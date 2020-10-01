@@ -3,10 +3,10 @@ from api.models import db, Person, Email
 from api.core import create_response, serialize_list, logger
 import requests
 
-main = Blueprint("auth", __name__)  # initialize blueprint
+auth = Blueprint("auth", __name__)  # initialize blueprint
 
 
-@main.route("/verifyEmail", methods=["POST"])
+@auth.route("/verifyEmail", methods=["POST"])
 def verify_email():
     headers = {"Content-Type": "application/json", "token": request.headers.token}
     data = {"pin": request.body.pin}

@@ -3,7 +3,7 @@ from .base import db
 from mongoengine import *
 
 
-class Email(EmbeddedDocument, Mixin):
+class Education(EmbeddedDocument, Mixin):
     """Education embedded within Mentor."""
 
     education_level = StringField()
@@ -18,6 +18,6 @@ class Email(EmbeddedDocument, Mixin):
         self.graduation_year = graduation_year
 
     def __repr__(self):
-        return f"""<Highest degree {self.education_level}, 
-                    majors {self.majors}, school {self.school}, 
-                    graduation date {self.graduation_year}>"""
+        return f"""<Education level: {self.education_level}, 
+                    majors: {self.majors}, school: {self.school}, 
+                    graduation year: {self.graduation_year}>"""

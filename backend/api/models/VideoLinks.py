@@ -5,8 +5,12 @@ from mongoengine import *
 
 class VideoLinks(Document, Mixin):
     """Video Links Collection"""
-    Link = StringField(required=True)
-    Tag = StringField(required=True)
+    def __init__(self, link, tag):
+        self.link = link
+        self.tag = tag
+
+    link = StringField(required=True)
+    tag = StringField(required=True)
 
     def __repr__(self):
-        return f"<VideoLink {self.Link}>"
+        return f"<VideoLink {self.link}>"

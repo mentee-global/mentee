@@ -1,8 +1,11 @@
+<!--
+Template credits to from https://github.com/codeforamerica/howto
+-->
 #### Description
 A clear and concise description of what the issue is about.
 
 #### Screenshots
-![Downhill Windmills](http://i.giphy.com/KO8AG2EByqkFi.gif)
+![Bunny and carrot](https://media.giphy.com/media/l0HlCc9qfYJ6lZrzO/giphy.gif)
 
 #### Files
 A list of relevant files for this issue. This will help people navigate the project and offer some clues of where to start.

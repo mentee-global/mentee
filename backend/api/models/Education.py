@@ -6,18 +6,18 @@ from mongoengine import *
 class Email(EmbeddedDocument, Mixin):
     """Education embedded within Mentor."""
 
-    educationLevel = StringField()
+    education_level = StringField()
     majors = ListField(StringField())
     school = StringField()
-    graduationYear = IntField()
+    graduation_year = IntField()
 
-    def __init__(self, educationLevel, majors, school, graduationYear):
-        self.educationLevel = education_level
+    def __init__(self, education_level, majors, school, graduation_year):
+        self.education_level = education_level
         self.majors = majors
         self.school = school
-        self.graduationYear = graduationYear
+        self.graduation_year = graduation_year
 
     def __repr__(self):
-        return f"""<Highest degree {self.educationLevel}, 
+        return f"""<Highest degree {self.education_level}, 
                     majors {self.majors}, school {self.school}, 
-                    graduation date {self.graduationYear}>"""
+                    graduation date {self.graduation_year}>"""

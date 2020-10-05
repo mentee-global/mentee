@@ -2,8 +2,10 @@ from api.core import Mixin
 from .base import db
 from mongoengine import *
 
+
 class VideoInfo(EmbeddedDocument, Mixin):
     """Video Information Collection"""
+
     def __init__(self, title, url, tags):
         self.title = title
         self.url = url

@@ -5,6 +5,6 @@ from .base import db
 from .Email import Email
 from .Person import Person
 
-__all__ = ["db", "Email", "Person"]
+__all__ = ["db", "Email", "Person", "Education"]
 
 # You must import all of the new Models you create to this page

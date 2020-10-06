@@ -6,10 +6,10 @@ from mongoengine import *
 class Video(EmbeddedDocument, Mixin):
     """Video Collection"""
 
-    def __init__(self, title, url, tag):
-        self.title = title
-        self.url = url
-        self.tag = tag
+    # def __init__(self, title, url, tag):
+    #     self.title = title
+    #     self.url = url
+    #     self.tag = tag
 
     title = StringField(required=True)
     url = StringField(required=True)

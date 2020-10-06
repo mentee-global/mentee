@@ -1,13 +1,11 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
     <div>
       <header>
-        <p>
-          This is the home page. Playing around with React router.
-        </p>
+        <p>This is the home page</p>
         <Link to="/appointments">Appointments Page</Link>
       </header>
     </div>

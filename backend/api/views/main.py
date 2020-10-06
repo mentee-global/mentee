@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email
+from api.models import db, Person, Email, MentorProfile
 from api.core import create_response, serialize_list, logger
 
 main = Blueprint("main", __name__)  # initialize blueprint
@@ -14,7 +14,12 @@ def index():
     logger.info("Hello World!")
     return "Hello World!"
 
-
+# GET request for /mentors
+@main.route("/mentors", methods=["GET"])
+def get_mentors():
+    mentors = MentorProfile.objects()
+    return create_response(data={"mentors": mentors})
+    
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])
 def get_persons():

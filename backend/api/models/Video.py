@@ -3,8 +3,8 @@ from .base import db
 from mongoengine import *
 
 
-class VideoInfo(EmbeddedDocument, Mixin):
-    """Video Information Collection"""
+class Video(EmbeddedDocument, Mixin):
+    """Video Collection"""
 
     def __init__(self, title, url, tags):
         self.title = title
@@ -16,4 +16,4 @@ class VideoInfo(EmbeddedDocument, Mixin):
     tags = StringField(required=True)
 
     def __repr__(self):
-        return f"<VideoInfo title: {self.title} URL: {self.url} tags: {self.tags}>"
+        return f"<Video title: {self.title} URL: {self.url} tags: {self.tags}>"

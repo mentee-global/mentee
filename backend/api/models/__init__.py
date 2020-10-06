@@ -4,6 +4,7 @@
 from .base import db
 from .Email import Email
 from .Person import Person
+from .Education import Education
 
 __all__ = ["db", "Email", "Person", "Education"]
 

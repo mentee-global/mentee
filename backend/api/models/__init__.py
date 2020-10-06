@@ -5,8 +5,9 @@ from .base import db
 from .Email import Email
 from .Person import Person
 from .Education import Education
+from .MentorProfile import MentorProfile
 from .Video import Video
 
-__all__ = ["db", "Email", "Person", "Education", "Video"]
+__all__ = ["db", "Email", "Person", "Education", "Video", "MentorProfile"]
 
 # You must import all of the new Models you create to this page

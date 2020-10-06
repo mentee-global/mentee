@@ -49,7 +49,7 @@ def create_person():
     )
 
 
-#
+#TODO: Make this cleaner!
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():
     data = request.get_json()

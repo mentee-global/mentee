@@ -6,9 +6,15 @@ from mongoengine import *
 class Education(EmbeddedDocument, Mixin):
     """Education embedded within Mentor."""
 
+<<<<<<< HEAD
     education_level = StringField(required=True)
     majors = ListField(StringField(), required=True)
     school = StringField(required=True)
+=======
+    education_level = StringField(max_length=200, required=True)
+    majors = ListField(StringField(), min_length=1, required=True)
+    school = StringField(max_length=200, required=True)
+>>>>>>> eee6e8d9cddbf0253cb6f853c5b6bbe63ec983b7
     graduation_year = IntField(required=True)
 
     def __init__(self, education_level, majors, school, graduation_year):

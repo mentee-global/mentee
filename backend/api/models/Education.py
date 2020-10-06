@@ -18,7 +18,6 @@ class Education(EmbeddedDocument, Mixin):
     #     self.school = school
     #     self.graduation_year = graduation_year
 
-
     def __repr__(self):
         return f"""<Education level: {self.education_level}, 
                     majors: {self.majors}, school: {self.school}, 

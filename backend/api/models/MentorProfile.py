@@ -2,7 +2,7 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, VideoLinks
+from api.models import Education, Video
 
 
 class MentorProfile(Document, Mixin):
@@ -20,7 +20,7 @@ class MentorProfile(Document, Mixin):
     biography = StringField(required=False)
     offers_in_person = BooleanField(required=True)
     offers_group_appointments = BooleanField(required=True)
-    video_links = EmbeddedDocumentField(VideoLinks)
+    video = EmbeddedDocumentField(Video)
 
     def __repr__(self):
         return f"""<Mentor id:{self.uid} \n name: {self.name} 

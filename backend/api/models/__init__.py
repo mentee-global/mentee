@@ -4,8 +4,10 @@
 from .base import db
 from .Email import Email
 from .Person import Person
+from .Education import Education
 from .MentorProfile import MentorProfile
+from .VideoLinks import VideoLinks
 
-__all__ = ["db", "Email", "Person", "MentorProfile"]
+__all__ = ["db", "Email", "Person", "Education", "VideoLinks", "MentorProfile"]
 
 # You must import all of the new Models you create to this page

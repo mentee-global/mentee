@@ -22,6 +22,37 @@ class MentorProfile(Document, Mixin):
     offers_group_appointments = BooleanField(required=True)
     video = EmbeddedDocumentField(Video)
 
+    def __init__(
+        self,
+        uid="",
+        name="",
+        professional_title="",
+        linkedin="",
+        website="",
+        picture="",
+        education=None,
+        languages=None,
+        specializations=None,
+        biography="",
+        offers_in_person=False,
+        offers_group_appointments=False,
+        video=None,
+    ):
+        Document.__init__(self)
+        self.uid = uid
+        self.name = name
+        self.professional_title = professional_title
+        self.linkedin = linkedin
+        self.website = website
+        self.picture = picture
+        self.education = education
+        self.languages = languages
+        self.specializations = specializations
+        self.biography = biography
+        self.offers_in_person = offers_in_person
+        self.offers_group_appointments = offers_group_appointments
+        self.video = video
+
     def __repr__(self):
         return f"""<Mentor id:{self.uid} \n name: {self.name} 
                 \n professional title: {self.professional_title} 

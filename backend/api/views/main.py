@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email, MentorProfile
+from api.models import db, Person, Email, Video, Education, MentorProfile
 from api.core import create_response, serialize_list, logger
 
 main = Blueprint("main", __name__)  # initialize blueprint
@@ -51,11 +51,15 @@ def create_person():
 def edit_mentor(id):
     data = request.get_json()
     mentor = MentorProfile.objects.get(id=id)
+    # try: 
+    #     
+    #     print(mentor)
+    # except Exception as e:
+    #     print(e)
+    #     return create_response(status=422, message="No mentor with that id")
 
     if data == None:
          return create_response(status=400, message="No data provided to update Mentor Profile")
-    
-    # TODO: Ask if put request should create an object with the id passed if the id doesn't exist already
 
     if "name" in data:
         mentor.name = data.get("name")
@@ -73,8 +77,11 @@ def edit_mentor(id):
         mentor.picture = data.get("picture")
     
     if "education" in data:
-        mentor.education = data.get("education")
-    
+        education_data = data.get("education")
+        new_education = Education(education_level=education_data.get("education_level"), 
+                                  majors = education_data.get("majors"),
+                                  school = education_data.get("school"), graduation_year = education_data.get("graduation_year"))
+        mentor.education = new_education
     if "languages" in data:
         mentor.languages = data.get("languages")
     
@@ -89,13 +96,17 @@ def edit_mentor(id):
     
     if "offers_group_appointments" in data:
         mentor.offers_group_appointments = data.get("offers_group_appointments")
-    
-    if "video" in data:
-        mentor.video = data.get("video")
 
-    ret = mentor.to_dict()
+    #TODO: Determine if we keep videos in mentor profile    
+    if "video" in data:
+        video_data = data.get("video")
+        new_video = Video(title=video_data.get("title"), url=video_data.get("url"), tag=video_data.get("tag"))
+        mentor.video = new_video
+
     mentor.save()
 
+    #TODO: 
     return create_response(
-        data={"mentor": ret}
+        status=200,
+        data={"Success"}
     ) 

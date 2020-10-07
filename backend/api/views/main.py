@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email
+from api.models import db, Person, Email, MentorProfile
 from api.core import create_response, serialize_list, logger
 
 main = Blueprint("main", __name__)  # initialize blueprint
@@ -14,13 +14,11 @@ def index():
     logger.info("Hello World!")
     return "Hello World!"
 
-
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])
 def get_persons():
     persons = Person.objects()
     return create_response(data={"persons": persons})
-
 
 # POST request for /persons
 @main.route("/persons", methods=["POST"])
@@ -47,3 +45,20 @@ def create_person():
     return create_response(
         message=f"Successfully created person {new_person.name} with id: {new_person.id}"
     )
+
+# PUT requests for /mentor
+@main.route("/mentor/<id>", methods=["PUT"])
+def edit_mentor(id):
+    data = request.get_json()
+    if data == None:
+         return create_response(status=400, message="No data provided to update Mentor Profile")
+    
+    # TODO: Determine if put request should replace all fields
+    # TODO: Ask if put request should create an object with the id passed if the id doesn't exist already
+    # TODO: Implement data checking
+
+    MentorProfile.objects.get(id=id).update(**data)
+    
+    return create_response(
+        message=f"Successfully changed"
+    ) 

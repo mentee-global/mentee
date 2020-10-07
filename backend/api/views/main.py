@@ -50,15 +50,52 @@ def create_person():
 @main.route("/mentor/<id>", methods=["PUT"])
 def edit_mentor(id):
     data = request.get_json()
+    mentor = MentorProfile.objects.get(id=id)
+
     if data == None:
          return create_response(status=400, message="No data provided to update Mentor Profile")
     
-    # TODO: Determine if put request should replace all fields
     # TODO: Ask if put request should create an object with the id passed if the id doesn't exist already
-    # TODO: Implement data checking
 
-    MentorProfile.objects.get(id=id).update(**data)
+    if "name" in data:
+        mentor.name = data.get("name")
+
+    if "professional_title" in data:
+        mentor.professional_title = data.get("professional_title")
     
+    if "linkedin" in data:
+        mentor.linkedin = data.get("linkedin")
+    
+    if "website" in data:
+        mentor.website = data.get("website")
+    
+    if "picture" in data:
+        mentor.picture = data.get("picture")
+    
+    if "education" in data:
+        mentor.education = data.get("education")
+    
+    if "languages" in data:
+        mentor.languages = data.get("languages")
+    
+    if "specializations" in data:
+        mentor.specializations = data.get("specializations")
+    
+    if "biography" in data:
+        mentor.biography = data.get("biography")
+
+    if "offers_in_person" in data:
+        mentor.offers_in_person = data.get("offers_in_person")
+    
+    if "offers_group_appointments" in data:
+        mentor.offers_group_appointments = data.get("offers_group_appointments")
+    
+    if "video" in data:
+        mentor.video = data.get("video")
+
+    ret = mentor.to_dict()
+    mentor.save()
+
     return create_response(
-        message=f"Successfully changed"
+        data={"mentor": ret}
     ) 

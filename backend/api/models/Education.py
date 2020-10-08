@@ -14,8 +14,7 @@ class Education(EmbeddedDocument, Mixin):
     def __init__(self, education_level, majors, school, graduation_year):
         EmbeddedDocument.__init__(self)
         self.education_level = education_level
-        for major in majors:
-            self.majors.append(major)
+        self.majors = majors
         self.school = school
         self.graduation_year = graduation_year
 

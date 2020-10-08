@@ -7,6 +7,7 @@ class Video(EmbeddedDocument, Mixin):
     """Video Collection"""
 
     def __init__(self, title, url, tag):
+        EmbeddedDocument.__init__(self)
         self.title = title
         self.url = url
         self.tag = tag

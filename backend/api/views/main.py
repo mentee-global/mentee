@@ -104,9 +104,7 @@ def create_mentor_profile():
             logger.info(msg)
             return create_response(status=422, message=msg)
         new_video = Video(
-            title=video_data["title"], 
-            url=video_data["url"], 
-            tag=video_data["tag"]
+            title=video_data["title"], url=video_data["url"], tag=video_data["tag"]
         )
         new_mentor.video = new_video
 

@@ -89,10 +89,10 @@ def create_mentor_profile():
             return create_response(status=422, message=msg)
 
         new_education = Education(
-            education_data["education_level"],
-            education_data["majors"],
-            education_data["school"],
-            education_data["graduation_year"],
+            education_level=education_data["education_level"],
+            majors=education_data["majors"],
+            school=education_data["school"],
+            graduation_year=education_data["graduation_year"],
         )
         new_mentor.education = new_education
 
@@ -104,7 +104,9 @@ def create_mentor_profile():
             logger.info(msg)
             return create_response(status=422, message=msg)
         new_video = Video(
-            title=video_data["title"], url=video_data["url"], tag=video_data["tag"]
+            title=video_data["title"], 
+            url=video_data["url"], 
+            tag=video_data["tag"]
         )
         new_mentor.video = new_video
 

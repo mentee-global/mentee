@@ -20,7 +20,7 @@ function Appointments() {
     <div>
       <Layout>
         <Header className="appointments-header">
-          <img src={mentee_logo} alt="Mentee" className="mentee-logo"/>
+          <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
         </Header>
         <Layout>
           <Sider theme="light">

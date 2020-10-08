@@ -79,7 +79,7 @@ def create_mentor_profile():
 
     if "biography" in data:
         new_mentor.biography = data["biography"]
-        
+
     # If optional field Education is passed
     if "education" in data:
         education_data = data["education"]

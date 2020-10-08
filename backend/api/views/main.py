@@ -64,20 +64,22 @@ def create_mentor_profile():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    new_mentor = MentorProfile()
-    new_mentor.uid = "TBD"
-    new_mentor.name = data["name"]
-    new_mentor.professional_title = data["professional_title"]
-    new_mentor.linkedin = data["linkedin"]
-    new_mentor.website = data["website"]
-    new_mentor.picture = data["picture"]
-    new_mentor.offers_in_person = data["offers_in_person"]
-    new_mentor.offers_group_appointments = data["offers_group_appointments"]
-    for language in data["languages"]:
-        new_mentor.languages.append(language)
-    for specialization in data["specializations"]:
-        new_mentor.specializations.append(specialization)
+    new_mentor = MentorProfile(
+        uid="TBD",
+        name=data["name"],
+        professional_title=data["professional_title"],
+        linkedin=data["linkedin"],
+        website=data["website"],
+        picture=data["picture"],
+        languages=data["languages"],
+        specializations=data["specializations"],
+        offers_in_person=data["offers_in_person"],
+        offers_group_appointments=data["offers_group_appointments"],
+    )
 
+    if "biography" in data:
+        new_mentor.biography = data["biography"]
+        
     # If optional field Education is passed
     if "education" in data:
         education_data = data["education"]
@@ -86,12 +88,12 @@ def create_mentor_profile():
             logger.info(msg)
             return create_response(status=422, message=msg)
 
-        new_education = Education()
-        new_education.education_level = education_data["education_level"]
-        new_education.school = education_data["school"]
-        new_education.graduation_year = education_data["graduation_year"]
-        for major in education_data["majors"]:
-            new_education.majors.append(major)
+        new_education = Education(
+            education_data["education_level"],
+            education_data["majors"],
+            education_data["school"],
+            education_data["graduation_year"],
+        )
         new_mentor.education = new_education
 
     # If optional field Video is passed

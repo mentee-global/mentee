@@ -60,7 +60,7 @@ def create_mentor_profile():
 
     logger.info("Data received: %s", data)
     msg, body_error = mentor_post_verify(data, "main_body")
-    if (body_error):
+    if body_error:
         logger.info(msg)
         return create_response(status=422, message=msg)
 
@@ -82,7 +82,7 @@ def create_mentor_profile():
     if "education" in data:
         education_data = data["education"]
         msg, education_error = mentor_post_verify(education_data, "education")
-        if (education_error):    
+        if education_error:
             logger.info(msg)
             return create_response(status=422, message=msg)
 
@@ -98,10 +98,9 @@ def create_mentor_profile():
     if "video" in data:
         video_data = data["video"]
         msg, video_error = mentor_post_verify(video_data, "video")
-        if (video_error):    
+        if video_error:
             logger.info(msg)
             return create_response(status=422, message=msg)
-
         new_video = Video(
             title=video_data["title"], url=video_data["url"], tag=video_data["tag"]
         )

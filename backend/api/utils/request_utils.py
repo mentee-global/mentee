@@ -1,9 +1,7 @@
 from typing import Tuple
 
 
-def mentor_post_verify(
-    data: dict = None, field: str = ""
-) -> Tuple[str, bool]:
+def mentor_post_verify(data: dict = None, field: str = "") -> Tuple[str, bool]:
     # TODO: Possibly include WTForms instead in order to simplify this type of checking
     msg = ""
     error = False

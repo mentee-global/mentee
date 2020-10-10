@@ -8,7 +8,7 @@ from mongoengine import *
 class User(Document, Mixin):
     """User Collection."""
 
-    userId = StringField(required=True)
+    user_id = StringField(required=True)
     username = StringField(required=True)
 
     def __repr__(self):

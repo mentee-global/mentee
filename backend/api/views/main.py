@@ -71,7 +71,7 @@ def edit_mentor(id):
         logger.info(msg)
         return create_response(status=400, message=msg)
 
-    # Check for required fields
+    # Edit fields or keep original data if no added data
     mentor.name = data.get("name", mentor.name)
     mentor.professional_title = data.get(
         "professional_title", mentor.professional_title

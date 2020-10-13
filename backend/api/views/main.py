@@ -33,7 +33,7 @@ def get_mentor(mentor_id):
         return create_response(status=422, message=msg)
     return create_response(data={"mentor": mentor})
 
-
+  
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])
 def get_persons():

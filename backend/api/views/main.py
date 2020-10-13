@@ -23,12 +23,12 @@ def get_mentors():
 
 
 # GET request for specific mentor based on id
-@main.route("/mentors/<string:mentor_id>", methods=["GET"])
+@main.route("/mentor/<string:mentor_id>", methods=["GET"])
 def get_mentor(mentor_id):
     try:
         mentor = MentorProfile.objects.get(id=mentor_id)
     except:
-        msg = "This mentor does not exist!"
+        msg = "No mentors currently exist with ID " + mentor_id
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(data={"mentor": mentor})

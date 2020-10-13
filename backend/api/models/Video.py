@@ -17,5 +17,4 @@ class Video(EmbeddedDocument, Mixin):
     tag = StringField(required=True)
 
     def __repr__(self):
-        return f"""<Video title: {self.title}, 
-                    URL: {self.url}, tag: {self.tag}>"""
+        return f"<Video title: {self.title}, URL: {self.url}, tag: {self.tag}>"

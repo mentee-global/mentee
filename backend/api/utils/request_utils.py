@@ -1,5 +1,20 @@
+from flask_inputs import Inputs
+from wtforms.validators import InputRequired
 from typing import Tuple
 
+
+class MentorInputs(Inputs):
+    rule = {
+        'name': [InputRequired()],
+        'professional_title': [InputRequired()],
+        'linkedin': [InputRequired()],
+        'website': [InputRequired()],
+        'picture': [InputRequired()],
+        'languages': [InputRequired()],
+        'specializations': [InputRequired()],
+        'offers_in_person': [InputRequired()],
+        'offers_group_appointments': [InputRequired()],
+    }
 
 def mentor_post_verify(data: dict = None, field: str = "") -> Tuple[str, bool]:
     # TODO: Possibly include WTForms instead in order to simplify this type of checking

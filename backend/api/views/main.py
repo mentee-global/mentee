@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from api.models import db, Person, Email, MentorProfile, Education, Video
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import mentor_post_verify
+from api.utils.request_utils import MentorInputs, mentor_post_verify
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -53,16 +53,19 @@ def create_person():
 # TODO: Make this cleaner!
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():
-    data = request.get_json()
+    print(request.get_json())
+    print(type(request))
+    data = MentorInputs(request)
 
-    if data is None:
-        return create_response(status=400, message="No data provided for new FP")
+    if not data.validate():
+        print(data.errors)
+        return create_response(status=422, message=data.errors)
 
     logger.info("Data received: %s", data)
-    msg, body_error = mentor_post_verify(data, "main_body")
-    if body_error:
-        logger.info(msg)
-        return create_response(status=422, message=msg)
+    # msg, body_error = mentor_post_verify(data, "main_body")
+    # if body_error:
+    #     logger.info(msg)
+    #     return create_response(status=422, message=msg)
 
     new_mentor = MentorProfile(
         uid="TBD",

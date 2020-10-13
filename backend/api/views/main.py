@@ -15,6 +15,13 @@ def index():
     return "Hello World!"
 
 
+# GET request for /mentors
+@main.route("/mentors", methods=["GET"])
+def get_mentors():
+    mentors = MentorProfile.objects()
+    return create_response(data={"mentors": mentors})
+
+
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])
 def get_persons():

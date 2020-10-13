@@ -26,31 +26,29 @@ function Appointments() {
       <Layout>
         <Header className="appointments-header">
           <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
-          <div>
-            <span>
-              <div className="profile-caret">
-                <Button
-                  type="link"
-                  style={{ color: "gray" }}
-                  onClick={() => setDisplayDropdown(!displayDropdown)}
-                >
-                  {displayDropdown ? <CaretUpOutlined /> : <CaretDownOutlined />}
-                </Button>
-              </div>
-              <div className="profile-name">
-                <b>Name Here</b>
-                <br />
-                Position Here
-              </div>
-              <div className="profile-picture">
-                <UserOutlined />
-              </div>
-            </span>
-            <div className="notification-bell">
-              <NavLink to="/" className="notification-bell">
-                <BellOutlined />
-              </NavLink>
+          <span>
+            <div className="profile-caret">
+              <Button
+                type="link"
+                style={{ color: "gray" }}
+                onClick={() => setDisplayDropdown(!displayDropdown)}
+              >
+                {displayDropdown ? <CaretUpOutlined /> : <CaretDownOutlined />}
+              </Button>
             </div>
+            <div className="profile-name">
+              <b>Name Here</b>
+              <br />
+              Position Here
+            </div>
+            <div className="profile-picture">
+              <UserOutlined />
+            </div>
+          </span>
+          <div className="notification-bell">
+            <NavLink to="/" className="notification-bell">
+              <BellOutlined />
+            </NavLink>
           </div>
         </Header>
         <Layout>

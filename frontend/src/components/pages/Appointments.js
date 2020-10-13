@@ -6,6 +6,7 @@ import {
   VideoCameraOutlined,
   CalendarOutlined,
   HomeOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 
 import "antd/dist/antd.css";
@@ -21,39 +22,49 @@ function Appointments() {
       <Layout>
         <Header className="appointments-header">
           <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
+          <div style={{ float: "right" }}>two</div>
+          <div className="notification-bell">
+            <NavLink to="/">
+              <BellOutlined />
+            </NavLink>
+          </div>
         </Header>
         <Layout>
           <Sider theme="light">
-            <Menu theme="light" mode="inline">
+            <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
               <Menu.Item
-                key="1"
+                key="home"
                 className="appointments-menu-item"
                 icon={<HomeOutlined />}
               >
-                <NavLink to="/" activeStyle={{ color: "black" }}>
+                <NavLink to="/" style={{ color: "black" }}>
                   Home
                 </NavLink>
               </Menu.Item>
               <Menu.Item
-                key="2"
-                className="appointments-menu-item"
+                key="appointments"
+                className="appointments-menu-item-selected"
                 icon={<CalendarOutlined />}
               >
                 Appointments
               </Menu.Item>
               <Menu.Item
-                key="3"
+                key="videos"
                 className="appointments-menu-item"
                 icon={<VideoCameraOutlined />}
               >
-                Your Videos
+                <NavLink to="/videos" style={{ color: "black" }}>
+                  Your Videos
+                </NavLink>
               </Menu.Item>
               <Menu.Item
-                key="4"
+                key="profile"
                 className="appointments-menu-item"
                 icon={<UserOutlined />}
               >
-                Profile
+                <NavLink to="/profile" style={{ color: "black" }}>
+                  Profile
+                </NavLink>
               </Menu.Item>
             </Menu>
           </Sider>

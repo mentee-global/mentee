@@ -12,6 +12,17 @@
   color: black;
 }
 
+.appointments-menu-item-selected {
+  background-color: #fcf6ea;
+  pointer-events: none;
+}
+
+.notification-bell {
+  float: right;
+  fontSize: 20px;
+  color: black;
+}
+
 .mentee-logo {
   background-color: #fbecc1;
   float: left;

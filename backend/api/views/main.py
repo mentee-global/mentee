@@ -58,7 +58,7 @@ def create_person():
     )
 
 
-# TODO: Make this cleaner!
+# POST request for a new mentor profile
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():
     data = request.json

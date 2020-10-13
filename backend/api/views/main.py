@@ -14,12 +14,14 @@ def index():
     logger.info("Hello World!")
     return "Hello World!"
 
+
 # GET request for /mentors
 @main.route("/mentors", methods=["GET"])
 def get_mentors():
     mentors = MentorProfile.objects()
     return create_response(data={"mentors": mentors})
-    
+
+
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])
 def get_persons():
@@ -43,10 +45,11 @@ def create_person():
         return create_response(status=422, message=msg)
 
     #  create MongoEngine objects
-    new_person = Person(name=data["name"])
+    emails = []
     for email in data["emails"]:
         email_obj = Email(email=email)
-        new_person.emails.append(email_obj)
+        emails.append(email_obj)
+    new_person = Person(name=data["name"], emails=emails)
     new_person.save()
 
     return create_response(

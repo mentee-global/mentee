@@ -20,10 +20,10 @@ class MentorProfile(Document, Mixin):
     biography = StringField(required=False)
     offers_in_person = BooleanField(required=True)
     offers_group_appointments = BooleanField(required=True)
-    video = EmbeddedDocumentField(Video)
+    videos = ListField(EmbeddedDocumentField(Video))
 
     def __repr__(self):
-        return f"""<Mentor id:{self.uid} \n name: {self.name} 
+        return f"""<MentorProfile id:{self.uid} \n name: {self.name} 
                 \n professional title: {self.professional_title} 
                 \n linkedin: {self.linkedin} \n website: {self.website}
                 \n picture: {self.picture} \n biography: {self.biography} 

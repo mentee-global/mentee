@@ -7,6 +7,7 @@ from .Person import Person
 from .Education import Education
 from .Video import Video
 from .MentorProfile import MentorProfile
+from .Availability import Availability
 
 __all__ = ["db", "Email", "Person", "Education", "Video", "MentorProfile"]
 

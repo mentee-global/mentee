@@ -5,7 +5,7 @@ from mongoengine import *
 
 class Availability(EmbeddedDocument, Mixin):
     """Availability embedded within Mentor."""
-    
+
     start_time = DateTimeField(required=True)
     end_time = DateTimeField(required=True)
 

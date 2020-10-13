@@ -1,77 +1,37 @@
-from flask_inputs import Inputs
+from wtforms import Form
+from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
 from wtforms.validators import InputRequired
+import wtforms_json
 from typing import Tuple
 
+wtforms_json.init()
 
-class MentorInputs(Inputs):
-    rule = {
-        'name': [InputRequired()],
-        'professional_title': [InputRequired()],
-        'linkedin': [InputRequired()],
-        'website': [InputRequired()],
-        'picture': [InputRequired()],
-        'languages': [InputRequired()],
-        'specializations': [InputRequired()],
-        'offers_in_person': [InputRequired()],
-        'offers_group_appointments': [InputRequired()],
-    }
 
-def mentor_post_verify(data: dict = None, field: str = "") -> Tuple[str, bool]:
-    # TODO: Possibly include WTForms instead in order to simplify this type of checking
-    msg = ""
-    error = False
-    if field == "main_body":
-        if "name" not in data:
-            msg = "No name provided for mentor profile."
-            error = True
-        elif "professional_title" not in data:
-            msg = "No professional title provided for mentor profile."
-            error = True
-        elif "linkedin" not in data:
-            msg = "No linkedin provided for mentor profile."
-            error = True
-        elif "website" not in data:
-            msg = "No website provided for mentor profile."
-            error = True
-        elif "picture" not in data:
-            msg = "No picture provided for mentor profile."
-            error = True
-        elif "languages" not in data:
-            msg = "No languages provided for mentor profile."
-            error = True
-        elif "specializations" not in data:
-            msg = "No specializations provided for mentor profile."
-            error = True
-        elif "offers_in_person" not in data:
-            msg = "No offers in person provided for mentor profile."
-            error = True
-        elif "offers_group_appointments" not in data:
-            msg = "No offers group appointments provided for mentor profile."
-            error = True
+class MentorForm(Form):
+    uid = StringField(validators=[InputRequired()])
+    name = StringField(validators=[InputRequired()])
+    professional_title = StringField(validators=[InputRequired()])
+    linkedin = StringField(validators=[InputRequired()])
+    website = StringField(validators=[InputRequired()])
+    picture = StringField(validators=[InputRequired()])
+    languages = FieldList(StringField(validators=[InputRequired()]))
+    specializations = FieldList(StringField(validators=[InputRequired()]))
+    offers_in_person = BooleanField(validators=[InputRequired()])
+    offers_group_appointments = BooleanField(validators=[InputRequired()])
 
-    elif field == "education":
-        if "education_level" not in data:
-            msg = "No education_level provided for mentor education"
-            error = True
-        elif "majors" not in data:
-            msg = "No majors provided for mentor education"
-            error = True
-        elif "school" not in data:
-            msg = "No school provided for mentor education"
-            error = True
-        elif "graduation_year" not in data:
-            msg = "No graduation year provided for mentor education"
-            error = True
 
-    elif field == "video":
-        if "title" not in data:
-            msg = "No title provided for mentor video"
-            error = True
-        if "url" not in data:
-            msg = "No URL provided for mentor video"
-            error = True
-        if "tag" not in data:
-            msg = "No tag provided for mentor video"
-            error = True
+class EducationForm(Form):
+    education_level = StringField(validators=[InputRequired()])
+    majors = FieldList(StringField(validators=[InputRequired()]))
+    school = StringField(validators=[InputRequired()])
+    graduation_year = IntegerField(validators=[InputRequired()])
 
-    return msg, error
+
+class VideoForm(Form):
+    title = StringField(validators=[InputRequired()])
+    url = StringField(validators=[InputRequired()])
+    tag = StringField(validators=[InputRequired()])
+
+
+class ListVideoForm(Form):
+    videos = FieldList(FormField(VideoForm(validators=[InputRequired()])))

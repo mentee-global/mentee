@@ -1,11 +1,7 @@
 from flask import Blueprint, request, jsonify
-<<<<<<< HEAD
 from api.models import db, Person, Email, MentorProfile, Education, Video
-=======
-from api.models import db, Person, Email, MentorProfile
->>>>>>> origin/master
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import MentorInputs, mentor_post_verify
+from api.utils.request_utils import MentorForm, EducationForm, ListVideoForm
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -58,22 +54,14 @@ def create_person():
 # TODO: Make this cleaner!
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():
-    print(request.get_json())
-    print(type(request))
-    data = MentorInputs(request)
+    data = request.json
+    validate_data = MentorForm.from_json(data)
 
-    if not data.validate():
-        print(data.errors)
-        return create_response(status=422, message=data.errors)
-
-    logger.info("Data received: %s", data)
-    # msg, body_error = mentor_post_verify(data, "main_body")
-    # if body_error:
-    #     logger.info(msg)
-    #     return create_response(status=422, message=msg)
+    if not validate_data.validate():
+        msg = ", ".join(validate_data.errors.keys())
+        return create_response(status=422, message="Missing fields " + msg)
 
     new_mentor = MentorProfile(
-        uid="TBD",
         name=data["name"],
         professional_title=data["professional_title"],
         linkedin=data["linkedin"],
@@ -91,10 +79,11 @@ def create_mentor_profile():
     # If optional field Education is passed
     if "education" in data:
         education_data = data["education"]
-        msg, education_error = mentor_post_verify(education_data, "education")
-        if education_error:
-            logger.info(msg)
-            return create_response(status=422, message=msg)
+        validate_education = EducationForm.from_json(education_data)
+
+        if not validate_education.validate():
+            msg = ", ".join(validate_education.errors.keys())
+            return create_response(status=422, message="Missing fields " + msg)
 
         new_education = Education(
             education_level=education_data["education_level"],
@@ -105,16 +94,19 @@ def create_mentor_profile():
         new_mentor.education = new_education
 
     # If optional field Video is passed
-    if "video" in data:
-        video_data = data["video"]
-        msg, video_error = mentor_post_verify(video_data, "video")
-        if video_error:
-            logger.info(msg)
-            return create_response(status=422, message=msg)
-        new_video = Video(
-            title=video_data["title"], url=video_data["url"], tag=video_data["tag"]
-        )
-        new_mentor.video = new_video
+    if "videos" in data:
+        videos_data = data["videos"]
+        validate_videos = ListVideoForm().from_json(data)
+
+        if not validate_videos.validate():
+            msg = ", ".join(validate_data.errors.keys())
+            return create_response(status=422, message="Missing fields" + msg)
+
+        for video_data in videos_data:
+            new_video = Video(
+                title=video_data["title"], url=video_data["url"], tag=video_data["tag"]
+            )
+            new_mentor.videos.append(new_video)
 
     new_mentor.save()
     return create_response(

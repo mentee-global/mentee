@@ -5,6 +5,7 @@
 
 .appointments-header {
   background-color: #fbecc1;
+  padding: 0px;
 }
 
 .appointments-menu-item:hover {
@@ -19,8 +20,28 @@
 
 .notification-bell {
   float: right;
-  fontSize: 20px;
+  font-size: 17.5px;
   color: black;
+  margin-right: 2%;
+}
+
+.profile-picture {
+  float: right;
+  font-size: 30px;
+}
+
+.profile-name {
+  float: right;
+  margin-top: 15px;
+  margin-left: 1%;
+  font-size: 15px;
+  line-height: 15px;
+}
+
+.profile-caret {
+  float: right;
+  margin-left: 1%;
+  color: gray;
 }
 
 .mentee-logo {
@@ -28,5 +49,5 @@
   float: left;
   height: 40px;
   width: 200px;
-  margin: 10px -30px;
+  margin: 10px 10px;
 }

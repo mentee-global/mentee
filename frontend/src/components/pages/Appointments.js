@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Button } from "antd";
 import {
   UserOutlined,
   VideoCameraOutlined,
   CalendarOutlined,
   HomeOutlined,
   BellOutlined,
+  CaretUpOutlined,
+  CaretDownOutlined,
 } from "@ant-design/icons";
 
 import "antd/dist/antd.css";
@@ -17,16 +19,38 @@ import mentee_logo from "../../resources/mentee.png";
 const { Header, Sider, Content } = Layout;
 
 function Appointments() {
+  const [displayDropdown, setDisplayDropdown] = useState(false);
+
   return (
     <div>
       <Layout>
         <Header className="appointments-header">
           <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
-          <div style={{ float: "right" }}>two</div>
-          <div className="notification-bell">
-            <NavLink to="/">
-              <BellOutlined />
-            </NavLink>
+          <div>
+            <span>
+              <div className="profile-caret">
+                <Button
+                  type="link"
+                  style={{ color: "gray" }}
+                  onClick={() => setDisplayDropdown(!displayDropdown)}
+                >
+                  {displayDropdown ? <CaretUpOutlined /> : <CaretDownOutlined />}
+                </Button>
+              </div>
+              <div className="profile-name">
+                <b>Name Here</b>
+                <br />
+                Position Here
+              </div>
+              <div className="profile-picture">
+                <UserOutlined />
+              </div>
+            </span>
+            <div className="notification-bell">
+              <NavLink to="/" className="notification-bell">
+                <BellOutlined />
+              </NavLink>
+            </div>
           </div>
         </Header>
         <Layout>

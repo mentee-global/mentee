@@ -4,6 +4,8 @@ from wtforms.validators import InputRequired
 import wtforms_json
 from typing import Tuple
 
+# Needed in order to be able to transform from JSON to Form structure
+# Also patches WTForms with supporting code for JSON
 wtforms_json.init()
 
 
@@ -33,5 +35,6 @@ class VideoForm(Form):
     tag = StringField(validators=[InputRequired()])
 
 
+# Needed in order to be able to verify a list of videos
 class ListVideoForm(Form):
     videos = FieldList(FormField(VideoForm(validators=[InputRequired()])))

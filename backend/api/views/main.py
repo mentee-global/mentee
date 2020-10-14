@@ -64,10 +64,12 @@ def create_mentor_profile():
     data = request.json
     validate_data = MentorForm.from_json(data)
 
+    # Used WTForms and WTForms-JSON to validate that there exists values
     if not validate_data.validate():
         msg = ", ".join(validate_data.errors.keys())
         return create_response(status=422, message="Missing fields " + msg)
 
+    # TODO: Include UID once it is finalized
     new_mentor = MentorProfile(
         name=data["name"],
         professional_title=data["professional_title"],
@@ -80,6 +82,7 @@ def create_mentor_profile():
         offers_group_appointments=data["offers_group_appointments"],
     )
 
+    # If option field Biography is passed
     if "biography" in data:
         new_mentor.biography = data["biography"]
 
@@ -100,7 +103,7 @@ def create_mentor_profile():
         )
         new_mentor.education = new_education
 
-    # If optional field Video is passed
+    # If optional field Videos is passed
     if "videos" in data:
         videos_data = data["videos"]
         validate_videos = ListVideoForm().from_json(data)

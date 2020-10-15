@@ -5,8 +5,6 @@ from wtforms import validators
 import wtforms_json
 from typing import Tuple
 
-# Needed in order to be able to transform from JSON to Form structure
-# Also patches WTForms with supporting code for JSON
 wtforms_json.init()
 
 

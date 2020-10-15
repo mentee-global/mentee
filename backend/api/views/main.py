@@ -64,7 +64,6 @@ def create_mentor_profile():
     data = request.json
     validate_data = MentorForm.from_json(data)
 
-    # Used WTForms and WTForms-JSON to validate that there exists values
     if not validate_data.validate():
         msg = ", ".join(validate_data.errors.keys())
         return create_response(status=422, message="Missing fields " + msg)
@@ -81,11 +80,8 @@ def create_mentor_profile():
         offers_group_appointments=data["offers_group_appointments"],
     )
 
-    # If option field Biography is passed
-    if "biography" in data:
-        new_mentor.biography = data["biography"]
+    new_mentor.biography = data.get("biography")
 
-    # If optional field Education is passed
     if "education" in data:
         education_data = data["education"]
         validate_education = EducationForm.from_json(education_data)
@@ -102,19 +98,16 @@ def create_mentor_profile():
         )
         new_mentor.education = new_education
 
-    # If optional field Videos is passed
     if "videos" in data:
         videos_data = data["videos"]
 
-        # Runs through every video and validates it if it is fully filled then add to database
-        for i, video in enumerate(videos_data):
+        for video in videos_data:
             validate_video = VideoForm.from_json(video)
 
             if not validate_video.validate():
                 msg = ", ".join(validate_video.errors.keys())
                 return create_response(
-                    status=422,
-                    message="Missing fields " + msg + " in video index " + str(i),
+                    status=422, message="Missing fields " + msg + " in video index "
                 )
 
             new_video = Video(title=video["title"], url=video["url"], tag=video["tag"])

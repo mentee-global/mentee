@@ -13,16 +13,18 @@ import "./css/Navigation.scss";
 const { Sider } = Layout;
 
 function NavigationSidebar(props) {
+  const getMenuItemStyle = (page) => {
+    return props.selectedPage === page
+      ? "navigation-menu-item-selected"
+      : "navigation-menu-item";
+  };
+
   return (
     <Sider theme="light">
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
         <Menu.Item
           key="home"
-          className={
-            props.selectedPage === "home"
-              ? "navigation-menu-item-selected"
-              : "navigation-menu-item"
-          }
+          className={getMenuItemStyle("home")}
           icon={<HomeOutlined />}
         >
           <NavLink to="/" style={{ color: "black" }}>
@@ -31,11 +33,7 @@ function NavigationSidebar(props) {
         </Menu.Item>
         <Menu.Item
           key="appointments"
-          className={
-            props.selectedPage === "appointments"
-              ? "navigation-menu-item-selected"
-              : "navigation-menu-item"
-          }
+          className={getMenuItemStyle("appointments")}
           icon={<CalendarOutlined />}
         >
           <NavLink to="/appointments" style={{ color: "black" }}>
@@ -44,11 +42,7 @@ function NavigationSidebar(props) {
         </Menu.Item>
         <Menu.Item
           key="videos"
-          className={
-            props.selectedPage === "videos"
-              ? "navigation-menu-item-selected"
-              : "navigation-menu-item"
-          }
+          className={getMenuItemStyle("videos")}
           icon={<VideoCameraOutlined />}
         >
           <NavLink to="/videos" style={{ color: "black" }}>
@@ -57,11 +51,7 @@ function NavigationSidebar(props) {
         </Menu.Item>
         <Menu.Item
           key="profile"
-          className={
-            props.selectedPage === "profile"
-              ? "navigation-menu-item-selected"
-              : "navigation-menu-item"
-          }
+          className={getMenuItemStyle("profile")}
           icon={<UserOutlined />}
         >
           <NavLink to="/profile" style={{ color: "black" }}>

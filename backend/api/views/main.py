@@ -85,18 +85,19 @@ def edit_mentor(id):
     if "education" in data:
         education_data = data.get("education")
         mentor.education = Education(
-                                education_level=education_data.get("education_level"),
-                                majors=education_data.get("majors"),
-                                school=education_data.get("school"),
-                                graduation_year=education_data.get("graduation_year"),
-                            )
+            education_level=education_data.get("education_level"),
+            majors=education_data.get("majors"),
+            school=education_data.get("school"),
+            graduation_year=education_data.get("graduation_year"),
+        )
 
     # Create video objects for each item in list
     if "videos" in data:
         video_data = data.get("videos")
-        mentor.videos = [Video(title=video.get("title"), 
-                               url=video.get("url"), 
-                               tag=video.get("tag")) for video in video_data]
+        mentor.videos = [
+            Video(title=video.get("title"), url=video.get("url"), tag=video.get("tag"))
+            for video in video_data
+        ]
 
     mentor.save()
 

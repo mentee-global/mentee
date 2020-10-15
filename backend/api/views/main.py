@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from api.models import db, Person, Email, MentorProfile, Education, Video
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import MentorForm, EducationForm, ListVideoForm
+from api.utils.request_utils import MentorForm, EducationForm, VideoForm
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -69,7 +69,6 @@ def create_mentor_profile():
         msg = ", ".join(validate_data.errors.keys())
         return create_response(status=422, message="Missing fields " + msg)
 
-    # TODO: Include UID once it is finalized
     new_mentor = MentorProfile(
         name=data["name"],
         professional_title=data["professional_title"],
@@ -106,16 +105,19 @@ def create_mentor_profile():
     # If optional field Videos is passed
     if "videos" in data:
         videos_data = data["videos"]
-        validate_videos = ListVideoForm().from_json(data)
 
-        if not validate_videos.validate():
-            msg = ", ".join(validate_data.errors.keys())
-            return create_response(status=422, message="Missing fields" + msg)
+        # Runs through every video and validates it if it is fully filled then add to database
+        for i, video in enumerate(videos_data):
+            validate_video = VideoForm.from_json(video)
 
-        for video_data in videos_data:
-            new_video = Video(
-                title=video_data["title"], url=video_data["url"], tag=video_data["tag"]
-            )
+            if not validate_video.validate():
+                msg = ", ".join(validate_video.errors.keys())
+                return create_response(
+                    status=422,
+                    message="Missing fields " + msg + " in video index " + str(i),
+                )
+
+            new_video = Video(title=video["title"], url=video["url"], tag=video["tag"])
             new_mentor.videos.append(new_video)
 
     new_mentor.save()

@@ -1,6 +1,7 @@
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
 from wtforms.validators import InputRequired
+from wtforms import validators
 import wtforms_json
 from typing import Tuple
 
@@ -16,15 +17,15 @@ class MentorForm(Form):
     linkedin = StringField(validators=[InputRequired()])
     website = StringField(validators=[InputRequired()])
     picture = StringField(validators=[InputRequired()])
-    languages = FieldList(StringField(validators=[InputRequired()]))
-    specializations = FieldList(StringField(validators=[InputRequired()]))
+    languages = FieldList(StringField(), validators=[validators.required()])
+    specializations = FieldList(StringField(), validators=[validators.required()])
     offers_in_person = BooleanField(validators=[InputRequired()])
     offers_group_appointments = BooleanField(validators=[InputRequired()])
 
 
 class EducationForm(Form):
     education_level = StringField(validators=[InputRequired()])
-    majors = FieldList(StringField(validators=[InputRequired()]))
+    majors = FieldList(StringField(), validators=[validators.required()])
     school = StringField(validators=[InputRequired()])
     graduation_year = IntegerField(validators=[InputRequired()])
 
@@ -33,8 +34,3 @@ class VideoForm(Form):
     title = StringField(validators=[InputRequired()])
     url = StringField(validators=[InputRequired()])
     tag = StringField(validators=[InputRequired()])
-
-
-# Needed in order to be able to verify a list of videos
-class ListVideoForm(Form):
-    videos = FieldList(FormField(VideoForm(validators=[InputRequired()])))

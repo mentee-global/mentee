@@ -22,6 +22,18 @@ def get_mentors():
     return create_response(data={"mentors": mentors})
 
 
+# GET request for specific mentor based on id
+@main.route("/mentor/<string:mentor_id>", methods=["GET"])
+def get_mentor(mentor_id):
+    try:
+        mentor = MentorProfile.objects.get(id=mentor_id)
+    except:
+        msg = "No mentors currently exist with ID " + mentor_id
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    return create_response(data={"mentor": mentor})
+
+
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])
 def get_persons():

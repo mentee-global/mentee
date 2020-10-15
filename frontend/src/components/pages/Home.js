@@ -2,14 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 function Home() {
-  return (
-    <div>
-      <header>
-        <p>This is the home page</p>
-        <Link to="/appointments">Appointments Page</Link>
-      </header>
-    </div>
-  );
+  return <div>Home</div>;
 }
 
 export default Home;

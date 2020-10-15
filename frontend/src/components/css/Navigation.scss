@@ -1,19 +1,19 @@
-.appointments-content {
+.navigation-content {
   margin: 5% 5%;
   height: 500px;
 }
 
-.appointments-header {
+.navigation-header {
   background-color: #fbecc1;
   padding: 0px;
 }
 
-.appointments-menu-item:hover {
+.navigation-menu-item:hover {
   background-color: #fcf6ea;
   color: black;
 }
 
-.appointments-menu-item-selected {
+.navigation-menu-item-selected {
   background-color: #fcf6ea;
   pointer-events: none;
 }
@@ -42,6 +42,11 @@
   float: right;
   margin-left: 1%;
   color: gray;
+}
+
+.dropdown-menu {
+  border-radius: 5px;
+  width: 300px;
 }
 
 .mentee-logo {

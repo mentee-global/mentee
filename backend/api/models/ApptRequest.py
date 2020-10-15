@@ -4,22 +4,23 @@ from mongoengine import *
 from flask_mongoengine import Document
 from api.models import Email
 
+
 class ApptRequest(Document, Mixin):
     """Appointment Request Collection."""
 
-    name = StringField(required = True)
-    email = EmbeddedDocumentField(Email, required = True)
-    phone_number = StringField(required = True)
+    name = StringField(required=True)
+    email = EmbeddedDocumentField(Email, required=True)
+    phone_number = StringField(required=True)
     languages = ListField(StringField(), required=True)
-    age = IntField(required = True)
-    gender = StringField(required = True)
-    ethnicity = StringField(required = True)
+    age = IntField(required=True)
+    gender = StringField(required=True)
+    ethnicity = StringField(required=True)
     location = StringField()
-    mentorship_goals = StringField(required = True)
-    specialist_categories = ListField(StringField(), required = True)
+    mentorship_goals = StringField(required=True)
+    specialist_categories = ListField(StringField(), required=True)
     message = StringField()
-    attendee_count = IntField(required = True)
-    organization = StringField(required = True)
+    attendee_count = IntField(required=True)
+    organization = StringField(required=True)
 
     def __repr__(self):
         return f"""<name: {self.name}
@@ -35,4 +36,3 @@ class ApptRequest(Document, Mixin):
                 \n message: {self.message}
                 \n attendee_count: {self.attendee_count}
                 \n organization: {self.organization}>"""
-

@@ -21,6 +21,7 @@ def get_mentors():
     mentors = MentorProfile.objects()
     return create_response(data={"mentors": mentors})
 
+
 # GET request for specific mentor based on id
 @main.route("/mentor/<string:mentor_id>", methods=["GET"])
 def get_mentor(mentor_id):
@@ -31,6 +32,7 @@ def get_mentor(mentor_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(data={"mentor": mentor})
+
 
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])

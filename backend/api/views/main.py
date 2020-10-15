@@ -107,7 +107,7 @@ def create_mentor_profile():
             if not validate_video.validate():
                 msg = ", ".join(validate_video.errors.keys())
                 return create_response(
-                    status=422, message="Missing fields " + msg + " in video index "
+                    status=422, message="Missing fields " + msg
                 )
 
             new_video = Video(title=video["title"], url=video["url"], tag=video["tag"])

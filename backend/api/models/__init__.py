@@ -9,6 +9,14 @@ from .Video import Video
 from .MentorProfile import MentorProfile
 from .Availability import Availability
 
-__all__ = ["db", "Email", "Person", "Education", "Video", "MentorProfile"]
+__all__ = [
+    "db",
+    "Email",
+    "Person",
+    "Education",
+    "Video",
+    "MentorProfile",
+    "Availability",
+]
 
 # You must import all of the new Models you create to this page

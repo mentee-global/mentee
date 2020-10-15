@@ -10,5 +10,5 @@ class Availability(EmbeddedDocument, Mixin):
     end_time = DateTimeField(required=True)
 
     def __repr__(self):
-        return f"""<start time: {self.start_time}, 
+        return f"""<Availability: start time: {self.start_time}, 
                     end_time: {self.end_time}>"""

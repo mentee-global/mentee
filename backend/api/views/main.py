@@ -65,12 +65,6 @@ def edit_mentor(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # Check if data exists
-    if data == None:
-        msg = "No data provided to update Mentor Profile"
-        logger.info(msg)
-        return create_response(status=400, message=msg)
-
     # Edit fields or keep original data if no added data
     mentor.name = data.get("name", mentor.name)
     mentor.professional_title = data.get(
@@ -90,24 +84,19 @@ def edit_mentor(id):
     # Create education object
     if "education" in data:
         education_data = data.get("education")
-        new_education = Education(
-            education_level=education_data.get("education_level"),
-            majors=education_data.get("majors"),
-            school=education_data.get("school"),
-            graduation_year=education_data.get("graduation_year"),
-        )
-        mentor.education = new_education
+        mentor.education = Education(
+                                education_level=education_data.get("education_level"),
+                                majors=education_data.get("majors"),
+                                school=education_data.get("school"),
+                                graduation_year=education_data.get("graduation_year"),
+                            )
 
-    # TODO: Determine if we keep videos in mentor profile
-    # Create video object
-    if "video" in data:
-        video_data = data.get("video")
-        new_video = Video(
-            title=video_data.get("title"),
-            url=video_data.get("url"),
-            tag=video_data.get("tag"),
-        )
-        mentor.video = new_video
+    # Create video objects for each item in list
+    if "videos" in data:
+        video_data = data.get("videos")
+        mentor.videos = [Video(title=video.get("title"), 
+                               url=video.get("url"), 
+                               tag=video.get("tag")) for video in video_data]
 
     mentor.save()
 

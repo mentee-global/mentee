@@ -6,8 +6,8 @@ from .Email import Email
 from .Person import Person
 from .Education import Education
 from .Video import Video
-from .MentorProfile import MentorProfile
 from .Availability import Availability
+from .MentorProfile import MentorProfile
 
 __all__ = [
     "db",

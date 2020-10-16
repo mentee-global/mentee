@@ -1,0 +1,25 @@
+
+.appointments-welcome-text {
+    font-size:30px;
+    font-weight: 700;
+}
+
+.appointments-tabs {
+    flex: 1;
+    flex-direction: row;
+    margin-bottom: 15px;
+}
+
+.appointments-tab-item {
+    background-color: "#FFECBD";
+    color: "#A58123";
+    border-radius: 13;
+    margin-right: 15
+}
+
+.appointments-tab-item-selected {
+    background-color: "#E4BB4F";
+    color: "#FFF7E2";
+    border-radius: 13;
+    margin-right: 15
+}

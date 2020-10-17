@@ -6,7 +6,7 @@ In the project directory, you can run:
 
 ### `yarn install`
 
-This installs all the dependencies that are currently being used by the react application. Make sure that there exists a `yarn.lock` 
+Installs all the dependencies that are currently being used by the react application. It is recommended that you do this every time you merge.
 
 ### `yarn start`
 

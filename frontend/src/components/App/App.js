@@ -8,6 +8,7 @@ import Navigation from "components/Navigation";
 
 function App() {
   return (
+<<<<<<< HEAD
     <>
       <Router>
         <Route
@@ -31,6 +32,29 @@ function App() {
         />
       </Router>
     </>
+=======
+    <Router>
+      <Route
+        path="/"
+        exact
+        component={() => <Navigation content={<Home />} page="home" />}
+      />
+      <Route
+        path="/appointments"
+        component={() => (
+          <Navigation content={<Appointments />} page="appointments" />
+        )}
+      />
+      <Route
+        path="/videos"
+        component={() => <Navigation content={<Videos />} page="videos" />}
+      />
+      <Route
+        path="/profile"
+        component={() => <Navigation content={<Profile />} page="profile" />}
+      />
+    </Router>
+>>>>>>> origin/master
   );
 }
 

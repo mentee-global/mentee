@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Button, Dropdown, Menu } from "antd";
+import { Layout, Dropdown, Menu } from "antd";
 import {
   UserOutlined,
   BellOutlined,
@@ -17,15 +17,21 @@ function NavigationHeader() {
   const dropdownMenu = (
     <Menu className="dropdown-menu">
       <Menu.Item key="edit-profile">
-        <b>Edit Profile</b>
+        <NavLink to="/profile">
+          <b>Edit Profile</b>
+        </NavLink>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="settings">
-        <b>Settings</b>
+        <NavLink to="/">
+          <b>Settings</b>
+        </NavLink>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="sign-out">
-        <b>Sign Out</b>
+        <NavLink to="/">
+          <b>Sign Out</b>
+        </NavLink>
       </Menu.Item>
     </Menu>
   );

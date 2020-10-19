@@ -6,8 +6,17 @@ from .Email import Email
 from .Person import Person
 from .Education import Education
 from .Video import Video
+from .Availability import Availability
 from .MentorProfile import MentorProfile
 
-__all__ = ["db", "Email", "Person", "Education", "Video", "MentorProfile"]
+__all__ = [
+    "db",
+    "Email",
+    "Person",
+    "Education",
+    "Video",
+    "MentorProfile",
+    "Availability",
+]
 
 # You must import all of the new Models you create to this page

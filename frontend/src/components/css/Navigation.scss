@@ -1,0 +1,58 @@
+.navigation-content {
+  margin: 5% 5%;
+  height: 500px;
+}
+
+.navigation-header {
+  background-color: #fbecc1;
+  padding: 0px;
+}
+
+.navigation-menu-item:hover {
+  background-color: #fcf6ea;
+  color: black;
+}
+
+.navigation-menu-item-selected {
+  background-color: #fcf6ea;
+  pointer-events: none;
+}
+
+.notification-bell {
+  float: right;
+  font-size: 17.5px;
+  color: black;
+  margin-right: 2%;
+}
+
+.profile-picture {
+  float: right;
+  font-size: 30px;
+}
+
+.profile-name {
+  float: right;
+  margin-top: 15px;
+  margin-left: 1%;
+  font-size: 15px;
+  line-height: 15px;
+}
+
+.profile-caret {
+  float: right;
+  margin-left: 1%;
+  color: gray;
+}
+
+.dropdown-menu {
+  border-radius: 5px;
+  width: 300px;
+}
+
+.mentee-logo {
+  background-color: #fbecc1;
+  float: left;
+  height: 40px;
+  width: 200px;
+  margin: 10px 10px;
+}

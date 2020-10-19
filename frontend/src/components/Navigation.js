@@ -13,7 +13,7 @@ function Navigation(props) {
     <div>
       <Layout>
         <NavigationHeader />
-        <Layout>
+        <Layout className="layout-body">
           <NavigationSidebar selectedPage={props.page} />
           <Content className="navigation-content">{props.content}</Content>
         </Layout>

@@ -35,6 +35,18 @@ def get_mentor(mentor_id):
     return create_response(data={"mentor": mentor})
 
 
+# GET request for appointments by mentor id
+@main.route("/requests/<string:mentor_id>", methods=["GET"])
+def get_requests(mentor_id):
+    try:
+        requests = MentorProfile.objects.filter(mentor_id=mentor_id)
+    except:
+        msg = "There are no appointment requests for this mentor"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    return create_response(data={"requests": requests})
+
+
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])
 def get_persons():

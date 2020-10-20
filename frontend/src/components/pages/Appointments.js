@@ -28,6 +28,7 @@ function Appointments() {
     const active = "#FFF7E2";
     const inactive = "#A58123";
     return {
+      fontWeight: 700,
       color: currentTab === tab ? active : inactive
     }
   }
@@ -47,6 +48,44 @@ function Appointments() {
     )
   }
 
+  const AvailabilityTab = () => {
+    return (
+      <div>
+        <div className="availability-container">
+          <div className="calendar-header">
+            Set available hours by specific date
+        </div>
+          <div className="calendar-container">
+            <Calendar>
+            </Calendar>
+          </div>
+        </div>
+        <div className="save-container">
+          <Button
+            type="default"
+            shape="round"
+            style={getButtonStyle(currentTab)}
+            onClick={() => console.log("TODO: save!")}
+          >
+            <div style={getButtonTextStyle(currentTab)}>
+              Save
+          </div>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  function renderTab(tab) {
+    switch (tab) {
+      case Tabs.upcoming: return null;
+      case Tabs.pending: return null;
+      case Tabs.past: return null;
+      case Tabs.availability: return <AvailabilityTab />;
+      default: return <div />;
+    }
+  }
+
   return (
     <div>
       <div className="appointments-welcome-text">Welcome, Bernie</div>
@@ -54,10 +93,9 @@ function Appointments() {
         <Tab title={Tabs.upcoming} text="Upcoming" />
         <Tab title={Tabs.pending} text="Pending" />
         <Tab title={Tabs.past} text="Past" />
-        <Tab title={Tabs.appointments} text="Appointments" />
-        <Calendar>
-        </Calendar>
+        <Tab title={Tabs.availability} text="Appointments" />
       </div>
+      {renderTab(currentTab)}
     </div>
   );
 }

@@ -4,8 +4,10 @@ from mongoengine import *
 from flask_mongoengine import Document
 from api.models import Availability
 
+
 class AppointmentRequest(Document, Mixin):
     """Appointment Request Collection."""
+
     mentor_id = ObjectIdField(required=True)
     timeslot = EmbeddedDocumentField(Availability, required=True)
     accepted = BooleanField(required=True)
@@ -22,7 +24,6 @@ class AppointmentRequest(Document, Mixin):
     message = StringField()
     attendee_count = IntField(required=True)
     organization = StringField(required=True)
-    
 
     def __repr__(self):
         return f"""<AppointmentRequest name: {self.name}

@@ -6,8 +6,21 @@
     border: 1px solid #f0f0f0;
     border-radius: 2px;
     font-family: Helvetica;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.light{
-    font-weight: 400;
+.italics{
+    font-style: italic;
+}
+#events{
+    text-align: left;
+}
+
+#event-header{
+   color: #A58123;
+}
+
+#day-color{
+    color: #E4BB4F;
 }

@@ -6,10 +6,12 @@ from flask_mongoengine import Document
 
 class AppointmentRequest(Document, Mixin):
     """Appointment Request Collection."""
-
+    #mentor_id
+    #timeslot = availability
+    accepted = BooleanField(required=True)
     name = StringField(required=True)
     email = StringField(required=True)
-    phone_number = StringField(required=True)
+    phone_number = StringField()
     languages = ListField(StringField(), required=True)
     age = StringField(required=True)
     gender = StringField(required=True)
@@ -20,12 +22,13 @@ class AppointmentRequest(Document, Mixin):
     message = StringField()
     attendee_count = IntField(required=True)
     organization = StringField(required=True)
+    
 
     def __repr__(self):
         return f"""<AppointmentRequest name: {self.name}
                 \n email: {self.email}
                 \n phone_number: {self.phone_number}
-                \n languages: {self.languages}
+                \n languages: {self.languages} 
                 \n age: {self.age}
                 \n gender: {self.gender}
                 \n ethnicity: {self.ethnicity}

@@ -6,6 +6,7 @@ from .Email import Email
 from .Person import Person
 from .Education import Education
 from .Video import Video
+from .Availability import Availability
 from .MentorProfile import MentorProfile
 from .AppointmentRequest import AppointmentRequest
 
@@ -16,7 +17,7 @@ __all__ = [
     "Education",
     "Video",
     "MentorProfile",
-    "AppointmentRequest",
+    "Availability",
 ]
 
 # You must import all of the new Models you create to this page

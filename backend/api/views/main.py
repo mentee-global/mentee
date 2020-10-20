@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from api.models import db, Person, Email, Education, Video, MentorProfile
 from api.core import create_response, serialize_list, logger
+from api.utils.request_utils import MentorForm, EducationForm, VideoForm
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -66,6 +67,65 @@ def create_person():
 
     return create_response(
         message=f"Successfully created person {new_person.name} with id: {new_person.id}"
+    )
+
+
+# POST request for a new mentor profile
+@main.route("/mentor", methods=["POST"])
+def create_mentor_profile():
+    data = request.json
+    validate_data = MentorForm.from_json(data)
+
+    if not validate_data.validate():
+        msg = ", ".join(validate_data.errors.keys())
+        return create_response(status=422, message="Missing fields " + msg)
+
+    new_mentor = MentorProfile(
+        name=data["name"],
+        professional_title=data["professional_title"],
+        linkedin=data["linkedin"],
+        website=data["website"],
+        picture=data["picture"],
+        languages=data["languages"],
+        specializations=data["specializations"],
+        offers_in_person=data["offers_in_person"],
+        offers_group_appointments=data["offers_group_appointments"],
+    )
+
+    new_mentor.biography = data.get("biography")
+
+    if "education" in data:
+        education_data = data["education"]
+        validate_education = EducationForm.from_json(education_data)
+
+        if not validate_education.validate():
+            msg = ", ".join(validate_education.errors.keys())
+            return create_response(status=422, message="Missing fields " + msg)
+
+        new_education = Education(
+            education_level=education_data["education_level"],
+            majors=education_data["majors"],
+            school=education_data["school"],
+            graduation_year=education_data["graduation_year"],
+        )
+        new_mentor.education = new_education
+
+    if "videos" in data:
+        videos_data = data["videos"]
+
+        for video in videos_data:
+            validate_video = VideoForm.from_json(video)
+
+            if not validate_video.validate():
+                msg = ", ".join(validate_video.errors.keys())
+                return create_response(status=422, message="Missing fields " + msg)
+
+            new_video = Video(title=video["title"], url=video["url"], tag=video["tag"])
+            new_mentor.videos.append(new_video)
+
+    new_mentor.save()
+    return create_response(
+        message=f"Successfully created Mentor Profile {new_mentor.name} with UID: {new_mentor.uid}"
     )
 
 

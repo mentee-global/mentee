@@ -10,7 +10,7 @@ const Tabs = Object.freeze({
 });
 
 function Appointments() {
-  const [currentTab, setCurrentTab] = useState(Tabs.availability);
+  const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
 
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
@@ -52,7 +52,7 @@ function Appointments() {
             Set available hours by specific date
           </div>
           <div className="calendar-container">
-            <Calendar></Calendar>
+            <Calendar />
           </div>
         </div>
         <div className="save-container">

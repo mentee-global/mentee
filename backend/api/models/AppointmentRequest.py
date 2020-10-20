@@ -26,7 +26,10 @@ class AppointmentRequest(Document, Mixin):
     organization = StringField(required=True)
 
     def __repr__(self):
-        return f"""<AppointmentRequest name: {self.name}
+        return f"""<AppointmentRequest mentor_id: {self.mentor_id}
+                \n timeslot: {self.timeslot}
+                \n accepted: {self.accepted}
+                \n name: {self.name}
                 \n email: {self.email}
                 \n phone_number: {self.phone_number}
                 \n languages: {self.languages} 

@@ -11,7 +11,7 @@ import {
 import "./css/Navigation.scss";
 
 const { Sider } = Layout;
-const menuItemMarginOverride = {marginTop: "0px", marginBottom: "0px"}
+const menuItemMarginOverride = { marginTop: "0px", marginBottom: "0px" };
 
 function NavigationSidebar(props) {
   const getMenuItemStyle = (page) => {
@@ -22,7 +22,7 @@ function NavigationSidebar(props) {
 
   return (
     <Sider theme="light" className="sidebar">
-      <Menu theme="light" mode="inline" style={{ marginTop: "25%" }} >
+      <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
         <Menu.Item
           key="home"
           className={getMenuItemStyle("home")}

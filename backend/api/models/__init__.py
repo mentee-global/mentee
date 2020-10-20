@@ -18,7 +18,7 @@ __all__ = [
     "Video",
     "MentorProfile",
     "Availability",
-    "AppointmentRequest"
+    "AppointmentRequest",
 ]
 
 # You must import all of the new Models you create to this page

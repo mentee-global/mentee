@@ -7,7 +7,8 @@ from .Person import Person
 from .Education import Education
 from .Video import Video
 from .MentorProfile import MentorProfile
+from .AppointmentRequest import AppointmentRequest
 
-__all__ = ["db", "Email", "Person", "Education", "Video", "MentorProfile"]
+__all__ = ["db", "Email", "Person", "Education", "Video", "MentorProfile", "AppointmentRequest"]
 
 # You must import all of the new Models you create to this page

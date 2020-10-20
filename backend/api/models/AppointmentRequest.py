@@ -2,7 +2,6 @@ from api.core import Mixin
 from .base import db
 from mongoengine import *
 from flask_mongoengine import Document
-from api.models import Email
 
 
 class AppointmentRequest(Document, Mixin):
@@ -12,7 +11,7 @@ class AppointmentRequest(Document, Mixin):
     email = StringField(required=True)
     phone_number = StringField(required=True)
     languages = ListField(StringField(), required=True)
-    age = IntField(required=True)
+    age = StringField(required=True)
     gender = StringField(required=True)
     ethnicity = StringField(required=True)
     location = StringField()

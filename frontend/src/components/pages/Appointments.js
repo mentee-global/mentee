@@ -91,9 +91,13 @@ function Appointments() {
 
   return (
     <div>
-      <div className="appointments-welcome-text">Welcome, MENTOR_NAME [TODO] </div>
+      <div className="appointments-welcome-text">
+        Welcome, MENTOR_NAME [TODO]{" "}
+      </div>
       <div className="appointments-tabs">
-        {Object.values(Tabs).map((tab, index) => <Tab title={tab} key={index} />)}
+        {Object.values(Tabs).map((tab, index) => (
+          <Tab title={tab} key={index} />
+        ))}
       </div>
       {renderTab(currentTab)}
     </div>

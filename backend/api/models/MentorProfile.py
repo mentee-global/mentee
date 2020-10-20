@@ -2,7 +2,7 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, Video
+from api.models import Education, Video, Availability
 
 
 class MentorProfile(Document, Mixin):
@@ -21,6 +21,7 @@ class MentorProfile(Document, Mixin):
     offers_in_person = BooleanField(required=True)
     offers_group_appointments = BooleanField(required=True)
     videos = ListField(EmbeddedDocumentField(Video))
+    availability = ListField(EmbeddedDocumentField(Availability))
 
     def __repr__(self):
         return f"""<MentorProfile id:{self.uid} \n name: {self.name} 

@@ -9,3 +9,4 @@ mongoengine>=0.18.2
 requests>=2.19.1
 pymongo[srv]
 python-dotenv
+wtforms-JSON

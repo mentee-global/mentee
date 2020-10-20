@@ -2,12 +2,12 @@ from api.core import Mixin
 from .base import db
 from mongoengine import *
 from flask_mongoengine import Document
-
+from api.models import Availability
 
 class AppointmentRequest(Document, Mixin):
     """Appointment Request Collection."""
-    #mentor_id
-    #timeslot = availability
+    mentor_id = ObjectIdField(required=True)
+    timeslot = EmbeddedDocumentField(Availability, required=True)
     accepted = BooleanField(required=True)
     name = StringField(required=True)
     email = StringField(required=True)

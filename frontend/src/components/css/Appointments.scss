@@ -9,40 +9,87 @@
     margin-bottom: 5%;
 }
 
-.appointments-tab-item {
-    background-color: "#FFECBD";
-    color: "#A58123";
-    border-radius: 13;
-    margin-right: 15
-}
-
-.appointments-tab-item-selected {
-    background-color: "#E4BB4F";
-    color: "#FFF7E2";
-    border-radius: 13;
-    margin-right: 15
-}
-
 .appointment-card {
     background-color: #FFECBD;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-radius: 15px;
+    border-radius: 13px;
     padding: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 18px;
+    margin-left: 25px;
+    height: 84px;
 }
 
 .appointments-background {
-    background-color: #FCF6E8;
-    padding: 20px;
-    margin-right: 30px;
-    margin-top: 1%;
-    border-radius: 15px;
+    background: #FCF6E8;
+    padding: 46px 13px 48px 20px;
+    border-radius: 8px;
+    width: auto;
+    margin: 2% 3%;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
+}
+
+.appointments-date-block {
+    display: flex;
+    margin-bottom: 40px;
+}
+
+.appointments-date-text-block {
+    font-size: 13px;
+    color: #A58123;
+    display: block;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    padding-right: 20px;
+    width: 100px;
+}
+
+.appointments-date-number {
+    font-size: 24px;
+    color: inherit;
+    font-weight: bold;
+    margin: 0;
+}
+
+.appointments-row {
+    border-left: solid;
+    border-color: #E4BB4F;
+    border-width: 2px;
     width: 100%;
 }
 
-.appointments-date {
+.appointments-column {
+    padding: 5% 2%;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+.appointments-welcome-box {
+    margin: 0% 3%;
+}
+
+.appointment-time, .appointment-description{
+    color: #7A7A7A;
+    line-height: 15px;
+}
+
+.appointment-time, .appointment-description, .appointment-mentee-name {
+    font-size: 13px;
+}
+
+.appointment-pending-buttons {
     display: flex;
-    margin-bottom: 3%;
+    background-color: white;
+    border-radius: 13px;
+    padding: 2px;
+}
+
+.appointment-accept, .appointment-decline {
+    padding: 0px;
+}
+
+.appointment-pending-buttons, .appointment-more-details {
+    margin-right: 1%;
 }

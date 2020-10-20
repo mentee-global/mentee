@@ -14,7 +14,10 @@ function Navigation(props) {
       <Layout>
         <NavigationHeader />
         <Layout className="layout-body">
-          <NavigationSidebar selectedPage={props.page} />
+          <NavigationSidebar
+            className="navigation-sidebar"
+            selectedPage={props.page}
+          />
           <Content className="navigation-content">{props.content}</Content>
         </Layout>
       </Layout>

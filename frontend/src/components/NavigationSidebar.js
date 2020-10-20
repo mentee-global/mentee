@@ -20,7 +20,10 @@ function NavigationSidebar(props) {
   };
 
   return (
-    <Sider theme="light">
+    <Sider
+      theme="light"
+      style={{ boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.244974)" }}
+    >
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
         <Menu.Item
           key="home"

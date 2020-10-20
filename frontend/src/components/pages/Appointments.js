@@ -3,10 +3,10 @@ import { Button, Calendar } from "antd";
 import "../css/Appointments.scss";
 
 const Tabs = Object.freeze({
-  upcoming: 1,
-  pending: 2,
-  past: 3,
-  availability: 4,
+  upcoming: "Upcoming",
+  pending: "Pending",
+  past: "Past",
+  availability: "Appointments",
 });
 
 function Appointments() {
@@ -39,7 +39,7 @@ function Appointments() {
         style={getButtonStyle(props.title)}
         onClick={() => setCurrentTab(props.title)}
       >
-        <div style={getButtonTextStyle(props.title)}>{props.text}</div>
+        <div style={getButtonTextStyle(props.title)}>{props.title}</div>
       </Button>
     );
   };
@@ -91,12 +91,9 @@ function Appointments() {
 
   return (
     <div>
-      <div className="appointments-welcome-text">Welcome, Bernie</div>
+      <div className="appointments-welcome-text">Welcome, MENTOR_NAME [TODO] </div>
       <div className="appointments-tabs">
-        <Tab title={Tabs.upcoming} text="Upcoming" />
-        <Tab title={Tabs.pending} text="Pending" />
-        <Tab title={Tabs.past} text="Past" />
-        <Tab title={Tabs.availability} text="Appointments" />
+        {Object.values(Tabs).map((tab, index) => <Tab title={tab} key={index} />)}
       </div>
       {renderTab(currentTab)}
     </div>

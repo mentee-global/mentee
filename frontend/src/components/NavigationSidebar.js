@@ -11,6 +11,7 @@ import {
 import "./css/Navigation.scss";
 
 const { Sider } = Layout;
+const menuItemMarginOverride = {marginTop: "0px", marginBottom: "0px"}
 
 function NavigationSidebar(props) {
   const getMenuItemStyle = (page) => {
@@ -20,11 +21,12 @@ function NavigationSidebar(props) {
   };
 
   return (
-    <Sider theme="light">
-      <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
+    <Sider theme="light" className="sidebar">
+      <Menu theme="light" mode="inline" style={{ marginTop: "25%" }} >
         <Menu.Item
           key="home"
           className={getMenuItemStyle("home")}
+          style={menuItemMarginOverride}
           icon={<HomeOutlined />}
         >
           <NavLink to="/" style={{ color: "black" }}>
@@ -34,6 +36,7 @@ function NavigationSidebar(props) {
         <Menu.Item
           key="appointments"
           className={getMenuItemStyle("appointments")}
+          style={menuItemMarginOverride}
           icon={<CalendarOutlined />}
         >
           <NavLink to="/appointments" style={{ color: "black" }}>
@@ -43,6 +46,7 @@ function NavigationSidebar(props) {
         <Menu.Item
           key="videos"
           className={getMenuItemStyle("videos")}
+          style={menuItemMarginOverride}
           icon={<VideoCameraOutlined />}
         >
           <NavLink to="/videos" style={{ color: "black" }}>
@@ -52,6 +56,7 @@ function NavigationSidebar(props) {
         <Menu.Item
           key="profile"
           className={getMenuItemStyle("profile")}
+          style={menuItemMarginOverride}
           icon={<UserOutlined />}
         >
           <NavLink to="/profile" style={{ color: "black" }}>

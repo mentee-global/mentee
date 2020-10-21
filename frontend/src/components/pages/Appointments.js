@@ -88,11 +88,13 @@ function Appointments() {
             className="appointment-accept"
             icon={<Icon component={acceptIcon} />}
             type="text"
+            shape="circle"
           ></Button>
           <Button
             className="appointment-accept"
             icon={<Icon component={declineIcon} />}
             type="text"
+            shape="circle"
           ></Button>
         </div>
       );
@@ -133,7 +135,6 @@ function Appointments() {
             />
           ))}
         </div>
-        .
       </div>
     )
   );

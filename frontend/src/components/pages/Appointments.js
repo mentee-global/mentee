@@ -5,7 +5,7 @@ import "../css/Appointments.scss";
 import AppointmentUpcoming from "../../resources/upcomingInfo.svg";
 import AcceptIcon from "../../resources/accept.svg";
 import DeclineIcon from "../../resources/decline.svg";
-import appointmentData from "./appointments.json";
+import appointmentData from "../../resources/appointments.json";
 
 const upcomingIcon = () => <img src={AppointmentUpcoming} />;
 const acceptIcon = () => <img src={AcceptIcon} />;

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email, Education, Video, MentorProfile
+from api.models import db, Person, Email, Education, Video, MentorProfile, AppointmentRequest
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import MentorForm, EducationForm, VideoForm
 
@@ -36,16 +36,24 @@ def get_mentor(mentor_id):
 
 
 # GET request for appointments by mentor id
-@main.route("/requests/<string:mentor_id>", methods=["GET"])
+@main.route("/appointment/<string:mentor_id>", methods=["GET"])
 def get_requests(mentor_id):
-    try:
-        requests = MentorProfile.objects.filter(mentor_id=mentor_id)
-    except:
-        msg = "There are no appointment requests for this mentor"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
+    requests = AppointmentRequest.objects(mentor_id=mentor_id)
     return create_response(data={"requests": requests})
 
+# DELETE request for appointment by appointment id
+'''
+@main.route("/appointment/<string:appointment_id>", methods=["DELETE"]) 
+def delete_request(appointment_id):
+    try:
+        request = MentorProfile.objects.get(id=appointment_id)
+        request.delete()
+    except:
+        msg = "The request you attempted to delete was not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    return create_response(data={"deleted id": appointment_id})
+'''
 
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])

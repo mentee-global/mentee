@@ -15,7 +15,7 @@ def put_appointment(id):
 
     # Try to get appointment
     try:
-        appointment = AppointmentRequest.get(id=id)
+        appointment = AppointmentRequest.objects.get(id=id)
     except:
         msg = "No appointment with that id"
         logger.info(msg)

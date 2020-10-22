@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Calendar, Col, Row } from "antd";
 import Icon, { ClockCircleOutlined } from "@ant-design/icons";
 import "../css/Appointments.scss";
@@ -27,15 +27,14 @@ const Tabs = Object.freeze({
     title: "All Past",
     key: "past",
   },
-  appointments: {
+  availability: {
     id: 4,
-    title: "TBD",
-    key: "appointments",
+    title: "Availability",
+    key: "availability",
   },
 });
 
 // TODO: Clean this make it easy for people to figure out and remove certain elements
-
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
 
@@ -54,8 +53,8 @@ function Appointments() {
     const active = "#FFF7E2";
     const inactive = "#A58123";
     return {
+      fontWeight: 700,
       color: currentTab === tab ? active : inactive,
-      fontWeight: "bold",
     };
   };
 
@@ -116,61 +115,100 @@ function Appointments() {
     );
   };
 
-  const FetchedAppointments = appointmentData[currentTab.key].map(
-    (appointmentsObject, index) => (
-      <div key={index} className="appointments-date-block">
-        <div className="appointments-date-text-block">
-          <h1 className="appointments-date-number">
-            {appointmentsObject["date"]}
-          </h1>
-          <p>{appointmentsObject["date_name"]}</p>
+  const AvailabilityTab = () => {
+    return (
+      <div>
+        <div className="availability-container">
+          <div className="calendar-header">
+            Set available hours by specific date
+          </div>
+          <div className="calendar-container">
+            <Calendar />
+          </div>
         </div>
-        <div className="appointments-row">
-          {appointmentsObject["appointments"].map((appointment, index) => (
-            <Appointment
-              key={index}
-              name={appointment["name"]}
-              time={appointment["time"]}
-              description={appointment["description"]}
-            />
+        <div className="save-container">
+          <Button
+            type="default"
+            shape="round"
+            style={getButtonStyle(currentTab)}
+            onClick={() => console.log("TODO: save!")}
+          >
+            <div style={getButtonTextStyle(currentTab)}>Save</div>
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const Appointments = (props) => {
+    return (
+      <div>
+        <b className="appointment-tabs-title">{currentTab.title}</b>{" "}
+        <div className="appointments-background">
+          {props.data.map((appointmentsObject, index) => (
+            <div key={index} className="appointments-date-block">
+              <div className="appointments-date-text-block">
+                <h1 className="appointments-date-number">
+                  {appointmentsObject["date"]}
+                </h1>
+                <p>{appointmentsObject["date_name"]}</p>
+              </div>
+              <div className="appointments-row">
+                {appointmentsObject["appointments"].map(
+                  (appointment, index) => (
+                    <Appointment
+                      key={index}
+                      name={appointment["name"]}
+                      time={appointment["time"]}
+                      description={appointment["description"]}
+                    />
+                  )
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </div>
-    )
-  );
+    );
+  };
+
+  function renderTab(tab) {
+    switch (tab) {
+      case Tabs.upcoming:
+        return <Appointments data={appointmentData["upcoming"]} />;
+      case Tabs.pending:
+        return <Appointments data={appointmentData["pending"]} />;
+      case Tabs.past:
+        return <Appointments data={appointmentData["past"]} />;
+      case Tabs.availability:
+        return <AvailabilityTab />;
+      default:
+        return <div />;
+    }
+  }
 
   return (
-    <div>
-      <Row>
-        <Col span={18} className="appointments-column" scroll="y">
-          <div className="appointments-welcome-box">
-            <div className="appointments-welcome-text">Welcome, Bernie</div>
-            <div className="appointments-tabs">
-              <Tab tab={Tabs.upcoming} text="Upcoming" />
-              <Tab tab={Tabs.pending} text="Pending" />
-              <Tab tab={Tabs.past} text="Past" />
-              <Tab tab={Tabs.appointments} text="Appointments" />
-            </div>
-            <b
-              style={{
-                fontSize: "18px",
-              }}
-            >
-              {currentTab.title}
-            </b>
+    <Row>
+      <Col span={18} className="appointments-column">
+        <div className="appointments-welcome-box">
+          <div className="appointments-welcome-text">Welcome, {"Bernie"}</div>
+          <div className="appointments-tabs">
+            {Object.values(Tabs).map((tab, index) => (
+              <Tab tab={tab} text={tab.title} key={index} />
+            ))}
           </div>
-          <div className="appointments-background">{FetchedAppointments}</div>
-        </Col>
-        <Col
-          span={6}
-          style={{
-            borderLeft: "3px solid #E5E5E5",
-          }}
-        >
-          <Calendar></Calendar>
-        </Col>
-      </Row>
-    </div>
+        </div>
+        {renderTab(currentTab)}
+      </Col>
+      <Col
+        span={6}
+        style={{
+          borderLeft: "3px solid #E5E5E5",
+        }}
+      >
+        <Calendar></Calendar>
+      </Col>
+    </Row>
   );
 }
 

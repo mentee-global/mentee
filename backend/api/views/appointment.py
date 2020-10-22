@@ -26,3 +26,31 @@ def put_appointment(id):
     appointment.save()
 
     return create_response(status=200, message=f"Success")
+
+@appointment.route("/testendpoint", methods=["POST"])
+def addtestcollection():
+    new_appointment = AppointmentRequest(
+        timeslot= Availability(
+            start_time = parse("Thu Oct 22 17:13:46 UTC 2020"),
+            end_time = parse("Thu Oct 22 18:13:46 UTC 2020")
+        )
+        accepted=False
+        name="Bob Ross"
+        email="bobross@gmail.com"
+        phone_number="(111) 111-1111"
+        languages=["English", "Art"]
+        gender="Male"
+        ethnicity="Caucasian"
+        location="Somewhere"
+        mentorship_goals="Something"
+        specialist_categories=["stuff"]
+        message="Hello world"
+        attendee_count = 13
+        organization="Hack4Impact"
+    )
+
+    newappointment.save()
+    return create_respons(
+        status=200, message=f"Success"
+    )
+    

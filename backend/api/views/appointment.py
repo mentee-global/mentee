@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email
+from api.models import db, Person, Email, Availability, AppointmentRequest
 from api.core import create_response, serialize_list, logger
 import requests
 
@@ -21,8 +21,12 @@ def put_appointment(id):
     if "timeslot" in data:
         availability_data = data.get("availability")
         appointment.timeslot = Availability(
-            start_time=availability_data.get("start_time")
+            start_time=availability_data.get("start_time"),
             end_time=availability_data.get("end_data")
         )
     
     appointment.accepted = data.get("accepted", appointment.accepted)
+
+    appointment.save()
+
+    return create_response(status=200, message=f"Success")

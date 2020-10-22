@@ -1,29 +1,67 @@
 .background-color-strip {
-    height: 20%;
-    background: #FCF6E8;
+  height: 20%;
+  background: #FCF6E8;
 }
 
-.profile-content {
-    padding-top: 5%;
-    padding-left: 5%;
+.mentor-profile-content {
+  padding-top: 5%;
+  padding-left: 5%;
 }
 
-.edit-profile-button {
-    background: #E4BB4F;
-    color: #FFFFFF;
-    border-radius: 13px;
+.mentor-profile-content-flexbox {
+  display: flex;
 }
 
-.specialization-tag {
-    background: #FFFFFF;
-    border: 3px solid #FFECBD;
-    border-radius: 13px;
+.mentor-profile-info {
+  width: 70%;
 }
 
-.contact-info {
-    left: 70%;
-    background: #FFFFFF;
-    border-radius: 8px;
+.mentor-profile-name {
+  font-weight: bold;
+  font-size: 20px;
 }
 
+.mentor-profile-heading {
+  color: #828282;
+}
 
+.yellow-dot {
+  color: #E4BB4F;
+}
+
+.mentor-profile-tag-first {
+  margin-right: 1%;
+}
+
+.mentor-profile-tag {
+  margin-right: 1%;
+  margin-left: 3%;
+}
+
+.edit-mentor-profile-button {
+  background: #E4BB4F;
+  color: #FFFFFF;
+  border-radius: 13px;
+}
+
+.mentor-specialization-tag {
+  background: #FFFFFF;
+  border: 3px solid #FFECBD;
+  border-radius: 13px;
+}
+
+.mentor-profile-contact {
+  border-top-color: #FFECBD;
+  border-top-width: 5vh;
+  border-top-style: solid;
+  border-radius: 8px;
+  width: 25%;
+  height: 20vh;
+  padding: 1%;
+}
+
+.mentor-profile-contact-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: -7vh;
+}

@@ -1,5 +1,13 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email, Education, Video, MentorProfile, AppointmentRequest
+from api.models import (
+    db,
+    Person,
+    Email,
+    Education,
+    Video,
+    MentorProfile,
+    AppointmentRequest,
+)
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import MentorForm, EducationForm, VideoForm
 
@@ -41,8 +49,9 @@ def get_requests(mentor_id):
     requests = AppointmentRequest.objects(mentor_id=mentor_id)
     return create_response(data={"requests": requests})
 
+
 # DELETE request for appointment by appointment id
-'''
+"""
 @main.route("/appointment/<string:appointment_id>", methods=["DELETE"]) 
 def delete_request(appointment_id):
     try:
@@ -53,7 +62,7 @@ def delete_request(appointment_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(data={"deleted id": appointment_id})
-'''
+"""
 
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])

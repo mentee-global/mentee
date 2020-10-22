@@ -6,10 +6,12 @@ import "../css/Profile.scss";
 
 function Profile() {
   return (
-      <div className="background-color-strip">
-        {/* <div className="profile-content"> */}
-            <UserOutlined style={{ fontSize: "100px" }} />
-        {/* </div> */}
+    <div className="background-color-strip">
+      <div className="profile-content">
+        <UserOutlined style={{ fontSize: "100px" }} />
+        <br />
+        This is the profile body
+      </div>
     </div>
   );
 }

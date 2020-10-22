@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email, Availability, AppointmentRequest
+from api.models import AppointmentRequest
 from api.core import create_response, serialize_list, logger
 import requests
 from dateutil.parser import parse
@@ -7,13 +7,12 @@ from dateutil.parser import parse
 appointment = Blueprint("appointment", __name__)
 
 
-@appointment.route("/appointment/<id>", methods=["PUT"])
+@appointment.route("/accept/<id>", methods=["PUT"])
 def put_appointment(id):
     data = request.get_json()
 
     logger.info("Data received: %s", data)
 
-    # Try to get appointment
     try:
         appointment = AppointmentRequest.objects.get(id=id)
     except:
@@ -22,7 +21,7 @@ def put_appointment(id):
         return create_response(status=422, message=msg)
 
     # Update appointment acceptance status
-    appointment.accepted = data.get("accepted", appointment.accepted)
+    appointment.accepted = True
 
     appointment.save()
 

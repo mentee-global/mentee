@@ -21,14 +21,7 @@ function NavigationSidebar(props) {
   };
 
   return (
-<<<<<<< HEAD
-    <Sider
-      theme="light"
-      style={{ boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.244974)" }}
-    >
-=======
     <Sider theme="light" className="sidebar">
->>>>>>> origin/master
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
         <Menu.Item
           key="home"

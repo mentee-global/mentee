@@ -44,10 +44,28 @@
   border-radius: 13px;
 }
 
-.mentor-specialization-tag {
-  background: #FFFFFF;
+.mentor-specialization-tag-first {
   border: 3px solid #FFECBD;
   border-radius: 13px;
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+  min-width: 15%;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.mentor-specialization-tag {
+  border: 3px solid #FFECBD;
+  border-radius: 13px;
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+  min-width: 15%;
+  padding-left: 3%;
+  padding-right: 3%;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 
 .mentor-profile-contact {
@@ -56,12 +74,24 @@
   border-top-style: solid;
   border-radius: 8px;
   width: 25%;
-  height: 20vh;
+  height: 20%;
   padding: 1%;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
 }
 
 .mentor-profile-contact-header {
   font-size: 20px;
   font-weight: bold;
   margin-top: -7vh;
+}
+
+.mentor-profile-contact-icon {
+  margin-right: 5%;
+}
+
+.mentor-profile-contact-edit {
+  font-weight: bold;
+  font-size: 12px;
+  text-decoration: underline;
+  color: #A58123;
 }

@@ -6,6 +6,8 @@ import {
   CommentOutlined,
   LinkOutlined,
   LinkedinOutlined,
+  MailOutlined,
+  PhoneOutlined,
 } from "@ant-design/icons";
 
 import "../css/Profile.scss";
@@ -48,7 +50,10 @@ function Profile() {
             <div className="mentor-profile-heading">
               <b>Specializations</b>
             </div>
-            <div>Tags tags tags</div>
+            <div>
+              <div className="mentor-specialization-tag-first">Tag[0]</div>
+              <div className="mentor-specialization-tag">Tag[1]</div>
+            </div>
             <br />
             <div className="mentor-profile-heading">
               <b>Education</b>
@@ -57,6 +62,20 @@ function Profile() {
           </div>
           <div className="mentor-profile-contact">
             <div className="mentor-profile-contact-header">Contact Info</div>
+            <div>
+              <MailOutlined className="mentor-profile-contact-icon" />
+              mentoremail@email.com
+            </div>
+            <div>
+              <PhoneOutlined className="mentor-profile-contact-icon" />
+              1-234-567-8901
+            </div>
+            <br />
+            <div>
+              <Link to="/" className="mentor-profile-contact-edit">
+                Edit
+              </Link>
+            </div>
           </div>
         </div>
       </div>

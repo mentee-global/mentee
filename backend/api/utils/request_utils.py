@@ -39,7 +39,7 @@ class AvailabilityForm(Form):
 
 class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
-    time_slot = FormField(AvailabilityForm)
+    timeslot = FormField(AvailabilityForm)
     name = StringField(validators=[InputRequired()])
     accepted = BooleanField(validators=[validators.required()], false_values=('false', "False"))
     email = StringField(validators=[InputRequired()])

@@ -1,18 +1,7 @@
 from flask import Blueprint, request, jsonify
-from api.models import (
-    db,
-    Person,
-    Email,
-    Education,
-    Video,
-    MentorProfile
-)
+from api.models import db, Person, Email, Education, Video, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import (
-    MentorForm,
-    EducationForm,
-    VideoForm
-)
+from api.utils.request_utils import MentorForm, EducationForm, VideoForm
 
 main = Blueprint("main", __name__)  # initialize blueprint
 

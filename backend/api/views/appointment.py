@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import (AppointmentRequest, Availability)
+from api.models import AppointmentRequest, Availability
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm
 
@@ -43,4 +43,3 @@ def create_appointment():
     return create_response(
         message=f"Successfully created appointment with MentorID: {new_appointment.mentor_id} as Mentee Name: {new_appointment.name}"
     )
-

@@ -1,0 +1,54 @@
+
+.appointments-welcome-text {
+    margin: 1% 1%;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.appointments-tabs {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1%;
+    margin-left: 1%;
+}
+
+.appointments-tab-item {
+    background-color: #FFECBD;
+    color: #A58123;
+    border-radius: 13px;
+    margin-right: 1%;
+}
+
+.appointments-tab-item-selected {
+    background-color: #E4BB4F;
+    color: #FFF7E2;
+    border-radius: 13px;
+    margin-right: 1%;
+}
+
+.availability-container {
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    overflow: hidden;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    background-color: #FFECBD;
+    font-weight: bold;
+    padding-left: 1%;
+    height: 50px;
+    width: 100%;
+}
+
+.calendar-container {
+    height: 400px;
+    overflow-y: scroll;
+    margin-bottom: 15px;
+}
+
+.save-container {
+    display: flex;
+    justify-content: flex-end;
+}

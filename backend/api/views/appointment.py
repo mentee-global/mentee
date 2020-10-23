@@ -7,7 +7,7 @@ from dateutil.parser import parse
 appointment = Blueprint("appointment", __name__)
 
 
-@appointment.route("/accept/<id>", methods=["PUT"])
+@appointment.route("/appointment/accept/<id>", methods=["PUT"])
 def put_appointment(id):
     data = request.get_json()
 
@@ -20,7 +20,6 @@ def put_appointment(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # Update appointment acceptance status
     appointment.accepted = True
 
     appointment.save()

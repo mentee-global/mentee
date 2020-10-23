@@ -1,7 +1,21 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email, Education, Video, MentorProfile, AppointmentRequest, Availability
+from api.models import (
+    db,
+    Person,
+    Email,
+    Education,
+    Video,
+    MentorProfile,
+    AppointmentRequest,
+    Availability,
+)
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import MentorForm, EducationForm, VideoForm, ApppointmentForm
+from api.utils.request_utils import (
+    MentorForm,
+    EducationForm,
+    VideoForm,
+    ApppointmentForm,
+)
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -182,6 +196,7 @@ def edit_mentor(id):
 
     return create_response(status=200, message=f"Success")
 
+
 # POST request for Mentee Appointment
 @main.route("/appointment", methods=["POST"])
 def create_appointment():
@@ -193,26 +208,28 @@ def create_appointment():
         return create_response(status=422, message="Missing fields " + msg)
 
     new_appointment = AppointmentRequest(
-        mentor_id = data.get('mentor_id'),
-        accepted = data.get('accepted'),
-        name = data.get('name'),
-        email = data.get('email'),
-        phone_number = data.get('phone_number'),
-        languages = data.get('languages'),
-        age = data.get('age'),
-        gender = data.get('gender'),
-        ethnicity = data.get('ethnicity'),
-        location = data.get('location'),
-        mentorship_goals = data.get('mentorship_goals'),
-        specialist_categories = data.get('specialist_categories'),
-        message = data.get('message'),
-        attendee_count = data.get('attendee_count'),
-        organization = data.get('organization')
+        mentor_id=data.get("mentor_id"),
+        accepted=data.get("accepted"),
+        name=data.get("name"),
+        email=data.get("email"),
+        phone_number=data.get("phone_number"),
+        languages=data.get("languages"),
+        age=data.get("age"),
+        gender=data.get("gender"),
+        ethnicity=data.get("ethnicity"),
+        location=data.get("location"),
+        mentorship_goals=data.get("mentorship_goals"),
+        specialist_categories=data.get("specialist_categories"),
+        message=data.get("message"),
+        attendee_count=data.get("attendee_count"),
+        organization=data.get("organization"),
     )
 
-    time_data = data.get('timeslot')
-    new_appointment.timeslot = Availability(start_time = time_data.get('start_time'), end_time = time_data.get('end_time'))
-    
+    time_data = data.get("timeslot")
+    new_appointment.timeslot = Availability(
+        start_time=time_data.get("start_time"), end_time=time_data.get("end_time")
+    )
+
     new_appointment.save()
     return create_response(
         message=f"Successfully created appointment with MentorID: {new_appointment.mentor_id} as Mentee Name: {new_appointment.name}"

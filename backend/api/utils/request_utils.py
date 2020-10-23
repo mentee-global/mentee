@@ -17,8 +17,12 @@ class MentorForm(Form):
     picture = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])
-    offers_in_person = BooleanField(validators=[InputRequired()], false_values=('false', "False"))
-    offers_group_appointments = BooleanField(validators=[InputRequired()], false_values=('false', "False"))
+    offers_in_person = BooleanField(
+        validators=[InputRequired()], false_values=("false", "False")
+    )
+    offers_group_appointments = BooleanField(
+        validators=[InputRequired()], false_values=("false", "False")
+    )
 
 
 class EducationForm(Form):
@@ -33,15 +37,19 @@ class VideoForm(Form):
     url = StringField(validators=[InputRequired()])
     tag = StringField(validators=[InputRequired()])
 
+
 class AvailabilityForm(Form):
     start_time = StringField(validators=[InputRequired()])
     end_time = StringField(validators=[InputRequired()])
+
 
 class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)
     name = StringField(validators=[InputRequired()])
-    accepted = BooleanField(validators=[validators.required()], false_values=('false', "False"))
+    accepted = BooleanField(
+        validators=[validators.required()], false_values=("false", "False")
+    )
     email = StringField(validators=[InputRequired()])
     phone_number = StringField()
     languages = FieldList(StringField(), validators=[validators.required()])

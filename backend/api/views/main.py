@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Person, Email, Education, Video, MentorProfile
+from api.models import db, Person, Email, Education, Video, MentorProfile, AppointmentRequest, Availability
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import MentorForm, EducationForm, VideoForm
+from api.utils.request_utils import MentorForm, EducationForm, VideoForm, ApppointmentForm
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -181,3 +181,21 @@ def edit_mentor(id):
     mentor.save()
 
     return create_response(status=200, message=f"Success")
+
+# POST request for Mentee Appointment
+@main.route("/appointment", methods=["POST"])
+def create_appointment():
+    data = request.get_json()
+    validate_data = ApppointmentForm.from_json(data)
+    print(validate_data['accepted'])
+    print(type(validate_data['accepted']))
+
+    print(data["accepted"])
+    if not validate_data.validate():
+        msg = ", ".join(validate_data.errors.keys())
+        return create_response(status=422, message="Missing fields " + msg)
+
+    
+    return create_response(
+        message=f"Successfully created Mentor Profile  with UID: "
+    )

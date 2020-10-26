@@ -9,19 +9,74 @@ import {
   MailOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-
+import { Button } from "antd";
 import "../css/Profile.scss";
 
 function Profile() {
+  const methods = ["Zoom", "Bluejeans"];
+  const languages = ["English", "x86 ASM"];
+  const specializations = ["Data", "Really angry commit messages"];
+  const educations = [
+    {
+      education_level: "Bachelor's Degree",
+      major: "Computer Engineering",
+      school: "University of Illinois at Urbana-Champaign",
+      year: 2021,
+    },
+    {
+      education_level: "Bachelor's Degree",
+      major: "Computer Engineering",
+      school: "University of Illinois at Urbana-Champaign",
+      year: 2021,
+    },
+  ];
+
+  const getMeetingMethods = (methods) => {
+    return methods.map((method, idx) => (idx === 0 ? method : " | " + method));
+  };
+
+  const getLanguages = (languages) => {
+    return languages.map((language, idx) =>
+      idx === 0 ? language : " • " + language
+    );
+  };
+
+  const getSpecializationTags = (specializations) => {
+    return specializations.map((specialization, idx) =>
+      idx === 0 ? (
+        <div className="mentor-specialization-tag-first">{specialization}</div>
+      ) : (
+        <div className="mentor-specialization-tag">{specialization}</div>
+      )
+    );
+  };
+
+  const getEducations = (educations) => {
+    return educations.map((education) => (
+      <div className="mentor-profile-education">
+        <b>{education["school"]}</b>
+        <br />
+        {education["education_level"] + ", " + education["major"]}
+        <br />
+        {education["year"]}
+      </div>
+    ));
+  };
+
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
         <UserOutlined style={{ fontSize: "100px" }} />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
-            <div className="mentor-profile-name">Mentor Name</div>
+            <div className="mentor-profile-name">
+              Mentor Name
+              <Button className="mentor-profile-edit-button">
+                <b>Edit Profile</b>
+              </Button>
+            </div>
             <div className="mentor-profile-heading">
-              Title <t className="yellow-dot">•</t> Meetings[0] | Meetings[1]
+              Title <t className="yellow-dot">•</t> {getMeetingMethods(methods)}
             </div>
             <div>
               <span>
@@ -30,7 +85,7 @@ function Profile() {
               </span>
               <span>
                 <CommentOutlined className="mentor-profile-tag" />
-                Language[0] • Language[1]
+                {getLanguages(languages)}
               </span>
               <span>
                 <LinkOutlined className="mentor-profile-tag" />
@@ -50,15 +105,12 @@ function Profile() {
             <div className="mentor-profile-heading">
               <b>Specializations</b>
             </div>
-            <div>
-              <div className="mentor-specialization-tag-first">Tag[0]</div>
-              <div className="mentor-specialization-tag">Tag[1]</div>
-            </div>
+            <div>{getSpecializationTags(specializations)}</div>
             <br />
             <div className="mentor-profile-heading">
               <b>Education</b>
             </div>
-            <div>Education list</div>
+            <div>{getEducations(educations)}</div>
           </div>
           <div className="mentor-profile-contact">
             <div className="mentor-profile-contact-header">Contact Info</div>

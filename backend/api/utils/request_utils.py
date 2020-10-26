@@ -21,11 +21,6 @@ class VideoForm(Form):
     tag = StringField(validators=[InputRequired()])
 
 
-class AvailabilityForm(Form):
-    start_time = StringField(validators=[InputRequired()])
-    end_time = StringField(validators=[InputRequired()])
-
-
 class MentorForm(Form):
     uid = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
@@ -41,9 +36,11 @@ class MentorForm(Form):
     offers_group_appointments = BooleanField(
         validators=[InputRequired()], false_values=("false", "False")
     )
-    availability = FieldList(
-        FormField(AvailabilityForm), validators=[validators.required()]
-    )
+
+
+class AvailabilityForm(Form):
+    start_time = StringField(validators=[InputRequired()])
+    end_time = StringField(validators=[InputRequired()])
 
 
 class ApppointmentForm(Form):

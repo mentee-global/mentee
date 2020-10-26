@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify
-from api.models import AppointmentRequest, Availability
+from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm
 
 appointment = Blueprint("appointment", __name__)
 
 # POST request for Mentee Appointment
-@appointment.route("/appointments", methods=["POST"])
+@appointment.route("/appointment", methods=["POST"])
 def create_appointment():
     data = request.get_json()
     validate_data = ApppointmentForm.from_json(data)
@@ -43,3 +43,32 @@ def create_appointment():
     return create_response(
         message=f"Successfully created appointment with MentorID: {new_appointment.mentor_id} as Mentee Name: {new_appointment.name}"
     )
+
+
+@appointment.route("/appointment/accept/<id>", methods=["PUT"])
+def put_appointment(id):
+    try:
+        appointment = AppointmentRequest.objects.get(id=id)
+    except:
+        msg = "No appointment with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    appointment.accepted = True
+
+    try:
+        mentor = MentorProfile.objects.get(id=appointment.mentor_id)
+    except:
+        msg = "Mentor not found with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    for timeslot in enumerate(mentor.availability):
+        if timeslot == appointment.timeslot:
+            mentor.availability.remove(timeslot)
+            break
+
+    mentor.save()
+    appointment.save()
+
+    return create_response(status=200, message=f"Success")

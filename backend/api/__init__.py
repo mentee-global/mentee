@@ -75,7 +75,6 @@ def create_app(test_config=None):
     app.register_blueprint(main.main)
     app.register_blueprint(auth.auth)
     app.register_blueprint(appointment.appointment)
-
     # register error Handler
     app.register_error_handler(Exception, all_exception_handler)
 

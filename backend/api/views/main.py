@@ -90,6 +90,7 @@ def create_mentor_profile():
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
         offers_group_appointments=data["offers_group_appointments"],
+        availability=data["availability"],
     )
 
     new_mentor.biography = data.get("biography")

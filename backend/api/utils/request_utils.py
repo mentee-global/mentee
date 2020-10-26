@@ -8,23 +8,6 @@ from typing import Tuple
 wtforms_json.init()
 
 
-class MentorForm(Form):
-    uid = StringField(validators=[InputRequired()])
-    name = StringField(validators=[InputRequired()])
-    professional_title = StringField(validators=[InputRequired()])
-    linkedin = StringField(validators=[InputRequired()])
-    website = StringField(validators=[InputRequired()])
-    picture = StringField(validators=[InputRequired()])
-    languages = FieldList(StringField(), validators=[validators.required()])
-    specializations = FieldList(StringField(), validators=[validators.required()])
-    offers_in_person = BooleanField(
-        validators=[InputRequired()], false_values=("false", "False")
-    )
-    offers_group_appointments = BooleanField(
-        validators=[InputRequired()], false_values=("false", "False")
-    )
-
-
 class EducationForm(Form):
     education_level = StringField(validators=[InputRequired()])
     majors = FieldList(StringField(), validators=[validators.required()])
@@ -41,6 +24,26 @@ class VideoForm(Form):
 class AvailabilityForm(Form):
     start_time = StringField(validators=[InputRequired()])
     end_time = StringField(validators=[InputRequired()])
+
+
+class MentorForm(Form):
+    uid = StringField(validators=[InputRequired()])
+    name = StringField(validators=[InputRequired()])
+    professional_title = StringField(validators=[InputRequired()])
+    linkedin = StringField(validators=[InputRequired()])
+    website = StringField(validators=[InputRequired()])
+    picture = StringField(validators=[InputRequired()])
+    languages = FieldList(StringField(), validators=[validators.required()])
+    specializations = FieldList(StringField(), validators=[validators.required()])
+    offers_in_person = BooleanField(
+        validators=[InputRequired()], false_values=("false", "False")
+    )
+    offers_group_appointments = BooleanField(
+        validators=[InputRequired()], false_values=("false", "False")
+    )
+    availability = FieldList(
+        FormField(AvailabilityForm), validators=[validators.required()]
+    )
 
 
 class ApppointmentForm(Form):

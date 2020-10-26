@@ -23,6 +23,7 @@ def get_mentor(mentor_id):
         return create_response(status=422, message=msg)
     return create_response(data={"mentor": mentor})
 
+
 # POST request for a new mentor profile
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():

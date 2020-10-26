@@ -10,6 +10,7 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import { Button } from "antd";
+
 import "../css/Profile.scss";
 
 function Profile() {

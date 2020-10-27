@@ -41,21 +41,7 @@ def get_mentor(mentor_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(data={"mentor": mentor})
-
-
-# DELETE request for appointment by appointment id
-"""
-@main.route("/appointment/<string:appointment_id>", methods=["DELETE"]) 
-def delete_request(appointment_id):
-    try:
-        request = MentorProfile.objects.get(id=appointment_id)
-        request.delete()
-    except:
-        msg = "The request you attempted to delete was not found"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    return create_response(data={"deleted id": appointment_id})
-"""
+    
 
 # function that is called when you visit /persons
 @main.route("/persons", methods=["GET"])

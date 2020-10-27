@@ -13,6 +13,20 @@ def get_requests(mentor_id):
     return create_response(data={"requests": requests})
 
 
+# DELETE request for appointment by appointment id
+@appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"]) 
+def delete_request(appointment_id):
+    try:
+        request = AppointmentRequest.objects.get(id=appointment_id)
+        request.delete()
+    except Exception as e:
+        print(e)
+        msg = "The request you attempted to delete was not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    return create_response(data={"deleted id": appointment_id})
+
+
 @appointment.route("/appointment/accept/<id>", methods=["PUT"])
 def put_appointment(id):
     data = request.get_json()

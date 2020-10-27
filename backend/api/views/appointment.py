@@ -14,7 +14,7 @@ def get_requests(mentor_id):
 
 
 # DELETE request for appointment by appointment id
-@appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"]) 
+@appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"])
 def delete_request(appointment_id):
     try:
         request = AppointmentRequest.objects.get(id=appointment_id)

@@ -25,7 +25,7 @@ def delete_request(appointment_id):
         return create_response(status=422, message=msg)
     return create_response(data={"deleted id": appointment_id})
 
-    
+
 @appointment.route("/appointment/accept/<id>", methods=["PUT"])
 def put_appointment(id):
     data = request.get_json()

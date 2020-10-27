@@ -14,6 +14,7 @@ import { Button } from "antd";
 import "../css/Profile.scss";
 
 function Profile() {
+  // placeholder list data - will be populated later by querying DB
   const methods = ["Zoom", "Bluejeans"];
   const languages = ["English", "x86 ASM"];
   const specializations = ["Data", "Really angry commit messages"];

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Calendar, Col, Row } from "antd";
 import Icon, { ClockCircleOutlined } from "@ant-design/icons";
 import "../css/Appointments.scss";
@@ -13,22 +13,18 @@ const declineIcon = () => <img src={DeclineIcon} />;
 
 const Tabs = Object.freeze({
   upcoming: {
-    id: 1,
     title: "All Upcoming",
     key: "upcoming",
   },
   pending: {
-    id: 2,
     title: "All Pending",
     key: "pending",
   },
   past: {
-    id: 3,
     title: "All Past",
     key: "past",
   },
   availability: {
-    id: 4,
     title: "Availability",
     key: "availability",
   },
@@ -72,7 +68,7 @@ function Appointments() {
   };
 
   const getAppointmentButton = (tab) => {
-    if (tab.id === 1) {
+    if (tab === Tabs.upcoming) {
       return (
         <Button
           className="appointment-more-details"
@@ -80,7 +76,7 @@ function Appointments() {
           type="text"
         ></Button>
       );
-    } else if (tab.id === 2) {
+    } else if (tab === Tabs.pending) {
       return (
         <div className="appointment-pending-buttons">
           <Button
@@ -140,30 +136,28 @@ function Appointments() {
     );
   };
 
-  const Appointments = (props) => {
+  const Appointments = ({ data }) => {
     return (
       <div>
         <b className="appointment-tabs-title">{currentTab.title}</b>{" "}
         <div className="appointments-background">
-          {props.data.map((appointmentsObject, index) => (
+          {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
               <div className="appointments-date-text-block">
                 <h1 className="appointments-date-number">
-                  {appointmentsObject["date"]}
+                  {appointmentsObject.date}
                 </h1>
-                <p>{appointmentsObject["date_name"]}</p>
+                <p>{appointmentsObject.date_name}</p>
               </div>
               <div className="appointments-row">
-                {appointmentsObject["appointments"].map(
-                  (appointment, index) => (
-                    <Appointment
-                      key={index}
-                      name={appointment["name"]}
-                      time={appointment["time"]}
-                      description={appointment["description"]}
-                    />
-                  )
-                )}
+                {appointmentsObject.appointments.map((appointment, index) => (
+                  <Appointment
+                    key={index}
+                    name={appointment.name}
+                    time={appointment.time}
+                    description={appointment.description}
+                  />
+                ))}
               </div>
             </div>
           ))}
@@ -174,12 +168,10 @@ function Appointments() {
 
   function renderTab(tab) {
     switch (tab) {
-      case Tabs.upcoming:
-        return <Appointments data={appointmentData["upcoming"]} />;
-      case Tabs.pending:
-        return <Appointments data={appointmentData["pending"]} />;
+      case Tabs.upcoming: // Fall through
+      case Tabs.pending: // Fall through
       case Tabs.past:
-        return <Appointments data={appointmentData["past"]} />;
+        return <Appointments data={appointmentData[currentTab.key]} />;
       case Tabs.availability:
         return <AvailabilityTab />;
       default:
@@ -191,7 +183,7 @@ function Appointments() {
     <Row>
       <Col span={18} className="appointments-column">
         <div className="appointments-welcome-box">
-          <div className="appointments-welcome-text">Welcome, {"Bernie"}</div>
+          <div className="appointments-welcome-text">Welcome, {"TODO"}</div>
           <div className="appointments-tabs">
             {Object.values(Tabs).map((tab, index) => (
               <Tab tab={tab} text={tab.title} key={index} />
@@ -200,16 +192,17 @@ function Appointments() {
         </div>
         {renderTab(currentTab)}
       </Col>
-      <Col
-        span={6}
-        style={{
-          borderLeft: "3px solid #E5E5E5",
-        }}
-      >
+      <Col span={6} style={styles.calendar}>
         <Calendar></Calendar>
       </Col>
     </Row>
   );
 }
+
+const styles = {
+  calendar: {
+    borderLeft: "3px solid #E5E5E5",
+  },
+};
 
 export default Appointments;

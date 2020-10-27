@@ -9,7 +9,7 @@ import {
   MailOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, Avatar } from "antd";
 
 import "../css/Profile.scss";
 
@@ -68,7 +68,7 @@ function Profile() {
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
-        <UserOutlined style={{ fontSize: "100px" }} />
+        <Avatar size={120} icon={<UserOutlined />}/>
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <div className="mentor-profile-name">

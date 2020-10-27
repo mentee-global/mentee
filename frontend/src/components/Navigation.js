@@ -1,7 +1,8 @@
 import React from "react";
 import { Layout } from "antd";
 
-import NavigationHeader from "./NavigationHeader";
+import MentorNavHeader from "./MentorNavHeader";
+import MenteeNavHeader from "./MenteeNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
 
 import "./css/Navigation.scss";
@@ -13,7 +14,7 @@ function Navigation(props) {
     <div>
       <Layout className="navigation-layout">
         {/* add prop to choose between mentor/mentee navbars */}
-        <NavigationHeader />
+        <MentorNavHeader />
         <Layout>
           <NavigationSidebar selectedPage={props.page} />
           <Content className="navigation-content">{props.content}</Content>

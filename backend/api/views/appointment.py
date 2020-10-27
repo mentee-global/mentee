@@ -63,7 +63,7 @@ def put_appointment(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    for timeslot in enumerate(mentor.availability):
+    for timeslot in mentor.availability:
         if timeslot == appointment.timeslot:
             mentor.availability.remove(timeslot)
             break

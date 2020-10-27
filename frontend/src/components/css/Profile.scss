@@ -39,10 +39,13 @@
 }
 
 .mentor-profile-edit-button {
-  background: #E4BB4F;
-  color: #FFFFFF;
   border-radius: 13px;
   margin-left: 60%;
+}
+
+.mentor-profile-edit-button:visited {
+  background: #E4BB4F;
+  color: #FFFFFF;
 }
 
 .mentor-specialization-tag-first {
@@ -87,8 +90,8 @@
 .mentor-profile-contact-header {
   font-size: 20px;
   font-weight: bold;
-  margin-top: -7vh;
-  height: 7vh;
+  background: #FFECBD;
+  height: 5vh;
 }
 
 .mentor-profile-contact-icon {

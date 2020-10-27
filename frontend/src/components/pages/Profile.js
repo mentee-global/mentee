@@ -72,7 +72,10 @@ function Profile() {
           <div className="mentor-profile-info">
             <div className="mentor-profile-name">
               Mentor Name
-              <Button className="mentor-profile-edit-button">
+              <Button
+                className="mentor-profile-edit-button"
+                style={{ background: "#E4BB4F", color: "#FFFFFF" }}
+              >
                 <b>Edit Profile</b>
               </Button>
             </div>
@@ -113,23 +116,21 @@ function Profile() {
             </div>
             <div>{getEducations(educations)}</div>
           </div>
-          <div className="mentor-profile-contact">
-            <div className="mentor-profile-contact-header">Contact Info</div>
-            <div>
-              <MailOutlined className="mentor-profile-contact-icon" />
-              mentoremail@email.com
-            </div>
-            <div>
-              <PhoneOutlined className="mentor-profile-contact-icon" />
-              1-234-567-8901
-            </div>
+          <fieldset className="mentor-profile-contact">
+            <legend className="mentor-profile-contact-header">
+              Contact Info
+            </legend>
+            <MailOutlined className="mentor-profile-contact-icon" />
+            mentoremail@email.com
             <br />
-            <div>
-              <Link to="/" className="mentor-profile-contact-edit">
-                Edit
-              </Link>
-            </div>
-          </div>
+            <PhoneOutlined className="mentor-profile-contact-icon" />
+            1-234-567-8901
+            <br />
+            <br />
+            <Link to="/" className="mentor-profile-contact-edit">
+              Edit
+            </Link>
+          </fieldset>
         </div>
       </div>
     </div>

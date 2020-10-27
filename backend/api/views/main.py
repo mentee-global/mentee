@@ -1,7 +1,12 @@
 from flask import Blueprint, request, jsonify
 from api.models import db, Person, Email, Education, Video, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import MentorForm, EducationForm, VideoForm
+from api.utils.request_utils import (
+    MentorForm,
+    EducationForm,
+    VideoForm,
+    is_invalid_form,
+)
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -76,9 +81,9 @@ def create_mentor_profile():
     data = request.json
     validate_data = MentorForm.from_json(data)
 
-    if not validate_data.validate():
-        msg = ", ".join(validate_data.errors.keys())
-        return create_response(status=422, message="Missing fields " + msg)
+    msg, is_invalid = is_invalid_form(validate_data)
+    if is_invalid:
+        return create_response(status=422, message=msg)
 
     new_mentor = MentorProfile(
         name=data["name"],
@@ -98,9 +103,9 @@ def create_mentor_profile():
         education_data = data["education"]
         validate_education = EducationForm.from_json(education_data)
 
-        if not validate_education.validate():
-            msg = ", ".join(validate_education.errors.keys())
-            return create_response(status=422, message="Missing fields " + msg)
+        msg, is_invalid = is_invalid_form(validate_education)
+        if is_invalid:
+            return create_response(status=422, message=msg)
 
         new_education = Education(
             education_level=education_data["education_level"],
@@ -116,9 +121,9 @@ def create_mentor_profile():
         for video in videos_data:
             validate_video = VideoForm.from_json(video)
 
-            if not validate_video.validate():
-                msg = ", ".join(validate_video.errors.keys())
-                return create_response(status=422, message="Missing fields " + msg)
+            msg, is_invalid = is_invalid_form(validate_video)
+            if is_invalid:
+                return create_response(status=422, message=msg)
 
             new_video = Video(title=video["title"], url=video["url"], tag=video["tag"])
             new_mentor.videos.append(new_video)

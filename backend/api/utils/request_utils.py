@@ -62,3 +62,14 @@ class ApppointmentForm(Form):
     message = StringField()
     attendee_count = IntegerField(validators=[InputRequired()])
     organization = StringField(validators=[InputRequired()])
+
+
+def is_invalid_form(form_data) -> Tuple[str, bool]:
+    """Using WTForms, validates the inputed form based on above schemas
+    :param form_data - From the POST Request converted from JSON
+    :return Tuple of an error message and if it is invalid or not
+    """
+    if not form_data.validate():
+        msg = ", ".join(form_data.errors.keys())
+        return "Missing fields " + msg, True
+    return "", False

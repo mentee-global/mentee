@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import ApppointmentForm
+from api.utils.request_utils import ApppointmentForm, is_invalid_form
 
 appointment = Blueprint("appointment", __name__)
 
@@ -9,12 +9,11 @@ appointment = Blueprint("appointment", __name__)
 @appointment.route("/appointment", methods=["POST"])
 def create_appointment():
     data = request.get_json()
-    validate_data = ApppointmentForm.from_json(data)
 
-    if not validate_data.validate():
-        msg = ", ".join(validate_data.errors.keys())
-        print("returning!")
-        return create_response(status=422, message="Missing fields " + msg)
+    validate_data = ApppointmentForm.from_json(data)
+    msg, is_invalid = is_invalid_form(validate_data)
+    if is_invalid:
+        return create_response(status=422, message=msg)
 
     new_appointment = AppointmentRequest(
         mentor_id=data.get("mentor_id"),
@@ -49,19 +48,13 @@ def create_appointment():
 def put_appointment(id):
     try:
         appointment = AppointmentRequest.objects.get(id=id)
+        mentor = MentorProfile.objects.get(id=appointment.mentor_id)
     except:
-        msg = "No appointment with that id"
+        msg = "No appointment or mentor found (or both) with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
     appointment.accepted = True
-
-    try:
-        mentor = MentorProfile.objects.get(id=appointment.mentor_id)
-    except:
-        msg = "Mentor not found with that id"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
 
     for timeslot in mentor.availability:
         if timeslot == appointment.timeslot:

@@ -13,7 +13,7 @@ import mentee_logo from "../resources/mentee.png";
 
 const { Header } = Layout;
 
-function NavigationHeader() {
+function MentorNavHeader() {
   const dropdownMenu = (
     <Menu className="dropdown-menu">
       <Menu.Item key="edit-profile">
@@ -63,4 +63,4 @@ function NavigationHeader() {
   );
 }
 
-export default NavigationHeader;
+export default MentorNavHeader;

@@ -68,7 +68,7 @@ function Profile() {
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
-        <Avatar size={120} icon={<UserOutlined />}/>
+        <Avatar size={120} icon={<UserOutlined />} />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <div className="mentor-profile-name">

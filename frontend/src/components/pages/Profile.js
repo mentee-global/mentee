@@ -105,7 +105,16 @@ function Profile() {
             <div className="mentor-profile-heading">
               <b>About</b>
             </div>
-            <div>About text</div>
+            <div className="mentor-profile-about">
+              About text About text About text About text About text About text
+              About text About text About text About text About text About text
+              About text About text About text About text About text About text
+              About text About text About text About text About text About text
+              About text About text About text About text About text About text
+              About text About text About text About text About text About text
+              About text About text About text About text About text About text
+              About text About text About text About text About text About text
+            </div>
             <br />
             <div className="mentor-profile-heading">
               <b>Specializations</b>

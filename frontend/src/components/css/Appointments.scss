@@ -7,7 +7,7 @@
 .appointments-tabs {
     display: flex;
     flex-direction: row;
-    margin-bottom: 1%;
+    margin-bottom: 5%;
     margin-left: 1%;
 }
 
@@ -121,9 +121,11 @@
 }
 
 .availability-container {
+
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
     overflow: hidden;
+    margin: 5px 3% 2% 3%;
 }
 
 .calendar-header {

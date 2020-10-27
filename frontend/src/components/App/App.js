@@ -28,6 +28,10 @@ function App() {
         path="/profile"
         component={() => <Navigation content={<Profile />} page="profile" />}
       />
+      <Route
+        path="mentors"
+        component={() => <Navigation content={<MentorGallery/>} page="mentorgallery"/>}
+      />
     </Router>
   );
 }

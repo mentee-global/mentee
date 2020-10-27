@@ -11,7 +11,7 @@ const { Content } = Layout;
 function Navigation(props) {
   return (
     <div>
-      <Layout>
+      <Layout className="navigation-layout">
         <NavigationHeader />
         <Layout>
           <NavigationSidebar selectedPage={props.page} />

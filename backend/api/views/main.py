@@ -43,13 +43,6 @@ def get_mentor(mentor_id):
     return create_response(data={"mentor": mentor})
 
 
-# GET request for appointments by mentor id
-@main.route("/appointment/<string:mentor_id>", methods=["GET"])
-def get_requests(mentor_id):
-    requests = AppointmentRequest.objects(mentor_id=mentor_id)
-    return create_response(data={"requests": requests})
-
-
 # DELETE request for appointment by appointment id
 """
 @main.route("/appointment/<string:appointment_id>", methods=["DELETE"]) 

@@ -6,6 +6,12 @@ from dateutil.parser import parse
 
 appointment = Blueprint("appointment", __name__)
 
+# GET request for appointments by mentor id
+@appointment.route("/appointment/<string:mentor_id>", methods=["GET"])
+def get_requests(mentor_id):
+    requests = AppointmentRequest.objects(mentor_id=mentor_id)
+    return create_response(data={"requests": requests})
+
 
 @appointment.route("/appointment/accept/<id>", methods=["PUT"])
 def put_appointment(id):

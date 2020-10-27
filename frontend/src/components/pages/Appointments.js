@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { Button, Calendar, Col, Row } from "antd";
-import Icon, { ClockCircleOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, CheckCircleTwoTone, CloseCircleTwoTone, InfoCircleFilled } from "@ant-design/icons";
 import "../css/Appointments.scss";
-import AppointmentUpcoming from "../../resources/upcomingInfo.svg";
-import AcceptIcon from "../../resources/accept.svg";
-import DeclineIcon from "../../resources/decline.svg";
-import appointmentData from "../../resources/appointments.json";
-
-const upcomingIcon = () => <img src={AppointmentUpcoming} />;
-const acceptIcon = () => <img src={AcceptIcon} />;
-const declineIcon = () => <img src={DeclineIcon} />;
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -30,7 +22,6 @@ const Tabs = Object.freeze({
   },
 });
 
-// TODO: Clean this make it easy for people to figure out and remove certain elements
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
 
@@ -72,7 +63,7 @@ function Appointments() {
       return (
         <Button
           className="appointment-more-details"
-          icon={<Icon component={upcomingIcon} />}
+          icon={<InfoCircleFilled style={{...styles.appointment_buttons, color:"#A58123"}} />}
           type="text"
         ></Button>
       );
@@ -81,13 +72,13 @@ function Appointments() {
         <div className="appointment-pending-buttons">
           <Button
             className="appointment-accept"
-            icon={<Icon component={acceptIcon} />}
+            icon={<CheckCircleTwoTone style={styles.appointment_buttons} twoToneColor="#52c41a"/>}
             type="text"
             shape="circle"
           ></Button>
           <Button
             className="appointment-accept"
-            icon={<Icon component={declineIcon} />}
+            icon={<CloseCircleTwoTone style={styles.appointment_buttons} twoToneColor="#eb2f00"/>}
             type="text"
             shape="circle"
           ></Button>
@@ -171,7 +162,7 @@ function Appointments() {
       case Tabs.upcoming: // Fall through
       case Tabs.pending: // Fall through
       case Tabs.past:
-        return <Appointments data={appointmentData[currentTab.key]} />;
+        return <Appointments data={[]} />;
       case Tabs.availability:
         return <AvailabilityTab />;
       default:
@@ -203,6 +194,9 @@ const styles = {
   calendar: {
     borderLeft: "3px solid #E5E5E5",
   },
+  appointment_buttons: {
+    fontSize: '24px'
+  }
 };
 
 export default Appointments;

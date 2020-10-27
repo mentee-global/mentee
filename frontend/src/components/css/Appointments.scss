@@ -93,17 +93,19 @@
     display: flex;
     background-color: white;
     border-radius: 13px;
-    padding: 2px;
+    padding: .5%;
 }
 
 .appointment-accept,
 .appointment-decline {
     padding: 0px;
+    margin: 0px;
 }
 
 .appointment-pending-buttons,
 .appointment-more-details {
     margin-right: 1%;
+    padding-bottom: 1px;;
 }
 
 .appointments-tab-item {

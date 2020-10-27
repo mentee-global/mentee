@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Button, Calendar, Col, Row } from "antd";
-import { ClockCircleOutlined, CheckCircleTwoTone, CloseCircleTwoTone, InfoCircleFilled } from "@ant-design/icons";
+import {
+  ClockCircleOutlined,
+  CheckCircleTwoTone,
+  CloseCircleTwoTone,
+  InfoCircleFilled,
+} from "@ant-design/icons";
 import "../css/Appointments.scss";
 
 const Tabs = Object.freeze({
@@ -63,7 +68,11 @@ function Appointments() {
       return (
         <Button
           className="appointment-more-details"
-          icon={<InfoCircleFilled style={{...styles.appointment_buttons, color:"#A58123"}} />}
+          icon={
+            <InfoCircleFilled
+              style={{ ...styles.appointment_buttons, color: "#A58123" }}
+            />
+          }
           type="text"
         ></Button>
       );
@@ -72,13 +81,23 @@ function Appointments() {
         <div className="appointment-pending-buttons">
           <Button
             className="appointment-accept"
-            icon={<CheckCircleTwoTone style={styles.appointment_buttons} twoToneColor="#52c41a"/>}
+            icon={
+              <CheckCircleTwoTone
+                style={styles.appointment_buttons}
+                twoToneColor="#52c41a"
+              />
+            }
             type="text"
             shape="circle"
           ></Button>
           <Button
             className="appointment-accept"
-            icon={<CloseCircleTwoTone style={styles.appointment_buttons} twoToneColor="#eb2f00"/>}
+            icon={
+              <CloseCircleTwoTone
+                style={styles.appointment_buttons}
+                twoToneColor="#eb2f00"
+              />
+            }
             type="text"
             shape="circle"
           ></Button>
@@ -195,8 +214,8 @@ const styles = {
     borderLeft: "3px solid #E5E5E5",
   },
   appointment_buttons: {
-    fontSize: '24px'
-  }
+    fontSize: "24px",
+  },
 };
 
 export default Appointments;

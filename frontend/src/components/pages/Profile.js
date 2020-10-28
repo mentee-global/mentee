@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   UserOutlined,
@@ -12,26 +12,45 @@ import {
 import { Button, Avatar } from "antd";
 
 import "../css/Profile.scss";
+import { fetchMentorByID } from "../../utils/api.js";
+const mentorID = "5f961535f84a6a4c05255855";
 
 function Profile() {
   // placeholder list data - will be populated later by querying DB
-  const methods = ["Zoom", "Bluejeans"];
-  const languages = ["English", "x86 ASM"];
-  const specializations = ["Data", "Really angry commit messages"];
-  const educations = [
-    {
-      education_level: "Bachelor's Degree",
-      major: "Computer Engineering",
-      school: "University of Illinois at Urbana-Champaign",
-      year: 2021,
-    },
-    {
-      education_level: "Bachelor's Degree",
-      major: "Computer Engineering",
-      school: "University of Illinois at Urbana-Champaign",
-      year: 2021,
-    },
-  ];
+  const [methods, setMethods] = useState(["Zoom", "Bluejeans"]);
+  const [languages, setLanguages] = useState([]);
+  const [specializations, setSpecializations] = useState([]);
+  const [educations, setEducation] = useState([
+
+  ]);
+  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
+  const [website, setWebsite] = useState("");
+  const [biography, setBiography] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [fetchedMentor, setFetchedMentor] = useState(false);
+
+
+  useEffect(() => {
+    async function getProfile() {
+      const response = await fetchMentorByID(mentorID);
+      if (response) {
+        setName(response.name)
+        setTitle(response.title)
+        setWebsite(response.website)
+        setBiography(response.biography)
+        setLinkedin(response.linkedin)
+        setEducation([response.education])
+        setSpecializations(response.specializations)
+        setLanguages(response.languages)
+        setBiography(response.biography);
+      }
+    }
+    if (!fetchedMentor) {
+      getProfile();
+      setFetchedMentor(true);
+    } 
+  })
 
   const getMeetingMethods = (methods) => {
     return methods.map((method, idx) => (idx === 0 ? method : " | " + method));
@@ -72,7 +91,7 @@ function Profile() {
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <div className="mentor-profile-name">
-              Mentor Name
+              {name}
               <Button
                 className="mentor-profile-edit-button"
                 style={{ background: "#E4BB4F", color: "#FFFFFF" }}
@@ -81,7 +100,7 @@ function Profile() {
               </Button>
             </div>
             <div className="mentor-profile-heading">
-              Title <t className="yellow-dot">•</t> {getMeetingMethods(methods)}
+              {title} <t className="yellow-dot">•</t> {getMeetingMethods(methods)}
             </div>
             <div>
               <span>
@@ -94,11 +113,11 @@ function Profile() {
               </span>
               <span>
                 <LinkOutlined className="mentor-profile-tag" />
-                website.com
+                {website}
               </span>
               <span>
                 <LinkedinOutlined className="mentor-profile-tag" />
-                LinkedIn
+                {linkedin}
               </span>
             </div>
             <br />
@@ -106,14 +125,7 @@ function Profile() {
               <b>About</b>
             </div>
             <div className="mentor-profile-about">
-              About text About text About text About text About text About text
-              About text About text About text About text About text About text
-              About text About text About text About text About text About text
-              About text About text About text About text About text About text
-              About text About text About text About text About text About text
-              About text About text About text About text About text About text
-              About text About text About text About text About text About text
-              About text About text About text About text About text About text
+              {biography}
             </div>
             <br />
             <div className="mentor-profile-heading">

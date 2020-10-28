@@ -1,0 +1,58 @@
+.mentor-card{
+    background: #FFFFFF;
+    border: 2px solid #E4BB4F;
+    border-radius: 8px;
+
+}
+.mentor-card:hover{
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.mentor-container{
+    padding: 1vh;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+    grid-gap: 1rem;
+}
+
+hr.solid {
+  border-top: 3px solid #F2C94C;
+}
+.profile-button{
+    background: #E4BB4F;
+    color: white;
+}
+.profile-button:hover, .profile-button:focus{
+    color:#E4BB4F; 
+    border-color: #E4BB4F;
+}
+.profile-button:active, .profile-button:focus{
+    outline-color: #E4BB4F;
+}
+.card-header{
+    display: flex;
+    padding-top: 10px;
+    font-weight: 2rem;
+}
+.header-text{
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+}
+.header-icon{
+    padding-right: 5px;
+}
+
+.headers{
+    color: #A58123;
+    margin: 0;
+}
+
+.list-items{
+    padding-left: 27px;
+    padding-bottom: 30px;
+}
+
+.card-body{
+    padding: 20px;
+    padding-top: 0px;
+}

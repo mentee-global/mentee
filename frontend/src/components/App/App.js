@@ -5,6 +5,7 @@ import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
 import Navigation from "components/Navigation";
+import MentorGallery from "components/pages/MentorGallery"
 
 function App() {
   return (
@@ -29,8 +30,8 @@ function App() {
         component={() => <Navigation content={<Profile />} page="profile" />}
       />
       <Route
-        path="mentors"
-        component={() => <Navigation content={<MentorGallery/>} page="mentorgallery"/>}
+        path="/mentee/mentorgallery"
+        component={() => <Navigation content={<MentorGallery />} page="mentorgallery"/>}
       />
     </Router>
   );

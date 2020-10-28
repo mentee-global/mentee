@@ -11,10 +11,13 @@ const { Content } = Layout;
 function Navigation(props) {
   return (
     <div>
-      <Layout>
+      <Layout className="navigation-layout">
         <NavigationHeader />
-        <Layout>
-          <NavigationSidebar selectedPage={props.page} />
+        <Layout className="layout-body">
+          <NavigationSidebar
+            className="navigation-sidebar"
+            selectedPage={props.page}
+          />
           <Content className="navigation-content">{props.content}</Content>
         </Layout>
       </Layout>

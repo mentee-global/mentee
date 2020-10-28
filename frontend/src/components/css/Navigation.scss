@@ -1,6 +1,9 @@
+.navigation-layout {
+  height: 100vh;
+}
+
 .navigation-content {
   margin-left: 3px;
-  height: 100vh;
 }
 
 .navigation-header {
@@ -63,4 +66,8 @@
   height: 40px;
   width: 200px;
   margin: 10px 10px;
+}
+
+.layout-body {
+  background-color: white;
 }

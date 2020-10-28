@@ -5,7 +5,8 @@ const instance = axios.create({
 });
 
 export const fetchMentorByID = (id) => {
-  return instance.get("/mentor/" + id).then(
+  const requestExtension = "/mentor/" + id;
+  return instance.get(requestExtension).then(
     (response) => response.data.result.mentor,
     (err) => {
       console.error(err);
@@ -15,7 +16,8 @@ export const fetchMentorByID = (id) => {
 };
 
 export const fetchMentors = () => {
-  return instance.get("/mentors").then(
+  const requestExtension = "/mentors";
+  return instance.get(requestExtension).then(
     (response) => response.data.result.mentors,
     (err) => {
       console.error(err);

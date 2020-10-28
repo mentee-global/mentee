@@ -13,6 +13,8 @@ import { Button, Avatar } from "antd";
 
 import "../css/Profile.scss";
 import { fetchMentorByID } from "../../utils/api.js";
+// This is just for the timebeing while we get auth up and running
+// TODO: Delete this after auth is done!
 const mentorID = "5f961535f84a6a4c05255855";
 
 function Profile() {

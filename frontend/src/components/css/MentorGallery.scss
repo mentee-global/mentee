@@ -13,13 +13,26 @@
     grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
     grid-gap: 1rem;
 }
-
+.lesson-types{
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.45);
+}
+.dot{
+  height: 10px;
+  width: 10px;
+  background-color: #F2C94C;
+  border-radius: 50%;
+  margin-right: 10px;
+  display: inline-block;
+}
 hr.solid {
   border-top: 3px solid #F2C94C;
 }
 .profile-button{
+    float: right;
     background: #E4BB4F;
     color: white;
+    margin-bottom: 10px;
 }
 .profile-button:hover, .profile-button:focus{
     color:#E4BB4F; 
@@ -32,6 +45,7 @@ hr.solid {
     display: flex;
     padding-top: 10px;
     font-weight: 2rem;
+    padding-bottom: 10px;
 }
 .header-text{
     display: flex;
@@ -48,8 +62,10 @@ hr.solid {
 }
 
 .list-items{
+    display: block;
+    text-align: left;
     padding-left: 27px;
-    padding-bottom: 30px;
+    padding-bottom: 10px;
 }
 
 .card-body{

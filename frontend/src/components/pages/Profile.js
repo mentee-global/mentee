@@ -28,7 +28,7 @@ function Profile() {
       }
     }
     if (!fetchedMentor) {
-      //getMentor();
+      getMentor();
     }
   });
 
@@ -53,17 +53,22 @@ function Profile() {
   };
 
   const getEducations = (educations) => {
-    return educations.map((education) => (
-      <div className="mentor-profile-education">
-        <b>{education.school}</b>
-        <br />
-        {education.education_level}
-        <br />
-        {"Majors: " + education.majors.join(", ")}
-        <br />
-        {education.graduation_year}
-      </div>
-    ));
+    console.log(educations);
+    return educations[0] != null ? (
+      educations.map((education) => (
+        <div className="mentor-profile-education">
+          <b>{education.school}</b>
+          <br />
+          {education.education_level}
+          <br />
+          {"Majors: " + education.majors.join(", ")}
+          <br />
+          {education.graduation_year}
+        </div>
+      ))
+    ) : (
+      <div></div>
+    );
   };
 
   return (
@@ -117,7 +122,13 @@ function Profile() {
             <div className="mentor-profile-heading">
               <b>Education</b>
             </div>
-            <div>{getEducations([mentor.education] || [{}])/* change this once model supports list of education */}</div> 
+            <div>
+              {
+                getEducations([
+                  mentor.education,
+                ]) /* change this once model supports list of education and remove ternary in getEdu*/
+              }
+            </div>
           </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">

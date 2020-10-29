@@ -1,8 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.models import (
     db,
-    Person,
-    Email,
     Education,
     Video,
     MentorProfile,

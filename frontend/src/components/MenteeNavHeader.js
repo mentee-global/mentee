@@ -1,12 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Dropdown, Menu } from "antd";
-import {
-  UserOutlined,
-  BellOutlined,
-  CaretDownOutlined,
-} from "@ant-design/icons";
-
+import { Layout, Button } from "antd";
 import "./css/Navigation.scss";
 
 import mentee_logo from "../resources/mentee.png";
@@ -14,50 +8,40 @@ import mentee_logo from "../resources/mentee.png";
 const { Header } = Layout;
 
 function MenteeNavHeader() {
-  const dropdownMenu = (
-    <Menu className="dropdown-menu">
-      <Menu.Item key="edit-profile">
-        <NavLink to="/profile">
-          <b>Edit Profile</b>
-        </NavLink>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="settings">
-        <NavLink to="/">
-          <b>Settings</b>
-        </NavLink>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="sign-out">
-        <NavLink to="/">
-          <b>Sign Out</b>
-        </NavLink>
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
     <Header className="navigation-header">
-      <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
-      <span>
-        <div className="profile-caret">
-          <Dropdown overlay={dropdownMenu} trigger={["click"]}>
-            <CaretDownOutlined />
-          </Dropdown>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
         </div>
-        <div className="profile-name">
-          <b>Name Here</b>
-          <br />
-          Position Here
+        <div>
+          <NavLink to="/gallery">
+            <Button
+              className="navigation-header-button"
+              style={{ background: "#FCF6E8", color: "#A58123" }}
+            >
+              <b>Find a Mentor</b>
+            </Button>
+          </NavLink>
+          <Button
+            className="navigation-header-button"
+            style={{ background: "#FCF6E8", color: "#A58123" }}
+          >
+            <b>About Us</b>
+          </Button>
+          <Button
+            className="navigation-header-button"
+            style={{ background: "#FCF6E8", color: "#A58123" }}
+          >
+            <b>FAQ</b>
+          </Button>
+          <Button
+            className="navigation-header-button-dark"
+            style={{ background: "#E4BB4F", color: "white" }}
+          >
+            <b>Mentor Log In</b>
+          </Button>
         </div>
-        <div className="profile-picture">
-          <UserOutlined />
-        </div>
-      </span>
-      <div className="notification-bell">
-        <NavLink to="/" className="notification-bell">
-          <BellOutlined />
-        </NavLink>
       </div>
     </Header>
   );

@@ -4,6 +4,10 @@ const instance = axios.create({
   baseURL: "http://localhost:5000",
 });
 
+// This is just for the time being while we get auth up and running
+// TODO: Delete this after auth is done!
+export const mentorID = "5f961535f84a6a4c05255855";
+
 export const fetchMentorByID = (id) => {
   const requestExtension = "/mentor/" + id;
   return instance.get(requestExtension).then(
@@ -70,7 +74,7 @@ export const acceptAppointment = (id) => {
   );
 };
 
-// Endpoint has not been merged yet. Remove this once it is
+// Endpoint has not been merged to main yet. Remove this once it is
 export const deleteAppointment = (id) => {
   const requestExtension = "/appointment/" + id;
   return instance.delete(requestExtension).then(
@@ -82,7 +86,7 @@ export const deleteAppointment = (id) => {
   );
 };
 
-// Endpoint has not been merged yet. Remove this once it is
+// Endpoint has not been merged to main yet. Remove this once it is
 export const getAppointmentsByMentorID = (id) => {
   const requestExtension = "/appointment/mentor/" + id;
   return instance.get(requestExtension).then(

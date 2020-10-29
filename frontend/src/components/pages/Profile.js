@@ -12,41 +12,23 @@ import {
 import { Button, Avatar } from "antd";
 
 import "../css/Profile.scss";
-import { fetchMentorByID } from "../../utils/api.js";
-// This is just for the time being while we get auth up and running
-// TODO: Delete this after auth is done!
-const mentorID = "5f961535f84a6a4c05255855";
+import { fetchMentorByID, mentorID } from "../../utils/api";
 
 function Profile() {
   const [methods, setMethods] = useState(["Zoom", "Bluejeans"]);
-  const [languages, setLanguages] = useState([]);
-  const [specializations, setSpecializations] = useState([]);
-  const [educations, setEducation] = useState([]);
-  const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
-  const [website, setWebsite] = useState("");
-  const [biography, setBiography] = useState("");
-  const [linkedin, setLinkedin] = useState("");
+  const [mentor, setMentor] = useState({});
   const [fetchedMentor, setFetchedMentor] = useState(false);
 
   useEffect(() => {
-    async function getProfile() {
-      const response = await fetchMentorByID(mentorID);
-      if (response) {
-        setName(response.name);
-        setTitle(response.title);
-        setWebsite(response.website);
-        setBiography(response.biography);
-        setLinkedin(response.linkedin);
-        setEducation([response.education]);
-        setSpecializations(response.specializations);
-        setLanguages(response.languages);
-        setBiography(response.biography);
+    async function getMentor() {
+      const mentor_data = await fetchMentorByID(mentorID);
+      setFetchedMentor(true);
+      if (mentor_data) {
+        setMentor(mentor_data);
       }
     }
     if (!fetchedMentor) {
-      getProfile();
-      setFetchedMentor(true);
+      //getMentor();
     }
   });
 
@@ -73,11 +55,13 @@ function Profile() {
   const getEducations = (educations) => {
     return educations.map((education) => (
       <div className="mentor-profile-education">
-        <b>{education["school"]}</b>
+        <b>{education.school}</b>
         <br />
-        {education["education_level"] + ", " + education["major"]}
+        {education.education_level}
         <br />
-        {education["year"]}
+        {"Majors: " + education.majors.join(", ")}
+        <br />
+        {education.graduation_year}
       </div>
     ));
   };
@@ -89,7 +73,7 @@ function Profile() {
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <div className="mentor-profile-name">
-              {name}
+              {mentor.name}
               <Button
                 className="mentor-profile-edit-button"
                 style={{ background: "#E4BB4F", color: "#FFFFFF" }}
@@ -98,7 +82,7 @@ function Profile() {
               </Button>
             </div>
             <div className="mentor-profile-heading">
-              {title} <t className="yellow-dot">•</t>{" "}
+              {mentor.professional_title} <t className="yellow-dot">•</t>{" "}
               {getMeetingMethods(methods)}
             </div>
             <div>
@@ -108,32 +92,32 @@ function Profile() {
               </span>
               <span>
                 <CommentOutlined className="mentor-profile-tag" />
-                {getLanguages(languages)}
+                {getLanguages(mentor.languages || [])}
               </span>
               <span>
                 <LinkOutlined className="mentor-profile-tag" />
-                {website}
+                {mentor.website}
               </span>
               <span>
                 <LinkedinOutlined className="mentor-profile-tag" />
-                {linkedin}
+                {mentor.linkedin}
               </span>
             </div>
             <br />
             <div className="mentor-profile-heading">
               <b>About</b>
             </div>
-            <div className="mentor-profile-about">{biography}</div>
+            <div className="mentor-profile-about">{mentor.biography}</div>
             <br />
             <div className="mentor-profile-heading">
               <b>Specializations</b>
             </div>
-            <div>{getSpecializationTags(specializations)}</div>
+            <div>{getSpecializationTags(mentor.specializations || [])}</div>
             <br />
             <div className="mentor-profile-heading">
               <b>Education</b>
             </div>
-            <div>{getEducations(educations)}</div>
+            <div>{getEducations([mentor.education] || [{}])/* change this once model supports list of education */}</div> 
           </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">

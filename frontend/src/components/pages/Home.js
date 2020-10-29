@@ -6,7 +6,7 @@ function Home() {
     <div>
       Home
       <br />
-      <NavLink to="/appointments">Mentor Portal</NavLink>
+      <NavLink to="/profile">Mentor Portal</NavLink>
     </div>
   );
 }

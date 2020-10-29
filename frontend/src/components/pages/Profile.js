@@ -15,25 +15,26 @@ import "../css/Profile.scss";
 import { fetchMentorByID, mentorID } from "../../utils/api";
 
 function Profile() {
-  const [methods, setMethods] = useState(["Zoom", "Bluejeans"]);
   const [mentor, setMentor] = useState({});
-  const [fetchedMentor, setFetchedMentor] = useState(false);
 
   useEffect(() => {
     async function getMentor() {
       const mentor_data = await fetchMentorByID(mentorID);
-      setFetchedMentor(true);
       if (mentor_data) {
         setMentor(mentor_data);
       }
     }
-    if (!fetchedMentor) {
-      getMentor();
-    }
-  });
+    getMentor();
+  }, []);
 
-  const getMeetingMethods = (methods) => {
-    return methods.map((method, idx) => (idx === 0 ? method : " | " + method));
+  const getMeetingMethods = () => {
+    const in_person = mentor.offers_in_person ? "In person | Online" : "Online";
+    const group_session = mentor.offers_group_appointments
+      ? "Group Meetings | 1-on-1"
+      : "1-on-1";
+    return in_person && group_session
+      ? in_person + " | " + group_session
+      : in_person || group_session;
   };
 
   const getLanguages = (languages) => {
@@ -53,7 +54,11 @@ function Profile() {
   };
 
   const getEducations = (educations) => {
-    console.log(educations);
+    if (educations == null) {
+      return <div></div>;
+    }
+    // Change this to just educations.map once educations field is updated as a list in mongodb
+    // Current it is sent as a single object
     return educations[0] != null ? (
       educations.map((education) => (
         <div className="mentor-profile-education">
@@ -74,7 +79,7 @@ function Profile() {
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
-        <Avatar size={120} icon={<UserOutlined />} />
+        <Avatar size={120} src={mentor.picture} icon={<UserOutlined />} />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <div className="mentor-profile-name">
@@ -88,7 +93,7 @@ function Profile() {
             </div>
             <div className="mentor-profile-heading">
               {mentor.professional_title} <t className="yellow-dot">•</t>{" "}
-              {getMeetingMethods(methods)}
+              {getMeetingMethods()}
             </div>
             <div>
               <span>

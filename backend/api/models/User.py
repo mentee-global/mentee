@@ -1,6 +1,5 @@
 from api.core import Mixin
 from .base import db
-from api.models import Email
 from flask_mongoengine import Document
 from mongoengine import *
 

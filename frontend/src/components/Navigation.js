@@ -15,8 +15,12 @@ function Navigation(props) {
       <Layout className="navigation-layout">
         {/* add prop to choose between mentor/mentee navbars */}
         <MentorNavHeader />
-        <Layout>
-          <NavigationSidebar selectedPage={props.page} />
+        <Layout className="layout-body">
+          {/* <NavigationSidebar selectedPage={props.page} /> */}
+          <NavigationSidebar
+            className="navigation-sidebar"
+            selectedPage={props.page}
+          />
           <Content className="navigation-content">{props.content}</Content>
         </Layout>
       </Layout>

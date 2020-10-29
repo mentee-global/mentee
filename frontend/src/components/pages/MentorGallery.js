@@ -128,12 +128,12 @@ function MentorCard({
         </h3>
         <Text className="list-items">{specializations.join(", ")}</Text>
         <h4>
-          <LinkOutlined />
-          <a href={website}>{website}</a>
+          <LinkOutlined style={{ fontSize: "20px" }}/>
+          <a className="links" href={website}>{website}</a>
         </h4>
         <h4>
-          <LinkedinOutlined />
-          <a href={linkedin}>linkedin</a>
+          <LinkedinOutlined style={{ fontSize: "20px" }}/>
+          <a className="links" href={linkedin}>linkedin</a>
         </h4>
         <hr class="solid" />
         <Button className="profile-button" shape="round" size="medium">

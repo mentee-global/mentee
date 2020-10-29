@@ -48,6 +48,9 @@ def create_mentor_profile():
 
     new_mentor = MentorProfile(
         name=data["name"],
+        location=data["location"],
+        email=data["email"],
+        phone_number=data["phone_number"],
         professional_title=data["professional_title"],
         linkedin=data["linkedin"],
         website=data["website"],
@@ -115,6 +118,9 @@ def edit_mentor(id):
     mentor.professional_title = data.get(
         "professional_title", mentor.professional_title
     )
+    mentor.location = data.get("location", mentor.location)
+    mentor.email = data.get("email", mentor.email)
+    mentor.phone_number = data.get("phone_number", mentor.phone_number)
     mentor.specializations = data.get("specializations", mentor.specializations)
     mentor.languages = data.get("languages", mentor.languages)
     mentor.offers_group_appointments = data.get(

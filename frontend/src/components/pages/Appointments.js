@@ -7,6 +7,7 @@ import {
   InfoCircleFilled,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
+import MentorCalendar from "components/MentorCalendar";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -203,7 +204,7 @@ function Appointments() {
         {renderTab(currentTab)}
       </Col>
       <Col span={6} style={styles.calendar}>
-        <Calendar></Calendar>
+        <MentorCalendar></MentorCalendar>
       </Col>
     </Row>
   );

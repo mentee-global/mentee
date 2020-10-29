@@ -10,8 +10,8 @@ const {Text} = Typography;
 
 function MentorCalendar() {
     var days = ['Sunday','Monday','Tuesday','Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const [date, setDate] = useState(moment('2017-01-25'));
-    const [value, setValue] = useState(moment('2017-01-25'));
+    const [date, setDate] = useState(moment());
+    const [value, setValue] = useState(moment());
     
 
     const sampleJSON = {

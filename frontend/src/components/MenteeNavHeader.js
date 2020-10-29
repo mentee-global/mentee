@@ -10,9 +10,11 @@ const { Header } = Layout;
 function MenteeNavHeader() {
   return (
     <Header className="navigation-header">
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="navigation-mentee-flexbox">
         <div>
-          <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
+          <NavLink to="/">
+            <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
+          </NavLink>
         </div>
         <div>
           <NavLink to="/gallery">

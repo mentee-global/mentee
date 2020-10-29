@@ -74,7 +74,7 @@ export const acceptAppointment = (id) => {
   );
 };
 
-// Endpoint has not been merged to main yet. Remove this once it is
+// Endpoint has not been merged to master yet. Remove this once it is
 export const deleteAppointment = (id) => {
   const requestExtension = "/appointment/" + id;
   return instance.delete(requestExtension).then(
@@ -86,7 +86,7 @@ export const deleteAppointment = (id) => {
   );
 };
 
-// Endpoint has not been merged to main yet. Remove this once it is
+// Endpoint has not been merged to master yet. Remove this once it is
 export const getAppointmentsByMentorID = (id) => {
   const requestExtension = "/appointment/mentor/" + id;
   return instance.get(requestExtension).then(

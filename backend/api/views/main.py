@@ -48,9 +48,7 @@ def create_mentor_profile():
 
     new_mentor = MentorProfile(
         name=data["name"],
-        location=data["location"],
         email=data["email"],
-        phone_number=data["phone_number"],
         professional_title=data["professional_title"],
         linkedin=data["linkedin"],
         website=data["website"],
@@ -62,7 +60,8 @@ def create_mentor_profile():
     )
 
     new_mentor.biography = data.get("biography")
-
+    new_mentor.phone_number = data.get("phone_number")
+    new_mentor.location = data.get("location")
     if "education" in data:
         education_data = data["education"]
         validate_education = EducationForm.from_json(education_data)

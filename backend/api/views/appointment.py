@@ -12,9 +12,6 @@ def get_requests_by_mentor(mentor_id):
     return create_response(data={"requests": requests})
 
 
-@appointment.route("/appointment/accept/<id>", methods=["PUT"])
-def put_appointment(id):
-=======
 # POST request for Mentee Appointment
 @appointment.route("/appointment", methods=["POST"])
 def create_appointment():

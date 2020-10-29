@@ -10,6 +10,9 @@ class MentorProfile(Document, Mixin):
 
     uid = ""  # TODO: Add Uid field
     name = StringField(required=True)
+    location = StringField()
+    email = StringField(required=True)
+    phone_number = StringField()
     professional_title = StringField(required=True)
     linkedin = StringField(required=True)
     website = StringField(required=True)

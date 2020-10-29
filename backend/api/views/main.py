@@ -1,20 +1,12 @@
 from flask import Blueprint, request, jsonify
 from api.models import (
     db,
-<<<<<<< HEAD
-    Person,
-    Email,
-=======
->>>>>>> 9a0096931cf1c63e92fd79273f0f36bcacfba8ae
     Education,
     Video,
     MentorProfile,
     AppointmentRequest,
 )
-<<<<<<< HEAD
-=======
 from api.models import db, Education, Video, MentorProfile
->>>>>>> 9a0096931cf1c63e92fd79273f0f36bcacfba8ae
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     MentorForm,

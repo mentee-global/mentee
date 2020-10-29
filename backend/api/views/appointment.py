@@ -10,23 +10,6 @@ appointment = Blueprint("appointment", __name__)
 def get_requests_by_mentor(mentor_id):
     requests = AppointmentRequest.objects(mentor_id=mentor_id)
     return create_response(data={"requests": requests})
-<<<<<<< HEAD
-
-
-# DELETE request for appointment by appointment id
-@appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"])
-def delete_request(appointment_id):
-    try:
-        request = AppointmentRequest.objects.get(id=appointment_id)
-        request.delete()
-    except:
-        msg = "The request you attempted to delete was not found"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    return create_response(data={"deleted id": appointment_id})
-
-=======
->>>>>>> 9a0096931cf1c63e92fd79273f0f36bcacfba8ae
 
 
 # POST request for Mentee Appointment
@@ -88,4 +71,17 @@ def put_appointment(id):
     mentor.save()
     appointment.save()
 
+    return create_response(status=200, message=f"Success")
+
+
+# DELETE request for appointment by appointment id
+@appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"])
+def delete_request(appointment_id):
+    try:
+        request = AppointmentRequest.objects.get(id=appointment_id)
+    except:
+        msg = "The request you attempted to delete was not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    request.delete()
     return create_response(status=200, message=f"Success")

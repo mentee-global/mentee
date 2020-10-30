@@ -42,7 +42,11 @@ function App() {
       <Route
         path="/gallery"
         component={() => (
-          <Navigation content={<MentorGallery />} page="gallery" needsAuth={false} />
+          <Navigation
+            content={<MentorGallery />}
+            page="gallery"
+            needsAuth={false}
+          />
         )}
       />
     </Router>

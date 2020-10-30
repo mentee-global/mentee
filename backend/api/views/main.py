@@ -70,12 +70,12 @@ def create_mentor_profile():
         if is_invalid:
             return create_response(status=422, message=msg)
 
-        new_education = Education(
-            education_level=education_data["education_level"],
-            majors=education_data["majors"],
-            school=education_data["school"],
-            graduation_year=education_data["graduation_year"],
-        )
+        new_education = [Education(
+            education_level=education["education_level"],
+            majors=education["majors"],
+            school=education["school"],
+            graduation_year=education["graduation_year"],
+        ) for education in education_data]
         new_mentor.education = new_education
 
     if "videos" in data:
@@ -134,12 +134,14 @@ def edit_mentor(id):
     # Create education object
     if "education" in data:
         education_data = data.get("education")
-        mentor.education = Education(
-            education_level=education_data.get("education_level"),
-            majors=education_data.get("majors"),
-            school=education_data.get("school"),
-            graduation_year=education_data.get("graduation_year"),
-        )
+        mentor.education=[
+            Education(
+                education_level=education.get("education_level"), 
+                majors=education.get("majors"), 
+                school=education.get("school"),
+                graduation_year=education.get("graduation_year"))
+                for education in education_data
+        ]
 
     # Create video objects for each item in list
     if "videos" in data:

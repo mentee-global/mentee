@@ -17,7 +17,7 @@ class MentorProfile(Document, Mixin):
     linkedin = StringField(required=True)
     website = StringField(required=True)
     picture = StringField(required=True)
-    education = EmbeddedDocumentField(Education)
+    education = ListField(EmbeddedDocumentField(Education))
     languages = ListField(StringField(), required=True)
     specializations = ListField(StringField(), required=True)
     biography = StringField(required=False)

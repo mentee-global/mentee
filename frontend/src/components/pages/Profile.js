@@ -57,8 +57,9 @@ function Profile() {
     if (educations == null) {
       return <div></div>;
     }
-    // Change this to just educations.map once educations field is updated as a list in mongodb
-    // Current it is sent as a single object
+    // Issue #32
+    // Change this from a ternary to just educations.map once educations field is updated as a list in mongodb
+    // Currently it is sent as a single object Issue #32
     return educations[0] != null ? (
       educations.map((education) => (
         <div className="mentor-profile-education">
@@ -96,22 +97,34 @@ function Profile() {
               {getMeetingMethods()}
             </div>
             <div>
+              {mentor.location && (
+                <span>
+                  <EnvironmentOutlined className="mentor-profile-tag-first" />
+                  {mentor.location}
+                </span>
+              )}
               <span>
-                <EnvironmentOutlined className="mentor-profile-tag-first" />
-                Location
-              </span>
-              <span>
-                <CommentOutlined className="mentor-profile-tag" />
+                <CommentOutlined
+                  className={
+                    !mentor.location
+                      ? "mentor-profile-tag-first"
+                      : "mentor-profile-tag"
+                  }
+                />
                 {getLanguages(mentor.languages || [])}
               </span>
-              <span>
-                <LinkOutlined className="mentor-profile-tag" />
-                {mentor.website}
-              </span>
-              <span>
-                <LinkedinOutlined className="mentor-profile-tag" />
-                {mentor.linkedin}
-              </span>
+              {mentor.website && (
+                <span>
+                  <LinkOutlined className="mentor-profile-tag" />
+                  {mentor.website}
+                </span>
+              )}
+              {mentor.linkedin && (
+                <span>
+                  <LinkedinOutlined className="mentor-profile-tag" />
+                  {mentor.linkedin}
+                </span>
+              )}
             </div>
             <br />
             <div className="mentor-profile-heading">
@@ -131,7 +144,7 @@ function Profile() {
               {
                 getEducations([
                   mentor.education,
-                ]) /* change this once model supports list of education and remove ternary in getEdu*/
+                ]) /*For issue #32 change this once model supports list of education and remove ternary in getEdu*/
               }
             </div>
           </div>
@@ -140,11 +153,15 @@ function Profile() {
               Contact Info
             </legend>
             <MailOutlined className="mentor-profile-contact-icon" />
-            mentoremail@email.com
+            {mentor.email}
             <br />
-            <PhoneOutlined className="mentor-profile-contact-icon" />
-            1-234-567-8901
-            <br />
+            {mentor.phone_number && (
+              <div>
+                <PhoneOutlined className="mentor-profile-contact-icon" />
+                {mentor.phone_number}
+                <br />
+              </div>
+            )}
             <br />
             <Link to="/" className="mentor-profile-contact-edit">
               Edit

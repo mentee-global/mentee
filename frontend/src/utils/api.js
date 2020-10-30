@@ -5,10 +5,10 @@ const instance = axios.create({
 });
 
 // This is just for the time being while we get auth up and running
-// TODO: Delete this after auth is done
-// Also if there are other ID's you want to test add them into here.
+// TODO: Delete these after auth is done
+// Also if there are other ID's you want to test add them into here and import them into your file
 export const mentorID = "5f961535f84a6a4c05255855";
-export const appointmentID = "";
+export const appointmentID = "5f93224191f097b50954408c";
 
 export const fetchMentorByID = (id) => {
   const requestExtension = "/mentor/" + id;
@@ -16,7 +16,6 @@ export const fetchMentorByID = (id) => {
     (response) => response.data.result.mentor,
     (err) => {
       console.error(err);
-      return null;
     }
   );
 };
@@ -27,7 +26,6 @@ export const fetchMentors = () => {
     (response) => response.data.result.mentors,
     (err) => {
       console.error(err);
-      return null;
     }
   );
 };
@@ -72,7 +70,7 @@ export const acceptAppointment = (id) => {
   );
 };
 
-// Endpoint has not been merged to master yet. Remove this once it is
+// Endpoint does not exist yet. Remove this comment once it does
 export const deleteAppointment = (id) => {
   const requestExtension = "/appointment/" + id;
   return instance.delete(requestExtension).then(
@@ -89,7 +87,6 @@ export const getAppointmentsByMentorID = (id) => {
     (response) => response.data.result.requests,
     (err) => {
       console.error(err);
-      return null;
     }
   );
 };

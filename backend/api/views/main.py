@@ -64,19 +64,21 @@ def create_mentor_profile():
     new_mentor.location = data.get("location")
     if "education" in data:
         education_data = data["education"]
-        validate_education = EducationForm.from_json(education_data)
+        
+        for education in education_data:
+            validate_education = EducationForm.from_json(education)
 
-        msg, is_invalid = is_invalid_form(validate_education)
-        if is_invalid:
-            return create_response(status=422, message=msg)
-
-        new_education = [Education(
-            education_level=education["education_level"],
-            majors=education["majors"],
-            school=education["school"],
-            graduation_year=education["graduation_year"],
-        ) for education in education_data]
-        new_mentor.education = new_education
+            msg, is_invalid = is_invalid_form(validate_education)
+            if is_invalid:
+                return create_response(status=422, message=msg)
+            
+            new_education = Education(
+                education_level=education["education_level"],
+                majors=education["majors"],
+                school=education["school"],
+                graduation_year=education["graduation_year"],
+            )
+            new_mentor.education.append(new_education)
 
     if "videos" in data:
         videos_data = data["videos"]

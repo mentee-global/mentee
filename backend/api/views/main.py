@@ -1,11 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import (
-    db,
-    Education,
-    Video,
-    MentorProfile,
-    AppointmentRequest,
-)
+from api.models import db, Education, Video, MentorProfile, AppointmentRequest
 from api.models import db, Education, Video, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
@@ -64,14 +58,14 @@ def create_mentor_profile():
     new_mentor.location = data.get("location")
     if "education" in data:
         education_data = data["education"]
-        
+
         for education in education_data:
             validate_education = EducationForm.from_json(education)
 
             msg, is_invalid = is_invalid_form(validate_education)
             if is_invalid:
                 return create_response(status=422, message=msg)
-            
+
             new_education = Education(
                 education_level=education["education_level"],
                 majors=education["majors"],
@@ -136,13 +130,14 @@ def edit_mentor(id):
     # Create education object
     if "education" in data:
         education_data = data.get("education")
-        mentor.education=[
+        mentor.education = [
             Education(
-                education_level=education.get("education_level"), 
-                majors=education.get("majors"), 
+                education_level=education.get("education_level"),
+                majors=education.get("majors"),
                 school=education.get("school"),
-                graduation_year=education.get("graduation_year"))
-                for education in education_data
+                graduation_year=education.get("graduation_year"),
+            )
+            for education in education_data
         ]
 
     # Create video objects for each item in list

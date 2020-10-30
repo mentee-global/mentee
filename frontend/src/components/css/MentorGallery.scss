@@ -11,6 +11,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
     grid-gap: 1rem;
+    overflow-y: hidden;
 }
 .lesson-types{
     font-style: italic;

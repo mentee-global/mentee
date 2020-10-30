@@ -12,45 +12,8 @@ const { Title, Text } = Typography;
 
 function MentorGallery() {
   // TODO: populate mentors list with GET mentor request
-  const mentor1 =  {
-    name: "test",
-    professional_title: "Professional Programmer",
-    specializations: [
-      "cooking",
-      "programming",
-      "stuff",
-      "more stuff",
-      "loremipsumdelor",
-    ],
-    location: "Chicago, IL",
-    languages: ["english", "other"],
-    website: "https://google.com",
-    linkedin: "https://linkedin.com",
-    offers_in_person: false,
-    offers_group_appointments: true,
-  };
-  const mentors = [
-    mentor1,
-    mentor1,
-    mentor1,
-    {
-      name: "test",
-      professional_title: "Professional Programmer",
-      specializations: [
-        "cooking",
-        "programming",
-        "stuff",
-        "more stuff",
-        "loremipsumdelor",
-      ],
-      location: "Chicago, IL",
-      languages: ["english", "other"],
-      website: "https://google.com",
-      linkedin: "https://linkedin.com",
-      offers_in_person: false,
-      offers_group_appointments: true,
-    },
-  ];
+  const mentors = [];
+  
   function getLessonTypes(offers_group_appointments, offers_in_person) {
     let output = "1-on-1 | virtual";
     if (offers_group_appointments) {

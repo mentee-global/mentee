@@ -32,9 +32,7 @@ function Profile() {
     const group_session = mentor.offers_group_appointments
       ? "Group Meetings | 1-on-1"
       : "1-on-1";
-    return in_person && group_session
-      ? in_person + " | " + group_session
-      : in_person || group_session;
+    return in_person + " | " + group_session;
   };
 
   const getLanguages = (languages) => {
@@ -54,27 +52,23 @@ function Profile() {
   };
 
   const getEducations = (educations) => {
-    if (educations == null) {
-      return <div></div>;
+    if (educations == null || educations[0] == null) {
+      return;
     }
-    // Issue #32
+    // TODO: Issue #32
     // Change this from a ternary to just educations.map once educations field is updated as a list in mongodb
-    // Currently it is sent as a single object Issue #32
-    return educations[0] != null ? (
-      educations.map((education) => (
-        <div className="mentor-profile-education">
-          <b>{education.school}</b>
-          <br />
-          {education.education_level}
-          <br />
-          {"Majors: " + education.majors.join(", ")}
-          <br />
-          {education.graduation_year}
-        </div>
-      ))
-    ) : (
-      <div></div>
-    );
+    // Currently it is sent as a single object
+    return educations.map((education) => (
+      <div className="mentor-profile-education">
+        <b>{education.school}</b>
+        <br />
+        {education.education_level}
+        <br />
+        {"Majors: " + education.majors.join(", ")}
+        <br />
+        {education.graduation_year}
+      </div>
+    ));
   };
 
   return (
@@ -144,7 +138,7 @@ function Profile() {
               {
                 getEducations([
                   mentor.education,
-                ]) /*For issue #32 change this once model supports list of education and remove ternary in getEdu*/
+                ]) /*TODO: issue #32 change this once model supports list of education and remove ternary in getEdu*/
               }
             </div>
           </div>

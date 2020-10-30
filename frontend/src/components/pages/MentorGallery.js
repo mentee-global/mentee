@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import { LinkOutlined, LinkedinOutlined } from "@ant-design/icons";
-import Location from "../../resources/location.svg";
-import Specializations from "../../resources/specialization.svg";
-import Picture from "../../resources/default-picture.svg";
+import React from "react";
+import { LinkOutlined, LinkedinOutlined, StarOutlined, EnvironmentOutlined, UserOutlined} from "@ant-design/icons";
 import "../css/MentorGallery.scss";
-import { Typography, Button } from "antd";
+import { Avatar,Typography, Button } from "antd";
 const { Title, Text } = Typography;
 
 function MentorGallery() {
+  // TODO: populate mentors list with GET mentor request
   const mentors = [
     {
       name: "test",
@@ -46,10 +44,10 @@ function MentorGallery() {
   ];
   function getLessonTypes(offers_group_appointments, offers_in_person) {
     let output = "1-on-1 | virtual";
-    if (offers_group_appointments == true) {
+    if (offers_group_appointments) {
       output += " | " + "group";
     }
-    if (offers_in_person == true) {
+    if (offers_in_person) {
       output += " | " + "in person";
     }
     return output;
@@ -59,7 +57,6 @@ function MentorGallery() {
     <div className="mentor-container">
       {mentors.map(
         (mentor, key) => (
-          console.log(mentor.name),
           (
             <MentorCard
               key={key}
@@ -94,21 +91,21 @@ function MentorCard({
   linkedin,
 }) {
   if (picture == null) {
-    picture = Picture;
+    
   }
   return (
     <div className="mentor-card">
       <div className="card-body">
         <div className="card-header">
-          <img src={picture} />
+          <Avatar size={90} icon={getPicture(picture)} />
           <div className="header-text">
-            <Title style={{ margin: 0 }} className="title-text">
+            <Title style={styles.title} className="title-text">
               {name}
             </Title>
-            <Title type="secondary" style={{ margin: 0 }} level={5}>
+            <Title style={styles.title} type="secondary" level={5}>
               {professional_title}
             </Title>
-            <Title type="secondary" style={{ margin: 0 }} level={5}>
+            <Title style={styles.title} type="secondary" level={5}>
               Speaks: {languages.join(", ")}
             </Title>
           </div>
@@ -118,23 +115,23 @@ function MentorCard({
           {lesson_types}
         </h3>
         <h3 className="headers">
-          <img className="header-icon" src={Location} />
+          <EnvironmentOutlined style={styles.icon}/>
           Location:
         </h3>
         <Text className="list-items">{location}</Text>
         <h3 className="headers">
-          <img className="header-icon" src={Specializations} />
+          <StarOutlined style={styles.icon} />
           Specializations:
         </h3>
         <Text className="list-items">{specializations.join(", ")}</Text>
         <h4>
-          <LinkOutlined style={{ fontSize: "20px" }} />
+          <LinkOutlined style={styles.icon} />
           <a className="links" href={website}>
             {website}
           </a>
         </h4>
         <h4>
-          <LinkedinOutlined style={{ fontSize: "20px" }} />
+          <LinkedinOutlined style={styles.icon} />
           <a className="links" href={linkedin}>
             linkedin
           </a>
@@ -147,5 +144,23 @@ function MentorCard({
     </div>
   );
 }
+
+function getPicture(picture) {
+  if (picture == null) {
+    return <UserOutlined/>
+  } else {
+    return <img src={picture}/>
+  }
+}
+
+const styles =  {
+  title: {
+    margin: 0,
+  },
+  icon: {
+    fontSize: "20px",
+    "padding-right": "7px",
+  },
+};
 
 export default MentorGallery;

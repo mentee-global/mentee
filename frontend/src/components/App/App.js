@@ -4,7 +4,6 @@ import Appointments from "components/pages/Appointments";
 import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
-import Gallery from "components/pages/Gallery";
 import Navigation from "components/Navigation";
 import MentorGallery from "components/pages/MentorGallery";
 
@@ -43,13 +42,7 @@ function App() {
       <Route
         path="/gallery"
         component={() => (
-          <Navigation content={<Gallery />} page="gallery" needsAuth={false} />
-        )}
-      />
-      <Route
-        path="/mentee/mentorgallery"
-        component={() => (
-          <Navigation content={<MentorGallery />} page="mentorgallery" />
+          <Navigation content={<MentorGallery />} page="gallery" needsAuth={false} />
         )}
       />
     </Router>

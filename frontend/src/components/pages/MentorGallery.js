@@ -58,7 +58,6 @@ function MentorCard({
   website,
   linkedin,
 }) {
-
   return (
     <div className="mentor-card">
       <div className="card-body">

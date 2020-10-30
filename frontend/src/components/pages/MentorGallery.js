@@ -1,7 +1,13 @@
 import React from "react";
-import { LinkOutlined, LinkedinOutlined, StarOutlined, EnvironmentOutlined, UserOutlined} from "@ant-design/icons";
+import {
+  LinkOutlined,
+  LinkedinOutlined,
+  StarOutlined,
+  EnvironmentOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import "../css/MentorGallery.scss";
-import { Avatar,Typography, Button } from "antd";
+import { Avatar, Typography, Button } from "antd";
 const { Title, Text } = Typography;
 
 function MentorGallery() {
@@ -55,26 +61,22 @@ function MentorGallery() {
 
   return (
     <div className="mentor-container">
-      {mentors.map(
-        (mentor, key) => (
-          (
-            <MentorCard
-              key={key}
-              name={mentor.name}
-              languages={mentor.languages}
-              professional_title={mentor.professional_title}
-              location={mentor.location}
-              specializations={mentor.specializations}
-              website={mentor.website}
-              linkedin={mentor.linkedin}
-              lesson_types={getLessonTypes(
-                mentor.offers_group_appointments,
-                mentor.offers_in_person
-              )}
-            />
-          )
-        )
-      )}
+      {mentors.map((mentor, key) => (
+        <MentorCard
+          key={key}
+          name={mentor.name}
+          languages={mentor.languages}
+          professional_title={mentor.professional_title}
+          location={mentor.location}
+          specializations={mentor.specializations}
+          website={mentor.website}
+          linkedin={mentor.linkedin}
+          lesson_types={getLessonTypes(
+            mentor.offers_group_appointments,
+            mentor.offers_in_person
+          )}
+        />
+      ))}
     </div>
   );
 }
@@ -91,7 +93,6 @@ function MentorCard({
   linkedin,
 }) {
   if (picture == null) {
-    
   }
   return (
     <div className="mentor-card">
@@ -115,7 +116,7 @@ function MentorCard({
           {lesson_types}
         </h3>
         <h3 className="headers">
-          <EnvironmentOutlined style={styles.icon}/>
+          <EnvironmentOutlined style={styles.icon} />
           Location:
         </h3>
         <Text className="list-items">{location}</Text>
@@ -147,13 +148,13 @@ function MentorCard({
 
 function getPicture(picture) {
   if (picture == null) {
-    return <UserOutlined/>
+    return <UserOutlined />;
   } else {
-    return <img src={picture}/>
+    return <img src={picture} />;
   }
 }
 
-const styles =  {
+const styles = {
   title: {
     margin: 0,
   },

@@ -1,8 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function Home() {
-  return <div>Home</div>;
+  return (
+    <div>
+      Home
+      <br />
+      <NavLink to="/profile">Mentor Portal</NavLink>
+    </div>
+  );
 }
 
 export default Home;

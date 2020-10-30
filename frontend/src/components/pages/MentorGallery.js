@@ -58,8 +58,7 @@ function MentorCard({
   website,
   linkedin,
 }) {
-  if (picture == null) {
-  }
+
   return (
     <div className="mentor-card">
       <div className="card-body">
@@ -113,7 +112,7 @@ function MentorCard({
 }
 
 function getPicture(picture) {
-  if (picture == null) {
+  if (!picture) {
     return <UserOutlined />;
   } else {
     return <img src={picture} />;

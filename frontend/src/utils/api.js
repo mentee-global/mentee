@@ -84,7 +84,7 @@ export const deleteAppointment = (id) => {
 export const getAppointmentsByMentorID = (id) => {
   const requestExtension = "/appointment/mentor/" + id;
   return instance.get(requestExtension).then(
-    (response) => response.data.result.requests,
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }

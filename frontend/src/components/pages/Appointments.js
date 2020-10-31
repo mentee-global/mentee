@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Calendar, Col, Row } from "antd";
 import {
   ClockCircleOutlined,
@@ -7,6 +7,8 @@ import {
   InfoCircleFilled,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
+import { getAppointmentsByMentorID, mentorID } from "../../utils/api";
+import { formatAppointments } from "../../utils/dateFormatting";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -29,6 +31,17 @@ const Tabs = Object.freeze({
 
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
+  const [appointments, setAppointments] = useState({});
+
+  useEffect(() => {
+    async function getAppointments() {
+      const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
+      const formattedAppointments = formatAppointments(appointmentsResponse);
+
+      setAppointments(formattedAppointments);
+    }
+    getAppointments();
+  }, []);
 
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
@@ -147,6 +160,10 @@ function Appointments() {
   };
 
   const Appointments = ({ data }) => {
+    if (data == null) {
+      return <div></div>;
+    }
+
     return (
       <div>
         <b className="appointment-tabs-title">{currentTab.title}</b>
@@ -181,7 +198,7 @@ function Appointments() {
       case Tabs.upcoming: // Fall through
       case Tabs.pending: // Fall through
       case Tabs.past:
-        return <Appointments data={[]} />;
+        return <Appointments data={appointments[currentTab.key]} />;
       case Tabs.availability:
         return <AvailabilityTab />;
       default:

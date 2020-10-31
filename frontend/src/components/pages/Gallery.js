@@ -56,9 +56,7 @@ function Gallery() {
     </div>
   );
 }
-
-function MentorCard({
-  name,
+/*  name,
   picture,
   languages,
   professional_title,
@@ -66,48 +64,48 @@ function MentorCard({
   lesson_types,
   specializations,
   website,
-  linkedin,
-}) {
+  linkedin,*/
+function MentorCard(props) {
   return (
     <div className="mentor-card">
       <div className="card-body">
         <div className="card-header">
-          <Avatar size={90} icon={getPicture(picture)} />
+          <Avatar size={90} icon={getPicture(props.picture)} />
           <div className="header-text">
             <Title style={styles.title} className="title-text">
-              {name}
+              {props.name}
             </Title>
             <Title style={styles.title} type="secondary" level={5}>
-              {professional_title}
+              {props.professional_title}
             </Title>
             <Title style={styles.title} type="secondary" level={5}>
-              Speaks: {languages.join(", ")}
+              Speaks: {props.languages.join(", ")}
             </Title>
           </div>
         </div>
         <h3 className="lesson-types">
           <span class="dot" />
-          {lesson_types}
+          {props.lesson_types}
         </h3>
         <h3 className="headers">
           <EnvironmentOutlined style={styles.icon} />
           Location:
         </h3>
-        <Text className="list-items">{location}</Text>
+        <Text className="list-items">{props.location}</Text>
         <h3 className="headers">
           <StarOutlined style={styles.icon} />
           Specializations:
         </h3>
-        <Text className="list-items">{specializations.join(", ")}</Text>
+        <Text className="list-items">{props.specializations.join(", ")}</Text>
         <h4>
           <LinkOutlined style={styles.icon} />
-          <a className="links" href={website}>
-            {website}
+          <a className="links" href={props.website}>
+            {props.website}
           </a>
         </h4>
         <h4>
           <LinkedinOutlined style={styles.icon} />
-          <a className="links" href={linkedin}>
+          <a className="links" href={props.linkedin}>
             linkedin
           </a>
         </h4>

@@ -12,7 +12,7 @@ import { Avatar, Typography, Button } from "antd";
 const { Title, Text } = Typography;
 
 function Gallery() {
-  // TODO: populate mentors list with GET mentor request
+  
   const [mentors, setMentors] = useState([]);
 
   useEffect(() => {

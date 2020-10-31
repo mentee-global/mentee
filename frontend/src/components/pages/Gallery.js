@@ -12,7 +12,6 @@ import { Avatar, Typography, Button } from "antd";
 const { Title, Text } = Typography;
 
 function Gallery() {
-  
   const [mentors, setMentors] = useState([]);
 
   useEffect(() => {

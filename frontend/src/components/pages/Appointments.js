@@ -7,8 +7,8 @@ import {
   InfoCircleFilled,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
-import { getAppointmentsByMentorID, mentorID } from "../../utils/api";
-import { formatAppointments } from "../../utils/dateFormatting";
+import { acceptAppointment, getAppointmentsByMentorID, mentorID, deleteAppointment } from '../../utils/api' 
+import { formatAppointments } from '../../utils/dateFormatting'
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -32,16 +32,28 @@ const Tabs = Object.freeze({
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
+  const [clickAppointment, setClickAppointment] = useState(false)
 
   useEffect(() => {
     async function getAppointments() {
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);
 
-      setAppointments(formattedAppointments);
+      if (formattedAppointments) {
+        setAppointments(formattedAppointments)
+      }
     }
     getAppointments();
   }, []);
+
+  async function declineAppointmentClick(id) {
+    await deleteAppointment(id);
+    
+  };
+
+  async function acceptAppointmentClick(id) {
+    await acceptAppointment(id);
+  }
 
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
@@ -76,7 +88,7 @@ function Appointments() {
     );
   };
 
-  const getAppointmentButton = (tab) => {
+  const getAppointmentButton = (tab, id) => {
     if (tab === Tabs.upcoming) {
       return (
         <Button
@@ -102,6 +114,7 @@ function Appointments() {
             }
             type="text"
             shape="circle"
+            onClick={acceptAppointmentClick(id)}
           ></Button>
           <Button
             className="appointment-accept"
@@ -113,6 +126,7 @@ function Appointments() {
             }
             type="text"
             shape="circle"
+            onClick={declineAppointmentClick(id)}
           ></Button>
         </div>
       );
@@ -120,6 +134,7 @@ function Appointments() {
   };
 
   const Appointment = (props) => {
+
     return (
       <div className="appointment-card">
         <div>
@@ -129,7 +144,7 @@ function Appointments() {
           </div>
           <div className="appointment-description">{props.description}</div>
         </div>
-        {getAppointmentButton(currentTab)}
+        {getAppointmentButton(currentTab, props.id)}
       </div>
     );
   };
@@ -183,6 +198,7 @@ function Appointments() {
                     name={appointment.name}
                     time={appointment.time}
                     description={appointment.description}
+                    id={appointment.id}
                   />
                 ))}
               </div>

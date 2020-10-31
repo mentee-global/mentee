@@ -7,8 +7,13 @@ import {
   InfoCircleFilled,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
-import { acceptAppointment, getAppointmentsByMentorID, mentorID, deleteAppointment } from '../../utils/api' 
-import { formatAppointments } from '../../utils/dateFormatting'
+import {
+  acceptAppointment,
+  getAppointmentsByMentorID,
+  mentorID,
+  deleteAppointment,
+} from "../../utils/api";
+import { formatAppointments } from "../../utils/dateFormatting";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -32,7 +37,7 @@ const Tabs = Object.freeze({
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
-  const [clickAppointment, setClickAppointment] = useState(false)
+  const [clickAppointment, setClickAppointment] = useState(false);
 
   useEffect(() => {
     async function getAppointments() {
@@ -40,7 +45,7 @@ function Appointments() {
       const formattedAppointments = formatAppointments(appointmentsResponse);
 
       if (formattedAppointments) {
-        setAppointments(formattedAppointments)
+        setAppointments(formattedAppointments);
       }
     }
     getAppointments();
@@ -48,8 +53,7 @@ function Appointments() {
 
   async function declineAppointmentClick(id) {
     await deleteAppointment(id);
-    
-  };
+  }
 
   async function acceptAppointmentClick(id) {
     await acceptAppointment(id);
@@ -134,7 +138,6 @@ function Appointments() {
   };
 
   const Appointment = (props) => {
-
     return (
       <div className="appointment-card">
         <div>

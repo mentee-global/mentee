@@ -1,0 +1,42 @@
+.home-background {
+  background-color: #F8D15B;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-content {
+  height: 90%;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.home-text-container {
+  height: 50%;
+  width: 50%;
+}
+
+.home-header {
+  color: white;
+  font-weight: bold;
+  font-size: 300%;
+}
+
+.home-text {
+  color: #644A0A;
+  font-weight: bold;
+}
+
+.home-button {
+  color: white;
+  border-radius: 13px;
+}
+
+.home-honeycomb {
+  height: 60vh;
+  width: 60vh;
+}

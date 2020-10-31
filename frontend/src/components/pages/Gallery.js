@@ -56,15 +56,7 @@ function Gallery() {
     </div>
   );
 }
-/*  name,
-  picture,
-  languages,
-  professional_title,
-  location,
-  lesson_types,
-  specializations,
-  website,
-  linkedin,*/
+
 function MentorCard(props) {
   return (
     <div className="mentor-card">

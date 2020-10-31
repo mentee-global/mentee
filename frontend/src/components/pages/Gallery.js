@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -10,7 +10,6 @@ import "../css/MentorGallery.scss";
 import { fetchMentors } from "../../utils/api";
 import { Avatar, Typography, Button } from "antd";
 const { Title, Text } = Typography;
-
 
 function Gallery() {
   // TODO: populate mentors list with GET mentor request
@@ -140,4 +139,4 @@ const styles = {
   },
 };
 
-export default Gallery;;
+export default Gallery;

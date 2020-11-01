@@ -70,7 +70,6 @@ export const acceptAppointment = (id) => {
   );
 };
 
-// TODO: Endpoint does not exist yet. Remove this comment once it does
 export const deleteAppointment = (id) => {
   const requestExtension = "/appointment/" + id;
   return instance.delete(requestExtension).then(

@@ -9,7 +9,7 @@ import {
 
 import "./css/Navigation.scss";
 
-import mentee_logo from "../resources/mentee.png";
+import MenteeLogo from "../resources/mentee.png";
 
 const { Header } = Layout;
 
@@ -39,7 +39,7 @@ function MentorNavHeader() {
   return (
     <Header className="navigation-header">
       <NavLink to="/">
-        <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
+        <img src={MenteeLogo} alt="Mentee" className="mentee-logo" />
       </NavLink>
       <span>
         <div className="profile-caret">

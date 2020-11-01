@@ -5,7 +5,7 @@ import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
 import Navigation from "components/Navigation";
-import MentorGallery from "components/pages/MentorGallery";
+import Gallery from "components/pages/Gallery";
 
 function App() {
   return (
@@ -42,11 +42,7 @@ function App() {
       <Route
         path="/gallery"
         component={() => (
-          <Navigation
-            content={<MentorGallery />}
-            page="gallery"
-            needsAuth={false}
-          />
+          <Navigation content={<Gallery />} page="gallery" needsAuth={false} />
         )}
       />
     </Router>

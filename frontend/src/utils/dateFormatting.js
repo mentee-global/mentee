@@ -48,6 +48,8 @@ export const formatAppointments = (data) => {
         appointments: [formattedAppointment],
       };
 
+      // This block of code searches through the appointments and finds where it can be inserted
+      // For now it is in O(n) time but we can change this to O(logn) with binary search
       if (formatted[key].length < 1) {
         formatted[key].push(dayObject);
       } else if (formatted[key].length < 2) {

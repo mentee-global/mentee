@@ -37,7 +37,7 @@ const Tabs = Object.freeze({
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
-  const [click, setClick] = useState(true);
+  const [appointmentClick, setAppointmentClick] = useState(true);
 
   useEffect(() => {
     async function getAppointments() {
@@ -49,7 +49,7 @@ function Appointments() {
       }
     }
     getAppointments();
-  }, [click]);
+  }, [appointmentClick]);
 
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {
@@ -57,7 +57,7 @@ function Appointments() {
     } else {
       await deleteAppointment(id);
     }
-    setClick(!click);
+    setAppointmentClick(!appointmentClick);
   }
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";

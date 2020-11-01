@@ -37,7 +37,7 @@ const Tabs = Object.freeze({
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
-  const [clickAppointment, setClickAppointment] = useState(false);
+  const [click, setClick] = useState(true);
 
   useEffect(() => {
     async function getAppointments() {
@@ -49,16 +49,16 @@ function Appointments() {
       }
     }
     getAppointments();
-  }, []);
+  }, [click]);
 
-  async function declineAppointmentClick(id) {
-    await deleteAppointment(id);
+  async function handleAppointmentClick(id, didAccept) {
+    if (didAccept) {
+      await acceptAppointment(id)
+    } else {
+      await deleteAppointment(id);
+    }
+    setClick(!click);
   }
-
-  async function acceptAppointmentClick(id) {
-    await acceptAppointment(id);
-  }
-
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
     const inactive = "#FFECBD";
@@ -118,7 +118,7 @@ function Appointments() {
             }
             type="text"
             shape="circle"
-            onClick={acceptAppointmentClick(id)}
+            onClick={() => handleAppointmentClick(id, true)}
           ></Button>
           <Button
             className="appointment-accept"
@@ -130,7 +130,7 @@ function Appointments() {
             }
             type="text"
             shape="circle"
-            onClick={declineAppointmentClick(id)}
+            onClick={() => handleAppointmentClick(id, false)}
           ></Button>
         </div>
       );
@@ -229,7 +229,7 @@ function Appointments() {
     <Row>
       <Col span={18} className="appointments-column">
         <div className="appointments-welcome-box">
-          <div className="appointments-welcome-text">Welcome, {"TODO"}</div>
+          <div className="appointments-welcome-text">Welcome, {appointments.mentor_name}</div>
           <div className="appointments-tabs">
             {Object.values(Tabs).map((tab, index) => (
               <Tab tab={tab} text={tab.title} key={index} />

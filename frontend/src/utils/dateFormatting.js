@@ -16,7 +16,6 @@ export const formatAppointments = (data) => {
 
   let prevDate = now;
   for (const index in appointments) {
-    console.log(index);
     const timeslot = appointments[index].timeslot;
     const appointment = appointments[index];
 
@@ -34,7 +33,7 @@ export const formatAppointments = (data) => {
       name: appointment.name,
       time: startTime.format("h:m a") + " - " + endTime.format("h:m a"),
       description: appointment.message,
-      id: appointment.id,
+      id: appointment._id.$oid,
     };
 
     if (prevDate.isSame(startTime, "date") && formatted[key].length > 0) {
@@ -48,7 +47,6 @@ export const formatAppointments = (data) => {
         date_name: startTime.format("ddd"),
         appointments: [formattedAppointment],
       };
-      console.log(startTime.format("M/D"));
 
       if (formatted[key].length < 1) {
         formatted[key].push(dayObject);

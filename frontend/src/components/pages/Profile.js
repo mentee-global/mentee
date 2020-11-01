@@ -81,7 +81,7 @@ function Profile() {
               {mentor.name}
               <Button
                 className="mentor-profile-edit-button"
-                style={{ background: "#E4BB4F", color: "#FFFFFF" }}
+                style={{ background: "#E4BB4F", color: "white" }}
               >
                 <b>Edit Profile</b>
               </Button>

@@ -83,3 +83,16 @@ def put_appointment(id):
     appointment.save()
 
     return create_response(status=200, message=f"Success")
+
+
+# DELETE request for appointment by appointment id
+@appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"])
+def delete_request(appointment_id):
+    try:
+        request = AppointmentRequest.objects.get(id=appointment_id)
+    except:
+        msg = "The request you attempted to delete was not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    request.delete()
+    return create_response(status=200, message=f"Success")

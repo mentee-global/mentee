@@ -13,7 +13,7 @@ import mentee_logo from "../resources/mentee.png";
 
 const { Header } = Layout;
 
-function NavigationHeader() {
+function MentorNavHeader() {
   const dropdownMenu = (
     <Menu className="dropdown-menu">
       <Menu.Item key="edit-profile">
@@ -38,7 +38,9 @@ function NavigationHeader() {
 
   return (
     <Header className="navigation-header">
-      <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
+      <NavLink to="/">
+        <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
+      </NavLink>
       <span>
         <div className="profile-caret">
           <Dropdown overlay={dropdownMenu} trigger={["click"]}>
@@ -63,4 +65,4 @@ function NavigationHeader() {
   );
 }
 
-export default NavigationHeader;
+export default MentorNavHeader;

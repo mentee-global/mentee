@@ -1,7 +1,8 @@
 import React from "react";
 import { Layout } from "antd";
 
-import NavigationHeader from "./NavigationHeader";
+import MentorNavHeader from "./MentorNavHeader";
+import MenteeNavHeader from "./MenteeNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
 
 import "./css/Navigation.scss";
@@ -12,14 +13,15 @@ function Navigation(props) {
   return (
     <div>
       <Layout className="navigation-layout">
-        <NavigationHeader />
-        <Layout className="layout-body">
-          <NavigationSidebar
-            className="navigation-sidebar"
-            selectedPage={props.page}
-          />
+        {props.needsAuth ? <MentorNavHeader /> : <MenteeNavHeader />}
+        {props.needsAuth ? (
+          <Layout>
+            <NavigationSidebar selectedPage={props.page} />
+            <Content className="navigation-content">{props.content}</Content>
+          </Layout>
+        ) : (
           <Content className="navigation-content">{props.content}</Content>
-        </Layout>
+        )}
       </Layout>
     </div>
   );

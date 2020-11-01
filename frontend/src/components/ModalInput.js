@@ -11,8 +11,9 @@ function ModalInput(props) {
         console.log(props.index + ": ", props.clicked)
     }, [props.clicked]);
 
-    function handleMenuClick(e) {
-        console.log('clicked', e);
+    function handleOnChange(e) {
+        props.onChange(e);
+        props.handleClick(props.index);
     }
 
     function getContainerStyle() {
@@ -54,7 +55,7 @@ function ModalInput(props) {
 
     const InputBox = (props) => {
         switch (props.type) {
-            case 'text': return (<Input onClick={() => props.handleClick(props.index)} bordered={false} placeholder={props.placeholder} />);
+            case 'text': return (<Input onClick={() => props.handleClick(props.index)} onChange={handleOnChange} bordered={false} placeholder={props.placeholder} />);
             case 'dropdown': return (<Select
                 onClick={() => props.handleClick(props.index)}
                 mode="multiple"
@@ -62,10 +63,11 @@ function ModalInput(props) {
                 bordered={false}
                 style={{ width: '100%' }}
                 placeholder="Please select"
+                onChange={handleOnChange}
             >
                 {returnDropdownItems(props.options)}
             </Select>);
-            case 'textarea': return (<Input.TextArea onClick={() => props.handleClick(props.index)} bordered={false} maxLength={500} placeholder={props.placeholder} />);
+            case 'textarea': return (<Input.TextArea onClick={() => props.handleClick(props.index)} onChange={handleOnChange} bordered={false} maxLength={500} placeholder={props.placeholder} />);
         }
     }
 

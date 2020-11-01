@@ -53,7 +53,7 @@ function Appointments() {
 
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {
-      await acceptAppointment(id)
+      await acceptAppointment(id);
     } else {
       await deleteAppointment(id);
     }
@@ -229,7 +229,9 @@ function Appointments() {
     <Row>
       <Col span={18} className="appointments-column">
         <div className="appointments-welcome-box">
-          <div className="appointments-welcome-text">Welcome, {appointments.mentor_name}</div>
+          <div className="appointments-welcome-text">
+            Welcome, {appointments.mentor_name}
+          </div>
           <div className="appointments-tabs">
             {Object.values(Tabs).map((tab, index) => (
               <Tab tab={tab} text={tab.title} key={index} />

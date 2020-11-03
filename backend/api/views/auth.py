@@ -15,17 +15,16 @@ def verify_email():
         "token": request.headers.get("token"),
     }
     results = requests.post(AUTH_URL + "/verifyEmail", headers=headers, json=data)
-    return create_response(data={results.json()})
+    return results.json()
 
 
 @auth.route("/register", methods=["POST"])
 def register():
     data = request.json
-    print(data)
     headers = {"Content-Type": "application/json"}
     results = requests.post(AUTH_URL + "/register", headers=headers, json=data)
     resp = results.json()
-    print(resp)
+
     if not resp.get("token"):
         return create_response(message=resp["message"], status=400)
 
@@ -35,5 +34,24 @@ def register():
             "token": resp["token"],
             "userID": resp["uid"],
             "permission": resp["permission"],
+        },
+    )
+
+
+@auth.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    body = {"email": data["email"], "password": data["password"]}
+    headers = {"Content-Type": "application/json"}
+    results = requests.post(AUTH_URL + "/login", headers=headers, json=body)
+    resp = results.json()
+
+    if not resp.get("token"):
+        return create_response(message=resp["message"], status=400)
+
+    return create_response(
+        message=resp["message"],
+        data={
+            "token": resp["token"],
         },
     )

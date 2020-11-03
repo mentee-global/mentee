@@ -26,7 +26,7 @@ function Home() {
             </Button>
           </NavLink>
         </div>
-        <img className="home-honeycomb" src={Honeycomb} />
+        <img className="home-honeycomb" src={Honeycomb} alt="" />
       </div>
     </div>
   );

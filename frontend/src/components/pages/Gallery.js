@@ -6,7 +6,7 @@ import {
   EnvironmentOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import "../css/MentorGallery.scss";
+import "../css/Gallery.scss";
 import { fetchMentors } from "../../utils/api";
 import { Avatar, Typography, Button } from "antd";
 const { Title, Text } = Typography;
@@ -27,16 +27,16 @@ function Gallery() {
   function getLessonTypes(offers_group_appointments, offers_in_person) {
     let output = "1-on-1 | virtual";
     if (offers_group_appointments) {
-      output += " | " + "group";
+      output += " | group";
     }
     if (offers_in_person) {
-      output += " | " + "in person";
+      output += " | in person";
     }
     return output;
   }
 
   return (
-    <div className="mentor-container">
+    <div className="gallery-mentor-container">
       {mentors.map((mentor, key) => (
         <MentorCard
           key={key}
@@ -59,12 +59,12 @@ function Gallery() {
 
 function MentorCard(props) {
   return (
-    <div className="mentor-card">
-      <div className="card-body">
-        <div className="card-header">
+    <div className="gallery-mentor-card">
+      <div className="gallery-card-body">
+        <div className="gallery-card-header">
           <Avatar size={90} icon={getPicture(props.picture)} />
-          <div className="header-text">
-            <Title style={styles.title} className="title-text">
+          <div className="gallery-header-text">
+            <Title style={styles.title} className="gallery-title-text">
               {props.name}
             </Title>
             <Title style={styles.title} type="secondary" level={5}>
@@ -75,34 +75,36 @@ function MentorCard(props) {
             </Title>
           </div>
         </div>
-        <h3 className="lesson-types">
+        <h3 className="gallery-lesson-types">
           <span class="dot" />
           {props.lesson_types}
         </h3>
-        <h3 className="headers">
+        <h3 className="gallery-headers">
           <EnvironmentOutlined style={styles.icon} />
           Location:
         </h3>
-        <Text className="list-items">{props.location}</Text>
-        <h3 className="headers">
+        <Text className="gallery-list-items">{props.location}</Text>
+        <h3 className="gallery-headers">
           <StarOutlined style={styles.icon} />
           Specializations:
         </h3>
-        <Text className="list-items">{props.specializations.join(", ")}</Text>
+        <Text className="gallery-list-items">
+          {props.specializations.join(", ")}
+        </Text>
         <h4>
           <LinkOutlined style={styles.icon} />
-          <a className="links" href={props.website}>
+          <a className="gallery-links" href={props.website}>
             {props.website}
           </a>
         </h4>
         <h4>
           <LinkedinOutlined style={styles.icon} />
-          <a className="links" href={props.linkedin}>
+          <a className="gallery-links" href={props.linkedin}>
             linkedin
           </a>
         </h4>
         <hr class="solid" />
-        <Button className="profile-button" shape="round" size="medium">
+        <Button className="gallery-profile-button" shape="round" size="medium">
           View Profile
         </Button>
       </div>
@@ -114,7 +116,7 @@ function getPicture(picture) {
   if (!picture) {
     return <UserOutlined />;
   } else {
-    return <img src={picture} />;
+    return <img src={picture} alt="" />;
   }
 }
 

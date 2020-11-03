@@ -4,8 +4,8 @@ import Appointments from "components/pages/Appointments";
 import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
-import Gallery from "components/pages/Gallery";
 import Navigation from "components/Navigation";
+import Gallery from "components/pages/Gallery";
 
 function App() {
   return (

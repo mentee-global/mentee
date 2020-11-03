@@ -149,7 +149,7 @@ function Appointments() {
   const Appointments = ({ data }) => {
     return (
       <div>
-        <b className="appointment-tabs-title">{currentTab.title}</b>{" "}
+        <b className="appointment-tabs-title">{currentTab.title}</b>
         <div className="appointments-background">
           {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">

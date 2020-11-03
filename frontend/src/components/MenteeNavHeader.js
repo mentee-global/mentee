@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Layout, Button } from "antd";
 import "./css/Navigation.scss";
 
-import mentee_logo from "../resources/mentee.png";
+import MenteeLogo from "../resources/mentee.png";
 
 const { Header } = Layout;
 
@@ -13,7 +13,7 @@ function MenteeNavHeader() {
       <div className="navigation-mentee-flexbox">
         <div>
           <NavLink to="/">
-            <img src={mentee_logo} alt="Mentee" className="mentee-logo" />
+            <img src={MenteeLogo} alt="Mentee" className="mentee-logo" />
           </NavLink>
         </div>
         <div>
@@ -37,12 +37,14 @@ function MenteeNavHeader() {
           >
             <b>FAQ</b>
           </Button>
-          <Button
-            className="navigation-header-button-dark"
-            style={{ background: "#E4BB4F", color: "white" }}
-          >
-            <b>Mentor Log In</b>
-          </Button>
+          <NavLink to="/profile">
+            <Button
+              className="navigation-header-button-dark"
+              style={{ background: "#E4BB4F", color: "white" }}
+            >
+              <b>Mentor Log In</b>
+            </Button>
+          </NavLink>
         </div>
       </div>
     </Header>

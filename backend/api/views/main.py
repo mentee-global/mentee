@@ -56,7 +56,9 @@ def create_mentor_profile():
     new_mentor.biography = data.get("biography")
     new_mentor.phone_number = data.get("phone_number")
     new_mentor.location = data.get("location")
+    
     if "education" in data:
+        new_mentor.education = []
         education_data = data["education"]
 
         for education in education_data:

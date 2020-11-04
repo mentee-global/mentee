@@ -1,12 +1,16 @@
+import os
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
 from wtforms.validators import InputRequired
 from wtforms import validators
 import wtforms_json
 from typing import Tuple
+from .flask_imgur import Imgur
 
 wtforms_json.init()
 
+imgur_key = os.environ.get("IMGUR_KEY")
+imgur_client = Imgur(client_id=imgur_key)
 
 class EducationForm(Form):
     education_level = StringField(validators=[InputRequired()])
@@ -62,7 +66,6 @@ class ApppointmentForm(Form):
     message = StringField()
     attendee_count = IntegerField(validators=[InputRequired()])
     organization = StringField(validators=[InputRequired()])
-
 
 def is_invalid_form(form_data) -> Tuple[str, bool]:
     """Using WTForms, validates the inputed form based on above schemas

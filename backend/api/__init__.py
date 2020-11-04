@@ -5,7 +5,6 @@ from flask import Flask, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_mongoengine import MongoEngine
-from flask_imgur import Imgur
 
 from api.core import all_exception_handler
 
@@ -35,10 +34,7 @@ def create_app(test_config=None):
 
     app = Flask(__name__)
 
-
     CORS(app)  # add CORS
-
-    imgur_handler = Imgur(app)
 
     # logging
     formatter = RequestFormatter(
@@ -64,9 +60,7 @@ def create_app(test_config=None):
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    imgur_id = os.environ.get("IMGUR_KEY")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-    app.config["IMGUR_ID"] = imgur_id   
 
     # register mongoengine to this app
     from api.models import db

@@ -32,6 +32,7 @@ class MentorForm(Form):
     linkedin = StringField(validators=[InputRequired()])
     website = StringField(validators=[InputRequired()])
     picture = StringField(validators=[InputRequired()])
+    email = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])
     offers_in_person = BooleanField(

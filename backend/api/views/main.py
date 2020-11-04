@@ -1,12 +1,6 @@
 from os import path
 from flask import Blueprint, request, jsonify
-from api.models import (
-    db,
-    Education,
-    Video,
-    MentorProfile,
-    AppointmentRequest,
-)
+from api.models import db, Education, Video, MentorProfile, AppointmentRequest
 from api.models import db, Education, Video, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
@@ -50,6 +44,7 @@ def create_mentor_profile():
 
     new_mentor = MentorProfile(
         name=data["name"],
+        email=data["email"],
         professional_title=data["professional_title"],
         linkedin=data["linkedin"],
         website=data["website"],
@@ -61,22 +56,27 @@ def create_mentor_profile():
     )
 
     new_mentor.biography = data.get("biography")
+    new_mentor.phone_number = data.get("phone_number")
+    new_mentor.location = data.get("location")
 
     if "education" in data:
+        new_mentor.education = []
         education_data = data["education"]
-        validate_education = EducationForm.from_json(education_data)
 
-        msg, is_invalid = is_invalid_form(validate_education)
-        if is_invalid:
-            return create_response(status=422, message=msg)
+        for education in education_data:
+            validate_education = EducationForm.from_json(education)
 
-        new_education = Education(
-            education_level=education_data["education_level"],
-            majors=education_data["majors"],
-            school=education_data["school"],
-            graduation_year=education_data["graduation_year"],
-        )
-        new_mentor.education = new_education
+            msg, is_invalid = is_invalid_form(validate_education)
+            if is_invalid:
+                return create_response(status=422, message=msg)
+
+            new_education = Education(
+                education_level=education["education_level"],
+                majors=education["majors"],
+                school=education["school"],
+                graduation_year=education["graduation_year"],
+            )
+            new_mentor.education.append(new_education)
 
     if "videos" in data:
         videos_data = data["videos"]
@@ -117,6 +117,9 @@ def edit_mentor(id):
     mentor.professional_title = data.get(
         "professional_title", mentor.professional_title
     )
+    mentor.location = data.get("location", mentor.location)
+    mentor.email = data.get("email", mentor.email)
+    mentor.phone_number = data.get("phone_number", mentor.phone_number)
     mentor.specializations = data.get("specializations", mentor.specializations)
     mentor.languages = data.get("languages", mentor.languages)
     mentor.offers_group_appointments = data.get(
@@ -131,12 +134,15 @@ def edit_mentor(id):
     # Create education object
     if "education" in data:
         education_data = data.get("education")
-        mentor.education = Education(
-            education_level=education_data.get("education_level"),
-            majors=education_data.get("majors"),
-            school=education_data.get("school"),
-            graduation_year=education_data.get("graduation_year"),
-        )
+        mentor.education = [
+            Education(
+                education_level=education.get("education_level"),
+                majors=education.get("majors"),
+                school=education.get("school"),
+                graduation_year=education.get("graduation_year"),
+            )
+            for education in education_data
+        ]
 
     # Create video objects for each item in list
     if "videos" in data:

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Modal, Radio } from "antd";
+import { Button, Modal, Checkbox, Avatar } from "antd";
 import MentorProfileModal from "../MentorProfileModal";
 import ModalInput from "../ModalInput";
+import { UserOutlined, EditFilled, PlusCircleFilled } from '@ant-design/icons'
 import "../css/Profile.scss";
 
 const LANGUAGES = ["English", "Spanish", "German", "Chinese", "Vietnamese"]
@@ -26,7 +27,23 @@ function Profile() {
   const [majors, setMajors] = useState(null)
   const [degree, setDegree] = useState(null)
 
-
+  function renderEducationInputs() {
+    let numDegrees = (numInputs - 10) / 4;
+    let degrees = [...Array(numDegrees).keys()]
+    return degrees.map((key, i) => (<div className="modal-education-container">
+      <div className="modal-education-sidebar"></div>
+      <div className="modal-inner-education-container">
+        <div className="modal-input-container">
+          <ModalInput height={60} type="text" title="School" clicked={inputClicked[10 + (i * 4)]} index={10 + (i * 4)} handleClick={handleClick} onChange={handleSchoolChange}></ModalInput>
+          <ModalInput height={60} type="text" title="End Year/Expected" clicked={inputClicked[10 + (i * 4) + 1]} index={10 + (i * 4) + 1} handleClick={handleClick} onChange={handleGraduationDateChange} placeholder="Ex. Computer Science, Biology"></ModalInput>
+        </div>
+        <div className="modal-input-container">
+          <ModalInput height={60} type="text" title="Major(s)" clicked={inputClicked[10 + (i * 4) + 2]} index={10 + (i * 4) + 2} handleClick={handleClick} onChange={handleMajorsChange}></ModalInput>
+          <ModalInput height={60} type="text" title="Degree" clicked={inputClicked[10 + (i * 4) + 3]} index={10 + (i * 4) + 3} handleClick={handleClick} onChange={handleDegreeChange} placeholder="Ex. Bachelor's"></ModalInput>
+        </div>
+      </div>
+    </div>))
+  }
 
   function handleClick(index) {
     let newClickedInput = new Array(numInputs).fill(false)
@@ -99,6 +116,7 @@ function Profile() {
         title="Edit Profile"
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
+        width="50%"
         style={{ overflow: "hidden" }}
         footer={<Button
           type="default"
@@ -113,6 +131,10 @@ function Profile() {
           Save</Button>}
       >
         <div className="modal-container">
+          <div className="modal-profile-container">
+            <Avatar size={120} icon={<UserOutlined />} className="modal-profile-icon" />
+            <Button shape="circle" icon={<EditFilled />} className="modal-profile-icon-edit" />
+          </div>
           <div className="modal-inner-container">
             <div className="modal-input-container">
               <ModalInput height={60} type="text" title="Name *" clicked={inputClicked[0]} index={0} handleClick={handleClick} onChange={handleNameChange}></ModalInput>
@@ -122,8 +144,9 @@ function Profile() {
               <ModalInput type="textarea" title="About" clicked={inputClicked[2]} index={2} handleClick={handleClick} onChange={handleAboutChange}></ModalInput>
             </div>
             <div className="modal-availability-radios">
-              <Radio className="modal-availability-radio-text" clicked={inputClicked[3]} index={3} handleClick={handleClick} onChange={handleOnlineAvailableChange}> Available online? </Radio>
-              <Radio className="modal-availability-radio-text" clicked={inputClicked[4]} index={4} handleClick={handleClick} onChange={handleGroupAvailableChange}> Available for group appointments? </Radio>
+              <Checkbox className="modal-availability-radio-text" clicked={inputClicked[3]} index={3} handleClick={handleClick} onChange={handleOnlineAvailableChange}>Available online?</Checkbox>
+              <div></div>
+              <Checkbox className="modal-availability-radio-text" clicked={inputClicked[4]} index={4} handleClick={handleClick} onChange={handleGroupAvailableChange}>Available for group appointments?</Checkbox>
             </div>
             <div className="modal-input-container">
               <ModalInput height={60} type="text" title="Location" clicked={inputClicked[5]} index={5} handleClick={handleClick} onChange={handleLocationChange}></ModalInput>
@@ -135,22 +158,15 @@ function Profile() {
             </div>
             <div className="modal-input-container">
               <ModalInput height={60} type="dropdown" title="Specializations" clicked={inputClicked[9]} index={9} handleClick={handleClick} onChange={handleSpecializationsChange} options={SPECIALIZATIONS}></ModalInput>
-              <div style={{ flex: 0.8 }} />
             </div>
             <div className="modal-education-header">
               Education
             </div>
-            <div className="modal-education-container">
-              <div className="modal-education-sidebar"></div>
-              <div>
-                <div className="modal-input-container">
-                  <ModalInput height={60} type="text" title="School" clicked={inputClicked[10]} index={10} handleClick={handleClick} onChange={handleSchoolChange}></ModalInput>
-                  <ModalInput height={60} type="text" title="End Year/Expected" clicked={inputClicked[11]} index={11} handleClick={handleClick} onChange={handleGraduationDateChange} placeholder="Ex. Computer Science, Biology"></ModalInput>
-                </div>
-                <div className="modal-input-container">
-                  <ModalInput height={60} type="text" title="Major(s)" clicked={inputClicked[12]} index={12} handleClick={handleClick} onChange={handleMajorsChange}></ModalInput>
-                  <ModalInput height={60} type="text" title="Degree" clicked={inputClicked[13]} index={13} handleClick={handleClick} onChange={handleDegreeChange} placeholder="Ex. Bachelor's"></ModalInput>
-                </div>
+            {renderEducationInputs()}
+            <div className="modal-input-container modal-education-add-container" onClick={() => setNumInputs(numInputs + 4)}>
+              <PlusCircleFilled className="modal-education-add-icon" />
+              <div className="modal-education-add-text">
+                Add more
               </div>
             </div>
           </div>

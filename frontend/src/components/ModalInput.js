@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Menu, Select, Input, Button } from "antd";
+import "./css/Profile.scss";
 
 const { Option } = Select;
 
@@ -8,7 +9,6 @@ function ModalInput(props) {
 
     useEffect(() => {
         setIsClicked(props.clicked)
-        console.log(props.index + ": ", props.clicked)
     }, [props.clicked]);
 
     function handleOnChange(e) {
@@ -64,6 +64,7 @@ function ModalInput(props) {
                 style={{ width: '100%' }}
                 placeholder="Please select"
                 onChange={handleOnChange}
+                className="ant-select-selection--multiple"
             >
                 {returnDropdownItems(props.options)}
             </Select>);

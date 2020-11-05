@@ -8,7 +8,7 @@ from api.models import Education, Video, Availability
 class MentorProfile(Document, Mixin):
     """"Mentor Profile Collection."""
 
-    uid = ""  # TODO: Add Uid field
+    user_id = ObjectIdField(required=True)
     name = StringField(required=True)
     location = StringField()
     email = StringField(required=True)

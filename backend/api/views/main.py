@@ -160,11 +160,11 @@ def edit_mentor(id):
 def uploadImage(id):
     data = request.files['image']
     image_response = imgur_client.send_image(data)
-
-    if image_response and not image_response.get("success", False):
+    
+    if not image_response.get("success", False):
         msg = ""
         if "data" in image_response:
-            msg = image_response["data"].get("error")
+            msg = image_response["data"].get("error", "")
         return create_response(status=400, message=f"Image upload failed: " + msg)
 
     try:

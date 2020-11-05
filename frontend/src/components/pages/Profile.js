@@ -1,179 +1,156 @@
-import React, { useState } from "react";
-import { Button, Modal, Checkbox, Avatar } from "antd";
-import MentorProfileModal from "../MentorProfileModal";
-import ModalInput from "../ModalInput";
-import { UserOutlined, EditFilled, PlusCircleFilled } from '@ant-design/icons'
-import "../css/Profile.scss";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  UserOutlined,
+  EnvironmentOutlined,
+  CommentOutlined,
+  LinkOutlined,
+  LinkedinOutlined,
+  MailOutlined,
+  PhoneOutlined,
+} from "@ant-design/icons";
+import { Button, Avatar } from "antd";
+import MentorProfileModal from "../MentorProfileModal"
 
-const LANGUAGES = ["English", "Spanish", "German", "Chinese", "Vietnamese"]
-const SPECIALIZATIONS = ["Marketing", "Business", "English", "Computer Science"]
+import "../css/Profile.scss";
+import { fetchMentorByID, mentorID } from "../../utils/api";
 
 function Profile() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [numInputs, setNumInputs] = useState(14);
-  const [inputClicked, setInputClicked] = useState(new Array(numInputs).fill(false)) // each index represents an input box, respectively
-  const [name, setName] = useState(null)
-  const [title, setTitle] = useState(null)
-  const [about, setAbout] = useState(null)
-  const [onlineAvailable, setOnlineAvailable] = useState(null)
-  const [groupAvailable, setGroupAvailable] = useState(null)
-  const [location, setLocation] = useState(null)
-  const [website, setWebsite] = useState(null)
-  const [languages, setLanguages] = useState(null)
-  const [linkedin, setLinkedin] = useState(null)
-  const [specializations, setSpecializations] = useState(null)
-  const [school, setSchool] = useState(null)
-  const [graduation, setGraduation] = useState(null)
-  const [majors, setMajors] = useState(null)
-  const [degree, setDegree] = useState(null)
+  const [mentor, setMentor] = useState({});
 
-  function renderEducationInputs() {
-    let numDegrees = (numInputs - 10) / 4;
-    let degrees = [...Array(numDegrees).keys()]
-    return degrees.map((key, i) => (<div className="modal-education-container">
-      <div className="modal-education-sidebar"></div>
-      <div className="modal-inner-education-container">
-        <div className="modal-input-container">
-          <ModalInput height={60} type="text" title="School" clicked={inputClicked[10 + (i * 4)]} index={10 + (i * 4)} handleClick={handleClick} onChange={handleSchoolChange}></ModalInput>
-          <ModalInput height={60} type="text" title="End Year/Expected" clicked={inputClicked[10 + (i * 4) + 1]} index={10 + (i * 4) + 1} handleClick={handleClick} onChange={handleGraduationDateChange} placeholder="Ex. Computer Science, Biology"></ModalInput>
-        </div>
-        <div className="modal-input-container">
-          <ModalInput height={60} type="text" title="Major(s)" clicked={inputClicked[10 + (i * 4) + 2]} index={10 + (i * 4) + 2} handleClick={handleClick} onChange={handleMajorsChange}></ModalInput>
-          <ModalInput height={60} type="text" title="Degree" clicked={inputClicked[10 + (i * 4) + 3]} index={10 + (i * 4) + 3} handleClick={handleClick} onChange={handleDegreeChange} placeholder="Ex. Bachelor's"></ModalInput>
-        </div>
+  useEffect(() => {
+    async function getMentor() {
+      const mentor_data = await fetchMentorByID(mentorID);
+      if (mentor_data) {
+        setMentor(mentor_data);
+      }
+    }
+    getMentor();
+  }, []);
+
+  const getMeetingMethods = () => {
+    const in_person = mentor.offers_in_person ? "In person | Online" : "Online";
+    const group_session = mentor.offers_group_appointments
+      ? "Group Meetings | 1-on-1"
+      : "1-on-1";
+    return in_person + " | " + group_session;
+  };
+
+  const getLanguages = (languages) => {
+    return languages.map((language, idx) =>
+      idx === 0 ? language : " • " + language
+    );
+  };
+
+  const getSpecializationTags = (specializations) => {
+    return specializations.map((specialization, idx) =>
+      idx === 0 ? (
+        <div className="mentor-specialization-tag-first">{specialization}</div>
+      ) : (
+          <div className="mentor-specialization-tag">{specialization}</div>
+        )
+    );
+  };
+
+  const getEducations = (educations) => {
+    if (educations == null || educations[0] == null) {
+      return;
+    }
+    return educations.map((education) => (
+      <div className="mentor-profile-education">
+        <b>{education.school}</b>
+        <br />
+        {education.education_level}
+        <br />
+        {"Major(s): " + education.majors.join(", ")}
+        <br />
+        {education.graduation_year}
       </div>
-    </div>))
-  }
-
-  function handleClick(index) {
-    let newClickedInput = new Array(numInputs).fill(false)
-    newClickedInput[index] = true
-    setInputClicked(newClickedInput)
-  }
-
-  function handleNameChange(e) {
-    setName(e.target.value)
-  }
-
-  function handleTitleChange(e) {
-    setTitle(e.target.value)
-  }
-
-  function handleAboutChange(e) {
-    setAbout(e.target.value)
-  }
-
-  function handleOnlineAvailableChange(e) {
-    setOnlineAvailable(e.target.checked)
-  }
-
-  function handleGroupAvailableChange(e) {
-    setGroupAvailable(e.target.checked)
-  }
-
-  function handleLocationChange(e) {
-    setLocation(e.target.value)
-  }
-
-  function handleWebsiteChange(e) {
-    setWebsite(e.target.value)
-  }
-
-  function handleLanguageChange(e) {
-    // setLanguages(e.target.value)
-  }
-
-  function handleLinkedinChange(e) {
-    setLinkedin(e.target.value)
-  }
-
-  function handleSpecializationsChange(e) {
-    // setSpecializations(e.target.value)
-  }
-
-  function handleSchoolChange(e) {
-    setSchool(e.target.value)
-  }
-
-  function handleGraduationDateChange(e) {
-    setGraduation(e.target.value)
-  }
-
-  function handleMajorsChange(e) {
-    setMajors(e.target.value)
-  }
-
-  function handleDegreeChange(e) {
-    setDegree(e.target.value)
-  }
+    ));
+  };
 
   return (
-    <div>
-      <Button type="primary" onClick={() => setModalVisible(true)}>
-        Open Modal
-        </Button>
-      <Modal
-        title="Edit Profile"
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        width="50%"
-        style={{ overflow: "hidden" }}
-        footer={<Button
-          type="default"
-          shape="round"
-          style={{
-            borderRadius: 13,
-            marginRight: 15,
-            backgroundColor: "#E4BB4F"
-          }}
-          onClick={() => setModalVisible(false)}
-        >
-          Save</Button>}
-      >
-        <div className="modal-container">
-          <div className="modal-profile-container">
-            <Avatar size={120} icon={<UserOutlined />} className="modal-profile-icon" />
-            <Button shape="circle" icon={<EditFilled />} className="modal-profile-icon-edit" />
+    <div className="background-color-strip">
+      <div className="mentor-profile-content">
+        <Avatar size={120} src={mentor.picture} icon={<UserOutlined />} />
+        <div className="mentor-profile-content-flexbox">
+          <div className="mentor-profile-info">
+            <div className="mentor-profile-name">
+              {mentor.name}
+              <MentorProfileModal />
+            </div>
+            <div className="mentor-profile-heading">
+              {mentor.professional_title} <t className="yellow-dot">•</t>{" "}
+              {getMeetingMethods()}
+            </div>
+            <div>
+              {mentor.location && (
+                <span>
+                  <EnvironmentOutlined className="mentor-profile-tag-first" />
+                  {mentor.location}
+                </span>
+              )}
+              <span>
+                <CommentOutlined
+                  className={
+                    !mentor.location
+                      ? "mentor-profile-tag-first"
+                      : "mentor-profile-tag"
+                  }
+                />
+                {getLanguages(mentor.languages || [])}
+              </span>
+              {mentor.website && (
+                <span>
+                  <LinkOutlined className="mentor-profile-tag" />
+                  {mentor.website}
+                </span>
+              )}
+              {mentor.linkedin && (
+                <span>
+                  <LinkedinOutlined className="mentor-profile-tag" />
+                  {mentor.linkedin}
+                </span>
+              )}
+            </div>
+            <br />
+            <div className="mentor-profile-heading">
+              <b>About</b>
+            </div>
+            <div className="mentor-profile-about">{mentor.biography}</div>
+            <br />
+            <div className="mentor-profile-heading">
+              <b>Specializations</b>
+            </div>
+            <div>{getSpecializationTags(mentor.specializations || [])}</div>
+            <br />
+            <div className="mentor-profile-heading">
+              <b>Education</b>
+            </div>
+            <div>{getEducations(mentor.education)}</div>
           </div>
-          <div className="modal-inner-container">
-            <div className="modal-input-container">
-              <ModalInput height={60} type="text" title="Name *" clicked={inputClicked[0]} index={0} handleClick={handleClick} onChange={handleNameChange}></ModalInput>
-              <ModalInput height={60} type="text" title="Professional Title *" clicked={inputClicked[1]} index={1} handleClick={handleClick} onChange={handleTitleChange}></ModalInput>
-            </div>
-            <div className="modal-input-container">
-              <ModalInput type="textarea" title="About" clicked={inputClicked[2]} index={2} handleClick={handleClick} onChange={handleAboutChange}></ModalInput>
-            </div>
-            <div className="modal-availability-radios">
-              <Checkbox className="modal-availability-radio-text" clicked={inputClicked[3]} index={3} handleClick={handleClick} onChange={handleOnlineAvailableChange}>Available online?</Checkbox>
-              <div></div>
-              <Checkbox className="modal-availability-radio-text" clicked={inputClicked[4]} index={4} handleClick={handleClick} onChange={handleGroupAvailableChange}>Available for group appointments?</Checkbox>
-            </div>
-            <div className="modal-input-container">
-              <ModalInput height={60} type="text" title="Location" clicked={inputClicked[5]} index={5} handleClick={handleClick} onChange={handleLocationChange}></ModalInput>
-              <ModalInput height={60} type="text" title="Website" clicked={inputClicked[6]} index={6} handleClick={handleClick} onChange={handleWebsiteChange}></ModalInput>
-            </div>
-            <div className="modal-input-container">
-              <ModalInput height={60} type="dropdown" title="Languages" clicked={inputClicked[7]} index={7} handleClick={handleClick} onChange={handleLanguageChange} placeholder="Ex. English, Spanish" options={LANGUAGES}></ModalInput>
-              <ModalInput height={60} type="text" title="LinkedIn" clicked={inputClicked[8]} index={8} handleClick={handleClick} onChange={handleLinkedinChange}></ModalInput>
-            </div>
-            <div className="modal-input-container">
-              <ModalInput height={60} type="dropdown" title="Specializations" clicked={inputClicked[9]} index={9} handleClick={handleClick} onChange={handleSpecializationsChange} options={SPECIALIZATIONS}></ModalInput>
-            </div>
-            <div className="modal-education-header">
-              Education
-            </div>
-            {renderEducationInputs()}
-            <div className="modal-input-container modal-education-add-container" onClick={() => setNumInputs(numInputs + 4)}>
-              <PlusCircleFilled className="modal-education-add-icon" />
-              <div className="modal-education-add-text">
-                Add more
+          <fieldset className="mentor-profile-contact">
+            <legend className="mentor-profile-contact-header">
+              Contact Info
+            </legend>
+            <MailOutlined className="mentor-profile-contact-icon" />
+            {mentor.email}
+            <br />
+            {mentor.phone_number && (
+              <div>
+                <PhoneOutlined className="mentor-profile-contact-icon" />
+                {mentor.phone_number}
+                <br />
               </div>
-            </div>
-          </div>
+            )}
+            <br />
+            <Link to="/" className="mentor-profile-contact-edit">
+              Edit
+            </Link>
+          </fieldset>
         </div>
-      </Modal>
+      </div>
     </div>
-
   );
 }
 

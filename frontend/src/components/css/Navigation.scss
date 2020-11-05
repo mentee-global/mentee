@@ -1,11 +1,23 @@
+.navigation-layout {
+  height: 100vh;
+}
+
 .navigation-content {
-  margin: 1% 1%;
-  height: 100%;
+  margin-left: 0px;
+  background-color: white;
 }
 
 .navigation-header {
   background-color: #fbecc1;
   padding: 0px;
+}
+
+.navigation-sidebar {
+    box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.244974);
+}
+
+.navigation-menu-item {
+    background-color: white;
 }
 
 .navigation-menu-item:hover {
@@ -41,6 +53,7 @@
 .profile-caret {
   float: right;
   margin-left: 1%;
+  margin-right: 1%;
   color: gray;
 }
 
@@ -55,4 +68,23 @@
   height: 40px;
   width: 200px;
   margin: 10px 10px;
+}
+
+.navigation-header-button {
+  border-radius: 13px;
+  border-color: #FCF6E8;
+  width: 125px;
+  margin-right: 5px;
+}
+
+.navigation-header-button-dark {
+  border-radius: 13px;
+  border-color: #E4BB4F;
+  width: 125px;
+  margin-right: 5px;
+}
+
+.navigation-mentee-flexbox {
+  display: flex;
+  justify-content: space-between;
 }

@@ -12,6 +12,30 @@ import "./css/Navigation.scss";
 
 const { Sider } = Layout;
 
+const menuItemMarginOverride = { marginTop: "0px", marginBottom: "0px" };
+const pages = {
+  home: {
+    name: "Home",
+    path: "/",
+    icon: <HomeOutlined />,
+  },
+  appointments: {
+    name: "Appointments",
+    path: "/appointments",
+    icon: <CalendarOutlined />,
+  },
+  videos: {
+    name: "Your Videos",
+    path: "/videos",
+    icon: <VideoCameraOutlined />,
+  },
+  profile: {
+    name: "Profile",
+    path: "/profile",
+    icon: <UserOutlined />,
+  },
+};
+
 function NavigationSidebar(props) {
   const getMenuItemStyle = (page) => {
     return props.selectedPage === page
@@ -20,44 +44,20 @@ function NavigationSidebar(props) {
   };
 
   return (
-    <Sider theme="light">
+    <Sider theme="light" className="navigation-sidebar">
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
-        <Menu.Item
-          key="home"
-          className={getMenuItemStyle("home")}
-          icon={<HomeOutlined />}
-        >
-          <NavLink to="/" style={{ color: "black" }}>
-            Home
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item
-          key="appointments"
-          className={getMenuItemStyle("appointments")}
-          icon={<CalendarOutlined />}
-        >
-          <NavLink to="/appointments" style={{ color: "black" }}>
-            Appointments
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item
-          key="videos"
-          className={getMenuItemStyle("videos")}
-          icon={<VideoCameraOutlined />}
-        >
-          <NavLink to="/videos" style={{ color: "black" }}>
-            Your Videos
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item
-          key="profile"
-          className={getMenuItemStyle("profile")}
-          icon={<UserOutlined />}
-        >
-          <NavLink to="/profile" style={{ color: "black" }}>
-            Profile
-          </NavLink>
-        </Menu.Item>
+        {Object.keys(pages).map((page) => (
+          <Menu.Item
+            key={page}
+            className={getMenuItemStyle(page)}
+            style={menuItemMarginOverride}
+            icon={pages[page]["icon"]}
+          >
+            <NavLink to={pages[page]["path"]} style={{ color: "black" }}>
+              {pages[page]["name"]}
+            </NavLink>
+          </Menu.Item>
+        ))}
       </Menu>
     </Sider>
   );

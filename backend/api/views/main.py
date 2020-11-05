@@ -1,7 +1,6 @@
 from os import path
 from flask import Blueprint, request, jsonify
 from api.models import db, Education, Video, MentorProfile, AppointmentRequest
-from api.models import db, Education, Video, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     MentorForm,

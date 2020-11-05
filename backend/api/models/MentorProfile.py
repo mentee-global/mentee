@@ -2,7 +2,7 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, Video, Availability
+from api.models import Education, Video, Availability, Picture
 
 
 class MentorProfile(Document, Mixin):
@@ -16,7 +16,7 @@ class MentorProfile(Document, Mixin):
     professional_title = StringField(required=True)
     linkedin = StringField(required=True)
     website = StringField(required=True)
-    picture = StringField(required=True)
+    picture = EmbeddedDocumentField(Picture)
     education = ListField(EmbeddedDocumentField(Education))
     languages = ListField(StringField(), required=True)
     specializations = ListField(StringField(), required=True)

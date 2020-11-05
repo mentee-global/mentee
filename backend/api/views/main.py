@@ -48,7 +48,6 @@ def create_mentor_profile():
         professional_title=data["professional_title"],
         linkedin=data["linkedin"],
         website=data["website"],
-        picture=data["picture"],
         languages=data["languages"],
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
@@ -129,7 +128,6 @@ def edit_mentor(id):
     mentor.biography = data.get("biography", mentor.biography)
     mentor.linkedin = data.get("linkedin", mentor.linkedin)
     mentor.website = data.get("website", mentor.website)
-    mentor.picture = data.get("picture", mentor.picture)
 
     # Create education object
     if "education" in data:
@@ -165,7 +163,6 @@ def uploadImage(id):
         image_response = imgur_client.send_image(data)
     except:
         return create_response(status=400, message=f"Image upload failed")
-
     try:
         mentor = MentorProfile.objects.get(id=id)
     except:
@@ -173,7 +170,16 @@ def uploadImage(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    mentor.picture = image_response["data"]["link"]
+    try:
+        if mentor.picture.picture_hash is True:
+            image_response = imgur_client.delete_image(mentor.picture.picture_hash)
+    except:
+        msg = "Failed to delete picture"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    mentor.picture.url = image_response["data"]["link"]
+    mentor.picture.picture_hash = image_response["data"]["deletehash"]
 
     mentor.save()
     return create_response(status=200, message=f"Success")

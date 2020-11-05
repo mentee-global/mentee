@@ -8,7 +8,7 @@ from api.utils.request_utils import (
     EducationForm,
     VideoForm,
     is_invalid_form,
-    imgur_client
+    imgur_client,
 )
 
 main = Blueprint("main", __name__)  # initialize blueprint
@@ -156,11 +156,12 @@ def edit_mentor(id):
 
     return create_response(status=200, message=f"Success")
 
+
 @main.route("/mentor/image/<id>", methods=["PUT"])
 def uploadImage(id):
-    data = request.files['image']
+    data = request.files["image"]
     image_response = imgur_client.send_image(data)
-    
+
     if not image_response.get("success", False):
         msg = ""
         if "data" in image_response:

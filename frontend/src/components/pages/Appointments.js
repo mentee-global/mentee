@@ -9,7 +9,6 @@ import {
 import "../css/Appointments.scss";
 import AvailabilityCalendar from "../AvailabilityCalendar";
 
-
 const Tabs = Object.freeze({
   upcoming: {
     title: "All Upcoming",
@@ -131,7 +130,7 @@ function Appointments() {
             Set available hours by specific date
           </div>
           <div className="calendar-container">
-            <AvailabilityCalendar/>
+            <AvailabilityCalendar />
           </div>
         </div>
         <div className="save-container">

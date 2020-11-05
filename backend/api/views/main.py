@@ -160,13 +160,11 @@ def edit_mentor(id):
 @main.route("/mentor/image/<id>", methods=["PUT"])
 def uploadImage(id):
     data = request.files["image"]
-    image_response = imgur_client.send_image(data)
 
-    if not image_response.get("success", False):
-        msg = ""
-        if "data" in image_response:
-            msg = image_response["data"].get("error", "")
-        return create_response(status=400, message=f"Image upload failed: " + msg)
+    try:
+        image_response = imgur_client.send_image(data)
+    except:
+        return create_response(status=400, message=f"Image upload failed")
 
     try:
         mentor = MentorProfile.objects.get(id=id)

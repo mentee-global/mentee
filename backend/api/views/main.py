@@ -154,7 +154,7 @@ def edit_mentor(id):
     return create_response(status=200, message=f"Success")
 
 
-@main.route("/mentor/image/<id>", methods=["PUT"])
+@main.route("/mentor/<id>/image", methods=["PUT"])
 def uploadImage(id):
     data = request.files["image"]
 
@@ -170,15 +170,15 @@ def uploadImage(id):
         return create_response(status=422, message=msg)
 
     try:
-        if mentor.picture.picture_hash is True:
-            image_response = imgur_client.delete_image(mentor.picture.picture_hash)
+        if mentor.image.image_hash is True:
+            image_response = imgur_client.delete_image(mentor.image.image_hash)
     except:
-        msg = "Failed to delete picture"
+        msg = "Failed to delete image"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    mentor.picture.url = image_response["data"]["link"]
-    mentor.picture.picture_hash = image_response["data"]["deletehash"]
+    mentor.image.url = image_response["data"]["link"]
+    mentor.image.image_hash = image_response["data"]["deletehash"]
 
     mentor.save()
     return create_response(status=200, message=f"Success")

@@ -5,7 +5,7 @@ from .base import db
 from .Education import Education
 from .Video import Video
 from .Availability import Availability
-from .Picture import Picture
+from .Image import Image
 from .MentorProfile import MentorProfile
 from .AppointmentRequest import AppointmentRequest
 
@@ -16,7 +16,7 @@ __all__ = [
     "MentorProfile",
     "Availability",
     "AppointmentRequest",
-    "Picture",
+    "Image",
 ]
 
 # You must import all of the new Models you create to this page

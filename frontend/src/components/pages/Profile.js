@@ -94,16 +94,18 @@ function Profile() {
                   {mentor.location}
                 </span>
               )}
-              <span>
-                <CommentOutlined
-                  className={
-                    !mentor.location
-                      ? "mentor-profile-tag-first"
-                      : "mentor-profile-tag"
-                  }
-                />
-                {getLanguages(mentor.languages || [])}
-              </span>
+              {mentor.languages && mentor.languages.length > 0 && (
+                <span>
+                  <CommentOutlined
+                    className={
+                      !mentor.location
+                        ? "mentor-profile-tag-first"
+                        : "mentor-profile-tag"
+                    }
+                  />
+                  {getLanguages(mentor.languages || [])}
+                </span>
+              )}
               {mentor.website && (
                 <span>
                   <LinkOutlined className="mentor-profile-tag" />
@@ -137,9 +139,13 @@ function Profile() {
             <legend className="mentor-profile-contact-header">
               Contact Info
             </legend>
-            <MailOutlined className="mentor-profile-contact-icon" />
-            {mentor.email}
-            <br />
+            {mentor.email && (
+              <div>
+                <MailOutlined className="mentor-profile-contact-icon" />
+                {mentor.email}
+                <br />
+              </div>
+            )}
             {mentor.phone_number && (
               <div>
                 <PhoneOutlined className="mentor-profile-contact-icon" />

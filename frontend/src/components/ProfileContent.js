@@ -55,7 +55,7 @@ function ProfileContent(props) {
     <div className="mentor-profile-info">
       <div className="mentor-profile-name">
         {props.mentor.name}
-        {props.button === "edit-profile" ? (
+        {props.button === "mentor" ? (
           <Button
             className="mentor-profile-edit-button"
             style={{ background: "#E4BB4F", color: "white" }}
@@ -67,7 +67,7 @@ function ProfileContent(props) {
             className="mentor-profile-edit-button"
             style={{ background: "#E4BB4F", color: "white" }}
           >
-            <b>Other Button</b>
+            <b>Book Appointment</b>
           </Button>
         )}
       </div>

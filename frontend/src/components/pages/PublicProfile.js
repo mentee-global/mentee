@@ -21,7 +21,7 @@ function PublicProfile(props) {
 
   return (
     <div className="background-color-strip">
-      <div className="mentor-profile-content">
+      <div className="mentor-profile-content-public">
         <Avatar size={120} src={mentor.picture} icon={<UserOutlined />} />
         <div className="mentor-profile-content-flexbox">
           <ProfileContent mentor={mentor} />

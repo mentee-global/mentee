@@ -20,7 +20,7 @@ export const formatAppointments = (data) => {
 
     const startTime = moment(timeslot.start_time.$date);
     const endTime = moment(timeslot.end_time.$date);
-    
+
     let keyToInsertAt = "upcoming";
     if (!appointment.accepted && startTime.isSameOrAfter(now)) {
       keyToInsertAt = "pending";
@@ -33,9 +33,9 @@ export const formatAppointments = (data) => {
       id: appointment._id.$oid,
       name: appointment.name,
       time: startTime.format("h:m a") + " - " + endTime.format("h:m a"),
-      isoTime: startTime.format()
+      isoTime: startTime.format(),
     };
-    
+
     // This is the only case where we might not have a date for a certain key
     if (output[keyToInsertAt].length < 1) {
       const dayObject = {
@@ -48,13 +48,28 @@ export const formatAppointments = (data) => {
       continue;
     }
 
-    const idxDayInsertAt = findIdxToInsert(output[keyToInsertAt], startTime, "date");
-    const dayFound = idxDayInsertAt < output[keyToInsertAt].length ? moment(output[keyToInsertAt][idxDayInsertAt].isoTime) : undefined;
+    const idxDayInsertAt = findIdxToInsert(
+      output[keyToInsertAt],
+      startTime,
+      "date"
+    );
+    const dayFound =
+      idxDayInsertAt < output[keyToInsertAt].length
+        ? moment(output[keyToInsertAt][idxDayInsertAt].isoTime)
+        : undefined;
     // Checks if appointment is in the same day
     if (dayFound && dayFound.isSame(startTime, "date")) {
-      const idxAppointmentInsert = findIdxToInsert(output[keyToInsertAt].appointments, startTime, "minute");
+      const idxAppointmentInsert = findIdxToInsert(
+        output[keyToInsertAt].appointments,
+        startTime,
+        "minute"
+      );
 
-      output[keyToInsertAt][idxDayInsertAt]["appointments"].splice(idxAppointmentInsert, 0, formattedAppointment);
+      output[keyToInsertAt][idxDayInsertAt]["appointments"].splice(
+        idxAppointmentInsert,
+        0,
+        formattedAppointment
+      );
     } else {
       // We will need to make a new day and fit in the current appointment
       const dayObject = {
@@ -86,7 +101,7 @@ const findIdxToInsert = (times, timeToInsert, granularity) => {
   // Binary search to get nearest day index to new day
   while (low < high) {
     mid = Math.floor((high + low) / 2);
-    midDay = moment(times[mid].isoTime)
+    midDay = moment(times[mid].isoTime);
     if (midDay.isSame(timeToInsert, granularity)) {
       return mid;
     } else if (midDay.isBefore(timeToInsert, granularity)) {
@@ -101,4 +116,4 @@ const findIdxToInsert = (times, timeToInsert, granularity) => {
   } else {
     return mid;
   }
-}
+};

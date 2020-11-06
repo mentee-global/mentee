@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Select, Input, Button } from "antd";
-import "./css/Profile.scss";
+import { Select, Input } from "antd";
+import "./css/Modal.scss";
 
 const { Option } = Select;
 
@@ -55,8 +55,9 @@ function ModalInput(props) {
 
     const InputBox = (props) => {
         switch (props.type) {
-            case 'text': return (<Input onClick={() => props.handleClick(props.index)} onChange={handleOnChange} bordered={false} placeholder={props.placeholder} />);
+            case 'text': return (<Input className="input-text" onClick={() => props.handleClick(props.index)} onChange={handleOnChange} bordered={false} placeholder={props.placeholder} />);
             case 'dropdown': return (<Select
+                className="input-text"
                 onClick={() => props.handleClick(props.index)}
                 mode="multiple"
                 allowClear
@@ -64,11 +65,10 @@ function ModalInput(props) {
                 style={{ width: '100%' }}
                 placeholder="Please select"
                 onChange={handleOnChange}
-                className="ant-select-selection--multiple"
             >
                 {returnDropdownItems(props.options)}
             </Select>);
-            case 'textarea': return (<Input.TextArea onClick={() => props.handleClick(props.index)} onChange={handleOnChange} bordered={false} maxLength={500} placeholder={props.placeholder} />);
+            case 'textarea': return (<Input.TextArea className="input-text" onClick={() => props.handleClick(props.index)} onChange={handleOnChange} bordered={false} placeholder={props.placeholder} />);
         }
     }
 
@@ -90,22 +90,15 @@ const styles = {
         borderBottomStyle: "solid",
         borderBottomWidth: 3,
         borderColor: "#828282",
-        margin: 5,
-        padding: 4
+        margin: 18,
+        padding: 4,
+        paddingTop: 6
     },
     text: {
         flex: 1,
-        fontWeight: "bold"
-    },
-    placeholderContainer: {
-        flex: 0.8,
-        width: "100%",
-    },
-    placeholderText: {
-        flex: 1,
-        width: "70%",
-        alignItems: "center",
-        color: "#828282"
+        fontWeight: "bold",
+        color: "#828282",
+        marginLeft: 11
     },
     clicked: {
         color: "#F2C94C",

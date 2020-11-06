@@ -1,0 +1,103 @@
+.modal-container {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.modal-profile-container {
+    display: flex;
+    background-color: #FFF7E2;
+    min-height: 120px;
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.modal-profile-icon {
+    margin-top: 60px;
+    margin-left: 44px;
+}
+
+.modal-profile-icon-edit {
+    margin-top: 140px;
+    margin-left: -30px;
+}
+
+.modal-inner-container {
+    display: flex;
+    flex-direction: column;
+    margin: 24px;
+}
+
+.modal-input-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+
+.modal-availability-checkbox {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+    margin-left: 18px;
+}
+
+.modal-availability-checkbox-text {
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: "#7A7A7A"
+}
+
+.modal-education-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.modal-education-header {
+    display: flex;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 5px;
+    margin-left: 16px;
+}
+
+.modal-education-sidebar {
+    display: flex;
+    margin: 5px;
+    margin-left: 16px;
+    height: 93%;
+    width: 14px;
+    border-left: 3px solid #A58123;
+}
+
+.modal-inner-education-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.modal-education-add-container {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.modal-education-add-icon {
+    margin-right: 10px;
+    font-size: 25px;
+    color: #A58123;
+}
+
+.modal-education-add-text {
+    font-size: 16px;
+    text-decoration-line: underline;
+    color: #A58123;
+}
+
+.input-text {
+    font-size: 18px;
+    font-weight: 500;
+}

@@ -9,7 +9,7 @@ import {
   MailOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { Button, Avatar } from "antd";
+import { Avatar } from "antd";
 import MentorProfileModal from "../MentorProfileModal"
 
 import "../css/Profile.scss";

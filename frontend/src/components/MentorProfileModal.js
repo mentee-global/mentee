@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Button, Modal, Checkbox, Avatar } from "antd";
 import ModalInput from "./ModalInput";
 import { UserOutlined, EditFilled, PlusCircleFilled } from '@ant-design/icons'
-import "./css/Profile.scss";
-
-const LANGUAGES = ["English", "Spanish", "German", "Chinese", "Vietnamese"]
-const SPECIALIZATIONS = ["Marketing", "Business", "English", "Computer Science"]
+import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts"
+import "./css/AntDesign.scss"
+import "./css/Modal.scss";
 
 function MentorProfileModal() {
     const [modalVisible, setModalVisible] = useState(false);
@@ -14,7 +13,7 @@ function MentorProfileModal() {
     const [name, setName] = useState(null)
     const [title, setTitle] = useState(null)
     const [about, setAbout] = useState(null)
-    const [onlineAvailable, setOnlineAvailable] = useState(null)
+    const [inPersonAvailable, setInPersonAvailable] = useState(null)
     const [groupAvailable, setGroupAvailable] = useState(null)
     const [location, setLocation] = useState(null)
     const [website, setWebsite] = useState(null)
@@ -33,18 +32,19 @@ function MentorProfileModal() {
             <div className="modal-education-sidebar"></div>
             <div className="modal-inner-education-container">
                 <div className="modal-input-container">
-                    <ModalInput height={60} type="text" title="School" clicked={inputClicked[10 + (i * 4)]} index={10 + (i * 4)} handleClick={handleClick} onChange={handleSchoolChange}></ModalInput>
-                    <ModalInput height={60} type="text" title="End Year/Expected" clicked={inputClicked[10 + (i * 4) + 1]} index={10 + (i * 4) + 1} handleClick={handleClick} onChange={handleGraduationDateChange} placeholder="Ex. Computer Science, Biology"></ModalInput>
+                    <ModalInput height={65} type="text" title="School" clicked={inputClicked[10 + (i * 4)]} index={10 + (i * 4)} handleClick={handleClick} onChange={handleSchoolChange}></ModalInput>
+                    <ModalInput height={65} type="text" title="End Year/Expected" clicked={inputClicked[10 + (i * 4) + 1]} index={10 + (i * 4) + 1} handleClick={handleClick} onChange={handleGraduationDateChange}></ModalInput>
                 </div>
                 <div className="modal-input-container">
-                    <ModalInput height={60} type="text" title="Major(s)" clicked={inputClicked[10 + (i * 4) + 2]} index={10 + (i * 4) + 2} handleClick={handleClick} onChange={handleMajorsChange}></ModalInput>
-                    <ModalInput height={60} type="text" title="Degree" clicked={inputClicked[10 + (i * 4) + 3]} index={10 + (i * 4) + 3} handleClick={handleClick} onChange={handleDegreeChange} placeholder="Ex. Bachelor's"></ModalInput>
+                    <ModalInput height={65} type="text" title="Major(s)" clicked={inputClicked[10 + (i * 4) + 2]} index={10 + (i * 4) + 2} handleClick={handleClick} onChange={handleMajorsChange} placeholder="Ex. Computer Science, Biology"></ModalInput>
+                    <ModalInput height={65} type="text" title="Degree" clicked={inputClicked[10 + (i * 4) + 3]} index={10 + (i * 4) + 3} handleClick={handleClick} onChange={handleDegreeChange} placeholder="Ex. Bachelor's"></ModalInput>
                 </div>
             </div>
         </div>))
     }
 
     function handleClick(index) {
+        // Sets only the clicked input box to true to change color, else false
         let newClickedInput = new Array(numInputs).fill(false)
         newClickedInput[index] = true
         setInputClicked(newClickedInput)
@@ -62,8 +62,8 @@ function MentorProfileModal() {
         setAbout(e.target.value)
     }
 
-    function handleOnlineAvailableChange(e) {
-        setOnlineAvailable(e.target.checked)
+    function handleInPersonAvailableChange(e) {
+        setInPersonAvailable(e.target.checked)
     }
 
     function handleGroupAvailableChange(e) {
@@ -79,7 +79,9 @@ function MentorProfileModal() {
     }
 
     function handleLanguageChange(e) {
-        // setLanguages(e.target.value)
+        let languagesSelected = []
+        e.forEach(value => languagesSelected.push(LANGUAGES[value]))
+        setLanguages(languagesSelected)
     }
 
     function handleLinkedinChange(e) {
@@ -87,7 +89,9 @@ function MentorProfileModal() {
     }
 
     function handleSpecializationsChange(e) {
-        // setSpecializations(e.target.value)
+        let specializationsSelected = []
+        e.forEach(value => specializationsSelected.push(SPECIALIZATIONS[value]))
+        setLanguages(specializationsSelected)
     }
 
     function handleSchoolChange(e) {
@@ -120,11 +124,7 @@ function MentorProfileModal() {
                 footer={<Button
                     type="default"
                     shape="round"
-                    style={{
-                        borderRadius: 13,
-                        marginRight: 15,
-                        backgroundColor: "#E4BB4F"
-                    }}
+                    style={styles.footer}
                     onClick={() => setModalVisible(false)}
                 >
                     Save</Button>}
@@ -136,42 +136,50 @@ function MentorProfileModal() {
                     </div>
                     <div className="modal-inner-container">
                         <div className="modal-input-container">
-                            <ModalInput height={60} type="text" title="Name *" clicked={inputClicked[0]} index={0} handleClick={handleClick} onChange={handleNameChange}></ModalInput>
-                            <ModalInput height={60} type="text" title="Professional Title *" clicked={inputClicked[1]} index={1} handleClick={handleClick} onChange={handleTitleChange}></ModalInput>
+                            <ModalInput height={65} type="text" title="Name *" clicked={inputClicked[0]} index={0} handleClick={handleClick} onChange={handleNameChange}></ModalInput>
+                            <ModalInput height={65} type="text" title="Professional Title *" clicked={inputClicked[1]} index={1} handleClick={handleClick} onChange={handleTitleChange}></ModalInput>
                         </div>
                         <div className="modal-input-container">
                             <ModalInput type="textarea" title="About" clicked={inputClicked[2]} index={2} handleClick={handleClick} onChange={handleAboutChange}></ModalInput>
                         </div>
-                        <div className="modal-availability-radios">
-                            <Checkbox className="modal-availability-radio-text" clicked={inputClicked[3]} index={3} handleClick={handleClick} onChange={handleOnlineAvailableChange}>Available online?</Checkbox>
+                        <div className="modal-availability-checkbox">
+                            <Checkbox className="modal-availability-checkbox-text" clicked={inputClicked[3]} index={3} handleClick={handleClick} onChange={handleInPersonAvailableChange}>Available online?</Checkbox>
                             <div></div>
-                            <Checkbox className="modal-availability-radio-text" clicked={inputClicked[4]} index={4} handleClick={handleClick} onChange={handleGroupAvailableChange}>Available for group appointments?</Checkbox>
+                            <Checkbox className="modal-availability-checkbox-text" clicked={inputClicked[4]} index={4} handleClick={handleClick} onChange={handleGroupAvailableChange}>Available for group appointments?</Checkbox>
                         </div>
                         <div className="modal-input-container">
-                            <ModalInput height={60} type="text" title="Location" clicked={inputClicked[5]} index={5} handleClick={handleClick} onChange={handleLocationChange}></ModalInput>
-                            <ModalInput height={60} type="text" title="Website" clicked={inputClicked[6]} index={6} handleClick={handleClick} onChange={handleWebsiteChange}></ModalInput>
+                            <ModalInput height={65} type="text" title="Location" clicked={inputClicked[5]} index={5} handleClick={handleClick} onChange={handleLocationChange}></ModalInput>
+                            <ModalInput height={65} type="text" title="Website" clicked={inputClicked[6]} index={6} handleClick={handleClick} onChange={handleWebsiteChange}></ModalInput>
                         </div>
                         <div className="modal-input-container">
-                            <ModalInput height={60} type="dropdown" title="Languages" clicked={inputClicked[7]} index={7} handleClick={handleClick} onChange={handleLanguageChange} placeholder="Ex. English, Spanish" options={LANGUAGES}></ModalInput>
-                            <ModalInput height={60} type="text" title="LinkedIn" clicked={inputClicked[8]} index={8} handleClick={handleClick} onChange={handleLinkedinChange}></ModalInput>
+                            <ModalInput height={65} type="dropdown" title="Languages" clicked={inputClicked[7]} index={7} handleClick={handleClick} onChange={handleLanguageChange} placeholder="Ex. English, Spanish" options={LANGUAGES}></ModalInput>
+                            <ModalInput height={65} type="text" title="LinkedIn" clicked={inputClicked[8]} index={8} handleClick={handleClick} onChange={handleLinkedinChange}></ModalInput>
                         </div>
                         <div className="modal-input-container">
-                            <ModalInput height={60} type="dropdown" title="Specializations" clicked={inputClicked[9]} index={9} handleClick={handleClick} onChange={handleSpecializationsChange} options={SPECIALIZATIONS}></ModalInput>
+                            <ModalInput height={65} type="dropdown" title="Specializations" clicked={inputClicked[9]} index={9} handleClick={handleClick} onChange={handleSpecializationsChange} options={SPECIALIZATIONS}></ModalInput>
                         </div>
                         <div className="modal-education-header">
                             Education
-            </div>
+                        </div>
                         {renderEducationInputs()}
                         <div className="modal-input-container modal-education-add-container" onClick={() => setNumInputs(numInputs + 4)}>
                             <PlusCircleFilled className="modal-education-add-icon" />
                             <div className="modal-education-add-text">
                                 Add more
-              </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </Modal>
         </div>);
+}
+
+const styles = {
+    footer: {
+        borderRadius: 13,
+        marginRight: 15,
+        backgroundColor: "#E4BB4F"
+    }
 }
 
 export default MentorProfileModal;

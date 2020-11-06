@@ -55,16 +55,13 @@ function Profile() {
     if (educations == null || educations[0] == null) {
       return;
     }
-    // TODO: Issue #32
-    // Change this from a ternary to just educations.map once educations field is updated as a list in mongodb
-    // Currently it is sent as a single object
     return educations.map((education) => (
       <div className="mentor-profile-education">
         <b>{education.school}</b>
         <br />
         {education.education_level}
         <br />
-        {"Majors: " + education.majors.join(", ")}
+        {"Major(s): " + education.majors.join(", ")}
         <br />
         {education.graduation_year}
       </div>
@@ -97,16 +94,18 @@ function Profile() {
                   {mentor.location}
                 </span>
               )}
-              <span>
-                <CommentOutlined
-                  className={
-                    !mentor.location
-                      ? "mentor-profile-tag-first"
-                      : "mentor-profile-tag"
-                  }
-                />
-                {getLanguages(mentor.languages || [])}
-              </span>
+              {mentor.languages && mentor.languages.length > 0 && (
+                <span>
+                  <CommentOutlined
+                    className={
+                      !mentor.location
+                        ? "mentor-profile-tag-first"
+                        : "mentor-profile-tag"
+                    }
+                  />
+                  {getLanguages(mentor.languages || [])}
+                </span>
+              )}
               {mentor.website && (
                 <span>
                   <LinkOutlined className="mentor-profile-tag" />
@@ -134,21 +133,19 @@ function Profile() {
             <div className="mentor-profile-heading">
               <b>Education</b>
             </div>
-            <div>
-              {
-                getEducations([
-                  mentor.education,
-                ]) /*TODO: issue #32 change this once model supports list of education and remove ternary in getEdu*/
-              }
-            </div>
+            <div>{getEducations(mentor.education)}</div>
           </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">
               Contact Info
             </legend>
-            <MailOutlined className="mentor-profile-contact-icon" />
-            {mentor.email}
-            <br />
+            {mentor.email && (
+              <div>
+                <MailOutlined className="mentor-profile-contact-icon" />
+                {mentor.email}
+                <br />
+              </div>
+            )}
             {mentor.phone_number && (
               <div>
                 <PhoneOutlined className="mentor-profile-contact-icon" />

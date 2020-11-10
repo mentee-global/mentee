@@ -10,7 +10,7 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import { Avatar } from "antd";
-import MentorProfileModal from "../MentorProfileModal"
+import MentorProfileModal from "../MentorProfileModal";
 
 import "../css/Profile.scss";
 import { fetchMentorByID, mentorID } from "../../utils/api";
@@ -47,8 +47,8 @@ function Profile() {
       idx === 0 ? (
         <div className="mentor-specialization-tag-first">{specialization}</div>
       ) : (
-          <div className="mentor-specialization-tag">{specialization}</div>
-        )
+        <div className="mentor-specialization-tag">{specialization}</div>
+      )
     );
   };
 

@@ -11,7 +11,7 @@ function App() {
     <Router>
       <Route
         path="/"
-        exact
+        exact 
         component={() => <Navigation content={<Home />} page="home" />}
       />
       <Route

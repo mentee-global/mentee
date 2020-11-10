@@ -2,6 +2,7 @@
 # initializing db in api.models.base instead of in api.__init__.py
 # to prevent circular dependencies
 from .base import db
+from .Users import Users
 from .Education import Education
 from .Video import Video
 from .Availability import Availability
@@ -10,6 +11,7 @@ from .AppointmentRequest import AppointmentRequest
 
 __all__ = [
     "db",
+    "Users",
     "Education",
     "Video",
     "MentorProfile",

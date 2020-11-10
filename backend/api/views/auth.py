@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db
+from api.models import db, Users, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import AUTH_URL
 import requests
@@ -49,9 +49,21 @@ def login():
     if not resp.get("token"):
         return create_response(message=resp["message"], status=400)
 
+    uid = resp["uid"]
+    user = Users.objects.get(id=uid)
+    try:
+        mentor = MentorProfile.objects.get(user_id=user)
+        mentor_id = mentor.id
+    except:
+        msg = "Couldn't find mentor with these credentials"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
     return create_response(
         message=resp["message"],
         data={
+            "userId": resp["uid"],
+            "mentorId": str(mentor_id),
             "token": resp["token"],
         },
     )

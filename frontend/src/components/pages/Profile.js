@@ -25,7 +25,9 @@ function Profile() {
       <div className="mentor-profile-content">
         <Avatar size={120} src={mentor.picture} icon={<UserOutlined />} />
         <div className="mentor-profile-content-flexbox">
-          <ProfileContent mentor={mentor} button={"mentor"} />
+          <div className="mentor-profile-info">
+            <ProfileContent mentor={mentor} button={"mentor"} />
+          </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">
               Contact Info

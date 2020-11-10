@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
-import ProfileContent from "../ProfileContent";
 
-import "../css/Profile.scss";
+import ProfileContent from "../ProfileContent";
+import ProfileVideos from "../ProfileVideos";
 import { fetchMentorByID } from "../../utils/api";
+
+import "../css/PublicProfile.scss";
 
 function PublicProfile(props) {
   const [mentor, setMentor] = useState({});
@@ -17,16 +19,16 @@ function PublicProfile(props) {
       }
     }
     getMentor();
-  }, []);
+  }, [props.id]);
 
   return (
-    <div className="background-color-strip">
+    <div className="mentor-profile-flexbox">
       <div className="mentor-profile-content-public">
         <Avatar size={120} src={mentor.picture} icon={<UserOutlined />} />
-        <div className="mentor-profile-content-flexbox">
-          <ProfileContent mentor={mentor} />
-          <div>videos go here</div>
-        </div>
+        <ProfileContent mentor={mentor} />
+      </div>
+      <div className="mentor-profile-videos">
+        <ProfileVideos />
       </div>
     </div>
   );

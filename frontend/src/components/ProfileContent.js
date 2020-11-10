@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Button } from "antd";
 
-import "./css/Profile.scss";
+const profileButtonStyle = { background: "#E4BB4F", color: "white" };
 
 function ProfileContent(props) {
   const getMeetingMethods = () => {
@@ -52,20 +52,20 @@ function ProfileContent(props) {
   };
 
   return (
-    <div className="mentor-profile-info">
+    <div>
       <div className="mentor-profile-name">
         {props.mentor.name}
         {props.button === "mentor" ? (
           <Button
             className="mentor-profile-edit-button"
-            style={{ background: "#E4BB4F", color: "white" }}
+            style={profileButtonStyle}
           >
             <b>Edit Profile</b>
           </Button>
         ) : (
           <Button
             className="mentor-profile-edit-button"
-            style={{ background: "#E4BB4F", color: "white" }}
+            style={profileButtonStyle}
           >
             <b>Book Appointment</b>
           </Button>

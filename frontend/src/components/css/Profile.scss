@@ -1,6 +1,8 @@
+@import "_app";
+
 .background-color-strip {
   height: 20%;
-  background: #FCF6E8;
+  background: $background-color-strip-color;
 }
 
 .mentor-profile-content {
@@ -22,11 +24,11 @@
 }
 
 .mentor-profile-heading {
-  color: #828282;
+  color: $mentor-profile-heading-color;
 }
 
 .yellow-dot {
-  color: #E4BB4F;
+  color: $yellow-dot-color;
 }
 
 .mentor-profile-tag-first {
@@ -48,7 +50,7 @@
 }
 
 .mentor-specialization-tag-first {
-  border: 3px solid #FFECBD;
+  border: 3px solid $specialization-tag-border;
   border-radius: 13px;
   font-weight: bold;
   display: inline-block;
@@ -59,7 +61,7 @@
 }
 
 .mentor-specialization-tag {
-  border: 3px solid #FFECBD;
+  border: 3px solid $specialization-tag-border;
   border-radius: 13px;
   font-weight: bold;
   display: inline-block;
@@ -76,7 +78,7 @@
 }
 
 .mentor-profile-contact {
-  border-top-color: #FFECBD;
+  border-top-color: $specialization-tag-border;
   border-top-width: 5vh;
   border-top-style: solid;
   border-radius: 8px;
@@ -89,7 +91,7 @@
 .mentor-profile-contact-header {
   font-size: 20px;
   font-weight: bold;
-  background: #FFECBD;
+  background: $specialization-tag-border;
   height: 5vh;
 }
 
@@ -101,5 +103,5 @@
   font-weight: bold;
   font-size: 12px;
   text-decoration: underline;
-  color: #A58123;
+  color: $edit-contact-color;
 }

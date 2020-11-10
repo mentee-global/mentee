@@ -1,3 +1,5 @@
+@import "_app";
+
 .appointments-welcome-text {
     margin: 1% 1%;
     font-size: 30px;
@@ -12,7 +14,7 @@
 }
 
 .appointment-card {
-    background-color: #FFECBD;
+    background-color: $appointment-card-background-color;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -24,7 +26,7 @@
 }
 
 .appointments-background {
-    background: #FCF6E8;
+    background: $appointment-background-color;
     padding: 46px 13px 48px 20px;
     border-radius: 8px;
     width: auto;
@@ -39,7 +41,7 @@
 
 .appointments-date-text-block {
     font-size: 13px;
-    color: #A58123;
+    color: $appointments-date-text-block-color;
     display: block;
     font-weight: bold;
     line-height: 1;
@@ -57,7 +59,7 @@
 
 .appointments-row {
     border-left: solid;
-    border-color: #E4BB4F;
+    border-color: $appointments-row-border-color;
     border-width: 2px;
     width: 100%;
 }
@@ -74,7 +76,7 @@
 
 .appointment-time,
 .appointment-description {
-    color: #7A7A7A;
+    color: $appointments-description;
     line-height: 15px;
 }
 
@@ -109,15 +111,15 @@
 }
 
 .appointments-tab-item {
-    background-color: #FFECBD;
-    color: #A58123;
+    background-color: $appointments-tab-background-color;
+    color: $appointments-tab-color;
     border-radius: 13px;
     margin-right: 1%;
 }
 
 .appointments-tab-item-selected {
-    background-color: #E4BB4F;
-    color: #FFF7E2;
+    background-color: $appointments-tab-item-selected-background-color;
+    color: $appointments-tab-item-selected-color;
     border-radius: 13px;
     margin-right: 1%;
 }
@@ -133,7 +135,7 @@
 .calendar-header {
     display: flex;
     align-items: center;
-    background-color: #FFECBD;
+    background-color: $appointment-card-background-color;
     font-weight: bold;
     padding-left: 1%;
     height: 50px;

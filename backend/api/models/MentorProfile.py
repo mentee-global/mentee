@@ -8,6 +8,7 @@ from api.models import Education, Video, Availability, Users
 class MentorProfile(Document, Mixin):
     """"Mentor Profile Collection."""
 
+    # TODO: make required: true
     user_id = ReferenceField("Users")
     name = StringField(required=True)
     location = StringField()

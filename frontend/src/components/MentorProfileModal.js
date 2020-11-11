@@ -28,7 +28,7 @@ function MentorProfileModal() {
   const [degree, setDegree] = useState(null);
 
   function renderEducationInputs() {
-    let numDegrees = (numInputs - 10) / 4;
+    let numDegrees = (numInputs - 10) / 4; // All boxes after first 10 are education-related
     let degrees = [...Array(numDegrees).keys()];
     return degrees.map((key, i) => (
       <div className="modal-education-container">
@@ -39,7 +39,7 @@ function MentorProfileModal() {
               height={65}
               type="text"
               title="School"
-              clicked={inputClicked[10 + i * 4]}
+              clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
               index={10 + i * 4}
               handleClick={handleClick}
               onChange={handleSchoolChange}

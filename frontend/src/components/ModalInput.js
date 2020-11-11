@@ -5,21 +5,32 @@ import "./css/Modal.scss";
 const { Option } = Select;
 
 function ModalInput(props) {
-  const [isClicked, setIsClicked] = useState(props.clicked);
+  const {
+    height,
+    clicked,
+    index,
+    type,
+    title,
+    placeholder,
+    options,
+    onChange,
+    handleClick,
+  } = props;
+  const [isClicked, setIsClicked] = useState(clicked);
 
   useEffect(() => {
-    setIsClicked(props.clicked);
-  }, [props.clicked]);
+    setIsClicked(clicked);
+  }, [clicked]);
 
   function handleOnChange(e) {
-    props.onChange(e);
-    props.handleClick(props.index);
+    onChange(e);
+    handleClick(index);
   }
 
   function getContainerStyle() {
     let style = {
       ...styles.container,
-      height: props.height,
+      height: height,
     };
 
     if (isClicked) {
@@ -53,23 +64,23 @@ function ModalInput(props) {
     return options;
   };
 
-  const InputBox = (props) => {
-    switch (props.type) {
+  const InputBox = () => {
+    switch (type) {
       case "text":
         return (
           <Input
             className="input-text"
-            onClick={() => props.handleClick(props.index)}
+            onClick={() => handleClick(index)}
             onChange={handleOnChange}
             bordered={false}
-            placeholder={props.placeholder}
+            placeholder={placeholder}
           />
         );
       case "dropdown":
         return (
           <Select
             className="input-text"
-            onClick={() => props.handleClick(props.index)}
+            onClick={() => handleClick(index)}
             mode="multiple"
             allowClear
             bordered={false}
@@ -77,17 +88,17 @@ function ModalInput(props) {
             placeholder="Please select"
             onChange={handleOnChange}
           >
-            {returnDropdownItems(props.options)}
+            {returnDropdownItems(options)}
           </Select>
         );
       case "textarea":
         return (
           <Input.TextArea
             className="input-text"
-            onClick={() => props.handleClick(props.index)}
+            onClick={() => handleClick(index)}
             onChange={handleOnChange}
             bordered={false}
-            placeholder={props.placeholder}
+            placeholder={placeholder}
           />
         );
     }
@@ -95,8 +106,8 @@ function ModalInput(props) {
 
   return (
     <div style={getContainerStyle()}>
-      <div style={getTextStyle()}>{props.title}</div>
-      {InputBox(props)}
+      <div style={getTextStyle()}>{title}</div>
+      {InputBox()}
     </div>
   );
 }

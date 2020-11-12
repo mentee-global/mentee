@@ -55,7 +55,7 @@ function ProfileContent(props) {
     <div>
       <div className="mentor-profile-name">
         {props.mentor.name}
-        {props.button === "mentor" ? (
+        {props.isMentor ? (
           <Button
             className="mentor-profile-edit-button"
             style={profileButtonStyle}

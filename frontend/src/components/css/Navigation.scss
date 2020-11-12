@@ -5,7 +5,8 @@
 }
 
 .navigation-content {
-  margin-left: 3px;
+  margin-left: 0px;
+  background-color: white;
 }
 
 .navigation-header {
@@ -13,7 +14,7 @@
   padding: 0px;
 }
 
-.sidebar {
+.navigation-sidebar {
     box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.244974);
 }
 
@@ -54,6 +55,7 @@
 .profile-caret {
   float: right;
   margin-left: 1%;
+  margin-right: 1%;
   color: $profile-caret-color;
 }
 
@@ -70,6 +72,21 @@
   margin: 10px 10px;
 }
 
-.layout-body {
-  background-color: $layout-body-color;
+.navigation-header-button {
+  border-radius: 13px;
+  border-color: $header-button-border;
+  width: 125px;
+  margin-right: 5px;
+}
+
+.navigation-header-button-dark {
+  border-radius: 13px;
+  border-color: $header-button-dark-border;
+  width: 125px;
+  margin-right: 5px;
+}
+
+.navigation-mentee-flexbox {
+  display: flex;
+  justify-content: space-between;
 }

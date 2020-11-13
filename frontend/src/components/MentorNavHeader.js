@@ -59,7 +59,7 @@ function MentorNavHeader() {
       <div className="notification-bell">
         <NavLink to="/" className="notification-bell">
           <BellOutlined />
-        </NavLink> 
+        </NavLink>
       </div>
     </Header>
   );

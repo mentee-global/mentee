@@ -39,8 +39,6 @@ function ProfileVideos(props) {
     setVideoGrid(grid);
   }, [props.videos]);
 
-  const defaultVideo = <div className="video-default-preview"> </div>;
-
   return (
     <div>
       <h1>

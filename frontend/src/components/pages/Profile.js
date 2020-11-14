@@ -53,7 +53,7 @@ function Profile() {
           </fieldset>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 

@@ -6,7 +6,7 @@ import {
   LinkedinOutlined,
 } from "@ant-design/icons";
 import { Button } from "antd";
-import MentorProfileModal from "./MentorProfileModal"
+import MentorProfileModal from "./MentorProfileModal";
 
 const profileButtonStyle = { background: "#E4BB4F", color: "white" };
 
@@ -30,8 +30,8 @@ function ProfileContent(props) {
       idx === 0 ? (
         <div className="mentor-specialization-tag-first">{specialization}</div>
       ) : (
-          <div className="mentor-specialization-tag">{specialization}</div>
-        )
+        <div className="mentor-specialization-tag">{specialization}</div>
+      )
     );
   };
 
@@ -59,13 +59,13 @@ function ProfileContent(props) {
         {props.isMentor ? (
           <MentorProfileModal />
         ) : (
-            <Button
-              className="mentor-profile-edit-button"
-              style={profileButtonStyle}
-            >
-              <b>Book Appointment</b>
-            </Button>
-          )}
+          <Button
+            className="mentor-profile-edit-button"
+            style={profileButtonStyle}
+          >
+            <b>Book Appointment</b>
+          </Button>
+        )}
       </div>
       <div className="mentor-profile-heading">
         {props.mentor.professional_title} <t className="yellow-dot">•</t>{" "}

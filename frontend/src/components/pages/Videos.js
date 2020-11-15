@@ -1,7 +1,8 @@
 import React from "react";
+import MenteeAppointmentModal1 from "../MenteeAppointmentModal1"
 
 function Videos() {
-  return <div>Videos</div>;
+  return <MenteeAppointmentModal1></MenteeAppointmentModal1>;
 }
 
 export default Videos;

@@ -36,7 +36,7 @@ function MentorProfileModal() {
         <div className="modal-inner-education-container">
           <div className="modal-input-container">
             <ModalInput
-              height={65}
+              style={styles.modalInput}
               type="text"
               title="School"
               clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
@@ -45,7 +45,7 @@ function MentorProfileModal() {
               onChange={handleSchoolChange}
             ></ModalInput>
             <ModalInput
-              height={65}
+              style={styles.modalInput}
               type="text"
               title="End Year/Expected"
               clicked={inputClicked[10 + i * 4 + 1]}
@@ -56,7 +56,7 @@ function MentorProfileModal() {
           </div>
           <div className="modal-input-container">
             <ModalInput
-              height={65}
+              style={styles.modalInput}
               type="text"
               title="Major(s)"
               clicked={inputClicked[10 + i * 4 + 2]}
@@ -66,7 +66,7 @@ function MentorProfileModal() {
               placeholder="Ex. Computer Science, Biology"
             ></ModalInput>
             <ModalInput
-              height={65}
+              style={styles.modalInput}
               type="text"
               title="Degree"
               clicked={inputClicked[10 + i * 4 + 3]}
@@ -190,7 +190,7 @@ function MentorProfileModal() {
           <div className="modal-inner-container">
             <div className="modal-input-container">
               <ModalInput
-                height={65}
+                style={styles.modalInput}
                 type="text"
                 title="Name *"
                 clicked={inputClicked[0]}
@@ -199,7 +199,7 @@ function MentorProfileModal() {
                 onChange={handleNameChange}
               ></ModalInput>
               <ModalInput
-                height={65}
+                style={styles.modalInput}
                 type="text"
                 title="Professional Title *"
                 clicked={inputClicked[1]}
@@ -210,6 +210,7 @@ function MentorProfileModal() {
             </div>
             <div className="modal-input-container">
               <ModalInput
+                style={styles.modalInput}
                 type="textarea"
                 title="About"
                 clicked={inputClicked[2]}
@@ -241,7 +242,7 @@ function MentorProfileModal() {
             </div>
             <div className="modal-input-container">
               <ModalInput
-                height={65}
+                style={styles.modalInput}
                 type="text"
                 title="Location"
                 clicked={inputClicked[5]}
@@ -250,7 +251,7 @@ function MentorProfileModal() {
                 onChange={handleLocationChange}
               ></ModalInput>
               <ModalInput
-                height={65}
+                style={styles.modalInput}
                 type="text"
                 title="Website"
                 clicked={inputClicked[6]}
@@ -261,7 +262,7 @@ function MentorProfileModal() {
             </div>
             <div className="modal-input-container">
               <ModalInput
-                height={65}
+                style={styles.modalInput}
                 type="dropdown"
                 title="Languages"
                 clicked={inputClicked[7]}
@@ -272,7 +273,7 @@ function MentorProfileModal() {
                 options={LANGUAGES}
               ></ModalInput>
               <ModalInput
-                height={65}
+                style={styles.modalInput}
                 type="text"
                 title="LinkedIn"
                 clicked={inputClicked[8]}
@@ -283,7 +284,7 @@ function MentorProfileModal() {
             </div>
             <div className="modal-input-container">
               <ModalInput
-                height={65}
+                style={styles.modalInput}
                 type="dropdown"
                 title="Specializations"
                 clicked={inputClicked[9]}
@@ -310,6 +311,12 @@ function MentorProfileModal() {
 }
 
 const styles = {
+  modalInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6
+  },
   footer: {
     borderRadius: 13,
     marginRight: 15,

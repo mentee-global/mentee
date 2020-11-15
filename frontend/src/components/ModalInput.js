@@ -6,7 +6,6 @@ const { Option } = Select;
 
 function ModalInput(props) {
   const {
-    height,
     clicked,
     index,
     type,
@@ -30,7 +29,7 @@ function ModalInput(props) {
   function getContainerStyle() {
     let style = {
       ...styles.container,
-      height: height,
+      ...props.style,
     };
 
     if (isClicked) {
@@ -121,9 +120,6 @@ const styles = {
     borderBottomStyle: "solid",
     borderBottomWidth: 3,
     borderColor: "#828282",
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
   },
   text: {
     flex: 1,

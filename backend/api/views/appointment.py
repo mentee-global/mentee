@@ -19,7 +19,7 @@ def get_requests_by_mentor(mentor_id):
 
     # End of block
     requests = AppointmentRequest.objects(mentor_id=mentor_id)
-    # TODO Remove sending mentor form this response as well
+    # TODO Remove sending mentor name from this response
     return create_response(data={"mentor_name": mentor.name, "requests": requests})
 
 

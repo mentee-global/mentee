@@ -178,7 +178,7 @@ function Appointments() {
   };
 
   const Appointments = ({ data }) => {
-    if (data == null) {
+    if (!data) {
       return <div></div>;
     }
 

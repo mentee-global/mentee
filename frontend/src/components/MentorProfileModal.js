@@ -43,7 +43,7 @@ function MentorProfileModal() {
               index={10 + i * 4}
               handleClick={handleClick}
               onChange={handleSchoolChange}
-            ></ModalInput>
+            />
             <ModalInput
               style={styles.modalInput}
               type="text"
@@ -52,7 +52,7 @@ function MentorProfileModal() {
               index={10 + i * 4 + 1}
               handleClick={handleClick}
               onChange={handleGraduationDateChange}
-            ></ModalInput>
+            />
           </div>
           <div className="modal-input-container">
             <ModalInput
@@ -64,7 +64,7 @@ function MentorProfileModal() {
               handleClick={handleClick}
               onChange={handleMajorsChange}
               placeholder="Ex. Computer Science, Biology"
-            ></ModalInput>
+            />
             <ModalInput
               style={styles.modalInput}
               type="text"
@@ -74,7 +74,7 @@ function MentorProfileModal() {
               handleClick={handleClick}
               onChange={handleDegreeChange}
               placeholder="Ex. Bachelor's"
-            ></ModalInput>
+            />
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@ function MentorProfileModal() {
                 index={0}
                 handleClick={handleClick}
                 onChange={handleNameChange}
-              ></ModalInput>
+              />
               <ModalInput
                 style={styles.modalInput}
                 type="text"
@@ -206,7 +206,7 @@ function MentorProfileModal() {
                 index={1}
                 handleClick={handleClick}
                 onChange={handleTitleChange}
-              ></ModalInput>
+              />
             </div>
             <div className="modal-input-container">
               <ModalInput
@@ -217,7 +217,7 @@ function MentorProfileModal() {
                 index={2}
                 handleClick={handleClick}
                 onChange={handleAboutChange}
-              ></ModalInput>
+              />
             </div>
             <div className="modal-availability-checkbox">
               <Checkbox
@@ -249,7 +249,7 @@ function MentorProfileModal() {
                 index={5}
                 handleClick={handleClick}
                 onChange={handleLocationChange}
-              ></ModalInput>
+              />
               <ModalInput
                 style={styles.modalInput}
                 type="text"
@@ -258,7 +258,7 @@ function MentorProfileModal() {
                 index={6}
                 handleClick={handleClick}
                 onChange={handleWebsiteChange}
-              ></ModalInput>
+              />
             </div>
             <div className="modal-input-container">
               <ModalInput
@@ -271,7 +271,7 @@ function MentorProfileModal() {
                 onChange={handleLanguageChange}
                 placeholder="Ex. English, Spanish"
                 options={LANGUAGES}
-              ></ModalInput>
+              />
               <ModalInput
                 style={styles.modalInput}
                 type="text"
@@ -280,7 +280,7 @@ function MentorProfileModal() {
                 index={8}
                 handleClick={handleClick}
                 onChange={handleLinkedinChange}
-              ></ModalInput>
+              />
             </div>
             <div className="modal-input-container">
               <ModalInput
@@ -292,7 +292,7 @@ function MentorProfileModal() {
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
                 options={SPECIALIZATIONS}
-              ></ModalInput>
+              />
             </div>
             <div className="modal-education-header">Education</div>
             {renderEducationInputs()}
@@ -315,7 +315,7 @@ const styles = {
     height: 65,
     margin: 18,
     padding: 4,
-    paddingTop: 6
+    paddingTop: 6,
   },
   footer: {
     borderRadius: 13,

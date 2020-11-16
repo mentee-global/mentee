@@ -6,6 +6,7 @@ import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
 import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
+import PublicProfile from "components/pages/PublicProfile";
 
 function App() {
   return (
@@ -41,8 +42,16 @@ function App() {
       />
       <Route
         path="/gallery"
-        component={() => (
-          <Navigation content={<Gallery />} page="gallery" needsAuth={false} />
+        exact
+        component={() => <Navigation content={<Gallery />} needsAuth={false} />}
+      />
+      <Route
+        path="/gallery/:id"
+        component={(props) => (
+          <Navigation
+            content={<PublicProfile id={props.match.params.id} />}
+            needsAuth={false}
+          />
         )}
       />
     </Router>

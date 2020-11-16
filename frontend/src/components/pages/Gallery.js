@@ -45,6 +45,7 @@ function Gallery() {
             mentor.offers_group_appointments,
             mentor.offers_in_person
           )}
+          image={mentor.image}
         />
       ))}
     </div>

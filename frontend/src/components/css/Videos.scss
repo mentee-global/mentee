@@ -24,14 +24,27 @@
     bottom: 0;
     margin-right: 25px;
     margin-bottom: 23px;
+    font-weight: bold;
 }
-
+ 
 .video-submit-card {
-    position: fixed;
-    right: 0;
     margin-right: 36px;
 }
 
 .video-submit-title {
     background: #fef7e2;
+}
+
+.filter-card {
+    margin-left: 64px;
+    width: 33%;
+}
+
+.filters {
+    display: flex;
+}
+
+.videos-container {
+    margin-left: 64px;
+    background: #FFFDF5;
 }

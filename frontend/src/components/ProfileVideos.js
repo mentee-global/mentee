@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import { Input, Row, Col } from "antd";
+import { Row, Col } from "antd";
 import ReactPlayer from "react-player";
 
 import "./css/PublicProfile.scss";
 
 function ProfileVideos(props) {
-  const [search, setSearch] = useState("");
   const [pinnedVideo, setPinnedVideo] = useState();
   const [videoGrid, setVideoGrid] = useState([]);
 
@@ -45,15 +43,6 @@ function ProfileVideos(props) {
         <b>Videos</b>
       </h1>
       <hr className="mentor-profile-videos-divider" />
-      {/* Temporary display to show search updating */}
-      You searched for: {search}
-      <Input
-        prefix={<SearchOutlined />}
-        placeholder="Search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mentor-profile-videos-search"
-      />
       <Row>
         <Col span={24}>
           <div className="pinned-video-default-preview">

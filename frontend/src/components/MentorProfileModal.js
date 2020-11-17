@@ -129,7 +129,7 @@ function MentorProfileModal() {
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
     e.forEach((value) => specializationsSelected.push(SPECIALIZATIONS[value]));
-    setLanguages(specializationsSelected);
+    setSpecializations(specializationsSelected);
   }
 
   function handleSchoolChange(e) {

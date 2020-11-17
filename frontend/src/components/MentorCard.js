@@ -24,11 +24,11 @@ const styles = {
 };
 
 function MentorCard(props) {
-  function getPicture(picture) {
-    if (!picture) {
+  function getImage(image) {
+    if (!image) {
       return <UserOutlined />;
     } else {
-      return <img src={picture} alt="" />;
+      return <img src={image} alt="" />;
     }
   }
 
@@ -36,7 +36,7 @@ function MentorCard(props) {
     <div className="gallery-mentor-card">
       <div className="gallery-card-body">
         <div className="gallery-card-header">
-          <Avatar size={90} icon={getPicture(props.picture)} />
+          <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text">
             <Title style={styles.title} className="gallery-title-text">
               {props.name}

@@ -6,6 +6,7 @@ import {
   LinkedinOutlined,
 } from "@ant-design/icons";
 import { Button } from "antd";
+import MentorProfileModal from "./MentorProfileModal";
 
 const profileButtonStyle = { background: "#E4BB4F", color: "white" };
 
@@ -56,12 +57,7 @@ function ProfileContent(props) {
       <div className="mentor-profile-name">
         {props.mentor.name}
         {props.isMentor ? (
-          <Button
-            className="mentor-profile-edit-button"
-            style={profileButtonStyle}
-          >
-            <b>Edit Profile</b>
-          </Button>
+          <MentorProfileModal />
         ) : (
           <Button
             className="mentor-profile-edit-button"

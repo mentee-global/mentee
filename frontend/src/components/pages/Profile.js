@@ -9,7 +9,6 @@ import { fetchMentorByID, mentorID } from "../../utils/api";
 
 function Profile() {
   const [mentor, setMentor] = useState({});
-
   useEffect(() => {
     async function getMentor() {
       const mentor_data = await fetchMentorByID(mentorID);
@@ -23,7 +22,11 @@ function Profile() {
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
-        <Avatar size={120} src={mentor.picture} icon={<UserOutlined />} />
+        <Avatar
+          size={120}
+          src={mentor.image && mentor.image.url}
+          icon={<UserOutlined />}
+        />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <ProfileContent mentor={mentor} isMentor={true} />

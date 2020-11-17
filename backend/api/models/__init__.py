@@ -2,12 +2,21 @@
 # initializing db in api.models.base instead of in api.__init__.py
 # to prevent circular dependencies
 from .base import db
-from .Email import Email
-from .Person import Person
 from .Education import Education
 from .Video import Video
+from .Availability import Availability
+from .Image import Image
 from .MentorProfile import MentorProfile
+from .AppointmentRequest import AppointmentRequest
 
-__all__ = ["db", "Email", "Person", "Education", "Video", "MentorProfile"]
+__all__ = [
+    "db",
+    "Education",
+    "Video",
+    "MentorProfile",
+    "Availability",
+    "AppointmentRequest",
+    "Image",
+]
 
 # You must import all of the new Models you create to this page

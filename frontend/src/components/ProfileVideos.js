@@ -12,10 +12,29 @@ function ProfileVideos(props) {
     let grid = [];
     if (props.videos) {
       props.videos.forEach((video) => {
-        if (video.tag === "pinned") {
+        if (video.tag === "pinned" && !pinnedVideo) {
           setPinnedVideo(video);
         } else {
-          grid.push(
+          grid.push(video);
+        }
+      });
+    }
+    setVideoGrid(grid);
+  }, [props.videos]);
+
+  const renderVideoGrid = () => {
+    if (!videoGrid || videoGrid.length === 0) return;
+    const videoReducer = (rows, cur_video, idx) => {
+      idx % 2 === 0
+        ? rows.push([cur_video])
+        : rows[rows.length - 1].push(cur_video);
+      return rows;
+    };
+    const rows = videoGrid.reduce(videoReducer, []);
+    return rows.map((row) => (
+      <>
+        <Row gutter={16}>
+          {row.map((video) => (
             <Col span={12}>
               <div className="video-default-preview">
                 <ReactPlayer
@@ -26,21 +45,12 @@ function ProfileVideos(props) {
                 />
               </div>
             </Col>
-          );
-        }
-      });
-    }
-    if (grid.length < 6) {
-      for (let i = grid.length; i < 6; i++) {
-        grid.push(
-          <Col span={12}>
-            <div className="video-default-preview"></div>
-          </Col>
-        );
-      }
-    }
-    setVideoGrid(grid);
-  }, [props.videos]);
+          ))}
+        </Row>
+        <br />
+      </>
+    ));
+  };
 
   return (
     <div>
@@ -63,20 +73,7 @@ function ProfileVideos(props) {
         </Col>
       </Row>
       <br />
-      <Row gutter={16}>
-        {videoGrid[0]}
-        {videoGrid[1]}
-      </Row>
-      <br />
-      <Row gutter={16}>
-        {videoGrid[2]}
-        {videoGrid[3]}
-      </Row>
-      <br />
-      <Row gutter={16}>
-        {videoGrid[4]}
-        {videoGrid[5]}
-      </Row>
+      {renderVideoGrid()}
     </div>
   );
 }

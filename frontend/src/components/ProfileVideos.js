@@ -20,7 +20,7 @@ function ProfileVideos(props) {
       });
     }
     setVideoGrid(grid);
-  }, [props.videos]);
+  }, [props.videos, pinnedVideo, setPinnedVideo, setVideoGrid]);
 
   const renderVideoGrid = () => {
     if (!videoGrid || videoGrid.length === 0) return;

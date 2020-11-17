@@ -19,3 +19,13 @@
     display: grid;
     text-align: right;
 }
+
+.close-icon{
+    padding-left: 10px;
+    height: 5px;
+    width: 5px;
+}
+
+.close-icon::hover{
+    color: yellow;
+}

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import moment from "moment";
 import { Calendar, Modal, TimePicker, Button } from "antd";
+import { CloseCircleFilled } from "@ant-design/icons";
 import "./css/AvailabilityCalendar.scss";
 
 function AvailabilityCalendar() {
@@ -17,15 +18,34 @@ function AvailabilityCalendar() {
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
   const [timeslotcount, setTimeSlotCount] = useState(1);
-  
-  const day = {};
-  const [timeslots, setTimeSlots] = useState([]);
+  const [time1, setTime1] = useState();
+  const [time2, setTime2] = useState();
+  const [timeSlots, setTimeSlots] = useState([]);
   //TODO store and find previously set dates
   //TODO set symbol on calendar when appointments are set
-  const saveValues = (times) => {
-    
-  }
-  
+  const handleTime1Change = (index, event) => {
+    const times = [...timeSlots];
+    times[index][0] = event;
+    setTimeSlots(times);
+  };
+  const handleTime2Change = (index, event) => {
+    const times = [...timeSlots];
+    times[index][1] = event;
+    setTimeSlots(times);
+  };
+
+  const addTimeSlots = () => {
+    const times = [...timeSlots];
+    times.push([moment(), moment()]);
+    setTimeSlots(times);
+  };
+
+  const removeTimeSlots = (index) => {
+    const times = [...timeSlots];
+    times.splice(index, 1);
+    setTimeSlots(times);
+  };
+
   const onSelect = (value) => {
     setTimeSlotCount(1);
     setDate(value);
@@ -34,28 +54,11 @@ function AvailabilityCalendar() {
   };
 
   const handleOk = (e) => {
-    days.push({
-      date: {
-        timeslots: []
-      }
-    })
     setVisible(false);
   };
 
   const handleCancel = (e) => {
     setVisible(false);
-  };
-
-  const getPickTimes = (date) => {
-    let times = [];
-    for (let i = 0; i < timeslotcount; i++) {
-      times.push(<TimeSlots date={date} parentCallback={saveValues} newtime1 = {moment()} newtime2={moment()}/>);
-    }
-    return times;
-  };
-
-  const addTimeSlot = () => {
-    setTimeSlotCount(timeslotcount + 1);
   };
 
   return (
@@ -75,51 +78,32 @@ function AvailabilityCalendar() {
           <h2 className="date">{date && date.format("MM/DD")} </h2>
           <h5 className="date">{days[date.day()]}</h5>
         </div>
-        {getPickTimes(date)}
-        <Button onClick={addTimeSlot}>Add</Button>
+        {timeSlots.map((timeSlot, index) => (
+          <Fragment key={`${index}`}>
+            <div>
+              <TimePicker
+                value={timeSlot[0]}
+                onChange={(event) => handleTime1Change(index, event)}
+                className="timeslot"
+                format={"HH:mm"}
+              />
+              <h1 className="timeslot"> - </h1>
+              <TimePicker
+                value={timeSlot[1]}
+                onChange={(event) => handleTime2Change(index, event)}
+                className="timeslots"
+                format={"HH:mm"}
+              />
+              <CloseCircleFilled
+                className="close-icon"
+                onClick={() => removeTimeSlots(index)}
+              />
+            </div>
+          </Fragment>
+        ))}
+        <Button onClick={addTimeSlots}>Add</Button>
       </Modal>
     </>
-  );
-}
-
-function TimeSlots({ parentCallback, date, newtime1, newtime2 }) {
-  //TODO add x button to remove time slots
-  const [times, setTimes] = useState([moment(),moment()]);
-  const [time1, setTime1] = useState(newtime1);
-  const [time2, setTime2] = useState(newtime2);
-
-
-  const updateTimes = () => {
-    parentCallback(times);
-    setTimes([time1, time2]);
-    console.log(times);
-  }
-  const updateTime1 = (time, timeString) => {
-    console.log("Was called 1")
-    const newtime = time;
-    newtime.year(date.year());
-    newtime.month(date.month());
-    newtime.day(date.day());
-    setTime1(time);
-    updateTimes();
-  }
-
-  const updateTime2 = (time, timeString) => {
-    console.log("Was called 2");
-    time.year(date.year());
-    time.month(date.month());
-    time.day(date.day());
-    setTime2(time);
-    console.log(time2);
-    updateTimes();
-  }
-
-  return (
-    <div>
-      <TimePicker value={time1} onChange={updateTime1} className="timeslot" format={"HH:mm"} />
-      <h1 className="timeslot"> - </h1>
-      <TimePicker value={time2} onChange={updateTime2} className="timeslots" format={"HH:mm"} />
-    </div>
   );
 }
 

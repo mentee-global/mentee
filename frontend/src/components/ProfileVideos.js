@@ -18,7 +18,12 @@ function ProfileVideos(props) {
           grid.push(
             <Col span={12}>
               <div className="video-default-preview">
-                <ReactPlayer url={video.url} width="100%" height="100%" />
+                <ReactPlayer
+                  url={video.url}
+                  width="100%"
+                  height="100%"
+                  className="video-border"
+                />
               </div>
             </Col>
           );
@@ -47,7 +52,12 @@ function ProfileVideos(props) {
         <Col span={24}>
           <div className="pinned-video-default-preview">
             {pinnedVideo && (
-              <ReactPlayer url={pinnedVideo.url} width="100%" height="100%" />
+              <ReactPlayer
+                url={pinnedVideo.url}
+                width="100%"
+                height="100%"
+                className="video-border"
+              />
             )}
           </div>
         </Col>

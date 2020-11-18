@@ -1,0 +1,46 @@
+.navigation-header-button {
+  border-radius: 13px;
+  border-color: $header-button-border;
+  width: 125px;
+  margin-right: 5px;
+}
+
+.navigation-header-button-dark {
+  border-radius: 13px;
+  border-color: $header-button-dark-border;
+  width: 125px;
+  margin-right: 5px;
+}
+
+.mentor-profile-edit-button {
+  border-radius: 13px;
+  margin-left: 60%;
+  border-color: #E4BB4F;
+  margin-left: 50%;
+}
+
+.home-button {
+  color: white;
+  border-color: #A58123;
+  border-radius: 13px;
+}
+
+
+.gallery-profile-button {
+  float: right;
+  background: #E4BB4F;
+  border-color: #E4BB4F;
+  color: white;
+  margin-bottom: 15px;
+  margin-top: 10px;
+  border-radius: 13px;
+}
+
+.gallery-profile-button:hover, .gallery-profile-button:focus {
+  color:#E4BB4F; 
+  border-color: #E4BB4F;
+}
+
+.gallery-profile-button:active, .gallery-profile-button:focus {
+  outline-color: #E4BB4F;
+}

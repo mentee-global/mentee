@@ -9,6 +9,8 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 
+import MenteeButton from "./MenteeButton"
+
 import "./css/Gallery.scss";
 
 const { Title, Text } = Typography;
@@ -79,7 +81,9 @@ function MentorCard(props) {
         </h4>
         <hr className="gallery-solid-border" />
         <NavLink to={"/gallery/" + props.id}>
-          <Button className="gallery-profile-button">View Profile</Button>
+          <div className="gallery-button">
+            <MenteeButton content="View Profile" />
+          </div>
         </NavLink>
       </div>
     </div>

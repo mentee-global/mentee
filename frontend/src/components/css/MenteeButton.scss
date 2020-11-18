@@ -1,3 +1,30 @@
+@import "_app";
+
+.dark-button {
+  color: white;
+  border-color: #A58123;
+  border-radius: 13px;
+}
+
+.dark-button:hover, .dark-button:focus {
+  border-color: white;
+}
+
+.regular-button {
+  background: #E4BB4F;
+  border-color: #E4BB4F;
+  color: white;
+}
+
+.regular-button:hover, .regular-button:focus {
+  color:#E4BB4F; 
+  border-color: #E4BB4F;
+}
+
+.regular-button:active, .regular-button:focus {
+  outline-color: #E4BB4F;
+}
+
 .navigation-header-button {
   border-radius: 13px;
   border-color: $header-button-border;
@@ -19,28 +46,5 @@
   margin-left: 50%;
 }
 
-.home-button {
-  color: white;
-  border-color: #A58123;
-  border-radius: 13px;
-}
 
 
-.gallery-profile-button {
-  float: right;
-  background: #E4BB4F;
-  border-color: #E4BB4F;
-  color: white;
-  margin-bottom: 15px;
-  margin-top: 10px;
-  border-radius: 13px;
-}
-
-.gallery-profile-button:hover, .gallery-profile-button:focus {
-  color:#E4BB4F; 
-  border-color: #E4BB4F;
-}
-
-.gallery-profile-button:active, .gallery-profile-button:focus {
-  outline-color: #E4BB4F;
-}

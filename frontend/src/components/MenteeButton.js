@@ -8,7 +8,7 @@ function MenteeButton(props) {
     else if (theme === "light") return "light-button";
     else return "regular-button";
   };
-  
+
   return (
     <Button
       className={getButtonClass(props.theme)}

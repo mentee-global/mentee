@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from "react";
 import moment from "moment";
-import { Calendar, Modal, TimePicker, Button } from "antd";
+import { Calendar, Modal, TimePicker, Button, Badge } from "antd";
 import { CloseCircleFilled } from "@ant-design/icons";
 import "./css/AvailabilityCalendar.scss";
 
@@ -14,20 +14,19 @@ function AvailabilityCalendar() {
     "Friday",
     "Saturday",
   ];
+
+  const [saved, setSaved] = useState({"11/12/2020": true, "12/12/2020": true})
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
-  const [timeslotcount, setTimeSlotCount] = useState(1);
-  const [time1, setTime1] = useState();
-  const [time2, setTime2] = useState();
   const [timeSlots, setTimeSlots] = useState([]);
-  //TODO store and find previously set dates
-  //TODO set symbol on calendar when appointments are set
+
   const handleTime1Change = (index, event) => {
     const times = [...timeSlots];
     times[index][0] = event;
     setTimeSlots(times);
   };
+
   const handleTime2Change = (index, event) => {
     const times = [...timeSlots];
     times[index][1] = event;
@@ -47,32 +46,65 @@ function AvailabilityCalendar() {
   };
 
   const onSelect = (value) => {
-    setTimeSlotCount(1);
-    setDate(value);
     setValue(value);
     setVisible(true);
   };
 
-  const handleOk = (e) => {
+  const handleOk = () => {
     setVisible(false);
   };
 
-  const handleCancel = (e) => {
+  const handleCancel = () => {
     setVisible(false);
+  }
+  const handleClear = () => {
+    setTimeSlots([]);
   };
 
+  const getListData = (value) => {
+    if(saved[value.format("DD/MM/YYYY")]) {
+      return [{content: "test"}]
+    } else {
+      return []
+    }
+  }
+  const monthCellRender = (value) =>{
+
+  }
+
+
+  const dateCellRender = (value) =>{
+    const listData = getListData(value);
+
+    return (
+      <ul className="status">
+        {listData.map(item => (
+          <li key={item.content}>
+            <Badge status="success"/>
+          </li>
+        ))}
+
+
+      </ul>
+    )
+  }
   return (
     <>
       <Calendar
         value={value}
         onPanelChange={(value) => setValue(value)}
         onSelect={onSelect}
+        dateCellRender={dateCellRender}
+        monthCellRender={monthCellRender}
       />
       <Modal
         title="Select times for each available session per day"
         visible={visible}
-        onOk={handleOk}
         onCancel={handleCancel}
+        footer={[
+          <Button key="clear" type="back" onClick={handleClear}>Clear all</Button>,
+          <Button key="save" type="primary" onClick={handleOk}>Save</Button>
+        ]}
       >
         <div className="date-header">
           <h2 className="date">{date && date.format("MM/DD")} </h2>
@@ -101,7 +133,7 @@ function AvailabilityCalendar() {
             </div>
           </Fragment>
         ))}
-        <Button onClick={addTimeSlots}>Add</Button>
+        <Button onClick={addTimeSlots}>Add hours</Button>
       </Modal>
     </>
   );

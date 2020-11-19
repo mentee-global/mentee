@@ -41,10 +41,7 @@ function MenteeNavHeader() {
           </span>
           <NavLink to="/profile">
             <span className="navigation-header-button">
-              <MenteeButton
-                width="125px"
-                content={<b>Mentor Log In</b>}
-              />
+              <MenteeButton width="125px" content={<b>Mentor Log In</b>} />
             </span>
           </NavLink>
         </div>

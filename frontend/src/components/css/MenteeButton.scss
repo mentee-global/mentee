@@ -21,9 +21,9 @@
 }
 
 .dark-button:hover, .dark-button:active {
-  background: $header-button-border;
-  border-color: #A58123;
-  color: #A58123;
+  background: #A58123;
+  border-color: $header-button-border;
+  color: $header-button-border;
 }
 
 .light-button, .light-button:focus {
@@ -34,7 +34,7 @@
 }
 
 .light-button:hover, .light-button:active {
-  background: #A58123;
-  border-color: $header-button-border;
-  color: $header-button-border;
+  background: $header-button-border;
+  border-color: #A58123;
+  color: #A58123;
 }

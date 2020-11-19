@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Button, Typography } from "antd";
+import { Avatar, Typography } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,

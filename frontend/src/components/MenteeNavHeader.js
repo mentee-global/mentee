@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Button } from "antd";
+import { Layout } from "antd";
 
 import MenteeButton from "./MenteeButton";
 

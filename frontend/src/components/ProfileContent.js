@@ -5,14 +5,11 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-import { Button } from "antd";
 
 import MenteeButton from "./MenteeButton";
 import MentorProfileModal from "./MentorProfileModal";
 
 import "./css/Profile.scss";
-
-const profileButtonStyle = { background: "#E4BB4F", color: "white" };
 
 function ProfileContent(props) {
   const getMeetingMethods = () => {

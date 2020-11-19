@@ -153,7 +153,7 @@ function MentorProfileModal() {
     <span>
       <span className="mentor-profile-button">
         <MenteeButton
-          content="Edit Profile"
+          content={<b>Edit Profile</b>}
           onClick={() => setModalVisible(true)}
         />
       </span>

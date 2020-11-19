@@ -18,8 +18,8 @@ const login = (email, password) => {
       password,
     })
     .then((response) => {
-      if (response.data.token) {
-        localStorage.setItem("user", JSON.stringify(response.data));
+      if (response.data.result && response.data.result.token) {
+        localStorage.setItem("user", JSON.stringify(response.data.result));
       }
 
       return response.data;
@@ -34,9 +34,4 @@ const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem("user"));
 };
 
-export default {
-  register,
-  login,
-  logout,
-  getCurrentUser,
-};
+export { register, login, logout, getCurrentUser };

@@ -1,3 +1,5 @@
+@import "_app";
+
 .navigation-layout {
   height: 100vh;
 }
@@ -9,7 +11,7 @@
 }
 
 .navigation-header {
-  background-color: #fbecc1;
+  background-color: $nav-header-color;
   padding: 0px;
 }
 
@@ -18,23 +20,23 @@
 }
 
 .navigation-menu-item {
-    background-color: white;
+    background-color: $nav-menu-item-color;
 }
 
 .navigation-menu-item:hover {
-  background-color: #fcf6ea;
-  color: black;
+  background-color: $nav-menu-item-hover-background-color;
+  color: $nav-menu-item-hover-color;
 }
 
 .navigation-menu-item-selected {
-  background-color: #fcf6ea;
+  background-color:$nav-menu-item-selected-color;
   pointer-events: none;
 }
 
 .notification-bell {
   float: right;
   font-size: 17.5px;
-  color: black;
+  color: $notif-bell-color;
   margin-right: 2%;
 }
 
@@ -55,7 +57,7 @@
   float: right;
   margin-left: 1%;
   margin-right: 1%;
-  color: gray;
+  color: $profile-caret-color;
 }
 
 .dropdown-menu {
@@ -64,7 +66,7 @@
 }
 
 .mentee-logo {
-  background-color: #fbecc1;
+  background-color: $mentee-logo-color;
   float: left;
   height: 40px;
   width: 200px;
@@ -73,14 +75,14 @@
 
 .navigation-header-button {
   border-radius: 13px;
-  border-color: #FCF6E8;
+  border-color: $header-button-border;
   width: 125px;
   margin-right: 5px;
 }
 
 .navigation-header-button-dark {
   border-radius: 13px;
-  border-color: #E4BB4F;
+  border-color: $header-button-dark-border;
   width: 125px;
   margin-right: 5px;
 }

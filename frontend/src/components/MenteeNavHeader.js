@@ -42,7 +42,6 @@ function MenteeNavHeader() {
           <NavLink to="/profile">
             <span className="navigation-header-button">
               <MenteeButton
-                theme="dark"
                 width="125px"
                 content={<b>Mentor Log In</b>}
               />

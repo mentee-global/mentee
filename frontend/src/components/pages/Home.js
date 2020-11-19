@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "antd";
-import MenteeButton from "../MenteeButton"
+import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
 import Honeycomb from "../../resources/honeycomb.png";

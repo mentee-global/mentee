@@ -1,50 +1,40 @@
 @import "_app";
 
-.dark-button {
-  color: white;
-  border-color: #A58123;
-  border-radius: 13px;
-}
-
-.dark-button:hover, .dark-button:focus {
-  border-color: white;
-}
-
-.regular-button {
+.regular-button, .regular-button:focus {
   background: #E4BB4F;
   border-color: #E4BB4F;
+  border-radius: 13px;  
   color: white;
 }
 
-.regular-button:hover, .regular-button:focus {
-  color:#E4BB4F; 
+.regular-button:hover, .regular-button:active {
+  background: white;
   border-color: #E4BB4F;
+  color: #E4BB4F; 
 }
 
-.regular-button:active, .regular-button:focus {
-  outline-color: #E4BB4F;
-}
-
-.navigation-header-button {
+.dark-button, .dark-button:focus {
+  background: #A58123;
+  border-color: #A58123;
   border-radius: 13px;
+  color: white;
+}
+
+.dark-button:hover, .dark-button:active {
+  background: #A58123;
+  border-color: white;
+  color: white;
+}
+
+.light-button, .light-button:focus {
+  background: #FCF6E8;
   border-color: $header-button-border;
-  width: 125px;
-  margin-right: 5px;
-}
-
-.navigation-header-button-dark {
   border-radius: 13px;
-  border-color: $header-button-dark-border;
-  width: 125px;
-  margin-right: 5px;
+  color: #A58123;
 }
 
-.mentor-profile-edit-button {
-  border-radius: 13px;
-  margin-left: 60%;
-  border-color: #E4BB4F;
-  margin-left: 50%;
+.light-button:hover, .light-button:active {
+  background: #FCF6E8;
+  border-color: $header-button-border;
+  color: #A58123;
 }
-
-
-

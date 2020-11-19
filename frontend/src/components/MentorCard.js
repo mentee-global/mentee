@@ -9,7 +9,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 
-import MenteeButton from "./MenteeButton"
+import MenteeButton from "./MenteeButton";
 
 import "./css/Gallery.scss";
 

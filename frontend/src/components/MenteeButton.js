@@ -3,19 +3,21 @@ import { Button } from "antd";
 import "./css/MenteeButton.scss";
 
 function MenteeButton(props) {
-  if(props.theme === "dark") {
-    return(
-      <Button
-        className="dark-button"
-        style={{ background: "#A58123", color: "white" }}
-      >
-        {props.content}
-      </Button>
-    )
-  }
+  const getButtonClass = (theme) => {
+    if (theme === "dark") return "dark-button";
+    else if (theme === "light") return "light-button";
+    else return "regular-button";
+  };
+  
   return (
-    <Button className="regular-button">{props.content}</Button>
-  ); 
+    <Button
+      className={getButtonClass(props.theme)}
+      style={{ width: props.width }}
+      onClick={props.onClick}
+    >
+      {props.content}
+    </Button>
+  );
 }
 
 export default MenteeButton;

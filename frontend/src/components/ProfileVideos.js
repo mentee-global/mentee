@@ -20,7 +20,8 @@ function ProfileVideos(props) {
       });
     }
     setVideoGrid(grid);
-  }, [props.videos, pinnedVideo, setPinnedVideo, setVideoGrid]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.videos]);
 
   const renderVideoGrid = () => {
     if (!videoGrid || videoGrid.length === 0) return;
@@ -43,6 +44,11 @@ function ProfileVideos(props) {
                   height="100%"
                   className="video-border"
                 />
+              </div>
+              <div>
+                <b>{video.title}</b>
+                <br />
+                {video.tag}
               </div>
             </Col>
           ))}
@@ -70,6 +76,13 @@ function ProfileVideos(props) {
               />
             )}
           </div>
+          {pinnedVideo && (
+            <div>
+              <b>{pinnedVideo.title}</b>
+              <br />
+              {pinnedVideo.tag}
+            </div>
+          )}
         </Col>
       </Row>
       <br />

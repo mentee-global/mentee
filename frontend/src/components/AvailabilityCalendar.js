@@ -15,7 +15,10 @@ function AvailabilityCalendar() {
     "Saturday",
   ];
 
-  const [saved, setSaved] = useState({"11/12/2020": true, "12/12/2020": true})
+  const [saved, setSaved] = useState({
+    "11/12/2020": true,
+    "12/12/2020": true,
+  });
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
@@ -56,38 +59,33 @@ function AvailabilityCalendar() {
 
   const handleCancel = () => {
     setVisible(false);
-  }
+  };
   const handleClear = () => {
     setTimeSlots([]);
   };
 
   const getListData = (value) => {
-    if(saved[value.format("DD/MM/YYYY")]) {
-      return [{content: "test"}]
+    if (saved[value.format("DD/MM/YYYY")]) {
+      return [{ content: "test" }];
     } else {
-      return []
+      return [];
     }
-  }
-  const monthCellRender = (value) =>{
+  };
+  const monthCellRender = (value) => {};
 
-  }
-
-
-  const dateCellRender = (value) =>{
+  const dateCellRender = (value) => {
     const listData = getListData(value);
 
     return (
       <ul className="status">
-        {listData.map(item => (
+        {listData.map((item) => (
           <li key={item.content}>
-            <Badge status="success"/>
+            <Badge status="success" />
           </li>
         ))}
-
-
       </ul>
-    )
-  }
+    );
+  };
   return (
     <>
       <Calendar
@@ -102,8 +100,12 @@ function AvailabilityCalendar() {
         visible={visible}
         onCancel={handleCancel}
         footer={[
-          <Button key="clear" type="back" onClick={handleClear}>Clear all</Button>,
-          <Button key="save" type="primary" onClick={handleOk}>Save</Button>
+          <Button key="clear" type="back" onClick={handleClear}>
+            Clear all
+          </Button>,
+          <Button key="save" type="primary" onClick={handleOk}>
+            Save
+          </Button>,
         ]}
       >
         <div className="date-header">

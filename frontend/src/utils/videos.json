@@ -1,0 +1,50 @@
+{
+  "message": "Success",
+  "status": 200,
+  "data": {
+    "videos": [
+      {
+        "url": "url",
+        "title": "Title",
+        "tag": "Citizenship",
+        "date_uploaded": "2020-10-22T20:13:46.000+00:00"
+      },
+      {
+        "url": "url",
+        "title": "Title",
+        "tag": "Citizenship",
+        "date_uploaded": "2020-10-22T20:13:46.000+00:00"
+      },
+      {
+        "url": "url",
+        "title": "Title",
+        "tag": "Citizenship",
+        "date_uploaded": "2020-10-22T20:13:46.000+00:00"
+      },
+      {
+        "url": "url",
+        "title": "Title",
+        "tag": "Citizenship",
+        "date_uploaded": "2020-10-22T20:13:46.000+00:00"
+      },
+      {
+        "url": "url",
+        "title": "Title",
+        "tag": "Citizenship",
+        "date_uploaded": "2020-10-22T20:13:46.000+00:00"
+      },
+      {
+        "url": "url",
+        "title": "Title",
+        "tag": "Citizenship",
+        "date_uploaded": "2020-10-22T20:13:46.000+00:00"
+      },
+      {
+        "url": "url",
+        "title": "Title",
+        "tag": "Citizenship",
+        "date_uploaded": "2020-10-22T20:13:46.000+00:00"
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Calendar, Col, Row } from "antd";
 import {
   ClockCircleOutlined,
@@ -7,6 +7,13 @@ import {
   InfoCircleFilled,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
+import {
+  acceptAppointment,
+  getAppointmentsByMentorID,
+  mentorID,
+  deleteAppointment,
+} from "../../utils/api";
+import { formatAppointments } from "../../utils/dateFormatting";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -29,7 +36,29 @@ const Tabs = Object.freeze({
 
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
+  const [appointments, setAppointments] = useState({});
+  const [appointmentClick, setAppointmentClick] = useState(true);
 
+  useEffect(() => {
+    async function getAppointments() {
+      const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
+      const formattedAppointments = formatAppointments(appointmentsResponse);
+
+      if (formattedAppointments) {
+        setAppointments(formattedAppointments);
+      }
+    }
+    getAppointments();
+  }, [appointmentClick]);
+
+  async function handleAppointmentClick(id, didAccept) {
+    if (didAccept) {
+      await acceptAppointment(id);
+    } else {
+      await deleteAppointment(id);
+    }
+    setAppointmentClick(!appointmentClick);
+  }
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
     const inactive = "#FFECBD";
@@ -63,7 +92,7 @@ function Appointments() {
     );
   };
 
-  const getAppointmentButton = (tab) => {
+  const getAppointmentButton = (tab, id) => {
     if (tab === Tabs.upcoming) {
       return (
         <Button
@@ -89,6 +118,7 @@ function Appointments() {
             }
             type="text"
             shape="circle"
+            onClick={() => handleAppointmentClick(id, true)}
           ></Button>
           <Button
             className="appointment-accept"
@@ -100,6 +130,7 @@ function Appointments() {
             }
             type="text"
             shape="circle"
+            onClick={() => handleAppointmentClick(id, false)}
           ></Button>
         </div>
       );
@@ -116,7 +147,7 @@ function Appointments() {
           </div>
           <div className="appointment-description">{props.description}</div>
         </div>
-        {getAppointmentButton(currentTab)}
+        {getAppointmentButton(currentTab, props.id)}
       </div>
     );
   };
@@ -147,6 +178,10 @@ function Appointments() {
   };
 
   const Appointments = ({ data }) => {
+    if (!data) {
+      return <div></div>;
+    }
+
     return (
       <div>
         <b className="appointment-tabs-title">{currentTab.title}</b>
@@ -166,6 +201,7 @@ function Appointments() {
                     name={appointment.name}
                     time={appointment.time}
                     description={appointment.description}
+                    id={appointment.id}
                   />
                 ))}
               </div>
@@ -181,7 +217,7 @@ function Appointments() {
       case Tabs.upcoming: // Fall through
       case Tabs.pending: // Fall through
       case Tabs.past:
-        return <Appointments data={[]} />;
+        return <Appointments data={appointments[currentTab.key]} />;
       case Tabs.availability:
         return <AvailabilityTab />;
       default:
@@ -193,7 +229,9 @@ function Appointments() {
     <Row>
       <Col span={18} className="appointments-column">
         <div className="appointments-welcome-box">
-          <div className="appointments-welcome-text">Welcome, {"TODO"}</div>
+          <div className="appointments-welcome-text">
+            Welcome, {appointments.mentor_name}
+          </div>
           <div className="appointments-tabs">
             {Object.values(Tabs).map((tab, index) => (
               <Tab tab={tab} text={tab.title} key={index} />

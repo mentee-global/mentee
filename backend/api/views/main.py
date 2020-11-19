@@ -1,12 +1,13 @@
+from os import path
 from flask import Blueprint, request, jsonify
 from api.models import db, Education, Video, MentorProfile, AppointmentRequest
-from api.models import db, Education, Video, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     MentorForm,
     EducationForm,
     VideoForm,
     is_invalid_form,
+    imgur_client,
 )
 
 main = Blueprint("main", __name__)  # initialize blueprint
@@ -46,7 +47,6 @@ def create_mentor_profile():
         professional_title=data["professional_title"],
         linkedin=data["linkedin"],
         website=data["website"],
-        picture=data["picture"],
         languages=data["languages"],
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
@@ -127,7 +127,6 @@ def edit_mentor(id):
     mentor.biography = data.get("biography", mentor.biography)
     mentor.linkedin = data.get("linkedin", mentor.linkedin)
     mentor.website = data.get("website", mentor.website)
-    mentor.picture = data.get("picture", mentor.picture)
 
     # Create education object
     if "education" in data:
@@ -152,4 +151,34 @@ def edit_mentor(id):
 
     mentor.save()
 
+    return create_response(status=200, message=f"Success")
+
+
+@main.route("/mentor/<id>/image", methods=["PUT"])
+def uploadImage(id):
+    data = request.files["image"]
+
+    try:
+        image_response = imgur_client.send_image(data)
+    except:
+        return create_response(status=400, message=f"Image upload failed")
+    try:
+        mentor = MentorProfile.objects.get(id=id)
+    except:
+        msg = "No mentor with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    try:
+        if mentor.image.image_hash is True:
+            image_response = imgur_client.delete_image(mentor.image.image_hash)
+    except:
+        msg = "Failed to delete image"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    mentor.image.url = image_response["data"]["link"]
+    mentor.image.image_hash = image_response["data"]["deletehash"]
+
+    mentor.save()
     return create_response(status=200, message=f"Success")

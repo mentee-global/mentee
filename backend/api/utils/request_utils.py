@@ -1,11 +1,16 @@
+import os
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
 from wtforms.validators import InputRequired
 from wtforms import validators
 import wtforms_json
 from typing import Tuple
+from .flask_imgur import Imgur
 
 wtforms_json.init()
+
+imgur_key = os.environ.get("IMGUR_KEY")
+imgur_client = Imgur(client_id=imgur_key)
 
 
 class EducationForm(Form):
@@ -27,7 +32,6 @@ class MentorForm(Form):
     professional_title = StringField(validators=[InputRequired()])
     linkedin = StringField(validators=[InputRequired()])
     website = StringField(validators=[InputRequired()])
-    picture = StringField(validators=[InputRequired()])
     email = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Button, Form, Input, Select } from "antd";
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons";
 import moment from "moment";
+import ReactPlayer from "react-player";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import "../css/Videos.scss";
 import videosJSON from "utils/videos.json";
@@ -9,18 +10,22 @@ const { Option } = Select;
 
 function Videos() {
   const [videos, setVideos] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [selectFilter, setSelectFilter] = useState("");
+  const [nameFilter, setNameFilter] = useState("");
 
   useEffect(() => {
     async function getVideos() {
       setVideos(videosJSON.data.videos);
+      setFiltered(videosJSON.data.videos);
     }
     getVideos();
-    console.log(videos);
   }, []);
 
   const handleDeleteVideo = (id) => {
     const newVideos = [...videos];
     newVideos.splice(id, 1);
+    setFiltered(newVideos);
     setVideos(newVideos);
   };
 
@@ -32,6 +37,7 @@ function Videos() {
     };
     newVideos[id] = video;
     setVideos(newVideos);
+    setFiltered(newVideos);
   };
 
   const returnDropdownItems = (items) => {
@@ -42,17 +48,53 @@ function Videos() {
     return options;
   };
 
-  const Video = (props) => {
+  const handlePinVideo = (id) => {
+    if (id != 0) {
+      const newVideos = [...videos];
+      const video = newVideos.splice(id, 1)[0];
+      newVideos.sort(
+        (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
+      );
+      newVideos.unshift(video);
+      setVideos(newVideos);
+      setFiltered(newVideos);
+    }
+  };
+
+  const filterSpecialization = (value) => {
+    const filteredVideos = videos.filter((video, index, arr) => {
+      return SPECIALIZATIONS.indexOf(video.tag) == value;
+    });
+    setFiltered(filteredVideos);
+    setSelectFilter(value);
+  };
+
+  const handleClearFilters = () => {
+    setFiltered(videos);
+    setNameFilter("");
+    setSelectFilter("");
+  };
+
+  const MentorVideo = (props) => {
     return (
       <div className="video-row">
         <div className="video-block">
-          <div className="video"></div>
+          <ReactPlayer
+            url={props.url}
+            width="150px"
+            height="100px"
+            className="video"
+          />
           <div className="video-description">
             <div>{props.title}</div>
             <div>{moment(props.date).fromNow()}</div>
           </div>
           <div className="video-pin">
-            <button>
+            <button
+              className="pin-button"
+              onClick={() => props.onPinVideo(props.id)}
+              style={props.id == 0 ? { background: "#F2C94C" } : {}}
+            >
               <PushpinOutlined />
             </button>
           </div>
@@ -87,16 +129,63 @@ function Videos() {
           <h1>Specializations Tag</h1>
           <h1>Delete</h1>
         </div>
-        {videos &&
-          videos.map((values, index) => (
-            <Video
+        {filtered &&
+          filtered.map((values, index) => (
+            <MentorVideo
               title={values.title}
               date={values.date_uploaded}
               tag={values.tag}
               id={index}
               onChangeTag={handleVideoTag}
+              onPinVideo={handlePinVideo}
+              url={values.url}
             />
           ))}
+      </div>
+    );
+  };
+
+  const VideoSubmit = () => {
+    return (
+      <div className="video-submit-card">
+        <h1 className="video-submit-title">Add Video</h1>
+        <Form
+          name="video-submit"
+          initialValues={{
+            remember: true,
+          }}
+        >
+          <Form.Item
+            name="title"
+            rules={[
+              {
+                required: true,
+                message: "Please input a video title",
+              },
+            ]}
+          >
+            <Input placeholder="Video Title" />
+          </Form.Item>
+          <Form.Item
+            name="url"
+            rules={[
+              {
+                required: true,
+                message: "Please input a video link",
+              },
+            ]}
+          >
+            <Input placeholder="Video Link" />
+          </Form.Item>
+          <Form.Item>
+            <Select>{returnDropdownItems(SPECIALIZATIONS)}</Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     );
   };
@@ -112,43 +201,26 @@ function Videos() {
       <div className="filter-card">
         <h1 style={{ fontWeight: "bold", fontSize: 18 }}>Your Uploads</h1>
         <div className="filters">
-          <Input.Search style={{ width: 300 }}></Input.Search>
-          <Select style={{ width: 200 }}>
+          <Input.Search
+            style={{ width: 300 }}
+            defaultValue={nameFilter}
+          ></Input.Search>
+          <Select
+            style={{ width: 200 }}
+            onChange={(value) => filterSpecialization(value)}
+            value={selectFilter}
+          >
             {returnDropdownItems(SPECIALIZATIONS)}
           </Select>
+          <Button onClick={handleClearFilters}>Clear</Button>
         </div>
       </div>
       <Row>
         <Col span={16}>
-          <VideosContainer></VideosContainer>
+          <VideosContainer />
         </Col>
         <Col span={8}>
-          <div className="video-submit-card">
-            <h1 className="video-submit-title">Add Videos</h1>
-            <Form
-              name="video-submit"
-              initialValues={{
-                remember: true,
-              }}
-            >
-              <Form.Item
-                name="url"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input a video link",
-                  },
-                ]}
-              >
-                <Input placeholder="Paste Link" />
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
+          <VideoSubmit />
         </Col>
       </Row>
     </div>

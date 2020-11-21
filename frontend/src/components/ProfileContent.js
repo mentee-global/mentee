@@ -8,6 +8,8 @@ import {
 import { Button } from "antd";
 import MentorProfileModal from "./MentorProfileModal";
 
+import "./css/Profile.scss";
+
 const profileButtonStyle = { background: "#E4BB4F", color: "white" };
 
 function ProfileContent(props) {
@@ -36,19 +38,23 @@ function ProfileContent(props) {
   };
 
   const getEducations = (educations) => {
-    if (educations == null || educations[0] == null) {
+    if (!educations || !educations[0]) {
       return;
     }
     return educations.map((education) => (
-      <div className="mentor-profile-education">
-        <b>{education.school}</b>
-        <br />
-        {education.education_level}
-        <br />
-        {"Major(s): " + education.majors.join(", ")}
-        <br />
-        {education.graduation_year}
-      </div>
+      <>
+        {education.majors.map((major) => (
+          <div className="mentor-profile-education">
+            <b>{education.school}</b>
+            <br />
+            {education.education_level}, {major}
+            <br />
+            <t className="mentor-profile-heading">
+              {education.graduation_year}
+            </t>
+          </div>
+        ))}
+      </>
     ));
   };
 

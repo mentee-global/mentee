@@ -27,10 +27,10 @@ function Gallery() {
   function getLessonTypes(offers_group_appointments, offers_in_person) {
     let output = "1-on-1 | virtual";
     if (offers_group_appointments) {
-      output += " | " + "group";
+      output += " | group";
     }
     if (offers_in_person) {
-      output += " | " + "in person";
+      output += " | in person";
     }
     return output;
   }

@@ -1,7 +1,8 @@
 import React, { useState, Fragment } from "react";
 import moment from "moment";
-import { Calendar, Modal, TimePicker, Button, Badge } from "antd";
-import { CloseCircleFilled } from "@ant-design/icons";
+import { Calendar, Modal, Button, Badge } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+import TextField from '@material-ui/core/TextField';
 import "./css/AvailabilityCalendar.scss";
 
 function AvailabilityCalendar() {
@@ -15,6 +16,7 @@ function AvailabilityCalendar() {
     "Saturday",
   ];
 
+  //TODO: Fill this list with dates in month that have appointments
   const [saved, setSaved] = useState({
     "11/12/2020": true,
     "12/12/2020": true,
@@ -26,13 +28,13 @@ function AvailabilityCalendar() {
 
   const handleTime1Change = (index, event) => {
     const times = [...timeSlots];
-    times[index][0] = event;
+    times[index][0] = moment(date.format("YYYY-MM-DD") + " " + event.target.value);
     setTimeSlots(times);
   };
 
   const handleTime2Change = (index, event) => {
     const times = [...timeSlots];
-    times[index][1] = event;
+    times[index][1] = moment(date.format("YYYY-MM-DD") + " " + event.target.value);
     setTimeSlots(times);
   };
 
@@ -51,9 +53,11 @@ function AvailabilityCalendar() {
   const onSelect = (value) => {
     setValue(value);
     setVisible(true);
+    setDate(value);
   };
 
   const handleOk = () => {
+  
     setVisible(false);
   };
 
@@ -112,30 +116,43 @@ function AvailabilityCalendar() {
           <h2 className="date">{date && date.format("MM/DD")} </h2>
           <h5 className="date">{days[date.day()]}</h5>
         </div>
+        {console.log(timeSlots)}
         {timeSlots.map((timeSlot, index) => (
           <Fragment key={`${index}`}>
-            <div>
-              <TimePicker
-                value={timeSlot[0]}
+            <div className="timeslot-wrapper">
+              <TextField
+                value={timeSlot[0].format("HH:mm")}
                 onChange={(event) => handleTime1Change(index, event)}
                 className="timeslot"
-                format={"HH:mm"}
+                type="time"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, 
+                }}
               />
               <h1 className="timeslot"> - </h1>
-              <TimePicker
-                value={timeSlot[1]}
+              <TextField
+                value={timeSlot[1].format("HH:mm")}
                 onChange={(event) => handleTime2Change(index, event)}
                 className="timeslots"
-                format={"HH:mm"}
+                type="time"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  step: 300, 
+                }}
               />
-              <CloseCircleFilled
+              <CloseOutlined
                 className="close-icon"
                 onClick={() => removeTimeSlots(index)}
               />
             </div>
           </Fragment>
         ))}
-        <Button onClick={addTimeSlots}>Add hours</Button>
+        <Button className="add-times" onClick={addTimeSlots}>Add hours</Button>
       </Modal>
     </>
   );

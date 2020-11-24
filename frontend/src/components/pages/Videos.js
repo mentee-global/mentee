@@ -23,6 +23,7 @@ function Videos() {
   }, []);
 
   const handleSearchVideo = (query) => {
+    setTitleFilter(query);
     query = query.toUpperCase();
     let newVideos = [];
     for (let video of videos) {
@@ -31,7 +32,6 @@ function Videos() {
         newVideos.push(video);
       }
     }
-    setTitleFilter(query);
     setFiltered(newVideos);
   };
 
@@ -41,12 +41,12 @@ function Videos() {
     newVideos.splice(id, 1);
     setVideos(newVideos);
 
-    if (!selectFilter) {
+    if (selectFilter !== "") {
       const filteredVideos = newVideos.filter((video, index, arr) => {
         return SPECIALIZATIONS.indexOf(video.tag) === selectFilter;
       });
       newVideos = filteredVideos;
-    } else if (!titleFilter) {
+    } else if (titleFilter !== "") {
       newVideos = [];
       for (let video in videos) {
         if (video.title.search(titleFilter) > -1) {
@@ -101,6 +101,23 @@ function Videos() {
     setFiltered(videos);
     setTitleFilter("");
     setSelectFilter("");
+  };
+
+  const handleSearchChange = (event) => {
+    setTitleFilter(event.target.value);
+  };
+
+  const handleSubmitVideo = (video) => {
+    let newVideos = [...videos];
+    video = {
+      ...video,
+      date_uploaded: moment().format(),
+    };
+    newVideos.push(video);
+
+    setVideos(newVideos);
+    setFiltered(newVideos);
+    handleClearFilters();
   };
 
   const MentorVideo = (props) => {
@@ -183,6 +200,7 @@ function Videos() {
           initialValues={{
             remember: true,
           }}
+          onFinish={handleSubmitVideo}
         >
           <Form.Item
             name="title"
@@ -206,7 +224,15 @@ function Videos() {
           >
             <Input placeholder="Video Link" />
           </Form.Item>
-          <Form.Item>
+          <Form.Item
+            name="tag"
+            rules={[
+              {
+                required: true,
+                message: "Please select a tag",
+              },
+            ]}
+          >
             <Select>{returnDropdownItems(SPECIALIZATIONS)}</Select>
           </Form.Item>
           <Form.Item>
@@ -223,9 +249,6 @@ function Videos() {
     <div style={{ height: "100%" }}>
       <div className="videos-header">
         <h1 className="videos-header-title">Welcome, {"Insert name"}</h1>
-        <Button className="edit-videos" shape="round" size="large">
-          Manage Uploads
-        </Button>
       </div>
       <div className="filter-card">
         <h1 style={{ fontWeight: "bold", fontSize: 18 }}>Your Uploads</h1>
@@ -233,6 +256,7 @@ function Videos() {
           <Input.Search
             style={{ width: 300 }}
             value={titleFilter}
+            onChange={handleSearchChange}
             onSearch={(value) => handleSearchVideo(value)}
           />
           <Select

@@ -37,19 +37,23 @@ function ProfileContent(props) {
   };
 
   const getEducations = (educations) => {
-    if (educations == null || educations[0] == null) {
+    if (!educations || !educations[0]) {
       return;
     }
     return educations.map((education) => (
-      <div className="mentor-profile-education">
-        <b>{education.school}</b>
-        <br />
-        {education.education_level}
-        <br />
-        {"Major(s): " + education.majors.join(", ")}
-        <br />
-        {education.graduation_year}
-      </div>
+      <>
+        {education.majors.map((major) => (
+          <div className="mentor-profile-education">
+            <b>{education.school}</b>
+            <br />
+            {education.education_level}, {major}
+            <br />
+            <t className="mentor-profile-heading">
+              {education.graduation_year}
+            </t>
+          </div>
+        ))}
+      </>
     ));
   };
 

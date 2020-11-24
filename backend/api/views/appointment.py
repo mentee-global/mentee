@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import ApppointmentForm, is_invalid_form
+from api.utils.request_utils import ApppointmentForm, is_invalid_form, verify_user
 
 appointment = Blueprint("appointment", __name__)
 
@@ -64,6 +64,9 @@ def create_appointment():
 
 @appointment.route("/appointment/accept/<id>", methods=["PUT"])
 def put_appointment(id):
+    if not verify_user(request.headers.get("token")):
+        return create_response(status=401, message="Invalid token")
+
     try:
         appointment = AppointmentRequest.objects.get(id=id)
         mentor = MentorProfile.objects.get(id=appointment.mentor_id)
@@ -88,6 +91,9 @@ def put_appointment(id):
 # DELETE request for appointment by appointment id
 @appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"])
 def delete_request(appointment_id):
+    if not verify_user(request.headers.get("token")):
+        return create_response(status=401, message="Invalid token")
+
     try:
         request = AppointmentRequest.objects.get(id=appointment_id)
     except:

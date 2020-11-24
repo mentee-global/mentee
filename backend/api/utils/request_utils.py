@@ -6,6 +6,8 @@ from wtforms import validators
 import wtforms_json
 from typing import Tuple
 from .flask_imgur import Imgur
+from api.utils.constants import AUTH_URL
+import requests
 
 wtforms_json.init()
 
@@ -78,3 +80,13 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
         msg = ", ".join(form_data.errors.keys())
         return "Missing fields " + msg, True
     return "", False
+
+
+def verify_user(token):
+    """
+    Given user, validate their credentials for secured endpoints.
+    """
+    headers = {"Content-Type": "application/json", "token": token}
+    results = requests.post(AUTH_URL + "/verify", headers=headers)
+    res = results.json()
+    return res["status"] == 200

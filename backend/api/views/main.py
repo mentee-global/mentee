@@ -8,6 +8,7 @@ from api.utils.request_utils import (
     VideoForm,
     is_invalid_form,
     imgur_client,
+    verify_user,
 )
 
 main = Blueprint("main", __name__)  # initialize blueprint
@@ -22,6 +23,9 @@ def get_mentors():
 # GET request for specific mentor based on id
 @main.route("/mentor/<string:mentor_id>", methods=["GET"])
 def get_mentor(mentor_id):
+    if not verify_user(request.headers.get("token")):
+        return create_response(status=401, message="Invalid token")
+
     try:
         mentor = MentorProfile.objects.get(id=mentor_id)
     except:
@@ -34,6 +38,9 @@ def get_mentor(mentor_id):
 # POST request for a new mentor profile
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():
+    if not verify_user(request.headers.get("token")):
+        return create_response(status=401, message="Invalid token")
+
     data = request.json
     validate_data = MentorForm.from_json(data)
 
@@ -98,6 +105,9 @@ def create_mentor_profile():
 # PUT requests for /mentor
 @main.route("/mentor/<id>", methods=["PUT"])
 def edit_mentor(id):
+    if not verify_user(request.headers.get("token")):
+        return create_response(status=401, message="Invalid token")
+
     data = request.get_json()
 
     logger.info("Data received: %s", data)
@@ -156,6 +166,9 @@ def edit_mentor(id):
 
 @main.route("/mentor/<id>/image", methods=["PUT"])
 def uploadImage(id):
+    if not verify_user(request.headers.get("token")):
+        return create_response(status=401, message="Invalid token")
+
     data = request.files["image"]
 
     try:

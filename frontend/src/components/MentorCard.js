@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Button, Typography } from "antd";
+import { Avatar, Typography } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -8,6 +8,8 @@ import {
   EnvironmentOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+
+import MenteeButton from "./MenteeButton";
 
 import "./css/Gallery.scss";
 
@@ -53,11 +55,15 @@ function MentorCard(props) {
           <span className="gallery-dot" />
           {props.lesson_types}
         </h3>
-        <h3 className="gallery-headers">
-          <EnvironmentOutlined style={styles.icon} />
-          Location:
-        </h3>
-        <Text className="gallery-list-items">{props.location}</Text>
+        {props.location && (
+          <div>
+            <h3 className="gallery-headers">
+              <EnvironmentOutlined style={styles.icon} />
+              Location:
+            </h3>
+            <Text className="gallery-list-items">{props.location}</Text>
+          </div>
+        )}
         <h3 className="gallery-headers">
           <StarOutlined style={styles.icon} />
           Specializations:
@@ -65,21 +71,27 @@ function MentorCard(props) {
         <Text className="gallery-list-items">
           {props.specializations.join(", ")}
         </Text>
-        <h4>
-          <LinkOutlined style={styles.icon} />
-          <a className="gallery-links" href={props.website}>
-            {props.website}
-          </a>
-        </h4>
-        <h4>
-          <LinkedinOutlined style={styles.icon} />
-          <a className="gallery-links" href={props.linkedin}>
-            linkedin
-          </a>
-        </h4>
+        {props.website && (
+          <h4>
+            <LinkOutlined style={styles.icon} />
+            <a className="gallery-links" href={props.website}>
+              {props.website}
+            </a>
+          </h4>
+        )}
+        {props.linkedin && (
+          <h4>
+            <LinkedinOutlined style={styles.icon} />
+            <a className="gallery-links" href={props.linkedin}>
+              linkedin
+            </a>
+          </h4>
+        )}
         <hr className="gallery-solid-border" />
         <NavLink to={"/gallery/" + props.id}>
-          <Button className="gallery-profile-button">View Profile</Button>
+          <div className="gallery-button">
+            <MenteeButton content="View Profile" />
+          </div>
         </NavLink>
       </div>
     </div>

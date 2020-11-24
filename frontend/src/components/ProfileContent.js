@@ -5,10 +5,11 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-import { Button } from "antd";
+
+import MenteeButton from "./MenteeButton";
 import MentorProfileModal from "./MentorProfileModal";
 
-const profileButtonStyle = { background: "#E4BB4F", color: "white" };
+import "./css/Profile.scss";
 
 function ProfileContent(props) {
   const getMeetingMethods = () => {
@@ -32,19 +33,23 @@ function ProfileContent(props) {
   };
 
   const getEducations = (educations) => {
-    if (educations == null || educations[0] == null) {
+    if (!educations || !educations[0]) {
       return;
     }
     return educations.map((education) => (
-      <div className="mentor-profile-education">
-        <b>{education.school}</b>
-        <br />
-        {education.education_level}
-        <br />
-        {"Major(s): " + education.majors.join(", ")}
-        <br />
-        {education.graduation_year}
-      </div>
+      <>
+        {education.majors.map((major) => (
+          <div className="mentor-profile-education">
+            <b>{education.school}</b>
+            <br />
+            {education.education_level}, {major}
+            <br />
+            <t className="mentor-profile-heading">
+              {education.graduation_year}
+            </t>
+          </div>
+        ))}
+      </>
     ));
   };
 
@@ -55,12 +60,9 @@ function ProfileContent(props) {
         {props.isMentor ? (
           <MentorProfileModal />
         ) : (
-          <Button
-            className="mentor-profile-edit-button"
-            style={profileButtonStyle}
-          >
-            <b>Book Appointment</b>
-          </Button>
+          <span className="mentor-profile-button">
+            <MenteeButton content={<b>Book Appointment</b>} />
+          </span>
         )}
       </div>
       <div className="mentor-profile-heading">

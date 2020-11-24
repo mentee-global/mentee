@@ -7,13 +7,15 @@ import "./css/PublicProfile.scss";
 function ProfileVideos(props) {
   const renderVideoGrid = () => {
     if (!props.videos || props.videos.length <= 1) return;
-    const videoReducer = (rows, cur_video, idx) => {
-      idx % 2 === 0
-        ? rows.push([cur_video])
-        : rows[rows.length - 1].push(cur_video);
-      return rows;
+
+    const pairReducer = (aggregator, current, index) => {
+      index % 2 === 0
+        ? aggregator.push([current])
+        : aggregator[aggregator.length - 1].push(current);
+      return aggregator;
     };
-    const rows = props.videos.slice(1).reduce(videoReducer, []);
+    const rows = props.videos.slice(1).reduce(pairReducer, []);
+
     return rows.map((row) => (
       <>
         <Row gutter={16}>

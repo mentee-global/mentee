@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Button, Typography } from "antd";
+import { Avatar, Typography } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -8,6 +8,8 @@ import {
   EnvironmentOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+
+import MenteeButton from "./MenteeButton";
 
 import "./css/Gallery.scss";
 
@@ -87,7 +89,9 @@ function MentorCard(props) {
         )}
         <hr className="gallery-solid-border" />
         <NavLink to={"/gallery/" + props.id}>
-          <Button className="gallery-profile-button">View Profile</Button>
+          <div className="gallery-button">
+            <MenteeButton content="View Profile" />
+          </div>
         </NavLink>
       </div>
     </div>

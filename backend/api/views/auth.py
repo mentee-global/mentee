@@ -18,6 +18,20 @@ def verify_email():
     return results.json()
 
 
+@auth.route("/resendVerificationEmail", methods=["POST"])
+def resend_email():
+    data = request.json
+    headers = {
+        "Content-Type": "application/json",
+        "token": request.headers.get("token"),
+    }
+    results = requests.post(
+        AUTH_URL + "/resendVerificationEmail", headers=headers, json=data
+    )
+
+    return results.json()
+
+
 @auth.route("/register", methods=["POST"])
 def register():
     data = request.json
@@ -55,3 +69,21 @@ def login():
             "token": resp["token"],
         },
     )
+
+
+@auth.route("/forgotPassword", methods=["POST"])
+def forgot_password():
+    data = request.json
+    body = {"email": data["email"], "answer": data["answer"]}
+    headers = {"Content-Type": "application/json"}
+    results = requests.post(AUTH_URL + "/forgotPassword", headers=headers, json=body)
+    return results.json()
+
+
+@auth.route("/passwordReset", methods=["POST"])
+def reset_password():
+    data = request.json
+    body = {"email": data["email"], "pin": data["pin"], "password": data["password"]}
+    headers = {"Content-Type": "application/json"}
+    results = requests.post(AUTH_URL + "/passwordReset", headers=headers, json=body)
+    return results.json()

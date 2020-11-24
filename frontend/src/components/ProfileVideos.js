@@ -5,33 +5,15 @@ import ReactPlayer from "react-player";
 import "./css/PublicProfile.scss";
 
 function ProfileVideos(props) {
-  const [pinnedVideo, setPinnedVideo] = useState();
-  const [videoGrid, setVideoGrid] = useState([]);
-
-  useEffect(() => {
-    let grid = [];
-    if (props.videos) {
-      props.videos.forEach((video) => {
-        if (video.tag === "pinned" && !pinnedVideo) {
-          setPinnedVideo(video);
-        } else {
-          grid.push(video);
-        }
-      });
-    }
-    setVideoGrid(grid);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.videos]);
-
   const renderVideoGrid = () => {
-    if (!videoGrid || videoGrid.length === 0) return;
+    if (!props.videos || props.videos.length <= 1) return;
     const videoReducer = (rows, cur_video, idx) => {
       idx % 2 === 0
         ? rows.push([cur_video])
         : rows[rows.length - 1].push(cur_video);
       return rows;
     };
-    const rows = videoGrid.reduce(videoReducer, []);
+    const rows = props.videos.slice(1).reduce(videoReducer, []);
     return rows.map((row) => (
       <>
         <Row gutter={16}>
@@ -67,20 +49,20 @@ function ProfileVideos(props) {
       <Row>
         <Col span={24}>
           <div className="pinned-video-default-preview">
-            {pinnedVideo && (
+            {props.videos && props.videos[0] && (
               <ReactPlayer
-                url={pinnedVideo.url}
+                url={props.videos[0].url}
                 width="100%"
                 height="100%"
                 className="video-border"
               />
             )}
           </div>
-          {pinnedVideo && (
+          {props.videos && props.videos[0] && (
             <div>
-              <b>{pinnedVideo.title}</b>
+              <b>{props.videos[0].title}</b>
               <br />
-              {pinnedVideo.tag}
+              {props.videos[0].tag}
             </div>
           )}
         </Col>

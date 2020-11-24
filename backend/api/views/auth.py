@@ -74,7 +74,7 @@ def login():
 @auth.route("/forgotPassword", methods=["POST"])
 def forgot_password():
     data = request.json
-    body = {"email": data["email"], "answer": data["answer"]}
+    body = {"email": data["email"]}
     headers = {"Content-Type": "application/json"}
     results = requests.post(AUTH_URL + "/forgotPassword", headers=headers, json=body)
     return results.json()

@@ -12,7 +12,7 @@ function Videos() {
   const [videos, setVideos] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [selectFilter, setSelectFilter] = useState("");
-  const [nameFilter, setNameFilter] = useState("");
+  const [titleFilter, setTitleFilter] = useState("");
 
   useEffect(() => {
     async function getVideos() {
@@ -22,11 +22,39 @@ function Videos() {
     getVideos();
   }, []);
 
-  const handleDeleteVideo = (id) => {
-    const newVideos = [...videos];
-    newVideos.splice(id, 1);
+  const handleSearchVideo = (query) => {
+    query = query.toUpperCase();
+    let newVideos = [];
+    for (let video of videos) {
+      let title = video.title.toUpperCase();
+      if (title.search(query) > -1) {
+        newVideos.push(video);
+      }
+    }
+    setTitleFilter(query);
     setFiltered(newVideos);
+  }
+
+  const handleDeleteVideo = (video) => {
+    let newVideos = [...videos];
+    let id = newVideos.indexOf(video);
+    newVideos.splice(id, 1);
     setVideos(newVideos);
+
+    if (!selectFilter) {
+      const filteredVideos = newVideos.filter((video, index, arr) => {
+        return SPECIALIZATIONS.indexOf(video.tag) === selectFilter;
+      });
+      newVideos = filteredVideos;
+    } else if (!titleFilter) {
+      newVideos = [];
+      for (let video in videos) {
+        if (video.title.search(titleFilter) > -1) {
+          newVideos.push(video);
+        }
+      }
+    }
+    setFiltered(newVideos);
   };
 
   const handleVideoTag = (id, specialization) => {
@@ -71,7 +99,7 @@ function Videos() {
 
   const handleClearFilters = () => {
     setFiltered(videos);
-    setNameFilter("");
+    setTitleFilter("");
     setSelectFilter("");
   };
 
@@ -115,7 +143,7 @@ function Videos() {
             }
             style={{ ...styles.interactionVideo, left: "78%" }}
             type="text"
-            onClick={() => handleDeleteVideo(props.id)}
+            onClick={() => handleDeleteVideo(props.video)}
           ></Button>
         </div>
       </div>
@@ -130,15 +158,16 @@ function Videos() {
           <h1>Delete</h1>
         </div>
         {filtered &&
-          filtered.map((values, index) => (
+          filtered.map((video, index) => (
             <MentorVideo
-              title={values.title}
-              date={values.date_uploaded}
-              tag={values.tag}
+              title={video.title}
+              date={video.date_uploaded}
+              tag={video.tag}
               id={index}
+              video={video}
               onChangeTag={handleVideoTag}
               onPinVideo={handlePinVideo}
-              url={values.url}
+              url={video.url}
             />
           ))}
       </div>
@@ -203,8 +232,9 @@ function Videos() {
         <div className="filters">
           <Input.Search
             style={{ width: 300 }}
-            defaultValue={nameFilter}
-          ></Input.Search>
+            value={titleFilter}
+            onSearch={(value) => handleSearchVideo(value)}
+          />
           <Select
             style={{ width: 200 }}
             onChange={(value) => filterSpecialization(value)}

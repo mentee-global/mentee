@@ -152,6 +152,14 @@ function Appointments() {
     );
   };
 
+  const AcceptRejectAppointment = ({ data }) => {
+    return (
+      <div>
+
+      </div>
+    )
+  };
+
   const AvailabilityTab = () => {
     return (
       <div>

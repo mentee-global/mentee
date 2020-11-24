@@ -33,7 +33,7 @@ function Videos() {
     }
     setTitleFilter(query);
     setFiltered(newVideos);
-  }
+  };
 
   const handleDeleteVideo = (video) => {
     let newVideos = [...videos];

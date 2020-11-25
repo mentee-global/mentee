@@ -108,16 +108,18 @@ function Videos() {
   };
 
   const handleSubmitVideo = (video) => {
+    console.log(video);
     let newVideos = [...videos];
     video = {
       ...video,
       date_uploaded: moment().format(),
+      tag: SPECIALIZATIONS[video.tag],
     };
     newVideos.push(video);
 
+    handleClearFilters();
     setVideos(newVideos);
     setFiltered(newVideos);
-    handleClearFilters();
   };
 
   const MentorVideo = (props) => {

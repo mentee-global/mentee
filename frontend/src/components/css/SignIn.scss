@@ -22,6 +22,7 @@
     color: #644A0A;
     font-weight: bold;
     font-size: 300%;
+    height: 6%;
 }
 
 .signin-input-container {
@@ -55,6 +56,27 @@
     justify-content: center;
 }
 
-.signin-register-text {
+.signin-register-button {
+    background: none;
+    border: none;
     color: #E4BB4F;
+    text-decoration: underline;
+    margin-left: 5px;
+    transition-duration: 0.4s;
+}
+
+.signin-register-button:hover {
+    background: none;
+    border: none;
+    color: #ffe5a3;
+    text-decoration: underline;
+    margin-left: 5px;
+}
+
+.signin-register-button:active {
+    background: none;
+    border: none;
+    color: #E4BB4F;
+    text-decoration: underline;
+    margin-left: 5px;
 }

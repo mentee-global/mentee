@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Button, Form, Input, Select } from "antd";
-import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons";
 import moment from "moment";
-import ReactPlayer from "react-player";
+import MentorVideo from "../MentorVideo";
 import { SPECIALIZATIONS } from "utils/consts.js";
+import { returnDropdownItems } from "utils/inputs";
 import "../css/Videos.scss";
 import videosJSON from "utils/videos.json";
-const { Option } = Select;
 
 function Videos() {
   const [videos, setVideos] = useState([]);
@@ -68,14 +67,6 @@ function Videos() {
     setFiltered(newVideos);
   };
 
-  const returnDropdownItems = (items) => {
-    let options = [];
-    for (let i = 0; i < items.length; i++) {
-      options.push(<Option key={i}>{items[i]}</Option>);
-    }
-    return options;
-  };
-
   const handlePinVideo = (id) => {
     if (id != 0) {
       const newVideos = [...videos];
@@ -122,53 +113,6 @@ function Videos() {
     setFiltered(newVideos);
   };
 
-  const MentorVideo = (props) => {
-    return (
-      <div className="video-row">
-        <div className="video-block">
-          <ReactPlayer
-            url={props.url}
-            width="150px"
-            height="100px"
-            className="video"
-          />
-          <div className="video-description">
-            <div>{props.title}</div>
-            <div>{moment(props.date).fromNow()}</div>
-          </div>
-          <div className="video-pin">
-            <button
-              className="pin-button"
-              onClick={() => props.onPinVideo(props.id)}
-              style={props.id == 0 ? { background: "#F2C94C" } : {}}
-            >
-              <PushpinOutlined />
-            </button>
-          </div>
-        </div>
-        <div className="video-interactions">
-          <Select
-            style={{ ...styles.interactionVideo, left: "14%", width: 230 }}
-            defaultValue={props.tag}
-            onChange={(option) =>
-              props.onChangeTag(props.id, SPECIALIZATIONS[option])
-            }
-          >
-            {returnDropdownItems(SPECIALIZATIONS)}
-          </Select>
-          <Button
-            icon={
-              <DeleteOutlined style={{ fontSize: "24px", color: "#957520" }} />
-            }
-            style={{ ...styles.interactionVideo, left: "78%" }}
-            type="text"
-            onClick={() => handleDeleteVideo(props.video)}
-          ></Button>
-        </div>
-      </div>
-    );
-  };
-
   const VideosContainer = () => {
     return (
       <div className="videos-container">
@@ -185,7 +129,8 @@ function Videos() {
               id={index}
               video={video}
               onChangeTag={handleVideoTag}
-              onPinVideo={handlePinVideo}
+              onPin={handlePinVideo}
+              onDelete={handleDeleteVideo}
               url={video.url}
             />
           ))}
@@ -282,13 +227,5 @@ function Videos() {
     </div>
   );
 }
-
-const styles = {
-  interactionVideo: {
-    position: "absolute",
-    top: "50%",
-    margin: "-25px 0 0 -25px",
-  },
-};
 
 export default Videos;

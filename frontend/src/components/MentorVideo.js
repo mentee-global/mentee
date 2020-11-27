@@ -5,10 +5,10 @@ import moment from "moment";
 import { Button, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { returnDropdownItems } from "utils/inputs";
-import "components/css/MentorProfile.scss";
+import "components/css/MentorVideo.scss";
 
 const MentorVideo = (props) => {
-  const { onPin, onChangeTag, handleDeleteVideo } = props;
+  const { onPin, onChangeTag, onDelete } = props;
 
   return (
     <div className="video-row">
@@ -27,7 +27,7 @@ const MentorVideo = (props) => {
           <button
             className="pin-button"
             onClick={() => onPin(props.id)}
-            style={props.id == 0 ? { background: "#F2C94C" } : {}}
+            style={props.id === 0 ? { background: "#F2C94C" } : {}}
           >
             <PushpinOutlined />
           </button>
@@ -47,7 +47,7 @@ const MentorVideo = (props) => {
           }
           style={{ ...styles.interactionVideo, left: "78%" }}
           type="text"
-          onClick={() => handleDeleteVideo(props.video)}
+          onClick={() => onDelete(props.video)}
         ></Button>
       </div>
     </div>

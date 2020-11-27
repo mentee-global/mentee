@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Button, Form, Input, Select } from "antd";
 import moment from "moment";
 import MentorVideo from "../MentorVideo";
+import VideoSubmit from "../VideoSubmit";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { returnDropdownItems } from "utils/inputs";
 import "../css/Videos.scss";
@@ -12,6 +13,7 @@ function Videos() {
   const [filtered, setFiltered] = useState([]);
   const [selectFilter, setSelectFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
+  const [form] = Form.useForm();
 
   useEffect(() => {
     async function getVideos() {
@@ -68,7 +70,7 @@ function Videos() {
   };
 
   const handlePinVideo = (id) => {
-    if (id != 0) {
+    if (id !== 0) {
       const newVideos = [...videos];
       const video = newVideos.splice(id, 1)[0];
       newVideos.sort(
@@ -81,9 +83,13 @@ function Videos() {
   };
 
   const filterSpecialization = (value) => {
+    console.log(filtered);
+    console.log(videos);
     const filteredVideos = videos.filter((video, index, arr) => {
+      console.log(SPECIALIZATIONS.indexOf(video.tag));
       return SPECIALIZATIONS.indexOf(video.tag) == value;
     });
+    console.log(filteredVideos);
     setFiltered(filteredVideos);
     setSelectFilter(value);
   };
@@ -108,6 +114,7 @@ function Videos() {
     };
     newVideos.push(video);
 
+    form.resetFields();
     handleClearFilters();
     setVideos(newVideos);
     setFiltered(newVideos);
@@ -134,60 +141,6 @@ function Videos() {
               url={video.url}
             />
           ))}
-      </div>
-    );
-  };
-
-  const VideoSubmit = () => {
-    return (
-      <div className="video-submit-card">
-        <h1 className="video-submit-title">Add Video</h1>
-        <Form
-          name="video-submit"
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={handleSubmitVideo}
-        >
-          <Form.Item
-            name="title"
-            rules={[
-              {
-                required: true,
-                message: "Please input a video title",
-              },
-            ]}
-          >
-            <Input placeholder="Video Title" />
-          </Form.Item>
-          <Form.Item
-            name="url"
-            rules={[
-              {
-                required: true,
-                message: "Please input a video link",
-              },
-            ]}
-          >
-            <Input placeholder="Video Link" />
-          </Form.Item>
-          <Form.Item
-            name="tag"
-            rules={[
-              {
-                required: true,
-                message: "Please select a tag",
-              },
-            ]}
-          >
-            <Select>{returnDropdownItems(SPECIALIZATIONS)}</Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
       </div>
     );
   };
@@ -221,7 +174,7 @@ function Videos() {
           <VideosContainer />
         </Col>
         <Col span={8}>
-          <VideoSubmit />
+          <VideoSubmit handleSubmitVideo={handleSubmitVideo} form={form} />
         </Col>
       </Row>
     </div>

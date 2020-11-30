@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal, Checkbox, Avatar } from "antd";
 import ModalInput from "./ModalInput";
+import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
 import "./css/AntDesign.scss";
@@ -129,7 +130,7 @@ function MentorProfileModal() {
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
     e.forEach((value) => specializationsSelected.push(SPECIALIZATIONS[value]));
-    setLanguages(specializationsSelected);
+    setSpecializations(specializationsSelected);
   }
 
   function handleSchoolChange(e) {
@@ -149,14 +150,13 @@ function MentorProfileModal() {
   }
 
   return (
-    <div>
-      <Button
-        style={{ background: "#E4BB4F", color: "white" }}
-        className="mentor-profile-edit-button"
-        onClick={() => setModalVisible(true)}
-      >
-        Edit Profile
-      </Button>
+    <span>
+      <span className="mentor-profile-button">
+        <MenteeButton
+          content={<b>Edit Profile</b>}
+          onClick={() => setModalVisible(true)}
+        />
+      </span>
       <Modal
         title="Edit Profile"
         visible={modalVisible}
@@ -305,7 +305,7 @@ function MentorProfileModal() {
           </div>
         </div>
       </Modal>
-    </div>
+    </span>
   );
 }
 

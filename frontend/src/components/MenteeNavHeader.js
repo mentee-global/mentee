@@ -1,6 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Button } from "antd";
+import { Layout } from "antd";
+
+import MenteeButton from "./MenteeButton";
+
 import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
@@ -18,32 +21,28 @@ function MenteeNavHeader() {
         </div>
         <div>
           <NavLink to="/gallery">
-            <Button
-              className="navigation-header-button"
-              style={{ background: "#FCF6E8", color: "#A58123" }}
-            >
-              <b>Find a Mentor</b>
-            </Button>
+            <span className="navigation-header-button">
+              <MenteeButton
+                theme="light"
+                width="125px"
+                content={<b>Find a Mentor</b>}
+              />
+            </span>
           </NavLink>
-          <Button
-            className="navigation-header-button"
-            style={{ background: "#FCF6E8", color: "#A58123" }}
-          >
-            <b>About Us</b>
-          </Button>
-          <Button
-            className="navigation-header-button"
-            style={{ background: "#FCF6E8", color: "#A58123" }}
-          >
-            <b>FAQ</b>
-          </Button>
+          <span className="navigation-header-button">
+            <MenteeButton
+              theme="light"
+              width="125px"
+              content={<b>About Us</b>}
+            />
+          </span>
+          <span className="navigation-header-button">
+            <MenteeButton theme="light" width="125px" content={<b>FAQ</b>} />
+          </span>
           <NavLink to="/profile">
-            <Button
-              className="navigation-header-button-dark"
-              style={{ background: "#E4BB4F", color: "white" }}
-            >
-              <b>Mentor Log In</b>
-            </Button>
+            <span className="navigation-header-button">
+              <MenteeButton width="125px" content={<b>Mentor Log In</b>} />
+            </span>
           </NavLink>
         </div>
       </div>

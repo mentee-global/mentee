@@ -5,12 +5,11 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-import { Button } from "antd";
+
+import MenteeButton from "./MenteeButton";
 import MentorProfileModal from "./MentorProfileModal";
 
 import "./css/Profile.scss";
-
-const profileButtonStyle = { background: "#E4BB4F", color: "white" };
 
 function ProfileContent(props) {
   const getMeetingMethods = () => {
@@ -28,13 +27,9 @@ function ProfileContent(props) {
   };
 
   const getSpecializationTags = (specializations) => {
-    return specializations.map((specialization, idx) =>
-      idx === 0 ? (
-        <div className="mentor-specialization-tag-first">{specialization}</div>
-      ) : (
-        <div className="mentor-specialization-tag">{specialization}</div>
-      )
-    );
+    return specializations.map((specialization, idx) => (
+      <div className="mentor-specialization-tag">{specialization}</div>
+    ));
   };
 
   const getEducations = (educations) => {
@@ -65,12 +60,9 @@ function ProfileContent(props) {
         {props.isMentor ? (
           <MentorProfileModal />
         ) : (
-          <Button
-            className="mentor-profile-edit-button"
-            style={profileButtonStyle}
-          >
-            <b>Book Appointment</b>
-          </Button>
+          <span className="mentor-profile-button">
+            <MenteeButton content={<b>Book Appointment</b>} />
+          </span>
         )}
       </div>
       <div className="mentor-profile-heading">

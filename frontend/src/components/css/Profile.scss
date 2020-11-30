@@ -41,26 +41,8 @@
   margin-left: 3%;
 }
 
-.mentor-profile-edit-button {
-  border-radius: 13px;
-  margin-left: 60%;
-  border-color: #E4BB4F;
-  margin-left: 50%;
-}
-
 .mentor-profile-about {
   width: 90%;
-}
-
-.mentor-specialization-tag-first {
-  border: 3px solid $specialization-tag-border;
-  border-radius: 13px;
-  font-weight: bold;
-  display: inline-block;
-  text-align: center;
-  min-width: 15%;
-  padding-left: 3%;
-  padding-right: 3%;
 }
 
 .mentor-specialization-tag {
@@ -72,7 +54,7 @@
   min-width: 15%;
   padding-left: 3%;
   padding-right: 3%;
-  margin-left: 2%;
+  margin-top: 2%;
   margin-right: 2%;
 }
 
@@ -107,4 +89,8 @@
   font-size: 12px;
   text-decoration: underline;
   color: $edit-contact-color;
+}
+
+.mentor-profile-button {
+  margin-left: 50%;
 }

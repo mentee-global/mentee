@@ -44,16 +44,18 @@ function Videos() {
 
     if (selectFilter !== "") {
       const filteredVideos = newVideos.filter((video, index, arr) => {
-        return SPECIALIZATIONS.indexOf(video.tag) === selectFilter;
+        return SPECIALIZATIONS.indexOf(video.tag) == selectFilter;
       });
       newVideos = filteredVideos;
-    } else if (titleFilter !== "") {
-      newVideos = [];
-      for (let video in videos) {
+    }
+    if (titleFilter !== "") {
+      let titleFiltered = [];
+      for (let video in newVideos) {
         if (video.title.search(titleFilter) > -1) {
-          newVideos.push(video);
+          titleFiltered.push(video);
         }
       }
+      newVideos = titleFiltered;
     }
     setFiltered(newVideos);
   };
@@ -83,13 +85,9 @@ function Videos() {
   };
 
   const filterSpecialization = (value) => {
-    console.log(filtered);
-    console.log(videos);
     const filteredVideos = videos.filter((video, index, arr) => {
-      console.log(SPECIALIZATIONS.indexOf(video.tag));
       return SPECIALIZATIONS.indexOf(video.tag) == value;
     });
-    console.log(filteredVideos);
     setFiltered(filteredVideos);
     setSelectFilter(value);
   };
@@ -105,7 +103,6 @@ function Videos() {
   };
 
   const handleSubmitVideo = (video) => {
-    console.log(video);
     let newVideos = [...videos];
     video = {
       ...video,

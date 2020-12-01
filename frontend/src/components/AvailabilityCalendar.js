@@ -104,10 +104,15 @@ function AvailabilityCalendar() {
         visible={visible}
         onCancel={handleCancel}
         footer={[
-          <Button key="clear" type="back" onClick={handleClear}>
+          <Button key="clear" 
+                  type="back" 
+                  onClick={handleClear}
+                  style={styles.button}>
             Clear all
           </Button>,
-          <Button key="save" type="primary" onClick={handleOk}>
+          <Button key="save" type="primary" 
+                  onClick={handleOk}
+                  style={styles.button}>
             Save
           </Button>,
         ]}
@@ -152,10 +157,19 @@ function AvailabilityCalendar() {
             </div>
           </Fragment>
         ))}
-        <Button className="add-times" onClick={addTimeSlots}>Add hours</Button>
+        <Button className="add-times" onClick={addTimeSlots} style={styles.button}>Add hours</Button>
       </Modal>
     </>
   );
+}
+
+const styles = {
+  button: {
+    backgroundColor: "#E4BB4F",
+    borderRadius: 13,
+    fontWeight: 700,
+    color: "#FFF7E2"
+  }
 }
 
 export default AvailabilityCalendar;

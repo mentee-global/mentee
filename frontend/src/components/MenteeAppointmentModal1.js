@@ -86,22 +86,19 @@ function MenteeAppointmentModal1() {
         <div className="modal-container">
           <div className="modal-mentee-appointment-heading-container">
             <div className="modal-mentee-appointment-heading-text">
-              {" "}
-              Mentoring Session with Bernie Sanders{" "}
+              Mentoring Session with Bernie Sanders
             </div>
             <div className="modal-mentee-appointment-heading-divider" />
             <div className="modal-mentee-appointment-heading-date-container">
               <div className="modal-mentee-appointment-heading-date">
-                {" "}
-                10/6{" "}
+                10/6
               </div>
               <div className="modal-mentee-appointment-heading-day">
-                {" "}
-                Tuesday{" "}
+                Tuesday
               </div>
             </div>
           </div>
-          <div className="modal-inner-container">
+          <div className="modal-mentee-inner-container">
             <div className="flex flex-row">
               <div className="modal-mentee-appointment-col-container">
                 <div className="modal-mentee-appointment-header-text">
@@ -191,56 +188,62 @@ function MenteeAppointmentModal1() {
                 <div className="modal-mentee-appointment-header-text">
                   Contact Information
                 </div>
-                <ModalInput
-                  style={styles.modalInput}
-                  type="text"
-                  title="Email*"
-                  clicked={inputClicked[5]}
-                  index={5}
-                  handleClick={handleClick}
-                  onChange={handleLinkedinChange}
-                />
-                <ModalInput
-                  style={styles.modalInput}
-                  type="text"
-                  title="Phone Number*"
-                  clicked={inputClicked[5]}
-                  index={5}
-                  handleClick={handleClick}
-                  onChange={handleLinkedinChange}
-                />
-                <div className="modal-availability-checkbox">
+                <div className="modal-mentee-appointment-contact-container">
+                  <ModalInput
+                    style={styles.contactInput}
+                    type="text"
+                    title="Email*"
+                    clicked={inputClicked[5]}
+                    index={5}
+                    handleClick={handleClick}
+                    onChange={handleLinkedinChange}
+                  />
+                </div>
+                <div className="modal-mentee-appointment-contact-container">
+                  <ModalInput
+                    style={styles.contactInput}
+                    type="text"
+                    title="Phone Number*"
+                    clicked={inputClicked[5]}
+                    index={5}
+                    handleClick={handleClick}
+                    onChange={handleLinkedinChange}
+                  />
+                </div>
+                <div className="modal-mentee-availability-checkbox">
                   <Checkbox
-                    className="modal-availability-checkbox-text"
+                    className="modal-mentee-availability-checkbox-text"
                     clicked={inputClicked[3]}
                     index={3}
                     handleClick={handleClick}
                     onChange={handleLanguageChange}
                   >
-                    Available online?
+                    Allow calls
                   </Checkbox>
                   <div></div>
                   <Checkbox
-                    className="modal-availability-checkbox-text"
+                    className="modal-mentee-availability-checkbox-text"
                     clicked={inputClicked[3]}
                     index={3}
                     handleClick={handleClick}
                     onChange={handleLanguageChange}
                   >
-                    Available online?
+                    Allow texting
                   </Checkbox>
                 </div>
-                <div className="modal-mentee-appointment-header-text">
-                  Message to Mentor
+                <div className="modal-mentee-message-container">
+                  <div className="modal-mentee-appointment-header-text">
+                    Message to Mentor
                 </div>
-                <ModalInput
-                  style={styles.modalInput}
-                  type="textarea"
-                  clicked={inputClicked[2]}
-                  index={2}
-                  handleClick={handleClick}
-                  onChange={handleLinkedinChange}
-                />
+                  <ModalInput
+                    style={styles.modalInput}
+                    type="textarea"
+                    clicked={inputClicked[2]}
+                    index={2}
+                    handleClick={handleClick}
+                    onChange={handleLinkedinChange}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -254,6 +257,11 @@ const styles = {
   modalInput: {
     height: 65,
     marginTop: 20,
+    width: "95%",
+  },
+  contactInput: {
+    maxHeight: 60,
+    marginTop: 16,
     width: "95%",
   },
   footer: {

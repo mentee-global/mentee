@@ -17,10 +17,7 @@ function AvailabilityCalendar() {
   ];
 
   //TODO: Fill this list with dates in month that have appointments
-  const [saved, setSaved] = useState({
-    "11/12/2020": true,
-    "12/12/2020": true,
-  });
+  const [saved, setSaved] = useState({});
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);

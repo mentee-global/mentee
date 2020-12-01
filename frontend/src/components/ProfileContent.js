@@ -27,13 +27,9 @@ function ProfileContent(props) {
   };
 
   const getSpecializationTags = (specializations) => {
-    return specializations.map((specialization, idx) =>
-      idx === 0 ? (
-        <div className="mentor-specialization-tag-first">{specialization}</div>
-      ) : (
-        <div className="mentor-specialization-tag">{specialization}</div>
-      )
-    );
+    return specializations.map((specialization, idx) => (
+      <div className="mentor-specialization-tag">{specialization}</div>
+    ));
   };
 
   const getEducations = (educations) => {

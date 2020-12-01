@@ -45,17 +45,6 @@
   width: 90%;
 }
 
-.mentor-specialization-tag-first {
-  border: 3px solid $specialization-tag-border;
-  border-radius: 13px;
-  font-weight: bold;
-  display: inline-block;
-  text-align: center;
-  min-width: 15%;
-  padding-left: 3%;
-  padding-right: 3%;
-}
-
 .mentor-specialization-tag {
   border: 3px solid $specialization-tag-border;
   border-radius: 13px;
@@ -65,7 +54,7 @@
   min-width: 15%;
   padding-left: 3%;
   padding-right: 3%;
-  margin-left: 2%;
+  margin-top: 2%;
   margin-right: 2%;
 }
 

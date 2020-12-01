@@ -35,3 +35,21 @@ def edit_availability(id):
     ]
     mentor.save()
     return create_response(status=200, message=f"Success")
+
+@availability.route("/availability/setdays/<id>", methods=["GET"])
+def get_set_availability_days(id):
+    try: 
+        availability = MentorProfile.objects.get(id = id).availability
+    except:
+        msg = "No mentor found with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    set_availability_days = []
+    
+    for each in availability:
+        print(each)
+        day = str(each.start_time.year) + "-" + str(each.start_time.month) + "-" + str(each.start_time.day)
+        if day not in set_availability_days:
+            set_availability_days.append(day)
+    return create_response(status=200, data={"days": set_availability_days})
+

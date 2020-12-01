@@ -5,10 +5,21 @@ const instance = axios.create({
 });
 
 const register = (email, password) => {
-  return instance.post("/register", {
-    email,
-    password,
-  });
+  return instance
+    .post("/register", {
+      email,
+      password,
+    })
+    .then((response) => {
+      if (response.data.result && response.data.result.token) {
+        localStorage.setItem(
+          "registration",
+          JSON.stringify(response.data.result)
+        );
+      }
+
+      return response.data;
+    });
 };
 
 const login = (email, password) => {
@@ -34,4 +45,25 @@ const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem("user"));
 };
 
-export { register, login, logout, getCurrentUser };
+const isLoggedIn = () => {
+  return Boolean(getCurrentUser());
+};
+
+const getCurrentRegistration = () => {
+  return JSON.parse(localStorage.getItem("registration"));
+};
+
+// For when the user verifies and has an actual login
+const removeRegistration = () => {
+  localStorage.removeItem("reigstration");
+};
+
+export {
+  register,
+  login,
+  logout,
+  getCurrentUser,
+  isLoggedIn,
+  getCurrentRegistration,
+  removeRegistration,
+};

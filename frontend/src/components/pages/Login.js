@@ -3,32 +3,32 @@ import { Input } from "antd";
 import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
-import "../css/SignIn.scss";
+import "../css/Login.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [inputClicked, setInputClicked] = useState(new Array(2).fill(false));
+  const [inputClicked, setInputClicked] = useState([false, false]);
 
   function handleInputClick(index) {
-    let newClickedInput = new Array(2).fill(false);
+    let newClickedInput = [false, false];
     newClickedInput[index] = true;
     setInputClicked(newClickedInput);
   }
 
   return (
     <div className="home-background">
-      <div className="signin-content">
-        <div className="signin-container">
-          <h1 className="signin-text">Sign In</h1>
+      <div className="login-content">
+        <div className="login-container">
+          <h1 className="login-text">Sign In</h1>
           <div
-            className={`signin-input-container${
+            className={`login-input-container${
               inputClicked[0] ? "__clicked" : ""
             }`}
           >
             <Input
-              className="signin-input"
+              className="login-input"
               onClick={() => handleInputClick(0)}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
@@ -36,19 +36,19 @@ function Login() {
             />
           </div>
           <div
-            className={`signin-input-container${
+            className={`login-input-container${
               inputClicked[1] ? "__clicked" : ""
             }`}
           >
             <Input
-              className="signin-input"
+              className="login-input"
               onClick={() => handleInputClick(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
               placeholder="Password"
             />
           </div>
-          <div className="signin-button">
+          <div className="login-button">
             <MenteeButton
               content={<b>Login</b>}
               width={"60%"}
@@ -56,10 +56,10 @@ function Login() {
               onClick={() => {}}
             />
           </div>
-          <div className="signin-register-container">
+          <div className="login-register-container">
             <div>Don&#39;t have an account?</div>
             <button
-              className="signin-register-button"
+              className="login-register-button"
               onClick={() => console.log("clicked")}
             >
               Register

@@ -1,5 +1,5 @@
 
-.signin-content {
+.login-content {
     height: 90%;
     width: 90%;
     display: flex;
@@ -7,7 +7,7 @@
     justify-content: space-around;
 }
 
-.signin-container {
+.login-container {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -17,7 +17,7 @@
     padding: 2.5%;
 }
 
-.signin-text {
+.login-text {
     display: flex;
     color: #644A0A;
     font-weight: bold;
@@ -25,38 +25,38 @@
     height: 6%;
 }
 
-.signin-input-container {
+.login-input-container {
     display: flex;
     flex-direction: column;
     border-bottom: 3px solid #828282;
 }
 
-.signin-input-container__clicked {
+.login-input-container__clicked {
     display: flex;
     flex-direction: column;
     border-bottom: 3px solid #E4BB4F;
 }
 
-.signin-input {
+.login-input {
     font-size: 150%;
     margin-left: -1.5%;
 }
 
-.signin-button {
+.login-button {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
 }
 
-.signin-register-container {
+.login-register-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
 }
 
-.signin-register-button {
+.login-register-button {
     background: none;
     border: none;
     color: #E4BB4F;
@@ -65,7 +65,7 @@
     transition-duration: 0.4s;
 }
 
-.signin-register-button:hover {
+.login-register-button:hover {
     background: none;
     border: none;
     color: #ffe5a3;
@@ -73,7 +73,7 @@
     margin-left: 5px;
 }
 
-.signin-register-button:active {
+.login-register-button:active {
     background: none;
     border: none;
     color: #E4BB4F;

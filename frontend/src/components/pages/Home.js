@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
-import "../css/SignIn.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
 function Home() {

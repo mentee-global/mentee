@@ -57,9 +57,7 @@ function App() {
       />
       <Route
         path="/login"
-        component={() => (
-          <Navigation content={<Login />} needsAuth={false} />
-        )}
+        component={() => <Navigation content={<Login />} needsAuth={false} />}
       />
     </Router>
   );

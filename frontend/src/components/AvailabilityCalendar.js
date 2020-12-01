@@ -2,7 +2,7 @@ import React, { useState, Fragment } from "react";
 import moment from "moment";
 import { Calendar, Modal, Button, Badge } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import TextField from '@material-ui/core/TextField';
+import TextField from "@material-ui/core/TextField";
 import "./css/AvailabilityCalendar.scss";
 
 function AvailabilityCalendar() {
@@ -28,13 +28,17 @@ function AvailabilityCalendar() {
 
   const handleTime1Change = (index, event) => {
     const times = [...timeSlots];
-    times[index][0] = moment(date.format("YYYY-MM-DD") + " " + event.target.value);
+    times[index][0] = moment(
+      date.format("YYYY-MM-DD") + " " + event.target.value
+    );
     setTimeSlots(times);
   };
 
   const handleTime2Change = (index, event) => {
     const times = [...timeSlots];
-    times[index][1] = moment(date.format("YYYY-MM-DD") + " " + event.target.value);
+    times[index][1] = moment(
+      date.format("YYYY-MM-DD") + " " + event.target.value
+    );
     setTimeSlots(times);
   };
 
@@ -57,7 +61,6 @@ function AvailabilityCalendar() {
   };
 
   const handleOk = () => {
-  
     setVisible(false);
   };
 
@@ -104,15 +107,20 @@ function AvailabilityCalendar() {
         visible={visible}
         onCancel={handleCancel}
         footer={[
-          <Button key="clear" 
-                  type="back" 
-                  onClick={handleClear}
-                  style={styles.button}>
+          <Button
+            key="clear"
+            type="back"
+            onClick={handleClear}
+            style={styles.button}
+          >
             Clear all
           </Button>,
-          <Button key="save" type="primary" 
-                  onClick={handleOk}
-                  style={styles.button}>
+          <Button
+            key="save"
+            type="primary"
+            onClick={handleOk}
+            style={styles.button}
+          >
             Save
           </Button>,
         ]}
@@ -134,7 +142,7 @@ function AvailabilityCalendar() {
                   shrink: true,
                 }}
                 inputProps={{
-                  step: 300, 
+                  step: 300,
                 }}
               />
               <h1 className="timeslot"> - </h1>
@@ -147,7 +155,7 @@ function AvailabilityCalendar() {
                   shrink: true,
                 }}
                 inputProps={{
-                  step: 300, 
+                  step: 300,
                 }}
               />
               <CloseOutlined
@@ -157,7 +165,13 @@ function AvailabilityCalendar() {
             </div>
           </Fragment>
         ))}
-        <Button className="add-times" onClick={addTimeSlots} style={styles.button}>Add hours</Button>
+        <Button
+          className="add-times"
+          onClick={addTimeSlots}
+          style={styles.button}
+        >
+          Add hours
+        </Button>
       </Modal>
     </>
   );
@@ -168,8 +182,8 @@ const styles = {
     backgroundColor: "#E4BB4F",
     borderRadius: 13,
     fontWeight: 700,
-    color: "#FFF7E2"
-  }
-}
+    color: "#FFF7E2",
+  },
+};
 
 export default AvailabilityCalendar;

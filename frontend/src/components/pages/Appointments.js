@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Calendar, Col, Row } from "antd";
+import { Button, Calendar, Col, Row, Modal } from "antd";
 import {
   ClockCircleOutlined,
   CheckCircleTwoTone,
@@ -38,6 +38,7 @@ function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     async function getAppointments() {
@@ -107,7 +108,7 @@ function Appointments() {
       );
     } else if (tab === Tabs.pending) {
       return (
-        <div className="appointment-pending-buttons">
+        <div className="appointment-pending-buttons" onClick={() => AcceptRejectAppointment(id)}>
           <Button
             className="appointment-accept"
             icon={
@@ -118,7 +119,7 @@ function Appointments() {
             }
             type="text"
             shape="circle"
-            onClick={() => handleAppointmentClick(id, true)}
+            //onClick={() => handleAppointmentClick(id, true)}
           ></Button>
           <Button
             className="appointment-accept"
@@ -130,7 +131,8 @@ function Appointments() {
             }
             type="text"
             shape="circle"
-            onClick={() => handleAppointmentClick(id, false)}
+            //
+            //onClick={() => handleAppointmentClick(id, false)}
           ></Button>
         </div>
       );
@@ -153,11 +155,7 @@ function Appointments() {
   };
 
   const AcceptRejectAppointment = ({ data }) => {
-    return (
-      <div>
-
-      </div>
-    )
+    setModalVisible(true)
   };
 
   const AvailabilityTab = () => {
@@ -176,7 +174,7 @@ function Appointments() {
             type="default"
             shape="round"
             style={getButtonStyle(currentTab)}
-            onClick={() => console.log("TODO: save!")}
+            //onClick={() => console.log("TODO: save!")}
           >
             <div style={getButtonTextStyle(currentTab)}>Save</div>
           </Button>
@@ -233,25 +231,48 @@ function Appointments() {
     }
   }
 
+  const FullAppointment = (props) => {
+    return (
+      <div>{props.name}</div>
+    );
+  };
+
   return (
-    <Row>
-      <Col span={18} className="appointments-column">
-        <div className="appointments-welcome-box">
-          <div className="appointments-welcome-text">
-            Welcome, {appointments.mentor_name}
-          </div>
-          <div className="appointments-tabs">
-            {Object.values(Tabs).map((tab, index) => (
-              <Tab tab={tab} text={tab.title} key={index} />
-            ))}
-          </div>
+    <div>
+      <Modal
+      visible={modalVisible}
+      >
+        <div>
+        {appointmentsObject.appointments.map((appointment, index) => (
+          <FullAppointment 
+            name={appointment.name}
+          />
+        ))}
         </div>
-        {renderTab(currentTab)}
-      </Col>
-      <Col span={6} style={styles.calendar}>
-        <Calendar></Calendar>
-      </Col>
-    </Row>
+        
+        <Button onClick={() => setModalVisible(false)}>
+          Close Modal
+        </Button>
+      </Modal>
+      <Row>
+        <Col span={18} className="appointments-column">
+          <div className="appointments-welcome-box">
+            <div className="appointments-welcome-text">
+              Welcome, {appointments.mentor_name}
+            </div>
+            <div className="appointments-tabs">
+              {Object.values(Tabs).map((tab, index) => (
+                <Tab tab={tab} text={tab.title} key={index} />
+              ))}
+            </div>
+          </div>
+          {renderTab(currentTab)}
+        </Col>
+        <Col span={6} style={styles.calendar}>
+          <Calendar></Calendar>
+        </Col>
+      </Row>
+    </div>
   );
 }
 

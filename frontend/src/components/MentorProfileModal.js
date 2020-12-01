@@ -7,13 +7,13 @@ import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 
-function MentorProfileModal() {
+function MentorProfileModal(props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(14);
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
-  const [name, setName] = useState(null);
+  const [name, setName] = useState(props.mentor.name);
   const [title, setTitle] = useState(null);
   const [about, setAbout] = useState(null);
   const [inPersonAvailable, setInPersonAvailable] = useState(null);
@@ -197,6 +197,7 @@ function MentorProfileModal() {
                 index={0}
                 handleClick={handleClick}
                 onChange={handleNameChange}
+                placeholder={name}
               ></ModalInput>
               <ModalInput
                 height={65}

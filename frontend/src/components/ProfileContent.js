@@ -58,7 +58,7 @@ function ProfileContent(props) {
       <div className="mentor-profile-name">
         {props.mentor.name}
         {props.isMentor ? (
-          <MentorProfileModal />
+          <MentorProfileModal mentor={props.mentor}/>
         ) : (
           <span className="mentor-profile-button">
             <MenteeButton content={<b>Book Appointment</b>} />

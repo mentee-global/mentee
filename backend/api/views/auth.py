@@ -49,9 +49,4 @@ def login():
     if not resp.get("token"):
         return create_response(message=resp["message"], status=400)
 
-    return create_response(
-        message=resp["message"],
-        data={
-            "token": resp["token"],
-        },
-    )
+    return create_response(message=resp["message"], data={"token": resp["token"]})

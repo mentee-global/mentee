@@ -38,11 +38,23 @@ function MentorProfileModal(props) {
     setGroupAvailable(props.mentor.offers_group_appointments);
     setLocation(props.mentor.location);
     setWebsite(props.mentor.website);
-    setLanguages(props.mentor.languages);
     setLinkedin(props.mentor.linkedin);
-    setSpecializations(props.mentor.specializations);
     setEducations(props.mentor.education);
     setImage(props.mentor.image);
+    setSpecializations(props.mentor.specializations);
+    setLanguages(props.mentor.languages);
+    // if (props.mentor.specializations) {
+    //   const spec = props.mentor.specializations;
+    //   const newSpec = []
+    //   spec.forEach((string) => {newSpec.push(SPECIALIZATIONS.indexOf(string))})
+    //   setSpecializations(newSpec);
+    // }
+    // if (props.mentor.languages) {
+    //   const lang = props.mentor.languages;
+    //   const newLang = []
+    //   lang.forEach((string) => {newLang.push(LANGUAGES.indexOf(string))})
+    //   setLanguages(newLang);
+    // }
   }, [props.mentor]);
 
   function renderEducationInputs() {
@@ -153,7 +165,10 @@ function MentorProfileModal(props) {
 
   function handleLanguageChange(e) {
     let languagesSelected = [];
-    e.forEach((value) => languagesSelected.push(LANGUAGES[value]));
+    e.forEach((value) => {
+      console.log(value);
+      languagesSelected.push(value);
+    });
     setLanguages(languagesSelected);
     console.log(languagesSelected);
     setEdited(true);
@@ -166,7 +181,7 @@ function MentorProfileModal(props) {
 
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
-    e.forEach((value) => specializationsSelected.push(SPECIALIZATIONS[value]));
+    e.forEach((value) => specializationsSelected.push(value));
     setSpecializations(specializationsSelected);
     setEdited(true);
   }
@@ -348,7 +363,7 @@ function MentorProfileModal(props) {
                 onChange={handleInPersonAvailableChange}
                 checked={inPersonAvailable}
               >
-                Available online?
+                Available in-person?
               </Checkbox>
               <div></div>
               <Checkbox

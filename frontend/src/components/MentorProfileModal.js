@@ -27,6 +27,7 @@ function MentorProfileModal(props) {
   const [educations, setEducations] = useState([]);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
+  const [edited, setEdited] = useState(false);
 
   useEffect(() => {
     setName(props.mentor.name);
@@ -116,46 +117,56 @@ function MentorProfileModal(props) {
 
   function handleNameChange(e) {
     setName(e.target.value);
+    setEdited(true);
   }
 
   function handleTitleChange(e) {
     setTitle(e.target.value);
+    setEdited(true);
   }
 
   function handleAboutChange(e) {
     setAbout(e.target.value);
+    setEdited(true);
   }
 
   function handleInPersonAvailableChange(e) {
     setInPersonAvailable(e.target.checked);
+    setEdited(true);
   }
 
   function handleGroupAvailableChange(e) {
     setGroupAvailable(e.target.checked);
+    setEdited(true);
   }
 
   function handleLocationChange(e) {
     setLocation(e.target.value);
+    setEdited(true);
   }
 
   function handleWebsiteChange(e) {
     setWebsite(e.target.value);
+    setEdited(true);
   }
 
   function handleLanguageChange(e) {
     let languagesSelected = [];
     e.forEach((value) => languagesSelected.push(LANGUAGES[value]));
     setLanguages(languagesSelected);
+    setEdited(true);
   }
 
   function handleLinkedinChange(e) {
     setLinkedin(e.target.value);
+    setEdited(true);
   }
 
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
     e.forEach((value) => specializationsSelected.push(SPECIALIZATIONS[value]));
     setSpecializations(specializationsSelected);
+    setEdited(true);
   }
 
   function handleSchoolChange(e, index) {
@@ -164,6 +175,7 @@ function MentorProfileModal(props) {
     education.school = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
   }
 
   function handleGraduationDateChange(e, index) {
@@ -172,6 +184,7 @@ function MentorProfileModal(props) {
     education.graduation_year = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
   }
 
   function handleMajorsChange(e, index) {
@@ -182,6 +195,7 @@ function MentorProfileModal(props) {
     education.majors = majors;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
   }
 
   function handleDegreeChange(e, index) {
@@ -190,6 +204,7 @@ function MentorProfileModal(props) {
     education.education_level = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
   }
 
   const handleAddEducation = () => {
@@ -201,14 +216,24 @@ function MentorProfileModal(props) {
       graduation_year: "",
     });
     setEducations(newEducations);
+    setEdited(true);
   };
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
       await editMentorProfile(data, props.mentor._id.$oid);
+      if (changedImage) {
+        await uploadMentorImage(image, props.mentor._id.$oid);
+      }
+      props.onSave();
+      setModalVisible(false);
+      setChangedImage(false);
+    }
+    if (!edited) {
+      setModalVisible(false);
+      return;
     }
 
-    console.log(props.mentor._id.$oid);
     const updatedProfile = {
       name: name,
       professional_title: title,
@@ -223,7 +248,6 @@ function MentorProfileModal(props) {
     };
 
     saveEdits(updatedProfile);
-    setModalVisible(false);
   };
 
   return (
@@ -257,9 +281,15 @@ function MentorProfileModal(props) {
               size={120}
               icon={<UserOutlined />}
               className="modal-profile-icon"
+              src={
+                changedImage ? URL.createObjectURL(image) : image && image.url
+              }
             />
             <Upload
-              action={(file) => uploadMentorImage(file, props.mentor._id.$oid)}
+              action={(file) => {
+                setImage(file);
+                setChangedImage(true);
+              }}
               accept=".png,.jpg,.jpeg"
               showUploadList={false}
             >

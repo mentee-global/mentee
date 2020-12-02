@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Checkbox, Avatar } from "antd";
+import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
+import { editMentorProfile, uploadMentorImage } from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 
@@ -24,6 +25,8 @@ function MentorProfileModal(props) {
   const [linkedin, setLinkedin] = useState(null);
   const [specializations, setSpecializations] = useState(null);
   const [educations, setEducations] = useState([]);
+  const [image, setImage] = useState(null);
+  const [changedImage, setChangedImage] = useState(false);
 
   useEffect(() => {
     setName(props.mentor.name);
@@ -37,6 +40,7 @@ function MentorProfileModal(props) {
     setLinkedin(props.mentor.linkedin);
     setSpecializations(props.mentor.specializations);
     setEducations(props.mentor.education);
+    setImage(props.mentor.image);
   }, [props.mentor]);
 
   function renderEducationInputs() {
@@ -199,6 +203,29 @@ function MentorProfileModal(props) {
     setEducations(newEducations);
   };
 
+  const handleSaveEdits = () => {
+    async function saveEdits(data) {
+      await editMentorProfile(data, props.mentor._id.$oid);
+    }
+
+    console.log(props.mentor._id.$oid);
+    const updatedProfile = {
+      name: name,
+      professional_title: title,
+      linkedin: linkedin,
+      website: website,
+      education: educations,
+      languages: languages,
+      specializations: specializations,
+      biography: about,
+      offers_in_person: inPersonAvailable,
+      offers_group_appointments: groupAvailable,
+    };
+
+    saveEdits(updatedProfile);
+    setModalVisible(false);
+  };
+
   return (
     <span>
       <span className="mentor-profile-button">
@@ -218,7 +245,7 @@ function MentorProfileModal(props) {
             type="default"
             shape="round"
             style={styles.footer}
-            onClick={() => setModalVisible(false)}
+            onClick={handleSaveEdits}
           >
             Save
           </Button>
@@ -231,11 +258,17 @@ function MentorProfileModal(props) {
               icon={<UserOutlined />}
               className="modal-profile-icon"
             />
-            <Button
-              shape="circle"
-              icon={<EditFilled />}
-              className="modal-profile-icon-edit"
-            />
+            <Upload
+              action={(file) => uploadMentorImage(file, props.mentor._id.$oid)}
+              accept=".png,.jpg,.jpeg"
+              showUploadList={false}
+            >
+              <Button
+                shape="circle"
+                icon={<EditFilled />}
+                className="modal-profile-icon-edit"
+              />
+            </Upload>
           </div>
           <div className="modal-inner-container">
             <div className="modal-input-container">

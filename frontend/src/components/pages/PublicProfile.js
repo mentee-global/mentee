@@ -24,11 +24,15 @@ function PublicProfile(props) {
   return (
     <div className="mentor-profile-flexbox">
       <div className="mentor-profile-content-public">
-        <Avatar size={120} src={mentor.picture} icon={<UserOutlined />} />
+        <Avatar
+          size={120}
+          src={mentor.image && mentor.image.url}
+          icon={<UserOutlined />}
+        />
         <ProfileContent mentor={mentor} />
       </div>
       <div className="mentor-profile-videos">
-        <ProfileVideos mentor={mentor} />
+        <ProfileVideos videos={mentor.videos} />
       </div>
     </div>
   );

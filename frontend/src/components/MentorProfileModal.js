@@ -155,6 +155,7 @@ function MentorProfileModal(props) {
     let languagesSelected = [];
     e.forEach((value) => languagesSelected.push(LANGUAGES[value]));
     setLanguages(languagesSelected);
+    console.log(languagesSelected);
     setEdited(true);
   }
 
@@ -248,6 +249,7 @@ function MentorProfileModal(props) {
       offers_in_person: inPersonAvailable,
       offers_group_appointments: groupAvailable,
     };
+    console.log(updatedProfile);
     setSaving(true);
     saveEdits(updatedProfile);
   };

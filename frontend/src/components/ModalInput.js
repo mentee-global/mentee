@@ -89,7 +89,7 @@ function ModalInput(props) {
           <Select
             className="input-text"
             onClick={() => handleClick(index)}
-            mode="tags"
+            mode={onEducationChange ? "tags" : "multiple"}
             allowClear
             bordered={false}
             style={{ width: "100%" }}

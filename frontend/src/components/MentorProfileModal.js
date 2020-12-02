@@ -28,6 +28,7 @@ function MentorProfileModal(props) {
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setName(props.mentor.name);
@@ -225,11 +226,12 @@ function MentorProfileModal(props) {
       if (changedImage) {
         await uploadMentorImage(image, props.mentor._id.$oid);
       }
+      setSaving(false);
       props.onSave();
       setModalVisible(false);
       setChangedImage(false);
     }
-    if (!edited) {
+    if (!edited && !changedImage) {
       setModalVisible(false);
       return;
     }
@@ -246,7 +248,7 @@ function MentorProfileModal(props) {
       offers_in_person: inPersonAvailable,
       offers_group_appointments: groupAvailable,
     };
-
+    setSaving(true);
     saveEdits(updatedProfile);
   };
 
@@ -270,6 +272,7 @@ function MentorProfileModal(props) {
             shape="round"
             style={styles.footer}
             onClick={handleSaveEdits}
+            loading={saving}
           >
             Save
           </Button>

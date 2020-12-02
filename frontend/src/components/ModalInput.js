@@ -9,12 +9,15 @@ function ModalInput(props) {
     height,
     clicked,
     index,
+    educationIndex,
+    onEducationChange,
     type,
     title,
     placeholder,
     options,
     onChange,
     handleClick,
+    defaultValue,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -23,7 +26,11 @@ function ModalInput(props) {
   }, [clicked]);
 
   function handleOnChange(e) {
-    onChange(e);
+    if (!onEducationChange) {
+      onChange(e);
+    } else {
+      onEducationChange(e, educationIndex);
+    }
     handleClick(index);
   }
 
@@ -74,6 +81,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
+            value={defaultValue}
           />
         );
       case "dropdown":
@@ -81,12 +89,14 @@ function ModalInput(props) {
           <Select
             className="input-text"
             onClick={() => handleClick(index)}
-            mode="multiple"
+            mode="tags"
             allowClear
             bordered={false}
             style={{ width: "100%" }}
-            placeholder="Please select"
+            placeholder={placeholder || "Please select"}
             onChange={handleOnChange}
+            defaultValue={defaultValue}
+            tokenSeparators={[","]}
           >
             {returnDropdownItems(options)}
           </Select>
@@ -99,6 +109,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
+            value={defaultValue}
           />
         );
     }

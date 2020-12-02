@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -13,7 +13,7 @@ function MentorProfileModal(props) {
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
-  const [name, setName] = useState(props.mentor.name);
+  const [name, setName] = useState(null);
   const [title, setTitle] = useState(null);
   const [about, setAbout] = useState(null);
   const [inPersonAvailable, setInPersonAvailable] = useState(null);
@@ -23,63 +23,84 @@ function MentorProfileModal(props) {
   const [languages, setLanguages] = useState(null);
   const [linkedin, setLinkedin] = useState(null);
   const [specializations, setSpecializations] = useState(null);
-  const [school, setSchool] = useState(null);
-  const [graduation, setGraduation] = useState(null);
-  const [majors, setMajors] = useState(null);
-  const [degree, setDegree] = useState(null);
+  const [educations, setEducations] = useState([]);
+
+  useEffect(() => {
+    setName(props.mentor.name);
+    setTitle(props.mentor.professional_title);
+    setAbout(props.mentor.biography);
+    setInPersonAvailable(props.mentor.offers_in_person);
+    setGroupAvailable(props.mentor.offers_group_appointments);
+    setLocation(props.mentor.location);
+    setWebsite(props.mentor.website);
+    setLanguages(props.mentor.languages);
+    setLinkedin(props.mentor.linkedin);
+    setSpecializations(props.mentor.specializations);
+    setEducations(props.mentor.education);
+  }, [props.mentor]);
 
   function renderEducationInputs() {
-    let numDegrees = (numInputs - 10) / 4; // All boxes after first 10 are education-related
-    let degrees = [...Array(numDegrees).keys()];
-    return degrees.map((key, i) => (
-      <div className="modal-education-container">
-        <div className="modal-education-sidebar"></div>
-        <div className="modal-inner-education-container">
-          <div className="modal-input-container">
-            <ModalInput
-              height={65}
-              type="text"
-              title="School"
-              clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
-              index={10 + i * 4}
-              handleClick={handleClick}
-              onChange={handleSchoolChange}
-            ></ModalInput>
-            <ModalInput
-              height={65}
-              type="text"
-              title="End Year/Expected"
-              clicked={inputClicked[10 + i * 4 + 1]}
-              index={10 + i * 4 + 1}
-              handleClick={handleClick}
-              onChange={handleGraduationDateChange}
-            ></ModalInput>
-          </div>
-          <div className="modal-input-container">
-            <ModalInput
-              height={65}
-              type="text"
-              title="Major(s)"
-              clicked={inputClicked[10 + i * 4 + 2]}
-              index={10 + i * 4 + 2}
-              handleClick={handleClick}
-              onChange={handleMajorsChange}
-              placeholder="Ex. Computer Science, Biology"
-            ></ModalInput>
-            <ModalInput
-              height={65}
-              type="text"
-              title="Degree"
-              clicked={inputClicked[10 + i * 4 + 3]}
-              index={10 + i * 4 + 3}
-              handleClick={handleClick}
-              onChange={handleDegreeChange}
-              placeholder="Ex. Bachelor's"
-            ></ModalInput>
+    return (
+      educations &&
+      educations.map((education, i) => (
+        <div className="modal-education-container">
+          <div className="modal-education-sidebar"></div>
+          <div className="modal-inner-education-container">
+            <div className="modal-input-container">
+              <ModalInput
+                height={65}
+                type="text"
+                title="School"
+                clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
+                index={10 + i * 4}
+                handleClick={handleClick}
+                onEducationChange={handleSchoolChange}
+                educationIndex={i}
+                defaultValue={education.school}
+              ></ModalInput>
+              <ModalInput
+                height={65}
+                type="text"
+                title="End Year/Expected"
+                clicked={inputClicked[10 + i * 4 + 1]}
+                index={10 + i * 4 + 1}
+                handleClick={handleClick}
+                onEducationChange={handleGraduationDateChange}
+                educationIndex={i}
+                defaultValue={education.graduation_year}
+              ></ModalInput>
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                height={65}
+                type="dropdown"
+                title="Major(s)"
+                clicked={inputClicked[10 + i * 4 + 2]}
+                index={10 + i * 4 + 2}
+                handleClick={handleClick}
+                onEducationChange={handleMajorsChange}
+                educationIndex={i}
+                options={[]}
+                placeholder="Ex. Computer Science, Biology"
+                defaultValue={education.majors}
+              ></ModalInput>
+              <ModalInput
+                height={65}
+                type="text"
+                title="Degree"
+                clicked={inputClicked[10 + i * 4 + 3]}
+                index={10 + i * 4 + 3}
+                handleClick={handleClick}
+                educationIndex={i}
+                onEducationChange={handleDegreeChange}
+                placeholder="Ex. Bachelor's"
+                defaultValue={education.education_level}
+              ></ModalInput>
+            </div>
           </div>
         </div>
-      </div>
-    ));
+      ))
+    );
   }
 
   function handleClick(index) {
@@ -133,21 +154,50 @@ function MentorProfileModal(props) {
     setSpecializations(specializationsSelected);
   }
 
-  function handleSchoolChange(e) {
-    setSchool(e.target.value);
+  function handleSchoolChange(e, index) {
+    const newEducations = [...educations];
+    let education = newEducations[index];
+    education.school = e.target.value;
+    newEducations[index] = education;
+    setEducations(newEducations);
   }
 
-  function handleGraduationDateChange(e) {
-    setGraduation(e.target.value);
+  function handleGraduationDateChange(e, index) {
+    const newEducations = [...educations];
+    let education = newEducations[index];
+    education.graduation_year = e.target.value;
+    newEducations[index] = education;
+    setEducations(newEducations);
   }
 
-  function handleMajorsChange(e) {
-    setMajors(e.target.value);
+  function handleMajorsChange(e, index) {
+    const newEducations = [...educations];
+    let education = newEducations[index];
+    const majors = [];
+    e.forEach((value) => majors.push(value));
+    education.majors = majors;
+    newEducations[index] = education;
+    setEducations(newEducations);
   }
 
-  function handleDegreeChange(e) {
-    setDegree(e.target.value);
+  function handleDegreeChange(e, index) {
+    const newEducations = [...educations];
+    let education = newEducations[index];
+    education.education_level = e.target.value;
+    newEducations[index] = education;
+    setEducations(newEducations);
   }
+
+  const handleAddEducation = () => {
+    const newEducations = [...educations];
+    newEducations.push({
+      education_level: "",
+      majors: [],
+      school: "",
+      graduation_year: "",
+    });
+    setEducations(newEducations);
+  };
 
   return (
     <span>
@@ -197,7 +247,7 @@ function MentorProfileModal(props) {
                 index={0}
                 handleClick={handleClick}
                 onChange={handleNameChange}
-                placeholder={name}
+                defaultValue={name}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -207,6 +257,7 @@ function MentorProfileModal(props) {
                 index={1}
                 handleClick={handleClick}
                 onChange={handleTitleChange}
+                defaultValue={title}
               ></ModalInput>
             </div>
             <div className="modal-input-container">
@@ -217,6 +268,7 @@ function MentorProfileModal(props) {
                 index={2}
                 handleClick={handleClick}
                 onChange={handleAboutChange}
+                defaultValue={about}
               ></ModalInput>
             </div>
             <div className="modal-availability-checkbox">
@@ -226,6 +278,7 @@ function MentorProfileModal(props) {
                 index={3}
                 handleClick={handleClick}
                 onChange={handleInPersonAvailableChange}
+                checked={inPersonAvailable}
               >
                 Available online?
               </Checkbox>
@@ -236,6 +289,7 @@ function MentorProfileModal(props) {
                 index={4}
                 handleClick={handleClick}
                 onChange={handleGroupAvailableChange}
+                checked={groupAvailable}
               >
                 Available for group appointments?
               </Checkbox>
@@ -249,6 +303,7 @@ function MentorProfileModal(props) {
                 index={5}
                 handleClick={handleClick}
                 onChange={handleLocationChange}
+                defaultValue={location}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -258,6 +313,7 @@ function MentorProfileModal(props) {
                 index={6}
                 handleClick={handleClick}
                 onChange={handleWebsiteChange}
+                defaultValue={website}
               ></ModalInput>
             </div>
             <div className="modal-input-container">
@@ -271,6 +327,7 @@ function MentorProfileModal(props) {
                 onChange={handleLanguageChange}
                 placeholder="Ex. English, Spanish"
                 options={LANGUAGES}
+                defaultValue={languages}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -280,6 +337,7 @@ function MentorProfileModal(props) {
                 index={8}
                 handleClick={handleClick}
                 onChange={handleLinkedinChange}
+                defaultValue={linkedin}
               ></ModalInput>
             </div>
             <div className="modal-input-container">
@@ -292,13 +350,14 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
                 options={SPECIALIZATIONS}
+                defaultValue={specializations}
               ></ModalInput>
             </div>
             <div className="modal-education-header">Education</div>
             {renderEducationInputs()}
             <div
               className="modal-input-container modal-education-add-container"
-              onClick={() => setNumInputs(numInputs + 4)}
+              onClick={handleAddEducation}
             >
               <PlusCircleFilled className="modal-education-add-icon" />
               <div className="modal-education-add-text">Add more</div>

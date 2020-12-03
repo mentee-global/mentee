@@ -1,0 +1,13 @@
+.register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 40%;
+  background-color: white;
+  padding: 2.5%;
+}
+
+.register-error {
+  color: red;
+}

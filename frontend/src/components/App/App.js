@@ -8,6 +8,7 @@ import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import Login from "components/pages/Login";
+import Register from "components/pages/Register";
 
 function App() {
   return (
@@ -58,6 +59,12 @@ function App() {
       <Route
         path="/login"
         component={() => <Navigation content={<Login />} needsAuth={false} />}
+      />
+      <Route
+        path="/register"
+        component={() => (
+          <Navigation content={<Register />} needsAuth={false} />
+        )}
       />
     </Router>
   );

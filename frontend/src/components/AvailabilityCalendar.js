@@ -29,7 +29,7 @@ function AvailabilityCalendar() {
       date.format("YYYY-MM-DD") + " " + event.target.value
     );
     setTimeSlots(times);
-  }
+  };
 
   const addTimeSlots = () => {
     const times = [...timeSlots];

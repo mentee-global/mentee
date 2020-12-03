@@ -17,27 +17,19 @@ function AvailabilityCalendar() {
   ];
 
   //TODO: Fill this list with dates in month that have appointments
-  const [saved, setSaved] = useState({});
+  const [saved] = useState({});
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
 
-  const handleTime1Change = (index, event) => {
+  const handleTimeChange = (index, event, num) => {
     const times = [...timeSlots];
-    times[index][0] = moment(
+    times[index][num] = moment(
       date.format("YYYY-MM-DD") + " " + event.target.value
     );
     setTimeSlots(times);
-  };
-
-  const handleTime2Change = (index, event) => {
-    const times = [...timeSlots];
-    times[index][1] = moment(
-      date.format("YYYY-MM-DD") + " " + event.target.value
-    );
-    setTimeSlots(times);
-  };
+  }
 
   const addTimeSlots = () => {
     const times = [...timeSlots];
@@ -126,13 +118,12 @@ function AvailabilityCalendar() {
           <h2 className="date">{date && date.format("MM/DD")} </h2>
           <h5 className="date">{days[date.day()]}</h5>
         </div>
-        {console.log(timeSlots)}
         {timeSlots.map((timeSlot, index) => (
           <Fragment key={`${index}`}>
             <div className="timeslot-wrapper">
               <TextField
                 value={timeSlot[0].format("HH:mm")}
-                onChange={(event) => handleTime1Change(index, event)}
+                onChange={(event) => handleTimeChange(index, event, 1)}
                 className="timeslot"
                 type="time"
                 InputLabelProps={{
@@ -145,7 +136,7 @@ function AvailabilityCalendar() {
               <h1 className="timeslot"> - </h1>
               <TextField
                 value={timeSlot[1].format("HH:mm")}
-                onChange={(event) => handleTime2Change(index, event)}
+                onChange={(event) => handleTimeChange(index, event, 2)}
                 className="timeslots"
                 type="time"
                 InputLabelProps={{

@@ -48,7 +48,7 @@ function Appointments(props) {
       }
     }
     getAppointments();
-  }, [appointmentClick]);
+  }, [appointmentClick, props.id]);
 
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {

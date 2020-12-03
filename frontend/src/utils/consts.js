@@ -52,6 +52,7 @@ export const ETHNICITIES = [
   "Hispanic or Latino",
   "Native Hawaiian or Other Pacific Islander",
   "White",
+  "Other",
 ];
 
 export const AGES = [

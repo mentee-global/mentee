@@ -75,12 +75,26 @@ function ModalInput(props) {
             placeholder={placeholder}
           />
         );
-      case "dropdown":
+      case "dropdown-single":
         return (
           <Select
             className="input-text"
             onClick={() => handleClick(index)}
-            mode="multiple"
+            allowClear
+            bordered={false}
+            style={{ width: "100%" }}
+            placeholder="Please select"
+            onChange={handleOnChange}
+          >
+            {returnDropdownItems(options)}
+          </Select>
+        );
+      case "dropdown-multiple":
+        return (
+          <Select
+            className="input-text"
+            onClick={() => handleClick(index)}
+            mode={"multiple"}
             allowClear
             bordered={false}
             style={{ width: "100%" }}

@@ -263,7 +263,7 @@ function MentorProfileModal() {
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
-                type="dropdown"
+                type="dropdown-multiple"
                 title="Languages"
                 clicked={inputClicked[7]}
                 index={7}
@@ -285,7 +285,7 @@ function MentorProfileModal() {
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
-                type="dropdown"
+                type="dropdown-multiple"
                 title="Specializations"
                 clicked={inputClicked[9]}
                 index={9}

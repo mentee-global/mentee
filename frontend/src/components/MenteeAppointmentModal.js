@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, Calendar, Checkbox, Avatar } from "antd";
+import { Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -13,6 +13,9 @@ import {
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
+
+// TODO: Temporary constants, fill in later
+const organizations = ["Hack4Impact", "YMCA"];
 
 const sampleTimes = [
   "11-12pm",
@@ -32,24 +35,25 @@ const sampleTimes = [
 function MenteeAppointmentModal() {
   const [appModalVisible1, setAppModalVisible1] = useState(false);
   const [appModalVisible2, setAppModalVisible2] = useState(false);
-  const [numInputs, setNumInputs] = useState(14);
+  const [numInputs, setNumInputs] = useState(11);
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
-  const [name, setName] = useState(null);
-  const [title, setTitle] = useState(null);
-  const [about, setAbout] = useState(null);
-  const [inPersonAvailable, setInPersonAvailable] = useState(null);
-  const [groupAvailable, setGroupAvailable] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [website, setWebsite] = useState(null);
-  const [languages, setLanguages] = useState(null);
-  const [linkedin, setLinkedin] = useState(null);
-  const [specializations, setSpecializations] = useState(null);
-  const [school, setSchool] = useState(null);
-  const [graduation, setGraduation] = useState(null);
-  const [majors, setMajors] = useState(null);
-  const [degree, setDegree] = useState(null);
+  const [date, setDate] = useState();
+  const [time, setTime] = useState();
+  const [name, setName] = useState();
+  const [ageRange, setAgeRange] = useState();
+  const [gender, setGender] = useState();
+  const [ethnicity, setEthnicity] = useState();
+  const [languages, setLanguages] = useState();
+  const [specializations, setSpecializations] = useState();
+  const [location, setLocation] = useState();
+  const [organization, setOrganization] = useState();
+  const [email, setEmail] = useState();
+  const [phone, setPhone] = useState();
+  const [canCall, setCanCall] = useState(false);
+  const [canText, setCanText] = useState(false);
+  const [message, setMessage] = useState();
 
   function handleClick(index) {
     // Sets only the clicked input box to true to change color, else false
@@ -58,14 +62,34 @@ function MenteeAppointmentModal() {
     setInputClicked(newClickedInput);
   }
 
+  function handleDateChange(e) {
+    setDate(e._d);
+  }
+
+  function handleTimeChange(time) {
+    setTime(time);
+  }
+
+  function handleNameChange(e) {
+    setName(e.target.value);
+  }
+
+  function handleAgeRange(e) {
+    setAgeRange(AGES[e]);
+  }
+
+  function handleGenderChange(e) {
+    setGender(GENDERS[e]);
+  }
+
+  function handleEthnicityChange(e) {
+    setEthnicity(ETHNICITIES[e]);
+  }
+
   function handleLanguageChange(e) {
     let languagesSelected = [];
     e.forEach((value) => languagesSelected.push(LANGUAGES[value]));
     setLanguages(languagesSelected);
-  }
-
-  function handleLinkedinChange(e) {
-    setLinkedin(e.target.value);
   }
 
   function handleSpecializationsChange(e) {
@@ -74,8 +98,40 @@ function MenteeAppointmentModal() {
     setLanguages(specializationsSelected);
   }
 
+  function handleLocationChange(e) {
+    setLocation(e.target.value);
+  }
+
+  function handleOrganizationChange(e) {
+    setOrganization(e.target.value);
+  }
+
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+  }
+
+  function handlePhoneChange(e) {
+    setPhone(e.target.value);
+  }
+
+  function handleCallChange(checked) {
+    setCanCall(checked);
+  }
+
+  function handleTextChange(checked) {
+    setCanText(checked);
+  }
+
+  function handleMessageChange(e) {
+    setMessage(e.target.value);
+  }
+
   function closeModals() {
     setAppModalVisible1(false);
+    setAppModalVisible2(false);
+  }
+
+  function handleBookAppointment() {
     setAppModalVisible2(false);
   }
 
@@ -105,7 +161,7 @@ function MenteeAppointmentModal() {
           </div>
           <div className="modal-mentee-appointment-datetime-container">
             <div className="modal-mentee-appointment-datetime-container-header">
-              <Calendar fullscreen={false} onPanelChange={null} />
+              <Calendar fullscreen={false} onSelect={handleDateChange} />
               <div className="modal-mentee-appointment-datetime-header">
                 <div className="modal-mentee-appointment-datetime-text">
                   Select Time
@@ -115,14 +171,15 @@ function MenteeAppointmentModal() {
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
-                {sampleTimes.map((time) => (
+                {sampleTimes.map((time, index) => (
                   <div className="modal-mentee-appointment-timeslot">
-                    {" "}
                     <MenteeButton
+                      key={index}
                       width={100}
                       content={time}
                       theme="light"
-                    />{" "}
+                      onClick={handleTimeChange}
+                    />
                   </div>
                 ))}
               </div>
@@ -148,8 +205,8 @@ function MenteeAppointmentModal() {
         style={{ overflow: "hidden" }}
         footer={
           <MenteeButton
-            content="Book Appontment"
-            onClick={() => setAppModalVisible2(false)}
+            content="Book Appointment"
+            onClick={() => handleBookAppointment()}
           />
         }
       >
@@ -176,47 +233,47 @@ function MenteeAppointmentModal() {
                   style={styles.modalInput}
                   type="text"
                   title="Name"
-                  clicked={inputClicked[5]}
-                  index={5}
+                  clicked={inputClicked[0]}
+                  index={0}
                   handleClick={handleClick}
-                  onChange={handleLinkedinChange}
+                  onChange={handleNameChange}
                 />
                 <ModalInput
                   style={styles.modalInput}
-                  type="dropdown"
+                  type="dropdown-single"
                   title="Age Range*"
-                  clicked={inputClicked[7]}
-                  index={7}
+                  clicked={inputClicked[1]}
+                  index={1}
                   handleClick={handleClick}
-                  onChange={handleLanguageChange}
+                  onChange={handleAgeRange}
                   options={AGES}
                 />
                 <ModalInput
                   style={styles.modalInput}
-                  type="dropdown"
+                  type="dropdown-single"
                   title="Gender*"
-                  clicked={inputClicked[7]}
-                  index={7}
+                  clicked={inputClicked[2]}
+                  index={2}
                   handleClick={handleClick}
-                  onChange={handleLanguageChange}
+                  onChange={handleGenderChange}
                   options={GENDERS}
                 />
                 <ModalInput
                   style={styles.modalInput}
-                  type="dropdown"
+                  type="dropdown-single"
                   title="Ethnicity*"
-                  clicked={inputClicked[7]}
-                  index={7}
+                  clicked={inputClicked[3]}
+                  index={3}
                   handleClick={handleClick}
-                  onChange={handleLanguageChange}
+                  onChange={handleEthnicityChange}
                   options={ETHNICITIES}
                 />
                 <ModalInput
                   style={styles.modalInput}
-                  type="dropdown"
+                  type="dropdown-multiple"
                   title="Language(s)*"
-                  clicked={inputClicked[7]}
-                  index={7}
+                  clicked={inputClicked[4]}
+                  index={4}
                   handleClick={handleClick}
                   onChange={handleLanguageChange}
                   placeholder="Ex. English, Spanish"
@@ -224,10 +281,10 @@ function MenteeAppointmentModal() {
                 />
                 <ModalInput
                   style={styles.modalInput}
-                  type="dropdown"
+                  type="dropdown-multiple"
                   title="Specialization Needs*"
-                  clicked={inputClicked[9]}
-                  index={9}
+                  clicked={inputClicked[5]}
+                  index={5}
                   handleClick={handleClick}
                   onChange={handleSpecializationsChange}
                   options={SPECIALIZATIONS}
@@ -236,20 +293,19 @@ function MenteeAppointmentModal() {
                   style={styles.modalInput}
                   type="text"
                   title="Current Location"
-                  clicked={inputClicked[5]}
-                  index={5}
+                  clicked={inputClicked[6]}
+                  index={6}
                   handleClick={handleClick}
-                  onChange={handleLinkedinChange}
+                  onChange={handleLocationChange}
                 />
                 <ModalInput
                   style={styles.modalInput}
-                  type="dropdown"
+                  type="text"
                   title="Organization Affiliation"
                   clicked={inputClicked[7]}
                   index={7}
                   handleClick={handleClick}
-                  onChange={handleLanguageChange}
-                  options={LANGUAGES}
+                  onChange={handleOrganizationChange}
                 />
               </div>
               <div className="modal-mentee-appointment-col-container">
@@ -261,10 +317,10 @@ function MenteeAppointmentModal() {
                     style={styles.contactInput}
                     type="text"
                     title="Email*"
-                    clicked={inputClicked[5]}
-                    index={5}
+                    clicked={inputClicked[8]}
+                    index={8}
                     handleClick={handleClick}
-                    onChange={handleLinkedinChange}
+                    onChange={handleEmailChange}
                   />
                 </div>
                 <div className="modal-mentee-appointment-contact-container">
@@ -272,44 +328,47 @@ function MenteeAppointmentModal() {
                     style={styles.contactInput}
                     type="text"
                     title="Phone Number*"
-                    clicked={inputClicked[5]}
-                    index={5}
+                    clicked={inputClicked[9]}
+                    index={9}
                     handleClick={handleClick}
-                    onChange={handleLinkedinChange}
+                    onChange={handlePhoneChange}
                   />
                 </div>
-                <div className="modal-mentee-availability-checkbox">
-                  <Checkbox
-                    className="modal-mentee-availability-checkbox-text"
-                    clicked={inputClicked[3]}
-                    index={3}
-                    handleClick={handleClick}
-                    onChange={handleLanguageChange}
-                  >
-                    Allow calls
-                  </Checkbox>
-                  <div></div>
-                  <Checkbox
-                    className="modal-mentee-availability-checkbox-text"
-                    clicked={inputClicked[3]}
-                    index={3}
-                    handleClick={handleClick}
-                    onChange={handleLanguageChange}
-                  >
-                    Allow texting
-                  </Checkbox>
+                <div className="modal-mentee-availability-switches">
+                  <div className="modal-mentee-availability-switch">
+                    <div className="modal-mentee-availability-switch-text">
+                      Allow calls
+                    </div>
+                    <Switch
+                      size="small"
+                      checked={canCall}
+                      handleClick={handleClick}
+                      onChange={handleCallChange}
+                    />
+                  </div>
+                  <div className="modal-mentee-availability-switch">
+                    <div className="modal-mentee-availability-switch-text">
+                      Allow texting
+                    </div>
+                    <Switch
+                      size="small"
+                      checked={canText}
+                      handleClick={handleClick}
+                      onChange={handleTextChange}
+                    />
+                  </div>
                 </div>
-                <div className="modal-mentee-message-container">
+                <div className="modal-mentee-appointment-message-container">
                   <div className="modal-mentee-appointment-header-text">
                     Message to Mentor
                   </div>
                   <ModalInput
                     style={styles.modalInput}
                     type="textarea"
-                    clicked={inputClicked[2]}
-                    index={2}
+                    clicked={inputClicked[10]}
+                    index={10}
                     handleClick={handleClick}
-                    onChange={handleLinkedinChange}
+                    onChange={handleMessageChange}
                   />
                 </div>
               </div>

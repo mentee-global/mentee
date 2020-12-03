@@ -1,7 +1,7 @@
 .modal-container {
     display: flex;
     flex-direction: column;
-    height: 60vh;
+    height: 80vh;
     width: 100%;
     overflow-y: scroll;
 }
@@ -25,6 +25,7 @@
     height: 14vh;
     width: 100%;
     padding: 3%;
+    padding-top: 2%;
     border-bottom: 2px solid #E0E0E0;
 }
 
@@ -80,23 +81,33 @@
     width: 100%;
 }
 
-.modal-mentee-message-container {
+.modal-mentee-appointment-message-container {
     display: flex;
     flex-direction: column;
     flex: 4;
+    margin-top: 10px;
 }
 
-.modal-mentee-availability-checkbox {
+.modal-mentee-appointment-switches {
     display: flex;
-    flex-direction: column;
     flex: 2;
+    flex-direction: column;
 }
 
-.modal-mentee-availability-checkbox-text {
+.modal-mentee-availability-switch {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.modal-mentee-availability-switch-text {
     justify-content: center;
     font-size: 14px;
     font-weight: 700;
-    color: "#7A7A7A"
+    color: "#7A7A7A";
+    margin-right: 10px;
 }
 
 .modal-mentee-appointment-contact-container {
@@ -186,4 +197,8 @@
 
 .bold {
     font-weight: bold;
+}
+
+.ant-switch-checked {
+    background: #F2C94C;
 }

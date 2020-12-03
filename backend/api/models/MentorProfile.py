@@ -2,7 +2,7 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, Video, Availability
+from api.models import Education, Video, Availability, Image
 
 
 class MentorProfile(Document, Mixin):
@@ -10,11 +10,14 @@ class MentorProfile(Document, Mixin):
 
     uid = ""  # TODO: Add Uid field
     name = StringField(required=True)
+    location = StringField()
+    email = StringField(required=True)
+    phone_number = StringField()
     professional_title = StringField(required=True)
     linkedin = StringField(required=True)
     website = StringField(required=True)
-    picture = StringField(required=True)
-    education = EmbeddedDocumentField(Education)
+    image = EmbeddedDocumentField(Image)
+    education = ListField(EmbeddedDocumentField(Education))
     languages = ListField(StringField(), required=True)
     specializations = ListField(StringField(), required=True)
     biography = StringField(required=False)
@@ -27,6 +30,6 @@ class MentorProfile(Document, Mixin):
         return f"""<MentorProfile id:{self.uid} \n name: {self.name} 
                 \n professional title: {self.professional_title} 
                 \n linkedin: {self.linkedin} \n website: {self.website}
-                \n picture: {self.picture} \n biography: {self.biography} 
+                \n image: {self.image} \n biography: {self.biography} 
                 \n offers_in_person: {self.offers_in_person} 
                 \n offers_group_appointments: {self.offers_group_appointments}>"""

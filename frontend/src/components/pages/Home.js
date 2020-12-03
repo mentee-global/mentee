@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Button } from "antd";
+import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
 import Honeycomb from "../../resources/honeycomb.png";
@@ -18,15 +18,10 @@ function Home() {
           </p>
           <br />
           <NavLink to="/gallery">
-            <Button
-              className="home-button"
-              style={{ background: "#A58123", color: "white" }}
-            >
-              <b>Find a Mentor</b>
-            </Button>
+            <MenteeButton theme="dark" content={<b>Find a Mentor</b>} />
           </NavLink>
         </div>
-        <img className="home-honeycomb" src={Honeycomb} />
+        <img className="home-honeycomb" src={Honeycomb} alt="" />
       </div>
     </div>
   );

@@ -1,0 +1,30 @@
+// Overriding styles for antdesign to comply with Mentee Designs
+
+.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #E4BB4F;
+    border-color: #E4BB4F;
+}
+
+.ant-select-selection--multiple {
+   white-space: nowrap;
+   overflow: auto;
+   height: 30px;
+}
+
+.ant-modal-header {
+    background-color: #FFECBD;
+}
+
+.ant-modal-title {
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.ant-modal-content {
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+.ant-modal-body {
+    padding: 0px;
+}

@@ -120,7 +120,7 @@ function AvailabilityCalendar() {
             <div className="timeslot-wrapper">
               <TextField
                 value={timeSlot[0].format("HH:mm")}
-                onChange={(event) => handleTimeChange(index, event, 1)}
+                onChange={(event) => handleTimeChange(index, event, 0)}
                 className="timeslot"
                 type="time"
                 InputLabelProps={{
@@ -133,7 +133,7 @@ function AvailabilityCalendar() {
               <h1 className="timeslot"> - </h1>
               <TextField
                 value={timeSlot[1].format("HH:mm")}
-                onChange={(event) => handleTimeChange(index, event, 2)}
+                onChange={(event) => handleTimeChange(index, event, 1)}
                 className="timeslots"
                 type="time"
                 InputLabelProps={{

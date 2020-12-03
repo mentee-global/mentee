@@ -5,19 +5,19 @@ import { Avatar } from "antd";
 import ProfileContent from "../ProfileContent";
 
 import "../css/Profile.scss";
-import { fetchMentorByID, mentorID } from "../../utils/api";
+import { fetchMentorByID } from "../../utils/api";
 
-function Profile() {
+function Profile(props) {
   const [mentor, setMentor] = useState({});
   useEffect(() => {
     async function getMentor() {
-      const mentor_data = await fetchMentorByID(mentorID);
+      const mentor_data = await fetchMentorByID(props.id);
       if (mentor_data) {
         setMentor(mentor_data);
       }
     }
     getMentor();
-  }, []);
+  }, [props.id]);
 
   return (
     <div className="background-color-strip">

@@ -35,9 +35,9 @@ function App() {
         )}
       />
       <Route
-        path="/profile"
-        component={() => (
-          <Navigation content={<Profile />} page="profile" needsAuth={true} />
+        path="/profile/:id"
+        component={(props) => (
+          <Navigation content={<Profile id={props.match.params.id} />} page="profile" needsAuth={true} />
         )}
       />
       <Route

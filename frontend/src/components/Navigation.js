@@ -16,7 +16,7 @@ function Navigation(props) {
         {props.needsAuth ? <MentorNavHeader /> : <MenteeNavHeader />}
         {props.needsAuth ? (
           <Layout>
-            <NavigationSidebar selectedPage={props.page} />
+            <NavigationSidebar selectedPage={props.page} id={props.id} />
             <Content className="navigation-content">{props.content}</Content>
           </Layout>
         ) : (

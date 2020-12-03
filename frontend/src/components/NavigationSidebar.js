@@ -13,30 +13,31 @@ import "./css/Navigation.scss";
 const { Sider } = Layout;
 
 const menuItemMarginOverride = { marginTop: "0px", marginBottom: "0px" };
-const pages = {
-  home: {
-    name: "Home",
-    path: "/",
-    icon: <HomeOutlined />,
-  },
-  appointments: {
-    name: "Appointments",
-    path: "/appointments",
-    icon: <CalendarOutlined />,
-  },
-  videos: {
-    name: "Your Videos",
-    path: "/videos",
-    icon: <VideoCameraOutlined />,
-  },
-  profile: {
-    name: "Profile",
-    path: "/profile",
-    icon: <UserOutlined />,
-  },
-};
 
 function NavigationSidebar(props) {
+  const pages = {
+    home: {
+      name: "Home",
+      path: "/",
+      icon: <HomeOutlined />,
+    },
+    appointments: {
+      name: "Appointments",
+      path: "/appointments/" + props.id,
+      icon: <CalendarOutlined />,
+    },
+    videos: {
+      name: "Your Videos",
+      path: "/videos",
+      icon: <VideoCameraOutlined />,
+    },
+    profile: {
+      name: "Profile",
+      path: "/profile/" + props.id,
+      icon: <UserOutlined />,
+    },
+  };
+
   const getMenuItemStyle = (page) => {
     return props.selectedPage === page
       ? "navigation-menu-item-selected"

@@ -10,7 +10,6 @@ import "../css/Appointments.scss";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
-  mentorID,
   deleteAppointment,
 } from "../../utils/api";
 import { formatAppointments } from "../../utils/dateFormatting";
@@ -34,14 +33,14 @@ const Tabs = Object.freeze({
   },
 });
 
-function Appointments() {
+function Appointments(props) {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
 
   useEffect(() => {
     async function getAppointments() {
-      const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
+      const appointmentsResponse = await getAppointmentsByMentorID(props.id);
       const formattedAppointments = formatAppointments(appointmentsResponse);
 
       if (formattedAppointments) {

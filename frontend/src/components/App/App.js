@@ -19,12 +19,13 @@ function App() {
         )}
       />
       <Route
-        path="/appointments"
-        component={() => (
+        path="/appointments/:id"
+        component={(props) => (
           <Navigation
-            content={<Appointments />}
+            content={<Appointments id={props.match.params.id} />}
             page="appointments"
             needsAuth={true}
+            id={props.match.params.id}
           />
         )}
       />
@@ -37,7 +38,12 @@ function App() {
       <Route
         path="/profile/:id"
         component={(props) => (
-          <Navigation content={<Profile id={props.match.params.id} />} page="profile" needsAuth={true} />
+          <Navigation
+            content={<Profile id={props.match.params.id} />}
+            page="profile"
+            needsAuth={true}
+            id={props.match.params.id}
+          />
         )}
       />
       <Route

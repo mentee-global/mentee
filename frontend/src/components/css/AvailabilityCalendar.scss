@@ -17,12 +17,6 @@
 
 }
 
-.ant-modal-body{
-    padding-top: 0;
-    padding-left: 10px;
-    line-height: 1;
-}
-
 .date-header{
     float: right;
     display: grid;
@@ -40,35 +34,6 @@
 .status{
     list-style: none;
     float: left;
-}
-
-.ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #E4BB4F;
-    border-color: #E4BB4F;
-}
-
-.ant-select-selection--multiple {
-   white-space: nowrap;
-   overflow: auto;
-   height: 30px;
-}
-
-.ant-modal-header {
-    background-color: #FFECBD;
-}
-
-.ant-modal-title {
-    font-weight: bold;
-    font-size: 20px;
-}
-
-.ant-modal-content {
-    border-radius: 30px;
-    overflow: hidden;
-}
-
-.ant-modal-body {
-    padding: 0px;
 }
 
 .add-times{

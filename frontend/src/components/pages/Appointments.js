@@ -198,6 +198,14 @@ function Appointments() {
                     time={appointment.time}
                     description={appointment.description}
                     id={appointment.id}
+                    email={appointment.email}
+                    phone_number={appointment.phone_number}
+                    languages={appointment.languages}
+                    gender={appointment.gender}
+                    ethnicity={appointment.ethnicity}
+                    location={appointment.location}
+                    mentorship_goals={appointment.mentorship_goals}
+                    specialist_categories={appointment.specialist_categories}
                   />
                 ))}
               </div>
@@ -221,7 +229,10 @@ function Appointments() {
   }
   const FullAppointment = (props) => {
     return (
-      <div>{props.name}</div>
+      <div>
+        <div>{props.name}</div>
+        <div>{props.email}</div>
+      </div> 
     );
   };
   return (

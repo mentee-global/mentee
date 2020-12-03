@@ -3,6 +3,7 @@ import moment from "moment";
 import { Calendar, Modal, Button, Badge } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
+import MenteeButton from "./MenteeButton.js";
 import "./css/AvailabilityCalendar.scss";
 
 function AvailabilityCalendar() {
@@ -96,22 +97,18 @@ function AvailabilityCalendar() {
         visible={visible}
         onCancel={handleCancel}
         footer={[
-          <Button
+          <MenteeButton
             key="clear"
             type="back"
             onClick={handleClear}
-            style={styles.button}
-          >
-            Clear all
-          </Button>,
-          <Button
+            content="Clear all"
+          />,
+          <MenteeButton
             key="save"
             type="primary"
             onClick={handleOk}
-            style={styles.button}
-          >
-            Save
-          </Button>,
+            content="Save"
+          />,
         ]}
       >
         <div className="date-header">
@@ -153,13 +150,9 @@ function AvailabilityCalendar() {
             </div>
           </Fragment>
         ))}
-        <Button
-          className="add-times"
-          onClick={addTimeSlots}
-          style={styles.button}
-        >
-          Add hours
-        </Button>
+        <div className="add-times">
+          <MenteeButton onClick={addTimeSlots} content="Add hours" />
+        </div>
       </Modal>
     </>
   );

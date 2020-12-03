@@ -51,8 +51,8 @@ function Login() {
           <div className="login-button">
             <MenteeButton
               content={<b>Login</b>}
-              width={"60%"}
-              height={"150%"}
+              width={"50%"}
+              height={"125%"}
               onClick={() => {}}
             />
           </div>

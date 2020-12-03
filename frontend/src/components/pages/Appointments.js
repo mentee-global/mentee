@@ -7,14 +7,13 @@ import {
   InfoCircleFilled,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
+import { formatAppointments } from "../../utils/dateFormatting";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
   mentorID,
   deleteAppointment,
 } from "../../utils/api";
-import { formatAppointments } from "../../utils/dateFormatting";
-
 const Tabs = Object.freeze({
   upcoming: {
     title: "All Upcoming",
@@ -33,25 +32,22 @@ const Tabs = Object.freeze({
     key: "availability",
   },
 });
-
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [modalAppointment, setModalAppointment] = useState({});
   useEffect(() => {
     async function getAppointments() {
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);
-
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
       }
     }
     getAppointments();
   }, [appointmentClick]);
-
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {
       await acceptAppointment(id);
@@ -70,7 +66,6 @@ function Appointments() {
       backgroundColor: currentTab === tab ? active : inactive,
     };
   };
-
   const getButtonTextStyle = (tab) => {
     const active = "#FFF7E2";
     const inactive = "#A58123";
@@ -79,7 +74,6 @@ function Appointments() {
       color: currentTab === tab ? active : inactive,
     };
   };
-
   const Tab = (props) => {
     return (
       <Button
@@ -92,8 +86,7 @@ function Appointments() {
       </Button>
     );
   };
-
-  const getAppointmentButton = (tab, id) => {
+  const getAppointmentButton = (tab, props) => {
     if (tab === Tabs.upcoming) {
       return (
         <Button
@@ -108,7 +101,7 @@ function Appointments() {
       );
     } else if (tab === Tabs.pending) {
       return (
-        <div className="appointment-pending-buttons" onClick={() => AcceptRejectAppointment(id)}>
+        <div className="appointment-pending-buttons" onClick={() => AcceptRejectAppointment(props)}>
           <Button
             className="appointment-accept"
             icon={
@@ -138,7 +131,6 @@ function Appointments() {
       );
     }
   };
-
   const Appointment = (props) => {
     return (
       <div className="appointment-card">
@@ -149,15 +141,15 @@ function Appointments() {
           </div>
           <div className="appointment-description">{props.description}</div>
         </div>
-        {getAppointmentButton(currentTab, props.id)}
+        {getAppointmentButton(currentTab, props)}
       </div>
     );
   };
-
-  const AcceptRejectAppointment = ({ data }) => {
+  const AcceptRejectAppointment = (props) => {
     setModalVisible(true)
+    setModalAppointment(props)
+    console.log(props)
   };
-
   const AvailabilityTab = () => {
     return (
       <div>
@@ -182,12 +174,10 @@ function Appointments() {
       </div>
     );
   };
-
   const Appointments = ({ data }) => {
     if (!data) {
       return <div></div>;
     }
-
     return (
       <div>
         <b className="appointment-tabs-title">{currentTab.title}</b>
@@ -217,7 +207,6 @@ function Appointments() {
       </div>
     );
   };
-
   function renderTab(tab) {
     switch (tab) {
       case Tabs.upcoming: // Fall through
@@ -230,24 +219,27 @@ function Appointments() {
         return <div />;
     }
   }
-
   const FullAppointment = (props) => {
     return (
       <div>{props.name}</div>
     );
   };
-
   return (
     <div>
       <Modal
       visible={modalVisible}
       >
         <div>
-        {appointmentsObject.appointments.map((appointment, index) => (
-          <FullAppointment 
-            name={appointment.name}
-          />
-        ))}
+          {modalAppointment.name}
+          {modalAppointment.description}
+          {modalAppointment.email}
+          {modalAppointment.phone_number}
+          {modalAppointment.languages}
+          {modalAppointment.gender}
+          {modalAppointment.ethnicity}
+          {modalAppointment.location}
+          {modalAppointment.mentorship_goals}
+          {modalAppointment.specialist_categories}
         </div>
         
         <Button onClick={() => setModalVisible(false)}>
@@ -275,7 +267,6 @@ function Appointments() {
     </div>
   );
 }
-
 const styles = {
   calendar: {
     borderLeft: "3px solid #E5E5E5",
@@ -284,5 +275,4 @@ const styles = {
     fontSize: "24px",
   },
 };
-
 export default Appointments;

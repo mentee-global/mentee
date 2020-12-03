@@ -34,6 +34,14 @@ export const formatAppointments = (data) => {
       name: appointment.name,
       time: startTime.format("h:m a") + " - " + endTime.format("h:m a"),
       isoTime: startTime.format(),
+      email: appointment.email,
+      phone_number: appointment.phone_number,
+      languages: appointment.languages,
+      gender: appointment.gender,
+      ethnicity: appointment.ethnicity,
+      location: appointment.location,
+      mentorship_goals: appointment.mentorship_goals,
+      specialist_categories: appointment.specialist_categories,
     };
 
     // This is the only case where we might not have a date for a certain key

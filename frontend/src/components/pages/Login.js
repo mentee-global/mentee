@@ -59,10 +59,7 @@ function Login() {
           </div>
           <div className="login-register-container">
             <div>Don&#39;t have an account?</div>
-            <NavLink
-              to="/"
-              className="login-register-button"
-            >
+            <NavLink to="/" className="login-register-link">
               Register
             </NavLink>
           </div>

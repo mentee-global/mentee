@@ -57,7 +57,7 @@
     justify-content: center;
 }
 
-.login-register-button {
+.login-register-link {
     background: none;
     border: none;
     color: $mentee-button-regular;
@@ -66,7 +66,7 @@
     transition-duration: 0.4s;
 }
 
-.login-register-button:hover {
+.login-register-link:hover {
     color: $register-link-hover;
     text-decoration: underline;
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { Input } from "antd";
 import MenteeButton from "../MenteeButton";
 
@@ -58,12 +59,12 @@ function Login() {
           </div>
           <div className="login-register-container">
             <div>Don&#39;t have an account?</div>
-            <button
+            <NavLink
+              to="/"
               className="login-register-button"
-              onClick={() => console.log("clicked")}
             >
               Register
-            </button>
+            </NavLink>
           </div>
         </div>
         <img className="home-honeycomb" src={Honeycomb} alt="" />

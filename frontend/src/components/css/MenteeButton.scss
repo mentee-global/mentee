@@ -1,40 +1,40 @@
 @import "_app";
 
 .regular-button, .regular-button:focus {
-  background: #E4BB4F;
-  border-color: #E4BB4F;
+  background: $mentee-button-regular;
+  border-color: $mentee-button-regular;
   border-radius: 13px;  
   color: white;
 }
 
 .regular-button:hover, .regular-button:active {
-  background: #E4BB4F;
+  background: $mentee-button-regular;
   border-color: white;
   color: white; 
 }
 
 .dark-button, .dark-button:focus {
-  background: #A58123;
-  border-color: #A58123;
+  background: $mentee-button-dark;
+  border-color: $mentee-button-dark;
   border-radius: 13px;
-  color: $header-button-border;
+  color: $mentee-button-light;
 }
 
 .dark-button:hover, .dark-button:active {
-  background: #A58123;
-  border-color: $header-button-border;
-  color: $header-button-border;
+  background: $mentee-button-dark;
+  border-color: $mentee-button-light;
+  color: $mentee-button-light;
 }
 
 .light-button, .light-button:focus {
-  background: $header-button-border;
-  border-color: $header-button-border;
+  background: $mentee-button-light;
+  border-color: $mentee-button-light;
   border-radius: 13px;
-  color: #A58123;
+  color: $mentee-button-dark;
 }
 
 .light-button:hover, .light-button:active {
-  background: $header-button-border;
-  border-color: #A58123;
-  color: #A58123;
+  background: $mentee-button-light;
+  border-color: $mentee-button-dark;
+  color: $mentee-button-dark;
 }

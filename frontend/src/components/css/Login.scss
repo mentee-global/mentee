@@ -1,3 +1,4 @@
+@import "_app";
 
 .login-content {
     height: 90%;
@@ -59,24 +60,13 @@
 .login-register-button {
     background: none;
     border: none;
-    color: #E4BB4F;
+    color: $mentee-button-regular;
     text-decoration: underline;
     margin-left: 5px;
     transition-duration: 0.4s;
 }
 
 .login-register-button:hover {
-    background: none;
-    border: none;
-    color: #ffe5a3;
+    color: $register-link-hover;
     text-decoration: underline;
-    margin-left: 5px;
-}
-
-.login-register-button:active {
-    background: none;
-    border: none;
-    color: #E4BB4F;
-    text-decoration: underline;
-    margin-left: 5px;
 }

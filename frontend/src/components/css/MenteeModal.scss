@@ -2,16 +2,15 @@
     display: flex;
     flex-direction: column;
     height: 60vh;
-    width: 100vh;
+    width: 100%;
     overflow-y: scroll;
 }
 
 .modal-container-row {
     display: flex;
     flex-direction: row;
-    height: 60vh;
-    width: 100vh;
-    overflow-y: scroll;
+    height: 80vh;
+    width: 100%;
 }
 
 .modal-mentee-inner-container {
@@ -108,10 +107,83 @@
 .modal-mentee-appointment-info-container {
     display: flex;
     flex: 0.3;
-    border-right: 0.5px solid #7A7A7A;
+    flex-direction: column;
+    border-right: 1px solid #cccccc;
+    padding: 4%;
 }
 
-.modal-mentee-appointment-calendar-container {
+.modal-mentee-appointment-datetime-container {
     display: flex;
     flex: 0.7;
+    flex-direction: column;
+}
+
+.modal-mentee-appointment-profile-icon {
+    margin-top: 20%;
+    margin-bottom: 5%;
+}
+
+.modal-mentee-appointment-datetime-header {
+    display: flex;
+    flex-direction: row;
+    flex: 0.1;
+    width: 100%;
+    border-top: 2px solid #E4BB4F;
+    padding-top: 1%;
+}
+
+.modal-mentee-appointment-datetime-text {
+    display: flex;
+    flex: 0.6;
+    justify-content: flex-end;
+    font-size: 2.5vh;
+    font-weight: bold;
+    padding-right: 6px;
+}
+
+.modal-mentee-appointment-datetime-timezone {
+    display: flex;
+    flex: 0.4;
+    font-size: 2.5vh;
+    font-style: italic;
+    border-left: 1px solid #E4BB4F;
+    padding-left: 4px;
+}
+
+.modal-mentee-appointment-timeslots-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.modal-mentee-appointment-timeslot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5%;
+}
+
+.modal-mentee-appointment-datetime-container-header{
+    display: flex;
+    flex: 0.88;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 5%;
+    padding-top: 7%;
+    overflow-y: scroll;
+}
+
+.modal-mentee-appointment-datetime-container-footer{
+    display: flex;
+    flex: 0.12;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 5%;
+    width: 100%;
+}
+
+.bold {
+    font-weight: bold;
 }

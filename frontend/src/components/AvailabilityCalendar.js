@@ -48,22 +48,20 @@ function AvailabilityCalendar() {
       }
     }
     getAvailability();
-
-    async function getSetDays() {
-      const set_data = await fetchSetDays(mentorID);
-      if (set_data) {
-        let set = {};
-        let i;
-        console.log(set_data.days.length);
-        for (i = 0; i < set_data.days.length; i++) {
-          set[set_data.days[i]] = true;
-        }
-        setSaved(set);
-      }
-    }
-    getSetDays();
   }, []);
-
+  async function getSetDays() {
+    const set_data = await fetchSetDays(mentorID);
+    if (set_data) {
+      let set = {};
+      let i;
+      for (i = 0; i < set_data.days.length; i++) {
+        // console.log(set_data.days[i]);
+        set[set_data.days[i]] = true;
+      }
+      setSaved(set);
+    }
+  }
+  getSetDays();
   const handleTimeChange = (index, event, num) => {
     const times = [...timeSlots];
     times[index][num] = moment(
@@ -103,6 +101,7 @@ function AvailabilityCalendar() {
     );
     editAvailability(json_data, mentorID);
     setVisible(false);
+    getSetDays(mentorID);
   };
 
   const handleCancel = () => {
@@ -113,6 +112,8 @@ function AvailabilityCalendar() {
   };
 
   const getListData = (value) => {
+    console.log(saved);
+    console.log(value.format("YYYY-MM-DD"));
     if (saved[value.format("YYYY-MM-DD")]) {
       return [{ content: "test" }];
     } else {

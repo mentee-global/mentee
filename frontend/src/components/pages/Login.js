@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
+import { isLoggedIn, login } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
@@ -11,18 +12,32 @@ function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [inputClicked, setInputClicked] = useState([false, false]);
+  const [error, setError] = useState(false);
+  const history = useHistory();
 
-  function handleInputClick(index) {
+  const redirectToAppointments = () => {
+    history.push("appointments");
+  };
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      redirectToAppointments();
+    }
+  }, []);
+
+  const handleInputClick = (index) => {
     let newClickedInput = [false, false];
     newClickedInput[index] = true;
     setInputClicked(newClickedInput);
-  }
-
+  };
   return (
     <div className="home-background">
       <div className="login-content">
         <div className="login-container">
           <h1 className="login-text">Sign In</h1>
+          {error && (
+            <p>Incorrect username and/or password. Please try again.</p>
+          )}
           <div
             className={`login-input-container${
               inputClicked[0] ? "__clicked" : ""
@@ -54,7 +69,13 @@ function Login() {
               content={<b>Login</b>}
               width={"50%"}
               height={"125%"}
-              onClick={() => {}}
+              onClick={async () => {
+                const res = await login(email, password);
+                setError(!Boolean(res));
+                if (!error) {
+                  redirectToAppointments();
+                }
+              }}
             />
           </div>
           <div className="login-register-container">

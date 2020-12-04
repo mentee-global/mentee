@@ -34,6 +34,10 @@ const login = (email, password) => {
       }
 
       return response.data;
+    })
+    .catch((err) => {
+      console.error(err);
+      return false;
     });
 };
 
@@ -43,6 +47,12 @@ const logout = () => {
 
 const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem("user"));
+};
+
+const getMentorID = () => {
+  if (isLoggedIn()) {
+    return getCurrentUser()["mentorId"];
+  } else return false;
 };
 
 const isLoggedIn = () => {
@@ -63,6 +73,7 @@ export {
   login,
   logout,
   getCurrentUser,
+  getMentorID,
   isLoggedIn,
   getCurrentRegistration,
   removeRegistration,

@@ -70,22 +70,6 @@ function MenteeAppointmentModal() {
     setTime(time);
   }
 
-  function handleNameChange(e) {
-    setName(e.target.value);
-  }
-
-  function handleAgeRange(e) {
-    setAgeRange(AGES[e]);
-  }
-
-  function handleGenderChange(e) {
-    setGender(GENDERS[e]);
-  }
-
-  function handleEthnicityChange(e) {
-    setEthnicity(ETHNICITIES[e]);
-  }
-
   function handleLanguageChange(e) {
     let languagesSelected = [];
     e.forEach((value) => languagesSelected.push(LANGUAGES[value]));
@@ -96,34 +80,6 @@ function MenteeAppointmentModal() {
     let specializationsSelected = [];
     e.forEach((value) => specializationsSelected.push(SPECIALIZATIONS[value]));
     setLanguages(specializationsSelected);
-  }
-
-  function handleLocationChange(e) {
-    setLocation(e.target.value);
-  }
-
-  function handleOrganizationChange(e) {
-    setOrganization(e.target.value);
-  }
-
-  function handleEmailChange(e) {
-    setEmail(e.target.value);
-  }
-
-  function handlePhoneChange(e) {
-    setPhone(e.target.value);
-  }
-
-  function handleCallChange(checked) {
-    setCanCall(checked);
-  }
-
-  function handleTextChange(checked) {
-    setCanText(checked);
-  }
-
-  function handleMessageChange(e) {
-    setMessage(e.target.value);
   }
 
   function closeModals() {
@@ -200,13 +156,13 @@ function MenteeAppointmentModal() {
       <Modal
         title="Your Information"
         visible={appModalVisible2}
-        onCancel={() => closeModals()}
+        onCancel={closeModals}
         width="60%"
         style={{ overflow: "hidden" }}
         footer={
           <MenteeButton
             content="Book Appointment"
-            onClick={() => handleBookAppointment()}
+            onClick={handleBookAppointment}
           />
         }
       >
@@ -236,7 +192,7 @@ function MenteeAppointmentModal() {
                   clicked={inputClicked[0]}
                   index={0}
                   handleClick={handleClick}
-                  onChange={handleNameChange}
+                  onChange={(e) => setName(e.target.value)}
                 />
                 <ModalInput
                   style={styles.modalInput}
@@ -245,7 +201,7 @@ function MenteeAppointmentModal() {
                   clicked={inputClicked[1]}
                   index={1}
                   handleClick={handleClick}
-                  onChange={handleAgeRange}
+                  onChange={(e) => setAgeRange(AGES[e])}
                   options={AGES}
                 />
                 <ModalInput
@@ -255,7 +211,7 @@ function MenteeAppointmentModal() {
                   clicked={inputClicked[2]}
                   index={2}
                   handleClick={handleClick}
-                  onChange={handleGenderChange}
+                  onChange={(e) => setGender(GENDERS[e])}
                   options={GENDERS}
                 />
                 <ModalInput
@@ -265,7 +221,7 @@ function MenteeAppointmentModal() {
                   clicked={inputClicked[3]}
                   index={3}
                   handleClick={handleClick}
-                  onChange={handleEthnicityChange}
+                  onChange={(e) => setEthnicity(ETHNICITIES[e])}
                   options={ETHNICITIES}
                 />
                 <ModalInput
@@ -296,7 +252,7 @@ function MenteeAppointmentModal() {
                   clicked={inputClicked[6]}
                   index={6}
                   handleClick={handleClick}
-                  onChange={handleLocationChange}
+                  onChange={(e) => setLocation(e.target.value)}
                 />
                 <ModalInput
                   style={styles.modalInput}
@@ -305,7 +261,7 @@ function MenteeAppointmentModal() {
                   clicked={inputClicked[7]}
                   index={7}
                   handleClick={handleClick}
-                  onChange={handleOrganizationChange}
+                  onChange={(e) => setOrganization(e.target.value)}
                 />
               </div>
               <div className="modal-mentee-appointment-col-container">
@@ -320,7 +276,7 @@ function MenteeAppointmentModal() {
                     clicked={inputClicked[8]}
                     index={8}
                     handleClick={handleClick}
-                    onChange={handleEmailChange}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="modal-mentee-appointment-contact-container">
@@ -331,7 +287,7 @@ function MenteeAppointmentModal() {
                     clicked={inputClicked[9]}
                     index={9}
                     handleClick={handleClick}
-                    onChange={handlePhoneChange}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
                 <div className="modal-mentee-availability-switches">
@@ -343,7 +299,7 @@ function MenteeAppointmentModal() {
                       size="small"
                       checked={canCall}
                       handleClick={handleClick}
-                      onChange={handleCallChange}
+                      onChange={(e) => setCanCall(e)}
                     />
                   </div>
                   <div className="modal-mentee-availability-switch">
@@ -354,7 +310,7 @@ function MenteeAppointmentModal() {
                       size="small"
                       checked={canText}
                       handleClick={handleClick}
-                      onChange={handleTextChange}
+                      onChange={(e) => setCanText(e)}
                     />
                   </div>
                 </div>
@@ -368,7 +324,7 @@ function MenteeAppointmentModal() {
                     clicked={inputClicked[10]}
                     index={10}
                     handleClick={handleClick}
-                    onChange={handleMessageChange}
+                    onChange={(e) => setMessage(e.target.value)}
                   />
                 </div>
               </div>

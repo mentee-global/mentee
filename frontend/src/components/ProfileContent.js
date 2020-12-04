@@ -8,6 +8,7 @@ import {
 
 import MenteeButton from "./MenteeButton";
 import MentorProfileModal from "./MentorProfileModal";
+import MenteeAppointmentModal from "./MenteeAppointmentModal";
 
 import "./css/Profile.scss";
 
@@ -60,9 +61,9 @@ function ProfileContent(props) {
         {props.isMentor ? (
           <MentorProfileModal />
         ) : (
-          <span className="mentor-profile-button">
-            <MenteeButton content={<b>Book Appointment</b>} />
-          </span>
+          <div className="mentor-profile-button">
+            <MenteeAppointmentModal />
+          </div>
         )}
       </div>
       <div className="mentor-profile-heading">

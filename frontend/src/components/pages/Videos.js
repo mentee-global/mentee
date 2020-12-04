@@ -1,8 +1,5 @@
 import React from "react";
-import MenteeAppointmentModal from "../MenteeAppointmentModal";
 
-function Videos() {
-  return <MenteeAppointmentModal />;
-}
+function Videos() {}
 
 export default Videos;

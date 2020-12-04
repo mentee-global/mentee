@@ -65,14 +65,13 @@ const getCurrentRegistration = () => {
 
 // For when the user verifies and has an actual login
 const removeRegistration = () => {
-  localStorage.removeItem("reigstration");
+  localStorage.removeItem("registration");
 };
 
 export {
   register,
   login,
   logout,
-  getCurrentUser,
   getMentorID,
   isLoggedIn,
   getCurrentRegistration,

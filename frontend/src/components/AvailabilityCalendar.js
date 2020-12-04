@@ -1,10 +1,16 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
 import { Calendar, Modal, Button, Badge } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
 import MenteeButton from "./MenteeButton.js";
 import "./css/AvailabilityCalendar.scss";
+import {
+  fetchAvailability,
+  editAvailability,
+  mentorID,
+  fetchSetDays,
+} from "../utils/api"
 
 function AvailabilityCalendar() {
   const days = [
@@ -18,11 +24,46 @@ function AvailabilityCalendar() {
   ];
 
   //TODO: Fill this list with dates in month that have appointments
-  const [saved] = useState({});
+  const [saved, setSaved] = useState({});
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
+  const format = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
+
+  useEffect(() => {
+    async function getAvailability() {
+      const availability_data = await fetchAvailability(mentorID);
+      if(availability_data) {
+        const availability = availability_data.availability;
+        const times = [];
+        var i;
+        for (i = 0; i < availability.length; i++) {
+          times.push([
+            moment(availability[i].start_time.$date), 
+            moment(availability[i].end_time.$date)]);
+        }
+        console.log(times);
+        setTimeSlots(times);
+        console.log(timeSlots); 
+      }
+    }
+    getAvailability();
+
+    async function getSetDays() {
+      const set_data = await fetchSetDays(mentorID);
+      if(set_data) {
+        let set = {};
+        let i;
+        console.log(set_data.days.length);
+        for (i = 0; i < set_data.days.length; i++) {
+          set[set_data.days[i]] = true;
+        }
+        setSaved(set);
+      }
+    } 
+    getSetDays();
+  }, []);  
 
   const handleTimeChange = (index, event, num) => {
     const times = [...timeSlots];
@@ -34,7 +75,7 @@ function AvailabilityCalendar() {
 
   const addTimeSlots = () => {
     const times = [...timeSlots];
-    times.push([moment(), moment()]);
+    times.push([moment(date.format("YYYY-MM-DD")), moment(date.format("YYYY-MM-DD"))]);
     setTimeSlots(times);
   };
 
@@ -51,6 +92,12 @@ function AvailabilityCalendar() {
   };
 
   const handleOk = () => {
+    let json_data = [];
+    timeSlots.map((timeSlot) => (
+      json_data.push({"start_time": {"$date": timeSlot[0].format(format)}, "end_time": {"$date": timeSlot[1].format(format)}})
+    ));
+    console.log(json_data);
+    editAvailability(json_data, mentorID);
     setVisible(false);
   };
 
@@ -62,12 +109,23 @@ function AvailabilityCalendar() {
   };
 
   const getListData = (value) => {
-    if (saved[value.format("DD/MM/YYYY")]) {
+    if (saved[value.format("YYYY-MM-DD")]) {
       return [{ content: "test" }];
     } else {
       return [];
     }
   };
+
+  const getTimeSlots = (day) => {
+    let returnSlots = [];
+    let i;
+    for (i = 0; i < timeSlots.length; i++) {
+      if (day === timeSlots[i][0].format("YYYY-MM-DD")) {
+        returnSlots.push(timeSlots[i]);
+      }
+    }
+    return returnSlots;
+  }
   const monthCellRender = (value) => {};
 
   const dateCellRender = (value) => {
@@ -115,7 +173,7 @@ function AvailabilityCalendar() {
           <h2 className="date">{date && date.format("MM/DD")} </h2>
           <h5 className="date">{days[date.day()]}</h5>
         </div>
-        {timeSlots.map((timeSlot, index) => (
+        {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
           <Fragment key={`${index}`}>
             <div className="timeslot-wrapper">
               <TextField
@@ -157,14 +215,5 @@ function AvailabilityCalendar() {
     </>
   );
 }
-
-const styles = {
-  button: {
-    backgroundColor: "#E4BB4F",
-    borderRadius: 13,
-    fontWeight: 700,
-    color: "#FFF7E2",
-  },
-};
 
 export default AvailabilityCalendar;

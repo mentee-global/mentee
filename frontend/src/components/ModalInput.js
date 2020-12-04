@@ -18,6 +18,8 @@ function ModalInput(props) {
     onChange,
     handleClick,
     defaultValue,
+    valid,
+    validate,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -40,10 +42,15 @@ function ModalInput(props) {
       height: height,
     };
 
-    if (isClicked) {
+    if (isClicked && valid) {
       style = {
         ...style,
         ...styles.clicked,
+      };
+    } else if (validate && !valid) {
+      style = {
+        ...style,
+        ...styles.invalid,
       };
     }
 
@@ -145,6 +152,10 @@ const styles = {
   clicked: {
     color: "#F2C94C",
     borderColor: "#F2C94C",
+  },
+  invalid: {
+    color: "#FF0000",
+    borderColor: "#FF0000",
   },
 };
 

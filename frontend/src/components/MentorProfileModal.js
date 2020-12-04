@@ -14,6 +14,8 @@ function MentorProfileModal(props) {
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
+  const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
+  const [validate, setValidate] = useState(false);
   const [name, setName] = useState(null);
   const [title, setTitle] = useState(null);
   const [about, setAbout] = useState(null);
@@ -43,18 +45,17 @@ function MentorProfileModal(props) {
     setImage(props.mentor.image);
     setSpecializations(props.mentor.specializations);
     setLanguages(props.mentor.languages);
-    // if (props.mentor.specializations) {
-    //   const spec = props.mentor.specializations;
-    //   const newSpec = []
-    //   spec.forEach((string) => {newSpec.push(SPECIALIZATIONS.indexOf(string))})
-    //   setSpecializations(newSpec);
-    // }
-    // if (props.mentor.languages) {
-    //   const lang = props.mentor.languages;
-    //   const newLang = []
-    //   lang.forEach((string) => {newLang.push(LANGUAGES.indexOf(string))})
-    //   setLanguages(newLang);
-    // }
+
+    if (props.mentor.education) {
+      let newInputs = (props.mentor.education.length - 1) * 4;
+      setNumInputs(numInputs + newInputs);
+
+      let newValid = [...isValid];
+      for (let i = 0; i < newInputs; i++) {
+        newValid.push(true);
+      }
+      setIsValid(newValid);
+    }
   }, [props.mentor]);
 
   function renderEducationInputs() {
@@ -75,6 +76,8 @@ function MentorProfileModal(props) {
                 onEducationChange={handleSchoolChange}
                 educationIndex={i}
                 defaultValue={education.school}
+                valid={isValid[10 + i * 4]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -86,6 +89,8 @@ function MentorProfileModal(props) {
                 onEducationChange={handleGraduationDateChange}
                 educationIndex={i}
                 defaultValue={education.graduation_year}
+                valid={isValid[10 + i * 4 + 1]}
+                validate={validate}
               ></ModalInput>
             </div>
             <div className="modal-input-container">
@@ -101,6 +106,8 @@ function MentorProfileModal(props) {
                 options={[]}
                 placeholder="Ex. Computer Science, Biology"
                 defaultValue={education.majors}
+                valid={isValid[10 + i * 4 + 2]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -113,6 +120,8 @@ function MentorProfileModal(props) {
                 onEducationChange={handleDegreeChange}
                 placeholder="Ex. Bachelor's"
                 defaultValue={education.education_level}
+                valid={isValid[10 + i * 4 + 3]}
+                validate={validate}
               ></ModalInput>
             </div>
           </div>
@@ -131,11 +140,19 @@ function MentorProfileModal(props) {
   function handleNameChange(e) {
     setName(e.target.value);
     setEdited(true);
+    let newValid = [...isValid];
+
+    newValid[0] = !!e.target.value;
+
+    setIsValid(newValid);
   }
 
   function handleTitleChange(e) {
     setTitle(e.target.value);
     setEdited(true);
+    let newValid = [...isValid];
+    newValid[1] = !!e.target.value;
+    setIsValid(newValid);
   }
 
   function handleAboutChange(e) {
@@ -166,12 +183,14 @@ function MentorProfileModal(props) {
   function handleLanguageChange(e) {
     let languagesSelected = [];
     e.forEach((value) => {
-      console.log(value);
       languagesSelected.push(value);
     });
     setLanguages(languagesSelected);
-    console.log(languagesSelected);
     setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[7] = !!languagesSelected.length;
+    setIsValid(newValid);
   }
 
   function handleLinkedinChange(e) {
@@ -184,6 +203,10 @@ function MentorProfileModal(props) {
     e.forEach((value) => specializationsSelected.push(value));
     setSpecializations(specializationsSelected);
     setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[9] = !!specializationsSelected.length;
+    setIsValid(newValid);
   }
 
   function handleSchoolChange(e, index) {
@@ -193,6 +216,10 @@ function MentorProfileModal(props) {
     newEducations[index] = education;
     setEducations(newEducations);
     setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4] = !!education.school;
+    setIsValid(newValid);
   }
 
   function handleGraduationDateChange(e, index) {
@@ -202,6 +229,10 @@ function MentorProfileModal(props) {
     newEducations[index] = education;
     setEducations(newEducations);
     setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4 + 1] = !!education.graduation_year;
+    setIsValid(newValid);
   }
 
   function handleMajorsChange(e, index) {
@@ -213,6 +244,10 @@ function MentorProfileModal(props) {
     newEducations[index] = education;
     setEducations(newEducations);
     setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4 + 2] = !!education.majors;
+    setIsValid(newValid);
   }
 
   function handleDegreeChange(e, index) {
@@ -222,6 +257,10 @@ function MentorProfileModal(props) {
     newEducations[index] = education;
     setEducations(newEducations);
     setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4 + 3] = !!education.education_level;
+    setIsValid(newValid);
   }
 
   const handleAddEducation = () => {
@@ -234,6 +273,7 @@ function MentorProfileModal(props) {
     });
     setEducations(newEducations);
     setEdited(true);
+    setIsValid([...isValid].push(true, true, true, true));
   };
 
   const handleSaveEdits = () => {
@@ -245,10 +285,17 @@ function MentorProfileModal(props) {
       setSaving(false);
       props.onSave();
       setModalVisible(false);
+      setValidate(false);
       setChangedImage(false);
     }
     if (!edited && !changedImage) {
       setModalVisible(false);
+      setValidate(false);
+      return;
+    }
+
+    if (isValid.includes(false)) {
+      setValidate(true);
       return;
     }
 
@@ -264,7 +311,7 @@ function MentorProfileModal(props) {
       offers_in_person: inPersonAvailable,
       offers_group_appointments: groupAvailable,
     };
-    console.log(updatedProfile);
+
     setSaving(true);
     saveEdits(updatedProfile);
   };
@@ -280,7 +327,10 @@ function MentorProfileModal(props) {
       <Modal
         title="Edit Profile"
         visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => {
+          setModalVisible(false);
+          setValidate(false);
+        }}
         width="50%"
         style={{ overflow: "hidden" }}
         footer={
@@ -331,6 +381,8 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleNameChange}
                 defaultValue={name}
+                valid={isValid[0]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -341,6 +393,8 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleTitleChange}
                 defaultValue={title}
+                valid={isValid[1]}
+                validate={validate}
               ></ModalInput>
             </div>
             <div className="modal-input-container">
@@ -411,6 +465,8 @@ function MentorProfileModal(props) {
                 placeholder="Ex. English, Spanish"
                 options={LANGUAGES}
                 defaultValue={languages}
+                valid={isValid[7]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -434,6 +490,8 @@ function MentorProfileModal(props) {
                 onChange={handleSpecializationsChange}
                 options={SPECIALIZATIONS}
                 defaultValue={specializations}
+                valid={isValid[9]}
+                validate={validate}
               ></ModalInput>
             </div>
             <div className="modal-education-header">Education</div>

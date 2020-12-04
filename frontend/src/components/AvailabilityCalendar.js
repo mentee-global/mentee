@@ -10,7 +10,7 @@ import {
   editAvailability,
   mentorID,
   fetchSetDays,
-} from "../utils/api"
+} from "../utils/api";
 
 function AvailabilityCalendar() {
   const days = [
@@ -34,25 +34,24 @@ function AvailabilityCalendar() {
   useEffect(() => {
     async function getAvailability() {
       const availability_data = await fetchAvailability(mentorID);
-      if(availability_data) {
+      if (availability_data) {
         const availability = availability_data.availability;
         const times = [];
         var i;
         for (i = 0; i < availability.length; i++) {
           times.push([
-            moment(availability[i].start_time.$date), 
-            moment(availability[i].end_time.$date)]);
+            moment(availability[i].start_time.$date),
+            moment(availability[i].end_time.$date),
+          ]);
         }
-        console.log(times);
         setTimeSlots(times);
-        console.log(timeSlots); 
       }
     }
     getAvailability();
 
     async function getSetDays() {
       const set_data = await fetchSetDays(mentorID);
-      if(set_data) {
+      if (set_data) {
         let set = {};
         let i;
         console.log(set_data.days.length);
@@ -61,9 +60,9 @@ function AvailabilityCalendar() {
         }
         setSaved(set);
       }
-    } 
+    }
     getSetDays();
-  }, []);  
+  }, []);
 
   const handleTimeChange = (index, event, num) => {
     const times = [...timeSlots];
@@ -75,7 +74,10 @@ function AvailabilityCalendar() {
 
   const addTimeSlots = () => {
     const times = [...timeSlots];
-    times.push([moment(date.format("YYYY-MM-DD")), moment(date.format("YYYY-MM-DD"))]);
+    times.push([
+      moment(date.format("YYYY-MM-DD")),
+      moment(date.format("YYYY-MM-DD")),
+    ]);
     setTimeSlots(times);
   };
 
@@ -93,10 +95,12 @@ function AvailabilityCalendar() {
 
   const handleOk = () => {
     let json_data = [];
-    timeSlots.map((timeSlot) => (
-      json_data.push({"start_time": {"$date": timeSlot[0].format(format)}, "end_time": {"$date": timeSlot[1].format(format)}})
-    ));
-    console.log(json_data);
+    timeSlots.map((timeSlot) =>
+      json_data.push({
+        start_time: { $date: timeSlot[0].format(format) },
+        end_time: { $date: timeSlot[1].format(format) },
+      })
+    );
     editAvailability(json_data, mentorID);
     setVisible(false);
   };
@@ -125,7 +129,7 @@ function AvailabilityCalendar() {
       }
     }
     return returnSlots;
-  }
+  };
   const monthCellRender = (value) => {};
 
   const dateCellRender = (value) => {

@@ -102,7 +102,7 @@ export const fetchAvailability = (id) => {
 
 export const editAvailability = (timeslots, id) => {
   const requestExtension = "/availability/" + id;
-  let availability = {"Availability": timeslots};
+  let availability = { Availability: timeslots };
   return instance.put(requestExtension, availability).then(
     (response) => response,
     (err) => {
@@ -118,5 +118,5 @@ export const fetchSetDays = (id) => {
     (err) => {
       console.error(err);
     }
-  )
-}
+  );
+};

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
+import { Button, Modal, Checkbox, Avatar, Upload, Alert } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
@@ -41,10 +41,14 @@ function MentorProfileModal(props) {
     setLocation(props.mentor.location);
     setWebsite(props.mentor.website);
     setLinkedin(props.mentor.linkedin);
-    setEducations(props.mentor.education);
     setImage(props.mentor.image);
     setSpecializations(props.mentor.specializations);
     setLanguages(props.mentor.languages);
+    // Deep copy of array of objects
+    const newEducation = props.mentor.education
+      ? JSON.parse(JSON.stringify(props.mentor.education))
+      : [];
+    setEducations(newEducation);
 
     if (props.mentor.education) {
       let newInputs = (props.mentor.education.length - 1) * 4;
@@ -56,7 +60,7 @@ function MentorProfileModal(props) {
       }
       setIsValid(newValid);
     }
-  }, [props.mentor]);
+  }, [props.mentor, modalVisible]);
 
   function renderEducationInputs() {
     return (
@@ -334,15 +338,18 @@ function MentorProfileModal(props) {
         width="50%"
         style={{ overflow: "hidden" }}
         footer={
-          <Button
-            type="default"
-            shape="round"
-            style={styles.footer}
-            onClick={handleSaveEdits}
-            loading={saving}
-          >
-            Save
-          </Button>
+          <div>
+            {validate && <b style={styles.alertToast}>Missing Fields</b>}
+            <Button
+              type="default"
+              shape="round"
+              style={styles.footer}
+              onClick={handleSaveEdits}
+              loading={saving}
+            >
+              Save
+            </Button>
+          </div>
         }
       >
         <div className="modal-container">
@@ -515,6 +522,11 @@ const styles = {
     borderRadius: 13,
     marginRight: 15,
     backgroundColor: "#E4BB4F",
+  },
+  alertToast: {
+    color: "#FF0000",
+    display: "inline-block",
+    marginRight: 10,
   },
 };
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
-import { returnDropdownItems } from "utils/inputs";
+import { formatDropdownItems } from "utils/inputs";
 import "../components/css/Videos.scss";
 
 const VideoSubmit = (props) => {
@@ -47,7 +47,7 @@ const VideoSubmit = (props) => {
             },
           ]}
         >
-          <Select>{returnDropdownItems(SPECIALIZATIONS)}</Select>
+          <Select>{formatDropdownItems(SPECIALIZATIONS)}</Select>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

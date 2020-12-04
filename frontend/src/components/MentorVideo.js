@@ -4,30 +4,38 @@ import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { Button, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
-import { returnDropdownItems } from "utils/inputs";
+import { formatDropdownItems } from "utils/inputs";
 import "components/css/MentorVideo.scss";
 
-const MentorVideo = (props) => {
-  const { onPin, onChangeTag, onDelete } = props;
-
+const MentorVideo = ({
+  onPin,
+  onChangeTag,
+  onDelete,
+  title,
+  tag,
+  id,
+  date,
+  video,
+}) => {
   return (
     <div className="video-row">
       <div className="video-block">
         <ReactPlayer
-          url={props.url}
+          url={video.url}
           width="150px"
           height="100px"
           className="video"
         />
         <div className="video-description">
-          <div>{props.title}</div>
-          <div>{moment(props.date).fromNow()}</div>
+          <div>{title}</div>
+          <div>{moment(date).fromNow()}</div>
         </div>
         <div className="video-pin">
           <button
             className="pin-button"
-            onClick={() => onPin(props.id)}
-            style={props.id === 0 ? { background: "#F2C94C" } : {}}
+            disabled={id == 0}
+            onClick={() => onPin(id)}
+            style={id === 0 ? { background: "#F2C94C" } : {}}
           >
             <PushpinOutlined />
           </button>
@@ -36,10 +44,10 @@ const MentorVideo = (props) => {
       <div className="video-interactions">
         <Select
           style={{ ...styles.interactionVideo, left: "14%", width: 230 }}
-          defaultValue={props.tag}
-          onChange={(option) => onChangeTag(props.id, SPECIALIZATIONS[option])}
+          defaultValue={tag}
+          onChange={(option) => onChangeTag(id, SPECIALIZATIONS[option])}
         >
-          {returnDropdownItems(SPECIALIZATIONS)}
+          {formatDropdownItems(SPECIALIZATIONS)}
         </Select>
         <Button
           icon={
@@ -47,7 +55,7 @@ const MentorVideo = (props) => {
           }
           style={{ ...styles.interactionVideo, left: "78%" }}
           type="text"
-          onClick={() => onDelete(props.video)}
+          onClick={() => onDelete(video)}
         ></Button>
       </div>
     </div>

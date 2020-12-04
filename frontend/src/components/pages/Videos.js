@@ -4,9 +4,9 @@ import moment from "moment";
 import MentorVideo from "../MentorVideo";
 import VideoSubmit from "../VideoSubmit";
 import { SPECIALIZATIONS } from "utils/consts.js";
-import { returnDropdownItems } from "utils/inputs";
+import { formatDropdownItems } from "utils/inputs";
+import { fetchMentorByID, mentorID, editMentorProfile } from "utils/api";
 import "../css/Videos.scss";
-import videosJSON from "utils/videos.json";
 
 function Videos() {
   const [videos, setVideos] = useState([]);
@@ -17,11 +17,22 @@ function Videos() {
 
   useEffect(() => {
     async function getVideos() {
-      setVideos(videosJSON.data.videos);
-      setFiltered(videosJSON.data.videos);
+      const mentor = await fetchMentorByID(mentorID);
+      console.log(mentor);
+      if (mentor) {
+        setVideos(mentor.videos);
+        setFiltered(mentor.videos);
+      }
     }
     getVideos();
   }, []);
+
+  async function updateVideos(data, id) {
+    const update = {
+      videos: data,
+    };
+    await editMentorProfile(update, id);
+  }
 
   const handleSearchVideo = (query) => {
     setTitleFilter(query);
@@ -58,6 +69,7 @@ function Videos() {
       newVideos = titleFiltered;
     }
     setFiltered(newVideos);
+    updateVideos(newVideos, mentorID);
   };
 
   const handleVideoTag = (id, specialization) => {
@@ -69,19 +81,19 @@ function Videos() {
     newVideos[id] = video;
     setVideos(newVideos);
     setFiltered(newVideos);
+    updateVideos(newVideos, mentorID);
   };
 
   const handlePinVideo = (id) => {
-    if (id !== 0) {
-      const newVideos = [...videos];
-      const video = newVideos.splice(id, 1)[0];
-      newVideos.sort(
-        (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
-      );
-      newVideos.unshift(video);
-      setVideos(newVideos);
-      setFiltered(newVideos);
-    }
+    const newVideos = [...videos];
+    const video = newVideos.splice(id, 1)[0];
+    newVideos.sort(
+      (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
+    );
+    newVideos.unshift(video);
+    setVideos(newVideos);
+    setFiltered(newVideos);
+    updateVideos(newVideos, mentorID);
   };
 
   const filterSpecialization = (value) => {
@@ -115,6 +127,7 @@ function Videos() {
     handleClearFilters();
     setVideos(newVideos);
     setFiltered(newVideos);
+    updateVideos(newVideos, mentorID);
   };
 
   const VideosContainer = () => {
@@ -135,7 +148,6 @@ function Videos() {
               onChangeTag={handleVideoTag}
               onPin={handlePinVideo}
               onDelete={handleDeleteVideo}
-              url={video.url}
             />
           ))}
       </div>
@@ -161,7 +173,7 @@ function Videos() {
             onChange={(value) => filterSpecialization(value)}
             value={selectFilter}
           >
-            {returnDropdownItems(SPECIALIZATIONS)}
+            {formatDropdownItems(SPECIALIZATIONS)}
           </Select>
           <Button onClick={handleClearFilters}>Clear</Button>
         </div>

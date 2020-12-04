@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useHistory } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { logout, getMentorID } from "utils/auth.service";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
@@ -16,14 +16,10 @@ import MenteeLogo from "../resources/mentee.png";
 const { Header } = Layout;
 
 function MentorNavHeader() {
-  const history = useHistory();
   const [mentor, setMentor] = useState();
 
   useEffect(() => {
     const mentorID = getMentorID();
-    if (!mentorID) {
-      history.push("/login");
-    }
     async function getMentor() {
       const mentorData = await fetchMentorByID(mentorID);
       if (mentorData) {

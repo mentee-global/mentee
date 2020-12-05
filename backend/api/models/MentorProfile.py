@@ -2,20 +2,21 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, Video, Availability, Image
+from api.models import Education, Video, Availability, Image, Users
 
 
 class MentorProfile(Document, Mixin):
     """"Mentor Profile Collection."""
 
-    uid = ""  # TODO: Add Uid field
+    # TODO: make required: true
+    user_id = ReferenceField("Users")
     name = StringField(required=True)
     location = StringField()
     email = StringField(required=True)
     phone_number = StringField()
     professional_title = StringField(required=True)
-    linkedin = StringField(required=True)
-    website = StringField(required=True)
+    linkedin = StringField()
+    website = StringField()
     image = EmbeddedDocumentField(Image)
     education = ListField(EmbeddedDocumentField(Education))
     languages = ListField(StringField(), required=True)
@@ -27,7 +28,7 @@ class MentorProfile(Document, Mixin):
     availability = ListField(EmbeddedDocumentField(Availability))
 
     def __repr__(self):
-        return f"""<MentorProfile id:{self.uid} \n name: {self.name} 
+        return f"""<MentorProfile user_id:{self.user_id} \n name: {self.name} 
                 \n professional title: {self.professional_title} 
                 \n linkedin: {self.linkedin} \n website: {self.website}
                 \n image: {self.image} \n biography: {self.biography} 

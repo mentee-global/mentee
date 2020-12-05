@@ -22,6 +22,13 @@ const register = (email, password) => {
     });
 };
 
+const verify = (pin) => {
+  return instance
+    .post("/verify", {
+      pin
+    })
+}
+
 const login = (email, password) => {
   return instance
     .post("/login", {

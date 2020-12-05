@@ -102,7 +102,7 @@ function ModalInput(props) {
             style={{ width: "100%" }}
             placeholder={placeholder || "Please select"}
             onChange={handleOnChange}
-            defaultValue={defaultValue}
+            value={defaultValue}
             tokenSeparators={[","]}
           >
             {returnDropdownItems(options)}

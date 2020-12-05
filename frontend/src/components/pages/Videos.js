@@ -14,6 +14,7 @@ function Videos() {
   const [filtered, setFiltered] = useState([]);
   const [selectFilter, setSelectFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
+  const [mentorID, setMentorID] = useState("");
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -24,6 +25,7 @@ function Videos() {
         setVideos(mentor.videos);
         setFiltered(mentor.videos);
       }
+      setMentorID(mentorID);
     }
     getVideos();
   }, []);

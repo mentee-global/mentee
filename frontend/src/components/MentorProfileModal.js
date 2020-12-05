@@ -250,7 +250,7 @@ function MentorProfileModal(props) {
     setEdited(true);
 
     let newValid = [...isValid];
-    newValid[10 + index * 4 + 2] = !!education.majors;
+    newValid[10 + index * 4 + 2] = !!education.majors.length;
     setIsValid(newValid);
   }
 
@@ -289,11 +289,13 @@ function MentorProfileModal(props) {
       setSaving(false);
       props.onSave();
       setModalVisible(false);
+      setIsValid([...isValid].fill(true));
       setValidate(false);
       setChangedImage(false);
     }
     if (!edited && !changedImage) {
       setModalVisible(false);
+      setIsValid([...isValid].fill(true));
       setValidate(false);
       return;
     }
@@ -334,6 +336,7 @@ function MentorProfileModal(props) {
         onCancel={() => {
           setModalVisible(false);
           setValidate(false);
+          setIsValid([...isValid].fill(true));
         }}
         width="50%"
         style={{ overflow: "hidden" }}

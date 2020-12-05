@@ -12,7 +12,6 @@ function Profile() {
   const [mentor, setMentor] = useState({});
   const [editedMentor, setEditedMentor] = useState(false);
 
-
   useEffect(() => {
     const mentorID = getMentorID();
     async function getMentor() {

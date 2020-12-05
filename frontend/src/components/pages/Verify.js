@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Input } from "antd";
+import { Input, Button } from "antd";
 import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
@@ -44,11 +44,14 @@ function Verify() {
             />
           </div>
           <div className="login-register-container">
-            <div>Didn&#39;t receive a code?</div>
-            {/* TODO: replace with auth resend (may have to change to button) */}
-            <NavLink to="/login" className="login-register-link">
-              Resend
-            </NavLink>
+            Didn&#39;t receive a code?
+            <Button
+              type="link"
+              className="verify-resend-link"
+              onClick={() => {}} // TODO: replace with auth resend
+            >
+              <u>Resend</u>
+            </Button>
           </div>
         </div>
       </div>

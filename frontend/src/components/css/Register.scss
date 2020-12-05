@@ -11,3 +11,36 @@
 .register-error {
   color: red;
 }
+
+.verify-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80%;
+  width: 40%;
+  background-color: white;
+  padding: 2.5%;
+}
+
+.verify-header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.verify-header-text {
+  width: 70%;
+}
+
+.verify-header-text-description {
+  color: gray;
+}
+
+.verify-header-image {
+  width: 30%;
+}
+
+.verify-honeycomb {
+  height: 100%;
+  width: 100%;
+}

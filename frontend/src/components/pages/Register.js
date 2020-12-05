@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory, withRouter } from "react-router-dom";
 import { Input } from "antd";
 import MenteeButton from "../MenteeButton";
 
@@ -8,13 +8,14 @@ import "../css/Login.scss";
 import "../css/Register.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
-function Register() {
+function Register(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fieldError, setFieldError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [inputFocus, setInputFocus] = useState([false, false, false]);
+  const history = useHistory();
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false, false];
@@ -23,8 +24,15 @@ function Register() {
   }
 
   const setErrors = () => {
-    setPasswordError(password !== confirmPassword);
-    setFieldError(email === "" || password === "" || confirmPassword === "");
+    let newPasswordError = password !== confirmPassword;
+    let newFieldError =
+      email === "" || password === "" || confirmPassword === "";
+    if (newPasswordError || newFieldError) {
+      setPasswordError(newPasswordError);
+      setFieldError(newFieldError);
+    } else {
+      history.push("/verify");
+    }
   };
 
   return (
@@ -99,4 +107,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default withRouter(Register);

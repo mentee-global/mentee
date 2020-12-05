@@ -9,6 +9,7 @@ import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import Login from "components/pages/Login";
 import Register from "components/pages/Register";
+import Verify from "components/pages/Verify";
 
 function App() {
   return (
@@ -65,6 +66,10 @@ function App() {
         component={() => (
           <Navigation content={<Register />} needsAuth={false} />
         )}
+      />
+      <Route
+        path="/verify"
+        component={() => <Navigation content={<Verify />} needsAuth={false} />}
       />
     </Router>
   );

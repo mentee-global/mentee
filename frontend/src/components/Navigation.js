@@ -18,7 +18,7 @@ function Navigation(props) {
     if (props.needsAuth && !isLoggedIn()) {
       history.push("/login");
     }
-  }, []);
+  }, [history, props.needsAuth]);
 
   return (
     <div>

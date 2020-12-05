@@ -6,6 +6,8 @@ import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 //import { editMentorProfile, uploadMentorImage } from "../../utils/api";
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
+import "../css/RegisterForm.scss";
+import MenteeButton from "components/MenteeButton";
 
 function RegisterForm(props) {
     const [numInputs, setNumInputs] = useState(14);
@@ -295,8 +297,12 @@ function RegisterForm(props) {
     }
 
     return (
-        <div className="modal-container">
-            <div className="modal-profile-container">
+        <div className="register-content">
+            <div className="register-header">
+                <h2>Welcome. Tell us about yourself.</h2>
+                <MenteeButton content="Save" />
+            </div>
+            <div className="register-header-container">
                 <Avatar
                     size={120}
                     icon={<UserOutlined />}

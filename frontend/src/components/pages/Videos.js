@@ -1,5 +1,7 @@
 import React from "react";
 
-function Videos() {}
+function Videos() {
+  return <div>Videos</div>;
+}
 
 export default Videos;

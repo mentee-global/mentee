@@ -15,7 +15,6 @@ import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
 
 // TODO: Temporary constants, fill in later
-const organizations = ["Hack4Impact", "YMCA"];
 
 const sampleTimes = [
   "11-12pm",

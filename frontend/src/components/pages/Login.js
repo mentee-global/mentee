@@ -83,7 +83,7 @@ function Login() {
           </div>
           <div className="login-register-container">
             <div>Don&#39;t have an account?</div>
-            <NavLink to="/" className="login-register-link">
+            <NavLink to="/register" className="login-register-link">
               Register
             </NavLink>
           </div>

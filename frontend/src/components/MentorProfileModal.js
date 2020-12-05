@@ -287,11 +287,11 @@ function MentorProfileModal(props) {
         await uploadMentorImage(image, props.mentor._id.$oid);
       }
       setSaving(false);
+      setChangedImage(false);
       props.onSave();
       setModalVisible(false);
       setIsValid([...isValid].fill(true));
       setValidate(false);
-      setChangedImage(false);
     }
     if (!edited && !changedImage) {
       setModalVisible(false);
@@ -362,7 +362,9 @@ function MentorProfileModal(props) {
               icon={<UserOutlined />}
               className="modal-profile-icon"
               src={
-                changedImage ? URL.createObjectURL(image) : image && image.url
+                changedImage
+                  ? image && URL.createObjectURL(image)
+                  : image && image.url
               }
             />
             <Upload

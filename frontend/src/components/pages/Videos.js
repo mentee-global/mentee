@@ -18,7 +18,6 @@ function Videos() {
   useEffect(() => {
     async function getVideos() {
       const mentor = await fetchMentorByID(mentorID);
-      console.log(mentor);
       if (mentor) {
         setVideos(mentor.videos);
         setFiltered(mentor.videos);

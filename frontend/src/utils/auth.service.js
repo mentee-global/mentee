@@ -19,15 +19,32 @@ const register = (email, password) => {
       }
 
       return response.data;
+    })
+    .catch((err) => {
+      console.error(err);
+      return false;
     });
 };
 
 const verify = (pin) => {
   return instance
-    .post("/verify", {
-      pin
+    .post(
+      "/verifyEmail",
+      {
+        pin,
+      },
+      { headers: { token: getCurrentRegistration()["token"] } }
+    )
+    .then((response) => {
+      return response.data.status == 200;
     })
-}
+};
+
+const resendVerify = () => {
+  return instance.post("resendVerificationEmail", null, {
+    headers: { token: getCurrentRegistration()["token"] },
+  });
+};
 
 const login = (email, password) => {
   return instance
@@ -70,7 +87,7 @@ const getCurrentRegistration = () => {
   return JSON.parse(localStorage.getItem("registration"));
 };
 
-// For when the user verifies and has an actual login
+// For when the user finishes creating profile
 const removeRegistration = () => {
   localStorage.removeItem("registration");
 };
@@ -83,4 +100,6 @@ export {
   isLoggedIn,
   getCurrentRegistration,
   removeRegistration,
+  verify,
+  resendVerify,
 };

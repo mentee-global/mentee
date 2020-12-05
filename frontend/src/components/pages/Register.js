@@ -1,21 +1,35 @@
-import React, { useState } from "react";
-import { NavLink, useHistory, withRouter } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink, withRouter } from "react-router-dom";
 import { Input } from "antd";
 import MenteeButton from "../MenteeButton";
+import {
+  getCurrentRegistration,
+  isLoggedIn,
+  register,
+} from "utils/auth.service";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
 import "../css/Register.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
-function Register() {
+function Register({ history }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fieldError, setFieldError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [serverError, setServerError] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [inputFocus, setInputFocus] = useState([false, false, false]);
-  const history = useHistory();
+
+  useEffect(() => {
+    if (getCurrentRegistration()) {
+      // TODO: redirect to the mentor profile creation apge
+    } else if (isLoggedIn()) {
+      history.push("/appointments");
+    }
+  }, []);
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false, false];
@@ -23,7 +37,8 @@ function Register() {
     setInputFocus(newClickedInput);
   }
 
-  const setErrors = () => {
+  const setErrors = async () => {
+    setSaving(true);
     let newPasswordError = password !== confirmPassword;
     let newFieldError =
       email === "" || password === "" || confirmPassword === "";
@@ -31,8 +46,14 @@ function Register() {
       setPasswordError(newPasswordError);
       setFieldError(newFieldError);
     } else {
-      history.push("/verify");
+      const res = await register(email, password);
+      if (res) {
+        history.push("/verify");
+      } else {
+        setServerError(true);
+      }
     }
+    setSaving(false);
   };
 
   return (
@@ -47,6 +68,7 @@ function Register() {
           >
             <Input
               className="login-input"
+              disabled={saving}
               onFocus={() => handleInputFocus(0)}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
@@ -60,6 +82,7 @@ function Register() {
           >
             <Input
               className="login-input"
+              disabled={saving}
               onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
@@ -73,6 +96,7 @@ function Register() {
           >
             <Input
               className="login-input"
+              disabled={saving}
               onFocus={() => handleInputFocus(2)}
               onChange={(e) => setConfirmPassword(e.target.value)}
               bordered={false}
@@ -83,6 +107,8 @@ function Register() {
             <div className="register-error">All fields must be set</div>
           ) : passwordError ? (
             <div className="register-error">Passwords do not match</div>
+          ) : serverError ? (
+            <div className="register-error">Error, please try again!</div>
           ) : (
             <br />
           )}
@@ -91,6 +117,7 @@ function Register() {
               content={<b>Next</b>}
               width={"50%"}
               height={"125%"}
+              loading={saving}
               onClick={setErrors}
             />
           </div>

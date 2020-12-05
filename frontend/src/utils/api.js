@@ -42,7 +42,6 @@ export const editMentorProfile = (profile, id) => {
 
 export const uploadMentorImage = (data, id) => {
   let formData = new FormData();
-  console.log(data);
   formData.append("image", data);
   const requestExtension = "/mentor/" + id + "/image";
   return instance.put(requestExtension, formData).then(

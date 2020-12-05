@@ -53,8 +53,7 @@ function AvailabilityCalendar() {
     const set_data = await fetchSetDays(mentorID);
     if (set_data) {
       let set = {};
-      let i;
-      for (i = 0; i < set_data.days.length; i++) {
+      for (let i = 0; i < set_data.days.length; i++) {
         // console.log(set_data.days[i]);
         set[set_data.days[i]] = true;
       }

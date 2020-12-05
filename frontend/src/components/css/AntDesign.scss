@@ -1,8 +1,9 @@
+@import "_app";
 // Overriding styles for antdesign to comply with Mentee Designs
 
 .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #E4BB4F;
-    border-color: #E4BB4F;
+    background-color: $yellow-dot-color;
+    border-color: $yellow-dot-color;
 }
 
 .ant-select-selection--multiple {
@@ -12,7 +13,7 @@
 }
 
 .ant-modal-header {
-    background-color: #FFECBD;
+    background-color: $appointment-card-background-color;
 }
 
 .ant-modal-title {

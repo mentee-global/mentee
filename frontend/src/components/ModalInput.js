@@ -112,6 +112,8 @@ function ModalInput(props) {
             value={defaultValue}
           />
         );
+      default:
+        return null;
     }
   };
 

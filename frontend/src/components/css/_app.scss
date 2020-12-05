@@ -1,4 +1,4 @@
-//Appointments constants
+// Appointments constants
 $appointment-card-background-color:#FFECBD;
 $appointment-background-color: #FCF6E8;
 $appointments-date-text-block-color: #A58123;
@@ -9,8 +9,7 @@ $appointments-tab-color:#A58123;
 $appointments-tab-item-selected-background-color: #E4BB4F;
 $appointments-tab-item-selected-color: #FFF7E2;
 
-
-//Navigation constants
+// Navigation constants
 $nav-header-color: #fbecc1;
 $nav-menu-item-color: White;
 $nav-menu-item-hover-background-color: #fcf6ea;
@@ -19,13 +18,18 @@ $nav-menu-item-selected-color: #fcf6ea;
 $notif-bell-color: Black;
 $profile-caret-color: Gray;
 $mentee-logo-color: #fbecc1;
-$header-button-border: #FCF6E8;
-$header-button-dark-border: #E4BB4F;
 
-
-//Profile constants
+// Profile constants
 $background-color-strip-color: #FCF6E8;
 $mentor-profile-heading-color: #828282;
 $yellow-dot-color: #E4BB4F;
 $specialization-tag-border: #FFECBD;
 $edit-contact-color: #A58123;
+
+// MenteeButton constants
+$mentee-button-regular: #E4BB4F;
+$mentee-button-dark: #A58123;
+$mentee-button-light: #FCF6E8;
+
+// Auth pages constants
+$register-link-hover: #FFE5A3;

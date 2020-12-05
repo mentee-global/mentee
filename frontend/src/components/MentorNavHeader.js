@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Dropdown, Menu } from "antd";
+import { logout, getMentorID } from "utils/auth.service";
+import { fetchMentorByID } from "utils/api";
+import { Avatar, Layout, Dropdown, Menu } from "antd";
 import {
   UserOutlined,
   BellOutlined,
@@ -14,6 +16,19 @@ import MenteeLogo from "../resources/mentee.png";
 const { Header } = Layout;
 
 function MentorNavHeader() {
+  const [mentor, setMentor] = useState();
+
+  useEffect(() => {
+    const mentorID = getMentorID();
+    async function getMentor() {
+      const mentorData = await fetchMentorByID(mentorID);
+      if (mentorData) {
+        setMentor(mentorData);
+      }
+    }
+    getMentor();
+  }, []);
+
   const dropdownMenu = (
     <Menu className="dropdown-menu">
       <Menu.Item key="edit-profile">
@@ -28,7 +43,7 @@ function MentorNavHeader() {
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="sign-out">
+      <Menu.Item key="sign-out" onClick={logout}>
         <NavLink to="/">
           <b>Sign Out</b>
         </NavLink>
@@ -47,14 +62,22 @@ function MentorNavHeader() {
             <CaretDownOutlined />
           </Dropdown>
         </div>
-        <div className="profile-name">
-          <b>Name Here</b>
-          <br />
-          Position Here
-        </div>
-        <div className="profile-picture">
-          <UserOutlined />
-        </div>
+        {mentor && (
+          <>
+            <div className="profile-name">
+              <b>{mentor.name}</b>
+              <br />
+              {mentor.professional_title}
+            </div>
+            <div className="profile-picture">
+              <Avatar
+                size={40}
+                src={mentor.image && mentor.image.url}
+                icon={<UserOutlined />}
+              />
+            </div>
+          </>
+        )}
       </span>
       <div className="notification-bell">
         <NavLink to="/" className="notification-bell">

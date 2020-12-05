@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useCallback, useState, useEffect } from "react";
+import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
+import { isLoggedIn, login } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
-
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/Home.scss";
 import "../css/Login.scss";
 import Honeycomb from "../../resources/honeycomb.png";
@@ -10,27 +11,46 @@ import Honeycomb from "../../resources/honeycomb.png";
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [inputClicked, setInputClicked] = useState([false, false]);
+  const [inputFocus, setInputFocus] = useState([false, false]);
+  const [error, setError] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
+  const history = useHistory();
 
-  function handleInputClick(index) {
+  function handleInputFocus(index) {
     let newClickedInput = [false, false];
     newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
+    setInputFocus(newClickedInput);
   }
+
+  const redirectToAppointments = useCallback(() => {
+    history.push("appointments");
+  }, [history]);
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      redirectToAppointments();
+    }
+  }, [redirectToAppointments]);
 
   return (
     <div className="home-background">
       <div className="login-content">
         <div className="login-container">
           <h1 className="login-text">Sign In</h1>
+          {error && (
+            <div className="login-error">
+              Incorrect username and/or password. Please try again.
+            </div>
+          )}
           <div
             className={`login-input-container${
-              inputClicked[0] ? "__clicked" : ""
+              inputFocus[0] ? "__clicked" : ""
             }`}
           >
             <Input
               className="login-input"
-              onClick={() => handleInputClick(0)}
+              onFocus={() => handleInputFocus(0)}
+              disabled={loggingIn}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
               placeholder="Email"
@@ -38,12 +58,16 @@ function Login() {
           </div>
           <div
             className={`login-input-container${
-              inputClicked[1] ? "__clicked" : ""
+              inputFocus[1] ? "__clicked" : ""
             }`}
           >
-            <Input
+            <Input.Password
               className="login-input"
-              onClick={() => handleInputClick(1)}
+              disabled={loggingIn}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+              onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
               placeholder="Password"
@@ -51,15 +75,24 @@ function Login() {
           </div>
           <div className="login-button">
             <MenteeButton
-              content={<b>Login</b>}
+              content={<b>Log In</b>}
               width={"50%"}
               height={"125%"}
-              onClick={() => {}}
+              loading={loggingIn}
+              onClick={async () => {
+                setLoggingIn(true);
+                const res = await login(email, password);
+                setError(!Boolean(res));
+                if (Boolean(res)) {
+                  redirectToAppointments();
+                }
+                setLoggingIn(false);
+              }}
             />
           </div>
           <div className="login-register-container">
             <div>Don&#39;t have an account?</div>
-            <NavLink to="/" className="login-register-link">
+            <NavLink to="/register" className="login-register-link">
               Register
             </NavLink>
           </div>

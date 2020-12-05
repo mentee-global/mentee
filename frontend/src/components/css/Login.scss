@@ -57,7 +57,7 @@
     justify-content: center;
 }
 
-.login-register-link {
+.login-register-link, .login-register-link:focus {
     background: none;
     border: none;
     color: $mentee-button-regular;
@@ -69,4 +69,8 @@
 .login-register-link:hover {
     color: $register-link-hover;
     text-decoration: underline;
+}
+
+.login-error {
+    color: red;
 }

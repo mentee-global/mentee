@@ -8,12 +8,17 @@ function ModalInput(props) {
   const {
     clicked,
     index,
+    educationIndex,
+    onEducationChange,
     type,
     title,
     placeholder,
     options,
     onChange,
     handleClick,
+    defaultValue,
+    valid,
+    validate,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -22,7 +27,11 @@ function ModalInput(props) {
   }, [clicked]);
 
   function handleOnChange(e) {
-    onChange(e);
+    if (!onEducationChange) {
+      onChange(e);
+    } else {
+      onEducationChange(e, educationIndex);
+    }
     handleClick(index);
   }
 
@@ -32,10 +41,15 @@ function ModalInput(props) {
       ...props.style,
     };
 
-    if (isClicked) {
+    if (isClicked && valid) {
       style = {
         ...style,
         ...styles.clicked,
+      };
+    } else if (validate && !valid) {
+      style = {
+        ...style,
+        ...styles.invalid,
       };
     }
 
@@ -58,7 +72,7 @@ function ModalInput(props) {
   const returnDropdownItems = (items) => {
     let options = [];
     for (let i = 0; i < items.length; i++) {
-      options.push(<Option key={i}>{items[i]}</Option>);
+      options.push(<Option key={items[i]}>{items[i]}</Option>);
     }
     return options;
   };
@@ -73,6 +87,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
+            value={defaultValue}
           />
         );
       case "dropdown-single":
@@ -94,12 +109,14 @@ function ModalInput(props) {
           <Select
             className="input-text"
             onClick={() => handleClick(index)}
-            mode={"multiple"}
+            mode={onEducationChange ? "tags" : "multiple"}
             allowClear
             bordered={false}
             style={{ width: "100%" }}
-            placeholder="Please select"
+            placeholder={placeholder || "Please select"}
             onChange={handleOnChange}
+            value={defaultValue}
+            tokenSeparators={[","]}
           >
             {returnDropdownItems(options)}
           </Select>
@@ -112,8 +129,11 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
+            value={defaultValue}
           />
         );
+      default:
+        return null;
     }
   };
 
@@ -144,6 +164,10 @@ const styles = {
   clicked: {
     color: "#F2C94C",
     borderColor: "#F2C94C",
+  },
+  invalid: {
+    color: "#FF0000",
+    borderColor: "#FF0000",
   },
 };
 

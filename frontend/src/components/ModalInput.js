@@ -10,6 +10,7 @@ function ModalInput(props) {
     index,
     educationIndex,
     onEducationChange,
+    maxRows,
     type,
     title,
     placeholder,
@@ -124,7 +125,8 @@ function ModalInput(props) {
       case "textarea":
         return (
           <Input.TextArea
-            className="input-text"
+            className="input-textarea"
+            autoSize={{ maxRows: maxRows ?? 1 }}
             onClick={() => handleClick(index)}
             onChange={handleOnChange}
             bordered={false}

@@ -320,6 +320,7 @@ function MenteeAppointmentModal() {
                   <ModalInput
                     style={styles.modalInput}
                     type="textarea"
+                    maxRows={11}
                     clicked={inputClicked[10]}
                     index={10}
                     handleClick={handleClick}

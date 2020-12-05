@@ -10,6 +10,7 @@ import { fetchMentorByID } from "utils/api";
 
 function Profile() {
   const [mentor, setMentor] = useState({});
+  const [editedMentor, setEditedMentor] = useState(false);
 
   useEffect(() => {
     const mentorID = getMentorID();
@@ -20,7 +21,11 @@ function Profile() {
       }
     }
     getMentor();
-  }, []);
+  }, [editedMentor]);
+
+  const handleSaveEdits = () => {
+    setEditedMentor(!editedMentor);
+  };
 
   return (
     <div className="background-color-strip">
@@ -32,7 +37,11 @@ function Profile() {
         />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
-            <ProfileContent mentor={mentor} isMentor={true} />
+            <ProfileContent
+              mentor={mentor}
+              isMentor={true}
+              handleSaveEdits={handleSaveEdits}
+            />
           </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">

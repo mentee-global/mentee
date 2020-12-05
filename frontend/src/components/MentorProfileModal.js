@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
+import { Button, Modal, Checkbox, Avatar, Upload, Alert } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
@@ -14,6 +14,8 @@ function MentorProfileModal(props) {
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
+  const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
+  const [validate, setValidate] = useState(false);
   const [name, setName] = useState(null);
   const [title, setTitle] = useState(null);
   const [about, setAbout] = useState(null);
@@ -27,6 +29,8 @@ function MentorProfileModal(props) {
   const [educations, setEducations] = useState([]);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
+  const [edited, setEdited] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setName(props.mentor.name);
@@ -36,12 +40,27 @@ function MentorProfileModal(props) {
     setGroupAvailable(props.mentor.offers_group_appointments);
     setLocation(props.mentor.location);
     setWebsite(props.mentor.website);
-    setLanguages(props.mentor.languages);
     setLinkedin(props.mentor.linkedin);
-    setSpecializations(props.mentor.specializations);
-    setEducations(props.mentor.education);
     setImage(props.mentor.image);
-  }, [props.mentor]);
+    setSpecializations(props.mentor.specializations);
+    setLanguages(props.mentor.languages);
+    // Deep copy of array of objects
+    const newEducation = props.mentor.education
+      ? JSON.parse(JSON.stringify(props.mentor.education))
+      : [];
+    setEducations(newEducation);
+
+    if (props.mentor.education) {
+      let newInputs = (props.mentor.education.length - 1) * 4;
+      setNumInputs(numInputs + newInputs);
+
+      let newValid = [...isValid];
+      for (let i = 0; i < newInputs; i++) {
+        newValid.push(true);
+      }
+      setIsValid(newValid);
+    }
+  }, [props.mentor, modalVisible]);
 
   function renderEducationInputs() {
     return (
@@ -61,6 +80,8 @@ function MentorProfileModal(props) {
                 onEducationChange={handleSchoolChange}
                 educationIndex={i}
                 defaultValue={education.school}
+                valid={isValid[10 + i * 4]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -72,6 +93,8 @@ function MentorProfileModal(props) {
                 onEducationChange={handleGraduationDateChange}
                 educationIndex={i}
                 defaultValue={education.graduation_year}
+                valid={isValid[10 + i * 4 + 1]}
+                validate={validate}
               ></ModalInput>
             </div>
             <div className="modal-input-container">
@@ -87,6 +110,8 @@ function MentorProfileModal(props) {
                 options={[]}
                 placeholder="Ex. Computer Science, Biology"
                 defaultValue={education.majors}
+                valid={isValid[10 + i * 4 + 2]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -99,6 +124,8 @@ function MentorProfileModal(props) {
                 onEducationChange={handleDegreeChange}
                 placeholder="Ex. Bachelor's"
                 defaultValue={education.education_level}
+                valid={isValid[10 + i * 4 + 3]}
+                validate={validate}
               ></ModalInput>
             </div>
           </div>
@@ -116,46 +143,74 @@ function MentorProfileModal(props) {
 
   function handleNameChange(e) {
     setName(e.target.value);
+    setEdited(true);
+    let newValid = [...isValid];
+
+    newValid[0] = !!e.target.value;
+
+    setIsValid(newValid);
   }
 
   function handleTitleChange(e) {
     setTitle(e.target.value);
+    setEdited(true);
+    let newValid = [...isValid];
+    newValid[1] = !!e.target.value;
+    setIsValid(newValid);
   }
 
   function handleAboutChange(e) {
     setAbout(e.target.value);
+    setEdited(true);
   }
 
   function handleInPersonAvailableChange(e) {
     setInPersonAvailable(e.target.checked);
+    setEdited(true);
   }
 
   function handleGroupAvailableChange(e) {
     setGroupAvailable(e.target.checked);
+    setEdited(true);
   }
 
   function handleLocationChange(e) {
     setLocation(e.target.value);
+    setEdited(true);
   }
 
   function handleWebsiteChange(e) {
     setWebsite(e.target.value);
+    setEdited(true);
   }
 
   function handleLanguageChange(e) {
     let languagesSelected = [];
-    e.forEach((value) => languagesSelected.push(LANGUAGES[value]));
+    e.forEach((value) => {
+      languagesSelected.push(value);
+    });
     setLanguages(languagesSelected);
+    setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[7] = !!languagesSelected.length;
+    setIsValid(newValid);
   }
 
   function handleLinkedinChange(e) {
     setLinkedin(e.target.value);
+    setEdited(true);
   }
 
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
-    e.forEach((value) => specializationsSelected.push(SPECIALIZATIONS[value]));
+    e.forEach((value) => specializationsSelected.push(value));
     setSpecializations(specializationsSelected);
+    setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[9] = !!specializationsSelected.length;
+    setIsValid(newValid);
   }
 
   function handleSchoolChange(e, index) {
@@ -164,6 +219,11 @@ function MentorProfileModal(props) {
     education.school = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4] = !!education.school;
+    setIsValid(newValid);
   }
 
   function handleGraduationDateChange(e, index) {
@@ -172,6 +232,11 @@ function MentorProfileModal(props) {
     education.graduation_year = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4 + 1] = !!education.graduation_year;
+    setIsValid(newValid);
   }
 
   function handleMajorsChange(e, index) {
@@ -182,6 +247,11 @@ function MentorProfileModal(props) {
     education.majors = majors;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4 + 2] = !!education.majors.length;
+    setIsValid(newValid);
   }
 
   function handleDegreeChange(e, index) {
@@ -190,6 +260,11 @@ function MentorProfileModal(props) {
     education.education_level = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    setEdited(true);
+
+    let newValid = [...isValid];
+    newValid[10 + index * 4 + 3] = !!education.education_level;
+    setIsValid(newValid);
   }
 
   const handleAddEducation = () => {
@@ -201,14 +276,35 @@ function MentorProfileModal(props) {
       graduation_year: "",
     });
     setEducations(newEducations);
+    setEdited(true);
+    setIsValid([...isValid].push(true, true, true, true));
   };
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
       await editMentorProfile(data, props.mentor._id.$oid);
+      if (changedImage) {
+        await uploadMentorImage(image, props.mentor._id.$oid);
+      }
+      setSaving(false);
+      props.onSave();
+      setModalVisible(false);
+      setIsValid([...isValid].fill(true));
+      setValidate(false);
+      setChangedImage(false);
+    }
+    if (!edited && !changedImage) {
+      setModalVisible(false);
+      setIsValid([...isValid].fill(true));
+      setValidate(false);
+      return;
     }
 
-    console.log(props.mentor._id.$oid);
+    if (isValid.includes(false)) {
+      setValidate(true);
+      return;
+    }
+
     const updatedProfile = {
       name: name,
       professional_title: title,
@@ -222,8 +318,8 @@ function MentorProfileModal(props) {
       offers_group_appointments: groupAvailable,
     };
 
+    setSaving(true);
     saveEdits(updatedProfile);
-    setModalVisible(false);
   };
 
   return (
@@ -237,18 +333,26 @@ function MentorProfileModal(props) {
       <Modal
         title="Edit Profile"
         visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => {
+          setModalVisible(false);
+          setValidate(false);
+          setIsValid([...isValid].fill(true));
+        }}
         width="50%"
         style={{ overflow: "hidden" }}
         footer={
-          <Button
-            type="default"
-            shape="round"
-            style={styles.footer}
-            onClick={handleSaveEdits}
-          >
-            Save
-          </Button>
+          <div>
+            {validate && <b style={styles.alertToast}>Missing Fields</b>}
+            <Button
+              type="default"
+              shape="round"
+              style={styles.footer}
+              onClick={handleSaveEdits}
+              loading={saving}
+            >
+              Save
+            </Button>
+          </div>
         }
       >
         <div className="modal-container">
@@ -257,9 +361,15 @@ function MentorProfileModal(props) {
               size={120}
               icon={<UserOutlined />}
               className="modal-profile-icon"
+              src={
+                changedImage ? URL.createObjectURL(image) : image && image.url
+              }
             />
             <Upload
-              action={(file) => uploadMentorImage(file, props.mentor._id.$oid)}
+              action={(file) => {
+                setImage(file);
+                setChangedImage(true);
+              }}
               accept=".png,.jpg,.jpeg"
               showUploadList={false}
             >
@@ -281,6 +391,8 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleNameChange}
                 defaultValue={name}
+                valid={isValid[0]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -291,6 +403,8 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleTitleChange}
                 defaultValue={title}
+                valid={isValid[1]}
+                validate={validate}
               ></ModalInput>
             </div>
             <div className="modal-input-container">
@@ -313,7 +427,7 @@ function MentorProfileModal(props) {
                 onChange={handleInPersonAvailableChange}
                 checked={inPersonAvailable}
               >
-                Available online?
+                Available in-person?
               </Checkbox>
               <div></div>
               <Checkbox
@@ -361,6 +475,8 @@ function MentorProfileModal(props) {
                 placeholder="Ex. English, Spanish"
                 options={LANGUAGES}
                 defaultValue={languages}
+                valid={isValid[7]}
+                validate={validate}
               ></ModalInput>
               <ModalInput
                 height={65}
@@ -384,6 +500,8 @@ function MentorProfileModal(props) {
                 onChange={handleSpecializationsChange}
                 options={SPECIALIZATIONS}
                 defaultValue={specializations}
+                valid={isValid[9]}
+                validate={validate}
               ></ModalInput>
             </div>
             <div className="modal-education-header">Education</div>
@@ -407,6 +525,11 @@ const styles = {
     borderRadius: 13,
     marginRight: 15,
     backgroundColor: "#E4BB4F",
+  },
+  alertToast: {
+    color: "#FF0000",
+    display: "inline-block",
+    marginRight: 10,
   },
 };
 

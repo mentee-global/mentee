@@ -18,6 +18,8 @@ function ModalInput(props) {
     onChange,
     handleClick,
     defaultValue,
+    valid,
+    validate,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -40,10 +42,15 @@ function ModalInput(props) {
       height: height,
     };
 
-    if (isClicked) {
+    if (isClicked && valid) {
       style = {
         ...style,
         ...styles.clicked,
+      };
+    } else if (validate && !valid) {
+      style = {
+        ...style,
+        ...styles.invalid,
       };
     }
 
@@ -66,7 +73,7 @@ function ModalInput(props) {
   const returnDropdownItems = (items) => {
     let options = [];
     for (let i = 0; i < items.length; i++) {
-      options.push(<Option key={i}>{items[i]}</Option>);
+      options.push(<Option key={items[i]}>{items[i]}</Option>);
     }
     return options;
   };
@@ -89,13 +96,13 @@ function ModalInput(props) {
           <Select
             className="input-text"
             onClick={() => handleClick(index)}
-            mode="tags"
+            mode={onEducationChange ? "tags" : "multiple"}
             allowClear
             bordered={false}
             style={{ width: "100%" }}
             placeholder={placeholder || "Please select"}
             onChange={handleOnChange}
-            defaultValue={defaultValue}
+            value={defaultValue}
             tokenSeparators={[","]}
           >
             {returnDropdownItems(options)}
@@ -147,6 +154,10 @@ const styles = {
   clicked: {
     color: "#F2C94C",
     borderColor: "#F2C94C",
+  },
+  invalid: {
+    color: "#FF0000",
+    borderColor: "#FF0000",
   },
 };
 

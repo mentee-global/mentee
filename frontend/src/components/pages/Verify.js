@@ -40,11 +40,12 @@ function Verify() {
               content={<b>Confirm</b>}
               width={"50%"}
               height={"125%"}
-              onClick={() => {}}
+              onClick={() => {}} // TODO: replace with auth confirmation
             />
           </div>
           <div className="login-register-container">
             <div>Didn&#39;t receive a code?</div>
+            {/* TODO: replace with auth resend (may have to change to button) */}
             <NavLink to="/login" className="login-register-link">
               Resend
             </NavLink>

@@ -41,8 +41,9 @@ function Register() {
         <div className="register-container">
           <h1 className="login-text">Register</h1>
           <div
-            className={`login-input-container${inputClicked[0] ? "__clicked" : ""
-              }`}
+            className={`login-input-container${
+              inputClicked[0] ? "__clicked" : ""
+            }`}
           >
             <Input
               className="login-input"
@@ -53,8 +54,9 @@ function Register() {
             />
           </div>
           <div
-            className={`login-input-container${inputClicked[1] ? "__clicked" : ""
-              }`}
+            className={`login-input-container${
+              inputClicked[1] ? "__clicked" : ""
+            }`}
           >
             <Input
               className="login-input"
@@ -65,8 +67,9 @@ function Register() {
             />
           </div>
           <div
-            className={`login-input-container${inputClicked[2] ? "__clicked" : ""
-              }`}
+            className={`login-input-container${
+              inputClicked[2] ? "__clicked" : ""
+            }`}
           >
             <Input
               className="login-input"
@@ -77,8 +80,9 @@ function Register() {
             />
           </div>
           <div
-            className={`login-input-container${inputClicked[3] ? "__clicked" : ""
-              }`}
+            className={`login-input-container${
+              inputClicked[3] ? "__clicked" : ""
+            }`}
           >
             <Input
               className="login-input"
@@ -93,8 +97,8 @@ function Register() {
           ) : passwordError ? (
             <div className="register-error">Passwords do not match</div>
           ) : (
-                <br />
-              )}
+            <br />
+          )}
           <div className="login-button">
             <MenteeButton
               content={<b>Next</b>}

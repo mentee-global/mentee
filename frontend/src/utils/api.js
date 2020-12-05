@@ -11,6 +11,7 @@ export const mentorID = "5fa1d8316405978382c8b92f";
 export const appointmentID = "5f93224191f097b50954408c";
 
 export const fetchMentorByID = (id) => {
+  if (!id) return;
   const requestExtension = "/mentor/" + id;
   return instance.get(requestExtension).then(
     (response) => response.data.result.mentor,

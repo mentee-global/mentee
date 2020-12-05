@@ -4,11 +4,14 @@ const instance = axios.create({
   baseURL: "http://localhost:5000",
 });
 
-const register = (email, password) => {
+// Role is where you put "admin" or "mentor"- right now
+// we only have mentor
+const register = (email, password, role) => {
   return instance
     .post("/register", {
       email,
       password,
+      role,
     })
     .then((response) => {
       if (response.data.result && response.data.result.token) {
@@ -37,7 +40,7 @@ const verify = (pin) => {
     )
     .then((response) => {
       return response.data.status == 200;
-    })
+    });
 };
 
 const resendVerify = () => {

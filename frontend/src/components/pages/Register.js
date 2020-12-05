@@ -46,7 +46,7 @@ function Register({ history }) {
       setPasswordError(newPasswordError);
       setFieldError(newFieldError);
     } else {
-      const res = await register(email, password);
+      const res = await register(email, password, "mentor");
       if (res) {
         history.push("/verify");
       } else {

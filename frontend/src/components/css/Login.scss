@@ -57,7 +57,7 @@
     justify-content: center;
 }
 
-.login-register-link {
+.login-register-link, .login-register-link:focus {
     background: none;
     border: none;
     color: $mentee-button-regular;

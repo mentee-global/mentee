@@ -11,10 +11,16 @@ import Honeycomb from "../../resources/honeycomb.png";
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [inputClicked, setInputClicked] = useState([false, false]);
+  const [inputFocus, setInputFocus] = useState([false, false]);
   const [error, setError] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
+
+  function handleInputFocus(index) {
+    let newClickedInput = [false, false];
+    newClickedInput[index] = true;
+    setInputFocus(newClickedInput);
+  }
 
   const redirectToAppointments = useCallback(() => {
     history.push("appointments");
@@ -26,11 +32,6 @@ function Login() {
     }
   }, [redirectToAppointments]);
 
-  const handleInputClick = (index) => {
-    let newClickedInput = [false, false];
-    newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
-  };
   return (
     <div className="home-background">
       <div className="login-content">
@@ -43,13 +44,13 @@ function Login() {
           )}
           <div
             className={`login-input-container${
-              inputClicked[0] ? "__clicked" : ""
+              inputFocus[0] ? "__clicked" : ""
             }`}
           >
             <Input
               className="login-input"
+              onFocus={() => handleInputFocus(0)}
               disabled={loggingIn}
-              onClick={() => handleInputClick(0)}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
               placeholder="Email"
@@ -57,7 +58,7 @@ function Login() {
           </div>
           <div
             className={`login-input-container${
-              inputClicked[1] ? "__clicked" : ""
+              inputFocus[1] ? "__clicked" : ""
             }`}
           >
             <Input.Password
@@ -66,7 +67,7 @@ function Login() {
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
-              onClick={() => handleInputClick(1)}
+              onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
               placeholder="Password"
@@ -91,7 +92,7 @@ function Login() {
           </div>
           <div className="login-register-container">
             <div>Don&#39;t have an account?</div>
-            <NavLink to="/" className="login-register-link">
+            <NavLink to="/register" className="login-register-link">
               Register
             </NavLink>
           </div>

@@ -10,12 +10,12 @@ import Honeycomb from "../../resources/honeycomb.png";
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [inputClicked, setInputClicked] = useState([false, false]);
+  const [inputFocus, setInputFocus] = useState([false, false]);
 
-  function handleInputClick(index) {
+  function handleInputFocus(index) {
     let newClickedInput = [false, false];
     newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
+    setInputFocus(newClickedInput);
   }
 
   return (
@@ -25,12 +25,12 @@ function Login() {
           <h1 className="login-text">Sign In</h1>
           <div
             className={`login-input-container${
-              inputClicked[0] ? "__clicked" : ""
+              inputFocus[0] ? "__clicked" : ""
             }`}
           >
             <Input
               className="login-input"
-              onClick={() => handleInputClick(0)}
+              onFocus={() => handleInputFocus(0)}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
               placeholder="Email"
@@ -38,12 +38,12 @@ function Login() {
           </div>
           <div
             className={`login-input-container${
-              inputClicked[1] ? "__clicked" : ""
+              inputFocus[1] ? "__clicked" : ""
             }`}
           >
             <Input
               className="login-input"
-              onClick={() => handleInputClick(1)}
+              onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
               placeholder="Password"

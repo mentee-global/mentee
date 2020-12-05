@@ -9,6 +9,7 @@ import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import Login from "components/pages/Login";
 import Register from "components/pages/Register";
+import RegisterForm from "components/pages/RegisterForm";
 
 function App() {
   return (
@@ -64,6 +65,12 @@ function App() {
         path="/register"
         component={() => (
           <Navigation content={<Register />} needsAuth={false} />
+        )}
+      />
+      <Route
+        path="/register-form"
+        component={() => (
+          <Navigation content={<RegisterForm />} needsAuth={false} />
         )}
       />
     </Router>

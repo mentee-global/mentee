@@ -37,8 +37,7 @@ function AvailabilityCalendar() {
       if (availability_data) {
         const availability = availability_data.availability;
         const times = [];
-        var i;
-        for (i = 0; i < availability.length; i++) {
+        for (let i = 0; i < availability.length; i++) {
           times.push([
             moment(availability[i].start_time.$date),
             moment(availability[i].end_time.$date),
@@ -49,17 +48,21 @@ function AvailabilityCalendar() {
     }
     getAvailability();
   }, []);
-  async function getSetDays() {
-    const set_data = await fetchSetDays(mentorID);
-    if (set_data) {
-      let set = {};
-      for (let i = 0; i < set_data.days.length; i++) {
-        set[set_data.days[i]] = true;
+
+  useEffect(() => {
+    async function getSetDays() {
+      const set_data = await fetchSetDays(mentorID);
+      if (set_data) {
+        let set = {};
+        for (let i = 0; i < set_data.days.length; i++) {
+          set[set_data.days[i]] = true;
+        }
+        setSaved(set);
       }
-      setSaved(set);
     }
-  }
-  getSetDays();
+    getSetDays();
+  }, [saved]);
+
   const handleTimeChange = (index, event, num) => {
     const times = [...timeSlots];
     times[index][num] = moment(
@@ -99,14 +102,16 @@ function AvailabilityCalendar() {
     );
     editAvailability(json_data, mentorID);
     setVisible(false);
-    getSetDays(mentorID);
   };
 
   const handleCancel = () => {
     setVisible(false);
   };
   const handleClear = () => {
-    setTimeSlots([]);
+    let cleared = timeSlots.filter(function (value, index, arr) {
+      return !(value[0].format("YYYY-MM-DD") === date.format("YYYY-MM-DD"));
+    });
+    setTimeSlots(cleared);
   };
 
   const getListData = (value) => {
@@ -119,8 +124,7 @@ function AvailabilityCalendar() {
 
   const getTimeSlots = (day) => {
     let returnSlots = [];
-    let i;
-    for (i = 0; i < timeSlots.length; i++) {
+    for (let i = 0; i < timeSlots.length; i++) {
       if (day === timeSlots[i][0].format("YYYY-MM-DD")) {
         returnSlots.push(timeSlots[i]);
       }

@@ -15,13 +15,13 @@ function Login() {
   const [error, setError] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
-  
+
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
     newClickedInput[index] = true;
     setInputFocus(newClickedInput);
   }
-  
+
   const redirectToAppointments = useCallback(() => {
     history.push("appointments");
   }, [history]);

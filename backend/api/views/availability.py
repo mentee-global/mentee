@@ -4,7 +4,7 @@ from api.core import create_response, serialize_list, logger
 
 availability = Blueprint("availability", __name__)
 
-
+# Get request for avalability for a specific mentor
 @availability.route("/availability/<id>", methods=["GET"])
 def get_availability(id):
 
@@ -18,6 +18,7 @@ def get_availability(id):
     return create_response(data={"availability": availability})
 
 
+# Put request to edit availability for a specific mentor
 @availability.route("/availability/<id>", methods=["PUT"])
 def edit_availability(id):
     data = request.get_json().get("Availability")
@@ -39,6 +40,7 @@ def edit_availability(id):
     return create_response(status=200, message=f"Success")
 
 
+# Get days that availabilities have been set for
 @availability.route("/availability/setdays/<id>", methods=["GET"])
 def get_set_availability_days(id):
     try:
@@ -49,14 +51,15 @@ def get_set_availability_days(id):
         return create_response(status=422, message=msg)
     set_availability_days = []
 
+    # Find the Year/month/day
     for each in availability:
-        print(each)
+
         day = (
             str(each.start_time.year)
             + "-"
-            + str(each.start_time.month)
+            + "{:0>2}".format(each.start_time.month)
             + "-"
-            + str(each.start_time.day)
+            + "{:0>2}".format(each.start_time.day)
         )
         if day not in set_availability_days:
             set_availability_days.append(day)

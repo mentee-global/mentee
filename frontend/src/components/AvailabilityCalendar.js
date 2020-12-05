@@ -55,7 +55,6 @@ function AvailabilityCalendar() {
       let set = {};
       let i;
       for (i = 0; i < set_data.days.length; i++) {
-        // console.log(set_data.days[i]);
         set[set_data.days[i]] = true;
       }
       setSaved(set);
@@ -112,8 +111,6 @@ function AvailabilityCalendar() {
   };
 
   const getListData = (value) => {
-    console.log(saved);
-    console.log(value.format("YYYY-MM-DD"));
     if (saved[value.format("YYYY-MM-DD")]) {
       return [{ content: "test" }];
     } else {

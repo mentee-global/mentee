@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
+import { isLoggedIn, login } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
-
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/Home.scss";
 import "../css/Login.scss";
 import Honeycomb from "../../resources/honeycomb.png";
@@ -11,6 +12,8 @@ function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
+  const [error, setError] = useState(false);
+  const history = useHistory();
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
@@ -18,11 +21,24 @@ function Login() {
     setInputFocus(newClickedInput);
   }
 
+  const redirectToAppointments = () => {
+    history.push("appointments");
+  };
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      redirectToAppointments();
+    }
+  }, []);
+
   return (
     <div className="home-background">
       <div className="login-content">
         <div className="login-container">
           <h1 className="login-text">Sign In</h1>
+          {error && (
+            <p>Incorrect username and/or password. Please try again.</p>
+          )}
           <div
             className={`login-input-container${
               inputFocus[0] ? "__clicked" : ""
@@ -41,9 +57,12 @@ function Login() {
               inputFocus[1] ? "__clicked" : ""
             }`}
           >
-            <Input
+            <Input.Password
               className="login-input"
-              onFocus={() => handleInputFocus(1)}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+              onClick={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
               placeholder="Password"
@@ -54,7 +73,13 @@ function Login() {
               content={<b>Login</b>}
               width={"50%"}
               height={"125%"}
-              onClick={() => {}}
+              onClick={async () => {
+                const res = await login(email, password);
+                setError(!Boolean(res));
+                if (!error) {
+                  redirectToAppointments();
+                }
+              }}
             />
           </div>
           <div className="login-register-container">

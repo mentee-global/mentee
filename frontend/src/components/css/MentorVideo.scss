@@ -1,0 +1,29 @@
+.video-row {
+    display: flex;
+    border-top: solid #FFECBD 1px;
+    height: 125px;
+}
+
+.video-block {
+    display: flex;
+    width: 40%;
+}
+
+.video {
+    background: #e5e5e5;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-top: 13px;
+    margin-left: 8px;
+}
+
+.video-interactions {
+    width: 60%;
+    border-left: solid #FFECBD 1px;
+    position: relative;
+}
+
+.pin-button {
+    border-radius: 100%;
+    border: none;
+}

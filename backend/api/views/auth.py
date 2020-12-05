@@ -62,7 +62,7 @@ def login():
 
     if not resp.get("token"):
         return create_response(message=resp["message"], status=400)
-      
+
     uid = resp["uid"]
     user = Users.objects.get(id=uid)
     try:

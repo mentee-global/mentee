@@ -35,6 +35,18 @@ export const editMentorProfile = (profile, id) => {
   );
 };
 
+export const uploadMentorImage = (data, id) => {
+  let formData = new FormData();
+  formData.append("image", data);
+  const requestExtension = "/mentor/" + id + "/image";
+  return instance.put(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createMentorProfile = (profile) => {
   const requestExtension = "/mentor";
   return instance.post(requestExtension, profile).then(

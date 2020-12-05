@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
 import { isLoggedIn, login } from "utils/auth.service";
@@ -13,6 +13,7 @@ function Login() {
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
   const [error, setError] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
 
   function handleInputFocus(index) {
@@ -21,15 +22,15 @@ function Login() {
     setInputFocus(newClickedInput);
   }
 
-  const redirectToAppointments = () => {
+  const redirectToAppointments = useCallback(() => {
     history.push("appointments");
-  };
+  }, [history]);
 
   useEffect(() => {
     if (isLoggedIn()) {
       redirectToAppointments();
     }
-  }, []);
+  }, [redirectToAppointments]);
 
   return (
     <div className="home-background">
@@ -37,7 +38,9 @@ function Login() {
         <div className="login-container">
           <h1 className="login-text">Sign In</h1>
           {error && (
-            <p>Incorrect username and/or password. Please try again.</p>
+            <div className="login-error">
+              Incorrect username and/or password. Please try again.
+            </div>
           )}
           <div
             className={`login-input-container${
@@ -47,6 +50,7 @@ function Login() {
             <Input
               className="login-input"
               onFocus={() => handleInputFocus(0)}
+              disabled={loggingIn}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
               placeholder="Email"
@@ -59,10 +63,11 @@ function Login() {
           >
             <Input.Password
               className="login-input"
+              disabled={loggingIn}
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
-              onClick={() => handleInputFocus(1)}
+              onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
               placeholder="Password"
@@ -70,15 +75,18 @@ function Login() {
           </div>
           <div className="login-button">
             <MenteeButton
-              content={<b>Login</b>}
+              content={<b>Log In</b>}
               width={"50%"}
               height={"125%"}
+              loading={loggingIn}
               onClick={async () => {
+                setLoggingIn(true);
                 const res = await login(email, password);
                 setError(!Boolean(res));
-                if (!error) {
+                if (Boolean(res)) {
                   redirectToAppointments();
                 }
+                setLoggingIn(false);
               }}
             />
           </div>

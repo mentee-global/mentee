@@ -45,6 +45,7 @@ export const formatAppointments = (data) => {
       location: appointment.location,
       mentorship_goals: appointment.mentorship_goals,
       specialist_categories: appointment.specialist_categories,
+      organization: appointment.organization,
     };
 
     // This is the only case where we might not have a date for a certain key

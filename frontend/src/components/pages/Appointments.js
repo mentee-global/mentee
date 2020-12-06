@@ -245,8 +245,11 @@ function Appointments() {
 
   const getSubtext = (gender, ethnicity, organization) => {
     var subtextInfo = [gender, ethnicity];
-    if (organization !== undefined) {
+    if (organization != undefined) {
       subtextInfo.push(organization);
+    } else {
+      console.log(organization);
+      console.log("hiiiiiiiiii");
     }
     return subtextInfo.join(" • ");
   };

@@ -91,8 +91,11 @@ const getCurrentRegistration = () => {
 };
 
 // For when the user finishes creating profile
-const removeRegistration = () => {
+const removeRegistration = (mentorId) => {
+  const registration = JSON.parse(localStorage.getItem("registration"));
+  registration["mentorId"] = mentorId;
   localStorage.removeItem("registration");
+  localStorage.setItem("user", JSON.stringify(registration));
 };
 
 export {

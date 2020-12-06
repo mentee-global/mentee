@@ -64,7 +64,7 @@ function Verify(props) {
                 setVerifying(true);
                 const success = await verify(code);
                 if (success) {
-                  // TODO: link to third page of registration
+                  props.history.push("/create-profile");
                 } else {
                   setError(true);
                   setResent(false);

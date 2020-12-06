@@ -27,18 +27,17 @@ class VideoForm(Form):
 
 
 class MentorForm(Form):
-    uid = StringField(validators=[InputRequired()])
+    user_id = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     professional_title = StringField(validators=[InputRequired()])
-    email = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])
-    offers_in_person = BooleanField(
-        validators=[InputRequired()], false_values=("false", "False")
-    )
-    offers_group_appointments = BooleanField(
-        validators=[InputRequired()], false_values=("false", "False")
-    )
+    # offers_in_person = BooleanField(
+    #     validators=[InputRequired()], false_values=("false", "False", False)
+    # )
+    # offers_group_appointments = BooleanField(
+    #     validators=[InputRequired()], false_values=("false", "False", False)
+    # )
 
 
 class AvailabilityForm(Form):

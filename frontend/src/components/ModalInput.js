@@ -6,11 +6,11 @@ const { Option } = Select;
 
 function ModalInput(props) {
   const {
-    height,
     clicked,
     index,
     educationIndex,
     onEducationChange,
+    maxRows,
     type,
     title,
     placeholder,
@@ -39,7 +39,7 @@ function ModalInput(props) {
   function getContainerStyle() {
     let style = {
       ...styles.container,
-      height: height,
+      ...props.style,
     };
 
     if (isClicked && valid) {
@@ -91,7 +91,21 @@ function ModalInput(props) {
             value={defaultValue}
           />
         );
-      case "dropdown":
+      case "dropdown-single":
+        return (
+          <Select
+            className="input-text"
+            onClick={() => handleClick(index)}
+            allowClear
+            bordered={false}
+            style={{ width: "100%" }}
+            placeholder="Please select"
+            onChange={handleOnChange}
+          >
+            {returnDropdownItems(options)}
+          </Select>
+        );
+      case "dropdown-multiple":
         return (
           <Select
             className="input-text"
@@ -111,7 +125,8 @@ function ModalInput(props) {
       case "textarea":
         return (
           <Input.TextArea
-            className="input-text"
+            className="input-textarea"
+            autoSize={{ maxRows: maxRows ?? 1 }}
             onClick={() => handleClick(index)}
             onChange={handleOnChange}
             bordered={false}
@@ -141,9 +156,6 @@ const styles = {
     borderBottomStyle: "solid",
     borderBottomWidth: 3,
     borderColor: "#828282",
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
   },
   text: {
     flex: 1,

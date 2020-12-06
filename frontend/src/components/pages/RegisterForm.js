@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Button, Modal, Checkbox, Avatar, Upload, Alert } from "antd";
+import React, { useState } from "react";
+import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
-import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
+import { PlusCircleFilled } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
-//import { editMentorProfile, uploadMentorImage } from "../../utils/api";
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
-import MenteeButton from "components/MenteeButton";
+import "../css/MenteeButton.scss";
 
 function RegisterForm(props) {
   const [numInputs, setNumInputs] = useState(14);
@@ -23,12 +22,10 @@ function RegisterForm(props) {
   const [groupAvailable, setGroupAvailable] = useState(null);
   const [location, setLocation] = useState(null);
   const [website, setWebsite] = useState(null);
-  const [languages, setLanguages] = useState(null);
+  const [languages, setLanguages] = useState([]);
   const [linkedin, setLinkedin] = useState(null);
-  const [specializations, setSpecializations] = useState(null);
+  const [specializations, setSpecializations] = useState([]);
   const [educations, setEducations] = useState([]);
-  const [image, setImage] = useState(null);
-  const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -41,6 +38,7 @@ function RegisterForm(props) {
           <div className="modal-inner-education-container">
             <div className="modal-input-container">
               <ModalInput
+                style={styles.modalInput}
                 height={65}
                 type="text"
                 title="School"
@@ -52,8 +50,9 @@ function RegisterForm(props) {
                 defaultValue={education.school}
                 valid={isValid[10 + i * 4]}
                 validate={validate}
-              ></ModalInput>
+              />
               <ModalInput
+                style={styles.modalInput}
                 height={65}
                 type="text"
                 title="End Year/Expected"
@@ -65,12 +64,13 @@ function RegisterForm(props) {
                 defaultValue={education.graduation_year}
                 valid={isValid[10 + i * 4 + 1]}
                 validate={validate}
-              ></ModalInput>
+              />
             </div>
             <div className="modal-input-container">
               <ModalInput
+                style={styles.modalInput}
                 height={65}
-                type="dropdown"
+                type="dropdown-multiple"
                 title="Major(s)"
                 clicked={inputClicked[10 + i * 4 + 2]}
                 index={10 + i * 4 + 2}
@@ -82,8 +82,9 @@ function RegisterForm(props) {
                 defaultValue={education.majors}
                 valid={isValid[10 + i * 4 + 2]}
                 validate={validate}
-              ></ModalInput>
+              />
               <ModalInput
+                style={styles.modalInput}
                 height={65}
                 type="text"
                 title="Degree"
@@ -96,7 +97,7 @@ function RegisterForm(props) {
                 defaultValue={education.education_level}
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
-              ></ModalInput>
+              />
             </div>
           </div>
         </div>
@@ -247,22 +248,17 @@ function RegisterForm(props) {
     });
     setEducations(newEducations);
     setEdited(true);
-    setIsValid([...isValid].push(true, true, true, true));
+    setIsValid([...isValid, true, true, true, true]);
   };
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      // await editMentorProfile(data, props.mentor._id.$oid);
-      // if (changedImage) {
-      //     await uploadMentorImage(image, props.mentor._id.$oid);
-      // }
       setSaving(false);
-      props.onSave();
       setIsValid([...isValid].fill(true));
       setValidate(false);
-      setChangedImage(false);
     }
-    if (!edited && !changedImage) {
+
+    if (!edited) {
       setIsValid([...isValid].fill(true));
       setValidate(false);
       return;
@@ -273,7 +269,7 @@ function RegisterForm(props) {
       return;
     }
 
-    const updatedProfile = {
+    const newProfile = {
       name: name,
       professional_title: title,
       linkedin: linkedin,
@@ -287,47 +283,30 @@ function RegisterForm(props) {
     };
 
     setSaving(true);
-    saveEdits(updatedProfile);
+    saveEdits(newProfile);
   };
-
-  function handleInputClick(index) {
-    let newClickedInput = [false, false, false, false];
-    newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
-  }
 
   return (
     <div className="register-content">
       <div className="register-header">
         <h2>Welcome. Tell us about yourself.</h2>
-        <MenteeButton content="Save" />
-      </div>
-      <div className="register-header-container">
-        <Avatar
-          size={120}
-          icon={<UserOutlined />}
-          className="modal-profile-icon"
-          src={changedImage ? URL.createObjectURL(image) : image && image.url}
-        />
-        <Upload
-          action={(file) => {
-            setImage(file);
-            setChangedImage(true);
-          }}
-          accept=".png,.jpg,.jpeg"
-          showUploadList={false}
-        >
+        <div>
+          {validate && <b style={styles.alertToast}>Missing Fields</b>}
           <Button
-            shape="circle"
-            icon={<EditFilled />}
-            className="modal-profile-icon-edit"
-          />
-        </Upload>
+            type="default"
+            shape="round"
+            className="regular-button"
+            onClick={handleSaveEdits}
+            loading={saving}
+          >
+            Save
+          </Button>
+        </div>
       </div>
       <div className="modal-inner-container">
         <div className="modal-input-container">
           <ModalInput
-            height={65}
+            style={styles.modalInput}
             type="text"
             title="Name *"
             clicked={inputClicked[0]}
@@ -337,9 +316,9 @@ function RegisterForm(props) {
             defaultValue={name}
             valid={isValid[0]}
             validate={validate}
-          ></ModalInput>
+          />
           <ModalInput
-            height={65}
+            style={styles.modalInput}
             type="text"
             title="Professional Title *"
             clicked={inputClicked[1]}
@@ -349,10 +328,11 @@ function RegisterForm(props) {
             defaultValue={title}
             valid={isValid[1]}
             validate={validate}
-          ></ModalInput>
+          />
         </div>
         <div className="modal-input-container">
           <ModalInput
+            style={styles.modalInput}
             type="textarea"
             title="About"
             clicked={inputClicked[2]}
@@ -360,7 +340,7 @@ function RegisterForm(props) {
             handleClick={handleClick}
             onChange={handleAboutChange}
             defaultValue={about}
-          ></ModalInput>
+          />
         </div>
         <div className="modal-availability-checkbox">
           <Checkbox
@@ -387,7 +367,7 @@ function RegisterForm(props) {
         </div>
         <div className="modal-input-container">
           <ModalInput
-            height={65}
+            style={styles.modalInput}
             type="text"
             title="Location"
             clicked={inputClicked[5]}
@@ -395,9 +375,9 @@ function RegisterForm(props) {
             handleClick={handleClick}
             onChange={handleLocationChange}
             defaultValue={location}
-          ></ModalInput>
+          />
           <ModalInput
-            height={65}
+            style={styles.modalInput}
             type="text"
             title="Website"
             clicked={inputClicked[6]}
@@ -405,12 +385,12 @@ function RegisterForm(props) {
             handleClick={handleClick}
             onChange={handleWebsiteChange}
             defaultValue={website}
-          ></ModalInput>
+          />
         </div>
         <div className="modal-input-container">
           <ModalInput
-            height={65}
-            type="dropdown"
+            style={styles.modalInput}
+            type="dropdown-multiple"
             title="Languages"
             clicked={inputClicked[7]}
             index={7}
@@ -421,9 +401,9 @@ function RegisterForm(props) {
             defaultValue={languages}
             valid={isValid[7]}
             validate={validate}
-          ></ModalInput>
+          />
           <ModalInput
-            height={65}
+            style={styles.modalInput}
             type="text"
             title="LinkedIn"
             clicked={inputClicked[8]}
@@ -431,12 +411,12 @@ function RegisterForm(props) {
             handleClick={handleClick}
             onChange={handleLinkedinChange}
             defaultValue={linkedin}
-          ></ModalInput>
+          />
         </div>
         <div className="modal-input-container">
           <ModalInput
-            height={65}
-            type="dropdown"
+            style={styles.modalInput}
+            type="dropdown-multiple"
             title="Specializations"
             clicked={inputClicked[9]}
             index={9}
@@ -446,7 +426,7 @@ function RegisterForm(props) {
             defaultValue={specializations}
             valid={isValid[9]}
             validate={validate}
-          ></ModalInput>
+          />
         </div>
         <div className="modal-education-header">Education</div>
         {renderEducationInputs()}
@@ -461,5 +441,19 @@ function RegisterForm(props) {
     </div>
   );
 }
+
+const styles = {
+  modalInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6,
+  },
+  alertToast: {
+    color: "#FF0000",
+    display: "inline-block",
+    marginRight: 10,
+  },
+};
 
 export default RegisterForm;

@@ -69,12 +69,20 @@ function App() {
         )}
       />
       <Route
-        path="/register-form"
+        path="/register"
+        component={() => (
+          <Navigation content={<Register />} needsAuth={false} />
+        )}
+      />
+      <Route
+        path="/verify"
+        component={() => <Navigation content={<Verify />} needsAuth={false} />}
+      />
+      <Route
+        path="/create-profile"
         component={() => (
           <Navigation content={<RegisterForm />} needsAuth={false} />
         )}
-        path="/verify"
-        component={() => <Navigation content={<Verify />} needsAuth={false} />}
       />
     </Router>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import { Input, Button } from "antd";
 import MenteeButton from "../MenteeButton";
 
@@ -10,6 +10,7 @@ import Honeycomb from "../../resources/honeycomb.png";
 
 function Verify() {
   const [code, setCode] = useState("");
+  const history = useHistory();
 
   return (
     <div className="home-background">
@@ -40,7 +41,9 @@ function Verify() {
               content={<b>Confirm</b>}
               width={"50%"}
               height={"125%"}
-              onClick={() => {}} // TODO: replace with auth confirmation
+              onClick={() => {
+                history.push("/create-profile");
+              }} // TODO: replace with auth confirmation
             />
           </div>
           <div className="login-register-container">

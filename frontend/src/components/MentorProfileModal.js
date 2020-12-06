@@ -71,6 +71,7 @@ function MentorProfileModal(props) {
           <div className="modal-inner-education-container">
             <div className="modal-input-container">
               <ModalInput
+                style={styles.modalInput}
                 height={65}
                 type="text"
                 title="School"
@@ -82,8 +83,9 @@ function MentorProfileModal(props) {
                 defaultValue={education.school}
                 valid={isValid[10 + i * 4]}
                 validate={validate}
-              ></ModalInput>
+              />
               <ModalInput
+                style={styles.modalInput}
                 height={65}
                 type="text"
                 title="End Year/Expected"
@@ -95,10 +97,11 @@ function MentorProfileModal(props) {
                 defaultValue={education.graduation_year}
                 valid={isValid[10 + i * 4 + 1]}
                 validate={validate}
-              ></ModalInput>
+              />
             </div>
             <div className="modal-input-container">
               <ModalInput
+                style={styles.modalInput}
                 height={65}
                 type="dropdown-multiple"
                 title="Major(s)"
@@ -112,8 +115,9 @@ function MentorProfileModal(props) {
                 defaultValue={education.majors}
                 valid={isValid[10 + i * 4 + 2]}
                 validate={validate}
-              ></ModalInput>
+              />
               <ModalInput
+                style={styles.modalInput}
                 height={65}
                 type="text"
                 title="Degree"
@@ -126,7 +130,7 @@ function MentorProfileModal(props) {
                 defaultValue={education.education_level}
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
-              ></ModalInput>
+              />
             </div>
           </div>
         </div>

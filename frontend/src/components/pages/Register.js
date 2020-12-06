@@ -96,7 +96,7 @@ function Register() {
           </div>
           <div className="login-register-container">
             <div>Already have an account?</div>
-            <NavLink to="/register-form" className="login-register-link">
+            <NavLink to="/login" className="login-register-link">
               Login
             </NavLink>
           </div>

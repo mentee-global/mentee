@@ -1,5 +1,6 @@
 from os import path
 from flask import Blueprint, request, jsonify
+from bson import ObjectId
 from api.models import db, Education, Video, MentorProfile, AppointmentRequest
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
@@ -42,6 +43,7 @@ def create_mentor_profile():
         return create_response(status=422, message=msg)
 
     new_mentor = MentorProfile(
+        user_id=ObjectId(data["user_id"]),
         name=data["name"],
         email=data["email"],
         professional_title=data["professional_title"],

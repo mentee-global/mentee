@@ -263,8 +263,16 @@ function Appointments() {
         onCancel={() => setModalVisible(false)}
         footer={
           <div className = "ar-footer">
-            <Button className="accept-apt">Accept</Button>
-            <Button className="reject-apt">Reject</Button>
+            <Button 
+              className="accept-apt" 
+              onClick={() => handleAppointmentClick(modalAppointment.id, true)}>
+              Accept
+            </Button>
+            <Button 
+              className="reject-apt" 
+              onClick={() => handleAppointmentClick(modalAppointment.id, false)}>
+              Reject
+            </Button>
           </div>
         }
       >

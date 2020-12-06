@@ -11,22 +11,26 @@ import "../css/Videos.scss";
 
 function Videos() {
   const [videos, setVideos] = useState([]);
+  const [name, setName] = useState("");
   const [filtered, setFiltered] = useState([]);
   const [selectFilter, setSelectFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
+  const [mentorID, setMentorID] = useState("");
   const [form] = Form.useForm();
-  const mentorID = getMentorID();
 
   useEffect(() => {
     async function getVideos() {
-      const mentor = await fetchMentorByID(mentorID);
+      const newMentorID = await getMentorID();
+      const mentor = await fetchMentorByID(newMentorID);
+      setName(mentor.name);
       if (mentor) {
         setVideos(mentor.videos);
         setFiltered(mentor.videos);
       }
+      setMentorID(newMentorID);
     }
     getVideos();
-  }, []);
+  }, [mentorID]);
 
   async function updateVideos(data, id) {
     const update = {
@@ -56,7 +60,7 @@ function Videos() {
 
     if (selectFilter !== "") {
       const filteredVideos = newVideos.filter((video, index, arr) => {
-        return SPECIALIZATIONS.indexOf(video.tag) == selectFilter;
+        return SPECIALIZATIONS.indexOf(video.tag) === selectFilter;
       });
       newVideos = filteredVideos;
     }
@@ -99,6 +103,7 @@ function Videos() {
 
   const filterSpecialization = (value) => {
     const filteredVideos = videos.filter((video, index, arr) => {
+      // eslint-disable-next-line eqeqeq
       return SPECIALIZATIONS.indexOf(video.tag) == value;
     });
     setFiltered(filteredVideos);
@@ -158,7 +163,7 @@ function Videos() {
   return (
     <div style={{ height: "100%" }}>
       <div className="videos-header">
-        <h1 className="videos-header-title">Welcome, {"Insert name"}</h1>
+        <h1 className="videos-header-title">Welcome, {name}</h1>
       </div>
       <div className="filter-card">
         <h1 style={{ fontWeight: "bold", fontSize: 18 }}>Your Uploads</h1>

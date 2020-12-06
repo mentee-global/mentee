@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory, withRouter } from "react-router-dom";
 import { Input } from "antd";
 import MenteeButton from "../MenteeButton";
 
@@ -10,29 +10,29 @@ import Honeycomb from "../../resources/honeycomb.png";
 
 function Register() {
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fieldError, setFieldError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [inputClicked, setInputClicked] = useState([
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [inputFocus, setInputFocus] = useState([false, false, false]);
+  const history = useHistory();
 
-  function handleInputClick(index) {
-    let newClickedInput = [false, false, false, false];
+  function handleInputFocus(index) {
+    let newClickedInput = [false, false, false];
     newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
+    setInputFocus(newClickedInput);
   }
 
   const setErrors = () => {
-    setPasswordError(password !== confirmPassword);
-    setFieldError(
-      email === "" || phone === "" || password === "" || confirmPassword === ""
-    );
+    let newPasswordError = password !== confirmPassword;
+    let newFieldError =
+      email === "" || password === "" || confirmPassword === "";
+    if (newPasswordError || newFieldError) {
+      setPasswordError(newPasswordError);
+      setFieldError(newFieldError);
+    } else {
+      history.push("/verify");
+    }
   };
 
   return (
@@ -42,12 +42,12 @@ function Register() {
           <h1 className="login-text">Register</h1>
           <div
             className={`login-input-container${
-              inputClicked[0] ? "__clicked" : ""
+              inputFocus[0] ? "__clicked" : ""
             }`}
           >
             <Input
               className="login-input"
-              onClick={() => handleInputClick(0)}
+              onFocus={() => handleInputFocus(0)}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
               placeholder="Email"
@@ -55,25 +55,12 @@ function Register() {
           </div>
           <div
             className={`login-input-container${
-              inputClicked[1] ? "__clicked" : ""
+              inputFocus[1] ? "__clicked" : ""
             }`}
           >
             <Input
               className="login-input"
-              onClick={() => handleInputClick(1)}
-              onChange={(e) => setPhone(e.target.value)}
-              bordered={false}
-              placeholder="Phone #"
-            />
-          </div>
-          <div
-            className={`login-input-container${
-              inputClicked[2] ? "__clicked" : ""
-            }`}
-          >
-            <Input
-              className="login-input"
-              onClick={() => handleInputClick(2)}
+              onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
               placeholder="Password"
@@ -81,12 +68,12 @@ function Register() {
           </div>
           <div
             className={`login-input-container${
-              inputClicked[3] ? "__clicked" : ""
+              inputFocus[2] ? "__clicked" : ""
             }`}
           >
             <Input
               className="login-input"
-              onClick={() => handleInputClick(3)}
+              onFocus={() => handleInputFocus(2)}
               onChange={(e) => setConfirmPassword(e.target.value)}
               bordered={false}
               placeholder="Confirm Password"
@@ -104,7 +91,7 @@ function Register() {
               content={<b>Next</b>}
               width={"50%"}
               height={"125%"}
-              onClick={() => setErrors()}
+              onClick={setErrors}
             />
           </div>
           <div className="login-register-container">
@@ -120,4 +107,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default withRouter(Register);

@@ -20,6 +20,8 @@
 }
 
 .mentor-profile-name {
+  display: flex;
+  flex-direction: row;
   font-weight: bold;
   font-size: 20px;
 }

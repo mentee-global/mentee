@@ -33,7 +33,7 @@ const MentorVideo = ({
         <div className="video-pin">
           <button
             className="pin-button"
-            disabled={id == 0}
+            disabled={id === 0}
             onClick={() => onPin(id)}
             style={id === 0 ? { background: "#F2C94C" } : {}}
           >

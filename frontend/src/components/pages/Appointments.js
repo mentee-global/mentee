@@ -13,9 +13,14 @@ import { formatAppointments } from "../../utils/dateFormatting";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
-  mentorID,
   deleteAppointment,
 } from "../../utils/api";
+<<<<<<< HEAD
+=======
+import { getMentorID } from "utils/auth.service";
+import { formatAppointments } from "../../utils/dateFormatting";
+
+>>>>>>> c96b72b7373804a39f7c531e4c953b352d6230fd
 const Tabs = Object.freeze({
   upcoming: {
     title: "All Upcoming",
@@ -41,6 +46,7 @@ function Appointments() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
   useEffect(() => {
+    const mentorID = getMentorID();
     async function getAppointments() {
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);

@@ -34,6 +34,7 @@ export const formatAppointments = (data) => {
       name: appointment.name,
       email: appointment.email,
       age: appointment.age,
+      date: startTime.format("dddd MMMM Do, YYYY"),
       time: startTime.format("h:m a") + " - " + endTime.format("h:m a"),
       isoTime: startTime.format(),
       email: appointment.email,

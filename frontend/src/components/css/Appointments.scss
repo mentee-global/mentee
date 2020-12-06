@@ -25,7 +25,6 @@
     bottom: -107.35px;
     left: 225px;
     transform: rotate(90deg);
-
 }
 
 .ar-modal-container {
@@ -161,12 +160,28 @@
     color: #7A7A7A;
 }
 
-.ar-apt-time {
+.ar-apt-date {
     position: absolute;
     width: 318px;
     height: 35px;
     left: 55.91px;
     top: 236px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 18px;
+
+    color: #A58123;
+}
+
+.ar-apt-time {
+    position: absolute;
+    width: 318px;
+    height: 35px;
+    left: 55.91px;
+    top: 250px;
 
     font-family: Helvetica;
     font-style: normal;

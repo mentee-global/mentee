@@ -199,6 +199,7 @@ function Appointments() {
                   <Appointment
                     key={index}
                     name={appointment.name}
+                    date={appointment.date}
                     time={appointment.time}
                     description={appointment.description}
                     id={appointment.id}
@@ -274,6 +275,7 @@ function Appointments() {
             <div className="ar-languages"><CommentOutlined className="ar-icon"></CommentOutlined>{getLanguages(modalAppointment.languages || [])}</div>
             <div className="ar-location"><EnvironmentOutlined className="ar-icon"></EnvironmentOutlined>{modalAppointment.location}</div>
           </div>
+          <div className="ar-apt-date">{modalAppointment.date}</div>
           <div className="ar-apt-time">{modalAppointment.time}</div>
           <div className="ar-categories-title">Seeking help in:</div>
           <div className="ar-categories">{getCategories(modalAppointment.specialist_categories || [])}</div>  

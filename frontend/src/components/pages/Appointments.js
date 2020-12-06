@@ -15,12 +15,8 @@ import {
   getAppointmentsByMentorID,
   deleteAppointment,
 } from "../../utils/api";
-<<<<<<< HEAD
-=======
 import { getMentorID } from "utils/auth.service";
-import { formatAppointments } from "../../utils/dateFormatting";
 
->>>>>>> c96b72b7373804a39f7c531e4c953b352d6230fd
 const Tabs = Object.freeze({
   upcoming: {
     title: "All Upcoming",
@@ -248,7 +244,7 @@ function Appointments() {
 
   const getSubtext = (gender, ethnicity, organization) => {
     var subtextInfo = [gender, ethnicity];
-    if (organization != undefined) {
+    if (organization !== undefined) {
       subtextInfo.push(organization);
     }
     return subtextInfo.join(" • ");
@@ -269,7 +265,7 @@ function Appointments() {
         }
       >
         <div className="ar-modal-container">
-          <div className="ar-status">pending</div>
+          <div className="ar-status">pending<span class="dot"></span></div>
           <div className="ar-modal-title">{modalAppointment.name}, {modalAppointment.age}</div>
           <div className="ar-phone">Call/text: {modalAppointment.phone_number}</div>
           <div className="ar-email">{modalAppointment.email}</div>
@@ -283,9 +279,11 @@ function Appointments() {
           <div className="ar-categories">{getCategories(modalAppointment.specialist_categories || [])}</div>  
           <div className="ar-goals-title">Note:</div>
           <div className="ar-goals">{modalAppointment.mentorship_goals}</div>
+          <div className="vl"></div>
+          <div className="hl"></div>
         </div>
       </Modal>
-      <Row>
+      <Row> 
         <Col span={18} className="appointments-column">
           <div className="appointments-welcome-box">
             <div className="appointments-welcome-text">

@@ -1,7 +1,35 @@
 @import "_app";
 
+.dot {
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background-color: #F8D15B;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.vl {
+    position: absolute;
+    border-left: 3px solid #A58123;
+    height: 31px;
+    left: 42.91px;
+    top: 235px;
+}
+
+.hl {
+    position: absolute;
+    border-left: 1px solid #A58123;
+    height: 355px;
+    bottom: -107.35px;
+    left: 225px;
+    transform: rotate(90deg);
+
+}
+
 .ar-modal-container {
-    height: 450px;
+    height: 400px;
 }
 
 .ar-footer {

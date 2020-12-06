@@ -33,6 +33,7 @@ export const formatAppointments = (data) => {
       id: appointment._id.$oid,
       name: appointment.name,
       email: appointment.email,
+      age: appointment.age,
       time: startTime.format("h:m a") + " - " + endTime.format("h:m a"),
       isoTime: startTime.format(),
       email: appointment.email,

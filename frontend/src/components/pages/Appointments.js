@@ -5,6 +5,8 @@ import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
   InfoCircleFilled,
+  EnvironmentOutlined,
+  CommentOutlined,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
 import { formatAppointments } from "../../utils/dateFormatting";
@@ -199,6 +201,7 @@ function Appointments() {
                     description={appointment.description}
                     id={appointment.id}
                     email={appointment.email}
+                    age={appointment.age}
                     phone_number={appointment.phone_number}
                     languages={appointment.languages}
                     gender={appointment.gender}
@@ -206,6 +209,7 @@ function Appointments() {
                     location={appointment.location}
                     mentorship_goals={appointment.mentorship_goals}
                     specialist_categories={appointment.specialist_categories}
+                    organization = {appointment.organization}
                   />
                 ))}
               </div>
@@ -227,35 +231,53 @@ function Appointments() {
         return <div />;
     }
   }
-  const FullAppointment = (props) => {
-    return (
-      <div>
-        <div>{props.name}</div>
-        <div>{props.email}</div>
-      </div> 
-    );
+
+  const getLanguages = (languages) => {
+    return languages.join(" • ");
   };
+
+  const getCategories = (specialist_categories) => {
+    return specialist_categories.join(", ");
+  };
+
+  const getSubtext = (gender, ethnicity, organization) => {
+    var subtextInfo = [gender, ethnicity];
+    if (organization != undefined) {
+      subtextInfo.push(organization);
+    }
+    return subtextInfo.join(" • ");
+  };
+
   return (
     <div>
       <Modal
       visible={modalVisible}
+        title="Appointment Details"
+        width="449.91px"
+        onCancel={() => setModalVisible(false)}
+        footer={
+          <div className = "ar-footer">
+            <Button className="accept-apt">Accept</Button>
+            <Button className="reject-apt">Reject</Button>
+          </div>
+        }
       >
-        <div>
-          {modalAppointment.name}
-          {modalAppointment.description}
-          {modalAppointment.email}
-          {modalAppointment.phone_number}
-          {modalAppointment.languages}
-          {modalAppointment.gender}
-          {modalAppointment.ethnicity}
-          {modalAppointment.location}
-          {modalAppointment.mentorship_goals}
-          {modalAppointment.specialist_categories}
+        <div className="ar-modal-container">
+          <div className="ar-status">pending</div>
+          <div className="ar-modal-title">{modalAppointment.name}, {modalAppointment.age}</div>
+          <div className="ar-phone">Call/text: {modalAppointment.phone_number}</div>
+          <div className="ar-email">{modalAppointment.email}</div>
+          <div className="ar-title-subtext">{getSubtext(modalAppointment.gender, modalAppointment.ethnicity, modalAppointment.organization)}</div>
+          <div>
+            <div className="ar-languages"><CommentOutlined className="ar-icon"></CommentOutlined>{getLanguages(modalAppointment.languages || [])}</div>
+            <div className="ar-location"><EnvironmentOutlined className="ar-icon"></EnvironmentOutlined>{modalAppointment.location}</div>
+          </div>
+          <div className="ar-apt-time">{modalAppointment.time}</div>
+          <div className="ar-categories-title">Seeking help in:</div>
+          <div className="ar-categories">{getCategories(modalAppointment.specialist_categories || [])}</div>  
+          <div className="ar-goals-title">Note:</div>
+          <div className="ar-goals">{modalAppointment.mentorship_goals}</div>
         </div>
-        
-        <Button onClick={() => setModalVisible(false)}>
-          Close Modal
-        </Button>
       </Modal>
       <Row>
         <Col span={18} className="appointments-column">

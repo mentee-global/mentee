@@ -1,5 +1,260 @@
 @import "_app";
 
+.ar-modal-container {
+    height: 450px;
+}
+
+.ar-footer {
+    height: 50px;
+}
+
+.ar-status {
+    position: absolute;
+    width: 67.6px;
+    height: 37.8px;
+    left: 335.14px;
+    top: 70.26px;
+
+    font-family: Helvetica;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 14px;
+    text-align: right;
+
+    color: #828282;
+}
+
+.ar-modal-title {
+    position: absolute;
+    width: 201px;
+    height: 24px;
+    left: 42.91px;
+    top: 115px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 28px;
+
+    color: #000000;
+}
+
+.ar-phone {
+    position: absolute;
+    width: 189px;
+    height: 14px;
+    left: 208.91px;
+    top: 115px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+
+    text-align: right;
+
+    color: #000000;
+}
+
+.ar-email {
+    position: absolute;
+    width: 189px;
+    height: 14px;
+    left: 208.91px;
+    top: 134px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+
+    text-align: right;
+    text-decoration-line: underline;
+
+    color: #000000;
+}
+
+.ar-title-subtext {
+    position: absolute;
+    width: 207px;
+    height: 14px;
+    left: 43.55px;
+    top: 150px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    /* identical to box height */
+
+
+    color: #7A7A7A;
+
+}
+
+.ar-languages {
+    position: absolute;
+    width: 198px;
+    height: 16.05px;
+    left: 43.55px;
+    top: 172.06px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+
+    color: #7A7A7A;
+}
+
+.ar-icon {
+    margin-right: 5px;
+}
+
+.ar-location {
+    position: absolute;
+    width: 198px;
+    height: 16.05px;
+    left: 43.55px;
+    top: 190px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+
+    color: #7A7A7A;
+}
+
+.ar-apt-time {
+    position: absolute;
+    width: 318px;
+    height: 35px;
+    left: 55.91px;
+    top: 236px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 18px;
+
+    color: #A58123;
+}
+
+.ar-categories-title {
+    position: absolute;
+    width: 318px;
+    height: 35px;
+    left: 43.91px;
+    top: 309px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 16px;
+
+    color: #A58123;
+}
+
+.ar-categories {
+    position: absolute;
+    width: 318px;
+    height: 35px;
+    left: 43.91px;
+    top: 329px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+
+    color: #000000;
+}
+
+.ar-goals-title {
+    position: absolute;
+    width: 62px;
+    height: 21px;
+    left: 43.91px;
+    top: 380px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 16px;
+
+    color: #A58123;
+}
+
+.ar-goals {
+    position: absolute;
+    width: 376px;
+    height: 63px;
+    left: 45.91px;
+    top: 406px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+
+    color: #000000;
+}
+
+.accept-apt {
+    position: absolute;
+    width: 118.93px;
+    height: 32px;
+    left: 94.55px;
+    bottom: 25px;
+
+    background: #E4BB4F;
+    border: 3px solid #6FCF97;
+    border-radius: 13px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: center;
+
+    color: #FCF6E8;
+}
+
+.reject-apt {
+    position: absolute;
+    width: 118.93px;
+    height: 32px;
+    left: 232.64px;
+    bottom: 25px;
+
+    background: #E4BB4F;
+    border: 3px solid #A62B31;
+    border-radius: 13px;
+
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 21px;
+    text-align: center;
+
+    color: #FCF6E8;
+}
+
 .appointments-welcome-text {
     margin: 1% 1%;
     font-size: 30px;

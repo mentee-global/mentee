@@ -18,6 +18,7 @@ function RegisterForm(props) {
   ); // each index represents an input box, respectively
   const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
   const [validate, setValidate] = useState(false);
+  const [error, setError] = useState(false);
   const [name, setName] = useState(null);
   const [title, setTitle] = useState(null);
   const [about, setAbout] = useState(null);
@@ -29,7 +30,6 @@ function RegisterForm(props) {
   const [linkedin, setLinkedin] = useState(null);
   const [specializations, setSpecializations] = useState([]);
   const [educations, setEducations] = useState([]);
-  const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
 
   function renderEducationInputs() {
@@ -115,72 +115,23 @@ function RegisterForm(props) {
     setInputClicked(newClickedInput);
   }
 
-  function handleNameChange(e) {
-    setName(e.target.value);
-    setEdited(true);
-    let newValid = [...isValid];
-
-    newValid[0] = !!e.target.value;
-
-    setIsValid(newValid);
-  }
-
-  function handleTitleChange(e) {
-    setTitle(e.target.value);
-    setEdited(true);
-    let newValid = [...isValid];
-    newValid[1] = !!e.target.value;
-    setIsValid(newValid);
-  }
-
-  function handleAboutChange(e) {
-    setAbout(e.target.value);
-    setEdited(true);
-  }
-
-  function handleInPersonAvailableChange(e) {
-    setInPersonAvailable(e.target.checked);
-    setEdited(true);
-  }
-
-  function handleGroupAvailableChange(e) {
-    setGroupAvailable(e.target.checked);
-    setEdited(true);
-  }
-
-  function handleLocationChange(e) {
-    setLocation(e.target.value);
-    setEdited(true);
-  }
-
-  function handleWebsiteChange(e) {
-    setWebsite(e.target.value);
-    setEdited(true);
-  }
-
   function handleLanguageChange(e) {
     let languagesSelected = [];
+    console.log(e.value);
     e.forEach((value) => {
       languagesSelected.push(value);
     });
     setLanguages(languagesSelected);
-    setEdited(true);
 
     let newValid = [...isValid];
     newValid[7] = !!languagesSelected.length;
     setIsValid(newValid);
   }
 
-  function handleLinkedinChange(e) {
-    setLinkedin(e.target.value);
-    setEdited(true);
-  }
-
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
     e.forEach((value) => specializationsSelected.push(value));
     setSpecializations(specializationsSelected);
-    setEdited(true);
 
     let newValid = [...isValid];
     newValid[9] = !!specializationsSelected.length;
@@ -193,7 +144,6 @@ function RegisterForm(props) {
     education.school = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
-    setEdited(true);
 
     let newValid = [...isValid];
     newValid[10 + index * 4] = !!education.school;
@@ -206,7 +156,6 @@ function RegisterForm(props) {
     education.graduation_year = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
-    setEdited(true);
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 1] = !!education.graduation_year;
@@ -221,7 +170,6 @@ function RegisterForm(props) {
     education.majors = majors;
     newEducations[index] = education;
     setEducations(newEducations);
-    setEdited(true);
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 2] = !!education.majors.length;
@@ -234,7 +182,6 @@ function RegisterForm(props) {
     education.education_level = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
-    setEdited(true);
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 3] = !!education.education_level;
@@ -250,30 +197,24 @@ function RegisterForm(props) {
       graduation_year: "",
     });
     setEducations(newEducations);
-    setEdited(true);
     setIsValid([...isValid, true, true, true, true]);
   };
 
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
       const res = await createMentorProfile(data);
-      console.log(res);
       const mentorId = res.data ? res.data.result.mentorId : false;
+      setSaving(false);
+      setValidate(false);
       if (mentorId) {
-        setSaving(false);
+        setError(false);
         setIsValid([...isValid].fill(true));
         setValidate(false);
         removeRegistration(mentorId);
         props.history.push("/profile");
       } else {
-        // TODO: error handling
+        setError(true);
       }
-    }
-
-    if (!edited) {
-      setIsValid([...isValid].fill(true));
-      setValidate(false);
-      return;
     }
 
     if (isValid.includes(false)) {
@@ -303,6 +244,7 @@ function RegisterForm(props) {
     <div className="register-content">
       <div className="register-header">
         <h2>Welcome. Tell us about yourself.</h2>
+        {error && <div className="register-error">Error, try again.</div>}
         <div>
           {validate && <b style={styles.alertToast}>Missing Fields</b>}
           <Button
@@ -325,7 +267,12 @@ function RegisterForm(props) {
             clicked={inputClicked[0]}
             index={0}
             handleClick={handleClick}
-            onChange={handleNameChange}
+            onChange={(e) => {
+              setName(e.target.value);
+              let newValid = [...isValid];
+              newValid[0] = !!e.target.value;
+              setIsValid(newValid);
+            }}
             defaultValue={name}
             valid={isValid[0]}
             validate={validate}
@@ -337,7 +284,12 @@ function RegisterForm(props) {
             clicked={inputClicked[1]}
             index={1}
             handleClick={handleClick}
-            onChange={handleTitleChange}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              let newValid = [...isValid];
+              newValid[1] = !!e.target.value;
+              setIsValid(newValid);
+            }}
             defaultValue={title}
             valid={isValid[1]}
             validate={validate}
@@ -351,7 +303,7 @@ function RegisterForm(props) {
             clicked={inputClicked[2]}
             index={2}
             handleClick={handleClick}
-            onChange={handleAboutChange}
+            onChange={(e) => setAbout(e.target.value)}
             defaultValue={about}
           />
         </div>
@@ -361,7 +313,7 @@ function RegisterForm(props) {
             clicked={inputClicked[3]}
             index={3}
             handleClick={handleClick}
-            onChange={handleInPersonAvailableChange}
+            onChange={(e) => setInPersonAvailable(e.target.checked)}
             checked={inPersonAvailable}
           >
             Available in-person?
@@ -372,7 +324,7 @@ function RegisterForm(props) {
             clicked={inputClicked[4]}
             index={4}
             handleClick={handleClick}
-            onChange={handleGroupAvailableChange}
+            onChange={(e) => setGroupAvailable(e.target.checked)}
             checked={groupAvailable}
           >
             Available for group appointments?
@@ -386,7 +338,7 @@ function RegisterForm(props) {
             clicked={inputClicked[5]}
             index={5}
             handleClick={handleClick}
-            onChange={handleLocationChange}
+            onChange={(e) => setLocation(e.target.value)}
             defaultValue={location}
           />
           <ModalInput
@@ -396,7 +348,7 @@ function RegisterForm(props) {
             clicked={inputClicked[6]}
             index={6}
             handleClick={handleClick}
-            onChange={handleWebsiteChange}
+            onChange={(e) => setWebsite(e.target.value)}
             defaultValue={website}
           />
         </div>
@@ -422,7 +374,7 @@ function RegisterForm(props) {
             clicked={inputClicked[8]}
             index={8}
             handleClick={handleClick}
-            onChange={handleLinkedinChange}
+            onChange={(e) => setLinkedin(e.target.value)}
             defaultValue={linkedin}
           />
         </div>

@@ -23,7 +23,7 @@ function Verify(props) {
     if (!getCurrentRegistration()) {
       props.history.push("/login");
     }
-  }, []);
+  }, [props.history]);
 
   return (
     <div className="home-background">
@@ -82,7 +82,7 @@ function Verify(props) {
                 resendVerify().then(() => {
                   setResent(true);
                 });
-              }} // TODO: replace with auth resend
+              }}
             >
               <u>Resend</u>
             </Button>

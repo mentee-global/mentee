@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
-import { getCurrentRegistration, removeRegistration } from "utils/auth.service";
+import {
+  getCurrentRegistration,
+  removeRegistration,
+  isLoggedIn,
+} from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
 import { PlusCircleFilled } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
@@ -12,7 +16,7 @@ import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
 
 function RegisterForm(props) {
-  const [numInputs, setNumInputs] = useState(14);
+  const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
@@ -31,6 +35,14 @@ function RegisterForm(props) {
   const [specializations, setSpecializations] = useState([]);
   const [educations, setEducations] = useState([]);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      props.history.push("/profile");
+    } else if (!getCurrentRegistration()) {
+      props.history.push("/register");
+    }
+  }, [props.history]);
 
   function renderEducationInputs() {
     return (
@@ -115,27 +127,10 @@ function RegisterForm(props) {
     setInputClicked(newClickedInput);
   }
 
-  function handleLanguageChange(e) {
-    let languagesSelected = [];
-    console.log(e.value);
-    e.forEach((value) => {
-      languagesSelected.push(value);
-    });
-    setLanguages(languagesSelected);
-
-    let newValid = [...isValid];
-    newValid[7] = !!languagesSelected.length;
-    setIsValid(newValid);
-  }
-
-  function handleSpecializationsChange(e) {
-    let specializationsSelected = [];
-    e.forEach((value) => specializationsSelected.push(value));
-    setSpecializations(specializationsSelected);
-
-    let newValid = [...isValid];
-    newValid[9] = !!specializationsSelected.length;
-    setIsValid(newValid);
+  function validateNotEmpty(arr, index) {
+    let tempValid = isValid;
+    tempValid[index] = arr.length > 0;
+    setIsValid(tempValid);
   }
 
   function handleSchoolChange(e, index) {
@@ -360,7 +355,10 @@ function RegisterForm(props) {
             clicked={inputClicked[7]}
             index={7}
             handleClick={handleClick}
-            onChange={handleLanguageChange}
+            onChange={(e) => {
+              setLanguages(e);
+              validateNotEmpty(e, 7);
+            }}
             placeholder="Ex. English, Spanish"
             options={LANGUAGES}
             defaultValue={languages}
@@ -386,7 +384,10 @@ function RegisterForm(props) {
             clicked={inputClicked[9]}
             index={9}
             handleClick={handleClick}
-            onChange={handleSpecializationsChange}
+            onChange={(e) => {
+              setSpecializations(e);
+              validateNotEmpty(e, 9);
+            }}
             options={SPECIALIZATIONS}
             defaultValue={specializations}
             valid={isValid[9]}

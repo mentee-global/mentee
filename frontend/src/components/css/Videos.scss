@@ -28,11 +28,17 @@
 }
  
 .video-submit-card {
-    margin-right: 36px;
+    padding: 16px;
 }
 
 .video-submit-title {
-    background: #fef7e2;
+    padding-left: 16px;
+    background: #FFECBD;
+    font-size: 20px;
+    font-weight: bold;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    height: 40px;
 }
 
 .filter-card {
@@ -66,4 +72,5 @@
 
 .videos-table-title h1 {
     font-weight: bold;
+    font-size: 20px;
 }

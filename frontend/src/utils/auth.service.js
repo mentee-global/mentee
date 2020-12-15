@@ -28,6 +28,7 @@ const register = (email, password, role) => {
     });
 };
 
+// Sends verification code to email
 const verify = (pin) => {
   return instance
     .post(
@@ -46,6 +47,7 @@ const verify = (pin) => {
     });
 };
 
+// Resends verification code to email they registered with
 const resendVerify = () => {
   return instance.post("resendVerificationEmail", null, {
     headers: { token: getCurrentRegistration()["token"] },
@@ -75,6 +77,8 @@ const logout = () => {
   localStorage.removeItem("user");
 };
 
+// User obj is created on login & successful registration (profile creation included)
+// stores mentor ID, user ID, token
 const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem("user"));
 };
@@ -89,15 +93,17 @@ const isLoggedIn = () => {
   return Boolean(getCurrentUser());
 };
 
+// Registration obj is created on registration (inputting email, password)
+// and deleted on successful profile creation
+// stores user ID, token
 const getCurrentRegistration = () => {
   return JSON.parse(localStorage.getItem("registration"));
 };
 
 const hasCurrentRegistration = () => {
   return Boolean(getCurrentRegistration());
-}
+};
 
-// For when the user finishes creating profile
 const removeRegistration = (mentorId) => {
   const registration = JSON.parse(localStorage.getItem("registration"));
   registration["mentorId"] = mentorId;

@@ -24,7 +24,6 @@ function Register({ history }) {
   const [inputFocus, setInputFocus] = useState([false, false, false]);
 
   useEffect(() => {
-    // If they already have a registration
     if (hasCurrentRegistration()) {
       history.push("/create-profile");
     } else if (isLoggedIn()) {
@@ -38,15 +37,21 @@ function Register({ history }) {
     setInputFocus(newClickedInput);
   }
 
-  const setErrors = async () => {
-    setSaving(true);
+  const checkErrors = () => {
     let newPasswordError = password !== confirmPassword;
     let newFieldError =
       email === "" || password === "" || confirmPassword === "";
     if (newPasswordError || newFieldError) {
       setPasswordError(newPasswordError);
       setFieldError(newFieldError);
-    } else {
+      return true;
+    }
+    return false;
+  };
+
+  const submitForm = async () => {
+    setSaving(true);
+    if (!checkErrors()) {
       const res = await register(email, password, "mentor");
       if (res) {
         history.push("/verify");
@@ -119,7 +124,7 @@ function Register({ history }) {
               width={"50%"}
               height={"125%"}
               loading={saving}
-              onClick={setErrors}
+              onClick={submitForm}
             />
           </div>
           <div className="login-register-container">

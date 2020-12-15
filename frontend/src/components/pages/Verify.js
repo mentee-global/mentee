@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { Input, Button } from "antd";
 import {
-  getCurrentRegistration,
+  hasCurrentRegistration,
   resendVerify,
   verify,
 } from "utils/auth.service";
@@ -20,7 +20,7 @@ function Verify(props) {
   const [resent, setResent] = useState(false);
 
   useEffect(() => {
-    if (!getCurrentRegistration()) {
+    if (!hasCurrentRegistration()) {
       props.history.push("/login");
     }
   }, [props.history]);

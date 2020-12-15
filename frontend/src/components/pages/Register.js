@@ -3,7 +3,7 @@ import { NavLink, withRouter } from "react-router-dom";
 import { Input } from "antd";
 import MenteeButton from "../MenteeButton";
 import {
-  getCurrentRegistration,
+  hasCurrentRegistration,
   isLoggedIn,
   register,
 } from "utils/auth.service";
@@ -24,12 +24,13 @@ function Register({ history }) {
   const [inputFocus, setInputFocus] = useState([false, false, false]);
 
   useEffect(() => {
-    if (getCurrentRegistration()) {
-      // TODO: redirect to the mentor profile creation apge
+    // If they already have a registration
+    if (hasCurrentRegistration()) {
+      history.push("/create-profile");
     } else if (isLoggedIn()) {
       history.push("/appointments");
     }
-  }, []);
+  }, [history]);
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false, false];

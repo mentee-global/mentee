@@ -4,8 +4,7 @@ const instance = axios.create({
   baseURL: "http://localhost:5000",
 });
 
-// Role is where you put "admin" or "mentor"- right now
-// we only have mentor
+// Role is where you put "admin" or "mentor"- right now we only support mentor
 const register = (email, password, role) => {
   return instance
     .post("/register", {
@@ -40,6 +39,10 @@ const verify = (pin) => {
     )
     .then((response) => {
       return response.data.status == 200;
+    })
+    .catch((err) => {
+      console.error(err);
+      return false;
     });
 };
 
@@ -90,6 +93,10 @@ const getCurrentRegistration = () => {
   return JSON.parse(localStorage.getItem("registration"));
 };
 
+const hasCurrentRegistration = () => {
+  return Boolean(getCurrentRegistration());
+}
+
 // For when the user finishes creating profile
 const removeRegistration = (mentorId) => {
   const registration = JSON.parse(localStorage.getItem("registration"));
@@ -105,6 +112,7 @@ export {
   getMentorID,
   isLoggedIn,
   getCurrentRegistration,
+  hasCurrentRegistration,
   removeRegistration,
   verify,
   resendVerify,

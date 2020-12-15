@@ -4,6 +4,7 @@ import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
 import {
   getCurrentRegistration,
+  hasCurrentRegistration,
   removeRegistration,
   isLoggedIn,
 } from "utils/auth.service";
@@ -39,7 +40,7 @@ function RegisterForm(props) {
   useEffect(() => {
     if (isLoggedIn()) {
       props.history.push("/profile");
-    } else if (!getCurrentRegistration()) {
+    } else if (!hasCurrentRegistration()) {
       props.history.push("/register");
     }
   }, [props.history]);
@@ -204,7 +205,6 @@ function RegisterForm(props) {
       if (mentorId) {
         setError(false);
         setIsValid([...isValid].fill(true));
-        setValidate(false);
         removeRegistration(mentorId);
         props.history.push("/profile");
       } else {

@@ -173,6 +173,7 @@ function Videos() {
             value={titleFilter}
             onChange={handleSearchChange}
             onSearch={(value) => handleSearchVideo(value)}
+            placeholder="Title"
           />
           <Select
             style={{ width: 200 }}

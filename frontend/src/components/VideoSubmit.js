@@ -6,15 +6,13 @@ import "../components/css/Videos.scss";
 
 const VideoSubmit = (props) => {
   return (
-    <div
-      style={{
-        boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-        marginRight: "36px",
-        borderRadius: "8px",
-      }}
-    >
+    <div className="video-submit-card">
       <div className="video-submit-title">Add Video</div>
-      <div className="video-submit-card">
+      <div
+        style={{
+          padding: "16px",
+        }}
+      >
         <Form
           form={props.form}
           name="video-submit"
@@ -54,7 +52,7 @@ const VideoSubmit = (props) => {
               },
             ]}
           >
-            <Select>{formatDropdownItems(SPECIALIZATIONS)}</Select>
+            <Select placeholder="Specializations">{formatDropdownItems(SPECIALIZATIONS)}</Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

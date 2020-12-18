@@ -57,6 +57,7 @@ def create_appointment():
         start_time=time_data.get("start_time"), end_time=time_data.get("end_time")
     )
 
+    # Gets mentor's email and sends a notification to them of new appointment
     try:
         mentor = MentorProfile.objects.get(id=data.get("mentor_id"))
     except:

@@ -84,6 +84,12 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
 
 
 def send_email(recipient: str = "", subject: str = "", html: str = "") -> bool:
+    """Sends an email to a specific email address from the official MENTEE email
+    :param recipient - recipients email address
+    :param subject - subject headline of the email
+    :param html - content within the email
+    :return boolean whether it successful sent an email
+    """
     message = Mail(
         from_email=SENDER_EMAIL, to_emails=recipient, subject=subject, html_content=html
     )

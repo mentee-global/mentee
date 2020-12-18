@@ -52,7 +52,9 @@ const VideoSubmit = (props) => {
               },
             ]}
           >
-            <Select placeholder="Specializations">{formatDropdownItems(SPECIALIZATIONS)}</Select>
+            <Select placeholder="Specializations">
+              {formatDropdownItems(SPECIALIZATIONS)}
+            </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

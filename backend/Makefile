@@ -39,11 +39,3 @@ make compose_start:
 heroku_setup:
 	python manage.py recreate_db
 	
-format:
-	( \
-		. venv/bin/activate; \
-		black api/; \
-		black tests/; \
-		black manage.py; \
-		black index.py; \
-	)

@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import ApppointmentForm, is_invalid_form
+from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
+from ..utils.constants import APPOINTMENT_EMAIL_MESSAGE
 
 appointment = Blueprint("appointment", __name__)
 
@@ -55,6 +56,24 @@ def create_appointment():
     new_appointment.timeslot = Availability(
         start_time=time_data.get("start_time"), end_time=time_data.get("end_time")
     )
+
+    try:
+        mentor = MentorProfile.objects.get(id=data.get("mentor_id"))
+    except:
+        msg = "No mentor found with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    res_email = send_email(
+        mentor.email,
+        "Appointment Request",
+        APPOINTMENT_EMAIL_MESSAGE.format(new_appointment.name),
+    )
+
+    if not res_email:
+        msg = "Failed to send an email"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
 
     new_appointment.save()
     return create_response(

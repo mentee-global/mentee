@@ -5,12 +5,17 @@ from wtforms.validators import InputRequired
 from wtforms import validators
 import wtforms_json
 from typing import Tuple
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from .flask_imgur import Imgur
+from .constants import SENDER_EMAIL
 
 wtforms_json.init()
 
 imgur_key = os.environ.get("IMGUR_KEY")
 imgur_client = Imgur(client_id=imgur_key)
+
+sendgrid_key = os.environ.get("SENDGRID_API_KEY")
 
 
 class EducationForm(Form):
@@ -76,3 +81,16 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
         msg = ", ".join(form_data.errors.keys())
         return "Missing fields " + msg, True
     return "", False
+
+
+def send_email(recipient: str = "", subject: str = "", html: str = "") -> bool:
+    message = Mail(
+        from_email=SENDER_EMAIL, to_emails=recipient, subject=subject, html_content=html
+    )
+    try:
+        sg = SendGridAPIClient(sendgrid_key)
+        response = sg.send(message)
+    except Exception as e:
+        print(e.message)
+        return False
+    return True

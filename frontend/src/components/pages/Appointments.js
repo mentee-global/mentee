@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, Calendar, Col, Row } from "antd";
-import {
-  ClockCircleOutlined,
-  CheckCircleTwoTone,
-  CloseCircleTwoTone,
-  InfoCircleFilled,
-} from "@ant-design/icons";
+import { ClockCircleOutlined, InfoCircleFilled } from "@ant-design/icons";
 import "../css/Appointments.scss";
+import PendingAppointmentModal from "../PendingAppointmentModal";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
@@ -52,14 +48,6 @@ function Appointments() {
     getAppointments();
   }, [appointmentClick]);
 
-  async function handleAppointmentClick(id, didAccept) {
-    if (didAccept) {
-      await acceptAppointment(id);
-    } else {
-      await deleteAppointment(id);
-    }
-    setAppointmentClick(!appointmentClick);
-  }
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
     const inactive = "#FFECBD";
@@ -109,30 +97,11 @@ function Appointments() {
     } else if (tab === Tabs.pending) {
       return (
         <div className="appointment-pending-buttons">
-          <Button
-            className="appointment-accept"
-            icon={
-              <CheckCircleTwoTone
-                style={styles.appointment_buttons}
-                twoToneColor="#52c41a"
-              />
-            }
-            type="text"
-            shape="circle"
-            onClick={() => handleAppointmentClick(id, true)}
-          ></Button>
-          <Button
-            className="appointment-accept"
-            icon={
-              <CloseCircleTwoTone
-                style={styles.appointment_buttons}
-                twoToneColor="#eb2f00"
-              />
-            }
-            type="text"
-            shape="circle"
-            onClick={() => handleAppointmentClick(id, false)}
-          ></Button>
+          <PendingAppointmentModal
+            id={id}
+            setAppointmentClick={setAppointmentClick}
+            appointmentClick={appointmentClick}
+          />
         </div>
       );
     }

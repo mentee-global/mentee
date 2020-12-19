@@ -93,9 +93,18 @@
 
 .appointment-pending-buttons {
     display: flex;
-    background-color: white;
     border-radius: 13px;
     padding: .5%;
+}
+
+.appointment-review-button,
+.appointment-review-button:hover,
+.appointment-review-button:focus {
+    border-radius: 13;
+    border-width: 0;
+    background-color: $mentee-button-regular;
+    color: $theme-orange-light;
+    font-weight: 700;
 }
 
 .appointment-accept,
@@ -107,7 +116,7 @@
 .appointment-pending-buttons,
 .appointment-more-details {
     margin-right: 1%;
-    padding-bottom: 1px;;
+    padding-bottom: 1px;
 }
 
 .appointments-tab-item {
@@ -125,7 +134,6 @@
 }
 
 .availability-container {
-
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
     overflow: hidden;

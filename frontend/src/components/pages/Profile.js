@@ -30,11 +30,12 @@ function Profile() {
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
-        <Avatar
-          size={120}
-          src={mentor.image && mentor.image.url}
-          icon={<UserOutlined />}
-        />
+        <div className="mentor-profile-avatar">
+          <Avatar
+            src={mentor.image && mentor.image.url}
+            icon={<UserOutlined />}
+          />
+        </div>
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <ProfileContent

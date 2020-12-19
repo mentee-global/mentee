@@ -4,13 +4,8 @@ const instance = axios.create({
   baseURL: "http://localhost:5000",
 });
 
-// This is just for the time being while we get auth up and running
-// TODO: Delete these after auth is done
-// Also if there are other ID's you want to test add them into here and import them into your file
-export const mentorID = "5fa1d8316405978382c8b92f";
-export const appointmentID = "5f93224191f097b50954408c";
-
 export const fetchMentorByID = (id) => {
+  if (!id) return;
   const requestExtension = "/mentor/" + id;
   return instance.get(requestExtension).then(
     (response) => response.data.result.mentor,
@@ -33,6 +28,18 @@ export const fetchMentors = () => {
 export const editMentorProfile = (profile, id) => {
   const requestExtension = "/mentor/" + id;
   return instance.put(requestExtension, profile).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const uploadMentorImage = (data, id) => {
+  let formData = new FormData();
+  formData.append("image", data);
+  const requestExtension = "/mentor/" + id + "/image";
+  return instance.put(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);

@@ -5,10 +5,10 @@ import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
 import MenteeButton from "./MenteeButton.js";
 import "./css/AvailabilityCalendar.scss";
+import { getMentorID } from "utils/auth.service";
 import {
   fetchAvailability,
   editAvailability,
-  mentorID,
   fetchSetDays,
 } from "../utils/api";
 
@@ -23,45 +23,53 @@ function AvailabilityCalendar() {
     "Saturday",
   ];
 
-  //TODO: Fill this list with dates in month that have appointments
+  const mentorID = getMentorID();
   const [saved, setSaved] = useState({});
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
-  const format = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
-
-  useEffect(() => {
-    async function getAvailability() {
-      const availability_data = await fetchAvailability(mentorID);
-      if (availability_data) {
-        const availability = availability_data.availability;
-        const times = [];
-        for (let i = 0; i < availability.length; i++) {
-          times.push([
-            moment(availability[i].start_time.$date),
-            moment(availability[i].end_time.$date),
-          ]);
-        }
-        setTimeSlots(times);
-      }
-    }
-    getAvailability();
-  }, []);
-
+  const format = "YYYY-MM-DDTHH:mm:ss.SSSZ";
+  // var tz = moment.tz.guess();
   useEffect(() => {
     async function getSetDays() {
-      const set_data = await fetchSetDays(mentorID);
-      if (set_data) {
-        let set = {};
-        for (let i = 0; i < set_data.days.length; i++) {
-          set[set_data.days[i]] = true;
-        }
-        setSaved(set);
+      const availability_data = await fetchAvailability(mentorID);
+      const set = [];
+      if (availability_data) {
+        const availability = availability_data.availability;
+        availability.forEach((time) => {
+          if (
+            !saved.hasOwnProperty(moment.parseZone(time.start_time.$date)) &&
+            !set.hasOwnProperty(time.start_time.$date)
+          ) {
+            set[
+              moment.parseZone(time.start_time.$date).format("YYYY-MM-DD")
+            ] = true;
+          }
+        });
       }
+      setSaved(set);
     }
     getSetDays();
-  }, [saved]);
+  }, [timeSlots]);
+
+  async function getAvailability() {
+    const availability_data = await fetchAvailability(mentorID);
+    if (availability_data) {
+      const availability = availability_data.availability;
+      const times = [];
+
+      for (let i = 0; i < availability.length; i++) {
+        times.push([
+          moment.parseZone(availability[i].start_time.$date),
+          moment.parseZone(availability[i].end_time.$date),
+        ]);
+      }
+
+      setTimeSlots(times);
+      console.log(timeSlots);
+    }
+  }
 
   const handleTimeChange = (index, event, num) => {
     const times = [...timeSlots];
@@ -90,16 +98,29 @@ function AvailabilityCalendar() {
     setValue(value);
     setVisible(true);
     setDate(value);
+    getAvailability();
   };
 
   const handleOk = () => {
     let json_data = [];
     timeSlots.map((timeSlot) =>
       json_data.push({
-        start_time: { $date: timeSlot[0].format(format) },
-        end_time: { $date: timeSlot[1].format(format) },
+        start_time: { $date: moment.parseZone(timeSlot[0].format(format)) },
+        end_time: { $date: moment.parseZone(timeSlot[1].format(format)) },
       })
     );
+    timeSlots.map((timeSlot) =>
+      console.log(
+        moment.parseZone(timeSlot[0].format(format)).utc(true).format(format)
+      )
+    );
+
+    timeSlots.map((timeSlot) =>
+      console.log(
+        moment.parseZone(timeSlot[1].format(format)).utc(true).format(format)
+      )
+    );
+
     editAvailability(json_data, mentorID);
     setVisible(false);
   };

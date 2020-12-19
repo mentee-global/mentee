@@ -11,9 +11,9 @@ import AvailabilityCalendar from "../AvailabilityCalendar";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
-  mentorID,
   deleteAppointment,
 } from "../../utils/api";
+import { getMentorID } from "utils/auth.service";
 import { formatAppointments } from "../../utils/dateFormatting";
 
 const Tabs = Object.freeze({
@@ -41,6 +41,7 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
 
   useEffect(() => {
+    const mentorID = getMentorID();
     async function getAppointments() {
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);

@@ -1,0 +1,25 @@
+.register-content {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    padding-left: 15%;
+    padding-right: 15%;
+    padding-top: 2%;
+}
+
+.register-header-container {
+    display: flex;
+    min-height: 120px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.register-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+

@@ -58,10 +58,7 @@ class Imgur(object):
 
         b64 = base64.b64encode(image.read())
 
-        data = dict(
-            image=b64,
-            type="base64",
-        )
+        data = dict(image=b64, type="base64")
 
         data.update(params)
         return urllib.parse.urlencode(data).encode("utf-8")

@@ -6,15 +6,20 @@ const { Option } = Select;
 
 function ModalInput(props) {
   const {
-    height,
     clicked,
     index,
+    educationIndex,
+    onEducationChange,
+    maxRows,
     type,
     title,
     placeholder,
     options,
     onChange,
     handleClick,
+    defaultValue,
+    valid,
+    validate,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -23,20 +28,29 @@ function ModalInput(props) {
   }, [clicked]);
 
   function handleOnChange(e) {
-    onChange(e);
+    if (!onEducationChange) {
+      onChange(e);
+    } else {
+      onEducationChange(e, educationIndex);
+    }
     handleClick(index);
   }
 
   function getContainerStyle() {
     let style = {
       ...styles.container,
-      height: height,
+      ...props.style,
     };
 
-    if (isClicked) {
+    if (isClicked && valid) {
       style = {
         ...style,
         ...styles.clicked,
+      };
+    } else if (validate && !valid) {
+      style = {
+        ...style,
+        ...styles.invalid,
       };
     }
 
@@ -59,7 +73,7 @@ function ModalInput(props) {
   const returnDropdownItems = (items) => {
     let options = [];
     for (let i = 0; i < items.length; i++) {
-      options.push(<Option key={i}>{items[i]}</Option>);
+      options.push(<Option key={items[i]}>{items[i]}</Option>);
     }
     return options;
   };
@@ -74,14 +88,14 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
+            value={defaultValue}
           />
         );
-      case "dropdown":
+      case "dropdown-single":
         return (
           <Select
             className="input-text"
             onClick={() => handleClick(index)}
-            mode="multiple"
             allowClear
             bordered={false}
             style={{ width: "100%" }}
@@ -91,16 +105,37 @@ function ModalInput(props) {
             {returnDropdownItems(options)}
           </Select>
         );
+      case "dropdown-multiple":
+        return (
+          <Select
+            className="input-text"
+            onClick={() => handleClick(index)}
+            mode={onEducationChange ? "tags" : "multiple"}
+            allowClear
+            bordered={false}
+            style={{ width: "100%" }}
+            placeholder={placeholder || "Please select"}
+            onChange={handleOnChange}
+            value={defaultValue}
+            tokenSeparators={[","]}
+          >
+            {returnDropdownItems(options)}
+          </Select>
+        );
       case "textarea":
         return (
           <Input.TextArea
-            className="input-text"
+            className="input-textarea"
+            autoSize={{ maxRows: maxRows ?? 1 }}
             onClick={() => handleClick(index)}
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
+            value={defaultValue}
           />
         );
+      default:
+        return null;
     }
   };
 
@@ -121,9 +156,6 @@ const styles = {
     borderBottomStyle: "solid",
     borderBottomWidth: 3,
     borderColor: "#828282",
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
   },
   text: {
     flex: 1,
@@ -134,6 +166,10 @@ const styles = {
   clicked: {
     color: "#F2C94C",
     borderColor: "#F2C94C",
+  },
+  invalid: {
+    color: "#FF0000",
+    borderColor: "#FF0000",
   },
 };
 

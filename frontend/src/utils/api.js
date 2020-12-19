@@ -118,12 +118,3 @@ export const editAvailability = (timeslots, id) => {
   );
 };
 
-export const fetchSetDays = (id) => {
-  const requestExtension = "/availability/setdays/" + id;
-  return instance.get(requestExtension).then(
-    (response) => response.data.result,
-    (err) => {
-      console.error(err);
-    }
-  );
-};

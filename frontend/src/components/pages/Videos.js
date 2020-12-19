@@ -93,7 +93,8 @@ function Videos() {
     const newVideos = [...videos];
     const video = newVideos.splice(id, 1)[0];
     newVideos.sort(
-      (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
+      (a, b) =>
+        moment(a.date_uploaded.$date).diff(moment(b.date_uploaded.$date)) * -1
     );
     newVideos.unshift(video);
     setVideos(newVideos);
@@ -147,7 +148,7 @@ function Videos() {
           filtered.map((video, index) => (
             <MentorVideo
               title={video.title}
-              date={video.date_uploaded}
+              date={video.date_uploaded.$date}
               tag={video.tag}
               id={index}
               video={video}

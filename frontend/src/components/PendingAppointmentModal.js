@@ -32,7 +32,7 @@ function PendingAppointmentModal(props) {
         onCancel={() => {
           setModalVisible(false);
         }}
-        width="50%"
+        width="30%"
         style={{ overflow: "hidden" }}
         footer={
           <div style={{ textAlign: "center" }}>

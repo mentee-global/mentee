@@ -4,9 +4,7 @@ import { ClockCircleOutlined, InfoCircleFilled } from "@ant-design/icons";
 import "../css/Appointments.scss";
 import PendingAppointmentModal from "../PendingAppointmentModal";
 import {
-  acceptAppointment,
   getAppointmentsByMentorID,
-  deleteAppointment,
 } from "../../utils/api";
 import { getMentorID } from "utils/auth.service";
 import { formatAppointments } from "../../utils/dateFormatting";

@@ -67,7 +67,6 @@ function AvailabilityCalendar() {
       }
 
       setTimeSlots(times);
-      console.log(timeSlots);
     }
   }
 
@@ -109,17 +108,7 @@ function AvailabilityCalendar() {
         end_time: { $date: moment.parseZone(timeSlot[1].format(format)) },
       })
     );
-    timeSlots.map((timeSlot) =>
-      console.log(
-        moment.parseZone(timeSlot[0].format(format)).utc(true).format(format)
-      )
-    );
 
-    timeSlots.map((timeSlot) =>
-      console.log(
-        moment.parseZone(timeSlot[1].format(format)).utc(true).format(format)
-      )
-    );
 
     editAvailability(json_data, mentorID);
     setVisible(false);

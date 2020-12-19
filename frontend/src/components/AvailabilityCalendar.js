@@ -109,7 +109,6 @@ function AvailabilityCalendar() {
       })
     );
 
-
     editAvailability(json_data, mentorID);
     setVisible(false);
   };

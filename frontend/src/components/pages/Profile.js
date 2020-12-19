@@ -32,6 +32,7 @@ function Profile() {
       <div className="mentor-profile-content">
         <div className="mentor-profile-avatar">
           <Avatar
+            size={120}
             src={mentor.image && mentor.image.url}
             icon={<UserOutlined />}
           />

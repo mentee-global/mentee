@@ -117,4 +117,3 @@ export const editAvailability = (timeslots, id) => {
     }
   );
 };
-

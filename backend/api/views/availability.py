@@ -38,4 +38,3 @@ def edit_availability(id):
     ]
     mentor.save()
     return create_response(status=200, message=f"Success")
-

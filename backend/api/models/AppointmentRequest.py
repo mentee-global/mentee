@@ -17,13 +17,13 @@ class AppointmentRequest(Document, Mixin):
     languages = ListField(StringField(), required=True)
     age = StringField(required=True)
     gender = StringField(required=True)
-    ethnicity = StringField(required=True)
     location = StringField()
-    mentorship_goals = StringField(required=True)
     specialist_categories = ListField(StringField(), required=True)
     message = StringField()
     attendee_count = IntField(required=True)
     organization = StringField(required=True)
+    allowTexts = BooleanField(required=True)
+    allowCalls = BooleanField(required=True)
 
     def __repr__(self):
         return f"""<AppointmentRequest mentor_id: {self.mentor_id}

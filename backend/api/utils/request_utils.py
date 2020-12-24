@@ -49,12 +49,9 @@ class ApppointmentForm(Form):
     languages = FieldList(StringField(), validators=[validators.required()])
     age = StringField(validators=[InputRequired()])
     gender = StringField(validators=[InputRequired()])
-    ethnicity = StringField(validators=[InputRequired()])
     location = StringField()
-    mentorship_goals = StringField(validators=[InputRequired()])
     specialist_categories = FieldList(StringField(), validators=[validators.required()])
     message = StringField()
-    attendee_count = IntegerField(validators=[InputRequired()])
     organization = StringField(validators=[InputRequired()])
 
 

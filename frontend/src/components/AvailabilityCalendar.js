@@ -16,6 +16,7 @@ function AvailabilityCalendar() {
   const [visible, setVisible] = useState(false);
   const [lockmodal, setLockModal] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
+  const [trigger, setTrigger] = useState(false);
   const format = "YYYY-MM-DDTHH:mm:ss.SSSZ";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -39,7 +40,7 @@ function AvailabilityCalendar() {
       setSaved(set);
     }
     getSetDays();
-  });
+  }, [trigger]);
 
   async function getAvailability() {
     const availability_data = await fetchAvailability(mentorID);
@@ -100,7 +101,8 @@ function AvailabilityCalendar() {
     });
   };
 
-  const handleOk = () => {
+  async function handleOk()
+  {
     let json_data = [];
     timeSlots.map((timeSlot) =>
       json_data.push({
@@ -108,10 +110,10 @@ function AvailabilityCalendar() {
         end_time: { $date: moment.parseZone(timeSlot[1].format(format)) },
       })
     );
-
-    editAvailability(json_data, mentorID);
+    
+    await editAvailability(json_data, mentorID);
+    setTrigger(!trigger);
     setVisible(false);
-    dateCellRender(date);
   };
 
   const handleClear = () => {

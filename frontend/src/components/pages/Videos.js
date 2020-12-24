@@ -24,8 +24,15 @@ function Videos() {
       const mentor = await fetchMentorByID(newMentorID);
       setName(mentor.name);
       if (mentor) {
-        setVideos(mentor.videos);
-        setFiltered(mentor.videos);
+        let videos = mentor.videos;
+        // Formats all dates from objects (in Epoch) to MongoDB parseable
+        for (let i = 0; i < videos.length; i++) {
+          const date = videos[i].date_uploaded.$date;
+          videos[i].date_uploaded = moment(date).format();
+        }
+
+        setVideos(videos);
+        setFiltered(videos);
       }
       setMentorID(newMentorID);
     }
@@ -93,8 +100,7 @@ function Videos() {
     const newVideos = [...videos];
     const video = newVideos.splice(id, 1)[0];
     newVideos.sort(
-      (a, b) =>
-        moment(a.date_uploaded.$date).diff(moment(b.date_uploaded.$date)) * -1
+      (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
     );
     newVideos.unshift(video);
     setVideos(newVideos);
@@ -129,6 +135,9 @@ function Videos() {
       tag: SPECIALIZATIONS[video.tag],
     };
     newVideos.push(video);
+    newVideos.sort(
+      (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
+    );
 
     form.resetFields();
     handleClearFilters();
@@ -148,7 +157,7 @@ function Videos() {
           filtered.map((video, index) => (
             <MentorVideo
               title={video.title}
-              date={video.date_uploaded.$date}
+              date={video.date_uploaded}
               tag={video.tag}
               id={index}
               video={video}

@@ -12,7 +12,6 @@ import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
 
 // TODO: Temporary constants, fill in later
-
 const sampleTimes = [
   "11-12pm",
   "2-3pm",
@@ -38,7 +37,7 @@ function MenteeAppointmentModal(props) {
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
   const [date, setDate] = useState();
-  const [time, setTime] = useState([]);
+  const [time, setTime] = useState();
   const [name, setName] = useState();
   const [ageRange, setAgeRange] = useState();
   const [gender, setGender] = useState();
@@ -71,29 +70,28 @@ function MenteeAppointmentModal(props) {
   const values = [
     mentorId,
     name,
-    ageRange,
-    gender,
-    languages,
-    specializations,
-    location,
-    organization,
     email,
     phone,
+    languages,
+    ageRange,
+    gender,
+    location,
+    specializations,
+    message,
+    organization,
     canCall,
     canText,
-    message,
   ];
 
   useEffect(() => {
     if (props.availability) {
       setTimeSlots(props.availability);
     }
-
   }, [props]);
 
   useEffect(() => {
     let daySlots = [];
-    timeSlots.forEach(element => {
+    timeSlots.forEach((element) => {
       if (moment(element.start_time.$date).format("YYYY-MM-DD") === date) {
         daySlots.push(element);
       }
@@ -116,18 +114,6 @@ function MenteeAppointmentModal(props) {
     setTime(time);
   }
 
-  function handleLanguageChange(e) {
-    let languagesSelected = [];
-    e.forEach((value) => languagesSelected.push(LANGUAGES[value]));
-    setLanguages(languagesSelected);
-  }
-
-  function handleSpecializationsChange(e) {
-    let specializationsSelected = [];
-    e.forEach((value) => specializationsSelected.push(SPECIALIZATIONS[value]));
-    setLanguages(specializationsSelected);
-  }
-
   function closeModals() {
     setAppModalVisible1(false);
     setAppModalVisible2(false);
@@ -137,12 +123,15 @@ function MenteeAppointmentModal(props) {
     setAppModalVisible2(false);
     const appointment = {};
     for (let i = 0; i < values.length; i++) {
-      appointment[fields[i]] = values[i];
+      if (values[i] !== undefined) {
+        appointment[fields[i]] = values[i];
+      }
     }
+    appointment["accepted"] = false;
     appointment["timeslot"] = {
-      start_time: {$date: time.start_time},
-      end_time: {$date: time.end_time}
-    }
+      start_time: moment(time.start_time.$date).format(),
+      end_time: moment(time.end_time.$date).format(),
+    };
     await createAppointment(appointment);
   }
 
@@ -183,11 +172,18 @@ function MenteeAppointmentModal(props) {
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
                 {dayTimeSlots.map((time, index) => (
-                  <div className="modal-mentee-appointment-timeslot">
+                  <div
+                    key={index}
+                    className="modal-mentee-appointment-timeslot"
+                  >
                     <MenteeButton
                       key={index}
                       width={100}
-                      content={moment(time.start_time).format("HH:mm") + "-" + moment(time.end_time).format("HH:mm")}
+                      content={
+                        moment(time.start_time).format("HH:mm") +
+                        "-" +
+                        moment(time.end_time).format("HH:mm")
+                      }
                       theme="light"
                       onClick={() => handleTimeChange(time)}
                     />
@@ -243,7 +239,7 @@ function MenteeAppointmentModal(props) {
                 <ModalInput
                   style={styles.modalInput}
                   type="text"
-                  title="Name"
+                  title="Name*"
                   clicked={inputClicked[0]}
                   index={0}
                   handleClick={handleClick}
@@ -256,7 +252,7 @@ function MenteeAppointmentModal(props) {
                   clicked={inputClicked[1]}
                   index={1}
                   handleClick={handleClick}
-                  onChange={(e) => setAgeRange(AGES[e])}
+                  onChange={(e) => setAgeRange(e)}
                   options={AGES}
                 />
                 <ModalInput
@@ -266,7 +262,7 @@ function MenteeAppointmentModal(props) {
                   clicked={inputClicked[2]}
                   index={2}
                   handleClick={handleClick}
-                  onChange={(e) => setGender(GENDERS[e])}
+                  onChange={(e) => setGender(e)}
                   options={GENDERS}
                 />
                 <ModalInput
@@ -276,7 +272,7 @@ function MenteeAppointmentModal(props) {
                   clicked={inputClicked[4]}
                   index={4}
                   handleClick={handleClick}
-                  onChange={handleLanguageChange}
+                  onChange={(e) => setLanguages(e)}
                   placeholder="Ex. English, Spanish"
                   options={LANGUAGES}
                 />
@@ -287,7 +283,7 @@ function MenteeAppointmentModal(props) {
                   clicked={inputClicked[5]}
                   index={5}
                   handleClick={handleClick}
-                  onChange={handleSpecializationsChange}
+                  onChange={(e) => setSpecializations(e)}
                   options={SPECIALIZATIONS}
                 />
                 <ModalInput
@@ -302,7 +298,7 @@ function MenteeAppointmentModal(props) {
                 <ModalInput
                   style={styles.modalInput}
                   type="text"
-                  title="Organization Affiliation"
+                  title="Organization Affiliation*"
                   clicked={inputClicked[7]}
                   index={7}
                   handleClick={handleClick}

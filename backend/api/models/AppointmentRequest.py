@@ -20,7 +20,6 @@ class AppointmentRequest(Document, Mixin):
     location = StringField()
     specialist_categories = ListField(StringField(), required=True)
     message = StringField()
-    attendee_count = IntField(required=True)
     organization = StringField(required=True)
     allowTexts = BooleanField(required=True)
     allowCalls = BooleanField(required=True)

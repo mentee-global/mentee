@@ -7,6 +7,7 @@ import {
   isLoggedIn,
   register,
 } from "utils/auth.service";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
@@ -86,9 +87,12 @@ function Register({ history }) {
               inputFocus[1] ? "__clicked" : ""
             }`}
           >
-            <Input
+            <Input.Password
               className="login-input"
               disabled={saving}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
               onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
@@ -100,9 +104,12 @@ function Register({ history }) {
               inputFocus[2] ? "__clicked" : ""
             }`}
           >
-            <Input
+            <Input.Password
               className="login-input"
               disabled={saving}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
               onFocus={() => handleInputFocus(2)}
               onChange={(e) => setConfirmPassword(e.target.value)}
               bordered={false}

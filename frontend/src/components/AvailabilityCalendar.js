@@ -101,8 +101,7 @@ function AvailabilityCalendar() {
     });
   };
 
-  async function handleOk()
-  {
+  async function handleOk() {
     let json_data = [];
     timeSlots.map((timeSlot) =>
       json_data.push({
@@ -110,11 +109,11 @@ function AvailabilityCalendar() {
         end_time: { $date: moment.parseZone(timeSlot[1].format(format)) },
       })
     );
-    
+
     await editAvailability(json_data, mentorID);
     setTrigger(!trigger);
     setVisible(false);
-  };
+  }
 
   const handleClear = () => {
     let cleared = timeSlots.filter(function (value) {

@@ -152,6 +152,7 @@ function AvailabilityCalendar() {
       </ul>
     );
   };
+  
   return (
     <>
       <Calendar

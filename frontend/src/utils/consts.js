@@ -43,17 +43,7 @@ export const SPECIALIZATIONS = [
   "Other",
 ];
 
-export const GENDERS = ["Male", "Female"];
-
-export const ETHNICITIES = [
-  "American Indian or Alaska Native",
-  "Asian",
-  "Black or African American",
-  "Hispanic or Latino",
-  "Native Hawaiian or Other Pacific Islander",
-  "White",
-  "Other",
-];
+export const GENDERS = ["Male", "Female", "Non-Binary", "Other"];
 
 export const AGES = [
   "Under 18 years",

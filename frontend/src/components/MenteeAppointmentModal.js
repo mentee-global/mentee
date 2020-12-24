@@ -3,13 +3,7 @@ import { Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import {
-  LANGUAGES,
-  SPECIALIZATIONS,
-  GENDERS,
-  ETHNICITIES,
-  AGES,
-} from "../utils/consts";
+import { LANGUAGES, SPECIALIZATIONS, GENDERS, AGES } from "../utils/consts";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -43,7 +37,6 @@ function MenteeAppointmentModal() {
   const [name, setName] = useState();
   const [ageRange, setAgeRange] = useState();
   const [gender, setGender] = useState();
-  const [ethnicity, setEthnicity] = useState();
   const [languages, setLanguages] = useState();
   const [specializations, setSpecializations] = useState();
   const [location, setLocation] = useState();
@@ -215,16 +208,6 @@ function MenteeAppointmentModal() {
                 />
                 <ModalInput
                   style={styles.modalInput}
-                  type="dropdown-single"
-                  title="Ethnicity*"
-                  clicked={inputClicked[3]}
-                  index={3}
-                  handleClick={handleClick}
-                  onChange={(e) => setEthnicity(ETHNICITIES[e])}
-                  options={ETHNICITIES}
-                />
-                <ModalInput
-                  style={styles.modalInput}
                   type="dropdown-multiple"
                   title="Language(s)*"
                   clicked={inputClicked[4]}
@@ -341,6 +324,7 @@ const styles = {
     height: 65,
     marginTop: 20,
     width: "95%",
+    overflow: "hidden",
   },
   contactInput: {
     maxHeight: 60,

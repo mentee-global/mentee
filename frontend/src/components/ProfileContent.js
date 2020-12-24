@@ -65,7 +65,7 @@ function ProfileContent(props) {
           />
         ) : (
           <div className="mentor-profile-button">
-            <MenteeAppointmentModal />
+            <MenteeAppointmentModal availability={props.mentor.availability}/>
           </div>
         )}
       </div>

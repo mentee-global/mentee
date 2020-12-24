@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import moment from "moment";
 import { Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
@@ -27,7 +28,9 @@ const sampleTimes = [
   "9-10pm",
 ];
 
-function MenteeAppointmentModal() {
+function MenteeAppointmentModal(props) {
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [dayTimeSlots, setDayTimeSlots] = useState([]);
   const [appModalVisible1, setAppModalVisible1] = useState(false);
   const [appModalVisible2, setAppModalVisible2] = useState(false);
   const [numInputs, setNumInputs] = useState(11);
@@ -35,7 +38,7 @@ function MenteeAppointmentModal() {
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
   const [date, setDate] = useState();
-  const [time, setTime] = useState();
+  const [time, setTime] = useState([]);
   const [name, setName] = useState();
   const [ageRange, setAgeRange] = useState();
   const [gender, setGender] = useState();
@@ -64,6 +67,7 @@ function MenteeAppointmentModal() {
     "allow_calls",
     "allow_texts",
   ];
+
   const values = [
     mentorId,
     name,
@@ -80,6 +84,23 @@ function MenteeAppointmentModal() {
     message,
   ];
 
+  useEffect(() => {
+    if (props.availability) {
+      setTimeSlots(props.availability);
+    }
+
+  }, [props]);
+
+  useEffect(() => {
+    let daySlots = [];
+    timeSlots.forEach(element => {
+      if (moment(element.start_time.$date).format("YYYY-MM-DD") === date) {
+        daySlots.push(element);
+      }
+    });
+    setDayTimeSlots(daySlots);
+  }, [date]);
+
   function handleClick(index) {
     // Sets only the clicked input box to true to change color, else false
     let newClickedInput = new Array(numInputs).fill(false);
@@ -88,7 +109,7 @@ function MenteeAppointmentModal() {
   }
 
   function handleDateChange(e) {
-    setDate(e._d);
+    setDate(moment(e._d).format("YYYY-MM-DD"));
   }
 
   function handleTimeChange(time) {
@@ -117,6 +138,10 @@ function MenteeAppointmentModal() {
     const appointment = {};
     for (let i = 0; i < values.length; i++) {
       appointment[fields[i]] = values[i];
+    }
+    appointment["timeslot"] = {
+      start_time: {$date: time.start_time},
+      end_time: {$date: time.end_time}
     }
     await createAppointment(appointment);
   }
@@ -157,14 +182,14 @@ function MenteeAppointmentModal() {
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
-                {sampleTimes.map((time, index) => (
+                {dayTimeSlots.map((time, index) => (
                   <div className="modal-mentee-appointment-timeslot">
                     <MenteeButton
                       key={index}
                       width={100}
-                      content={time}
+                      content={moment(time.start_time).format("HH:mm") + "-" + moment(time.end_time).format("HH:mm")}
                       theme="light"
-                      onClick={handleTimeChange}
+                      onClick={() => handleTimeChange(time)}
                     />
                   </div>
                 ))}

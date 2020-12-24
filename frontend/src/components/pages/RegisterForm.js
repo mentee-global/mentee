@@ -199,7 +199,8 @@ function RegisterForm(props) {
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
       const res = await createMentorProfile(data);
-      const mentorId = res.data ? res.data.result.mentorId : false;
+      const mentorId =
+        res && res.data && res.data.result ? res.data.result.mentorId : false;
       setSaving(false);
       setValidate(false);
       if (mentorId) {

@@ -8,18 +8,25 @@ import "./css/AvailabilityCalendar.scss";
 import { getMentorID } from "utils/auth.service";
 import { fetchAvailability, editAvailability } from "../utils/api";
 
+/**
+ * Moment.js documentation: {@link https://momentjs.com/docs/}
+ */
 function AvailabilityCalendar() {
   const mentorID = getMentorID();
-  const [saved, setSaved] = useState({});
+  const [saved, setSaved] = useState({}); // Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
-  const [lockmodal, setLockModal] = useState(false);
+  const [lockmodal, setLockModal] = useState(false); // Locks modal when panel changes
   const [timeSlots, setTimeSlots] = useState([]);
-  const [trigger, setTrigger] = useState(false);
+  const [trigger, setTrigger] = useState(false); // Trigger for getSetdays UseEffect
   const format = "YYYY-MM-DDTHH:mm:ss.SSSZ";
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone; // Gives timezone of browser
 
+  /**
+   * Gets appointments from backend and finds the days in format "YYYY-MM-DD"
+   * Changes setDays UseState when trigger variable is changed
+   */
   useEffect(() => {
     async function getSetDays() {
       const availability_data = await fetchAvailability(mentorID);
@@ -27,10 +34,12 @@ function AvailabilityCalendar() {
       if (availability_data) {
         const availability = availability_data.availability;
         availability.forEach((time) => {
+          // Checking if saved or set have date already
           if (
             !saved.hasOwnProperty(moment.parseZone(time.start_time.$date)) &&
             !set.hasOwnProperty(time.start_time.$date)
           ) {
+            // .format strips data to find just year, month, and day
             set[
               moment.parseZone(time.start_time.$date).format("YYYY-MM-DD")
             ] = true;
@@ -42,6 +51,9 @@ function AvailabilityCalendar() {
     getSetDays();
   }, [trigger]);
 
+  /**
+   * Gets availability from backend and changes clientside timeslots
+   */
   async function getAvailability() {
     const availability_data = await fetchAvailability(mentorID);
     if (availability_data) {
@@ -59,9 +71,15 @@ function AvailabilityCalendar() {
     }
   }
 
-  const handleTimeChange = (index, event, num) => {
+  /**
+   * Handles time changes on textfields
+   * @param {int} index Which timeSlot was changed
+   * @param {String} event User input values
+   * @param {int} timeslot Which of the two textfields was changed
+   */
+  const handleTimeChange = (index, event, timeslot) => {
     let times = [...timeSlots];
-    times[index][num] = moment(
+    times[index][timeslot] = moment(
       date.format("YYYY-MM-DD") + " " + event.target.value
     );
     setTimeSlots(times);
@@ -84,10 +102,16 @@ function AvailabilityCalendar() {
 
   const onPanelChange = (value) => {
     setValue(value);
-    setLockModal(true);
+    setLockModal(true); // Locks modal on panel changes
   };
 
+  /**
+   * When a date on calendar is selected open modal
+   * @param {String} value Date value from calendar
+   */
   const onSelect = (value) => {
+    // Workaround that prevents modal from popping up when
+    // panels are changed by checking state value of lockmodal
     setLockModal((state) => {
       setDate(value);
       setValue(value);
@@ -102,26 +126,37 @@ function AvailabilityCalendar() {
   };
 
   async function handleOk() {
-    let json_data = [];
+    let toSend = [];
+
+    // Fills toSend with current timeSlots
     timeSlots.map((timeSlot) =>
-      json_data.push({
+      toSend.push({
         start_time: { $date: moment.parseZone(timeSlot[0].format(format)) },
         end_time: { $date: moment.parseZone(timeSlot[1].format(format)) },
       })
     );
 
-    await editAvailability(json_data, mentorID);
+    // Sends toSend to backend to update availability
+    await editAvailability(toSend, mentorID);
+
+    // Change trigger to update green dots on calendar
     setTrigger(!trigger);
     setVisible(false);
   }
 
+  // Clears set appointments in modal
   const handleClear = () => {
+    // Filters timeSlots for appointments on current day
     let cleared = timeSlots.filter(function (value) {
       return !(value[0].format("YYYY-MM-DD") === date.format("YYYY-MM-DD"));
     });
     setTimeSlots(cleared);
   };
 
+  /**
+   * Checks if day in calendar has appointments set
+   * @param {moment} value moment value of day
+   */
   const getListData = (value) => {
     if (saved[value.format("YYYY-MM-DD")]) {
       return [{ content: "Appointment Set" }];
@@ -130,6 +165,11 @@ function AvailabilityCalendar() {
     }
   };
 
+  /**
+   * Gets timeSlots from a certain day for modal
+   * @param {String} day Day to get timeSlots from
+   * @return {Array} Timeslots from a specific day
+   */
   const getTimeSlots = (day) => {
     let returnSlots = [];
     for (let i = 0; i < timeSlots.length; i++) {
@@ -140,6 +180,11 @@ function AvailabilityCalendar() {
     return returnSlots;
   };
 
+  /**
+   * Renders each cell of calendar
+   * @param {moment} value
+   * @returns {*} Content of the cell
+   */
   const dateCellRender = (value) => {
     const listData = getListData(value);
     return (
@@ -152,7 +197,7 @@ function AvailabilityCalendar() {
       </ul>
     );
   };
-  
+
   return (
     <>
       <Calendar

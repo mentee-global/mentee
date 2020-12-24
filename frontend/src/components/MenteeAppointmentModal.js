@@ -4,6 +4,8 @@ import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { LANGUAGES, SPECIALIZATIONS, GENDERS, AGES } from "../utils/consts";
+import { createAppointment } from "../utils/api";
+import { getMentorID } from "utils/auth.service";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -46,6 +48,37 @@ function MenteeAppointmentModal() {
   const [canCall, setCanCall] = useState(false);
   const [canText, setCanText] = useState(false);
   const [message, setMessage] = useState();
+  const mentorId = getMentorID();
+  const fields = [
+    "mentor_id",
+    "name",
+    "email",
+    "phone_number",
+    "languages",
+    "age",
+    "gender",
+    "location",
+    "specialist_categories",
+    "message",
+    "organization",
+    "allow_calls",
+    "allow_texts",
+  ];
+  const values = [
+    mentorId,
+    name,
+    ageRange,
+    gender,
+    languages,
+    specializations,
+    location,
+    organization,
+    email,
+    phone,
+    canCall,
+    canText,
+    message,
+  ];
 
   function handleClick(index) {
     // Sets only the clicked input box to true to change color, else false
@@ -79,8 +112,13 @@ function MenteeAppointmentModal() {
     setAppModalVisible2(false);
   }
 
-  function handleBookAppointment() {
+  async function handleBookAppointment() {
     setAppModalVisible2(false);
+    const appointment = {};
+    for (let i = 0; i < values.length; i++) {
+      appointment[fields[i]] = values[i];
+    }
+    await createAppointment(appointment);
   }
 
   return (

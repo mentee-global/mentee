@@ -69,13 +69,14 @@ def create_app(test_config=None):
     Migrate(app, db)
 
     # import and register blueprints
-    from api.views import main, auth, appointment, availability
+    from api.views import main, auth, appointment, availability, verify
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
     app.register_blueprint(main.main)
     app.register_blueprint(auth.auth)
     app.register_blueprint(appointment.appointment)
     app.register_blueprint(availability.availability)
+    app.register_blueprint(verify.verify)
     # register error Handler
     app.register_error_handler(Exception, all_exception_handler)
 

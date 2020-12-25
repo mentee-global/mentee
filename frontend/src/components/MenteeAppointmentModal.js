@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { Form, Modal, Calendar, Avatar, Switch } from "antd";
+import { Alert, Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -65,6 +65,7 @@ function MenteeAppointmentModal(props) {
   const [canText, setCanText] = useState(false);
   const [message, setMessage] = useState();
   const mentorID = props.mentor_id;
+  const [validate, setValidate] = useState(false);
 
   // useState values
   const values = [
@@ -119,13 +120,21 @@ function MenteeAppointmentModal(props) {
     setDate(moment(e._d).format("YYYY-MM-DD"));
   }
 
-  function handleTimeChange(time) {
-    setTime(time);
-  }
-
   function closeModals() {
+    setTime(null);
     setAppModalVisible1(false);
     setAppModalVisible2(false);
+  }
+
+  // Move on to next page if time is truthy
+  function updateModal() {
+    if (time) {
+      setAppModalVisible1(false);
+      setAppModalVisible2(true);
+      setValidate(false);
+    } else {
+      setValidate(true);
+    }
   }
 
   async function handleBookAppointment() {
@@ -222,19 +231,21 @@ function MenteeAppointmentModal(props) {
                         moment(time.end_time.$date).format("HH:mm")
                       }
                       theme="light"
-                      onClick={() => handleTimeChange(time)}
+                      onClick={() => setTime(time)}
                     />
                   </div>
                 ))}
               </div>
             </div>
             <div className="modal-mentee-appointment-datetime-container-footer">
+              {validate && (
+                <b style={styles.alertToast}>Appointment Time Not Chosen</b>
+              )}
               <MenteeButton
                 width={120}
                 content={"continue"}
                 onClick={() => {
-                  setAppModalVisible1(false);
-                  setAppModalVisible2(true);
+                  updateModal();
                 }}
               />
             </div>
@@ -528,6 +539,11 @@ const styles = {
     maxHeight: 60,
     marginTop: 16,
     width: "95%",
+  },
+  alertToast: {
+    color: "#FF0000",
+    display: "inline-block",
+    marginRight: 10,
   },
 };
 

@@ -55,3 +55,20 @@ export const AGES = [
   "45 to 49",
   "Over 60",
 ];
+
+// Keys for fields
+export const KEYS = [
+  "mentor_id",
+  "name",
+  "email",
+  "phone_number",
+  "languages",
+  "age",
+  "gender",
+  "location",
+  "specialist_categories",
+  "message",
+  "organization",
+  "allow_calls",
+  "allow_texts",
+];

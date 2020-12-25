@@ -4,12 +4,14 @@ import { Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import { LANGUAGES, SPECIALIZATIONS, GENDERS, AGES } from "../utils/consts";
 import {
-  createAppointment,
-  fetchAvailability,
-  editAvailability,
-} from "../utils/api";
+  LANGUAGES,
+  SPECIALIZATIONS,
+  GENDERS,
+  AGES,
+  KEYS,
+} from "../utils/consts";
+import { createAppointment, editAvailability } from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -44,7 +46,7 @@ function MenteeAppointmentModal(props) {
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
   const [appModalVisible1, setAppModalVisible1] = useState(false);
   const [appModalVisible2, setAppModalVisible2] = useState(false);
-  const [numInputs, setNumInputs] = useState(11);
+  const [numInputs] = useState(11);
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
@@ -63,22 +65,8 @@ function MenteeAppointmentModal(props) {
   const [canText, setCanText] = useState(false);
   const [message, setMessage] = useState();
   const mentorID = props.mentor_id;
-  const fields = [
-    "mentor_id",
-    "name",
-    "email",
-    "phone_number",
-    "languages",
-    "age",
-    "gender",
-    "location",
-    "specialist_categories",
-    "message",
-    "organization",
-    "allow_calls",
-    "allow_texts",
-  ];
 
+  // useState values
   const values = [
     mentorID,
     name,
@@ -95,18 +83,21 @@ function MenteeAppointmentModal(props) {
     canText,
   ];
 
+  // Updates availability
   useEffect(() => {
     if (props.availability) {
       setTimeSlots(props.availability);
     }
   }, [props]);
 
+  // Resets form fields on close
   useEffect(() => {
     if (appModalVisible2) {
       form.resetFields();
     }
-  }, [appModalVisible2]);
+  }, [appModalVisible2, form]);
 
+  // Update Buttons available
   useEffect(() => {
     let daySlots = [];
     timeSlots.forEach((element) => {
@@ -115,7 +106,7 @@ function MenteeAppointmentModal(props) {
       }
     });
     setDayTimeSlots(daySlots);
-  }, [date]);
+  }, [date, timeSlots]);
 
   function handleClick(index) {
     // Sets only the clicked input box to true to change color, else false
@@ -141,20 +132,29 @@ function MenteeAppointmentModal(props) {
     setAppModalVisible2(false);
 
     const appointment = {};
+
+    // Match keys to useState value
     for (let i = 0; i < values.length; i++) {
       if (values[i] !== undefined) {
-        appointment[fields[i]] = values[i];
+        appointment[KEYS[i]] = values[i];
       }
     }
+
+    // Manually set keys to values for accepted and timeslot
     appointment["accepted"] = false;
     appointment["timeslot"] = {
       start_time: moment(time.start_time.$date).format(),
       end_time: moment(time.end_time.$date).format(),
     };
 
+    // POST request to create mentee appointment
     await createAppointment(appointment);
+
+    // Find matching appointment and PUT request for mentor availability
     const changeTime = [...timeSlots];
     let index = 0;
+
+    // Change date format and find index of object that matches selected
     changeTime.forEach((element) => {
       element.end_time.$date = moment(element.end_time.$date).format();
       element.start_time.$date = moment(element.start_time.$date).format();
@@ -165,6 +165,8 @@ function MenteeAppointmentModal(props) {
         index = changeTime.indexOf(element);
       }
     });
+
+    // Remove date object from timeslots and update availability
     changeTime.splice(index, 1);
     await editAvailability(changeTime, mentorID);
   }

@@ -224,11 +224,11 @@ function MenteeAppointmentModal(props) {
                   >
                     <MenteeButton
                       key={index}
-                      width={100}
+                      width={170}
                       content={
-                        moment(time.start_time.$date).format("HH:mm") +
+                        moment(time.start_time.$date).format("hh:mm A") +
                         "-" +
-                        moment(time.end_time.$date).format("HH:mm")
+                        moment(time.end_time.$date).format("hh:mm A")
                       }
                       theme="light"
                       onClick={() => setTime(time)}
@@ -530,13 +530,11 @@ function MenteeAppointmentModal(props) {
 
 const styles = {
   modalInput: {
-    height: 65,
     marginTop: 20,
     width: "95%",
     overflow: "hidden",
   },
   contactInput: {
-    maxHeight: 60,
     marginTop: 16,
     width: "95%",
   },

@@ -111,6 +111,10 @@
     background-color: inherit;
 }
 
+.modal-mentee-appointment-contact-container {
+    display: inline;
+}
+
 
 // This is probably bad coding practice so probably want to replace
 .ant-form-item-has-error{
@@ -118,6 +122,9 @@
     border-color: inherit !important;
 }
 
+.ant-form-item{
+    margin: 0;
+}
 .ant-input {
     background-color: inherit !important;
 }

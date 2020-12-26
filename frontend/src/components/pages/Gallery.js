@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
+import { Input, Checkbox } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 
 import "../css/Gallery.scss";
 
@@ -28,28 +31,60 @@ function Gallery() {
     return output;
   }
 
-  return (
-    <div className="gallery-mentor-container">
-      {mentors.map((mentor, key) => (
-        <MentorCard
-          key={key}
-          name={mentor.name}
-          languages={mentor.languages}
-          professional_title={mentor.professional_title}
-          location={mentor.location}
-          specializations={mentor.specializations}
-          website={mentor.website}
-          linkedin={mentor.linkedin}
-          id={mentor._id["$oid"]}
-          lesson_types={getLessonTypes(
-            mentor.offers_group_appointments,
-            mentor.offers_in_person
-          )}
-          image={mentor.image}
+  const FilterSection = (props) => {
+    const { title, options } = props;
+    return (
+      <div>
+        <div className="gallery-filter-section-title">{title}</div>
+        <Checkbox.Group
+          options={options}
+          onChange={() => console.log("change")}
         />
-      ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="gallery-container">
+      <div className="gallery-filter-container">
+        <div className="gallery-filter-header">Filter By:</div>
+        <Input
+          placeholder="Search by name"
+          prefix={<SearchOutlined />}
+          style={styles.searchInput}
+        />
+        <FilterSection title="Specializations" options={SPECIALIZATIONS} />
+        <FilterSection title="Languages" options={LANGUAGES} />
+      </div>
+      <div className="gallery-mentor-container">
+        {mentors.map((mentor, key) => (
+          <MentorCard
+            key={key}
+            name={mentor.name}
+            languages={mentor.languages}
+            professional_title={mentor.professional_title}
+            location={mentor.location}
+            specializations={mentor.specializations}
+            website={mentor.website}
+            linkedin={mentor.linkedin}
+            id={mentor._id["$oid"]}
+            lesson_types={getLessonTypes(
+              mentor.offers_group_appointments,
+              mentor.offers_in_person
+            )}
+            image={mentor.image}
+          />
+        ))}
+      </div>
     </div>
   );
 }
+
+const styles = {
+  searchInput: {
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+};
 
 export default Gallery;

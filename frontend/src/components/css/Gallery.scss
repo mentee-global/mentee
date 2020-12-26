@@ -1,5 +1,31 @@
+@import "_app";
+
+.gallery-container {
+    display: flex;
+    flex-direction: row;
+    padding: 1vh;
+}
+
+.gallery-filter-container {
+    margin-right: 1rem;
+    background-color: $theme-orange-light;
+    width: 20%;
+    padding: 2vh;
+    border-radius: 8px;
+}
+
+.gallery-filter-header {
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+.gallery-filter-section-title {
+    color: $theme-orange-dark;
+    font-weight: bold;
+    font-size: 16px;
+}
+
 .gallery-mentor-container {
-  padding: 1vh;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
   grid-gap: 1rem;
@@ -8,8 +34,8 @@
 }
 
 .gallery-mentor-card {
-    background: #FFFFFF;
-    border: 2px solid #E4BB4F;
+    background-color: white;
+    border: 2px solid $theme-orange;
     border-radius: 8px;
 }
 
@@ -26,14 +52,14 @@
 .gallery-dot {
   height: 10px;
   width: 10px;
-  background-color: #F2C94C;
+  background-color: $theme-orange;
   border-radius: 50%;
   margin-right: 10px;
   display: inline-block;
 }
 
 .gallery-solid-border  {
-  border-top: 3px solid #F2C94C;
+  border-top: 3px solid $theme-orange;
   margin-top: 20px;
 }
 
@@ -68,7 +94,7 @@
 }
 
 .gallery-headers {
-    color: #A58123;
+    color: $theme-orange-dark;
     margin: 0;
 }
 

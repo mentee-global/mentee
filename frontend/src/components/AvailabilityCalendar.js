@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
-import { Calendar, Modal, Button, Badge } from "antd";
+import { Calendar, Modal, Badge } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
 import MenteeButton from "./MenteeButton.js";
@@ -53,7 +53,6 @@ function AvailabilityCalendar() {
       setSaved(set);
     }
     getSetDays();
-    console.log(timeSlots);
   }, [timeSlots]);
 
   async function getAvailability() {
@@ -74,7 +73,7 @@ function AvailabilityCalendar() {
   }
 
   const handleTimeChange = (index, event, num) => {
-    const times = [...timeSlots];
+    let times = [...timeSlots];
     times[index][num] = moment(
       date.format("YYYY-MM-DD") + " " + event.target.value
     );
@@ -82,7 +81,7 @@ function AvailabilityCalendar() {
   };
 
   const addTimeSlots = () => {
-    const times = [...timeSlots];
+    let times = [...timeSlots];
     times.push([
       moment(date.format("YYYY-MM-DD")),
       moment(date.format("YYYY-MM-DD")),
@@ -91,7 +90,7 @@ function AvailabilityCalendar() {
   };
 
   const removeTimeSlots = (index) => {
-    const times = [...timeSlots];
+    let times = [...timeSlots];
     times.splice(index, 1);
     setTimeSlots(times);
   };
@@ -149,7 +148,7 @@ function AvailabilityCalendar() {
     let returnSlots = [];
     for (let i = 0; i < timeSlots.length; i++) {
       if (day === timeSlots[i][0].format("YYYY-MM-DD")) {
-        returnSlots.push(timeSlots[i]);
+        returnSlots.push([timeSlots[i], i]);
       }
     }
     return returnSlots;
@@ -210,8 +209,8 @@ function AvailabilityCalendar() {
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">
                 <TextField
-                  value={timeSlot[0].format("HH:mm")}
-                  onChange={(event) => handleTimeChange(index, event, 0)}
+                  value={timeSlot[0][0].format("HH:mm")}
+                  onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
                   className="timeslot"
                   type="time"
                   InputLabelProps={{
@@ -223,8 +222,8 @@ function AvailabilityCalendar() {
                 />
                 <h1 className="timeslot"> - </h1>
                 <TextField
-                  value={timeSlot[1].format("HH:mm")}
-                  onChange={(event) => handleTimeChange(index, event, 1)}
+                  value={timeSlot[0][1].format("HH:mm")}
+                  onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
                   className="timeslots"
                   type="time"
                   InputLabelProps={{

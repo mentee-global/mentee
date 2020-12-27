@@ -28,9 +28,11 @@ function AvailabilityCalendar() {
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
+  const [lockmodal, setLockModal] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
   const format = "YYYY-MM-DDTHH:mm:ss.SSSZ";
-  // var tz = moment.tz.guess();
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   useEffect(() => {
     async function getSetDays() {
       const availability_data = await fetchAvailability(mentorID);
@@ -51,6 +53,7 @@ function AvailabilityCalendar() {
       setSaved(set);
     }
     getSetDays();
+    console.log(timeSlots);
   }, [timeSlots]);
 
   async function getAvailability() {
@@ -92,12 +95,23 @@ function AvailabilityCalendar() {
     times.splice(index, 1);
     setTimeSlots(times);
   };
+  const onPanelChange = (value) => {
+    setValue(value);
+    setLockModal(true);
+  };
 
   const onSelect = (value) => {
-    setValue(value);
-    setVisible(true);
-    setDate(value);
-    getAvailability();
+    setLockModal((state) => {
+      setDate(value);
+      setValue(value);
+      getAvailability();
+      if (!state) {
+        setVisible(true);
+      } else {
+        setLockModal(false);
+      }
+      return state;
+    });
   };
 
   const handleOk = () => {
@@ -117,7 +131,7 @@ function AvailabilityCalendar() {
     setVisible(false);
   };
   const handleClear = () => {
-    let cleared = timeSlots.filter(function (value, index, arr) {
+    let cleared = timeSlots.filter(function (value) {
       return !(value[0].format("YYYY-MM-DD") === date.format("YYYY-MM-DD"));
     });
     setTimeSlots(cleared);
@@ -159,7 +173,7 @@ function AvailabilityCalendar() {
     <>
       <Calendar
         value={value}
-        onPanelChange={(value) => setValue(value)}
+        onPanelChange={onPanelChange}
         onSelect={onSelect}
         dateCellRender={dateCellRender}
         monthCellRender={monthCellRender}
@@ -183,45 +197,51 @@ function AvailabilityCalendar() {
           />,
         ]}
       >
+        <h3 className="hours">
+          <b>Hours </b> | <i>{tz.replace("_", " ")}</i>
+        </h3>
+        <br></br>
         <div className="date-header">
           <h2 className="date">{date && date.format("MM/DD")} </h2>
           <h5 className="date">{days[date.day()]}</h5>
         </div>
-        {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
-          <Fragment key={`${index}`}>
-            <div className="timeslot-wrapper">
-              <TextField
-                value={timeSlot[0].format("HH:mm")}
-                onChange={(event) => handleTimeChange(index, event, 0)}
-                className="timeslot"
-                type="time"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  step: 300,
-                }}
-              />
-              <h1 className="timeslot"> - </h1>
-              <TextField
-                value={timeSlot[1].format("HH:mm")}
-                onChange={(event) => handleTimeChange(index, event, 1)}
-                className="timeslots"
-                type="time"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  step: 300,
-                }}
-              />
-              <CloseOutlined
-                className="close-icon"
-                onClick={() => removeTimeSlots(index)}
-              />
-            </div>
-          </Fragment>
-        ))}
+        <div className="all-timeslots-wrapper">
+          {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
+            <Fragment key={`${index}`}>
+              <div className="timeslot-wrapper">
+                <TextField
+                  value={timeSlot[0].format("HH:mm")}
+                  onChange={(event) => handleTimeChange(index, event, 0)}
+                  className="timeslot"
+                  type="time"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    step: 300,
+                  }}
+                />
+                <h1 className="timeslot"> - </h1>
+                <TextField
+                  value={timeSlot[1].format("HH:mm")}
+                  onChange={(event) => handleTimeChange(index, event, 1)}
+                  className="timeslots"
+                  type="time"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    step: 300,
+                  }}
+                />
+                <CloseOutlined
+                  className="close-icon"
+                  onClick={() => removeTimeSlots(index)}
+                />
+              </div>
+            </Fragment>
+          ))}
+        </div>
         <div className="add-times">
           <MenteeButton onClick={addTimeSlots} content="Add hours" />
         </div>

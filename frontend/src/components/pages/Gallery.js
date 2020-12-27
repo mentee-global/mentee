@@ -38,10 +38,10 @@ function Gallery() {
     return mentors.filter((mentor) => {
       const matchesSpecializations =
         specializations.length == 0 ||
-        specializations.every((s) => mentor.specializations.indexOf(s) >= 0);
+        specializations.some((s) => mentor.specializations.indexOf(s) >= 0);
       const matchesLanguages =
         languages.length == 0 ||
-        languages.every((l) => mentor.languages.indexOf(l) >= 0);
+        languages.some((l) => mentor.languages.indexOf(l) >= 0);
       const matchesName =
         !query || mentor.name.toUpperCase().includes(query.toUpperCase());
 

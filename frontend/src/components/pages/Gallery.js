@@ -9,6 +9,9 @@ import "../css/Gallery.scss";
 
 function Gallery() {
   const [mentors, setMentors] = useState([]);
+  const [specializations, setSpecializations] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const [query, setQuery] = useState();
 
   useEffect(() => {
     async function getMentors() {
@@ -31,18 +34,20 @@ function Gallery() {
     return output;
   }
 
-  const FilterSection = (props) => {
-    const { title, options } = props;
-    return (
-      <div>
-        <div className="gallery-filter-section-title">{title}</div>
-        <Checkbox.Group
-          options={options}
-          onChange={() => console.log("change")}
-        />
-      </div>
-    );
-  };
+  function getFilteredMentors() {
+    return mentors.filter((mentor) => {
+      const matchesSpecializations =
+        specializations.length == 0 ||
+        specializations.every((s) => mentor.specializations.indexOf(s) >= 0);
+      const matchesLanguages =
+        languages.length == 0 ||
+        languages.every((l) => mentor.languages.indexOf(l) >= 0);
+      const matchesName =
+        !query || mentor.name.toUpperCase().includes(query.toUpperCase());
+
+      return matchesSpecializations && matchesLanguages && matchesName;
+    });
+  }
 
   return (
     <div className="gallery-container">
@@ -52,12 +57,23 @@ function Gallery() {
           placeholder="Search by name"
           prefix={<SearchOutlined />}
           style={styles.searchInput}
+          onChange={(e) => setQuery(e.target.value)}
         />
-        <FilterSection title="Specializations" options={SPECIALIZATIONS} />
-        <FilterSection title="Languages" options={LANGUAGES} />
+        <div className="gallery-filter-section-title">Specializations</div>
+        <Checkbox.Group
+          defaultValue={specializations}
+          options={SPECIALIZATIONS}
+          onChange={(checked) => setSpecializations(checked)}
+        />
+        <div className="gallery-filter-section-title">Languages</div>
+        <Checkbox.Group
+          defaultValue={languages}
+          options={LANGUAGES}
+          onChange={(checked) => setLanguages(checked)}
+        />
       </div>
       <div className="gallery-mentor-container">
-        {mentors.map((mentor, key) => (
+        {getFilteredMentors().map((mentor, key) => (
           <MentorCard
             key={key}
             name={mentor.name}

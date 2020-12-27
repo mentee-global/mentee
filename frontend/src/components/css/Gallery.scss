@@ -7,9 +7,9 @@
 }
 
 .gallery-filter-container {
+    flex: 1;
     margin-right: 1rem;
     background-color: $theme-orange-light;
-    width: 20%;
     padding: 2vh;
     border-radius: 8px;
 }
@@ -26,6 +26,7 @@
 }
 
 .gallery-mentor-container {
+  flex: 5;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
   grid-gap: 1rem;

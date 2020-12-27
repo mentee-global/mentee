@@ -124,6 +124,7 @@ function AvailabilityCalendar() {
 
     editAvailability(json_data, mentorID);
     setVisible(false);
+    dateCellRender(date);
   };
 
   const handleCancel = () => {
@@ -138,7 +139,7 @@ function AvailabilityCalendar() {
 
   const getListData = (value) => {
     if (saved[value.format("YYYY-MM-DD")]) {
-      return [{ content: "test" }];
+      return [{ content: "Appointment Set" }];
     } else {
       return [];
     }
@@ -157,7 +158,6 @@ function AvailabilityCalendar() {
 
   const dateCellRender = (value) => {
     const listData = getListData(value);
-
     return (
       <ul className="status">
         {listData.map((item) => (
@@ -235,7 +235,7 @@ function AvailabilityCalendar() {
                 />
                 <CloseOutlined
                   className="close-icon"
-                  onClick={() => removeTimeSlots(index)}
+                  onClick={() => removeTimeSlots(timeSlot[1])}
                 />
               </div>
             </Fragment>

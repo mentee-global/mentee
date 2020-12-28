@@ -23,7 +23,7 @@ function AppointmentInfo(props) {
   };
 
   const displayButtons = () => {
-    if (!props.needButtons) {
+    if (props.needButtons) {
       return (
         <div style={{ textAlign: "center" }}>
           <MenteeButton

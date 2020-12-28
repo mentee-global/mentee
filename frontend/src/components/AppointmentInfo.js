@@ -14,7 +14,6 @@ import {
 import "./css/Appointments.scss";
 
 function AppointmentInfo(props) {
-    const [appointmentClick, setAppointmentClick] = useState(true);
 
     const getLanguages = (languages) => {
         return languages.join(" • ");
@@ -31,18 +30,6 @@ function AppointmentInfo(props) {
         }
         return subtextInfo.join(" • ");
     };
-    
-    async function handleAppointmentClick(id, didAccept) {
-        if (didAccept) {
-          await acceptAppointment(id);
-        } else {
-          await deleteAppointment(id);
-        }
-        setAppointmentClick(!appointmentClick);
-        props.setModalVisible(false);
-    }
-
-
 
     return (
         <Modal
@@ -55,12 +42,12 @@ function AppointmentInfo(props) {
                 <MenteeButton 
                 content={"Accept"}
                 border={"1px solid green"}
-                onClick={() => handleAppointmentClick(props.modalAppointment.id, true)}
+                onClick={() => props.handleAppointmentClick(props.modalAppointment.id, true)}
                 />
                 <MenteeButton 
                 content={"Deny"}
                 border={"1px solid red"}
-                onClick={() => handleAppointmentClick(props.modalAppointment.id, false)}
+                onClick={() => props.handleAppointmentClick(props.modalAppointment.id, false)}
                 />
             </div>
             }

@@ -54,6 +54,15 @@ function Appointments() {
     }
     getAppointments();
   }, [appointmentClick]);
+  async function handleAppointmentClick(id, didAccept) {
+    if (didAccept) {
+      await acceptAppointment(id);
+    } else {
+      await deleteAppointment(id);
+    }
+    setAppointmentClick(!appointmentClick);
+    setModalVisible(false);
+  }
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
     const inactive = "#FFECBD";
@@ -211,6 +220,7 @@ function Appointments() {
       <AppointmentInfo
         setModalVisible = {setModalVisible}
         modalVisible = {modalVisible}
+        handleAppointmentClick = {handleAppointmentClick}
         modalAppointment = {modalAppointment}
         
       />

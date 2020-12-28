@@ -36,6 +36,7 @@ function Gallery() {
 
   function getFilteredMentors() {
     return mentors.filter((mentor) => {
+      // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
         specializations.length == 0 ||
         specializations.some((s) => mentor.specializations.indexOf(s) >= 0);

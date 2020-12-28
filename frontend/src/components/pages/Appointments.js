@@ -41,7 +41,7 @@ function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
-  //const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
   useEffect(() => {
     const mentorID = getMentorID();
@@ -149,7 +149,7 @@ function Appointments() {
     );
   };
   const AcceptRejectAppointment = (props) => {
-    //setModalVisible(true)
+    setModalVisible(true)
     setModalAppointment(props)
   };
   const AvailabilityTab = () => {
@@ -237,7 +237,8 @@ function Appointments() {
     <div>
       
       <AppointmentInfo
-        //modalVisible = {modalVisible}
+        setModalVisible = {setModalVisible}
+        modalVisible = {modalVisible}
         name={modalAppointment.name}
         date={modalAppointment.date}
         time={modalAppointment.time}

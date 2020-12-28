@@ -16,7 +16,7 @@ import "./css/Appointments.scss";
 function AppointmentInfo(props) {
     const [appointmentClick, setAppointmentClick] = useState(true);
 
-    const [modalVisible, setModalVisible] = useState(false);
+    //const [modalVisible, setModalVisible] = useState(false);
 
     const getLanguages = (languages) => {
         return languages.join(" • ");
@@ -47,10 +47,10 @@ function AppointmentInfo(props) {
 
     return (
         <Modal
-            visible={modalVisible}
+            visible={props.modalVisible}
             title="Appointment Details"
             width="449.91px"
-            onCancel={() => setModalVisible(false)}
+            onCancel={() => props.setModalVisible(false)}
             footer={
             <div className = "ar-footer">
                 <Button 

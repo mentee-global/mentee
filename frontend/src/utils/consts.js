@@ -1,19 +1,19 @@
 export const LANGUAGES = [
-  "Hindu",
-  "Urdu",
-  "Spanish",
   "Arabic",
+  "Bengali",
+  "Cantonese",
+  "English",
   "French",
   "German",
-  "English",
-  "Russian",
-  "Swahili",
-  "Mandarin",
-  "Cantonese",
-  "Bengali",
-  "Japanese",
+  "Hindu",
   "Italian",
+  "Japanese",
+  "Mandarin",
   "Portuguese",
+  "Russian",
+  "Spanish",
+  "Swahili",
+  "Urdu"
 ];
 
 export const SPECIALIZATIONS = [

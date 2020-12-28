@@ -24,26 +24,26 @@ function AppointmentInfo(props) {
 
   const displayButtons = () => {
     if (!props.needButtons) {
-        return (
-            <div style={{ textAlign: "center" }}>   
-                <MenteeButton
-                    content={"Accept"}
-                    border={"1px solid green"}
-                    onClick={() =>
-                        props.handleAppointmentClick(props.modalAppointment.id, true)
-                    }
-                />
-                <MenteeButton
-                    content={"Deny"}
-                    border={"1px solid red"}
-                    onClick={() =>
-                        props.handleAppointmentClick(props.modalAppointment.id, false)
-                    }
-                />
-            </div>
-        )
+      return (
+        <div style={{ textAlign: "center" }}>
+          <MenteeButton
+            content={"Accept"}
+            border={"1px solid green"}
+            onClick={() =>
+              props.handleAppointmentClick(props.modalAppointment.id, true)
+            }
+          />
+          <MenteeButton
+            content={"Deny"}
+            border={"1px solid red"}
+            onClick={() =>
+              props.handleAppointmentClick(props.modalAppointment.id, false)
+            }
+          />
+        </div>
+      );
     } else {
-        return null;
+      return null;
     }
   };
 
@@ -53,9 +53,7 @@ function AppointmentInfo(props) {
       title="Appointment Details"
       width="449.91px"
       onCancel={() => props.setModalVisible(false)}
-      footer={
-        displayButtons()
-      }
+      footer={displayButtons()}
     >
       <div className="ar-modal-container">
         <div className="ar-status">

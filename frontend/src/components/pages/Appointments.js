@@ -17,7 +17,7 @@ import {
 } from "../../utils/api";
 import { getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
-
+import MenteeButton from "../MenteeButton.js"
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -54,14 +54,6 @@ function Appointments() {
     }
     getAppointments();
   }, [appointmentClick]);
-  /*async function handleAppointmentClick(id, didAccept) {
-    if (didAccept) {
-      await acceptAppointment(id);
-    } else {
-      await deleteAppointment(id);
-    }
-    setAppointmentClick(!appointmentClick);
-  }*/
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
     const inactive = "#FFECBD";
@@ -107,30 +99,10 @@ function Appointments() {
       );
     } else if (tab === Tabs.pending) {
       return (
-        <div className="appointment-pending-buttons" onClick={() => AcceptRejectAppointment(props)}>
-          <Button
-            className="appointment-accept"
-            icon={
-              <CheckCircleTwoTone
-                style={styles.appointment_buttons}
-                twoToneColor="#52c41a"
-              />
-            }
-            type="text"
-            shape="circle"
-          ></Button>
-          <Button
-            className="appointment-accept"
-            icon={
-              <CloseCircleTwoTone
-                style={styles.appointment_buttons}
-                twoToneColor="#eb2f00"
-              />
-            }
-            type="text"
-            shape="circle"
-          ></Button>
-        </div>
+        <MenteeButton 
+          content = {<b>Review</b>}
+          onClick={() => AcceptRejectAppointment(props)}>
+        </MenteeButton>
       );
     }
   };
@@ -239,20 +211,7 @@ function Appointments() {
       <AppointmentInfo
         setModalVisible = {setModalVisible}
         modalVisible = {modalVisible}
-        name={modalAppointment.name}
-        date={modalAppointment.date}
-        time={modalAppointment.time}
-        description={modalAppointment.description}
-        id={modalAppointment.id}
-        email={modalAppointment.email}
-        age={modalAppointment.age}
-        phone_number={modalAppointment.phone_number}
-        languages={modalAppointment.languages}
-        gender={modalAppointment.gender}
-        ethnicity={modalAppointment.ethnicity}
-        location={modalAppointment.location}
-        specialist_categories={modalAppointment.specialist_categories}
-        organization = {modalAppointment.organization}
+        modalAppointment = {modalAppointment}
         
       />
       <Row> 

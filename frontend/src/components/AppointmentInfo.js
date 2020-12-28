@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
+import MenteeButton from "./MenteeButton";
 import {
     EnvironmentOutlined,
     CommentOutlined,
@@ -10,13 +11,10 @@ import {
     deleteAppointment,
 } from "./../utils/api";
 
-
 import "./css/Appointments.scss";
 
 function AppointmentInfo(props) {
     const [appointmentClick, setAppointmentClick] = useState(true);
-
-    //const [modalVisible, setModalVisible] = useState(false);
 
     const getLanguages = (languages) => {
         return languages.join(" • ");
@@ -41,6 +39,7 @@ function AppointmentInfo(props) {
           await deleteAppointment(id);
         }
         setAppointmentClick(!appointmentClick);
+        props.setModalVisible(false);
     }
 
 
@@ -52,36 +51,36 @@ function AppointmentInfo(props) {
             width="449.91px"
             onCancel={() => props.setModalVisible(false)}
             footer={
-            <div className = "ar-footer">
-                <Button 
-                className="accept-apt" 
-                onClick={() => handleAppointmentClick(props.id, true)}>
-                Accept
-                </Button>
-                <Button 
-                className="reject-apt" 
-                onClick={() => handleAppointmentClick(props.id, false)}>
-                Reject
-                </Button>
+            <div style={{ textAlign: "center" }}>
+                <MenteeButton 
+                content={"Accept"}
+                border={"1px solid green"}
+                onClick={() => handleAppointmentClick(props.modalAppointment.id, true)}
+                />
+                <MenteeButton 
+                content={"Deny"}
+                border={"1px solid red"}
+                onClick={() => handleAppointmentClick(props.modalAppointment.id, false)}
+                />
             </div>
             }
         >
             <div className="ar-modal-container">
             <div className="ar-status">pending<span class="dot"></span></div>
-            <div className="ar-modal-title">{props.name}, {props.age}</div>
-            <div className="ar-phone">Call/text: {props.phone_number}</div>
-            <div className="ar-email">{props.email}</div>
-            <div className="ar-title-subtext">{getSubtext(props.gender, props.ethnicity, props.organization)}</div>
+            <div className="ar-modal-title">{props.modalAppointment.name}, {props.age}</div>
+            <div className="ar-phone">Call/text: {props.modalAppointment.phone_number}</div>
+            <div className="ar-email">{props.modalAppointment.email}</div>
+            <div className="ar-title-subtext">{getSubtext(props.modalAppointment.gender, props.modalAppointment.ethnicity, props.modalAppointment.organization)}</div>
             <div>
-                <div className="ar-languages"><CommentOutlined className="ar-icon"></CommentOutlined>{getLanguages(props.languages || [])}</div>
-                <div className="ar-location"><EnvironmentOutlined className="ar-icon"></EnvironmentOutlined>{props.location}</div>
+                <div className="ar-languages"><CommentOutlined className="ar-icon"></CommentOutlined>{getLanguages(props.modalAppointment.languages || [])}</div>
+                <div className="ar-location"><EnvironmentOutlined className="ar-icon"></EnvironmentOutlined>{props.modalAppointment.location}</div>
             </div>
-            <div className="ar-apt-date">{props.date}</div>
-            <div className="ar-apt-time">{props.time}</div>
+            <div className="ar-apt-date">{props.modalAppointment.date}</div>
+            <div className="ar-apt-time">{props.modalAppointment.time}</div>
             <div className="ar-categories-title">Seeking help in:</div>
-            <div className="ar-categories">{getCategories(props.specialist_categories || [])}</div>  
+            <div className="ar-categories">{getCategories(props.modalAppointment.specialist_categories || [])}</div>  
             <div className="ar-goals-title">Note:</div>
-            <div className="ar-goals">{props.description}</div>
+            <div className="ar-goals">{props.modalAppointment.description}</div>
             <div className="vl"></div>
             <div className="hl"></div>
             </div>

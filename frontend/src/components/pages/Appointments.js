@@ -104,6 +104,7 @@ function Appointments() {
             />
           }
           type="text"
+          onClick={() => ViewAppointmentDetails(props)}
         ></Button>
       );
     } else if (tab === Tabs.pending) {
@@ -130,6 +131,10 @@ function Appointments() {
     );
   };
   const AcceptRejectAppointment = (props) => {
+    setModalVisible(true);
+    setModalAppointment(props);
+  };
+  const ViewAppointmentDetails = (props) => {
     setModalVisible(true);
     setModalAppointment(props);
   };

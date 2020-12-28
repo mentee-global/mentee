@@ -13,7 +13,7 @@ export const LANGUAGES = [
   "Russian",
   "Spanish",
   "Swahili",
-  "Urdu"
+  "Urdu",
 ];
 
 export const SPECIALIZATIONS = [

@@ -17,7 +17,7 @@ import {
 } from "../../utils/api";
 import { getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
-import MenteeButton from "../MenteeButton.js"
+import MenteeButton from "../MenteeButton.js";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -108,10 +108,10 @@ function Appointments() {
       );
     } else if (tab === Tabs.pending) {
       return (
-        <MenteeButton 
-          content = {<b>Review</b>}
-          onClick={() => AcceptRejectAppointment(props)}>
-        </MenteeButton>
+        <MenteeButton
+          content={<b>Review</b>}
+          onClick={() => AcceptRejectAppointment(props)}
+        ></MenteeButton>
       );
     }
   };
@@ -130,8 +130,8 @@ function Appointments() {
     );
   };
   const AcceptRejectAppointment = (props) => {
-    setModalVisible(true)
-    setModalAppointment(props)
+    setModalVisible(true);
+    setModalAppointment(props);
   };
   const AvailabilityTab = () => {
     return (
@@ -189,7 +189,7 @@ function Appointments() {
                     ethnicity={appointment.ethnicity}
                     location={appointment.location}
                     specialist_categories={appointment.specialist_categories}
-                    organization = {appointment.organization}
+                    organization={appointment.organization}
                   />
                 ))}
               </div>
@@ -212,19 +212,15 @@ function Appointments() {
     }
   }
 
-
-
   return (
     <div>
-      
       <AppointmentInfo
-        setModalVisible = {setModalVisible}
-        modalVisible = {modalVisible}
-        handleAppointmentClick = {handleAppointmentClick}
-        modalAppointment = {modalAppointment}
-        
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+        handleAppointmentClick={handleAppointmentClick}
+        modalAppointment={modalAppointment}
       />
-      <Row> 
+      <Row>
         <Col span={18} className="appointments-column">
           <div className="appointments-welcome-box">
             <div className="appointments-welcome-text">

@@ -1,10 +1,20 @@
 @import "_app";
 
-.dot {
+.pending-dot {
     position: absolute;
     height: 10px;
     width: 10px;
     background-color: #F8D15B;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.upcoming-dot {
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    background-color: #2F80ED;
     border-radius: 50%;
     display: inline-block;
     margin-left: 5px;

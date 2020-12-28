@@ -47,6 +47,22 @@ function AppointmentInfo(props) {
     }
   };
 
+  const pendingOrUpcoming = () => {
+    if (props.needButtons) {
+        return (
+            <div className="ar-status">
+                pending<span class="pending-dot"></span>
+            </div>
+        );
+    } else {
+        return (
+            <div className="ar-status">
+            upcoming<span class="upcoming-dot"></span>
+            </div>
+        );
+      }
+  }
+
   return (
     <Modal
       visible={props.modalVisible}
@@ -56,9 +72,7 @@ function AppointmentInfo(props) {
       footer={displayButtons()}
     >
       <div className="ar-modal-container">
-        <div className="ar-status">
-          pending<span class="dot"></span>
-        </div>
+        {pendingOrUpcoming()}
         <div className="ar-modal-title">
           {props.modalAppointment.name}, {props.age}
         </div>

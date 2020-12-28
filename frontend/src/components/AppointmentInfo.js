@@ -3,8 +3,6 @@ import { Button, Modal } from "antd";
 import MenteeButton from "./MenteeButton";
 import { EnvironmentOutlined, CommentOutlined } from "@ant-design/icons";
 
-import { acceptAppointment, deleteAppointment } from "./../utils/api";
-
 import "./css/Appointments.scss";
 
 function AppointmentInfo(props) {
@@ -24,6 +22,31 @@ function AppointmentInfo(props) {
     return subtextInfo.join(" • ");
   };
 
+  const displayButtons = () => {
+    if (!props.needButtons) {
+        return (
+            <div style={{ textAlign: "center" }}>   
+                <MenteeButton
+                    content={"Accept"}
+                    border={"1px solid green"}
+                    onClick={() =>
+                        props.handleAppointmentClick(props.modalAppointment.id, true)
+                    }
+                />
+                <MenteeButton
+                    content={"Deny"}
+                    border={"1px solid red"}
+                    onClick={() =>
+                        props.handleAppointmentClick(props.modalAppointment.id, false)
+                    }
+                />
+            </div>
+        )
+    } else {
+        return null;
+    }
+  };
+
   return (
     <Modal
       visible={props.modalVisible}
@@ -31,22 +54,7 @@ function AppointmentInfo(props) {
       width="449.91px"
       onCancel={() => props.setModalVisible(false)}
       footer={
-        <div style={{ textAlign: "center" }}>
-          <MenteeButton
-            content={"Accept"}
-            border={"1px solid green"}
-            onClick={() =>
-              props.handleAppointmentClick(props.modalAppointment.id, true)
-            }
-          />
-          <MenteeButton
-            content={"Deny"}
-            border={"1px solid red"}
-            onClick={() =>
-              props.handleAppointmentClick(props.modalAppointment.id, false)
-            }
-          />
-        </div>
+        displayButtons()
       }
     >
       <div className="ar-modal-container">

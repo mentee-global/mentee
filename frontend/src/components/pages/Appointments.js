@@ -217,6 +217,7 @@ function Appointments() {
       <AppointmentInfo
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
+        needButtons = {currentTab == Tabs.pending}
         handleAppointmentClick={handleAppointmentClick}
         modalAppointment={modalAppointment}
       />

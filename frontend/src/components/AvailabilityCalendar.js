@@ -6,23 +6,9 @@ import TextField from "@material-ui/core/TextField";
 import MenteeButton from "./MenteeButton.js";
 import "./css/AvailabilityCalendar.scss";
 import { getMentorID } from "utils/auth.service";
-import {
-  fetchAvailability,
-  editAvailability,
-  fetchSetDays,
-} from "../utils/api";
+import { fetchAvailability, editAvailability } from "../utils/api";
 
 function AvailabilityCalendar() {
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-
   const mentorID = getMentorID();
   const [saved, setSaved] = useState({});
   const [value, setValue] = useState(moment());
@@ -61,12 +47,12 @@ function AvailabilityCalendar() {
       const availability = availability_data.availability;
       const times = [];
 
-      for (let i = 0; i < availability.length; i++) {
+      availability.forEach((element) => {
         times.push([
-          moment.parseZone(availability[i].start_time.$date),
-          moment.parseZone(availability[i].end_time.$date),
+          moment.parseZone(element.start_time.$date),
+          moment.parseZone(element.end_time.$date),
         ]);
-      }
+      });
 
       setTimeSlots(times);
     }
@@ -94,6 +80,7 @@ function AvailabilityCalendar() {
     times.splice(index, 1);
     setTimeSlots(times);
   };
+
   const onPanelChange = (value) => {
     setValue(value);
     setLockModal(true);
@@ -127,9 +114,6 @@ function AvailabilityCalendar() {
     dateCellRender(date);
   };
 
-  const handleCancel = () => {
-    setVisible(false);
-  };
   const handleClear = () => {
     let cleared = timeSlots.filter(function (value) {
       return !(value[0].format("YYYY-MM-DD") === date.format("YYYY-MM-DD"));
@@ -154,7 +138,6 @@ function AvailabilityCalendar() {
     }
     return returnSlots;
   };
-  const monthCellRender = (value) => {};
 
   const dateCellRender = (value) => {
     const listData = getListData(value);
@@ -175,12 +158,11 @@ function AvailabilityCalendar() {
         onPanelChange={onPanelChange}
         onSelect={onSelect}
         dateCellRender={dateCellRender}
-        monthCellRender={monthCellRender}
       />
       <Modal
         title="Select times for each available session per day"
         visible={visible}
-        onCancel={handleCancel}
+        onCancel={() => setVisible(false)}
         footer={[
           <MenteeButton
             key="clear"
@@ -202,7 +184,7 @@ function AvailabilityCalendar() {
         <br></br>
         <div className="date-header">
           <h2 className="date">{date && date.format("MM/DD")} </h2>
-          <h5 className="date">{days[date.day()]}</h5>
+          <h5 className="date">{date.format("dddd")}</h5>
         </div>
         <div className="all-timeslots-wrapper">
           {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (

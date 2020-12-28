@@ -22,15 +22,15 @@ function Videos() {
     async function getVideos() {
       const newMentorID = await getMentorID();
       const mentor = await fetchMentorByID(newMentorID);
-      setName(mentor.name);
       if (mentor) {
         let videos = mentor.videos;
-        // Formats all dates from objects (in Epoch) to MongoDB parseable
-        for (let i = 0; i < videos.length; i++) {
-          const date = videos[i].date_uploaded.$date;
-          videos[i].date_uploaded = moment(date).format();
-        }
+        // Formats all dates from objects (in Epoch) to MongoDB parsable
+        videos.forEach((video, index) => {
+          const date = video.date_uploaded.$date;
+          videos[index].date_uploaded = moment(date).format();
+        });
 
+        setName(mentor.name);
         setVideos(videos);
         setFiltered(videos);
       }

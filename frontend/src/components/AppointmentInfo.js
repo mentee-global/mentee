@@ -49,19 +49,19 @@ function AppointmentInfo(props) {
 
   const pendingOrUpcoming = () => {
     if (props.needButtons) {
-        return (
-            <div className="ar-status">
-                pending<span class="pending-dot"></span>
-            </div>
-        );
+      return (
+        <div className="ar-status">
+          pending<span class="pending-dot"></span>
+        </div>
+      );
     } else {
-        return (
-            <div className="ar-status">
-            upcoming<span class="upcoming-dot"></span>
-            </div>
-        );
-      }
-  }
+      return (
+        <div className="ar-status">
+          upcoming<span class="upcoming-dot"></span>
+        </div>
+      );
+    }
+  };
 
   return (
     <Modal

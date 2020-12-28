@@ -16,6 +16,8 @@ import {
   deleteAppointment,
 } from "../../utils/api";
 import { getMentorID } from "utils/auth.service";
+import AppointmentInfo from "../AppointmentInfo";
+
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -39,7 +41,7 @@ function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
+  //const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
   useEffect(() => {
     const mentorID = getMentorID();
@@ -52,14 +54,14 @@ function Appointments() {
     }
     getAppointments();
   }, [appointmentClick]);
-  async function handleAppointmentClick(id, didAccept) {
+  /*async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {
       await acceptAppointment(id);
     } else {
       await deleteAppointment(id);
     }
     setAppointmentClick(!appointmentClick);
-  }
+  }*/
   const getButtonStyle = (tab) => {
     const active = "#E4BB4F";
     const inactive = "#FFECBD";
@@ -116,7 +118,6 @@ function Appointments() {
             }
             type="text"
             shape="circle"
-            //onClick={() => handleAppointmentClick(id, true)}
           ></Button>
           <Button
             className="appointment-accept"
@@ -128,8 +129,6 @@ function Appointments() {
             }
             type="text"
             shape="circle"
-            //
-            //onClick={() => handleAppointmentClick(id, false)}
           ></Button>
         </div>
       );
@@ -150,9 +149,8 @@ function Appointments() {
     );
   };
   const AcceptRejectAppointment = (props) => {
-    setModalVisible(true)
+    //setModalVisible(true)
     setModalAppointment(props)
-    console.log(props)
   };
   const AvailabilityTab = () => {
     return (
@@ -170,7 +168,6 @@ function Appointments() {
             type="default"
             shape="round"
             style={getButtonStyle(currentTab)}
-            //onClick={() => console.log("TODO: save!")}
           >
             <div style={getButtonTextStyle(currentTab)}>Save</div>
           </Button>
@@ -210,7 +207,6 @@ function Appointments() {
                     gender={appointment.gender}
                     ethnicity={appointment.ethnicity}
                     location={appointment.location}
-                    mentorship_goals={appointment.mentorship_goals}
                     specialist_categories={appointment.specialist_categories}
                     organization = {appointment.organization}
                   />
@@ -235,67 +231,29 @@ function Appointments() {
     }
   }
 
-  const getLanguages = (languages) => {
-    return languages.join(" • ");
-  };
 
-  const getCategories = (specialist_categories) => {
-    return specialist_categories.join(", ");
-  };
-
-  const getSubtext = (gender, ethnicity, organization) => {
-    var subtextInfo = [gender, ethnicity];
-    if (organization != undefined) {
-      subtextInfo.push(organization);
-    } else {
-      console.log(organization);
-      console.log("hiiiiiiiiii");
-    }
-    return subtextInfo.join(" • ");
-  };
 
   return (
     <div>
-      <Modal
-      visible={modalVisible}
-        title="Appointment Details"
-        width="449.91px"
-        onCancel={() => setModalVisible(false)}
-        footer={
-          <div className = "ar-footer">
-            <Button 
-              className="accept-apt" 
-              onClick={() => handleAppointmentClick(modalAppointment.id, true)}>
-              Accept
-            </Button>
-            <Button 
-              className="reject-apt" 
-              onClick={() => handleAppointmentClick(modalAppointment.id, false)}>
-              Reject
-            </Button>
-          </div>
-        }
-      >
-        <div className="ar-modal-container">
-          <div className="ar-status">pending<span class="dot"></span></div>
-          <div className="ar-modal-title">{modalAppointment.name}, {modalAppointment.age}</div>
-          <div className="ar-phone">Call/text: {modalAppointment.phone_number}</div>
-          <div className="ar-email">{modalAppointment.email}</div>
-          <div className="ar-title-subtext">{getSubtext(modalAppointment.gender, modalAppointment.ethnicity, modalAppointment.organization)}</div>
-          <div>
-            <div className="ar-languages"><CommentOutlined className="ar-icon"></CommentOutlined>{getLanguages(modalAppointment.languages || [])}</div>
-            <div className="ar-location"><EnvironmentOutlined className="ar-icon"></EnvironmentOutlined>{modalAppointment.location}</div>
-          </div>
-          <div className="ar-apt-date">{modalAppointment.date}</div>
-          <div className="ar-apt-time">{modalAppointment.time}</div>
-          <div className="ar-categories-title">Seeking help in:</div>
-          <div className="ar-categories">{getCategories(modalAppointment.specialist_categories || [])}</div>  
-          <div className="ar-goals-title">Note:</div>
-          <div className="ar-goals">{modalAppointment.mentorship_goals}</div>
-          <div className="vl"></div>
-          <div className="hl"></div>
-        </div>
-      </Modal>
+      
+      <AppointmentInfo
+        //modalVisible = {modalVisible}
+        name={modalAppointment.name}
+        date={modalAppointment.date}
+        time={modalAppointment.time}
+        description={modalAppointment.description}
+        id={modalAppointment.id}
+        email={modalAppointment.email}
+        age={modalAppointment.age}
+        phone_number={modalAppointment.phone_number}
+        languages={modalAppointment.languages}
+        gender={modalAppointment.gender}
+        ethnicity={modalAppointment.ethnicity}
+        location={modalAppointment.location}
+        specialist_categories={modalAppointment.specialist_categories}
+        organization = {modalAppointment.organization}
+        
+      />
       <Row> 
         <Col span={18} className="appointments-column">
           <div className="appointments-welcome-box">

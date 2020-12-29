@@ -31,7 +31,7 @@ const sampleTimes = [
   "9-10pm",
 ];
 
-function MenteeAppointmentModal() {
+function MenteeAppointmentModal(props) {
   const [appModalVisible1, setAppModalVisible1] = useState(false);
   const [appModalVisible2, setAppModalVisible2] = useState(false);
   const [numInputs, setNumInputs] = useState(11);
@@ -111,7 +111,7 @@ function MenteeAppointmentModal() {
               size={80}
               icon={<UserOutlined />}
             />
-            <h3 className="bold">Mentoring Session with Bernie Sanders</h3>
+            <h3 className="bold">Mentoring Session with {props.mentor.name}</h3>
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">
@@ -133,6 +133,7 @@ function MenteeAppointmentModal() {
                       width={100}
                       content={time}
                       theme="light"
+                      borderOnClick={true}
                       onClick={handleTimeChange}
                     />
                   </div>

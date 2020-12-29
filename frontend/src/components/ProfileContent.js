@@ -6,7 +6,6 @@ import {
   LinkedinOutlined,
 } from "@ant-design/icons";
 
-import MenteeButton from "./MenteeButton";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 
@@ -65,7 +64,7 @@ function ProfileContent(props) {
           />
         ) : (
           <div className="mentor-profile-button">
-            <MenteeAppointmentModal />
+            <MenteeAppointmentModal mentor={props.mentor} />
           </div>
         )}
       </div>

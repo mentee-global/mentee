@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Button, Calendar, Col, Row, Modal } from "antd";
+import { Button, Calendar, Col, Row } from "antd";
 import {
   ClockCircleOutlined,
-  CheckCircleTwoTone,
-  CloseCircleTwoTone,
   InfoCircleFilled,
-  EnvironmentOutlined,
-  CommentOutlined,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
 import { formatAppointments } from "../../utils/dateFormatting";

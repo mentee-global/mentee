@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Modal } from "antd";
+import React from "react";
+import { Modal } from "antd";
 import MenteeButton from "./MenteeButton";
 import { EnvironmentOutlined, CommentOutlined } from "@ant-design/icons";
 
@@ -42,8 +42,6 @@ function AppointmentInfo(props) {
           />
         </div>
       );
-    } else {
-      return null;
     }
   };
 

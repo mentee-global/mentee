@@ -264,6 +264,8 @@
     line-height: 16px;
 
     color: #000000;
+
+    overflow: auto;
 }
 
 .accept-apt {
@@ -382,6 +384,12 @@
     margin: 0% 2%;
 }
 
+.appointment-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+    width: 400px;
+}
 .appointment-time,
 .appointment-description {
     color: $appointments-description;

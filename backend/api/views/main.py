@@ -91,7 +91,12 @@ def create_mentor_profile():
             if is_invalid:
                 return create_response(status=422, message=msg)
 
-            new_video = Video(title=video["title"], url=video["url"], tag=video["tag"])
+            new_video = Video(
+                title=video["title"],
+                url=video["url"],
+                tag=video["tag"],
+                date_uploaded=video["date_uploaded"],
+            )
             new_mentor.videos.append(new_video)
 
     new_mentor.save()
@@ -151,7 +156,12 @@ def edit_mentor(id):
     if "videos" in data:
         video_data = data.get("videos")
         mentor.videos = [
-            Video(title=video.get("title"), url=video.get("url"), tag=video.get("tag"))
+            Video(
+                title=video.get("title"),
+                url=video.get("url"),
+                tag=video.get("tag"),
+                date_uploaded=video.get("date_uploaded"),
+            )
             for video in video_data
         ]
 

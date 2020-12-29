@@ -1,5 +1,8 @@
 @import "_app";
 // Overriding styles for antdesign to comply with Mentee Designs
+.ant-checkbox .ant-checkbox-inner {
+    border-color: $yellow-dot-color;
+}
 
 .ant-checkbox-checked .ant-checkbox-inner {
     background-color: $yellow-dot-color;
@@ -28,4 +31,9 @@
 
 .ant-modal-body {
     padding: 0px;
+}
+
+.ant-checkbox-group-item {
+    display: block;
+    margin-right: 0;
 }

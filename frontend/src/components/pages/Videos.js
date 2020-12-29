@@ -135,9 +135,6 @@ function Videos() {
       tag: SPECIALIZATIONS[video.tag],
     };
     newVideos.push(video);
-    newVideos.sort(
-      (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
-    );
 
     form.resetFields();
     handleClearFilters();

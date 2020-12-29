@@ -24,6 +24,7 @@ class VideoForm(Form):
     title = StringField(validators=[InputRequired()])
     url = StringField(validators=[InputRequired()])
     tag = StringField(validators=[InputRequired()])
+    date_uploaded = StringField(validators=[InputRequired()])
 
 
 class MentorForm(Form):

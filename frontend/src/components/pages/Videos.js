@@ -22,10 +22,17 @@ function Videos() {
     async function getVideos() {
       const newMentorID = await getMentorID();
       const mentor = await fetchMentorByID(newMentorID);
-      setName(mentor.name);
       if (mentor) {
-        setVideos(mentor.videos);
-        setFiltered(mentor.videos);
+        let videos = mentor.videos;
+        // Formats all dates from objects (in Epoch) to MongoDB parsable
+        videos.forEach((video, index) => {
+          const date = video.date_uploaded.$date;
+          videos[index].date_uploaded = moment(date).format();
+        });
+
+        setName(mentor.name);
+        setVideos(videos);
+        setFiltered(videos);
       }
       setMentorID(newMentorID);
     }
@@ -173,6 +180,7 @@ function Videos() {
             value={titleFilter}
             onChange={handleSearchChange}
             onSearch={(value) => handleSearchVideo(value)}
+            placeholder="Title"
           />
           <Select
             style={{ width: 200 }}

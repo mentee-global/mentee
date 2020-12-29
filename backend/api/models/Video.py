@@ -9,6 +9,7 @@ class Video(EmbeddedDocument, Mixin):
     title = StringField(required=True)
     url = StringField(required=True)
     tag = StringField(required=True)
+    date_uploaded = DateTimeField(required=True)
 
     def __repr__(self):
-        return f"<Video title: {self.title}, URL: {self.url}, tag: {self.tag}>"
+        return f"<Video title: {self.title}, URL: {self.url}, tag: {self.tag}, date: {self.date_uploaded}>"

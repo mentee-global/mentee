@@ -36,12 +36,10 @@ def get_mentor(mentor_id):
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():
     data = request.json
-    print(data)
     validate_data = MentorForm.from_json(data)
 
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
-        print(msg)
         return create_response(status=422, message=msg)
 
     user = Users.objects.get(id=data["user_id"])

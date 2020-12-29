@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { Input, Button } from "antd";
 import {
+  isLoggedIn,
   hasCurrentRegistration,
   resendVerify,
   verify,
@@ -22,6 +23,8 @@ function Verify(props) {
   useEffect(() => {
     if (!hasCurrentRegistration()) {
       props.history.push("/login");
+    } else if (isLoggedIn()) {
+      props.history.push("/appointments");
     }
   }, [props.history]);
 
@@ -78,10 +81,10 @@ function Verify(props) {
             <Button
               type="link"
               className="verify-resend-link"
-              onClick={() => {
-                resendVerify().then(() => {
-                  setResent(true);
-                });
+              onClick={async () => {
+                // TODO: error handling for resend?
+                await resendVerify();
+                setResent(true);
               }}
             >
               <u>Resend</u>

@@ -32,12 +32,6 @@ class MentorForm(Form):
     professional_title = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])
-    # offers_in_person = BooleanField(
-    #     validators=[InputRequired()], false_values=("false", "False", False)
-    # )
-    # offers_group_appointments = BooleanField(
-    #     validators=[InputRequired()], false_values=("false", "False", False)
-    # )
 
 
 class AvailabilityForm(Form):
@@ -49,9 +43,6 @@ class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)
     name = StringField(validators=[InputRequired()])
-    accepted = BooleanField(
-        validators=[validators.required()], false_values=("false", "False")
-    )
     email = StringField(validators=[InputRequired()])
     phone_number = StringField()
     languages = FieldList(StringField(), validators=[validators.required()])

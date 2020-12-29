@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, Users, MentorProfile
+from api.models import db, Users, MentorProfile, VerifiedEmail
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import AUTH_URL
 import requests
@@ -99,3 +99,27 @@ def reset_password():
     headers = {"Content-Type": "application/json"}
     results = requests.post(AUTH_URL + "/passwordReset", headers=headers, json=body)
     return results.json()
+
+
+@auth.route("/verifyAccountCreation", methods=["GET"])
+def verify_account():
+    email = request.args.get("email", default="")
+    password = request.args.get("password", default="")
+
+    try:
+        account = VerifiedEmail.objects.get(email=email)
+    except:
+        return create_response(
+            data={},
+            status=401,
+            message="Could not find email in database",
+        )
+
+    if not account.is_mentor and password != account.password:
+        return create_response(data={}, status=401, message="Password is not correct")
+
+    return create_response(
+        data={"is_verified": True, "is_mentor": account.is_mentor},
+        status=200,
+        message="Successful returned verification!",
+    )

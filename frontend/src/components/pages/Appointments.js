@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Calendar, Col, Row } from "antd";
-import {
-  ClockCircleOutlined,
-  InfoCircleFilled,
-} from "@ant-design/icons";
+import { ClockCircleOutlined, InfoCircleFilled } from "@ant-design/icons";
 import "../css/Appointments.scss";
 import { formatAppointments } from "../../utils/dateFormatting";
 import {

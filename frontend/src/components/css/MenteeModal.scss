@@ -201,6 +201,14 @@
     font-weight: bold;
 }
 
-.ant-switch-checked {
-    background: $theme-orange;
+.ant-picker-calendar-date-value:hover,
+.ant-picker-calendar-date-value:active,
+.ant-picker-calendar-date-value:focus,
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  color: white;
+  background: $theme-orange;
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: $theme-orange;
 }

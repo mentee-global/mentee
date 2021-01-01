@@ -39,7 +39,7 @@ function AvailabilityCalendar() {
       setSaved(set);
     }
     getSetDays();
-  }, [timeSlots]);
+  });
 
   async function getAvailability() {
     const availability_data = await fetchAvailability(mentorID);

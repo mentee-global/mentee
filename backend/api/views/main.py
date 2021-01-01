@@ -6,7 +6,6 @@ from api.models import (
     Video,
     MentorProfile,
     AppointmentRequest,
-    VerifiedEmail,
 )
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
@@ -199,27 +198,3 @@ def uploadImage(id):
 
     mentor.save()
     return create_response(status=200, message=f"Success")
-
-
-@main.route("/verifyAccountCreation", methods=["GET"])
-def verify_account():
-    email = request.args.get("email", default="")
-    password = request.args.get("password", default="")
-
-    try:
-        account = VerifiedEmail.objects.get(email=email)
-    except:
-        return create_response(
-            data={},
-            status=401,
-            message="Could not find email in database",
-        )
-
-    if not account.is_mentor and password != account.password:
-        return create_response(data={}, status=401, message="Password is incorrect")
-
-    return create_response(
-        data={"is_verified": True, "is_mentor": account.is_mentor},
-        status=200,
-        message="Successfully returned verification",
-    )

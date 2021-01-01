@@ -6,6 +6,10 @@ import "../css/Home.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
 function Home() {
+  const handleViewPermission = () => {
+    return false;
+  }
+
   return (
     <div className="home-background">
       <div className="home-content">
@@ -18,7 +22,7 @@ function Home() {
           </p>
           <br />
           <NavLink to="/gallery">
-            <MenteeButton theme="dark" content={<b>Find a Mentor</b>} />
+            <MenteeButton theme="dark" content={<b>Find a Mentor</b>} onClick={handleViewPermission}/>
           </NavLink>
         </div>
         <img className="home-honeycomb" src={Honeycomb} alt="" />

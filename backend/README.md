@@ -6,6 +6,18 @@ We use [black](https://github.com/ambv/black) for code formatting, and [mypy](ht
 
 ![](../master/docs/flask.gif)
 
+## Yarn commands for both frontend and backend
+First you need to install [concurrently](https://www.npmjs.com/package/concurrently)
+`npm install -g concurrently`
+
+Then within the root folder (not this one)
+
+To run both sides concurrently
+`yarn start`
+
+To format both sides of the project before pushing
+`yarn format`
+
 ## Remote Database Setup
 Create a `.env` file in this folder with the contents:
 ```

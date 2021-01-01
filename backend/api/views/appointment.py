@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
-from ..utils.constants import APPOINTMENT_EMAIL_MESSAGE, APPT_NOTIFICATION_TEMPLATE
+from api.utils.constants import APPT_NOTIFICATION_TEMPLATE
 
 appointment = Blueprint("appointment", __name__)
 
@@ -72,7 +72,7 @@ def create_appointment():
     if not res_email:
         msg = "Failed to send an email"
         logger.info(msg)
-        return create_response(status=422, message=msg)
+        return create_response(status=503, message=msg)
 
     new_appointment.save()
     return create_response(

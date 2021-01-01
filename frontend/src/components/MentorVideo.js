@@ -27,10 +27,12 @@ const MentorVideo = ({
           className="video"
         />
         <div className="video-description">
-          <div>{title}</div>
-          <div>{moment(date).fromNow()}</div>
+          <b>{title}</b>
+          <div>
+            {moment(date).format("MM/DD/YY")} • {moment(date).fromNow()}
+          </div>
         </div>
-        <div className="video-pin">
+        <div className="pin-container">
           <button
             className="pin-button"
             disabled={id === 0}

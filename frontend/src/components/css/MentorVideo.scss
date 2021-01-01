@@ -24,6 +24,21 @@
 }
 
 .pin-button {
+    margin: 10px 10px 0px 0px;
     border-radius: 100%;
     border: none;
+    font-size: 20px;
+}
+
+.pin-container {
+    height: fit-content;
+}
+
+.video-description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 4px;
+    white-space: nowrap;
+    width: 48%;
 }

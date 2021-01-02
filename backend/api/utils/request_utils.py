@@ -30,18 +30,11 @@ class VideoForm(Form):
 
 
 class MentorForm(Form):
-    uid = StringField(validators=[InputRequired()])
+    user_id = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     professional_title = StringField(validators=[InputRequired()])
-    email = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])
-    offers_in_person = BooleanField(
-        validators=[InputRequired()], false_values=("false", "False")
-    )
-    offers_group_appointments = BooleanField(
-        validators=[InputRequired()], false_values=("false", "False")
-    )
 
 
 class AvailabilityForm(Form):
@@ -53,9 +46,6 @@ class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)
     name = StringField(validators=[InputRequired()])
-    accepted = BooleanField(
-        validators=[validators.required()], false_values=("false", "False")
-    )
     email = StringField(validators=[InputRequired()])
     phone_number = StringField()
     languages = FieldList(StringField(), validators=[validators.required()])

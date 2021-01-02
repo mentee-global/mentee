@@ -68,26 +68,16 @@
 .mentee-logo {
   background-color: $mentee-logo-color;
   float: left;
-  height: 40px;
+  height: 70px;
   width: 200px;
   margin: 10px 10px;
-}
-
-.navigation-header-button {
-  border-radius: 13px;
-  border-color: $header-button-border;
-  width: 125px;
-  margin-right: 5px;
-}
-
-.navigation-header-button-dark {
-  border-radius: 13px;
-  border-color: $header-button-dark-border;
-  width: 125px;
-  margin-right: 5px;
 }
 
 .navigation-mentee-flexbox {
   display: flex;
   justify-content: space-between;
+}
+
+.navigation-header-button {
+  margin-right: 10px;
 }

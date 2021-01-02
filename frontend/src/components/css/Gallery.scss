@@ -1,5 +1,32 @@
+@import "_app";
+
+.gallery-container {
+    display: flex;
+    flex-direction: row;
+    padding: 1vh;
+}
+
+.gallery-filter-container {
+    flex: 1;
+    margin-right: 1rem;
+    background-color: $theme-orange-light;
+    padding: 2vh;
+    border-radius: 8px;
+}
+
+.gallery-filter-header {
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+.gallery-filter-section-title {
+    color: $theme-orange-dark;
+    font-weight: bold;
+    font-size: 16px;
+}
+
 .gallery-mentor-container {
-  padding: 1vh;
+  flex: 5;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
   grid-gap: 1rem;
@@ -8,8 +35,8 @@
 }
 
 .gallery-mentor-card {
-    background: #FFFFFF;
-    border: 2px solid #E4BB4F;
+    background-color: white;
+    border: 2px solid $theme-orange;
     border-radius: 8px;
 }
 
@@ -26,34 +53,15 @@
 .gallery-dot {
   height: 10px;
   width: 10px;
-  background-color: #F2C94C;
+  background-color: $theme-orange;
   border-radius: 50%;
   margin-right: 10px;
   display: inline-block;
 }
 
 .gallery-solid-border  {
-  border-top: 3px solid #F2C94C;
+  border-top: 3px solid $theme-orange;
   margin-top: 20px;
-}
-
-.gallery-profile-button {
-    float: right;
-    background: #E4BB4F;
-    border-color: #E4BB4F;
-    color: white;
-    margin-bottom: 15px;
-    margin-top: 10px;
-    border-radius: 13px;
-}
-
-.gallery-profile-button:hover, .gallery-profile-button:focus {
-    color:#E4BB4F; 
-    border-color: #E4BB4F;
-}
-
-.gallery-profile-button:active, .gallery-profile-button:focus {
-    outline-color: #E4BB4F;
 }
 
 .gallery-card-header {
@@ -87,7 +95,7 @@
 }
 
 .gallery-headers {
-    color: #A58123;
+    color: $theme-orange-dark;
     margin: 0;
 }
 
@@ -101,4 +109,10 @@
 .gallery-card-body {
     padding: 20px;
     padding-top: 0px;
+}
+
+.gallery-button {
+  float: right;
+  margin-bottom: 15px;
+  margin-top: 10px;
 }

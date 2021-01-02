@@ -32,7 +32,7 @@ function PublicProfile(props) {
         <ProfileContent mentor={mentor} />
       </div>
       <div className="mentor-profile-videos">
-        <ProfileVideos mentor={mentor} />
+        <ProfileVideos videos={mentor.videos} />
       </div>
     </div>
   );

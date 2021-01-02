@@ -2,22 +2,30 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
+import { getMentorID } from "utils/auth.service";
 import ProfileContent from "../ProfileContent";
 
 import "../css/Profile.scss";
-import { fetchMentorByID, mentorID } from "../../utils/api";
+import { fetchMentorByID } from "utils/api";
 
 function Profile() {
   const [mentor, setMentor] = useState({});
+  const [editedMentor, setEditedMentor] = useState(false);
+
   useEffect(() => {
+    const mentorID = getMentorID();
     async function getMentor() {
-      const mentor_data = await fetchMentorByID(mentorID);
-      if (mentor_data) {
-        setMentor(mentor_data);
+      const mentorData = await fetchMentorByID(mentorID);
+      if (mentorData) {
+        setMentor(mentorData);
       }
     }
     getMentor();
-  }, []);
+  }, [editedMentor]);
+
+  const handleSaveEdits = () => {
+    setEditedMentor(!editedMentor);
+  };
 
   return (
     <div className="background-color-strip">
@@ -29,7 +37,11 @@ function Profile() {
         />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
-            <ProfileContent mentor={mentor} isMentor={true} />
+            <ProfileContent
+              mentor={mentor}
+              isMentor={true}
+              handleSaveEdits={handleSaveEdits}
+            />
           </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">

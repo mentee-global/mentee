@@ -1,0 +1,40 @@
+@import "_app";
+
+.regular-button, .regular-button:focus {
+  background: $mentee-button-regular;
+  border-color: $mentee-button-regular;
+  border-radius: 13px;  
+  color: white;
+}
+
+.regular-button:hover, .regular-button:active {
+  background: $mentee-button-regular;
+  border-color: white;
+  color: white; 
+}
+
+.dark-button, .dark-button:focus {
+  background: $mentee-button-dark;
+  border-color: $mentee-button-dark;
+  border-radius: 13px;
+  color: $mentee-button-light;
+}
+
+.dark-button:hover, .dark-button:active {
+  background: $mentee-button-dark;
+  border-color: $mentee-button-light;
+  color: $mentee-button-light;
+}
+
+.light-button, .light-button:focus {
+  background: $mentee-button-light;
+  border-color: $mentee-button-light;
+  border-radius: 13px;
+  color: $mentee-button-dark;
+}
+
+.light-button:hover, .light-button:active {
+  background: $mentee-button-light;
+  border-color: $mentee-button-dark;
+  color: $mentee-button-dark;
+}

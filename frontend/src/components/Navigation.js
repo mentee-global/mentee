@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
+import { isLoggedIn } from "utils/auth.service";
 
 import MentorNavHeader from "./MentorNavHeader";
 import MenteeNavHeader from "./MenteeNavHeader";
@@ -10,6 +12,14 @@ import "./css/Navigation.scss";
 const { Content } = Layout;
 
 function Navigation(props) {
+  const history = useHistory();
+
+  useEffect(() => {
+    if (props.needsAuth && !isLoggedIn()) {
+      history.push("/login");
+    }
+  }, [history, props.needsAuth]);
+
   return (
     <div>
       <Layout className="navigation-layout">

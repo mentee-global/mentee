@@ -26,14 +26,13 @@ class VideoForm(Form):
     title = StringField(validators=[InputRequired()])
     url = StringField(validators=[InputRequired()])
     tag = StringField(validators=[InputRequired()])
+    date_uploaded = StringField(validators=[InputRequired()])
 
 
 class MentorForm(Form):
     uid = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     professional_title = StringField(validators=[InputRequired()])
-    linkedin = StringField(validators=[InputRequired()])
-    website = StringField(validators=[InputRequired()])
     email = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])

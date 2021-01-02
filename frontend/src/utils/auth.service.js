@@ -111,11 +111,20 @@ const removeRegistration = (mentorId) => {
   localStorage.setItem("user", JSON.stringify(registration));
 };
 
+const getToken = () => {
+  const registration = getCurrentRegistration();
+  if (registration.hasOwnProperty("token")) {
+    return registration["token"];
+  }
+  return null;
+}
+
 export {
   register,
   login,
   logout,
   getMentorID,
+  getToken,
   isLoggedIn,
   getCurrentRegistration,
   hasCurrentRegistration,

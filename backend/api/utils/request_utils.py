@@ -8,7 +8,6 @@ from typing import Tuple
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from .flask_imgur import Imgur
-from .constants import SENDER_EMAIL
 
 wtforms_json.init()
 
@@ -16,6 +15,8 @@ imgur_key = os.environ.get("IMGUR_KEY")
 imgur_client = Imgur(client_id=imgur_key)
 
 sendgrid_key = os.environ.get("SENDGRID_API_KEY")
+
+sender_email = os.environ.get("SENDER_EMAIL")
 
 
 class EducationForm(Form):
@@ -84,7 +85,7 @@ def send_email(
     :return boolean whether it successful sent an email
     """
     message = Mail(
-        from_email=SENDER_EMAIL, to_emails=recipient, subject=subject, html_content=html
+        from_email=sender_email, to_emails=recipient, subject=subject, html_content=html
     )
 
     if template_id:
@@ -92,7 +93,7 @@ def send_email(
 
     try:
         sg = SendGridAPIClient(sendgrid_key)
-        response = sg.send(message)
+        sg.send(message)
     except Exception as e:
         return False
     return True

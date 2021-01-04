@@ -1,6 +1,7 @@
 from os import path
 from flask import Blueprint, request, jsonify
-from api.models import db, Education, Video, MentorProfile, AppointmentRequest
+from bson import ObjectId
+from api.models import db, Education, Video, MentorProfile, AppointmentRequest, Users
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     MentorForm,
@@ -41,18 +42,22 @@ def create_mentor_profile():
     if is_invalid:
         return create_response(status=422, message=msg)
 
+    user = Users.objects.get(id=data["user_id"])
+    email = user.email
+
     new_mentor = MentorProfile(
+        user_id=ObjectId(data["user_id"]),
         name=data["name"],
-        email=data["email"],
+        email=email,
         professional_title=data["professional_title"],
-        linkedin=data["linkedin"],
-        website=data["website"],
         languages=data["languages"],
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
         offers_group_appointments=data["offers_group_appointments"],
     )
 
+    new_mentor.website = data.get("website")
+    new_mentor.linkedin = data.get("linkedin")
     new_mentor.biography = data.get("biography")
     new_mentor.phone_number = data.get("phone_number")
     new_mentor.location = data.get("location")
@@ -96,7 +101,8 @@ def create_mentor_profile():
 
     new_mentor.save()
     return create_response(
-        message=f"Successfully created Mentor Profile {new_mentor.name} with UID: {new_mentor.uid}"
+        message=f"Successfully created Mentor Profile {new_mentor.name}",
+        data={"mentorId": str(new_mentor.id)},
     )
 
 

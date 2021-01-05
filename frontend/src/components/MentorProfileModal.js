@@ -236,6 +236,11 @@ function MentorProfileModal(props) {
   }
 
   function handleGraduationDateChange(e, index) {
+    const year = e.target.value;
+    if (isNaN(year) || year.includes(".") || year.includes(" ")) {
+      return;
+    }
+
     const newEducations = [...educations];
     let education = newEducations[index];
     education.graduation_year = e.target.value;
@@ -286,7 +291,10 @@ function MentorProfileModal(props) {
     });
     setEducations(newEducations);
     setEdited(true);
-    setIsValid([...isValid].push(true, true, true, true));
+
+    const newValidArray = [...isValid];
+    newValidArray.push(false, false, false, false);
+    setIsValid(newValidArray);
   };
 
   const handleSaveEdits = () => {
@@ -345,6 +353,7 @@ function MentorProfileModal(props) {
         onCancel={() => {
           setModalVisible(false);
           setValidate(false);
+          setChangedImage(false);
           setIsValid([...isValid].fill(true));
         }}
         width="50%"

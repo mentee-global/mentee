@@ -150,6 +150,7 @@ def edit_mentor(id):
     # Create education object
     if "education" in data:
         education_data = data.get("education")
+        logger.info(education_data)
         mentor.education = [
             Education(
                 education_level=education.get("education_level"),

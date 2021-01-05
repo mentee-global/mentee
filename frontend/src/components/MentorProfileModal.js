@@ -5,12 +5,15 @@ import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
 import { editMentorProfile, uploadMentorImage } from "../utils/api";
+import { getMentorID } from "../utils/auth.service";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 
+const INITIAL_NUM_INPUTS = 14;
+
 function MentorProfileModal(props) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [numInputs, setNumInputs] = useState(14);
+  const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
@@ -33,32 +36,34 @@ function MentorProfileModal(props) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    setName(props.mentor.name);
-    setTitle(props.mentor.professional_title);
-    setAbout(props.mentor.biography);
-    setInPersonAvailable(props.mentor.offers_in_person);
-    setGroupAvailable(props.mentor.offers_group_appointments);
-    setLocation(props.mentor.location);
-    setWebsite(props.mentor.website);
-    setLinkedin(props.mentor.linkedin);
-    setImage(props.mentor.image);
-    setSpecializations(props.mentor.specializations);
-    setLanguages(props.mentor.languages);
-    // Deep copy of array of objects
-    const newEducation = props.mentor.education
-      ? JSON.parse(JSON.stringify(props.mentor.education))
-      : [];
-    setEducations(newEducation);
+    if (props.mentor) {
+      setName(props.mentor.name);
+      setTitle(props.mentor.professional_title);
+      setAbout(props.mentor.biography);
+      setInPersonAvailable(props.mentor.offers_in_person);
+      setGroupAvailable(props.mentor.offers_group_appointments);
+      setLocation(props.mentor.location);
+      setWebsite(props.mentor.website);
+      setLinkedin(props.mentor.linkedin);
+      setImage(props.mentor.image);
+      setSpecializations(props.mentor.specializations);
+      setLanguages(props.mentor.languages);
+      // Deep copy of array of objects
+      const newEducation = props.mentor.education
+        ? JSON.parse(JSON.stringify(props.mentor.education))
+        : [];
+      setEducations(newEducation);
 
-    if (props.mentor.education) {
-      let newInputs = (props.mentor.education.length - 1) * 4;
-      setNumInputs(numInputs + newInputs);
+      if (props.mentor.education) {
+        let newInputs = (props.mentor.education.length - 1) * 4;
+        setNumInputs(INITIAL_NUM_INPUTS + newInputs);
 
-      let newValid = [...isValid];
-      for (let i = 0; i < newInputs; i++) {
-        newValid.push(true);
+        let newValid = [...isValid];
+        for (let i = 0; i < newInputs; i++) {
+          newValid.push(true);
+        }
+        setIsValid(newValid);
       }
-      setIsValid(newValid);
     }
   }, [props.mentor, modalVisible]);
 
@@ -286,9 +291,9 @@ function MentorProfileModal(props) {
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      await editMentorProfile(data, props.mentor._id.$oid);
+      await editMentorProfile(data, getMentorID());
       if (changedImage) {
-        await uploadMentorImage(image, props.mentor._id.$oid);
+        await uploadMentorImage(image, getMentorID());
       }
       setSaving(false);
       setChangedImage(false);

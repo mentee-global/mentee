@@ -46,7 +46,7 @@ def register():
         message=resp["message"],
         data={
             "token": resp["token"],
-            "userID": resp["uid"],
+            "userId": resp["uid"],
             "permission": resp["permission"],
         },
     )

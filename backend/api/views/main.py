@@ -197,9 +197,7 @@ def uploadImage(id):
         if mentor.image is True and mentor.image.image_hash is True:
             image_response = imgur_client.delete_image(mentor.image.image_hash)
     except:
-        msg = "Failed to delete image"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
+        logger.info("Failed to delete image but saving new image")
 
     new_image = Image(
         url=image_response["data"]["link"],

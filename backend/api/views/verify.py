@@ -19,13 +19,13 @@ def verify_email():
         account = VerifiedEmail.objects.get(email=email)
     except:
         return create_response(
-            data={},
+            data={"is_verified": False},
             status=401,
             message="Could not find email in database",
         )
 
     if not account.is_mentor and password != account.password:
-        return create_response(data={}, status=401, message="Password is incorrect")
+        return create_response(data={"is_verified": False}, status=401, message="Password is incorrect")
 
     return create_response(
         data={"is_verified": True, "is_mentor": account.is_mentor},

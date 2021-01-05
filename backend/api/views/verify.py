@@ -25,7 +25,9 @@ def verify_email():
         )
 
     if not account.is_mentor and password != account.password:
-        return create_response(data={"is_verified": False}, status=401, message="Password is incorrect")
+        return create_response(
+            data={"is_verified": False}, status=401, message="Password is incorrect"
+        )
 
     return create_response(
         data={"is_verified": True, "is_mentor": account.is_mentor},

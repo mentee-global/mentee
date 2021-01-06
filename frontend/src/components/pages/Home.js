@@ -1,15 +1,10 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import MenteeButton from "../MenteeButton";
 
+import MenteeVerificationModal from "../MenteeVerificationModal";
 import "../css/Home.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
 function Home() {
-  const handleViewPermission = () => {
-    return false;
-  };
-
   return (
     <div className="home-background">
       <div className="home-content">
@@ -21,13 +16,7 @@ function Home() {
             the country.
           </p>
           <br />
-          <NavLink to="/gallery">
-            <MenteeButton
-              theme="dark"
-              content={<b>Find a Mentor</b>}
-              onClick={handleViewPermission}
-            />
-          </NavLink>
+          <MenteeVerificationModal />
         </div>
         <img className="home-honeycomb" src={Honeycomb} alt="" />
       </div>

@@ -104,6 +104,7 @@ export const getIsEmailVerified = (email, password) => {
     (response) => response.data.result,
     (err) => {
       console.error(err);
+      return err.response.data.result;
     }
   );
 };

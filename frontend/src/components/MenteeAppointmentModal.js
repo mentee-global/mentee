@@ -25,12 +25,15 @@ const sampleTimes = [
   "9-10pm",
   "9-10pm",
 ];
+
+// Form validateMessages sends values here
 const validationMessage = {
   required: "Please enter your ${name}",
   types: {
     email: "Not a valid email",
   },
 };
+
 function MenteeAppointmentModal(props) {
   const [form] = Form.useForm();
   const [timeSlots, setTimeSlots] = useState([]);
@@ -126,6 +129,7 @@ function MenteeAppointmentModal(props) {
 
   async function handleBookAppointment() {
     setAppModalVisible2(false);
+
     const appointment = {};
     for (let i = 0; i < values.length; i++) {
       if (values[i] !== undefined) {
@@ -330,10 +334,11 @@ function MenteeAppointmentModal(props) {
                     />
                   </Form.Item>
                   <Form.Item
-                    name="specialization needs"
+                    name="specialization"
                     rules={[
                       {
                         required: true,
+                        message: "Please enter your specialization needs",
                       },
                     ]}
                   >
@@ -348,15 +353,17 @@ function MenteeAppointmentModal(props) {
                       options={SPECIALIZATIONS}
                     />
                   </Form.Item>
-                  <ModalInput
-                    style={styles.modalInput}
-                    type="text"
-                    title="Current Location"
-                    clicked={inputClicked[6]}
-                    index={6}
-                    handleClick={handleClick}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
+                  <Form.Item name="location">
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="text"
+                      title="Current Location"
+                      clicked={inputClicked[6]}
+                      index={6}
+                      handleClick={handleClick}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                  </Form.Item>
                   <Form.Item
                     name="languages"
                     rules={[

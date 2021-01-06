@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Select, Input } from "antd";
+import { Select, Input, InputNumber } from "antd";
 import "./css/Modal.scss";
+import { NodeExpandOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 

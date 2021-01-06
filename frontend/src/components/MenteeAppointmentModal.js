@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { Modal, Calendar, Avatar, Switch } from "antd";
+import { Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { LANGUAGES, SPECIALIZATIONS, GENDERS, AGES } from "../utils/consts";
 import { createAppointment } from "../utils/api";
-import { getMentorID } from "utils/auth.service";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -26,8 +25,14 @@ const sampleTimes = [
   "9-10pm",
   "9-10pm",
 ];
-
+ const validationMessage = {
+    required: 'Please enter your ${name}',
+    types: {
+      email: "Not a valid email",
+    }
+  };
 function MenteeAppointmentModal(props) {
+  const [form] = Form.useForm();
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
   const [appModalVisible1, setAppModalVisible1] = useState(false);
@@ -50,7 +55,7 @@ function MenteeAppointmentModal(props) {
   const [canCall, setCanCall] = useState(false);
   const [canText, setCanText] = useState(false);
   const [message, setMessage] = useState();
-  const mentorId = getMentorID();
+  const mentorID = props.mentor_id;
   const fields = [
     "mentor_id",
     "name",
@@ -68,7 +73,7 @@ function MenteeAppointmentModal(props) {
   ];
 
   const values = [
-    mentorId,
+    mentorID,
     name,
     email,
     phone,
@@ -141,7 +146,7 @@ function MenteeAppointmentModal(props) {
         content="Book Appointment"
         onClick={() => setAppModalVisible1(true)}
       />
-      <Modal
+      <Modal forceRender
         title="        " // Uses Unicode spaces to get desired heading
         visible={appModalVisible1}
         onCancel={() => closeModals()}
@@ -203,8 +208,9 @@ function MenteeAppointmentModal(props) {
             </div>
           </div>
         </div>
+
       </Modal>
-      <Modal
+      <Modal forceRender
         title="Your Information"
         visible={appModalVisible2}
         onCancel={closeModals}
@@ -213,10 +219,18 @@ function MenteeAppointmentModal(props) {
         footer={
           <MenteeButton
             content="Book Appointment"
-            onClick={handleBookAppointment}
+            htmlType="submit"
+            form="appointment-form" 
           />
         }
-      >
+      > 
+        <Form
+          id="appointment-form"
+          form={form}
+          onFinish={handleBookAppointment}
+          validateMessages={validationMessage}
+          scrollToFirstError
+        >
         <div className="modal-container">
           <div className="modal-mentee-appointment-heading-container">
             <div className="modal-mentee-appointment-heading-text">
@@ -236,35 +250,69 @@ function MenteeAppointmentModal(props) {
                 <div className="modal-mentee-appointment-header-text">
                   About You
                 </div>
-                <ModalInput
-                  style={styles.modalInput}
-                  type="text"
-                  title="Name*"
-                  clicked={inputClicked[0]}
-                  index={0}
-                  handleClick={handleClick}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <ModalInput
-                  style={styles.modalInput}
-                  type="dropdown-single"
-                  title="Age Range*"
-                  clicked={inputClicked[1]}
-                  index={1}
-                  handleClick={handleClick}
-                  onChange={(e) => setAgeRange(e)}
-                  options={AGES}
-                />
-                <ModalInput
-                  style={styles.modalInput}
-                  type="dropdown-single"
-                  title="Gender*"
-                  clicked={inputClicked[2]}
-                  index={2}
-                  handleClick={handleClick}
-                  onChange={(e) => setGender(e)}
-                  options={GENDERS}
-                />
+                <Form.Item
+                  name="name"
+                  rules={[
+                    {
+                      required: true,
+                    }
+                  ]}
+                >
+                  <ModalInput
+                    style={styles.modalInput}
+                    type="text"
+                    title="Name*"
+                    clicked={inputClicked[0]}
+                    index={0}
+                    handleClick={handleClick}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="age"
+                  rules={[
+                    {
+                      required: true,
+                    }
+                  ]}
+                >
+                  <ModalInput
+                    style={styles.modalInput}
+                    type="dropdown-single"
+                    title="Age Range*"
+                    clicked={inputClicked[1]}
+                    index={1}
+                    handleClick={handleClick}
+                    onChange={(e) => setAgeRange(e)}
+                    options={AGES}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="gender"
+                  rules={[
+                    {
+                      required: true,
+                    }
+                  ]}
+                >
+                  <ModalInput
+                    style={styles.modalInput}
+                    type="dropdown-single"
+                    title="Gender*"
+                    clicked={inputClicked[2]}
+                    index={2}
+                    handleClick={handleClick}
+                    onChange={(e) => setGender(e)}
+                    options={GENDERS}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="languages"
+                  rules={[
+                    {
+                      required: true,
+                    }
+                  ]}>
                 <ModalInput
                   style={styles.modalInput}
                   type="dropdown-multiple"
@@ -276,16 +324,25 @@ function MenteeAppointmentModal(props) {
                   placeholder="Ex. English, Spanish"
                   options={LANGUAGES}
                 />
-                <ModalInput
-                  style={styles.modalInput}
-                  type="dropdown-multiple"
-                  title="Specialization Needs*"
-                  clicked={inputClicked[5]}
-                  index={5}
-                  handleClick={handleClick}
-                  onChange={(e) => setSpecializations(e)}
-                  options={SPECIALIZATIONS}
-                />
+                </Form.Item>
+                <Form.Item
+                  name="specialization needs"
+                  rules={[
+                    {
+                      required: true,
+                    }
+                ]}>
+                  <ModalInput
+                    style={styles.modalInput}
+                    type="dropdown-multiple"
+                    title="Specialization Needs*"
+                    clicked={inputClicked[5]}
+                    index={5}
+                    handleClick={handleClick}
+                    onChange={(e) => setSpecializations(e)}
+                    options={SPECIALIZATIONS}
+                  />
+                </Form.Item>
                 <ModalInput
                   style={styles.modalInput}
                   type="text"
@@ -295,20 +352,37 @@ function MenteeAppointmentModal(props) {
                   handleClick={handleClick}
                   onChange={(e) => setLocation(e.target.value)}
                 />
-                <ModalInput
-                  style={styles.modalInput}
-                  type="text"
-                  title="Organization Affiliation*"
-                  clicked={inputClicked[7]}
-                  index={7}
-                  handleClick={handleClick}
-                  onChange={(e) => setOrganization(e.target.value)}
-                />
+                <Form.Item
+                  name="languages"
+                  rules={[
+                    {
+                      required: true,
+                    }
+                  ]}>
+                  <ModalInput
+                    style={styles.modalInput}
+                    type="text"
+                    title="Organization Affiliation*"
+                    clicked={inputClicked[7]}
+                    index={7}
+                    handleClick={handleClick}
+                    onChange={(e) => setOrganization(e.target.value)}
+                  />
+                </Form.Item>
+
               </div>
               <div className="modal-mentee-appointment-col-container">
                 <div className="modal-mentee-appointment-header-text">
                   Contact Information
                 </div>
+                <Form.Item
+                  name="email"
+                  rules={[
+                    {
+                      required: true,
+                      type: "email",
+                    }
+                 ]}>
                 <div className="modal-mentee-appointment-contact-container">
                   <ModalInput
                     style={styles.contactInput}
@@ -320,6 +394,15 @@ function MenteeAppointmentModal(props) {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
+               </Form.Item>
+               <Form.Item
+                  name="phone number"
+                  rules={[
+                    {
+                      required: true,
+                    }
+
+                 ]}>
                 <div className="modal-mentee-appointment-contact-container">
                   <ModalInput
                     style={styles.contactInput}
@@ -331,6 +414,7 @@ function MenteeAppointmentModal(props) {
                     onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
+                </Form.Item>
                 <div className="modal-mentee-availability-switches">
                   <div className="modal-mentee-availability-switch">
                     <div className="modal-mentee-availability-switch-text">
@@ -373,6 +457,7 @@ function MenteeAppointmentModal(props) {
             </div>
           </div>
         </div>
+      </Form>
       </Modal>
     </div>
   );

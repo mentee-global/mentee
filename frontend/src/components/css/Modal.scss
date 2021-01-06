@@ -108,4 +108,20 @@
     font-size: 18px;
     font-weight: 500;
     overflow-y: scroll;
+    background-color: inherit;
+}
+
+
+// This is probably bad coding practice so probably want to replace
+.ant-form-item-has-error{
+    background-color: inherit !important;
+    border-color: inherit !important;
+}
+
+.ant-input {
+    background-color: inherit !important;
+}
+
+ant-form-item-has-error, .ant-input:focus {
+    box-shadow: none !important;
 }

@@ -1,5 +1,5 @@
 from os import path
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 from bson import ObjectId
 from api.models import (
     db,
@@ -24,7 +24,7 @@ main = Blueprint("main", __name__)  # initialize blueprint
 # GET request for /mentors
 @main.route("/mentors", methods=["GET"])
 def get_mentors():
-    mentors = MentorProfile.objects()
+    mentors = MentorProfile.objects().exclude("availability", "videos")
     return create_response(data={"mentors": mentors})
 
 
@@ -118,8 +118,6 @@ def create_mentor_profile():
 @main.route("/mentor/<id>", methods=["PUT"])
 def edit_mentor(id):
     data = request.get_json()
-
-    logger.info("Data received: %s", data)
 
     # Try to retrieve Mentor profile from database
     try:

@@ -7,7 +7,7 @@ from api.utils.constants import APPT_NOTIFICATION_TEMPLATE
 appointment = Blueprint("appointment", __name__)
 
 # GET request for appointments by mentor id
-@appointment.route("/appointment/mentor/<string:mentor_id>", methods=["GET"])
+@appointment.route("/mentor/<string:mentor_id>", methods=["GET"])
 def get_requests_by_mentor(mentor_id):
     # TODO: Remove this once we have an authentication setup!
     # Block to remove:
@@ -25,7 +25,7 @@ def get_requests_by_mentor(mentor_id):
 
 
 # POST request for Mentee Appointment
-@appointment.route("/appointment", methods=["POST"])
+@appointment.route("/", methods=["POST"])
 def create_appointment():
     data = request.get_json()
     validate_data = ApppointmentForm.from_json(data)
@@ -78,7 +78,7 @@ def create_appointment():
     )
 
 
-@appointment.route("/appointment/accept/<id>", methods=["PUT"])
+@appointment.route("/accept/<id>", methods=["PUT"])
 def put_appointment(id):
     try:
         appointment = AppointmentRequest.objects.get(id=id)
@@ -102,7 +102,7 @@ def put_appointment(id):
 
 
 # DELETE request for appointment by appointment id
-@appointment.route("/appointment/<string:appointment_id>", methods=["DELETE"])
+@appointment.route("/<string:appointment_id>", methods=["DELETE"])
 def delete_request(appointment_id):
     try:
         request = AppointmentRequest.objects.get(id=appointment_id)

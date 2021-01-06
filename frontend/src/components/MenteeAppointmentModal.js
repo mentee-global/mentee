@@ -25,12 +25,12 @@ const sampleTimes = [
   "9-10pm",
   "9-10pm",
 ];
- const validationMessage = {
-    required: 'Please enter your ${name}',
-    types: {
-      email: "Not a valid email",
-    }
-  };
+const validationMessage = {
+  required: "Please enter your ${name}",
+  types: {
+    email: "Not a valid email",
+  },
+};
 function MenteeAppointmentModal(props) {
   const [form] = Form.useForm();
   const [timeSlots, setTimeSlots] = useState([]);
@@ -146,7 +146,8 @@ function MenteeAppointmentModal(props) {
         content="Book Appointment"
         onClick={() => setAppModalVisible1(true)}
       />
-      <Modal forceRender
+      <Modal
+        forceRender
         title="        " // Uses Unicode spaces to get desired heading
         visible={appModalVisible1}
         onCancel={() => closeModals()}
@@ -208,9 +209,9 @@ function MenteeAppointmentModal(props) {
             </div>
           </div>
         </div>
-
       </Modal>
-      <Modal forceRender
+      <Modal
+        forceRender
         title="Your Information"
         visible={appModalVisible2}
         onCancel={closeModals}
@@ -220,10 +221,10 @@ function MenteeAppointmentModal(props) {
           <MenteeButton
             content="Book Appointment"
             htmlType="submit"
-            form="appointment-form" 
+            form="appointment-form"
           />
         }
-      > 
+      >
         <Form
           id="appointment-form"
           form={form}
@@ -231,233 +232,238 @@ function MenteeAppointmentModal(props) {
           validateMessages={validationMessage}
           scrollToFirstError
         >
-        <div className="modal-container">
-          <div className="modal-mentee-appointment-heading-container">
-            <div className="modal-mentee-appointment-heading-text">
-              Mentoring Session with Bernie Sanders
-            </div>
-            <div className="modal-mentee-appointment-heading-divider" />
-            <div className="modal-mentee-appointment-heading-date-container">
-              <div className="modal-mentee-appointment-heading-date">10/6</div>
-              <div className="modal-mentee-appointment-heading-day">
-                Tuesday
+          <div className="modal-container">
+            <div className="modal-mentee-appointment-heading-container">
+              <div className="modal-mentee-appointment-heading-text">
+                Mentoring Session with Bernie Sanders
+              </div>
+              <div className="modal-mentee-appointment-heading-divider" />
+              <div className="modal-mentee-appointment-heading-date-container">
+                <div className="modal-mentee-appointment-heading-date">
+                  10/6
+                </div>
+                <div className="modal-mentee-appointment-heading-day">
+                  Tuesday
+                </div>
               </div>
             </div>
-          </div>
-          <div className="modal-mentee-inner-container">
-            <div className="flex flex-row">
-              <div className="modal-mentee-appointment-col-container">
-                <div className="modal-mentee-appointment-header-text">
-                  About You
-                </div>
-                <Form.Item
-                  name="name"
-                  rules={[
-                    {
-                      required: true,
-                    }
-                  ]}
-                >
-                  <ModalInput
-                    style={styles.modalInput}
-                    type="text"
-                    title="Name*"
-                    clicked={inputClicked[0]}
-                    index={0}
-                    handleClick={handleClick}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="age"
-                  rules={[
-                    {
-                      required: true,
-                    }
-                  ]}
-                >
-                  <ModalInput
-                    style={styles.modalInput}
-                    type="dropdown-single"
-                    title="Age Range*"
-                    clicked={inputClicked[1]}
-                    index={1}
-                    handleClick={handleClick}
-                    onChange={(e) => setAgeRange(e)}
-                    options={AGES}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="gender"
-                  rules={[
-                    {
-                      required: true,
-                    }
-                  ]}
-                >
-                  <ModalInput
-                    style={styles.modalInput}
-                    type="dropdown-single"
-                    title="Gender*"
-                    clicked={inputClicked[2]}
-                    index={2}
-                    handleClick={handleClick}
-                    onChange={(e) => setGender(e)}
-                    options={GENDERS}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="languages"
-                  rules={[
-                    {
-                      required: true,
-                    }
-                  ]}>
-                <ModalInput
-                  style={styles.modalInput}
-                  type="dropdown-multiple"
-                  title="Language(s)*"
-                  clicked={inputClicked[4]}
-                  index={4}
-                  handleClick={handleClick}
-                  onChange={(e) => setLanguages(e)}
-                  placeholder="Ex. English, Spanish"
-                  options={LANGUAGES}
-                />
-                </Form.Item>
-                <Form.Item
-                  name="specialization needs"
-                  rules={[
-                    {
-                      required: true,
-                    }
-                ]}>
-                  <ModalInput
-                    style={styles.modalInput}
-                    type="dropdown-multiple"
-                    title="Specialization Needs*"
-                    clicked={inputClicked[5]}
-                    index={5}
-                    handleClick={handleClick}
-                    onChange={(e) => setSpecializations(e)}
-                    options={SPECIALIZATIONS}
-                  />
-                </Form.Item>
-                <ModalInput
-                  style={styles.modalInput}
-                  type="text"
-                  title="Current Location"
-                  clicked={inputClicked[6]}
-                  index={6}
-                  handleClick={handleClick}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
-                <Form.Item
-                  name="languages"
-                  rules={[
-                    {
-                      required: true,
-                    }
-                  ]}>
-                  <ModalInput
-                    style={styles.modalInput}
-                    type="text"
-                    title="Organization Affiliation*"
-                    clicked={inputClicked[7]}
-                    index={7}
-                    handleClick={handleClick}
-                    onChange={(e) => setOrganization(e.target.value)}
-                  />
-                </Form.Item>
-
-              </div>
-              <div className="modal-mentee-appointment-col-container">
-                <div className="modal-mentee-appointment-header-text">
-                  Contact Information
-                </div>
-                <Form.Item
-                  name="email"
-                  rules={[
-                    {
-                      required: true,
-                      type: "email",
-                    }
-                 ]}>
-                <div className="modal-mentee-appointment-contact-container">
-                  <ModalInput
-                    style={styles.contactInput}
-                    type="text"
-                    title="Email*"
-                    clicked={inputClicked[8]}
-                    index={8}
-                    handleClick={handleClick}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-               </Form.Item>
-               <Form.Item
-                  name="phone number"
-                  rules={[
-                    {
-                      required: true,
-                    }
-
-                 ]}>
-                <div className="modal-mentee-appointment-contact-container">
-                  <ModalInput
-                    style={styles.contactInput}
-                    type="text"
-                    title="Phone Number*"
-                    clicked={inputClicked[9]}
-                    index={9}
-                    handleClick={handleClick}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </div>
-                </Form.Item>
-                <div className="modal-mentee-availability-switches">
-                  <div className="modal-mentee-availability-switch">
-                    <div className="modal-mentee-availability-switch-text">
-                      Allow calls
-                    </div>
-                    <Switch
-                      size="small"
-                      checked={canCall}
-                      handleClick={handleClick}
-                      onChange={(e) => setCanCall(e)}
-                    />
-                  </div>
-                  <div className="modal-mentee-availability-switch">
-                    <div className="modal-mentee-availability-switch-text">
-                      Allow texting
-                    </div>
-                    <Switch
-                      size="small"
-                      checked={canText}
-                      handleClick={handleClick}
-                      onChange={(e) => setCanText(e)}
-                    />
-                  </div>
-                </div>
-                <div className="modal-mentee-appointment-message-container">
+            <div className="modal-mentee-inner-container">
+              <div className="flex flex-row">
+                <div className="modal-mentee-appointment-col-container">
                   <div className="modal-mentee-appointment-header-text">
-                    Message to Mentor
+                    About You
                   </div>
+                  <Form.Item
+                    name="name"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="text"
+                      title="Name*"
+                      clicked={inputClicked[0]}
+                      index={0}
+                      handleClick={handleClick}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="age"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="dropdown-single"
+                      title="Age Range*"
+                      clicked={inputClicked[1]}
+                      index={1}
+                      handleClick={handleClick}
+                      onChange={(e) => setAgeRange(e)}
+                      options={AGES}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="gender"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="dropdown-single"
+                      title="Gender*"
+                      clicked={inputClicked[2]}
+                      index={2}
+                      handleClick={handleClick}
+                      onChange={(e) => setGender(e)}
+                      options={GENDERS}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="languages"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="dropdown-multiple"
+                      title="Language(s)*"
+                      clicked={inputClicked[4]}
+                      index={4}
+                      handleClick={handleClick}
+                      onChange={(e) => setLanguages(e)}
+                      placeholder="Ex. English, Spanish"
+                      options={LANGUAGES}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="specialization needs"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="dropdown-multiple"
+                      title="Specialization Needs*"
+                      clicked={inputClicked[5]}
+                      index={5}
+                      handleClick={handleClick}
+                      onChange={(e) => setSpecializations(e)}
+                      options={SPECIALIZATIONS}
+                    />
+                  </Form.Item>
                   <ModalInput
                     style={styles.modalInput}
-                    type="textarea"
-                    maxRows={11}
-                    clicked={inputClicked[10]}
-                    index={10}
+                    type="text"
+                    title="Current Location"
+                    clicked={inputClicked[6]}
+                    index={6}
                     handleClick={handleClick}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={(e) => setLocation(e.target.value)}
                   />
+                  <Form.Item
+                    name="languages"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="text"
+                      title="Organization Affiliation*"
+                      clicked={inputClicked[7]}
+                      index={7}
+                      handleClick={handleClick}
+                      onChange={(e) => setOrganization(e.target.value)}
+                    />
+                  </Form.Item>
+                </div>
+                <div className="modal-mentee-appointment-col-container">
+                  <div className="modal-mentee-appointment-header-text">
+                    Contact Information
+                  </div>
+                  <Form.Item
+                    name="email"
+                    rules={[
+                      {
+                        required: true,
+                        type: "email",
+                      },
+                    ]}
+                  >
+                    <div className="modal-mentee-appointment-contact-container">
+                      <ModalInput
+                        style={styles.contactInput}
+                        type="text"
+                        title="Email*"
+                        clicked={inputClicked[8]}
+                        index={8}
+                        handleClick={handleClick}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </Form.Item>
+                  <Form.Item
+                    name="phone number"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <div className="modal-mentee-appointment-contact-container">
+                      <ModalInput
+                        style={styles.contactInput}
+                        type="text"
+                        title="Phone Number*"
+                        clicked={inputClicked[9]}
+                        index={9}
+                        handleClick={handleClick}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </div>
+                  </Form.Item>
+                  <div className="modal-mentee-availability-switches">
+                    <div className="modal-mentee-availability-switch">
+                      <div className="modal-mentee-availability-switch-text">
+                        Allow calls
+                      </div>
+                      <Switch
+                        size="small"
+                        checked={canCall}
+                        handleClick={handleClick}
+                        onChange={(e) => setCanCall(e)}
+                      />
+                    </div>
+                    <div className="modal-mentee-availability-switch">
+                      <div className="modal-mentee-availability-switch-text">
+                        Allow texting
+                      </div>
+                      <Switch
+                        size="small"
+                        checked={canText}
+                        handleClick={handleClick}
+                        onChange={(e) => setCanText(e)}
+                      />
+                    </div>
+                  </div>
+                  <div className="modal-mentee-appointment-message-container">
+                    <div className="modal-mentee-appointment-header-text">
+                      Message to Mentor
+                    </div>
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="textarea"
+                      maxRows={11}
+                      clicked={inputClicked[10]}
+                      index={10}
+                      handleClick={handleClick}
+                      onChange={(e) => setMessage(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </Form>
+        </Form>
       </Modal>
     </div>
   );

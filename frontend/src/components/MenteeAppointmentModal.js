@@ -186,9 +186,9 @@ function MenteeAppointmentModal(props) {
                       key={index}
                       width={100}
                       content={
-                        moment(time.start_time).format("HH:mm") +
+                        moment(time.start_time.$date).format("HH:mm") +
                         "-" +
-                        moment(time.end_time).format("HH:mm")
+                        moment(time.end_time.$date).format("HH:mm")
                       }
                       theme="light"
                       onClick={() => handleTimeChange(time)}

@@ -62,6 +62,8 @@ def create_mentor_profile():
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
         offers_group_appointments=data["offers_group_appointments"],
+        email_notifications=date["email_notifications"],
+        text_notifications=data["text_notifications"]
     )
 
     new_mentor.website = data.get("website")
@@ -146,6 +148,8 @@ def edit_mentor(id):
     mentor.biography = data.get("biography", mentor.biography)
     mentor.linkedin = data.get("linkedin", mentor.linkedin)
     mentor.website = data.get("website", mentor.website)
+    mentor.text_notifications = data.get("text_notifications", mentor.text_notifications)
+    mentor.email_notifications = date.get("data_notifications", mentor.email_notifications)
 
     # Create education object
     if "education" in data:

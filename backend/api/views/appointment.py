@@ -54,7 +54,6 @@ def create_appointment():
         start_time=time_data.get("start_time"), end_time=time_data.get("end_time")
     )
 
-
     # Gets mentor's email and sends a notification to them about the appointment
     try:
         mentor = MentorProfile.objects.get(id=data.get("mentor_id"))
@@ -63,7 +62,7 @@ def create_appointment():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    if (mentor.email_notifications):
+    if mentor.email_notifications:
         res_email = send_email(
             recipient=mentor.email, template_id=APPT_NOTIFICATION_TEMPLATE
         )

@@ -89,7 +89,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
-            value={defaultValue}
+            value={props.value}
           />
         );
       case "dropdown-single":
@@ -102,6 +102,7 @@ function ModalInput(props) {
             style={{ width: "100%" }}
             placeholder="Please select"
             onChange={handleOnChange}
+            value={props.value}
           >
             {returnDropdownItems(options)}
           </Select>
@@ -117,7 +118,7 @@ function ModalInput(props) {
             style={{ width: "100%" }}
             placeholder={placeholder || "Please select"}
             onChange={handleOnChange}
-            value={defaultValue}
+            value={props.value}
             tokenSeparators={[","]}
           >
             {returnDropdownItems(options)}
@@ -132,7 +133,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
-            value={defaultValue}
+            value={props.value}
           />
         );
       default:

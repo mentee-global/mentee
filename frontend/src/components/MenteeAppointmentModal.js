@@ -5,7 +5,11 @@ import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { LANGUAGES, SPECIALIZATIONS, GENDERS, AGES } from "../utils/consts";
-import { createAppointment } from "../utils/api";
+import {
+  createAppointment,
+  fetchAvailability,
+  editAvailability,
+} from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -147,7 +151,22 @@ function MenteeAppointmentModal(props) {
       start_time: moment(time.start_time.$date).format(),
       end_time: moment(time.end_time.$date).format(),
     };
+
     await createAppointment(appointment);
+    const changeTime = [...timeSlots];
+    let index = 0;
+    changeTime.forEach((element) => {
+      element.end_time.$date = moment(element.end_time.$date).format();
+      element.start_time.$date = moment(element.start_time.$date).format();
+      if (
+        element.end_time.$date === time.end_time.$date &&
+        time.start_time.$date === element.start_time.$date
+      ) {
+        index = changeTime.indexOf(element);
+      }
+    });
+    changeTime.splice(index, 1);
+    await editAvailability(changeTime, mentorID);
   }
 
   return (

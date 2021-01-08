@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
-import { Input, Avatar, Switch, Button } from "antd";
+import {
+  UserOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  AlignCenterOutlined,
+} from "@ant-design/icons";
+import { Form, Input, Avatar, Switch, Button } from "antd";
 import { getMentorID } from "utils/auth.service";
 import ProfileContent from "../ProfileContent";
-import MenteeButton from "../MenteeButton";
 
+import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
 import { fetchMentorByID } from "utils/api";
 
@@ -12,13 +17,13 @@ function Profile() {
   const [mentor, setMentor] = useState({});
   const [onEdit, setEditing] = useState(false);
   const [editedMentor, setEditedMentor] = useState(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const mentorID = getMentorID();
     async function getMentor() {
       const mentorData = await fetchMentorByID(mentorID);
       if (mentorData) {
-        console.log(mentorData);
         setMentor(mentorData);
       }
     }
@@ -58,16 +63,60 @@ function Profile() {
     );
   }
 
+  const validateMessages = {
+    types: {
+      email: "Please input a valid email!",
+      number: "Please input a valid phone number!",
+    },
+  };
+
+  const onFinish = (values) => {
+    console.log(values);
+    setEditing(false);
+    //TODO: Store new data into backend
+    handleSaveEdits();
+  };
+
   function renderEditInfo() {
     return (
-      <div>
+      <Form
+        form={form}
+        name="nest-messages"
+        layout="inline"
+        onFinish={onFinish}
+        validateMessages={validateMessages}
+        initialValues={{
+          email: mentor.email,
+          phone: mentor.phone,
+          email_notifications: mentor.email_notifications,
+          text_notifications: mentor.text_notifications,
+        }}
+      >
         <div className="mentor-profile-input">
           <MailOutlined className="mentor-profile-contact-icon" />
-          <Input defaultValue={mentor.email} />
+          <Form.Item
+            name="email"
+            rules={[
+              {
+                type: "email",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
         </div>
         <div className="mentor-profile-input">
           <PhoneOutlined className="mentor-profile-contact-icon" />
-          <Input defaultValue={mentor.phone_number} />
+          <Form.Item
+            name="phone"
+            rules={[
+              {
+                min: 10,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
         </div>
         <div className="mentor-profile-editing-footer">
           <div className="mentor-profile-notifications-container">
@@ -75,20 +124,28 @@ function Profile() {
               <div className="modal-mentee-availability-switch-text">
                 Email notifications
               </div>
-              <Switch size="small" />
+              <Form.Item name="email_notifications">
+                <Switch size="small" />
+              </Form.Item>
             </div>
             <div className="modal-mentee-availability-switch">
               <div className="modal-mentee-availability-switch-text">
                 Text notifications
               </div>
-              <Switch size="small" />
+              <Form.Item name="text_notifications">
+                <Switch size="small" />
+              </Form.Item>
             </div>
           </div>
           <div className="mentor-profile-save-container">
-            <MenteeButton onClick={() => setEditing(false)} content="Save" />
+            <Form.Item>
+              <Button className="regular-button" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
           </div>
         </div>
-      </div>
+      </Form>
     );
   }
 

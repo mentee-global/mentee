@@ -14,8 +14,9 @@ import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
 
-// TODO: Temporary constants, fill in later
+const DAY = 24 * 60 * 60 * 1000;
 
+// TODO: Replace sampleTimes with times from mentor availability
 const sampleTimes = [
   "11-12pm",
   "2-3pm",
@@ -90,6 +91,13 @@ function MenteeAppointmentModal(props) {
     setAppModalVisible2(false);
   }
 
+  function disabledDate(currentDate) {
+    // disable/return true if date is in the past
+    let disabled = currentDate && currentDate.valueOf() < Date.now() - DAY;
+    // TODO: connect to backend, return true if currentDate not in mentor availability
+    return disabled;
+  }
+
   return (
     <div>
       <MenteeButton
@@ -116,7 +124,12 @@ function MenteeAppointmentModal(props) {
           </div>
           <div className="modal-mentee-appointment-datetime-container">
             <div className="modal-mentee-appointment-datetime-container-header">
-              <Calendar fullscreen={false} onSelect={handleDateChange} />
+              <Calendar
+                fullscreen={false}
+                onSelect={handleDateChange}
+                onPanalChange={(v, m) => console.log(v, m)}
+                disabledDate={disabledDate}
+              />
               <div className="modal-mentee-appointment-datetime-header">
                 <div className="modal-mentee-appointment-datetime-text">
                   Select Time

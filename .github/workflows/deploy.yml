@@ -39,6 +39,7 @@ jobs:
         with:
           name: frontend-build
           path:  ${{ github.workspace }}/frontend/build
+          retention-days: 1
           if-no-files-found: error
         
   deploy:
@@ -51,7 +52,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: frontend-build
-          path: frontend
+          path: ${{ github.workspace }}/frontend/build
 
       - name: Deploy to Heroku
         uses: AkhileshNS/heroku-deploy@v3.8.8

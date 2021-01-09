@@ -62,8 +62,8 @@ def create_mentor_profile():
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
         offers_group_appointments=data["offers_group_appointments"],
-        email_notifications=date["email_notifications"],
-        text_notifications=data["text_notifications"],
+        email_notifications=data.get("email_notifications", False),
+        text_notifications=data.get("text_notifications", False),
     )
 
     new_mentor.website = data.get("website")
@@ -151,7 +151,7 @@ def edit_mentor(id):
     mentor.text_notifications = data.get(
         "text_notifications", mentor.text_notifications
     )
-    mentor.email_notifications = date.get(
+    mentor.email_notifications = data.get(
         "data_notifications", mentor.email_notifications
     )
 

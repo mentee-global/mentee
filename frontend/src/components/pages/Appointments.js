@@ -181,7 +181,7 @@ function Appointments() {
 
   const Appointments = ({ data }) => {
     if (!data) {
-      return <div></div>;
+      return <div>There are no appointments here</div>;
     }
 
     return (

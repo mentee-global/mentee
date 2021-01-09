@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   EnvironmentOutlined,
   CommentOutlined,
@@ -8,11 +8,16 @@ import {
 
 import MenteeButton from "./MenteeButton";
 import MentorProfileModal from "./MentorProfileModal";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
+import { isVerified } from "../utils/verifyMentee";
+import { isLoggedIn } from "utils/auth.service";
 
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
+  const [verified, setVerified] = useState(isVerified() || isLoggedIn());
+
   const getMeetingMethods = () => {
     const in_person = props.mentor.offers_in_person
       ? "In person | Online"
@@ -54,6 +59,10 @@ function ProfileContent(props) {
     ));
   };
 
+  const handleVerification = () => {
+    setVerified(true);
+  };
+
   return (
     <div>
       <div className="mentor-profile-name">
@@ -65,7 +74,15 @@ function ProfileContent(props) {
           />
         ) : (
           <div className="mentor-profile-button">
-            <MenteeAppointmentModal />
+            {verified ? (
+              <MenteeAppointmentModal />
+            ) : (
+              <MenteeVerificationModal
+                width="180px"
+                appointment
+                onVerified={handleVerification}
+              />
+            )}
           </div>
         )}
       </div>

@@ -7,6 +7,7 @@ import MenteeButton from "./MenteeButton";
 import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 
 const { Header } = Layout;
 
@@ -20,15 +21,9 @@ function MenteeNavHeader() {
           </NavLink>
         </div>
         <div>
-          <NavLink to="/gallery">
-            <span className="navigation-header-button">
-              <MenteeButton
-                theme="light"
-                width="125px"
-                content={<b>Find a Mentor</b>}
-              />
-            </span>
-          </NavLink>
+          <span className="navigation-header-button">
+            <MenteeVerificationModal theme="light" button />
+          </span>
           <NavLink to="/login">
             <span className="navigation-header-button">
               <MenteeButton width="125px" content={<b>Mentor Log In</b>} />

@@ -8,7 +8,7 @@ import { isLoggedIn } from "utils/auth.service";
 import "./css/VerificationModal.scss";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 
-function MenteeVerificationModal() {
+function MenteeVerificationModal(props) {
   const history = useHistory();
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState();
@@ -18,7 +18,12 @@ function MenteeVerificationModal() {
 
   const handleViewPermission = () => {
     if (isLoggedIn() || isVerified()) {
-      history.push("/gallery");
+      if (!props.appointment) {
+        history.push("/gallery");
+      } else {
+        props.onVerified();
+        setIsVisible(false);
+      }
       return;
     }
 
@@ -61,10 +66,14 @@ function MenteeVerificationModal() {
   return (
     <span>
       <MenteeButton
-        theme="dark"
-        content={<b>Find a Mentor</b>}
+        theme={props.theme}
+        content={
+          props.appointment ? <b>Book Appointment</b> : <b>Find a Mentor</b>
+        }
         onClick={handleViewPermission}
+        width={props.width}
       />
+
       <Modal
         title="Verify Mentee"
         visible={isVisible}

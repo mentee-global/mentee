@@ -1,22 +1,20 @@
 import { getIsEmailVerified } from "./api";
 
+console.log(window.name);
+
 const verify = async (email, password) => {
   const res = await getIsEmailVerified(email, password);
 
   if (res.is_verified) {
-    localStorage.setItem("verification", JSON.stringify(res));
+    window.name = "True";
     return true;
   }
 
   return false;
 };
 
-const getVerification = () => {
-  return JSON.parse(localStorage.getItem("verification"));
-};
-
 const isVerified = () => {
-  return Boolean(getVerification());
+  return window.name === "True";
 };
 
-export { isVerified, getVerification, verify };
+export { isVerified, verify };

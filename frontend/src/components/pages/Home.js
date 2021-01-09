@@ -16,7 +16,7 @@ function Home() {
             the country.
           </p>
           <br />
-          <MenteeVerificationModal />
+          <MenteeVerificationModal theme="dark" button />
         </div>
         <img className="home-honeycomb" src={Honeycomb} alt="" />
       </div>

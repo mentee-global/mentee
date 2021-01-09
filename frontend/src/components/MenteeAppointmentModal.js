@@ -91,9 +91,10 @@ function MenteeAppointmentModal() {
   }
 
   return (
-    <div>
+    <span>
       <MenteeButton
-        content="Book Appointment"
+        content={<b>Book Appointment</b>}
+        width="180px"
         onClick={() => setAppModalVisible1(true)}
       />
       <Modal
@@ -332,7 +333,7 @@ function MenteeAppointmentModal() {
           </div>
         </div>
       </Modal>
-    </div>
+    </span>
   );
 }
 

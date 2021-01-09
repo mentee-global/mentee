@@ -62,8 +62,8 @@ def create_mentor_profile():
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
         offers_group_appointments=data["offers_group_appointments"],
-        email_notifications=data.get("email_notifications", False),
-        text_notifications=data.get("text_notifications", False),
+        email_notifications=data.get("email_notifications", True),
+        text_notifications=data.get("text_notifications", True),
     )
 
     new_mentor.website = data.get("website")

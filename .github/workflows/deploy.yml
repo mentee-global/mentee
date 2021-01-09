@@ -25,13 +25,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Move to frontend
-        run: cd frontend
-
-      # Yarn build 
-      - uses: borales/actions-yarn@v2.0.0
+      # Run yarn build
+      - uses: actions/setup-node@v2
         with:
-          cmd: build 
+          node-version: '12'
+          check-latest: true
+      - working-directory: ./frontend
+      - run: yarn install
+      - run: yarn run build
 
       - name: Deploy to Heroku
         uses: AkhileshNS/heroku-deploy@v3.8.8

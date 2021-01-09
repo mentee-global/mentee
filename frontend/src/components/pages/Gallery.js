@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
-import { Input, Checkbox } from "antd";
+import { Input, Checkbox, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 
 import "../css/Gallery.scss";
+import { isLoggedIn } from "utils/auth.service";
+import { isVerified } from "utils/verifyMentee";
 
 function Gallery() {
   const [mentors, setMentors] = useState([]);
@@ -50,7 +52,14 @@ function Gallery() {
     });
   }
 
-  return (
+  // Add some kind of error 403 code
+  return !(isLoggedIn() || isVerified()) ? (
+    <Result
+      status="403"
+      title="403"
+      subTitle="Sorry, you are not authorized to access this page."
+    />
+  ) : (
     <div className="gallery-container">
       <div className="gallery-filter-container">
         <div className="gallery-filter-header">Filter By:</div>

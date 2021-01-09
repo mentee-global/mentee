@@ -1,11 +1,12 @@
-import { Modal, Button, Input } from "antd";
+import { Modal, Input } from "antd";
 import { useHistory } from "react-router-dom";
 import React, { useState } from "react";
 import MenteeButton from "./MenteeButton";
 import { isVerified, verify } from "../utils/verifyMentee";
 import { isLoggedIn } from "utils/auth.service";
 
-import "./css/Modal.scss";
+import "./css/VerificationModal.scss";
+import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 
 function MenteeVerificationModal() {
   const history = useHistory();
@@ -18,20 +19,43 @@ function MenteeVerificationModal() {
   const handleViewPermission = () => {
     if (isLoggedIn() || isVerified()) {
       history.push("/gallery");
+      return;
     }
 
     setIsVisible(true);
   };
 
   const handleVerifyInfo = async () => {
+    setIsVerifying(true);
     await verify(email, password);
+    setIsVerifying(false);
 
-    if (isVerified()) {
-      setError(false);
-      setIsVisible(false);
-      history.push("/gallery");
+    if (!isVerified()) {
+      setError(true);
     }
-    setError(true);
+  };
+
+  const getIsVerifiedIcon = () => {
+    if (isVerified()) {
+      return (
+        <div className="verified-feedback">
+          <div>Confirmed </div>
+          <CheckCircleTwoTone
+            className="feedback-icon"
+            twoToneColor="#52c41a"
+          />
+        </div>
+      );
+    } else if (error) {
+      return (
+        <div className="verified-feedback">
+          <div>Not Verified </div>
+          <CloseCircleTwoTone className="feedback-icon" twoToneColor="red" />
+        </div>
+      );
+    } else {
+      return <div></div>;
+    }
   };
 
   return (
@@ -44,27 +68,28 @@ function MenteeVerificationModal() {
       <Modal
         title="Verify Mentee"
         visible={isVisible}
-        width="30%"
+        className="verification-modal"
         onCancel={() => {
           setIsVisible(false);
           setError(false);
         }}
         footer={
-          <div>
-            {error && <b>Not Verified/Wrong Password</b>}
-            <Button type="round" onClick={() => {}} loading={isVerifying}>
-              Continue
-            </Button>
+          <div className="footer-container">
+            {getIsVerifiedIcon()}
+            <MenteeButton
+              theme="light"
+              content="Continue"
+              onClick={handleViewPermission}
+            />
           </div>
         }
       >
-        <div className="modal-container" style={styles.modal}>
-          <div className="modal-header">
+        <div className="verification-body">
+          <div className="verification-header">
             You must confirm your email is approved through <b>MENTEE</b> to
             continue
           </div>
-          <div className="modal-inner-container">
-            <div className="modal-input-container"></div>
+          <div className="verification-input-container">
             <Input
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
@@ -75,7 +100,10 @@ function MenteeVerificationModal() {
             />
             <MenteeButton
               content="Check Registration"
+              radius="4px"
+              width="100%"
               onClick={handleVerifyInfo}
+              loading={isVerifying}
             />
           </div>
         </div>
@@ -83,25 +111,5 @@ function MenteeVerificationModal() {
     </span>
   );
 }
-
-const styles = {
-  modal: {
-    height: "30%",
-    width: "60%",
-    overflowY: "hidden",
-  },
-  input: {},
-  button: {},
-  footer: {
-    borderRadius: 13,
-    marginRight: 15,
-    backgroundColor: "#E4BB4F",
-  },
-  alertToast: {
-    color: "#FF0000",
-    display: "inline-block",
-    marginRight: 10,
-  },
-};
 
 export default MenteeVerificationModal;

@@ -3,7 +3,6 @@
 .regular-button, .regular-button:focus {
   background: $mentee-button-regular;
   border-color: $mentee-button-regular;
-  border-radius: 13px;  
   color: white;
 }
 
@@ -16,7 +15,6 @@
 .dark-button, .dark-button:focus {
   background: $mentee-button-dark;
   border-color: $mentee-button-dark;
-  border-radius: 13px;
   color: $mentee-button-light;
 }
 
@@ -29,7 +27,6 @@
 .light-button, .light-button:focus {
   background: $mentee-button-light;
   border-color: $mentee-button-light;
-  border-radius: 13px;
   color: $mentee-button-dark;
 }
 

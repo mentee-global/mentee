@@ -14,8 +14,13 @@ function MenteeButton(props) {
       className={getButtonClass(props.theme)}
       disabled={props.disabled ?? false}
       loading={props.loading ?? false}
-      style={{ width: props.width, height: props.height }}
+      style={{
+        width: props.width,
+        height: props.height,
+        borderRadius: props.radius ?? "13px",
+      }}
       onClick={props.onClick}
+      loading={props.loading ?? false}
     >
       {props.content}
     </Button>

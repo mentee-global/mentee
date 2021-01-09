@@ -33,12 +33,24 @@ jobs:
       - run: yarn install
       # set CI to false because warnings are treated as errors if CI=true
       - run: CI=false yarn run build
+      
+      - name: save build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-build
+          path: build
         
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Downloading build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-build
+          path: frontend
 
       - name: Deploy to Heroku
         uses: AkhileshNS/heroku-deploy@v3.8.8

@@ -3,6 +3,7 @@ import { Button, Calendar, Col, Row } from "antd";
 import { ClockCircleOutlined, InfoCircleFilled } from "@ant-design/icons";
 import "../css/Appointments.scss";
 import { formatAppointments } from "../../utils/dateFormatting";
+import AvailabilityCalendar from "../AvailabilityCalendar";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
@@ -139,7 +140,7 @@ function Appointments() {
             Set available hours by specific date
           </div>
           <div className="calendar-container">
-            <Calendar />
+            <AvailabilityCalendar />
           </div>
         </div>
         <div className="save-container">

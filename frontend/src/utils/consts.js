@@ -1,6 +1,11 @@
-export const API_URL = "http://localhost:5000/api/";
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://mentee-h4i.herokuapp.com/"
+    : "http://localhost:5000/";
 
-export const AUTH_URL = "http://localhost:5000/auth/";
+export const API_URL = BASE_URL + "api/";
+
+export const AUTH_URL = BASE_URL + "auth/";
 
 export const LANGUAGES = [
   "Arabic",

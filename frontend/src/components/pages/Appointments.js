@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Button, Calendar, Col, Row } from "antd";
+import { Button, Calendar, Col, Row, Result } from "antd";
 import {
   ClockCircleOutlined,
   CheckCircleTwoTone,
   CloseCircleTwoTone,
   InfoCircleFilled,
+  SmileOutlined,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
+import AvailabilityCalendar from "../AvailabilityCalendar";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
@@ -161,7 +163,7 @@ function Appointments() {
             Set available hours by specific date
           </div>
           <div className="calendar-container">
-            <Calendar />
+            <AvailabilityCalendar />
           </div>
         </div>
         <div className="save-container">
@@ -179,8 +181,15 @@ function Appointments() {
   };
 
   const Appointments = ({ data }) => {
-    if (!data) {
-      return <div></div>;
+    if (!data || !data.length) {
+      return (
+        <div className="empty-appointments-list appointments-background">
+          <Result
+            icon={<SmileOutlined style={{ color: "#A58123" }} />}
+            title="There are currently no appointments"
+          />
+        </div>
+      );
     }
 
     return (

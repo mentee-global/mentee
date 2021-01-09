@@ -96,3 +96,24 @@ export const getAppointmentsByMentorID = (id) => {
     }
   );
 };
+
+export const fetchAvailability = (id) => {
+  const requestExtension = "/availability/" + id;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const editAvailability = (timeslots, id) => {
+  const requestExtension = "/availability/" + id;
+  let availability = { Availability: timeslots };
+  return instance.put(requestExtension, availability).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};

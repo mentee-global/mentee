@@ -31,7 +31,7 @@ jobs:
           node-version: '12'
           check-latest: true
       - run: yarn install
-      - run: yarn run build
+      - run: CI=false yarn run build
         
   deploy:
     runs-on: ubuntu-latest

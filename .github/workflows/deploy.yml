@@ -31,6 +31,7 @@ jobs:
           node-version: '12'
           check-latest: true
       - run: yarn install
+      # set CI to false because warnings are treated as errors if CI=true
       - run: CI=false yarn run build
         
   deploy:
@@ -43,5 +44,7 @@ jobs:
         uses: AkhileshNS/heroku-deploy@v3.8.8
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "MENTEE-h4i"
+          heroku_app_name: "mentee-h4i"
           heroku_email: "h4i.mentee.auth@gmail.com"
+          # TODO: set to master instead
+          branch: deployment

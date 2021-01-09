@@ -11,7 +11,7 @@ import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
-import { fetchMentorByID } from "utils/api";
+import { fetchMentorByID, editMentorProfile } from "utils/api";
 
 function Profile() {
   const [mentor, setMentor] = useState({});
@@ -71,10 +71,14 @@ function Profile() {
   };
 
   const onFinish = (values) => {
-    console.log(values);
+    async function saveEdits() {
+      const new_values = { ...values, phone_number: values.phone };
+      await editMentorProfile(new_values, getMentorID());
+      handleSaveEdits();
+    }
+
     setEditing(false);
-    //TODO: Store new data into backend
-    handleSaveEdits();
+    saveEdits();
   };
 
   function renderEditInfo() {
@@ -87,7 +91,7 @@ function Profile() {
         validateMessages={validateMessages}
         initialValues={{
           email: mentor.email,
-          phone: mentor.phone,
+          phone: mentor.phone_number,
           email_notifications: mentor.email_notifications,
           text_notifications: mentor.text_notifications,
         }}
@@ -125,7 +129,10 @@ function Profile() {
                 Email notifications
               </div>
               <Form.Item name="email_notifications">
-                <Switch size="small" />
+                <Switch
+                  size="small"
+                  defaultChecked={mentor.email_notifications}
+                />
               </Form.Item>
             </div>
             <div className="modal-mentee-availability-switch">
@@ -133,7 +140,10 @@ function Profile() {
                 Text notifications
               </div>
               <Form.Item name="text_notifications">
-                <Switch size="small" />
+                <Switch
+                  size="small"
+                  defaultChecked={mentor.text_notifications}
+                />
               </Form.Item>
             </div>
           </div>

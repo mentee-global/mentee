@@ -32,7 +32,7 @@ def create_app(test_config=None):
         app.run()
     """
 
-    app = Flask(__name__, static_folder="../../frontend/build", static_url_path="")
+    app = Flask(__name__, static_folder="../../frontend/artifacts", static_url_path="")
 
     CORS(app)  # add CORS
 

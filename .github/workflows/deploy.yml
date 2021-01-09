@@ -52,7 +52,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: frontend-build
-          path: ${{ github.workspace }}/frontend/build
+          path: ${{ github.workspace }}/frontend/artifacts
 
       - name: Deploy to Heroku
         uses: AkhileshNS/heroku-deploy@v3.8.8

@@ -152,7 +152,7 @@ def edit_mentor(id):
         "text_notifications", mentor.text_notifications
     )
     mentor.email_notifications = data.get(
-        "data_notifications", mentor.email_notifications
+        "email_notifications", mentor.email_notifications
     )
 
     # Create education object

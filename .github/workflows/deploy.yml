@@ -58,5 +58,4 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "mentee-h4i"
           heroku_email: "h4i.mentee.auth@gmail.com"
-          # TODO: set to master instead
-          branch: deployment
+          branch: master

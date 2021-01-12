@@ -1,7 +1,8 @@
 import axios from "axios";
+import { AUTH_URL } from "utils/consts";
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: AUTH_URL,
 });
 
 // Role is where you put "admin" or "mentor"- right now we only support mentor

@@ -5,10 +5,7 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-
-import MenteeButton from "./MenteeButton";
 import MentorProfileModal from "./MentorProfileModal";
-import MenteeVerificationModal from "./MenteeVerificationModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import { isVerified } from "../utils/verifyMentee";
 import { isLoggedIn } from "utils/auth.service";
@@ -57,10 +54,6 @@ function ProfileContent(props) {
         ))}
       </>
     ));
-  };
-
-  const handleVerification = () => {
-    setVerified(true);
   };
 
   return (

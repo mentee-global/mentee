@@ -6,13 +6,15 @@ import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import "../css/Gallery.scss";
 import { isLoggedIn } from "utils/auth.service";
-import { isVerified } from "utils/verifyMentee";
+import { useLocation } from "react-router";
 
 function Gallery() {
   const [mentors, setMentors] = useState([]);
   const [specializations, setSpecializations] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
+  const location = useLocation();
+  const verified = location.state && location.state.verified;
 
   useEffect(() => {
     async function getMentors() {
@@ -21,8 +23,10 @@ function Gallery() {
         setMentors(mentor_data);
       }
     }
-    getMentors();
-  }, []);
+    if (verified) {
+      getMentors();
+    }
+  }, [verified]);
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {
     let output = "1-on-1 | virtual";
@@ -52,7 +56,7 @@ function Gallery() {
   }
 
   // Add some kind of error 403 code
-  return !(isLoggedIn() || isVerified()) ? (
+  return !(isLoggedIn() || verified) ? (
     <Result
       status="403"
       title="403"

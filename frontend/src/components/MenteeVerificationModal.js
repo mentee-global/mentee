@@ -1,7 +1,7 @@
 import { Modal, Input } from "antd";
 import React, { useState } from "react";
 import MenteeButton from "./MenteeButton";
-import { isVerified, verify } from "../utils/verifyMentee";
+import { verify } from "../utils/verifyMentee";
 import { isLoggedIn } from "utils/auth.service";
 
 import "./css/VerificationModal.scss";
@@ -13,9 +13,10 @@ function MenteeVerificationModal(props) {
   const [password, setPassword] = useState();
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   const handleViewPermission = () => {
-    if (isLoggedIn() || isVerified()) {
+    if (isLoggedIn() || verified) {
       props.onVerified();
       setIsVisible(false);
       return;
@@ -26,16 +27,19 @@ function MenteeVerificationModal(props) {
 
   const handleVerifyInfo = async () => {
     setIsVerifying(true);
-    await verify(email, password);
+    const res = await verify(email, password);
     setIsVerifying(false);
 
-    if (!isVerified()) {
+    setVerified(res);
+    if (!res) {
       setError(true);
+    } else {
+      setError(false);
     }
   };
 
   const getIsVerifiedIcon = () => {
-    if (isVerified()) {
+    if (verified) {
       return (
         <div className="verified-feedback">
           <div>Confirmed </div>

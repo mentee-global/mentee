@@ -3,7 +3,7 @@ import { getIsEmailVerified } from "./api";
 const verify = async (email, password) => {
   const res = await getIsEmailVerified(email, password);
 
-  sessionStorage.setItem("isVerified", JSON.stringify(res.is_verified));
+  return res.is_verified;
 };
 
 const isVerified = () => {

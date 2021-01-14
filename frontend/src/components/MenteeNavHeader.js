@@ -29,7 +29,10 @@ function MenteeNavHeader() {
               content={<b>Find a Mentor</b>}
               theme="light"
               onVerified={() => {
-                history.push("/gallery");
+                history.push({
+                  pathname: '/gallery',
+                  state: { verified: true }
+                });
               }}
             />
           </span>

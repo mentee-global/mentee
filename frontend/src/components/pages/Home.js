@@ -22,7 +22,10 @@ function Home() {
             content={<b>Find a Mentor</b>}
             theme="dark"
             onVerified={() => {
-              history.push("/gallery");
+              history.push({
+                pathname: '/gallery',
+                state: { verified: true }
+              });
             }}
           />
         </div>

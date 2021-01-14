@@ -3,6 +3,7 @@ import { Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 import {
   LANGUAGES,
   SPECIALIZATIONS,
@@ -92,10 +93,10 @@ function MenteeAppointmentModal() {
 
   return (
     <span>
-      <MenteeButton
+      <MenteeVerificationModal
         content={<b>Book Appointment</b>}
-        width="180px"
-        onClick={() => setAppModalVisible1(true)}
+        style={{ width: "180px" }}
+        onVerified={() => setAppModalVisible1(true)}
       />
       <Modal
         title="        " // Uses Unicode spaces to get desired heading

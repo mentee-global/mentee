@@ -15,6 +15,7 @@ function MenteeButton(props) {
       disabled={props.disabled ?? false}
       loading={props.loading ?? false}
       style={{
+        ...props.style,
         width: props.width,
         height: props.height,
         borderRadius: props.radius ?? "13px",

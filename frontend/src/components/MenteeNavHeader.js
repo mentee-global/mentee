@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Layout } from "antd";
+import { useHistory } from "react-router-dom";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 
@@ -12,6 +13,8 @@ import MenteeVerificationModal from "./MenteeVerificationModal";
 const { Header } = Layout;
 
 function MenteeNavHeader() {
+  const history = useHistory();
+
   return (
     <Header className="navigation-header">
       <div className="navigation-mentee-flexbox">
@@ -22,7 +25,13 @@ function MenteeNavHeader() {
         </div>
         <div>
           <span className="navigation-header-button">
-            <MenteeVerificationModal theme="light" button />
+            <MenteeVerificationModal
+              content={<b>Find a Mentor</b>}
+              theme="light"
+              onVerified={() => {
+                history.push("/gallery");
+              }}
+            />
           </span>
           <NavLink to="/login">
             <span className="navigation-header-button">

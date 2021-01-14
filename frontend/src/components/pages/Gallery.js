@@ -4,7 +4,6 @@ import MentorCard from "../MentorCard";
 import { Input, Checkbox, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
-
 import "../css/Gallery.scss";
 import { isLoggedIn } from "utils/auth.service";
 import { isVerified } from "utils/verifyMentee";

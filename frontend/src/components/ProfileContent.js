@@ -74,15 +74,7 @@ function ProfileContent(props) {
           />
         ) : (
           <div className="mentor-profile-button">
-            {verified ? (
-              <MenteeAppointmentModal />
-            ) : (
-              <MenteeVerificationModal
-                width="180px"
-                appointment
-                onVerified={handleVerification}
-              />
-            )}
+            <MenteeAppointmentModal />
           </div>
         )}
       </div>

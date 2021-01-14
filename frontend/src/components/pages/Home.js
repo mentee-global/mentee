@@ -1,10 +1,12 @@
 import React from "react";
-
+import { useHistory } from "react-router-dom";
 import MenteeVerificationModal from "../MenteeVerificationModal";
 import "../css/Home.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
 function Home() {
+  const history = useHistory();
+
   return (
     <div className="home-background">
       <div className="home-content">
@@ -16,7 +18,13 @@ function Home() {
             the country.
           </p>
           <br />
-          <MenteeVerificationModal theme="dark" button />
+          <MenteeVerificationModal
+            content={<b>Find a Mentor</b>}
+            theme="dark"
+            onVerified={() => {
+              history.push("/gallery");
+            }}
+          />
         </div>
         <img className="home-honeycomb" src={Honeycomb} alt="" />
       </div>

@@ -1,5 +1,4 @@
 import { Modal, Input } from "antd";
-import { useHistory } from "react-router-dom";
 import React, { useState } from "react";
 import MenteeButton from "./MenteeButton";
 import { isVerified, verify } from "../utils/verifyMentee";
@@ -9,7 +8,6 @@ import "./css/VerificationModal.scss";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 
 function MenteeVerificationModal(props) {
-  const history = useHistory();
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -18,12 +16,8 @@ function MenteeVerificationModal(props) {
 
   const handleViewPermission = () => {
     if (isLoggedIn() || isVerified()) {
-      if (!props.appointment) {
-        history.push("/gallery");
-      } else {
-        props.onVerified();
-        setIsVisible(false);
-      }
+      props.onVerified();
+      setIsVisible(false);
       return;
     }
 
@@ -67,11 +61,9 @@ function MenteeVerificationModal(props) {
     <span>
       <MenteeButton
         theme={props.theme}
-        content={
-          props.appointment ? <b>Book Appointment</b> : <b>Find a Mentor</b>
-        }
+        content={props.content}
         onClick={handleViewPermission}
-        width={props.width}
+        style={props.style}
       />
 
       <Modal

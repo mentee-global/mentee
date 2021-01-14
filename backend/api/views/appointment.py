@@ -62,14 +62,14 @@ def create_appointment():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    res_email = send_email(
-        recipient=mentor.email, template_id=APPT_NOTIFICATION_TEMPLATE
-    )
+    if mentor.email_notifications:
+        res_email = send_email(
+            recipient=mentor.email, template_id=APPT_NOTIFICATION_TEMPLATE
+        )
 
-    if not res_email:
-        msg = "Failed to send an email"
-        logger.info(msg)
-        return create_response(status=503, message=msg)
+        if not res_email:
+            msg = "Failed to send an email"
+            logger.info(msg)
 
     new_appointment.save()
 

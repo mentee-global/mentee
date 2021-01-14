@@ -30,8 +30,8 @@ function MenteeNavHeader() {
               theme="light"
               onVerified={() => {
                 history.push({
-                  pathname: '/gallery',
-                  state: { verified: true }
+                  pathname: "/gallery",
+                  state: { verified: true },
                 });
               }}
             />

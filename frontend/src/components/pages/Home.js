@@ -23,8 +23,8 @@ function Home() {
             theme="dark"
             onVerified={() => {
               history.push({
-                pathname: '/gallery',
-                state: { verified: true }
+                pathname: "/gallery",
+                state: { verified: true },
               });
             }}
           />

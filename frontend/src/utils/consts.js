@@ -65,8 +65,8 @@ export const AGES = [
   "Over 60",
 ];
 
-// Keys for fields
-export const KEYS = [
+// Keys for fields of Appointments
+export const APPOINTMENT_FORM_KEYS = [
   "mentor_id",
   "name",
   "email",

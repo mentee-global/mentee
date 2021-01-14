@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { Alert, Form, Modal, Calendar, Avatar, Switch } from "antd";
+import { Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -9,7 +9,7 @@ import {
   SPECIALIZATIONS,
   GENDERS,
   AGES,
-  KEYS,
+  APPOINTMENT_FORM_KEYS,
 } from "../utils/consts";
 import { createAppointment, editAvailability } from "../utils/api";
 import "./css/AntDesign.scss";
@@ -44,9 +44,9 @@ function MenteeAppointmentModal(props) {
   const [form] = Form.useForm();
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
-  const [appModalVisible1, setAppModalVisible1] = useState(false);
-  const [appModalVisible2, setAppModalVisible2] = useState(false);
-  const [numInputs] = useState(11);
+  const [calendarModalVisible, setCalendarModalVisible] = useState(false);
+  const [formModalVisible, setFormModalVisible] = useState(false);
+  const numInputs = 11;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
@@ -93,10 +93,10 @@ function MenteeAppointmentModal(props) {
 
   // Resets form fields on close
   useEffect(() => {
-    if (appModalVisible2) {
+    if (formModalVisible) {
       form.resetFields();
     }
-  }, [appModalVisible2, form]);
+  }, [formModalVisible, form]);
 
   // Update Buttons available
   useEffect(() => {
@@ -122,15 +122,14 @@ function MenteeAppointmentModal(props) {
 
   function closeModals() {
     setTime(null);
-    setAppModalVisible1(false);
-    setAppModalVisible2(false);
+    setCalendarModalVisible(false);
+    setFormModalVisible(false);
   }
 
-  // Move on to next page if time is truthy
   function updateModal() {
     if (time) {
-      setAppModalVisible1(false);
-      setAppModalVisible2(true);
+      setCalendarModalVisible(false);
+      setFormModalVisible(true);
       setValidate(false);
     } else {
       setValidate(true);
@@ -138,14 +137,14 @@ function MenteeAppointmentModal(props) {
   }
 
   async function handleBookAppointment() {
-    setAppModalVisible2(false);
+    setFormModalVisible(false);
 
     const appointment = {};
 
     // Match keys to useState value
     for (let i = 0; i < values.length; i++) {
       if (values[i] !== undefined) {
-        appointment[KEYS[i]] = values[i];
+        appointment[APPOINTMENT_FORM_KEYS[i]] = values[i];
       }
     }
 
@@ -156,7 +155,6 @@ function MenteeAppointmentModal(props) {
       end_time: moment(time.end_time.$date).format(),
     };
 
-    // POST request to create mentee appointment
     await createAppointment(appointment);
 
     // Find matching appointment and PUT request for mentor availability
@@ -184,12 +182,12 @@ function MenteeAppointmentModal(props) {
     <div>
       <MenteeButton
         content="Book Appointment"
-        onClick={() => setAppModalVisible1(true)}
+        onClick={() => setCalendarModalVisible(true)}
       />
       <Modal
         forceRender
         title="        " // Uses Unicode spaces to get desired heading
-        visible={appModalVisible1}
+        visible={calendarModalVisible}
         onCancel={() => closeModals()}
         width="60%"
         style={{ overflow: "hidden" }}
@@ -202,7 +200,8 @@ function MenteeAppointmentModal(props) {
               size={80}
               icon={<UserOutlined />}
             />
-            <h3 className="bold">Mentoring Session with Bernie Sanders</h3>
+            {/* TODO: Replace Bernie Sanders with Mentor Name */}
+            <h3 className="bold">Mentoring Session with Bernie Sanders</h3> 
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">
@@ -212,6 +211,7 @@ function MenteeAppointmentModal(props) {
                 <div className="modal-mentee-appointment-datetime-text">
                   Select Time
                 </div>
+                {/* TODO: Change CST to timezone value */}
                 <div className="modal-mentee-appointment-datetime-timezone">
                   CST
                 </div>
@@ -255,7 +255,7 @@ function MenteeAppointmentModal(props) {
       <Modal
         forceRender
         title="Your Information"
-        visible={appModalVisible2}
+        visible={formModalVisible}
         onCancel={closeModals}
         width="60%"
         style={{ overflow: "hidden" }}

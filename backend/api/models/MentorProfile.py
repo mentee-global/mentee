@@ -26,6 +26,8 @@ class MentorProfile(Document, Mixin):
     offers_group_appointments = BooleanField(required=True)
     videos = ListField(EmbeddedDocumentField(Video))
     availability = ListField(EmbeddedDocumentField(Availability))
+    text_notifications = BooleanField(required=True)
+    email_notifications = BooleanField(required=True)
 
     def __repr__(self):
         return f"""<MentorProfile user_id:{self.user_id} \n name: {self.name} 

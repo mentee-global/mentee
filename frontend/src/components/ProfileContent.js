@@ -5,8 +5,6 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-import { Button } from "antd";
-import MenteeButton from "./MenteeButton";
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";

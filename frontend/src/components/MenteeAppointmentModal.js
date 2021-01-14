@@ -505,18 +505,16 @@ function MenteeAppointmentModal(props) {
                     <div className="modal-mentee-appointment-header-text">
                       Message to Mentor
                     </div>
-                    <Form.Item name="message">
-                      <ModalInput
-                        style={styles.modalInput}
-                        type="textarea"
-                        maxRows={11}
-                        clicked={inputClicked[10]}
-                        index={10}
-                        handleClick={handleClick}
-                        onChange={(e) => setMessage(e.target.value)}
-                        value={message}
-                      />
-                    </Form.Item>
+                    <ModalInput
+                      style={styles.modalInput}
+                      type="textarea"
+                      maxRows={11}
+                      clicked={inputClicked[10]}
+                      index={10}
+                      handleClick={handleClick}
+                      onChange={(e) => setMessage(e.target.value)}
+                      value={message}
+                    />
                   </div>
                 </div>
               </div>

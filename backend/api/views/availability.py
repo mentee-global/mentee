@@ -5,7 +5,7 @@ from api.core import create_response, serialize_list, logger
 availability = Blueprint("availability", __name__)
 
 # Get request for avalability for a specific mentor
-@availability.route("/availability/<id>", methods=["GET"])
+@availability.route("/<id>", methods=["GET"])
 def get_availability(id):
 
     try:
@@ -19,7 +19,7 @@ def get_availability(id):
 
 
 # Put request to edit availability for a specific mentor
-@availability.route("/availability/<id>", methods=["PUT"])
+@availability.route("/<id>", methods=["PUT"])
 def edit_availability(id):
     data = request.get_json().get("Availability")
     try:

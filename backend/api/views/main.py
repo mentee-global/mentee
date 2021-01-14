@@ -1,5 +1,5 @@
 from os import path
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 from bson import ObjectId
 from api.models import (
     db,
@@ -24,7 +24,7 @@ main = Blueprint("main", __name__)  # initialize blueprint
 # GET request for /mentors
 @main.route("/mentors", methods=["GET"])
 def get_mentors():
-    mentors = MentorProfile.objects()
+    mentors = MentorProfile.objects().exclude("availability", "videos")
     return create_response(data={"mentors": mentors})
 
 
@@ -62,6 +62,8 @@ def create_mentor_profile():
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
         offers_group_appointments=data["offers_group_appointments"],
+        email_notifications=data.get("email_notifications", True),
+        text_notifications=data.get("text_notifications", True),
     )
 
     new_mentor.website = data.get("website")
@@ -119,8 +121,6 @@ def create_mentor_profile():
 def edit_mentor(id):
     data = request.get_json()
 
-    logger.info("Data received: %s", data)
-
     # Try to retrieve Mentor profile from database
     try:
         mentor = MentorProfile.objects.get(id=id)
@@ -146,6 +146,12 @@ def edit_mentor(id):
     mentor.biography = data.get("biography", mentor.biography)
     mentor.linkedin = data.get("linkedin", mentor.linkedin)
     mentor.website = data.get("website", mentor.website)
+    mentor.text_notifications = data.get(
+        "text_notifications", mentor.text_notifications
+    )
+    mentor.email_notifications = data.get(
+        "email_notifications", mentor.email_notifications
+    )
 
     # Create education object
     if "education" in data:

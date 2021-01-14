@@ -79,6 +79,7 @@ function MentorCard(props) {
               className="gallery-links"
               href={formatLinkForHref(props.website)}
               target="_blank"
+              rel="noopener noreferrer"
             >
               {props.website}
             </a>
@@ -91,6 +92,7 @@ function MentorCard(props) {
               className="gallery-links"
               href={formatLinkForHref(props.linkedin)}
               target="_blank"
+              rel="noopener noreferrer"
             >
               linkedin
             </a>

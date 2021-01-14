@@ -94,7 +94,11 @@ function ProfileContent(props) {
         {props.mentor.website && (
           <span>
             <LinkOutlined className="mentor-profile-tag" />
-            <a href={formatLinkForHref(props.mentor.website)} target="_blank">
+            <a
+              href={formatLinkForHref(props.mentor.website)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {props.mentor.website}
             </a>
           </span>
@@ -102,7 +106,11 @@ function ProfileContent(props) {
         {props.mentor.linkedin && (
           <span>
             <LinkedinOutlined className="mentor-profile-tag" />
-            <a href={formatLinkForHref(props.mentor.linkedin)} target="_blank">
+            <a
+              href={formatLinkForHref(props.mentor.linkedin)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {props.mentor.linkedin}
             </a>
           </span>

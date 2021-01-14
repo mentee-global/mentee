@@ -14,7 +14,7 @@ export const LANGUAGES = [
   "English",
   "French",
   "German",
-  "Hindu",
+  "Hindi",
   "Italian",
   "Japanese",
   "Mandarin",

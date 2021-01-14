@@ -5,8 +5,9 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-
+import { Button } from "antd";
 import MenteeButton from "./MenteeButton";
+import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 
@@ -95,13 +96,17 @@ function ProfileContent(props) {
         {props.mentor.website && (
           <span>
             <LinkOutlined className="mentor-profile-tag" />
-            {props.mentor.website}
+            <a href={formatLinkForHref(props.mentor.website)} target="_blank">
+              {props.mentor.website}
+            </a>
           </span>
         )}
         {props.mentor.linkedin && (
           <span>
             <LinkedinOutlined className="mentor-profile-tag" />
-            {props.mentor.linkedin}
+            <a href={formatLinkForHref(props.mentor.linkedin)} target="_blank">
+              {props.mentor.linkedin}
+            </a>
           </span>
         )}
       </div>

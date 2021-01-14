@@ -8,6 +8,7 @@ import {
   EnvironmentOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { formatLinkForHref } from "utils/misc";
 
 import MenteeButton from "./MenteeButton";
 
@@ -76,7 +77,7 @@ function MentorCard(props) {
             <LinkOutlined style={styles.icon} />
             <a
               className="gallery-links"
-              href={"//" + props.website}
+              href={formatLinkForHref(props.website)}
               target="_blank"
             >
               {props.website}
@@ -88,7 +89,7 @@ function MentorCard(props) {
             <LinkedinOutlined style={styles.icon} />
             <a
               className="gallery-links"
-              href={"//" + props.linkedin}
+              href={formatLinkForHref(props.linkedin)}
               target="_blank"
             >
               linkedin

@@ -96,6 +96,15 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
+    start_time = appointment.timeslot.start_time.strftime("%m-%d-%Y at %I:%M%z%p %Z")
+    res_email = send_email(
+        recipient=appointment.email,
+        subject="Mentee Appointment Notification",
+        html=f"<b> Your appointment with {mentor.name} on {start_time} was accepted. </b>",
+    )
+    if not res_email:
+        logger.info("Failed to send email")
+
     mentor.save()
     appointment.save()
 

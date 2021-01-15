@@ -3,6 +3,7 @@ from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
 from api.utils.constants import APPT_NOTIFICATION_TEMPLATE
+import datetime
 
 appointment = Blueprint("appointment", __name__)
 
@@ -110,5 +111,21 @@ def delete_request(appointment_id):
         msg = "The request you attempted to delete was not found"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    request.delete()
+
+    try:
+        mentor = MentorProfile.objects.get(id=request.mentor_id)
+
+        start_time = request.timeslot.start_time.strftime("%m-%d-%Y at %I:%M%z%p %Z")
+        res_email = send_email(
+            recipient=request.email,
+            subject="Mentee Appointment Notification",
+            html=f"<b> Your appointment with {mentor.name} on {start_time} was declined. </b>",
+        )
+        if not res_email:
+            logger.info("Failed to send email")
+    except:
+        msg = "No mentor found with that id"
+        logger.info(msg)
+
+    # request.delete()
     return create_response(status=200, message=f"Success")

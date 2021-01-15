@@ -114,7 +114,12 @@ def delete_request(appointment_id):
 
     try:
         mentor = MentorProfile.objects.get(id=request.mentor_id)
+    except:
+        msg = "No mentor found with that id"
+        logger.info(msg)
+        mentor = False
 
+    if mentor:
         start_time = request.timeslot.start_time.strftime("%m-%d-%Y at %I:%M%z%p %Z")
         res_email = send_email(
             recipient=request.email,
@@ -123,9 +128,6 @@ def delete_request(appointment_id):
         )
         if not res_email:
             logger.info("Failed to send email")
-    except:
-        msg = "No mentor found with that id"
-        logger.info(msg)
 
-    # request.delete()
+    request.delete()
     return create_response(status=200, message=f"Success")

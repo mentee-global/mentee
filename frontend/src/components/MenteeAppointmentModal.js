@@ -8,7 +8,7 @@ import {
   SPECIALIZATIONS,
   GENDERS,
   ETHNICITIES,
-  AGES,
+  AGES
 } from "../utils/consts";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";

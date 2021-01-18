@@ -73,20 +73,25 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
 
 
 def send_email(
-    recipient: str = "", subject: str = "", html: str = "<div/>", template_id: str = ""
+    recipient: str = "", subject: str = "", data: dict = None, template_id: str = ""
 ) -> bool:
     """Sends an email to a specific email address from the official MENTEE email
     :param recipient - recipients email address
     :param subject - subject headline of the email
-    :param html - content within the email
+    :param data - data params within the email
     :return boolean whether it successful sent an email
     """
     message = Mail(
-        from_email=sender_email, to_emails=recipient, subject=subject, html_content=html
+        from_email=sender_email,
+        to_emails=recipient,
+        subject=subject,
     )
 
     if template_id:
         message.template_id = template_id
+
+    if data:
+        message.dynamic_template_data = data
 
     try:
         sg = SendGridAPIClient(sendgrid_key)

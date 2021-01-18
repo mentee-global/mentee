@@ -8,7 +8,7 @@ import {
   SPECIALIZATIONS,
   GENDERS,
   ETHNICITIES,
-  AGES
+  AGES,
 } from "../utils/consts";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
@@ -100,7 +100,7 @@ function MenteeAppointmentModal() {
         title="        " // Uses Unicode spaces to get desired heading
         visible={appModalVisible1}
         onCancel={() => closeModals()}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={null}
       >
@@ -111,7 +111,9 @@ function MenteeAppointmentModal() {
               size={80}
               icon={<UserOutlined />}
             />
-            <h3 className="bold">Mentoring Session with Bernie Sanders</h3>
+            <h3 className="bold">
+              Mentoring Session with <br /> Bernie Sanders
+            </h3>
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">
@@ -156,7 +158,7 @@ function MenteeAppointmentModal() {
         title="Your Information"
         visible={appModalVisible2}
         onCancel={closeModals}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={
           <MenteeButton
@@ -179,7 +181,7 @@ function MenteeAppointmentModal() {
             </div>
           </div>
           <div className="modal-mentee-inner-container">
-            <div className="flex flex-row">
+            <div className="flex">
               <div className="modal-mentee-appointment-col-container">
                 <div className="modal-mentee-appointment-header-text">
                   About You

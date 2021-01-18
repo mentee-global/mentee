@@ -37,12 +37,6 @@ function MentorNavHeader() {
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="settings">
-        <NavLink to="/">
-          <b>Settings</b>
-        </NavLink>
-      </Menu.Item>
-      <Menu.Divider />
       <Menu.Item key="sign-out" onClick={logout}>
         <NavLink to="/">
           <b>Sign Out</b>
@@ -79,11 +73,6 @@ function MentorNavHeader() {
           </>
         )}
       </span>
-      <div className="notification-bell">
-        <NavLink to="/" className="notification-bell">
-          <BellOutlined />
-        </NavLink>
-      </div>
     </Header>
   );
 }

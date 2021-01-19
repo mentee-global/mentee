@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  UserOutlined,
-  MailOutlined,
-  PhoneOutlined,
-  AlignCenterOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button } from "antd";
 import { getMentorID } from "utils/auth.service";
 import ProfileContent from "../ProfileContent";

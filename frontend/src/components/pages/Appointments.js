@@ -236,24 +236,19 @@ function Appointments() {
   }
 
   return (
-    <Row>
-      <Col span={18} className="appointments-column">
-        <div className="appointments-welcome-box">
-          <div className="appointments-welcome-text">
-            Welcome, {appointments.mentor_name}
-          </div>
-          <div className="appointments-tabs">
-            {Object.values(Tabs).map((tab, index) => (
-              <Tab tab={tab} text={tab.title} key={index} />
-            ))}
-          </div>
+    <Col span={18} className="appointments-column">
+      <div className="appointments-welcome-box">
+        <div className="appointments-welcome-text">
+          Welcome, {appointments.mentor_name}
         </div>
-        {renderTab(currentTab)}
-      </Col>
-      <Col span={6} style={styles.calendar}>
-        <Calendar></Calendar>
-      </Col>
-    </Row>
+        <div className="appointments-tabs">
+          {Object.values(Tabs).map((tab, index) => (
+            <Tab tab={tab} text={tab.title} key={index} />
+          ))}
+        </div>
+      </div>
+      {renderTab(currentTab)}
+    </Col>
   );
 }
 

@@ -71,15 +71,31 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
         return "Missing fields " + msg, True
     return "", False
 
-
 def send_email(
     recipient: str = "", subject: str = "", data: dict = None, template_id: str = ""
 ) -> bool:
     """Sends an email to a specific email address from the official MENTEE email
-    :param recipient - recipients email address
+    :param recipient - a single recipient's email address
     :param subject - subject headline of the email
     :param data - data params within the email
-    :return boolean whether it successful sent an email
+    :return boolean whether it successfully sent an email
+
+    When you want to send a personalized email you'll need to define the keys of such dictionary (the data param)  
+     - First make sure the name matches exactly as the handlebar name you created within the UI of SendGrid.
+     - {{ date }} in handlebar syntax (which is in the template) should have the key 'date' in the data dictionary
+
+    IMPORTANT:
+     - Make sure you have the template-id within the `utils/const.py`
+     - This only supports a single recipient it cannot be sent it to multiple emails
+        - https://www.twilio.com/blog/sending-bulk-email-sendgrid-python
+
+    This uses Dynamic Templates along with handlebars which allows the ability of personalizing emails through variables.
+     - Handlebar Syntax
+        - https://sendgrid.com/docs/for-developers/sending-email/using-handlebars/#use-cases
+     - Dynamic Templates
+        - https://sendgrid.com/docs/ui/sending-email/how-to-send-an-email-with-dynamic-transactional-templates/
+     - Changing Sender Email
+        - https://sendgrid.com/docs/ui/sending-email/sender-verification/
     """
     message = Mail(
         from_email=sender_email,

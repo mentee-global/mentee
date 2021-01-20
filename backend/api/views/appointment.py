@@ -2,8 +2,11 @@ from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
-from api.utils.constants import MENTOR_APPT_TEMPLATE, MENTEE_APPT_TEMPLATE
-import datetime
+from api.utils.constants import (
+    MENTOR_APPT_TEMPLATE,
+    MENTEE_APPT_TEMPLATE,
+    APPT_TIME_FORMAT,
+)
 
 appointment = Blueprint("appointment", __name__)
 
@@ -94,9 +97,7 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
-    start_time = appointment.timeslot.start_time.strftime(
-        "%m-%d-%Y at %I:%M%z%p %Z CST"
-    )
+    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT)
     res_email = send_email(
         recipient=appointment.email,
         subject="Mentee Appointment Notification",
@@ -130,7 +131,7 @@ def delete_request(appointment_id):
         mentor = False
 
     if mentor:
-        start_time = request.timeslot.start_time.strftime("%m-%d-%Y at %I:%M%z%p CST")
+        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT)
         res_email = send_email(
             recipient=request.email,
             subject="Mentee Appointment Notification",

@@ -71,6 +71,7 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
         return "Missing fields " + msg, True
     return "", False
 
+
 def send_email(
     recipient: str = "", subject: str = "", data: dict = None, template_id: str = ""
 ) -> bool:
@@ -80,7 +81,7 @@ def send_email(
     :param data - data params within the email
     :return boolean whether it successfully sent an email
 
-    When you want to send a personalized email you'll need to define the keys of such dictionary (the data param)  
+    When you want to send a personalized email you'll need to define the keys of such dictionary (the data param)
      - First make sure the name matches exactly as the handlebar name you created within the UI of SendGrid.
      - {{ date }} in handlebar syntax (which is in the template) should have the key 'date' in the data dictionary
 

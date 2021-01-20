@@ -201,7 +201,9 @@ function MenteeAppointmentModal(props) {
               icon={<UserOutlined />}
             />
             {/* TODO: Replace Bernie Sanders with Mentor Name */}
-            <h3 className="bold">Mentoring Session with <br/> Bernie Sanders</h3>
+            <h3 className="bold">
+              Mentoring Session with <br /> Bernie Sanders
+            </h3>
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">

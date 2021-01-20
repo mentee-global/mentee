@@ -1,7 +1,7 @@
 @import "_app";
 
 .appointment-modal {
-    width: 60%;
+    width: 60% !important;
 }
 
 .modal-container {
@@ -211,9 +211,15 @@
     background: $theme-orange;
 }
 
+@media only screen and (max-width: 1100px) {
+    .appointment-modal {
+        width: 85% !important;
+    }
+}
+
 @media only screen and (max-width: 760px) {
     .appointment-modal {
-        width: 100%;
+        width: 100% !important;
     }
     .modal-container-row {
         flex-direction: column;

@@ -22,6 +22,8 @@ function MenteeButton(props) {
       }}
       onClick={props.onClick}
       loading={props.loading ?? false}
+      htmlType={props.htmlType}
+      form={props.form}
     >
       {props.content}
     </Button>

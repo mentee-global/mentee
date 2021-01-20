@@ -14,8 +14,8 @@ function Home() {
           <h1 className="home-header">Welcome to Mentee</h1>
           <p className="home-text">
             Find a mentors from a diverse pool of backgrounds with experience in
-            18+ specializations, 15 different languages at locations all across
-            the country.
+            23+ specializations, 15 different languages at locations all across
+            the world.
           </p>
           <br />
           <MenteeVerificationModal

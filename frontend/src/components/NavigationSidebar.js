@@ -14,11 +14,6 @@ const { Sider } = Layout;
 
 const menuItemMarginOverride = { marginTop: "0px", marginBottom: "0px" };
 const pages = {
-  home: {
-    name: "Home",
-    path: "/",
-    icon: <HomeOutlined />,
-  },
   appointments: {
     name: "Appointments",
     path: "/appointments",

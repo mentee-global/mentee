@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
-import { Input, Checkbox } from "antd";
+import { Input, Checkbox, Modal } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
-
+import MenteeButton from "../MenteeButton"
 import "../css/Gallery.scss";
 
 function Gallery() {
@@ -12,6 +12,8 @@ function Gallery() {
   const [specializations, setSpecializations] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
+  const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
+
 
   useEffect(() => {
     async function getMentors() {
@@ -51,8 +53,65 @@ function Gallery() {
   }
 
   return (
+    <>
+    <MenteeButton
+        onClick = {() => setMobileFilterVisible(true)}       
+        content = "Filter"
+        theme = "back"
+        id = "filter-button"
+    />
+    <Modal
+      onCancel = {() => {
+        setMobileFilterVisible(false)
+        setSpecializations([])
+        setQuery("")
+        setLanguages([])
+      }}  
+      visible = {mobileFilterVisible}
+
+      footer= {[
+        <MenteeButton 
+         content="Apply"
+         key="apply"
+         onClick = {() => setMobileFilterVisible(false)}
+        />,
+        <MenteeButton 
+          content="Cancel"
+          key = "cancel"
+          onClick = {() => {
+            setMobileFilterVisible(false)
+            setSpecializations([])
+            setQuery("")
+            setLanguages([])
+          }}
+        />,
+      ]}
+    >
+      <div className="no-margin gallery-filter-container">
+        <div className="gallery-filter-header">Filter By:</div>
+        <Input
+          placeholder="Search by name"
+          prefix={<SearchOutlined />}
+          style={styles.searchInput}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <div className="gallery-filter-section-title">Specializations</div>
+        <Checkbox.Group
+          defaultValue={specializations}
+          options={SPECIALIZATIONS}
+          onChange={(checked) => setSpecializations(checked)}
+        />
+        <div className="gallery-filter-section-title">Languages</div>
+        <Checkbox.Group
+          defaultValue={languages}
+          options={LANGUAGES}
+          onChange={(checked) => setLanguages(checked)}
+        />
+      </div> 
+    </Modal>
+
     <div className="gallery-container">
-      <div className="gallery-filter-container">
+      <div className="gallery-filter-container mobile-invisible">
         <div className="gallery-filter-header">Filter By:</div>
         <Input
           placeholder="Search by name"
@@ -73,7 +132,9 @@ function Gallery() {
           onChange={(checked) => setLanguages(checked)}
         />
       </div>
+
       <div className="gallery-mentor-container">
+
         {getFilteredMentors().map((mentor, key) => (
           <MentorCard
             key={key}
@@ -94,6 +155,7 @@ function Gallery() {
         ))}
       </div>
     </div>
+    </>
   );
 }
 

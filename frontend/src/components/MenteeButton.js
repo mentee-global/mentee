@@ -12,10 +12,11 @@ function MenteeButton(props) {
   return (
     <Button
       className={getButtonClass(props.theme)}
-      disabled={props.disabled ?? false}
+      disabled={props.disabled ?? false} 
       loading={props.loading ?? false}
       style={{ width: props.width, height: props.height }}
       onClick={props.onClick}
+      id = {props.id}
     >
       {props.content}
     </Button>

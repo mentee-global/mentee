@@ -31,7 +31,7 @@
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
   grid-gap: 1rem;
   height: 100%;
-  overflow-y: scroll;
+  overflow: hidden;
 }
 
 .gallery-mentor-card {
@@ -116,6 +116,9 @@
   margin-bottom: 15px;
   margin-top: 10px;
 }
+#filter-button {
+    display: none;
+}
 
 @media only screen and (max-width: 600px) {
     .gallery-mentor-container {
@@ -124,7 +127,16 @@
     grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
     grid-gap: 1rem;
     height: 100%;
-    overflow-y: scroll;
+    overflow: hidden;
     }
 
+    .gallery-filter-container{
+        margin: 0;
+    }
+    .mobile-invisible {
+        display: none;
+    }
+    #filter-button {
+        display:grid;
+    }
 }

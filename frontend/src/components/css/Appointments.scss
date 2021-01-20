@@ -38,7 +38,8 @@
 }
 
 .ar-modal-container {
-    min-height: 400px;
+    height: 400px;
+    overflow: scroll;
 }
 
 .ar-footer {
@@ -252,8 +253,8 @@
 
 .ar-goals {
     position: absolute;
-    width: 376px;
-    min-height: auto;//63px;
+    width: 350px;
+    //height: 100%;
     left: 45.91px;
     top: 406px;
 
@@ -265,7 +266,7 @@
 
     color: #000000;
     
-    //overflow: auto;
+    overflow: visible;
 }
 
 .accept-apt {

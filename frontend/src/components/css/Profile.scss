@@ -83,6 +83,8 @@
 }
 
 .mentor-profile-contact-icon {
+  align-self: flex-start;
+  margin-top: 3.5%;
   margin-right: 5%;
 }
 
@@ -95,4 +97,26 @@
 
 .mentor-profile-button {
   margin-left: 50%;
+}
+
+.mentor-profile-input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 2%;
+}
+
+.mentor-profile-editing-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.mentor-profile-notifications-container {
+  flex: 0.7;
+}
+
+.mentor-profile-save-container {
+  display: flex;
+  flex: 0.3;
 }

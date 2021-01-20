@@ -64,7 +64,10 @@ function ProfileContent(props) {
           />
         ) : (
           <div className="mentor-profile-button">
-            <MenteeAppointmentModal />
+            <MenteeAppointmentModal
+              availability={props.mentor.availability}
+              mentor_id={props.id}
+            />
           </div>
         )}
       </div>

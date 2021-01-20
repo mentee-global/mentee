@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Select, Input } from "antd";
+import { Select, Input, InputNumber } from "antd";
 import "./css/Modal.scss";
+import { NodeExpandOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -88,7 +89,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
-            value={defaultValue}
+            value={props.value}
           />
         );
       case "dropdown-single":
@@ -101,6 +102,7 @@ function ModalInput(props) {
             style={{ width: "100%" }}
             placeholder="Please select"
             onChange={handleOnChange}
+            value={props.value}
           >
             {returnDropdownItems(options)}
           </Select>
@@ -116,7 +118,7 @@ function ModalInput(props) {
             style={{ width: "100%" }}
             placeholder={placeholder || "Please select"}
             onChange={handleOnChange}
-            value={defaultValue}
+            value={props.value}
             tokenSeparators={[","]}
           >
             {returnDropdownItems(options)}
@@ -131,7 +133,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             bordered={false}
             placeholder={placeholder}
-            value={defaultValue}
+            value={props.value}
           />
         );
       default:

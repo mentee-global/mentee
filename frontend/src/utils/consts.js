@@ -14,7 +14,7 @@ export const LANGUAGES = [
   "English",
   "French",
   "German",
-  "Hindu",
+  "Hindi",
   "Italian",
   "Japanese",
   "Mandarin",
@@ -52,17 +52,7 @@ export const SPECIALIZATIONS = [
   "Other",
 ];
 
-export const GENDERS = ["Male", "Female"];
-
-export const ETHNICITIES = [
-  "American Indian or Alaska Native",
-  "Asian",
-  "Black or African American",
-  "Hispanic or Latino",
-  "Native Hawaiian or Other Pacific Islander",
-  "White",
-  "Other",
-];
+export const GENDERS = ["Male", "Female", "Non-Binary", "Other"];
 
 export const AGES = [
   "Under 18 years",
@@ -73,4 +63,21 @@ export const AGES = [
   "40 to 44",
   "45 to 49",
   "Over 60",
+];
+
+// Keys for fields of Appointments
+export const APPOINTMENT_FORM_KEYS = [
+  "mentor_id",
+  "name",
+  "email",
+  "phone_number",
+  "languages",
+  "age",
+  "gender",
+  "location",
+  "specialist_categories",
+  "message",
+  "organization",
+  "allow_calls",
+  "allow_texts",
 ];

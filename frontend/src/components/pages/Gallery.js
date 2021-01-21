@@ -53,7 +53,6 @@ function Gallery() {
 
   return (
     <>
-      // Activates Modal that only shows on mobile
       <MenteeButton
         onClick={() => setMobileFilterVisible(true)}
         content="Filter"
@@ -92,6 +91,7 @@ function Gallery() {
             placeholder="Search by name"
             prefix={<SearchOutlined />}
             style={styles.searchInput}
+            value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
           <div className="gallery-filter-section-title">Specializations</div>
@@ -99,12 +99,14 @@ function Gallery() {
             defaultValue={specializations}
             options={SPECIALIZATIONS}
             onChange={(checked) => setSpecializations(checked)}
+            value={specializations}
           />
           <div className="gallery-filter-section-title">Languages</div>
           <Checkbox.Group
             defaultValue={languages}
             options={LANGUAGES}
             onChange={(checked) => setLanguages(checked)}
+            value={languages}
           />
         </div>
       </Modal>

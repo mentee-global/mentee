@@ -1,11 +1,10 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import MenteeButton from "../MenteeButton";
-
+import { withRouter } from "react-router-dom";
+import MenteeVerificationModal from "../MenteeVerificationModal";
 import "../css/Home.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
-function Home() {
+function Home({ history }) {
   return (
     <div className="home-background">
       <div className="home-content">
@@ -17,9 +16,16 @@ function Home() {
             the world.
           </p>
           <br />
-          <NavLink to="/gallery">
-            <MenteeButton theme="dark" content={<b>Find a Mentor</b>} />
-          </NavLink>
+          <MenteeVerificationModal
+            content={<b>Find a Mentor</b>}
+            theme="dark"
+            onVerified={() => {
+              history.push({
+                pathname: "/gallery",
+                state: { verified: true },
+              });
+            }}
+          />
         </div>
         <img className="home-honeycomb" src={Honeycomb} alt="" />
       </div>
@@ -27,4 +33,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default withRouter(Home);

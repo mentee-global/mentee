@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_URL } from "utils/consts";
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: API_URL,
 });
 
 export const fetchMentorByID = (id) => {
@@ -58,7 +59,7 @@ export const createMentorProfile = (profile) => {
 };
 
 export const createAppointment = (appointment) => {
-  const requestExtension = "/appointment";
+  const requestExtension = "/appointment/";
   return instance.post(requestExtension, appointment).then(
     (response) => response,
     (err) => {

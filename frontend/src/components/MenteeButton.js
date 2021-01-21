@@ -17,6 +17,8 @@ function MenteeButton(props) {
       style={{ width: props.width, height: props.height }}
       onClick={props.onClick}
       id={props.id}
+      htmlType={props.htmlType}
+      form={props.form}
     >
       {props.content}
     </Button>

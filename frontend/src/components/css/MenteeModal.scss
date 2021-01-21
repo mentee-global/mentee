@@ -113,7 +113,6 @@
 }
 
 .modal-mentee-appointment-contact-container {
-    display: flex;
     flex: 1;
 }
 
@@ -195,6 +194,9 @@
     align-items: center;
     padding-right: 5%;
     width: 100%;
+}
+.input-text{
+    overflow:hidden;
 }
 
 .bold {

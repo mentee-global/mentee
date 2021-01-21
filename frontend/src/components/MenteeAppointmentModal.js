@@ -179,10 +179,8 @@ function MenteeAppointmentModal(props) {
 
   function disabledDate(date) {
     // disable/return true if date is in the past or not in availability
-    let disabled = date && date.valueOf() < Date.now() - DAY;
-    disabled =
-      disabled || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
-    return disabled;
+    let dateInPast = date && date.valueOf() < Date.now() - DAY;
+    return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
   }
 
   return (
@@ -216,7 +214,7 @@ function MenteeAppointmentModal(props) {
               <Calendar
                 fullscreen={false}
                 onSelect={handleDateChange}
-                onPanalChange={(v, m) => console.log(v, m)}
+                // onPanalChange={(v, m) => console.log(v, m)}
                 disabledDate={disabledDate}
               />
               <div className="modal-mentee-appointment-datetime-header">
@@ -229,7 +227,7 @@ function MenteeAppointmentModal(props) {
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
-                {dayTimeSlots.map((time, index) => (
+                {dayTimeSlots.map((timeSlot, index) => (
                   <div
                     key={index}
                     className="modal-mentee-appointment-timeslot"
@@ -238,13 +236,13 @@ function MenteeAppointmentModal(props) {
                       key={index}
                       width={170}
                       content={
-                        moment(time.start_time.$date).format("hh:mm A") +
+                        moment(timeSlot.start_time.$date).format("hh:mm A") +
                         "-" +
-                        moment(time.end_time.$date).format("hh:mm A")
+                        moment(timeSlot.end_time.$date).format("hh:mm A")
                       }
                       theme="light"
                       borderOnClick={true}
-                      onClick={(time) => setTime(time)}
+                      onClick={() => setTime(timeSlot)}
                     />
                   </div>
                 ))}

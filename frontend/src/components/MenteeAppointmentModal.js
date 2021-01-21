@@ -208,7 +208,7 @@ function MenteeAppointmentModal(props) {
               size={80}
               icon={<UserOutlined />}
             />
-            <h3 className="bold">Mentoring Session with {props.mentor.name}</h3>
+            <h3 className="bold">Mentoring Session with {props.mentor_name}</h3>
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">

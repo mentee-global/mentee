@@ -7,6 +7,12 @@ import { isLoggedIn } from "utils/auth.service";
 import "./css/VerificationModal.scss";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 
+/**
+ * NOTE:
+ * Every modal that is open is its own instance
+ * so all the props and email/password
+ * are not connected between modals
+ */
 function MenteeVerificationModal(props) {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState();
@@ -15,6 +21,10 @@ function MenteeVerificationModal(props) {
   const [error, setError] = useState(false);
   const [verified, setVerified] = useState(false);
 
+  /**
+   * This is the entry point for whether one
+   * is allowed to view a page or modal.
+   */
   const handleViewPermission = () => {
     if (isLoggedIn() || verified) {
       props.onVerified();
@@ -25,6 +35,10 @@ function MenteeVerificationModal(props) {
     setIsVisible(true);
   };
 
+  /**
+   * Async backend verification of credentials
+   * Takes in the existing states of email and password
+   */
   const handleVerifyInfo = async () => {
     setIsVerifying(true);
     const res = await verify(email, password);

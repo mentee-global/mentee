@@ -76,11 +76,13 @@ function MenteeVerificationModal(props) {
   };
 
   return (
-    <span>
+    <span className={props.className}>
       <MenteeButton
         theme={props.theme}
         content={props.content}
         onClick={handleViewPermission}
+        width={props.width}
+        height={props.height}
         style={props.style}
       />
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import { Input } from "antd";
-import MenteeButton from "../MenteeButton";
+import MenteeVerificationModal from "../MenteeVerificationModal";
 import {
   hasCurrentRegistration,
   isLoggedIn,
@@ -125,15 +125,14 @@ function Register({ history }) {
           ) : (
             <br />
           )}
-          <div className="login-button">
-            <MenteeButton
-              content={<b>Next</b>}
-              width={"50%"}
-              height={"125%"}
-              loading={saving}
-              onClick={submitForm}
-            />
-          </div>
+          <MenteeVerificationModal
+            content={<b>Next</b>}
+            width="50%"
+            height="125%"
+            loading={saving}
+            onVerified={submitForm}
+            className="login-button"
+          />
           <div className="login-register-container">
             <div>Already have an account?</div>
             <NavLink to="/login" className="login-register-link">

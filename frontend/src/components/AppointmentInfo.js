@@ -76,18 +76,14 @@ function AppointmentInfo(props) {
         <div className="ar-modal-title">
           {props.modalAppointment.name}, {props.age}
         </div>
-        <div className="ar-phone">
-          Call/text: {props.modalAppointment.phone_number}
-        </div>
-        <div className="ar-email">{props.modalAppointment.email}</div>
-        <div className="ar-title-subtext">
-          {getSubtext(
-            props.modalAppointment.gender,
-            props.modalAppointment.ethnicity,
-            props.modalAppointment.organization
-          )}
-        </div>
-        <div>
+        <div className="personal-info">
+          <div className="ar-title-subtext">
+            {getSubtext(
+              props.modalAppointment.gender,
+              props.modalAppointment.ethnicity,
+              props.modalAppointment.organization
+            )}
+          </div>
           <div className="ar-languages">
             <CommentOutlined className="ar-icon"></CommentOutlined>
             {getLanguages(props.modalAppointment.languages || [])}
@@ -97,16 +93,21 @@ function AppointmentInfo(props) {
             {props.modalAppointment.location}
           </div>
         </div>
+        <div className="ar-phone">
+          Call/text: {props.modalAppointment.phone_number}
+        </div>
+        <div className="ar-email">{props.modalAppointment.email}</div>
+        
+        
         <div className="ar-apt-date">{props.modalAppointment.date}</div>
         <div className="ar-apt-time">{props.modalAppointment.time}</div>
+        <div className="vl"></div>
         <div className="ar-categories-title">Seeking help in:</div>
         <div className="ar-categories">
           {getCategories(props.modalAppointment.specialist_categories || [])}
         </div>
         <div className="ar-goals-title">Note:</div>
         <div className="ar-goals">{props.modalAppointment.description}</div>
-        <div className="vl"></div>
-        <div className="hl"></div>
       </div>
     </Modal>
   );

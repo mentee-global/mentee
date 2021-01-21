@@ -1,7 +1,7 @@
 @import "_app";
 
 .pending-dot {
-    position: absolute;
+    position: relative;
     height: 10px;
     width: 10px;
     background-color: #F8D15B;
@@ -11,7 +11,7 @@
 }
 
 .upcoming-dot {
-    position: absolute;
+    position: relative;
     height: 10px;
     width: 10px;
     background-color: #2F80ED;
@@ -21,25 +21,25 @@
 }
 
 .vl {
-    position: absolute;
+    position: relative;
     border-left: 3px solid #A58123;
     height: 31px;
     left: 42.91px;
-    top: 235px;
 }
 
 .hl {
-    position: absolute;
+    position: relative;
     border-left: 1px solid #A58123;
     height: 355px;
     bottom: -125px;
-    left: 225px;
+    left: 10px;
     transform: rotate(90deg);
 }
 
 .ar-modal-container {
-    height: 400px;
-    overflow: scroll;
+    //min-height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .ar-footer {
@@ -47,11 +47,11 @@
 }
 
 .ar-status {
-    position: absolute;
+    position: relative;
     width: 67.6px;
     height: 37.8px;
     left: 335.14px;
-    top: 70.26px;
+    top: 20px;
 
     font-family: Helvetica;
     font-style: italic;
@@ -64,11 +64,11 @@
 }
 
 .ar-modal-title {
-    position: absolute;
+    position: relative;
     width: 201px;
     height: 24px;
     left: 42.91px;
-    top: 115px;
+    top: 20px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -80,11 +80,10 @@
 }
 
 .ar-phone {
-    position: absolute;
+    position: relative;
     width: 189px;
     height: 14px;
     left: 208.91px;
-    top: 115px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -98,11 +97,10 @@
 }
 
 .ar-email {
-    position: absolute;
+    position: relative;
     width: 189px;
     height: 14px;
     left: 208.91px;
-    top: 134px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -116,12 +114,17 @@
     color: #000000;
 }
 
+.personal-info {
+    position: relative;
+    top: 1px;
+}
+
 .ar-title-subtext {
-    position: absolute;
+    position: relative;
     width: 207px;
     height: 14px;
     left: 43.55px;
-    top: 150px;
+    //top: 10px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -136,11 +139,11 @@
 }
 
 .ar-languages {
-    position: absolute;
+    position: relative;
     width: 198px;
     height: 16.05px;
     left: 43.55px;
-    top: 172.06px;
+    top: 20px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -156,11 +159,11 @@
 }
 
 .ar-location {
-    position: absolute;
+    position: relative;
     width: 198px;
     height: 16.05px;
     left: 43.55px;
-    top: 190px;
+    top: 26px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -172,11 +175,11 @@
 }
 
 .ar-apt-date {
-    position: absolute;
+    position: relative;
     width: 318px;
     height: 35px;
     left: 55.91px;
-    top: 236px;
+    top: 67px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -188,11 +191,11 @@
 }
 
 .ar-apt-time {
-    position: absolute;
+    position: relative;
     width: 318px;
     height: 35px;
     left: 55.91px;
-    top: 250px;
+    top: 50px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -204,11 +207,11 @@
 }
 
 .ar-categories-title {
-    position: absolute;
+    position: relative;
     width: 318px;
     height: 35px;
     left: 43.91px;
-    top: 309px;
+    top: 50px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -220,11 +223,11 @@
 }
 
 .ar-categories {
-    position: absolute;
+    position: relative;
     width: 318px;
     height: 35px;
     left: 43.91px;
-    top: 329px;
+    top: 40px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -236,11 +239,11 @@
 }
 
 .ar-goals-title {
-    position: absolute;
+    position: relative;
     width: 62px;
     height: 21px;
     left: 43.91px;
-    top: 380px;
+    top: 60px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -252,11 +255,11 @@
 }
 
 .ar-goals {
-    position: absolute;
+    position: relative;
     width: 350px;
-    //height: 100%;
-    left: 45.91px;
-    top: 406px;
+    //min-height: 50px;
+    left: 43.91px;
+    top: 60px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -270,7 +273,7 @@
 }
 
 .accept-apt {
-    position: absolute;
+    position: relative;
     width: 118.93px;
     height: 32px;
     left: 94.55px;
@@ -291,7 +294,7 @@
 }
 
 .reject-apt {
-    position: absolute;
+    position: relative;
     width: 118.93px;
     height: 32px;
     left: 232.64px;

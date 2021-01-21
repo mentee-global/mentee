@@ -18,22 +18,6 @@ import "./css/MenteeModal.scss";
 
 const DAY = 24 * 60 * 60 * 1000;
 
-// TODO: Replace sampleTimes with times from mentor availability
-const sampleTimes = [
-  "11-12pm",
-  "2-3pm",
-  "3-4pm",
-  "5-6pm",
-  "7-8pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-];
-
 // Form validateMessages sends values here
 const validationMessage = {
   required: "Please enter your ${name}",
@@ -46,6 +30,7 @@ function MenteeAppointmentModal(props) {
   const [form] = Form.useForm();
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
+  const [daySlots, setDaySlots] = useState([]);
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [formModalVisible, setFormModalVisible] = useState(false);
   const numInputs = 11;
@@ -100,12 +85,23 @@ function MenteeAppointmentModal(props) {
     }
   }, [formModalVisible, form]);
 
+  useEffect(() => {
+    let dayList = [];
+    timeSlots.forEach((timeSlot) => {
+      let day = moment(timeSlot.start_time.$date).format("YYYY-MM-DD");
+      if (!dayList.includes(day)) {
+        dayList.push(day)
+      }
+    })
+    setDaySlots(dayList);
+  }, [timeSlots])
+
   // Update Buttons available
   useEffect(() => {
     let daySlots = [];
-    timeSlots.forEach((element) => {
-      if (moment(element.start_time.$date).format("YYYY-MM-DD") === date) {
-        daySlots.push(element);
+    timeSlots.forEach((timeSlot) => {
+      if (moment(timeSlot.start_time.$date).format("YYYY-MM-DD") === date) {
+        daySlots.push(timeSlot);
       }
     });
     setDayTimeSlots(daySlots);
@@ -180,10 +176,10 @@ function MenteeAppointmentModal(props) {
     await editAvailability(changeTime, mentorID);
   }
 
-  function disabledDate(currentDate) {
-    // disable/return true if date is in the past
-    let disabled = currentDate && currentDate.valueOf() < Date.now() - DAY;
-    // TODO: connect to backend, return true if currentDate not in mentor availability
+  function disabledDate(date) {
+    // disable/return true if date is in the past or not in availability
+    let disabled = date && date.valueOf() < Date.now() - DAY;
+    disabled = disabled || !(daySlots.includes(moment(date).format('YYYY-MM-DD')))
     return disabled;
   }
 
@@ -245,7 +241,7 @@ function MenteeAppointmentModal(props) {
                       }
                       theme="light"
                       borderOnClick={true}
-                      onClick={handleTimeChange}
+                      onClick={(time) => setTime(time)}
                     />
                   </div>
                 ))}

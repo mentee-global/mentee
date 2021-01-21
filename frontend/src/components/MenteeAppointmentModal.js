@@ -91,11 +91,11 @@ function MenteeAppointmentModal(props) {
     timeSlots.forEach((timeSlot) => {
       let day = moment(timeSlot.start_time.$date).format("YYYY-MM-DD");
       if (!dayList.includes(day)) {
-        dayList.push(day)
+        dayList.push(day);
       }
-    })
+    });
     setDaySlots(dayList);
-  }, [timeSlots])
+  }, [timeSlots]);
 
   // Update Buttons available
   useEffect(() => {
@@ -180,7 +180,8 @@ function MenteeAppointmentModal(props) {
   function disabledDate(date) {
     // disable/return true if date is in the past or not in availability
     let disabled = date && date.valueOf() < Date.now() - DAY;
-    disabled = disabled || !(daySlots.includes(moment(date).format('YYYY-MM-DD')))
+    disabled =
+      disabled || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
     return disabled;
   }
 
@@ -207,14 +208,7 @@ function MenteeAppointmentModal(props) {
               size={80}
               icon={<UserOutlined />}
             />
-<<<<<<< HEAD
             <h3 className="bold">Mentoring Session with {props.mentor.name}</h3>
-=======
-            {/* TODO: Replace Bernie Sanders with Mentor Name */}
-            <h3 className="bold">
-              Mentoring Session with <br /> Bernie Sanders
-            </h3>
->>>>>>> 96a07668025226051daee991aed24c64b0397245
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">

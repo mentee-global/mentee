@@ -4,6 +4,7 @@ import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
 import Logo from "../../resources/logo.svg";
+import Health from "../../resources/focus-for-health.svg"
 
 function Home() {
   return (
@@ -23,6 +24,7 @@ function Home() {
         </div>
         <img className="home-honeycomb" src={Logo} alt="Adrinka Logo" />
       </div>
+      <img className="focus-for-health" src={Health} alt="" />
     </div>
   );
 }

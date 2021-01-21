@@ -191,7 +191,7 @@ function MenteeAppointmentModal(props) {
         title="        " // Uses Unicode spaces to get desired heading
         visible={calendarModalVisible}
         onCancel={() => closeModals()}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={null}
       >
@@ -203,7 +203,9 @@ function MenteeAppointmentModal(props) {
               icon={<UserOutlined />}
             />
             {/* TODO: Replace Bernie Sanders with Mentor Name */}
-            <h3 className="bold">Mentoring Session with Bernie Sanders</h3>
+            <h3 className="bold">
+              Mentoring Session with <br /> Bernie Sanders
+            </h3>
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">
@@ -259,7 +261,7 @@ function MenteeAppointmentModal(props) {
         title="Your Information"
         visible={formModalVisible}
         onCancel={closeModals}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={
           <MenteeButton

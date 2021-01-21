@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
-import Honeycomb from "../../resources/honeycomb.png";
+import Logo from "../../resources/logo.svg";
 
 function Home() {
   return (
@@ -21,7 +21,7 @@ function Home() {
             <MenteeButton theme="dark" content={<b>Find a Mentor</b>} />
           </NavLink>
         </div>
-        <img className="home-honeycomb" src={Honeycomb} alt="" />
+        <img className="home-honeycomb" src={Logo} alt="Adrinka Logo" />
       </div>
     </div>
   );

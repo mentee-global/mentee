@@ -184,7 +184,7 @@ function MenteeAppointmentModal(props) {
       <MenteeVerificationModal
         content={<b>Book Appointment</b>}
         style={{ width: "180px" }}
-        onVerified={() => setAppModalVisible1(true)}
+        onVerified={() => setCalendarModalVisible(true)}
       />
       <Modal
         forceRender

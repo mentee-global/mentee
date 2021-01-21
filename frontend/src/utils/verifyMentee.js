@@ -6,8 +6,4 @@ const verify = async (email, password) => {
   return res.is_verified;
 };
 
-const isVerified = () => {
-  return Boolean(JSON.parse(sessionStorage.getItem("isVerified")));
-};
-
-export { isVerified, verify };
+export { verify };

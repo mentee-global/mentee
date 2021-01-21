@@ -81,11 +81,7 @@ function MenteeVerificationModal(props) {
         footer={
           <div className="footer-container">
             {getIsVerifiedIcon()}
-            <MenteeButton
-              theme="light"
-              content="Continue"
-              onClick={handleViewPermission}
-            />
+            <MenteeButton content="Continue" onClick={handleViewPermission} />
           </div>
         }
       >

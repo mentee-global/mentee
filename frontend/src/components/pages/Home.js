@@ -1,12 +1,10 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import MenteeVerificationModal from "../MenteeVerificationModal";
 import "../css/Home.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
-function Home() {
-  const history = useHistory();
-
+function Home({ history }) {
   return (
     <div className="home-background">
       <div className="home-content">
@@ -35,4 +33,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default withRouter(Home);

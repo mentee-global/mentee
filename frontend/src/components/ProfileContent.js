@@ -8,14 +8,9 @@ import {
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
-import { isVerified } from "../utils/verifyMentee";
-import { isLoggedIn } from "utils/auth.service";
-
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
-  const [verified, setVerified] = useState(isVerified() || isLoggedIn());
-
   const getMeetingMethods = () => {
     const in_person = props.mentor.offers_in_person
       ? "In person | Online"

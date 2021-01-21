@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Layout } from "antd";
-import { useHistory } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 
@@ -12,9 +12,7 @@ import MenteeVerificationModal from "./MenteeVerificationModal";
 
 const { Header } = Layout;
 
-function MenteeNavHeader() {
-  const history = useHistory();
-
+function MenteeNavHeader({ history }) {
   return (
     <Header className="navigation-header">
       <div className="navigation-mentee-flexbox">
@@ -52,4 +50,4 @@ function MenteeNavHeader() {
   );
 }
 
-export default MenteeNavHeader;
+export default withRouter(MenteeNavHeader);

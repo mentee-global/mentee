@@ -4,6 +4,7 @@
   background: $mentee-button-regular;
   border-color: $mentee-button-regular;
   color: white;
+  border-radius: 13px; 
 }
 
 .regular-button:hover, .regular-button:active {
@@ -16,6 +17,7 @@
   background: $mentee-button-dark;
   border-color: $mentee-button-dark;
   color: $mentee-button-light;
+  border-radius: 13px; 
 }
 
 .dark-button:hover, .dark-button:active {
@@ -28,6 +30,7 @@
   background: $mentee-button-light;
   border-color: $mentee-button-light;
   color: $mentee-button-dark;
+  border-radius: 13px; 
 }
 
 .light-button:hover, .light-button:active {

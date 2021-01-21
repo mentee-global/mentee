@@ -4,6 +4,7 @@ import { Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 import {
   LANGUAGES,
   SPECIALIZATIONS,
@@ -179,10 +180,11 @@ function MenteeAppointmentModal(props) {
   }
 
   return (
-    <div>
-      <MenteeButton
-        content="Book Appointment"
-        onClick={() => setCalendarModalVisible(true)}
+    <span>
+      <MenteeVerificationModal
+        content={<b>Book Appointment</b>}
+        style={{ width: "180px" }}
+        onVerified={() => setCalendarModalVisible(true)}
       />
       <Modal
         forceRender
@@ -524,7 +526,7 @@ function MenteeAppointmentModal(props) {
           </div>
         </Form>
       </Modal>
-    </div>
+    </span>
   );
 }
 

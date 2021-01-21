@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   EnvironmentOutlined,
   CommentOutlined,
@@ -8,7 +8,6 @@ import {
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
-
 import "./css/Profile.scss";
 
 function ProfileContent(props) {

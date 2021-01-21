@@ -53,6 +53,7 @@ function Gallery() {
 
   return (
     <>
+      // Activates Modal that only shows on mobile
       <MenteeButton
         onClick={() => setMobileFilterVisible(true)}
         content="Filter"

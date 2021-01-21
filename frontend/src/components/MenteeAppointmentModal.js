@@ -4,6 +4,7 @@ import { Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 import {
   LANGUAGES,
   SPECIALIZATIONS,
@@ -184,17 +185,18 @@ function MenteeAppointmentModal(props) {
   }
 
   return (
-    <div>
-      <MenteeButton
-        content="Book Appointment"
-        onClick={() => setCalendarModalVisible(true)}
+    <span>
+      <MenteeVerificationModal
+        content={<b>Book Appointment</b>}
+        style={{ width: "180px" }}
+        onVerified={() => setCalendarModalVisible(true)}
       />
       <Modal
         forceRender
         title="        " // Uses Unicode spaces to get desired heading
         visible={calendarModalVisible}
         onCancel={() => closeModals()}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={null}
       >
@@ -205,7 +207,14 @@ function MenteeAppointmentModal(props) {
               size={80}
               icon={<UserOutlined />}
             />
+<<<<<<< HEAD
             <h3 className="bold">Mentoring Session with {props.mentor.name}</h3>
+=======
+            {/* TODO: Replace Bernie Sanders with Mentor Name */}
+            <h3 className="bold">
+              Mentoring Session with <br /> Bernie Sanders
+            </h3>
+>>>>>>> 96a07668025226051daee991aed24c64b0397245
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">
@@ -267,7 +276,7 @@ function MenteeAppointmentModal(props) {
         title="Your Information"
         visible={formModalVisible}
         onCancel={closeModals}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={
           <MenteeButton
@@ -532,7 +541,7 @@ function MenteeAppointmentModal(props) {
           </div>
         </Form>
       </Modal>
-    </div>
+    </span>
   );
 }
 

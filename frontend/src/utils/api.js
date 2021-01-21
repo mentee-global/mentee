@@ -98,6 +98,18 @@ export const getAppointmentsByMentorID = (id) => {
   );
 };
 
+export const getIsEmailVerified = (email, password) => {
+  const requestExtension =
+    "/verifyEmail?email=" + email + "&password=" + password;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return err.response.data.result;
+    }
+  );
+};
+
 export const fetchAvailability = (id) => {
   const requestExtension = "/availability/" + id;
   return instance.get(requestExtension).then(

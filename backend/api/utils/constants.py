@@ -1,4 +1,4 @@
-AUTH_URL = "https://h4i-mentee-auth.vercel.app"
+AUTH_URL = "https://h4i-mentee-auth-omega.vercel.app/"
 
 # Follow this to see how to change the email
 # https://sendgrid.com/docs/ui/sending-email/sender-verification/

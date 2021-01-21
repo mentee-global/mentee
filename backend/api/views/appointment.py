@@ -9,8 +9,6 @@ appointment = Blueprint("appointment", __name__)
 # GET request for appointments by mentor id
 @appointment.route("/mentor/<string:mentor_id>", methods=["GET"])
 def get_requests_by_mentor(mentor_id):
-    # TODO: Remove this once we have an authentication setup!
-    # Block to remove:
     try:
         mentor = MentorProfile.objects.get(id=mentor_id)
     except:
@@ -18,9 +16,8 @@ def get_requests_by_mentor(mentor_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # End of block
+    # Includes mentor name because appointments page does not fetch all mentor info
     requests = AppointmentRequest.objects(mentor_id=mentor_id)
-    # TODO Remove sending mentor name from this response
     return create_response(data={"mentor_name": mentor.name, "requests": requests})
 
 

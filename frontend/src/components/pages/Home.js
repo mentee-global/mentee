@@ -22,7 +22,7 @@ function Home() {
             <MenteeButton theme="dark" content={<b>Find a Mentor</b>} />
           </NavLink>
         </div>
-        <img className="home-honeycomb" src={Logo} alt="Adrinka Logo" />
+        <img className="logo" src={Logo} alt="Adrinka Logo" />
       </div>
       <img className="focus-for-health" src={Health} alt="" />
     </div>

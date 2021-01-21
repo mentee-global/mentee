@@ -88,7 +88,7 @@ function MenteeVerificationModal(props) {
       />
 
       <Modal
-        title="Verify Mentee"
+        title={"Verify " + (props.mentor ? "Mentor" : "Mentee")} 
         visible={isVisible}
         className="verification-modal"
         onCancel={() => {
@@ -112,12 +112,12 @@ function MenteeVerificationModal(props) {
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            {!props.mentor && 
-            <Input.Password
-              placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            }
+            {!props.mentor && (
+              <Input.Password
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            )}
             <MenteeButton
               content="Check Registration"
               radius="4px"

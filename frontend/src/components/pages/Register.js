@@ -132,6 +132,7 @@ function Register({ history }) {
             loading={saving}
             onVerified={submitForm}
             className="login-button"
+            mentor
           />
           <div className="login-register-container">
             <div>Already have an account?</div>

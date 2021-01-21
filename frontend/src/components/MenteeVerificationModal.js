@@ -84,6 +84,7 @@ function MenteeVerificationModal(props) {
         width={props.width}
         height={props.height}
         style={props.style}
+        loading={props.loading}
       />
 
       <Modal
@@ -111,10 +112,12 @@ function MenteeVerificationModal(props) {
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
             />
+            {!props.mentor && 
             <Input.Password
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
+            }
             <MenteeButton
               content="Check Registration"
               radius="4px"

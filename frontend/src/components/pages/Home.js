@@ -4,7 +4,7 @@ import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
 import Logo from "../../resources/logo.svg";
-import Health from "../../resources/focus-for-health.svg"
+import Health from "../../resources/focus-for-health.svg";
 
 function Home() {
   return (

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
-import Logo from "../../resources/logo.svg";
+import Logo from "../../resources/logo.png";
 import Health from "../../resources/focus-for-health.svg"
 
 function Home() {

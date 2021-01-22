@@ -4,7 +4,7 @@ import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
 import Logo from "../../resources/logo.png";
-import Health from "../../resources/focus-for-health.svg"
+import Health from "../../resources/focus-for-health.svg";
 
 function Home() {
   return (
@@ -22,9 +22,13 @@ function Home() {
             <MenteeButton theme="dark" content={<b>Find a Mentor</b>} />
           </NavLink>
         </div>
-        <img className="home-honeycomb" src={Logo} alt="Adrinka Logo" />
+        <img className="logo" src={Logo} alt="Adrinka Logo" />
       </div>
-      <img className="focus-for-health" src={Health} alt="" />
+      <img
+        className="focus-for-health"
+        src={Health}
+        alt="Focus for Health Logo"
+      />
     </div>
   );
 }

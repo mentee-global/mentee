@@ -24,7 +24,11 @@ function Home() {
         </div>
         <img className="logo" src={Logo} alt="Adrinka Logo" />
       </div>
-      <img className="focus-for-health" src={Health} alt="Focus for Health Logo" />
+      <img
+        className="focus-for-health"
+        src={Health}
+        alt="Focus for Health Logo"
+      />
     </div>
   );
 }

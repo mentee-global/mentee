@@ -120,7 +120,9 @@ function Appointments() {
     return (
       <div className="appointment-card">
         <div>
-          <div className="appointment-mentee-name"><b>{props.name}</b></div>
+          <div className="appointment-mentee-name">
+            <b>{props.name}</b>
+          </div>
           <div className="appointment-time">
             <ClockCircleOutlined /> {props.time}
           </div>

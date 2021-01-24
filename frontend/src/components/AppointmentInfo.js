@@ -65,32 +65,32 @@ function AppointmentInfo(props) {
 
   const allowsContact = (allow_calls, allow_texts, phone_number) => {
     if (allow_calls && allow_texts) {
-      return <div>
-        <div className="ar-phone">Allows calls/texts</div>
-        <div className="ar-phone">
-          Call/text: {phone_number}
+      return (
+        <div>
+          <div className="ar-phone">Allows calls/texts</div>
+          <div className="ar-phone">Call/text: {phone_number}</div>
+          <div className="ar-email">{props.modalAppointment.email}</div>
         </div>
-        <div className="ar-email">{props.modalAppointment.email}</div>
-      </div>
+      );
     } else if (allow_calls) {
-      return <div>
-        <div className="ar-phone">Allows calls</div>
-        <div className="ar-phone">
-          Call: {phone_number}
+      return (
+        <div>
+          <div className="ar-phone">Allows calls</div>
+          <div className="ar-phone">Call: {phone_number}</div>
+          <div className="ar-email">{props.modalAppointment.email}</div>
         </div>
-        <div className="ar-email">{props.modalAppointment.email}</div>
-      </div>
+      );
     } else if (allow_texts == true) {
-      return <div>
-        <div className="ar-phone">Allows texts</div>
-        <div className="ar-phone">
-          Text: {phone_number}
+      return (
+        <div>
+          <div className="ar-phone">Allows texts</div>
+          <div className="ar-phone">Text: {phone_number}</div>
+          <div className="ar-email">{props.modalAppointment.email}</div>
         </div>
-        <div className="ar-email">{props.modalAppointment.email}</div>
-      </div>
+      );
     }
-    return <div className="ar-email-only">{props.modalAppointment.email}</div>
-  }
+    return <div className="ar-email-only">{props.modalAppointment.email}</div>;
+  };
 
   return (
     <Modal
@@ -104,7 +104,12 @@ function AppointmentInfo(props) {
         {pendingOrUpcoming()}
         <div>
           <div>
-          {allowsContact(props.modalAppointment.allow_calls, props.modalAppointment.allow_texts, props.modalAppointment.phone_number)}</div>
+            {allowsContact(
+              props.modalAppointment.allow_calls,
+              props.modalAppointment.allow_texts,
+              props.modalAppointment.phone_number
+            )}
+          </div>
           <div className="ar-modal-title">
             {props.modalAppointment.name}, {props.modalAppointment.age}
           </div>

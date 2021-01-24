@@ -2,8 +2,10 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { Layout } from "antd";
+import { withRouter } from "react-router-dom";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 
 import "./css/Navigation.scss";
 
@@ -12,7 +14,7 @@ import MenteeLogoSmall from "../resources/menteeSmall.png";
 
 const { Header } = Layout;
 
-function MenteeNavHeader() {
+function MenteeNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
 
   return (
@@ -28,15 +30,19 @@ function MenteeNavHeader() {
           </NavLink>
         </div>
         <div>
-          <NavLink to="/gallery">
-            <span className="navigation-header-button">
-              <MenteeButton
-                theme="light"
-                width="45%"
-                content={<b>Find a Mentor⠀⠀</b>}
-              />
-            </span>
-          </NavLink>
+          <span className="navigation-header-button">
+            <MenteeVerificationModal
+              content={<b>Find a Mentor</b>}
+              theme="light"
+              width="45%"
+              onVerified={() => {
+                history.push({
+                  pathname: "/gallery",
+                  state: { verified: true },
+                });
+              }}
+            />
+          </span>
           <NavLink to="/login">
             <span className="navigation-header-button">
               <MenteeButton
@@ -53,4 +59,4 @@ function MenteeNavHeader() {
   );
 }
 
-export default MenteeNavHeader;
+export default withRouter(MenteeNavHeader);

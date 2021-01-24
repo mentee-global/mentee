@@ -14,8 +14,8 @@ function AppointmentInfo(props) {
     return specialist_categories.join(", ");
   };
 
-  const getSubtext = (gender, ethnicity, organization) => {
-    var subtextInfo = [gender, ethnicity];
+  const getSubtext = (gender, organization) => {
+    var subtextInfo = [gender];
     if (organization != undefined) {
       subtextInfo.push(organization);
     }
@@ -51,17 +51,46 @@ function AppointmentInfo(props) {
     if (props.needButtons) {
       return (
         <div className="ar-status">
-          pending<span class="pending-dot"></span>
+          pending<span className="pending-dot"></span>
         </div>
       );
     } else {
       return (
         <div className="ar-status">
-          upcoming<span class="upcoming-dot"></span>
+          upcoming<span className="upcoming-dot"></span>
         </div>
       );
     }
   };
+
+  const allowsContact = (allow_calls, allow_texts, phone_number) => {
+    if (allow_calls && allow_texts) {
+      return <div>
+        <div className="ar-phone">Allows calls/texts</div>
+        <div className="ar-phone">
+          Call/text: {phone_number}
+        </div>
+        <div className="ar-email">{props.modalAppointment.email}</div>
+      </div>
+    } else if (allow_calls) {
+      return <div>
+        <div className="ar-phone">Allows calls</div>
+        <div className="ar-phone">
+          Call: {phone_number}
+        </div>
+        <div className="ar-email">{props.modalAppointment.email}</div>
+      </div>
+    } else if (allow_texts == true) {
+      return <div>
+        <div className="ar-phone">Allows texts</div>
+        <div className="ar-phone">
+          Text: {phone_number}
+        </div>
+        <div className="ar-email">{props.modalAppointment.email}</div>
+      </div>
+    }
+    return <div className="ar-email-only">{props.modalAppointment.email}</div>
+  }
 
   return (
     <Modal
@@ -73,14 +102,17 @@ function AppointmentInfo(props) {
     >
       <div className="ar-modal-container">
         {pendingOrUpcoming()}
-        <div className="ar-modal-title">
-          {props.modalAppointment.name}, {props.age}
+        <div>
+          <div>
+          {allowsContact(props.modalAppointment.allow_calls, props.modalAppointment.allow_texts, props.modalAppointment.phone_number)}</div>
+          <div className="ar-modal-title">
+            {props.modalAppointment.name}, {props.modalAppointment.age}
+          </div>
         </div>
         <div className="personal-info">
           <div className="ar-title-subtext">
             {getSubtext(
               props.modalAppointment.gender,
-              props.modalAppointment.ethnicity,
               props.modalAppointment.organization
             )}
           </div>
@@ -93,12 +125,6 @@ function AppointmentInfo(props) {
             {props.modalAppointment.location}
           </div>
         </div>
-        <div className="ar-phone">
-          Call/text: {props.modalAppointment.phone_number}
-        </div>
-        <div className="ar-email">{props.modalAppointment.email}</div>
-        
-        
         <div className="ar-apt-date">{props.modalAppointment.date}</div>
         <div className="ar-apt-time">{props.modalAppointment.time}</div>
         <div className="vl"></div>

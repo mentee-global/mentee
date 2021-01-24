@@ -48,7 +48,7 @@
 
 .ar-status {
     position: relative;
-    width: 67.6px;
+    width: 80px;
     height: 37.8px;
     left: 335.14px;
     top: 20px;
@@ -66,9 +66,8 @@
 .ar-modal-title {
     position: relative;
     width: 201px;
-    height: 24px;
+    min-height: 24px;
     left: 42.91px;
-    top: 20px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -79,24 +78,7 @@
     color: #000000;
 }
 
-.ar-phone {
-    position: relative;
-    width: 189px;
-    height: 14px;
-    left: 208.91px;
-
-    font-family: Helvetica;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 14px;
-
-    text-align: right;
-
-    color: #000000;
-}
-
-.ar-email {
+.ar-phone, .ar-contact, .ar-email, .ar-email-only {
     position: relative;
     width: 189px;
     height: 14px;
@@ -114,9 +96,17 @@
     color: #000000;
 }
 
+.ar-phone, .ar-email {
+    top: 45px;
+}
+
+.ar-email-only {
+    top: 16px;
+}
+
 .personal-info {
     position: relative;
-    top: 1px;
+    top: 20px;
 }
 
 .ar-title-subtext {
@@ -124,7 +114,6 @@
     width: 207px;
     height: 14px;
     left: 43.55px;
-    //top: 10px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -143,7 +132,7 @@
     width: 198px;
     height: 16.05px;
     left: 43.55px;
-    top: 20px;
+    top: 10px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -163,7 +152,7 @@
     width: 198px;
     height: 16.05px;
     left: 43.55px;
-    top: 26px;
+    top: 16px;
 
     font-family: Helvetica;
     font-style: normal;
@@ -400,9 +389,16 @@
 }
 
 .appointment-time,
-.appointment-description,
+.appointment-description {
+    font-size: 13px;
+}
+
 .appointment-mentee-name {
     font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+    width: 400px;
 }
 
 .appointment-tabs-title {

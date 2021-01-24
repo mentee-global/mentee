@@ -120,7 +120,7 @@ function Appointments() {
     return (
       <div className="appointment-card">
         <div>
-          <b className="appointment-mentee-name">{props.name}</b>
+          <div className="appointment-mentee-name"><b>{props.name}</b></div>
           <div className="appointment-time">
             <ClockCircleOutlined /> {props.time}
           </div>
@@ -202,6 +202,8 @@ function Appointments() {
                     location={appointment.location}
                     specialist_categories={appointment.specialist_categories}
                     organization={appointment.organization}
+                    allow_calls={appointment.allow_calls}
+                    allow_texts={appointment.allow_texts}
                   />
                 ))}
               </div>

@@ -46,6 +46,8 @@ export const formatAppointments = (data) => {
       mentorship_goals: appointment.mentorship_goals,
       specialist_categories: appointment.specialist_categories,
       organization: appointment.organization,
+      allow_texts: appointment.allow_texts,
+      allow_calls: appointment.allow_calls,
     };
 
     // This is the only case where we might not have a date for a certain key

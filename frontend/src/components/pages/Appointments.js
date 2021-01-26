@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Button, Calendar, Col, Row } from "antd";
+import { Button, Calendar, Col, Row, Result } from "antd";
 import {
   ClockCircleOutlined,
   CheckCircleTwoTone,
   CloseCircleTwoTone,
   InfoCircleFilled,
+  SmileOutlined,
 } from "@ant-design/icons";
 import "../css/Appointments.scss";
+import AvailabilityCalendar from "../AvailabilityCalendar";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
-  mentorID,
   deleteAppointment,
 } from "../../utils/api";
+import { getMentorID } from "utils/auth.service";
 import { formatAppointments } from "../../utils/dateFormatting";
 
 const Tabs = Object.freeze({
@@ -40,6 +42,7 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
 
   useEffect(() => {
+    const mentorID = getMentorID();
     async function getAppointments() {
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);
@@ -160,26 +163,23 @@ function Appointments() {
             Set available hours by specific date
           </div>
           <div className="calendar-container">
-            <Calendar />
+            <AvailabilityCalendar />
           </div>
-        </div>
-        <div className="save-container">
-          <Button
-            type="default"
-            shape="round"
-            style={getButtonStyle(currentTab)}
-            onClick={() => console.log("TODO: save!")}
-          >
-            <div style={getButtonTextStyle(currentTab)}>Save</div>
-          </Button>
         </div>
       </div>
     );
   };
 
   const Appointments = ({ data }) => {
-    if (!data) {
-      return <div></div>;
+    if (!data || !data.length) {
+      return (
+        <div className="empty-appointments-list appointments-background">
+          <Result
+            icon={<SmileOutlined style={{ color: "#A58123" }} />}
+            title="There are currently no appointments"
+          />
+        </div>
+      );
     }
 
     return (
@@ -226,24 +226,19 @@ function Appointments() {
   }
 
   return (
-    <Row>
-      <Col span={18} className="appointments-column">
-        <div className="appointments-welcome-box">
-          <div className="appointments-welcome-text">
-            Welcome, {appointments.mentor_name}
-          </div>
-          <div className="appointments-tabs">
-            {Object.values(Tabs).map((tab, index) => (
-              <Tab tab={tab} text={tab.title} key={index} />
-            ))}
-          </div>
+    <Col span={18} className="appointments-column">
+      <div className="appointments-welcome-box">
+        <div className="appointments-welcome-text">
+          Welcome, {appointments.mentor_name}
         </div>
-        {renderTab(currentTab)}
-      </Col>
-      <Col span={6} style={styles.calendar}>
-        <Calendar></Calendar>
-      </Col>
-    </Row>
+        <div className="appointments-tabs">
+          {Object.values(Tabs).map((tab, index) => (
+            <Tab tab={tab} text={tab.title} key={index} />
+          ))}
+        </div>
+      </div>
+      {renderTab(currentTab)}
+    </Col>
   );
 }
 

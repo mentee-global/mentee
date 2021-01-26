@@ -1,16 +1,12 @@
 import axios from "axios";
+import { API_URL } from "utils/consts";
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: API_URL,
 });
 
-// This is just for the time being while we get auth up and running
-// TODO: Delete these after auth is done
-// Also if there are other ID's you want to test add them into here and import them into your file
-export const mentorID = "5f9c8e5b8784f24df9f21819";
-export const appointmentID = "5f93224191f097b50954408c";
-
 export const fetchMentorByID = (id) => {
+  if (!id) return;
   const requestExtension = "/mentor/" + id;
   return instance.get(requestExtension).then(
     (response) => response.data.result.mentor,
@@ -40,6 +36,18 @@ export const editMentorProfile = (profile, id) => {
   );
 };
 
+export const uploadMentorImage = (data, id) => {
+  let formData = new FormData();
+  formData.append("image", data);
+  const requestExtension = "/mentor/" + id + "/image";
+  return instance.put(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createMentorProfile = (profile) => {
   const requestExtension = "/mentor";
   return instance.post(requestExtension, profile).then(
@@ -51,7 +59,7 @@ export const createMentorProfile = (profile) => {
 };
 
 export const createAppointment = (appointment) => {
-  const requestExtension = "/appointment";
+  const requestExtension = "/appointment/";
   return instance.post(requestExtension, appointment).then(
     (response) => response,
     (err) => {
@@ -84,6 +92,39 @@ export const getAppointmentsByMentorID = (id) => {
   const requestExtension = "/appointment/mentor/" + id;
   return instance.get(requestExtension).then(
     (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getIsEmailVerified = (email, password) => {
+  const requestExtension =
+    "/verifyEmail?email=" + email + "&password=" + password;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return err.response.data.result;
+    }
+  );
+};
+
+export const fetchAvailability = (id) => {
+  const requestExtension = "/availability/" + id;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const editAvailability = (timeslots, id) => {
+  const requestExtension = "/availability/" + id;
+  let availability = { Availability: timeslots };
+  return instance.put(requestExtension, availability).then(
+    (response) => response,
     (err) => {
       console.error(err);
     }

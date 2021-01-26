@@ -1,13 +1,18 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Button } from "antd";
+import { Layout } from "antd";
+import { withRouter } from "react-router-dom";
+import { isLoggedIn } from "utils/auth.service";
+import MenteeButton from "./MenteeButton";
+
 import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 
 const { Header } = Layout;
 
-function MenteeNavHeader() {
+function MenteeNavHeader({ history }) {
   return (
     <Header className="navigation-header">
       <div className="navigation-mentee-flexbox">
@@ -17,33 +22,27 @@ function MenteeNavHeader() {
           </NavLink>
         </div>
         <div>
-          <NavLink to="/gallery">
-            <Button
-              className="navigation-header-button"
-              style={{ background: "#FCF6E8", color: "#A58123" }}
-            >
-              <b>Find a Mentor</b>
-            </Button>
-          </NavLink>
-          <Button
-            className="navigation-header-button"
-            style={{ background: "#FCF6E8", color: "#A58123" }}
-          >
-            <b>About Us</b>
-          </Button>
-          <Button
-            className="navigation-header-button"
-            style={{ background: "#FCF6E8", color: "#A58123" }}
-          >
-            <b>FAQ</b>
-          </Button>
-          <NavLink to="/profile">
-            <Button
-              className="navigation-header-button-dark"
-              style={{ background: "#E4BB4F", color: "white" }}
-            >
-              <b>Mentor Log In</b>
-            </Button>
+          <span className="navigation-header-button">
+            <MenteeVerificationModal
+              content={<b>Find a Mentor</b>}
+              theme="light"
+              onVerified={() => {
+                history.push({
+                  pathname: "/gallery",
+                  state: { verified: true },
+                });
+              }}
+            />
+          </span>
+          <NavLink to="/login">
+            <span className="navigation-header-button">
+              <MenteeButton
+                width="125px"
+                content={
+                  <b>{isLoggedIn() ? "Your Profile" : "Mentor Log In"}</b>
+                }
+              />
+            </span>
           </NavLink>
         </div>
       </div>
@@ -51,4 +50,4 @@ function MenteeNavHeader() {
   );
 }
 
-export default MenteeNavHeader;
+export default withRouter(MenteeNavHeader);

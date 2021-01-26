@@ -29,10 +29,10 @@ function PublicProfile(props) {
           src={mentor.image && mentor.image.url}
           icon={<UserOutlined />}
         />
-        <ProfileContent mentor={mentor} />
+        <ProfileContent mentor={mentor} id={props.id} />
       </div>
       <div className="mentor-profile-videos">
-        <ProfileVideos mentor={mentor} />
+        <ProfileVideos videos={mentor.videos} />
       </div>
     </div>
   );

@@ -20,6 +20,8 @@
 }
 
 .mentor-profile-name {
+  display: flex;
+  flex-direction: row;
   font-weight: bold;
   font-size: 20px;
 }
@@ -41,26 +43,8 @@
   margin-left: 3%;
 }
 
-.mentor-profile-edit-button {
-  border-radius: 13px;
-  margin-left: 60%;
-  border-color: #E4BB4F;
-  margin-left: 50%;
-}
-
 .mentor-profile-about {
   width: 90%;
-}
-
-.mentor-specialization-tag-first {
-  border: 3px solid $specialization-tag-border;
-  border-radius: 13px;
-  font-weight: bold;
-  display: inline-block;
-  text-align: center;
-  min-width: 15%;
-  padding-left: 3%;
-  padding-right: 3%;
 }
 
 .mentor-specialization-tag {
@@ -72,7 +56,7 @@
   min-width: 15%;
   padding-left: 3%;
   padding-right: 3%;
-  margin-left: 2%;
+  margin-top: 2%;
   margin-right: 2%;
 }
 
@@ -99,6 +83,8 @@
 }
 
 .mentor-profile-contact-icon {
+  align-self: flex-start;
+  margin-top: 3.5%;
   margin-right: 5%;
 }
 
@@ -108,5 +94,29 @@
   text-decoration: underline;
   color: $edit-contact-color;
 }
-  color: #A58123;
+
+.mentor-profile-button {
+  margin-left: 50%;
+}
+
+.mentor-profile-input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 2%;
+}
+
+.mentor-profile-editing-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.mentor-profile-notifications-container {
+  flex: 0.7;
+}
+
+.mentor-profile-save-container {
+  display: flex;
+  flex: 0.3;
 }

@@ -1,0 +1,46 @@
+@import "_app";
+
+.regular-button, .regular-button:focus,
+.regular-button-focus {
+  background: $mentee-button-regular;
+  border-color: $mentee-button-regular;
+  color: white;
+  border-radius: 13px; 
+}
+
+.regular-button:hover, .regular-button:active,
+.regular-button-focus:focus, .regular-button-focus:hover, .regular-button-focus:active {
+  background: $mentee-button-regular;
+  border-color: white;
+  color: white; 
+}
+
+.dark-button, .dark-button:focus,
+.dark-button-focus {
+  background: $mentee-button-dark;
+  border-color: $mentee-button-dark;
+  color: $mentee-button-light;
+  border-radius: 13px; 
+}
+
+.dark-button:hover, .dark-button:active,
+.dark-button-focus:focus, .dark-button-focus:hover, .dark-button-focus:active {
+  background: $mentee-button-dark;
+  border-color: $mentee-button-light;
+  color: $mentee-button-light;
+}
+
+.light-button, .light-button:focus,
+.light-button-focus {
+  background: $mentee-button-light;
+  border-color: $mentee-button-light;
+  color: $mentee-button-dark;
+  border-radius: 13px; 
+}
+
+.light-button:hover, .light-button:active,
+.light-button-focus:focus, .light-button-focus:hover, .light-button-focus:active {
+  background: $mentee-button-light;
+  border-color: $mentee-button-dark;
+  color: $mentee-button-dark;
+}

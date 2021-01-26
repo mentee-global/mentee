@@ -1,6 +1,15 @@
 from os import path
-from flask import Blueprint, request, jsonify
-from api.models import db, Education, Video, MentorProfile, AppointmentRequest
+from flask import Blueprint, request, jsonify, send_from_directory
+from bson import ObjectId
+from api.models import (
+    db,
+    Education,
+    Video,
+    MentorProfile,
+    AppointmentRequest,
+    Users,
+    Image,
+)
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     MentorForm,
@@ -15,7 +24,7 @@ main = Blueprint("main", __name__)  # initialize blueprint
 # GET request for /mentors
 @main.route("/mentors", methods=["GET"])
 def get_mentors():
-    mentors = MentorProfile.objects()
+    mentors = MentorProfile.objects().exclude("availability", "videos")
     return create_response(data={"mentors": mentors})
 
 # GET request for specific mentor based on id
@@ -47,18 +56,24 @@ def create_mentor_profile():
     if is_invalid:
         return create_response(status=422, message=msg)
 
+    user = Users.objects.get(id=data["user_id"])
+    email = user.email
+
     new_mentor = MentorProfile(
+        user_id=ObjectId(data["user_id"]),
         name=data["name"],
-        email=data["email"],
+        email=email,
         professional_title=data["professional_title"],
-        linkedin=data["linkedin"],
-        website=data["website"],
         languages=data["languages"],
         specializations=data["specializations"],
         offers_in_person=data["offers_in_person"],
         offers_group_appointments=data["offers_group_appointments"],
+        email_notifications=data.get("email_notifications", True),
+        text_notifications=data.get("text_notifications", True),
     )
 
+    new_mentor.website = data.get("website")
+    new_mentor.linkedin = data.get("linkedin")
     new_mentor.biography = data.get("biography")
     new_mentor.phone_number = data.get("phone_number")
     new_mentor.location = data.get("location")
@@ -93,12 +108,18 @@ def create_mentor_profile():
             if is_invalid:
                 return create_response(status=422, message=msg)
 
-            new_video = Video(title=video["title"], url=video["url"], tag=video["tag"])
+            new_video = Video(
+                title=video["title"],
+                url=video["url"],
+                tag=video["tag"],
+                date_uploaded=video["date_uploaded"],
+            )
             new_mentor.videos.append(new_video)
 
     new_mentor.save()
     return create_response(
-        message=f"Successfully created Mentor Profile {new_mentor.name} with UID: {new_mentor.uid}"
+        message=f"Successfully created Mentor Profile {new_mentor.name}",
+        data={"mentorId": str(new_mentor.id)},
     )
 
 
@@ -106,8 +127,6 @@ def create_mentor_profile():
 @main.route("/mentor/<id>", methods=["PUT"])
 def edit_mentor(id):
     data = request.get_json()
-
-    logger.info("Data received: %s", data)
 
     # Try to retrieve Mentor profile from database
     try:
@@ -134,6 +153,12 @@ def edit_mentor(id):
     mentor.biography = data.get("biography", mentor.biography)
     mentor.linkedin = data.get("linkedin", mentor.linkedin)
     mentor.website = data.get("website", mentor.website)
+    mentor.text_notifications = data.get(
+        "text_notifications", mentor.text_notifications
+    )
+    mentor.email_notifications = data.get(
+        "email_notifications", mentor.email_notifications
+    )
 
     # Create education object
     if "education" in data:
@@ -152,7 +177,12 @@ def edit_mentor(id):
     if "videos" in data:
         video_data = data.get("videos")
         mentor.videos = [
-            Video(title=video.get("title"), url=video.get("url"), tag=video.get("tag"))
+            Video(
+                title=video.get("title"),
+                url=video.get("url"),
+                tag=video.get("tag"),
+                date_uploaded=video.get("date_uploaded"),
+            )
             for video in video_data
         ]
 
@@ -177,15 +207,17 @@ def uploadImage(id):
         return create_response(status=422, message=msg)
 
     try:
-        if mentor.image.image_hash is True:
+        if mentor.image is True and mentor.image.image_hash is True:
             image_response = imgur_client.delete_image(mentor.image.image_hash)
     except:
-        msg = "Failed to delete image"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
+        logger.info("Failed to delete image but saving new image")
 
-    mentor.image.url = image_response["data"]["link"]
-    mentor.image.image_hash = image_response["data"]["deletehash"]
+    new_image = Image(
+        url=image_response["data"]["link"],
+        image_hash=image_response["data"]["deletehash"],
+    )
+
+    mentor.image = new_image
 
     mentor.save()
     return create_response(status=200, message=f"Success")

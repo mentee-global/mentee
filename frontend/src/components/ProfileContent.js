@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   EnvironmentOutlined,
   CommentOutlined,
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-import { Button } from "antd";
+import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
-
-const profileButtonStyle = { background: "#E4BB4F", color: "white" };
+import MenteeAppointmentModal from "./MenteeAppointmentModal";
+import "./css/Profile.scss";
 
 function ProfileContent(props) {
   const getMeetingMethods = () => {
@@ -26,29 +26,29 @@ function ProfileContent(props) {
   };
 
   const getSpecializationTags = (specializations) => {
-    return specializations.map((specialization, idx) =>
-      idx === 0 ? (
-        <div className="mentor-specialization-tag-first">{specialization}</div>
-      ) : (
-        <div className="mentor-specialization-tag">{specialization}</div>
-      )
-    );
+    return specializations.map((specialization, idx) => (
+      <div className="mentor-specialization-tag">{specialization}</div>
+    ));
   };
 
   const getEducations = (educations) => {
-    if (educations == null || educations[0] == null) {
+    if (!educations || !educations[0]) {
       return;
     }
     return educations.map((education) => (
-      <div className="mentor-profile-education">
-        <b>{education.school}</b>
-        <br />
-        {education.education_level}
-        <br />
-        {"Major(s): " + education.majors.join(", ")}
-        <br />
-        {education.graduation_year}
-      </div>
+      <>
+        {education.majors.map((major) => (
+          <div className="mentor-profile-education">
+            <b>{education.school}</b>
+            <br />
+            {education.education_level}, {major}
+            <br />
+            <t className="mentor-profile-heading">
+              {education.graduation_year}
+            </t>
+          </div>
+        ))}
+      </>
     ));
   };
 
@@ -57,14 +57,18 @@ function ProfileContent(props) {
       <div className="mentor-profile-name">
         {props.mentor.name}
         {props.isMentor ? (
-          <MentorProfileModal />
+          <MentorProfileModal
+            mentor={props.mentor}
+            onSave={props.handleSaveEdits}
+          />
         ) : (
-          <Button
-            className="mentor-profile-edit-button"
-            style={profileButtonStyle}
-          >
-            <b>Book Appointment</b>
-          </Button>
+          <div className="mentor-profile-button">
+            <MenteeAppointmentModal
+              mentor_name={props.mentor.name}
+              availability={props.mentor.availability}
+              mentor_id={props.id}
+            />
+          </div>
         )}
       </div>
       <div className="mentor-profile-heading">
@@ -93,13 +97,25 @@ function ProfileContent(props) {
         {props.mentor.website && (
           <span>
             <LinkOutlined className="mentor-profile-tag" />
-            {props.mentor.website}
+            <a
+              href={formatLinkForHref(props.mentor.website)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {props.mentor.website}
+            </a>
           </span>
         )}
         {props.mentor.linkedin && (
           <span>
             <LinkedinOutlined className="mentor-profile-tag" />
-            {props.mentor.linkedin}
+            <a
+              href={formatLinkForHref(props.mentor.linkedin)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {props.mentor.linkedin}
+            </a>
           </span>
         )}
       </div>

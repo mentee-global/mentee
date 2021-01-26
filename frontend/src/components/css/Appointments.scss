@@ -66,7 +66,6 @@
 
 .appointments-column {
     padding: 5% 3%;
-    overflow-y: auto;
     height: 100vh;
 }
 
@@ -125,7 +124,6 @@
 }
 
 .availability-container {
-
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
     overflow: hidden;
@@ -148,7 +146,6 @@
     margin-bottom: 15px;
 }
 
-.save-container {
-    display: flex;
-    justify-content: flex-end;
+.empty-appointments-list {
+    font-weight: bold;
 }

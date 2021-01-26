@@ -32,7 +32,7 @@ def create_app(test_config=None):
         app.run()
     """
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../../frontend/artifacts", static_url_path="")
 
     CORS(app)  # add CORS
 
@@ -69,13 +69,21 @@ def create_app(test_config=None):
     Migrate(app, db)
 
     # import and register blueprints
-    from api.views import main, auth, appointment
+    from api.views import app_blueprint, main, auth, appointment, availability, verify
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
-    app.register_blueprint(main.main)
-    app.register_blueprint(auth.auth)
-    app.register_blueprint(appointment.appointment)
-    # register error Handler
+    app.register_blueprint(app_blueprint.app_blueprint)
+    app.register_blueprint(main.main, url_prefix="/api")
+    app.register_blueprint(auth.auth, url_prefix="/auth")
+    app.register_blueprint(appointment.appointment, url_prefix="/api/appointment")
+    app.register_blueprint(availability.availability, url_prefix="/api/availability")
+    app.register_blueprint(verify.verify, url_prefix="/api")
+
+    # register error handlers
+    @app.errorhandler(404)
+    def not_found(e):
+        return app.send_static_file("index.html")
+
     app.register_error_handler(Exception, all_exception_handler)
 
     return app

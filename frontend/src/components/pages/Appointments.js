@@ -166,16 +166,6 @@ function Appointments() {
             <AvailabilityCalendar />
           </div>
         </div>
-        <div className="save-container">
-          <Button
-            type="default"
-            shape="round"
-            style={getButtonStyle(currentTab)}
-            onClick={() => console.log("TODO: save!")}
-          >
-            <div style={getButtonTextStyle(currentTab)}>Save</div>
-          </Button>
-        </div>
       </div>
     );
   };

@@ -1,4 +1,10 @@
-AUTH_URL = "https://h4i-mentee-auth-omega.vercel.app/"
+import os
+
+AUTH_URL = (
+    "h4i-mentee-auth.vercel.app"
+    if os.environ.get("DEPLOYMENT") == "prod"
+    else "https://mentee-auth-dev.vercel.app"
+)
 
 # Follow this to see how to change the email
 # https://sendgrid.com/docs/ui/sending-email/sender-verification/

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AUTH_URL } from "utils/consts";
+import { AUTH_URL, REGISTRATION_STAGE } from "utils/consts";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -15,6 +15,7 @@ const register = (email, password, role) => {
     })
     .then((response) => {
       if (response.data.result && response.data.result.token) {
+        response.data.result.verified = false;
         localStorage.setItem(
           "registration",
           JSON.stringify(response.data.result)
@@ -40,7 +41,13 @@ const verify = (pin) => {
       { headers: { token: getCurrentRegistration()["token"] } }
     )
     .then((response) => {
-      return response.data.status == 200;
+      if (response.data.status === 200) {
+        const registration = JSON.parse(localStorage.getItem("registration"));
+        registration["verified"] = true;
+        localStorage.setItem("registration", JSON.stringify(registration));
+        return true;
+      }
+      return false;
     })
     .catch((err) => {
       console.error(err);
@@ -101,8 +108,12 @@ const getCurrentRegistration = () => {
   return JSON.parse(localStorage.getItem("registration"));
 };
 
-const hasCurrentRegistration = () => {
-  return Boolean(getCurrentRegistration());
+const getRegistrationStage = () => {
+  const registration = getCurrentRegistration();
+
+  if (!registration) return REGISTRATION_STAGE.START;
+  if (!registration.verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
+  return REGISTRATION_STAGE.PROFILE_CREATION;
 };
 
 const removeRegistration = (mentorId) => {
@@ -119,7 +130,7 @@ export {
   getMentorID,
   isLoggedIn,
   getCurrentRegistration,
-  hasCurrentRegistration,
+  getRegistrationStage,
   removeRegistration,
   verify,
   resendVerify,

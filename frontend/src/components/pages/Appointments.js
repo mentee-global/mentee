@@ -251,9 +251,6 @@ function Appointments() {
           </div>
           {renderTab(currentTab)}
         </Col>
-        <Col span={6} style={styles.calendar}>
-          <Calendar></Calendar>
-        </Col>
       </Row>
     </div>
   );

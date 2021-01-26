@@ -50,7 +50,6 @@ function ModalInput(props) {
       };
     }
 
-
     if (isClicked && valid) {
       style = {
         ...style,

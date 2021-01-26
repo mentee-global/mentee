@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import { UserOutlined, EditFilled, PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  EditFilled,
+  PlusCircleFilled,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
 import { editMentorProfile, uploadMentorImage } from "../utils/api";
 import { getMentorID } from "../utils/auth.service";
@@ -312,7 +317,7 @@ function MentorProfileModal(props) {
     const newValidArray = [...isValid];
     newValidArray.push(false, false, false, false);
     setIsValid(newValidArray);
-  }
+  };
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
@@ -458,7 +463,7 @@ function MentorProfileModal(props) {
                 defaultValue={about}
               />
             </div>
-            <div className="divider"/>
+            <div className="divider" />
             <div className="modal-availability-checkbox">
               <Checkbox
                 className="modal-availability-checkbox-text"

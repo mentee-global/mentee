@@ -212,7 +212,7 @@ function RegisterForm(props) {
     newEducations.pop();
     setEducations(newEducations);
     setIsValid([...isValid, true, true, true, true]);
-  }
+  };
 
   const handleSaveEdits = async () => {
     async function saveEdits(data) {

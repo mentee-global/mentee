@@ -38,13 +38,6 @@ def get_mentor(mentor_id):
         return create_response(status=422, message=msg)
     return create_response(data={"mentor": mentor})
 
-<<<<<<< HEAD
-# function that is called when you visit /persons
-@main.route("/persons", methods=["GET"])
-def get_persons():
-    persons = Person.objects()
-    return create_response(data={"persons": persons})
-=======
 
 # POST request for a new mentor profile
 @main.route("/mentor", methods=["POST"])
@@ -88,7 +81,6 @@ def create_mentor_profile():
             msg, is_invalid = is_invalid_form(validate_education)
             if is_invalid:
                 return create_response(status=422, message=msg)
->>>>>>> d1cca9a90ec86e02a0f11e20a23ecb581719474d
 
             new_education = Education(
                 education_level=education["education_level"],

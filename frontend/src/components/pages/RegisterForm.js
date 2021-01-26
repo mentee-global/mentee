@@ -9,7 +9,7 @@ import {
   isLoggedIn,
 } from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
-import { PlusCircleFilled } from "@ant-design/icons";
+import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS, REGISTRATION_STAGE } from "utils/consts";
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
@@ -119,6 +119,13 @@ function RegisterForm(props) {
                 validate={validate}
               />
             </div>
+            <div
+              className="modal-input-container modal-education-delete-container"
+              onClick={handleDeleteEducation}
+            >
+              <div className="modal-education-delete-text">delete</div>
+              <DeleteOutlined className="modal-education-delete-icon" />
+            </div>
           </div>
         </div>
       ))
@@ -199,6 +206,13 @@ function RegisterForm(props) {
     setEducations(newEducations);
     setIsValid([...isValid, true, true, true, true]);
   };
+
+  const handleDeleteEducation = () => {
+    const newEducations = [...educations];
+    newEducations.pop();
+    setEducations(newEducations);
+    setIsValid([...isValid, true, true, true, true]);
+  }
 
   const handleSaveEdits = async () => {
     async function saveEdits(data) {

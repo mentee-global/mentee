@@ -85,16 +85,34 @@
     margin-left: 20px;
 }
 
+.modal-education-delete-container {
+    margin-left: 90%;
+}
+
 .modal-education-add-icon {
     margin-right: 10px;
     font-size: 25px;
     color: #A58123;
 }
 
+.modal-education-delete-icon {
+    margin-left: 3px;
+    margin-top: 3px;
+    font-size: 10px;
+    color: #A62B31;
+}
+
 .modal-education-add-text {
     font-size: 16px;
     text-decoration-line: underline;
     color: #A58123;
+}
+
+.modal-education-delete-text {
+    font-size: 10px;
+    text-decoration-line: underline;
+    color: #A62B31;
+    font-weight: 700;
 }
 
 .input-text {

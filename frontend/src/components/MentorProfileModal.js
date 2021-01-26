@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
+import { UserOutlined, EditFilled, PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
 import { editMentorProfile, uploadMentorImage } from "../utils/api";
 import { getMentorID } from "../utils/auth.service";
@@ -136,6 +136,13 @@ function MentorProfileModal(props) {
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
               />
+            </div>
+            <div
+              className="modal-input-container modal-education-delete-container"
+              onClick={handleDeleteEducation}
+            >
+              <div className="modal-education-delete-text">delete</div>
+              <DeleteOutlined className="modal-education-delete-icon" />
             </div>
           </div>
         </div>
@@ -296,6 +303,16 @@ function MentorProfileModal(props) {
     newValidArray.push(false, false, false, false);
     setIsValid(newValidArray);
   };
+
+  const handleDeleteEducation = () => {
+    const newEducations = [...educations];
+    newEducations.pop();
+    setEducations(newEducations);
+    setEdited(true);
+    const newValidArray = [...isValid];
+    newValidArray.push(false, false, false, false);
+    setIsValid(newValidArray);
+  }
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {

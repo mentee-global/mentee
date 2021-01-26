@@ -4,13 +4,13 @@ import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
 import {
   getCurrentRegistration,
-  hasCurrentRegistration,
+  getRegistrationStage,
   removeRegistration,
   isLoggedIn,
 } from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
 import { PlusCircleFilled } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
+import { LANGUAGES, SPECIALIZATIONS, REGISTRATION_STAGE } from "utils/consts";
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
@@ -39,9 +39,13 @@ function RegisterForm(props) {
 
   useEffect(() => {
     if (isLoggedIn()) {
-      props.history.push("/profile");
-    } else if (!hasCurrentRegistration()) {
+      props.history.push("/appointments");
+    }
+    const registrationStage = getRegistrationStage();
+    if (registrationStage === REGISTRATION_STAGE.START) {
       props.history.push("/register");
+    } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
+      props.history.push("/verify");
     }
   }, [props.history]);
 
@@ -57,7 +61,7 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="School"
+                title="School *"
                 clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
                 index={10 + i * 4}
                 handleClick={handleClick}
@@ -71,7 +75,7 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="End Year/Expected"
+                title="End Year/Expected *"
                 clicked={inputClicked[10 + i * 4 + 1]}
                 index={10 + i * 4 + 1}
                 handleClick={handleClick}
@@ -87,7 +91,7 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="dropdown-multiple"
-                title="Major(s)"
+                title="Major(s) *"
                 clicked={inputClicked[10 + i * 4 + 2]}
                 index={10 + i * 4 + 2}
                 handleClick={handleClick}
@@ -103,7 +107,7 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="Degree"
+                title="Degree *"
                 clicked={inputClicked[10 + i * 4 + 3]}
                 index={10 + i * 4 + 3}
                 handleClick={handleClick}
@@ -240,7 +244,11 @@ function RegisterForm(props) {
     <div className="register-content">
       <div className="register-header">
         <h2>Welcome. Tell us about yourself.</h2>
-        {error && <div className="register-error">Error, try again.</div>}
+        {error && (
+          <div className="register-error">
+            Error or missing fields, try again.
+          </div>
+        )}
         <div>
           {validate && <b style={styles.alertToast}>Missing Fields</b>}
           <Button
@@ -352,7 +360,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Languages"
+            title="Languages *"
             clicked={inputClicked[7]}
             index={7}
             handleClick={handleClick}
@@ -381,7 +389,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Specializations"
+            title="Specializations *"
             clicked={inputClicked[9]}
             index={9}
             handleClick={handleClick}

@@ -1,6 +1,8 @@
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://mentee-h4i.herokuapp.com/"
+    ? process.env.DEPLOYMENT === "prod"
+      ? "https://mentee-h4i.herokuapp.com/"
+      : "https://mentee-dev.herokuapp.com/"
     : "http://localhost:5000/";
 
 export const API_URL = BASE_URL + "api/";

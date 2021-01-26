@@ -62,9 +62,6 @@ function Gallery() {
       <Modal
         onCancel={() => {
           setMobileFilterVisible(false);
-          setSpecializations([]);
-          setQuery("");
-          setLanguages([]);
         }}
         visible={mobileFilterVisible}
         footer={[

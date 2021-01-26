@@ -2,7 +2,11 @@ from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
-from api.utils.constants import APPT_NOTIFICATION_TEMPLATE
+from api.utils.constants import (
+    MENTOR_APPT_TEMPLATE,
+    MENTEE_APPT_TEMPLATE,
+    APPT_TIME_FORMAT,
+)
 
 appointment = Blueprint("appointment", __name__)
 
@@ -60,9 +64,7 @@ def create_appointment():
         return create_response(status=422, message=msg)
 
     if mentor.email_notifications:
-        res_email = send_email(
-            recipient=mentor.email, template_id=APPT_NOTIFICATION_TEMPLATE
-        )
+        res_email = send_email(recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE)
 
         if not res_email:
             msg = "Failed to send an email"
@@ -92,6 +94,16 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
+    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+    res_email = send_email(
+        recipient=appointment.email,
+        subject="Mentee Appointment Notification",
+        data={"name": mentor.name, "date": start_time, "approved": True},
+        template_id=MENTEE_APPT_TEMPLATE,
+    )
+    if not res_email:
+        logger.info("Failed to send email")
+
     mentor.save()
     appointment.save()
 
@@ -107,5 +119,24 @@ def delete_request(appointment_id):
         msg = "The request you attempted to delete was not found"
         logger.info(msg)
         return create_response(status=422, message=msg)
+
+    try:
+        mentor = MentorProfile.objects.get(id=request.mentor_id)
+    except:
+        msg = "No mentor found with that id"
+        logger.info(msg)
+        mentor = False
+
+    if mentor:
+        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+        res_email = send_email(
+            recipient=request.email,
+            subject="Mentee Appointment Notification",
+            data={"name": mentor.name, "date": start_time, "approved": False},
+            template_id=MENTEE_APPT_TEMPLATE,
+        )
+        if not res_email:
+            logger.info("Failed to send email")
+
     request.delete()
     return create_response(status=200, message=f"Success")

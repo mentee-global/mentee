@@ -32,8 +32,22 @@ export const formatAppointments = (data) => {
       description: appointment.message,
       id: appointment._id.$oid,
       name: appointment.name,
-      time: startTime.format("h:m a") + " - " + endTime.format("h:m a"),
+      email: appointment.email,
+      age: appointment.age,
+      date: startTime.format("dddd MMMM Do, YYYY"),
+      time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
+      email: appointment.email,
+      phone_number: appointment.phone_number,
+      languages: appointment.languages,
+      gender: appointment.gender,
+      ethnicity: appointment.ethnicity,
+      location: appointment.location,
+      mentorship_goals: appointment.mentorship_goals,
+      specialist_categories: appointment.specialist_categories,
+      organization: appointment.organization,
+      allow_texts: appointment.allow_texts,
+      allow_calls: appointment.allow_calls,
     };
 
     // This is the only case where we might not have a date for a certain key

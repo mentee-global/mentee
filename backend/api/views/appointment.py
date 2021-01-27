@@ -65,7 +65,7 @@ def create_appointment():
         return create_response(status=422, message=msg)
 
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
-    start_time = date_object.strftime(APPT_TIME_FORMAT)
+    start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
     mentee_email = send_email(
         recipient=new_appointment.email,
         template_id=MENTEE_APPT_TEMPLATE,
@@ -105,7 +105,7 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
-    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
     res_email = send_email(
         recipient=appointment.email,
         subject="Mentee Appointment Notification",
@@ -139,7 +139,7 @@ def delete_request(appointment_id):
         mentor = False
 
     if mentor:
-        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
         res_email = send_email(
             recipient=request.email,
             subject="Mentee Appointment Notification",

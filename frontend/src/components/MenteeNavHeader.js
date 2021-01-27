@@ -29,12 +29,12 @@ function MenteeNavHeader({ history }) {
             />
           </NavLink>
         </div>
-        <div>
+        <div style={{ display: "flex" }}>
           <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}
               theme="light"
-              width="45%"
+              width="100%"
               onVerified={() => {
                 history.push({
                   pathname: "/gallery",
@@ -43,16 +43,17 @@ function MenteeNavHeader({ history }) {
               }}
             />
           </span>
-          <NavLink to="/login">
-            <span className="navigation-header-button">
-              <MenteeButton
-                width="45%"
-                content={
-                  <b>{isLoggedIn() ? "Your Profile" : "Mentor Log In"}</b>
-                }
-              />
-            </span>
-          </NavLink>
+          <span className="navigation-header-button">
+            <MenteeButton
+              width="100%"
+              content={<b>{isLoggedIn() ? "Your Profile" : "Mentor Log In"}</b>}
+              onClick={() => {
+                history.push({
+                  pathname: "/login",
+                });
+              }}
+            />
+          </span>
         </div>
       </div>
     </Header>

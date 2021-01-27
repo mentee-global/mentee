@@ -1,16 +1,19 @@
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
-from api.utils.constants import APPT_NOTIFICATION_TEMPLATE
+from api.utils.constants import (
+    MENTOR_APPT_TEMPLATE,
+    MENTEE_APPT_TEMPLATE,
+    APPT_TIME_FORMAT,
+)
 
 appointment = Blueprint("appointment", __name__)
 
 # GET request for appointments by mentor id
 @appointment.route("/mentor/<string:mentor_id>", methods=["GET"])
 def get_requests_by_mentor(mentor_id):
-    # TODO: Remove this once we have an authentication setup!
-    # Block to remove:
     try:
         mentor = MentorProfile.objects.get(id=mentor_id)
     except:
@@ -18,9 +21,8 @@ def get_requests_by_mentor(mentor_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # End of block
+    # Includes mentor name because appointments page does not fetch all mentor info
     requests = AppointmentRequest.objects(mentor_id=mentor_id)
-    # TODO Remove sending mentor name from this response
     return create_response(data={"mentor_name": mentor.name, "requests": requests})
 
 
@@ -62,12 +64,17 @@ def create_appointment():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
+    start_time = date_object.strftime(APPT_TIME_FORMAT)
+    mentee_email = send_email(
+        recipient=new_appointment.email,
+        template_id=MENTEE_APPT_TEMPLATE,
+        data={"confirmation": True, "name": mentor.name, "date": start_time},
+    )
+
     if mentor.email_notifications:
         mentor_email = send_email(
-            recipient=mentor.email, template_id=APPT_NOTIFICATION_TEMPLATE
-        )
-        mentee_email = send_email(
-            recipient=new_appointment.email, template_id=APPT_NOTIFICATION_TEMPLATE
+            recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
         )
 
         if not mentor_email or not mentee_email:
@@ -98,6 +105,16 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
+    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+    res_email = send_email(
+        recipient=appointment.email,
+        subject="Mentee Appointment Notification",
+        data={"name": mentor.name, "date": start_time, "approved": True},
+        template_id=MENTEE_APPT_TEMPLATE,
+    )
+    if not res_email:
+        logger.info("Failed to send email")
+
     mentor.save()
     appointment.save()
 
@@ -113,5 +130,24 @@ def delete_request(appointment_id):
         msg = "The request you attempted to delete was not found"
         logger.info(msg)
         return create_response(status=422, message=msg)
+
+    try:
+        mentor = MentorProfile.objects.get(id=request.mentor_id)
+    except:
+        msg = "No mentor found with that id"
+        logger.info(msg)
+        mentor = False
+
+    if mentor:
+        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+        res_email = send_email(
+            recipient=request.email,
+            subject="Mentee Appointment Notification",
+            data={"name": mentor.name, "date": start_time, "approved": False},
+            template_id=MENTEE_APPT_TEMPLATE,
+        )
+        if not res_email:
+            logger.info("Failed to send email")
+
     request.delete()
     return create_response(status=200, message=f"Success")

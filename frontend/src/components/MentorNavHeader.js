@@ -3,11 +3,7 @@ import { NavLink } from "react-router-dom";
 import { logout, getMentorID } from "utils/auth.service";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
-import {
-  UserOutlined,
-  BellOutlined,
-  CaretDownOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 import "./css/Navigation.scss";
 

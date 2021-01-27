@@ -2,7 +2,8 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import MenteeVerificationModal from "../MenteeVerificationModal";
 import "../css/Home.scss";
-import Honeycomb from "../../resources/honeycomb.png";
+import Logo from "../../resources/logo.png";
+import Health from "../../resources/focus-for-health.svg";
 
 function Home({ history }) {
   return (
@@ -27,8 +28,13 @@ function Home({ history }) {
             }}
           />
         </div>
-        <img className="home-honeycomb" src={Honeycomb} alt="" />
+        <img className="logo" src={Logo} alt="Adrinka Logo" />
       </div>
+      <img
+        className="focus-for-health"
+        src={Health}
+        alt="Focus for Health Logo"
+      />
     </div>
   );
 }

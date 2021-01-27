@@ -317,6 +317,8 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="textarea"
+            maxRows={3}
+            hasBorder={false}
             title="About"
             clicked={inputClicked[2]}
             index={2}
@@ -325,6 +327,7 @@ function RegisterForm(props) {
             defaultValue={about}
           />
         </div>
+        <div className="divider" />
         <div className="modal-availability-checkbox">
           <Checkbox
             className="modal-availability-checkbox-text"

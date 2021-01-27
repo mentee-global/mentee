@@ -1,12 +1,11 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import MenteeButton from "../MenteeButton";
-
+import { withRouter } from "react-router-dom";
+import MenteeVerificationModal from "../MenteeVerificationModal";
 import "../css/Home.scss";
 import Logo from "../../resources/logo.png";
 import Health from "../../resources/focus-for-health.svg";
 
-function Home() {
+function Home({ history }) {
   return (
     <div className="home-background">
       <div className="home-content">
@@ -18,9 +17,16 @@ function Home() {
             the world.
           </p>
           <br />
-          <NavLink to="/gallery">
-            <MenteeButton theme="dark" content={<b>Find a Mentor</b>} />
-          </NavLink>
+          <MenteeVerificationModal
+            content={<b>Find a Mentor</b>}
+            theme="dark"
+            onVerified={() => {
+              history.push({
+                pathname: "/gallery",
+                state: { verified: true },
+              });
+            }}
+          />
         </div>
         <img className="logo" src={Logo} alt="Adrinka Logo" />
       </div>
@@ -33,4 +39,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default withRouter(Home);

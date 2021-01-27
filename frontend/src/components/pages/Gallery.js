@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
-import { Input, Checkbox } from "antd";
+import { Input, Checkbox, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
-
 import "../css/Gallery.scss";
+import { isLoggedIn } from "utils/auth.service";
+import { useLocation } from "react-router";
 
 function Gallery() {
   const [mentors, setMentors] = useState([]);
   const [specializations, setSpecializations] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
+  const location = useLocation();
+  const verified = location.state && location.state.verified;
 
   useEffect(() => {
     async function getMentors() {
@@ -20,8 +23,10 @@ function Gallery() {
         setMentors(mentor_data);
       }
     }
-    getMentors();
-  }, []);
+    if (verified) {
+      getMentors();
+    }
+  }, [verified]);
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {
     let output = "1-on-1 | virtual";
@@ -38,10 +43,10 @@ function Gallery() {
     return mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
-        specializations.length == 0 ||
+        specializations.length === 0 ||
         specializations.some((s) => mentor.specializations.indexOf(s) >= 0);
       const matchesLanguages =
-        languages.length == 0 ||
+        languages.length === 0 ||
         languages.some((l) => mentor.languages.indexOf(l) >= 0);
       const matchesName =
         !query || mentor.name.toUpperCase().includes(query.toUpperCase());
@@ -50,7 +55,14 @@ function Gallery() {
     });
   }
 
-  return (
+  // Add some kind of error 403 code
+  return !(isLoggedIn() || verified) ? (
+    <Result
+      status="403"
+      title="403"
+      subTitle="Sorry, you are not authorized to access this page."
+    />
+  ) : (
     <div className="gallery-container">
       <div className="gallery-filter-container">
         <div className="gallery-filter-header">Filter By:</div>

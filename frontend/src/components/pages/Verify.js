@@ -3,30 +3,35 @@ import { withRouter } from "react-router-dom";
 import { Input, Button } from "antd";
 import {
   isLoggedIn,
-  hasCurrentRegistration,
+  getRegistrationStage,
   resendVerify,
   verify,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
+import { REGISTRATION_STAGE } from "utils/consts";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
 import "../css/Register.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
-function Verify(props) {
+function Verify({ history }) {
   const [code, setCode] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState(false);
   const [resent, setResent] = useState(false);
 
   useEffect(() => {
-    if (!hasCurrentRegistration()) {
-      props.history.push("/login");
-    } else if (isLoggedIn()) {
-      props.history.push("/appointments");
+    if (isLoggedIn()) {
+      history.push("/appointments");
     }
-  }, [props.history]);
+    const registrationStage = getRegistrationStage();
+    if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
+      history.push("/create-profile");
+    } else if (registrationStage === REGISTRATION_STAGE.START) {
+      history.push("/register");
+    }
+  }, [history]);
 
   return (
     <div className="home-background">
@@ -67,7 +72,7 @@ function Verify(props) {
                 setVerifying(true);
                 const success = await verify(code);
                 if (success) {
-                  props.history.push("/create-profile");
+                  history.push("/create-profile");
                 } else {
                   setError(true);
                   setResent(false);

@@ -4,6 +4,7 @@ import { Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 import {
   LANGUAGES,
   SPECIALIZATIONS,
@@ -16,21 +17,7 @@ import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
 
-// TODO: Temporary constants, fill in later
-const sampleTimes = [
-  "11-12pm",
-  "2-3pm",
-  "3-4pm",
-  "5-6pm",
-  "7-8pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-  "9-10pm",
-];
+const DAY = 24 * 60 * 60 * 1000;
 
 // Form validateMessages sends values here
 const validationMessage = {
@@ -44,6 +31,7 @@ function MenteeAppointmentModal(props) {
   const [form] = Form.useForm();
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
+  const [daySlots, setDaySlots] = useState([]);
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [formModalVisible, setFormModalVisible] = useState(false);
   const numInputs = 11;
@@ -98,12 +86,23 @@ function MenteeAppointmentModal(props) {
     }
   }, [formModalVisible, form]);
 
+  useEffect(() => {
+    let dayList = [];
+    timeSlots.forEach((timeSlot) => {
+      let day = moment(timeSlot.start_time.$date).format("YYYY-MM-DD");
+      if (!dayList.includes(day)) {
+        dayList.push(day);
+      }
+    });
+    setDaySlots(dayList);
+  }, [timeSlots]);
+
   // Update Buttons available
   useEffect(() => {
     let daySlots = [];
-    timeSlots.forEach((element) => {
-      if (moment(element.start_time.$date).format("YYYY-MM-DD") === date) {
-        daySlots.push(element);
+    timeSlots.forEach((timeSlot) => {
+      if (moment(timeSlot.start_time.$date).format("YYYY-MM-DD") === date) {
+        daySlots.push(timeSlot);
       }
     });
     setDayTimeSlots(daySlots);
@@ -178,18 +177,25 @@ function MenteeAppointmentModal(props) {
     await editAvailability(changeTime, mentorID);
   }
 
+  function disabledDate(date) {
+    // disable/return true if date is in the past or not in availability
+    let dateInPast = date && date.valueOf() < Date.now() - DAY;
+    return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
+  }
+
   return (
-    <div>
-      <MenteeButton
-        content="Book Appointment"
-        onClick={() => setCalendarModalVisible(true)}
+    <span>
+      <MenteeVerificationModal
+        content={<b>Book Appointment</b>}
+        style={{ width: "180px" }}
+        onVerified={() => setCalendarModalVisible(true)}
       />
       <Modal
         forceRender
         title="        " // Uses Unicode spaces to get desired heading
         visible={calendarModalVisible}
         onCancel={() => closeModals()}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={null}
       >
@@ -200,13 +206,17 @@ function MenteeAppointmentModal(props) {
               size={80}
               icon={<UserOutlined />}
             />
-            {/* TODO: Replace Bernie Sanders with Mentor Name */}
-            <h3 className="bold">Mentoring Session with Bernie Sanders</h3>
+            <h3 className="bold">Mentoring Session with {props.mentor_name}</h3>
             <h2 className="bold">Select a Date & Time</h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">
             <div className="modal-mentee-appointment-datetime-container-header">
-              <Calendar fullscreen={false} onSelect={handleDateChange} />
+              <Calendar
+                fullscreen={false}
+                onSelect={handleDateChange}
+                // onPanalChange={(v, m) => console.log(v, m)}
+                disabledDate={disabledDate}
+              />
               <div className="modal-mentee-appointment-datetime-header">
                 <div className="modal-mentee-appointment-datetime-text">
                   Select Time
@@ -217,7 +227,7 @@ function MenteeAppointmentModal(props) {
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
-                {dayTimeSlots.map((time, index) => (
+                {dayTimeSlots.map((timeSlot, index) => (
                   <div
                     key={index}
                     className="modal-mentee-appointment-timeslot"
@@ -226,12 +236,13 @@ function MenteeAppointmentModal(props) {
                       key={index}
                       width={170}
                       content={
-                        moment(time.start_time.$date).format("hh:mm A") +
+                        moment(timeSlot.start_time.$date).format("hh:mm A") +
                         "-" +
-                        moment(time.end_time.$date).format("hh:mm A")
+                        moment(timeSlot.end_time.$date).format("hh:mm A")
                       }
                       theme="light"
-                      onClick={() => setTime(time)}
+                      borderOnClick={true}
+                      onClick={() => setTime(timeSlot)}
                     />
                   </div>
                 ))}
@@ -257,7 +268,7 @@ function MenteeAppointmentModal(props) {
         title="Your Information"
         visible={formModalVisible}
         onCancel={closeModals}
-        width="60%"
+        className="appointment-modal"
         style={{ overflow: "hidden" }}
         footer={
           <MenteeButton
@@ -522,7 +533,7 @@ function MenteeAppointmentModal(props) {
           </div>
         </Form>
       </Modal>
-    </div>
+    </span>
   );
 }
 

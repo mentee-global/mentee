@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   EnvironmentOutlined,
   CommentOutlined,
@@ -8,7 +8,6 @@ import {
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
-
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
@@ -65,6 +64,7 @@ function ProfileContent(props) {
         ) : (
           <div className="mentor-profile-button">
             <MenteeAppointmentModal
+              mentor_name={props.mentor.name}
               availability={props.mentor.availability}
               mentor_id={props.id}
             />

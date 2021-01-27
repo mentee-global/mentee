@@ -144,7 +144,7 @@ function MentorProfileModal(props) {
             </div>
             <div
               className="modal-input-container modal-education-delete-container"
-              onClick={handleDeleteEducation}
+              onClick={() => handleDeleteEducation(i)}
             >
               <div className="modal-education-delete-text">delete</div>
               <DeleteOutlined className="modal-education-delete-icon" />
@@ -309,14 +309,13 @@ function MentorProfileModal(props) {
     setIsValid(newValidArray);
   };
 
-  const handleDeleteEducation = () => {
+  const handleDeleteEducation = (educationIndex) => {
     const newEducations = [...educations];
-    newEducations.pop();
+    console.log(educationIndex);
+    newEducations.splice(educationIndex, 1);
+    console.log(newEducations);
     setEducations(newEducations);
     setEdited(true);
-    const newValidArray = [...isValid];
-    newValidArray.push(false, false, false, false);
-    setIsValid(newValidArray);
   };
 
   const handleSaveEdits = () => {

@@ -26,6 +26,7 @@ function MenteeButton(props) {
         border: props.border,
       }}
       onClick={props.onClick}
+      id={props.id}
       loading={props.loading ?? false}
       htmlType={props.htmlType}
       form={props.form}

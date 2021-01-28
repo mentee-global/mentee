@@ -305,7 +305,7 @@ function MentorProfileModal(props) {
     setEdited(true);
 
     const newValidArray = [...isValid];
-    newValidArray.push(false, false, false, false);
+    newValidArray.push(true, true, true, true);
     setIsValid(newValidArray);
   };
 
@@ -316,7 +316,9 @@ function MentorProfileModal(props) {
     setEdited(true);
 
     const newValidArray = [...isValid];
+    console.log(newValidArray);
     newValidArray.splice(10 + educationIndex * 4, 4);
+    console.log(newValidArray);
     setIsValid(newValidArray);
   };
 

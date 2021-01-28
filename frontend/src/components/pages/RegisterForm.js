@@ -67,7 +67,7 @@ function RegisterForm(props) {
                 handleClick={handleClick}
                 onEducationChange={handleSchoolChange}
                 educationIndex={i}
-                defaultValue={education.school}
+                value={education.school}
                 valid={isValid[10 + i * 4]}
                 validate={validate}
               />
@@ -81,7 +81,7 @@ function RegisterForm(props) {
                 handleClick={handleClick}
                 onEducationChange={handleGraduationDateChange}
                 educationIndex={i}
-                defaultValue={education.graduation_year}
+                value={education.graduation_year}
                 valid={isValid[10 + i * 4 + 1]}
                 validate={validate}
               />
@@ -99,7 +99,7 @@ function RegisterForm(props) {
                 educationIndex={i}
                 options={[]}
                 placeholder="Ex. Computer Science, Biology"
-                defaultValue={education.majors}
+                value={education.majors}
                 valid={isValid[10 + i * 4 + 2]}
                 validate={validate}
               />
@@ -114,7 +114,7 @@ function RegisterForm(props) {
                 educationIndex={i}
                 onEducationChange={handleDegreeChange}
                 placeholder="Ex. Bachelor's"
-                defaultValue={education.education_level}
+                value={education.education_level}
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
               />
@@ -291,7 +291,7 @@ function RegisterForm(props) {
               newValid[0] = !!e.target.value;
               setIsValid(newValid);
             }}
-            defaultValue={name}
+            value={name}
             valid={isValid[0]}
             validate={validate}
           />
@@ -308,7 +308,7 @@ function RegisterForm(props) {
               newValid[1] = !!e.target.value;
               setIsValid(newValid);
             }}
-            defaultValue={title}
+            value={title}
             valid={isValid[1]}
             validate={validate}
           />
@@ -324,7 +324,7 @@ function RegisterForm(props) {
             index={2}
             handleClick={handleClick}
             onChange={(e) => setAbout(e.target.value)}
-            defaultValue={about}
+            value={about}
           />
         </div>
         <div className="divider" />
@@ -360,7 +360,7 @@ function RegisterForm(props) {
             index={5}
             handleClick={handleClick}
             onChange={(e) => setLocation(e.target.value)}
-            defaultValue={location}
+            value={location}
           />
           <ModalInput
             style={styles.modalInput}
@@ -370,7 +370,7 @@ function RegisterForm(props) {
             index={6}
             handleClick={handleClick}
             onChange={(e) => setWebsite(e.target.value)}
-            defaultValue={website}
+            value={website}
           />
         </div>
         <div className="modal-input-container">
@@ -387,7 +387,7 @@ function RegisterForm(props) {
             }}
             placeholder="Ex. English, Spanish"
             options={LANGUAGES}
-            defaultValue={languages}
+            value={languages}
             valid={isValid[7]}
             validate={validate}
           />
@@ -399,7 +399,7 @@ function RegisterForm(props) {
             index={8}
             handleClick={handleClick}
             onChange={(e) => setLinkedin(e.target.value)}
-            defaultValue={linkedin}
+            value={linkedin}
           />
         </div>
         <div className="modal-input-container">
@@ -415,7 +415,7 @@ function RegisterForm(props) {
               validateNotEmpty(e, 9);
             }}
             options={SPECIALIZATIONS}
-            defaultValue={specializations}
+            value={specializations}
             valid={isValid[9]}
             validate={validate}
           />

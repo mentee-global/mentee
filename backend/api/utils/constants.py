@@ -1,7 +1,7 @@
 import os
 
 AUTH_URL = (
-    "h4i-mentee-auth.vercel.app"
+    "https://h4i-mentee-auth.vercel.app"
     if os.environ.get("DEPLOYMENT") == "prod"
     else "https://mentee-auth-dev.vercel.app"
 )

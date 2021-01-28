@@ -311,11 +311,13 @@ function MentorProfileModal(props) {
 
   const handleDeleteEducation = (educationIndex) => {
     const newEducations = [...educations];
-    console.log(educationIndex);
     newEducations.splice(educationIndex, 1);
-    console.log(newEducations);
     setEducations(newEducations);
     setEdited(true);
+
+    const newValidArray = [...isValid];
+    newValidArray.splice(10 + educationIndex * 4, 4);
+    setIsValid(newValidArray);
   };
 
   const handleSaveEdits = () => {

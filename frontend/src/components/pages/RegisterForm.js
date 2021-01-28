@@ -213,7 +213,7 @@ function RegisterForm(props) {
     setEducations(newEducations);
 
     const newValidArray = [...isValid];
-    newValidArray.splice(10 + index * 4, 4);
+    newValidArray.splice(10 + educationIndex * 4, 4);
     setIsValid(newValidArray);
   };
 

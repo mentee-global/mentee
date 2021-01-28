@@ -121,7 +121,7 @@ function RegisterForm(props) {
             </div>
             <div
               className="modal-input-container modal-education-delete-container"
-              onClick={handleDeleteEducation}
+              onClick={() => handleDeleteEducation(i)}
             >
               <div className="modal-education-delete-text">delete</div>
               <DeleteOutlined className="modal-education-delete-icon" />
@@ -207,7 +207,7 @@ function RegisterForm(props) {
     setIsValid([...isValid, true, true, true, true]);
   };
 
-  const handleDeleteEducation = () => {
+  const handleDeleteEducation = (educationIndex) => {
     const newEducations = [...educations];
     newEducations.splice(educationIndex, 1);
     setEducations(newEducations);

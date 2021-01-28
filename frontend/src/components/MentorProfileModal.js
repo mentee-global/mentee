@@ -356,6 +356,7 @@ function MentorProfileModal(props) {
       biography: about,
       offers_in_person: inPersonAvailable,
       offers_group_appointments: groupAvailable,
+      location: location,
     };
 
     setSaving(true);

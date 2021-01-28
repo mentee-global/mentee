@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
@@ -63,10 +64,20 @@ def create_appointment():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    if mentor.email_notifications:
-        res_email = send_email(recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE)
+    date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
+    start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
+    mentee_email = send_email(
+        recipient=new_appointment.email,
+        template_id=MENTEE_APPT_TEMPLATE,
+        data={"confirmation": True, "name": mentor.name, "date": start_time},
+    )
 
-        if not res_email:
+    if mentor.email_notifications:
+        mentor_email = send_email(
+            recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
+        )
+
+        if not mentor_email or not mentee_email:
             msg = "Failed to send an email"
             logger.info(msg)
 
@@ -94,7 +105,7 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
-    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
     res_email = send_email(
         recipient=appointment.email,
         subject="Mentee Appointment Notification",
@@ -128,7 +139,7 @@ def delete_request(appointment_id):
         mentor = False
 
     if mentor:
-        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT)
+        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
         res_email = send_email(
             recipient=request.email,
             subject="Mentee Appointment Notification",

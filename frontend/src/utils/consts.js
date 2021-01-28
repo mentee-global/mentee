@@ -12,6 +12,7 @@ export const AUTH_URL = BASE_URL + "auth/";
 export const LANGUAGES = [
   "Arabic",
   "Bengali",
+  "Burmese",
   "Cantonese",
   "English",
   "French",
@@ -19,6 +20,7 @@ export const LANGUAGES = [
   "Hindi",
   "Italian",
   "Japanese",
+  "Karen",
   "Mandarin",
   "Portuguese",
   "Russian",

@@ -209,9 +209,12 @@ function RegisterForm(props) {
 
   const handleDeleteEducation = () => {
     const newEducations = [...educations];
-    newEducations.pop();
+    newEducations.splice(educationIndex, 1);
     setEducations(newEducations);
-    setIsValid([...isValid, true, true, true, true]);
+
+    const newValidArray = [...isValid];
+    newValidArray.splice(10 + index * 4, 4);
+    setIsValid(newValidArray);
   };
 
   const handleSaveEdits = async () => {

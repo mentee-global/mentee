@@ -79,6 +79,5 @@ export const formatAppointments = (data) => {
 
   // We reverse past since we want from most recent to least recent
   output.past.reverse();
-  console.log(output.pending);
   return output;
 };

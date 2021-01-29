@@ -14,6 +14,12 @@ export const formatAppointments = (data) => {
   const appointments = data.requests;
   const now = moment();
 
+  appointments.sort(
+    (a, b) => moment(a.timeslot.start_time.$date).diff(moment(b.timeslot.start_time.$date))
+  )
+
+  let currentDate;
+  let dateIndex = 0;
   let appointment;
   for (appointment of appointments) {
     const timeslot = appointment.timeslot;
@@ -24,96 +30,48 @@ export const formatAppointments = (data) => {
     let keyToInsertAt = "upcoming";
     if (!appointment.accepted && startTime.isSameOrAfter(now)) {
       keyToInsertAt = "pending";
+      dateIndex = 0;
     } else if (startTime.isBefore(now)) {
       keyToInsertAt = "past";
+      dateIndex = 0;
     }
 
     const formattedAppointment = {
       description: appointment.message,
       id: appointment._id.$oid,
       name: appointment.name,
-      time: startTime.format("h:m a") + " - " + endTime.format("h:m a"),
+      time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
     };
 
     // This is the only case where we might not have a date for a certain key
     if (output[keyToInsertAt].length < 1) {
       const dayObject = {
-        isoTime: startTime.format(),
         date: startTime.format("M/D"),
         date_name: startTime.format("ddd"),
         appointments: [formattedAppointment],
       };
       output[keyToInsertAt].push(dayObject);
+      currentDate = startTime;
       continue;
     }
 
-    const idxDayInsertAt = findIdxToInsert(
-      output[keyToInsertAt],
-      startTime,
-      "date"
-    );
-    const dayFound =
-      idxDayInsertAt < output[keyToInsertAt].length
-        ? moment(output[keyToInsertAt][idxDayInsertAt].isoTime)
-        : undefined;
-    // Checks if appointment is in the same day
-    if (dayFound && dayFound.isSame(startTime, "date")) {
-      const idxAppointmentInsert = findIdxToInsert(
-        output[keyToInsertAt].appointments,
-        startTime,
-        "minute"
-      );
-
-      output[keyToInsertAt][idxDayInsertAt]["appointments"].splice(
-        idxAppointmentInsert,
-        0,
-        formattedAppointment
-      );
+    if (currentDate.isSame(startTime, "date")) {
+      output[keyToInsertAt][dateIndex]["appointments"].push(formattedAppointment);
     } else {
       // We will need to make a new day and fit in the current appointment
       const dayObject = {
-        isoTime: startTime.format(),
         date: startTime.format("M/D"),
         date_name: startTime.format("ddd"),
         appointments: [formattedAppointment],
       };
-
-      output[keyToInsertAt].splice(idxDayInsertAt, 0, dayObject);
+      currentDate = startTime;
+      dateIndex++;
+      output[keyToInsertAt].push(dayObject);
     }
   }
 
   // We reverse past since we want from most recent to least recent
   output.past.reverse();
   return output;
-};
-
-const findIdxToInsert = (times, timeToInsert, granularity) => {
-  if (!times) {
-    return 0;
-  }
-
-  let low = 0;
-  let high = times.length - 1;
-  let mid = low;
-  let midDay = moment(times[mid].isoTime);
-
-  // Binary search to get nearest day index to new day
-  while (low < high) {
-    mid = Math.floor((high + low) / 2);
-    midDay = moment(times[mid].isoTime);
-    if (midDay.isSame(timeToInsert, granularity)) {
-      return mid;
-    } else if (midDay.isBefore(timeToInsert, granularity)) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-
-  if (midDay.isBefore(timeToInsert, granularity)) {
-    return mid + 1;
-  } else {
-    return mid;
-  }
 };

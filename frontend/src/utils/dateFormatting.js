@@ -20,12 +20,21 @@ export const formatAppointments = (data) => {
     )
   );
 
-  let dateIndices = {
-    upcoming: 0,
-    pending: 0,
-    past: 0,
+  let appointmentType = {
+    upcoming: {
+      index: 0,
+      dayObject: moment(),
+    },
+    pending: {
+      index: 0,
+      dayObject: moment(),
+    },
+    past: {
+      index: 0,
+      dayObject: moment(),
+    },
   };
-  let currentDate;
+
   let appointment;
   for (appointment of appointments) {
     const timeslot = appointment.timeslot;
@@ -33,12 +42,13 @@ export const formatAppointments = (data) => {
     const startTime = moment(timeslot.start_time.$date);
     const endTime = moment(timeslot.end_time.$date);
 
-    let keyToInsertAt = "upcoming";
+    let currentKey = "upcoming";
     if (!appointment.accepted && startTime.isSameOrAfter(now)) {
-      keyToInsertAt = "pending";
+      currentKey = "pending";
     } else if (startTime.isBefore(now)) {
-      keyToInsertAt = "past";
+      currentKey = "past";
     }
+    let keyInfo = appointmentType[currentKey];
 
     const formattedAppointment = {
       description: appointment.message,
@@ -62,32 +72,29 @@ export const formatAppointments = (data) => {
       allow_calls: appointment.allow_calls,
     };
 
-    // This is the only case where we might not have a date for a certain key
-    if (output[keyToInsertAt].length < 1) {
+    // case where there is no dates at all in current type of appointment
+    if (output[currentKey].length < 1) {
       const dayObject = {
         date: startTime.format("M/D"),
         date_name: startTime.format("ddd"),
         appointments: [formattedAppointment],
       };
-      output[keyToInsertAt].push(dayObject);
-      currentDate = startTime;
-      continue;
-    }
-
-    if (currentDate.isSame(startTime, "date")) {
-      output[keyToInsertAt][dateIndices[keyToInsertAt]]["appointments"].push(
+      output[currentKey].push(dayObject);
+      appointmentType[currentKey].dayObject = startTime;
+    } else if (keyInfo.dayObject.isSame(startTime, "date")) {
+      output[currentKey][keyInfo.index]["appointments"].push(
         formattedAppointment
       );
     } else {
-      // We will need to make a new day and fit in the current appointment
+      // creates a new day since current appointment doesn't fit current day
       const dayObject = {
         date: startTime.format("M/D"),
         date_name: startTime.format("ddd"),
         appointments: [formattedAppointment],
       };
-      currentDate = startTime;
-      dateIndices[keyToInsertAt]++;
-      output[keyToInsertAt].push(dayObject);
+      appointmentType[currentKey].dayObject = startTime;
+      appointmentType[currentKey].index++;
+      output[currentKey].push(dayObject);
     }
   }
 

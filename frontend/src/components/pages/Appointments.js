@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Result } from "antd";
+import { Button, Col, Row, Result } from "antd";
 import {
   ClockCircleOutlined,
-  CheckCircleTwoTone,
-  CloseCircleTwoTone,
   InfoCircleFilled,
   SmileOutlined,
 } from "@ant-design/icons";

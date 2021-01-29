@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import { Input } from "antd";
-import MenteeButton from "../MenteeButton";
-import {
-  hasCurrentRegistration,
-  isLoggedIn,
-  register,
-} from "utils/auth.service";
+import MenteeVerificationModal from "../MenteeVerificationModal";
+import { getRegistrationStage, isLoggedIn, register } from "utils/auth.service";
+import { REGISTRATION_STAGE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 import "../css/Home.scss";
@@ -25,10 +22,14 @@ function Register({ history }) {
   const [inputFocus, setInputFocus] = useState([false, false, false]);
 
   useEffect(() => {
-    if (hasCurrentRegistration()) {
-      history.push("/create-profile");
-    } else if (isLoggedIn()) {
+    if (isLoggedIn()) {
       history.push("/appointments");
+    }
+    const registrationStage = getRegistrationStage();
+    if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
+      history.push("/create-profile");
+    } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
+      history.push("/verify");
     }
   }, [history]);
 
@@ -125,15 +126,15 @@ function Register({ history }) {
           ) : (
             <br />
           )}
-          <div className="login-button">
-            <MenteeButton
-              content={<b>Next</b>}
-              width={"50%"}
-              height={"125%"}
-              loading={saving}
-              onClick={submitForm}
-            />
-          </div>
+          <MenteeVerificationModal
+            content={<b>Next</b>}
+            width="50%"
+            height="125%"
+            loading={saving}
+            onVerified={submitForm}
+            className="login-button"
+            mentor
+          />
           <div className="login-register-container">
             <div>Already have an account?</div>
             <NavLink to="/login" className="login-register-link">

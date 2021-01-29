@@ -1,17 +1,23 @@
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? process.env.DEPLOYMENT === "prod"
-      ? "https://mentee-h4i.herokuapp.com/"
-      : "https://mentee-dev.herokuapp.com/"
+    ? // TODO: add configuration for dev url @ "https://mentee-dev.herokuapp.com/"
+      "https://mentee-h4i.herokuapp.com/"
     : "http://localhost:5000/";
 
 export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
 
+export const REGISTRATION_STAGE = {
+  START: 0,
+  VERIFY_EMAIL: 1,
+  PROFILE_CREATION: 2,
+};
+
 export const LANGUAGES = [
   "Arabic",
   "Bengali",
+  "Burmese",
   "Cantonese",
   "English",
   "French",
@@ -19,6 +25,7 @@ export const LANGUAGES = [
   "Hindi",
   "Italian",
   "Japanese",
+  "Karen",
   "Mandarin",
   "Portuguese",
   "Russian",

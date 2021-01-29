@@ -10,6 +10,7 @@ function ModalInput(props) {
     clicked,
     index,
     educationIndex,
+    hasBorder = true,
     onEducationChange,
     maxRows,
     type,
@@ -42,6 +43,12 @@ function ModalInput(props) {
       ...styles.container,
       ...props.style,
     };
+    if (hasBorder) {
+      style = {
+        ...style,
+        ...styles.border,
+      };
+    }
 
     if (isClicked && valid) {
       style = {
@@ -90,6 +97,7 @@ function ModalInput(props) {
             bordered={false}
             placeholder={placeholder}
             value={props.value}
+            defaultValue={defaultValue}
           />
         );
       case "dropdown-single":
@@ -103,6 +111,7 @@ function ModalInput(props) {
             placeholder="Please select"
             onChange={handleOnChange}
             value={props.value}
+            defaultValue={defaultValue}
           >
             {returnDropdownItems(options)}
           </Select>
@@ -120,6 +129,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             value={props.value}
             tokenSeparators={[","]}
+            defaultValue={defaultValue}
           >
             {returnDropdownItems(options)}
           </Select>
@@ -134,6 +144,7 @@ function ModalInput(props) {
             bordered={false}
             placeholder={placeholder}
             value={props.value}
+            defaultValue={defaultValue}
           />
         );
       default:
@@ -155,6 +166,8 @@ const styles = {
     flexDirection: "column",
     width: "100%",
     backgroundColor: "#FFFDF5",
+  },
+  border: {
     borderBottomStyle: "solid",
     borderBottomWidth: 3,
     borderColor: "#828282",

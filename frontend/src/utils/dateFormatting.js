@@ -44,12 +44,9 @@ export const formatAppointments = (data) => {
       description: appointment.message,
       id: appointment._id.$oid,
       name: appointment.name,
-<<<<<<< HEAD
-=======
       email: appointment.email,
       age: appointment.age,
       date: startTime.format("dddd MMMM Do, YYYY"),
->>>>>>> origin/master
       time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
       email: appointment.email,

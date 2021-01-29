@@ -20,8 +20,11 @@ export const formatAppointments = (data) => {
     )
   );
 
-  // This resets to zero when we switch to a new key since its a new array
-  let dateIndex = 0;
+  let dateIndices = {
+    upcoming: 0,
+    pending: 0,
+    past: 0,
+  };
   let currentDate;
   let appointment;
   for (appointment of appointments) {
@@ -33,10 +36,8 @@ export const formatAppointments = (data) => {
     let keyToInsertAt = "upcoming";
     if (!appointment.accepted && startTime.isSameOrAfter(now)) {
       keyToInsertAt = "pending";
-      dateIndex = 0;
     } else if (startTime.isBefore(now)) {
       keyToInsertAt = "past";
-      dateIndex = 0;
     }
 
     const formattedAppointment = {
@@ -60,7 +61,7 @@ export const formatAppointments = (data) => {
     }
 
     if (currentDate.isSame(startTime, "date")) {
-      output[keyToInsertAt][dateIndex]["appointments"].push(
+      output[keyToInsertAt][dateIndices[keyToInsertAt]]["appointments"].push(
         formattedAppointment
       );
     } else {
@@ -71,12 +72,13 @@ export const formatAppointments = (data) => {
         appointments: [formattedAppointment],
       };
       currentDate = startTime;
-      dateIndex++;
+      dateIndices[keyToInsertAt]++;
       output[keyToInsertAt].push(dayObject);
     }
   }
 
   // We reverse past since we want from most recent to least recent
   output.past.reverse();
+  console.log(output.pending);
   return output;
 };

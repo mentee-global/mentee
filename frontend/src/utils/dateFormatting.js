@@ -14,9 +14,11 @@ export const formatAppointments = (data) => {
   const appointments = data.requests;
   const now = moment();
 
-  appointments.sort(
-    (a, b) => moment(a.timeslot.start_time.$date).diff(moment(b.timeslot.start_time.$date))
-  )
+  appointments.sort((a, b) =>
+    moment(a.timeslot.start_time.$date).diff(
+      moment(b.timeslot.start_time.$date)
+    )
+  );
 
   let currentDate;
   let dateIndex = 0;
@@ -57,7 +59,9 @@ export const formatAppointments = (data) => {
     }
 
     if (currentDate.isSame(startTime, "date")) {
-      output[keyToInsertAt][dateIndex]["appointments"].push(formattedAppointment);
+      output[keyToInsertAt][dateIndex]["appointments"].push(
+        formattedAppointment
+      );
     } else {
       // We will need to make a new day and fit in the current appointment
       const dayObject = {

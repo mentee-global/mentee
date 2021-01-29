@@ -20,8 +20,9 @@ export const formatAppointments = (data) => {
     )
   );
 
-  let currentDate;
+  // This resets to zero when we switch to a new key since its a new array
   let dateIndex = 0;
+  let currentDate;
   let appointment;
   for (appointment of appointments) {
     const timeslot = appointment.timeslot;

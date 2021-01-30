@@ -10,7 +10,7 @@ import "../css/PublicProfile.scss";
 
 function PublicProfile(props) {
   const [mentor, setMentor] = useState({});
-  const [updateContent , setUpdateContent] = useState(false);
+  const [updateContent, setUpdateContent] = useState(false);
 
   useEffect(() => {
     async function getMentor() {
@@ -24,7 +24,7 @@ function PublicProfile(props) {
 
   const handleUpdateMentor = () => {
     setUpdateContent(!updateContent);
-  }
+  };
 
   return (
     <div className="mentor-profile-flexbox">
@@ -34,7 +34,11 @@ function PublicProfile(props) {
           src={mentor.image && mentor.image.url}
           icon={<UserOutlined />}
         />
-        <ProfileContent mentor={mentor} id={props.id} handleUpdateMentor={handleUpdateMentor} />
+        <ProfileContent
+          mentor={mentor}
+          id={props.id}
+          handleUpdateMentor={handleUpdateMentor}
+        />
       </div>
       <div className="mentor-profile-videos">
         <ProfileVideos videos={mentor.videos} />

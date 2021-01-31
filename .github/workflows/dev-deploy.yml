@@ -31,7 +31,7 @@ jobs:
           check-latest: true
       - run: yarn install
       # set CI to false because warnings are treated as errors if CI=true
-      - run: CI=false REACT_APP_STAGE=development yarn run build:dev
+      - run: CI=false REACT_APP_STAGE=development yarn run build
       
       - name: save build artifacts
         uses: actions/upload-artifact@v2

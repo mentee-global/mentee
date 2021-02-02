@@ -176,6 +176,7 @@ function MenteeAppointmentModal(props) {
     // Remove date object from timeslots and update availability
     changeTime.splice(index, 1);
     await editAvailability(changeTime, mentorID);
+    props.handleUpdateMentor();
   }
 
   function disabledDate(date) {

@@ -9,7 +9,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/Home.scss";
 import "../css/Login.scss";
 import "../css/Register.scss";
-import Honeycomb from "../../resources/honeycomb.png";
+import Logo from "../../resources/logo.png";
 
 function Register({ history }) {
   const [email, setEmail] = useState("");
@@ -142,7 +142,7 @@ function Register({ history }) {
             </NavLink>
           </div>
         </div>
-        <img className="home-honeycomb" src={Honeycomb} alt="" />
+        <img className="logo" src={Logo} alt="" />
       </div>
     </div>
   );

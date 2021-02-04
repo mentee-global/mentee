@@ -42,60 +42,13 @@ $
 
 ### Verifying
 
-Install [Postman](https://www.getpostman.com/downloads/) or your app of choice for testing API calls, and [Compass](https://www.mongodb.com/download-center/compass) to view the contents of the database.
+Install [Postman](https://www.getpostman.com/downloads/) or your app of choice for testing API calls, or go onto "collections" on MongoDB Atlas.
 
 Then, make Postman calls to verify that the server works:
-1. `GET localhost:5000/` should return "Hello World"
-2. `POST localhost:5000/persons` with a JSON body (in Postman as raw JSON) of:
-```json
-{
-    "name": "Hack4Impact",
-    "emails": [
-        "hack4impact@illinois.edu",
-        "contact@hack4impact.org",
-        "uiuc@hack4impact.org"
-    ]
-}
-```
-3. `GET localhost:5000/persons` should return a result similar to:
-```json
-{
-  "message": "",
-  "result": {
-    "persons": [
-      {
-        "_id": {
-          "$oid": "5dacf1047d915d954f8e4291"
-        },
-        "emails": [
-          {
-            "email": "hack4impact@illinois.edu"
-          },
-          {
-            "email": "contact@hack4impact.org"
-          },
-          {
-            "email": "uiuc@hack4impact.org"
-          }
-        ],
-        "name": "Hack4Impact"
-      }
-    ]
-  },
-  "success": true
-}
-```
+
+`GET localhost:5000/api/mentors` should return a list of the test mentors we have in the DB.
 
 You can also view the contents of your database by connecting to it in Mongo Compass using the default settings!
-
-## Using Docker
-
-Install [Docker](https://docs.docker.com/get-docker/) if you don't already have it. This app is set up so that you can just run `docker-compose up` and the app will start up for you! This is optional, however- it's not much less effort to run the backend and frontend.
-
-```
-$ sudo dockerd
-$ sudo docker-compose up
-```
 
 ## Repository Contents
 
@@ -134,3 +87,4 @@ find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 - [Relational Databases](https://www.ntu.edu.sg/home/ehchua/programming/sql/Relational_Database_Design.html) - Designing a database schema
 - [REST API](http://www.restapitutorial.com/lessons/restquicktips.html) - tips on making an API Restful
 - [Docker Docs](https://docs.docker.com/get-started/) - Docker docs
+- [SendGrid](https://sendgrid.com/docs/for-developers/) - Documentation For SendGrid

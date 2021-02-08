@@ -1,22 +1,31 @@
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://mentee-h4i.herokuapp.com/"
+    ? // TODO: add configuration for dev url @ "https://mentee-dev.herokuapp.com/"
+      "https://mentee-h4i.herokuapp.com/"
     : "http://localhost:5000/";
 
 export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
 
+export const REGISTRATION_STAGE = {
+  START: 0,
+  VERIFY_EMAIL: 1,
+  PROFILE_CREATION: 2,
+};
+
 export const LANGUAGES = [
   "Arabic",
   "Bengali",
+  "Burmese",
   "Cantonese",
   "English",
   "French",
   "German",
-  "Hindu",
+  "Hindi",
   "Italian",
   "Japanese",
+  "Karen",
   "Mandarin",
   "Portuguese",
   "Russian",
@@ -52,17 +61,7 @@ export const SPECIALIZATIONS = [
   "Other",
 ];
 
-export const GENDERS = ["Male", "Female"];
-
-export const ETHNICITIES = [
-  "American Indian or Alaska Native",
-  "Asian",
-  "Black or African American",
-  "Hispanic or Latino",
-  "Native Hawaiian or Other Pacific Islander",
-  "White",
-  "Other",
-];
+export const GENDERS = ["Male", "Female", "Non-Binary", "Other"];
 
 export const AGES = [
   "Under 18 years",
@@ -73,4 +72,21 @@ export const AGES = [
   "40 to 44",
   "45 to 49",
   "Over 60",
+];
+
+// Keys for fields of Appointments
+export const APPOINTMENT_FORM_KEYS = [
+  "mentor_id",
+  "name",
+  "email",
+  "phone_number",
+  "languages",
+  "age",
+  "gender",
+  "location",
+  "specialist_categories",
+  "message",
+  "organization",
+  "allow_calls",
+  "allow_texts",
 ];

@@ -85,16 +85,34 @@
     margin-left: 20px;
 }
 
+.modal-education-delete-container {
+    margin-left: 90%;
+}
+
 .modal-education-add-icon {
     margin-right: 10px;
     font-size: 25px;
     color: #A58123;
 }
 
+.modal-education-delete-icon {
+    margin-left: 3px;
+    margin-top: 3px;
+    font-size: 10px;
+    color: #A62B31;
+}
+
 .modal-education-add-text {
     font-size: 16px;
     text-decoration-line: underline;
     color: #A58123;
+}
+
+.modal-education-delete-text {
+    font-size: 10px;
+    text-decoration-line: underline;
+    color: #A62B31;
+    font-weight: 700;
 }
 
 .input-text {
@@ -108,4 +126,31 @@
     font-size: 18px;
     font-weight: 500;
     overflow-y: scroll;
+    background-color: inherit;
+}
+
+.divider {
+    margin-top: 50px;
+}
+
+.modal-mentee-appointment-contact-container {
+    display: inline;
+}
+
+
+// This is probably bad coding practice so probably want to replace
+.ant-form-item-has-error{
+    background-color: inherit !important;
+    border-color: inherit !important;
+}
+
+.ant-form-item{
+    margin: 0;
+}
+.ant-input {
+    background-color: inherit !important;
+}
+
+ant-form-item-has-error, .ant-input:focus {
+    box-shadow: none !important;
 }

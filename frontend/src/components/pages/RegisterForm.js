@@ -4,13 +4,13 @@ import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
 import {
   getCurrentRegistration,
-  hasCurrentRegistration,
+  getRegistrationStage,
   removeRegistration,
   isLoggedIn,
 } from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
-import { PlusCircleFilled } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
+import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
+import { LANGUAGES, SPECIALIZATIONS, REGISTRATION_STAGE } from "utils/consts";
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
@@ -39,9 +39,13 @@ function RegisterForm(props) {
 
   useEffect(() => {
     if (isLoggedIn()) {
-      props.history.push("/profile");
-    } else if (!hasCurrentRegistration()) {
+      props.history.push("/appointments");
+    }
+    const registrationStage = getRegistrationStage();
+    if (registrationStage === REGISTRATION_STAGE.START) {
       props.history.push("/register");
+    } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
+      props.history.push("/verify");
     }
   }, [props.history]);
 
@@ -57,13 +61,13 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="School"
+                title="School *"
                 clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
                 index={10 + i * 4}
                 handleClick={handleClick}
                 onEducationChange={handleSchoolChange}
                 educationIndex={i}
-                defaultValue={education.school}
+                value={education.school}
                 valid={isValid[10 + i * 4]}
                 validate={validate}
               />
@@ -71,13 +75,13 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="End Year/Expected"
+                title="End Year/Expected *"
                 clicked={inputClicked[10 + i * 4 + 1]}
                 index={10 + i * 4 + 1}
                 handleClick={handleClick}
                 onEducationChange={handleGraduationDateChange}
                 educationIndex={i}
-                defaultValue={education.graduation_year}
+                value={education.graduation_year}
                 valid={isValid[10 + i * 4 + 1]}
                 validate={validate}
               />
@@ -87,7 +91,7 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="dropdown-multiple"
-                title="Major(s)"
+                title="Major(s) *"
                 clicked={inputClicked[10 + i * 4 + 2]}
                 index={10 + i * 4 + 2}
                 handleClick={handleClick}
@@ -95,7 +99,7 @@ function RegisterForm(props) {
                 educationIndex={i}
                 options={[]}
                 placeholder="Ex. Computer Science, Biology"
-                defaultValue={education.majors}
+                value={education.majors}
                 valid={isValid[10 + i * 4 + 2]}
                 validate={validate}
               />
@@ -103,17 +107,24 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="Degree"
+                title="Degree *"
                 clicked={inputClicked[10 + i * 4 + 3]}
                 index={10 + i * 4 + 3}
                 handleClick={handleClick}
                 educationIndex={i}
                 onEducationChange={handleDegreeChange}
                 placeholder="Ex. Bachelor's"
-                defaultValue={education.education_level}
+                value={education.education_level}
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
               />
+            </div>
+            <div
+              className="modal-input-container modal-education-delete-container"
+              onClick={() => handleDeleteEducation(i)}
+            >
+              <div className="modal-education-delete-text">delete</div>
+              <DeleteOutlined className="modal-education-delete-icon" />
             </div>
           </div>
         </div>
@@ -196,6 +207,16 @@ function RegisterForm(props) {
     setIsValid([...isValid, true, true, true, true]);
   };
 
+  const handleDeleteEducation = (educationIndex) => {
+    const newEducations = [...educations];
+    newEducations.splice(educationIndex, 1);
+    setEducations(newEducations);
+
+    const newValidArray = [...isValid];
+    newValidArray.splice(10 + educationIndex * 4, 4);
+    setIsValid(newValidArray);
+  };
+
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
       const res = await createMentorProfile(data);
@@ -240,7 +261,11 @@ function RegisterForm(props) {
     <div className="register-content">
       <div className="register-header">
         <h2>Welcome. Tell us about yourself.</h2>
-        {error && <div className="register-error">Error, try again.</div>}
+        {error && (
+          <div className="register-error">
+            Error or missing fields, try again.
+          </div>
+        )}
         <div>
           {validate && <b style={styles.alertToast}>Missing Fields</b>}
           <Button
@@ -269,7 +294,7 @@ function RegisterForm(props) {
               newValid[0] = !!e.target.value;
               setIsValid(newValid);
             }}
-            defaultValue={name}
+            value={name}
             valid={isValid[0]}
             validate={validate}
           />
@@ -286,7 +311,7 @@ function RegisterForm(props) {
               newValid[1] = !!e.target.value;
               setIsValid(newValid);
             }}
-            defaultValue={title}
+            value={title}
             valid={isValid[1]}
             validate={validate}
           />
@@ -295,14 +320,17 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="textarea"
+            maxRows={3}
+            hasBorder={false}
             title="About"
             clicked={inputClicked[2]}
             index={2}
             handleClick={handleClick}
             onChange={(e) => setAbout(e.target.value)}
-            defaultValue={about}
+            value={about}
           />
         </div>
+        <div className="divider" />
         <div className="modal-availability-checkbox">
           <Checkbox
             className="modal-availability-checkbox-text"
@@ -335,7 +363,7 @@ function RegisterForm(props) {
             index={5}
             handleClick={handleClick}
             onChange={(e) => setLocation(e.target.value)}
-            defaultValue={location}
+            value={location}
           />
           <ModalInput
             style={styles.modalInput}
@@ -345,14 +373,14 @@ function RegisterForm(props) {
             index={6}
             handleClick={handleClick}
             onChange={(e) => setWebsite(e.target.value)}
-            defaultValue={website}
+            value={website}
           />
         </div>
         <div className="modal-input-container">
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Languages"
+            title="Languages *"
             clicked={inputClicked[7]}
             index={7}
             handleClick={handleClick}
@@ -362,7 +390,7 @@ function RegisterForm(props) {
             }}
             placeholder="Ex. English, Spanish"
             options={LANGUAGES}
-            defaultValue={languages}
+            value={languages}
             valid={isValid[7]}
             validate={validate}
           />
@@ -374,14 +402,14 @@ function RegisterForm(props) {
             index={8}
             handleClick={handleClick}
             onChange={(e) => setLinkedin(e.target.value)}
-            defaultValue={linkedin}
+            value={linkedin}
           />
         </div>
         <div className="modal-input-container">
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Specializations"
+            title="Specializations *"
             clicked={inputClicked[9]}
             index={9}
             handleClick={handleClick}
@@ -390,7 +418,7 @@ function RegisterForm(props) {
               validateNotEmpty(e, 9);
             }}
             options={SPECIALIZATIONS}
-            defaultValue={specializations}
+            value={specializations}
             valid={isValid[9]}
             validate={validate}
           />

@@ -3,11 +3,7 @@ import { NavLink } from "react-router-dom";
 import { logout, getMentorID } from "utils/auth.service";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
-import {
-  UserOutlined,
-  BellOutlined,
-  CaretDownOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 import "./css/Navigation.scss";
 
@@ -34,12 +30,6 @@ function MentorNavHeader() {
       <Menu.Item key="edit-profile">
         <NavLink to="/profile">
           <b>Edit Profile</b>
-        </NavLink>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="settings">
-        <NavLink to="/">
-          <b>Settings</b>
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
@@ -79,11 +69,6 @@ function MentorNavHeader() {
           </>
         )}
       </span>
-      <div className="notification-bell">
-        <NavLink to="/" className="notification-bell">
-          <BellOutlined />
-        </NavLink>
-      </div>
     </Header>
   );
 }

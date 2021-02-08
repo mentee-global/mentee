@@ -1,5 +1,9 @@
 @import "_app";
 
+.appointment-modal {
+    width: 60% !important;
+}
+
 .modal-container {
     display: flex;
     flex-direction: column;
@@ -24,7 +28,7 @@
 .modal-mentee-appointment-heading-container {
     display: flex;
     flex-direction: row;
-    height: 14vh;
+    height: fit-content;
     width: 100%;
     padding: 3%;
     padding-top: 2%;
@@ -58,7 +62,6 @@
     color: $theme-orange-dark;
     font-size: 5vh;
     font-weight: bold;
-    margin-top: -10%;
 }
 
 .modal-mentee-appointment-heading-day {
@@ -113,7 +116,6 @@
 }
 
 .modal-mentee-appointment-contact-container {
-    display: flex;
     flex: 1;
 }
 
@@ -196,11 +198,55 @@
     padding-right: 5%;
     width: 100%;
 }
+.input-text{
+    overflow:hidden;
+}
 
 .bold {
     font-weight: bold;
 }
 
+.ant-picker-calendar-date-value:hover,
+.ant-picker-calendar-date-value:active,
+.ant-picker-calendar-date-value:focus,
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  color: white;
+  background: $theme-orange;
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: $theme-orange;
+}
+
 .ant-switch-checked {
     background: $theme-orange;
 }
+
+@media only screen and (max-width: 1100px) {
+    .appointment-modal {
+        width: 85% !important;
+    }
+}
+
+@media only screen and (max-width: 760px) {
+    .appointment-modal {
+        width: 100% !important;
+    }
+    .modal-container-row {
+        flex-direction: column;
+        height: 100%;
+        margin-bottom: 12px;
+    }
+    .modal-mentee-appointment-info-container {
+        padding: 0px 5%;
+    }
+    .modal-mentee-appointment-profile-icon {
+        margin: 12px 0px;
+    }
+    .modal-mentee-appointment-datetime-container-header {
+        padding-top: 0px;
+    }
+    .flex {
+        flex-direction: column;
+    }
+}   

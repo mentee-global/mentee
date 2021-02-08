@@ -1,10 +1,11 @@
-name: deploy
+name: Deploy to Dev
 
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches:
+      - dev
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -56,6 +57,6 @@ jobs:
         uses: AkhileshNS/heroku-deploy@v3.8.8
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "mentee-h4i"
+          heroku_app_name: "mentee-dev"
           heroku_email: "h4i.mentee.auth@gmail.com"
-          branch: master
+          branch: dev

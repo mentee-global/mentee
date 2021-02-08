@@ -59,7 +59,7 @@ export const createMentorProfile = (profile) => {
 };
 
 export const createAppointment = (appointment) => {
-  const requestExtension = "/appointment";
+  const requestExtension = "/appointment/";
   return instance.post(requestExtension, appointment).then(
     (response) => response,
     (err) => {
@@ -94,6 +94,18 @@ export const getAppointmentsByMentorID = (id) => {
     (response) => response.data.result,
     (err) => {
       console.error(err);
+    }
+  );
+};
+
+export const getIsEmailVerified = (email, password) => {
+  const requestExtension =
+    "/verifyEmail?email=" + email + "&password=" + password;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return err.response.data.result;
     }
   );
 };

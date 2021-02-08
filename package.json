@@ -1,10 +1,12 @@
-
 {
     "scripts": {
         "format:backend": "cd backend && make format",
         "format": "concurrently \"cd frontend && yarn format\" \"yarn format:backend\"",
         "start:backend": "cd backend && make run_server",
-        "start:frontend": "cd frontend && yarn start",
+        "start:frontend": "cd frontend && yarn && yarn start",
         "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\""
+    },
+    "dependencies": {
+        "concurrently": "^5.3.0"
     }
 }

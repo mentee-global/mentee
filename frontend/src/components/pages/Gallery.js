@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
-import { Input, Checkbox, Result } from "antd";
+import { Input, Checkbox, Modal, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
+import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn } from "utils/auth.service";
 import { useLocation } from "react-router";
@@ -13,6 +14,7 @@ function Gallery() {
   const [specializations, setSpecializations] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
+  const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
   const verified = location.state && location.state.verified;
 
@@ -63,49 +65,107 @@ function Gallery() {
       subTitle="Sorry, you are not authorized to access this page."
     />
   ) : (
-    <div className="gallery-container">
-      <div className="gallery-filter-container">
-        <div className="gallery-filter-header">Filter By:</div>
-        <Input
-          placeholder="Search by name"
-          prefix={<SearchOutlined />}
-          style={styles.searchInput}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <div className="gallery-filter-section-title">Specializations</div>
-        <Checkbox.Group
-          defaultValue={specializations}
-          options={SPECIALIZATIONS}
-          onChange={(checked) => setSpecializations(checked)}
-        />
-        <div className="gallery-filter-section-title">Languages</div>
-        <Checkbox.Group
-          defaultValue={languages}
-          options={LANGUAGES}
-          onChange={(checked) => setLanguages(checked)}
-        />
-      </div>
-      <div className="gallery-mentor-container">
-        {getFilteredMentors().map((mentor, key) => (
-          <MentorCard
-            key={key}
-            name={mentor.name}
-            languages={mentor.languages}
-            professional_title={mentor.professional_title}
-            location={mentor.location}
-            specializations={mentor.specializations}
-            website={mentor.website}
-            linkedin={mentor.linkedin}
-            id={mentor._id["$oid"]}
-            lesson_types={getLessonTypes(
-              mentor.offers_group_appointments,
-              mentor.offers_in_person
-            )}
-            image={mentor.image}
+    <>
+      <MenteeButton
+        onClick={() => setMobileFilterVisible(true)}
+        content="Filter"
+        theme="back"
+        id="filter-button"
+      />
+      <Modal
+        onCancel={() => {
+          setMobileFilterVisible(false);
+        }}
+        visible={mobileFilterVisible}
+        footer={[
+          <MenteeButton
+            content="Apply"
+            key="apply"
+            onClick={() => setMobileFilterVisible(false)}
+          />,
+          <MenteeButton
+            content="Cancel"
+            key="cancel"
+            onClick={() => {
+              setMobileFilterVisible(false);
+              setSpecializations([]);
+              setQuery("");
+              setLanguages([]);
+            }}
+          />,
+        ]}
+      >
+        <div className="no-margin gallery-filter-container">
+          <div className="gallery-filter-header">Filter By:</div>
+          <Input
+            placeholder="Search by name"
+            prefix={<SearchOutlined />}
+            style={styles.searchInput}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
           />
-        ))}
+          <div className="gallery-filter-section-title">Specializations</div>
+          <Checkbox.Group
+            defaultValue={specializations}
+            options={SPECIALIZATIONS}
+            onChange={(checked) => setSpecializations(checked)}
+            value={specializations}
+          />
+          <div className="gallery-filter-section-title">Languages</div>
+          <Checkbox.Group
+            defaultValue={languages}
+            options={LANGUAGES}
+            onChange={(checked) => setLanguages(checked)}
+            value={languages}
+          />
+        </div>
+      </Modal>
+
+      <div className="gallery-container">
+        <div className="gallery-filter-container mobile-invisible">
+          <div className="gallery-filter-header">Filter By:</div>
+          <Input
+            placeholder="Search by name"
+            prefix={<SearchOutlined />}
+            style={styles.searchInput}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <div className="gallery-filter-section-title">Specializations</div>
+          <Checkbox.Group
+            defaultValue={specializations}
+            options={SPECIALIZATIONS}
+            onChange={(checked) => setSpecializations(checked)}
+          />
+          <div className="gallery-filter-section-title">Languages</div>
+          <Checkbox.Group
+            defaultValue={languages}
+            options={LANGUAGES}
+            onChange={(checked) => setLanguages(checked)}
+          />
+        </div>
+
+        <div className="gallery-mentor-container">
+          {getFilteredMentors().map((mentor, key) => (
+            <MentorCard
+              key={key}
+              name={mentor.name}
+              languages={mentor.languages}
+              professional_title={mentor.professional_title}
+              location={mentor.location}
+              specializations={mentor.specializations}
+              website={mentor.website}
+              linkedin={mentor.linkedin}
+              id={mentor._id["$oid"]}
+              lesson_types={getLessonTypes(
+                mentor.offers_group_appointments,
+                mentor.offers_in_person
+              )}
+              image={mentor.image}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

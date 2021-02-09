@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import { UserOutlined, EditFilled, PlusCircleFilled } from "@ant-design/icons";
+import {
+  UserOutlined,
+  EditFilled,
+  PlusCircleFilled,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
 import { editMentorProfile, uploadMentorImage } from "../utils/api";
 import { getMentorID } from "../utils/auth.service";
@@ -85,7 +90,7 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onEducationChange={handleSchoolChange}
                 educationIndex={i}
-                defaultValue={education.school}
+                value={education.school}
                 valid={isValid[10 + i * 4]}
                 validate={validate}
               />
@@ -99,7 +104,7 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onEducationChange={handleGraduationDateChange}
                 educationIndex={i}
-                defaultValue={education.graduation_year}
+                value={education.graduation_year}
                 valid={isValid[10 + i * 4 + 1]}
                 validate={validate}
               />
@@ -117,7 +122,7 @@ function MentorProfileModal(props) {
                 educationIndex={i}
                 options={[]}
                 placeholder="Ex. Computer Science, Biology"
-                defaultValue={education.majors}
+                value={education.majors}
                 valid={isValid[10 + i * 4 + 2]}
                 validate={validate}
               />
@@ -132,10 +137,17 @@ function MentorProfileModal(props) {
                 educationIndex={i}
                 onEducationChange={handleDegreeChange}
                 placeholder="Ex. Bachelor's"
-                defaultValue={education.education_level}
+                value={education.education_level}
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
               />
+            </div>
+            <div
+              className="modal-input-container modal-education-delete-container"
+              onClick={() => handleDeleteEducation(i)}
+            >
+              <div className="modal-education-delete-text">delete</div>
+              <DeleteOutlined className="modal-education-delete-icon" />
             </div>
           </div>
         </div>
@@ -293,7 +305,20 @@ function MentorProfileModal(props) {
     setEdited(true);
 
     const newValidArray = [...isValid];
-    newValidArray.push(false, false, false, false);
+    newValidArray.push(true, true, true, true);
+    setIsValid(newValidArray);
+  };
+
+  const handleDeleteEducation = (educationIndex) => {
+    const newEducations = [...educations];
+    newEducations.splice(educationIndex, 1);
+    setEducations(newEducations);
+    setEdited(true);
+
+    const newValidArray = [...isValid];
+    console.log(newValidArray);
+    newValidArray.splice(10 + educationIndex * 4, 4);
+    console.log(newValidArray);
     setIsValid(newValidArray);
   };
 
@@ -333,6 +358,7 @@ function MentorProfileModal(props) {
       biography: about,
       offers_in_person: inPersonAvailable,
       offers_group_appointments: groupAvailable,
+      location: location,
     };
 
     setSaving(true);
@@ -410,7 +436,7 @@ function MentorProfileModal(props) {
                 index={0}
                 handleClick={handleClick}
                 onChange={handleNameChange}
-                defaultValue={name}
+                value={name}
                 valid={isValid[0]}
                 validate={validate}
               />
@@ -422,7 +448,7 @@ function MentorProfileModal(props) {
                 index={1}
                 handleClick={handleClick}
                 onChange={handleTitleChange}
-                defaultValue={title}
+                value={title}
                 valid={isValid[1]}
                 validate={validate}
               />
@@ -431,14 +457,17 @@ function MentorProfileModal(props) {
               <ModalInput
                 style={styles.modalInput}
                 type="textarea"
+                maxRows={3}
+                hasBorder={false}
                 title="About"
                 clicked={inputClicked[2]}
                 index={2}
                 handleClick={handleClick}
                 onChange={handleAboutChange}
-                defaultValue={about}
+                value={about}
               />
             </div>
+            <div className="divider" />
             <div className="modal-availability-checkbox">
               <Checkbox
                 className="modal-availability-checkbox-text"
@@ -471,7 +500,7 @@ function MentorProfileModal(props) {
                 index={5}
                 handleClick={handleClick}
                 onChange={handleLocationChange}
-                defaultValue={location}
+                value={location}
               />
               <ModalInput
                 style={styles.modalInput}
@@ -481,7 +510,7 @@ function MentorProfileModal(props) {
                 index={6}
                 handleClick={handleClick}
                 onChange={handleWebsiteChange}
-                defaultValue={website}
+                value={website}
               />
             </div>
             <div className="modal-input-container">
@@ -495,7 +524,7 @@ function MentorProfileModal(props) {
                 onChange={handleLanguageChange}
                 placeholder="Ex. English, Spanish"
                 options={LANGUAGES}
-                defaultValue={languages}
+                value={languages}
                 valid={isValid[7]}
                 validate={validate}
               />
@@ -507,7 +536,7 @@ function MentorProfileModal(props) {
                 index={8}
                 handleClick={handleClick}
                 onChange={handleLinkedinChange}
-                defaultValue={linkedin}
+                value={linkedin}
               />
             </div>
             <div className="modal-input-container">
@@ -520,7 +549,7 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
                 options={SPECIALIZATIONS}
-                defaultValue={specializations}
+                value={specializations}
                 valid={isValid[9]}
                 validate={validate}
               />

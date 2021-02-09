@@ -1,6 +1,7 @@
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://mentee-h4i.herokuapp.com/"
+    ? // TODO: add configuration for dev url @ "https://mentee-dev.herokuapp.com/"
+      "https://mentee-h4i.herokuapp.com/"
     : "http://localhost:5000/";
 
 export const API_URL = BASE_URL + "api/";
@@ -16,6 +17,7 @@ export const REGISTRATION_STAGE = {
 export const LANGUAGES = [
   "Arabic",
   "Bengali",
+  "Burmese",
   "Cantonese",
   "English",
   "French",
@@ -23,6 +25,7 @@ export const LANGUAGES = [
   "Hindi",
   "Italian",
   "Japanese",
+  "Karen",
   "Mandarin",
   "Portuguese",
   "Russian",

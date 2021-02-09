@@ -18,6 +18,7 @@ import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
 
 const DAY = 24 * 60 * 60 * 1000;
+const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 // Form validateMessages sends values here
 const validationMessage = {
@@ -175,6 +176,7 @@ function MenteeAppointmentModal(props) {
     // Remove date object from timeslots and update availability
     changeTime.splice(index, 1);
     await editAvailability(changeTime, mentorID);
+    props.handleUpdateMentor();
   }
 
   function disabledDate(date) {
@@ -221,9 +223,8 @@ function MenteeAppointmentModal(props) {
                 <div className="modal-mentee-appointment-datetime-text">
                   Select Time
                 </div>
-                {/* TODO: Change CST to timezone value */}
                 <div className="modal-mentee-appointment-datetime-timezone">
-                  CST
+                  {tz}
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
@@ -288,16 +289,16 @@ function MenteeAppointmentModal(props) {
           <div className="modal-container">
             <div className="modal-mentee-appointment-heading-container">
               <div className="modal-mentee-appointment-heading-text">
-                Mentoring Session with Bernie Sanders
+                Mentoring Session with {props.mentor_name}
               </div>
               <div className="modal-mentee-appointment-heading-divider" />
               <div className="modal-mentee-appointment-heading-date-container">
                 <div className="modal-mentee-appointment-heading-date">
-                  10/6
+                  {date}
                 </div>
-                <div className="modal-mentee-appointment-heading-day">
+                {/* <div className="modal-mentee-appointment-heading-day">
                   Tuesday
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="modal-mentee-inner-container">
@@ -467,19 +468,11 @@ function MenteeAppointmentModal(props) {
                     </Form.Item>
                   </div>
                   <div className="modal-mentee-appointment-contact-container">
-                    <Form.Item
-                      name="phone"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your phone number",
-                        },
-                      ]}
-                    >
+                    <Form.Item name="phone">
                       <ModalInput
                         style={styles.contactInput}
                         type="text"
-                        title="Phone Number*"
+                        title="Phone Number"
                         clicked={inputClicked[9]}
                         index={9}
                         handleClick={handleClick}

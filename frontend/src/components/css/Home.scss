@@ -31,7 +31,32 @@
   font-weight: bold;
 }
 
-.home-honeycomb {
+.logo{
   height: 60vh;
   width: 60vh;
+}
+
+.focus-for-health {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  font-size: 18px;
+  width: 40vh
+}
+
+@media only screen and (max-width: 1024px) {
+  .logo{
+    height: 20vh;
+    width: 20vh;
+  }
+  .home-content {
+    height: fit-content;
+  }
+  .home-background {
+    height: 100%;
+    width: 100%;
+  }
+  .home-header {
+    font-size: 5vh;
+  }
 }

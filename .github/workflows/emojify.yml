@@ -1,0 +1,13 @@
+- name: Emojify PR Title
+  # You may pin to the exact commit or the version.
+  # uses: pineapplelol/emojify-pr-title@d5dccd41bb9a238ddbb785eaeb86f93e523ec259
+  uses: pineapplelol/emojify-pr-title@v1.2
+  with:
+    # The GitHub authentication token
+    github-token: ${{ github.token }}
+    # 
+    emoji-list: # optional
+    # 
+    use-emoji-map: # optional
+    # 
+    emoji-map: # optional

@@ -185,6 +185,20 @@ function MenteeAppointmentModal(props) {
     return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
   }
 
+  function isMentorAvailable() {
+    let isAvailable = false;
+    timeSlots.forEach((timeSlot) => {
+      let day = moment(timeSlot.start_time.$date);
+      let currentDate = moment();
+      if (day.isAfter(currentDate)) {
+        isAvailable = true;
+        return true;
+      }
+    });
+
+    return isAvailable;
+  }
+
   return (
     <span>
       <MenteeVerificationModal
@@ -228,25 +242,29 @@ function MenteeAppointmentModal(props) {
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
-                {dayTimeSlots.map((timeSlot, index) => (
-                  <div
-                    key={index}
-                    className="modal-mentee-appointment-timeslot"
-                  >
-                    <MenteeButton
+                {!isMentorAvailable() ? (
+                  <h1>There are no appointments available</h1>
+                ) : (
+                  dayTimeSlots.map((timeSlot, index) => (
+                    <div
                       key={index}
-                      width={170}
-                      content={
-                        moment(timeSlot.start_time.$date).format("hh:mm A") +
-                        "-" +
-                        moment(timeSlot.end_time.$date).format("hh:mm A")
-                      }
-                      theme="light"
-                      borderOnClick={true}
-                      onClick={() => setTime(timeSlot)}
-                    />
-                  </div>
-                ))}
+                      className="modal-mentee-appointment-timeslot"
+                    >
+                      <MenteeButton
+                        key={index}
+                        width={170}
+                        content={
+                          moment(timeSlot.start_time.$date).format("hh:mm A") +
+                          "-" +
+                          moment(timeSlot.end_time.$date).format("hh:mm A")
+                        }
+                        theme="light"
+                        borderOnClick={true}
+                        onClick={() => setTime(timeSlot)}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
             <div className="modal-mentee-appointment-datetime-container-footer">

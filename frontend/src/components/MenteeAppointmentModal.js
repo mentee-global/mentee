@@ -55,6 +55,7 @@ function MenteeAppointmentModal(props) {
   const [message, setMessage] = useState();
   const mentorID = props.mentor_id;
   const [validate, setValidate] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(false);
 
   // useState values
   const values = [
@@ -91,8 +92,14 @@ function MenteeAppointmentModal(props) {
     let dayList = [];
     timeSlots.forEach((timeSlot) => {
       let day = moment(timeSlot.start_time.$date).format("YYYY-MM-DD");
+      let dayTimeObject = moment(timeSlot.start_time.$date);
+      let currentDate = moment();
+
       if (!dayList.includes(day)) {
         dayList.push(day);
+      }
+      if (dayTimeObject.isAfter(currentDate)) {
+        setIsAvailable(true);
       }
     });
     setDaySlots(dayList);
@@ -185,20 +192,6 @@ function MenteeAppointmentModal(props) {
     return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
   }
 
-  function isMentorAvailable() {
-    let isAvailable = false;
-    timeSlots.forEach((timeSlot) => {
-      let day = moment(timeSlot.start_time.$date);
-      let currentDate = moment();
-      if (day.isAfter(currentDate)) {
-        isAvailable = true;
-        return true;
-      }
-    });
-
-    return isAvailable;
-  }
-
   return (
     <span>
       <MenteeVerificationModal
@@ -242,7 +235,7 @@ function MenteeAppointmentModal(props) {
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
-                {!isMentorAvailable() ? (
+                {!isAvailable ? (
                   <h1>There are no appointments available</h1>
                 ) : (
                   dayTimeSlots.map((timeSlot, index) => (

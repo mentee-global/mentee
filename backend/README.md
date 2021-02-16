@@ -135,3 +135,4 @@ find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 - [REST API](http://www.restapitutorial.com/lessons/restquicktips.html) - tips on making an API Restful
 - [Docker Docs](https://docs.docker.com/get-started/) - Docker docs
 - [SendGrid](https://sendgrid.com/docs/for-developers/) - Documentation For SendGrid
+- [Twilio](twilio.com/docs/libraries/python) - Documentation for Twilio

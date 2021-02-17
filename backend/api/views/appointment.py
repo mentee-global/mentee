@@ -78,22 +78,22 @@ def create_appointment():
     )
 
     if mentor.email_notifications:
-        mentor_email = send_email(
+        mentor_email, res_msg = send_email(
             recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
         )
 
         if not mentor_email:
-            msg = "Failed to send an email"
+            msg = "Failed to send an email " + res_msg
             logger.info(msg)
 
     if mentor.text_notifications:
-        res = send_sms(
+        res, res_msg = send_sms(
             text="You received a new appointment request!\nCheckout https://mentee-h4i.herokuapp.com/",
             recipient=mentor.phone_number,
         )
 
         if not res:
-            msg = "Failed to send message"
+            msg = "Failed to send message " + res_msg
             logger.info(msg)
 
     new_appointment.save()

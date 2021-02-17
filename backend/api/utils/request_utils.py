@@ -79,7 +79,7 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
 
 def send_email(
     recipient: str = "", subject: str = "", data: dict = None, template_id: str = ""
-) -> bool:
+) -> Tuple[bool, str]:
     """Sends an email to a specific email address from the official MENTEE email
     :param recipient - a single recipient's email address
     :param subject - subject headline of the email
@@ -119,11 +119,12 @@ def send_email(
         sg = SendGridAPIClient(sendgrid_key)
         sg.send(message)
     except Exception as e:
-        return False
-    return True
+        return False, str(e)
+
+    return True, ""
 
 
-def send_sms(text: str = "", recipient: str = "") -> bool:
+def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
     """Send an SMS using Twilio from the provided phone number in .env
     :param text - this is the body of the text message
     :param recipient - so far this is only limited to US/CA phone numbers
@@ -133,10 +134,10 @@ def send_sms(text: str = "", recipient: str = "") -> bool:
     https://www.twilio.com/console
     """
     if not recipient or not text:
-        return False
+        return False, "Empty recipient number or text"
     try:
         res = twilio_client.messages.create(body=text, from_=twilio_phone, to=recipient)
     except Exception as e:
-        return False
+        return False, str(e)
 
-    return True
+    return True, ""

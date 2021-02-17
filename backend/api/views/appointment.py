@@ -49,7 +49,7 @@ def download_appointments():
     worksheet = writer.sheets["Appointments"]
     format = workbook.add_format()
     format.set_bg_color('#eeeeee')
-    worksheet.set_column(0,9,28)
+    worksheet.set_column(0,15,28)
 
     writer.close()
     output.seek(0)

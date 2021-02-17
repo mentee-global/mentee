@@ -124,6 +124,14 @@ def send_email(
 
 
 def send_sms(text: str = "", recipient: str = "") -> bool:
+    """Send an SMS using Twilio from the provided phone number in .env
+    :param text - this is the body of the text message
+    :param recipient - so far this is only limited to US/CA phone numbers
+    :returns boolean if successfully send a message
+
+    Check out here to see the account details of Twilio
+    https://www.twilio.com/console
+    """
     if not recipient or not text:
         return False
     try:

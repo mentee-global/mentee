@@ -78,7 +78,6 @@ def create_app(test_config=None):
     app.register_blueprint(appointment.appointment, url_prefix="/api/appointment")
     app.register_blueprint(availability.availability, url_prefix="/api/availability")
     app.register_blueprint(verify.verify, url_prefix="/api")
-
     # register error handlers
     @app.errorhandler(404)
     def not_found(e):

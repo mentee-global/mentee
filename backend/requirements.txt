@@ -11,3 +11,5 @@ pymongo[srv]
 python-dotenv
 wtforms-JSON
 sendgrid
+pandas
+xlsxwriter

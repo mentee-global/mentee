@@ -1,8 +1,5 @@
-import pandas as pd
-import xlsxwriter
-from io import BytesIO
 from datetime import datetime
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
@@ -49,7 +46,7 @@ def download_appointments():
     worksheet = writer.sheets["Appointments"]
     format = workbook.add_format()
     format.set_bg_color('#eeeeee')
-    worksheet.set_column(0,15,28)
+    worksheet.set_column(0,len(appts[0]),28)
 
     writer.close()
     output.seek(0)

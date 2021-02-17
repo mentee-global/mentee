@@ -103,6 +103,9 @@ def send_email(
      - Changing Sender Email
         - https://sendgrid.com/docs/ui/sending-email/sender-verification/
     """
+    if not recipient:
+        return False, "Missing recipient email"
+
     message = Mail(
         from_email=sender_email,
         to_emails=recipient,

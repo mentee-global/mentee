@@ -71,11 +71,15 @@ def create_appointment():
 
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
-    mentee_email = send_email(
+
+    mentee_email, res_msg = send_email(
         recipient=new_appointment.email,
         template_id=MENTEE_APPT_TEMPLATE,
         data={"confirmation": True, "name": mentor.name, "date": start_time},
     )
+    if not mentee_email:
+        msg = "Failed to send mentee email " + res_msg
+        logger.info(msg)
 
     if mentor.email_notifications:
         mentor_email, res_msg = send_email(

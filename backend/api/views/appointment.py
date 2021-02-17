@@ -2,7 +2,12 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
+from api.utils.request_utils import (
+    ApppointmentForm,
+    is_invalid_form,
+    send_email,
+    send_sms,
+)
 from api.utils.constants import (
     MENTOR_APPT_TEMPLATE,
     MENTEE_APPT_TEMPLATE,
@@ -77,8 +82,18 @@ def create_appointment():
             recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
         )
 
-        if not mentor_email or not mentee_email:
+        if not mentor_email:
             msg = "Failed to send an email"
+            logger.info(msg)
+
+    if mentor.text_notifications:
+        res = send_sms(
+            text="You received a new appointment request!\nCheckout https://mentee-h4i.herokuapp.com/",
+            recipient=mentor.phone_number,
+        )
+
+        if not res:
+            msg = "Failed to send message"
             logger.info(msg)
 
     new_appointment.save()

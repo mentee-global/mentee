@@ -7,6 +7,7 @@ import wtforms_json
 from typing import Tuple
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from twilio.rest import Client
 from .flask_imgur import Imgur
 
 wtforms_json.init()
@@ -15,8 +16,12 @@ imgur_key = os.environ.get("IMGUR_KEY")
 imgur_client = Imgur(client_id=imgur_key)
 
 sendgrid_key = os.environ.get("SENDGRID_API_KEY")
-
 sender_email = os.environ.get("SENDER_EMAIL")
+
+twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID")
+twilio_token = os.environ.get("TWILIO_AUTH_TOKEN")
+twilio_phone = os.environ.get("TWILIO_PHONE")
+twilio_client = Client(twilio_sid, twilio_token)
 
 
 class EducationForm(Form):
@@ -115,4 +120,15 @@ def send_email(
         sg.send(message)
     except Exception as e:
         return False
+    return True
+
+
+def send_sms(text: str = "", recipient: str = "") -> bool:
+    if not recipient or not text:
+        return False
+    try:
+        res = twilio_client.messages.create(body=text, from_=twilio_phone, to=recipient)
+    except Exception as e:
+        return False
+
     return True

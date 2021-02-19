@@ -23,6 +23,7 @@ const VideoSubmit = (props) => {
         >
           <Form.Item
             name="title"
+            className="video-submit-input"
             rules={[
               {
                 required: true,
@@ -30,10 +31,11 @@ const VideoSubmit = (props) => {
               },
             ]}
           >
-            <Input placeholder="Video Title" />
+            <Input placeholder="Video Title (e.g. 'Welcome!', 'How to do taxes')" />
           </Form.Item>
           <Form.Item
             name="url"
+            className="video-submit-input"
             rules={[
               {
                 required: true,
@@ -45,6 +47,7 @@ const VideoSubmit = (props) => {
           </Form.Item>
           <Form.Item
             name="tag"
+            className="video-submit-input"
             rules={[
               {
                 required: true,
@@ -52,11 +55,14 @@ const VideoSubmit = (props) => {
               },
             ]}
           >
-            <Select placeholder="Specializations">
+            <Select
+              placeholder="Specializations"
+              className="video-submit-input"
+            >
               {formatDropdownItems(SPECIALIZATIONS)}
             </Select>
           </Form.Item>
-          <Form.Item>
+          <Form.Item className="video-submit-input">
             <Button type="primary" htmlType="submit">
               Submit
             </Button>

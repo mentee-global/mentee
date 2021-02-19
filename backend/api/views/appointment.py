@@ -26,6 +26,12 @@ def get_requests_by_mentor(mentor_id):
     return create_response(data={"mentor_name": mentor.name, "requests": requests})
 
 
+# GET request for appointments by mentor name
+
+# GET request for appointments by mentee name
+
+# GET # of appointments by mentor id or name?
+
 # POST request for Mentee Appointment
 @appointment.route("/", methods=["POST"])
 def create_appointment():

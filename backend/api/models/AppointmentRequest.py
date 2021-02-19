@@ -23,7 +23,7 @@ class AppointmentRequest(Document, Mixin):
     organization = StringField(required=True)
     allow_texts = BooleanField(required=True)
     allow_calls = BooleanField(required=True)
-3
+
     def __repr__(self):
         return f"""<AppointmentRequest mentor_id: {self.mentor_id}
                 \n timeslot: {self.timeslot}

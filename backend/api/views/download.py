@@ -35,7 +35,7 @@ def download_appointments():
     output.seek(0)
 
     try:
-        return send_file(output, attachment_filename="appts.xlsx", as_attachment=True)
+        return send_file(output, attachment_filename="appointments.xlsx", as_attachment=True)
     except FileNotFoundError:
         msg = "Download failed"
         logger.info(msg)
@@ -72,5 +72,9 @@ def download_accounts_info():
     writer.close()
     output.seek(0)
 
-    return send_file(output, attachment_filename="accounts.xlsx", as_attachment=True)
-
+    try:
+        return send_file(output, attachment_filename="accounts.xlsx", as_attachment=True)
+    except FileNotFoundError:
+        msg = "Download failed"
+        logger.info(msg)
+        return create_response(status=422, message=msg)

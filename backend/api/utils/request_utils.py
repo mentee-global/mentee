@@ -7,7 +7,7 @@ import wtforms_json
 from typing import Tuple
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from twilio.rest import Client
+from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
 
 wtforms_json.init()
@@ -21,7 +21,7 @@ sender_email = os.environ.get("SENDER_EMAIL")
 twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID")
 twilio_token = os.environ.get("TWILIO_AUTH_TOKEN")
 twilio_phone = os.environ.get("TWILIO_PHONE")
-twilio_client = Client(twilio_sid, twilio_token)
+twilio_client = TwilioClient(twilio_sid, twilio_token)
 
 
 class EducationForm(Form):

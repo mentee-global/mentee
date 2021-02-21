@@ -26,12 +26,6 @@ def get_requests_by_mentor(mentor_id):
     return create_response(data={"mentor_name": mentor.name, "requests": requests})
 
 
-# GET request for appointments by mentor name
-
-# GET request for appointments by mentee name
-
-# GET # of appointments by mentor id or name?
-
 # POST request for Mentee Appointment
 @appointment.route("/", methods=["POST"])
 def create_appointment():
@@ -157,3 +151,20 @@ def delete_request(appointment_id):
 
     request.delete()
     return create_response(status=200, message=f"Success")
+
+
+# GET all appointments per mentor
+@appointment.route("/mentors", methods=["GET"])
+def get_mentors_appointments():
+    mentors = MentorProfile.objects.only("id", "name")
+    appointments = AppointmentRequest.objects()
+
+    data = {}
+    for mentor in mentors:
+        data[mentor.name] = [
+            appointment
+            for appointment in appointments
+            if appointment.mentor_id == mentor.id
+        ]
+
+    return create_response(data=data, status=200, message="Success")

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "backend"
 packages = [
-  {include = "scripts"},
+    { include = "api" },
 ]
 version = "0.1.0"
 description = ""

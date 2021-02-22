@@ -1,5 +1,8 @@
 [tool.poetry]
 name = "backend"
+packages = [
+  {include = "scripts"},
+]
 version = "0.1.0"
 description = ""
 authors = ["kenetec <klhester3@gmail.com>"]

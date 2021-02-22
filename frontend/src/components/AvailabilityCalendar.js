@@ -1,8 +1,10 @@
 import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
-import { Calendar, Modal, Badge } from "antd";
+import { Calendar, Modal, Badge, DatePicker } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
+import { Input } from 'antd';
+
 import MenteeButton from "./MenteeButton.js";
 import "./css/AvailabilityCalendar.scss";
 import { getMentorID } from "utils/auth.service";
@@ -237,7 +239,7 @@ function AvailabilityCalendar() {
           {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">
-                <TextField
+                <Input
                   value={timeSlot[0][0].format("HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
                   className="timeslot"
@@ -250,7 +252,7 @@ function AvailabilityCalendar() {
                   }}
                 />
                 <h1 className="timeslot"> - </h1>
-                <TextField
+                <Input
                   value={timeSlot[0][1].format("HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
                   className="timeslots"

@@ -67,6 +67,7 @@ function ProfileContent(props) {
               mentor_name={props.mentor.name}
               availability={props.mentor.availability}
               mentor_id={props.id}
+              handleUpdateMentor={props.handleUpdateMentor}
             />
           </div>
         )}

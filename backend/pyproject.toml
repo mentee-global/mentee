@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["kenetec <klhester3@gmail.com>"]
+
+[tool.poetry.scripts]
+start = "scripts:runserver"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+flask-mongoengine = ">=0.9.5"
+gunicorn = ">=19.7.1"
+mongoengine = ">=0.18.2"
+Flask-Cors = ">=3.0.6"
+Flask-Migrate = "==2.1.1"
+Flask-Script = "==2.0.6"
+Flask = ">=1.0.2"
+python-dotenv = "^0.15.0"
+WTForms-JSON = "^0.3.3"
+sendgrid = "^6.6.0"
+pymongo = "^3.11.3"
+requests = "^2.25.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

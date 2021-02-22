@@ -1,26 +1,10 @@
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
-from api import create_app
-from api.models import db
+from subprocess import check_call
 
-# sets up the app
-app = create_app()
-
-manager = Manager(app)
-migrate = Migrate(app, db)
-
-# adds the python manage.py db init, db migrate, db upgrade commands
-manager.add_command("db", MigrateCommand)
-
-def runserver():
-    app.run(debug=True, host="0.0.0.0", port=5000)
+def runserver() -> None:
+    check_call(["python", "manage.py", "runserver"])
 
 def runprod():
-    app.run(debug=True, host="0.0.0.0")
+    check_call(["python", "manage.py", "runprod"])
 
 def runworker():
-    app.run(debug=False)
-
-
-if __name__ == "__main__":
-    manager.run()
+    check_call(["python", "manage.py", "runworker"])

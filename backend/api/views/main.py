@@ -97,7 +97,7 @@ def edit_mentor(id):
         return create_response(status=422, message=msg)
 
     res = edit_profile(data, mentor)
-    if not res
+    if not res:
         msg = "couldn't update profile"
         return create_response(status=500, message=msg)
 

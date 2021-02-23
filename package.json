@@ -5,6 +5,9 @@
         "format": "concurrently \"cd frontend && yarn format\" \"yarn format:backend\"",
         "start:backend": "cd backend && poetry export -f requirements.txt --output ../requirements.txt && poetry run start",
         "start:frontend": "cd frontend && yarn start",
-        "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\""
+        "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\"",
+        "setup:backend": "cd backend && poetry install",
+        "setup:frontend": "cd frontend && yarn",
+        "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\""
     }
 }

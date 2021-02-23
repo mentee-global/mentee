@@ -1,4 +1,4 @@
-# Flask Boilerplate
+# Flask Backend
 
 This is based off of [Flask Boilerplate](https://github.com/tko22/flask-boilerplate), but repurposed for MongoDB using MongoEngine.
 
@@ -18,26 +18,16 @@ Replace the `[xxx]` with your own credentials.
 
 ### Server Setup
 
-Make sure you have [Python3](https://realpython.com/installing-python/) and `pip3` installed.
+Make sure you have [Python3](https://realpython.com/installing-python/) and [Poetry](https://python-poetry.org/) installed.
 
-Start your virtual environment:
+Install packages:
 
 ```
-$ pip3 install virtualenv
-$ virtualenv venv
-$ source venv/bin/activate
+$ poetry install
 ```
-Now, install the python dependencies and run the server:
+To run the server:
 ```
-(venv) $ pip install -r requirements.txt
-(venv) $ pip install -r requirements-dev.txt
-(venv) $ python manage.py runserver
-```
-
-To exit the virtual environment:
-```
-(venv) $ deactivate
-$
+$ poetry run start
 ```
 
 ### Verifying
@@ -88,7 +78,7 @@ Then, make Postman calls to verify that the server works:
 
 You can also view the contents of your database by connecting to it in Mongo Compass using the default settings!
 
-## Using Docker
+## Using Docker **NOT SUPPORTED**
 
 Install [Docker](https://docs.docker.com/get-docker/) if you don't already have it. This app is set up so that you can just run `docker-compose up` and the app will start up for you! This is optional, however- it's not much less effort to run the backend and frontend.
 

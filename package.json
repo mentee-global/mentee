@@ -3,7 +3,7 @@
     "scripts": {
         "format:backend": "cd backend && poetry run format",
         "format": "concurrently \"cd frontend && yarn format\" \"yarn format:backend\"",
-        "start:backend": "cd backend && poetry export -f requirements.txt --output ../requirements.txt && poetry run start",
+        "start:backend": "cd backend && poetry export -f requirements.txt --output requirements.txt && poetry export -f requirements.txt --output ../requirements.txt && poetry run start",
         "start:frontend": "cd frontend && yarn start",
         "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\"",
         "setup:backend": "cd backend && poetry install",

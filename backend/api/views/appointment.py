@@ -25,6 +25,7 @@ def get_requests_by_mentor(mentor_id):
     requests = AppointmentRequest.objects(mentor_id=mentor_id)
     return create_response(data={"mentor_name": mentor.name, "requests": requests})
 
+
 # POST request for Mentee Appointment
 @appointment.route("/", methods=["POST"])
 def create_appointment():

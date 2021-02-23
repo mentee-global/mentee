@@ -9,28 +9,25 @@ class MenteeProfile(Document, Mixin):
     """"Mentee Profile Collection."""
 
     name = StringField(required=True)
+    gender = StringField(required=True)
     location = StringField()
+    age = StringField(required=True)
     email = StringField(required=True)
     phone_number = StringField()
-    professional_title = StringField(required=True)
     linkedin = StringField()
     website = StringField()
     image = EmbeddedDocumentField(Image)
     education = ListField(EmbeddedDocumentField(Education))
     languages = ListField(StringField(), required=True)
-    specializations = ListField(StringField(), required=True)
+    specialist_categories = ListField(StringField(), required=True)
     biography = StringField(required=False)
-    offers_in_person = BooleanField(required=True)
-    offers_group_appointments = BooleanField(required=True)
-    videos = ListField(EmbeddedDocumentField(Video))
-    availability = ListField(EmbeddedDocumentField(Availability))
+    organization = StringField(required=True)
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)
 
     def __repr__(self):
-        return f"""<MenteeProfile user_id:{self.id} \n name: {self.name} 
-                \n professional title: {self.professional_title} 
+        return f"""<MenteeProfile user_id:{self.id} \n name: {self.name}
+                \n age: {self.age} gender: {self.gender}
+                \n organization: {self.organization} 
                 \n linkedin: {self.linkedin} \n website: {self.website}
-                \n image: {self.image} \n biography: {self.biography} 
-                \n offers_in_person: {self.offers_in_person} 
-                \n offers_group_appointments: {self.offers_group_appointments}>"""
+                \n image: {self.image} \n biography: {self.biography}"""

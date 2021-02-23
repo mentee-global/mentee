@@ -41,24 +41,24 @@ def download_appointments():
                 int(appt.allow_texts),
             ]
         )
-    columns=[
-            "mentor name",
-            "mentor email",
-            "timeslot.start_time",
-            "timeslot.end_time",
-            "accepted",
-            "name",
-            "email",
-            "phone_number",
-            "languages",
-            "age",
-            "gender",
-            "location",
-            "specialist_categories",
-            "message",
-            "organization",
-            "allow_calls",
-            "allow_texts",
+    columns = [
+        "mentor name",
+        "mentor email",
+        "timeslot.start_time",
+        "timeslot.end_time",
+        "accepted",
+        "name",
+        "email",
+        "phone_number",
+        "languages",
+        "age",
+        "gender",
+        "location",
+        "specialist_categories",
+        "message",
+        "organization",
+        "allow_calls",
+        "allow_texts",
     ]
     return generate_sheet("appointments", appts, columns)
 
@@ -115,33 +115,31 @@ def download_accounts_info():
                 int(acct.email_notifications),
             ]
         )
-    columns=[
-            "mentor name",
-            "location",
-            "email",
-            "phone_number",
-            "professional_title",
-            "linkedin",
-            "website",
-            "image url",
-            "video(s) up",
-            "educations",
-            "languages",
-            "specializations",
-            "biography",
-            "offers_in_person",
-            "offers_group_appointments",
-            "available times",
-            "text_notifications",
-            "email_notifications",
+    columns = [
+        "mentor name",
+        "location",
+        "email",
+        "phone_number",
+        "professional_title",
+        "linkedin",
+        "website",
+        "image url",
+        "video(s) up",
+        "educations",
+        "languages",
+        "specializations",
+        "biography",
+        "offers_in_person",
+        "offers_group_appointments",
+        "available times",
+        "text_notifications",
+        "email_notifications",
     ]
     return generate_sheet("accounts", accts, columns)
 
+
 def generate_sheet(sheet_name, row_data, columns):
-    df = pd.DataFrame(
-        row_data,
-        columns=columns
-    )
+    df = pd.DataFrame(row_data, columns=columns)
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine="xlsxwriter")
 
@@ -159,7 +157,9 @@ def generate_sheet(sheet_name, row_data, columns):
 
     try:
         return send_file(
-            output, attachment_filename="{0}.xlsx".format(sheet_name), as_attachment=True
+            output,
+            attachment_filename="{0}.xlsx".format(sheet_name),
+            as_attachment=True,
         )
     except FileNotFoundError:
         msg = "Download failed"

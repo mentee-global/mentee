@@ -96,55 +96,11 @@ def edit_mentor(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # Edit fields or keep original data if no added data
-    mentor.name = data.get("name", mentor.name)
-    mentor.professional_title = data.get(
-        "professional_title", mentor.professional_title
-    )
-    mentor.location = data.get("location", mentor.location)
-    mentor.email = data.get("email", mentor.email)
-    mentor.phone_number = data.get("phone_number", mentor.phone_number)
-    mentor.specializations = data.get("specializations", mentor.specializations)
-    mentor.languages = data.get("languages", mentor.languages)
-    mentor.offers_group_appointments = data.get(
-        "offers_group_appointments", mentor.offers_group_appointments
-    )
-    mentor.offers_in_person = data.get("offers_in_person", mentor.offers_in_person)
-    mentor.biography = data.get("biography", mentor.biography)
-    mentor.linkedin = data.get("linkedin", mentor.linkedin)
-    mentor.website = data.get("website", mentor.website)
-    mentor.text_notifications = data.get(
-        "text_notifications", mentor.text_notifications
-    )
-    mentor.email_notifications = data.get(
-        "email_notifications", mentor.email_notifications
-    )
-
-    # Create education object
-    if "education" in data:
-        education_data = data.get("education")
-        mentor.education = [
-            Education(
-                education_level=education.get("education_level"),
-                majors=education.get("majors"),
-                school=education.get("school"),
-                graduation_year=education.get("graduation_year"),
-            )
-            for education in education_data
-        ]
-
-    # Create video objects for each item in list
-    if "videos" in data:
-        video_data = data.get("videos")
-        mentor.videos = [
-            Video(
-                title=video.get("title"),
-                url=video.get("url"),
-                tag=video.get("tag"),
-                date_uploaded=video.get("date_uploaded"),
-            )
-            for video in video_data
-        ]
+    res = edit_profile(data, mentor)
+    if not res
+        msg = "couldn't update profile"
+        return create_response(status=500, message=msg)
+    
 
     mentor.save()
 

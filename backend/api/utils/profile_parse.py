@@ -92,6 +92,69 @@ def new_profile(data: dict = {}, profile_type: str = ""):
     return new_profile
 
 
-def edit_profile(data: dict = {}, account_type: str = ""):
-    if not data or not account_type:
+def edit_profile(data: dict = {}, profile: object = None):
+    if not data or not profile:
         return None
+
+    if isinstance(profile, MentorProfile):
+        # Edit fields or keep original data if no added data
+        profile.professional_title = data.get(
+            "professional_title", profile.professional_title
+        )
+        profile.specializations = data.get("specializations", profile.specializations)
+        profile.offers_group_appointments = data.get(
+            "offers_group_appointments", profile.offers_group_appointments
+        )
+        profile.offers_in_person = data.get(
+            "offers_in_person", profile.offers_in_person
+        )
+
+        # Create video objects for each item in list
+        if "videos" in data:
+            video_data = data.get("videos")
+            profile.videos = [
+                Video(
+                    title=video.get("title"),
+                    url=video.get("url"),
+                    tag=video.get("tag"),
+                    date_uploaded=video.get("date_uploaded"),
+                )
+                for video in video_data
+            ]
+    elif isinstance(profile, MenteeProfile):
+        profile.age = data.get("age", profile.age)
+        profile.gender = data.get("gender", profile.gender)
+        profile.organization = data.get("organization", profile.organization)
+        profile.specialist_categories = data.get(
+            "specialist_categories", profile.specialist_categories
+        )
+
+    profile.name = data.get("name", profile.name)
+    profile.location = data.get("location", profile.location)
+    profile.email = data.get("email", profile.email)
+    profile.phone_number = data.get("phone_number", profile.phone_number)
+    profile.languages = data.get("languages", profile.languages)
+    profile.biography = data.get("biography", profile.biography)
+    profile.linkedin = data.get("linkedin", profile.linkedin)
+    profile.website = data.get("website", profile.website)
+    profile.text_notifications = data.get(
+        "text_notifications", profile.text_notifications
+    )
+    profile.email_notifications = data.get(
+        "email_notifications", profile.email_notifications
+    )
+
+    # Create education object
+    if "education" in data:
+        education_data = data.get("education")
+        profile.education = [
+            Education(
+                education_level=education.get("education_level"),
+                majors=education.get("majors"),
+                school=education.get("school"),
+                graduation_year=education.get("graduation_year"),
+            )
+            for education in education_data
+        ]
+
+    return profile

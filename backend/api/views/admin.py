@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from api.core import create_response, serialize_list, logger
-from api.models import (db, MentorProfile)
+from api.models import (db, MentorProfile, AdminEmails)
+import csv
+import io
 
 admin = Blueprint("admin", __name__) # initialize blueprint
 
@@ -22,8 +24,21 @@ def delete_mentor(mentor_id):
 
 
 
-@admin.route("/upload", methods=["POST"])
+@admin.route("/upload", methods=["GET", "POST"])
 def upload_emails():
     f = request.files['fileupload']  #make sure frontend matches!
-    fstring = f.read()
-    csv_dicts = [{k: v for k, v in row.items()} for row in csv.DictReader(fstring.splitlines(), skipinitialspace=True)]
+    #fstring = f.read("r")
+    #with io.TextIOWrapper(request.files["fileupload"], encoding="utf-8", newline='\n') as fstring:
+    #    reader = csv.reader(fstring, delimiter='\n')  
+    #reader = csv.reader(fstring, delimiter="\n")
+
+    with io.TextIOWrapper(open(f, "r"), encoding="utf-8", newline='\n') as fstring:
+	    reader = csv.reader(fstring, delimiter="\n")
+
+    emails = []
+    for line in reader:
+        print(line)
+        emails.append(line)
+    mentor_emails = AdminEmails(emails = emails)
+    mentor_emails.save()
+    return create_response(status=200, message="Successful")

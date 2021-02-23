@@ -6,6 +6,7 @@ from api.models import (
     Education,
     Video,
     MentorProfile,
+    MenteeProfile,
     AppointmentRequest,
     Users,
     Image,
@@ -18,6 +19,7 @@ from api.utils.request_utils import (
     is_invalid_form,
     imgur_client,
 )
+from api.utils.profile_parse import new_profile, edit_profile
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -26,6 +28,13 @@ main = Blueprint("main", __name__)  # initialize blueprint
 def get_mentors():
     mentors = MentorProfile.objects().exclude("availability", "videos")
     return create_response(data={"mentors": mentors})
+
+
+# GET request for /mentees
+@main.route("/mentees", methods=["GET"])
+def get_mentees():
+    mentees = MenteeProfile.objects()
+    return create_response(data={"mentees": mentees})
 
 
 # GET request for specific mentor based on id
@@ -40,6 +49,18 @@ def get_mentor(mentor_id):
     return create_response(data={"mentor": mentor})
 
 
+# GET request for specific mentee based on id
+@main.route("/mentee/<string:mentee_id>", methods=["GET"])
+def get_mentee(mentee_id):
+    try:
+        mentee = MenteeProfile.objects.get(id=mentee_id)
+    except:
+        msg = "No mentee currently exists with ID " + mentee_id
+        logger.info(msg)
+        return create_response(data={"mentee": mentee})
+    return create_response(date={"mentee": mentee})
+
+
 # POST request for a new mentor profile
 @main.route("/mentor", methods=["POST"])
 def create_mentor_profile():
@@ -51,63 +72,9 @@ def create_mentor_profile():
         return create_response(status=422, message=msg)
 
     user = Users.objects.get(id=data["user_id"])
-    email = user.email
+    data["email"] = user.email
 
-    new_mentor = MentorProfile(
-        user_id=ObjectId(data["user_id"]),
-        name=data["name"],
-        email=email,
-        professional_title=data["professional_title"],
-        languages=data["languages"],
-        specializations=data["specializations"],
-        offers_in_person=data["offers_in_person"],
-        offers_group_appointments=data["offers_group_appointments"],
-        email_notifications=data.get("email_notifications", True),
-        text_notifications=data.get("text_notifications", True),
-    )
-
-    new_mentor.website = data.get("website")
-    new_mentor.linkedin = data.get("linkedin")
-    new_mentor.biography = data.get("biography")
-    new_mentor.phone_number = data.get("phone_number")
-    new_mentor.location = data.get("location")
-
-    if "education" in data:
-        new_mentor.education = []
-        education_data = data["education"]
-
-        for education in education_data:
-            validate_education = EducationForm.from_json(education)
-
-            msg, is_invalid = is_invalid_form(validate_education)
-            if is_invalid:
-                return create_response(status=422, message=msg)
-
-            new_education = Education(
-                education_level=education["education_level"],
-                majors=education["majors"],
-                school=education["school"],
-                graduation_year=education["graduation_year"],
-            )
-            new_mentor.education.append(new_education)
-
-    if "videos" in data:
-        videos_data = data["videos"]
-
-        for video in videos_data:
-            validate_video = VideoForm.from_json(video)
-
-            msg, is_invalid = is_invalid_form(validate_video)
-            if is_invalid:
-                return create_response(status=422, message=msg)
-
-            new_video = Video(
-                title=video["title"],
-                url=video["url"],
-                tag=video["tag"],
-                date_uploaded=video["date_uploaded"],
-            )
-            new_mentor.videos.append(new_video)
+    new_mentor = new_profile(data=data, profile_type="mentor")
 
     new_mentor.save()
     return create_response(

@@ -100,7 +100,6 @@ def edit_mentor(id):
     if not res
         msg = "couldn't update profile"
         return create_response(status=500, message=msg)
-    
 
     mentor.save()
 

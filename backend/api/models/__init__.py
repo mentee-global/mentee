@@ -10,6 +10,7 @@ from .Image import Image
 from .MentorProfile import MentorProfile
 from .AppointmentRequest import AppointmentRequest
 from .VerifiedEmail import VerifiedEmail
+from .MenteeProfile import MenteeProfile
 
 __all__ = [
     "db",
@@ -21,6 +22,7 @@ __all__ = [
     "AppointmentRequest",
     "Image",
     "VerifiedEmail",
+    "MenteeProfile"
 ]
 
 # You must import all of the new Models you create to this page

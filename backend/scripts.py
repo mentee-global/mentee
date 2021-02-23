@@ -8,3 +8,9 @@ def runprod():
 
 def runworker():
     check_call(["python", "manage.py", "runworker"])
+
+def format():
+    check_call(["black", "api/"])
+    check_call(["black", "tests/"])
+    check_call(["black", "manage.py"])
+    check_call(["black", "index.py"])

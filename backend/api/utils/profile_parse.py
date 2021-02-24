@@ -1,14 +1,5 @@
 from bson import ObjectId
-from api.models import (
-    db,
-    Education,
-    Video,
-    MentorProfile,
-    MenteeProfile,
-    AppointmentRequest,
-    Users,
-    Image,
-)
+from api.models import db, Education, Video, MentorProfile, MenteeProfile, Image
 from api.utils.request_utils import imgur_client
 
 
@@ -32,22 +23,16 @@ def new_profile(data: dict = {}, profile_type: str = ""):
         )
 
         if "videos" in data:
-            videos_data = data["videos"]
-
-            for video in videos_data:
-                validate_video = VideoForm.from_json(video)
-
-                msg, is_invalid = is_invalid_form(validate_video)
-                if is_invalid:
-                    return create_response(status=422, message=msg)
-
-                new_video = Video(
+            video_data = data.get("videos")
+            new_profile.videos = [
+                Video(
                     title=video["title"],
                     url=video["url"],
                     tag=video["tag"],
                     date_uploaded=video["date_uploaded"],
                 )
-                new_profile.videos.append(new_video)
+                for video in video_data
+            ]
     elif profile_type == "mentee":
         new_profile = MenteeProfile(
             name=data["name"],
@@ -61,6 +46,7 @@ def new_profile(data: dict = {}, profile_type: str = ""):
             gender=data["gender"],
         )
     else:
+        # There is not match with mentee/mentor
         return None
 
     new_profile.languages = data["languages"]
@@ -71,30 +57,23 @@ def new_profile(data: dict = {}, profile_type: str = ""):
     new_profile.location = data.get("location")
 
     if "education" in data:
-        new_profile.education = []
-        education_data = data["education"]
-
-        for education in education_data:
-            validate_education = EducationForm.from_json(education)
-
-            msg, is_invalid = is_invalid_form(validate_education)
-            if is_invalid:
-                return create_response(status=422, message=msg)
-
-            new_education = Education(
-                education_level=education["education_level"],
-                majors=education["majors"],
-                school=education["school"],
-                graduation_year=education["graduation_year"],
+        education_data = data.get("education")
+        new_profile.education = [
+            Education(
+                education_level=education.get("education_level"),
+                majors=education.get("majors"),
+                school=education.get("school"),
+                graduation_year=education.get("graduation_year"),
             )
-            new_profile.education.append(new_education)
+            for education in education_data
+        ]
 
     return new_profile
 
 
 def edit_profile(data: dict = {}, profile: object = None):
     if not data or not profile:
-        return None
+        return False
 
     if isinstance(profile, MentorProfile):
         # Edit fields or keep original data if no added data
@@ -157,4 +136,4 @@ def edit_profile(data: dict = {}, profile: object = None):
             for education in education_data
         ]
 
-    return profile
+    return True

@@ -54,7 +54,7 @@ def get_mentee(mentee_id):
         msg = "No mentee currently exists with ID " + mentee_id
         logger.info(msg)
         return create_response(data={"mentee": mentee})
-    return create_response(date={"mentee": mentee})
+    return create_response(data={"mentee": mentee})
 
 
 # POST request for a new mentor profile

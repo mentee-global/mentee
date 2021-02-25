@@ -11,7 +11,7 @@ class MenteeProfile(Document, Mixin):
     name = StringField(required=True)
     gender = StringField(required=True)
     location = StringField()
-    age = StringField(required=True)
+    age = IntField(required=True)
     email = StringField(required=True)
     phone_number = StringField()
     linkedin = StringField()

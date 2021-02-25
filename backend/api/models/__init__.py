@@ -22,7 +22,7 @@ __all__ = [
     "AppointmentRequest",
     "Image",
     "VerifiedEmail",
-    "AdminEmails"
+    "AdminEmails",
 ]
 
 # You must import all of the new Models you create to this page

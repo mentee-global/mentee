@@ -27,6 +27,7 @@ def get_mentors():
     mentors = MentorProfile.objects().exclude("availability", "videos")
     return create_response(data={"mentors": mentors})
 
+
 # GET request for specific mentor based on id
 @main.route("/mentor/<string:mentor_id>", methods=["GET"])
 def get_mentor(mentor_id):

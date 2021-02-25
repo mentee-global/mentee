@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.core import create_response, serialize_list, logger
-from api.models import (db, MentorProfile, AdminEmails)
+from api.models import db, MentorProfile, AdminEmails
 import csv
 import io
 
@@ -23,22 +23,31 @@ def delete_mentor(mentor_id):
 
 
 
-
 @admin.route("/upload", methods=["GET", "POST"])
 def upload_emails():
-    f = request.files['fileupload']  #make sure frontend matches!
-    #fstring = f.read("r")
-    #with io.TextIOWrapper(request.files["fileupload"], encoding="utf-8", newline='\n') as fstring:
-    #    reader = csv.reader(fstring, delimiter='\n')  
-    #reader = csv.reader(fstring, delimiter="\n")
+    if request.method == "GET":
+        uploads = AdminEmails.objects()
+        return create_response(data={"emails": uploads})
 
-    with io.TextIOWrapper(open(f, "r"), encoding="utf-8", newline='\n') as fstring:
-	    reader = csv.reader(fstring, delimiter="\n")
+    f = request.files['fileupload']
+    
 
-    emails = []
-    for line in reader:
-        print(line)
-        emails.append(line)
-    mentor_emails = AdminEmails(emails = emails)
-    mentor_emails.save()
-    return create_response(status=200, message="Successful")
+    with io.TextIOWrapper(f, encoding="utf-8", newline='\n') as fstring:
+        reader = csv.reader(fstring, delimiter="\n")
+        emails = []
+        for line in reader:
+            print(line)
+            emails.append(line[0])
+
+    uploaded_emails = AdminEmails(
+        emails=emails,
+    )
+    uploaded_emails.save()
+    return create_response(status=200, message="success")
+
+@admin.route("/upload", methods=["DELETE"])
+def delete_uploaded_emails():
+    uploaded_files = AdminEmails.objects()
+    for f in uploaded_files:
+        f.delete()
+    return create_response(status=200, message="Successful deletion")

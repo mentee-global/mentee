@@ -4,6 +4,15 @@ from api.utils.request_utils import imgur_client
 
 
 def new_profile(data: dict = {}, profile_type: str = ""):
+    """Parses data given by POST request
+
+    Args:
+        data (dict): POST Data. Defaults to {}.
+        profile_type (str): Type of account parsing to. Defaults to "".
+
+    Returns:
+        MongoDB Model: Depending on type it returns the respective model object
+    """
     if not data or not profile_type:
         return None
 
@@ -72,6 +81,15 @@ def new_profile(data: dict = {}, profile_type: str = ""):
 
 
 def edit_profile(data: dict = {}, profile: object = None):
+    """PUT Request Parsing
+
+    Args:
+        data (dict, optional): PUT Request data. Defaults to {}.
+        profile (MongoDB Model, optional): Edits the model in place. Defaults to None.
+
+    Returns:
+        Boolean: True if successful otherwise false
+    """
     if not data or not profile:
         return False
 

@@ -34,7 +34,7 @@ def delete_application(email):
 @apply.route("/<string:email>", methods=["PUT"])
 def edit_application(email):
     data = request.get_json()
-
+    logger.info(data)
     # Try to retrieve Mentor application from database
     try:
         application = MentorApplication.objects.get(email=email)
@@ -45,6 +45,7 @@ def edit_application(email):
 
     # Edit fields or keep original data if no added data
     application.name = data.get("name", application.name)
+    application.email = data.get("email", application.email)
     application.buisness_number = data.get("buisness_number", application.buisness_number)
     application.cell_number = data.get("cell_number", application.cell_number)
     application.hear_about_us = data.get("hear_about_us", application.hear_about_us)
@@ -65,6 +66,5 @@ def edit_application(email):
     application.languages = data.get("languages", application.languages)
 
     application.save()
-
     return create_response(status=200, message=f"Success")
 

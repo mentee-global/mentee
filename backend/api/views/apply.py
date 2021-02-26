@@ -5,15 +5,16 @@ from api.core import create_response, serialize_list, logger
 apply = Blueprint("apply", __name__)
 
 # GET request for mentor applications by email 
-@apply.route("/application/<string:email>", methods=["GET"])
-def get_application_by_email(email):
-    try:
-        application = MentorApplication.objects.get(email=email)
-    except:
-        msg = "No application currently exist with this email " + email
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-
+@apply.route("/<id>", methods=["GET"])
+def get_application_by_email(id):
+   # logger.info(email)
+    # try:
+    #     application = MentorApplication.objects.get(id=id)
+    # except:
+    #     msg = "No application currently exist with this email " + id
+    #     logger.info(msg)
+    #     return create_response(status=422, message=msg)
+    application = MentorApplication.objects.get(id=id)
     return create_response(data={"mentor_application": application})
 
 # DELETE request for mentor application by email
@@ -30,7 +31,7 @@ def delete_application(email):
     return create_response(status=200, message=f"Success")
 
 # PUT requests for /application
-@apply.route("/application/<string:email>", methods=["PUT"])
+@apply.route("/<string:email>", methods=["PUT"])
 def edit_application(email):
     data = request.get_json()
 

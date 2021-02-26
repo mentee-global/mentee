@@ -8,14 +8,14 @@ class MentorApplication(EmbeddedDocument, Mixin):
     email = StringField(required=True)
     name = StringField(required=True)
     cell_number = StringField(required=True)
-    business_number = StringField()
+    buisness_number = StringField()
     hear_about_us = StringField(required=True)
     offer_donation = BooleanField(required=True)
     mentoring_options = ListField(StringField(), required=True)
     employer_name = StringField(required=True)
     work_sectors = ListField(StringField(), required=True)
     role_description = StringField(required=True)
-    time_at_current_company = BooleanField(required=True)
+    time_at_current_company = StringField(required=True)
     linkedin = StringField(required=True)
     why_join_mentee = StringField(required=True)
     commit_time = StringField(required=True)
@@ -29,7 +29,7 @@ class MentorApplication(EmbeddedDocument, Mixin):
     def __repr__(self):
         return f"""<Mentor Application email: {self.email}
                 \n name: {self.name}
-                \n buisness_number: {self.business_number}
+                \n buisness_number: {self.buisness_number}
                 \n cell_number: {self.cell_number}
                 \n hear_about_us: {self.hear_about_us}
                 \n offer_donation: {self.offer_donation}

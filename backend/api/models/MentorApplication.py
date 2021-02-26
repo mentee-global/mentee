@@ -3,7 +3,7 @@ from .base import db
 from mongoengine import *
 
 
-class MentorApplication(EmbeddedDocument, Mixin):
+class MentorApplication(Document, Mixin):
     """Model for mentor application."""
     email = StringField(required=True)
     name = StringField(required=True)

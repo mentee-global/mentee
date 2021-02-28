@@ -19,25 +19,44 @@ def delete_mentor(mentor_id):
     return create_response(status=200, message="Successful deletion")
 
 
-@admin.route("/upload", methods=["GET", "POST"])
-def upload_emails():
+@admin.route("/upload/mentors", methods=["GET", "POST"])
+def upload_mentor_emails():
     if request.method == "GET":
-        uploads = AdminEmails.objects()
-        return create_response(data={"emails": uploads})
+        uploads = AdminEmails.objects().get(is_mentor=True)
+        return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
-        emails = []
         for line in reader:
-            print(line)
-            emails.append(line[0])
+            email = AdminEmails(email=line[0], is_mentor=True)
+            email.save()
 
-    uploaded_emails = AdminEmails(
-        emails=emails,
-    )
-    uploaded_emails.save()
+    return create_response(status=200, message="success")
+
+@admin.route("/upload/mentees", methods=["GET", "POST"])
+def upload_mentee_emails():
+    if request.method == "GET":
+        uploads = AdminEmails.objects().get(is_mentor=False)
+        return create_response(data={"uploads": uploads})
+
+    f = request.files["fileupload"]
+
+    with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
+        reader = csv.reader(fstring, delimiter="\n")
+        is_email = True
+        address = None
+        password = None
+        for line in reader:
+            if (is_email):
+                address = line[0]
+            else:
+                password = line[0]
+                email = AdminEmails(email=address, password=password, is_mentor=False)
+                email.save()
+            is_email = not is_email
+
     return create_response(status=200, message="success")
 
 

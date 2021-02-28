@@ -35,6 +35,7 @@ def upload_mentor_emails():
 
     return create_response(status=200, message="success")
 
+
 @admin.route("/upload/mentees", methods=["GET", "POST"])
 def upload_mentee_emails():
     if request.method == "GET":
@@ -49,7 +50,7 @@ def upload_mentee_emails():
         address = None
         password = None
         for line in reader:
-            if (is_email):
+            if is_email:
                 address = line[0]
             else:
                 password = line[0]

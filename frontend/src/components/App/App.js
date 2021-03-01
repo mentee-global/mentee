@@ -78,6 +78,18 @@ function App() {
           <Navigation content={<RegisterForm />} needsAuth={false} />
         )}
       />
+      <Route
+        path="/manage-users"
+        component={() => <Navigation content={<div />} needsAuth={true} />}
+      />
+      <Route
+        path="/account-data"
+        component={() => <Navigation content={<div />} needsAuth={true} />}
+      />
+      <Route
+        path="/all-appointments"
+        component={() => <Navigation content={<div />} needsAuth={true} />}
+      />
     </Router>
   );
 }

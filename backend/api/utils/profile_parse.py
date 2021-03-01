@@ -31,6 +31,9 @@ def new_profile(data: dict = {}, profile_type: str = ""):
             text_notifications=data.get("text_notifications", True),
         )
 
+        new_profile.website = data.get("website")
+        new_profile.linkedin = data.get("linkedin")
+
         if "videos" in data:
             video_data = data.get("videos")
             new_profile.videos = [
@@ -47,7 +50,6 @@ def new_profile(data: dict = {}, profile_type: str = ""):
             name=data["name"],
             # TODO: Change this to the actual email and remove default
             email=data.get("email", "email@gmail.com"),
-            specialist_categories=data["specialist_categories"],
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", True),
             organization=data["organization"],
@@ -59,8 +61,6 @@ def new_profile(data: dict = {}, profile_type: str = ""):
         return None
 
     new_profile.languages = data["languages"]
-    new_profile.website = data.get("website")
-    new_profile.linkedin = data.get("linkedin")
     new_profile.biography = data.get("biography")
     new_profile.phone_number = data.get("phone_number")
     new_profile.location = data.get("location")
@@ -105,6 +105,8 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.offers_in_person = data.get(
             "offers_in_person", profile.offers_in_person
         )
+        profile.linkedin = data.get("linkedin", profile.linkedin)
+        profile.website = data.get("website", profile.website)
 
         # Create video objects for each item in list
         if "videos" in data:
@@ -122,9 +124,6 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.age = data.get("age", profile.age)
         profile.gender = data.get("gender", profile.gender)
         profile.organization = data.get("organization", profile.organization)
-        profile.specialist_categories = data.get(
-            "specialist_categories", profile.specialist_categories
-        )
 
     profile.name = data.get("name", profile.name)
     profile.location = data.get("location", profile.location)
@@ -132,8 +131,6 @@ def edit_profile(data: dict = {}, profile: object = None):
     profile.phone_number = data.get("phone_number", profile.phone_number)
     profile.languages = data.get("languages", profile.languages)
     profile.biography = data.get("biography", profile.biography)
-    profile.linkedin = data.get("linkedin", profile.linkedin)
-    profile.website = data.get("website", profile.website)
     profile.text_notifications = data.get(
         "text_notifications", profile.text_notifications
     )

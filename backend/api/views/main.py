@@ -12,6 +12,8 @@ from api.core import create_response, logger
 from api.utils.request_utils import (
     MentorForm,
     MenteeForm,
+    EducationForm,
+    VideoForm,
     is_invalid_form,
     imgur_client,
 )

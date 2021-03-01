@@ -15,7 +15,7 @@ const { Content } = Layout;
 function Navigation(props) {
   const history = useHistory();
   // Set this to false and connect to backend
-  const [isAdmin, setIsAdmin] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(true);
 
   useEffect(() => {
     if (props.needsAuth && !isLoggedIn()) {
@@ -29,8 +29,11 @@ function Navigation(props) {
         {props.needsAuth ? <MentorNavHeader /> : <MenteeNavHeader />}
         {props.needsAuth ? (
           <Layout>
-            {isAdmin ? <AdminSidebar/> : <NavigationSidebar selectedPage={props.page} />
-            }
+            {isAdmin ? (
+              <AdminSidebar />
+            ) : (
+              <NavigationSidebar selectedPage={props.page} />
+            )}
             <Content className="navigation-content">{props.content}</Content>
           </Layout>
         ) : (

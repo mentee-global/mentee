@@ -1,10 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import {
-  TeamOutlined,
-  DatabaseOutlined
-} from "@ant-design/icons";
+import { TeamOutlined, DatabaseOutlined } from "@ant-design/icons";
 
 import "./css/Navigation.scss";
 
@@ -17,28 +14,26 @@ const pages = {
     name: "Manage Users",
     path: "/manage-users",
     icon: <TeamOutlined />,
-    isSubMenu: false
+    isSubMenu: false,
   },
   reports: {
     name: "Reports",
     isSubMenu: true,
     icon: <DatabaseOutlined />,
     items: {
-        accountData: {
-            name: "Account Data",
-            path: "/account-data"
-          },
-          allAppointments: {
-            name: "All Appointments",
-            path: "/all-appointments"
-          }
-    }
-  }
+      accountData: {
+        name: "Account Data",
+        path: "/account-data",
+      },
+      allAppointments: {
+        name: "All Appointments",
+        path: "/all-appointments",
+      },
+    },
+  },
 };
 
-const subMenus = [
-    'reports'
-]
+const subMenus = ["reports"];
 
 function AdminSidebar(props) {
   const getMenuItemStyle = (page) => {
@@ -49,40 +44,54 @@ function AdminSidebar(props) {
 
   return (
     <Sider theme="light" className="navigation-sidebar">
-      <Menu theme="light" mode="inline" style={{ marginTop: "20%" }} defaultOpenKeys={subMenus}>
+      <Menu
+        theme="light"
+        mode="inline"
+        style={{ marginTop: "20%" }}
+        defaultOpenKeys={subMenus}
+      >
         {Object.keys(pages).map((page) => {
-            if (pages[page]["isSubMenu"]) {
-                let subItems = pages[page]["items"];
-                return (
-                    <SubMenu key={page} theme="light" icon={pages[page]["icon"]} title={pages[page]["name"]}>
-                        {Object.keys(subItems).map((subPage) => (
-                    <Menu.Item
-                      key={subPage}
-                      className={getMenuItemStyle(subPage)}
-                      style={menuItemMarginOverride}
-                      icon={subItems[subPage]["icon"]}
+          if (pages[page]["isSubMenu"]) {
+            let subItems = pages[page]["items"];
+            return (
+              <SubMenu
+                className="navigation-submenu"
+                key={page}
+                theme="light"
+                icon={pages[page]["icon"]}
+                title={pages[page]["name"]}
+              >
+                {Object.keys(subItems).map((subPage) => (
+                  <Menu.Item
+                    key={subPage}
+                    className={getMenuItemStyle(subPage)}
+                    style={menuItemMarginOverride}
+                    icon={subItems[subPage]["icon"]}
+                  >
+                    <NavLink
+                      to={subItems[subPage]["path"]}
+                      style={{ color: "black" }}
                     >
-                      <NavLink to={subItems[subPage]["path"]} style={{ color: "black" }}>
-                        {subItems[subPage]["name"]}
-                      </NavLink>
-                    </Menu.Item>
-                  ))}
-                    </SubMenu>
-                )
-            } else {
-                return (
-                    <Menu.Item
-                      key={page}
-                      className={getMenuItemStyle(page)}
-                      style={menuItemMarginOverride}
-                      icon={pages[page]["icon"]}
-                    >
-                      <NavLink to={pages[page]["path"]} style={{ color: "black" }}>
-                        {pages[page]["name"]}
-                      </NavLink>
-                    </Menu.Item>
-                  )
-            }
+                      {subItems[subPage]["name"]}
+                    </NavLink>
+                  </Menu.Item>
+                ))}
+              </SubMenu>
+            );
+          } else {
+            return (
+              <Menu.Item
+                key={page}
+                className={getMenuItemStyle(page)}
+                style={menuItemMarginOverride}
+                icon={pages[page]["icon"]}
+              >
+                <NavLink to={pages[page]["path"]} style={{ color: "black" }}>
+                  {pages[page]["name"]}
+                </NavLink>
+              </Menu.Item>
+            );
+          }
         })}
       </Menu>
     </Sider>

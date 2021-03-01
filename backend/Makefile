@@ -5,10 +5,10 @@ mac_setup:
 setup:
 	pip3 install virtualenv
 	virtualenv venv
-	venv/Scripts/pip install -r requirements.txt -r requirements-dev.txt
+	venv/bin/pip install -r requirements.txt -r requirements-dev.txt
 
 run_server:
-	venv/Scripts/python manage.py runserver
+	venv/bin/python manage.py runserver
 
 start_dev_db:
 	echo "creating docker postgres DB"

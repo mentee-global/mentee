@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.core import create_response, serialize_list, logger
-from api.models import db, MentorProfile, AdminEmails, Users
+from api.models import db, MentorProfile, AdminEmails, Users, VerifiedEmail
 import csv
 import io
 
@@ -16,15 +16,24 @@ def delete_mentor(mentor_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
     user_id = mentor.user_id.id
-    print(user_id)
+    email = mentor.user_id.email
     try:
         login = Users.objects.get(id=user_id)
     except:
         msg = "No mentors currently exist with user_id " + user_id
         logger.info(msg)
         return create_response(status=422, message=msg)
+    if login.verified:
+        try:
+            verified = VerifiedEmail.objects.get(email=email)
+        except:
+            msg = "No verified mentors currently exist with email " + email
+            logger.info(msg)
+            return create_response(status=422, message=msg) 
     mentor.delete()
     login.delete()
+    if verified:
+        verified.delete()
     return create_response(status=200, message="Successful deletion")
 
 

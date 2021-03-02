@@ -29,7 +29,7 @@ def delete_mentor(mentor_id):
         except:
             msg = "No verified mentors currently exist with email " + email
             logger.info(msg)
-            return create_response(status=422, message=msg) 
+            return create_response(status=422, message=msg)
     mentor.delete()
     login.delete()
     if verified:

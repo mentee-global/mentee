@@ -42,9 +42,14 @@ function NavigationSidebar(props) {
   };
 
   return (
-    <Sider collapsible theme="light" className="navigation-sidebar" collapsed={collapsed} onCollapse={(col) => setCollapsed(col)}>
+    <Sider
+      collapsible
+      theme="light"
+      className="navigation-sidebar"
+      collapsed={collapsed}
+      onCollapse={(col) => setCollapsed(col)}
+    >
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
-        
         {Object.keys(pages).map((page) => (
           <Menu.Item
             key={page}

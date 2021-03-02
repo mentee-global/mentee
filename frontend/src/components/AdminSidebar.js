@@ -52,7 +52,7 @@ function AdminSidebar(props) {
       >
         {Object.keys(pages).map((page) => {
           if (pages[page]["isSubMenu"]) {
-            let subItems = pages[page]["items"];
+            const subItems = pages[page]["items"];
             return (
               <SubMenu
                 className="navigation-submenu"

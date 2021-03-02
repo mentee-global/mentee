@@ -79,7 +79,7 @@ function AvailabilityCalendar() {
    */
   const handleTimeChange = (index, value, timeslot) => {
     let times = [...timeSlots];
-    times[index][timeslot] = moment(date.format("YYYY-MM-DD") + " " + value);
+    times[index][timeslot] = moment(value);
 
     //date.format("YYYY-MM-DD") + " " + value
     setTimeSlots(times);
@@ -237,14 +237,19 @@ function AvailabilityCalendar() {
           {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">
-                <TimePicker use12Hours format="h:mm A">
-                  onClick={(value) => handleTimeChange(timeSlot[1], value, 0)}
-                </TimePicker>
+                <TimePicker
+                  use12Hours
+                  format="h:mm A"
+                  value={moment(timeSlot[0][0], "HH:mm")}
+                  onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
+                />
                 <h1 className="timeslot"> - </h1>
-                <TimePicker use12Hours format="h:mm A">
-                  onClick={(value) => handleTimeChange(timeSlot[1], value, 1)}
-                  }
-                </TimePicker>
+                <TimePicker
+                  use12Hours
+                  format="h:mm A"
+                  value={moment(timeSlot[0][1])}
+                  onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
+                />
                 <CloseOutlined
                   className="close-icon"
                   onClick={() => removeTimeSlots(timeSlot[1])}

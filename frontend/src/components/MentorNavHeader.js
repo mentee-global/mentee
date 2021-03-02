@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 import { logout, getMentorID } from "utils/auth.service";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
@@ -8,12 +9,13 @@ import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
+import MenteeLogoSmall from "../resources/menteeSmall.png";
 
 const { Header } = Layout;
 
 function MentorNavHeader() {
   const [mentor, setMentor] = useState();
-
+  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   useEffect(() => {
     const mentorID = getMentorID();
     async function getMentor() {
@@ -43,9 +45,15 @@ function MentorNavHeader() {
 
   return (
     <Header className="navigation-header">
-      <NavLink to="/">
-        <img src={MenteeLogo} alt="Mentee" className="mentee-logo" />
-      </NavLink>
+      <div>
+        <NavLink to="/">
+          <img
+            src={isMobile ? MenteeLogoSmall : MenteeLogo}
+            alt="Mentee"
+            className="mentee-logo"
+          />
+        </NavLink>
+      </div>
       <span>
         <div className="profile-caret">
           <Dropdown overlay={dropdownMenu} trigger={["click"]}>

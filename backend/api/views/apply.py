@@ -13,7 +13,11 @@ def get_application_by_email(email):
         msg = "No application currently exist with this email " + email
         logger.info(msg)
         return create_response(status=422, message=msg)
-
+    
+    if not application.verified:
+        msg = "Application wasn't verified."
+        logger.info(msg)
+        return create_response(status=422, message=msg)
 
     return create_response(data={"mentor_application": application})
 
@@ -24,6 +28,12 @@ def delete_application(email):
         application = MentorApplication.objects.get(email=email)
     except:
         msg = "The application you attempted to delete was not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    
+            
+    if not application.verified:
+        msg = "Application wasn't verified."
         logger.info(msg)
         return create_response(status=422, message=msg)
 
@@ -40,6 +50,11 @@ def edit_application(email):
         application = MentorApplication.objects.get(email=email)
     except:
         msg = "No application with that email"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+            
+    if not application.verified:
+        msg = "Application wasn't verified."
         logger.info(msg)
         return create_response(status=422, message=msg)
 

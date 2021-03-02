@@ -1,10 +1,8 @@
 import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
-import { Calendar, Modal, Badge, DatePicker } from "antd";
+import { Calendar, Modal, Badge, TimePicker } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
-import { Input } from 'antd';
-
 import MenteeButton from "./MenteeButton.js";
 import "./css/AvailabilityCalendar.scss";
 import { getMentorID } from "utils/auth.service";
@@ -79,11 +77,11 @@ function AvailabilityCalendar() {
    * @param {String} event User input values
    * @param {int} timeslot Which of the two textfields was changed
    */
-  const handleTimeChange = (index, event, timeslot) => {
+  const handleTimeChange = (index, value, timeslot) => {
     let times = [...timeSlots];
-    times[index][timeslot] = moment(
-      date.format("YYYY-MM-DD") + " " + event.target.value
-    );
+    times[index][timeslot] = moment(date.format("YYYY-MM-DD") + " " + value);
+
+    //date.format("YYYY-MM-DD") + " " + value
     setTimeSlots(times);
   };
 
@@ -239,31 +237,14 @@ function AvailabilityCalendar() {
           {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">
-                <Input
-                  value={timeSlot[0][0].format("HH:mm")}
-                  onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
-                  className="timeslot"
-                  type="time"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    step: 300,
-                  }}
-                />
+                <TimePicker use12Hours format="h:mm A">
+                  onClick={(value) => handleTimeChange(timeSlot[1], value, 0)}
+                </TimePicker>
                 <h1 className="timeslot"> - </h1>
-                <Input
-                  value={timeSlot[0][1].format("HH:mm")}
-                  onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
-                  className="timeslots"
-                  type="time"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    step: 300,
-                  }}
-                />
+                <TimePicker use12Hours format="h:mm A">
+                  onClick={(value) => handleTimeChange(timeSlot[1], value, 1)}
+                  }
+                </TimePicker>
                 <CloseOutlined
                   className="close-icon"
                   onClick={() => removeTimeSlots(timeSlot[1])}

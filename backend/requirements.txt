@@ -11,3 +11,4 @@ pymongo[srv]
 python-dotenv
 wtforms-JSON
 sendgrid
+firebase-admin

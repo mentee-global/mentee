@@ -1,11 +1,11 @@
 from flask import Blueprint, request, jsonify
+from firebase_admin import auth as firebase_auth
 from api.models import db, Users, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import AUTH_URL
 import requests
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
-
 
 @auth.route("/verifyEmail", methods=["POST"])
 def verify_email():

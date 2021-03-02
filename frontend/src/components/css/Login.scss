@@ -74,3 +74,24 @@
 .login-error {
     color: red;
 }
+
+figure{
+    width : 30%;
+}
+
+.logo {
+    height:auto;
+    width: 60%;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 60%;
+        width: 80%;
+        background-color: white;
+        padding: 2.5%;
+    }
+}

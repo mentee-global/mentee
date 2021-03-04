@@ -1,0 +1,26 @@
+@import "_app";
+
+.account-data-body {
+    padding: 22px;
+}
+
+.table-search {
+    width: 216px;
+    margin-top: 66px;
+    margin-bottom: 36px;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.table-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.table-button-group > .table-button {
+    margin: 0px 4px;
+}

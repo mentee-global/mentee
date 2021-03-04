@@ -18,7 +18,7 @@ TODO:
  [X] Implement table
  [X] Create dummy data that can be used with the table
  [X] Implement buttons and hotwire them to their respective placeholder endpoints
- [] Implement search feature by name
+ [X] Implement search feature by name
 */
 
 function AdminAccountData() {
@@ -27,6 +27,7 @@ function AdminAccountData() {
   const [isMenteeDownload, setIsMenteeDownload] = useState(false);
   const [reload, setReload] = useState(true);
   const [mentorData, setMentorData] = useState([]);
+  const [filterMentors, setFilterMentors] = useState([]);
 
   useEffect(() => {
     async function getMentorData() {
@@ -34,6 +35,7 @@ function AdminAccountData() {
       const res = await fetchMentorsAppointments();
       if (res) {
         setMentorData(res.mentorData);
+        setFilterMentors(res.mentorData);
       }
       setIsReloading(false);
     }
@@ -65,6 +67,18 @@ function AdminAccountData() {
     setIsMenteeDownload(false);
   };
 
+  const handleSearchAccount = (name) => {
+    if (!name) {
+      setFilterMentors(mentorData);
+      return;
+    }
+
+    let newFiltered = mentorData.filter((mentor) => {
+      return mentor.name.match(new RegExp(name, "i"));
+    });
+    setFilterMentors(newFiltered);
+  };
+
   return (
     <div className="account-data-body">
       <Breadcrumb>
@@ -74,11 +88,12 @@ function AdminAccountData() {
         </Breadcrumb.Item>
       </Breadcrumb>
       <div className="table-search">
-        <Input
+        <Input.Search
           placeholder="Search by name"
           prefix={<UserOutlined />}
           allowClear
           size="medium"
+          onSearch={(value) => handleSearchAccount(value)}
         />
       </div>
       <div className="table-header">
@@ -116,7 +131,7 @@ function AdminAccountData() {
         </div>
       </div>
       <Spin spinning={isReloading}>
-        <Table dataSource={mentorData}>
+        <Table dataSource={filterMentors}>
           <Column title="Name" dataIndex="name" key="name" />
           <Column
             title="No. of Appointments"

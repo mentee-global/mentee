@@ -13,14 +13,6 @@ import { formatLinkForHref } from "utils/misc";
 
 const { Column } = Table;
 
-/*
-TODO:
- [X] Implement table
- [X] Create dummy data that can be used with the table
- [X] Implement buttons and hotwire them to their respective placeholder endpoints
- [X] Implement search feature by name
-*/
-
 function AdminAccountData() {
   const [isReloading, setIsReloading] = useState(false);
   const [isMentorDownload, setIsMentorDownload] = useState(false);

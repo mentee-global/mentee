@@ -2,10 +2,10 @@
 mac_setup:
 	./mac_setup
 
-setup: 
+setup:
 	pip3 install virtualenv
 	virtualenv venv
-	venv/Scripts/pip install -r requirements.txt -r requirements-dev.txt
+	venv/bin/pip install -r requirements.txt -r requirements-dev.txt
 
 run_server:
 	venv/Scripts/python manage.py runserver

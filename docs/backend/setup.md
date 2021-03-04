@@ -1,26 +1,16 @@
 # Getting Started on Backend
 
 ## Installing and Running
-Make sure you have [Python3](https://realpython.com/installing-python/) and `pip3` installed.
+Make sure you have [Python3](https://realpython.com/installing-python/) and [Poetry](https://python-poetry.org/) installed.
 
-Start your virtual environment:
+Install packages:
 
 ```
-$ pip3 install virtualenv
-$ virtualenv venv
-$ source venv/bin/activate
+$ poetry install
 ```
-Now, install the python dependencies and run the server:
+To run the server:
 ```
-(venv) $ pip3 install -r requirements.txt
-(venv) $ pip3 install -r requirements-dev.txt
-(venv) $ make run_server
-```
-
-To exit the virtual environment:
-```
-(venv) $ deactivate
-$
+$ poetry run start
 ```
 
 ## Dependencies

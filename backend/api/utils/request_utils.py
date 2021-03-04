@@ -41,6 +41,15 @@ class MentorForm(Form):
     specializations = FieldList(StringField(), validators=[validators.required()])
 
 
+class MenteeForm(Form):
+    user_id = StringField(validators=[InputRequired()])
+    name = StringField(validators=[InputRequired()])
+    age = StringField(validators=[InputRequired()])
+    gender = StringField(validators=[InputRequired()])
+    languages = FieldList(StringField(), validators=[validators.required()])
+    organization = StringField(validators=[InputRequired()])
+
+
 class AvailabilityForm(Form):
     start_time = StringField(validators=[InputRequired()])
     end_time = StringField(validators=[InputRequired()])

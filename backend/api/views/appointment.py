@@ -175,4 +175,4 @@ def get_mentors_appointments():
             }
         )
 
-    return create_response(data={"data": data}, status=200, message="Success")
+    return create_response(data={"mentorData": data}, status=200, message="Success")

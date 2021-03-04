@@ -8,7 +8,8 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import "../css/AdminAccountData.scss";
-import result from "../../resources/accountsData.json";
+import { fetchMentorsAppointments, downloadMentorsData } from "../../utils/api";
+import { formatLinkForHref } from "utils/misc";
 
 const { Column } = Table;
 
@@ -16,20 +17,53 @@ const { Column } = Table;
 TODO:
  [X] Implement table
  [X] Create dummy data that can be used with the table
- [] Implement buttons and hotwire them to their respective placeholder endpoints
+ [X] Implement buttons and hotwire them to their respective placeholder endpoints
  [] Implement search feature by name
 */
 
 function AdminAccountData() {
   const [isReloading, setIsReloading] = useState(false);
+  const [isMentorDownload, setIsMentorDownload] = useState(false);
+  const [isMenteeDownload, setIsMenteeDownload] = useState(false);
+  const [reload, setReload] = useState(true);
   const [mentorData, setMentorData] = useState([]);
 
   useEffect(() => {
     async function getMentorData() {
-      setMentorData(result.result.data);
+      setIsReloading(true);
+      const res = await fetchMentorsAppointments();
+      if (res) {
+        setMentorData(res.mentorData);
+      }
+      setIsReloading(false);
     }
     getMentorData();
-  }, [isReloading]);
+  }, [reload]);
+
+  const handleDeleteAccount = (mentorId) => {
+    // TODO: Create endpoint that deletes a mentor account
+    setReload(!reload);
+    console.log(`Deleting Mentor with ID: ${mentorId}`);
+  };
+
+  const handleAddAccount = () => {
+    // TODO: Link to the modal or page where one can add a new account
+    console.log("Adding new account!");
+  };
+
+  const handleMentorsDownload = async () => {
+    setIsMentorDownload(true);
+    // TODO: Check up on why this isn't working..
+    await downloadMentorsData();
+    setIsMentorDownload(false);
+  };
+
+  const handleMenteesDownload = () => {
+    setIsMentorDownload(true);
+    // TODO: Add Mentee Account Downloads
+    console.log("Calling endpoint to download accounts");
+    setIsMenteeDownload(false);
+  };
 
   return (
     <div className="account-data-body">
@@ -50,20 +84,34 @@ function AdminAccountData() {
       <div className="table-header">
         <div className="table-title">Mentors</div>
         <div className="table-button-group">
-          <Button className="table-button" icon={<PlusOutlined />}>
+          <Button
+            className="table-button"
+            icon={<PlusOutlined />}
+            onClick={() => handleAddAccount()}
+          >
             Add New Account
           </Button>
-          <Button className="table-button" icon={<DownloadOutlined />}>
+          <Button
+            className="table-button"
+            icon={<DownloadOutlined />}
+            onClick={() => handleMentorsDownload()}
+            loading={isMentorDownload}
+          >
             Mentor Account Data
           </Button>
-          <Button className="table-button" icon={<DownloadOutlined />}>
+          <Button
+            className="table-button"
+            icon={<DownloadOutlined />}
+            onClick={() => handleMenteesDownload()}
+            loading={isMenteeDownload}
+          >
             Mentee Account Data
           </Button>
           <ReloadOutlined
             className="table-button"
             style={{ fontSize: "16px" }}
             spin={isReloading}
-            onClick={() => setIsReloading(!isReloading)}
+            onClick={() => setReload(!reload)}
           />
         </div>
       </div>
@@ -74,32 +122,43 @@ function AdminAccountData() {
             title="No. of Appointments"
             dataIndex="numOfAppointments"
             key="numOfAppointments"
+            align="center"
           />
           <Column
             title="Appointment Details"
             dataIndex="appointments"
             key="appointments"
-            render={(appointments) => <a props={appointments}>View</a>}
+            render={(appointments) => (
+              <a className="table-appt-view" props={appointments}>
+                View
+              </a>
+            )}
+            align="center"
           />
           <Column
             title="Delete"
             dataIndex="id"
             key="id"
             render={(mentorId) => (
-              <Checkbox
-                onClick={() => console.log(`Finna delete ${mentorId}`)}
-              />
+              <Checkbox onClick={() => handleDeleteAccount(mentorId)} />
             )}
+            align="center"
           />
           <Column
             title="Link to Profile"
             dataIndex="id"
             key="id"
             render={(id) => (
-              <a>
+              <a
+                style={{ color: "black" }}
+                href={formatLinkForHref(`localhost:3000/gallery/${id}`)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <LinkOutlined /> {`localhost:3000/gallery/${id}`}
               </a>
             )}
+            align="center"
           />
         </Table>
       </Spin>

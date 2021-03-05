@@ -6,7 +6,7 @@ import VideoSubmit from "../VideoSubmit";
 import { getMentorID } from "utils/auth.service";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
-import { fetchMentorByID, editMentorProfile } from "utils/api";
+import { fetchMentorByID, editMentorProfile } from "utils/apiHelper";
 import "../css/Videos.scss";
 
 function Videos() {

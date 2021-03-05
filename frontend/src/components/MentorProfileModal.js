@@ -9,7 +9,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
-import { editMentorProfile, uploadMentorImage } from "../utils/api";
+import { editMentorProfile, uploadMentorImage } from "../utils/apiHelper";
 import { getMentorID } from "../utils/auth.service";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
@@ -326,7 +326,7 @@ function MentorProfileModal(props) {
     async function saveEdits(data) {
       await editMentorProfile(data, getMentorID());
       if (changedImage) {
-        await uploadMentorImage(image, getMentorID(), "mentor");
+        await uploadMentorImage(image, getMentorID());
       }
       setSaving(false);
       setChangedImage(false);

@@ -4,7 +4,7 @@ import { Avatar } from "antd";
 
 import ProfileContent from "../ProfileContent";
 import ProfileVideos from "../ProfileVideos";
-import { fetchMentorByID } from "../../utils/api";
+import { fetchMentorByID } from "../../utils/apiHelper";
 
 import "../css/PublicProfile.scss";
 

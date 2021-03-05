@@ -31,34 +31,40 @@ def get_accounts(level):
     elif level == Account.MENTEE:
         accounts = MenteeProfile.objects().exclude("video", "phone_number", "email")
     else:
-        msg = "type parameter does not match the current type of accounts"
+        msg = "Given parameter does not match the current exiting levels of accounts"
         return create_response(status=422, message=msg) 
 
     return create_response(data={"accounts": accounts})
 
 # GET request for specific mentor based on id
-@main.route("/mentor/<string:mentor_id>", methods=["GET"])
-def get_mentor(mentor_id):
+@main.route("/account/<string:account_id>", methods=["GET"])
+def get_account(account_id):
     try:
-        mentor = MentorProfile.objects.get(id=mentor_id)
+        level = int(request.args.get("level", -1))
     except:
-        msg = "No mentors currently exist with ID " + mentor_id
-        logger.info(msg)
+        msg = "level parameter is not an int"
         return create_response(status=422, message=msg)
-    return create_response(data={"mentor": mentor})
+    
+    account = None
+    if level == Account.MENTOR:
+        try:
+            account = MentorProfile.objects.get(id=account_id)
+        except:
+            msg = "No mentors currently exist with ID " + account_id
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+    elif level == Account.MENTEE:
+        try:
+            account = MenteeProfile.objects.get(id=account_id)
+        except:
+            msg = "No mentee currently exists with ID " + account_id
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+    else:
+        msg = "Given level parameter does not match type of accounts"
+        return create_response(status=422, message=msg)
 
-
-# GET request for specific mentee based on id
-@main.route("/mentee/<string:mentee_id>", methods=["GET"])
-def get_mentee(mentee_id):
-    try:
-        mentee = MenteeProfile.objects.get(id=mentee_id)
-    except:
-        msg = "No mentee currently exists with ID " + mentee_id
-        logger.info(msg)
-        return create_response(data={"mentee": mentee})
-    return create_response(data={"mentee": mentee})
-
+    return create_response(data={"account": account})
 
 # POST request for a new mentor profile
 @main.route("/mentor", methods=["POST"])

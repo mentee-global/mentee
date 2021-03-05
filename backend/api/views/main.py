@@ -176,7 +176,7 @@ def uploadImage(id):
     except:
         msg = "Level param doesn't exist or isn't an int"
         return create_response(status=422, message=msg)
-    
+
     account = None
 
     try:

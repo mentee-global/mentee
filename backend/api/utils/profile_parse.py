@@ -143,7 +143,7 @@ def edit_profile(data: dict = {}, profile: object = None):
                 title=video.get("title"),
                 url=video.get("url"),
                 tag=video.get("tag"),
-                date_uploaded=video.get("date_uploaded")
+                date_uploaded=video.get("date_uploaded"),
             )
 
     profile.name = data.get("name", profile.name)

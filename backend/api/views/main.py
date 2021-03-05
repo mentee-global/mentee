@@ -36,13 +36,14 @@ def get_accounts(level):
 
     return create_response(data={"accounts": accounts})
 
-# GET request for specific mentor based on id
+
+# GET request for specific account based on id
 @main.route("/account/<string:account_id>", methods=["GET"])
 def get_account(account_id):
     try:
-        level = int(request.args.get("level", -1))
+        level = int(request.args["level"])
     except:
-        msg = "level parameter is not an int"
+        msg = "level parameter is not an int or missing level parameter"
         return create_response(status=422, message=msg)
     
     account = None
@@ -66,23 +67,45 @@ def get_account(account_id):
 
     return create_response(data={"account": account})
 
-# POST request for a new mentor profile
-@main.route("/mentor", methods=["POST"])
+
+# POST request for a new account profile
+@main.route("/account", methods=["POST"])
 def create_mentor_profile():
     data = request.json
-    validate_data = MentorForm.from_json(data)
+
+    try:
+        level = int(data["level"])
+    except:
+        msg = "missing level param or level param is not an int"
+        return create_response(status=422, message=msg)
+    
+
+    validate_data = None
+    if level == Account.MENTOR:
+        validate_data = MentorForm.from_json(data)
+    elif level == Account.MENTEE:
+        validate_data = MenteeForm.from_json(data)
+    else:
+        msg = "level param does not match existing account types"
+        return create_response(status=422, message=msg)
 
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
         return create_response(status=422, message=msg)
 
-    if "videos" in data:
+    if "videos" in data and level == Account.MENTOR:
         for video in data["videos"]:
             validate_video = VideoForm.from_json(video)
 
             msg, is_invalid = is_invalid_form(validate_video)
             if is_invalid:
                 return create_response(status=422, message=msg)
+    elif "video" in data and level == Account.MENTEE:
+        validate_video = VideoForm.from_json(data["video"])
+
+        msg, is_invalid = is_invalid_form(validate_video)
+        if is_invalid:
+            return create_response(status=422, message=msg)
 
     if "education" in data:
         for education in data["education"]:
@@ -95,50 +118,16 @@ def create_mentor_profile():
     user = Users.objects.get(id=data["user_id"])
     data["email"] = user.email
 
-    new_mentor = new_profile(data=data, profile_type="mentor")
+    new_account = new_profile(data=data, profile_type=level)
 
-    if not new_mentor:
-        msg = "Could not parse Mentor Data"
+    if not new_account:
+        msg = "Could not parse Account Data"
         create_response(status=400, message=msg)
 
-    new_mentor.save()
+    new_account.save()
     return create_response(
-        message=f"Successfully created Mentor Profile {new_mentor.name}",
-        data={"mentorId": str(new_mentor.id)},
-    )
-
-
-# POST request for a new mentee profile
-@main.route("/mentee", methods=["POST"])
-def create_mentee_profile():
-    data = request.json
-    validate_data = MenteeForm.from_json(data)
-
-    msg, is_invalid = is_invalid_form(validate_data)
-    if is_invalid:
-        return create_response(status=422, message=msg)
-
-    if "education" in data:
-        for education in data["education"]:
-            validate_education = EducationForm.from_json(education)
-
-            msg, is_invalid = is_invalid_form(validate_education)
-            if is_invalid:
-                return create_response(status=422, message=msg)
-
-    user = Users.objects.get(id=data["user_id"])
-    data["email"] = user.email
-
-    new_mentee = new_profile(data=data, profile_type="mentee")
-
-    if not new_mentee:
-        msg = "Could not parse Mentee Data"
-        create_response(status=400, message=msg)
-
-    new_mentee.save()
-    return create_response(
-        message=f"Successfully created Mentee Profile {new_mentee.name}",
-        data={"menteeId": str(new_mentee.id)},
+        message=f"Successfully created Mentor Profile {new_account.name}",
+        data={"mentorId": str(new_account.id)},
     )
 
 

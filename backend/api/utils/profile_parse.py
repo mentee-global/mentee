@@ -135,6 +135,16 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.age = data.get("age", profile.age)
         profile.gender = data.get("gender", profile.gender)
         profile.organization = data.get("organization", profile.organization)
+        profile.is_private = data.get("is_private", profile.is_private)
+
+        if "video" in data:
+            video_data = data.get("video")
+            profile.video = Video(
+                title=video.get("title"),
+                url=video.get("url"),
+                tag=video.get("tag"),
+                date_uploaded=video.get("date_uploaded")
+            )
 
     profile.name = data.get("name", profile.name)
     profile.location = data.get("location", profile.location)

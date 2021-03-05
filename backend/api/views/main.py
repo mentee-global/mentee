@@ -23,46 +23,45 @@ from api.utils.constants import Account
 main = Blueprint("main", __name__)  # initialize blueprint
 
 # GET request for /accounts/<type>
-@main.route("/accounts/<int:level>", methods=["GET"])
-def get_accounts(level):
+@main.route("/accounts/<int:account_type>", methods=["GET"])
+def get_accounts(account_type):
     accounts = None
-    if level == Account.MENTOR:
+    if account_type == Account.MENTOR:
         accounts = MentorProfile.objects().exclude("availability", "videos")
-    elif level == Account.MENTEE:
+    elif account_type == Account.MENTEE:
         accounts = MenteeProfile.objects().exclude("video", "phone_number", "email")
     else:
-        msg = "Given parameter does not match the current exiting levels of accounts"
+        msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)
 
     return create_response(data={"accounts": accounts})
 
 
 # GET request for specific account based on id
-@main.route("/account/<string:account_id>", methods=["GET"])
-def get_account(account_id):
+@main.route("/account/<string:id>", methods=["GET"])
+def get_account(id):
     try:
-        level = int(request.args["level"])
+        account_type = int(request.args["account_type"])
     except:
-        msg = "level parameter is not an int or missing level parameter"
+        msg = "Missing account_type param or account_type param is not an int"
         return create_response(status=422, message=msg)
 
     account = None
-    if level == Account.MENTOR:
-        try:
-            account = MentorProfile.objects.get(id=account_id)
-        except:
-            msg = "No mentors currently exist with ID " + account_id
-            logger.info(msg)
+    try:
+        if account_type == Account.MENTEE:
+            account = MenteeProfile.objects.get(id=id)
+        elif account_type == Account.MENTOR:
+            account = MentorProfile.objects.get(id=id)
+        else:
+            msg = "Level param doesn't match existing account types"
             return create_response(status=422, message=msg)
-    elif level == Account.MENTEE:
-        try:
-            account = MenteeProfile.objects.get(id=account_id)
-        except:
-            msg = "No mentee currently exists with ID " + account_id
-            logger.info(msg)
-            return create_response(status=422, message=msg)
-    else:
-        msg = "Given level parameter does not match type of accounts"
+    except:
+        msg = ""
+        if account_type == Account.MENTEE:
+            msg = "No mentee with that id"
+        elif account_type == Account.MENTOR:
+            msg = "No mentor with that id"
+        logger.info(msg)
         return create_response(status=422, message=msg)
 
     return create_response(data={"account": account})
@@ -74,32 +73,32 @@ def create_mentor_profile():
     data = request.json
 
     try:
-        level = int(data["level"])
+        account_type = int(data["account_type"])
     except:
-        msg = "missing level param or level param is not an int"
+        msg = "Missing account_type param or account_type param is not an int"
         return create_response(status=422, message=msg)
 
     validate_data = None
-    if level == Account.MENTOR:
+    if account_type == Account.MENTOR:
         validate_data = MentorForm.from_json(data)
-    elif level == Account.MENTEE:
+    elif account_type == Account.MENTEE:
         validate_data = MenteeForm.from_json(data)
     else:
-        msg = "level param does not match existing account types"
+        msg = "Level param does not match existing account types"
         return create_response(status=422, message=msg)
 
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
         return create_response(status=422, message=msg)
 
-    if "videos" in data and level == Account.MENTOR:
+    if "videos" in data and account_type == Account.MENTOR:
         for video in data["videos"]:
             validate_video = VideoForm.from_json(video)
 
             msg, is_invalid = is_invalid_form(validate_video)
             if is_invalid:
                 return create_response(status=422, message=msg)
-    elif "video" in data and level == Account.MENTEE:
+    elif "video" in data and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
         msg, is_invalid = is_invalid_form(validate_video)
@@ -117,7 +116,7 @@ def create_mentor_profile():
     user = Users.objects.get(id=data["user_id"])
     data["email"] = user.email
 
-    new_account = new_profile(data=data, profile_type=level)
+    new_account = new_profile(data=data, profile_type=account_type)
 
     if not new_account:
         msg = "Could not parse Account Data"
@@ -131,45 +130,40 @@ def create_mentor_profile():
 
 
 # PUT requests for /mentor
-@main.route("/mentor/<id>", methods=["PUT"])
+@main.route("/account/<id>", methods=["PUT"])
 def edit_mentor(id):
     data = request.get_json()
 
-    # Try to retrieve Mentor profile from database
     try:
-        mentor = MentorProfile.objects.get(id=id)
+        account_type = int(request.args["account_type"])
     except:
-        msg = "No mentor with that id"
+        msg = "Level param doesn't exist or isn't an int"
+        return create_response(status=422, message=msg)
+
+    # Try to retrieve account profile from database
+    account = None
+    try:
+        if account_type == Account.MENTEE:
+            account = MenteeProfile.objects.get(id=id)
+        elif account_type == Account.MENTOR:
+            account = MentorProfile.objects.get(id=id)
+        else:
+            msg = "Level param doesn't match existing account types"
+            return create_response(status=422, message=msg)
+    except:
+        msg = ""
+        if account_type == Account.MENTEE:
+            msg = "No mentee with that id"
+        elif account_type == Account.MENTOR:
+            msg = "No mentor with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    if not edit_profile(data, mentor):
+    if not edit_profile(data, account):
         msg = "Couldn't update profile"
         return create_response(status=500, message=msg)
 
-    mentor.save()
-
-    return create_response(status=200, message=f"Success")
-
-
-# PUT requests for /mentee
-@main.route("/mentee/<id>", methods=["PUT"])
-def edit_mentee(id):
-    data = request.get_json()
-
-    # Try to retrieve Mentor profile from database
-    try:
-        mentee = MenteeProfile.objects.get(id=id)
-    except:
-        msg = "No mentee with that id"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-
-    if not edit_profile(data, mentee):
-        msg = "Couldn't update profile"
-        return create_response(status=500, message=msg)
-
-    mentee.save()
+    account.save()
 
     return create_response(status=200, message=f"Success")
 
@@ -177,20 +171,33 @@ def edit_mentee(id):
 @main.route("/account/<id>/image", methods=["PUT"])
 def uploadImage(id):
     image = request.files["image"]
-    account_type = request.form["type"]
+    try:
+        account_type = int(request.form["account_type"])
+    except:
+        msg = "Level param doesn't exist or isn't an int"
+        return create_response(status=422, message=msg)
+    
     account = None
 
     try:
         image_response = imgur_client.send_image(image)
     except:
         return create_response(status=400, message=f"Image upload failed")
+
     try:
-        if account_type == "mentee":
+        if account_type == Account.MENTEE:
             account = MenteeProfile.objects.get(id=id)
-        elif account_type == "mentor":
+        elif account_type == Account.MENTOR:
             account = MentorProfile.objects.get(id=id)
+        else:
+            msg = "Level param doesn't match existing account types"
+            return create_response(status=422, message=msg)
     except:
-        msg = "No account with that id"
+        msg = ""
+        if account_type == Account.MENTEE:
+            msg = "No mentee with that id"
+        elif account_type == Account.MENTOR:
+            msg = "No mentor with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 

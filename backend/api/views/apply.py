@@ -4,13 +4,13 @@ from api.core import create_response, serialize_list, logger
 
 apply = Blueprint("apply", __name__)
 
-# GET request for mentor applications by email 
-@apply.route("/<string:email>", methods=["GET"])
-def get_application_by_email(email):
+# GET request for mentor applications by object ID 
+@apply.route("/<id>", methods=["GET"])
+def get_application_by_email(id):
     try:
-        application = MentorApplication.objects.get(email=email)
+        application = MentorApplication.objects.get(id=id)
     except:
-        msg = "No application currently exist with this email " + email
+        msg = "No application currently exist with this id " + id
         logger.info(msg)
         return create_response(status=422, message=msg)
     
@@ -21,11 +21,11 @@ def get_application_by_email(email):
 
     return create_response(data={"mentor_application": application})
 
-# DELETE request for mentor application by email
-@apply.route("/<string:email>", methods=["DELETE"])
-def delete_application(email):
+# DELETE request for mentor application by object ID 
+@apply.route("/<id>", methods=["DELETE"])
+def delete_application(id):
     try:
-        application = MentorApplication.objects.get(email=email)
+        application = MentorApplication.objects.get(id=id)
     except:
         msg = "The application you attempted to delete was not found"
         logger.info(msg)
@@ -40,16 +40,16 @@ def delete_application(email):
     application.delete()
     return create_response(status=200, message=f"Success")
 
-# PUT requests for /application
-@apply.route("/<string:email>", methods=["PUT"])
-def edit_application(email):
+# PUT requests for /application by object ID 
+@apply.route("/<id>", methods=["PUT"])
+def edit_application(id):
     data = request.get_json()
     logger.info(data)
     # Try to retrieve Mentor application from database
     try:
-        application = MentorApplication.objects.get(email=email)
+        application = MentorApplication.objects.get(id=id)
     except:
-        msg = "No application with that email"
+        msg = "No application with that object id"
         logger.info(msg)
         return create_response(status=422, message=msg)
             

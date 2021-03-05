@@ -13,7 +13,7 @@ import { fetchAvailability, editAvailability } from "../utils/api";
  */
 function AvailabilityCalendar() {
   const mentorID = getMentorID();
-  const [saved, setSaved] = useState({}); // Days with set appointments
+  const [saved, setSaved] = useState({}); //  Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);

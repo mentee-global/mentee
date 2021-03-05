@@ -18,22 +18,23 @@ from api.utils.request_utils import (
     imgur_client,
 )
 from api.utils.profile_parse import new_profile, edit_profile
+from api.utils.constants import Account
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
-# GET request for /mentors
-@main.route("/mentors", methods=["GET"])
-def get_mentors():
-    mentors = MentorProfile.objects().exclude("availability", "videos")
-    return create_response(data={"mentors": mentors})
+# GET request for /accounts/<type>
+@main.route("/accounts/<int:level>", methods=["GET"])
+def get_accounts(level):
+    accounts = None
+    if level == Account.MENTOR:
+        accounts = MentorProfile.objects().exclude("availability", "videos")
+    elif level == Account.MENTEE:
+        accounts = MenteeProfile.objects().exclude("video", "phone_number", "email")
+    else:
+        msg = "type parameter does not match the current type of accounts"
+        return create_response(status=422, message=msg) 
 
-
-# GET request for /mentees
-@main.route("/mentees", methods=["GET"])
-def get_mentees():
-    mentees = MenteeProfile.objects()
-    return create_response(data={"mentees": mentees})
-
+    return create_response(data={"accounts": accounts})
 
 # GET request for specific mentor based on id
 @main.route("/mentor/<string:mentor_id>", methods=["GET"])

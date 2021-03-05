@@ -56,17 +56,17 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             organization=data["organization"],
             age=data["age"],
             gender=data["gender"],
-            is_private=data.get("is_private", True)
+            is_private=data.get("is_private", True),
         )
-        
+
         if "video" in data:
             video_data = data.get("video")
             new_profile.video = Video(
-                    title=video_data["title"],
-                    url=video_data["url"],
-                    tag=video_data["tag"],
-                    date_uploaded=video_data["date_uploaded"]
-                )
+                title=video_data["title"],
+                url=video_data["url"],
+                tag=video_data["tag"],
+                date_uploaded=video_data["date_uploaded"],
+            )
     else:
         # There is not match with mentee/mentor
         return None

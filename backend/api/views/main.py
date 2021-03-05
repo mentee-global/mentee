@@ -32,7 +32,7 @@ def get_accounts(level):
         accounts = MenteeProfile.objects().exclude("video", "phone_number", "email")
     else:
         msg = "Given parameter does not match the current exiting levels of accounts"
-        return create_response(status=422, message=msg) 
+        return create_response(status=422, message=msg)
 
     return create_response(data={"accounts": accounts})
 
@@ -45,7 +45,7 @@ def get_account(account_id):
     except:
         msg = "level parameter is not an int or missing level parameter"
         return create_response(status=422, message=msg)
-    
+
     account = None
     if level == Account.MENTOR:
         try:
@@ -78,7 +78,6 @@ def create_mentor_profile():
     except:
         msg = "missing level param or level param is not an int"
         return create_response(status=422, message=msg)
-    
 
     validate_data = None
     if level == Account.MENTOR:

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.core import create_response, serialize_list, logger
-from api.models import db, MentorProfile, AdminEmails, Users, VerifiedEmail
+from api.models import db, MentorProfile, Users, VerifiedEmail
 import csv
 import io
 
@@ -40,7 +40,7 @@ def delete_mentor(mentor_id):
 @admin.route("/upload/mentors", methods=["GET", "POST"])
 def upload_mentor_emails():
     if request.method == "GET":
-        uploads = AdminEmails.objects().get(is_mentor=True)
+        uploads = VerifiedEmail.objects().get(is_mentor=True)
         return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
@@ -48,7 +48,7 @@ def upload_mentor_emails():
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
         for line in reader:
-            email = AdminEmails(email=line[0], is_mentor=True)
+            email = VerifiedEmail(email=line[0], is_mentor=True, password="")
             email.save()
 
     return create_response(status=200, message="success")
@@ -57,7 +57,7 @@ def upload_mentor_emails():
 @admin.route("/upload/mentees", methods=["GET", "POST"])
 def upload_mentee_emails():
     if request.method == "GET":
-        uploads = AdminEmails.objects().get(is_mentor=False)
+        uploads = VerifiedEmail.objects().get(is_mentor=False)
         return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
@@ -72,7 +72,7 @@ def upload_mentee_emails():
                 address = line[0]
             else:
                 password = line[0]
-                email = AdminEmails(email=address, password=password, is_mentor=False)
+                email = VerifiedEmail(email=address, password=password, is_mentor=False)
                 email.save()
             is_email = not is_email
 

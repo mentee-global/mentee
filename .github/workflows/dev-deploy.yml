@@ -31,7 +31,8 @@ jobs:
           check-latest: true
       - run: yarn install
       # set CI to false because warnings are treated as errors if CI=true
-      - run: CI=false yarn run build
+      # manually set react env here because NODE_ENV=production on build
+      - run: CI=false REACT_APP_ENV=development yarn run build
       
       - name: save build artifacts
         uses: actions/upload-artifact@v2
@@ -51,6 +52,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: frontend-build
+          # Use the path artifacts because frontend/build is in gitignore
           path: ${{ github.workspace }}/frontend/artifacts
 
       - name: Deploy to Heroku

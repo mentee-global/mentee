@@ -16,23 +16,19 @@ import "./css/Gallery.scss";
 
 const { Title, Text } = Typography;
 
-
 const styles = {
   title: {
-    fontSize: "20px",
-      whiteSpace: "normal",
-      overflow: "visible",
-      textOverflow: "ellipsis",
-      width: "100px",
-      margin: 0,
-
-  }, 
-  subTitle: {
-    fontSize: "12px",
+    fontSize: "35px",
     whiteSpace: "normal",
     overflow: "visible",
     textOverflow: "ellipsis",
-    width: "100px",
+    margin: 0,
+  },
+  subTitle: {
+    fontSize: "18px",
+    whiteSpace: "normal",
+    overflow: "visible",
+    textOverflow: "ellipsis",
     margin: 0,
   },
   icon: {

@@ -2,11 +2,22 @@
 Connecting immigrant and refugee youth with a network of mentors.
 
 ## How to run the project
-First you need to install [concurrently](https://www.npmjs.com/package/concurrently)
-`npm install -g concurrently`
+Install:
+* [Yarn](https://yarnpkg.com/)
+* [Poetry](https://python-poetry.org/)
+* [concurrently](https://www.npmjs.com/package/concurrently)
+
+To install/update dependencies:
+```bash
+$ yarn setup
+```
 
 To run both backend and frontend
-`yarn start`
+```bash
+$ yarn start
+```
 
 To format both sides
-`yarn format`
+```bash
+$ yarn format
+```

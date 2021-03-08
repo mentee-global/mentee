@@ -1,6 +1,7 @@
 import os
 import logging
 import firebase_admin
+import pyrebase
 
 from flask import Flask, request
 from flask_cors import CORS

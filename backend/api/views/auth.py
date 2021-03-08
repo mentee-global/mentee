@@ -1,13 +1,22 @@
 from flask import Blueprint, request, jsonify
-from firebase_admin import auth as firebase_auth
+from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
 from api.models import db, Users, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import AUTH_URL, USER_VERIFICATION_TEMPLATE, USER_FORGOT_PASSWORD_TEMPLATE
 from api.utils.request_utils import send_email
 import requests
+import pyrebase
+import os
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
+firebase_client = pyrebase.initialize_app({
+    "apiKey": os.environ.get("FIREBASE_API_KEY"),
+    "authDomain": "mentee-d0304.firebaseapp.com",
+    "databaseURL": "",
+    "storageBucket": "mentee-d0304.appspot.com",
+    "serviceAccount": os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+})
 
 @auth.route("/verifyEmail", methods=["POST"])
 def verify_email():
@@ -17,7 +26,7 @@ def verify_email():
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_auth.generate_email_verification_link(email)
+        verification_link = firebase_admin_auth.generate_email_verification_link(email)
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)
@@ -45,13 +54,13 @@ def create_firebase_user(email, password, role):
     error_http_response = None
 
     try:
-        firebase_user = firebase_auth.create_user(
+        firebase_user = firebase_admin_auth.create_user(
             email=email,
             email_verified=False,
             password=password,
         )
 
-        firebase_auth.set_custom_user_claims(
+        firebase_admin_auth.set_custom_user_claims(
             firebase_user.uid, {'role': role})
     except ValueError:
         msg = "Invalid input"
@@ -91,7 +100,7 @@ def register():
     return create_response(
         message="Created account",
         data={
-            "token": firebase_auth.create_custom_token(firebase_uid, {'role': role, 'user_id': str(user.id)}).decode('utf-8'),
+            "token": firebase_admin_auth.create_custom_token(firebase_uid, {'role': role, 'user_id': str(user.id)}).decode('utf-8'),
             "userId": str(user.id),
             "permission": role,
         },
@@ -107,10 +116,16 @@ def login():
     user = None
 
     try:
-        firebase_user = firebase_auth.get_user_by_email(email)
+        firebase_user = firebase_client.auth().sign_in_with_email_and_password(email, password)
     except Exception as e:
         if Users.objects(email=email):
             user = Users.objects.get(email=email);
+
+            if (len(user.firebase_uid) > 0):
+                msg = "Could not login"
+                logger.info(msg)
+                return create_response(status=422, message=msg)
+
             # old account, need to create a firebase account
             firebase_user, error_http_response = create_firebase_user(email, password, user.role)
 
@@ -119,14 +134,23 @@ def login():
 
             user.firebase_uid = firebase_user.uid
             user.save()
+
+            # send password reset email
+            error = send_forgot_password_email(email);
+
+            msg = "Created new Firebase account for existing user"
+            logger.info(msg)
+            return error and error or create_response(status=201, message=msg)
         else:
             msg = "Could not login"
             logger.info(msg)
             return create_response(status=422, message=msg)
 
+    firebase_uid = firebase_user['localId']
+
     if not user:
         try:
-            user = Users.objects.get(firebase_uid=firebase_user.uid)
+            user = Users.objects.get(firebase_uid=firebase_uid)
         except:
             msg = "Firebase user exists but not MongoDB user"
             logger.info(msg)
@@ -150,20 +174,17 @@ def login():
         data={
             "userId": str(user.id),
             "mentorId": str(mentor_id),
-            "token": firebase_auth.create_custom_token(firebase_user.uid, {'role': user.role, 'user_id': str(user.id)}).decode('utf-8'),
+            "token": firebase_admin_auth.create_custom_token(firebase_uid, {'role': user.role, 'user_id': str(user.id)}).decode('utf-8'),
         },
     )
 
 
-@auth.route("/forgotPassword", methods=["POST"])
-def forgot_password():
-    data = request.json
-    email = data.email('email')
+def send_forgot_password_email(email):
     reset_link = None
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        reset_link = firebase_auth.generate_password_reset_link(email)
+        reset_link = firebase_admin_auth.generate_password_reset_link(email)
     except ValueError:
         msg = 'Invalid email'
         logger.info(msg)
@@ -183,7 +204,15 @@ def forgot_password():
         logger.info(msg)
         return create_response(status=500, message=msg)
 
-    return create_response(
+
+@auth.route("/forgotPassword", methods=["POST"])
+def forgot_password():
+    data = request.json
+    email = data.get('email')
+    
+    error = send_forgot_password_email(email);
+
+    return error and error or create_response(
         message="Sent password reset link to email"
     )
 

@@ -63,15 +63,13 @@ const resendVerify = () => {
 };
 
 const login = (email, password) => 
-  post("/login", { email, password }).then((data) => {
-    if (data.success) {
-      firebase
-        .auth()
-        .signInWithCustomToken(data.result.token)
-        .then((userCredential) => {})
-        .catch((error) => {});
-    }
-  });
+  firebase
+  .auth()
+  .signInWithEmailAndPassword(email, password)
+  .then(userCredential => {
+    post('/login', {email, password})
+  })
+  .catch()
 
 
 const logout = () => {

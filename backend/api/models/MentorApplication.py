@@ -26,7 +26,8 @@ class MentorApplication(Document, Mixin):
     knowledge_location = StringField(required=True)
     referral = StringField()
     verified = StringField(required=True)
-    date_submitted = StringField(required=True)
+    date_submitted = DateTimeField(required=True)
+    notes = StringField()
 
     def __repr__(self):
         return f"""<Mentor Application email: {self.email}
@@ -49,4 +50,5 @@ class MentorApplication(Document, Mixin):
                 \n referral: {self.referral}
                 \n knowledge_location: {self. immigrant_status}
                 \n date_submitted: {self.date_submitted}
+                \n notes: {self.notes}
                 \n verified: {self.verified}>"""

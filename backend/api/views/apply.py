@@ -82,6 +82,7 @@ def edit_application(id):
     )
     application.languages = data.get("languages", application.languages)
     application.date_submitted = data.get("date_submitted", application.date_submitted)
+    application.notes = data.get("notes", application.notes)
 
     application.save()
     return create_response(status=200, message=f"Success")

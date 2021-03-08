@@ -82,8 +82,8 @@ function Login() {
               onClick={async () => {
                 setLoggingIn(true);
                 const res = await login(email, password);
-                setError(!Boolean(res));
-                if (Boolean(res)) {
+                setError(!res.success);
+                if (res.success) {
                   redirectToAppointments();
                 }
                 setLoggingIn(false);

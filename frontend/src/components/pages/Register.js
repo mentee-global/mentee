@@ -55,7 +55,7 @@ function Register({ history }) {
     setSaving(true);
     if (!checkErrors()) {
       const res = await register(email, password, "mentor");
-      if (res) {
+      if (res.success) {
         history.push("/verify");
       } else {
         setServerError(true);

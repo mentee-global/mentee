@@ -29,6 +29,8 @@ const register = (email, password, role) =>
         .then((userCredential) => {})
         .catch((error) => {});
     }
+
+    return data;
   });
 
 // Sends verification code to email
@@ -62,14 +64,18 @@ const resendVerify = () => {
   });
 };
 
-const login = (email, password) => 
-  firebase
-  .auth()
-  .signInWithEmailAndPassword(email, password)
-  .then(userCredential => {
-    post('/login', {email, password})
-  })
-  .catch()
+const login = (email, password) =>
+  post("/login", { email, password }).then((data) => {
+    if (data.success) {
+      firebase
+        .auth()
+        .signInWithCustomToken(data.result.token)
+        .then((userCredential) => {})
+        .catch((error) => {});
+    }
+
+    return data;
+  });
 
 
 const logout = () => {

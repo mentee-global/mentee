@@ -13,6 +13,11 @@ class Users(Document, Mixin):
     verified = BooleanField(required=True)
     mongooseVersion = IntField(db_field="__v")
 
+    # in the case where a User object exists but there is no Firebase user
+    # we need to force the user to reset their password since the 
+    # newly created Firebase account is using an unsecure password
+    lockedUntilPasswordReset = BooleanField()
+
     # legacy fields (DO NOT USE)
     password = StringField()
     pin = IntField()

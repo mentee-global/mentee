@@ -70,7 +70,9 @@ const login = (email, password) =>
       firebase
         .auth()
         .signInWithCustomToken(data.result.token)
-        .then((userCredential) => {})
+        .then((userCredential) => {
+          console.log('user', userCredential)
+        })
         .catch((error) => {});
     }
 

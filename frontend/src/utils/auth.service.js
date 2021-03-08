@@ -1,39 +1,39 @@
 import axios from "axios";
+import firebase from "firebase";
 import { AUTH_URL, REGISTRATION_STAGE } from "utils/consts";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
 });
 
-// Role is where you put "admin" or "mentor"- right now we only support mentor
-const register = (email, password, role) => {
-  return instance
-    .post("/register", {
-      email,
-      password,
-      role,
-    })
-    .then((response) => {
-      if (response.data.result && response.data.result.token) {
-        response.data.result.verified = false;
-        localStorage.setItem(
-          "registration",
-          JSON.stringify(response.data.result)
-        );
-      }
+const get = (url, params) =>
+  instance
+    .get(url, params)
+    .then((res) => res.data)
+    .catch((err) => console.error(err));
 
-      return response.data;
-    })
-    .catch((err) => {
-      console.error(err);
-      return false;
-    });
-};
+const post = (url, data, params) =>
+  instance
+    .post(url, data, params)
+    .then((res) => res.data)
+    .catch((err) => console.error(err));
+
+// Role is where you put "admin" or "mentor"- right now we only support mentor
+const register = (email, password, role) =>
+  post("/register", { email, password, role }).then((data) => {
+    if (data.success) {
+      const result = data.result.token;
+      firebase
+        .auth()
+        .signInWithCustomToken(result.token)
+        .then((userCredential) => {})
+        .catch((error) => {});
+    }
+  });
 
 // Sends verification code to email
 const verify = (pin) => {
-  return instance
-    .post(
+  return post(
       "/verifyEmail",
       {
         pin,
@@ -62,33 +62,36 @@ const resendVerify = () => {
   });
 };
 
-const login = (email, password) => {
-  return instance
-    .post("/login", {
-      email,
-      password,
-    })
-    .then((response) => {
-      if (response.data.result && response.data.result.token) {
-        localStorage.setItem("user", JSON.stringify(response.data.result));
-      }
+const login = (email, password) => 
+  post("/login", { email, password }).then((data) => {
+    if (data.success) {
+      firebase
+        .auth()
+        .signInWithCustomToken(data.result.token)
+        .then((userCredential) => {})
+        .catch((error) => {});
+    }
+  });
 
-      return response.data;
-    })
-    .catch((err) => {
-      console.error(err);
-      return false;
-    });
-};
 
 const logout = () => {
-  localStorage.removeItem("user");
+  firebase
+    .auth()
+    .signOut()
+    .catch((error) => {
+      const code = error.code;
+      const message = error.message;
+
+      console.error(message);
+      return false;
+    });
 };
 
 // User obj is created on login & successful registration (profile creation included)
 // stores mentor ID, user ID, token
 const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem("user"));
+  return firebase.auth().currentUser;
+  // return JSON.parse(localStorage.getItem("user"));
 };
 
 const getMentorID = () => {

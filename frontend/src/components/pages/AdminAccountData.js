@@ -1,37 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Breadcrumb, Input, Checkbox, Spin } from "antd";
+import { Table, Button, Breadcrumb, Input, Spin } from "antd";
 import {
   DownloadOutlined,
   ReloadOutlined,
   LinkOutlined,
   PlusOutlined,
   UserOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import "../css/AdminAccountData.scss";
 import { fetchMentorsAppointments, downloadMentorsData } from "../../utils/api";
 import { formatLinkForHref } from "utils/misc";
+import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
+import { PROFILE_URL } from "../../utils/consts";
 
 const { Column } = Table;
+
+const keys = {
+  MENTORS: 0,
+  MENTEES: 1,
+  ALL: 2,
+  ASCENDING: 0,
+  DESCENDING: 1,
+};
 
 function AdminAccountData() {
   const [isReloading, setIsReloading] = useState(false);
   const [isMentorDownload, setIsMentorDownload] = useState(false);
   const [isMenteeDownload, setIsMenteeDownload] = useState(false);
   const [reload, setReload] = useState(true);
+  const [resetFilters, setResetFilters] = useState(false);
   const [mentorData, setMentorData] = useState([]);
-  const [filterMentors, setFilterMentors] = useState([]);
+  const [displayData, setDisplayData] = useState([]);
+  const [displayOption, setDisplayOption] = useState(keys.MENTORS);
+  const [filterData, setFilterData] = useState([]);
 
   useEffect(() => {
-    async function getMentorData() {
+    async function getData() {
       setIsReloading(true);
       const res = await fetchMentorsAppointments();
       if (res) {
         setMentorData(res.mentorData);
-        setFilterMentors(res.mentorData);
+        // TODO: Add Mentee Data state
+        setDisplayData(res.mentorData);
+        setFilterData(res.mentorData);
       }
       setIsReloading(false);
     }
-    getMentorData();
+    getData();
   }, [reload]);
 
   const handleDeleteAccount = (mentorId) => {
@@ -59,16 +75,43 @@ function AdminAccountData() {
     setIsMenteeDownload(false);
   };
 
+  const handleSortData = (key) => {
+    const newData = [...filterData];
+    const isAscending = key === keys.ASCENDING;
+    newData.sort((a, b) => {
+      return isAscending
+        ? b.appointments.length - a.appointments.length
+        : a.appointments.length - b.appointments.length;
+    });
+    setFilterData(newData);
+  };
+
+  const handleAccountDisplay = (key) => {
+    let newData = [];
+    if (key === keys.MENTORS) {
+      newData = mentorData;
+    } else if (key === keys.MENTEES) {
+      //TODO: Add Mentee Data
+    } else if (key === keys.ALL) {
+      // TODO: Add Mentee Data
+      newData = mentorData.concat([]);
+    }
+
+    setDisplayData(newData);
+    setFilterData(newData);
+    setDisplayOption(key);
+  };
+
   const handleSearchAccount = (name) => {
     if (!name) {
-      setFilterMentors(mentorData);
+      setFilterData(displayData);
       return;
     }
 
-    let newFiltered = mentorData.filter((mentor) => {
-      return mentor.name.match(new RegExp(name, "i"));
+    let newFiltered = displayData.filter((account) => {
+      return account.name.match(new RegExp(name, "i"));
     });
-    setFilterMentors(newFiltered);
+    setFilterData(newFiltered);
   };
 
   return (
@@ -89,8 +132,25 @@ function AdminAccountData() {
         />
       </div>
       <div className="table-header">
-        <div className="table-title">Mentors</div>
+        <div className="table-title">
+          {displayOption === keys.MENTORS
+            ? "Mentors"
+            : displayOption === keys.MENTEES
+            ? "Mentees"
+            : "All"}
+        </div>
         <div className="table-button-group">
+          <MenteeMentorDropdown
+            className="table-button"
+            onChange={(key) => handleAccountDisplay(key)}
+            onReset={resetFilters}
+          />
+          <SortByApptDropdown
+            className="table-button"
+            onChange={(key) => handleSortData(key)}
+            onReset={resetFilters}
+            onChangeData={displayData}
+          />
           <Button
             className="table-button"
             icon={<PlusOutlined />}
@@ -118,12 +178,15 @@ function AdminAccountData() {
             className="table-button"
             style={{ fontSize: "16px" }}
             spin={isReloading}
-            onClick={() => setReload(!reload)}
+            onClick={() => {
+              setReload(!reload);
+              setResetFilters(!resetFilters);
+            }}
           />
         </div>
       </div>
       <Spin spinning={isReloading}>
-        <Table dataSource={filterMentors}>
+        <Table dataSource={filterData}>
           <Column title="Name" dataIndex="name" key="name" />
           <Column
             title="No. of Appointments"
@@ -147,7 +210,10 @@ function AdminAccountData() {
             dataIndex="id"
             key="id"
             render={(mentorId) => (
-              <Checkbox onClick={() => handleDeleteAccount(mentorId)} />
+              <DeleteOutlined
+                className="delete-user-btn"
+                onClick={() => handleDeleteAccount(mentorId)}
+              />
             )}
             align="center"
           />
@@ -158,11 +224,11 @@ function AdminAccountData() {
             render={(id) => (
               <a
                 style={{ color: "black" }}
-                href={formatLinkForHref(`localhost:3000/gallery/${id}`)}
+                href={formatLinkForHref(`${PROFILE_URL}/${id}`)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <LinkOutlined /> {`localhost:3000/gallery/${id}`}
+                <LinkOutlined /> {`${PROFILE_URL}/${id}`}
               </a>
             )}
             align="center"

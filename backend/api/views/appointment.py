@@ -161,7 +161,7 @@ def get_mentors_appointments():
 
     data = []
     for mentor in mentors:
-        appointments = [
+        mentor_appts = [
             appointment
             for appointment in appointments
             if appointment.mentor_id == mentor.id
@@ -170,8 +170,8 @@ def get_mentors_appointments():
             {
                 "name": mentor.name,
                 "id": str(mentor.id),
-                "appointments": appointments,
-                "numOfAppointments": len(appointments),
+                "appointments": mentor_appts,
+                "numOfAppointments": len(mentor_appts),
             }
         )
 

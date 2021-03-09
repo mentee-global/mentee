@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
@@ -32,7 +33,8 @@ const pages = {
 };
 
 function NavigationSidebar(props) {
-  const [collapsed, setCollapsed] = useState(true);
+  const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
+  const [collapsed, setCollapsed] = useState(isMobile);
   const getMenuItemStyle = (page) => {
     return props.selectedPage === page
       ? "navigation-menu-item-selected"

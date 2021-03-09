@@ -382,7 +382,6 @@ function MentorProfileModal(props) {
           setChangedImage(false);
           setIsValid([...isValid].fill(true));
         }}
-        width="50%"
         style={{ overflow: "hidden" }}
         footer={
           <div>

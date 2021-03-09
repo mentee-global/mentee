@@ -28,6 +28,10 @@
   color: $nav-menu-item-hover-color;
 }
 
+.ant-tooltip-inner {
+  color: white;
+}
+
 .navigation-menu-item-selected {
   background-color:$nav-menu-item-selected-color;
   pointer-events: none;
@@ -67,7 +71,7 @@
   margin: 7px 7px;
 }
 
-@media (min-width: 500px) {
+@media (min-width: 501px) {
   // For desktop screens
   .mentee-logo {
     background-color: $mentee-logo-color;

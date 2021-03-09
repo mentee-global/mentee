@@ -175,7 +175,7 @@ function Profile() {
               Contact Info
             </legend>
             {onEdit ? renderEditInfo() : renderContactInfo()}
-          </fieldset>
+          </fieldset> 
         </div>
       </div>
     </div>

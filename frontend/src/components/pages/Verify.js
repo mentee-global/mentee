@@ -4,7 +4,6 @@ import { Input, Button } from "antd";
 import {
   isLoggedIn,
   getRegistrationStage,
-  resendVerify,
   verify,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
@@ -88,7 +87,8 @@ function Verify({ history }) {
               className="verify-resend-link"
               onClick={async () => {
                 // TODO: error handling for resend?
-                await resendVerify();
+                // await resendVerify();
+                // await verify(email);
                 setResent(true);
               }}
             >

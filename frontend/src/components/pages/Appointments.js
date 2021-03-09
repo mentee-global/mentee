@@ -42,8 +42,8 @@ function Appointments() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
   useEffect(() => {
-    const mentorID = getMentorID();
     async function getAppointments() {
+      const mentorID = await getMentorID();
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {

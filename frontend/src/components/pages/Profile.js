@@ -15,8 +15,8 @@ function Profile() {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    const mentorID = getMentorID();
     async function getMentor() {
+      const mentorID = await getMentorID();
       const mentorData = await fetchMentorByID(mentorID);
       if (mentorData) {
         setMentor(mentorData);
@@ -68,7 +68,7 @@ function Profile() {
   const onFinish = (values) => {
     async function saveEdits() {
       const new_values = { ...values, phone_number: values.phone };
-      await editMentorProfile(new_values, getMentorID());
+      await editMentorProfile(new_values, await getMentorID());
       handleSaveEdits();
     }
 

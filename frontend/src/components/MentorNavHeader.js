@@ -17,8 +17,8 @@ function MentorNavHeader() {
   const [mentor, setMentor] = useState();
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   useEffect(() => {
-    const mentorID = getMentorID();
     async function getMentor() {
+      const mentorID = await getMentorID();
       const mentorData = await fetchMentorByID(mentorID);
       if (mentorData) {
         setMentor(mentorData);

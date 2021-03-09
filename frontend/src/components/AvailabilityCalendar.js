@@ -12,7 +12,6 @@ import { fetchAvailability, editAvailability } from "../utils/api";
  * Moment.js documentation: {@link https://momentjs.com/docs/}
  */
 function AvailabilityCalendar() {
-  const mentorID = getMentorID();
   const [saved, setSaved] = useState({}); // Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
@@ -29,6 +28,7 @@ function AvailabilityCalendar() {
    */
   useEffect(() => {
     async function getSetDays() {
+      const mentorID = await getMentorID();
       const availability_data = await fetchAvailability(mentorID);
       const set = [];
       if (availability_data) {
@@ -55,6 +55,7 @@ function AvailabilityCalendar() {
    * Gets availability from backend and changes clientside timeslots
    */
   async function getAvailability() {
+    const mentorID = await getMentorID();
     const availability_data = await fetchAvailability(mentorID);
     if (availability_data) {
       const availability = availability_data.availability;
@@ -137,6 +138,7 @@ function AvailabilityCalendar() {
     );
 
     // Sends toSend to backend to update availability
+    const mentorID = await getMentorID();
     await editAvailability(toSend, mentorID);
 
     // Change trigger to update green dots on calendar

@@ -9,21 +9,12 @@ from api.utils.constants import (
     USER_FORGOT_PASSWORD_TEMPLATE,
 )
 from api.utils.request_utils import send_email
+from api.utils.firebase import client as firebase_client
 import requests
 import pyrebase
 import os
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
-firebase_client = pyrebase.initialize_app(
-    {
-        "apiKey": os.environ.get("FIREBASE_API_KEY"),
-        "authDomain": "mentee-d0304.firebaseapp.com",
-        "databaseURL": "",
-        "storageBucket": "mentee-d0304.appspot.com",
-        "serviceAccount": os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"),
-    }
-)
-
 
 @auth.route("/verifyEmail", methods=["POST"])
 def verify_email():
@@ -105,7 +96,7 @@ def register():
         message="Created account",
         data={
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": role, "user_id": str(user.id)}
+                firebase_uid, {"role": role, "userId": str(user.id)}
             ).decode("utf-8"),
             "userId": str(user.id),
             "permission": role,
@@ -162,6 +153,7 @@ def login():
         try:
             user = Users.objects.get(firebase_uid=firebase_uid)
         except:
+            # should not occur but who knows
             msg = "Firebase user exists but not MongoDB user"
             logger.info(msg)
             return create_response(status=500, message=msg)
@@ -185,7 +177,7 @@ def login():
             "userId": str(user.id),
             "mentorId": str(mentor_id),
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": user.role, "user_id": str(user.id)}
+                firebase_uid, {"role": user.role, "userId": str(user.id), "mentorId": str(mentor_id)}
             ).decode("utf-8"),
         },
     )

@@ -3,10 +3,9 @@ import { withRouter } from "react-router-dom";
 import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
 import {
-  getCurrentRegistration,
   getRegistrationStage,
-  removeRegistration,
   isLoggedIn,
+  getUserId,
 } from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
@@ -227,7 +226,6 @@ function RegisterForm(props) {
       if (mentorId) {
         setError(false);
         setIsValid([...isValid].fill(true));
-        removeRegistration(mentorId);
         props.history.push("/profile");
       } else {
         setError(true);
@@ -240,7 +238,7 @@ function RegisterForm(props) {
     }
 
     const newProfile = {
-      user_id: getCurrentRegistration()["userId"],
+      user_id: await getUserId(),
       name: name,
       professional_title: title,
       linkedin: linkedin,

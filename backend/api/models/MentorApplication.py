@@ -22,10 +22,10 @@ class MentorApplication(Document, Mixin):
     commit_time = StringField(required=True)
     immigrant_status = StringField(required=True)
     languages = ListField(StringField(), required=True)
-    guidance_topics = ListField(StringField(), required=True)
+    specializations = ListField(StringField(), required=True)
     knowledge_location = StringField(required=True)
     referral = StringField()
-    verified = StringField(required=True)
+    application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
     notes = StringField()
 
@@ -44,11 +44,11 @@ class MentorApplication(Document, Mixin):
                 \n linkedin: {self.linkedin}
                 \n why_join_mentee: {self.why_join_mentee}
                 \n commit_time: {self.commit_time}
-                \n guidance_topics: {self.guidance_topics}
+                \n specializations: {self.specializations}
                 \n immigrant_status: {self.immigrant_status}
                 \n languages: {self.languages}
                 \n referral: {self.referral}
                 \n knowledge_location: {self. immigrant_status}
                 \n date_submitted: {self.date_submitted}
                 \n notes: {self.notes}
-                \n verified: {self.verified}>"""
+                \n application_state: {self.application_state}>"""

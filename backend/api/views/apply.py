@@ -5,6 +5,14 @@ from api.core import create_response, serialize_list, logger
 apply = Blueprint("apply", __name__)
 
 # GET request for mentor applications by object ID
+@apply.route("/", methods=["GET"])
+def get_applications():
+    application = MentorApplication.objects.only("name", "specializations", "id")
+
+    return create_response(data={"mentor_applications": application})
+
+
+# GET request for mentor applications for application organizer
 @apply.route("/<id>", methods=["GET"])
 def get_application_by_id(id):
     try:
@@ -72,13 +80,15 @@ def edit_application(id):
     application.knowledge_location = data.get(
         "knowledge_location", application.knowledge_location
     )
-    application.verified = data.get("verified", application.verified)
+    application.application_state = data.get(
+        "application_state", application.application_state
+    )
     application.immigrant_status = data.get(
         "immigrant_status", application.immigrant_status
     )
     application.work_sectors = data.get("work_sectors", application.work_sectors)
-    application.guidance_topics = data.get(
-        "guidance_topics", application.guidance_topics
+    application.specializations = data.get(
+        "specializations", application.specializations
     )
     application.languages = data.get("languages", application.languages)
     application.date_submitted = data.get("date_submitted", application.date_submitted)

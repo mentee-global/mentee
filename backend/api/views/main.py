@@ -129,7 +129,7 @@ def create_mentor_profile():
     )
 
 
-# PUT requests for /mentor
+# PUT requests for /account
 @main.route("/account/<id>", methods=["PUT"])
 def edit_mentor(id):
     data = request.get_json()

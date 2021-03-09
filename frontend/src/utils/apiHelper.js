@@ -7,6 +7,12 @@ import {
 } from "./api";
 import { ACCOUNT_TYPE } from "./consts";
 
+/**
+ * Wrapper function calls to general account endpoints
+ * This helps with avoiding the need to change multiple files
+ * should there be a need to change the value for ACCOUNT_TYPE
+ */
+
 export const createMentorProfile = async (data) => {
   return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR);
 };

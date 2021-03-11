@@ -11,7 +11,7 @@ import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
-import MentorApplicationModal from "components/MentorApplicationModal";
+import MentorApplicationView from "components/MentorApplicationView";
 
 function App() {
   return (
@@ -82,7 +82,7 @@ function App() {
       <Route
         path="/manage-users"
         component={() => (
-          <Navigation content={<MentorApplicationModal />} needsAuth={true} />
+          <Navigation content={<MentorApplicationView />} needsAuth={true} />
         )}
       />
       <Route

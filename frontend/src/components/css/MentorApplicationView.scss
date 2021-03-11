@@ -1,0 +1,26 @@
+.app-modal {
+  width: 50vw !important;
+}
+
+.view-container {
+  padding: 3em;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.double-info-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 1em 0em;
+}
+
+.single-info-section {
+  margin: 1em 0em;
+}
+
+.question {
+  color: gray;
+}

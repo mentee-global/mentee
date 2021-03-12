@@ -11,7 +11,6 @@ import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
-import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 
 function App() {
   return (
@@ -43,16 +42,6 @@ function App() {
         path="/profile"
         component={() => (
           <Navigation content={<Profile />} page="profile" needsAuth={true} />
-        )}
-      />
-      <Route
-        path="/organizer"
-        component={() => (
-          <Navigation
-            content={<ApplicationOrganizer />}
-            page="organizer"
-            needsAuth={false}
-          />
         )}
       />
       <Route

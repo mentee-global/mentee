@@ -130,3 +130,18 @@ export const editAvailability = (timeslots, id) => {
     }
   );
 };
+
+export const adminUploadEmails = (files, isMentor) => {
+  let mentorOrMentee = "mentor";
+  if (!isMentor) {
+    mentorOrMentee = "mentee"
+  }
+  const requestExtension = "/upload/mentor";
+  return instance.post(requestExtension, files).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+

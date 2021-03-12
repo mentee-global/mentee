@@ -3,7 +3,7 @@ import moment from "moment";
 import { Calendar, Modal, Badge, DatePicker } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
-import { Input } from 'antd';
+import { Input } from "antd";
 
 import MenteeButton from "./MenteeButton.js";
 import "./css/AvailabilityCalendar.scss";

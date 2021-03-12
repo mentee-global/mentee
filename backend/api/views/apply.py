@@ -4,7 +4,7 @@ from api.core import create_response, serialize_list, logger
 
 apply = Blueprint("apply", __name__)
 
-# GET request for mentor applications by object ID
+# GET request for mentor applications
 @apply.route("/", methods=["GET"])
 def get_applications():
     application = MentorApplication.objects.only("name", "specializations", "id")
@@ -12,7 +12,7 @@ def get_applications():
     return create_response(data={"mentor_applications": application})
 
 
-# GET request for mentor applications for application organizer
+# GET request for mentor applications for by id
 @apply.route("/<id>", methods=["GET"])
 def get_application_by_id(id):
     try:

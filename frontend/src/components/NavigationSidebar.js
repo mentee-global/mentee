@@ -42,7 +42,13 @@ function NavigationSidebar(props) {
   };
 
   return (
-    <Sider collapsible collapsed={collapsed} theme="light" className="navigation-sidebar" onCollapse={(collapsed) => setCollapsed(collapsed)}>
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      theme="light"
+      className="navigation-sidebar"
+      onCollapse={(collapsed) => setCollapsed(collapsed)}
+    >
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
         {Object.keys(pages).map((page) => (
           <Menu.Item
@@ -51,7 +57,10 @@ function NavigationSidebar(props) {
             style={menuItemMarginOverride}
             icon={pages[page]["icon"]}
           >
-            <NavLink to={pages[page]["path"]} style={collapsed ? {color: "white"} : {color: "black"}}>
+            <NavLink
+              to={pages[page]["path"]}
+              style={collapsed ? { color: "white" } : { color: "black" }}
+            >
               {pages[page]["name"]}
             </NavLink>
           </Menu.Item>

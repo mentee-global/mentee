@@ -98,9 +98,12 @@ function Login() {
             </NavLink>
           </div>
         </div>
-        {!isMobile &&
-          <figure> <img className="logo" src={Logo} alt="" /> </figure>
-        }
+        {!isMobile && (
+          <figure>
+            {" "}
+            <img className="logo" src={Logo} alt="" />{" "}
+          </figure>
+        )}
       </div>
     </div>
   );

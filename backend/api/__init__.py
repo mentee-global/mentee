@@ -77,6 +77,7 @@ def create_app(test_config=None):
         availability,
         verify,
         apply,
+        download,
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -87,7 +88,7 @@ def create_app(test_config=None):
     app.register_blueprint(availability.availability, url_prefix="/api/availability")
     app.register_blueprint(verify.verify, url_prefix="/api")
     app.register_blueprint(apply.apply, url_prefix="/api/application")
-
+    app.register_blueprint(download.download, url_prefix="/api/download")
     # register error handlers
     @app.errorhandler(404)
     def not_found(e):

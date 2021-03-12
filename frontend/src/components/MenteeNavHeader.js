@@ -49,7 +49,7 @@ function MenteeNavHeader({ history }) {
               content={<b>{"Admin Portal"}</b>}
               onClick={() => {
                 history.push({
-                  pathname: "/login",
+                  pathname: "/account-data",
                 });
               }}
             />

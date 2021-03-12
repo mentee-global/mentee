@@ -40,7 +40,7 @@ function MentorCard(props) {
       <div className="gallery-card-body">
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
-          <div className="gallery-header-text">
+          <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
               {props.name}
             </Title>
@@ -57,7 +57,7 @@ function MentorCard(props) {
           {props.lesson_types}
         </h3>
         {props.location && (
-          <div>
+          <div className="gallery-info-section">
             <h3 className="gallery-headers">
               <EnvironmentOutlined style={styles.icon} />
               Location:
@@ -73,7 +73,7 @@ function MentorCard(props) {
           {props.specializations.join(", ")}
         </Text>
         {props.website && (
-          <h4>
+          <h4 className="gallery-info-section">
             <LinkOutlined style={styles.icon} />
             <a
               className="gallery-links"
@@ -86,7 +86,7 @@ function MentorCard(props) {
           </h4>
         )}
         {props.linkedin && (
-          <h4>
+          <h4 className="gallery-info-section">
             <LinkedinOutlined style={styles.icon} />
             <a
               className="gallery-links"

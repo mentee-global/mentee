@@ -9,6 +9,8 @@ export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
 
+export const PROFILE_URL = BASE_URL + "gallery/";
+
 export const REGISTRATION_STAGE = {
   START: 0,
   VERIFY_EMAIL: 1,

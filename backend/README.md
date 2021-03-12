@@ -1,4 +1,4 @@
-# Flask Boilerplate
+# Flask Backend
 
 This is based off of [Flask Boilerplate](https://github.com/tko22/flask-boilerplate), but repurposed for MongoDB using MongoEngine.
 
@@ -18,26 +18,16 @@ Replace the `[xxx]` with your own credentials.
 
 ### Server Setup
 
-Make sure you have [Python3](https://realpython.com/installing-python/) and `pip3` installed.
+Make sure you have [Python3](https://realpython.com/installing-python/) and [Poetry](https://python-poetry.org/) installed.
 
-Start your virtual environment:
+Install packages:
 
 ```
-$ pip3 install virtualenv
-$ virtualenv venv
-$ source venv/bin/activate
+$ poetry install
 ```
-Now, install the python dependencies and run the server:
+To run the server:
 ```
-(venv) $ pip install -r requirements.txt
-(venv) $ pip install -r requirements-dev.txt
-(venv) $ python manage.py runserver
-```
-
-To exit the virtual environment:
-```
-(venv) $ deactivate
-$
+$ poetry run start
 ```
 
 ### Verifying
@@ -45,9 +35,15 @@ $
 Install [Postman](https://www.getpostman.com/downloads/) or your app of choice for testing API calls, or go onto "collections" on MongoDB Atlas.
 
 Then, make Postman calls to verify that the server works:
+<<<<<<< HEAD
 
 `GET localhost:5000/api/mentors` should return a list of the test mentors we have in the DB.
 
+=======
+
+## Using Docker **NOT SUPPORTED**
+
+>>>>>>> 7d1f975954ec0206455f04cc5effb8a660328e79
 You can also view the contents of your database by connecting to it in Mongo Compass using the default settings!
 
 ## Repository Contents
@@ -88,3 +84,4 @@ find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 - [REST API](http://www.restapitutorial.com/lessons/restquicktips.html) - tips on making an API Restful
 - [Docker Docs](https://docs.docker.com/get-started/) - Docker docs
 - [SendGrid](https://sendgrid.com/docs/for-developers/) - Documentation For SendGrid
+- [Twilio](twilio.com/docs/libraries/python) - Documentation for Twilio

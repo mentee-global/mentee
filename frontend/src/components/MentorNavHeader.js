@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
 import { logout, getMentorID } from "utils/auth.service";
 import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
@@ -16,7 +17,7 @@ const { Header } = Layout;
 function MentorNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const [mentor, setMentor] = useState();
-
+  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   useEffect(() => {
     const mentorID = getMentorID();
     async function getMentor() {
@@ -46,6 +47,7 @@ function MentorNavHeader() {
 
   return (
     <Header className="navigation-header">
+<<<<<<< HEAD
       <NavLink to="/">
         <img
           src={isMobile ? MenteeLogoSmall : MenteeLogo}
@@ -53,6 +55,17 @@ function MentorNavHeader() {
           className="mentee-logo"
         />
       </NavLink>
+=======
+      <div>
+        <NavLink to="/">
+          <img
+            src={isMobile ? MenteeLogoSmall : MenteeLogo}
+            alt="Mentee"
+            className="mentee-logo"
+          />
+        </NavLink>
+      </div>
+>>>>>>> 7d1f975954ec0206455f04cc5effb8a660328e79
       <span>
         <div className="profile-caret">
           <Dropdown overlay={dropdownMenu} trigger={["click"]}>

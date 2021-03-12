@@ -151,3 +151,28 @@ def delete_request(appointment_id):
 
     request.delete()
     return create_response(status=200, message=f"Success")
+
+
+# GET all appointments per mentor
+@appointment.route("/mentors", methods=["GET"])
+def get_mentors_appointments():
+    mentors = MentorProfile.objects.only("id", "name")
+    appointments = AppointmentRequest.objects()
+
+    data = []
+    for mentor in mentors:
+        mentor_appts = [
+            appointment
+            for appointment in appointments
+            if appointment.mentor_id == mentor.id
+        ]
+        data.append(
+            {
+                "name": mentor.name,
+                "id": str(mentor.id),
+                "appointments": mentor_appts,
+                "numOfAppointments": len(mentor_appts),
+            }
+        )
+
+    return create_response(data={"mentorData": data}, status=200, message="Success")

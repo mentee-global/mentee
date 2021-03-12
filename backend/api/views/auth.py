@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from api.models import db, Users, MentorProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import AUTH_URL
+from api.models import AppointmentRequest
 import requests
 
 auth = Blueprint("auth", __name__)  # initialize blueprint

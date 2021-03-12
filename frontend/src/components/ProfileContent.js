@@ -57,10 +57,12 @@ function ProfileContent(props) {
       <div className="mentor-profile-name">
         {props.mentor.name}
         {props.isMentor ? (
-          <MentorProfileModal
-            mentor={props.mentor}
-            onSave={props.handleSaveEdits}
-          />
+          <div className="mentor-profile-button">
+            <MentorProfileModal
+              mentor={props.mentor}
+              onSave={props.handleSaveEdits}
+            />
+          </div>
         ) : (
           <div className="mentor-profile-button">
             <MenteeAppointmentModal

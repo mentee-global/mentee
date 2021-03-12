@@ -77,6 +77,7 @@ def create_app(test_config=None):
         availability,
         verify,
         apply,
+        admin,
         download,
     )
 
@@ -88,6 +89,7 @@ def create_app(test_config=None):
     app.register_blueprint(availability.availability, url_prefix="/api/availability")
     app.register_blueprint(verify.verify, url_prefix="/api")
     app.register_blueprint(apply.apply, url_prefix="/api/application")
+    app.register_blueprint(admin.admin, url_prefix="/api")
     app.register_blueprint(download.download, url_prefix="/api/download")
     # register error handlers
     @app.errorhandler(404)

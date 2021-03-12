@@ -141,3 +141,23 @@ export const editAvailability = (timeslots, id) => {
     }
   );
 };
+
+export const fetchMentorsAppointments = () => {
+  const requestExtension = "/appointment/mentors";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const downloadMentorsData = () => {
+  const requestExtension = "/download/accounts/all";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};

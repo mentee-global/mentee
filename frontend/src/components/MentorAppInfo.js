@@ -32,11 +32,11 @@ function MentorAppInfo({ info }) {
         <div className="answer">Answer</div>
       </div>
       <div className="double-info-section">
-        <div>
+        <div style={{ width: "50%" }}>
           <div className="question">Phone</div>
           <div className="answer">Answer</div>
         </div>
-        <div>
+        <div style={{ width: "50%" }}>
           <div className="question">Phone (Business)</div>
           <div className="answer">Answer</div>
         </div>
@@ -62,11 +62,11 @@ function MentorAppInfo({ info }) {
         <div className="answer">Answer</div>
       </div>
       <div className="double-info-section">
-        <div>
+        <div style={{ width: "50%" }}>
           <div className="question">{questions.company}</div>
           <div className="answer">Answer</div>
         </div>
-        <div>
+        <div style={{ width: "50%" }}>
           <div className="question">{questions.job}</div>
           <div className="answer">Answer</div>
         </div>
@@ -80,11 +80,11 @@ function MentorAppInfo({ info }) {
         <div className="answer">Answer</div>
       </div>
       <div className="double-info-section">
-        <div>
+        <div style={{ width: "50%" }}>
           <div className="question">{questions.immigration}</div>
           <div className="answer">Answer</div>
         </div>
-        <div>
+        <div style={{ width: "50%" }}>
           <div className="question">{questions.languages}</div>
           <div className="answer">Answer</div>
         </div>

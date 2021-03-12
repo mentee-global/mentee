@@ -1,5 +1,5 @@
 .app-modal {
-  width: 50vw !important;
+  width: 60vw !important;
 }
 
 .view-container {
@@ -8,6 +8,10 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.info-container {
+  width: 60%;
 }
 
 .double-info-section {
@@ -19,8 +23,33 @@
 
 .single-info-section {
   margin: 1em 0em;
+  width: 50%;
 }
 
 .question {
   color: gray;
+}
+
+.status-container {
+  width: 40%;
+}
+
+.notes-container {
+  border: 1px solid #e5e5e5;
+  box-sizing: border-box;
+  border-radius: 7px;
+  padding: 26px;
+}
+
+.notes-title {
+  color: #828282;
+  font-weight: bold;
+  margin-bottom: 1.5em;
+}
+
+.note-wrap {
+  background: #ffecbd;
+  border-radius: 7px;
+  padding: 1em;
+  width: 100%;
 }

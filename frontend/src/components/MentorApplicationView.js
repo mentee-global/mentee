@@ -31,11 +31,16 @@ function MentorApplicationView({ data }) {
   };
 
   return (
-    <Modal visible={visible} footer={null} className="app-modal">
+    <Modal
+      visible={visible}
+      footer={null}
+      className="app-modal"
+      onCancel={() => setVisible(false)}
+    >
       <div className="view-container">
         <MentorAppInfo info={appData} />
         <div className="status-container">
-          <MentorAppProgress />
+          <MentorAppProgress progress={appData.application_state} />
           <NotesContainer />
         </div>
       </div>

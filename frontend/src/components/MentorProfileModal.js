@@ -326,7 +326,7 @@ function MentorProfileModal(props) {
     async function saveEdits(data) {
       await editMentorProfile(data, getMentorID());
       if (changedImage) {
-        await uploadMentorImage(image, getMentorID());
+        await uploadMentorImage(image, getMentorID(), "mentor");
       }
       setSaving(false);
       setChangedImage(false);

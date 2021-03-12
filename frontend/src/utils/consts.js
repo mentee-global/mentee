@@ -1,12 +1,15 @@
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? // TODO: add configuration for dev url @ "https://mentee-dev.herokuapp.com/"
-      "https://mentee-h4i.herokuapp.com/"
+    ? process.env.REACT_APP_ENV === "development"
+      ? "https://mentee-dev.herokuapp.com/"
+      : "https://mentee-h4i.herokuapp.com/"
     : "http://localhost:5000/";
 
 export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
+
+export const PROFILE_URL = BASE_URL + "gallery/";
 
 export const REGISTRATION_STAGE = {
   START: 0,

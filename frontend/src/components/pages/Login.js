@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
+import { useMediaQuery } from "react-responsive";
 import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
 import { isLoggedIn, login } from "utils/auth.service";
@@ -15,7 +16,7 @@ function Login() {
   const [error, setError] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
-
+  const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
     newClickedInput[index] = true;
@@ -97,7 +98,12 @@ function Login() {
             </NavLink>
           </div>
         </div>
-        <img className="logo" src={Logo} alt="" />
+        {!isMobile && (
+          <figure>
+            {" "}
+            <img className="logo" src={Logo} alt="" />{" "}
+          </figure>
+        )}
       </div>
     </div>
   );

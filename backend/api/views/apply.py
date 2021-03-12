@@ -56,7 +56,7 @@ def edit_application(id):
     application.name = data.get("name", application.name)
     application.email = data.get("email", application.email)
     application.business_number = data.get(
-        "business_number", application.buisness_number
+        "business_number", application.business_number
     )
     application.cell_number = data.get("cell_number", application.cell_number)
     application.hear_about_us = data.get("hear_about_us", application.hear_about_us)

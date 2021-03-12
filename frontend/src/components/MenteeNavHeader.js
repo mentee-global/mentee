@@ -31,6 +31,30 @@ function MenteeNavHeader({ history }) {
         </div>
         <div style={{ display: "flex" }}>
           <span className="navigation-header-button">
+            <MenteeButton
+              width="100%"
+              theme="light"
+              content={<b>{"Apply"}</b>}
+              onClick={() => {
+                history.push({
+                  pathname: "/login",
+                });
+              }}
+            />
+          </span>
+          <span className="navigation-header-button">
+            <MenteeButton
+              width="100%"
+              theme="light"
+              content={<b>{"Admin Portal"}</b>}
+              onClick={() => {
+                history.push({
+                  pathname: "/login",
+                });
+              }}
+            />
+          </span>
+          <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}
               theme="light"

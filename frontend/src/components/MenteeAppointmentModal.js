@@ -55,6 +55,7 @@ function MenteeAppointmentModal(props) {
   const [message, setMessage] = useState();
   const mentorID = props.mentor_id;
   const [validate, setValidate] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(false);
 
   // useState values
   const values = [
@@ -91,8 +92,14 @@ function MenteeAppointmentModal(props) {
     let dayList = [];
     timeSlots.forEach((timeSlot) => {
       let day = moment(timeSlot.start_time.$date).format("YYYY-MM-DD");
+      let dayTimeObject = moment(timeSlot.start_time.$date);
+      let currentDate = moment();
+
       if (!dayList.includes(day)) {
         dayList.push(day);
+      }
+      if (dayTimeObject.isAfter(currentDate)) {
+        setIsAvailable(true);
       }
     });
     setDaySlots(dayList);
@@ -228,25 +235,29 @@ function MenteeAppointmentModal(props) {
                 </div>
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
-                {dayTimeSlots.map((timeSlot, index) => (
-                  <div
-                    key={index}
-                    className="modal-mentee-appointment-timeslot"
-                  >
-                    <MenteeButton
+                {!isAvailable ? (
+                  <h1>There are no appointments available</h1>
+                ) : (
+                  dayTimeSlots.map((timeSlot, index) => (
+                    <div
                       key={index}
-                      width={170}
-                      content={
-                        moment(timeSlot.start_time.$date).format("hh:mm A") +
-                        "-" +
-                        moment(timeSlot.end_time.$date).format("hh:mm A")
-                      }
-                      theme="light"
-                      borderOnClick={true}
-                      onClick={() => setTime(timeSlot)}
-                    />
-                  </div>
-                ))}
+                      className="modal-mentee-appointment-timeslot"
+                    >
+                      <MenteeButton
+                        key={index}
+                        width={170}
+                        content={
+                          moment(timeSlot.start_time.$date).format("hh:mm A") +
+                          "-" +
+                          moment(timeSlot.end_time.$date).format("hh:mm A")
+                        }
+                        theme="light"
+                        borderOnClick={true}
+                        onClick={() => setTime(timeSlot)}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
             <div className="modal-mentee-appointment-datetime-container-footer">

@@ -4,7 +4,7 @@ from api.core import create_response, serialize_list, logger
 
 apply = Blueprint("apply", __name__)
 
-# GET request for mentor applications
+# GET request for all mentor applications
 @apply.route("/", methods=["GET"])
 def get_applications():
     application = MentorApplication.objects.only("name", "specializations", "id")

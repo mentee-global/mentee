@@ -1,8 +1,4 @@
 import React, { useState } from "react";
-<<<<<<< HEAD
-import { useMediaQuery } from "react-responsive";
-=======
->>>>>>> 7d1f975954ec0206455f04cc5effb8a660328e79
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import { useMediaQuery } from "react-responsive";

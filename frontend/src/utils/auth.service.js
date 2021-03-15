@@ -18,11 +18,13 @@ const post = (url, data, params) =>
     .then((res) => res.data)
     .catch((err) => console.error(err));
 
+const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
+
 // Role is where you put "admin" or "mentor"- right now we only support mentor
 export const register = (email, password, role) =>
   post("/register", { email, password, role }).then((data) => {
-    if (data.success) {
-      const result = data.result.token;
+    if (data && data.success) {
+      const result = data.result;
       firebase
         .auth()
         .signInWithCustomToken(result.token)
@@ -34,7 +36,7 @@ export const register = (email, password, role) =>
   });
 
 // Sends verification code to email
-export const verify = (email) => {
+export const sendVerificationEmail = (email) => {
   return post("/verifyEmail", {
     email,
   }).then((response) => {
@@ -47,7 +49,7 @@ export const verify = (email) => {
 
 export const login = (email, password) =>
   post("/login", { email, password }).then((data) => {
-    if (data.success) {
+    if (data && data.success) {
       firebase
         .auth()
         .signInWithCustomToken(data.result.token)
@@ -73,20 +75,25 @@ export const logout = () => {
     });
 };
 
-// User obj is created on login & successful registration (profile creation included)
-// stores mentor ID, user ID, token
+export const refreshToken = async () => {
+  if (isLoggedIn()) {
+    await getIdTokenResult().then((idTokenResult) => {
+      const token = post('/refreshToken').then(res => res && res.token);
+      firebase.auth().signInWithCustomToken(token);
+    })
+  }
+}
+
 export const getCurrentUser = () => {
   return firebase.auth().currentUser;
 };
 
 export const getMentorID = async () => {
   if (isLoggedIn()) {
-    return await getCurrentUser()
-      .getIdTokenResult()
-      .then((idTokenResult) => {
-        console.log("idtoken", idTokenResult);
-        return idTokenResult.claims.mentorId;
-      });
+    return await getIdTokenResult().then((idTokenResult) => {
+      console.log("idtoken", idTokenResult);
+      return idTokenResult.claims.mentorId;
+    });
   } else return false;
 };
 
@@ -96,32 +103,38 @@ export const isLoggedIn = () => {
 
 export const getUserId = async () => {
   if (isLoggedIn()) {
-    return await getCurrentUser()
-      .getIdTokenResult()
-      .then((idTokenResult) => {
-        return idTokenResult.claims.userId;
-      });
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.userId;
+    });
   }
 };
 
 export const isUserVerified = async () => {
   if (isLoggedIn()) {
-    return await getCurrentUser()
-      .getIdTokenResult()
-      .then((idTokenResult) => {
-        return idTokenResult.claims.email_verified;
-      });
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.email_verified;
+    });
+  }
+};
+
+export const getUserEmail = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.email;
+    });
   }
 };
 
 export const getRegistrationStage = async () => {
-  return await getCurrentUser()
-    .getIdTokenResult()
-    .then((idTokenResult) => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
       const claims = idTokenResult.claims;
 
-      if (!claims.mentorId) return REGISTRATION_STAGE.START;
       if (!claims.email_verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
-      return REGISTRATION_STAGE.PROFILE_CREATION;
+      if (!claims.mentorId) return REGISTRATION_STAGE.PROFILE_CREATION;
+      return null; 
     });
+  }
+
+  return REGISTRATION_STAGE.START;
 };

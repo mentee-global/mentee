@@ -16,6 +16,7 @@ import os
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
+
 @auth.route("/verifyEmail", methods=["POST"])
 def verify_email():
     data = request.json
@@ -24,7 +25,8 @@ def verify_email():
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_admin_auth.generate_email_verification_link(email)
+        verification_link = firebase_admin_auth.generate_email_verification_link(
+            email)
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)
@@ -58,7 +60,8 @@ def create_firebase_user(email, password, role):
             password=password,
         )
 
-        firebase_admin_auth.set_custom_user_claims(firebase_user.uid, {"role": role})
+        firebase_admin_auth.set_custom_user_claims(
+            firebase_user.uid, {"role": role})
     except ValueError:
         msg = "Invalid input"
         logger.info(msg)
@@ -78,7 +81,8 @@ def register():
     email_verified = False
     password = data.get("password")
     role = data.get("role")
-    firebase_user, error_http_response = create_firebase_user(email, password, role)
+    firebase_user, error_http_response = create_firebase_user(
+        email, password, role)
 
     if error_http_response:
         return error_http_response
@@ -177,7 +181,8 @@ def login():
             "userId": str(user.id),
             "mentorId": str(mentor_id),
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": user.role, "userId": str(user.id), "mentorId": str(mentor_id)}
+                firebase_uid, {"role": user.role, "userId": str(
+                    user.id), "mentorId": str(mentor_id)}
             ).decode("utf-8"),
         },
     )
@@ -217,14 +222,49 @@ def forgot_password():
     error = send_forgot_password_email(email)
 
     return (
-        error and error or create_response(message="Sent password reset link to email")
+        error and error or create_response(
+            message="Sent password reset link to email")
     )
 
 
 @auth.route("/passwordReset", methods=["POST"])
 def reset_password():
     data = request.json
-    body = {"email": data["email"], "pin": data["pin"], "password": data["password"]}
+    body = {"email": data["email"], "pin": data["pin"],
+            "password": data["password"]}
     headers = {"Content-Type": "application/json"}
-    results = requests.post(AUTH_URL + "/passwordReset", headers=headers, json=body)
+    results = requests.post(AUTH_URL + "/passwordReset",
+                            headers=headers, json=body)
     return results.json()
+
+
+@auth.route("/refreshToken", methods=["POST"])
+def refresh_token():
+    data = request.json
+    token = data.get('token');
+
+    claims = firebase_admin_auth.verify_id_token(token);
+    uid = claims['userId']
+
+    user = None
+
+    try:
+        user = Users.objects.get(id=uid)
+    except:
+        msg = "User not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    try:
+        mentor = MentorProfile.objects.get(user_id=user)
+    except:
+        msg = "Mentor profile not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    return create_response(status=200, data={
+        "token": firebase_admin_auth.create_custom_token(
+            user.firebase_uid, {"role": user.role, "userId": str(
+                user.id), "mentorId": str(mentor.id)}
+        ).decode("utf-8"),
+    })

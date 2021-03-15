@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import { Input } from "antd";
 import MenteeVerificationModal from "../MenteeVerificationModal";
-import { getRegistrationStage, isLoggedIn, register } from "utils/auth.service";
+import {
+  getRegistrationStage,
+  isLoggedIn,
+  register,
+  sendVerificationEmail,
+} from "utils/auth.service";
 import { REGISTRATION_STAGE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
@@ -22,15 +27,20 @@ function Register({ history }) {
   const [inputFocus, setInputFocus] = useState([false, false, false]);
 
   useEffect(() => {
-    if (isLoggedIn()) {
-      history.push("/appointments");
+    async function fetchData() {
+      const registrationStage = await getRegistrationStage();
+      console.log("regstate", registrationStage);
+
+      if (!registrationStage) {
+        history.push("/appointments");
+      } else if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
+        history.push("/create-profile");
+      } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
+        history.push("/verify");
+      }
     }
-    const registrationStage = getRegistrationStage();
-    if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
-      history.push("/create-profile");
-    } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
-      history.push("/verify");
-    }
+
+    fetchData();
   }, [history]);
 
   function handleInputFocus(index) {
@@ -56,7 +66,10 @@ function Register({ history }) {
     if (!checkErrors()) {
       const res = await register(email, password, "mentor");
       if (res.success) {
-        history.push("/verify");
+        // send verification email
+        const res = await sendVerificationEmail(email);
+
+        history.push(`/verify?sent=${res.success}`);
       } else {
         setServerError(true);
       }

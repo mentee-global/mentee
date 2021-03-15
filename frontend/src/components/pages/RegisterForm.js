@@ -6,6 +6,7 @@ import {
   getRegistrationStage,
   isLoggedIn,
   getUserId,
+  refreshToken,
 } from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
@@ -37,15 +38,19 @@ function RegisterForm(props) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn()) {
-      props.history.push("/appointments");
+    async function fetchData() {
+      const registrationStage = await getRegistrationStage();
+      
+      if (!registrationStage) {
+        props.history.push("/appointments");
+      } else if (registrationStage === REGISTRATION_STAGE.START) {
+        props.history.push("/register");
+      } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
+        props.history.push("/verify");
+      }
     }
-    const registrationStage = getRegistrationStage();
-    if (registrationStage === REGISTRATION_STAGE.START) {
-      props.history.push("/register");
-    } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
-      props.history.push("/verify");
-    }
+
+    fetchData();
   }, [props.history]);
 
   function renderEducationInputs() {
@@ -226,6 +231,7 @@ function RegisterForm(props) {
       if (mentorId) {
         setError(false);
         setIsValid([...isValid].fill(true));
+        await refreshToken();
         props.history.push("/profile");
       } else {
         setError(true);

@@ -26,7 +26,7 @@ def download_appointments():
                 mentor.email,
                 appt.timeslot.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
                 appt.timeslot.end_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
-                int(appt.accepted),
+                int(appt.accepted) if apt.accepted != null else "N/A",
                 appt.name,
                 appt.email,
                 appt.phone_number,
@@ -37,8 +37,8 @@ def download_appointments():
                 ",".join(appt.specialist_categories),
                 appt.message,
                 appt.organization,
-                int(appt.allow_calls),
-                int(appt.allow_texts),
+                int(appt.allow_calls) if apt.allow_calls != null else "N/A",
+                int(appt.allow_texts) if apt.allow_texts != null else "N/A",
             ]
         )
     columns = [

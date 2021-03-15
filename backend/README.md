@@ -35,15 +35,9 @@ $ poetry run start
 Install [Postman](https://www.getpostman.com/downloads/) or your app of choice for testing API calls, or go onto "collections" on MongoDB Atlas.
 
 Then, make Postman calls to verify that the server works:
-<<<<<<< HEAD
-
-`GET localhost:5000/api/mentors` should return a list of the test mentors we have in the DB.
-
-=======
 
 ## Using Docker **NOT SUPPORTED**
 
->>>>>>> be737ed1d70c37261817268a3c7972fa2808ae53
 You can also view the contents of your database by connecting to it in Mongo Compass using the default settings!
 
 ## Repository Contents

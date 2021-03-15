@@ -76,11 +76,8 @@ def create_app(test_config=None):
         appointment,
         availability,
         verify,
-<<<<<<< HEAD
-=======
         apply,
         admin,
->>>>>>> be737ed1d70c37261817268a3c7972fa2808ae53
         download,
     )
 
@@ -94,11 +91,8 @@ def create_app(test_config=None):
 <<<<<<< HEAD
 =======
     app.register_blueprint(apply.apply, url_prefix="/api/application")
-    app.register_blueprint(admin.admin, url_prefix="/api")
->>>>>>> be737ed1d70c37261817268a3c7972fa2808ae53
     app.register_blueprint(download.download, url_prefix="/api/download")
     # register error handlers
-    @app.errorhandler(404)
     def not_found(e):
         return app.send_static_file("index.html")
 

@@ -29,7 +29,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             offers_in_person=data["offers_in_person"],
             offers_group_appointments=data["offers_group_appointments"],
             email_notifications=data.get("email_notifications", True),
-            text_notifications=data.get("text_notifications", True),
+            text_notifications=data.get("text_notifications", False),
         )
 
         new_profile.website = data.get("website")
@@ -52,7 +52,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             # TODO: Change this to the actual email and remove default
             email=data.get("email", "email@gmail.com"),
             email_notifications=data.get("email_notifications", True),
-            text_notifications=data.get("text_notifications", True),
+            text_notifications=data.get("text_notifications", False),
             organization=data["organization"],
             age=data["age"],
             gender=data["gender"],

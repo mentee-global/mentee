@@ -72,6 +72,16 @@ export const createAccountProfile = (profile, type) => {
   );
 };
 
+export const fetchApplications = () => {
+  const requestExtension = "/application/";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
   return instance.post(requestExtension, appointment).then(
@@ -138,6 +148,26 @@ export const editAvailability = (timeslots, id) => {
   let availability = { Availability: timeslots };
   return instance.put(requestExtension, availability).then(
     (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const fetchMentorsAppointments = () => {
+  const requestExtension = "/appointment/mentors";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const downloadMentorsData = () => {
+  const requestExtension = "/download/accounts/all";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }

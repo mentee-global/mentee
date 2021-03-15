@@ -18,6 +18,7 @@ const post = (url, data, params) =>
     .then((res) => res.data)
     .catch((err) => console.error(err));
 
+const getIdToken = () => getCurrentUser().getIdToken(true);
 const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
 
 // Role is where you put "admin" or "mentor"- right now we only support mentor
@@ -77,7 +78,8 @@ export const logout = () => {
 
 export const refreshToken = async () => {
   if (isLoggedIn()) {
-    await getIdTokenResult().then((idTokenResult) => {
+    await getIdToken().then((idToken) => {
+      console.log('idtoken', idToken)
       const token = post('/refreshToken').then(res => res && res.token);
       firebase.auth().signInWithCustomToken(token);
     })
@@ -91,7 +93,6 @@ export const getCurrentUser = () => {
 export const getMentorID = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
-      console.log("idtoken", idTokenResult);
       return idTokenResult.claims.mentorId;
     });
   } else return false;

@@ -4,11 +4,13 @@ from io import BytesIO
 from api.core import create_response
 from api.models import AppointmentRequest, Users, MentorProfile
 from flask import send_file, Blueprint
+from api.utils.require_auth import admin_only
 
 download = Blueprint("download", __name__)
 
 
 @download.route("/appointments/all", methods=["GET"])
+@admin_only
 def download_appointments():
     try:
         appointments = AppointmentRequest.objects()
@@ -64,6 +66,7 @@ def download_appointments():
 
 
 @download.route("/accounts/all", methods=["GET"])
+@admin_only
 def download_accounts_info():
     try:
         admin_ids = Users.objects(role="admin").scalar("id")

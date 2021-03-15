@@ -7,6 +7,7 @@ import {
   isLoggedIn,
   register,
   sendVerificationEmail,
+  refreshToken,
 } from "utils/auth.service";
 import { REGISTRATION_STAGE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";

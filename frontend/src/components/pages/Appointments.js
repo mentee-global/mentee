@@ -13,7 +13,7 @@ import {
   getAppointmentsByMentorID,
   deleteAppointment,
 } from "../../utils/api";
-import { getMentorID } from "utils/auth.service";
+import { getMentorID, refreshToken } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 
@@ -44,6 +44,7 @@ function Appointments() {
   useEffect(() => {
     async function getAppointments() {
       const mentorID = await getMentorID();
+      await refreshToken();
       console.log('apt id', mentorID);
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);

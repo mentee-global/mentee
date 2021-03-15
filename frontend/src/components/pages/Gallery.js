@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchMentors } from "../../utils/apiHelper";
+import { fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
 import { Input, Checkbox, Modal, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";

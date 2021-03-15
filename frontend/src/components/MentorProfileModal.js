@@ -9,7 +9,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
-import { editMentorProfile, uploadMentorImage } from "../utils/apiHelper";
+import { editMentorProfile, uploadMentorImage } from "../utils/api";
 import { getMentorID } from "../utils/auth.service";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";

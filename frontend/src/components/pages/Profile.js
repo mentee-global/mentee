@@ -6,7 +6,7 @@ import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
-import { fetchMentorByID, editMentorProfile } from "utils/apiHelper";
+import { fetchMentorByID, editMentorProfile } from "utils/api";
 
 function Profile() {
   const [mentor, setMentor] = useState({});

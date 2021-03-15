@@ -8,7 +8,7 @@ import {
   removeRegistration,
   isLoggedIn,
 } from "utils/auth.service";
-import { createMentorProfile } from "utils/apiHelper";
+import { createMentorProfile } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS, REGISTRATION_STAGE } from "utils/consts";
 import "../css/AntDesign.scss";

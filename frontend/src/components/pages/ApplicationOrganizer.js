@@ -1,8 +1,8 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { Modal, Button } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { fetchApplications} from "../../utils/api";
+import { Modal, Button } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { fetchApplications } from "../../utils/api";
 import uuid from "uuid/v4";
 
 const { confirm } = Modal;
@@ -32,8 +32,6 @@ const { confirm } = Modal;
 //     items: []
 //   }
 // };
-
-
 
 const onDragEnd = (result, columns, setColumns) => {
   // if no designated column to switch then keep app in curr column
@@ -84,49 +82,10 @@ function ApplicationOrganizer() {
     { id: uuid(), content: "Application" },
   ];
 
-
-  useEffect(() => {
-    const getAllApplications = async () => {
-      const applications = await fetchApplications();
-      if (applications) {
-      setApplicationData(applications ? applications.mentor_applications: []);
-      }
-    };
-  
-    getAllApplications();
-
-  }, []);
-
-  function showConfirm () {
-    console.log(applicationData);
-    confirm({
-      title: 'Move this Application?',
-      icon: <ExclamationCircleOutlined />,
-      onOk() {
-        console.log('OK');
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-  }
-
-  function printData() {
-      console.log(applicationData); 
-  }
-
-  printData() 
-
-  const getApplications = () =>
-  applicationData.map(application => ({
-    id: application.id,
-    content: application.name + application.specializations
-  }));
-
-  const columnHeader = {
+  const [columns, setColumns] = useState({
     [1]: {
       name: "Pending",
-      items: []
+      items: [],
     },
     [2]: {
       name: "Reviewed",
@@ -140,14 +99,74 @@ function ApplicationOrganizer() {
       name: "Offer Made",
       items: [],
     },
-  };
+  });
 
-  const [columns, setColumns] = useState(columnHeader);
+  useEffect(() => {
+    const getAllApplications = async () => {
+      const applications = await fetchApplications();
+      if (applications) {
+        setApplicationData(
+          applications ? applications.mentor_applications : []
+        );
+      }
+    };
+
+    getAllApplications();
+  }, []);
+
+  useEffect(() => {
+    setColumns({
+      [1]: {
+        name: "Pending",
+        items: applicationData.map((application) => ({
+          id: application._id.$oid,
+          content: application.name + application.specializations,
+        })),
+      },
+      [2]: {
+        name: "Reviewed",
+        items: [],
+      },
+      [3]: {
+        name: "Rejected",
+        items: [],
+      },
+      [4]: {
+        name: "Offer Made",
+        items: [],
+      },
+    });
+  }, [applicationData]);
+
+  function showConfirm() {
+    console.log(applicationData);
+    confirm({
+      title: "Move this Application?",
+      icon: <ExclamationCircleOutlined />,
+      onOk() {
+        console.log("OK");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  }
+
+  function printData() {
+    console.log(applicationData);
+  }
+
+  printData();
+
+  const getApplications = () =>
+    applicationData.map((application) => ({
+      id: application.id,
+      content: application.name + application.specializations,
+    }));
+
 
   return (
-    
     <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
-        
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
       >
@@ -162,17 +181,15 @@ function ApplicationOrganizer() {
               }}
               key={columnId}
             >
-               
               <h2>{column.name}</h2>
               <div style={{ margin: 10 }}>
                 <Droppable droppableId={columnId} key={columnId}>
-                    {/* Causes the droppable item to change color of columm when picked up. */}
-                    
+                  {/* Causes the droppable item to change color of columm when picked up. */}
+
                   {(provided, currentApp) => {
-                      //printData()
+                    //printData()
                     return (
                       <div
-                      
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                         style={{
@@ -184,19 +201,15 @@ function ApplicationOrganizer() {
                           minHeight: 500,
                         }}
                       >
-                           
-                          {/* Mapping each item from list that corresponds to the column */}
+                        {/* Mapping each item from list that corresponds to the column */}
                         {column.items.map((item, index) => {
-                          
                           return (
                             <Draggable
                               key={item.id}
                               draggableId={item.id}
                               index={index}
                             >
-                             
                               {(provided) => {
-                               
                                 return (
                                   <div
                                     ref={provided.innerRef}
@@ -211,10 +224,8 @@ function ApplicationOrganizer() {
                                       color: "black",
                                       ...provided.draggableProps.style,
                                     }}
-                                    
-                                    
                                   >
-                                    {item.content}  
+                                    {item.content}
                                   </div>
                                 );
                               }}
@@ -225,7 +236,6 @@ function ApplicationOrganizer() {
                       </div>
                     );
                   }}
-                  
                 </Droppable>
               </div>
             </div>

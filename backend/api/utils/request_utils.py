@@ -98,11 +98,7 @@ def send_email(
      - Changing Sender Email
         - https://sendgrid.com/docs/ui/sending-email/sender-verification/
     """
-    message = Mail(
-        from_email=sender_email,
-        to_emails=recipient,
-        subject=subject,
-    )
+    message = Mail(from_email=sender_email, to_emails=recipient, subject=subject,)
 
     if template_id:
         message.template_id = template_id

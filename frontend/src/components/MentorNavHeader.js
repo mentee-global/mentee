@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { logout, getMentorID } from "utils/auth.service";
+import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
@@ -8,10 +9,12 @@ import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
+import MenteeLogoSmall from "../resources/menteeSmall.png";
 
 const { Header } = Layout;
 
 function MentorNavHeader() {
+  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const [mentor, setMentor] = useState();
 
   useEffect(() => {
@@ -44,7 +47,11 @@ function MentorNavHeader() {
   return (
     <Header className="navigation-header">
       <NavLink to="/">
-        <img src={MenteeLogo} alt="Mentee" className="mentee-logo" />
+        <img
+          src={isMobile ? MenteeLogoSmall : MenteeLogo}
+          alt="Mentee"
+          className="mentee-logo"
+        />
       </NavLink>
       <span>
         <div className="profile-caret">

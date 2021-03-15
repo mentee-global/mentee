@@ -29,7 +29,7 @@ export const fetchMentors = () => {
 export const fetchApplications = () => {
   const requestExtension = "/application/";
   return instance.get(requestExtension).then(
-    (response) => response.data.result.mentors,
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }

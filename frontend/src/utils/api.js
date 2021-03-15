@@ -36,7 +36,6 @@ export const fetchApplications = () => {
   );
 };
 
-
 export const editMentorProfile = (profile, id) => {
   const requestExtension = "/mentor/" + id;
   return instance.put(requestExtension, profile).then(

@@ -93,7 +93,7 @@ function ApplicationOrganizer() {
       //console.log(res);
       if (applications) {
       setApplicationData(applications);
-      //console.log(applicationData);
+      console.log(applicationData);
       }
       //console.log(applicationData);
   

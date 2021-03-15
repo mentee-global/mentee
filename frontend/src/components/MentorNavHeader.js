@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useMediaQuery } from "react-responsive";
 import { logout, getMentorID } from "utils/auth.service";
 import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
@@ -17,7 +16,7 @@ const { Header } = Layout;
 function MentorNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const [mentor, setMentor] = useState();
-  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
+
   useEffect(() => {
     const mentorID = getMentorID();
     async function getMentor() {

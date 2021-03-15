@@ -12,6 +12,7 @@ import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
 import AdminAccountData from "components/pages/AdminAccountData";
+import NotFound from "components/pages/NotFound";
 
 function App() {
   return (
@@ -93,6 +94,9 @@ function App() {
         path="/all-appointments"
         component={() => <Navigation content={<div />} needsAuth={true} />}
       />
+      <Route path="/not-found" component={() => (
+          <Navigation content={<NotFound />} needsAuth={false} />
+        )} />
     </Router>
   );
 }

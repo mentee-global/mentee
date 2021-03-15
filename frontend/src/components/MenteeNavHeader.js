@@ -37,9 +37,12 @@ function MenteeNavHeader({ history }) {
               content={<b>{"Apply"}</b>}
               onClick={() => {
                 history.push({
-                  pathname: "/login",
+                  pathname: "/not-found",
                 });
               }}
+              // onClick={() => {
+              //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
+              // }}
             />
           </span>
           <span className="navigation-header-button">

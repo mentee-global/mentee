@@ -7,7 +7,6 @@ import {
   isLoggedIn,
   register,
   sendVerificationEmail,
-  refreshToken,
 } from "utils/auth.service";
 import { REGISTRATION_STAGE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
@@ -30,7 +29,6 @@ function Register({ history }) {
   useEffect(() => {
     async function fetchData() {
       const registrationStage = await getRegistrationStage();
-      console.log("regstate", registrationStage);
 
       if (registrationStage === null) {
         history.push("/appointments");
@@ -67,10 +65,8 @@ function Register({ history }) {
     if (!checkErrors()) {
       const res = await register(email, password, "mentor");
       if (res.success) {
-        // send verification email
-        const res = await sendVerificationEmail(email);
-
-        history.push(`/verify?sent=${res.success}`);
+        await sendVerificationEmail(email);
+        history.push('/verify');
       } else {
         setServerError(true);
       }

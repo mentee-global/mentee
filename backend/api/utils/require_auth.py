@@ -21,3 +21,6 @@ def admin_only(fn):
     return create_response(status=401, message=msg)
   
   return wrapper
+
+def require_auth_lvl(fn):
+  pass

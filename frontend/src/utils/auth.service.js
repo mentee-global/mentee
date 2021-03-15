@@ -44,7 +44,6 @@ export const sendVerificationEmail = (email) => {
     if (response.success) {
       // add notice that email was sent
     }
-    return false;
   });
 };
 
@@ -79,11 +78,13 @@ export const logout = () => {
 export const refreshToken = async () => {
   if (isLoggedIn()) {
     await getIdToken().then(async (idToken) => {
-      const token = await post('/refreshToken', {token: idToken}).then(data => data && data.result.token);
+      const token = await post("/refreshToken", { token: idToken }).then(
+        (data) => data && data.result.token
+      );
       firebase.auth().signInWithCustomToken(token);
-    })
+    });
   }
-}
+};
 
 export const getCurrentUser = () => {
   return firebase.auth().currentUser;
@@ -132,7 +133,7 @@ export const getRegistrationStage = async () => {
 
       if (!claims.email_verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
       if (!claims.mentorId) return REGISTRATION_STAGE.PROFILE_CREATION;
-      return null; 
+      return null;
     });
   }
 

@@ -16,14 +16,6 @@ function Login() {
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
 
-  useEffect(() => {
-    async function f() {
-      await refreshToken();
-    }
-
-    f();
-  });
-
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
     newClickedInput[index] = true;
@@ -92,6 +84,7 @@ function Login() {
                 const res = await login(email, password);
                 setError(!res.success);
                 if (res.success) {
+                  // potentially add a wait until logged in (onAuthStateChanged trigger)
                   redirectToAppointments();
                 }
                 setLoggingIn(false);

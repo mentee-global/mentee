@@ -16,7 +16,6 @@ import os
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
-
 @auth.route("/verifyEmail", methods=["POST"])
 def verify_email():
     data = request.json

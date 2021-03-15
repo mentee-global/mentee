@@ -26,7 +26,7 @@ function Verify({ history, sent }) {
     async function fetchData() {
       const registrationStage = await getRegistrationStage();
 
-      if (!registrationStage) {
+      if (registrationStage === null) {
         history.push("/appointments");
       } else if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
         history.push("/create-profile");

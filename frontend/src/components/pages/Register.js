@@ -32,7 +32,7 @@ function Register({ history }) {
       const registrationStage = await getRegistrationStage();
       console.log("regstate", registrationStage);
 
-      if (!registrationStage) {
+      if (registrationStage === null) {
         history.push("/appointments");
       } else if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
         history.push("/create-profile");

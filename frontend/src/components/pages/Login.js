@@ -16,7 +16,13 @@ function Login() {
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
 
-  
+  useEffect(() => {
+    async function f() {
+      await refreshToken();
+    }
+
+    f();
+  });
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false];

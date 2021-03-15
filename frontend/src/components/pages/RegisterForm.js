@@ -41,7 +41,7 @@ function RegisterForm(props) {
     async function fetchData() {
       const registrationStage = await getRegistrationStage();
       
-      if (!registrationStage) {
+      if (registrationStage === null) {
         props.history.push("/appointments");
       } else if (registrationStage === REGISTRATION_STAGE.START) {
         props.history.push("/register");

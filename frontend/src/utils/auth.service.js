@@ -78,9 +78,8 @@ export const logout = () => {
 
 export const refreshToken = async () => {
   if (isLoggedIn()) {
-    await getIdToken().then((idToken) => {
-      console.log('idtoken', idToken)
-      const token = post('/refreshToken').then(res => res && res.token);
+    await getIdToken().then(async (idToken) => {
+      const token = await post('/refreshToken', {token: idToken}).then(data => data && data.result.token);
       firebase.auth().signInWithCustomToken(token);
     })
   }

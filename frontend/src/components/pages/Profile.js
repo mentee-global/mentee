@@ -15,15 +15,21 @@ function Profile() {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    async function getMentor() {
-      const mentorID = await getMentorID();
-      const mentorData = await fetchMentorByID(mentorID);
-      if (mentorData) {
-        setMentor(mentorData);
-      }
-    }
-    getMentor();
+    fetchMentor();
+  }, []);
+
+  useEffect(() => {
+    fetchMentor();
   }, [editedMentor]);
+
+  const fetchMentor = async () => {
+    const mentorID = await getMentorID();
+    console.log("pfid", mentorID);
+    const mentorData = await fetchMentorByID(mentorID);
+    if (mentorData) {
+      setMentor(mentorData);
+    }
+  };
 
   const handleSaveEdits = () => {
     setEditedMentor(!editedMentor);

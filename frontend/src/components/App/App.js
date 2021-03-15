@@ -11,6 +11,7 @@ import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
+import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 
 function App() {
@@ -40,6 +41,13 @@ function App() {
         )}
       />
       <Route
+        path="/profile"
+        component={() => (
+          <Navigation content={<Profile />} page="profile" needsAuth={true} />
+        )}
+      />
+
+    <Route
         path="/profile"
         component={() => (
           <Navigation content={<Profile />} page="profile" needsAuth={true} />
@@ -75,6 +83,12 @@ function App() {
       />
       <Route
         path="/create-profile"
+        component={() => (
+          <Navigation content={<RegisterForm />} needsAuth={false} />
+        )}
+      />
+      <Route
+        path="/organizer"
         component={() => (
           <Navigation content={<RegisterForm />} needsAuth={false} />
         )}

@@ -26,6 +26,17 @@ export const fetchMentors = () => {
   );
 };
 
+export const fetchApplications = () => {
+  const requestExtension = "/application/";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.mentors,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+
 export const editMentorProfile = (profile, id) => {
   const requestExtension = "/mentor/" + id;
   return instance.put(requestExtension, profile).then(

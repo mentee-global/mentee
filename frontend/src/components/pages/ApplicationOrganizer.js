@@ -76,9 +76,7 @@ const onDragEnd = (result, columns, setColumns) => {
 
 function ApplicationOrganizer() {
   const [applicationData, setApplicationData] = useState([]);
-
-  
-
+  const [displayData, setDisplayData] = useState([]);
 
   const itemsFromBackend = [
     { id: uuid(), content: "Application" },
@@ -90,13 +88,9 @@ function ApplicationOrganizer() {
   useEffect(() => {
     const getAllApplications = async () => {
       const applications = await fetchApplications();
-      //console.log(res);
       if (applications) {
-      setApplicationData(applications);
-      console.log(applicationData);
+      setApplicationData(applications ? applications.mentor_applications: []);
       }
-      //console.log(applicationData);
-  
     };
   
     getAllApplications();
@@ -117,15 +111,22 @@ function ApplicationOrganizer() {
     });
   }
 
-  // const itemSample = [
-  //   {id: uuid(), content: 'Item'},
-  //   {id: uuid(), content: 'Item'}
-  // ]; 
+  function printData() {
+      console.log(applicationData); 
+  }
+
+  printData() 
+
+  const getApplications = () =>
+  applicationData.map(application => ({
+    id: application.id,
+    content: application.name + application.specializations
+  }));
 
   const columnHeader = {
     [1]: {
       name: "Pending",
-      items: itemsFromBackend
+      items: []
     },
     [2]: {
       name: "Reviewed",
@@ -141,14 +142,12 @@ function ApplicationOrganizer() {
     },
   };
 
-  // does not work since applicationData is an empty list 
-//   const getApplicationData = () => 
-//     applicationData.map
   const [columns, setColumns] = useState(columnHeader);
 
-
   return (
+    
     <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
+        
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
       >
@@ -163,11 +162,14 @@ function ApplicationOrganizer() {
               }}
               key={columnId}
             >
+               
               <h2>{column.name}</h2>
               <div style={{ margin: 10 }}>
                 <Droppable droppableId={columnId} key={columnId}>
                     {/* Causes the droppable item to change color of columm when picked up. */}
+                    
                   {(provided, currentApp) => {
+                      //printData()
                     return (
                       <div
                       
@@ -182,6 +184,7 @@ function ApplicationOrganizer() {
                           minHeight: 500,
                         }}
                       >
+                           
                           {/* Mapping each item from list that corresponds to the column */}
                         {column.items.map((item, index) => {
                           
@@ -199,9 +202,6 @@ function ApplicationOrganizer() {
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    
-                                    
-                          
                                     style={{
                                       userSelect: "none",
                                       padding: 16,

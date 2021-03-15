@@ -94,9 +94,12 @@ function App() {
         path="/all-appointments"
         component={() => <Navigation content={<div />} needsAuth={true} />}
       />
-      <Route path="/not-found" component={() => (
+      <Route
+        path="/not-found"
+        component={() => (
           <Navigation content={<NotFound />} needsAuth={false} />
-        )} />
+        )}
+      />
     </Router>
   );
 }

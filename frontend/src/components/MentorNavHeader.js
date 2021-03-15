@@ -35,7 +35,7 @@ function MentorNavHeader() {
           <b>Edit Profile</b>
         </NavLink>
       </Menu.Item>
-      <Menu.Divider/>
+      <Menu.Divider />
       <Menu.Item key="sign-out" onClick={logout}>
         <NavLink to="/">
           <b>Sign Out</b>

@@ -90,7 +90,7 @@ function App() {
       <Route
         path="/organizer"
         component={() => (
-          <Navigation content={<RegisterForm />} needsAuth={false} />
+          <Navigation content={<ApplicationOrganizer />} needsAuth={false} />
         )}
       />
       <Route

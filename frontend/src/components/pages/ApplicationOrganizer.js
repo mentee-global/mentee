@@ -81,32 +81,11 @@ function ApplicationOrganizer() {
 
 
   const itemsFromBackend = [
-    { id: uuid(), content: "First task" },
-    { id: uuid(), content: "Second task" },
-    { id: uuid(), content: "Third task" },
-    { id: uuid(), content: "Fourth task" },
-    { id: uuid(), content: "Fifth task" }
+    { id: uuid(), content: "Application" },
+    { id: uuid(), content: "Application" },
+    { id: uuid(), content: "Application" },
   ];
-  
-  // const columnsFromBackend = {
-  //   [uuid()]: {
-  //     name: "Requested",
-  //     items: itemsFromBackend
-  //   },
-  //   [uuid()]: {
-  //     name: "To do",
-  //     items: []
-  //   },
-  //   [uuid()]: {
-  //     name: "In Progress",
-  //     items: []
-  //   },
-  //   [uuid()]: {
-  //     name: "Done",
-  //     items: []
-  //   }
-  // };
-  
+
 
   useEffect(() => {
     const getAllApplications = async () => {
@@ -146,7 +125,7 @@ function ApplicationOrganizer() {
   const columnHeader = {
     [1]: {
       name: "Pending",
-      items: applicationData
+      items: itemsFromBackend
     },
     [2]: {
       name: "Reviewed",
@@ -162,8 +141,9 @@ function ApplicationOrganizer() {
     },
   };
 
-  const getApplicationData = () => 
-    applicationData.map
+  // does not work since applicationData is an empty list 
+//   const getApplicationData = () => 
+//     applicationData.map
   const [columns, setColumns] = useState(columnHeader);
 
 
@@ -172,6 +152,7 @@ function ApplicationOrganizer() {
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
       >
+        {/* Mapping each columns from the list. */}
         {Object.entries(columns).map(([columnId, column]) => {
           return (
             <div
@@ -185,11 +166,12 @@ function ApplicationOrganizer() {
               <h2>{column.name}</h2>
               <div style={{ margin: 10 }}>
                 <Droppable droppableId={columnId} key={columnId}>
+                    {/* Causes the droppable item to change color of columm when picked up. */}
                   {(provided, currentApp) => {
                     return (
                       <div
+                      
                         {...provided.droppableProps}
-                        {...showConfirm}
                         ref={provided.innerRef}
                         style={{
                           background: currentApp.isDraggingOver
@@ -200,7 +182,7 @@ function ApplicationOrganizer() {
                           minHeight: 500,
                         }}
                       >
-                      
+                          {/* Mapping each item from list that corresponds to the column */}
                         {column.items.map((item, index) => {
                           
                           return (
@@ -232,23 +214,14 @@ function ApplicationOrganizer() {
                                     
                                     
                                   >
-                                    
-                                  <div>
-                                    {applicationData.map(application => (
-                                      {application}
-                                    ))}
-                                  </div>
-                                    
+                                    {item.content}  
                                   </div>
                                 );
                               }}
                             </Draggable>
                           );
                         })}
-                        {showConfirm}
                         {provided.placeholder}
-                        
-                      
                       </div>
                     );
                   }}

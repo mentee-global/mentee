@@ -7,6 +7,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/Home.scss";
 import "../css/Login.scss";
 import Logo from "../../resources/logo.png";
+import firebase from "firebase";
 
 function Login() {
   const [email, setEmail] = useState();
@@ -83,10 +84,12 @@ function Login() {
                 setLoggingIn(true);
                 const res = await login(email, password);
                 setError(!res.success);
-                if (res.success) {
-                  // potentially add a wait until logged in (onAuthStateChanged trigger)
+
+                firebase.auth().onAuthStateChanged((user) => {
+                  if (!user) return;
                   redirectToAppointments();
-                }
+                });
+
                 setLoggingIn(false);
               }}
             />

@@ -10,7 +10,6 @@ class Users(Document, Mixin):
     firebase_uid = StringField(required=True)
     email = StringField(required=True)
     role = StringField(required=True)
-    verified = BooleanField(required=True)
     mongooseVersion = IntField(db_field="__v")
 
     # in the case where a User object exists but there is no Firebase user
@@ -22,6 +21,7 @@ class Users(Document, Mixin):
     password = StringField()
     pin = IntField()
     expiration = DateTimeField()
+    verified = BooleanField(required=True)
 
     def __repr__(self):
         return f"<User id:{self.id} \n email:{self.email}>"

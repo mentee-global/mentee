@@ -101,8 +101,8 @@ def download_accounts_info():
                 ",".join(acct.languages),
                 ",".join(acct.specializations),
                 acct.biography,
-                int(acct.offers_in_person),
-                int(acct.offers_group_appointments),
+                int(acct.offers_in_person) if acct.offers_in_person != null else "N/A",
+                int(acct.offers_group_appointments) if acct.offers_group_appointments != null else "N/A",
                 ",".join(
                     [
                         avail.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S")
@@ -111,8 +111,8 @@ def download_accounts_info():
                         for avail in acct.availability
                     ]
                 ),
-                int(acct.text_notifications),
-                int(acct.email_notifications),
+                int(acct.text_notifications) if acct.text_notifications != null else "N/A",
+                int(acct.email_notifications) if acct.email_notifications != null else "N/A",
             ]
         )
     columns = [

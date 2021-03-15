@@ -11,6 +11,7 @@ import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
+import AdminAccountData from "components/pages/AdminAccountData";
 
 function App() {
   return (
@@ -69,12 +70,6 @@ function App() {
         )}
       />
       <Route
-        path="/register"
-        component={() => (
-          <Navigation content={<Register />} needsAuth={false} />
-        )}
-      />
-      <Route
         path="/verify"
         component={() => <Navigation content={<Verify />} needsAuth={false} />}
       />
@@ -83,6 +78,20 @@ function App() {
         component={() => (
           <Navigation content={<RegisterForm />} needsAuth={false} />
         )}
+      />
+      <Route
+        path="/manage-users"
+        component={() => <Navigation content={<div />} needsAuth={true} />}
+      />
+      <Route
+        path="/account-data"
+        component={() => (
+          <Navigation content={<AdminAccountData />} needsAuth={true} />
+        )}
+      />
+      <Route
+        path="/all-appointments"
+        component={() => <Navigation content={<div />} needsAuth={true} />}
       />
     </Router>
   );

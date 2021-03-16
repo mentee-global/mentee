@@ -26,7 +26,7 @@ def download_appointments():
                 mentor.email,
                 appt.timeslot.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
                 appt.timeslot.end_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
-                int(appt.accepted) if apt.accepted != null else "N/A",
+                int(appt.accepted) if apt.accepted != None else "N/A",
                 appt.name,
                 appt.email,
                 appt.phone_number,
@@ -37,8 +37,8 @@ def download_appointments():
                 ",".join(appt.specialist_categories),
                 appt.message,
                 appt.organization,
-                int(appt.allow_calls) if apt.allow_calls != null else "N/A",
-                int(appt.allow_texts) if apt.allow_texts != null else "N/A",
+                int(appt.allow_calls) if apt.allow_calls != None else "N/A",
+                int(appt.allow_texts) if apt.allow_texts != None else "N/A",
             ]
         )
     columns = [
@@ -101,9 +101,9 @@ def download_accounts_info():
                 ",".join(acct.languages),
                 ",".join(acct.specializations),
                 acct.biography,
-                int(acct.offers_in_person) if acct.offers_in_person != null else "N/A",
+                int(acct.offers_in_person) if acct.offers_in_person != None else "N/A",
                 int(acct.offers_group_appointments)
-                if acct.offers_group_appointments != null
+                if acct.offers_group_appointments != None
                 else "N/A",
                 ",".join(
                     [
@@ -114,10 +114,10 @@ def download_accounts_info():
                     ]
                 ),
                 int(acct.text_notifications)
-                if acct.text_notifications != null
+                if acct.text_notifications != None
                 else "N/A",
                 int(acct.email_notifications)
-                if acct.email_notifications != null
+                if acct.email_notifications != None
                 else "N/A",
             ]
         )

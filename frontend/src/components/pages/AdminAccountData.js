@@ -9,7 +9,11 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import "../css/AdminAccountData.scss";
-import { fetchMentorsAppointments, downloadMentorsData } from "../../utils/api";
+import {
+  fetchMentorsAppointments,
+  downloadMentorsData,
+  deleteMentorById,
+} from "../../utils/api";
 import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import { PROFILE_URL } from "../../utils/consts";
@@ -34,6 +38,7 @@ function AdminAccountData() {
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
+  const [downloadFile, setDownloadFile] = useState(null);
 
   useEffect(() => {
     async function getData() {
@@ -50,10 +55,9 @@ function AdminAccountData() {
     getData();
   }, [reload]);
 
-  const handleDeleteAccount = (mentorId) => {
-    // TODO: Create endpoint that deletes a mentor account
+  const handleDeleteAccount = async (mentorId) => {
+    await deleteMentorById(mentorId);
     setReload(!reload);
-    console.log(`Deleting Mentor with ID: ${mentorId}`);
   };
 
   const handleAddAccount = () => {
@@ -64,7 +68,8 @@ function AdminAccountData() {
   const handleMentorsDownload = async () => {
     setIsMentorDownload(true);
     // TODO: Check up on why this isn't working..
-    await downloadMentorsData();
+    const file = await downloadMentorsData();
+    setDownloadFile(file);
     setIsMentorDownload(false);
   };
 
@@ -116,6 +121,9 @@ function AdminAccountData() {
 
   return (
     <div className="account-data-body">
+      <div style={{ display: "none" }}>
+        <iframe src={downloadFile} />
+      </div>
       <Breadcrumb>
         <Breadcrumb.Item>User Reports</Breadcrumb.Item>
         <Breadcrumb.Item>

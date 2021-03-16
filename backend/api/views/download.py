@@ -164,6 +164,7 @@ def generate_sheet(sheet_name, row_data, columns):
     try:
         return send_file(
             output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             attachment_filename="{0}.xlsx".format(sheet_name),
             as_attachment=True,
         )

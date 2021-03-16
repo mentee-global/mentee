@@ -154,8 +154,31 @@ export const fetchMentorsAppointments = () => {
 
 export const downloadMentorsData = () => {
   const requestExtension = "/download/accounts/all";
-  return instance.get(requestExtension).then(
-    (response) => response.data.result,
+  return instance
+    .get(requestExtension, {
+      responseType: "blob",
+    })
+    .then(
+      (response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        console.log(response);
+        link.setAttribute("download", `data.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(url);
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+};
+
+export const deleteMentorById = (id) => {
+  const requestExtension = `/mentor/${id}`;
+  return instance.delete(requestExtension).then(
+    (response) => response,
     (err) => {
       console.error(err);
     }

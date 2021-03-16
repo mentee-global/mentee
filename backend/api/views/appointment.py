@@ -2,7 +2,12 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
+from api.utils.request_utils import (
+    ApppointmentForm,
+    is_invalid_form,
+    send_email,
+    send_sms,
+)
 from api.utils.constants import (
     MENTOR_APPT_TEMPLATE,
     MENTEE_APPT_TEMPLATE,
@@ -66,19 +71,33 @@ def create_appointment():
 
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
-    mentee_email = send_email(
+
+    mentee_email, res_msg = send_email(
         recipient=new_appointment.email,
         template_id=MENTEE_APPT_TEMPLATE,
         data={"confirmation": True, "name": mentor.name, "date": start_time},
     )
+    if not mentee_email:
+        msg = "Failed to send mentee email " + res_msg
+        logger.info(msg)
 
     if mentor.email_notifications:
-        mentor_email = send_email(
+        mentor_email, res_msg = send_email(
             recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
         )
 
-        if not mentor_email or not mentee_email:
-            msg = "Failed to send an email"
+        if not mentor_email:
+            msg = "Failed to send an email " + res_msg
+            logger.info(msg)
+
+    if mentor.text_notifications:
+        res, res_msg = send_sms(
+            text="You received a new appointment request!\nCheckout https://mentee-h4i.herokuapp.com/",
+            recipient=mentor.phone_number,
+        )
+
+        if not res:
+            msg = "Failed to send message " + res_msg
             logger.info(msg)
 
     new_appointment.save()

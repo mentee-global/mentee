@@ -26,6 +26,16 @@ export const fetchMentors = () => {
   );
 };
 
+export const fetchApplications = () => {
+  const requestExtension = "/application/";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const editMentorProfile = (profile, id) => {
   const requestExtension = "/mentor/" + id;
   return instance.put(requestExtension, profile).then(
@@ -36,10 +46,11 @@ export const editMentorProfile = (profile, id) => {
   );
 };
 
-export const uploadMentorImage = (data, id) => {
+export const uploadMentorImage = (data, id, type) => {
   let formData = new FormData();
   formData.append("image", data);
-  const requestExtension = "/mentor/" + id + "/image";
+  formData.append("type", type);
+  const requestExtension = "/account/" + id + "/image";
   return instance.put(requestExtension, formData).then(
     (response) => response,
     (err) => {

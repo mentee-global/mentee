@@ -2,86 +2,14 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Modal, Button } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { fetchApplications } from "../../utils/api";
-import uuid from "uuid/v4";
+import { fetchApplications, updateApplicationState } from "../../utils/api";
+import { async } from "q";
 
 const { confirm } = Modal;
-// const itemsFromBackend = [
-//   { id: uuid(), content: "First task" },
-//   { id: uuid(), content: "Second task" },
-//   { id: uuid(), content: "Third task" },
-//   { id: uuid(), content: "Fourth task" },
-//   { id: uuid(), content: "Fifth task" }
-// ];
-
-// const columnsFromBackend = {
-//   [uuid()]: {
-//     name: "Requested",
-//     items: itemsFromBackend
-//   },
-//   [uuid()]: {
-//     name: "To do",
-//     items: []
-//   },
-//   [uuid()]: {
-//     name: "In Progress",
-//     items: []
-//   },
-//   [uuid()]: {
-//     name: "Done",
-//     items: []
-//   }
-// };
-
-const onDragEnd = (result, columns, setColumns) => {
-  // if no designated column to switch then keep app in curr column
-  if (!result.destination) return;
-
-  const { source, destination } = result;
-
-  if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[source.droppableId];
-    const destColumn = columns[destination.droppableId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...sourceColumn,
-        items: sourceItems,
-      },
-      [destination.droppableId]: {
-        ...destColumn,
-        items: destItems,
-      },
-    });
-  } else {
-    const column = columns[source.droppableId];
-    const copiedItems = [...column.items];
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...column,
-        items: copiedItems,
-      },
-    });
-  }
-};
-
 function ApplicationOrganizer() {
   const [applicationData, setApplicationData] = useState([]);
-  const [displayData, setDisplayData] = useState([]);
-
-  const itemsFromBackend = [
-    { id: uuid(), content: "Application" },
-    { id: uuid(), content: "Application" },
-    { id: uuid(), content: "Application" },
-  ];
-
+  // need to use cancel as trigger to prevent card from moving
+  const [cancel, setCancel] = useState(false);
   const [columns, setColumns] = useState({
     [1]: {
       name: "Pending",
@@ -100,7 +28,7 @@ function ApplicationOrganizer() {
       items: [],
     },
   });
-
+  
   useEffect(() => {
     const getAllApplications = async () => {
       const applications = await fetchApplications();
@@ -120,7 +48,7 @@ function ApplicationOrganizer() {
         name: "Pending",
         items: applicationData.map((application) => ({
           id: application._id.$oid,
-          content: application.name + application.specializations,
+          content: "Name: " + application.name + " Specializations: " + application.specializations
         })),
       },
       [2]: {
@@ -138,13 +66,21 @@ function ApplicationOrganizer() {
     });
   }, [applicationData]);
 
-  function showConfirm() {
-    console.log(applicationData);
+  // 2 things to do
+  // put application cards in columns based on application_state 
+
+  function showConfirm (name, id) {
     confirm({
       title: "Move this Application?",
       icon: <ExclamationCircleOutlined />,
       onOk() {
-        console.log("OK");
+        async function updateApplication() {
+        // onOk send the put request 
+         await updateApplicationState(name, id);  
+         console.log("updated");
+        }
+        updateApplication();
+        console.log("updated");
       },
       onCancel() {
         console.log("Cancel");
@@ -152,19 +88,50 @@ function ApplicationOrganizer() {
     });
   }
 
-  function printData() {
-    console.log(applicationData);
-  }
-
-  printData();
-
-  const getApplications = () =>
-    applicationData.map((application) => ({
-      id: application.id,
-      content: application.name + application.specializations,
-    }));
-
-
+  const onDragEnd = (result, columns, setColumns) => {
+    // if no designated column to switch then keep app in curr column
+    if (!result.destination) return;
+  
+    const { source, destination } = result;
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
+      const [removed] = sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items: sourceItems,
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items: destItems,
+        },
+      });
+      var destColumnName = columns[destination.droppableId].name;
+      var destItemId = destItems[destination.index].id;
+      showConfirm(destColumnName, destItemId);
+      console.log(cancel);
+    } else {
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const [removed] = copiedItems.splice(source.index, 1);
+      copiedItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items: copiedItems,
+        },
+        
+      });
+      
+    }
+  };
+  
   return (
     <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
       <DragDropContext
@@ -203,6 +170,7 @@ function ApplicationOrganizer() {
                       >
                         {/* Mapping each item from list that corresponds to the column */}
                         {column.items.map((item, index) => {
+                        
                           return (
                             <Draggable
                               key={item.id}

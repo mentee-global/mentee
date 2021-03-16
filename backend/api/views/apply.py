@@ -7,7 +7,7 @@ apply = Blueprint("apply", __name__)
 # GET request for all mentor applications
 @apply.route("/", methods=["GET"])
 def get_applications():
-    application = MentorApplication.objects.only("name", "specializations", "id")
+    application = MentorApplication.objects.only("name", "specializations", "id", "application_state")
 
     return create_response(data={"mentor_applications": application})
 

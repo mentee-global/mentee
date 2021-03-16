@@ -26,16 +26,6 @@ export const fetchMentors = () => {
   );
 };
 
-export const fetchApplications = () => {
-  const requestExtension = "/application/";
-  return instance.get(requestExtension).then(
-    (response) => response.data.result,
-    (err) => {
-      console.error(err);
-    }
-  );
-};
-
 export const editMentorProfile = (profile, id) => {
   const requestExtension = "/mentor/" + id;
   return instance.put(requestExtension, profile).then(
@@ -161,3 +151,25 @@ export const downloadMentorsData = () => {
     }
   );
 };
+
+export const fetchApplications = () => {
+  const requestExtension = "/application/";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const updateApplicationState = (state, id) => {
+  const requestExtension = "/application/" + id;
+  let applicationState = {application_state: state};
+  return instance.put(requestExtension, applicationState).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+

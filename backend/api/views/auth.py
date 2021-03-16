@@ -16,6 +16,7 @@ import os
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
+
 @auth.route("/verifyEmail", methods=["POST"])
 def verify_email():
     data = request.json
@@ -137,6 +138,7 @@ def login():
                 return error_http_response
 
             user.firebase_uid = firebase_user.uid
+            user.locked_until_password_reset = True;
             user.save()
 
             # send password reset email
@@ -144,7 +146,7 @@ def login():
 
             msg = "Created new Firebase account for existing user"
             logger.info(msg)
-            return error and error or create_response(status=201, message=msg)
+            return error and error or create_response(status=201, message=msg, data={"passwordReset": True})
         else:
             msg = "Could not login"
             logger.info(msg)
@@ -240,9 +242,9 @@ def reset_password():
 @auth.route("/refreshToken", methods=["POST"])
 def refresh_token():
     data = request.json
-    token = data.get('token');
+    token = data.get('token')
 
-    claims = firebase_admin_auth.verify_id_token(token);
+    claims = firebase_admin_auth.verify_id_token(token)
     uid = claims['userId']
 
     user = None

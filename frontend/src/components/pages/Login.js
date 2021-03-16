@@ -9,11 +9,19 @@ import "../css/Login.scss";
 import Logo from "../../resources/logo.png";
 import firebase from "firebase";
 
+const INCORRECT_NAME_PASSWORD_ERROR_MSG =
+  "Incorrect username and/or password. Please try again.";
+const RESET_PASSWORD_ERROR_MSG = "Please reset password.";
+const SERVER_ERROR_MSG = "Something went wrong.";
+
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(
+    INCORRECT_NAME_PASSWORD_ERROR_MSG
+  );
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
 
@@ -38,11 +46,7 @@ function Login() {
       <div className="login-content">
         <div className="login-container">
           <h1 className="login-text">Sign In</h1>
-          {error && (
-            <div className="login-error">
-              Incorrect username and/or password. Please try again.
-            </div>
-          )}
+          {error && <div className="login-error">{errorMessage}</div>}
           <div
             className={`login-input-container${
               inputFocus[0] ? "__clicked" : ""
@@ -83,7 +87,17 @@ function Login() {
               onClick={async () => {
                 setLoggingIn(true);
                 const res = await login(email, password);
-                setError(!res.success);
+
+                if (!res) {
+                  setErrorMessage(SERVER_ERROR_MSG);
+                  setError(true);
+                } else if (!res.success) {
+                  setErrorMessage(INCORRECT_NAME_PASSWORD_ERROR_MSG);
+                  setError(true);
+                } else if (res.result.resetPassword) {
+                  setErrorMessage(RESET_PASSWORD_ERROR_MSG);
+                  setError(true);
+                }
 
                 firebase.auth().onAuthStateChanged((user) => {
                   if (!user) return;

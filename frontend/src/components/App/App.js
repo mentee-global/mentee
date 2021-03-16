@@ -12,6 +12,7 @@ import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
 import AdminAccountData from "components/pages/AdminAccountData";
+import AdminAppointmentData from "components/pages/AdminAppointmentData";
 
 function App() {
   return (
@@ -91,7 +92,9 @@ function App() {
       />
       <Route
         path="/all-appointments"
-        component={() => <Navigation content={<div />} needsAuth={true} />}
+        component={() => (
+          <Navigation content={<AdminAppointmentData />} needsAuth={true} />
+        )}
       />
     </Router>
   );

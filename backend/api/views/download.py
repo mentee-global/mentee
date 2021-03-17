@@ -26,7 +26,7 @@ def download_appointments():
                 mentor.email,
                 appt.timeslot.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
                 appt.timeslot.end_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
-                int(appt.accepted),
+                int(appt.accepted) if apt.accepted != None else "N/A",
                 appt.name,
                 appt.email,
                 appt.phone_number,
@@ -37,8 +37,8 @@ def download_appointments():
                 ",".join(appt.specialist_categories),
                 appt.message,
                 appt.organization,
-                int(appt.allow_calls),
-                int(appt.allow_texts),
+                int(appt.allow_calls) if apt.allow_calls != None else "N/A",
+                int(appt.allow_texts) if apt.allow_texts != None else "N/A",
             ]
         )
     columns = [
@@ -101,8 +101,10 @@ def download_accounts_info():
                 ",".join(acct.languages),
                 ",".join(acct.specializations),
                 acct.biography,
-                int(acct.offers_in_person),
-                int(acct.offers_group_appointments),
+                int(acct.offers_in_person) if acct.offers_in_person != None else "N/A",
+                int(acct.offers_group_appointments)
+                if acct.offers_group_appointments != None
+                else "N/A",
                 ",".join(
                     [
                         avail.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S")
@@ -111,8 +113,12 @@ def download_accounts_info():
                         for avail in acct.availability
                     ]
                 ),
-                int(acct.text_notifications),
-                int(acct.email_notifications),
+                int(acct.text_notifications)
+                if acct.text_notifications != None
+                else "N/A",
+                int(acct.email_notifications)
+                if acct.email_notifications != None
+                else "N/A",
             ]
         )
     columns = [

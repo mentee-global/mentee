@@ -224,11 +224,11 @@ function AdminAccountData() {
             render={(id) => (
               <a
                 style={{ color: "black" }}
-                href={formatLinkForHref(`${PROFILE_URL}/${id}`)}
+                href={formatLinkForHref(`${PROFILE_URL}${id}`)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <LinkOutlined /> {`${PROFILE_URL}/${id}`}
+                <LinkOutlined /> {`${PROFILE_URL}${id}`}
               </a>
             )}
             align="center"

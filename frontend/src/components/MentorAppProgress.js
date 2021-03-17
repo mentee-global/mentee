@@ -3,12 +3,6 @@ import "./css/MentorApplicationView.scss";
 
 function MentorAppProgress({ progress }) {
   const [status, setStatus] = useState({});
-  const progStates = {
-    pending: progress === "Pending",
-    reviewed: progress === "Reviewed",
-    offer: progress === "Offer",
-    rejected: progress === "Rejected",
-  };
 
   useEffect(() => {
     let newStatus = {};

@@ -14,10 +14,11 @@ function MentorApplicationView({ data }) {
   const NotesContainer = () => {
     return (
       <div className="notes-container">
+        <MentorAppProgress progress={appData.application_state} />
         <div className="notes-title">Notes</div>
         <div className="note-wrap">
           <Text
-            style={{ fontWeight: "bold", margin: ".5em" }}
+            style={{ fontWeight: "bold" }}
             editable={{
               onChange: setNote,
               tooltip: "Click to edit note",
@@ -40,7 +41,6 @@ function MentorApplicationView({ data }) {
       <div className="view-container">
         <MentorAppInfo info={appData} />
         <div className="status-container">
-          <MentorAppProgress progress={appData.application_state} />
           <NotesContainer />
         </div>
       </div>

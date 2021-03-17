@@ -18,7 +18,7 @@
   "specializations": ["Cool stuff", "Another cool thing I do"],
   "knowledge_location": "This is my knowledge in location",
   "referral": "This is a referral",
-  "application_state": "Pending",
+  "application_state": "Offer",
   "date_submitted": "This is date submitted please change to an ISO object",
   "notes": "Look at this fella!"
 }

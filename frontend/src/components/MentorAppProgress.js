@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./css/MentorApplicationView.scss";
 
 function MentorAppProgress({ progress }) {
+  const [status, setStatus] = useState({});
   const progStates = {
     pending: progress === "Pending",
     reviewed: progress === "Reviewed",
@@ -9,33 +10,34 @@ function MentorAppProgress({ progress }) {
     rejected: progress === "Rejected",
   };
 
+  useEffect(() => {
+    let newStatus = {};
+    switch (progress) {
+      case "Pending":
+        newStatus["style"] = { background: "#DADADA" };
+        break;
+      case "Reviewed":
+        newStatus["style"] = { background: "#FFDB6F" };
+        break;
+      case "Rejected":
+        newStatus["style"] = { background: "#B15858" };
+        break;
+      case "Offer":
+        newStatus["style"] = { background: "#6FCF97" };
+        break;
+      default:
+        newStatus["style"] = { background: "#DADADA" };
+        break;
+    }
+    newStatus["text"] = progress + (progress == "Offer" ? " Made" : "");
+    console.log(newStatus);
+    setStatus(newStatus);
+  }, []);
+
   return (
     <div className="progress-container">
-      <div style={{ width: "25%", textAlign: "center" }}>
-        <div className="progress-title">PENDING</div>
-        <div
-          className={"progress-section " + (progStates.pending && "selected")}
-          style={{ borderRadius: "20px 0px 0px 20px" }}
-        />
-      </div>
-      <div style={{ width: "25%", textAlign: "center" }}>
-        <div className="progress-title">REVIEWED</div>
-        <div
-          className={"progress-section " + (progStates.reviewed && "selected")}
-        />
-      </div>
-      <div style={{ width: "25%", textAlign: "center" }}>
-        <div className="progress-title">OFFER MADE</div>
-        <div
-          className={"progress-section " + (progStates.offer && "selected")}
-        />
-      </div>
-      <div style={{ width: "25%", textAlign: "center" }}>
-        <div className="progress-title">REJECTED</div>
-        <div
-          className={"progress-section " + (progStates.rejected && "selected")}
-          style={{ borderRadius: "0px 20px 20px 0px" }}
-        />
+      <div className="progress-section" style={status.style ?? {}}>
+        {status.text}
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ function MentorAppInfo({ info }) {
         <div className="answer">{info.date_submitted}</div>
       </div>
       <div className="single-info-section">
-        <h2 style={{ fontWeight: "bold" }}>{info.name}</h2>
+        <h1 style={{ fontWeight: "bold" }}>{info.name}</h1>
       </div>
       <div className="single-info-section">
         <div className="question">Linkedin</div>

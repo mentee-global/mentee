@@ -69,7 +69,6 @@ function AdminAccountData() {
       return;
     }
     const success = await deleteMentorById(mentorId);
-    console.log(success);
     if (success) {
       message.success(`Successfully deleted ${name}`);
       setReload(!reload);

@@ -30,7 +30,6 @@ function MentorAppProgress({ progress }) {
         break;
     }
     newStatus["text"] = progress + (progress == "Offer" ? " Made" : "");
-    console.log(newStatus);
     setStatus(newStatus);
   }, []);
 

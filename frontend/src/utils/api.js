@@ -178,9 +178,10 @@ export const downloadMentorsData = () => {
 export const deleteMentorById = (id) => {
   const requestExtension = `/mentor/${id}`;
   return instance.delete(requestExtension).then(
-    (response) => response,
+    (response) => response.success,
     (err) => {
       console.error(err);
+      return false;
     }
   );
 };

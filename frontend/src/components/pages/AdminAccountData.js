@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Breadcrumb, Input, Spin } from "antd";
+import {
+  Table,
+  Button,
+  Breadcrumb,
+  Input,
+  Spin,
+  Popconfirm,
+  message,
+} from "antd";
 import {
   DownloadOutlined,
   ReloadOutlined,
@@ -55,9 +63,19 @@ function AdminAccountData() {
     getData();
   }, [reload]);
 
-  const handleDeleteAccount = async (mentorId) => {
-    await deleteMentorById(mentorId);
-    setReload(!reload);
+  const handleDeleteAccount = async (mentorId, name) => {
+    if (!mentorId) {
+      message.error("Could not get specified mentor id");
+      return;
+    }
+    const success = await deleteMentorById(mentorId);
+    console.log(success);
+    if (success) {
+      message.success(`Successfully deleted ${name}`);
+      setReload(!reload);
+    } else {
+      message.error(`Could not delete ${name}`);
+    }
   };
 
   const handleAddAccount = () => {
@@ -215,13 +233,22 @@ function AdminAccountData() {
           />
           <Column
             title="Delete"
-            dataIndex="id"
+            dataIndex={["id", "name"]}
             key="id"
-            render={(mentorId) => (
-              <DeleteOutlined
-                className="delete-user-btn"
-                onClick={() => handleDeleteAccount(mentorId)}
-              />
+            render={(text, data) => (
+              <Popconfirm
+                title={`Are you sure you want to delete ${data.name}?`}
+                onConfirm={() => {
+                  handleDeleteAccount(data.id, data.name);
+                }}
+                onCancel={() =>
+                  message.info(`No deletion has been for ${data.name}`)
+                }
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined className="delete-user-btn" />
+              </Popconfirm>
             )}
             align="center"
           />

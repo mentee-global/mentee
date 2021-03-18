@@ -57,7 +57,10 @@ function NavigationSidebar(props) {
             style={menuItemMarginOverride}
             icon={pages[page]["icon"]}
           >
-            <NavLink to={pages[page]["path"]} style={{ color: "black" }}>
+            <NavLink
+              to={pages[page]["path"]}
+              style={collapsed ? { color: "white" } : { color: "black" }}
+            >
               {pages[page]["name"]}
             </NavLink>
           </Menu.Item>

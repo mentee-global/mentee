@@ -131,11 +131,13 @@ export const editAvailability = (timeslots, id) => {
   );
 };
 
-export const adminUploadEmails = (files, isMentor) => {
+export const adminUploadEmails = (files) => {
+  /*
   let mentorOrMentee = "mentor";
   if (!isMentor) {
     mentorOrMentee = "mentee"
   }
+  */
   const requestExtension = "/upload/mentor";
   return instance.post(requestExtension, files).then(
     (response) => response,

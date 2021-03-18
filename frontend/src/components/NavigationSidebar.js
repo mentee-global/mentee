@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
@@ -32,7 +33,8 @@ const pages = {
 };
 
 function NavigationSidebar(props) {
-  const [collapsed, setCollapsed] = useState(true);
+  const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
+  const [collapsed, setCollapsed] = useState(isMobile);
   const getMenuItemStyle = (page) => {
     return props.selectedPage === page
       ? "navigation-menu-item-selected"
@@ -40,7 +42,13 @@ function NavigationSidebar(props) {
   };
 
   return (
-    <Sider collapsible collapsed={collapsed} theme="light" className="navigation-sidebar" onCollapse={(collapsed) => setCollapsed(collapsed)}>
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      theme="light"
+      className="navigation-sidebar"
+      onCollapse={(collapsed) => setCollapsed(collapsed)}
+    >
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
         {Object.keys(pages).map((page) => (
           <Menu.Item
@@ -49,7 +57,10 @@ function NavigationSidebar(props) {
             style={menuItemMarginOverride}
             icon={pages[page]["icon"]}
           >
-            <NavLink to={pages[page]["path"]} style={collapsed ? {color: "white"} : {color: "black"}}>
+            <NavLink
+              to={pages[page]["path"]}
+              style={collapsed ? { color: "white" } : { color: "black" }}
+            >
               {pages[page]["name"]}
             </NavLink>
           </Menu.Item>

@@ -124,21 +124,22 @@ def login():
         if Users.objects(email=email):
             user = Users.objects.get(email=email)
 
-            if len(user.firebase_uid) > 0:
+            if user.firebase_uid and len(user.firebase_uid) > 0:
                 msg = "Could not login"
                 logger.info(msg)
                 return create_response(status=422, message=msg)
 
             # old account, need to create a firebase account
+            # no password -> no sign-in methods -> forced to reset password
             firebase_user, error_http_response = create_firebase_user(
-                email, password, user.role
+                email, None, user.role
             )
 
             if error_http_response:
                 return error_http_response
 
             user.firebase_uid = firebase_user.uid
-            user.locked_until_password_reset = True;
+            user.password = None
             user.save()
 
             # send password reset email
@@ -165,7 +166,7 @@ def login():
 
     # clear sensitive legacy fields
     if user.password:
-        user.password = ""
+        user.password = None
         user.save()
 
     try:
@@ -269,3 +270,8 @@ def refresh_token():
                 user.id), "mentorId": str(mentor.id)}
         ).decode("utf-8"),
     })
+
+
+@auth.route('/unlock', methods=['POST'])
+def unlockAccount():
+    pass

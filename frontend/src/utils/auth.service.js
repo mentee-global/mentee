@@ -49,7 +49,7 @@ export const sendVerificationEmail = (email) => {
 
 export const login = (email, password) =>
   post("/login", { email, password }).then((data) => {
-    if (data && data.success) {
+    if (data && data.success && data.result.token) {
       firebase
         .auth()
         .signInWithCustomToken(data.result.token)

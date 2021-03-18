@@ -11,7 +11,7 @@ import firebase from "firebase";
 
 const INCORRECT_NAME_PASSWORD_ERROR_MSG =
   "Incorrect username and/or password. Please try again.";
-const RESET_PASSWORD_ERROR_MSG = "Please reset password.";
+const RESET_PASSWORD_ERROR_MSG = "Please reset password. An link to reset your password has been sent to your email.";
 const SERVER_ERROR_MSG = "Something went wrong.";
 
 function Login() {
@@ -94,7 +94,7 @@ function Login() {
                 } else if (!res.success) {
                   setErrorMessage(INCORRECT_NAME_PASSWORD_ERROR_MSG);
                   setError(true);
-                } else if (res.result.resetPassword) {
+                } else if (res.result.passwordReset) {
                   setErrorMessage(RESET_PASSWORD_ERROR_MSG);
                   setError(true);
                 }

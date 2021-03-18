@@ -228,18 +228,6 @@ def forgot_password():
             message="Sent password reset link to email")
     )
 
-
-@auth.route("/passwordReset", methods=["POST"])
-def reset_password():
-    data = request.json
-    body = {"email": data["email"], "pin": data["pin"],
-            "password": data["password"]}
-    headers = {"Content-Type": "application/json"}
-    results = requests.post(AUTH_URL + "/passwordReset",
-                            headers=headers, json=body)
-    return results.json()
-
-
 @auth.route("/refreshToken", methods=["POST"])
 def refresh_token():
     data = request.json

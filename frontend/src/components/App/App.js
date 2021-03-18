@@ -47,7 +47,7 @@ function App() {
         )}
       />
 
-    <Route
+      <Route
         path="/profile"
         component={() => (
           <Navigation content={<Profile />} page="profile" needsAuth={true} />

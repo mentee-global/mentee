@@ -3,13 +3,17 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Modal, Button } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { fetchApplications, updateApplicationState } from "../../utils/api";
-import { async } from "q";
 
 const { confirm } = Modal;
+
+// application state constants
+const PENDING = "Pending";
+const REVIEWED = "Reviewed";
+const REJECTED = "Rejected";
+const OFFER_MADE = "Offer Made";
+
 function ApplicationOrganizer() {
   const [applicationData, setApplicationData] = useState([]);
-  // need to use cancel as trigger to prevent card from moving
-  const [cancel, setCancel] = useState(false);
   const [columns, setColumns] = useState({
     [1]: {
       name: "Pending",
@@ -28,7 +32,7 @@ function ApplicationOrganizer() {
       items: [],
     },
   });
-  
+
   useEffect(() => {
     const getAllApplications = async () => {
       const applications = await fetchApplications();
@@ -48,7 +52,11 @@ function ApplicationOrganizer() {
         name: "Pending",
         items: applicationData.map((application) => ({
           id: application._id.$oid,
-          content: "Name: " + application.name + " Specializations: " + application.specializations
+          content:
+            "Name: " +
+            application.name +
+            " Specializations: " +
+            application.specializations,
         })),
       },
       [2]: {
@@ -67,22 +75,30 @@ function ApplicationOrganizer() {
   }, [applicationData]);
 
   // 2 things to do
-  // put application cards in columns based on application_state 
+  // put application cards in columns based on application_state
 
-  function showConfirm (name, id) {
+  function showConfirm(name, id, removed, sourceItems, sourceColumn, sourceID) {
+    console.log(applicationData);
     confirm({
       title: "Move this Application?",
       icon: <ExclamationCircleOutlined />,
       onOk() {
         async function updateApplication() {
-        // onOk send the put request 
-         await updateApplicationState(name, id);  
-         console.log("updated");
+          // onOk send the put request
+          await updateApplicationState(name, id);
         }
         updateApplication();
         console.log("updated");
       },
       onCancel() {
+        sourceItems.push(removed);
+        setColumns({
+          ...columns,
+          [sourceID]: {
+            ...sourceColumn,
+            items: sourceItems,
+          },
+        });
         console.log("Cancel");
       },
     });
@@ -91,7 +107,7 @@ function ApplicationOrganizer() {
   const onDragEnd = (result, columns, setColumns) => {
     // if no designated column to switch then keep app in curr column
     if (!result.destination) return;
-  
+
     const { source, destination } = result;
     if (source.droppableId !== destination.droppableId) {
       const sourceColumn = columns[source.droppableId];
@@ -113,8 +129,14 @@ function ApplicationOrganizer() {
       });
       var destColumnName = columns[destination.droppableId].name;
       var destItemId = destItems[destination.index].id;
-      showConfirm(destColumnName, destItemId);
-      console.log(cancel);
+      showConfirm(
+        destColumnName,
+        destItemId,
+        removed,
+        sourceItems,
+        sourceColumn,
+        source.droppableId
+      );
     } else {
       const column = columns[source.droppableId];
       const copiedItems = [...column.items];
@@ -126,12 +148,10 @@ function ApplicationOrganizer() {
           ...column,
           items: copiedItems,
         },
-        
       });
-      
     }
   };
-  
+
   return (
     <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
       <DragDropContext
@@ -170,7 +190,6 @@ function ApplicationOrganizer() {
                       >
                         {/* Mapping each item from list that corresponds to the column */}
                         {column.items.map((item, index) => {
-                        
                           return (
                             <Draggable
                               key={item.id}

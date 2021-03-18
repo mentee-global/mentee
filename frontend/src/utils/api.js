@@ -164,7 +164,7 @@ export const fetchApplications = () => {
 
 export const updateApplicationState = (state, id) => {
   const requestExtension = "/application/" + id;
-  let applicationState = {application_state: state};
+  let applicationState = { application_state: state };
   return instance.put(requestExtension, applicationState).then(
     (response) => response,
     (err) => {
@@ -172,4 +172,3 @@ export const updateApplicationState = (state, id) => {
     }
   );
 };
-

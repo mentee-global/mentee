@@ -219,7 +219,7 @@ def send_forgot_password_email(email):
 @auth.route("/forgotPassword", methods=["POST"])
 def forgot_password():
     data = request.json
-    email = data.get("email")
+    email = data.get("email", "")
 
     error = send_forgot_password_email(email)
 
@@ -227,6 +227,7 @@ def forgot_password():
         error and error or create_response(
             message="Sent password reset link to email")
     )
+
 
 @auth.route("/refreshToken", methods=["POST"])
 def refresh_token():
@@ -258,8 +259,3 @@ def refresh_token():
                 user.id), "mentorId": str(mentor.id)}
         ).decode("utf-8"),
     })
-
-
-@auth.route('/unlock', methods=['POST'])
-def unlockAccount():
-    pass

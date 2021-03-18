@@ -11,6 +11,7 @@ import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
+import ForgotPassword from "components/pages/ForgotPassword";
 
 function App() {
   return (
@@ -71,6 +72,12 @@ function App() {
       <Route
         path="/verify"
         component={() => <Navigation content={<Verify />} needsAuth={false} />}
+      />
+      <Route
+        path="/forgotPassword"
+        component={() => (
+          <Navigation content={<ForgotPassword />} needsAuth={false} />
+        )}
       />
       <Route
         path="/create-profile"

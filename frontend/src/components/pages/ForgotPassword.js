@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { Input, Button } from "antd";
-import {
-  isLoggedIn,
-  getRegistrationStage,
-  sendVerificationEmail,
-  getUserEmail,
-  isUserVerified,
-} from "utils/auth.service";
+import { sendPasswordResetEmail } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { REGISTRATION_STAGE } from "utils/consts";
 
@@ -16,26 +10,27 @@ import "../css/Login.scss";
 import "../css/Register.scss";
 import Honeycomb from "../../resources/honeycomb.png";
 
-function Verify({ history, sent }) {
-  const [verifying, setVerifying] = useState(false);
+function ForgotPassword({ history }) {
+  const [email, setEmail] = useState();
   const [error, setError] = useState(false);
   const [resent, setResent] = useState(false);
+  const [inputFocus, setInputFocus] = useState(false);
+  const [sendingLink, setSendingLink] = useState(false);
+  const [sentLink, setSentLink] = useState(false);
 
-  useEffect(() => {
-    async function fetchData() {
-      const registrationStage = await getRegistrationStage();
+  const handleInputFocus = () => setInputFocus(true);
+  const handleInputBlur = () => setInputFocus(false);
 
-      if (registrationStage === null) {
-        history.push("/appointments");
-      } else if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
-        history.push("/create-profile");
-      } else if (registrationStage === REGISTRATION_STAGE.START) {
-        history.push("/register");
-      }
+  const sendEmail = async (onSuccess) => {
+    setError(false);
+
+    const res = await sendPasswordResetEmail(email);
+    if (res && res.success) {
+      onSuccess();
+    } else {
+      setError(true);
     }
-
-    fetchData();
-  }, [history]);
+  };
 
   return (
     <div className="home-background">
@@ -43,37 +38,43 @@ function Verify({ history, sent }) {
         <div className="verify-container">
           <div className="verify-header-container">
             <div className="verify-header-text">
-              <h1 className="login-text">Account Verification</h1>
+              <h1 className="login-text">Forgot Password</h1>
               {error && (
                 <div className="register-error">Error, please try again!</div>
               )}
               {resent && <div> Email resent! </div>}
               <br />
               <t className="verify-header-text-description">
-                A verification email has been sent to your email. Please click
-                the link contained inside to verify your account.
+                Please enter email for the password reset link to be sent to.
               </t>
             </div>
             <div className="verify-header-image">
               <img className="verify-honeycomb" src={Honeycomb} alt="" />
             </div>
           </div>
+          <div
+            className={`login-input-container${inputFocus ? "__clicked" : ""}`}
+          >
+            <Input
+              className="login-input"
+              onFocus={() => handleInputFocus()}
+              onBlur={() => handleInputBlur()}
+              onChange={(e) => setEmail(e.target.value)}
+              bordered={false}
+              placeholder="Email"
+            />
+          </div>
           <div className="login-button">
             <MenteeButton
-              content={<b>Confirm</b>}
+              content={<b>{sentLink ? "Sent!" : "Send Link"}</b>}
+              loading={sendingLink}
+              disabled={sentLink}
               width={"50%"}
               height={"125%"}
-              loading={verifying}
               onClick={async () => {
-                setVerifying(true);
-                const success = await isUserVerified();
-                if (success) {
-                  history.push("/create-profile");
-                } else {
-                  setError(true);
-                  setResent(false);
-                  setVerifying(false);
-                }
+                setSendingLink(true);
+                sendEmail(() => setSentLink(true));
+                setSendingLink(false);
               }}
             />
           </div>
@@ -84,8 +85,7 @@ function Verify({ history, sent }) {
               className="verify-resend-link"
               onClick={async () => {
                 // TODO: error handling for resend?
-                const res = await sendVerificationEmail(await getUserEmail());
-                setResent(true);
+                sendEmail(() => setResent(true));
               }}
             >
               <u>Resend</u>
@@ -97,4 +97,4 @@ function Verify({ history, sent }) {
   );
 }
 
-export default withRouter(Verify);
+export default withRouter(ForgotPassword);

@@ -114,6 +114,12 @@ function Login() {
               Register
             </NavLink>
           </div>
+          <div className="login-register-container">
+            <div>Forgot password?</div>
+            <NavLink to="/forgotPassword" className="login-register-link">
+              Reset it
+            </NavLink>
+          </div>
         </div>
         <img className="logo" src={Logo} alt="" />
       </div>

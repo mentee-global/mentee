@@ -36,15 +36,14 @@ export const register = (email, password, role) =>
     return data;
   });
 
-// Sends verification code to email
 export const sendVerificationEmail = (email) => {
   return post("/verifyEmail", {
     email,
-  }).then((response) => {
-    if (response.success) {
-      // add notice that email was sent
-    }
   });
+};
+
+export const sendPasswordResetEmail = (email) => {
+  return post("/forgotPassword", { email });
 };
 
 export const login = (email, password) =>
@@ -53,9 +52,6 @@ export const login = (email, password) =>
       firebase
         .auth()
         .signInWithCustomToken(data.result.token)
-        .then((userCredential) => {
-          console.log("user", userCredential);
-        })
         .catch((error) => {});
     }
 

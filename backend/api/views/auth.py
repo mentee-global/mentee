@@ -175,7 +175,17 @@ def login():
     except:
         msg = "Couldn't find mentor with these credentials"
         logger.info(msg)
-        return create_response(status=422, message=msg)
+        # return create_response(status=422, message=msg)
+
+        return create_response(
+            message="Logged in",
+            data={
+                "userId": str(user.id),
+                "token": firebase_admin_auth.create_custom_token(
+                    firebase_uid, {"role": user.role, "userId": str(
+                        user.id)}
+                ).decode("utf-8"),
+            },)
 
     return create_response(
         message="Logged in",

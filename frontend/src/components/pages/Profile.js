@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button } from "antd";
 import { getMentorID } from "utils/auth.service";
@@ -9,6 +10,7 @@ import "../css/Profile.scss";
 import { fetchMentorByID, editMentorProfile } from "utils/api";
 
 function Profile() {
+  const history = useHistory();
   const [mentor, setMentor] = useState({});
   const [onEdit, setEditing] = useState(false);
   const [editedMentor, setEditedMentor] = useState(false);
@@ -22,9 +24,17 @@ function Profile() {
     fetchMentor();
   }, [editedMentor]);
 
+  // useEffect(() => {
+  //   async function initialFetch() {
+  //     const mentorID = await getMentorID();
+  //     if (!mentorID) history.push('/create-profile')
+  //   }
+
+  //   initialFetch();
+  // }, [history])
+
   const fetchMentor = async () => {
     const mentorID = await getMentorID();
-    console.log("pfid", mentorID);
     const mentorData = await fetchMentorByID(mentorID);
     if (mentorData) {
       setMentor(mentorData);
@@ -74,7 +84,7 @@ function Profile() {
   const onFinish = (values) => {
     async function saveEdits() {
       const new_values = { ...values, phone_number: values.phone };
-      await editMentorProfile(new_values, await getMentorID());
+      await editMentorProfile(new_values, await getMentorID(history));
       handleSaveEdits();
     }
 

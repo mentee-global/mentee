@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
+import firebase from "firebase";
 import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
 import {
@@ -40,7 +41,7 @@ function RegisterForm(props) {
   useEffect(() => {
     async function fetchData() {
       const registrationStage = await getRegistrationStage();
-      
+
       if (registrationStage === null) {
         props.history.push("/appointments");
       } else if (registrationStage === REGISTRATION_STAGE.START) {
@@ -226,8 +227,10 @@ function RegisterForm(props) {
       const res = await createMentorProfile(data);
       const mentorId =
         res && res.data && res.data.result ? res.data.result.mentorId : false;
+
       setSaving(false);
       setValidate(false);
+
       if (mentorId) {
         setError(false);
         setIsValid([...isValid].fill(true));

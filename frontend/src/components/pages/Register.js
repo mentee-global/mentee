@@ -64,7 +64,7 @@ function Register({ history }) {
     setSaving(true);
     if (!checkErrors()) {
       const res = await register(email, password, "mentor");
-      if (res.success) {
+      if (res && res.success) {
         await sendVerificationEmail(email);
         history.push('/verify');
       } else {

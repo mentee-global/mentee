@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Row, Col, Button, Form, Input, Select } from "antd";
 import moment from "moment";
 import MentorVideo from "../MentorVideo";
@@ -10,6 +11,7 @@ import { fetchMentorByID, editMentorProfile } from "utils/api";
 import "../css/Videos.scss";
 
 function Videos() {
+  const history = useHistory();
   const [videos, setVideos] = useState([]);
   const [name, setName] = useState("");
   const [filtered, setFiltered] = useState([]);
@@ -17,6 +19,15 @@ function Videos() {
   const [titleFilter, setTitleFilter] = useState("");
   const [mentorID, setMentorID] = useState("");
   const [form] = Form.useForm();
+
+  // useEffect(() => {
+  //   async function initialFetch() {
+  //     const mentorID = await getMentorID();
+  //     if (!mentorID) history.push("/create-profile");
+  //   }
+
+  //   initialFetch();
+  // }, [history]);
 
   useEffect(() => {
     async function getVideos() {

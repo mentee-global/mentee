@@ -67,9 +67,9 @@ function ApplicationOrganizer() {
     });
   }, [applicationData]);
 
-  // 2 things to do
-  // put application cards in columns based on application_state
-
+ /** 
+  * Filters application by application state and items stored in the corresponding named columns
+  */
   function filterApplications(desiredState) {
     return applicationData.filter(state => state.application_state === desiredState).map((application) => ({
       id: application._id.$oid,
@@ -82,12 +82,16 @@ function ApplicationOrganizer() {
     
   }
 
+  /** 
+   * Confirmation modal when item is dragged to a new column destination 
+   */
   function showConfirm(name, id, removed, sourceItems, sourceColumn, sourceID) {
     console.log(applicationData);
     confirm({
       title: "Move this Application?",
       icon: <ExclamationCircleOutlined />,
       onOk() {
+        // updates application state of item based on destination column name 
         async function updateApplication() {
           // onOk send the put request
           await updateApplicationState(name, id);
@@ -96,6 +100,7 @@ function ApplicationOrganizer() {
         console.log("updated");
       },
       onCancel() {
+        // puts item back into source column if canceled 
         sourceItems.push(removed);
         setColumns({
           ...columns,
@@ -109,6 +114,9 @@ function ApplicationOrganizer() {
     });
   }
 
+  /** 
+   * Handles dragging of item to a new column 
+  */
   const onDragEnd = (result, columns, setColumns) => {
     // if no designated column to switch then keep app in curr column
     if (!result.destination) return;

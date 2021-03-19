@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import moment from "moment";
 import { Breadcrumb, Input, Button, Row, Col, Spin } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { fetchAllAppointments } from "../../utils/api";
@@ -6,11 +7,17 @@ import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
 import "../css/AdminAppointments.scss";
 
+const keys = {
+  ASCENDING: 0,
+  DESCENDING: 1,
+};
+
 function AdminAppointmentData() {
   const [isLoading, setIsLoading] = useState(false);
   const [resetFilters, setResetFilters] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [filterData, setFilterData] = useState([]);
+  const [filtering, setFiltering] = useState(false);
 
   useEffect(() => {
     async function getAppointments() {
@@ -18,19 +25,46 @@ function AdminAppointmentData() {
       const res = await fetchAllAppointments();
 
       if (res) {
-        setAppointments(res.appointments);
-        setFilterData(res.appointments);
+        const sorted = res.appointments.reverse();
+        setAppointments(sorted);
+        setFilterData(sorted);
         // TODO: REMOVE
-        console.log(res.appointments);
+        console.log(sorted);
       }
       setIsLoading(false);
     }
     getAppointments();
   }, []);
 
-  const handleSearchAppointment = (value) => {};
-  const handleResetFilters = () => {};
-  const handleSortData = () => {};
+  const handleSearchAppointment = (searchValue) => {
+    if (!searchValue) {
+      setFilterData(appointments);
+    }
+
+    const newFiltered = filterData.filter((appt) => {
+      return (
+        appt.mentor.match(new RegExp(searchValue, "i")) ||
+        appt.appointment.name.match(new RegExp(searchValue, "i"))
+      );
+    });
+    setFiltering(!filtering);
+    setFilterData(newFiltered);
+  };
+  const handleResetFilters = () => {
+    setFilterData(appointments);
+    setResetFilters(!resetFilters);
+    setFiltering(!filtering);
+  };
+  const handleSortData = (sortingKey) => {
+    setFiltering(!filtering);
+    const isAscending = sortingKey === keys.ASCENDING;
+    const newSorted = filterData.sort((a, b) => {
+      const aDate = moment(a.appointment.timeslot.start_time.$date);
+      const bDate = moment(b.appointment.timeslot.start_time.$date);
+      return isAscending ? bDate.diff(aDate) : aDate.diff(bDate);
+    });
+    setFilterData(newSorted);
+  };
   const handleSpecializationsDisplay = () => {};
 
   return (
@@ -73,7 +107,7 @@ function AdminAppointmentData() {
             {filterData.map((data, i) => {
               return (
                 <Col span={6}>
-                  <AdminAppointmentCard data={data} />
+                  <AdminAppointmentCard data={data} onReset={filtering} />
                 </Col>
               );
             })}

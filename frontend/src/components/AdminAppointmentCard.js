@@ -9,7 +9,7 @@ import moment from "moment";
 import AdminAppointmentModal from "./AdminAppointmentModal";
 import "./css/AdminAppointments.scss";
 
-function AdminAppointmentCard({ data }) {
+function AdminAppointmentCard({ data, onReset }) {
   const [visible, setVisible] = useState(false);
   const [dateFormat, setDateFormat] = useState({});
   const [status, setStatus] = useState({});
@@ -18,8 +18,8 @@ function AdminAppointmentCard({ data }) {
     if (!data) {
       return null;
     }
-    const startTime = moment(data.timeslot.start_time.$date);
-    const endTime = moment(data.timeslot.end_time.$date);
+    const startTime = moment(data.appointment.timeslot.start_time.$date);
+    const endTime = moment(data.appointment.timeslot.end_time.$date);
     setDateFormat({
       date: startTime.format("dddd, MMMM D, YYYY"),
       time: `${startTime.format("hh:mm a")} - ${endTime.format("hh:mm a")}`,
@@ -43,7 +43,7 @@ function AdminAppointmentCard({ data }) {
         icon: <QuestionCircleTwoTone twoToneColor="#F8D15B" />,
       });
     }
-  }, []);
+  }, [onReset]);
 
   return (
     <div className="card-container" onClick={() => setVisible(!visible)}>
@@ -60,11 +60,11 @@ function AdminAppointmentCard({ data }) {
       </div>
       <div className="card-mentor">
         <div style={{ fontSize: ".9em", color: "#7A7A7A" }}>Mentor</div>
-        <b>Bernie Sanders</b>
+        <b>{data.mentor}</b>
       </div>
       <div className="card-mentee">
         <div style={{ fontSize: ".9em", color: "#7A7A7A" }}>Mentee</div>
-        <b>{data.name}</b>
+        <b>{data.appointment.name}</b>
       </div>
       <div className="card-topic">
         <div>
@@ -72,8 +72,8 @@ function AdminAppointmentCard({ data }) {
         </div>
         <div>
           {data &&
-            data.specialist_categories.map((category, i) => {
-              return i < data.specialist_categories.length - 1
+            data.appointment.specialist_categories.map((category, i) => {
+              return i < data.appointment.specialist_categories.length - 1
                 ? `${category}, `
                 : category;
             })}

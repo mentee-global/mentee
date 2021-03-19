@@ -97,7 +97,7 @@ export const getMentorID = async () => {
   } else return false;
 };
 
-export const isLoggedIn = () => {
+export const isLoggedIn = async () => {
   return Boolean(getCurrentUser());
 };
 

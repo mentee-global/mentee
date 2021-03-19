@@ -18,6 +18,7 @@ function Navigation(props) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    console.log(props.needsAuth, isLoggedIn());
     if (props.needsAuth && !isLoggedIn()) {
       history.push("/login");
     }

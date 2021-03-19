@@ -86,6 +86,13 @@ export function MenteeMentorDropdown(props) {
       </Menu.Item>
     </Menu>
   );
+  return (
+    <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
+      <a>
+        {option.text} <DownOutlined />
+      </a>
+    </Dropdown>
+  );
 }
 
 export function SpecializationsDropdown(props) {

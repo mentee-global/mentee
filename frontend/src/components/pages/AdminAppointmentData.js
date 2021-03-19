@@ -6,6 +6,7 @@ import { fetchAllAppointments } from "../../utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
 import "../css/AdminAppointments.scss";
+import { SPECIALIZATIONS } from "utils/consts";
 
 const keys = {
   ASCENDING: 0,
@@ -65,7 +66,15 @@ function AdminAppointmentData() {
     });
     setFilterData(newSorted);
   };
-  const handleSpecializationsDisplay = () => {};
+  const handleSpecializationsDisplay = (index) => {
+    const newFiltered = filterData.filter((appt) => {
+      return appt.appointment.specialist_categories.includes(
+        SPECIALIZATIONS[index]
+      );
+    });
+    setFilterData(newFiltered);
+    setFiltering(!filtering);
+  };
 
   return (
     <div className="appointments-body">

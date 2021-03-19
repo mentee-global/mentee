@@ -220,6 +220,24 @@ function AdminAccountData() {
             align="center"
           />
           <Column
+            title="Appointments Available?"
+            dataIndex="appointmentsAvailable"
+            key="appointmentsAvailable"
+            align="center"
+          />
+          <Column
+            title="Videos Posted?"
+            dataIndex="videosUp"
+            key="videosUp"
+            align="center"
+          />
+          <Column
+            title="Picture Uploaded?"
+            dataIndex="profilePicUp"
+            key="profilePicUp"
+            align="center"
+          />
+          <Column
             title="Appointment Details"
             dataIndex="appointments"
             key="appointments"

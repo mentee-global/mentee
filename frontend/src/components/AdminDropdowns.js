@@ -97,6 +97,7 @@ export function MenteeMentorDropdown(props) {
 
 export function SpecializationsDropdown(props) {
   const [option, setOption] = useState("Filter by");
+  const [selected, setSelected] = useState([]);
 
   useEffect(() => {
     setOption("Filter by");
@@ -104,15 +105,24 @@ export function SpecializationsDropdown(props) {
 
   const handleClick = (newOption, text) => {
     setOption(text);
+    const newSelected = selected;
+    newSelected.push(newSelected);
+    setSelected(newSelected);
     props.onChange(newOption);
   };
 
   const overlay = (
     <Menu>
       {SPECIALIZATIONS.map((element, i) => {
+        const color = selected.includes(i) ? "red" : "black";
         return (
           <Menu.Item>
-            <a onClick={() => handleClick(i, element)}>{element}</a>
+            <a
+              onClick={() => handleClick(i, element)}
+              style={{ color: selected.includes(i) ? "red" : "black" }}
+            >
+              {element}
+            </a>
           </Menu.Item>
         );
       })}

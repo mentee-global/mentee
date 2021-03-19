@@ -114,7 +114,6 @@ export function SpecializationsDropdown(props) {
   const overlay = (
     <Menu>
       {SPECIALIZATIONS.map((element, i) => {
-        const color = selected.includes(i) ? "red" : "black";
         return (
           <Menu.Item>
             <a

@@ -195,3 +195,9 @@ def get_mentors_appointments():
         )
 
     return create_response(data={"mentorData": data}, status=200, message="Success")
+
+
+@appointment.route("/", methods=["GET"])
+def get_appointments():
+    appointments = AppointmentRequest.objects()
+    return create_response(data={"appointments": appointments}, status=200, message="Success")

@@ -1,0 +1,23 @@
+@import "_app";
+
+.appointments-body {
+  padding: 22px;
+  background-color: $admin-appointment-body;
+  height: 100%;
+}
+
+.appointment-search {
+  width: 18em;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2em;
+  margin-top: 4em;
+}
+
+.table-button-group > .table-button {
+  margin: 0px 1em;
+  color: black;
+}

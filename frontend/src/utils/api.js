@@ -152,6 +152,16 @@ export const fetchMentorsAppointments = () => {
   );
 };
 
+export const fetchAllAppointments = () => {
+  const requestExtension = "/appointment/";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const downloadMentorsData = () => {
   const requestExtension = "/download/accounts/all";
   return instance.get(requestExtension).then(

@@ -50,32 +50,37 @@ function ApplicationOrganizer() {
     setColumns({
       [1]: {
         name: "Pending",
-        items: applicationData.map((application) => ({
-          id: application._id.$oid,
-          content:
-            "Name: " +
-            application.name +
-            " Specializations: " +
-            application.specializations,
-        })),
+        items: filterApplications(PENDING)
       },
       [2]: {
         name: "Reviewed",
-        items: [],
+        items: filterApplications(REVIEWED)
       },
       [3]: {
         name: "Rejected",
-        items: [],
+        items: filterApplications(REJECTED)
       },
       [4]: {
         name: "Offer Made",
-        items: [],
+        items: filterApplications(OFFER_MADE)
       },
     });
   }, [applicationData]);
 
   // 2 things to do
   // put application cards in columns based on application_state
+
+  function filterApplications(desiredState) {
+    return applicationData.filter(state => state.application_state === desiredState).map((application) => ({
+      id: application._id.$oid,
+      content:
+        "Name: " +
+        application.name +
+        " Specializations: " +
+        application.specializations,
+    }))
+    
+  }
 
   function showConfirm(name, id, removed, sourceItems, sourceColumn, sourceID) {
     console.log(applicationData);

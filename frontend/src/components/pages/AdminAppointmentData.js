@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Breadcrumb, Input, Button } from "antd";
+import { Breadcrumb, Input, Button, Row, Col, Spin } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { fetchAllAppointments } from "../../utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
+import AdminAppointmentCard from "../AdminAppointmentCard";
 import "../css/AdminAppointments.scss";
 
 function AdminAppointmentData() {
-  const [isReloading, setIsReloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [resetFilters, setResetFilters] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [filterData, setFilterData] = useState([]);
 
   useEffect(() => {
     async function getAppointments() {
+      setIsLoading(true);
       const res = await fetchAllAppointments();
 
       if (res) {
@@ -21,6 +23,7 @@ function AdminAppointmentData() {
         // TODO: REMOVE
         console.log(res.appointments);
       }
+      setIsLoading(false);
     }
     getAppointments();
   }, []);
@@ -64,7 +67,19 @@ function AdminAppointmentData() {
           </Button>
         </div>
       </div>
-      <div className="appointments-table"></div>
+      <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>
+        <div className="appointments-table">
+          <Row gutter={[16, 16]} justify="space-between">
+            {filterData.map((data, i) => {
+              return (
+                <Col span={6}>
+                  <AdminAppointmentCard data={data} />
+                </Col>
+              );
+            })}
+          </Row>
+        </div>
+      </Spin>
     </div>
   );
 }

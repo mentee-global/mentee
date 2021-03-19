@@ -131,14 +131,12 @@ export const editAvailability = (timeslots, id) => {
   );
 };
 
-export const adminUploadEmails = (file) => {
-  /*
-  let mentorOrMentee = "mentor";
+export const adminUploadEmails = (file, isMentor) => {
+  let mentorOrMentee = "mentors";
   if (!isMentor) {
-    mentorOrMentee = "mentee"
+    mentorOrMentee = "mentees"
   }
-  */
-  const requestExtension = "/upload/mentors";
+  const requestExtension = "/upload/" + mentorOrMentee;
   let formData = new FormData();
   formData.append("fileupload", file);
   return instance.post(requestExtension, formData).then(

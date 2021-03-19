@@ -20,6 +20,12 @@ export const REGISTRATION_STAGE = {
   PROFILE_CREATION: 2,
 };
 
+export const ACCOUNT_TYPE = {
+  ADMIN: 0,
+  MENTOR: 1,
+  MENTEE: 2,
+};
+
 export const LANGUAGES = [
   "Arabic",
   "Bengali",

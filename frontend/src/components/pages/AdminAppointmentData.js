@@ -112,7 +112,7 @@ function AdminAppointmentData() {
       </div>
       <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>
         <div className="appointments-table">
-          <Row gutter={[16, 16]} justify="space-between">
+          <Row gutter={[16, 16]} justify="start">
             {filterData.map((data, i) => {
               return (
                 <Col span={6}>

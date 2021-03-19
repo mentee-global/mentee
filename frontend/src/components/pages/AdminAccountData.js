@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Breadcrumb, Input, Spin } from "antd";
+import {
+  Table,
+  Button,
+  Breadcrumb,
+  Input,
+  Spin,
+  Popconfirm,
+  message,
+} from "antd";
 import {
   DownloadOutlined,
   ReloadOutlined,
@@ -9,7 +17,11 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import "../css/AdminAccountData.scss";
-import { fetchMentorsAppointments, downloadMentorsData } from "../../utils/api";
+import {
+  fetchMentorsAppointments,
+  downloadMentorsData,
+  deleteMentorById,
+} from "../../utils/api";
 import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import { PROFILE_URL } from "../../utils/consts";
@@ -34,6 +46,7 @@ function AdminAccountData() {
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
+  const [downloadFile, setDownloadFile] = useState(null);
 
   useEffect(() => {
     async function getData() {
@@ -50,10 +63,18 @@ function AdminAccountData() {
     getData();
   }, [reload]);
 
-  const handleDeleteAccount = (mentorId) => {
-    // TODO: Create endpoint that deletes a mentor account
-    setReload(!reload);
-    console.log(`Deleting Mentor with ID: ${mentorId}`);
+  const handleDeleteAccount = async (mentorId, name) => {
+    if (!mentorId) {
+      message.error("Could not get specified mentor id");
+      return;
+    }
+    const success = await deleteMentorById(mentorId);
+    if (success) {
+      message.success(`Successfully deleted ${name}`);
+      setReload(!reload);
+    } else {
+      message.error(`Could not delete ${name}`);
+    }
   };
 
   const handleAddAccount = () => {
@@ -64,7 +85,8 @@ function AdminAccountData() {
   const handleMentorsDownload = async () => {
     setIsMentorDownload(true);
     // TODO: Check up on why this isn't working..
-    await downloadMentorsData();
+    const file = await downloadMentorsData();
+    setDownloadFile(file);
     setIsMentorDownload(false);
   };
 
@@ -116,6 +138,9 @@ function AdminAccountData() {
 
   return (
     <div className="account-data-body">
+      <div style={{ display: "none" }}>
+        <iframe src={downloadFile} />
+      </div>
       <Breadcrumb>
         <Breadcrumb.Item>User Reports</Breadcrumb.Item>
         <Breadcrumb.Item>
@@ -207,13 +232,22 @@ function AdminAccountData() {
           />
           <Column
             title="Delete"
-            dataIndex="id"
+            dataIndex={["id", "name"]}
             key="id"
-            render={(mentorId) => (
-              <DeleteOutlined
-                className="delete-user-btn"
-                onClick={() => handleDeleteAccount(mentorId)}
-              />
+            render={(text, data) => (
+              <Popconfirm
+                title={`Are you sure you want to delete ${data.name}?`}
+                onConfirm={() => {
+                  handleDeleteAccount(data.id, data.name);
+                }}
+                onCancel={() =>
+                  message.info(`No deletion has been for ${data.name}`)
+                }
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined className="delete-user-btn" />
+              </Popconfirm>
             )}
             align="center"
           />

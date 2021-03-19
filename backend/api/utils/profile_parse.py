@@ -1,24 +1,25 @@
 from bson import ObjectId
 from api.models import db, Education, Video, MentorProfile, MenteeProfile, Image
 from api.utils.request_utils import imgur_client
+from api.utils.constants import Account
 
 
-def new_profile(data: dict = {}, profile_type: str = ""):
+def new_profile(data: dict = {}, profile_type: int = -1):
     """Parses data given by POST request
 
     Args:
         data (dict): POST Data. Defaults to {}.
-        profile_type (str): Type of account parsing to. Defaults to "".
+        profile_type (int): Type of account parsing. Defaults to -1
 
     Returns:
         MongoDB Model: Depending on type it returns the respective model object
     """
-    if not data or not profile_type:
+    if not data or profile_type == -1:
         return None
 
     new_profile = None
 
-    if profile_type == "mentor":
+    if profile_type == Account.MENTOR:
         new_profile = MentorProfile(
             user_id=ObjectId(data["user_id"]),
             name=data["name"],
@@ -45,7 +46,7 @@ def new_profile(data: dict = {}, profile_type: str = ""):
                 )
                 for video in video_data
             ]
-    elif profile_type == "mentee":
+    elif profile_type == Account.MENTEE:
         new_profile = MenteeProfile(
             name=data["name"],
             # TODO: Change this to the actual email and remove default
@@ -55,7 +56,17 @@ def new_profile(data: dict = {}, profile_type: str = ""):
             organization=data["organization"],
             age=data["age"],
             gender=data["gender"],
+            is_private=data.get("is_private", True),
         )
+
+        if "video" in data:
+            video_data = data.get("video")
+            new_profile.video = Video(
+                title=video_data["title"],
+                url=video_data["url"],
+                tag=video_data["tag"],
+                date_uploaded=video_data["date_uploaded"],
+            )
     else:
         # There is not match with mentee/mentor
         return None
@@ -124,6 +135,16 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.age = data.get("age", profile.age)
         profile.gender = data.get("gender", profile.gender)
         profile.organization = data.get("organization", profile.organization)
+        profile.is_private = data.get("is_private", profile.is_private)
+
+        if "video" in data:
+            video_data = data.get("video")
+            profile.video = Video(
+                title=video.get("title"),
+                url=video.get("url"),
+                tag=video.get("tag"),
+                date_uploaded=video.get("date_uploaded"),
+            )
 
     profile.name = data.get("name", profile.name)
     profile.location = data.get("location", profile.location)

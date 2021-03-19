@@ -11,8 +11,10 @@ import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
+import MentorApplicationView from "components/MentorApplicationView";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
+import NotFound from "components/pages/NotFound";
 
 function App() {
   return (
@@ -82,7 +84,9 @@ function App() {
       />
       <Route
         path="/manage-users"
-        component={() => <Navigation content={<div />} needsAuth={true} />}
+        component={() => (
+          <Navigation content={<MentorApplicationView />} needsAuth={true} />
+        )}
       />
       <Route
         path="/account-data"
@@ -94,6 +98,12 @@ function App() {
         path="/all-appointments"
         component={() => (
           <Navigation content={<AdminAppointmentData />} needsAuth={true} />
+        )}
+      />
+      <Route
+        path="/not-found"
+        component={() => (
+          <Navigation content={<NotFound />} needsAuth={false} />
         )}
       />
     </Router>

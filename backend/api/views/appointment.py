@@ -200,4 +200,6 @@ def get_mentors_appointments():
 @appointment.route("/", methods=["GET"])
 def get_appointments():
     appointments = AppointmentRequest.objects()
-    return create_response(data={"appointments": appointments}, status=200, message="Success")
+    return create_response(
+        data={"appointments": appointments}, status=200, message="Success"
+    )

@@ -131,15 +131,17 @@ export const editAvailability = (timeslots, id) => {
   );
 };
 
-export const adminUploadEmails = (files) => {
+export const adminUploadEmails = (file) => {
   /*
   let mentorOrMentee = "mentor";
   if (!isMentor) {
     mentorOrMentee = "mentee"
   }
   */
-  const requestExtension = "/upload/mentor";
-  return instance.post(requestExtension, files).then(
+  const requestExtension = "/upload/mentors";
+  let formData = new FormData();
+  formData.append("fileupload", file);
+  return instance.post(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);

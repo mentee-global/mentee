@@ -21,7 +21,7 @@ function AdminAppointmentCard({ data, onReset }) {
     const startTime = moment(data.appointment.timeslot.start_time.$date);
     const endTime = moment(data.appointment.timeslot.end_time.$date);
     setDateFormat({
-      date: startTime.format("dddd, MMMM D, YYYY"),
+      date: startTime.format("dddd, MMMM D, YYYY "),
       time: `${startTime.format("hh:mm a")} - ${endTime.format("hh:mm a")}`,
     });
 
@@ -47,7 +47,12 @@ function AdminAppointmentCard({ data, onReset }) {
 
   return (
     <div className="card-container" onClick={() => setVisible(!visible)}>
-      <AdminAppointmentModal visible={visible} />
+      <AdminAppointmentModal
+        visible={visible}
+        data={data}
+        dateFormat={dateFormat}
+        status={status}
+      />
       <div className="card-header">
         <div className="card-date">
           <div>{dateFormat && dateFormat.date}</div>

@@ -37,9 +37,11 @@ function UploadEmails(props) {
             onCancel={() => {props.setModalVisible(false);}}
         >   <div className="dragdrops">
                 <div className="dragdrop">
+                    <h3>Add Mentors</h3>
                     {DragDrop(true)}
                 </div>
                 <div className="dragdrop">
+                    <h3>Add Mentees</h3>
                     {DragDrop(false)}
                 </div>
             </div>

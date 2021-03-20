@@ -1,5 +1,15 @@
 @import "_app";
 
-.dragdrops .dragdrop {
-    display: inline-block;
+.dragdrops{
+    padding: 20px;
+}
+
+.dragdrop{
+    width: 50%;
+    float: left;
+    padding: 20px;
+}
+
+h3{
+    text-align: center;
 }

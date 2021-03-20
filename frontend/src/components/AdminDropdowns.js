@@ -129,7 +129,12 @@ export function SpecializationsDropdown(props) {
   );
 
   return (
-    <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
+    <Dropdown
+      overlay={overlay}
+      className={props.className}
+      trigger={["click"]}
+      overlayStyle={{ overflowY: "scroll", height: "20em" }}
+    >
       <a>
         {option} <DownOutlined />
       </a>

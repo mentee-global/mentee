@@ -18,7 +18,7 @@ function AdminAppointmentData() {
   const [resetFilters, setResetFilters] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [filterData, setFilterData] = useState([]);
-  const [filtering, setFiltering] = useState(false);
+  const [render, setRender] = useState(false);
 
   useEffect(() => {
     async function getAppointments() {
@@ -29,8 +29,6 @@ function AdminAppointmentData() {
         const sorted = res.appointments.reverse();
         setAppointments(sorted);
         setFilterData(sorted);
-        // TODO: REMOVE
-        console.log(sorted);
       }
       setIsLoading(false);
     }
@@ -48,16 +46,16 @@ function AdminAppointmentData() {
         appt.appointment.name.match(new RegExp(searchValue, "i"))
       );
     });
-    setFiltering(!filtering);
+    // setFiltering(!filtering);
     setFilterData(newFiltered);
   };
   const handleResetFilters = () => {
     setFilterData(appointments);
     setResetFilters(!resetFilters);
-    setFiltering(!filtering);
+    // setFiltering(!filtering);
   };
   const handleSortData = (sortingKey) => {
-    setFiltering(!filtering);
+    // setFiltering(!filtering);
     const isAscending = sortingKey === keys.ASCENDING;
     const newSorted = filterData.sort((a, b) => {
       const aDate = moment(a.appointment.timeslot.start_time.$date);
@@ -65,6 +63,7 @@ function AdminAppointmentData() {
       return isAscending ? bDate.diff(aDate) : aDate.diff(bDate);
     });
     setFilterData(newSorted);
+    setRender(!render);
   };
   const handleSpecializationsDisplay = (index) => {
     const newFiltered = filterData.filter((appt) => {
@@ -73,7 +72,7 @@ function AdminAppointmentData() {
       );
     });
     setFilterData(newFiltered);
-    setFiltering(!filtering);
+    // setFiltering(!filtering);
   };
 
   return (
@@ -113,10 +112,10 @@ function AdminAppointmentData() {
       <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>
         <div className="appointments-table">
           <Row gutter={[16, 16]} justify="start">
-            {filterData.map((data, i) => {
+            {filterData.map((data) => {
               return (
                 <Col span={6}>
-                  <AdminAppointmentCard data={data} onReset={filtering} />
+                  <AdminAppointmentCard data={data} render={render} />
                 </Col>
               );
             })}

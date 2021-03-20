@@ -9,7 +9,7 @@ import moment from "moment";
 import AdminAppointmentModal from "./AdminAppointmentModal";
 import "./css/AdminAppointments.scss";
 
-function AdminAppointmentCard({ data, onReset }) {
+function AdminAppointmentCard({ data, render }) {
   const [visible, setVisible] = useState(false);
   const [dateFormat, setDateFormat] = useState({});
   const [status, setStatus] = useState({});
@@ -43,7 +43,7 @@ function AdminAppointmentCard({ data, onReset }) {
         icon: <QuestionCircleTwoTone twoToneColor="#F8D15B" />,
       });
     }
-  }, [onReset]);
+  }, [render]);
 
   return (
     <div className="card-container" onClick={() => setVisible(!visible)}>

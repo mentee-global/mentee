@@ -182,7 +182,7 @@ const downloadBlob = (response, filename) => {
   document.body.appendChild(link);
   link.click();
   URL.revokeObjectURL(url);
-}
+};
 
 export const downloadMentorsData = () => {
   const requestExtension = "/download/accounts/all";
@@ -192,7 +192,7 @@ export const downloadMentorsData = () => {
     })
     .then(
       (response) => {
-        downloadBlob(response, 'data.xlsx');
+        downloadBlob(response, "data.xlsx");
       },
       (err) => {
         console.error(err);
@@ -208,7 +208,7 @@ export const downloadAllApplicationData = () => {
     })
     .then(
       (response) => {
-        downloadBlob(response, 'all_appointments.xlsx');
+        downloadBlob(response, "all_appointments.xlsx");
       },
       (err) => {
         console.error(err);

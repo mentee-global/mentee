@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Breadcrumb, Input, Button, Row, Col, Spin } from "antd";
-import {
-  DownloadOutlined,
-} from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
-import { fetchAllAppointments, downloadAllApplicationData } from "../../utils/api";
+import {
+  fetchAllAppointments,
+  downloadAllApplicationData,
+} from "../../utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
 import "../css/AdminAppointments.scss";
@@ -22,7 +23,9 @@ function AdminAppointmentData() {
   const [appointments, setAppointments] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [render, setRender] = useState(false);
-  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(false);
+  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(
+    false
+  );
   const [downloadFile, setDownloadFile] = useState(null);
 
   useEffect(() => {
@@ -85,7 +88,7 @@ function AdminAppointmentData() {
     const file = await downloadAllApplicationData();
     setDownloadFile(file);
     setIsDownloadingAppointments(false);
-  }
+  };
 
   return (
     <div className="appointments-body">

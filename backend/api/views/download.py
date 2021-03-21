@@ -96,7 +96,7 @@ def download_accounts_info():
                 acct.professional_title,
                 acct.linkedin,
                 acct.website,
-                "Yes" if acct.image.url else "No",
+                "Yes" if acct.image and acct.image.url else "No",
                 acct.image.url if acct.image else "None",
                 "Yes" if len(acct.videos) >= 0 else "No",
                 "|".join(educations),

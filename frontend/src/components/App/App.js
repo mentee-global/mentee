@@ -12,7 +12,6 @@ import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
-import MentorApplicationView from "components/MentorApplicationView";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import NotFound from "components/pages/NotFound";
@@ -94,12 +93,6 @@ function App() {
         path="/organizer"
         component={() => (
           <Navigation content={<ApplicationOrganizer />} needsAuth={true} />
-        )}
-      />
-      <Route
-        path="/manage-users"
-        component={() => (
-          <Navigation content={<MentorApplicationView />} needsAuth={true} />
         )}
       />
       <Route

@@ -14,12 +14,6 @@ const { SubMenu } = Menu;
 
 const menuItemMarginOverride = { marginTop: "0px", marginBottom: "0px" };
 const pages = {
-  manageUsers: {
-    name: "Manage Users",
-    path: "/manage-users",
-    icon: <TeamOutlined />,
-    isSubMenu: false,
-  },
   applications: {
     name: "Applications",
     path: "/organizer",

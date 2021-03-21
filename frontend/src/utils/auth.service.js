@@ -91,6 +91,7 @@ export const getCurrentUser = () => {
 
 export const getMentorID = async () => {
   if (isLoggedIn()) {
+    console.log('logged in', isLoggedIn());
     return await getIdTokenResult().then((idTokenResult) => {
       return idTokenResult.claims.mentorId;
     });

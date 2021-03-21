@@ -208,11 +208,20 @@ export const deleteMentorById = (id) => {
   );
 };
 
-export const updateApplicationState = (state, id) => {
-  const requestExtension = "/application/" + id;
-  let applicationState = { application_state: state };
-  return instance.put(requestExtension, applicationState).then(
+export const updateApplicationById = (data, id) => {
+  const requestExtension = `/application/${id}`;
+  return instance.put(requestExtension, data).then(
     (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getApplicationById = (id) => {
+  const requestExtension = `/application/${id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.mentor_application,
     (err) => {
       console.error(err);
     }

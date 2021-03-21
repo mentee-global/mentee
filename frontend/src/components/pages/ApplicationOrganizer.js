@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { fetchApplications, updateApplicationState } from "../../utils/api";
+import { fetchApplications, updateApplicationById } from "../../utils/api";
 import MentorApplicationView from "../MentorApplicationView";
 
 const { confirm } = Modal;
@@ -103,7 +103,10 @@ function ApplicationOrganizer() {
         // updates application state of item based on destination column name
         async function updateApplication() {
           // onOk send the put request
-          await updateApplicationState(name, id);
+          const data = {
+            application_state: name,
+          };
+          await updateApplicationById(data, id);
         }
         updateApplication();
         console.log("updated");
@@ -226,12 +229,6 @@ function ApplicationOrganizer() {
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     style={{
-                                      userSelect: "none",
-                                      padding: 16,
-                                      margin: "0 0 8px 0",
-                                      minHeight: "50px",
-                                      backgroundColor: "white",
-                                      color: "black",
                                       ...provided.draggableProps.style,
                                     }}
                                   >

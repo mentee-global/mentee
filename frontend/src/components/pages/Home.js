@@ -6,7 +6,6 @@ import Logo from "../../resources/logo.png";
 import Health from "../../resources/focus-for-health.svg";
 
 function Home({ history }) {
-
   return (
     <div className="home-background">
       <div className="home-content">

@@ -201,7 +201,7 @@ export const deleteMentorById = (id) => {
 export const adminUploadEmails = (file, isMentor) => {
   let mentorOrMentee = "mentors";
   if (!isMentor) {
-    mentorOrMentee = "mentees"
+    mentorOrMentee = "mentees";
   }
   const requestExtension = "/upload/" + mentorOrMentee;
   let formData = new FormData();

@@ -92,7 +92,7 @@ function AdminAccountData() {
   };
 
   const handleMenteesDownload = () => {
-    setIsMentorDownload(true);
+    setIsMenteeDownload(true);
     // TODO: Add Mentee Account Downloads
     console.log("Calling endpoint to download accounts");
     setIsMenteeDownload(false);

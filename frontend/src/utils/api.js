@@ -174,6 +174,16 @@ export const fetchAllAppointments = () => {
   );
 };
 
+const downloadBlob = (response, filename) => {
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 export const downloadMentorsData = () => {
   const requestExtension = "/download/accounts/all";
   return instance
@@ -182,14 +192,23 @@ export const downloadMentorsData = () => {
     })
     .then(
       (response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        console.log(response);
-        link.setAttribute("download", `data.xlsx`);
-        document.body.appendChild(link);
-        link.click();
-        URL.revokeObjectURL(url);
+        downloadBlob(response, 'data.xlsx');
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+};
+
+export const downloadAllApplicationData = () => {
+  const requestExtension = "/download/appointments/all";
+  return instance
+    .get(requestExtension, {
+      responseType: "blob",
+    })
+    .then(
+      (response) => {
+        downloadBlob(response, 'all_appointments.xlsx');
       },
       (err) => {
         console.error(err);

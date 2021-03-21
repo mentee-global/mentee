@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Breadcrumb, Input, Button, Row, Col, Spin } from "antd";
+import {
+  DownloadOutlined,
+} from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
-import { fetchAllAppointments } from "../../utils/api";
+import { fetchAllAppointments, downloadAllApplicationData } from "../../utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
 import "../css/AdminAppointments.scss";
@@ -19,6 +22,8 @@ function AdminAppointmentData() {
   const [appointments, setAppointments] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [render, setRender] = useState(false);
+  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(false);
+  const [downloadFile, setDownloadFile] = useState(null);
 
   useEffect(() => {
     async function getAppointments() {
@@ -75,8 +80,18 @@ function AdminAppointmentData() {
     // setFiltering(!filtering);
   };
 
+  const handleAppointmentDownload = async () => {
+    setIsDownloadingAppointments(true);
+    const file = await downloadAllApplicationData();
+    setDownloadFile(file);
+    setIsDownloadingAppointments(false);
+  }
+
   return (
     <div className="appointments-body">
+      <div style={{ display: "none" }}>
+        <iframe src={downloadFile} />
+      </div>
       <Breadcrumb>
         <Breadcrumb.Item>User Reports</Breadcrumb.Item>
         <Breadcrumb.Item>
@@ -106,6 +121,14 @@ function AdminAppointmentData() {
           />
           <Button className="table-button" onClick={() => handleResetFilters()}>
             Clear Filters
+          </Button>
+          <Button
+            className="table-button"
+            icon={<DownloadOutlined />}
+            onClick={() => handleAppointmentDownload()}
+            loading={isDownloadingAppointments}
+          >
+            Appointment Data
           </Button>
         </div>
       </div>

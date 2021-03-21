@@ -2,7 +2,7 @@ import pandas as pd
 import xlsxwriter
 from datetime import datetime
 from io import BytesIO
-from api.core import create_response
+from api.core import create_response, logger
 from api.models import AppointmentRequest, Users, MentorProfile
 from flask import send_file, Blueprint
 
@@ -23,11 +23,11 @@ def download_appointments():
         mentor = MentorProfile.objects(id=appt.mentor_id).first()
         appts.append(
             [
-                mentor.name,
-                mentor.email,
+                mentor.name if mentor else "Deleted Account",
+                mentor.email if mentor else "Deleted Account",
                 appt.timeslot.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
                 appt.timeslot.end_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
-                int(appt.accepted) if apt.accepted != None else "N/A",
+                int(appt.accepted) if appt.accepted != None else "N/A",
                 appt.name,
                 appt.email,
                 appt.phone_number,
@@ -38,8 +38,8 @@ def download_appointments():
                 ",".join(appt.specialist_categories),
                 appt.message,
                 appt.organization,
-                int(appt.allow_calls) if apt.allow_calls != None else "N/A",
-                int(appt.allow_texts) if apt.allow_texts != None else "N/A",
+                int(appt.allow_calls) if appt.allow_calls != None else "N/A",
+                int(appt.allow_texts) if appt.allow_texts != None else "N/A",
             ]
         )
     columns = [

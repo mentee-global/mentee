@@ -238,17 +238,6 @@ function AdminAccountData() {
             align="center"
           />
           <Column
-            title="Appointment Details"
-            dataIndex="appointments"
-            key="appointments"
-            render={(appointments) => (
-              <a className="table-appt-view" props={appointments}>
-                View
-              </a>
-            )}
-            align="center"
-          />
-          <Column
             title="Delete"
             dataIndex={["id", "name"]}
             key="id"

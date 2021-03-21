@@ -29,7 +29,6 @@ def delete_mentor(mentor_id):
         except:
             msg = "No verified mentors currently exist with email " + email
             logger.info(msg)
-            return create_response(status=422, message=msg)
     mentor.delete()
     login.delete()
     if verified:
@@ -44,7 +43,6 @@ def upload_mentor_emails():
         return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
-    print(f)
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")

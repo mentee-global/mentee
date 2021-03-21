@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
 import { isLoggedIn } from "utils/auth.service";
@@ -6,6 +6,7 @@ import { isLoggedIn } from "utils/auth.service";
 import MentorNavHeader from "./MentorNavHeader";
 import MenteeNavHeader from "./MenteeNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
+import AdminSidebar from "./AdminSidebar";
 
 import "./css/Navigation.scss";
 
@@ -13,6 +14,8 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
+  // Set this to false and connect to backend
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (props.needsAuth && !isLoggedIn()) {
@@ -26,7 +29,11 @@ function Navigation(props) {
         {props.needsAuth ? <MentorNavHeader /> : <MenteeNavHeader />}
         {props.needsAuth ? (
           <Layout>
-            <NavigationSidebar selectedPage={props.page} />
+            {isAdmin ? (
+              <AdminSidebar />
+            ) : (
+              <NavigationSidebar selectedPage={props.page} />
+            )}
             <Content className="navigation-content">{props.content}</Content>
           </Layout>
         ) : (

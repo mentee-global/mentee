@@ -4,16 +4,8 @@ import MenteeVerificationModal from "../MenteeVerificationModal";
 import "../css/Home.scss";
 import Logo from "../../resources/logo.png";
 import Health from "../../resources/focus-for-health.svg";
-import UploadEmails from "../UploadEmails";
-import MenteeButton from "../MenteeButton.js";
 
 function Home({ history }) {
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const OpenModal = () => {
-    setModalVisible(true);
-  };
-
 
   return (
     <div className="home-background">
@@ -31,14 +23,6 @@ function Home({ history }) {
                 state: { verified: true },
               });
             }}
-          />
-          <MenteeButton
-          content={<b>Open Modal</b>}
-          onClick={() => OpenModal()}
-          ></MenteeButton>
-          <UploadEmails
-            setModalVisible={setModalVisible}
-            modalVisible={modalVisible}
           />
         </div>
         <img className="logo" src={Logo} alt="Adrinka Logo" />

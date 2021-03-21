@@ -18,17 +18,19 @@ const { Title, Text } = Typography;
 
 const styles = {
   title: {
-    fontSize: "35px",
+    fontSize: "20px",
     whiteSpace: "normal",
     overflow: "visible",
     textOverflow: "ellipsis",
+    width: "100px",
     margin: 0,
   },
   subTitle: {
-    fontSize: "18px",
+    fontSize: "12px",
     whiteSpace: "normal",
     overflow: "visible",
     textOverflow: "ellipsis",
+    width: "100px",
     margin: 0,
   },
   icon: {

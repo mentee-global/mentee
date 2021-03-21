@@ -5,14 +5,25 @@ const BASE_URL =
       : "https://mentee-h4i.herokuapp.com/"
     : "http://localhost:5000/";
 
+const FRONT_BASE_URL =
+  process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
+
 export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
+
+export const PROFILE_URL = FRONT_BASE_URL + "gallery/";
 
 export const REGISTRATION_STAGE = {
   START: 0,
   VERIFY_EMAIL: 1,
   PROFILE_CREATION: 2,
+};
+
+export const ACCOUNT_TYPE = {
+  ADMIN: 0,
+  MENTOR: 1,
+  MENTEE: 2,
 };
 
 export const LANGUAGES = [

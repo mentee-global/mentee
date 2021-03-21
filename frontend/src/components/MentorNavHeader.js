@@ -46,13 +46,15 @@ function MentorNavHeader() {
 
   return (
     <Header className="navigation-header">
-      <NavLink to="/">
-        <img
-          src={isMobile ? MenteeLogoSmall : MenteeLogo}
-          alt="Mentee"
-          className="mentee-logo"
-        />
-      </NavLink>
+      <div>
+        <NavLink to="/">
+          <img
+            src={isMobile ? MenteeLogoSmall : MenteeLogo}
+            alt="Mentee"
+            className="mentee-logo"
+          />
+        </NavLink>
+      </div>
       <span>
         <div className="profile-caret">
           <Dropdown overlay={dropdownMenu} trigger={["click"]}>

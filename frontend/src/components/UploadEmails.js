@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { Modal } from "antd";
 import { useDropzone } from 'react-dropzone';
 import { adminUploadEmails } from "utils/api";
+import MenteeButton from "./MenteeButton"
 
 import "./css/UploadEmails.scss";
 
@@ -34,7 +35,7 @@ function UploadEmails(props) {
         <Modal
             visible={props.modalVisible} 
             setModalVisible={props.setModalVisible}
-            onCancel={() => {props.setModalVisible(false);}}
+            footer={<MenteeButton content="Done" onClick={() => {props.setModalVisible(false);}}/>}
         >   <div className="dragdrops">
                 <div className="dragdrop">
                     <h3>Add Mentors</h3>

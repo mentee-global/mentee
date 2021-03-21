@@ -4,14 +4,9 @@ import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { fetchApplications, updateApplicationById } from "../../utils/api";
 import MentorApplicationView from "../MentorApplicationView";
+import { APP_STATUS } from "../../utils/consts";
 
 const { confirm } = Modal;
-
-// application state constants
-const PENDING = "Pending";
-const REVIEWED = "Reviewed";
-const REJECTED = "Rejected";
-const OFFER_MADE = "Offer Made";
 
 function ApplicationOrganizer() {
   const [applicationData, setApplicationData] = useState([]);
@@ -57,19 +52,19 @@ function ApplicationOrganizer() {
     setColumns({
       [1]: {
         name: "Pending",
-        items: filterApplications(PENDING),
+        items: filterApplications(APP_STATUS.PENDING),
       },
       [2]: {
         name: "Reviewed",
-        items: filterApplications(REVIEWED),
+        items: filterApplications(APP_STATUS.REVIEWED),
       },
       [3]: {
         name: "Rejected",
-        items: filterApplications(REJECTED),
+        items: filterApplications(APP_STATUS.REJECTED),
       },
       [4]: {
         name: "Offer Made",
-        items: filterApplications(OFFER_MADE),
+        items: filterApplications(APP_STATUS.OFFER_MADE),
       },
     });
   }, [applicationData]);
@@ -79,7 +74,7 @@ function ApplicationOrganizer() {
    */
   function filterApplications(desiredState) {
     return applicationData
-      .filter((state, index) => state.application_state === desiredState)
+      .filter((state) => state.application_state === desiredState)
       .map((application) => ({
         id: application._id.$oid,
         content:
@@ -95,7 +90,6 @@ function ApplicationOrganizer() {
    * Confirmation modal when item is dragged to a new column destination
    */
   function showConfirm(name, id, removed, sourceItems, sourceColumn, sourceID) {
-    console.log(applicationData);
     confirm({
       title: "Move this Application?",
       icon: <ExclamationCircleOutlined />,
@@ -109,7 +103,6 @@ function ApplicationOrganizer() {
           await updateApplicationById(data, id);
         }
         updateApplication();
-        console.log("updated");
       },
       onCancel() {
         // puts item back into source column if canceled
@@ -121,7 +114,6 @@ function ApplicationOrganizer() {
             items: sourceItems,
           },
         });
-        console.log("Cancel");
       },
     });
   }

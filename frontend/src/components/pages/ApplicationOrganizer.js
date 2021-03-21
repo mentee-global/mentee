@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { fetchApplications, updateApplicationState } from "../../utils/api";
 
@@ -50,40 +50,41 @@ function ApplicationOrganizer() {
     setColumns({
       [1]: {
         name: "Pending",
-        items: filterApplications(PENDING)
+        items: filterApplications(PENDING),
       },
       [2]: {
         name: "Reviewed",
-        items: filterApplications(REVIEWED)
+        items: filterApplications(REVIEWED),
       },
       [3]: {
         name: "Rejected",
-        items: filterApplications(REJECTED)
+        items: filterApplications(REJECTED),
       },
       [4]: {
         name: "Offer Made",
-        items: filterApplications(OFFER_MADE)
+        items: filterApplications(OFFER_MADE),
       },
     });
   }, [applicationData]);
 
- /** 
-  * Filters application by application state and items stored in the corresponding named columns
-  */
+  /**
+   * Filters application by application state and items stored in the corresponding named columns
+   */
   function filterApplications(desiredState) {
-    return applicationData.filter(state => state.application_state === desiredState).map((application) => ({
-      id: application._id.$oid,
-      content:
-        "Name: " +
-        application.name +
-        " Specializations: " +
-        application.specializations,
-    }))
-    
+    return applicationData
+      .filter((state) => state.application_state === desiredState)
+      .map((application) => ({
+        id: application._id.$oid,
+        content:
+          "Name: " +
+          application.name +
+          " Specializations: " +
+          application.specializations,
+      }));
   }
 
-  /** 
-   * Confirmation modal when item is dragged to a new column destination 
+  /**
+   * Confirmation modal when item is dragged to a new column destination
    */
   function showConfirm(name, id, removed, sourceItems, sourceColumn, sourceID) {
     console.log(applicationData);
@@ -91,7 +92,7 @@ function ApplicationOrganizer() {
       title: "Move this Application?",
       icon: <ExclamationCircleOutlined />,
       onOk() {
-        // updates application state of item based on destination column name 
+        // updates application state of item based on destination column name
         async function updateApplication() {
           // onOk send the put request
           await updateApplicationState(name, id);
@@ -100,7 +101,7 @@ function ApplicationOrganizer() {
         console.log("updated");
       },
       onCancel() {
-        // puts item back into source column if canceled 
+        // puts item back into source column if canceled
         sourceItems.push(removed);
         setColumns({
           ...columns,
@@ -114,9 +115,9 @@ function ApplicationOrganizer() {
     });
   }
 
-  /** 
-   * Handles dragging of item to a new column 
-  */
+  /**
+   * Handles dragging of item to a new column
+   */
   const onDragEnd = (result, columns, setColumns) => {
     // if no designated column to switch then keep app in curr column
     if (!result.destination) return;
@@ -140,6 +141,7 @@ function ApplicationOrganizer() {
           items: destItems,
         },
       });
+
       var destColumnName = columns[destination.droppableId].name;
       var destItemId = destItems[destination.index].id;
       showConfirm(

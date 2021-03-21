@@ -1,5 +1,6 @@
 import pandas as pd
 import xlsxwriter
+from datetime import datetime
 from io import BytesIO
 from api.core import create_response
 from api.models import AppointmentRequest, Users, MentorProfile
@@ -95,6 +96,7 @@ def download_accounts_info():
                 acct.professional_title,
                 acct.linkedin,
                 acct.website,
+                "Yes" if acct.image.url else "No",
                 acct.image.url if acct.image else "None",
                 "Yes" if len(acct.videos) >= 0 else "No",
                 "|".join(educations),
@@ -129,6 +131,7 @@ def download_accounts_info():
         "professional_title",
         "linkedin",
         "website",
+        "profile pic up",
         "image url",
         "video(s) up",
         "educations",
@@ -164,6 +167,7 @@ def generate_sheet(sheet_name, row_data, columns):
     try:
         return send_file(
             output,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             attachment_filename="{0}.xlsx".format(sheet_name),
             as_attachment=True,
         )

@@ -17,7 +17,7 @@ const questions = {
   languages: "Languages:",
   topics: "What special topics could you teach or offer guidance on?",
   knowledge_location:
-    "Please share which region(s), country(s), state(s), cities is your knowledge based in:",
+    "Please share which region(s), country(s), state(s), cities your knowledge is based in:",
 };
 
 function MentorAppInfo({ info }) {

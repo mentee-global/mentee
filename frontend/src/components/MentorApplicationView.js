@@ -7,9 +7,9 @@ import appData from "../resources/mentorApplication.json";
 
 const { Text } = Typography;
 
-function MentorApplicationView({ data }) {
+function MentorApplicationView({ data, provided }) {
   const [note, setNote] = useState("Insert a note here");
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   const NotesContainer = () => {
     return (
@@ -32,19 +32,22 @@ function MentorApplicationView({ data }) {
   };
 
   return (
-    <Modal
-      visible={visible}
-      footer={null}
-      className="app-modal"
-      onCancel={() => setVisible(false)}
-    >
-      <div className="view-container">
-        <MentorAppInfo info={appData} />
-        <div className="status-container">
-          <NotesContainer />
+    <div>
+      <div onClick={() => setVisible(true)}>{data.content}</div>
+      <Modal
+        visible={visible}
+        footer={null}
+        className="app-modal"
+        onCancel={() => setVisible(false)}
+      >
+        <div className="view-container">
+          <MentorAppInfo info={data} />
+          <div className="status-container">
+            <NotesContainer />
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+    </div>
   );
 }
 

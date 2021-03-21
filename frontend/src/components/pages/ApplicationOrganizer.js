@@ -3,6 +3,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { fetchApplications, updateApplicationState } from "../../utils/api";
+import MentorApplicationView from "../MentorApplicationView";
 
 const { confirm } = Modal;
 
@@ -37,9 +38,15 @@ function ApplicationOrganizer() {
     const getAllApplications = async () => {
       const applications = await fetchApplications();
       if (applications) {
-        setApplicationData(
-          applications ? applications.mentor_applications : []
+        const newApplications = applications.mentor_applications.map(
+          (app, index) => {
+            return {
+              ...app,
+              index: index,
+            };
+          }
         );
+        setApplicationData(newApplications);
       }
     };
 
@@ -72,7 +79,7 @@ function ApplicationOrganizer() {
    */
   function filterApplications(desiredState) {
     return applicationData
-      .filter((state) => state.application_state === desiredState)
+      .filter((state, index) => state.application_state === desiredState)
       .map((application) => ({
         id: application._id.$oid,
         content:
@@ -80,6 +87,7 @@ function ApplicationOrganizer() {
           application.name +
           " Specializations: " +
           application.specializations,
+        ...application,
       }));
   }
 
@@ -227,7 +235,7 @@ function ApplicationOrganizer() {
                                       ...provided.draggableProps.style,
                                     }}
                                   >
-                                    {item.content}
+                                    <MentorApplicationView data={item} />
                                   </div>
                                 );
                               }}

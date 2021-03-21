@@ -2,7 +2,7 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, Video, Availability, Image, Users
+from api.models import Education, Video, Image, Users
 
 
 class MenteeProfile(Document, Mixin):
@@ -21,6 +21,8 @@ class MenteeProfile(Document, Mixin):
     organization = StringField(required=True)
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)
+    is_private = BooleanField(required=True)
+    video = EmbeddedDocumentField(Video)
 
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.id} \n name: {self.name}

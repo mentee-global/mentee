@@ -15,7 +15,7 @@ import { fetchAvailability, editAvailability } from "../utils/api";
  */
 function AvailabilityCalendar() {
   const mentorID = getMentorID();
-  const [saved, setSaved] = useState({}); // Days with set appointments
+  const [saved, setSaved] = useState({}); //  Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
@@ -79,11 +79,11 @@ function AvailabilityCalendar() {
    * @param {String} event User input values
    * @param {int} timeslot Which of the two textfields was changed
    */
-  const handleTimeChange = (index, event, timeslot) => {
+  const handleTimeChange = (index, value, timeslot) => {
     let times = [...timeSlots];
-    times[index][timeslot] = moment(
-      date.format("YYYY-MM-DD") + " " + event.target.value
-    );
+    times[index][timeslot] = moment(value);
+
+    //date.format("YYYY-MM-DD") + " " + value
     setTimeSlots(times);
   };
 
@@ -242,27 +242,11 @@ function AvailabilityCalendar() {
                 <Input
                   value={timeSlot[0][0].format("HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
-                  className="timeslot"
-                  type="time"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    step: 300,
-                  }}
                 />
                 <h1 className="timeslot"> - </h1>
                 <Input
                   value={timeSlot[0][1].format("HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
-                  className="timeslots"
-                  type="time"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    step: 300,
-                  }}
                 />
                 <CloseOutlined
                   className="close-icon"

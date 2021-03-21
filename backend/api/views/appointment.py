@@ -195,3 +195,29 @@ def get_mentors_appointments():
         )
 
     return create_response(data={"mentorData": data}, status=200, message="Success")
+
+
+@appointment.route("/", methods=["GET"])
+def get_appointments():
+    appointments = AppointmentRequest.objects()
+    mentors = MentorProfile.objects().only("name", "id")
+
+    # TODO: Fix this.. It is too slow :(((
+    mentor_by_id = {}
+
+    for mentor in mentors:
+        mentor_by_id[mentor["id"]] = mentor.name
+
+    res_appts = []
+    for index in range(len(appointments) - 1):
+        current_id = appointments[index].mentor_id
+        res_appts.append(
+            {
+                "mentor": mentor_by_id.get(current_id, "Deleted Account"),
+                "appointment": appointments[index],
+            }
+        )
+
+    return create_response(
+        data={"appointments": res_appts}, status=200, message="Success"
+    )

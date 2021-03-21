@@ -4,7 +4,6 @@ import MentorAppInfo from "./MentorAppInfo";
 import MentorAppProgress from "./MentorAppProgress";
 import { getApplicationById, updateApplicationById } from "../utils/api";
 import "./css/MentorApplicationView.scss";
-import appData from "../resources/mentorApplication.json";
 
 const { Text } = Typography;
 
@@ -38,7 +37,7 @@ function MentorApplicationView({ data }) {
   const NotesContainer = () => {
     return (
       <div className="notes-container">
-        <MentorAppProgress progress={appData.application_state} />
+        <MentorAppProgress progress={data.application_state} />
         <div className="notes-title">Notes</div>
         <div className="note-wrap">
           <Text

@@ -1,6 +1,7 @@
 import axios from "axios";
 import firebase from "firebase";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
+import { useUserRoles } from 'utils/useUserRoles';
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -59,7 +60,7 @@ export const login = (email, password) =>
   });
 
 export const logout = () => {
-  firebase
+  return firebase
     .auth()
     .signOut()
     .catch((error) => {
@@ -123,9 +124,16 @@ export const getRole = async () => {
 
 export const getMentorID = async () => {
   if (isLoggedIn()) {
-    console.log("logged in", isLoggedIn());
     return await getIdTokenResult().then((idTokenResult) => {
       return idTokenResult.claims.mentorId;
+    });
+  } else return false;
+};
+
+export const getAdminID = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.adminId;
     });
   } else return false;
 };

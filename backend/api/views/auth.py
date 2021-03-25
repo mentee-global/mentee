@@ -162,9 +162,15 @@ def login():
     role = firebase_user_admin.custom_claims.get('role')
 
     if role == Account.ADMIN:
-        return create_response(message="Logged in", data={
-            "token": firebase_admin_auth.create_custom_token(firebase_uid, {"role": role}).decode('utf-8')
-        })
+        try:
+            admin = Admin.objects.get(email=email)
+            return create_response(message="Logged in", data={
+                "token": firebase_admin_auth.create_custom_token(firebase_uid, {"role": role, 'adminId': str(admin.id)}).decode('utf-8')
+            })
+        except:
+            msg = "Account not found in Admin collection"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
 
     try:
         if MentorProfile.objects(email=email):

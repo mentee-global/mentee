@@ -30,7 +30,7 @@ const useUserRoles = () => {
     });
   }, []);
 
-  return {isAdmin, isMentor, isMentee}
+  return { isAdmin, isMentor, isMentee };
 };
 
 export default useUserRoles;

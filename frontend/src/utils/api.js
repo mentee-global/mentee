@@ -263,6 +263,14 @@ export const adminUploadEmails = (file, isMentor) => {
   );
 };
 
+export const getAdmin = (id) => {
+  const requestExtension = `/admin/${id}`;
+  return instance.get(requestExtension).then(
+    (response) => response && response.data.result.admin,
+    (err) => console.error(err)
+  );
+};
+
 /**
  * Wrapper function calls to general account endpoints
  * This helps with avoiding the need to change multiple files

@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from firebase_admin import auth as firebase_admin_auth
 from api.utils.firebase import client as firebase_auth
 from api.core import create_response, serialize_list, logger
+from api.utils.constants import Account
 
 
 def admin_only(fn):
@@ -11,9 +12,9 @@ def admin_only(fn):
     data = request.json
     token = data.get('token')
     claims = firebase_admin_auth.verify_id_token(token);
-    role = claims['role']
+    role = claims.get('role')
 
-    if role == 'admin':
+    if role == Account.ADMIN:
       return fn(*args, **kwargs)
     
     msg = "Unauthorized"

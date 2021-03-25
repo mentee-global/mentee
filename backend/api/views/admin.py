@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.core import create_response, serialize_list, logger
-from api.models import db, MentorProfile, Users, VerifiedEmail
+from api.models import MentorProfile, Users, VerifiedEmail, Admin
 from api.utils.require_auth import admin_only
 import csv
 import io
@@ -9,6 +9,8 @@ import io
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
 # DELETE request for specific mentor based on id
+
+
 @admin.route("/mentor/<string:mentor_id>", methods=["DELETE"])
 @admin_only
 def delete_mentor(mentor_id):
@@ -76,8 +78,21 @@ def upload_mentee_emails():
                 address = line[0]
             else:
                 password = line[0]
-                email = VerifiedEmail(email=address, password=password, is_mentor=False)
+                email = VerifiedEmail(
+                    email=address, password=password, is_mentor=False)
                 email.save()
             is_email = not is_email
 
     return create_response(status=200, message="success")
+
+
+@admin.route('/admin/<id>', methods=['GET'])
+def get_admin(id):
+    try:
+        admin = Admin.objects.get(id=id)
+    except:
+        msg = 'Admin does not exist'
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    return create_response(data={'admin': admin})

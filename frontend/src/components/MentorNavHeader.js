@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useMediaQuery } from "react-responsive";
 import { logout, getMentorID } from "utils/auth.service";
+import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
@@ -14,9 +14,9 @@ import MenteeLogoSmall from "../resources/menteeSmall.png";
 const { Header } = Layout;
 
 function MentorNavHeader() {
-  const [mentor, setMentor] = useState();
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
-  
+  const [mentor, setMentor] = useState();
+
   useEffect(() => {
     async function getMentor() {
       const mentorID = await getMentorID();

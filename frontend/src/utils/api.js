@@ -164,10 +164,99 @@ export const fetchMentorsAppointments = () => {
   );
 };
 
-export const downloadMentorsData = () => {
-  const requestExtension = "/download/accounts/all";
+export const fetchAllAppointments = () => {
+  const requestExtension = "/appointment/";
   return instance.get(requestExtension).then(
     (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+const downloadBlob = (response, filename) => {
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+export const downloadMentorsData = () => {
+  const requestExtension = "/download/accounts/all";
+  return instance
+    .get(requestExtension, {
+      responseType: "blob",
+    })
+    .then(
+      (response) => {
+        downloadBlob(response, "data.xlsx");
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+};
+
+export const downloadAllApplicationData = () => {
+  const requestExtension = "/download/appointments/all";
+  return instance
+    .get(requestExtension, {
+      responseType: "blob",
+    })
+    .then(
+      (response) => {
+        downloadBlob(response, "all_appointments.xlsx");
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+};
+
+export const deleteMentorById = (id) => {
+  const requestExtension = `/mentor/${id}`;
+  return instance.delete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
+    }
+  );
+};
+
+export const updateApplicationById = (data, id) => {
+  const requestExtension = `/application/${id}`;
+  return instance.put(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getApplicationById = (id) => {
+  const requestExtension = `/application/${id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.mentor_application,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const adminUploadEmails = (file, isMentor) => {
+  let mentorOrMentee = "mentors";
+  if (!isMentor) {
+    mentorOrMentee = "mentees";
+  }
+  const requestExtension = "/upload/" + mentorOrMentee;
+  let formData = new FormData();
+  formData.append("fileupload", file);
+  return instance.post(requestExtension, formData).then(
+    (response) => response,
     (err) => {
       console.error(err);
     }

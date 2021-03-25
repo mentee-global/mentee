@@ -10,7 +10,7 @@ from api.utils.constants import (
     MENTOR_ROLE,
     MENTEE_ROLE,
     ADMIN_ROLE,
-    Account
+    Account,
 )
 from api.utils.request_utils import send_email
 from api.utils.firebase import client as firebase_client
@@ -29,8 +29,7 @@ def verify_email():
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_admin_auth.generate_email_verification_link(
-            email)
+        verification_link = firebase_admin_auth.generate_email_verification_link(email)
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)
@@ -64,8 +63,7 @@ def create_firebase_user(email, password, role):
             password=password,
         )
 
-        firebase_admin_auth.set_custom_user_claims(
-            firebase_user.uid, {"role": role})
+        firebase_admin_auth.set_custom_user_claims(firebase_user.uid, {"role": role})
     except ValueError:
         msg = "Invalid input"
         logger.info(msg)
@@ -89,12 +87,11 @@ def register():
     if Admin.objects(email=email):
         role = Account.ADMIN.value
     elif role == Account.ADMIN:
-        msg = 'Blocked attempt to create admin account'
+        msg = "Blocked attempt to create admin account"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    firebase_user, error_http_response = create_firebase_user(
-        email, password, role)
+    firebase_user, error_http_response = create_firebase_user(email, password, role)
 
     if error_http_response:
         return error_http_response
@@ -151,7 +148,13 @@ def login():
 
             msg = "Created new Firebase account for existing user"
             logger.info(msg)
-            return error and error or create_response(status=201, message=msg, data={"passwordReset": True})
+            return (
+                error
+                and error
+                or create_response(
+                    status=201, message=msg, data={"passwordReset": True}
+                )
+            )
         else:
             msg = "Could not login"
             logger.info(msg)
@@ -159,14 +162,19 @@ def login():
 
     firebase_uid = firebase_user["localId"]
     firebase_user_admin = firebase_admin_auth.get_user(firebase_uid)
-    role = firebase_user_admin.custom_claims.get('role')
+    role = firebase_user_admin.custom_claims.get("role")
 
     if role == Account.ADMIN:
         try:
             admin = Admin.objects.get(email=email)
-            return create_response(message="Logged in", data={
-                "token": firebase_admin_auth.create_custom_token(firebase_uid, {"role": role, 'adminId': str(admin.id)}).decode('utf-8')
-            })
+            return create_response(
+                message="Logged in",
+                data={
+                    "token": firebase_admin_auth.create_custom_token(
+                        firebase_uid, {"role": role, "adminId": str(admin.id)}
+                    ).decode("utf-8")
+                },
+            )
         except:
             msg = "Account not found in Admin collection"
             logger.info(msg)
@@ -230,18 +238,17 @@ def forgot_password():
     error = send_forgot_password_email(email)
 
     return (
-        error and error or create_response(
-            message="Sent password reset link to email")
+        error and error or create_response(message="Sent password reset link to email")
     )
 
 
 @auth.route("/refreshToken", methods=["POST"])
 def refresh_token():
     data = request.json
-    token = data.get('token')
+    token = data.get("token")
 
     claims = firebase_admin_auth.verify_id_token(token)
-    firebase_uid = claims.get('uid')
+    firebase_uid = claims.get("uid")
 
     try:
         mentor = MentorProfile.objects.get(firebase_uid=firebase_uid)
@@ -250,9 +257,11 @@ def refresh_token():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    return create_response(status=200, data={
-        "token": firebase_admin_auth.create_custom_token(
-            firebase_uid, {"role": claims.get(
-                'role'), "mentorId": str(mentor.id)}
-        ).decode("utf-8"),
-    })
+    return create_response(
+        status=200,
+        data={
+            "token": firebase_admin_auth.create_custom_token(
+                firebase_uid, {"role": claims.get("role"), "mentorId": str(mentor.id)}
+            ).decode("utf-8"),
+        },
+    )

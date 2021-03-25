@@ -7,21 +7,22 @@ from api.utils.constants import Account
 
 
 def admin_only(fn):
-  @wraps(fn)
-  def wrapper(*args, **kwargs):
-    data = request.json
-    token = data.get('token')
-    claims = firebase_admin_auth.verify_id_token(token);
-    role = claims.get('role')
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        data = request.json
+        token = data.get("token")
+        claims = firebase_admin_auth.verify_id_token(token)
+        role = claims.get("role")
 
-    if role == Account.ADMIN:
-      return fn(*args, **kwargs)
-    
-    msg = "Unauthorized"
-    logger.info(msg)
-    return create_response(status=401, message=msg)
-  
-  return wrapper
+        if role == Account.ADMIN:
+            return fn(*args, **kwargs)
+
+        msg = "Unauthorized"
+        logger.info(msg)
+        return create_response(status=401, message=msg)
+
+    return wrapper
+
 
 def require_auth_lvl(fn):
-  pass
+    pass

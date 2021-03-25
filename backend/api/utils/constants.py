@@ -18,9 +18,9 @@ USER_FORGOT_PASSWORD_TEMPLATE = "d-df1adcced8ab461ca72ceae5eecfc566"
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
 
 # legacy roles (moved to Account Enum)
-MENTOR_ROLE = 'mentor'
-MENTEE_ROLE = 'mentee'
-ADMIN_ROLE = 'admin'
+MENTOR_ROLE = "mentor"
+MENTEE_ROLE = "mentee"
+ADMIN_ROLE = "admin"
 
 # Account types
 class Account(Enum):

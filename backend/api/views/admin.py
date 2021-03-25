@@ -78,21 +78,20 @@ def upload_mentee_emails():
                 address = line[0]
             else:
                 password = line[0]
-                email = VerifiedEmail(
-                    email=address, password=password, is_mentor=False)
+                email = VerifiedEmail(email=address, password=password, is_mentor=False)
                 email.save()
             is_email = not is_email
 
     return create_response(status=200, message="success")
 
 
-@admin.route('/admin/<id>', methods=['GET'])
+@admin.route("/admin/<id>", methods=["GET"])
 def get_admin(id):
     try:
         admin = Admin.objects.get(id=id)
     except:
-        msg = 'Admin does not exist'
+        msg = "Admin does not exist"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    return create_response(data={'admin': admin})
+    return create_response(data={"admin": admin})

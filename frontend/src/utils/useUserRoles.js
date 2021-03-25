@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import firebase from "firebase";
-import { isUserAdmin, isUserMentor, isUserMentee } from "utils/auth.service";
+import { getIdTokenResult } from "utils/auth.service";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 const useUserRoles = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -9,24 +10,20 @@ const useUserRoles = () => {
 
   // setup listener
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(async () => {
-      if (await isUserAdmin()) {
-        setIsAdmin(true);
-        setIsMentor(false);
-        setIsMentee(false);
-      } else if (await isUserMentor()) {
-        setIsAdmin(false);
-        setIsMentor(true);
-        setIsMentee(false);
-      } else if (await isUserMentee()) {
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) {
         setIsAdmin(false);
         setIsMentor(false);
         setIsMentee(false);
-      } else {
-        setIsAdmin(false);
-        setIsMentor(false);
-        setIsMentee(false);
+        return;
       }
+
+      await getIdTokenResult().then((idTokenResult) => {
+        const role = idTokenResult.claims.role;
+        setIsAdmin(role === ACCOUNT_TYPE.ADMIN);
+        setIsMentor(role === ACCOUNT_TYPE.MENTOR);
+        setIsMentee(role === ACCOUNT_TYPE.MENTEE);
+      });
     });
   }, []);
 

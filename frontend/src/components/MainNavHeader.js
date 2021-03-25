@@ -19,6 +19,8 @@ function MainNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const { isAdmin, isMentor, isMentee } = useUserRoles();
 
+  console.log("isAdmin", isAdmin, "isMentor", isMentor, "isMentee", isMentee);
+
   return (
     <Header className="navigation-header">
       <div className="navigation-mentee-flexbox">
@@ -89,7 +91,7 @@ function MainNavHeader({ history }) {
               />
             </span>
           )}
-          {!isLoggedIn() && (
+          {(!isLoggedIn() || (!isAdmin && !isMentor && !isMentee)) && (
             <span className="navigation-header-button">
               <MenteeButton
                 width="100%"

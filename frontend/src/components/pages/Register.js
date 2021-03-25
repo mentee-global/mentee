@@ -7,6 +7,7 @@ import {
   isLoggedIn,
   register,
   sendVerificationEmail,
+  refreshToken
 } from "utils/auth.service";
 import { REGISTRATION_STAGE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
@@ -64,6 +65,8 @@ function Register({ history }) {
     setSaving(true);
     if (!checkErrors()) {
       const res = await register(email, password, "mentor");
+      // sign in
+      await refreshToken();
       if (res && res.success) {
         await sendVerificationEmail(email);
         history.push("/verify");

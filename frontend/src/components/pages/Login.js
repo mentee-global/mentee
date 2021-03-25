@@ -20,6 +20,7 @@ const INCORRECT_NAME_PASSWORD_ERROR_MSG =
 const RESET_PASSWORD_ERROR_MSG =
   "Please reset password. An link to reset your password has been sent to your email.";
 const SERVER_ERROR_MSG = "Something went wrong.";
+const RECREATE_ACCOUNT_ERROR_MSG = "Please re-register your account.";
 
 function Login() {
   const [email, setEmail] = useState();
@@ -108,6 +109,9 @@ function Login() {
                   setError(true);
                 } else if (res.result.passwordReset) {
                   setErrorMessage(RESET_PASSWORD_ERROR_MSG);
+                  setError(true);
+                } else if (res.result.recreateAccount) {
+                  setErrorMessage(RECREATE_ACCOUNT_ERROR_MSG);
                   setError(true);
                 }
 

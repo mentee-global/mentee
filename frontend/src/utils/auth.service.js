@@ -20,11 +20,15 @@ const post = (url, data, params) =>
     .catch((err) => console.error(err));
 
 const getIdToken = () => getCurrentUser().getIdToken(true);
-const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
+export const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
 
 // Role is where you put "admin" or "mentor"- right now we only support mentor
 export const register = (email, password, role) =>
-  post("/register", { email, password, role }).then((data) => {
+  post("/register", {
+    email: email.trim(),
+    password: password.trim(),
+    role,
+  }).then((data) => {
     if (data && data.success) {
       const result = data.result;
       firebase
@@ -48,16 +52,18 @@ export const sendPasswordResetEmail = (email) => {
 };
 
 export const login = (email, password) =>
-  post("/login", { email, password }).then((data) => {
-    if (data && data.success && data.result.token) {
-      firebase
-        .auth()
-        .signInWithCustomToken(data.result.token)
-        .catch((error) => {});
-    }
+  post("/login", { email: email.trim(), password: password.trim() }).then(
+    (data) => {
+      if (data && data.success && data.result.token) {
+        firebase
+          .auth()
+          .signInWithCustomToken(data.result.token)
+          .catch((error) => {});
+      }
 
-    return data;
-  });
+      return data;
+    }
+  );
 
 export const logout = () => {
   return firebase
@@ -93,7 +99,7 @@ export const getCurrentUser = () => {
 export const isUserAdmin = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then(
-      (idTokenResult) => idTokenResult.claims.role == ACCOUNT_TYPE.ADMIN
+      (idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.ADMIN
     );
   } else return false;
 };
@@ -101,7 +107,7 @@ export const isUserAdmin = async () => {
 export const isUserMentor = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then(
-      (idTokenResult) => idTokenResult.claims.role == ACCOUNT_TYPE.MENTOR
+      (idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.MENTOR
     );
   } else return false;
 };
@@ -109,7 +115,7 @@ export const isUserMentor = async () => {
 export const isUserMentee = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then(
-      (idTokenResult) => idTokenResult.claims.role == ACCOUNT_TYPE.MENTEE
+      (idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.MENTEE
     );
   } else return false;
 };

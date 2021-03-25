@@ -190,8 +190,8 @@ def login():
                 mentor.save()
         else:
             # delete account
-            firebase_admin_auth.delete_user(firebase_uid);
-            return create_response(data={'recreateAccount': True})
+            firebase_admin_auth.delete_user(firebase_uid)
+            return create_response(data={"recreateAccount": True})
     except:
         msg = "Couldn't find mentor with these credentials"
         logger.info(msg)

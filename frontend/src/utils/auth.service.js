@@ -151,7 +151,7 @@ export const isLoggedIn = () => {
 export const getUserId = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.userId;
+      return idTokenResult.claims.uid;
     });
   }
 };

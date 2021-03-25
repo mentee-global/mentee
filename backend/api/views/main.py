@@ -113,9 +113,6 @@ def create_mentor_profile():
             if is_invalid:
                 return create_response(status=422, message=msg)
 
-    user = Users.objects.get(id=data["user_id"])
-    data["email"] = user.email
-
     new_account = new_profile(data=data, profile_type=account_type)
 
     if not new_account:

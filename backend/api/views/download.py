@@ -6,6 +6,8 @@ from api.core import create_response, logger
 from api.models import AppointmentRequest, Users, MentorProfile
 from flask import send_file, Blueprint
 from api.utils.require_auth import admin_only
+from firebase_admin import auth as firebase_admin_auth
+from api.utils.constants import Account
 
 download = Blueprint("download", __name__)
 
@@ -69,9 +71,13 @@ def download_appointments():
 @download.route("/accounts/all", methods=["GET"])
 @admin_only
 def download_accounts_info():
+    logger.info('hdfadas')
     try:
-        admin_ids = Users.objects(role="admin").scalar("id")
-        accounts = MentorProfile.objects(user_id__nin=admin_ids)
+        users = firebase_admin_auth.get_users().users
+        admin_ids = [user.uid for user in users if user.custom_claims.get(
+            'role') == Account.ADMIN]
+
+        accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
     except:
         msg = "Failed to get accounts"
         logger.info(msg)

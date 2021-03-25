@@ -247,7 +247,7 @@ function RegisterForm(props) {
     }
 
     const newProfile = {
-      user_id: await getUserId(),
+      firebase_uid: await getUserId(),
       name: name,
       professional_title: title,
       linkedin: linkedin,

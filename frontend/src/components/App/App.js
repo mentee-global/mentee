@@ -48,13 +48,6 @@ function App() {
           <Navigation content={<Profile />} page="profile" needsAuth={true} />
         )}
       />
-
-      <Route
-        path="/profile"
-        component={() => (
-          <Navigation content={<Profile />} page="profile" needsAuth={true} />
-        )}
-      />
       <Route
         path="/gallery"
         exact

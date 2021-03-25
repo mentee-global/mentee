@@ -1,11 +1,13 @@
 from flask import Blueprint, request, jsonify
 from api.models import MentorApplication
 from api.core import create_response, serialize_list, logger
+from api.utils.require_auth import admin_only
 
 apply = Blueprint("apply", __name__)
 
 # GET request for all mentor applications
 @apply.route("/", methods=["GET"])
+@admin_only
 def get_applications():
     application = MentorApplication.objects.only(
         "name", "specializations", "id", "application_state"
@@ -16,6 +18,7 @@ def get_applications():
 
 # GET request for mentor applications for by id
 @apply.route("/<id>", methods=["GET"])
+@admin_only
 def get_application_by_id(id):
     try:
         application = MentorApplication.objects.get(id=id)
@@ -29,6 +32,7 @@ def get_application_by_id(id):
 
 # DELETE request for mentor application by object ID
 @apply.route("/<id>", methods=["DELETE"])
+@admin_only
 def delete_application(id):
     try:
         application = MentorApplication.objects.get(id=id)
@@ -43,6 +47,7 @@ def delete_application(id):
 
 # PUT requests for /application by object ID
 @apply.route("/<id>", methods=["PUT"])
+@admin_only
 def edit_application(id):
     data = request.get_json()
     logger.info(data)

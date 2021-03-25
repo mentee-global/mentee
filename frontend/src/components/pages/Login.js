@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
-import { isLoggedIn, login, refreshToken } from "utils/auth.service";
+import { isLoggedIn, login, refreshToken, isUserAdmin } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/Home.scss";
@@ -11,7 +11,8 @@ import firebase from "firebase";
 
 const INCORRECT_NAME_PASSWORD_ERROR_MSG =
   "Incorrect username and/or password. Please try again.";
-const RESET_PASSWORD_ERROR_MSG = "Please reset password. An link to reset your password has been sent to your email.";
+const RESET_PASSWORD_ERROR_MSG =
+  "Please reset password. An link to reset your password has been sent to your email.";
 const SERVER_ERROR_MSG = "Something went wrong.";
 
 function Login() {
@@ -33,6 +34,10 @@ function Login() {
 
   const redirectToAppointments = useCallback(() => {
     history.push("appointments");
+  }, [history]);
+
+  const redirectToAdminPortal = useCallback(() => {
+    history.push("account-data");
   }, [history]);
 
   useEffect(() => {
@@ -99,9 +104,14 @@ function Login() {
                   setError(true);
                 }
 
-                firebase.auth().onAuthStateChanged((user) => {
+                firebase.auth().onAuthStateChanged(async (user) => {
                   if (!user) return;
-                  redirectToAppointments();
+
+                  if (await isUserAdmin()) {
+                    redirectToAdminPortal();
+                  } else {
+                    redirectToAppointments();
+                  }
                 });
 
                 setLoggingIn(false);

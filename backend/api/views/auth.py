@@ -161,6 +161,11 @@ def login():
     firebase_user_admin = firebase_admin_auth.get_user(firebase_uid)
     role = firebase_user_admin.custom_claims.get('role')
 
+    if role == Account.ADMIN:
+        return create_response(message="Logged in", data={
+            "token": firebase_admin_auth.create_custom_token(firebase_uid, {"role": role}).decode('utf-8')
+        })
+
     try:
         if MentorProfile.objects(email=email):
             mentor = MentorProfile.objects.get(email=email)
@@ -241,6 +246,7 @@ def refresh_token():
 
     return create_response(status=200, data={
         "token": firebase_admin_auth.create_custom_token(
-            firebase_uid, {"role": claims.get('role'), "mentorId": str(mentor.id)}
+            firebase_uid, {"role": claims.get(
+                'role'), "mentorId": str(mentor.id)}
         ).decode("utf-8"),
     })

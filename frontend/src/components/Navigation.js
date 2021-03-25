@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
 import { isLoggedIn } from "utils/auth.service";
+import useUserRoles from 'utils/useUserRoles';
 
 import MentorNavHeader from "./MentorNavHeader";
 import MenteeNavHeader from "./MenteeNavHeader";
@@ -15,10 +16,9 @@ const { Content } = Layout;
 function Navigation(props) {
   const history = useHistory();
   // Set this to false and connect to backend
-  const [isAdmin, setIsAdmin] = useState(false);
+  const {isAdmin} = useUserRoles();
 
   useEffect(() => {
-    console.log(props.needsAuth, isLoggedIn());
     if (props.needsAuth && !isLoggedIn()) {
       history.push("/login");
     }

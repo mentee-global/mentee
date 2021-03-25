@@ -1,6 +1,6 @@
 import axios from "axios";
 import firebase from "firebase";
-import { AUTH_URL, REGISTRATION_STAGE } from "utils/consts";
+import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -77,7 +77,7 @@ export const refreshToken = async () => {
       const token = await post("/refreshToken", { token: idToken }).then(
         (data) => data && data.result.token
       );
-      
+
       firebase.auth().signInWithCustomToken(token);
 
       return token;
@@ -89,16 +89,48 @@ export const getCurrentUser = () => {
   return firebase.auth().currentUser;
 };
 
+export const isUserAdmin = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role == ACCOUNT_TYPE.ADMIN
+    );
+  } else return false;
+};
+
+export const isUserMentor = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role == ACCOUNT_TYPE.MENTOR
+    );
+  } else return false;
+};
+
+export const isUserMentee = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role == ACCOUNT_TYPE.MENTEE
+    );
+  } else return false;
+};
+
+export const getRole = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role
+    );
+  } else return null;
+};
+
 export const getMentorID = async () => {
   if (isLoggedIn()) {
-    console.log('logged in', isLoggedIn());
+    console.log("logged in", isLoggedIn());
     return await getIdTokenResult().then((idTokenResult) => {
       return idTokenResult.claims.mentorId;
     });
   } else return false;
 };
 
-export const isLoggedIn = async () => {
+export const isLoggedIn = () => {
   return Boolean(getCurrentUser());
 };
 

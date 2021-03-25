@@ -17,6 +17,11 @@ USER_FORGOT_PASSWORD_TEMPLATE = "d-df1adcced8ab461ca72ceae5eecfc566"
 # This lacks timezone so you'll need to add that according to whatever code you're working with
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
 
+# legacy roles (moved to Account Enum)
+MENTOR_ROLE = 'mentor'
+MENTEE_ROLE = 'mentee'
+ADMIN_ROLE = 'admin'
+
 # Account types
 class Account(Enum):
     ADMIN = 0

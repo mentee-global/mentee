@@ -2,13 +2,14 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, Video, Availability, Image, Users
+from api.models import Education, Video, Availability, Image
 
 
 class MentorProfile(Document, Mixin):
     """"Mentor Profile Collection."""
 
-    user_id = ReferenceField("Users", required=True)
+    firebase_uid = StringField();
+    user_id = ReferenceField("Users")
     name = StringField(required=True)
     location = StringField()
     email = StringField(required=True)
@@ -29,7 +30,8 @@ class MentorProfile(Document, Mixin):
     email_notifications = BooleanField(required=True)
 
     def __repr__(self):
-        return f"""<MentorProfile user_id:{self.user_id} \n name: {self.name} 
+        return f"""<MentorProfile firebase_id: {self.firebase_uid} 
+                \n user_id:{self.user_id} \n name: {self.name} 
                 \n professional title: {self.professional_title} 
                 \n linkedin: {self.linkedin} \n website: {self.website}
                 \n image: {self.image} \n biography: {self.biography} 

@@ -1,12 +1,16 @@
 from flask import Blueprint, request, jsonify
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile
+from api.models import db, Users, MentorProfile, Admin
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import (
     AUTH_URL,
     USER_VERIFICATION_TEMPLATE,
     USER_FORGOT_PASSWORD_TEMPLATE,
+    MENTOR_ROLE,
+    MENTEE_ROLE,
+    ADMIN_ROLE,
+    Account
 )
 from api.utils.request_utils import send_email
 from api.utils.firebase import client as firebase_client
@@ -78,9 +82,17 @@ def create_firebase_user(email, password, role):
 def register():
     data = request.json
     email = data.get("email")
-    email_verified = False
     password = data.get("password")
     role = data.get("role")
+
+    # if whitelisted, set to admin
+    if Admin.objects(email=email):
+        role = Account.ADMIN.value
+    elif role == Account.ADMIN:
+        msg = 'Blocked attempt to create admin account'
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
     firebase_user, error_http_response = create_firebase_user(
         email, password, role)
 
@@ -89,21 +101,12 @@ def register():
 
     firebase_uid = firebase_user.uid
 
-    # create User object
-    user = Users(
-        firebase_uid=firebase_uid, email=email, role=role, verified=email_verified
-    )
-
-    user.save()
-
     return create_response(
         message="Created account",
         data={
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": role, "userId": str(user.id)}
+                firebase_uid, {"role": role}
             ).decode("utf-8"),
-            "userId": str(user.id),
-            "permission": role,
         },
     )
 
@@ -124,23 +127,24 @@ def login():
         if Users.objects(email=email):
             user = Users.objects.get(email=email)
 
-            if user.firebase_uid and len(user.firebase_uid) > 0:
-                msg = "Could not login"
-                logger.info(msg)
-                return create_response(status=422, message=msg)
-
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
+            role = None
+            if user.role == MENTOR_ROLE:
+                role = Account.MENTOR
+            elif user.role == MENTEE_ROLE:
+                role = Account.MENTEE
+            elif user.role == ADMIN_ROLE:
+                role = Account.ADMIN
+
             firebase_user, error_http_response = create_firebase_user(
-                email, None, user.role
+                email, None, role.value
             )
 
             if error_http_response:
                 return error_http_response
 
-            user.firebase_uid = firebase_user.uid
-            user.password = None
-            user.save()
+            # user.delete()
 
             # send password reset email
             error = send_forgot_password_email(email)
@@ -154,47 +158,28 @@ def login():
             return create_response(status=422, message=msg)
 
     firebase_uid = firebase_user["localId"]
-
-    if not user:
-        try:
-            user = Users.objects.get(firebase_uid=firebase_uid)
-        except:
-            # should not occur but who knows
-            msg = "Firebase user exists but not MongoDB user"
-            logger.info(msg)
-            return create_response(status=500, message=msg)
-
-    # clear sensitive legacy fields
-    if user.password:
-        user.password = None
-        user.save()
+    firebase_user_admin = firebase_admin_auth.get_user(firebase_uid)
+    role = firebase_user_admin.custom_claims.get('role')
 
     try:
-        mentor = MentorProfile.objects.get(user_id=user)
-        mentor_id = mentor.id
+        if MentorProfile.objects(email=email):
+            mentor = MentorProfile.objects.get(email=email)
+            mentor_id = mentor.id
+
+            if not mentor.firebase_uid:
+                mentor.firebase_uid = firebase_uid
+                mentor.save()
     except:
         msg = "Couldn't find mentor with these credentials"
         logger.info(msg)
-        # return create_response(status=422, message=msg)
-
-        return create_response(
-            message="Logged in",
-            data={
-                "userId": str(user.id),
-                "token": firebase_admin_auth.create_custom_token(
-                    firebase_uid, {"role": user.role, "userId": str(
-                        user.id)}
-                ).decode("utf-8"),
-            },)
+        return create_response(status=422, message=msg)
 
     return create_response(
         message="Logged in",
         data={
-            "userId": str(user.id),
             "mentorId": str(mentor_id),
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": user.role, "userId": str(
-                    user.id), "mentorId": str(mentor_id)}
+                firebase_uid, {"role": role, "mentorId": str(mentor_id)}
             ).decode("utf-8"),
         },
     )
@@ -245,19 +230,10 @@ def refresh_token():
     token = data.get('token')
 
     claims = firebase_admin_auth.verify_id_token(token)
-    uid = claims['userId']
-
-    user = None
+    firebase_uid = claims.get('uid')
 
     try:
-        user = Users.objects.get(id=uid)
-    except:
-        msg = "User not found"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-
-    try:
-        mentor = MentorProfile.objects.get(user_id=user)
+        mentor = MentorProfile.objects.get(firebase_uid=firebase_uid)
     except:
         msg = "Mentor profile not found"
         logger.info(msg)
@@ -265,7 +241,6 @@ def refresh_token():
 
     return create_response(status=200, data={
         "token": firebase_admin_auth.create_custom_token(
-            user.firebase_uid, {"role": user.role, "userId": str(
-                user.id), "mentorId": str(mentor.id)}
+            firebase_uid, {"role": claims.get('role'), "mentorId": str(mentor.id)}
         ).decode("utf-8"),
     })

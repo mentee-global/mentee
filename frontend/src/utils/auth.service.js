@@ -1,7 +1,7 @@
 import axios from "axios";
 import firebase from "firebase";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
-import { useUserRoles } from 'utils/useUserRoles';
+import { useUserRoles } from "utils/useUserRoles";
 
 const instance = axios.create({
   baseURL: AUTH_URL,

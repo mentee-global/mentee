@@ -16,7 +16,7 @@ firebase.initializeApp({
   measurementId: "G-HSJ2934X33",
 });
 
-firebase.analytics()
+firebase.analytics();
 
 ReactDOM.render(
   <React.StrictMode>

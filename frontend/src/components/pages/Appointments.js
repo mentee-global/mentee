@@ -43,7 +43,7 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
-  
+
   // useEffect(() => {
   //   async function initialFetch() {
   //     const mentorID = await getMentorID();

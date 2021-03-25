@@ -66,7 +66,7 @@ function Register({ history }) {
       const res = await register(email, password, "mentor");
       if (res && res.success) {
         await sendVerificationEmail(email);
-        history.push('/verify');
+        history.push("/verify");
       } else {
         setServerError(true);
       }

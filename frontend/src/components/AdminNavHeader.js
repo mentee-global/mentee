@@ -25,7 +25,7 @@ function AdminNavHeader() {
       const admin = await getAdmin(adminId);
 
       if (admin) {
-        setAdmin(admin)
+        setAdmin(admin);
       }
     }
     fetchData();

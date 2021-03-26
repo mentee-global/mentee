@@ -2,9 +2,9 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
-  TeamOutlined,
   DatabaseOutlined,
   UsergroupAddOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 
 import "./css/Navigation.scss";
@@ -18,6 +18,12 @@ const pages = {
     name: "Applications",
     path: "/organizer",
     icon: <UsergroupAddOutlined />,
+    isSubMenu: false,
+  },
+  verifiedEmails: {
+    name: "Verified Emails",
+    path: "/verified-emails",
+    icon: <SearchOutlined />,
     isSubMenu: false,
   },
   reports: {

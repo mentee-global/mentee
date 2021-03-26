@@ -14,6 +14,7 @@ import RegisterForm from "components/pages/RegisterForm";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
+import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
 import NotFound from "components/pages/NotFound";
 
 function App() {
@@ -105,6 +106,12 @@ function App() {
         path="/all-appointments"
         component={() => (
           <Navigation content={<AdminAppointmentData />} needsAuth={true} />
+        )}
+      />
+      <Route
+        path="/verified-emails"
+        component={() => (
+          <Navigation content={<AdminVerifiedEmails />} needsAuth={true} />
         )}
       />
       <Route

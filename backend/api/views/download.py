@@ -1,7 +1,8 @@
 import pandas as pd
 import xlsxwriter
+from datetime import datetime
 from io import BytesIO
-from api.core import create_response
+from api.core import create_response, logger
 from api.models import AppointmentRequest, Users, MentorProfile
 from flask import send_file, Blueprint
 
@@ -22,11 +23,11 @@ def download_appointments():
         mentor = MentorProfile.objects(id=appt.mentor_id).first()
         appts.append(
             [
-                mentor.name,
-                mentor.email,
+                mentor.name if mentor else "Deleted Account",
+                mentor.email if mentor else "Deleted Account",
                 appt.timeslot.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
                 appt.timeslot.end_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
-                int(appt.accepted),
+                int(appt.accepted) if appt.accepted != None else "N/A",
                 appt.name,
                 appt.email,
                 appt.phone_number,
@@ -37,8 +38,8 @@ def download_appointments():
                 ",".join(appt.specialist_categories),
                 appt.message,
                 appt.organization,
-                int(appt.allow_calls),
-                int(appt.allow_texts),
+                int(appt.allow_calls) if appt.allow_calls != None else "N/A",
+                int(appt.allow_texts) if appt.allow_texts != None else "N/A",
             ]
         )
     columns = [
@@ -95,14 +96,17 @@ def download_accounts_info():
                 acct.professional_title,
                 acct.linkedin,
                 acct.website,
+                "Yes" if acct.image and acct.image.url else "No",
                 acct.image.url if acct.image else "None",
                 "Yes" if len(acct.videos) >= 0 else "No",
                 "|".join(educations),
                 ",".join(acct.languages),
                 ",".join(acct.specializations),
                 acct.biography,
-                int(acct.offers_in_person),
-                int(acct.offers_group_appointments),
+                int(acct.offers_in_person) if acct.offers_in_person != None else "N/A",
+                int(acct.offers_group_appointments)
+                if acct.offers_group_appointments != None
+                else "N/A",
                 ",".join(
                     [
                         avail.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S")
@@ -111,8 +115,12 @@ def download_accounts_info():
                         for avail in acct.availability
                     ]
                 ),
-                int(acct.text_notifications),
-                int(acct.email_notifications),
+                int(acct.text_notifications)
+                if acct.text_notifications != None
+                else "N/A",
+                int(acct.email_notifications)
+                if acct.email_notifications != None
+                else "N/A",
             ]
         )
     columns = [
@@ -123,6 +131,7 @@ def download_accounts_info():
         "professional_title",
         "linkedin",
         "website",
+        "profile pic up",
         "image url",
         "video(s) up",
         "educations",
@@ -158,6 +167,7 @@ def generate_sheet(sheet_name, row_data, columns):
     try:
         return send_file(
             output,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             attachment_filename="{0}.xlsx".format(sheet_name),
             as_attachment=True,
         )

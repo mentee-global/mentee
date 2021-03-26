@@ -1,4 +1,3 @@
-
 {
     "scripts": {
         "format:backend": "cd backend && poetry run format",
@@ -10,5 +9,9 @@
         "setup:backend": "cd backend && poetry install",
         "setup:frontend": "cd frontend && yarn",
         "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\""
+    },
+    "dependencies": {
+        "dropzone": "^5.8.1",
+        "react-dropzone": "^11.3.1"
     }
 }

@@ -9,6 +9,7 @@ from .Availability import Availability
 from .Image import Image
 from .MentorProfile import MentorProfile
 from .AppointmentRequest import AppointmentRequest
+from .MentorApplication import MentorApplication
 from .VerifiedEmail import VerifiedEmail
 from .MenteeProfile import MenteeProfile
 from .Message import Message
@@ -23,6 +24,7 @@ __all__ = [
     "AppointmentRequest",
     "Image",
     "VerifiedEmail",
+    "MentorApplication",
     "MenteeProfile",
     "Message",
 ]

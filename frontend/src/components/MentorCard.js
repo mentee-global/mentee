@@ -18,6 +18,17 @@ const { Title, Text } = Typography;
 
 const styles = {
   title: {
+    fontSize: "35px",
+    whiteSpace: "normal",
+    overflow: "visible",
+    textOverflow: "ellipsis",
+    margin: 0,
+  },
+  subTitle: {
+    fontSize: "18px",
+    whiteSpace: "normal",
+    overflow: "visible",
+    textOverflow: "ellipsis",
     margin: 0,
   },
   icon: {
@@ -40,14 +51,14 @@ function MentorCard(props) {
       <div className="gallery-card-body">
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
-          <div className="gallery-header-text">
+          <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
               {props.name}
             </Title>
-            <Title style={styles.title} type="secondary" level={5}>
+            <Title style={styles.subTitle} type="secondary" level={5}>
               {props.professional_title}
             </Title>
-            <Title style={styles.title} type="secondary" level={5}>
+            <Title style={styles.subTitle} type="secondary" level={5}>
               Speaks: {props.languages.join(", ")}
             </Title>
           </div>
@@ -57,7 +68,7 @@ function MentorCard(props) {
           {props.lesson_types}
         </h3>
         {props.location && (
-          <div>
+          <div className="gallery-info-section">
             <h3 className="gallery-headers">
               <EnvironmentOutlined style={styles.icon} />
               Location:
@@ -73,7 +84,7 @@ function MentorCard(props) {
           {props.specializations.join(", ")}
         </Text>
         {props.website && (
-          <h4>
+          <h4 className="gallery-info-section">
             <LinkOutlined style={styles.icon} />
             <a
               className="gallery-links"
@@ -86,7 +97,7 @@ function MentorCard(props) {
           </h4>
         )}
         {props.linkedin && (
-          <h4>
+          <h4 className="gallery-info-section">
             <LinkedinOutlined style={styles.icon} />
             <a
               className="gallery-links"

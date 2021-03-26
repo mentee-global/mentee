@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from api.models import MentorApplication
 from api.core import create_response, serialize_list, logger
+from api.utils.constants import MENTOR_APP_STATES, MENTOR_APP_OFFER
+from api.utils.request_utils import send_email
 
 apply = Blueprint("apply", __name__)
 
@@ -97,4 +99,11 @@ def edit_application(id):
     application.notes = data.get("notes", application.notes)
 
     application.save()
+
+    if application.application_state == MENTOR_APP_STATES["OFFER_MADE"]:
+        mentor_email = application.email
+        success, msg = send_email(recipient=mentor_email, subject="MENTEE Application Status", template_id=MENTOR_APP_OFFER)
+        if not success:
+            logger.info(msg)
+
     return create_response(status=200, message=f"Success")

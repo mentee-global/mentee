@@ -1,4 +1,4 @@
-****# Flask Backend
+# Flask Backend
 
 This is based off of [Flask Boilerplate](https://github.com/tko22/flask-boilerplate), but repurposed for MongoDB using MongoEngine.
 
@@ -7,13 +7,16 @@ We use [black](https://github.com/ambv/black) for code formatting, and [mypy](ht
 ![](../master/docs/flask.gif)
 
 ## Remote Database Setup
+
 Create a `.env` file in this folder with the contents:
+
 ```
 MONGO_USER=[DB username]
 MONGO_PASSWORD=[DB password]
 MONGO_DB=mentee
 MONGO_HOST=[host uri]
 ```
+
 Replace the `[xxx]` with your own credentials.
 
 ### Server Setup
@@ -25,7 +28,9 @@ Install packages:
 ```
 $ poetry install
 ```
+
 To run the server:
+
 ```
 $ poetry run start
 ```

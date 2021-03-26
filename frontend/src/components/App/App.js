@@ -11,8 +11,11 @@ import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
+import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import MentorApplication from "components/pages/MentorApplication";
+import AdminAppointmentData from "components/pages/AdminAppointmentData";
+import NotFound from "components/pages/NotFound";
 
 function App() {
   return (
@@ -40,6 +43,13 @@ function App() {
           <Navigation content={<Videos />} page="videos" needsAuth={true} />
         )}
       />
+      <Route
+        path="/profile"
+        component={() => (
+          <Navigation content={<Profile />} page="profile" needsAuth={true} />
+        )}
+      />
+
       <Route
         path="/profile"
         component={() => (
@@ -87,8 +97,10 @@ function App() {
         )}
       />
       <Route
-        path="/manage-users"
-        component={() => <Navigation content={<div />} needsAuth={true} />}
+        path="/organizer"
+        component={() => (
+          <Navigation content={<ApplicationOrganizer />} needsAuth={true} />
+        )}
       />
       <Route
         path="/account-data"
@@ -98,7 +110,15 @@ function App() {
       />
       <Route
         path="/all-appointments"
-        component={() => <Navigation content={<div />} needsAuth={true} />}
+        component={() => (
+          <Navigation content={<AdminAppointmentData />} needsAuth={true} />
+        )}
+      />
+      <Route
+        path="/not-found"
+        component={() => (
+          <Navigation content={<NotFound />} needsAuth={false} />
+        )}
       />
     </Router>
   );

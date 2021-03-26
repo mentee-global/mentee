@@ -326,7 +326,7 @@ function MentorProfileModal(props) {
     async function saveEdits(data) {
       await editMentorProfile(data, getMentorID());
       if (changedImage) {
-        await uploadMentorImage(image, getMentorID(), "mentor");
+        await uploadMentorImage(image, getMentorID());
       }
       setSaving(false);
       setChangedImage(false);
@@ -382,7 +382,6 @@ function MentorProfileModal(props) {
           setChangedImage(false);
           setIsValid([...isValid].fill(true));
         }}
-        width="50%"
         style={{ overflow: "hidden" }}
         footer={
           <div>

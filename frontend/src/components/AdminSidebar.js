@@ -1,7 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { TeamOutlined, DatabaseOutlined } from "@ant-design/icons";
+import {
+  TeamOutlined,
+  DatabaseOutlined,
+  UsergroupAddOutlined,
+} from "@ant-design/icons";
 
 import "./css/Navigation.scss";
 
@@ -10,10 +14,10 @@ const { SubMenu } = Menu;
 
 const menuItemMarginOverride = { marginTop: "0px", marginBottom: "0px" };
 const pages = {
-  manageUsers: {
-    name: "Manage Users",
-    path: "/manage-users",
-    icon: <TeamOutlined />,
+  applications: {
+    name: "Applications",
+    path: "/organizer",
+    icon: <UsergroupAddOutlined />,
     isSubMenu: false,
   },
   reports: {

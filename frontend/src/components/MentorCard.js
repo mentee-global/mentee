@@ -18,6 +18,17 @@ const { Title, Text } = Typography;
 
 const styles = {
   title: {
+    fontSize: "35px",
+    whiteSpace: "normal",
+    overflow: "visible",
+    textOverflow: "ellipsis",
+    margin: 0,
+  },
+  subTitle: {
+    fontSize: "18px",
+    whiteSpace: "normal",
+    overflow: "visible",
+    textOverflow: "ellipsis",
     margin: 0,
   },
   icon: {
@@ -44,10 +55,10 @@ function MentorCard(props) {
             <Title style={styles.title} className="gallery-title-text">
               {props.name}
             </Title>
-            <Title style={styles.title} type="secondary" level={5}>
+            <Title style={styles.subTitle} type="secondary" level={5}>
               {props.professional_title}
             </Title>
-            <Title style={styles.title} type="secondary" level={5}>
+            <Title style={styles.subTitle} type="secondary" level={5}>
               Speaks: {props.languages.join(", ")}
             </Title>
           </div>

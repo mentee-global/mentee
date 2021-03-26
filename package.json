@@ -1,4 +1,3 @@
-
 {
     "scripts": {
         "format:backend": "cd backend && poetry run format",

@@ -37,7 +37,7 @@ def create_message():
         email=data.get("email"),
         link=data.get("link"),
         time=datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z"),
-        #read=data.get("read"),
+        # read=data.get("read"),
     )
     try:
         message.save()

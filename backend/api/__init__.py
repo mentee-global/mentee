@@ -77,7 +77,7 @@ def create_app(test_config=None):
         availability,
         verify,
         download,
-        messages
+        messages,
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/

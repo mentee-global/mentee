@@ -54,8 +54,18 @@ class AvailabilityForm(Form):
     start_time = StringField(validators=[InputRequired()])
     end_time = StringField(validators=[InputRequired()])
 
+
 class MessageForm(Form):
     message = StringField(validators=[InputRequired()])
+    user_name = StringField(validators=[InputRequired()])
+    user_id = StringField(validators=[InputRequired()])
+    recipient_name = StringField(validators=[InputRequired()])
+    recipient_id = StringField(validators=[InputRequired()])
+    email = StringField()
+    link = StringField()
+    time = StringField(validators=[InputRequired()])
+
+
 class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)

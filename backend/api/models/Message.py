@@ -4,6 +4,7 @@ from flask_mongoengine import Document
 from mongoengine import *
 from api.models import Users
 
+
 class Message(Document, Mixin):
     """User Collection."""
 
@@ -14,7 +15,8 @@ class Message(Document, Mixin):
     recipient_id = ReferenceField("Users", required=True)
     email = StringField()
     link = StringField()
-    read = BooleanField(required=True)
+    time = DateTimeField(reqruied=True)
+    #read = BooleanField(required=True)
 
     def __repr__(self):
         return f"<Message:{self.message} \n Sent by:{self.user_name} to :{self.recipient_name}>"

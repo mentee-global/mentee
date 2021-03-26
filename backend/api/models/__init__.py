@@ -24,7 +24,7 @@ __all__ = [
     "Image",
     "VerifiedEmail",
     "MenteeProfile",
-    "Message"
+    "Message",
 ]
 
 # You must import all of the new Models you create to this page

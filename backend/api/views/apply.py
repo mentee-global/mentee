@@ -103,13 +103,16 @@ def edit_application(id):
     # Send a notification email
     if application.application_state == MENTOR_APP_STATES["OFFER_MADE"]:
         mentor_email = application.email
-        success, msg = send_email(recipient=mentor_email, subject="MENTEE Application Status", template_id=MENTOR_APP_OFFER)
+        success, msg = send_email(
+            recipient=mentor_email,
+            subject="MENTEE Application Status",
+            template_id=MENTOR_APP_OFFER,
+        )
         if not success:
             logger.info(msg)
 
         # Add to verified emails
         new_verified = VerifiedEmail(email=mentor_email, is_mentor=True)
         new_verified.save()
-
 
     return create_response(status=200, message=f"Success")

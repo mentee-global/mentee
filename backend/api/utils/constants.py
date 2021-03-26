@@ -25,10 +25,11 @@ class Account(Enum):
     def __eq__(self, other):
         return self.value == other
 
+
 # Mentor Application Status
 MENTOR_APP_STATES = {
-  "PENDING": "Pending",
-  "REVIEWED": "Reviewed",
-  "REJECTED": "Rejected",
-  "OFFER_MADE": "Offer Made",
+    "PENDING": "Pending",
+    "REVIEWED": "Reviewed",
+    "REJECTED": "Rejected",
+    "OFFER_MADE": "Offer Made",
 }

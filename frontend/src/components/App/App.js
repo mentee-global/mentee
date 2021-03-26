@@ -12,6 +12,7 @@ import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
 import AdminAccountData from "components/pages/AdminAccountData";
+import MentorApplication from "components/pages/MentorApplication";
 
 function App() {
   return (
@@ -49,6 +50,12 @@ function App() {
         path="/gallery"
         exact
         component={() => <Navigation content={<Gallery />} needsAuth={false} />}
+      />
+
+      <Route
+        path="/application-page"
+        exact
+        component={() => <Navigation content={<MentorApplication />} needsAuth={false} />}
       />
       <Route
         path="/gallery/:id"

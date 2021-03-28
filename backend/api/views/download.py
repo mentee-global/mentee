@@ -71,11 +71,14 @@ def download_appointments():
 @download.route("/accounts/all", methods=["GET"])
 @admin_only
 def download_accounts_info():
-    logger.info('hdfadas')
+    logger.info("hdfadas")
     try:
         users = firebase_admin_auth.get_users().users
-        admin_ids = [user.uid for user in users if user.custom_claims.get(
-            'role') == Account.ADMIN]
+        admin_ids = [
+            user.uid
+            for user in users
+            if user.custom_claims.get("role") == Account.ADMIN
+        ]
 
         accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
     except:

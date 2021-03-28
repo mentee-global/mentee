@@ -28,10 +28,10 @@ export const register = async (email, password, role) =>
     email: email && email.trim(),
     password: password && password.trim(),
     role,
-  }).then((data) => {
+  }).then(async (data) => {
     if (data && data.success) {
       const result = data.result;
-      firebase
+      await firebase
         .auth()
         .signInWithCustomToken(result.token)
         .then((userCredential) => {})
@@ -55,9 +55,9 @@ export const login = async (email, password) =>
   await post("/login", {
     email: email && email.trim(),
     password: password && password.trim(),
-  }).then((data) => {
+  }).then(async (data) => {
     if (data && data.success && data.result.token) {
-      firebase
+      await firebase
         .auth()
         .signInWithCustomToken(data.result.token)
         .catch((error) => {});

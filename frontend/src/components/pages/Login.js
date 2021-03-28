@@ -18,7 +18,7 @@ import firebase from "firebase";
 const INCORRECT_NAME_PASSWORD_ERROR_MSG =
   "Incorrect username and/or password. Please try again.";
 const RESET_PASSWORD_ERROR_MSG =
-  "Please reset password. An link to reset your password has been sent to your email.";
+  "Please reset password. A link to reset your password has been sent to your email.";
 const SERVER_ERROR_MSG = "Something went wrong.";
 const RECREATE_ACCOUNT_ERROR_MSG = "Please re-register your account.";
 
@@ -115,16 +115,18 @@ function Login() {
                   setError(true);
                 }
 
-                const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-                  unsubscribe();
-                  if (!user) return;
+                const unsubscribe = firebase
+                  .auth()
+                  .onAuthStateChanged(async (user) => {
+                    unsubscribe();
+                    if (!user) return;
 
-                  if (await isUserAdmin()) {
-                    redirectToAdminPortal();
-                  } else {
-                    redirectToAppointments();
-                  }
-                });
+                    if (await isUserAdmin()) {
+                      redirectToAdminPortal();
+                    } else {
+                      redirectToAppointments();
+                    }
+                  });
 
                 setLoggingIn(false);
               }}

@@ -2,8 +2,8 @@
     "scripts": {
         "format:backend": "cd backend && poetry run format",
         "format": "concurrently \"cd frontend && yarn format\" \"yarn format:backend\"",
-        "export_backend_dep": "cd backend && poetry export -f requirements.txt --output requirements.txt && poetry export -f requirements.txt --output ../requirements.txt",
-        "start:backend": "yarn export_backend_dep && cd backend && poetry run start",
+        "export": "cd backend && poetry export -f requirements.txt --output requirements.txt --without-hashes && poetry export -f requirements.txt --output ../requirements.txt --without-hashes",
+        "start:backend": "yarn export && cd backend && poetry run start",
         "start:frontend": "cd frontend && yarn start",
         "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\"",
         "setup:backend": "cd backend && poetry install",

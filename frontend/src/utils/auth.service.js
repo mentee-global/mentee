@@ -165,10 +165,10 @@ export const getUserEmail = async () => {
   }
 };
 
-export const getUserToken = async () => {
+export const getUserIdToken = async () => {
   if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.token;
+    return await getIdToken().then((idToken) => {
+      return idToken;
     });
   }
 };

@@ -67,15 +67,15 @@ function AdminLogin(props) {
               height={"125%"}
               loading={loggingIn}
               // use this to connect auth
-              //   onClick={async () => {
-              //     setLoggingIn(true);
-              //     const res = await login(email, password);
-              //     setError(!Boolean(res));
-              //     if (Boolean(res)) {
-              //       redirectToAppointments();
-              //     }
-              //     setLoggingIn(false);
-              //   }}
+              onClick={async () => {
+                setLoggingIn(true);
+                const res = await login(email, password);
+                setError(!Boolean(res));
+                if (res && res.success) {
+                  history.push("/account-data");
+                }
+                setLoggingIn(false);
+              }}
             />
           </div>
         </div>

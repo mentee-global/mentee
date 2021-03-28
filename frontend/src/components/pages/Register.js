@@ -9,7 +9,7 @@ import {
   sendVerificationEmail,
   refreshToken,
 } from "utils/auth.service";
-import { REGISTRATION_STAGE } from "utils/consts";
+import { REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 import "../css/Home.scss";
@@ -48,10 +48,10 @@ function Register({ history }) {
   const submitForm = async () => {
     setSaving(true);
     if (!checkErrors()) {
-      const res = await register(email, password, "mentor");
+      const res = await register(email, password, ACCOUNT_TYPE.MENTOR);
       // sign in
-      await refreshToken();
       if (res && res.success) {
+        await refreshToken();
         await sendVerificationEmail(email);
         history.push("/verify");
       } else {

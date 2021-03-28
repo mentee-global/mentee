@@ -7,6 +7,8 @@ import {
   sendVerificationEmail,
   getUserEmail,
   isUserVerified,
+  isUserMentor,
+  isUserAdmin,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { REGISTRATION_STAGE } from "utils/consts";
@@ -52,7 +54,11 @@ function Verify({ history, sent }) {
                 setVerifying(true);
                 const success = await isUserVerified();
                 if (success) {
-                  history.push("/create-profile");
+                  if (await isUserMentor()) {
+                    history.push("/create-profile");
+                  } else if (await isUserAdmin()) {
+                    history.push("/account-data");
+                  }
                 } else {
                   setError(true);
                   setResent(false);

@@ -101,10 +101,7 @@ function Login() {
                 setLoggingIn(true);
                 const res = await login(email, password);
 
-                if (!res) {
-                  setErrorMessage(SERVER_ERROR_MSG);
-                  setError(true);
-                } else if (!res.success) {
+                if (!res || !res.success) {
                   setErrorMessage(INCORRECT_NAME_PASSWORD_ERROR_MSG);
                   setError(true);
                 } else if (res.result.passwordReset) {

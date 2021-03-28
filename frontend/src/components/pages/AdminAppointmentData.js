@@ -11,7 +11,6 @@ import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
 import "../css/AdminAppointments.scss";
 import { SPECIALIZATIONS } from "utils/consts";
-import { getUserToken } from "utils/auth.service";
 
 const keys = {
   ASCENDING: 0,
@@ -86,7 +85,7 @@ function AdminAppointmentData() {
 
   const handleAppointmentDownload = async () => {
     setIsDownloadingAppointments(true);
-    const file = await downloadAllApplicationData(await getUserToken());
+    const file = await downloadAllApplicationData();
     setDownloadFile(file);
     setIsDownloadingAppointments(false);
   };

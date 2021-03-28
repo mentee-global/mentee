@@ -9,18 +9,18 @@ from api.utils.constants import Account
 def admin_only(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        data = request.json
         headers = request.headers
 
-        token = data.get("token") if data else headers.get("Authorization")
-        claims = firebase_admin_auth.verify_id_token(token)
-        role = claims.get("role")
+        try:
+            token = headers.get("Authorization")
+            claims = firebase_admin_auth.verify_id_token(token)
+            role = claims.get("role")
 
-        if role == Account.ADMIN:
-            return fn(*args, **kwargs)
-
-        msg = "Unauthorized"
-        logger.info(msg)
-        return create_response(status=401, message=msg)
+            if role == Account.ADMIN:
+                return fn(*args, **kwargs)
+        except:
+            msg = "Unauthorized"
+            logger.info(msg)
+            return create_response(status=401, message=msg)
 
     return wrapper

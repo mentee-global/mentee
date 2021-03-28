@@ -271,7 +271,7 @@ def refresh_token():
     firebase_uid = claims.get("uid")
 
     if Admin.objects(firebase_uid=firebase_uid):
-        admin = Admin.objects.get(firebase_uid=firebase_uid);
+        admin = Admin.objects.get(firebase_uid=firebase_uid)
 
         return create_response(
             status=200,

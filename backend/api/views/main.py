@@ -72,10 +72,13 @@ def get_account(id):
 def create_mentor_profile():
     data = request.json
 
+    logger.info(data)
+
     try:
         account_type = int(data["account_type"])
     except:
         msg = "Missing account_type param or account_type param is not an int"
+        logger.info(msg)
         return create_response(status=422, message=msg)
 
     validate_data = None
@@ -85,10 +88,12 @@ def create_mentor_profile():
         validate_data = MenteeForm.from_json(data)
     else:
         msg = "Level param does not match existing account types"
+        logger.info(msg)
         return create_response(status=422, message=msg)
 
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
+        logger.info(msg)
         return create_response(status=422, message=msg)
 
     if "videos" in data and account_type == Account.MENTOR:
@@ -97,12 +102,14 @@ def create_mentor_profile():
 
             msg, is_invalid = is_invalid_form(validate_video)
             if is_invalid:
+                logger.info(msg)
                 return create_response(status=422, message=msg)
     elif "video" in data and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
         msg, is_invalid = is_invalid_form(validate_video)
         if is_invalid:
+            logger.info(msg)
             return create_response(status=422, message=msg)
 
     if "education" in data:
@@ -113,10 +120,12 @@ def create_mentor_profile():
             if is_invalid:
                 return create_response(status=422, message=msg)
 
+    logger.info(data)
     new_account = new_profile(data=data, profile_type=account_type)
 
     if not new_account:
         msg = "Could not parse Account Data"
+        logger.info(msg)
         create_response(status=400, message=msg)
 
     new_account.save()

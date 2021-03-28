@@ -21,22 +21,6 @@ function Verify({ history, sent }) {
   const [error, setError] = useState(false);
   const [resent, setResent] = useState(false);
 
-  useEffect(() => {
-    async function fetchData() {
-      const registrationStage = await getRegistrationStage();
-
-      if (registrationStage === null) {
-        history.push("/appointments");
-      } else if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
-        history.push("/create-profile");
-      } else if (registrationStage === REGISTRATION_STAGE.START) {
-        history.push("/register");
-      }
-    }
-
-    fetchData();
-  }, [history]);
-
   return (
     <div className="home-background">
       <div className="login-content">

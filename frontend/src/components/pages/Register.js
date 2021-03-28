@@ -27,22 +27,6 @@ function Register({ history }) {
   const [saving, setSaving] = useState(false);
   const [inputFocus, setInputFocus] = useState([false, false, false]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const registrationStage = await getRegistrationStage();
-
-      if (registrationStage === null) {
-        history.push("/appointments");
-      } else if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
-        history.push("/create-profile");
-      } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
-        history.push("/verify");
-      }
-    }
-
-    fetchData();
-  }, [history]);
-
   function handleInputFocus(index) {
     let newClickedInput = [false, false, false];
     newClickedInput[index] = true;

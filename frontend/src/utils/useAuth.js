@@ -3,10 +3,12 @@ import firebase from "firebase";
 import { getIdTokenResult } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
 
-const useUserRoles = () => {
+const useAuth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMentor, setIsMentor] = useState(false);
   const [isMentee, setIsMentee] = useState(false);
+  const [claims, setClaims] = useState({});
+  const [token, setToken] = useState();
 
   // setup listener
   useEffect(() => {
@@ -19,6 +21,9 @@ const useUserRoles = () => {
       }
 
       await getIdTokenResult().then((idTokenResult) => {
+        setToken(idTokenResult.token);
+        setClaims(idTokenResult.claims);
+        
         const role = idTokenResult.claims.role;
         setIsAdmin(role === ACCOUNT_TYPE.ADMIN);
         setIsMentor(role === ACCOUNT_TYPE.MENTOR);
@@ -30,4 +35,4 @@ const useUserRoles = () => {
   return { isAdmin, isMentor, isMentee };
 };
 
-export default useUserRoles;
+export default useAuth;

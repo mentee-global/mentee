@@ -11,15 +11,13 @@ import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
 import MenteeLogoSmall from "../resources/menteeSmall.png";
-import useUserRoles from "./../utils/useUserRoles";
+import useAuth from "../utils/useAuth";
 
 const { Header } = Layout;
 
 function MainNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
-  const { isAdmin, isMentor, isMentee } = useUserRoles();
-
-  console.log("isAdmin", isAdmin, "isMentor", isMentor, "isMentee", isMentee);
+  const { isAdmin, isMentor, isMentee } = useAuth();
 
   return (
     <Header className="navigation-header">

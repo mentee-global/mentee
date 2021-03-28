@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
 import { isLoggedIn } from "utils/auth.service";
-import useUserRoles from "utils/useUserRoles";
+import useAuth from "utils/useAuth";
 
 import MentorNavHeader from "./MentorNavHeader";
 import MainNavHeader from "./MainNavHeader";
@@ -16,7 +16,7 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-  const { isAdmin } = useUserRoles();
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     if (props.needsAuth && !isLoggedIn()) {

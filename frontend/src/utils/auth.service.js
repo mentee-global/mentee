@@ -1,7 +1,7 @@
 import axios from "axios";
 import firebase from "firebase";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
-import { useUserRoles } from "utils/useUserRoles";
+import { useAuth } from "utils/useAuth";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -25,8 +25,8 @@ export const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
 // Role is where you put "admin" or "mentor"- right now we only support mentor
 export const register = (email, password, role) =>
   post("/register", {
-    email: email.trim(),
-    password: password.trim(),
+    email: email && email.trim(),
+    password: password && password.trim(),
     role,
   }).then((data) => {
     if (data && data.success) {
@@ -52,7 +52,7 @@ export const sendPasswordResetEmail = (email) => {
 };
 
 export const login = (email, password) =>
-  post("/login", { email: email.trim(), password: password.trim() }).then(
+  post("/login", { email: email && email.trim(), password: password && password.trim() }).then(
     (data) => {
       if (data && data.success && data.result.token) {
         firebase
@@ -79,6 +79,7 @@ export const logout = () => {
 };
 
 export const refreshToken = async () => {
+  // need initial token from registration
   if (isLoggedIn()) {
     return await getIdToken().then(async (idToken) => {
       const token = await post("/refreshToken", { token: idToken }).then(
@@ -146,14 +147,6 @@ export const getAdminID = async () => {
 
 export const isLoggedIn = () => {
   return Boolean(getCurrentUser());
-};
-
-export const getUserId = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.uid;
-    });
-  }
 };
 
 export const isUserVerified = async () => {

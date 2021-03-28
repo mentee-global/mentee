@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
 import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
 import {
   getRegistrationStage,
   isLoggedIn,
-  getUserId,
   refreshToken,
+  getCurrentUser,
+  getUserEmail,
 } from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
@@ -18,6 +19,7 @@ import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
 
 function RegisterForm(props) {
+  const history = useHistory();
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
@@ -37,22 +39,6 @@ function RegisterForm(props) {
   const [specializations, setSpecializations] = useState([]);
   const [educations, setEducations] = useState([]);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    async function fetchData() {
-      const registrationStage = await getRegistrationStage();
-
-      if (registrationStage === null) {
-        props.history.push("/appointments");
-      } else if (registrationStage === REGISTRATION_STAGE.START) {
-        props.history.push("/register");
-      } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
-        props.history.push("/verify");
-      }
-    }
-
-    fetchData();
-  }, [props.history]);
 
   function renderEducationInputs() {
     return (
@@ -235,7 +221,7 @@ function RegisterForm(props) {
         setError(false);
         setIsValid([...isValid].fill(true));
         await refreshToken();
-        props.history.push("/profile");
+        history.push("/profile");
       } else {
         setError(true);
       }
@@ -246,9 +232,12 @@ function RegisterForm(props) {
       return;
     }
 
+    const firebase_user = getCurrentUser();
+    const email = await getUserEmail();
     const newProfile = {
-      firebase_uid: await getUserId(),
+      firebase_uid: firebase_user ? firebase_user.uid : undefined,
       name: name,
+      email: email,
       professional_title: title,
       linkedin: linkedin,
       website: website,

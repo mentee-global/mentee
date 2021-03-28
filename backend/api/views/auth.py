@@ -101,7 +101,7 @@ def register():
     firebase_uid = firebase_user.uid
 
     if admin_user:
-        admin_user.firebased_uid = firebase_uid
+        admin_user.firebase_uid = firebase_uid
         admin_user.save()
 
     return create_response(
@@ -269,6 +269,18 @@ def refresh_token():
 
     claims = firebase_admin_auth.verify_id_token(token)
     firebase_uid = claims.get("uid")
+
+    if Admin.objects(firebase_uid=firebase_uid):
+        admin = Admin.objects.get(firebase_uid=firebase_uid);
+
+        return create_response(
+            status=200,
+            data={
+                "token": firebase_admin_auth.create_custom_token(
+                    firebase_uid, {"role": claims.get("role"), "adminId": str(admin.id)}
+                ).decode("utf-8"),
+            },
+        )
 
     try:
         mentor = MentorProfile.objects.get(firebase_uid=firebase_uid)

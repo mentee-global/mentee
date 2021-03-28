@@ -8,7 +8,6 @@ const useAuth = () => {
   const [isMentor, setIsMentor] = useState(false);
   const [isMentee, setIsMentee] = useState(false);
   const [claims, setClaims] = useState({});
-  const [token, setToken] = useState();
 
   // setup listener
   useEffect(() => {
@@ -21,7 +20,6 @@ const useAuth = () => {
       }
 
       await getIdTokenResult().then((idTokenResult) => {
-        setToken(idTokenResult.token);
         setClaims(idTokenResult.claims);
 
         const role = idTokenResult.claims.role;

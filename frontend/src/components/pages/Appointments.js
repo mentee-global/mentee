@@ -14,7 +14,7 @@ import {
   getAppointmentsByMentorID,
   deleteAppointment,
 } from "../../utils/api";
-import { getMentorID, refreshToken } from "utils/auth.service";
+import { getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 
@@ -43,16 +43,6 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
-
-  // useEffect(() => {
-  //   async function initialFetch() {
-  //     const mentorID = await getMentorID();
-  //     console.log(mentorID);
-  //     if (!mentorID) history.push('/create-profile')
-  //   }
-
-  //   initialFetch();
-  // }, [history])
 
   useEffect(() => {
     async function getAppointments() {

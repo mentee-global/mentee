@@ -86,7 +86,7 @@ function App() {
         component={() => <Navigation content={<Verify />} needsAuth={false} />}
       />
       <Route
-        path="/forgotPassword"
+        path="/forgot-password"
         component={() => (
           <Navigation content={<ForgotPassword />} needsAuth={false} />
         )}

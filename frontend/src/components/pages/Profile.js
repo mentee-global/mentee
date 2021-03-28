@@ -24,15 +24,6 @@ function Profile() {
     fetchMentor();
   }, [editedMentor]);
 
-  // useEffect(() => {
-  //   async function initialFetch() {
-  //     const mentorID = await getMentorID();
-  //     if (!mentorID) history.push('/create-profile')
-  //   }
-
-  //   initialFetch();
-  // }, [history])
-
   const fetchMentor = async () => {
     const mentorID = await getMentorID();
     const mentorData = await fetchMentorByID(mentorID);
@@ -84,7 +75,7 @@ function Profile() {
   const onFinish = (values) => {
     async function saveEdits() {
       const new_values = { ...values, phone_number: values.phone };
-      await editMentorProfile(new_values, await getMentorID(history));
+      await editMentorProfile(new_values, await getMentorID());
       handleSaveEdits();
     }
 

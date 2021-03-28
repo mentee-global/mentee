@@ -20,15 +20,6 @@ function Videos() {
   const [mentorID, setMentorID] = useState("");
   const [form] = Form.useForm();
 
-  // useEffect(() => {
-  //   async function initialFetch() {
-  //     const mentorID = await getMentorID();
-  //     if (!mentorID) history.push("/create-profile");
-  //   }
-
-  //   initialFetch();
-  // }, [history]);
-
   useEffect(() => {
     async function getVideos() {
       const newMentorID = await getMentorID();

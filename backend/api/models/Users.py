@@ -7,7 +7,7 @@ from mongoengine import *
 class Users(Document, Mixin):
     """User Collection."""
 
-    firebase_uid = StringField(required=True)
+    firebase_uid = StringField()
     email = StringField(required=True)
     role = StringField(required=True)
     mongooseVersion = IntField(db_field="__v")

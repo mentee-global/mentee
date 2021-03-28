@@ -23,7 +23,7 @@ const useAuth = () => {
       await getIdTokenResult().then((idTokenResult) => {
         setToken(idTokenResult.token);
         setClaims(idTokenResult.claims);
-        
+
         const role = idTokenResult.claims.role;
         setIsAdmin(role === ACCOUNT_TYPE.ADMIN);
         setIsMentor(role === ACCOUNT_TYPE.MENTOR);

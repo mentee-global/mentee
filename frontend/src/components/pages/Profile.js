@@ -17,7 +17,7 @@ function Profile() {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    console.log('here')
+    console.log("here");
     fetchMentor();
   }, []);
 
@@ -36,9 +36,9 @@ function Profile() {
 
   const fetchMentor = async () => {
     const mentorID = await getMentorID();
-    console.log('mentor id', mentorID);
+    console.log("mentor id", mentorID);
     const mentorData = await fetchMentorByID(mentorID);
-    console.log('mentor data', mentorData)
+    console.log("mentor data", mentorData);
     if (mentorData) {
       setMentor(mentorData);
     }

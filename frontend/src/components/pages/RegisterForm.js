@@ -225,7 +225,7 @@ function RegisterForm(props) {
         const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
           unsubscribe();
           history.push("/profile");
-        })
+        });
       } else {
         setError(true);
       }

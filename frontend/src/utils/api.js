@@ -192,7 +192,7 @@ export const downloadMentorsData = () => {
     })
     .then(
       (response) => {
-        downloadBlob(response, "data.xlsx");
+        downloadBlob(response, "mentor_data.xlsx");
       },
       (err) => {
         console.error(err);

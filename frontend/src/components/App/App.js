@@ -8,6 +8,7 @@ import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import Login from "components/pages/Login";
+import AdminLogin from "components/pages/AdminLogin";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
@@ -15,6 +16,7 @@ import ForgotPassword from "components/pages/ForgotPassword";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
+import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
 import NotFound from "components/pages/NotFound";
 
 function App() {
@@ -68,6 +70,12 @@ function App() {
         component={() => <Navigation content={<Login />} needsAuth={false} />}
       />
       <Route
+        path="/admin-login"
+        component={() => (
+          <Navigation content={<AdminLogin />} needsAuth={false} />
+        )}
+      />
+      <Route
         path="/register"
         component={() => (
           <Navigation content={<Register />} needsAuth={false} />
@@ -105,6 +113,12 @@ function App() {
         path="/all-appointments"
         component={() => (
           <Navigation content={<AdminAppointmentData />} needsAuth={true} />
+        )}
+      />
+      <Route
+        path="/verified-emails"
+        component={() => (
+          <Navigation content={<AdminVerifiedEmails />} needsAuth={true} />
         )}
       />
       <Route

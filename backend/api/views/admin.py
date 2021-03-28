@@ -54,7 +54,7 @@ def upload_mentor_emails():
 
 
 @admin.route("/upload/mentees", methods=["GET", "POST"])
-def upload_mentee_emails():
+def upload_mentee_emails(password):
     if request.method == "GET":
         uploads = VerifiedEmail.objects().get(is_mentor=False)
         return create_response(data={"uploads": uploads})
@@ -70,7 +70,7 @@ def upload_mentee_emails():
             if is_email:
                 address = line[0]
             else:
-                password = line[0]
+                password = password
                 email = VerifiedEmail(email=address, password=password, is_mentor=False)
                 email.save()
             is_email = not is_email

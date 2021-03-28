@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-<<<<<<< HEAD
-=======
 import { useMediaQuery } from "react-responsive";
->>>>>>> 827aae645dfad90f728956f2f5a82ceba978402a
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import { useMediaQuery } from "react-responsive";
@@ -37,13 +34,8 @@ const pages = {
 };
 
 function NavigationSidebar(props) {
-<<<<<<< HEAD
-  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
-  const [collapsed, setCollapsed] = useState(true);
-=======
   const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
   const [collapsed, setCollapsed] = useState(isMobile);
->>>>>>> 827aae645dfad90f728956f2f5a82ceba978402a
   const getMenuItemStyle = (page) => {
     return props.selectedPage === page
       ? "navigation-menu-item-selected"
@@ -53,17 +45,10 @@ function NavigationSidebar(props) {
   return (
     <Sider
       collapsible
-<<<<<<< HEAD
-      theme="light"
-      className="navigation-sidebar"
-      collapsed={collapsed}
-      onCollapse={(col) => setCollapsed(col)}
-=======
       collapsed={collapsed}
       theme="light"
       className="navigation-sidebar"
       onCollapse={(collapsed) => setCollapsed(collapsed)}
->>>>>>> 827aae645dfad90f728956f2f5a82ceba978402a
     >
       <Menu theme="light" mode="inline" style={{ marginTop: "25%" }}>
         {Object.keys(pages).map((page) => (

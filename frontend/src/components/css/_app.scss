@@ -1,18 +1,18 @@
 //Theme Colors
-$theme-orange: #E4BB4F;
-$theme-orange-light: #FFF7E2;
-$theme-orange-dark: #A58123;
+$theme-orange: #e4bb4f;
+$theme-orange-light: #fff7e2;
+$theme-orange-dark: #a58123;
 
 //Appointments constants
-$appointment-card-background-color:#FFECBD;
-$appointment-background-color: #FCF6E8;
-$appointments-date-text-block-color: #A58123;
-$appointments-row-border-color: #E4BB4F;
-$appointments-description: #7A7A7A;
-$appointments-tab-background-color:#FFECBD;
-$appointments-tab-color:#A58123;
-$appointments-tab-item-selected-background-color: #E4BB4F;
-$appointments-tab-item-selected-color: #FFF7E2;
+$appointment-card-background-color: #ffecbd;
+$appointment-background-color: #fcf6e8;
+$appointments-date-text-block-color: #a58123;
+$appointments-row-border-color: #e4bb4f;
+$appointments-description: #7a7a7a;
+$appointments-tab-background-color: #ffecbd;
+$appointments-tab-color: #a58123;
+$appointments-tab-item-selected-background-color: #e4bb4f;
+$appointments-tab-item-selected-color: #fff7e2;
 
 // Navigation constants
 $nav-header-color: #fbecc1;
@@ -22,24 +22,27 @@ $nav-menu-item-hover-color: black;
 $nav-menu-item-selected-color: #fcf6ea;
 $profile-caret-color: Gray;
 $mentee-logo-color: #fbecc1;
-$nav-submenu-color: #E4BB4F;
+$nav-submenu-color: #e4bb4f;
 
 // Profile constants
-$background-color-strip-color: #FCF6E8;
+$background-color-strip-color: #fcf6e8;
 $mentor-profile-heading-color: #828282;
-$yellow-dot-color: #E4BB4F;
-$specialization-tag-border: #FFECBD;
-$edit-contact-color: #A58123;
+$yellow-dot-color: #e4bb4f;
+$specialization-tag-border: #ffecbd;
+$edit-contact-color: #a58123;
 
 //Mentee Appointment Modal constants
-$mentee-appointment-heading-border-color: #E0E0E0;
-$mentee-appointment-text-color: #7A7A7A;
+$mentee-appointment-heading-border-color: #e0e0e0;
+$mentee-appointment-text-color: #7a7a7a;
 $mentee-appointment-info-border: #cccccc;
 
 // MenteeButton constants
-$mentee-button-regular: #E4BB4F;
-$mentee-button-dark: #A58123;
-$mentee-button-light: #FCF6E8;
+$mentee-button-regular: #e4bb4f;
+$mentee-button-dark: #a58123;
+$mentee-button-light: #fcf6e8;
 
 // Auth pages constants
-$register-link-hover: #FFE5A3;
+$register-link-hover: #ffe5a3;
+
+// Admin Appointments Page
+$admin-appointment-body: #fffdf5;

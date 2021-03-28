@@ -62,33 +62,6 @@ function MenteeNavHeader({ history }) {
             </>
           )}
           <span className="navigation-header-button">
-            <MenteeButton
-              width="100%"
-              theme="light"
-              content={<b>{"Apply"}</b>}
-              onClick={() => {
-                history.push({
-                  pathname: "/not-found",
-                });
-              }}
-              // onClick={() => {
-              //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
-              // }}
-            />
-          </span>
-          <span className="navigation-header-button">
-            <MenteeButton
-              width="100%"
-              theme="light"
-              content={<b>{"Admin Portal"}</b>}
-              onClick={() => {
-                history.push({
-                  pathname: "/account-data",
-                });
-              }}
-            />
-          </span>
-          <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}
               theme="light"

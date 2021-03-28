@@ -115,7 +115,8 @@ function Login() {
                   setError(true);
                 }
 
-                firebase.auth().onAuthStateChanged(async (user) => {
+                const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+                  unsubscribe();
                   if (!user) return;
 
                   if (await isUserAdmin()) {

@@ -23,8 +23,8 @@ const getIdToken = () => getCurrentUser().getIdToken(true);
 export const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
 
 // Role is where you put "admin" or "mentor"- right now we only support mentor
-export const register = (email, password, role) =>
-  post("/register", {
+export const register = async (email, password, role) =>
+  await post("/register", {
     email: email && email.trim(),
     password: password && password.trim(),
     role,
@@ -51,22 +51,23 @@ export const sendPasswordResetEmail = (email) => {
   return post("/forgotPassword", { email });
 };
 
-export const login = (email, password) =>
-  post("/login", { email: email && email.trim(), password: password && password.trim() }).then(
-    (data) => {
-      if (data && data.success && data.result.token) {
-        firebase
-          .auth()
-          .signInWithCustomToken(data.result.token)
-          .catch((error) => {});
-      }
-
-      return data;
+export const login = async (email, password) =>
+  await post("/login", {
+    email: email && email.trim(),
+    password: password && password.trim(),
+  }).then((data) => {
+    if (data && data.success && data.result.token) {
+      firebase
+        .auth()
+        .signInWithCustomToken(data.result.token)
+        .catch((error) => {});
     }
-  );
 
-export const logout = () => {
-  return firebase
+    return data;
+  });
+
+export const logout = async () =>
+  await firebase
     .auth()
     .signOut()
     .catch((error) => {
@@ -76,7 +77,6 @@ export const logout = () => {
       console.error(message);
       return false;
     });
-};
 
 export const refreshToken = async () => {
   // need initial token from registration
@@ -86,7 +86,7 @@ export const refreshToken = async () => {
         (data) => data && data.result.token
       );
 
-      firebase.auth().signInWithCustomToken(token);
+      await firebase.auth().signInWithCustomToken(token);
 
       return token;
     });

@@ -221,7 +221,11 @@ function RegisterForm(props) {
         setError(false);
         setIsValid([...isValid].fill(true));
         await refreshToken();
-        history.push("/profile");
+
+        const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+          unsubscribe();
+          history.push("/profile");
+        })
       } else {
         setError(true);
       }

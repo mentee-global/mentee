@@ -82,10 +82,12 @@ def register():
     email = data.get("email")
     password = data.get("password")
     role = data.get("role")
+    admin_user = None
 
     # if whitelisted, set to admin
     if Admin.objects(email=email):
         role = Account.ADMIN.value
+        admin_user = Admin.objects.get(email=email)
     elif role == Account.ADMIN:
         msg = "Blocked attempt to create admin account"
         logger.info(msg)
@@ -97,6 +99,10 @@ def register():
         return error_http_response
 
     firebase_uid = firebase_user.uid
+
+    if admin_user:
+        admin_user.firebased_uid = firebase_uid
+        admin_user.save()
 
     return create_response(
         message="Created account",
@@ -172,6 +178,11 @@ def login():
     if role == Account.ADMIN:
         try:
             admin = Admin.objects.get(email=email)
+
+            if not admin.firebase_uid:
+                admin.firebase_uid = firebase_uid
+                admin.save()
+
             return create_response(
                 message="Logged in",
                 data={

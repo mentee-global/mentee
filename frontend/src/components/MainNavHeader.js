@@ -32,7 +32,7 @@ function MainNavHeader({ history }) {
           </NavLink>
         </div>
         <div style={{ display: "flex" }}>
-          {!isLoggedIn() && (
+          {(!isLoggedIn() || (!isAdmin && !isMentor && !isMentee)) && (
             <span className="navigation-header-button">
               <MenteeButton
                 width="100%"

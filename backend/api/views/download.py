@@ -3,7 +3,7 @@ import xlsxwriter
 from datetime import datetime
 from io import BytesIO
 from api.core import create_response, logger
-from api.models import AppointmentRequest, Users, MentorProfile
+from api.models import AppointmentRequest, Admin, MentorProfile
 from flask import send_file, Blueprint
 from api.utils.require_auth import admin_only
 from firebase_admin import auth as firebase_admin_auth
@@ -73,12 +73,8 @@ def download_appointments():
 def download_accounts_info():
     logger.info("hdfadas")
     try:
-        users = firebase_admin_auth.get_users().users
-        admin_ids = [
-            user.uid
-            for user in users
-            if user.custom_claims.get("role") == Account.ADMIN
-        ]
+        admins = Admin.objects()
+        admin_ids = [admin.firebase_uid for admin in admins]
 
         accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
     except:

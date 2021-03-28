@@ -165,6 +165,14 @@ export const getUserEmail = async () => {
   }
 };
 
+export const getUserToken = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.token;
+    });
+  }
+};
+
 export const getRegistrationStage = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {

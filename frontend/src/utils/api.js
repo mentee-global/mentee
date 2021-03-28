@@ -184,11 +184,12 @@ const downloadBlob = (response, filename) => {
   URL.revokeObjectURL(url);
 };
 
-export const downloadMentorsData = () => {
+export const downloadMentorsData = (token) => {
   const requestExtension = "/download/accounts/all";
   return instance
     .get(requestExtension, {
       responseType: "blob",
+      headers: { Authorization: token },
     })
     .then(
       (response) => {
@@ -200,11 +201,12 @@ export const downloadMentorsData = () => {
     );
 };
 
-export const downloadAllApplicationData = () => {
+export const downloadAllApplicationData = (token) => {
   const requestExtension = "/download/appointments/all";
   return instance
     .get(requestExtension, {
       responseType: "blob",
+      headers: { Authorization: token },
     })
     .then(
       (response) => {

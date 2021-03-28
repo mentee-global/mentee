@@ -26,6 +26,7 @@ import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import { PROFILE_URL } from "../../utils/consts";
 import UploadEmails from "../UploadEmails";
+import { getUserToken } from "utils/auth.service";
 
 const { Column } = Table;
 
@@ -86,7 +87,7 @@ function AdminAccountData() {
   const handleMentorsDownload = async () => {
     setIsMentorDownload(true);
     // TODO: Check up on why this isn't working..
-    const file = await downloadMentorsData();
+    const file = await downloadMentorsData(await getUserToken());
     setDownloadFile(file);
     setIsMentorDownload(false);
   };

@@ -71,7 +71,6 @@ def download_appointments():
 @download.route("/accounts/all", methods=["GET"])
 @admin_only
 def download_accounts_info():
-    logger.info("hdfadas")
     try:
         admins = Admin.objects()
         admin_ids = [admin.firebase_uid for admin in admins]

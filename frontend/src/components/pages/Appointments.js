@@ -57,7 +57,6 @@ function Appointments() {
   useEffect(() => {
     async function getAppointments() {
       const mentorID = await getMentorID();
-      console.log("mentorId", mentorID);
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {

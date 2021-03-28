@@ -30,6 +30,8 @@ function MenteeNavHeader({ history }) {
           </NavLink>
         </div>
         <div style={{ display: "flex" }}>
+          {!isMobile &&
+          <>
           <span className="navigation-header-button">
             <MenteeButton
               width="100%"
@@ -57,6 +59,8 @@ function MenteeNavHeader({ history }) {
               }}
             />
           </span>
+          </>
+          }
           <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}

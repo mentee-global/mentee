@@ -12,6 +12,7 @@ import AdminLogin from "components/pages/AdminLogin";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
+import ForgotPassword from "components/pages/ForgotPassword";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
@@ -44,13 +45,6 @@ function App() {
           <Navigation content={<Videos />} page="videos" needsAuth={true} />
         )}
       />
-      <Route
-        path="/profile"
-        component={() => (
-          <Navigation content={<Profile />} page="profile" needsAuth={true} />
-        )}
-      />
-
       <Route
         path="/profile"
         component={() => (
@@ -90,6 +84,12 @@ function App() {
       <Route
         path="/verify"
         component={() => <Navigation content={<Verify />} needsAuth={false} />}
+      />
+      <Route
+        path="/forgot-password"
+        component={() => (
+          <Navigation content={<ForgotPassword />} needsAuth={false} />
+        )}
       />
       <Route
         path="/create-profile"

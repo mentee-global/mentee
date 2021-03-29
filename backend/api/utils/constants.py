@@ -11,10 +11,17 @@ AUTH_URL = (
 # https://sendgrid.com/docs/ui/sending-email/how-to-send-an-email-with-dynamic-transactional-templates/
 MENTOR_APPT_TEMPLATE = "d-3a2b51466e6541ffa052a197ced08c18"
 MENTEE_APPT_TEMPLATE = "d-2ce963b36c91457c89c916a111d658bd"
+USER_VERIFICATION_TEMPLATE = "d-7bd09ab8f8484cee9227a9a25ad527ec"
+USER_FORGOT_PASSWORD_TEMPLATE = "d-df1adcced8ab461ca72ceae5eecfc566"
 MENTOR_APP_OFFER = "d-3a7a5db2cf4e412e9e68e729a7b52813"
 
 # This lacks timezone so you'll need to add that according to whatever code you're working with
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
+
+# legacy roles (moved to Account Enum)
+MENTOR_ROLE = "mentor"
+MENTEE_ROLE = "mentee"
+ADMIN_ROLE = "admin"
 
 # Account types
 class Account(Enum):

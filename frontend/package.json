@@ -10,8 +10,10 @@
     "@testing-library/user-event": "^7.1.2",
     "antd": "^4.7.3",
     "axios": "^0.21.0",
+    "firebase": "^8.2.9",
     "node-sass": "^4.14.1",
     "prettier": "^2.1.2",
+    "pretty-quick": "^3.1.0",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^16.13.1",
@@ -29,8 +31,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --write '{src,test}/**/*.{js,jsx,json,css}'",
-    "format:check": "prettier --list-different '{src,test}/**/*.js'"
+    "format": "pretty-quick --staged {src,test}/**/*.{js,jsx,json,css}",
+    "format:all": "prettier --write {src,test}/**/*.{js,jsx,json,css}",
+    "format:check": "prettier --list-different {src,test}/**/*.js"
   },
   "eslintConfig": {
     "extends": "react-app"

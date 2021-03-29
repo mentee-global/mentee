@@ -16,12 +16,7 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-<<<<<<< HEAD
-  // Set this to false and connect to backend
-  const [isAdmin, setIsAdmin] = useState(false);
-=======
   const { isAdmin } = useAuth();
->>>>>>> origin/dev
 
   useEffect(() => {
     if (props.needsAuth && !isLoggedIn()) {

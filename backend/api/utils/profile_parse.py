@@ -21,7 +21,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
 
     if profile_type == Account.MENTOR:
         new_profile = MentorProfile(
-            user_id=ObjectId(data["user_id"]),
+            firebase_uid=data["firebase_uid"],
             name=data["name"],
             email=data["email"],
             professional_title=data["professional_title"],

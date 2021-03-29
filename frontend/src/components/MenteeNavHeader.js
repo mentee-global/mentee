@@ -6,6 +6,7 @@ import { withRouter } from "react-router-dom";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import MenteeVerificationModal from "./MenteeVerificationModal";
+import useAuth from "../utils/useAuth";
 
 import "./css/Navigation.scss";
 
@@ -16,6 +17,7 @@ const { Header } = Layout;
 
 function MenteeNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
+  const { isAdmin, isMentor, isMentee } = useAuth();
 
   return (
     <Header className="navigation-header">
@@ -54,7 +56,7 @@ function MenteeNavHeader({ history }) {
                   content={<b>{"Admin Portal"}</b>}
                   onClick={() => {
                     history.push({
-                      pathname: "/account-data",
+                      pathname: "/admin-login",
                     });
                   }}
                 />

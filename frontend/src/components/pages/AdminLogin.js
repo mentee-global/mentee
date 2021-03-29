@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
-import { isLoggedIn, login } from "utils/auth.service";
+import { isLoggedIn, login, isUserAdmin, logout } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/AdminLogin.scss";
@@ -67,15 +67,20 @@ function AdminLogin(props) {
               height={"125%"}
               loading={loggingIn}
               // use this to connect auth
-              //   onClick={async () => {
-              //     setLoggingIn(true);
-              //     const res = await login(email, password);
-              //     setError(!Boolean(res));
-              //     if (Boolean(res)) {
-              //       redirectToAppointments();
-              //     }
-              //     setLoggingIn(false);
-              //   }}
+              onClick={async () => {
+                setLoggingIn(true);
+                const res = await login(email, password);
+                setError(!Boolean(res));
+                if (res && res.success) {
+                  if (await isUserAdmin()) {
+                    history.push("/account-data");
+                  } else {
+                    setError(true);
+                    await logout();
+                  }
+                }
+                setLoggingIn(false);
+              }}
             />
           </div>
         </div>

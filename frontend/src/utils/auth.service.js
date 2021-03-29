@@ -1,137 +1,188 @@
 import axios from "axios";
-import { AUTH_URL, REGISTRATION_STAGE } from "utils/consts";
+import firebase from "firebase";
+import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
+import { useAuth } from "utils/useAuth";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
 });
 
+const get = (url, params) =>
+  instance
+    .get(url, params)
+    .then((res) => res.data)
+    .catch((err) => console.error(err));
+
+const post = (url, data, params) =>
+  instance
+    .post(url, data, params)
+    .then((res) => res.data)
+    .catch((err) => console.error(err));
+
+const getIdToken = () => getCurrentUser().getIdToken(true);
+export const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
+
 // Role is where you put "admin" or "mentor"- right now we only support mentor
-const register = (email, password, role) => {
-  return instance
-    .post("/register", {
-      email,
-      password,
-      role,
-    })
-    .then((response) => {
-      if (response.data.result && response.data.result.token) {
-        response.data.result.verified = false;
-        localStorage.setItem(
-          "registration",
-          JSON.stringify(response.data.result)
-        );
-      }
+export const register = async (email, password, role) =>
+  await post("/register", {
+    email: email && email.trim(),
+    password: password && password.trim(),
+    role,
+  }).then(async (data) => {
+    if (data && data.success) {
+      const result = data.result;
+      await firebase
+        .auth()
+        .signInWithCustomToken(result.token)
+        .then((userCredential) => {})
+        .catch((error) => {});
+    }
 
-      return response.data;
-    })
-    .catch((err) => {
-      console.error(err);
-      return false;
-    });
-};
+    return data;
+  });
 
-// Sends verification code to email
-const verify = (pin) => {
-  return instance
-    .post(
-      "/verifyEmail",
-      {
-        pin,
-      },
-      { headers: { token: getCurrentRegistration()["token"] } }
-    )
-    .then((response) => {
-      if (response.data.status === 200) {
-        const registration = JSON.parse(localStorage.getItem("registration"));
-        registration["verified"] = true;
-        localStorage.setItem("registration", JSON.stringify(registration));
-        return true;
-      }
-      return false;
-    })
-    .catch((err) => {
-      console.error(err);
-      return false;
-    });
-};
-
-// Resends verification code to email they registered with
-const resendVerify = () => {
-  return instance.post("resendVerificationEmail", null, {
-    headers: { token: getCurrentRegistration()["token"] },
+export const sendVerificationEmail = (email) => {
+  return post("/verifyEmail", {
+    email,
   });
 };
 
-const login = (email, password) => {
-  return instance
-    .post("/login", {
-      email,
-      password,
-    })
-    .then((response) => {
-      if (response.data.result && response.data.result.token) {
-        localStorage.setItem("user", JSON.stringify(response.data.result));
-      }
+export const sendPasswordResetEmail = (email) => {
+  return post("/forgotPassword", { email });
+};
 
-      return response.data;
-    })
-    .catch((err) => {
-      console.error(err);
+export const login = async (email, password) =>
+  await post("/login", {
+    email: email && email.trim(),
+    password: password && password.trim(),
+  }).then(async (data) => {
+    if (data && data.success && data.result.token) {
+      await firebase
+        .auth()
+        .signInWithCustomToken(data.result.token)
+        .catch((error) => {});
+    }
+
+    return data;
+  });
+
+export const logout = async () =>
+  await firebase
+    .auth()
+    .signOut()
+    .catch((error) => {
+      const code = error.code;
+      const message = error.message;
+
+      console.error(message);
       return false;
     });
-};
 
-const logout = () => {
-  localStorage.removeItem("user");
-};
-
-// User obj is created on login & successful registration (profile creation included)
-// stores mentor ID, user ID, token
-const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem("user"));
-};
-
-const getMentorID = () => {
+export const refreshToken = async () => {
+  // need initial token from registration
   if (isLoggedIn()) {
-    return getCurrentUser()["mentorId"];
+    return await getIdToken().then(async (idToken) => {
+      const token = await post("/refreshToken", { token: idToken }).then(
+        (data) => data && data.result.token
+      );
+
+      await firebase.auth().signInWithCustomToken(token);
+
+      return token;
+    });
+  }
+};
+
+export const getCurrentUser = () => {
+  return firebase.auth().currentUser;
+};
+
+export const isUserAdmin = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.ADMIN
+    );
   } else return false;
 };
 
-const isLoggedIn = () => {
+export const isUserMentor = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.MENTOR
+    );
+  } else return false;
+};
+
+export const isUserMentee = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.MENTEE
+    );
+  } else return false;
+};
+
+export const getRole = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then(
+      (idTokenResult) => idTokenResult.claims.role
+    );
+  } else return null;
+};
+
+export const getMentorID = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.mentorId;
+    });
+  } else return false;
+};
+
+export const getAdminID = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.adminId;
+    });
+  } else return false;
+};
+
+export const isLoggedIn = () => {
   return Boolean(getCurrentUser());
 };
 
-// Registration obj is created on registration (inputting email, password)
-// and deleted on successful profile creation
-// stores user ID, token
-const getCurrentRegistration = () => {
-  return JSON.parse(localStorage.getItem("registration"));
+export const isUserVerified = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.email_verified;
+    });
+  }
 };
 
-const getRegistrationStage = () => {
-  const registration = getCurrentRegistration();
-
-  if (!registration) return REGISTRATION_STAGE.START;
-  if (!registration.verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
-  return REGISTRATION_STAGE.PROFILE_CREATION;
+export const getUserEmail = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.email;
+    });
+  }
 };
 
-const removeRegistration = (mentorId) => {
-  const registration = JSON.parse(localStorage.getItem("registration"));
-  registration["mentorId"] = mentorId;
-  localStorage.removeItem("registration");
-  localStorage.setItem("user", JSON.stringify(registration));
+export const getUserIdToken = async () => {
+  if (isLoggedIn()) {
+    return await getIdToken().then((idToken) => {
+      return idToken;
+    });
+  }
 };
 
-export {
-  register,
-  login,
-  logout,
-  getMentorID,
-  isLoggedIn,
-  getCurrentRegistration,
-  getRegistrationStage,
-  removeRegistration,
-  verify,
-  resendVerify,
+export const getRegistrationStage = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      const claims = idTokenResult.claims;
+
+      if (!claims.email_verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
+      if (!claims.mentorId) return REGISTRATION_STAGE.PROFILE_CREATION;
+      return null;
+    });
+  }
+
+  return REGISTRATION_STAGE.START;
 };

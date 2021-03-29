@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Button, Col, Row, Result } from "antd";
 import {
   ClockCircleOutlined,
@@ -36,14 +37,16 @@ const Tabs = Object.freeze({
   },
 });
 function Appointments() {
+  const history = useHistory();
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
+
   useEffect(() => {
-    const mentorID = getMentorID();
     async function getAppointments() {
+      const mentorID = await getMentorID();
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {

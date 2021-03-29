@@ -78,13 +78,13 @@ function ModalInput(props) {
     return style;
   }
 
-  const returnDropdownItems = (items) => {
-    let options = [];
-    for (let i = 0; i < items.length; i++) {
-      options.push(<Option key={items[i]}>{items[i]}</Option>);
-    }
-    return options;
-  };
+  // const returnDropdownItems = (items) => {
+  //   let options = [];
+  //   for (let i = 0; i < items.length; i++) {
+  //     options.push(<Option key={items[i]}>{items[i]}</Option>);
+  //   }
+  //   return options;
+  // };
 
   const InputBox = () => {
     switch (type) {
@@ -113,7 +113,7 @@ function ModalInput(props) {
             value={props.value}
             defaultValue={defaultValue}
           >
-            {returnDropdownItems(options)}
+         
           </Select>
         );
       case "dropdown-multiple":
@@ -131,7 +131,7 @@ function ModalInput(props) {
             tokenSeparators={[","]}
             defaultValue={defaultValue}
           >
-            {returnDropdownItems(options)}
+            
           </Select>
         );
       case "textarea":

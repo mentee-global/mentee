@@ -199,7 +199,7 @@ export const deleteMentorById = (id) => {
 };
 
 export const adminUploadEmails = (file, password, isMentor) => {
-  const requestExtension = "/upload/mentors"
+  const requestExtension = "/upload/mentors";
   let formData = new FormData();
   formData.append("fileupload", file);
   formData.append("pass", password);

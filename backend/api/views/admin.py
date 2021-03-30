@@ -67,7 +67,6 @@ def upload_mentee_emails():
         return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
-    
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")

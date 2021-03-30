@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Modal, Form, Input, Button} from "antd";
+import { Modal, Form, Input, Button } from "antd";
 import { useDropzone } from "react-dropzone";
 import { adminUploadEmails } from "utils/api";
 import MenteeButton from "./MenteeButton";
@@ -15,7 +15,7 @@ function UploadEmails(props) {
 
     const onDrop = (acceptedFiles) => {
       setFiles(acceptedFiles);
-    }
+    };
 
     const onFinish = useCallback((files, password, mentor) => {
       async function uploadEmails(file) {
@@ -37,17 +37,26 @@ function UploadEmails(props) {
       if (!isMentor) {
         return (
           <Form.Item label="Password">
-            <Input name="inputtedPassword" type="text" onChange={(e) => {setPassword(e.target.value);}}/>
+            <Input
+              name="inputtedPassword"
+              type="text"
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+            />
           </Form.Item>
         );
       } else {
-        return <div></div>
+        return <div></div>;
       }
     };
     //
     return (
       <div>
-        <Form onFinish={() => onFinish(files, password, isMentor)} initialValues={{inputtedPassword: ""}}>
+        <Form
+          onFinish={() => onFinish(files, password, isMentor)}
+          initialValues={{ inputtedPassword: "" }}
+        >
           <Form.Item>
             <div {...getRootProps()}>
               <p>Drag 'n' drop some files here, or click to select files</p>
@@ -63,7 +72,6 @@ function UploadEmails(props) {
           </Form.Item>
         </Form>
       </div>
-      
     );
   }
 

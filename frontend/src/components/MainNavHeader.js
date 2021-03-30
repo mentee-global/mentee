@@ -11,7 +11,7 @@ import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
 import MenteeLogoSmall from "../resources/menteeSmall.png";
-import useAuth from "../utils/useAuth";
+import useAuth from "../utils/hooks/useAuth";
 
 const { Header } = Layout;
 

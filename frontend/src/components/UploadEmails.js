@@ -48,11 +48,11 @@ function UploadEmails(props) {
       {" "}
       <div className="dragdrops">
         <div className="dragdrop">
-          <h3>Add Mentors</h3>
+          <h3 className="upload-title">Add Mentors</h3>
           {DragDrop(true)}
         </div>
         <div className="dragdrop">
-          <h3>Add Mentees</h3>
+          <h3 className="upload-title">Add Mentees</h3>
           {DragDrop(false)}
         </div>
       </div>

@@ -25,6 +25,7 @@ import {
 import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import { PROFILE_URL } from "../../utils/consts";
+import UploadEmails from "../UploadEmails";
 
 const { Column } = Table;
 
@@ -47,6 +48,7 @@ function AdminAccountData() {
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
   const [downloadFile, setDownloadFile] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     async function getData() {
@@ -78,8 +80,7 @@ function AdminAccountData() {
   };
 
   const handleAddAccount = () => {
-    // TODO: Link to the modal or page where one can add a new account
-    console.log("Adding new account!");
+    setModalVisible(true);
   };
 
   const handleMentorsDownload = async () => {
@@ -91,7 +92,7 @@ function AdminAccountData() {
   };
 
   const handleMenteesDownload = () => {
-    setIsMentorDownload(true);
+    setIsMenteeDownload(true);
     // TODO: Add Mentee Account Downloads
     console.log("Calling endpoint to download accounts");
     setIsMenteeDownload(false);
@@ -183,6 +184,10 @@ function AdminAccountData() {
           >
             Add New Account
           </Button>
+          <UploadEmails
+            setModalVisible={setModalVisible}
+            modalVisible={modalVisible}
+          />
           <Button
             className="table-button"
             icon={<DownloadOutlined />}
@@ -220,14 +225,21 @@ function AdminAccountData() {
             align="center"
           />
           <Column
-            title="Appointment Details"
-            dataIndex="appointments"
-            key="appointments"
-            render={(appointments) => (
-              <a className="table-appt-view" props={appointments}>
-                View
-              </a>
-            )}
+            title="Appointments Available?"
+            dataIndex="appointmentsAvailable"
+            key="appointmentsAvailable"
+            align="center"
+          />
+          <Column
+            title="Videos Posted?"
+            dataIndex="videosUp"
+            key="videosUp"
+            align="center"
+          />
+          <Column
+            title="Picture Uploaded?"
+            dataIndex="profilePicUp"
+            key="profilePicUp"
             align="center"
           />
           <Column

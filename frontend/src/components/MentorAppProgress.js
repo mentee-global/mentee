@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./css/MentorApplicationView.scss";
+import { APP_STATUS } from "../utils/consts";
 
 function MentorAppProgress({ progress }) {
   const [status, setStatus] = useState({});
@@ -7,16 +8,16 @@ function MentorAppProgress({ progress }) {
   useEffect(() => {
     let newStatus = {};
     switch (progress) {
-      case "Pending":
+      case APP_STATUS.PENDING:
         newStatus["style"] = { background: "#DADADA" };
         break;
-      case "Reviewed":
+      case APP_STATUS.REVIEWED:
         newStatus["style"] = { background: "#FFDB6F" };
         break;
-      case "Rejected":
+      case APP_STATUS.REJECTED:
         newStatus["style"] = { background: "#B15858" };
         break;
-      case "Offer":
+      case APP_STATUS.OFFER_MADE:
         newStatus["style"] = { background: "#6FCF97" };
         break;
       default:

@@ -1,9 +1,31 @@
 import axios from "axios";
 import { API_URL, ACCOUNT_TYPE } from "utils/consts";
+import { getUserIdToken } from "utils/auth.service";
 
 const instance = axios.create({
   baseURL: API_URL,
 });
+
+const authGet = async (url, config) =>
+  instance
+    .get(url, { ...config, headers: { Authorization: await getUserIdToken() } })
+    .catch(console.error);
+
+const authPost = async (url, data, config) =>
+  instance
+    .post(url, data, {
+      ...config,
+      headers: { Authorization: await getUserIdToken() },
+    })
+    .catch(console.error);
+
+const authPut = async (url, data, config) =>
+  instance
+    .put(url, data, {
+      ...config,
+      headers: { Authorization: await getUserIdToken() },
+    })
+    .catch(console.error);
 
 export const fetchAccountById = (id, type) => {
   if (!id) return;
@@ -72,10 +94,10 @@ export const createAccountProfile = (profile, type) => {
   );
 };
 
-export const fetchApplications = () => {
+export const fetchApplications = async () => {
   const requestExtension = "/application/";
-  return instance.get(requestExtension).then(
-    (response) => response.data.result,
+  return await authGet(requestExtension).then(
+    (response) => response && response.data.result,
     (err) => {
       console.error(err);
     }
@@ -164,27 +186,52 @@ export const fetchMentorsAppointments = () => {
   );
 };
 
-export const downloadMentorsData = () => {
+export const fetchAllAppointments = () => {
+  const requestExtension = "/appointment/";
+  return instance.get(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+const downloadBlob = (response, filename) => {
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+export const downloadMentorsData = async () => {
   const requestExtension = "/download/accounts/all";
-  return instance
-    .get(requestExtension, {
-      responseType: "blob",
-    })
-    .then(
-      (response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        console.log(response);
-        link.setAttribute("download", `data.xlsx`);
-        document.body.appendChild(link);
-        link.click();
-        URL.revokeObjectURL(url);
-      },
-      (err) => {
-        console.error(err);
-      }
-    );
+  return authGet(requestExtension, {
+    responseType: "blob",
+  }).then(
+    (response) => {
+      downloadBlob(response, "mentor_data.xlsx");
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const downloadAllApplicationData = async () => {
+  const requestExtension = "/download/appointments/all";
+  return authGet(requestExtension, {
+    responseType: "blob",
+  }).then(
+    (response) => {
+      downloadBlob(response, "all_appointments.xlsx");
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
 };
 
 export const deleteMentorById = (id) => {
@@ -195,6 +242,50 @@ export const deleteMentorById = (id) => {
       console.error(err);
       return false;
     }
+  );
+};
+
+export const updateApplicationById = async (data, id) => {
+  const requestExtension = `/application/${id}`;
+  return await authPut(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getApplicationById = async (id) => {
+  const requestExtension = `/application/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.mentor_application,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const adminUploadEmails = (file, isMentor) => {
+  let mentorOrMentee = "mentors";
+  if (!isMentor) {
+    mentorOrMentee = "mentees";
+  }
+  const requestExtension = "/upload/" + mentorOrMentee;
+  let formData = new FormData();
+  formData.append("fileupload", file);
+  return instance.post(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getAdmin = (id) => {
+  const requestExtension = `/admin/${id}`;
+  return instance.get(requestExtension).then(
+    (response) => response && response.data.result.admin,
+    (err) => console.error(err)
   );
 };
 

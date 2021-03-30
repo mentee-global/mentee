@@ -11,3 +11,4 @@ api.log
 test.db
 creds.ini
 .env
+firebase_service_key.json

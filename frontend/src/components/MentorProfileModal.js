@@ -324,10 +324,13 @@ function MentorProfileModal(props) {
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      await editMentorProfile(data, getMentorID());
+      const mentorID = await getMentorID();
+      await editMentorProfile(data, mentorID);
+
       if (changedImage) {
         await uploadMentorImage(image, getMentorID());
       }
+
       setSaving(false);
       setChangedImage(false);
       props.onSave();

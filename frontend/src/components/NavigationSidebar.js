@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { useMediaQuery } from "react-responsive";
 import {
   UserOutlined,
   VideoCameraOutlined,

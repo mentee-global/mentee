@@ -1,5 +1,7 @@
 import os
 import logging
+import firebase_admin
+import pyrebase
 
 from flask import Flask, request
 from flask_cors import CORS
@@ -61,6 +63,9 @@ def create_app(test_config=None):
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+
+    # firebase
+    firebase_admin.initialize_app()
 
     # register mongoengine to this app
     from api.models import db

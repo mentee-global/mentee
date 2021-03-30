@@ -21,6 +21,17 @@ def get_all_messages():
     return create_response(data={"Messages": messages}, status=200, message="Success")
 
 
+@messages.route("/<string:message_id>", methods=["GET"])
+def get_message(message_id):
+    try:
+        message = Message.objects.get(id=message_id)
+    except:
+        msg = "Failed to get message"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    return create_response(data={"Message": message}, status=200, message="Success")
+
+
 @messages.route("/from=<string:sender_username>", methods=["GET"])
 def get_all_messages_from_user(sender_username):
     try:
@@ -63,6 +74,46 @@ def get_all_messages_to_user_id(recipient_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(data={"Messages": messages}, status=200, message="Success")
+
+
+@messages.route("/<string:message_id>", methods=["DELETE"])
+def delete_message(message_id):
+    try:
+        message = Message.objects.get(id=message_id)
+    except:
+        msg = "Invalid message id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    try:
+        message.delete()
+        return create_response(
+            status=200, message=f"message_id: {message_id} deleted successfully"
+        )
+    except:
+        msg = "Failed to delete message"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+
+@messages.route("/<string:message_id>/<field>:<value>", methods=["PUT"])
+def update_message(message_id, field, value):
+    try:
+        message = Message.objects.get(id=message_id)
+    except:
+        msg = "Invalid message id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    try:
+        message[field] = value
+        message.save()
+        return create_response(
+            status=200,
+            message=f"message_id: {message_id} field: {field} updated with: {value}",
+        )
+    except:
+        msg = "Failed to update message"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
 
 
 @messages.route("/", methods=["POST"])

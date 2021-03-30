@@ -5,7 +5,7 @@ import { isLoggedIn } from "utils/auth.service";
 import useAuth from "utils/hooks/useAuth";
 
 import MentorNavHeader from "./MentorNavHeader";
-import MainNavHeader from "./MainNavHeader";
+import MenteeNavHeader from "./MenteeNavHeader";
 import AdminNavHeader from "./AdminNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
 import AdminSidebar from "./AdminSidebar";
@@ -34,7 +34,7 @@ function Navigation(props) {
             <MentorNavHeader />
           )
         ) : (
-          <MainNavHeader />
+          <MenteeNavHeader />
         )}
         {props.needsAuth ? (
           <Layout>

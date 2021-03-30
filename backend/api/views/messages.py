@@ -20,6 +20,7 @@ def get_all_messages():
         return create_response(status=422, message=msg)
     return create_response(data={"Messages": messages}, status=200, message="Success")
 
+
 @messages.route("/from=<string:sender_username>", methods=["GET"])
 def get_all_messages_from_user(sender_username):
     try:
@@ -29,6 +30,7 @@ def get_all_messages_from_user(sender_username):
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(data={"Messages": messages}, status=200, message="Success")
+
 
 @messages.route("/from_id=<string:sender_id>", methods=["GET"])
 def get_all_messages_from_user_id(sender_id):
@@ -40,6 +42,7 @@ def get_all_messages_from_user_id(sender_id):
         return create_response(status=422, message=msg)
     return create_response(data={"Messages": messages}, status=200, message="Success")
 
+
 @messages.route("/to=<string:recipient_username>", methods=["GET"])
 def get_all_messages_to_user(recipient_username):
     try:
@@ -50,6 +53,7 @@ def get_all_messages_to_user(recipient_username):
         return create_response(status=422, message=msg)
     return create_response(data={"Messages": messages}, status=200, message="Success")
 
+
 @messages.route("/to_id=<string:recipient_id>", methods=["GET"])
 def get_all_messages_to_user_id(recipient_id):
     try:
@@ -59,6 +63,7 @@ def get_all_messages_to_user_id(recipient_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(data={"Messages": messages}, status=200, message="Success")
+
 
 @messages.route("/", methods=["POST"])
 def create_message():
@@ -85,6 +90,7 @@ def create_message():
         msg = "Failed to save message"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    return create_response(status=201,
-        message=f"Successfully saved message: {message.message} from user: {message.user_name} to: {message.recipient_name} sent on: {message.time}"
+    return create_response(
+        status=201,
+        message=f"Successfully saved message: {message.message} from user: {message.user_name} to: {message.recipient_name} sent on: {message.time}",
     )

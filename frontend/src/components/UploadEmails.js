@@ -10,7 +10,6 @@ import { FileSyncOutlined } from "@ant-design/icons";
 
 function UploadEmails(props) {
   function DragDrop(isMentor) {
-    const [editing, setEditing] = useState(true);
     const [password, setPassword] = useState("");
     const [files, setFiles] = useState([]);
 
@@ -18,34 +17,37 @@ function UploadEmails(props) {
       setFiles(acceptedFiles);
     }
 
-    const onFinish = useCallback((files, password) => {
+    const onFinish = useCallback((files, password, mentor) => {
       async function uploadEmails(file) {
-        await adminUploadEmails(file, password);
-        setEditing(false);
+        await adminUploadEmails(file, password, mentor);
       }
       files.forEach((file) => {
         uploadEmails(file);
       });
-      setEditing(false);
+      setFiles([]);
+      setPassword("");
     }, []);
 
     const { getRootProps, getInputProps } = useDropzone({
       onDrop,
       accept: ".csv",
     });
-    const includePassword = (isMentor) => {
-      if (isMentor) {
+
+    const includePassword = () => {
+      if (!isMentor) {
         return (
           <Form.Item label="Password">
             <Input name="inputtedPassword" type="text" onChange={(e) => {setPassword(e.target.value);}}/>
           </Form.Item>
-        )
+        );
+      } else {
+        return <div></div>
       }
-    }
+    };
     //
     return (
       <div>
-        <Form onFinish={() => onFinish(files, password)} initialValues={{inputtedPassword: ""}}>
+        <Form onFinish={() => onFinish(files, password, isMentor)} initialValues={{inputtedPassword: ""}}>
           <Form.Item>
             <div {...getRootProps()}>
               <p>Drag 'n' drop some files here, or click to select files</p>
@@ -53,9 +55,7 @@ function UploadEmails(props) {
               <input {...getInputProps()} />
             </div>
           </Form.Item>
-          <Form.Item label="Password">
-            <Input name="inputtedPassword" type="text" onChange={(e) => {setPassword(e.target.value);}}/>
-          </Form.Item>
+          {includePassword()}
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit

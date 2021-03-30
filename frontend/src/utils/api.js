@@ -198,14 +198,15 @@ export const deleteMentorById = (id) => {
   );
 };
 
-export const adminUploadEmails = (file, isMentor) => {
-  let mentorOrMentee = "mentors";
+export const adminUploadEmails = (file, password) => {
+  /*let mentorOrMentee = "mentors";
   if (!isMentor) {
     mentorOrMentee = "mentees";
-  }
-  const requestExtension = "/upload/" + mentorOrMentee;
+  }*/
+  const requestExtension = "/upload/mentors"// + mentorOrMentee;
   let formData = new FormData();
   formData.append("fileupload", file);
+  formData.append("pass", password);
   return instance.post(requestExtension, formData).then(
     (response) => response,
     (err) => {

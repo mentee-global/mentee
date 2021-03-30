@@ -44,22 +44,29 @@ def upload_mentor_emails():
 
     f = request.files["fileupload"]
 
+    print("asdf")
+    password = request.form["pass"]
+    print("fdsa")
+    print(password)
+    #password = "asdfajskldf;jawefo;ijawef"
+
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
         for line in reader:
-            email = VerifiedEmail(email=line[0], is_mentor=True, password="")
+            email = VerifiedEmail(email=line[0], is_mentor=True, password=password)
             email.save()
 
     return create_response(status=200, message="success")
 
 
 @admin.route("/upload/mentees", methods=["GET", "POST"])
-def upload_mentee_emails(password):
+def upload_mentee_emails():
     if request.method == "GET":
         uploads = VerifiedEmail.objects().get(is_mentor=False)
         return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
+    
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")

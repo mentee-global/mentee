@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Modal, Form, Button} from "antd";
+import { Modal, Form, Input, Button} from "antd";
 import { useDropzone } from "react-dropzone";
 import { adminUploadEmails } from "utils/api";
 import MenteeButton from "./MenteeButton";
@@ -10,41 +10,51 @@ import { FileSyncOutlined } from "@ant-design/icons";
 
 function UploadEmails(props) {
   function DragDrop(isMentor) {
+    const [editing, setEditing] = useState(true);
     const [password, setPassword] = useState("");
-    const [files, setFiles] = useState({});
+    const [files, setFiles] = useState([]);
 
     const onDrop = (acceptedFiles) => {
       setFiles(acceptedFiles);
     }
 
     const onFinish = useCallback((files, password) => {
-      async function uploadEmails(file, password) {
-        console.log(file);
+      async function uploadEmails(file) {
         await adminUploadEmails(file, password);
+        setEditing(false);
       }
       files.forEach((file) => {
-        uploadEmails(file, password);
+        uploadEmails(file);
       });
+      setEditing(false);
     }, []);
 
     const { getRootProps, getInputProps } = useDropzone({
       onDrop,
       accept: ".csv",
     });
+    const includePassword = (isMentor) => {
+      if (isMentor) {
+        return (
+          <Form.Item label="Password">
+            <Input name="inputtedPassword" type="text" onChange={(e) => {setPassword(e.target.value);}}/>
+          </Form.Item>
+        )
+      }
+    }
     //
     return (
       <div>
-        <Form onFinish={onFinish}>
-          <div {...getRootProps()}>
-            <p>Drag 'n' drop some files here, or click to select files</p>
-            <em>(Only *.csv files will be accepted)</em>
-            <input {...getInputProps()} />
-          </div>
+        <Form onFinish={() => onFinish(files, password)} initialValues={{inputtedPassword: ""}}>
+          <Form.Item>
+            <div {...getRootProps()}>
+              <p>Drag 'n' drop some files here, or click to select files</p>
+              <em>(Only *.csv files will be accepted)</em>
+              <input {...getInputProps()} />
+            </div>
+          </Form.Item>
           <Form.Item label="Password">
-            <ModalInput 
-              type="text"  
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <Input name="inputtedPassword" type="text" onChange={(e) => {setPassword(e.target.value);}}/>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

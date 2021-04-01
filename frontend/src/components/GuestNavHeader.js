@@ -15,7 +15,7 @@ import MenteeLogoSmall from "../resources/menteeSmall.png";
 
 const { Header } = Layout;
 
-function MenteeNavHeader({ history }) {
+function GuestNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const { isAdmin, isMentor, isMentee } = useAuth();
 
@@ -63,6 +63,7 @@ function MenteeNavHeader({ history }) {
               </span>
             </>
           )}
+          {/* TODO: Update this since verification modal will not longer be needed anymore! */}
           <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}
@@ -76,6 +77,7 @@ function MenteeNavHeader({ history }) {
               }}
             />
           </span>
+          {/** TODO: Generalize this to be Login instead of just Mentor Login */}
           <span className="navigation-header-button">
             <MenteeButton
               width="100%"
@@ -93,4 +95,4 @@ function MenteeNavHeader({ history }) {
   );
 }
 
-export default withRouter(MenteeNavHeader);
+export default withRouter(GuestNavHeader);

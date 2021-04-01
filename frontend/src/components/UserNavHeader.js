@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
-import { logout, getMentorID } from "utils/auth.service";
+import { logout, getMentorID, getMenteeID } from "utils/auth.service";
 import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
+import useAuth from "utils/useAuth";
 
 import "./css/Navigation.scss";
 
@@ -13,21 +14,23 @@ import MenteeLogoSmall from "../resources/menteeSmall.png";
 
 const { Header } = Layout;
 
-function MentorNavHeader() {
+function UserNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const history = useHistory();
+  const { isMentor } = useAuth();
 
-  const [mentor, setMentor] = useState();
+  const [user, setUser] = useState();
 
   useEffect(() => {
-    async function getMentor() {
-      const mentorID = await getMentorID();
-      const mentorData = await fetchMentorByID(mentorID);
-      if (mentorData) {
-        setMentor(mentorData);
+    async function getUser() {
+      // TODO: Change this to getMenteeID once implemented
+      const userID = isMentor ? await getMentorID() : await getMentorID();
+      const userData = await fetchMentorByID(userID);
+      if (userData) {
+        setUser(userData);
       }
     }
-    getMentor();
+    getUser();
   }, []);
 
   const dropdownMenu = (
@@ -62,17 +65,17 @@ function MentorNavHeader() {
             <CaretDownOutlined />
           </Dropdown>
         </div>
-        {mentor && (
+        {user && (
           <>
             <div className="profile-name">
-              <b>{mentor.name}</b>
+              <b>{user.name}</b>
               <br />
-              {mentor.professional_title}
+              {user.professional_title}
             </div>
             <div className="profile-picture">
               <Avatar
                 size={40}
-                src={mentor.image && mentor.image.url}
+                src={user.image && user.image.url}
                 icon={<UserOutlined />}
               />
             </div>
@@ -83,4 +86,4 @@ function MentorNavHeader() {
   );
 }
 
-export default MentorNavHeader;
+export default UserNavHeader;

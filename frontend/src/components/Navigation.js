@@ -4,8 +4,8 @@ import { Layout } from "antd";
 import { isLoggedIn } from "utils/auth.service";
 import useAuth from "utils/useAuth";
 
-import MentorNavHeader from "./MentorNavHeader";
-import MenteeNavHeader from "./MenteeNavHeader";
+import UserNavHeader from "./UserNavHeader";
+import GuestNavHeader from "./GuestNavHeader";
 import AdminNavHeader from "./AdminNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
 import AdminSidebar from "./AdminSidebar";
@@ -16,7 +16,7 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-  const { isAdmin } = useAuth();
+  const { isAdmin, isMentor, isMentee } = useAuth();
 
   useEffect(() => {
     if (props.needsAuth && !isLoggedIn()) {
@@ -31,10 +31,10 @@ function Navigation(props) {
           isAdmin ? (
             <AdminNavHeader />
           ) : (
-            <MentorNavHeader />
+            <UserNavHeader />
           )
         ) : (
-          <MenteeNavHeader />
+          <GuestNavHeader />
         )}
         {props.needsAuth ? (
           <Layout>

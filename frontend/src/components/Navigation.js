@@ -40,10 +40,12 @@ function Navigation(props) {
         {props.needsAuth ? (
           <Layout>
             {isAdmin ? (
-              <AdminSidebar />
+              <AdminSidebar selectedPage={props.page} />
             ) : isMentor ? (
               <MentorSidebar selectedPage={props.page} />
-            ): <MenteeSideBar/> }
+            ) : (
+              <MenteeSideBar selectedPage={props.page} />
+            )}
             <Content className="navigation-content">{props.content}</Content>
           </Layout>
         ) : (

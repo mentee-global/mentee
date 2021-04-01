@@ -7,8 +7,9 @@ import useAuth from "utils/useAuth";
 import UserNavHeader from "./UserNavHeader";
 import GuestNavHeader from "./GuestNavHeader";
 import AdminNavHeader from "./AdminNavHeader";
-import NavigationSidebar from "./NavigationSidebar";
+import MentorSidebar from "./MentorSidebar";
 import AdminSidebar from "./AdminSidebar";
+import MenteeSideBar from "./MenteeSidebar";
 
 import "./css/Navigation.scss";
 
@@ -40,9 +41,9 @@ function Navigation(props) {
           <Layout>
             {isAdmin ? (
               <AdminSidebar />
-            ) : (
-              <NavigationSidebar selectedPage={props.page} />
-            )}
+            ) : isMentor ? (
+              <MentorSidebar selectedPage={props.page} />
+            ): <MenteeSideBar/> }
             <Content className="navigation-content">{props.content}</Content>
           </Layout>
         ) : (

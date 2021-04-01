@@ -1,6 +1,6 @@
 import React from 'react'
 
-function MenteeSiderbar() {
+function MenteeSideBar() {
     return (
         <div>
             
@@ -8,4 +8,4 @@ function MenteeSiderbar() {
     )
 }
 
-export default MenteeSiderbar
+export default MenteeSideBar

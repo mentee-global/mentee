@@ -127,12 +127,6 @@ function App() {
           <Navigation content={<NotFound />} needsAuth={false} />
         )}
       />
-      <Route
-        path="/not-found"
-        component={() => (
-          <Navigation content={<NotFound />} needsAuth={false} />
-        )}
-      />
     </Router>
   );
 }

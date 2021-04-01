@@ -44,6 +44,9 @@ function MenteeNavHeader({ history }) {
                       pathname: "/not-found",
                     });
                   }}
+                  // onClick={() => {
+                  //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
+                  // }}
                 />
               </span>
               <span className="navigation-header-button">

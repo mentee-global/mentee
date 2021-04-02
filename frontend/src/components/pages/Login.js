@@ -7,6 +7,8 @@ import {
   login,
   refreshToken,
   isUserAdmin,
+  isUserMentee,
+  isUserMentor,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
@@ -14,6 +16,8 @@ import "../css/Home.scss";
 import "../css/Login.scss";
 import Logo from "../../resources/logo.png";
 import firebase from "firebase";
+import usePersistedState from "utils/hooks/usePersistedState";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 const INCORRECT_NAME_PASSWORD_ERROR_MSG =
   "Incorrect username and/or password. Please try again.";
@@ -33,6 +37,10 @@ function Login() {
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
   const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
+  const [permissions, setPermissions] = usePersistedState(
+    "permissions",
+    ACCOUNT_TYPE.MENTOR
+  );
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
@@ -41,10 +49,12 @@ function Login() {
   }
 
   const redirectToAppointments = useCallback(() => {
+    setPermissions(ACCOUNT_TYPE.MENTOR);
     history.push("appointments");
   }, [history]);
 
   const redirectToAdminPortal = useCallback(() => {
+    setPermissions(ACCOUNT_TYPE.ADMIN);
     history.push("account-data");
   }, [history]);
 

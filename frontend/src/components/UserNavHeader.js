@@ -5,7 +5,7 @@ import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
-import useAuth from "utils/useAuth";
+import useAuth from "utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
 

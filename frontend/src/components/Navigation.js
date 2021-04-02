@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
 import { isLoggedIn } from "utils/auth.service";
-import useAuth from "utils/useAuth";
+import usePersistedState from "utils/hooks/usePersistedState";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 import UserNavHeader from "./UserNavHeader";
 import GuestNavHeader from "./GuestNavHeader";
@@ -17,7 +18,10 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const [permissions, setPermissions] = usePersistedState(
+    "permissions",
+    ACCOUNT_TYPE.MENTOR
+  );
 
   useEffect(() => {
     if (props.needsAuth && !isLoggedIn()) {
@@ -29,7 +33,7 @@ function Navigation(props) {
     <div>
       <Layout className="navigation-layout">
         {props.needsAuth ? (
-          isAdmin ? (
+          permissions.isAdmin ? (
             <AdminNavHeader />
           ) : (
             <UserNavHeader />
@@ -39,9 +43,10 @@ function Navigation(props) {
         )}
         {props.needsAuth ? (
           <Layout>
-            {isAdmin ? (
+            {console.log(permissions)}
+            {permissions === ACCOUNT_TYPE.ADMIN ? (
               <AdminSidebar selectedPage={props.page} />
-            ) : isMentor ? (
+            ) : permissions === ACCOUNT_TYPE.MENTOR ? (
               <MentorSidebar selectedPage={props.page} />
             ) : (
               <MenteeSideBar selectedPage={props.page} />

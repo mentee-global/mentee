@@ -44,12 +44,7 @@ def upload_mentor_emails():
 
     f = request.files["fileupload"]
     password = request.form["pass"]
-    isMentor = request.form["mentorOrMentee"]
-    if isMentor == "true":
-        isMentor = True
-    else:
-        isMentor = False
-        print("YAMNT")
+    isMentor = request.form['mentorOrMentee'] == 'true'
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")

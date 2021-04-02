@@ -15,7 +15,7 @@ class Message(Document, Mixin):
     recipient_id = ReferenceField("Users", required=True)
     email = StringField()
     link = StringField()
-    time = DateTimeField(reqruied=True)
+    time = DateTimeField(required=True)
     # read = BooleanField(required=True)
 
     def __repr__(self):

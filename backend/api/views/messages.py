@@ -9,72 +9,21 @@ from datetime import datetime
 
 messages = Blueprint("messages", __name__)
 
-
-@messages.route("/all", methods=["GET"])
-def get_all_messages():
+@messages.route("/", methods=["GET"])
+def get_messages():
     try:
-        messages = Message.objects()
+        params = {}
+        for arg in request.args:
+            params[arg] = request.args.get(arg)
+        messages = Message.objects(__raw__= params)
     except:
-        msg = "Failed to get messages"
+        msg = "Invalid parameters provided"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    return create_response(data={"Messages": messages}, status=200, message="Success")
-
-
-@messages.route("/<string:message_id>", methods=["GET"])
-def get_message(message_id):
-    try:
-        message = Message.objects.get(id=message_id)
-    except:
-        msg = "Failed to get message"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    return create_response(data={"Message": message}, status=200, message="Success")
-
-
-@messages.route("/from=<string:sender_username>", methods=["GET"])
-def get_all_messages_from_user(sender_username):
-    try:
-        messages = Message.objects.get(user_name=sender_username)
-    except:
-        msg = "Failed to get messages"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    return create_response(data={"Messages": messages}, status=200, message="Success")
-
-
-@messages.route("/from_id=<string:sender_id>", methods=["GET"])
-def get_all_messages_from_user_id(sender_id):
-    try:
-        messages = Message.objects.get(user_id=sender_id)
-    except:
-        msg = "Failed to get messages"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    return create_response(data={"Messages": messages}, status=200, message="Success")
-
-
-@messages.route("/to=<string:recipient_username>", methods=["GET"])
-def get_all_messages_to_user(recipient_username):
-    try:
-        messages = Message.objects.get(recipient_name=recipient_username)
-    except:
-        msg = "Failed to get messages"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    return create_response(data={"Messages": messages}, status=200, message="Success")
-
-
-@messages.route("/to_id=<string:recipient_id>", methods=["GET"])
-def get_all_messages_to_user_id(recipient_id):
-    try:
-        messages = Message.objects.get(recipient_id=recipient_id)
-    except:
-        msg = "Failed to get messages"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    return create_response(data={"Messages": messages}, status=200, message="Success")
-
+    msg = "Success"
+    if not messages:
+        msg = "Messages could not be found with parameters provided"
+    return create_response(data={"Messages": messages}, status=200, message=msg)
 
 @messages.route("/<string:message_id>", methods=["DELETE"])
 def delete_message(message_id):
@@ -95,8 +44,8 @@ def delete_message(message_id):
         return create_response(status=422, message=msg)
 
 
-@messages.route("/<string:message_id>/<field>:<value>", methods=["PUT"])
-def update_message(message_id, field, value):
+@messages.route("/<string:message_id>", methods=["PUT"])
+def update_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
     except:
@@ -104,7 +53,10 @@ def update_message(message_id, field, value):
         logger.info(msg)
         return create_response(status=422, message=msg)
     try:
-        message[field] = value
+        body = request.get_json()
+        print(body)
+        for field in body:
+            message[field] = body[value]
         message.save()
         return create_response(
             status=200,
@@ -124,17 +76,22 @@ def create_message():
 
     if is_invalid:
         return create_response(status=422, message=msg)
-    message = Message(
-        message=data.get("message"),
-        user_name=data.get("user_name"),
-        user_id=data.get("user_id"),
-        recipient_name=data.get("recipient_name"),
-        recipient_id=data.get("recipient_id"),
-        email=data.get("email"),
-        link=data.get("link"),
-        time=datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z"),
-        # read=data.get("read"),
-    )
+    try:
+        message = Message(
+            message=data.get("message"),
+            user_name=data.get("user_name"),
+            user_id=data.get("user_id"),
+            recipient_name=data.get("recipient_name"),
+            recipient_id=data.get("recipient_id"),
+            email=data.get("email"),
+            link=data.get("link"),
+            time=datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z"),
+            # read=data.get("read"),
+        )
+    except:
+        msg = "Invalid parameter provided"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
     try:
         message.save()
     except:

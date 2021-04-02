@@ -30,7 +30,7 @@ function Sidebar({ subMenus, pages, selectedPage }) {
       <Menu
         theme="light"
         mode="inline"
-        style={{ marginTop: "20%" }}
+        style={{ marginTop: "25%" }}
         defaultOpenKeys={subMenus}
       >
         {Object.keys(pages).map((page) => {

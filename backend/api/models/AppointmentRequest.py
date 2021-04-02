@@ -9,23 +9,25 @@ class AppointmentRequest(Document, Mixin):
     """Appointment Request Collection."""
 
     mentor_id = ObjectIdField(required=True)
+    mentee_id = ObjectIdField(required=True)
     timeslot = EmbeddedDocumentField(Availability, required=True)
     accepted = BooleanField(required=True)
-    name = StringField(required=True)
-    email = StringField(required=True)
+    name = StringField()
+    email = StringField()
     phone_number = StringField()
-    languages = ListField(StringField(), required=True)
-    age = StringField(required=True)
-    gender = StringField(required=True)
+    languages = ListField(StringField())
+    age = StringField()
+    gender = StringField()
     location = StringField()
     specialist_categories = ListField(StringField(), required=True)
     message = StringField()
-    organization = StringField(required=True)
-    allow_texts = BooleanField(required=True)
-    allow_calls = BooleanField(required=True)
+    organization = StringField()
+    allow_texts = BooleanField()
+    allow_calls = BooleanField()
 
     def __repr__(self):
         return f"""<AppointmentRequest mentor_id: {self.mentor_id}
+                \n mentee_id: {self.mentee_id}
                 \n timeslot: {self.timeslot}
                 \n accepted: {self.accepted}
                 \n name: {self.name}

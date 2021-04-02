@@ -230,3 +230,10 @@ def get_appointments():
     return create_response(
         data={"appointments": res_appts}, status=200, message="Success"
     )
+
+
+# TODO: Create the script here so that admin can call/we can call it ourselves
+# This might even be temporary too!
+@appointment.route("/convert-all", methods=["PUT"])
+def convert_appointments():
+    return create_response(status=200, message="Hello Hello")

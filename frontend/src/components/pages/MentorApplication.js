@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Steps, message, Form, Input, Radio, Row, Col} from 'antd';
+import { Steps, message, Form, Input, Radio, Row, Col,Checkbox} from 'antd';
 import MenteeButton from "../MenteeButton";
 import ModalInput from "../ModalInput";
 
 function MentorApplication() { 
     const { Step } = Steps;
+    const { TextArea } = Input;
+    const onChange = e => {
+        console.log('radio checked', e.target.value);
+        setValue(e.target.value);
+      };
+      const [value, setValue] = useState(1);
     const steps = [
         {
           title: 'Personal Information',
@@ -42,7 +48,7 @@ function MentorApplication() {
             <div className="flex flex-row">
               <div className="page-one-column-container">
                 <div className="page-one-header">
-                  Personal Information
+                  <h1>Personal Information</h1>
                 </div>
                 <Form>
                 <Form.Item
@@ -53,9 +59,10 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  <ModalInput
+                  *First Name"
+                  <Input
                     type="text"
-                    title="*First Name"
+                    placeholder="*First Name"
                   />
                 </Form.Item>
                 <Form.Item
@@ -66,9 +73,9 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  <ModalInput
-                    type="text"
-                    title="*Last Name*"
+                  *Last Name*
+                  <Input
+                    placeholder="*Last Name*"
                   />
                 </Form.Item>
                 <Form.Item
@@ -79,9 +86,10 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  <ModalInput
+                  *Cell Phone Number*
+                  <Input
                     type="text"
-                    title="*Cell Phone Number*"
+                    placeholder="*Cell Phone Number*"
                   />
                 </Form.Item>
                 <Form.Item
@@ -92,9 +100,10 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  <ModalInput
+                  Business Number
+                  <Input
                     type="text"
-                    title="Business Number"
+                    placeholder="Business Number"
                   />
                 </Form.Item>
                 <Form.Item
@@ -105,9 +114,10 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  <ModalInput
+                  *Email
+                  <Input
                     type="text"
-                    title="*Email"
+                    placeholder="*Email"
                   />
                 </Form.Item>
                 <Form.Item
@@ -118,9 +128,10 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  <ModalInput
+                  *From whom or where did you hear about us?
+                  <Input
                     type="text"
-                    title="*From whom or where did you hear about us?"
+                    placeholder="*From whom or where did you hear about us?"
                   />
                 </Form.Item>
                 <Form.Item
@@ -131,9 +142,11 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  <ModalInput
-                    type="text"
-                    title="*Please share why you would like to becoome apart of our MENTEE Mentor Specialist team?"
+                  <div className="why-mentee-question">
+                  *Please share why you would like to becoome apart of our MENTEE Mentor Specialist team?
+                  </div>
+                  <TextArea autoSize
+                    placeholder="*Please share why you would like to becoome apart of our MENTEE Mentor Specialist team?"
                     style={{ overflow: "hidden" }}
                   />
                 </Form.Item>
@@ -143,6 +156,8 @@ function MentorApplication() {
               </div>
         )
     }
+
+
 
     function pageTwo() {
         return (
@@ -163,8 +178,29 @@ function MentorApplication() {
                 a donation for one year?*</p4>
                 <div className="donation-answer-choices">
                 <Form layout="inline">
-       
-            </Form>
+                <Form.Item
+                  name="why-mentee"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                    <Radio.Group onChange={onChange} value={value}>
+                        <Radio value={1}>Yes, I can offer a donation now to help suppourt this work! (https://www.menteteglobal.org/donate)</Radio>
+                        <Radio value={2}>No, unfortunately I cannot offer a donation nowm but please ask me again.</Radio>
+                        <Radio value={3}>I'm unable to offer a donation.</Radio>
+                </Radio.Group>
+                </Form.Item>
+                </Form>
+                </div>
+                <div className="mentoring-options-question">
+                    *Please choose the option(s) that is right for you
+                    <div className="mentoring-options-answers">
+                      <Checkbox.Group
+                        
+                      />
+                    </div>
                 </div>
             </div>
             </div>

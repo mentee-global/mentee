@@ -112,9 +112,7 @@ function ModalInput(props) {
             onChange={handleOnChange}
             value={props.value}
             defaultValue={defaultValue}
-          >
-         
-          </Select>
+          ></Select>
         );
       case "dropdown-multiple":
         return (
@@ -130,9 +128,7 @@ function ModalInput(props) {
             value={props.value}
             tokenSeparators={[","]}
             defaultValue={defaultValue}
-          >
-            
-          </Select>
+          ></Select>
         );
       case "textarea":
         return (

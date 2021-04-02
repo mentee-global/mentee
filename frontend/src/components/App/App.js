@@ -65,7 +65,9 @@ function App() {
       <Route
         path="/application-page"
         exact
-        component={() => <Navigation content={<MentorApplication />} needsAuth={false} />}
+        component={() => (
+          <Navigation content={<MentorApplication />} needsAuth={false} />
+        )}
       />
       <Route
         path="/gallery/:id"

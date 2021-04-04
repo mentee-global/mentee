@@ -27,15 +27,45 @@ def get_requests_by_id(account_type, id):
         elif account_type == Account.Mentee:
             account = MenteeProfile.objects.get(id=id)
     except:
-        msg = "No mentor found with that id"
+        msg = "No account found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
     # Includes mentor name because appointments page does not fetch all mentor info
-    if account_type == Account.Mentee:
-        by_email = AppointmentRequest.objects(email=account.email)
-        by_id = AppointmentRequest.objects(mentee_id=id)
-    return create_response(data={"mentor_name": account.name, "requests": requests})
+    if account_type == Account.MENTEE:
+        by_email = AppointmentRequest.filter(mentee_id__not__exists=True).objects(
+            email=account.email
+        )
+        for appointment in by_email:
+            try:
+                mentee = MenteeProfile.objects.get(email=appointment.email)
+            except:
+                msg = "Could not find Mentee with that email"
+                logger.info(msg)
+                continue
+            appointment.mentee_id = mentee.id
+            appointment.save()
+    elif account_type == Account.MENTOR:
+        not_verified = AppointmentRequest.filter(mentee_id__not__exists=True).objects(
+            mentor_id=account.id
+        )
+        for appointment in not_verified:
+            try:
+                mentee = MenteeProfile.objects.get(email=appointment.email)
+            except:
+                msg = "Could not find Mentee with that email"
+                logger.info(msg)
+                continue
+            appointment.mentee_id = mentee.id
+            appointment.save()
+
+    res = None
+    if account_type == Account.MENTEE:
+        res = AppointmentRequest.objects(mentee_id=id)
+    elif account_type == Account.MENTOR:
+        res = AppointmentRequest.objects(mentor_id=id)
+    # TODO: Change the frontend field to name instead of mentor_name
+    return create_response(data={"name": account.name, "requests": res})
 
 
 # POST request for Mentee Appointment

@@ -53,6 +53,7 @@ function Appointments() {
         ACCOUNT_TYPE.MENTOR
       );
       const formattedAppointments = formatAppointments(appointmentsResponse);
+      console.log(formattedAppointments);
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
       }
@@ -237,7 +238,7 @@ function Appointments() {
         <Col span={18} className="appointments-column">
           <div className="appointments-welcome-box">
             <div className="appointments-welcome-text">
-              Welcome, {appointments.mentor_name}
+              Welcome, {appointments.name}
             </div>
             <div className="appointments-tabs">
               {Object.values(Tabs).map((tab, index) => (

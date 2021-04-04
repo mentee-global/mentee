@@ -6,7 +6,7 @@ export const formatAppointments = (data) => {
   }
 
   const output = {
-    mentor_name: data.mentor_name,
+    name: data.name,
     upcoming: [],
     pending: [],
     past: [],

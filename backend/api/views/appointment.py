@@ -31,7 +31,7 @@ def get_requests_by_id(account_type, id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # Includes mentor name because appointments page does not fetch all mentor info
+    # Update appointment requests that don't have a mentee id
     if account_type == Account.MENTEE:
         by_email = AppointmentRequest.objects(email=account.email).filter(
             mentee_id__not__exists=True
@@ -49,7 +49,6 @@ def get_requests_by_id(account_type, id):
         not_verified = AppointmentRequest.objects(mentor_id=account.id).filter(
             mentee_id__not__exists=True
         )
-        logger.info(not_verified)
         for appointment in not_verified:
             try:
                 mentee = MenteeProfile.objects.get(email=appointment.email)
@@ -60,12 +59,14 @@ def get_requests_by_id(account_type, id):
             appointment.mentee_id = mentee.id
             appointment.save()
 
+    # Fetch appointments by respective mentee/mentor id
     res = None
     if account_type == Account.MENTEE:
         res = AppointmentRequest.objects(mentee_id=id)
     elif account_type == Account.MENTOR:
         res = AppointmentRequest.objects(mentor_id=id)
-    # TODO: Change the frontend field to name instead of mentor_name
+
+    # Includes mentor name because appointments page does not fetch all mentor info
     return create_response(data={"name": account.name, "requests": res})
 
 

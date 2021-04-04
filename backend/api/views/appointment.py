@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from api.models import AppointmentRequest, Availability, MentorProfile
+from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     ApppointmentForm,
@@ -12,23 +12,30 @@ from api.utils.constants import (
     MENTOR_APPT_TEMPLATE,
     MENTEE_APPT_TEMPLATE,
     APPT_TIME_FORMAT,
+    Account,
 )
 
 appointment = Blueprint("appointment", __name__)
 
 # GET request for appointments by mentor id
-@appointment.route("/mentor/<string:mentor_id>", methods=["GET"])
-def get_requests_by_mentor(mentor_id):
+@appointment.route("/<int:account_type>/<string:mentor_id>", methods=["GET"])
+def get_requests_by_id(account_type, id):
+    account = None
     try:
-        mentor = MentorProfile.objects.get(id=mentor_id)
+        if account_type == Account.MENTOR:
+            account = MentorProfile.objects.get(id=id)
+        elif account_type == Account.Mentee:
+            account = MenteeProfile.objects.get(id=id)
     except:
         msg = "No mentor found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
     # Includes mentor name because appointments page does not fetch all mentor info
-    requests = AppointmentRequest.objects(mentor_id=mentor_id)
-    return create_response(data={"mentor_name": mentor.name, "requests": requests})
+    if account_type == Account.Mentee:
+        by_email = AppointmentRequest.objects(email=account.email)
+        by_id = AppointmentRequest.objects(mentee_id=id)
+    return create_response(data={"mentor_name": account.name, "requests": requests})
 
 
 # POST request for Mentee Appointment
@@ -230,10 +237,3 @@ def get_appointments():
     return create_response(
         data={"appointments": res_appts}, status=200, message="Success"
     )
-
-
-# TODO: Create the script here so that admin can call/we can call it ourselves
-# This might even be temporary too!
-@appointment.route("/convert-all", methods=["PUT"])
-def convert_appointments():
-    return create_response(status=200, message="Hello Hello")

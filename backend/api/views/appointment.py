@@ -18,7 +18,7 @@ from api.utils.constants import (
 appointment = Blueprint("appointment", __name__)
 
 # GET request for appointments by mentor id
-@appointment.route("/<int:account_type>/<string:mentor_id>", methods=["GET"])
+@appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
 def get_requests_by_id(account_type, id):
     account = None
     try:
@@ -33,8 +33,8 @@ def get_requests_by_id(account_type, id):
 
     # Includes mentor name because appointments page does not fetch all mentor info
     if account_type == Account.MENTEE:
-        by_email = AppointmentRequest.filter(mentee_id__not__exists=True).objects(
-            email=account.email
+        by_email = AppointmentRequest.objects(email=account.email).filter(
+            mentee_id__not__exists=True
         )
         for appointment in by_email:
             try:
@@ -46,9 +46,10 @@ def get_requests_by_id(account_type, id):
             appointment.mentee_id = mentee.id
             appointment.save()
     elif account_type == Account.MENTOR:
-        not_verified = AppointmentRequest.filter(mentee_id__not__exists=True).objects(
-            mentor_id=account.id
+        not_verified = AppointmentRequest.objects(mentor_id=account.id).filter(
+            mentee_id__not__exists=True
         )
+        logger.info(not_verified)
         for appointment in not_verified:
             try:
                 mentee = MenteeProfile.objects.get(email=appointment.email)

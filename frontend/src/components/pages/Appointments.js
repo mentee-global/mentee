@@ -6,17 +6,18 @@ import {
   InfoCircleFilled,
   SmileOutlined,
 } from "@ant-design/icons";
-import "../css/Appointments.scss";
-import { formatAppointments } from "../../utils/dateFormatting";
-import AvailabilityCalendar from "../AvailabilityCalendar";
+import "components/css/Appointments.scss";
+import { formatAppointments } from "utils/dateFormatting";
+import AvailabilityCalendar from "components/AvailabilityCalendar";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
   deleteAppointment,
-} from "../../utils/api";
+} from "utils/api";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { getMentorID } from "utils/auth.service";
-import AppointmentInfo from "../AppointmentInfo";
-import MenteeButton from "../MenteeButton.js";
+import AppointmentInfo from "components/AppointmentInfo";
+import MenteeButton from "components/MenteeButton.js";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -47,7 +48,10 @@ function Appointments() {
   useEffect(() => {
     async function getAppointments() {
       const mentorID = await getMentorID();
-      const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
+      const appointmentsResponse = await getAppointmentsByMentorID(
+        mentorID,
+        ACCOUNT_TYPE.MENTOR
+      );
       const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {
         setAppointments(formattedAppointments);

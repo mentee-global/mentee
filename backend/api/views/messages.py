@@ -9,13 +9,11 @@ from datetime import datetime
 
 messages = Blueprint("messages", __name__)
 
+
 @messages.route("/", methods=["GET"])
 def get_messages():
     try:
-        params = {}
-        for arg in request.args:
-            params[arg] = request.args.get(arg)
-        messages = Message.objects(__raw__= params)
+        messages = Message.objects.filter(**request.args)
     except:
         msg = "Invalid parameters provided"
         logger.info(msg)
@@ -24,6 +22,7 @@ def get_messages():
     if not messages:
         msg = "Messages could not be found with parameters provided"
     return create_response(data={"Messages": messages}, status=200, message=msg)
+
 
 @messages.route("/<string:message_id>", methods=["DELETE"])
 def delete_message(message_id):
@@ -44,7 +43,7 @@ def delete_message(message_id):
         return create_response(status=422, message=msg)
 
 
-@messages.route("/<string:message_id>", methods=["PUT"]) #TODO:Make put request able to work with json
+@messages.route("/<string:message_id>", methods=["PUT"])
 def update_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -54,13 +53,12 @@ def update_message(message_id):
         return create_response(status=422, message=msg)
     try:
         body = request.get_json()
-        print(body)
         for field in body:
-            message[field] = body[value]
+            message[field] = body[field]
         message.save()
         return create_response(
             status=200,
-            message=f"message_id: {message_id} field: {field} updated with: {value}",
+            message=f"message_id: {message_id} field: {field} updated with: {body[field]}",
         )
     except:
         msg = "Failed to update message"

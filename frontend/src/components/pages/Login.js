@@ -137,7 +137,7 @@ function Login() {
           </div>
           <div className="login-register-container">
             <div>Forgot password?</div>
-            <NavLink to="/forgotPassword" className="login-register-link">
+            <NavLink to="/forgot-password" className="login-register-link">
               Reset it
             </NavLink>
           </div>

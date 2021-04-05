@@ -44,7 +44,7 @@ def delete_message(message_id):
         return create_response(status=422, message=msg)
 
 
-@messages.route("/<string:message_id>", methods=["PUT"])
+@messages.route("/<string:message_id>", methods=["PUT"]) #TODO:Make put request able to work with json
 def update_message(message_id):
     try:
         message = Message.objects.get(id=message_id)

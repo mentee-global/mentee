@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Steps, message, Form, Input, Radio, Row, Col,Checkbox} from 'antd';
+import { Steps, message, Form, Input, Radio, Row, Col, Checkbox} from 'antd';
 import MenteeButton from "../MenteeButton";
 import ModalInput from "../ModalInput";
 
 function MentorApplication() { 
     const { Step } = Steps;
     const { TextArea } = Input;
+    const plainOptions = ['I am able to mentor synchronously and asynchronously.', 
+    'I am able to mentor only asynchronously.', 
+    'I am able to post videos that mentor/teach skills in specific areas.'];
+
+    const workSectors = ['Architecture', 'Arts/Dance/Design/Music', 'Computer Science/Technology/IT',
+  'Education', 'Engineering', 'Finance', 'Government/Public Service', 'Healthcare','Human/Social Services',
+'Journalism','Law','Marketing','Media/Entertainment/Communications','Nonprofit/NGO','Retail','Sports/Recreation/Leisure'];
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue(e.target.value);
@@ -22,7 +29,7 @@ function MentorApplication() {
         },
         {
           title: 'Work Informatiom',
-          content: 'Last-content',
+          content: pageThree(),
         },
         {
             title: 'Specialization Information',
@@ -157,7 +164,9 @@ function MentorApplication() {
         )
     }
 
-
+    function onChangeCheck(checkedValues) {
+      console.log('checked = ', checkedValues);
+    }
 
     function pageTwo() {
         return (
@@ -165,7 +174,7 @@ function MentorApplication() {
         <div className="flex flex-row">
           <div className="page-two-column-container">
             <div className="page-two-header">
-              Commitments
+              <h2>Commitments</h2>
             </div>
             <div className="donation-question">
                 <p4>*As a MENTEE global mentor, you wll have your own profile page where
@@ -197,9 +206,38 @@ function MentorApplication() {
                 <div className="mentoring-options-question">
                     *Please choose the option(s) that is right for you
                     <div className="mentoring-options-answers">
-                      <Checkbox.Group
-                        
-                      />
+                    <Checkbox.Group options={plainOptions} defaultValue={['']} onChange={onChangeCheck}/>
+                    </div>
+                </div>
+                <div className="time-options-question">
+                  *Please choose the option(s) that is right for you  
+                  <div className="time-options-answers">
+                  <Radio.Group onChange={onChange} value={value}>
+                        <Radio value={1}>I can mentor several times a month.</Radio>
+                        <Radio value={2}>I can mentor 1-2 times a month.</Radio>
+                        <Radio value={3}>I can mentor several times a year.</Radio>
+                        <Radio value={4}>I can mentor a few times a year.</Radio>
+                        </Radio.Group>
+                    </div>
+                </div>
+
+                <div className="immigrant-family-question">
+                  *Are you an immigrant or refugee or do you come from an immigrant family or refugee family?
+                  <div className="immigrant-family-answers">
+                  <Radio.Group onChange={onChange} value={value}>
+                        <Radio value={1}>Yes</Radio>
+                        <Radio value={2}>No</Radio>
+                        </Radio.Group>
+                    </div>
+                </div>
+
+                <div className="immigrant-family-question">
+                  *If you are accepted as a Specialist, would you like to commit to...
+                  <div className="immigrant-family-answers">
+                  <Radio.Group onChange={onChange} value={value}>
+                        <Radio value={1}>One year with us</Radio>
+                        <Radio value={2}>Two years with us</Radio>
+                        </Radio.Group>
                     </div>
                 </div>
             </div>
@@ -208,6 +246,87 @@ function MentorApplication() {
           </div>
     )
     }
+
+
+    function pageThree() {
+      return (
+      <div className="page-two-containere">
+      <div className="flex flex-row">
+        <div className="page-two-column-container">
+          <div className="page-two-header">
+            <h2>Work Information </h2>
+          </div>
+          <div className="work-sectors-question">
+              *Which sector(s) do you work in? (Check all that apply)
+              <div className="work-sectors--answer-choices">
+              <Form layout="inline">
+              <Form.Item
+                name="work-sectors"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+              <Checkbox.Group options={workSectors} defaultValue={['']} onChange={onChangeCheck}/>
+              </Form.Item>
+              </Form>
+              </div>
+              <div className="role-description-question">
+                *Your full title and a brief description of your role.
+                  <div className="role-description-answers">
+                  <Form.Item
+                  name="role-description"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input
+                    type="text"
+                    placeholder="*Your full title and a brief description of your role."
+                  />
+                </Form.Item>
+                  </div>
+              </div>
+              <div className="employer-name-question">
+                  *Full name of your company/employer
+                  <div className="employer-name-answers">
+                  <Form.Item
+                  name="employer-name"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+    
+                  <Input
+                    type="text"
+                    placeholder="*Full name of your company/employer"
+                  />
+                </Form.Item>
+                  </div>
+              </div>
+              <div className="time-at-company-question">
+                  *Please choose the option(s) that is right for you  
+                  <div className="time-options-answers">
+                  <Radio.Group onChange={onChange} value={value}>
+                        <Radio value={1}>I can mentor several times a month.</Radio>
+                        <Radio value={2}>I can mentor 1-2 times a month.</Radio>
+                        <Radio value={3}>I can mentor several times a year.</Radio>
+                        <Radio value={4}>I can mentor a few times a year.</Radio>
+                        </Radio.Group>
+                    </div>
+                </div>
+         
+          </div>
+          </div>
+          </div>
+        </div>
+  )
+  }
     
     return (
         <>

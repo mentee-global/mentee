@@ -110,6 +110,9 @@ function MentorCard(props) {
           </h4>
         )}
         <hr className="gallery-solid-border" />
+        <div className="bookmark-button">
+          
+        </div>
         <NavLink to={"/gallery/" + props.id}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />

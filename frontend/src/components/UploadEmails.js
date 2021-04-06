@@ -1,12 +1,10 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { Modal, Form, Input, Button, message} from "antd";
+import React, { useCallback, useState } from "react";
+import { Modal, Form, Input, Button, message } from "antd";
 import { useDropzone } from "react-dropzone";
 import { adminUploadEmails } from "utils/api";
 import MenteeButton from "./MenteeButton";
-import ModalInput from "./ModalInput";
 
 import "./css/UploadEmails.scss";
-import { FileSyncOutlined } from "@ant-design/icons";
 
 function UploadEmails(props) {
   return (
@@ -31,7 +29,7 @@ function UploadEmails(props) {
         <div className="dragdrop">
           <h3>Add Mentees</h3>
           {DragDrop(false)}
-        </div>        
+        </div>
       </div>
     </Modal>
   );
@@ -45,9 +43,7 @@ function DragDrop(isMentor) {
     setFiles(acceptedFiles);
   };
 
-  const file_names = files.map(file => (
-    <li> {file.path} </li>
-  ));
+  const file_names = files.map((file) => <li> {file.path} </li>);
 
   const onFinish = useCallback((files, password, mentor) => {
     async function uploadEmails(file) {
@@ -62,10 +58,10 @@ function DragDrop(isMentor) {
   }, []);
 
   const success = () => {
-    message.success('This is a success message');
+    message.success("This is a success message");
   };
 
-  const {getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: ".csv",
   });

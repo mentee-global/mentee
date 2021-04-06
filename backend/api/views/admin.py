@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, flash
 from api.core import create_response, serialize_list, logger
 from api.models import db, MentorProfile, Users, VerifiedEmail
 import csv
@@ -51,7 +51,7 @@ def upload_mentor_emails():
         for line in reader:
             email = VerifiedEmail(email=line[0], is_mentor=isMentor, password=password)
             email.save()
-
+    #flash("Upload Successful!")
     return create_response(status=200, message="success")
 
 

@@ -53,6 +53,19 @@ function GuestNavHeader({ history }) {
                 <MenteeButton
                   width="100%"
                   theme="light"
+                  content={<b>{"Mentee Portal"}</b>}
+                  onClick={() => {
+                    history.push({
+                      // TODO: Change this to mentee login
+                      pathname: isMentee ? "/messages" : "/messages",
+                    });
+                  }}
+                />
+              </span>
+              <span className="navigation-header-button">
+                <MenteeButton
+                  width="100%"
+                  theme="light"
                   content={<b>{"Admin Portal"}</b>}
                   onClick={() => {
                     history.push({

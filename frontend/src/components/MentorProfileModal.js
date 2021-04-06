@@ -324,10 +324,13 @@ function MentorProfileModal(props) {
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      await editMentorProfile(data, getMentorID());
+      const mentorID = await getMentorID();
+      await editMentorProfile(data, mentorID);
+
       if (changedImage) {
-        await uploadMentorImage(image, getMentorID());
+        await uploadMentorImage(image, await getMentorID());
       }
+
       setSaving(false);
       setChangedImage(false);
       props.onSave();
@@ -397,6 +400,7 @@ function MentorProfileModal(props) {
             </Button>
           </div>
         }
+        className="modal-window"
       >
         <div className="modal-container">
           <div className="modal-profile-container">

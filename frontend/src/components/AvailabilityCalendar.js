@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
-import { Calendar, Modal, Badge, DatePicker } from "antd";
+import { Calendar, Modal, Badge, TimePicker } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import TextField from "@material-ui/core/TextField";
 import { Input } from "antd";
@@ -14,7 +14,6 @@ import { fetchAvailability, editAvailability } from "../utils/api";
  * Moment.js documentation: {@link https://momentjs.com/docs/}
  */
 function AvailabilityCalendar() {
-  const mentorID = getMentorID();
   const [saved, setSaved] = useState({}); //  Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
@@ -31,6 +30,7 @@ function AvailabilityCalendar() {
    */
   useEffect(() => {
     async function getSetDays() {
+      const mentorID = await getMentorID();
       const availability_data = await fetchAvailability(mentorID);
       const set = [];
       if (availability_data) {
@@ -57,6 +57,7 @@ function AvailabilityCalendar() {
    * Gets availability from backend and changes clientside timeslots
    */
   async function getAvailability() {
+    const mentorID = await getMentorID();
     const availability_data = await fetchAvailability(mentorID);
     if (availability_data) {
       const availability = availability_data.availability;
@@ -139,6 +140,7 @@ function AvailabilityCalendar() {
     );
 
     // Sends toSend to backend to update availability
+    const mentorID = await getMentorID();
     await editAvailability(toSend, mentorID);
 
     // Change trigger to update green dots on calendar
@@ -239,13 +241,17 @@ function AvailabilityCalendar() {
           {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">
-                <Input
-                  value={timeSlot[0][0].format("HH:mm")}
+                <TimePicker
+                  use12Hours
+                  format="h:mm A"
+                  value={moment(timeSlot[0][0], "HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
                 />
                 <h1 className="timeslot"> - </h1>
-                <Input
-                  value={timeSlot[0][1].format("HH:mm")}
+                <TimePicker
+                  use12Hours
+                  format="h:mm A"
+                  value={moment(timeSlot[0][1])}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
                 />
                 <CloseOutlined

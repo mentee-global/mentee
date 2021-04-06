@@ -26,6 +26,12 @@ export const ACCOUNT_TYPE = {
   MENTEE: 2,
 };
 
+export const APP_STATUS = {
+  PENDING: "Pending",
+  REVIEWED: "Reviewed",
+  REJECTED: "Rejected",
+  OFFER_MADE: "Offer Made",
+};
 export const LANGUAGES = [
   "Arabic",
   "Bengali",

@@ -1,14 +1,19 @@
 import pandas as pd
 import xlsxwriter
+from datetime import datetime
 from io import BytesIO
-from api.core import create_response
-from api.models import AppointmentRequest, Users, MentorProfile
+from api.core import create_response, logger
+from api.models import AppointmentRequest, Admin, MentorProfile
 from flask import send_file, Blueprint
+from api.utils.require_auth import admin_only
+from firebase_admin import auth as firebase_admin_auth
+from api.utils.constants import Account
 
 download = Blueprint("download", __name__)
 
 
 @download.route("/appointments/all", methods=["GET"])
+@admin_only
 def download_appointments():
     try:
         appointments = AppointmentRequest.objects()
@@ -22,11 +27,11 @@ def download_appointments():
         mentor = MentorProfile.objects(id=appt.mentor_id).first()
         appts.append(
             [
-                mentor.name,
-                mentor.email,
+                mentor.name if mentor else "Deleted Account",
+                mentor.email if mentor else "Deleted Account",
                 appt.timeslot.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
                 appt.timeslot.end_time.strftime("UTC: %m/%d/%Y, %H:%M:%S"),
-                int(appt.accepted) if apt.accepted != None else "N/A",
+                int(appt.accepted) if appt.accepted != None else "N/A",
                 appt.name,
                 appt.email,
                 appt.phone_number,
@@ -37,8 +42,8 @@ def download_appointments():
                 ",".join(appt.specialist_categories),
                 appt.message,
                 appt.organization,
-                int(appt.allow_calls) if apt.allow_calls != None else "N/A",
-                int(appt.allow_texts) if apt.allow_texts != None else "N/A",
+                int(appt.allow_calls) if appt.allow_calls != None else "N/A",
+                int(appt.allow_texts) if appt.allow_texts != None else "N/A",
             ]
         )
     columns = [
@@ -64,10 +69,13 @@ def download_appointments():
 
 
 @download.route("/accounts/all", methods=["GET"])
+@admin_only
 def download_accounts_info():
     try:
-        admin_ids = Users.objects(role="admin").scalar("id")
-        accounts = MentorProfile.objects(user_id__nin=admin_ids)
+        admins = Admin.objects()
+        admin_ids = [admin.firebase_uid for admin in admins]
+
+        accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
     except:
         msg = "Failed to get accounts"
         logger.info(msg)
@@ -95,6 +103,7 @@ def download_accounts_info():
                 acct.professional_title,
                 acct.linkedin,
                 acct.website,
+                "Yes" if acct.image and acct.image.url else "No",
                 acct.image.url if acct.image else "None",
                 "Yes" if len(acct.videos) >= 0 else "No",
                 "|".join(educations),
@@ -129,6 +138,7 @@ def download_accounts_info():
         "professional_title",
         "linkedin",
         "website",
+        "profile pic up",
         "image url",
         "video(s) up",
         "educations",

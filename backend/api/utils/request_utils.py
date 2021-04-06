@@ -39,7 +39,7 @@ class VideoForm(Form):
 
 
 class MentorForm(Form):
-    user_id = StringField(validators=[InputRequired()])
+    firebase_uid = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     professional_title = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
@@ -47,7 +47,7 @@ class MentorForm(Form):
 
 
 class MenteeForm(Form):
-    user_id = StringField(validators=[InputRequired()])
+    firebase_uid = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     age = StringField(validators=[InputRequired()])
     gender = StringField(validators=[InputRequired()])

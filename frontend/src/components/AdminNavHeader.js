@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
-import { logout, getMentorID } from "utils/auth.service";
+import { logout, getMentorID, getAdminID } from "utils/auth.service";
 import { useMediaQuery } from "react-responsive";
-import { fetchMentorByID } from "utils/api";
+import { getAdmin } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 
@@ -13,31 +13,26 @@ import MenteeLogoSmall from "../resources/menteeSmall.png";
 
 const { Header } = Layout;
 
-function MentorNavHeader() {
+function AdminNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const history = useHistory();
 
-  const [mentor, setMentor] = useState();
+  const [admin, setAdmin] = useState();
 
   useEffect(() => {
-    async function getMentor() {
-      const mentorID = await getMentorID();
-      const mentorData = await fetchMentorByID(mentorID);
-      if (mentorData) {
-        setMentor(mentorData);
+    async function fetchData() {
+      const adminId = await getAdminID();
+      const admin = await getAdmin(adminId);
+
+      if (admin) {
+        setAdmin(admin);
       }
     }
-    getMentor();
+    fetchData();
   }, []);
 
   const dropdownMenu = (
     <Menu className="dropdown-menu">
-      <Menu.Item key="edit-profile">
-        <NavLink to="/profile">
-          <b>Edit Profile</b>
-        </NavLink>
-      </Menu.Item>
-      <Menu.Divider />
       <Menu.Item
         key="sign-out"
         onClick={() => logout().then(() => history.push("/"))}
@@ -49,32 +44,25 @@ function MentorNavHeader() {
 
   return (
     <Header className="navigation-header">
-      <NavLink to="/">
-        <img
-          src={isMobile ? MenteeLogoSmall : MenteeLogo}
-          alt="Mentee"
-          className="mentee-logo"
-        />
-      </NavLink>
+      <div>
+        <NavLink to="/">
+          <img
+            src={isMobile ? MenteeLogoSmall : MenteeLogo}
+            alt="Mentee"
+            className="mentee-logo"
+          />
+        </NavLink>
+      </div>
       <span>
         <div className="profile-caret">
           <Dropdown overlay={dropdownMenu} trigger={["click"]}>
             <CaretDownOutlined />
           </Dropdown>
         </div>
-        {mentor && (
+        {admin && (
           <>
             <div className="profile-name">
-              <b>{mentor.name}</b>
-              <br />
-              {mentor.professional_title}
-            </div>
-            <div className="profile-picture">
-              <Avatar
-                size={40}
-                src={mentor.image && mentor.image.url}
-                icon={<UserOutlined />}
-              />
+              <b>{admin.name}</b>
             </div>
           </>
         )}
@@ -83,4 +71,4 @@ function MentorNavHeader() {
   );
 }
 
-export default MentorNavHeader;
+export default AdminNavHeader;

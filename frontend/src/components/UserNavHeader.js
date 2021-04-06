@@ -6,6 +6,8 @@ import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
+import usePersistedState from "utils/hooks/usePersistedState";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 import "./css/Navigation.scss";
 
@@ -20,6 +22,10 @@ function UserNavHeader() {
   const { isMentor } = useAuth();
 
   const [user, setUser] = useState();
+  const [permissions, setPermissions] = usePersistedState(
+    "permissions",
+    ACCOUNT_TYPE.GUEST
+  );
 
   useEffect(() => {
     async function getUser() {
@@ -43,7 +49,12 @@ function UserNavHeader() {
       <Menu.Divider />
       <Menu.Item
         key="sign-out"
-        onClick={() => logout().then(() => history.push("/"))}
+        onClick={() =>
+          logout().then(() => {
+            setPermissions(ACCOUNT_TYPE.GUEST);
+            history.push("/");
+          })
+        }
       >
         <b>Sign Out</b>
       </Menu.Item>

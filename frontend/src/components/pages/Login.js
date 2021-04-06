@@ -39,7 +39,7 @@ function Login() {
   const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
   const [permissions, setPermissions] = usePersistedState(
     "permissions",
-    ACCOUNT_TYPE.MENTOR
+    ACCOUNT_TYPE.GUEST
   );
 
   function handleInputFocus(index) {

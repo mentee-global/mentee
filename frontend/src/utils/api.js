@@ -245,6 +245,26 @@ export const deleteMentorById = (id) => {
   );
 };
 
+export const updateApplicationById = async (data, id) => {
+  const requestExtension = `/application/${id}`;
+  return await authPut(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getApplicationById = async (id) => {
+  const requestExtension = `/application/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.mentor_application,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const adminUploadEmails = (file, password, isMentor) => {
   const requestExtension = "/upload/mentors";
   let formData = new FormData();

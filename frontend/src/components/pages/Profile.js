@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button } from "antd";
-import { getMentorID } from "utils/auth.service";
+import { getMentorID, getIdTokenResult } from "utils/auth.service";
+import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
 import { fetchMentorByID, editMentorProfile } from "utils/api";
+import firebase from 'firebase';
 
 function Profile() {
   const history = useHistory();
@@ -15,10 +17,16 @@ function Profile() {
   const [onEdit, setEditing] = useState(false);
   const [editedMentor, setEditedMentor] = useState(false);
   const [form] = Form.useForm();
+  const { role } = useAuth();
 
   useEffect(() => {
-    fetchMentor();
-  }, []);
+    // console.log("here");
+    // onAuthUpdate.then((idTokenResult) => {
+    //   if (!idTokenResult) return;
+    console.log(role);
+      fetchMentor();
+    // });
+  }, [role]);
 
   useEffect(() => {
     fetchMentor();
@@ -26,7 +34,10 @@ function Profile() {
 
   const fetchMentor = async () => {
     const mentorID = await getMentorID();
+    console.log(mentorID);
     const mentorData = await fetchMentorByID(mentorID);
+
+    console.log(mentorData);
     if (mentorData) {
       setMentor(mentorData);
     }

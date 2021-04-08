@@ -16,12 +16,17 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-  const { isAdmin } = useAuth();
+  const { isAdmin, onAuthUpdate } = useAuth();
 
   useEffect(() => {
-    if (props.needsAuth && !isLoggedIn()) {
-      history.push("/login");
-    }
+    onAuthUpdate.then((idTokenResult) => {
+      if (!idTokenResult && props.needsAuth) {
+        history.push("/login");
+      }
+    });
+    // if (props.needsAuth && !isLoggedIn()) {
+    //   history.push("/login");
+    // }
   }, [history, props.needsAuth]);
 
   return (

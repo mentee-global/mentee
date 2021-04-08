@@ -78,6 +78,17 @@ export const logout = async () =>
       return false;
     });
 
+const authWrapper = async (func) => {
+  if (isLoggedIn()) return await func();
+
+  let result = null;
+  const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+    unsubscribe();
+    result = await getIdTokenResult().then(func);
+  });
+  return result;
+};
+
 export const refreshToken = async () => {
   // need initial token from registration
   if (isLoggedIn()) {
@@ -130,11 +141,17 @@ export const getRole = async () => {
 };
 
 export const getMentorID = async () => {
-  if (isLoggedIn()) {
+  let result = null;
+
+  await authWrapper(async () => {
     return await getIdTokenResult().then((idTokenResult) => {
       return idTokenResult.claims.mentorId;
     });
-  } else return false;
+  });
+
+  console.log('getMentorID', result)
+
+  return result;
 };
 
 export const getAdminID = async () => {

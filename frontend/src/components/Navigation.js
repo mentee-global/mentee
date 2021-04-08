@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
 import { isLoggedIn } from "utils/auth.service";
-import useAuth from "utils/useAuth";
+import useAuth from "utils/hooks/useAuth";
 
 import MentorNavHeader from "./MentorNavHeader";
 import MenteeNavHeader from "./MenteeNavHeader";

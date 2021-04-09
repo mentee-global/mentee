@@ -275,7 +275,7 @@ export const adminUploadEmails = (file, password, isMentor) => {
   } else {
     formData.append("mentorOrMentee", "false");
   }
-  return instance.post(requestExtension, formData).then(
+  return authPost(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);

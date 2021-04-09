@@ -22,6 +22,12 @@ const RESET_PASSWORD_ERROR_MSG =
 const SERVER_ERROR_MSG = "Something went wrong.";
 const RECREATE_ACCOUNT_ERROR_MSG = "Please re-register your account.";
 
+/**
+ * TODO:
+ * - Create main page for logins
+ *  3 main button components for types of login - pass on props to specify the selected signin and callbacks
+ */
+
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();

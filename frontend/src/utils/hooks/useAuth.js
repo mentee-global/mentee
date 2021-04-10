@@ -3,12 +3,23 @@ import firebase from "firebase";
 import { getIdTokenResult } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
 
+const onAuthStateChanged = (f) => {
+  const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    if (!user) return;
+
+    f(user);
+    unsubscribe();
+  });
+};
+
 const useAuth = () => {
-  // reduce number of state variables
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isMentor, setIsMentor] = useState(false);
-  const [isMentee, setIsMentee] = useState(false);
-  const [role, setRole] = useState(ACCOUNT_TYPE.MENTOR);
+  const [roleState, setRoleState] = useState({
+    role: null,
+    isAdmin: false,
+    isMentor: false,
+    isMentee: false,
+  });
+
   const [profileId, setProfileId] = useState();
   const [onAuthUpdate, setOnAuthUpdate] = useState(
     new Promise((resolve) => resolve)
@@ -21,13 +32,15 @@ const useAuth = () => {
 
       await getIdTokenResult()
         .then((idTokenResult) => {
-          const {role, profileId} = idTokenResult.claims;
-          
+          const { role, profileId } = idTokenResult.claims;
+
           setProfileId(profileId);
-          setRole(role);
-          setIsAdmin(role === ACCOUNT_TYPE.ADMIN);
-          setIsMentor(role === ACCOUNT_TYPE.MENTOR);
-          setIsMentee(role === ACCOUNT_TYPE.MENTEE);
+          setRoleState({
+            role,
+            isAdmin: role === ACCOUNT_TYPE.ADMIN,
+            isMentor: role === ACCOUNT_TYPE.MENTOR,
+            isMentee: role === ACCOUNT_TYPE.MENTEE,
+          });
 
           Promise.resolve(idTokenResult).then(onAuthUpdate);
         })
@@ -35,7 +48,14 @@ const useAuth = () => {
     });
   }, []);
 
-  return { isAdmin, isMentor, isMentee, onAuthUpdate, role };
+  return {
+    role: roleState.role,
+    isAdmin: roleState.isAdmin,
+    isMentor: roleState.isMentor,
+    isMentee: roleState.isMentee,
+    onAuthUpdate,
+    onAuthStateChanged,
+  };
 };
 
 export default useAuth;

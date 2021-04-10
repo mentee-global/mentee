@@ -103,7 +103,7 @@ function Login() {
               onClick={async () => {
                 setLoggingIn(true);
                 const res = await login(email, password, ACCOUNT_TYPE.MENTOR);
-                console.log('res', res)
+
                 if (!res || !res.success) {
                   setErrorMessage(INCORRECT_NAME_PASSWORD_ERROR_MSG);
                   setError(true);

@@ -5,6 +5,7 @@ import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
+import useAuth from "utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
 
@@ -16,6 +17,7 @@ const { Header } = Layout;
 function MentorNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const history = useHistory();
+  const {onAuthStateChanged} = useAuth();
 
   const [mentor, setMentor] = useState();
 
@@ -27,7 +29,8 @@ function MentorNavHeader() {
         setMentor(mentorData);
       }
     }
-    getMentor();
+    
+    onAuthStateChanged(getMentor);
   }, []);
 
   const dropdownMenu = (

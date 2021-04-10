@@ -9,6 +9,7 @@ import MenteeNavHeader from "./MenteeNavHeader";
 import AdminNavHeader from "./AdminNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
 import AdminSidebar from "./AdminSidebar";
+import firebase from "firebase";
 
 import "./css/Navigation.scss";
 

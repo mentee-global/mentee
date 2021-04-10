@@ -9,7 +9,6 @@ import ProfileContent from "../ProfileContent";
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
 import { fetchMentorByID, editMentorProfile } from "utils/api";
-import firebase from 'firebase';
 
 function Profile() {
   const history = useHistory();
@@ -17,16 +16,11 @@ function Profile() {
   const [onEdit, setEditing] = useState(false);
   const [editedMentor, setEditedMentor] = useState(false);
   const [form] = Form.useForm();
-  const { role } = useAuth();
+  const {onAuthStateChanged} = useAuth();
 
   useEffect(() => {
-    // console.log("here");
-    // onAuthUpdate.then((idTokenResult) => {
-    //   if (!idTokenResult) return;
-    console.log(role);
-      fetchMentor();
-    // });
-  }, [role]);
+    onAuthStateChanged(fetchMentor);
+  }, []);
 
   useEffect(() => {
     fetchMentor();

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile, Admin
+from api.models import db, Users, MentorProfile, Admin, MenteeProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import (
     AUTH_URL,
@@ -14,6 +14,7 @@ from api.utils.constants import (
 )
 from api.utils.request_utils import send_email
 from api.utils.firebase import client as firebase_client
+from api.utils.profile_parse import new_profile
 import requests
 import pyrebase
 import os
@@ -29,7 +30,8 @@ def verify_email():
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_admin_auth.generate_email_verification_link(email)
+        verification_link = firebase_admin_auth.generate_email_verification_link(
+            email)
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)
@@ -52,7 +54,7 @@ def verify_email():
     return create_response(message="Sent verification link to email")
 
 
-def create_firebase_user(email, password, role):
+def create_firebase_user(email, password):
     firebase_user = None
     error_http_response = None
 
@@ -62,8 +64,6 @@ def create_firebase_user(email, password, role):
             email_verified=False,
             password=password,
         )
-
-        firebase_admin_auth.set_custom_user_claims(firebase_user.uid, {"role": role})
     except ValueError:
         msg = "Invalid input"
         logger.info(msg)
@@ -89,15 +89,17 @@ def register():
         role = Account.ADMIN.value
         admin_user = Admin.objects.get(email=email)
     elif role == Account.ADMIN:
-        msg = "Blocked attempt to create admin account"
+        msg = "Email is not whitelisted as Admin"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    firebase_user, error_http_response = create_firebase_user(email, password, role)
+    firebase_user, error_http_response = create_firebase_user(
+        email, password, role)
 
     if error_http_response:
         return error_http_response
 
+    # account created
     firebase_uid = firebase_user.uid
 
     if admin_user:
@@ -114,13 +116,17 @@ def register():
     )
 
 
-@auth.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+def get_profile_model(role):
+    if role == Account.MENTOR:
+        return MentorProfile
+    elif role == Account.MENTEE:
+        return MenteeProfile
+    elif role == Account.ADMIN:
+        return Admin
+
+
+def attempt_login(email, password, role):
     firebase_user = None
-    user = None
 
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
@@ -129,24 +135,17 @@ def login():
     except Exception as e:
         if Users.objects(email=email):
             user = Users.objects.get(email=email)
+            profile = get_profile_model(role).objects(email=email)
 
-            if not MentorProfile.objects(email=email):
+            if not profile:
                 # delete account
                 # user.delete()
                 return create_response(data={"recreateAccount": True})
 
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
-            role = None
-            if user.role == MENTOR_ROLE:
-                role = Account.MENTOR
-            elif user.role == MENTEE_ROLE:
-                role = Account.MENTEE
-            elif user.role == ADMIN_ROLE:
-                role = Account.ADMIN
-
             firebase_user, error_http_response = create_firebase_user(
-                email, None, role.value
+                email, None
             )
 
             if error_http_response:
@@ -171,54 +170,50 @@ def login():
             logger.info(msg)
             return create_response(status=422, message=msg)
 
+    return firebase_user
+
+
+@auth.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    role = data.get('role')
+    firebase_user = attempt_login(email, password, role)
+
     firebase_uid = firebase_user["localId"]
-    firebase_user_admin = firebase_admin_auth.get_user(firebase_uid)
-    role = firebase_user_admin.custom_claims.get("role")
-
-    if role == Account.ADMIN:
-        try:
-            admin = Admin.objects.get(email=email)
-
-            if not admin.firebase_uid:
-                admin.firebase_uid = firebase_uid
-                admin.save()
-
-            return create_response(
-                message="Logged in",
-                data={
-                    "token": firebase_admin_auth.create_custom_token(
-                        firebase_uid, {"role": role, "adminId": str(admin.id)}
-                    ).decode("utf-8")
-                },
-            )
-        except:
-            msg = "Account not found in Admin collection"
-            logger.info(msg)
-            return create_response(status=422, message=msg)
+    profile_model = get_profile_model(role)
+    profile_id = None
 
     try:
-        if MentorProfile.objects(email=email):
-            mentor = MentorProfile.objects.get(email=email)
-            mentor_id = mentor.id
+        profile = profile_model.objects.get(email=email)
+        profile_id = str(profile.id)
 
-            if not mentor.firebase_uid:
-                mentor.firebase_uid = firebase_uid
-                mentor.save()
-        else:
-            # delete account
-            firebase_admin_auth.delete_user(firebase_uid)
-            return create_response(data={"recreateAccount": True})
+        if not profile.firebase_uid or profile.firebase_uid != firebase_uid:
+            profile.firebase_uid = firebase_uid
+            profile.save()
+        # elif profile.firebase_uid != firebase_uid:
+        #     # error? possible reasons for this may include exiting a registration flow early
+        #     pass
     except:
-        msg = "Couldn't find mentor with these credentials"
+        if role != Account.ADMIN:
+            # user failed to create profile during registration phase
+            # in future, maybe create a profile when /register is posted and
+            # keep within a limbo state until user fills out object
+            firebase_admin_auth.delete_user(firebase_uid)
+            msg = 'User failed to create profile, must recreate account'
+            return create_response(message=msg, data={"recreateAccount": True})
+
+        msg = "Couldn't find profile with these credentials"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
     return create_response(
         message="Logged in",
         data={
-            "mentorId": str(mentor_id),
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": role, "mentorId": str(mentor_id)}
+                firebase_uid, {"role": role,
+                               "profileId": profile_id}
             ).decode("utf-8"),
         },
     )
@@ -258,7 +253,8 @@ def forgot_password():
     error = send_forgot_password_email(email)
 
     return (
-        error and error or create_response(message="Sent password reset link to email")
+        error and error or create_response(
+            message="Sent password reset link to email")
     )
 
 
@@ -269,37 +265,24 @@ def refresh_token():
 
     claims = firebase_admin_auth.verify_id_token(token)
     firebase_uid = claims.get("uid")
+    role = claims.get('role')
 
-    if Admin.objects(firebase_uid=firebase_uid):
-        admin = Admin.objects.get(firebase_uid=firebase_uid)
+    profile_model = get_profile_model(role)
+    profile_id = None
 
-        return create_response(
-            status=200,
-            data={
-                "token": firebase_admin_auth.create_custom_token(
-                    firebase_uid, {"role": claims.get("role"), "adminId": str(admin.id)}
-                ).decode("utf-8"),
-            },
-        )
-
-    if MentorProfile.objects(firebase_uid=firebase_uid):
-        mentor = MentorProfile.objects.get(firebase_uid=firebase_uid)
-
-        return create_response(
-            status=200,
-            data={
-                "token": firebase_admin_auth.create_custom_token(
-                    firebase_uid,
-                    {"role": claims.get("role"), "mentorId": str(mentor.id)},
-                ).decode("utf-8"),
-            },
-        )
+    try:
+        profile = profile_model.get(firebase_uid=firebase_uid)
+        profile_id = str(profile.id)
+    except:
+        msg = 'Could not find Mentor profile'
+        logger.info(msg)
+        return create_response(status=422, message=msg)
 
     return create_response(
         status=200,
         data={
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": claims.get("role")}
+                firebase_uid, {"role": role, "profileId": profile_id}
             ).decode("utf-8"),
         },
     )

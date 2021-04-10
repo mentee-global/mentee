@@ -51,10 +51,11 @@ export const sendPasswordResetEmail = (email) => {
   return post("/forgotPassword", { email });
 };
 
-export const login = async (email, password) =>
+export const login = async (email, password, role) =>
   await post("/login", {
     email: email && email.trim(),
     password: password && password.trim(),
+    role
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
       await firebase
@@ -144,12 +145,10 @@ export const getMentorID = async () => {
   let result = null;
 
   await authWrapper(async () => {
-    return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.mentorId;
+    result = await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.profileId;
     });
   });
-
-  console.log('getMentorID', result)
 
   return result;
 };
@@ -157,7 +156,7 @@ export const getMentorID = async () => {
 export const getAdminID = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.adminId;
+      return idTokenResult.claims.profileId;
     });
   } else return false;
 };

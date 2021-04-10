@@ -4,11 +4,12 @@ import { getIdTokenResult } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 const useAuth = () => {
+  // reduce number of state variables
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMentor, setIsMentor] = useState(false);
   const [isMentee, setIsMentee] = useState(false);
   const [role, setRole] = useState(ACCOUNT_TYPE.MENTOR);
-  const [claims, setClaims] = useState({});
+  const [profileId, setProfileId] = useState();
   const [onAuthUpdate, setOnAuthUpdate] = useState(
     new Promise((resolve) => resolve)
   );
@@ -16,16 +17,19 @@ const useAuth = () => {
   // setup listener
   useEffect(() => {
     firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) return;
+
       await getIdTokenResult()
         .then((idTokenResult) => {
-          Promise.resolve(idTokenResult).then(onAuthUpdate);
-          setClaims(idTokenResult.claims);
-
-          const role = idTokenResult.claims.role;
+          const {role, profileId} = idTokenResult.claims;
+          
+          setProfileId(profileId);
           setRole(role);
           setIsAdmin(role === ACCOUNT_TYPE.ADMIN);
           setIsMentor(role === ACCOUNT_TYPE.MENTOR);
           setIsMentee(role === ACCOUNT_TYPE.MENTEE);
+
+          Promise.resolve(idTokenResult).then(onAuthUpdate);
         })
         .catch(() => Promise.resolve(null).then(onAuthUpdate));
     });

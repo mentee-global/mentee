@@ -10,10 +10,13 @@ import {
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import "../css/Home.scss";
-import "../css/Login.scss";
 import Logo from "../../resources/logo.png";
 import firebase from "firebase";
+import {ACCOUNT_TYPE} from 'utils/consts'
+
+import "../css/Home.scss";
+import "../css/Login.scss";
+
 
 const INCORRECT_NAME_PASSWORD_ERROR_MSG =
   "Incorrect username and/or password. Please try again.";
@@ -99,8 +102,8 @@ function Login() {
               loading={loggingIn}
               onClick={async () => {
                 setLoggingIn(true);
-                const res = await login(email, password);
-
+                const res = await login(email, password, ACCOUNT_TYPE.MENTOR);
+                console.log('res', res)
                 if (!res || !res.success) {
                   setErrorMessage(INCORRECT_NAME_PASSWORD_ERROR_MSG);
                   setError(true);

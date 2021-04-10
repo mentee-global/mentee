@@ -4,6 +4,7 @@ import { Input } from "antd";
 import { isLoggedIn, login, isUserAdmin, logout } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import {ACCOUNT_TYPE} from 'utils/consts'
 import "../css/AdminLogin.scss";
 
 function AdminLogin(props) {
@@ -69,7 +70,7 @@ function AdminLogin(props) {
               // use this to connect auth
               onClick={async () => {
                 setLoggingIn(true);
-                const res = await login(email, password);
+                const res = await login(email, password, ACCOUNT_TYPE.ADMIN);
                 setError(!Boolean(res));
                 if (res && res.success) {
                   if (await isUserAdmin()) {

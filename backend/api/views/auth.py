@@ -125,7 +125,12 @@ def get_profile_model(role):
         return Admin
 
 
-def attempt_login(email, password, role):
+@auth.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    role = data.get('role')
     firebase_user = None
 
     try:
@@ -135,12 +140,6 @@ def attempt_login(email, password, role):
     except Exception as e:
         if Users.objects(email=email):
             user = Users.objects.get(email=email)
-            profile = get_profile_model(role).objects(email=email)
-
-            if not profile:
-                # delete account
-                # user.delete()
-                return create_response(data={"recreateAccount": True})
 
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
@@ -169,17 +168,6 @@ def attempt_login(email, password, role):
             msg = "Could not login"
             logger.info(msg)
             return create_response(status=422, message=msg)
-
-    return firebase_user
-
-
-@auth.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
-    role = data.get('role')
-    firebase_user = attempt_login(email, password, role)
 
     firebase_uid = firebase_user["localId"]
     firebase_admin_user = firebase_admin_auth.get_user(firebase_uid)

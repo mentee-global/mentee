@@ -1,10 +1,17 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import { Input } from "antd";
-import { isLoggedIn, login, isUserAdmin, logout } from "utils/auth.service";
+import {
+  isLoggedIn,
+  login,
+  isUserAdmin,
+  logout,
+  sendVerificationEmail,
+} from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import {ACCOUNT_TYPE} from 'utils/consts'
+import { ACCOUNT_TYPE, LOGIN_ERROR_MSGS } from "utils/consts";
+import useAuth from "utils/hooks/useAuth";
 import "../css/AdminLogin.scss";
 
 function AdminLogin(props) {
@@ -12,8 +19,12 @@ function AdminLogin(props) {
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(
+    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+  );
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
+  const { onAuthStateChanged } = useAuth();
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
@@ -27,7 +38,7 @@ function AdminLogin(props) {
           <h1 className="login-text">Sign In as an Administrator</h1>
           {error && (
             <div className="login-error">
-              Incorrect username and/or password. Please try again.
+              {errorMessage}
             </div>
           )}
           <div
@@ -71,15 +82,33 @@ function AdminLogin(props) {
               onClick={async () => {
                 setLoggingIn(true);
                 const res = await login(email, password, ACCOUNT_TYPE.ADMIN);
-                setError(!Boolean(res));
-                if (res && res.success) {
-                  if (await isUserAdmin()) {
-                    history.push("/account-data");
-                  } else {
-                    setError(true);
-                    await logout();
-                  }
+                console.log("admin", !res, !res.success);
+                if (!res || !res.success) {
+                  setErrorMessage(
+                    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+                  );
+                  setError(true);
+                } else if (res.result.passwordReset) {
+                  setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
+                  setError(true);
+                } else if (res.result.recreateAccount) {
+                  setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
+                  setError(true);
                 }
+
+                onAuthStateChanged(async (user) => {
+                  if (!user) return;
+
+                  // if (res.result.redirectToVerify) {
+                  //   await sendVerificationEmail(email);
+                  //   history.push("/verify");
+                  // } else {
+                  //   history.push("/account-data");
+                  // }
+
+                  history.push("/account-data");
+                });
+
                 setLoggingIn(false);
               }}
             />

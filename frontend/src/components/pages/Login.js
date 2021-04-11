@@ -13,17 +13,10 @@ import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import Logo from "../../resources/logo.png";
 import firebase from "firebase";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, LOGIN_ERROR_MSGS } from "utils/consts";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
-
-const INCORRECT_NAME_PASSWORD_ERROR_MSG =
-  "Incorrect username and/or password. Please try again.";
-const RESET_PASSWORD_ERROR_MSG =
-  "Please reset password. A link to reset your password has been sent to your email.";
-const SERVER_ERROR_MSG = "Something went wrong.";
-const RECREATE_ACCOUNT_ERROR_MSG = "Please re-register your account.";
 
 function Login() {
   const [email, setEmail] = useState();
@@ -31,7 +24,7 @@ function Login() {
   const [inputFocus, setInputFocus] = useState([false, false]);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(
-    INCORRECT_NAME_PASSWORD_ERROR_MSG
+    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
   );
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
@@ -103,20 +96,19 @@ function Login() {
               onClick={async () => {
                 setLoggingIn(true);
 
-                const rawRes = await login(
+                const res = await login(
                   email,
                   password,
                   ACCOUNT_TYPE.MENTOR
                 );
-                const result = rawRes.result;
-                if (!rawRes || !rawRes.success) {
-                  setErrorMessage(INCORRECT_NAME_PASSWORD_ERROR_MSG);
+                if (!res || !res.success) {
+                  setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
                   setError(true);
-                } else if (result.passwordReset) {
-                  setErrorMessage(RESET_PASSWORD_ERROR_MSG);
+                } else if (res.result.passwordReset) {
+                  setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
                   setError(true);
-                } else if (result.recreateAccount) {
-                  setErrorMessage(RECREATE_ACCOUNT_ERROR_MSG);
+                } else if (res.result.recreateAccount) {
+                  setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
                   setError(true);
                 }
 
@@ -126,10 +118,10 @@ function Login() {
                     unsubscribe();
                     if (!user) return;
 
-                    if (result.redirectToVerify) {
-                      // await sendVerificationEmail(email);
+                    if (res.result.redirectToVerify) {
+                      await sendVerificationEmail(email);
                       history.push("/verify");
-                    } else if (result.redirectToCreateProfile) {
+                    } else if (res.result.redirectToCreateProfile) {
                       history.push("/create-profile");
                     } else {
                       redirectToAppointments();

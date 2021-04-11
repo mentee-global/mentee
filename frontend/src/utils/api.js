@@ -178,7 +178,7 @@ export const editAvailability = (timeslots, id) => {
 
 export const fetchMentorsAppointments = () => {
   const requestExtension = "/appointment/mentors";
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);

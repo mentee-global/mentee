@@ -55,7 +55,7 @@ export const login = async (email, password, role) =>
   await post("/login", {
     email: email && email.trim(),
     password: password && password.trim(),
-    role
+    role,
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
       await firebase
@@ -79,16 +79,16 @@ export const logout = async () =>
       return false;
     });
 
-const authWrapper = async (func) => {
-  if (isLoggedIn()) return await func();
+// const authWrapper = async (func) => {
+//   if (isLoggedIn()) return await func();
 
-  let result = null;
-  const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-    unsubscribe();
-    result = await getIdTokenResult().then(func);
-  });
-  return result;
-};
+//   let result = null;
+//   const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+//     unsubscribe();
+//     result = await getIdTokenResult().then(func);
+//   });
+//   return result;
+// };
 
 export const refreshToken = async () => {
   // need initial token from registration
@@ -138,19 +138,17 @@ export const getRole = async () => {
     return await getIdTokenResult().then(
       (idTokenResult) => idTokenResult.claims.role
     );
-  } else return null;
+  }
 };
 
 export const getMentorID = async () => {
-  let result = null;
-
-  await authWrapper(async () => {
-    result = await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.profileId;
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      if (idTokenResult.claims.role == ACCOUNT_TYPE.MENTOR) {
+        return idTokenResult.claims.profileId;
+      }
     });
-  });
-
-  return result;
+  }
 };
 
 export const getAdminID = async () => {

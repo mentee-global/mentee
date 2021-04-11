@@ -5,8 +5,6 @@ import { ACCOUNT_TYPE } from "utils/consts";
 
 const onAuthStateChanged = (f) => {
   const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-    if (!user) return;
-
     f(user);
     unsubscribe();
   });
@@ -24,6 +22,15 @@ const useAuth = () => {
   const [onAuthUpdate, setOnAuthUpdate] = useState(
     new Promise((resolve) => resolve)
   );
+
+  const resetRoleState = () => {
+    setRoleState({
+      role: null,
+      isAdmin: false,
+      isMentor: false,
+      isMentee: false,
+    });
+  };
 
   // setup listener
   useEffect(() => {
@@ -53,6 +60,7 @@ const useAuth = () => {
     isAdmin: roleState.isAdmin,
     isMentor: roleState.isMentor,
     isMentee: roleState.isMentee,
+    resetRoleState,
     onAuthUpdate,
     onAuthStateChanged,
   };

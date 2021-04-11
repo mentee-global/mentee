@@ -17,7 +17,7 @@ const { Header } = Layout;
 function MentorNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const history = useHistory();
-  const {onAuthStateChanged} = useAuth();
+  const { onAuthStateChanged, resetRoleState } = useAuth();
 
   const [mentor, setMentor] = useState();
 
@@ -29,9 +29,16 @@ function MentorNavHeader() {
         setMentor(mentorData);
       }
     }
-    
+
     onAuthStateChanged(getMentor);
   }, []);
+
+  const logoutUser = () => {
+    logout().then(() => {
+      resetRoleState();
+      history.push("/");
+    });
+  };
 
   const dropdownMenu = (
     <Menu className="dropdown-menu">
@@ -43,7 +50,7 @@ function MentorNavHeader() {
       <Menu.Divider />
       <Menu.Item
         key="sign-out"
-        onClick={() => logout().then(() => history.push("/"))}
+        onClick={logoutUser}
       >
         <b>Sign Out</b>
       </Menu.Item>

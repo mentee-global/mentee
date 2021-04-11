@@ -16,6 +16,7 @@ def admin_only(fn):
             claims = firebase_admin_auth.verify_id_token(token)
             role = claims.get("role")
 
+
             if role == Account.ADMIN:
                 # TODO: inject new token/role in response
                 return fn(*args, **kwargs)

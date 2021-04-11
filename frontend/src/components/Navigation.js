@@ -17,11 +17,11 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-  const { isAdmin, onAuthUpdate } = useAuth();
+  const { isAdmin, onAuthUpdate, onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    onAuthUpdate.then((idTokenResult) => {
-      if (!idTokenResult && props.needsAuth) {
+    onAuthStateChanged((user) => {
+      if (!user && props.needsAuth) {
         history.push("/login");
       }
     });

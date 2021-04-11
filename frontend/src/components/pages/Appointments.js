@@ -55,6 +55,7 @@ function Appointments() {
         setAppointments(formattedAppointments);
       }
     }
+
     onAuthStateChanged(getAppointments);
   }, [appointmentClick]);
   async function handleAppointmentClick(id, didAccept) {

@@ -95,13 +95,6 @@ function AdminLogin(props) {
                 onAuthStateChanged(async (user) => {
                   if (!user) return;
 
-                  // if (res.result.redirectToVerify) {
-                  //   await sendVerificationEmail(email);
-                  //   history.push("/verify");
-                  // } else {
-                  //   history.push("/account-data");
-                  // }
-
                   history.push("/account-data");
                 });
 

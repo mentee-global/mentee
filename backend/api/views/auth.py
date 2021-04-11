@@ -177,9 +177,6 @@ def login():
         if not profile.firebase_uid or profile.firebase_uid != firebase_uid:
             profile.firebase_uid = firebase_uid
             profile.save()
-        # elif profile.firebase_uid != firebase_uid:
-        #     # error? possible reasons for this may include exiting a registration flow early
-        #     pass
     except:
         if role != Account.ADMIN:
             # user failed to create profile during registration phase

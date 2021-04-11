@@ -79,17 +79,6 @@ export const logout = async () =>
       return false;
     });
 
-// const authWrapper = async (func) => {
-//   if (isLoggedIn()) return await func();
-
-//   let result = null;
-//   const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-//     unsubscribe();
-//     result = await getIdTokenResult().then(func);
-//   });
-//   return result;
-// };
-
 export const refreshToken = async () => {
   // need initial token from registration
   if (isLoggedIn()) {

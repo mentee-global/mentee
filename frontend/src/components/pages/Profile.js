@@ -16,7 +16,7 @@ function Profile() {
   const [onEdit, setEditing] = useState(false);
   const [editedMentor, setEditedMentor] = useState(false);
   const [form] = Form.useForm();
-  const {onAuthStateChanged} = useAuth();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     onAuthStateChanged(fetchMentor);

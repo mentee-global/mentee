@@ -48,10 +48,7 @@ function MentorNavHeader() {
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item
-        key="sign-out"
-        onClick={logoutUser}
-      >
+      <Menu.Item key="sign-out" onClick={logoutUser}>
         <b>Sign Out</b>
       </Menu.Item>
     </Menu>

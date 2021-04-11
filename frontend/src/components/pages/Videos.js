@@ -8,7 +8,7 @@ import { getMentorID } from "utils/auth.service";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import { fetchMentorByID, editMentorProfile } from "utils/api";
-import useAuth from 'utils/hooks/useAuth'
+import useAuth from "utils/hooks/useAuth";
 import "../css/Videos.scss";
 
 function Videos() {
@@ -20,7 +20,7 @@ function Videos() {
   const [titleFilter, setTitleFilter] = useState("");
   const [mentorID, setMentorID] = useState("");
   const [form] = Form.useForm();
-  const {onAuthStateChanged} = useAuth();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getVideos() {

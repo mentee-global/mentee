@@ -26,7 +26,7 @@ import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import { PROFILE_URL } from "../../utils/consts";
 import UploadEmails from "../UploadEmails";
-import useAuth from 'utils/hooks/useAuth'
+import useAuth from "utils/hooks/useAuth";
 
 const { Column } = Table;
 
@@ -51,7 +51,7 @@ function AdminAccountData() {
   const [downloadFile, setDownloadFile] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {onAuthStateChanged} = useAuth();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getData() {
@@ -65,7 +65,7 @@ function AdminAccountData() {
       }
       setIsReloading(false);
     }
-    
+
     onAuthStateChanged(getData);
   }, [reload]);
 

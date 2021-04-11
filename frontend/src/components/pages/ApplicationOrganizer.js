@@ -5,12 +5,12 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { fetchApplications, updateApplicationById } from "../../utils/api";
 import MentorApplicationView from "../MentorApplicationView";
 import { APP_STATUS } from "../../utils/consts";
-import useAuth from 'utils/hooks/useAuth'
+import useAuth from "utils/hooks/useAuth";
 
 const { confirm } = Modal;
 
 function ApplicationOrganizer() {
-  const {onAuthStateChanged} = useAuth();
+  const { onAuthStateChanged } = useAuth();
   const [applicationData, setApplicationData] = useState([]);
   const [columns, setColumns] = useState({
     [1]: {

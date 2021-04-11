@@ -7,7 +7,7 @@ import {
   login,
   refreshToken,
   isUserAdmin,
-  sendVerificationEmail
+  sendVerificationEmail,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
@@ -96,13 +96,11 @@ function Login() {
               onClick={async () => {
                 setLoggingIn(true);
 
-                const res = await login(
-                  email,
-                  password,
-                  ACCOUNT_TYPE.MENTOR
-                );
+                const res = await login(email, password, ACCOUNT_TYPE.MENTOR);
                 if (!res || !res.success) {
-                  setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
+                  setErrorMessage(
+                    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+                  );
                   setError(true);
                 } else if (res.result.passwordReset) {
                   setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);

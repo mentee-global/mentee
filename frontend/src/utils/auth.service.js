@@ -94,9 +94,10 @@ export const refreshToken = async () => {
   // need initial token from registration
   if (isLoggedIn()) {
     return await getIdToken().then(async (idToken) => {
-      const token = await post("/refreshToken", { token: idToken, role: await getRole() }).then(
-        (data) => data && data.result.token
-      );
+      const token = await post("/refreshToken", {
+        token: idToken,
+        role: await getRole(),
+      }).then((data) => data && data.result.token);
 
       await firebase.auth().signInWithCustomToken(token);
 

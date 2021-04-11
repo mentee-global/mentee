@@ -36,11 +36,7 @@ function AdminLogin(props) {
       <div className="login-content">
         <div className="login-container">
           <h1 className="login-text">Sign In as an Administrator</h1>
-          {error && (
-            <div className="login-error">
-              {errorMessage}
-            </div>
-          )}
+          {error && <div className="login-error">{errorMessage}</div>}
           <div
             className={`login-input-container${
               inputFocus[0] ? "__clicked" : ""

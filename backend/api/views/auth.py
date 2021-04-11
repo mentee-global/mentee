@@ -30,8 +30,7 @@ def verify_email():
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_admin_auth.generate_email_verification_link(
-            email)
+        verification_link = firebase_admin_auth.generate_email_verification_link(email)
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)
@@ -93,8 +92,7 @@ def register():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    firebase_user, error_http_response = create_firebase_user(
-        email, password)
+    firebase_user, error_http_response = create_firebase_user(email, password)
 
     if error_http_response:
         return error_http_response
@@ -130,7 +128,7 @@ def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-    role = data.get('role')
+    role = data.get("role")
     firebase_user = None
 
     try:
@@ -143,9 +141,7 @@ def login():
 
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
-            firebase_user, error_http_response = create_firebase_user(
-                email, None
-            )
+            firebase_user, error_http_response = create_firebase_user(email, None)
 
             if error_http_response:
                 return error_http_response
@@ -208,8 +204,7 @@ def login():
         message="Logged in",
         data={
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": role,
-                               "profileId": profile_id}
+                firebase_uid, {"role": role, "profileId": profile_id}
             ).decode("utf-8"),
         },
     )
@@ -249,8 +244,7 @@ def forgot_password():
     error = send_forgot_password_email(email)
 
     return (
-        error and error or create_response(
-            message="Sent password reset link to email")
+        error and error or create_response(message="Sent password reset link to email")
     )
 
 
@@ -261,7 +255,7 @@ def refresh_token():
 
     claims = firebase_admin_auth.verify_id_token(token)
     firebase_uid = claims.get("uid")
-    role = claims.get('role')
+    role = claims.get("role")
 
     profile_model = get_profile_model(role)
     profile_id = None
@@ -270,7 +264,7 @@ def refresh_token():
         profile = profile_model.objects.get(firebase_uid=firebase_uid)
         profile_id = str(profile.id)
     except:
-        msg = 'Could not find profile'
+        msg = "Could not find profile"
         logger.info(msg)
         return create_response(status=422, message=msg)
 

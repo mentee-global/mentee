@@ -209,6 +209,7 @@ def get_mentors_appointments():
 
 
 @appointment.route("/", methods=["GET"])
+@admin_only
 def get_appointments():
     appointments = AppointmentRequest.objects()
     mentors = MentorProfile.objects().only("name", "id")

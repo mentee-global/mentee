@@ -86,6 +86,7 @@ def upload_mentee_emails():
 
 
 @admin.route("/admin/<id>", methods=["GET"])
+@admin_only
 def get_admin(id):
     try:
         admin = Admin.objects.get(id=id)

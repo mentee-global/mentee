@@ -188,7 +188,7 @@ export const fetchMentorsAppointments = () => {
 
 export const fetchAllAppointments = () => {
   const requestExtension = "/appointment/";
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -273,7 +273,7 @@ export const adminUploadEmails = (file, isMentor) => {
   const requestExtension = "/upload/" + mentorOrMentee;
   let formData = new FormData();
   formData.append("fileupload", file);
-  return instance.post(requestExtension, formData).then(
+  return authPost(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -283,7 +283,7 @@ export const adminUploadEmails = (file, isMentor) => {
 
 export const getAdmin = (id) => {
   const requestExtension = `/admin/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response && response.data.result.admin,
     (err) => console.error(err)
   );

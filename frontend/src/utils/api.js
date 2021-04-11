@@ -83,10 +83,10 @@ export const uploadAccountImage = (data, id, type) => {
   );
 };
 
-export const createAccountProfile = (profile, type) => {
+export const createAccountProfile = async (profile, type) => {
   profile["account_type"] = type;
   const requestExtension = `/account`;
-  return instance.post(requestExtension, profile).then(
+  return await instance.post(requestExtension, profile).then(
     (response) => response,
     (err) => {
       console.error(err);

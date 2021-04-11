@@ -182,6 +182,7 @@ def login():
     firebase_user = attempt_login(email, password, role)
 
     firebase_uid = firebase_user["localId"]
+    firebase_admin_user = firebase_admin_auth.get_user(firebase_uid)
     profile_model = get_profile_model(role)
     profile_id = None
 
@@ -198,11 +199,18 @@ def login():
     except:
         if role != Account.ADMIN:
             # user failed to create profile during registration phase
-            # in future, maybe create a profile when /register is posted and
-            # keep within a limbo state until user fills out object
-            firebase_admin_auth.delete_user(firebase_uid)
-            msg = 'User failed to create profile, must recreate account'
-            return create_response(message=msg, data={"recreateAccount": True})
+            # prompt frontend to return user to appropriate phase
+            return create_response(
+                message="Logged in",
+                data={
+                    "redirectToVerify": not firebase_admin_user.email_verified,
+                    "redirectToCreateProfile": True,
+                    "token": firebase_admin_auth.create_custom_token(
+                        firebase_uid, {"role": role}
+                    ).decode("utf-8"),
+                },
+            )
+            # pass
 
         msg = "Couldn't find profile with these credentials"
         logger.info(msg)
@@ -271,10 +279,10 @@ def refresh_token():
     profile_id = None
 
     try:
-        profile = profile_model.get(firebase_uid=firebase_uid)
+        profile = profile_model.objects.get(firebase_uid=firebase_uid)
         profile_id = str(profile.id)
     except:
-        msg = 'Could not find Mentor profile'
+        msg = 'Could not find profile'
         logger.info(msg)
         return create_response(status=422, message=msg)
 

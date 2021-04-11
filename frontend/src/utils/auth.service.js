@@ -94,7 +94,7 @@ export const refreshToken = async () => {
   // need initial token from registration
   if (isLoggedIn()) {
     return await getIdToken().then(async (idToken) => {
-      const token = await post("/refreshToken", { token: idToken }).then(
+      const token = await post("/refreshToken", { token: idToken, role: await getRole() }).then(
         (data) => data && data.result.token
       );
 
@@ -151,10 +151,22 @@ export const getMentorID = async () => {
   }
 };
 
+export const getMenteeID = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      if (idTokenResult.claims.role == ACCOUNT_TYPE.MENTEE) {
+        return idTokenResult.claims.profileId;
+      }
+    });
+  }
+};
+
 export const getAdminID = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.profileId;
+      if (idTokenResult.claims.role == ACCOUNT_TYPE.ADMIN) {
+        return idTokenResult.claims.profileId;
+      }
     });
   } else return false;
 };

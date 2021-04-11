@@ -7,16 +7,16 @@ import {
   login,
   refreshToken,
   isUserAdmin,
+  sendVerificationEmail
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import Logo from "../../resources/logo.png";
 import firebase from "firebase";
-import {ACCOUNT_TYPE} from 'utils/consts'
+import { ACCOUNT_TYPE } from "utils/consts";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
-
 
 const INCORRECT_NAME_PASSWORD_ERROR_MSG =
   "Incorrect username and/or password. Please try again.";
@@ -102,15 +102,20 @@ function Login() {
               loading={loggingIn}
               onClick={async () => {
                 setLoggingIn(true);
-                const res = await login(email, password, ACCOUNT_TYPE.MENTOR);
 
-                if (!res || !res.success) {
+                const rawRes = await login(
+                  email,
+                  password,
+                  ACCOUNT_TYPE.MENTOR
+                );
+                const result = rawRes.result;
+                if (!rawRes || !rawRes.success) {
                   setErrorMessage(INCORRECT_NAME_PASSWORD_ERROR_MSG);
                   setError(true);
-                } else if (res.result.passwordReset) {
+                } else if (result.passwordReset) {
                   setErrorMessage(RESET_PASSWORD_ERROR_MSG);
                   setError(true);
-                } else if (res.result.recreateAccount) {
+                } else if (result.recreateAccount) {
                   setErrorMessage(RECREATE_ACCOUNT_ERROR_MSG);
                   setError(true);
                 }
@@ -121,8 +126,11 @@ function Login() {
                     unsubscribe();
                     if (!user) return;
 
-                    if (await isUserAdmin()) {
-                      redirectToAdminPortal();
+                    if (result.redirectToVerify) {
+                      // await sendVerificationEmail(email);
+                      history.push("/verify");
+                    } else if (result.redirectToCreateProfile) {
+                      history.push("/create-profile");
                     } else {
                       redirectToAppointments();
                     }

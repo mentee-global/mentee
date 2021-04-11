@@ -25,26 +25,3 @@ def admin_only(fn):
             return create_response(status=401, message=msg)
 
     return wrapper
-
-
-def require_roles(fn, **rq_kwargs):
-    roles_required = rq_kwargs.get("roles", [role.value for role in Account])
-
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        headers = request.headers
-
-        try:
-            token = headers.get("Authorization")
-            claims = firebase_admin_auth.verify_id_token(token)
-            role = claims.get("role")
-
-            if role in roles_required or role == Account.ADMIN:
-                # TODO: inject new token/role in response
-                return fn(*args, **kwargs)
-        except:
-            msg = "Unauthorized"
-            logger.info(msg)
-            return create_response(status=401, message=msg)
-
-    return wrapper

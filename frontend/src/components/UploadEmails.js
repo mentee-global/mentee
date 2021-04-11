@@ -10,7 +10,6 @@ function UploadEmails(props) {
   function DragDrop(isMentor) {
     const onDrop = useCallback((acceptedFiles) => {
       async function uploadEmails(file, isMentor) {
-        console.log(file);
         await adminUploadEmails(file, isMentor);
       }
       acceptedFiles.forEach((file) => {

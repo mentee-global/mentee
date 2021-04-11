@@ -28,10 +28,8 @@ function Profile() {
 
   const fetchMentor = async () => {
     const mentorID = await getMentorID();
-    console.log(mentorID);
     const mentorData = await fetchMentorByID(mentorID);
 
-    console.log(mentorData);
     if (mentorData) {
       setMentor(mentorData);
     }

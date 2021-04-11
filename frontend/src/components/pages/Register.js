@@ -51,7 +51,6 @@ function Register({ history }) {
       const res = await register(email, password, ACCOUNT_TYPE.MENTOR);
       // sign in
       if (res && res.success) {
-        await refreshToken();
         await sendVerificationEmail(email);
         history.push("/verify");
       } else {

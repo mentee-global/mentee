@@ -94,7 +94,7 @@ def register():
         return create_response(status=422, message=msg)
 
     firebase_user, error_http_response = create_firebase_user(
-        email, password, role)
+        email, password)
 
     if error_http_response:
         return error_http_response

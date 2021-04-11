@@ -82,7 +82,7 @@ function AdminLogin(props) {
               onClick={async () => {
                 setLoggingIn(true);
                 const res = await login(email, password, ACCOUNT_TYPE.ADMIN);
-                console.log("admin", !res, !res.success);
+
                 if (!res || !res.success) {
                   setErrorMessage(
                     LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG

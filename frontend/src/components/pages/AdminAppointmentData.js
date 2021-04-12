@@ -11,6 +11,7 @@ import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
 import "../css/AdminAppointments.scss";
 import { SPECIALIZATIONS } from "utils/consts";
+import useAuth from "utils/hooks/useAuth";
 
 const keys = {
   ASCENDING: 0,
@@ -28,6 +29,8 @@ function AdminAppointmentData() {
   );
   const [downloadFile, setDownloadFile] = useState(null);
 
+  const { onAuthStateChanged } = useAuth();
+
   useEffect(() => {
     async function getAppointments() {
       setIsLoading(true);
@@ -40,7 +43,8 @@ function AdminAppointmentData() {
       }
       setIsLoading(false);
     }
-    getAppointments();
+
+    onAuthStateChanged(getAppointments);
   }, []);
 
   const handleSearchAppointment = (searchValue) => {

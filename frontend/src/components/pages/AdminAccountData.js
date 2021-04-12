@@ -26,6 +26,7 @@ import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import { PROFILE_URL } from "../../utils/consts";
 import UploadEmails from "../UploadEmails";
+import useAuth from "utils/hooks/useAuth";
 
 const { Column } = Table;
 
@@ -50,6 +51,8 @@ function AdminAccountData() {
   const [downloadFile, setDownloadFile] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
 
+  const { onAuthStateChanged } = useAuth();
+
   useEffect(() => {
     async function getData() {
       setIsReloading(true);
@@ -62,7 +65,8 @@ function AdminAccountData() {
       }
       setIsReloading(false);
     }
-    getData();
+
+    onAuthStateChanged(getData);
   }, [reload]);
 
   const handleDeleteAccount = async (mentorId, name) => {

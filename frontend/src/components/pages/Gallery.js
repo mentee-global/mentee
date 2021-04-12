@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchMentors } from "../../utils/api";
+import { fetchMenteeByID, fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
 import { Input, Checkbox, Modal, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -8,9 +8,13 @@ import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn } from "utils/auth.service";
 import { useLocation } from "react-router";
+import useAuth from "../utils/hooks/useAuth";
 
 function Gallery() {
+  const {isAdmin, isMentor, isMentee} = useAuth();
+  const currMenteeId = "" //TESTING PURPOSES ONLY. TODO: Need to replace this with firebase_uid so every user has their unique id we could use to fetch their account info
   const [mentors, setMentors] = useState([]);
+  const [mentee, setMentee] = useState();
   const [specializations, setSpecializations] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
@@ -25,8 +29,17 @@ function Gallery() {
         setMentors(mentor_data);
       }
     }
+    async function getMentee(id) {
+      const mentee_data = await fetchMenteeByID(id)
+      if(mentee_data) {
+        setMentee(mentee_data)
+      }
+    }
     if (verified) {
       getMentors();
+    }
+    if (isMentee) {
+      getMentee(currMenteeId);
     }
   }, [verified]);
 
@@ -40,6 +53,8 @@ function Gallery() {
     }
     return output;
   }
+
+  function onFavoriteClick(mentor)
 
   function getFilteredMentors() {
     return mentors.filter((mentor) => {
@@ -160,6 +175,7 @@ function Gallery() {
                 mentor.offers_group_appointments,
                 mentor.offers_in_person
               )}
+              favorite={} // TODO: check if mentor is in mentee's favorite mentors
               image={mentor.image}
             />
           ))}

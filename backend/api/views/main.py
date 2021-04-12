@@ -36,7 +36,6 @@ def get_accounts(account_type):
 
     return create_response(data={"accounts": accounts})
 
-
 # GET request for specific account based on id
 @main.route("/account/<string:id>", methods=["GET"])
 def get_account(id):

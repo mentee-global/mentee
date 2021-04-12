@@ -1,12 +1,13 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography } from "antd";
+import { Avatar, Typography, Button } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
   StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
+  HeartOutlined
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 
@@ -38,12 +39,23 @@ const styles = {
 };
 
 function MentorCard(props) {
+  const [favorite, setFavorite] = useState(props.favorite);
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;
     } else {
       return <img src={image} alt="" />;
     }
+  }
+
+  function onFavoriteClick() {
+    if(favorite) {
+      //unfavorite
+    } else {
+      //add to favorites
+      //TODO: Create endpoint for updating favorite_mentors list for MenteeProfile
+    }
+    setFavorite(!favorite);
   }
 
   return (
@@ -61,6 +73,9 @@ function MentorCard(props) {
             <Title style={styles.subTitle} type="secondary" level={5}>
               Speaks: {props.languages.join(", ")}
             </Title>
+          </div>
+          <div className="favorite-button">
+            <Button shape="circle" icon={<HeartOutlined></HeartOutlined>} style={{ border: 'none'}} onClick={onFavoriteClick}/>
           </div>
         </div>
         <h3 className="gallery-lesson-types">

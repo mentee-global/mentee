@@ -9,6 +9,7 @@ import MenteeNavHeader from "./MenteeNavHeader";
 import AdminNavHeader from "./AdminNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
 import AdminSidebar from "./AdminSidebar";
+import firebase from "firebase";
 
 import "./css/Navigation.scss";
 
@@ -16,12 +17,14 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-  const { isAdmin } = useAuth();
+  const { isAdmin, onAuthUpdate, onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    if (props.needsAuth && !isLoggedIn()) {
-      history.push("/login");
-    }
+    onAuthStateChanged((user) => {
+      if (!user && props.needsAuth) {
+        history.push("/login");
+      }
+    });
   }, [history, props.needsAuth]);
 
   return (

@@ -5,6 +5,7 @@ import { useMediaQuery } from "react-responsive";
 import { fetchMentorByID } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
+import useAuth from "utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
 
@@ -16,6 +17,7 @@ const { Header } = Layout;
 function MentorNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const history = useHistory();
+  const { onAuthStateChanged, resetRoleState } = useAuth();
 
   const [mentor, setMentor] = useState();
 
@@ -27,8 +29,16 @@ function MentorNavHeader() {
         setMentor(mentorData);
       }
     }
-    getMentor();
+
+    onAuthStateChanged(getMentor);
   }, []);
+
+  const logoutUser = () => {
+    logout().then(() => {
+      resetRoleState();
+      history.push("/");
+    });
+  };
 
   const dropdownMenu = (
     <Menu className="dropdown-menu">
@@ -38,10 +48,7 @@ function MentorNavHeader() {
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item
-        key="sign-out"
-        onClick={() => logout().then(() => history.push("/"))}
-      >
+      <Menu.Item key="sign-out" onClick={logoutUser}>
         <b>Sign Out</b>
       </Menu.Item>
     </Menu>

@@ -1,13 +1,18 @@
 from flask import Blueprint, request, jsonify
 from api.core import create_response, serialize_list, logger
-from api.models import db, MentorProfile, Users, VerifiedEmail
+from api.models import MentorProfile, Users, VerifiedEmail, Admin
+from api.utils.require_auth import admin_only
 import csv
 import io
+
 
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
 # DELETE request for specific mentor based on id
+
+
 @admin.route("/mentor/<string:mentor_id>", methods=["DELETE"])
+@admin_only
 def delete_mentor(mentor_id):
     try:
         mentor = MentorProfile.objects.get(id=mentor_id)
@@ -37,42 +42,32 @@ def delete_mentor(mentor_id):
 
 
 @admin.route("/upload/mentors", methods=["GET", "POST"])
+@admin_only
 def upload_mentor_emails():
     if request.method == "GET":
         uploads = VerifiedEmail.objects().get(is_mentor=True)
         return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
+    password = request.form["pass"]
+    isMentor = request.form["mentorOrMentee"] == "true"
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
         for line in reader:
-            email = VerifiedEmail(email=line[0], is_mentor=True, password="")
+            email = VerifiedEmail(email=line[0], is_mentor=isMentor, password=password)
             email.save()
-
     return create_response(status=200, message="success")
 
 
-@admin.route("/upload/mentees", methods=["GET", "POST"])
-def upload_mentee_emails():
-    if request.method == "GET":
-        uploads = VerifiedEmail.objects().get(is_mentor=False)
-        return create_response(data={"uploads": uploads})
+@admin.route("/admin/<id>", methods=["GET"])
+@admin_only
+def get_admin(id):
+    try:
+        admin = Admin.objects.get(id=id)
+    except:
+        msg = "Admin does not exist"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
 
-    f = request.files["fileupload"]
-
-    with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
-        reader = csv.reader(fstring, delimiter="\n")
-        is_email = True
-        address = None
-        password = None
-        for line in reader:
-            if is_email:
-                address = line[0]
-            else:
-                password = line[0]
-                email = VerifiedEmail(email=address, password=password, is_mentor=False)
-                email.save()
-            is_email = not is_email
-
-    return create_response(status=200, message="success")
+    return create_response(data={"admin": admin})

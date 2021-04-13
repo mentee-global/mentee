@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { useMediaQuery } from "react-responsive";
 import {
   UserOutlined,
   VideoCameraOutlined,
   CalendarOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
+import usePersistedState from "../utils/hooks/usePersistedState";
 
 import "./css/Navigation.scss";
 
@@ -34,7 +35,10 @@ const pages = {
 
 function NavigationSidebar(props) {
   const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
-  const [collapsed, setCollapsed] = useState(isMobile);
+  const [collapsed, setCollapsed] = usePersistedState(
+    "collapsedNavbar",
+    isMobile
+  );
   const getMenuItemStyle = (page) => {
     return props.selectedPage === page
       ? "navigation-menu-item-selected"

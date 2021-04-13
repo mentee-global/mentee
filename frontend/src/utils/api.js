@@ -1,9 +1,31 @@
 import axios from "axios";
 import { API_URL, ACCOUNT_TYPE } from "utils/consts";
+import { getUserIdToken } from "utils/auth.service";
 
 const instance = axios.create({
   baseURL: API_URL,
 });
+
+const authGet = async (url, config) =>
+  instance
+    .get(url, { ...config, headers: { Authorization: await getUserIdToken() } })
+    .catch(console.error);
+
+const authPost = async (url, data, config) =>
+  instance
+    .post(url, data, {
+      ...config,
+      headers: { Authorization: await getUserIdToken() },
+    })
+    .catch(console.error);
+
+const authPut = async (url, data, config) =>
+  instance
+    .put(url, data, {
+      ...config,
+      headers: { Authorization: await getUserIdToken() },
+    })
+    .catch(console.error);
 
 export const fetchAccountById = (id, type) => {
   if (!id) return;
@@ -61,10 +83,10 @@ export const uploadAccountImage = (data, id, type) => {
   );
 };
 
-export const createAccountProfile = (profile, type) => {
+export const createAccountProfile = async (profile, type) => {
   profile["account_type"] = type;
   const requestExtension = `/account`;
-  return instance.post(requestExtension, profile).then(
+  return await instance.post(requestExtension, profile).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -72,15 +94,26 @@ export const createAccountProfile = (profile, type) => {
   );
 };
 
-export const fetchApplications = () => {
+export const fetchApplications = async () => {
   const requestExtension = "/application/";
-  return instance.get(requestExtension).then(
-    (response) => response.data.result,
+  return await authGet(requestExtension).then(
+    (response) => response && response.data.result,
     (err) => {
       console.error(err);
     }
   );
 };
+
+export const createApplication = (application) => {
+  const requestExtension = `/application/new`;
+  return instance.post(requestExtension, application).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
@@ -156,7 +189,7 @@ export const editAvailability = (timeslots, id) => {
 
 export const fetchMentorsAppointments = () => {
   const requestExtension = "/appointment/mentors";
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -166,7 +199,7 @@ export const fetchMentorsAppointments = () => {
 
 export const fetchAllAppointments = () => {
   const requestExtension = "/appointment/";
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -184,36 +217,32 @@ const downloadBlob = (response, filename) => {
   URL.revokeObjectURL(url);
 };
 
-export const downloadMentorsData = () => {
+export const downloadMentorsData = async () => {
   const requestExtension = "/download/accounts/all";
-  return instance
-    .get(requestExtension, {
-      responseType: "blob",
-    })
-    .then(
-      (response) => {
-        downloadBlob(response, "data.xlsx");
-      },
-      (err) => {
-        console.error(err);
-      }
-    );
+  return authGet(requestExtension, {
+    responseType: "blob",
+  }).then(
+    (response) => {
+      downloadBlob(response, "mentor_data.xlsx");
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
 };
 
-export const downloadAllApplicationData = () => {
+export const downloadAllApplicationData = async () => {
   const requestExtension = "/download/appointments/all";
-  return instance
-    .get(requestExtension, {
-      responseType: "blob",
-    })
-    .then(
-      (response) => {
-        downloadBlob(response, "all_appointments.xlsx");
-      },
-      (err) => {
-        console.error(err);
-      }
-    );
+  return authGet(requestExtension, {
+    responseType: "blob",
+  }).then(
+    (response) => {
+      downloadBlob(response, "all_appointments.xlsx");
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
 };
 
 export const deleteMentorById = (id) => {
@@ -227,9 +256,9 @@ export const deleteMentorById = (id) => {
   );
 };
 
-export const updateApplicationById = (data, id) => {
+export const updateApplicationById = async (data, id) => {
   const requestExtension = `/application/${id}`;
-  return instance.put(requestExtension, data).then(
+  return await authPut(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -237,9 +266,9 @@ export const updateApplicationById = (data, id) => {
   );
 };
 
-export const getApplicationById = (id) => {
+export const getApplicationById = async (id) => {
   const requestExtension = `/application/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.mentor_application,
     (err) => {
       console.error(err);
@@ -247,19 +276,29 @@ export const getApplicationById = (id) => {
   );
 };
 
-export const adminUploadEmails = (file, isMentor) => {
-  let mentorOrMentee = "mentors";
-  if (!isMentor) {
-    mentorOrMentee = "mentees";
-  }
-  const requestExtension = "/upload/" + mentorOrMentee;
+export const adminUploadEmails = (file, password, isMentor) => {
+  const requestExtension = "/upload/mentors";
   let formData = new FormData();
   formData.append("fileupload", file);
-  return instance.post(requestExtension, formData).then(
+  formData.append("pass", password);
+  if (isMentor) {
+    formData.append("mentorOrMentee", "true");
+  } else {
+    formData.append("mentorOrMentee", "false");
+  }
+  return authPost(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);
     }
+  );
+};
+
+export const getAdmin = (id) => {
+  const requestExtension = `/admin/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response && response.data.result.admin,
+    (err) => console.error(err)
   );
 };
 

@@ -1,9 +1,0 @@
-roles:
-    root: 
-        - admin
-    user: 
-        - mentor
-useGoogleAuth: true
-security_question: false
-gmail: true
-expire_after_hrs: 1

@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { Modal } from "antd";
+import React, { useCallback, useState } from "react";
+import { Modal, Form, Input, Button, message } from "antd";
 import { useDropzone } from "react-dropzone";
 import { adminUploadEmails } from "utils/api";
 import MenteeButton from "./MenteeButton";
@@ -7,40 +7,15 @@ import MenteeButton from "./MenteeButton";
 import "./css/UploadEmails.scss";
 
 function UploadEmails(props) {
-  function DragDrop(isMentor) {
-    const onDrop = useCallback((acceptedFiles) => {
-      async function uploadEmails(file, isMentor) {
-        console.log(file);
-        await adminUploadEmails(file, isMentor);
-      }
-      acceptedFiles.forEach((file) => {
-        uploadEmails(file, isMentor);
-      });
-    }, []);
-
-    const { getRootProps, getInputProps } = useDropzone({
-      onDrop,
-      accept: ".csv",
-    });
-
-    return (
-      <div {...getRootProps()}>
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
-        <em>(Only *.csv files will be accepted)</em>
-      </div>
-    );
-  }
-
   return (
     <Modal
-      visible={props.modalVisible}
-      setModalVisible={props.setModalVisible}
+      visible={props.uploadModalVisible}
+      setUploadModalVisible={props.setUploadModalVisible}
       footer={
         <MenteeButton
           content="Done"
           onClick={() => {
-            props.setModalVisible(false);
+            props.setUploadModalVisible(false);
           }}
         />
       }
@@ -57,6 +32,83 @@ function UploadEmails(props) {
         </div>
       </div>
     </Modal>
+  );
+}
+
+function DragDrop(isMentor) {
+  const [password, setPassword] = useState("");
+  const [files, setFiles] = useState([]);
+
+  const onDrop = (acceptedFiles) => {
+    setFiles(acceptedFiles);
+  };
+
+  const file_names = files.map((file) => <li> {file.path} </li>);
+
+  const onFinish = useCallback((files, password, mentor) => {
+    async function uploadEmails(file) {
+      await adminUploadEmails(file, password, mentor);
+    }
+    files.forEach((file) => {
+      uploadEmails(file);
+    });
+    setFiles([]);
+    setPassword("");
+    success();
+  }, []);
+
+  const success = () => {
+    message.success("This is a success message");
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: ".csv",
+  });
+
+  const includePassword = () => {
+    if (isMentor) {
+      return <div></div>;
+    } else {
+      return (
+        <Form.Item label="Password">
+          <Input
+            name="inputtedPassword"
+            type="text"
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          />
+        </Form.Item>
+      );
+    }
+  };
+  //
+  return (
+    <div>
+      <Form
+        onFinish={() => onFinish(files, password, isMentor)}
+        initialValues={{ inputtedPassword: "" }}
+      >
+        <Form.Item>
+          <div {...getRootProps()}>
+            <p>Drag 'n' drop some files here, or click to select files</p>
+            <em>(Only *.csv files will be accepted)</em>
+            <input {...getInputProps()} />
+          </div>
+          <aside>
+            <h4>Uploaded Files: </h4>
+            <ul type="circle">{file_names}</ul>
+          </aside>
+        </Form.Item>
+        {includePassword()}
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 }
 

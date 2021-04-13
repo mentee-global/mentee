@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Button, Col, Row, Result } from "antd";
 import {
   ClockCircleOutlined,
@@ -16,6 +17,7 @@ import {
 import { getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
+import useAuth from "utils/hooks/useAuth";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -36,21 +38,25 @@ const Tabs = Object.freeze({
   },
 });
 function Appointments() {
+  const history = useHistory();
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
+  const { onAuthStateChanged } = useAuth();
+
   useEffect(() => {
-    const mentorID = getMentorID();
     async function getAppointments() {
+      const mentorID = await getMentorID();
       const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
       const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
       }
     }
-    getAppointments();
+
+    onAuthStateChanged(getAppointments);
   }, [appointmentClick]);
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {

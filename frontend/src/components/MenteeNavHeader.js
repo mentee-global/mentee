@@ -79,6 +79,17 @@ function MenteeNavHeader({ history }) {
           <span className="navigation-header-button">
             <MenteeButton
               width="100%"
+              content={<b>Mentee Profile</b>}
+              onClick={() => {
+                history.push({
+                  pathname: "/profile",
+                });
+              }}
+            />
+          </span>
+          <span className="navigation-header-button">
+            <MenteeButton
+              width="100%"
               content={<b>{isLoggedIn() ? "Your Profile" : "Mentor Log In"}</b>}
               onClick={() => {
                 history.push({

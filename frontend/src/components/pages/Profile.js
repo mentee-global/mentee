@@ -2,54 +2,64 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button } from "antd";
-import { getMentorID } from "utils/auth.service";
+import { getMentorID, getMenteeID } from "utils/auth.service"; //! create getMenteeID
 import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
-import { fetchMentorByID, editMentorProfile } from "utils/api";
+import { fetchMentorByID, editMentorProfile, fetchMenteeByID, editMenteeProfile } from "utils/api";
 
 function Profile() {
   const history = useHistory();
-  const [mentor, setMentor] = useState({});
+  const [isMentor, setIsMentor] = useState(true);
+  const [user, setUser] = useState({});
   const [onEdit, setEditing] = useState(false);
-  const [editedMentor, setEditedMentor] = useState(false);
+  const [editedUser, setEditedUser] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    fetchMentor();
+    fetchUser();
   }, []);
 
   useEffect(() => {
-    fetchMentor();
-  }, [editedMentor]);
+    fetchUser();
+  }, [editedUser]);
 
-  const fetchMentor = async () => {
-    const mentorID = await getMentorID();
-    const mentorData = await fetchMentorByID(mentorID);
-    if (mentorData) {
-      setMentor(mentorData);
+  const fetchUser = async () => {
+    if (isMentor) {
+      const mentorID = await getMentorID();
+      const mentorData = await fetchMentorByID(mentorID);
+      if (mentorData) {
+        setUser(mentorData);
+      }
+    } else {
+      const menteeID = await getMenteeID();
+      const menteeData = await fetchMenteeByID(menteeID);
+      if (menteeData) {
+        setUser(menteeData);
+      }
     }
+    
   };
 
   const handleSaveEdits = () => {
-    setEditedMentor(!editedMentor);
+    setEditedUser(!editedUser);
   };
 
   function renderContactInfo() {
     return (
       <div>
-        {mentor.email && (
+        {user.email && (
           <div>
             <MailOutlined className="mentor-profile-contact-icon" />
-            {mentor.email}
+            {user.email}
             <br />
           </div>
         )}
-        {mentor.phone_number && (
+        {user.phone_number && (
           <div>
             <PhoneOutlined className="mentor-profile-contact-icon" />
-            {mentor.phone_number}
+            {user.phone_number}
             <br />
           </div>
         )}
@@ -92,10 +102,10 @@ function Profile() {
         onFinish={onFinish}
         validateMessages={validateMessages}
         initialValues={{
-          email: mentor.email,
-          phone: mentor.phone_number,
-          email_notifications: mentor.email_notifications,
-          text_notifications: mentor.text_notifications,
+          email: user.email,
+          phone: user.phone_number,
+          email_notifications: user.email_notifications,
+          text_notifications: user.text_notifications,
         }}
       >
         <div className="mentor-profile-input">
@@ -129,11 +139,11 @@ function Profile() {
             <div className="modal-mentee-availability-switch">
               <div className="modal-mentee-availability-switch-text">
                 Email notifications
-              </div>
+              </div> 
               <Form.Item name="email_notifications">
                 <Switch
                   size="small"
-                  defaultChecked={mentor.email_notifications}
+                  defaultChecked={user.email_notifications}
                 />
               </Form.Item>
             </div>
@@ -144,7 +154,7 @@ function Profile() {
               <Form.Item name="text_notifications">
                 <Switch
                   size="small"
-                  defaultChecked={mentor.text_notifications}
+                  defaultChecked={user.text_notifications}
                 />
               </Form.Item>
             </div>
@@ -161,21 +171,37 @@ function Profile() {
     );
   }
 
+  function renderProfileContent() {
+    if (isMentor) {
+      return (
+        <ProfileContent>
+          mentor={user}
+          isMentor={true}
+          handleSaveEdits={handleSaveEdits}
+        </ProfileContent>
+      );
+    } else {
+      return (
+        <ProfileContent>
+          mentee={user}
+          isMentor={false}
+          handleSaveEdits={handleSaveEdits}
+        </ProfileContent>
+      );
+    }
+  }
+
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
         <Avatar
           size={120}
-          src={mentor.image && mentor.image.url}
+          src={user.image && user.image.url}
           icon={<UserOutlined />}
         />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
-            <ProfileContent
-              mentor={mentor}
-              isMentor={true}
-              handleSaveEdits={handleSaveEdits}
-            />
+            {renderProfileContent()}
           </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">

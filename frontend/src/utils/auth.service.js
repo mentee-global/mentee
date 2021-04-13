@@ -137,6 +137,14 @@ export const getMentorID = async () => {
   } else return false;
 };
 
+export const getMenteeID = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      return idTokenResult.claims.menteeId;
+    });
+  } else return false;
+};
+
 export const getAdminID = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {

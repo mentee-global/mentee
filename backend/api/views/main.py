@@ -170,7 +170,6 @@ def edit_mentor(id):
 
     return create_response(status=200, message=f"Success")
 
-
 @main.route("/account/<id>/image", methods=["PUT"])
 def uploadImage(id):
     image = request.files["image"]
@@ -219,3 +218,4 @@ def uploadImage(id):
 
     account.save()
     return create_response(status=200, message=f"Success")
+

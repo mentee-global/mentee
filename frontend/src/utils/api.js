@@ -245,6 +245,23 @@ export const deleteMentorById = (id) => {
   );
 };
 
+export const EditFavMentorById = (mentee_id, mentor_id) => {
+  const requestExtension = `/mentee/addFavMentor`
+  return instance
+    .put(requestExtension, {
+      params: {
+        mentee_id: mentee_id ,
+        mentor_id: mentor_id
+      },
+    })
+    .then(
+      (response) => response,
+      (err) => {
+        console.error(err);
+      }
+    );
+}
+
 export const updateApplicationById = async (data, id) => {
   const requestExtension = `/application/${id}`;
   return await authPut(requestExtension, data).then(

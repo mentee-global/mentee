@@ -7,4 +7,4 @@ from api.utils.constants import Account
 
 mentee = Blueprint("mentee", __name__)
 
-@mentee.route("/mentee/addFavMentor/<string::mentor_id>", methods=["GET"])
+@mentee.route("/mentee/addFavMentor/", methods=["PUT"])

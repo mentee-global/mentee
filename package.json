@@ -1,10 +1,13 @@
-
 {
     "scripts": {
-        "format:backend": "cd backend && make format",
+        "format:backend": "cd backend && poetry run format",
         "format": "concurrently \"cd frontend && yarn format\" \"yarn format:backend\"",
-        "start:backend": "cd backend && make run_server",
+        "export": "cd backend && poetry export -f requirements.txt --output requirements.txt --without-hashes && poetry export -f requirements.txt --output ../requirements.txt --without-hashes",
+        "start:backend": "yarn export && cd backend && poetry run start",
         "start:frontend": "cd frontend && yarn start",
-        "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\""
+        "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\"",
+        "setup:backend": "cd backend && poetry install",
+        "setup:frontend": "cd frontend && yarn",
+        "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\""
     }
 }

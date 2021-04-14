@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
+import firebase from "firebase";
 import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
 import {
-  getCurrentRegistration,
   getRegistrationStage,
-  removeRegistration,
   isLoggedIn,
+  refreshToken,
+  getCurrentUser,
+  getUserEmail,
 } from "utils/auth.service";
 import { createMentorProfile } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
@@ -17,6 +19,7 @@ import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
 
 function RegisterForm(props) {
+  const history = useHistory();
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
@@ -36,18 +39,6 @@ function RegisterForm(props) {
   const [specializations, setSpecializations] = useState([]);
   const [educations, setEducations] = useState([]);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (isLoggedIn()) {
-      props.history.push("/appointments");
-    }
-    const registrationStage = getRegistrationStage();
-    if (registrationStage === REGISTRATION_STAGE.START) {
-      props.history.push("/register");
-    } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
-      props.history.push("/verify");
-    }
-  }, [props.history]);
 
   function renderEducationInputs() {
     return (
@@ -222,13 +213,19 @@ function RegisterForm(props) {
       const res = await createMentorProfile(data);
       const mentorId =
         res && res.data && res.data.result ? res.data.result.mentorId : false;
+
       setSaving(false);
       setValidate(false);
+
       if (mentorId) {
         setError(false);
         setIsValid([...isValid].fill(true));
-        removeRegistration(mentorId);
-        props.history.push("/profile");
+        await refreshToken();
+
+        const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+          unsubscribe();
+          history.push("/profile");
+        });
       } else {
         setError(true);
       }
@@ -239,9 +236,12 @@ function RegisterForm(props) {
       return;
     }
 
+    const firebase_user = getCurrentUser();
+    const email = await getUserEmail();
     const newProfile = {
-      user_id: getCurrentRegistration()["userId"],
+      firebase_uid: firebase_user ? firebase_user.uid : undefined,
       name: name,
+      email: email,
       professional_title: title,
       linkedin: linkedin,
       website: website,

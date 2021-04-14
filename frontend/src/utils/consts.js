@@ -5,9 +5,14 @@ const BASE_URL =
       : "https://mentee-h4i.herokuapp.com/"
     : "http://localhost:5000/";
 
+const FRONT_BASE_URL =
+  process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
+
 export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
+
+export const PROFILE_URL = FRONT_BASE_URL + "gallery/";
 
 export const REGISTRATION_STAGE = {
   START: 0,
@@ -15,6 +20,18 @@ export const REGISTRATION_STAGE = {
   PROFILE_CREATION: 2,
 };
 
+export const ACCOUNT_TYPE = {
+  ADMIN: 0,
+  MENTOR: 1,
+  MENTEE: 2,
+};
+
+export const APP_STATUS = {
+  PENDING: "Pending",
+  REVIEWED: "Reviewed",
+  REJECTED: "Rejected",
+  OFFER_MADE: "Offer Made",
+};
 export const LANGUAGES = [
   "Arabic",
   "Bengali",
@@ -91,3 +108,13 @@ export const APPOINTMENT_FORM_KEYS = [
   "allow_calls",
   "allow_texts",
 ];
+
+// Error messages for login
+export const LOGIN_ERROR_MSGS = {
+  INCORRECT_NAME_PASSWORD_ERROR_MSG:
+    "Incorrect username and/or password. Please try again.",
+  RESET_PASSWORD_ERROR_MSG:
+    "Please reset password. A link to reset your password has been sent to your email.",
+  SERVER_ERROR_MSG: "Something went wrong.",
+  RECREATE_ACCOUNT_ERROR_MSG: "Please re-register your account.",
+};

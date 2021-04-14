@@ -4,6 +4,19 @@ import "antd/dist/antd.css";
 import "./index.scss";
 import App from "components/App/App";
 import * as serviceWorker from "utils/serviceWorker";
+import firebase from "firebase";
+
+firebase.initializeApp({
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: "mentee-d0304.firebaseapp.com",
+  projectId: "mentee-d0304",
+  storageBucket: "mentee-d0304.appspot.com",
+  messagingSenderId: "64054250486",
+  appId: "1:64054250486:web:5dda0b621ca92dc03ad5d7",
+  measurementId: "G-HSJ2934X33",
+});
+
+firebase.analytics();
 
 ReactDOM.render(
   <React.StrictMode>

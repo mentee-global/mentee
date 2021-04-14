@@ -1,5 +1,7 @@
 import os
 import logging
+import firebase_admin
+import pyrebase
 
 from flask import Flask, request
 from flask_cors import CORS
@@ -62,6 +64,9 @@ def create_app(test_config=None):
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
 
+    # firebase
+    firebase_admin.initialize_app()
+
     # register mongoengine to this app
     from api.models import db
 
@@ -69,7 +74,17 @@ def create_app(test_config=None):
     Migrate(app, db)
 
     # import and register blueprints
-    from api.views import app_blueprint, main, auth, appointment, availability, verify
+    from api.views import (
+        app_blueprint,
+        main,
+        auth,
+        appointment,
+        availability,
+        verify,
+        apply,
+        admin,
+        download,
+    )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
     app.register_blueprint(app_blueprint.app_blueprint)
@@ -78,7 +93,9 @@ def create_app(test_config=None):
     app.register_blueprint(appointment.appointment, url_prefix="/api/appointment")
     app.register_blueprint(availability.availability, url_prefix="/api/availability")
     app.register_blueprint(verify.verify, url_prefix="/api")
-
+    app.register_blueprint(apply.apply, url_prefix="/api/application")
+    app.register_blueprint(admin.admin, url_prefix="/api")
+    app.register_blueprint(download.download, url_prefix="/api/download")
     # register error handlers
     @app.errorhandler(404)
     def not_found(e):

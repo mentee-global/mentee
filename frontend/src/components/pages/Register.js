@@ -2,9 +2,16 @@ import React, { useEffect, useState } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import { Input } from "antd";
 import MenteeVerificationModal from "../MenteeVerificationModal";
-import { getRegistrationStage, isLoggedIn, register } from "utils/auth.service";
-import { REGISTRATION_STAGE } from "utils/consts";
+import {
+  getRegistrationStage,
+  isLoggedIn,
+  register,
+  sendVerificationEmail,
+  refreshToken,
+} from "utils/auth.service";
+import { REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import useQuery from "utils/hooks/useQuery";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
@@ -12,6 +19,9 @@ import "../css/Register.scss";
 import Logo from "../../resources/logo.png";
 
 function Register({ history }) {
+  const query = useQuery();
+  const registerAs = query.get("as");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,18 +30,6 @@ function Register({ history }) {
   const [serverError, setServerError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [inputFocus, setInputFocus] = useState([false, false, false]);
-
-  useEffect(() => {
-    if (isLoggedIn()) {
-      history.push("/appointments");
-    }
-    const registrationStage = getRegistrationStage();
-    if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
-      history.push("/create-profile");
-    } else if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
-      history.push("/verify");
-    }
-  }, [history]);
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false, false];
@@ -54,8 +52,14 @@ function Register({ history }) {
   const submitForm = async () => {
     setSaving(true);
     if (!checkErrors()) {
-      const res = await register(email, password, "mentor");
-      if (res) {
+      const res = await register(
+        email,
+        password,
+        registerAs ? parseInt(registerAs, 10) : ACCOUNT_TYPE.MENTOR
+      );
+      // sign in
+      if (res && res.success) {
+        await sendVerificationEmail(email);
         history.push("/verify");
       } else {
         setServerError(true);

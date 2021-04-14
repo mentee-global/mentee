@@ -2,12 +2,18 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile
 from api.core import create_response, serialize_list, logger
-from api.utils.request_utils import ApppointmentForm, is_invalid_form, send_email
+from api.utils.request_utils import (
+    ApppointmentForm,
+    is_invalid_form,
+    send_email,
+    send_sms,
+)
 from api.utils.constants import (
     MENTOR_APPT_TEMPLATE,
     MENTEE_APPT_TEMPLATE,
     APPT_TIME_FORMAT,
 )
+from api.utils.require_auth import admin_only
 
 appointment = Blueprint("appointment", __name__)
 
@@ -66,19 +72,33 @@ def create_appointment():
 
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
-    mentee_email = send_email(
+
+    mentee_email, res_msg = send_email(
         recipient=new_appointment.email,
         template_id=MENTEE_APPT_TEMPLATE,
         data={"confirmation": True, "name": mentor.name, "date": start_time},
     )
+    if not mentee_email:
+        msg = "Failed to send mentee email " + res_msg
+        logger.info(msg)
 
     if mentor.email_notifications:
-        mentor_email = send_email(
+        mentor_email, res_msg = send_email(
             recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
         )
 
-        if not mentor_email or not mentee_email:
-            msg = "Failed to send an email"
+        if not mentor_email:
+            msg = "Failed to send an email " + res_msg
+            logger.info(msg)
+
+    if mentor.text_notifications:
+        res, res_msg = send_sms(
+            text="You received a new appointment request!\nCheckout https://mentee-h4i.herokuapp.com/",
+            recipient=mentor.phone_number,
+        )
+
+        if not res:
+            msg = "Failed to send message " + res_msg
             logger.info(msg)
 
     new_appointment.save()
@@ -151,3 +171,65 @@ def delete_request(appointment_id):
 
     request.delete()
     return create_response(status=200, message=f"Success")
+
+
+# GET all appointments per mentor
+@appointment.route("/mentors", methods=["GET"])
+@admin_only
+def get_mentors_appointments():
+    mentors = MentorProfile.objects()
+    appointments = AppointmentRequest.objects()
+
+    data = []
+    for mentor in mentors:
+        mentor_appts = [
+            appointment
+            for appointment in appointments
+            if appointment.mentor_id == mentor.id
+        ]
+        data.append(
+            {
+                "name": mentor.name,
+                "id": str(mentor.id),
+                "appointments": mentor_appts,
+                "numOfAppointments": len(mentor_appts),
+                "appointmentsAvailable": "Yes"
+                if [
+                    avail
+                    for avail in mentor.availability
+                    if avail.end_time > datetime.now()
+                ]
+                else "No",
+                "profilePicUp": "Yes" if mentor.image else "No",
+                "videosUp": "Yes" if mentor.videos else "No",
+            }
+        )
+
+    return create_response(data={"mentorData": data}, status=200, message="Success")
+
+
+@appointment.route("/", methods=["GET"])
+@admin_only
+def get_appointments():
+    appointments = AppointmentRequest.objects()
+    mentors = MentorProfile.objects().only("name", "id")
+
+    # TODO: Fix this.. It is too slow :(((
+    mentor_by_id = {}
+
+    for mentor in mentors:
+        mentor_by_id[mentor["id"]] = mentor.name
+
+    res_appts = []
+    for index in range(len(appointments) - 1):
+        current_id = appointments[index].mentor_id
+        res_appts.append(
+            {
+                "mentor": mentor_by_id.get(current_id, "Deleted Account"),
+                "appointment": appointments[index],
+            }
+        )
+
+    return create_response(
+        data={"appointments": res_appts}, status=200, message="Success"
+    )

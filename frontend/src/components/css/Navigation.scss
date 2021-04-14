@@ -37,6 +37,10 @@
   pointer-events: none;
 }
 
+.navigation-submenu {
+  color: $nav-submenu-color;
+}
+
 .profile-picture {
   float: right;
   font-size: 30px;

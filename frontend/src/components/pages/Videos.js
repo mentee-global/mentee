@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Row, Col, Button, Form, Input, Select } from "antd";
 import moment from "moment";
 import MentorVideo from "../MentorVideo";
@@ -7,9 +8,11 @@ import { getMentorID } from "utils/auth.service";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import { fetchMentorByID, editMentorProfile } from "utils/api";
+import useAuth from "utils/hooks/useAuth";
 import "../css/Videos.scss";
 
 function Videos() {
+  const history = useHistory();
   const [videos, setVideos] = useState([]);
   const [name, setName] = useState("");
   const [filtered, setFiltered] = useState([]);
@@ -17,6 +20,7 @@ function Videos() {
   const [titleFilter, setTitleFilter] = useState("");
   const [mentorID, setMentorID] = useState("");
   const [form] = Form.useForm();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getVideos() {
@@ -36,7 +40,8 @@ function Videos() {
       }
       setMentorID(newMentorID);
     }
-    getVideos();
+
+    onAuthStateChanged(getVideos);
   }, [mentorID]);
 
   async function updateVideos(data, id) {

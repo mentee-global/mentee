@@ -6,6 +6,7 @@ import { withRouter } from "react-router-dom";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import MenteeVerificationModal from "./MenteeVerificationModal";
+import useAuth from "../utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
 
@@ -16,6 +17,7 @@ const { Header } = Layout;
 
 function MenteeNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
+  const { isAdmin, isMentor, isMentee } = useAuth();
 
   return (
     <Header className="navigation-header">
@@ -30,6 +32,37 @@ function MenteeNavHeader({ history }) {
           </NavLink>
         </div>
         <div style={{ display: "flex" }}>
+          {!isMobile && (
+            <>
+              <span className="navigation-header-button">
+                <MenteeButton
+                  width="100%"
+                  theme="light"
+                  content={<b>{"Apply"}</b>}
+                  onClick={() => {
+                    history.push({
+                      pathname: "/not-found",
+                    });
+                  }}
+                  // onClick={() => {
+                  //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
+                  // }}
+                />
+              </span>
+              <span className="navigation-header-button">
+                <MenteeButton
+                  width="100%"
+                  theme="light"
+                  content={<b>{"Admin Portal"}</b>}
+                  onClick={() => {
+                    history.push({
+                      pathname: isAdmin ? "/account-data" : "/admin-login",
+                    });
+                  }}
+                />
+              </span>
+            </>
+          )}
           <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}

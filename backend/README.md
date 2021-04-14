@@ -1,4 +1,4 @@
-# Flask Boilerplate
+# Flask Backend
 
 This is based off of [Flask Boilerplate](https://github.com/tko22/flask-boilerplate), but repurposed for MongoDB using MongoEngine.
 
@@ -7,37 +7,32 @@ We use [black](https://github.com/ambv/black) for code formatting, and [mypy](ht
 ![](../master/docs/flask.gif)
 
 ## Remote Database Setup
+
 Create a `.env` file in this folder with the contents:
+
 ```
 MONGO_USER=[DB username]
 MONGO_PASSWORD=[DB password]
 MONGO_DB=mentee
 MONGO_HOST=[host uri]
 ```
+
 Replace the `[xxx]` with your own credentials.
 
 ### Server Setup
 
-Make sure you have [Python3](https://realpython.com/installing-python/) and `pip3` installed.
+Make sure you have [Python3](https://realpython.com/installing-python/) and [Poetry](https://python-poetry.org/) installed.
 
-Start your virtual environment:
+Install packages:
 
 ```
-$ pip3 install virtualenv
-$ virtualenv venv
-$ source venv/bin/activate
-```
-Now, install the python dependencies and run the server:
-```
-(venv) $ pip install -r requirements.txt
-(venv) $ pip install -r requirements-dev.txt
-(venv) $ python manage.py runserver
+$ poetry install
 ```
 
-To exit the virtual environment:
+To run the server:
+
 ```
-(venv) $ deactivate
-$
+$ poetry run start
 ```
 
 ### Verifying
@@ -88,3 +83,4 @@ find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 - [REST API](http://www.restapitutorial.com/lessons/restquicktips.html) - tips on making an API Restful
 - [Docker Docs](https://docs.docker.com/get-started/) - Docker docs
 - [SendGrid](https://sendgrid.com/docs/for-developers/) - Documentation For SendGrid
+- [Twilio](twilio.com/docs/libraries/python) - Documentation for Twilio

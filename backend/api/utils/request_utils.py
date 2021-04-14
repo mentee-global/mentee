@@ -7,6 +7,7 @@ import wtforms_json
 from typing import Tuple
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
 
 wtforms_json.init()
@@ -15,8 +16,12 @@ imgur_key = os.environ.get("IMGUR_KEY")
 imgur_client = Imgur(client_id=imgur_key)
 
 sendgrid_key = os.environ.get("SENDGRID_API_KEY")
-
 sender_email = os.environ.get("SENDER_EMAIL")
+
+twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID")
+twilio_token = os.environ.get("TWILIO_AUTH_TOKEN")
+twilio_phone = os.environ.get("TWILIO_PHONE")
+twilio_client = TwilioClient(twilio_sid, twilio_token)
 
 
 class EducationForm(Form):
@@ -34,11 +39,20 @@ class VideoForm(Form):
 
 
 class MentorForm(Form):
-    user_id = StringField(validators=[InputRequired()])
+    firebase_uid = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     professional_title = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.required()])
     specializations = FieldList(StringField(), validators=[validators.required()])
+
+
+class MenteeForm(Form):
+    firebase_uid = StringField(validators=[InputRequired()])
+    name = StringField(validators=[InputRequired()])
+    age = StringField(validators=[InputRequired()])
+    gender = StringField(validators=[InputRequired()])
+    languages = FieldList(StringField(), validators=[validators.required()])
+    organization = StringField(validators=[InputRequired()])
 
 
 class AvailabilityForm(Form):
@@ -74,7 +88,7 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
 
 def send_email(
     recipient: str = "", subject: str = "", data: dict = None, template_id: str = ""
-) -> bool:
+) -> Tuple[bool, str]:
     """Sends an email to a specific email address from the official MENTEE email
     :param recipient - a single recipient's email address
     :param subject - subject headline of the email
@@ -98,6 +112,9 @@ def send_email(
      - Changing Sender Email
         - https://sendgrid.com/docs/ui/sending-email/sender-verification/
     """
+    if not recipient:
+        return False, "Missing recipient email"
+
     message = Mail(
         from_email=sender_email,
         to_emails=recipient,
@@ -114,5 +131,25 @@ def send_email(
         sg = SendGridAPIClient(sendgrid_key)
         sg.send(message)
     except Exception as e:
-        return False
-    return True
+        return False, str(e)
+
+    return True, ""
+
+
+def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
+    """Send an SMS using Twilio from the provided phone number in .env
+    :param text - this is the body of the text message
+    :param recipient - so far this is only limited to US/CA phone numbers
+    :returns boolean if successfully send a message
+
+    Check out here to see the account details of Twilio
+    https://www.twilio.com/console
+    """
+    if not recipient or not text:
+        return False, "Empty recipient number or text"
+    try:
+        res = twilio_client.messages.create(body=text, from_=twilio_phone, to=recipient)
+    except Exception as e:
+        return False, str(e)
+
+    return True, ""

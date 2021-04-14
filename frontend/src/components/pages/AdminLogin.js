@@ -1,18 +1,37 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { NavLink, useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { Input } from "antd";
-import { isLoggedIn, login, isUserAdmin, logout } from "utils/auth.service";
+import { ACCOUNT_TYPE } from "utils/consts";
+import {
+  login,
+  logout,
+  isUserAdmin,
+  isUserMentee,
+  isUserMentor,
+} from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/AdminLogin.scss";
 
-function AdminLogin(props) {
+function AdminLogin() {
+  const history = useHistory();
+  const location = useLocation();
+  const [loginProps, setLoginProps] = useState({});
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
   const [error, setError] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
-  const history = useHistory();
+
+  useEffect(() => {
+    if (!location.state) {
+      history.push({
+        pathname: "/select-login",
+      });
+      // Redirects since login state has not be set for login yet
+    }
+    setLoginProps(location.state);
+  }, [location]);
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
@@ -23,7 +42,9 @@ function AdminLogin(props) {
     <div className="page-background">
       <div className="login-content">
         <div className="login-container">
-          <h1 className="login-text">Sign In as an Administrator</h1>
+          <h1 className="login-text">
+            Sign In as {loginProps && loginProps.title}
+          </h1>
           {error && (
             <div className="login-error">
               Incorrect username and/or password. Please try again.
@@ -72,7 +93,23 @@ function AdminLogin(props) {
                 const res = await login(email, password);
                 setError(!Boolean(res));
                 if (res && res.success) {
-                  if (await isUserAdmin()) {
+                  let loginFunction;
+                  switch (loginProps.type) {
+                    case ACCOUNT_TYPE.MENTEE:
+                      loginFunction = isUserMentee;
+                      break;
+                    case ACCOUNT_TYPE.MENTOR:
+                      loginFunction = isUserMentor;
+                      break;
+                    case ACCOUNT_TYPE.ADMIN:
+                      loginFunction = isUserAdmin;
+                      break;
+                    default:
+                      loginFunction = isUserMentor;
+                      break;
+                  }
+
+                  if (await loginFunction()) {
                     history.push("/account-data");
                   } else {
                     setError(true);

@@ -1,22 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { ACCOUNT_TYPE } from "utils/consts";
 import MentorImage from "resources/MentorLogin.svg";
 import MenteeLogin from "resources/MenteeLogin.svg";
 import AdminImage from "resources/AdminLogin.svg";
 import "components/css/SelectLogin.scss";
 
-const Logins = Object.freeze({
-  mentee: {},
-  mentor: {},
-  admin: {},
-});
-
 function SelectLogin() {
   const history = useHistory();
 
+  const Logins = Object.freeze({
+    mentee: {
+      title: "Mentee",
+      type: ACCOUNT_TYPE.MENTEE,
+    },
+    mentor: {
+      title: "Mentor",
+      login: ACCOUNT_TYPE.MENTOR,
+    },
+    admin: {
+      title: "Admin",
+      login: ACCOUNT_TYPE.ADMIN,
+    },
+  });
+
   const handleSelect = (key) => {
     history.push({
-      pathname: "/login",
+      pathname: "/admin-login",
       state: { ...Logins[key] },
     });
   };
@@ -39,7 +49,7 @@ function SelectLogin() {
         <div
           className="select-login-elem"
           onClick={() => {
-            handleSelect("mentee");
+            handleSelect("mentor");
           }}
         >
           <img src={MentorImage} alt="Mentor Image" className="select-image" />
@@ -48,7 +58,7 @@ function SelectLogin() {
         <div
           className="select-login-elem"
           onClick={() => {
-            handleSelect("mentee");
+            handleSelect("admin");
           }}
         >
           <img src={AdminImage} alt="Admin Image" className="select-image" />

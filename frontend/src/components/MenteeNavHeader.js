@@ -3,12 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { Layout } from "antd";
 import { withRouter } from "react-router-dom";
-import {
-  isLoggedIn,
-  isUserMentee,
-  isUserAdmin,
-  isUserMentor,
-} from "utils/auth.service";
+import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import MenteeVerificationModal from "./MenteeVerificationModal";
 import useAuth from "../utils/useAuth";
@@ -75,11 +70,11 @@ function MenteeNavHeader({ history }) {
               content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
               onClick={async () => {
                 let redirect = "/select-login";
-                if (await isUserMentor()) {
+                if (isMentor) {
                   redirect = "/appointments";
-                } else if (await isUserMentee()) {
+                } else if (isMentee) {
                   redirect = "/messages";
-                } else if (await isUserAdmin()) {
+                } else if (isAdmin) {
                   redirect = "/account-data";
                 }
                 history.push({

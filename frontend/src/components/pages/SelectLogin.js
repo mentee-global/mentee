@@ -13,20 +13,23 @@ function SelectLogin() {
     mentee: {
       title: "Mentee",
       type: ACCOUNT_TYPE.MENTEE,
+      redirect: "/messages",
     },
     mentor: {
       title: "Mentor",
       login: ACCOUNT_TYPE.MENTOR,
+      redirect: "/appointments",
     },
     admin: {
       title: "Admin",
       login: ACCOUNT_TYPE.ADMIN,
+      redirect: "/organizer",
     },
   });
 
   const handleSelect = (key) => {
     history.push({
-      pathname: "/admin-login",
+      pathname: "/login",
       state: { ...Logins[key] },
     });
   };

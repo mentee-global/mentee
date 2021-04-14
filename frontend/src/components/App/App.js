@@ -8,8 +8,8 @@ import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import SelectLogin from "components/pages/SelectLogin";
+import DELETELogin from "components/pages/DELETELogin";
 import Login from "components/pages/Login";
-import AdminLogin from "components/pages/AdminLogin";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/RegisterForm";
@@ -67,20 +67,14 @@ function App() {
         )}
       />
       <Route
-        path="/login"
-        component={() => <Navigation content={<Login />} needsAuth={false} />}
-      />
-      <Route
         path="/select-login"
         component={() => (
           <Navigation content={<SelectLogin />} needsAuth={false} />
         )}
       />
       <Route
-        path="/admin-login"
-        component={() => (
-          <Navigation content={<AdminLogin />} needsAuth={false} />
-        )}
+        path="/login"
+        component={() => <Navigation content={<Login />} needsAuth={false} />}
       />
       <Route
         path="/register"

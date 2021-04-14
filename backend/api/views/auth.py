@@ -30,7 +30,8 @@ def verify_email():
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_admin_auth.generate_email_verification_link(email)
+        verification_link = firebase_admin_auth.generate_email_verification_link(
+            email)
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)
@@ -85,7 +86,6 @@ def register():
 
     # if whitelisted, set to admin
     if Admin.objects(email=email):
-        role = Account.ADMIN.value
         admin_user = Admin.objects.get(email=email)
     elif role == Account.ADMIN:
         msg = "Email is not whitelisted as Admin"
@@ -131,17 +131,20 @@ def login():
     role = data.get("role")
     firebase_user = None
 
+    profile_model = get_profile_model(role)
+
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
         )
     except Exception as e:
-        if Users.objects(email=email):
-            user = Users.objects.get(email=email)
+        if Users.objects(email=email) or profile_model.objects(email=email):
+            # user = Users.objects.get(email=email)
 
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
-            firebase_user, error_http_response = create_firebase_user(email, None)
+            firebase_user, error_http_response = create_firebase_user(
+                email, None)
 
             if error_http_response:
                 return error_http_response
@@ -167,7 +170,6 @@ def login():
 
     firebase_uid = firebase_user["localId"]
     firebase_admin_user = firebase_admin_auth.get_user(firebase_uid)
-    profile_model = get_profile_model(role)
     profile_id = None
 
     try:
@@ -241,7 +243,8 @@ def forgot_password():
     error = send_forgot_password_email(email)
 
     return (
-        error and error or create_response(message="Sent password reset link to email")
+        error and error or create_response(
+            message="Sent password reset link to email")
     )
 
 

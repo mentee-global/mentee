@@ -111,6 +111,12 @@ function AdminLogin(props) {
               Register
             </NavLink>
           </div>
+          <div className="login-register-container">
+            <div>Forgot password?</div>
+            <NavLink to="/forgot-password" className="login-register-link">
+              Reset it
+            </NavLink>
+          </div>
         </div>
       </div>
     </div>

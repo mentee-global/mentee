@@ -72,8 +72,6 @@ def get_account(id):
 def create_mentor_profile():
     data = request.json
 
-    logger.info(data)
-
     try:
         account_type = int(data["account_type"])
     except:

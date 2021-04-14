@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button } from "antd";
-import { getMentorID } from "utils/auth.service";
+import { getMentorID, getIdTokenResult } from "utils/auth.service";
+import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";
@@ -15,9 +16,10 @@ function Profile() {
   const [onEdit, setEditing] = useState(false);
   const [editedMentor, setEditedMentor] = useState(false);
   const [form] = Form.useForm();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    fetchMentor();
+    onAuthStateChanged(fetchMentor);
   }, []);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ function Profile() {
   const fetchMentor = async () => {
     const mentorID = await getMentorID();
     const mentorData = await fetchMentorByID(mentorID);
+
     if (mentorData) {
       setMentor(mentorData);
     }

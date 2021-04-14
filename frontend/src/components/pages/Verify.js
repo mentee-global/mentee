@@ -9,6 +9,7 @@ import {
   isUserVerified,
   isUserMentor,
   isUserAdmin,
+  refreshToken,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { REGISTRATION_STAGE } from "utils/consts";
@@ -57,6 +58,7 @@ function Verify({ history, sent }) {
                   if (await isUserMentor()) {
                     history.push("/create-profile");
                   } else if (await isUserAdmin()) {
+                    await refreshToken();
                     history.push("/account-data");
                   }
                 } else {

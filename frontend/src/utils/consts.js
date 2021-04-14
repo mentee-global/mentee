@@ -108,3 +108,13 @@ export const APPOINTMENT_FORM_KEYS = [
   "allow_calls",
   "allow_texts",
 ];
+
+// Error messages for login
+export const LOGIN_ERROR_MSGS = {
+  INCORRECT_NAME_PASSWORD_ERROR_MSG:
+    "Incorrect username and/or password. Please try again.",
+  RESET_PASSWORD_ERROR_MSG:
+    "Please reset password. A link to reset your password has been sent to your email.",
+  SERVER_ERROR_MSG: "Something went wrong.",
+  RECREATE_ACCOUNT_ERROR_MSG: "Please re-register your account.",
+};

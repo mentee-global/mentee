@@ -29,7 +29,6 @@ function Login() {
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
   const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
-
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
     newClickedInput[index] = true;

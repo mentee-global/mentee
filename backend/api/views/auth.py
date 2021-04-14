@@ -30,8 +30,7 @@ def verify_email():
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_admin_auth.generate_email_verification_link(
-            email)
+        verification_link = firebase_admin_auth.generate_email_verification_link(email)
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)
@@ -143,8 +142,7 @@ def login():
 
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
-            firebase_user, error_http_response = create_firebase_user(
-                email, None)
+            firebase_user, error_http_response = create_firebase_user(email, None)
 
             if error_http_response:
                 return error_http_response
@@ -243,8 +241,7 @@ def forgot_password():
     error = send_forgot_password_email(email)
 
     return (
-        error and error or create_response(
-            message="Sent password reset link to email")
+        error and error or create_response(message="Sent password reset link to email")
     )
 
 

@@ -23,7 +23,7 @@ function SelectLogin() {
     admin: {
       title: "Admin",
       login: ACCOUNT_TYPE.ADMIN,
-      redirect: "/organizer",
+      redirect: "/account-data",
     },
   });
 

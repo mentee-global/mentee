@@ -3,7 +3,12 @@ import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { Layout } from "antd";
 import { withRouter } from "react-router-dom";
-import { isLoggedIn } from "utils/auth.service";
+import {
+  isLoggedIn,
+  isUserMentee,
+  isUserAdmin,
+  isUserMentor,
+} from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import MenteeVerificationModal from "./MenteeVerificationModal";
 import useAuth from "../utils/useAuth";
@@ -36,7 +41,7 @@ function MenteeNavHeader({ history }) {
             <>
               <span className="navigation-header-button">
                 <MenteeButton
-                  width="100%"
+                  width="9em"
                   theme="light"
                   content={<b>{"Apply"}</b>}
                   onClick={() => {
@@ -49,25 +54,13 @@ function MenteeNavHeader({ history }) {
                   // }}
                 />
               </span>
-              <span className="navigation-header-button">
-                <MenteeButton
-                  width="100%"
-                  theme="light"
-                  content={<b>{"Admin Portal"}</b>}
-                  onClick={() => {
-                    history.push({
-                      pathname: isAdmin ? "/account-data" : "/admin-login",
-                    });
-                  }}
-                />
-              </span>
             </>
           )}
           <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}
               theme="light"
-              width="100%"
+              width="9em"
               onVerified={() => {
                 history.push({
                   pathname: "/gallery",
@@ -78,11 +71,19 @@ function MenteeNavHeader({ history }) {
           </span>
           <span className="navigation-header-button">
             <MenteeButton
-              width="100%"
-              content={<b>{isLoggedIn() ? "Your Profile" : "Mentor Log In"}</b>}
-              onClick={() => {
+              width="9em"
+              content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
+              onClick={async () => {
+                let redirect = "/select-login";
+                if (await isUserMentor()) {
+                  redirect = "/appointments";
+                } else if (await isUserMentee()) {
+                  redirect = "/messages";
+                } else if (await isUserAdmin()) {
+                  redirect = "/account-data";
+                }
                 history.push({
-                  pathname: "/login",
+                  pathname: isLoggedIn() ? redirect : "/select-login",
                 });
               }}
             />

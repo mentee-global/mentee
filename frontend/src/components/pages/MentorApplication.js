@@ -3,6 +3,7 @@ import { Steps, message, Form, Input, Radio, Row, Col, Checkbox} from 'antd';
 import MenteeButton from "../MenteeButton";
 import ModalInput from "../ModalInput";
 import MentorApplicationPage from "../css/MentorApplicationPage.scss";
+import { MenteeMentorDropdown } from "components/AdminDropdowns";
 
 function MentorApplication() { 
     const { Step } = Steps;
@@ -56,6 +57,57 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       };
       const [value6, setValue6] = useState(1);
 
+
+      const [mentoringOptions, setMentoringOptions] = useState([]);
+      const [sectors, setSectors] = useState([]);
+      const [topics, setTopics] = useState([]);
+
+      function onChangeCheck(checkedValues) {
+        console.log('checked = ', checkedValues);
+        let optionsSelected = [];
+        checkedValues.forEach((value) => {
+          console.log(value);
+          optionsSelected.push(value);
+        });
+        setMentoringOptions(optionsSelected);
+      }
+
+      function onChangeCheck2(checkedValues) {
+        console.log('checked = ', checkedValues);
+        let optionsSelected = [];
+        checkedValues.forEach((value) => {
+          optionsSelected.push(value);
+        });
+        console.log("sectors", optionsSelected);
+        setSectors(optionsSelected);
+      }
+
+      function onChangeCheck3(checkedValues) {
+        console.log('checked = ', checkedValues);
+        let optionsSelected = [];
+        checkedValues.forEach((value) => {
+          optionsSelected.push(value);
+        });
+        setTopics(optionsSelected);
+      }
+
+      const [firstName, setFirstName] = useState(null);
+      const [lastName, setLastName] = useState(null);
+      const [cell, setCell] = useState(null);
+      const [businessNum, setBusinessNum] = useState(null);
+      const [email, setEmail] = useState(null);
+      const [hearAbout, setHearAbout] = useState(null);
+      const [whyMentee, setWhyMentee] = useState(null);
+      const [title, setTitle] = useState(null);
+      const [employer, setEmployer] = useState(null);
+      const [knowledgeLocation, setknowledgeLocation] = useState(null);
+      const [referall, setReferall] = useState(null);
+      const [languages, setLanguages] = useState(null);
+  
+  
+  
+
+
     const steps = [
         {
           title: 'Personal Information',
@@ -88,8 +140,9 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       
 
     function pageOne() {
+      console.log(firstName);
         return (
-            <div className="page-one-containere">
+            <div className="page-one-container">
             <div className="flex flex-row">
               <div className="page-one-column-container">
                 <div className="page-one-header">
@@ -108,6 +161,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   <Input
                     type="text"
                     placeholder="*First Name"
+                    value = {firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -121,6 +176,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   *Last Name*
                   <Input
                     placeholder="*Last Name*"
+                    value = {lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -135,6 +192,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   <Input
                     type="text"
                     placeholder="*Cell Phone Number*"
+                    value = {cell}
+                    onChange={(e) => setCell(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -149,6 +208,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   <Input
                     type="text"
                     placeholder="Business Number"
+                    value = {businessNum}
+                    onChange={(e) => setBusinessNum(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -163,6 +224,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   <Input
                     type="text"
                     placeholder="*Email"
+                    value = {email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -177,6 +240,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   <Input
                     type="text"
                     placeholder="*From whom or where did you hear about us?"
+                    value = {hearAbout}
+                    onChange={(e) => setHearAbout(e.target.value)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -193,6 +258,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   <TextArea autoSize
                     placeholder="*Please share why you would like to becoome apart of our MENTEE Mentor Specialist team?"
                     style={{ overflow: "hidden" }}
+                    value = {whyMentee}
+                    onChange={(e) => setWhyMentee(e.target.value)}
                   />
                 </Form.Item>
                 </Form>
@@ -202,13 +269,11 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
         )
     }
 
-    function onChangeCheck(checkedValues) {
-      console.log('checked = ', checkedValues);
-    }
 
     // 
 
     function pageTwo() {
+  
         return (
         <div className="page-two-containere">
         <div className="flex flex-row">
@@ -217,14 +282,6 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
               <h2>Commitments</h2>
             </div>
             <div className="donation-question">
-                <p4>*As a MENTEE global mentor, you wll have your own profile page where
-                you will highlight your skills and how you can help our mentees
-                either synchronously or asynchronously. You will also have thte opportunity 
-                to post your own videos that share your specific guidance or lessons to help our mentees.
-                Additionally, you will have a networking space that will allow you to get to know othere
-                specialists froom around the world and networking events that are online and global.
-                MENTEE is a volunteer organization and we are 100% sustained by donations. Are you able to offer
-                a donation for one year?*</p4>
                 <div className="donation-answer-choices">
                 <Form layout="inline">
                 <Form.Item
@@ -235,6 +292,16 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                     },
                   ]}
                 >
+                <div className="question">
+                <p4>*As a MENTEE global mentor, you wll have your own profile page where
+                you will highlight your skills and how you can help our mentees
+                either synchronously or asynchronously. You will also have thte opportunity 
+                to post your own videos that share your specific guidance or lessons to help our mentees.
+                Additionally, you will have a networking space that will allow you to get to know othere
+                specialists froom around the world and networking events that are online and global.
+                MENTEE is a volunteer organization and we are 100% sustained by donations. Are you able to offer
+                a donation for one year?*</p4>
+                </div>
                     <Radio.Group name="donation" onChange={onChange1} value={value1}>
                         <Radio  value={"Yes, I can offer a donation now to help suppourt this work!"}>Yes, I can offer a donation now to help suppourt this work! (https://www.menteteglobal.org/donate)
                         </Radio>
@@ -251,7 +318,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                 <div className="mentoring-options-question">
                     *Please choose the option(s) that is right for you
                     <div className="mentoring-options-answers">
-                    <Checkbox.Group options={workOptions} defaultValue={['']} onChange={onChangeCheck}/>
+                    <Checkbox.Group options={workOptions} defaultValue={mentoringOptions} onChange={onChangeCheck}/>
                     </div>
                 </div>
                 <div className="time-options-question">
@@ -302,6 +369,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
 
 
     function pageThree() {
+      console.log(title);
       return (
       <div className="page-two-containere">
       <div className="flex flex-row">
@@ -321,12 +389,11 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   },
                 ]}
               >
-              <Checkbox.Group options={workSectors} defaultValue={['']} onChange={onChangeCheck}/>
+              <Checkbox.Group options={workSectors} defaultValue={sectors} onChange={onChangeCheck2}/>
               </Form.Item>
               </Form>
               </div>
               <div className="role-description-question">
-                *Your full title and a brief description of your role.
                   <div className="role-description-answers">
                   <Form.Item
                   name="role-description"
@@ -336,15 +403,17 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                     },
                   ]}
                 >
+                   *Your full title and a brief description of your role.
                   <Input
                     type="text"
                     placeholder="*Your full title and a brief description of your role."
+                    value = {title}
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </Form.Item>
                   </div>
               </div>
               <div className="employer-name-question">
-                  *Full name of your company/employer
                   <div className="employer-name-answers">
                   <Form.Item
                   name="employer-name"
@@ -354,10 +423,12 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                     },
                   ]}
                 >
-    
+                  *Full name of your company/employer
                   <Input
                     type="text"
                     placeholder="*Full name of your company/employer"
+                    value = {employer}
+                    onChange={(e) => setEmployer(e.target.value)}
                   />
                 </Form.Item>
                   </div>
@@ -420,13 +491,11 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                 },
               ]}
             >
-            <Checkbox.Group options={specialTopics} defaultValue={['']} onChange={onChangeCheck}/>
+            <Checkbox.Group options={specialTopics} defaultValue={topics} onChange={onChangeCheck3}/>
             </Form.Item>
             </Form>
             </div>
             <div className="region-question">
-              Please share which region(s), country(s), state(s), cities your 
-              knowledge is based in
                 <div className="region-answers">
                 <Form.Item
                 name="region-question"
@@ -436,18 +505,19 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   },
                 ]}
               >
+              Please share which region(s), country(s), state(s), cities your 
+              knowledge is based in
                 <Input
                   type="text"
                   placeholder="Please share which region(s), country(s), state(s), cities your 
                   knowledge is based in"
+                  value = {knowledgeLocation}
+                  onChange={(e) => setknowledgeLocation(e.target.value)}
                 />
               </Form.Item>
                 </div>
             </div>
             <div className="contact-other-question">
-                *If you know someone who would be a great MENTEE 
-                Specialist, please share their name, email, and we'll contact
-                them!
                 <div className="contact-other-answers">
                 <Form.Item
                 name="contact-other"
@@ -457,20 +527,22 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   },
                 ]}
               >
-  
+                *If you know someone who would be a great MENTEE 
+                Specialist, please share their name, email, and we'll contact
+                them!
                 <Input
                   type="text"
                   placeholder="*If you know someone who would be a great MENTEE 
                   Specialist, please share their name, email, and we'll contact
                   them!"
+                  value = {referall}
+                  onChange={(e) => setReferall(e.target.value)}
                 />
+                
               </Form.Item>
                 </div>
             </div>
             <div className="languages-question">
-                *Do you speak a language(s) other than English? If yes, please
-                write the language(s) below and include your fluency level
-                (conversational, fluent, native).
                 <div className="languages-answers">
                 <Form.Item
                 name="languages"
@@ -480,12 +552,16 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   },
                 ]}
               >
-  
+                *Do you speak a language(s) other than English? If yes, please
+                write the language(s) below and include your fluency level
+                (conversational, fluent, native).
                 <Input
                   type="text"
                   placeholder="*Do you speak a language(s) other than English? If yes, please
                   write the language(s) below and include your fluency level
                   (conversational, fluent, native)."
+                  value = {languages}
+                  onChange={(e) => setLanguages(e.target.value)}
                 />
               </Form.Item>
                   </div>

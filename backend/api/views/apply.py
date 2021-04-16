@@ -124,9 +124,10 @@ def edit_application(id):
 
     
 # POST request for Mentee Appointment
-@apply.route("/", methods=["POST"])
+@apply.route("/new", methods=["POST"])
 def create_appointment():
     data = request.get_json()
+    logger.info(data)
     validate_data = MentorApplication.from_json(data)
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
@@ -150,7 +151,7 @@ def create_appointment():
         referral=data.get("referral"),
         knowledge_location=data.get("knowledge_location"),
         date_submitted=data.get("date_submitted"),
-        notes=data.get("notes"),
+        notes=data.get("notes", ""),
         application_state= "PENDING"
     )
 

@@ -3,6 +3,7 @@ import { Steps, message, Form, Input, Radio, Row, Col, Checkbox} from 'antd';
 import MenteeButton from "../MenteeButton";
 import ModalInput from "../ModalInput";
 import MentorApplicationPage from "../css/MentorApplicationPage.scss";
+import { createApplication } from "../../utils/api";
 import { MenteeMentorDropdown } from "components/AdminDropdowns";
 
 function MentorApplication() { 
@@ -101,11 +102,14 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       const [title, setTitle] = useState(null);
       const [employer, setEmployer] = useState(null);
       const [knowledgeLocation, setknowledgeLocation] = useState(null);
-      const [referall, setReferall] = useState(null);
+      const [referral, setReferral] = useState(null);
       const [languages, setLanguages] = useState(null);
   
   
   
+
+
+
 
 
     const steps = [
@@ -138,7 +142,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       };
 
       
-
+    // param object
+    // key value
     function pageOne() {
       console.log(firstName);
         return (
@@ -369,7 +374,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
 
 
     function pageThree() {
-      console.log(title);
+      console.log(sectors);
       return (
       <div className="page-two-containere">
       <div className="flex flex-row">
@@ -380,18 +385,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
           <div className="work-sectors-question">
               *Which sector(s) do you work in? (Check all that apply)
               <div className="work-sectors--answer-choices">
-              <Form layout="inline">
-              <Form.Item
-                name="work-sectors"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-              <Checkbox.Group options={workSectors} defaultValue={sectors} onChange={onChangeCheck2}/>
-              </Form.Item>
-              </Form>
+              <Checkbox.Group options={workSectors} value= {sectors} onChange={onChangeCheck2}/>
               </div>
               <div className="role-description-question">
                   <div className="role-description-answers">
@@ -470,6 +464,37 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
   )
   }
 
+  function handleSubmit(event) {
+    event.preventDefault();
+    async function submitApplication() {
+      // onOk send the put request
+      const data = {
+        email: email,
+        name: firstName + " " + lastName,
+        business_number: businessNum,
+        hear_about_us: hearAbout,
+        offer_donation: value1,
+        mentoring_options: mentoringOptions,
+        employer_name: employer,
+        role_description: title,
+        work_sectors: sectors,
+        time_at_current_company: value5,
+        linkedin: value6,
+        why_join_mentee: whyMentee,
+        commit_time: value4,
+        specializations: topics,
+        immigrant_status: value3,
+        languages: languages,
+        referral: referral,
+        knowledge_location: knowledgeLocation,
+        date_submitted: new Date()
+      }
+      console.log(data);
+      await createApplication(data);
+    }
+    submitApplication();
+
+  }
   function pageFour() {
     return (
     <div className="page-two-containere">
@@ -482,18 +507,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
             *What special topics could you teach or offer guidance on? (For
             any region or country- you will be asked next about location.)
             <div className="special-topics-answer-choices">
-            <Form layout="inline">
-            <Form.Item
-              name="special-topics"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-            <Checkbox.Group options={specialTopics} defaultValue={topics} onChange={onChangeCheck3}/>
-            </Form.Item>
-            </Form>
+            <Checkbox.Group options={specialTopics} value= {topics} onChange={onChangeCheck3}/>
             </div>
             <div className="region-question">
                 <div className="region-answers">
@@ -535,8 +549,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   placeholder="*If you know someone who would be a great MENTEE 
                   Specialist, please share their name, email, and we'll contact
                   them!"
-                  value = {referall}
-                  onChange={(e) => setReferall(e.target.value)}
+                  value = {referral}
+                  onChange={(e) => setReferral(e.target.value)}
                 />
                 
               </Form.Item>
@@ -566,6 +580,13 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
               </Form.Item>
                   </div>
               </div>
+              <div className="submit-button">
+              <MenteeButton 
+              content={<b> Submit</b>}
+              width={"7%"}
+              onClick={handleSubmit}
+             />
+              </div>  
         </div>
         </div>
         </div>

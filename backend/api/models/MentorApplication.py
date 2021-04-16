@@ -21,7 +21,7 @@ class MentorApplication(Document, Mixin):
     why_join_mentee = StringField(required=True)
     commit_time = StringField(required=True)
     immigrant_status = StringField(required=True)
-    languages = ListField(StringField(), required=True)
+    languages = StringField(required=True)
     specializations = ListField(StringField(), required=True)
     knowledge_location = StringField(required=True)
     referral = StringField()

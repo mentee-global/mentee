@@ -36,6 +36,7 @@ def get_accounts(account_type):
 
     return create_response(data={"accounts": accounts})
 
+
 # GET request for specific account based on id
 @main.route("/account/<string:id>", methods=["GET"])
 def get_account(id):
@@ -170,6 +171,7 @@ def edit_mentor(id):
 
     return create_response(status=200, message=f"Success")
 
+
 @main.route("/account/<id>/image", methods=["PUT"])
 def uploadImage(id):
     image = request.files["image"]
@@ -218,4 +220,3 @@ def uploadImage(id):
 
     account.save()
     return create_response(status=200, message=f"Success")
-

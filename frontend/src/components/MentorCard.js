@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Avatar, Typography, Button } from "antd";
 import {
@@ -7,10 +7,11 @@ import {
   StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
-  HeartOutlined
+  HeartOutlined,
+  HeartFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
-import { getMenteeID } from "utils/auth.service"; 
+import { getCurrentUser, getMenteeID } from "utils/auth.service";
 import { EditFavMentorById } from "../utils/api";
 import useAuth from "../utils/hooks/useAuth";
 
@@ -42,7 +43,7 @@ const styles = {
 };
 
 function MentorCard(props) {
-  const {isAdmin, isMentor, isMentee} = useAuth();
+  const { isAdmin, isMentor, isMentee } = useAuth();
   const [favorite, setFavorite] = useState(props.favorite);
   function getImage(image) {
     if (!image) {
@@ -54,6 +55,8 @@ function MentorCard(props) {
 
   function onFavoriteClick() {
     setFavorite(!favorite);
+    console.log("hit");
+    props.onEditFav(props.firebase_uid);
   }
 
   return (
@@ -72,10 +75,22 @@ function MentorCard(props) {
               Speaks: {props.languages.join(", ")}
             </Title>
           </div>
-        
-          <div className="favorite-button">
-            <Button shape="circle" icon={<HeartOutlined></HeartOutlined>} style={{ border: 'none'}} onClick={onFavoriteClick}/>
-          </div>
+          {isMentee && (
+            <div className="favorite-button">
+              <Button
+                shape="circle"
+                icon={
+                  favorite ? (
+                    <HeartFilled style={{ color: "#ff9cb3" }}></HeartFilled>
+                  ) : (
+                    <HeartOutlined></HeartOutlined>
+                  )
+                }
+                style={{ border: "none" }}
+                onClick={onFavoriteClick}
+              />
+            </div>
+          )}
         </div>
         <h3 className="gallery-lesson-types">
           <span className="gallery-dot" />
@@ -124,9 +139,7 @@ function MentorCard(props) {
           </h4>
         )}
         <hr className="gallery-solid-border" />
-        <div className="bookmark-button">
-          
-        </div>
+        <div className="bookmark-button"></div>
         <NavLink to={"/gallery/" + props.id}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />

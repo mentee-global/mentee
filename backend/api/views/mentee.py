@@ -7,24 +7,28 @@ from api.utils.constants import Account
 
 mentee = Blueprint("mentee", __name__)
 
+
 @mentee.route("/addFavMentor", methods=["PUT"])
 def add_fav_mentor():
     try:
-        mentor_id = request.args.get("mentor_id")
-        mentee_id = request.args.get("mentee_id")
+        data = request.get_json()
+        mentor_uid = data["mentor_uid"]
+        mentee_uid = data["mentee_uid"]
     except:
         msg = "invalid parameters provided"
         logger.info(msg)
         return create_response(status=422, message=msg)
+    print()
     try:
-        mentee = MenteeProfile.objects.get(id=mentee_id)
-        fav_mentor = MentorProfile.objects.get(id=mentor_id)
-        if fav_mentor in mentee.favorite_mentors:
-            mentee.favorite_mentors.remove(fav_mentor)
-            msg = f"Deleted mentor: {fav_mentor.name} from mentee: {mentee.name} favorite list"
+        mentee = MenteeProfile.objects.get(firebase_uid=mentee_uid)
+        if mentor_uid in mentee.favorite_mentors_uids:
+            mentee.favorite_mentors_uids.remove(mentor_uid)
+            msg = (
+                f"Deleted mentor: {mentor_uid} from mentee: {mentee.name} favorite list"
+            )
         else:
-            mentee.favorite_mentors.append(fav_mentor)
-            msg = f"Added mentor: {fav_mentor.name} to mentee: {mentee.name} favorite list"
+            mentee.favorite_mentors_uids.append(mentor_uid)
+            msg = f"Added mentor: {mentor_uid} to mentee: {mentee.name} favorite list"
         mentee.save()
     except:
         msg = "Failed to saved mentor as favorite"

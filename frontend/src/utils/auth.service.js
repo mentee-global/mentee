@@ -1,7 +1,7 @@
 import axios from "axios";
 import firebase from "firebase";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
-import { useAuth } from "utils/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -51,10 +51,11 @@ export const sendPasswordResetEmail = (email) => {
   return post("/forgotPassword", { email });
 };
 
-export const login = async (email, password) =>
+export const login = async (email, password, role) =>
   await post("/login", {
     email: email && email.trim(),
     password: password && password.trim(),
+    role,
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
       await firebase
@@ -82,9 +83,10 @@ export const refreshToken = async () => {
   // need initial token from registration
   if (isLoggedIn()) {
     return await getIdToken().then(async (idToken) => {
-      const token = await post("/refreshToken", { token: idToken }).then(
-        (data) => data && data.result.token
-      );
+      const token = await post("/refreshToken", {
+        token: idToken,
+        role: await getRole(),
+      }).then((data) => data && data.result.token);
 
       await firebase.auth().signInWithCustomToken(token);
 
@@ -126,21 +128,35 @@ export const getRole = async () => {
     return await getIdTokenResult().then(
       (idTokenResult) => idTokenResult.claims.role
     );
-  } else return null;
+  }
 };
 
 export const getMentorID = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.mentorId;
+      if (idTokenResult.claims.role == ACCOUNT_TYPE.MENTOR) {
+        return idTokenResult.claims.profileId;
+      }
     });
-  } else return false;
+  }
+};
+
+export const getMenteeID = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      if (idTokenResult.claims.role == ACCOUNT_TYPE.MENTEE) {
+        return idTokenResult.claims.profileId;
+      }
+    });
+  }
 };
 
 export const getAdminID = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
-      return idTokenResult.claims.adminId;
+      if (idTokenResult.claims.role == ACCOUNT_TYPE.ADMIN) {
+        return idTokenResult.claims.profileId;
+      }
     });
   } else return false;
 };

@@ -14,6 +14,7 @@ from api.utils.constants import (
     APPT_TIME_FORMAT,
     Account,
 )
+from api.utils.require_auth import admin_only
 
 appointment = Blueprint("appointment", __name__)
 
@@ -213,6 +214,7 @@ def delete_request(appointment_id):
 
 # GET all appointments per mentor
 @appointment.route("/mentors", methods=["GET"])
+@admin_only
 def get_mentors_appointments():
     mentors = MentorProfile.objects()
     appointments = AppointmentRequest.objects()
@@ -246,6 +248,7 @@ def get_mentors_appointments():
 
 
 @appointment.route("/", methods=["GET"])
+@admin_only
 def get_appointments():
     appointments = AppointmentRequest.objects()
     mentors = MentorProfile.objects().only("name", "id")

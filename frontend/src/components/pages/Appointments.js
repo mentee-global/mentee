@@ -16,8 +16,9 @@ import {
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getMentorID } from "utils/auth.service";
-import AppointmentInfo from "components/AppointmentInfo";
-import MenteeButton from "components/MenteeButton.js";
+import AppointmentInfo from "../AppointmentInfo";
+import MenteeButton from "../MenteeButton.js";
+import useAuth from "utils/hooks/useAuth";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -44,6 +45,7 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getAppointments() {
@@ -58,7 +60,8 @@ function Appointments() {
         setAppointments(formattedAppointments);
       }
     }
-    getAppointments();
+
+    onAuthStateChanged(getAppointments);
   }, [appointmentClick]);
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {

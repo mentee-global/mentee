@@ -1,156 +1,171 @@
+.modal-window {
+  width: 40% !important;
+}
+
+@media only screen and (max-width: 1400px) {
+  .modal-window {
+    width: 75% !important;
+  }
+}
+
+@media only screen and (max-width: 720px) {
+  .modal-window {
+    width: 100% !important;
+  }
+}
+
 .modal-container {
-    display: flex;
-    flex-direction: column;
-    height: 600px;
-    width: 100%;
-    overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  width: 100%;
+  overflow-y: scroll;
 }
 
 .modal-profile-container {
-    display: flex;
-    background-color: #FFF7E2;
-    min-height: 120px;
-    width: 100%;
-    margin-bottom: 50px;
+  display: flex;
+  background-color: #fff7e2;
+  min-height: 120px;
+  width: 100%;
+  margin-bottom: 50px;
 }
 
 .modal-profile-icon {
-    margin-top: 60px;
-    margin-left: 44px;
+  margin-top: 60px;
+  margin-left: 44px;
 }
 
 .modal-profile-icon-edit {
-    margin-top: 140px;
-    margin-left: -30px;
+  margin-top: 140px;
+  margin-left: -30px;
 }
 
 .modal-inner-container {
-    display: flex;
-    flex-direction: column;
-    margin: 24px;
+  display: flex;
+  flex-direction: column;
+  margin: 24px;
 }
 
 .modal-input-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
-
 .modal-availability-checkbox {
-    display: flex;
-    flex-direction: column;
-    margin: 5px;
-    margin-left: 18px;
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  margin-left: 18px;
 }
 
 .modal-availability-checkbox-text {
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    color: "#7A7A7A"
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: "#7A7A7A";
 }
 
 .modal-education-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 .modal-education-header {
-    display: flex;
-    font-size: 18px;
-    font-weight: bold;
-    margin: 5px;
-    margin-left: 16px;
+  display: flex;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 5px;
+  margin-left: 16px;
 }
 
 .modal-education-sidebar {
-    display: flex;
-    margin: 5px;
-    margin-left: 16px;
-    height: 93%;
-    width: 14px;
-    border-left: 3px solid #A58123;
+  display: flex;
+  margin: 5px;
+  margin-left: 16px;
+  height: 93%;
+  width: 14px;
+  border-left: 3px solid #a58123;
 }
 
 .modal-inner-education-container {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .modal-education-add-container {
-    margin-top: 5px;
-    margin-left: 20px;
+  margin-top: 5px;
+  margin-left: 20px;
 }
 
 .modal-education-delete-container {
-    margin-left: 90%;
+  margin-left: 90%;
 }
 
 .modal-education-add-icon {
-    margin-right: 10px;
-    font-size: 25px;
-    color: #A58123;
+  margin-right: 10px;
+  font-size: 25px;
+  color: #a58123;
 }
 
 .modal-education-delete-icon {
-    margin-left: 3px;
-    margin-top: 3px;
-    font-size: 10px;
-    color: #A62B31;
+  margin-left: 3px;
+  margin-top: 3px;
+  font-size: 10px;
+  color: #a62b31;
 }
 
 .modal-education-add-text {
-    font-size: 16px;
-    text-decoration-line: underline;
-    color: #A58123;
+  font-size: 16px;
+  text-decoration-line: underline;
+  color: #a58123;
 }
 
 .modal-education-delete-text {
-    font-size: 10px;
-    text-decoration-line: underline;
-    color: #A62B31;
-    font-weight: 700;
+  font-size: 10px;
+  text-decoration-line: underline;
+  color: #a62b31;
+  font-weight: 700;
 }
 
 .input-text {
-    font-size: 18px;
-    font-weight: 500;
-    overflow-y: scroll;
-    max-height: 30px;
+  font-size: 18px;
+  font-weight: 500;
+  overflow-y: scroll;
+  max-height: 30px;
 }
 
 .input-textarea {
-    font-size: 18px;
-    font-weight: 500;
-    overflow-y: scroll;
-    background-color: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  overflow-y: scroll;
+  background-color: inherit;
 }
 
 .divider {
-    margin-top: 50px;
+  margin-top: 50px;
 }
 
 .modal-mentee-appointment-contact-container {
-    display: inline;
+  display: inline;
 }
-
 
 // This is probably bad coding practice so probably want to replace
-.ant-form-item-has-error{
-    background-color: inherit !important;
-    border-color: inherit !important;
+.ant-form-item-has-error {
+  background-color: inherit !important;
+  border-color: inherit !important;
 }
 
-.ant-form-item{
-    margin: 0;
+.ant-form-item {
+  margin: 0;
 }
 .ant-input {
-    background-color: inherit !important;
+  background-color: inherit !important;
 }
 
-ant-form-item-has-error, .ant-input:focus {
-    box-shadow: none !important;
+ant-form-item-has-error,
+.ant-input:focus {
+  box-shadow: none !important;
 }

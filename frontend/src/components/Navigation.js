@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
 import { isLoggedIn } from "utils/auth.service";
-import useAuth from "utils/useAuth";
+import useAuth from "utils/hooks/useAuth";
 
 import MentorNavHeader from "./MentorNavHeader";
 import MenteeNavHeader from "./MenteeNavHeader";
 import AdminNavHeader from "./AdminNavHeader";
 import NavigationSidebar from "./NavigationSidebar";
 import AdminSidebar from "./AdminSidebar";
+import firebase from "firebase";
 
 import "./css/Navigation.scss";
 
@@ -16,12 +17,14 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
-  const { isAdmin } = useAuth();
+  const { isAdmin, onAuthUpdate, onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    if (props.needsAuth && !isLoggedIn()) {
-      history.push("/login");
-    }
+    onAuthStateChanged((user) => {
+      if (!user && props.needsAuth) {
+        history.push("/login");
+      }
+    });
   }, [history, props.needsAuth]);
 
   return (

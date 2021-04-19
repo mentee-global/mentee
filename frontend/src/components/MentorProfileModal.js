@@ -316,9 +316,7 @@ function MentorProfileModal(props) {
     setEdited(true);
 
     const newValidArray = [...isValid];
-    console.log(newValidArray);
     newValidArray.splice(10 + educationIndex * 4, 4);
-    console.log(newValidArray);
     setIsValid(newValidArray);
   };
 
@@ -328,7 +326,7 @@ function MentorProfileModal(props) {
       await editMentorProfile(data, mentorID);
 
       if (changedImage) {
-        await uploadMentorImage(image, getMentorID());
+        await uploadMentorImage(image, await getMentorID());
       }
 
       setSaving(false);
@@ -400,6 +398,7 @@ function MentorProfileModal(props) {
             </Button>
           </div>
         }
+        className="modal-window"
       >
         <div className="modal-container">
           <div className="modal-profile-container">

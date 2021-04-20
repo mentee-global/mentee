@@ -84,7 +84,7 @@ function Login() {
               // use this to connect auth
               onClick={async () => {
                 setLoggingIn(true);
-                const res = await login(email, password, loginProps.login);
+                const res = await login(email, password, loginProps.type);
 
                 if (!res || !res.success) {
                   setErrorMessage(
@@ -121,7 +121,10 @@ function Login() {
           </div>
           <div className="register-link">
             Don't Have an account?{" "}
-            <NavLink to="/register" className="login-register-link">
+            <NavLink
+              to={`/register?as=${loginProps.type}`}
+              className="login-register-link"
+            >
               Register
             </NavLink>
           </div>

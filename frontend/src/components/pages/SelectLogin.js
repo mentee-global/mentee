@@ -6,26 +6,26 @@ import MenteeLogin from "resources/MenteeLogin.svg";
 import AdminImage from "resources/AdminLogin.svg";
 import "components/css/SelectLogin.scss";
 
+const Logins = Object.freeze({
+  mentee: {
+    title: "Mentee",
+    type: ACCOUNT_TYPE.MENTEE,
+    redirect: "/messages",
+  },
+  mentor: {
+    title: "Mentor",
+    type: ACCOUNT_TYPE.MENTOR,
+    redirect: "/appointments",
+  },
+  admin: {
+    title: "Admin",
+    type: ACCOUNT_TYPE.ADMIN,
+    redirect: "/account-data",
+  },
+});
+
 function SelectLogin() {
   const history = useHistory();
-
-  const Logins = Object.freeze({
-    mentee: {
-      title: "Mentee",
-      type: ACCOUNT_TYPE.MENTEE,
-      redirect: "/messages",
-    },
-    mentor: {
-      title: "Mentor",
-      login: ACCOUNT_TYPE.MENTOR,
-      redirect: "/appointments",
-    },
-    admin: {
-      title: "Admin",
-      login: ACCOUNT_TYPE.ADMIN,
-      redirect: "/account-data",
-    },
-  });
 
   const handleSelect = (key) => {
     history.push({

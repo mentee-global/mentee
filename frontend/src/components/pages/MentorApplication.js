@@ -141,10 +141,9 @@ function MentorApplication() {
     function pageOne() {
       console.log(firstName);
         return (
+              <div className="page-one-header">
+                <h1>Personal Information</h1>
               <div className="page-one-column-container">
-                <div className="page-one-header">
-                  <h1>Personal Information</h1>
-                </div>
                 <div className="column-one">
                 <Form>
                 <Form.Item
@@ -155,7 +154,7 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  *First Name"
+                  *First Name
                   <Input
                     type="text"
                     placeholder="*First Name"
@@ -267,16 +266,17 @@ function MentorApplication() {
                 </Form>
                 </div>
               </div>
+              </div>
         )
     }
 
     function pageTwo() {
         return (
-          <div className="page-two-column-container">
-            <div className="page-two-header">
-              <h2>Commitments</h2>
-            </div>
-                <div className="donation-answer-choices">
+          <div className="page-two-header">
+              <h1>Commitments</h1>
+          <div className="page-one-column-container">
+            <div className="page-two-column">
+            <div className="donation-answer-choices">
                 <Form layout="inline">
                 <Form.Item
                   name="why-mentee"
@@ -287,14 +287,14 @@ function MentorApplication() {
                   ]}
                 >
                 <div className="donation-question">
-                <p4>*As a MENTEE global mentor, you wll have your own profile page where
+                *As a MENTEE global mentor, you wll have your own profile page where
                 you will highlight your skills and how you can help our mentees
                 either synchronously or asynchronously. You will also have thte opportunity 
                 to post your own videos that share your specific guidance or lessons to help our mentees.
                 Additionally, you will have a networking space that will allow you to get to know othere
                 specialists froom around the world and networking events that are online and global.
                 MENTEE is a volunteer organization and we are 100% sustained by donations. Are you able to offer
-                a donation for one year?*</p4>
+                a donation for one year?*
                 </div>
                     <Radio.Group name="donation" onChange={onChange1} value={offerDonation}>
                         <Radio  value={"Yes, I can offer a donation now to help suppourt this work!"}>Yes, I can offer a donation now to help suppourt this work! (https://www.menteteglobal.org/donate)
@@ -315,7 +315,9 @@ function MentorApplication() {
                     <Checkbox.Group options={workOptions} defaultValue={mentoringOptions} onChange={onChangeCheck}/>
                     </div>
                 </div>
-                <div className="time-options-question">
+            </div>
+            <div className="page-two-column-two">
+            <div className="time-options-question">
                   *Please choose the option(s) that is right for you  
                   <div className="time-options-answers">
                   <Radio.Group onChange={onChange2} value={commitTime}>
@@ -354,6 +356,8 @@ function MentorApplication() {
                         </Radio.Group>
                     </div>
                 </div>
+            </div>
+            </div>
             </div>
     )
     }

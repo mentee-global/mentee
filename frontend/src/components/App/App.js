@@ -66,11 +66,7 @@ function App() {
       <Route
         path="/messages"
         component={() => (
-          <Navigation
-            content={<Messages />}
-            page="favorites"
-            needsAuth={true}
-          />
+          <Navigation content={<Messages />} page="messages" needsAuth={true} />
         )}
       />
       <Route

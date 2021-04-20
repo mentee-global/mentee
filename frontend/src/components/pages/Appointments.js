@@ -55,7 +55,6 @@ function Appointments() {
         ACCOUNT_TYPE.MENTOR
       );
       const formattedAppointments = formatAppointments(appointmentsResponse);
-      console.log(formattedAppointments);
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
       }

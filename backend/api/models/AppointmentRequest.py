@@ -12,6 +12,12 @@ class AppointmentRequest(Document, Mixin):
     mentee_id = ObjectIdField()
     timeslot = EmbeddedDocumentField(Availability, required=True)
     accepted = BooleanField(required=True)
+    message = StringField()
+    allow_texts = BooleanField()
+    allow_calls = BooleanField()
+    
+    # Legacy Fields
+    organization = StringField()
     name = StringField()
     email = StringField()
     phone_number = StringField()
@@ -20,10 +26,6 @@ class AppointmentRequest(Document, Mixin):
     gender = StringField()
     location = StringField()
     specialist_categories = ListField(StringField(), required=True)
-    message = StringField()
-    organization = StringField()
-    allow_texts = BooleanField()
-    allow_calls = BooleanField()
 
     def __repr__(self):
         return f"""<AppointmentRequest mentor_id: {self.mentor_id}

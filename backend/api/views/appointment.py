@@ -18,7 +18,7 @@ from api.utils.require_auth import admin_only
 
 appointment = Blueprint("appointment", __name__)
 
-# GET request for appointments by mentor id
+# GET request for appointments by account id
 @appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
 def get_requests_by_id(account_type, id):
     account = None
@@ -38,13 +38,7 @@ def get_requests_by_id(account_type, id):
             mentee_id__not__exists=True
         )
         for appointment in by_email:
-            try:
-                mentee = MenteeProfile.objects.get(email=appointment.email)
-            except:
-                msg = "Could not find Mentee with that email"
-                logger.info(msg)
-                continue
-            appointment.mentee_id = mentee.id
+            appointment.mentee_id = id
             appointment.save()
     elif account_type == Account.MENTOR:
         not_verified = AppointmentRequest.objects(mentor_id=account.id).filter(

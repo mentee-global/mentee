@@ -118,25 +118,41 @@ function App() {
       <Route
         path="/organizer"
         component={() => (
-          <Navigation content={<ApplicationOrganizer />} needsAuth={true} />
+          <Navigation
+            content={<ApplicationOrganizer />}
+            needsAuth={true}
+            page="applications"
+          />
         )}
       />
       <Route
         path="/account-data"
         component={() => (
-          <Navigation content={<AdminAccountData />} needsAuth={true} />
+          <Navigation
+            content={<AdminAccountData />}
+            needsAuth={true}
+            page="accountData"
+          />
         )}
       />
       <Route
         path="/all-appointments"
         component={() => (
-          <Navigation content={<AdminAppointmentData />} needsAuth={true} />
+          <Navigation
+            content={<AdminAppointmentData />}
+            needsAuth={true}
+            page="allAppointments"
+          />
         )}
       />
       <Route
         path="/verified-emails"
         component={() => (
-          <Navigation content={<AdminVerifiedEmails />} needsAuth={true} />
+          <Navigation
+            content={<AdminVerifiedEmails />}
+            needsAuth={true}
+            page="verifiedEmails"
+          />
         )}
       />
       <Route

@@ -15,7 +15,7 @@ class AppointmentRequest(Document, Mixin):
     message = StringField()
     allow_texts = BooleanField()
     allow_calls = BooleanField()
-    
+
     # Legacy Fields
     organization = StringField()
     name = StringField()

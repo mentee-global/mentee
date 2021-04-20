@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation, NavLink } from "react-router-dom";
 import { Input } from "antd";
-import { ACCOUNT_TYPE } from "utils/consts";
-import {
-  login,
-  logout,
-  isUserAdmin,
-  isUserMentee,
-  isUserMentor,
-} from "utils/auth.service";
+import { LOGIN_ERROR_MSGS } from "utils/consts";
+import { login, sendVerificationEmail } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
+import firebase from "firebase";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../css/Login.scss";
 
@@ -21,6 +16,9 @@ function Login() {
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(
+    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+  );
   const [loggingIn, setLoggingIn] = useState(false);
 
   useEffect(() => {
@@ -45,11 +43,7 @@ function Login() {
           <h1 className="login-text">
             Sign In as {loginProps && loginProps.title}
           </h1>
-          {error && (
-            <div className="login-error">
-              Incorrect username and/or password. Please try again.
-            </div>
-          )}
+          {error && <div className="login-error">{errorMessage}</div>}
           <div
             className={`login-input-container${
               inputFocus[0] ? "__clicked" : ""
@@ -90,32 +84,37 @@ function Login() {
               // use this to connect auth
               onClick={async () => {
                 setLoggingIn(true);
-                const res = await login(email, password);
-                setError(!Boolean(res));
-                if (res && res.success) {
-                  let loginFunction;
-                  switch (loginProps.type) {
-                    case ACCOUNT_TYPE.MENTEE:
-                      loginFunction = isUserMentee;
-                      break;
-                    case ACCOUNT_TYPE.MENTOR:
-                      loginFunction = isUserMentor;
-                      break;
-                    case ACCOUNT_TYPE.ADMIN:
-                      loginFunction = isUserAdmin;
-                      break;
-                    default:
-                      loginFunction = isUserMentor;
-                      break;
-                  }
+                const res = await login(email, password, loginProps.login);
 
-                  if (await loginFunction()) {
-                    history.push(loginProps.redirect);
-                  } else {
-                    setError(true);
-                    await logout();
-                  }
+                if (!res || !res.success) {
+                  setErrorMessage(
+                    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+                  );
+                  setError(true);
+                } else if (res.result.passwordReset) {
+                  setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
+                  setError(true);
+                } else if (res.result.recreateAccount) {
+                  setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
+                  setError(true);
                 }
+
+                const unsubscribe = firebase
+                  .auth()
+                  .onAuthStateChanged(async (user) => {
+                    unsubscribe();
+                    if (!user) return;
+
+                    if (res.result.redirectToVerify) {
+                      await sendVerificationEmail(email);
+                      history.push("/verify");
+                    } else if (res.result.redirectToCreateProfile) {
+                      history.push("/create-profile");
+                    } else {
+                      history.push(loginProps.redirect);
+                    }
+                  });
+
                 setLoggingIn(false);
               }}
             />

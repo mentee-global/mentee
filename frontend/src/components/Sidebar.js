@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { NavLink } from "react-router-dom";
 import { Layout, Menu } from "antd";
+import usePersistedState from "../utils/hooks/usePersistedState";
 import "./css/Navigation.scss";
 
 const { Sider } = Layout;
@@ -11,7 +12,10 @@ const menuItemMarginOverride = { marginTop: "0px", marginBottom: "0px" };
 
 function Sidebar({ subMenus, pages, selectedPage }) {
   const isMobile = useMediaQuery({ query: `(max-width: 768px)` });
-  const [collapsed, setCollapsed] = useState(isMobile);
+  const [collapsed, setCollapsed] = usePersistedState(
+    "collapsedNavbar",
+    isMobile
+  );
 
   const getMenuItemStyle = (page) => {
     return selectedPage === page

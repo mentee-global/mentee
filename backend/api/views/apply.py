@@ -128,12 +128,15 @@ def edit_application(id):
 def create_appointment():
     data = request.get_json()
     logger.info(data)
-    validate_data = MentorApplication.from_json(data)
-    msg, is_invalid = is_invalid_form(validate_data)
-    if is_invalid:
-        return create_response(status=422, message=msg)
+    # validate_data = MentorApplication.from_json(data)
+    # msg, is_invalid = is_invalid_form(validate_data)
+    # if is_invalid:
+        #return create_response(status=422, message=msg)
+
     new_application = MentorApplication(
         name=data.get("name"),
+        email=data.get("email"),
+        specializations = data.get("specializations"),
         business_number=data.get("business_number"),
         cell_number=data.get("cell_number"),
         hear_about_us=data.get("email"),
@@ -146,6 +149,7 @@ def create_appointment():
         linkedin=data.get("linkedin"),
         why_join_mentee=data.get("why_join_mentee"),
         commit_time=data.get("commit_time"),
+        specialist_time = data.get("specialist_time"),
         immigrant_status=data.get("immigrant_status"),
         languages=data.get("languages"),
         referral=data.get("referral"),
@@ -159,5 +163,5 @@ def create_appointment():
     new_application.save()
 
     return create_response(
-        message=f"Successfully created application with ID: {new_application.mentor_id} with name: {new_application.name}"
+        message=f"Successfully created application with name {new_application.name}"
     )

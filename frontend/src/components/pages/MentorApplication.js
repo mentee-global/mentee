@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Steps, message, Form, Input, Radio, Row, Col, Checkbox} from 'antd';
 import MenteeButton from "../MenteeButton";
-import ModalInput from "../ModalInput";
 import MentorApplicationPage from "../css/MentorApplicationPage.scss";
 import { createApplication } from "../../utils/api";
-import { MenteeMentorDropdown } from "components/AdminDropdowns";
 
 function MentorApplication() { 
+    // constant declarations   
     const { Step } = Steps;
     const { TextArea } = Input;
     const workOptions = ['I am able to mentor synchronously and asynchronously.', 
@@ -14,51 +13,53 @@ function MentorApplication() {
     'I am able to post videos that mentor/teach skills in specific areas.'];
 
     const workSectors = ['Architecture', 'Arts/Dance/Design/Music', 'Computer Science/Technology/IT',
-  'Education', 'Engineering', 'Finance', 'Government/Public Service', 'Healthcare','Human/Social Services',
-'Journalism','Law','Marketing','Media/Entertainment/Communications','Nonprofit/NGO','Retail','Sports/Recreation/Leisure'];
+    'Education', 'Engineering', 'Finance', 'Government/Public Service', 'Healthcare','Human/Social Services',
+    'Journalism','Law','Marketing','Media/Entertainment/Communications','Nonprofit/NGO','Retail','Sports/Recreation/Leisure'];
 
-const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and More', 'Citizenship',
-'Education, Personal Guidance On Next Steps', 'Entrepreneurship', 'Finance, Business', 'Finance, Personal', 'Health, Community, and Enviornment','Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation',
-'Interview Skills & Practice','Journalism','Language Lessons','Letter Writing and Other Communications','Legal Issues, Business','Legal Issues, Related to Personal Issues (Excluding Citizenship)','Media/Public Relations',
-'Medicine', 'Nonprofits/NGOs', 'Professional Speaking', 'Resume Writing', 'Self Confidence', 'Small Business', 'Technology Training'];
+    const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and More', 'Citizenship',
+    'Education, Personal Guidance On Next Steps', 'Entrepreneurship', 'Finance, Business', 'Finance, Personal', 'Health, Community, and Enviornment','Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation',
+    'Interview Skills & Practice','Journalism','Language Lessons','Letter Writing and Other Communications','Legal Issues, Business','Legal Issues, Related to Personal Issues (Excluding Citizenship)','Media/Public Relations',
+    'Medicine', 'Nonprofits/NGOs', 'Professional Speaking', 'Resume Writing', 'Self Confidence', 'Small Business', 'Technology Training'];
+
+    // on change for radiio buttons 
+    const [offerDonation, setOfferDonation] = useState(1);
+    const [commitTime, setCommitTime] = useState(1);
+    const [immigrantStatus, setImmigrantStatus] = useState(1);
+    const [specialistTime, setSpecialistTime] = useState(1);
+    const [companyTime, setCompanyTime] = useState(1);
+    const [onLinkedin, setOnLinkedin] = useState(1);
+
     const onChange1 = (e) => {
         console.log('radio checked', e);
-        setValue1(e.target.value);
+        setOfferDonation(e.target.value);
       };
-      const [value1, setValue1] = useState(1);
 
       const onChange2 = (e) => {
         console.log('radio checked', e);
-        setValue2(e.target.value);
+        setCommitTime(e.target.value);
       };
-      const [value2, setValue2] = useState(1);
 
       const onChange3 = (e) => {
         console.log('radio checked', e);
-        setValue3(e.target.value);
+        setImmigrantStatus(e.target.value);
       };
-      const [value3, setValue3] = useState(1);
 
       const onChange4 = (e) => {
         console.log('radio checked', e);
-        setValue4(e.target.value);
+        setSpecialistTime(e.target.value);
       };
-      const [value4, setValue4] = useState(1);
-
 
       const onChange5 = (e) => {
         console.log('radio checked', e);
-        setValue5(e.target.value);
+        setCompanyTime(e.target.value);
       };
-      const [value5, setValue5] = useState(1);
 
       const onChange6 = (e) => {
         console.log('radio checked', e);
-        setValue6(e.target.value);
+        setOnLinkedin(e.target.value);
       };
-      const [value6, setValue6] = useState(1);
 
-
+      // on change for checked boxes
       const [mentoringOptions, setMentoringOptions] = useState([]);
       const [sectors, setSectors] = useState([]);
       const [topics, setTopics] = useState([]);
@@ -92,6 +93,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
         setTopics(optionsSelected);
       }
 
+      // sets text fields 
       const [firstName, setFirstName] = useState(null);
       const [lastName, setLastName] = useState(null);
       const [cell, setCell] = useState(null);
@@ -105,13 +107,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       const [referral, setReferral] = useState(null);
       const [languages, setLanguages] = useState(null);
   
-  
-  
-
-
-
-
-
+    // creates steps layout 
     const steps = [
         {
           title: 'Personal Information',
@@ -122,13 +118,13 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
           content: pageTwo(),
         },
         {
-          title: 'Work Informatiom',
+          title: 'Work Information',
           content: pageThree(),
         },
         {
             title: 'Specialization Information',
             content: pageFour(),
-        },
+        }
       ];
       
     const [current, setCurrent] = useState(0); 
@@ -142,17 +138,14 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       };
 
       
-    // param object
-    // key value
     function pageOne() {
       console.log(firstName);
         return (
-            <div className="page-one-container">
-            <div className="flex flex-row">
               <div className="page-one-column-container">
                 <div className="page-one-header">
                   <h1>Personal Information</h1>
                 </div>
+                <div className="column-one">
                 <Form>
                 <Form.Item
                   name="first-name"
@@ -201,6 +194,10 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                     onChange={(e) => setCell(e.target.value)}
                   />
                 </Form.Item>
+                </Form>
+                </div>
+                <div className="column-two">
+                <Form>
                 <Form.Item
                   name="business-number"
                   rules={[
@@ -269,24 +266,16 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                 </Form.Item>
                 </Form>
                 </div>
-                </div>
               </div>
         )
     }
 
-
-    // 
-
     function pageTwo() {
-  
         return (
-        <div className="page-two-containere">
-        <div className="flex flex-row">
           <div className="page-two-column-container">
             <div className="page-two-header">
               <h2>Commitments</h2>
             </div>
-            <div className="donation-question">
                 <div className="donation-answer-choices">
                 <Form layout="inline">
                 <Form.Item
@@ -297,7 +286,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                     },
                   ]}
                 >
-                <div className="question">
+                <div className="donation-question">
                 <p4>*As a MENTEE global mentor, you wll have your own profile page where
                 you will highlight your skills and how you can help our mentees
                 either synchronously or asynchronously. You will also have thte opportunity 
@@ -307,7 +296,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                 MENTEE is a volunteer organization and we are 100% sustained by donations. Are you able to offer
                 a donation for one year?*</p4>
                 </div>
-                    <Radio.Group name="donation" onChange={onChange1} value={value1}>
+                    <Radio.Group name="donation" onChange={onChange1} value={offerDonation}>
                         <Radio  value={"Yes, I can offer a donation now to help suppourt this work!"}>Yes, I can offer a donation now to help suppourt this work! (https://www.menteteglobal.org/donate)
                         </Radio>
                         <Radio value={"No, unfortunately I cannot offer a donation now but please ask me again."}>No, unfortunately I cannot offer a donation now but please ask me again.
@@ -329,7 +318,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                 <div className="time-options-question">
                   *Please choose the option(s) that is right for you  
                   <div className="time-options-answers">
-                  <Radio.Group onChange={onChange2} value={value2}>
+                  <Radio.Group onChange={onChange2} value={commitTime}>
                         <Radio value={"I can mentor several times a month."}>I can mentor several times a month.
                         </Radio>
                         <Radio value={"I can mentor 1-2 times a month."}>I can mentor 1-2 times a month.
@@ -345,7 +334,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                 <div className="immigrant-family-question">
                   *Are you an immigrant or refugee or do you come from an immigrant family or refugee family?
                   <div className="immigrant-family-answers">
-                  <Radio.Group onChange={onChange3} value={value3}>
+                  <Radio.Group onChange={onChange3} value={immigrantStatus}>
                         <Radio value={'Yes'}>Yes
                         </Radio>
                         <Radio value={'No'}>No
@@ -357,7 +346,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                 <div className="immigrant-family-question">
                   *If you are accepted as a Specialist, would you like to commit to...
                   <div className="immigrant-family-answers">
-                  <Radio.Group name="a" onChange={onChange4} value={value4}>
+                  <Radio.Group name="a" onChange={onChange4} value={specialistTime}>
                         <Radio value={"One year with us"}>One year with us
                         </Radio>
                         <Radio value={'Two years with us'}>Two years with us
@@ -366,12 +355,8 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                     </div>
                 </div>
             </div>
-            </div>
-            </div>
-          </div>
     )
     }
-
 
     function pageThree() {
       console.log(sectors);
@@ -430,7 +415,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
               <div className="time-at-company-question">
                   *How long have you been with this company? 
                   <div className="time-options-answers">
-                  <Radio.Group onChange={onChange5} value={value5}>
+                  <Radio.Group onChange={onChange5} value={companyTime}>
                         <Radio value={"Less than one year."}>Less than one year.
                         </Radio>
                         <Radio value={"1-4 years"}>1-4 years
@@ -447,7 +432,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
                   with our MENETEE Specialist profile unless you prefer they
                   remain seperate.) 
                   <div className="time-options-answers">
-                  <Radio.Group onChange={onChange6} value={value6}>
+                  <Radio.Group onChange={onChange6} value={onLinkedin}>
                         <Radio value={"Yes"}>Yes
                         </Radio>
                         <Radio value={"No"}>No
@@ -464,6 +449,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
   )
   }
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
   function handleSubmit(event) {
     event.preventDefault();
     async function submitApplication() {
@@ -471,19 +457,21 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       const data = {
         email: email,
         name: firstName + " " + lastName,
+        cell_number: cell,
         business_number: businessNum,
         hear_about_us: hearAbout,
-        offer_donation: value1,
+        offer_donation: offerDonation,
         mentoring_options: mentoringOptions,
         employer_name: employer,
         role_description: title,
         work_sectors: sectors,
-        time_at_current_company: value5,
-        linkedin: value6,
+        time_at_current_company: companyTime,
+        linkedin: onLinkedin,
         why_join_mentee: whyMentee,
-        commit_time: value4,
+        commit_time: commitTime,
+        specialist_time: specialistTime,
         specializations: topics,
-        immigrant_status: value3,
+        immigrant_status: immigrantStatus,
         languages: languages,
         referral: referral,
         knowledge_location: knowledgeLocation,
@@ -493,7 +481,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       await createApplication(data);
     }
     submitApplication();
-
+    setIsSubmitted(true); 
   }
   function pageFour() {
     return (
@@ -593,6 +581,14 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
       </div>
 )
 }
+
+function successPage() {
+    return (
+      <div className="success-message">
+        <h1>You have sucessfully submitted your global mentor application</h1>
+      </div>
+    ) 
+}
     
     return (
         <>
@@ -625,13 +621,7 @@ const specialTopics = ['Advocacy and Activism', 'Arts:Dance/Design/Music and Mor
              />
             )}
             </div>
-            {current === steps.length - 1 && (
-              <MenteeButton type="primary" onClick={() => message.success('Processing complete!')}>
-                Done
-              </MenteeButton>
-            )}
             </div>
-
         </>
       );
 }

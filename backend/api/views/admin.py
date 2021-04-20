@@ -49,43 +49,19 @@ def upload_mentor_emails():
         return create_response(data={"uploads": uploads})
 
     f = request.files["fileupload"]
+    password = request.form["pass"]
+    isMentor = request.form["mentorOrMentee"] == "true"
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
         for line in reader:
-            email = VerifiedEmail(email=line[0], is_mentor=True, password="")
+            email = VerifiedEmail(email=line[0], is_mentor=isMentor, password=password)
             email.save()
-
-    return create_response(status=200, message="success")
-
-
-@admin.route("/upload/mentees", methods=["GET", "POST"])
-@admin_only
-def upload_mentee_emails():
-    if request.method == "GET":
-        uploads = VerifiedEmail.objects().get(is_mentor=False)
-        return create_response(data={"uploads": uploads})
-
-    f = request.files["fileupload"]
-
-    with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
-        reader = csv.reader(fstring, delimiter="\n")
-        is_email = True
-        address = None
-        password = None
-        for line in reader:
-            if is_email:
-                address = line[0]
-            else:
-                password = line[0]
-                email = VerifiedEmail(email=address, password=password, is_mentor=False)
-                email.save()
-            is_email = not is_email
-
     return create_response(status=200, message="success")
 
 
 @admin.route("/admin/<id>", methods=["GET"])
+@admin_only
 def get_admin(id):
     try:
         admin = Admin.objects.get(id=id)

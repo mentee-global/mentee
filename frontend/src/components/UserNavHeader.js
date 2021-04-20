@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
-import { logout, getMentorID, getMenteeID } from "utils/auth.service";
+import { logout } from "utils/auth.service";
 import { useMediaQuery } from "react-responsive";
-import { fetchMentorByID } from "utils/api";
+import { fetchAccountById } from "utils/api";
 import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
-import usePersistedState from "utils/hooks/usePersistedState";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 import "./css/Navigation.scss";
@@ -19,25 +18,28 @@ const { Header } = Layout;
 function UserNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const history = useHistory();
-  const { isMentor } = useAuth();
-
+  const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
   const [user, setUser] = useState();
-  const [permissions, setPermissions] = usePersistedState(
-    "permissions",
-    ACCOUNT_TYPE.GUEST
-  );
 
   useEffect(() => {
     async function getUser() {
-      // TODO: Change this to getMenteeID once implemented
-      const userID = isMentor ? await getMentorID() : await getMentorID();
-      const userData = await fetchMentorByID(userID);
+      const userData = await fetchAccountById(profileId, role);
       if (userData) {
         setUser(userData);
       }
     }
-    getUser();
-  }, []);
+
+    // Don't fetch if guest
+    if (role == ACCOUNT_TYPE.GUEST || user) return;
+    onAuthStateChanged(getUser);
+  }, [role]);
+
+  const logoutUser = () => {
+    logout().then(() => {
+      resetRoleState();
+      history.push("/");
+    });
+  };
 
   const dropdownMenu = (
     <Menu className="dropdown-menu">
@@ -47,15 +49,7 @@ function UserNavHeader() {
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item
-        key="sign-out"
-        onClick={() =>
-          logout().then(() => {
-            setPermissions(ACCOUNT_TYPE.GUEST);
-            history.push("/");
-          })
-        }
-      >
+      <Menu.Item key="sign-out" onClick={logoutUser}>
         <b>Sign Out</b>
       </Menu.Item>
     </Menu>

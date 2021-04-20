@@ -11,6 +11,8 @@ import AdminNavHeader from "./AdminNavHeader";
 import MentorSidebar from "./MentorSidebar";
 import AdminSidebar from "./AdminSidebar";
 import MenteeSideBar from "./MenteeSidebar";
+import useAuth from "utils/hooks/useAuth";
+import firebase from "firebase";
 
 import "./css/Navigation.scss";
 
@@ -22,18 +24,21 @@ function Navigation(props) {
     "permissions",
     ACCOUNT_TYPE.MENTOR
   );
+  const { isAdmin, onAuthUpdate, onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    if (props.needsAuth && !isLoggedIn()) {
-      history.push("/login");
-    }
+    onAuthStateChanged((user) => {
+      if (!user && props.needsAuth) {
+        history.push("/login");
+      }
+    });
   }, [history, props.needsAuth]);
 
   return (
     <div>
       <Layout className="navigation-layout">
         {props.needsAuth ? (
-          permissions.isAdmin ? (
+          isAdmin ? (
             <AdminNavHeader />
           ) : (
             <UserNavHeader />
@@ -43,7 +48,6 @@ function Navigation(props) {
         )}
         {props.needsAuth ? (
           <Layout>
-            {console.log(permissions)}
             {permissions === ACCOUNT_TYPE.ADMIN ? (
               <AdminSidebar selectedPage={props.page} />
             ) : permissions === ACCOUNT_TYPE.MENTOR ? (

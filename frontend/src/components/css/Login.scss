@@ -85,8 +85,13 @@
   color: red;
 }
 
-.register-link {
+.account-help-container {
   text-align: center;
+}
+
+.account-link {
+  display: flex;
+  justify-content: center;
 }
 
 .login-register-link,

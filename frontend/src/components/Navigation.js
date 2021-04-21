@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
-import { isLoggedIn } from "utils/auth.service";
 import usePersistedState from "utils/hooks/usePersistedState";
 import { ACCOUNT_TYPE } from "utils/consts";
 
@@ -12,7 +11,6 @@ import MentorSidebar from "./MentorSidebar";
 import AdminSidebar from "./AdminSidebar";
 import MenteeSideBar from "./MenteeSidebar";
 import useAuth from "utils/hooks/useAuth";
-import firebase from "firebase";
 
 import "./css/Navigation.scss";
 

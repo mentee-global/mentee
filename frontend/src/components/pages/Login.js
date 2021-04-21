@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation, NavLink } from "react-router-dom";
 import { Input } from "antd";
-import { LOGIN_ERROR_MSGS } from "utils/consts";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
 import { login, sendVerificationEmail } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import firebase from "firebase";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import usePersistedState from "utils/hooks/usePersistedState";
 import "../css/Login.scss";
 
 function Login() {
@@ -20,6 +21,10 @@ function Login() {
     LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
   );
   const [loggingIn, setLoggingIn] = useState(false);
+  const [permissions, setPermissions] = usePersistedState(
+    "permissions",
+    ACCOUNT_TYPE.MENTOR
+  );
 
   useEffect(() => {
     if (!location.state) {
@@ -99,6 +104,7 @@ function Login() {
                   setError(true);
                 }
 
+                setPermissions(loginProps.type);
                 const unsubscribe = firebase
                   .auth()
                   .onAuthStateChanged(async (user) => {
@@ -119,14 +125,22 @@ function Login() {
               }}
             />
           </div>
-          <div className="register-link">
-            Don't Have an account?{" "}
-            <NavLink
-              to={`/register?as=${loginProps.type}`}
-              className="login-register-link"
-            >
-              Register
-            </NavLink>
+          <div className="account-help-container">
+            <div className="account-link">
+              Don't Have an account?{" "}
+              <NavLink
+                to={`/register?as=${loginProps.type}`}
+                className="login-register-link"
+              >
+                Register
+              </NavLink>
+            </div>
+            <div className="account-link">
+              <div>Forgot password?</div>
+              <NavLink to="/forgot-password" className="login-register-link">
+                Reset it
+              </NavLink>
+            </div>
           </div>
         </div>
       </div>

@@ -12,9 +12,10 @@ import MenteeButton from "../MenteeButton";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { ACCOUNT_TYPE, LOGIN_ERROR_MSGS } from "utils/consts";
 import useAuth from "utils/hooks/useAuth";
+import usePersistedState from "utils/hooks/usePersistedState";
 import "../css/AdminLogin.scss";
 
-function AdminLogin(props) {
+function AdminLogin() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
@@ -25,6 +26,10 @@ function AdminLogin(props) {
   const [loggingIn, setLoggingIn] = useState(false);
   const history = useHistory();
   const { onAuthStateChanged } = useAuth();
+  const [permissions, setPermissions] = usePersistedState(
+    "permissions",
+    ACCOUNT_TYPE.GUEST
+  );
 
   function handleInputFocus(index) {
     let newClickedInput = [false, false];
@@ -94,7 +99,7 @@ function AdminLogin(props) {
 
                 onAuthStateChanged(async (user) => {
                   if (!user) return;
-
+                  setPermissions(ACCOUNT_TYPE.ADMIN);
                   history.push("/account-data");
                 });
 

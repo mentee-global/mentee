@@ -4,6 +4,8 @@ import Appointments from "components/pages/Appointments";
 import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
+import Messages from "components/pages/Messages";
+import Favorites from "components/pages/Favorites";
 import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
@@ -50,6 +52,22 @@ function App() {
         path="/profile"
         component={() => (
           <Navigation content={<Profile />} page="profile" needsAuth={true} />
+        )}
+      />
+      <Route
+        path="/favorites"
+        component={() => (
+          <Navigation
+            content={<Favorites />}
+            page="favorites"
+            needsAuth={true}
+          />
+        )}
+      />
+      <Route
+        path="/messages"
+        component={() => (
+          <Navigation content={<Messages />} page="messages" needsAuth={true} />
         )}
       />
       <Route
@@ -101,31 +119,41 @@ function App() {
       <Route
         path="/organizer"
         component={() => (
-          <Navigation content={<ApplicationOrganizer />} needsAuth={true} />
+          <Navigation
+            content={<ApplicationOrganizer />}
+            needsAuth={true}
+            page="applications"
+          />
         )}
       />
       <Route
         path="/account-data"
         component={() => (
-          <Navigation content={<AdminAccountData />} needsAuth={true} />
+          <Navigation
+            content={<AdminAccountData />}
+            needsAuth={true}
+            page="accountData"
+          />
         )}
       />
       <Route
         path="/all-appointments"
         component={() => (
-          <Navigation content={<AdminAppointmentData />} needsAuth={true} />
+          <Navigation
+            content={<AdminAppointmentData />}
+            needsAuth={true}
+            page="allAppointments"
+          />
         )}
       />
       <Route
         path="/verified-emails"
         component={() => (
-          <Navigation content={<AdminVerifiedEmails />} needsAuth={true} />
-        )}
-      />
-      <Route
-        path="/not-found"
-        component={() => (
-          <Navigation content={<NotFound />} needsAuth={false} />
+          <Navigation
+            content={<AdminVerifiedEmails />}
+            needsAuth={true}
+            page="verifiedEmails"
+          />
         )}
       />
       <Route

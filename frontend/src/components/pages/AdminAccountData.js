@@ -26,6 +26,7 @@ import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import { PROFILE_URL } from "../../utils/consts";
 import UploadEmails from "../UploadEmails";
+import useAuth from "utils/hooks/useAuth";
 
 const { Column } = Table;
 
@@ -48,7 +49,9 @@ function AdminAccountData() {
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
   const [downloadFile, setDownloadFile] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getData() {
@@ -62,7 +65,8 @@ function AdminAccountData() {
       }
       setIsReloading(false);
     }
-    getData();
+
+    onAuthStateChanged(getData);
   }, [reload]);
 
   const handleDeleteAccount = async (mentorId, name) => {
@@ -80,7 +84,7 @@ function AdminAccountData() {
   };
 
   const handleAddAccount = () => {
-    setModalVisible(true);
+    setUploadModalVisible(true);
   };
 
   const handleMentorsDownload = async () => {
@@ -185,8 +189,8 @@ function AdminAccountData() {
             Add New Account
           </Button>
           <UploadEmails
-            setModalVisible={setModalVisible}
-            modalVisible={modalVisible}
+            setUploadModalVisible={setUploadModalVisible}
+            uploadModalVisible={uploadModalVisible}
           />
           <Button
             className="table-button"

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MentorImage from "resources/MentorLogin.svg";
@@ -26,6 +26,11 @@ const Logins = Object.freeze({
 
 function SelectLogin() {
   const history = useHistory();
+  const [displaySelect, setDisplaySelect] = useState(false);
+
+  const handleDisplayImages = () => {
+    setDisplaySelect(true);
+  };
 
   const handleSelect = (key) => {
     history.push({
@@ -36,10 +41,16 @@ function SelectLogin() {
 
   return (
     <div className="select-login-page">
-      <div className="select-login-header">
+      <div
+        className="select-login-header"
+        style={{ visibility: displaySelect ? "visible" : "hidden" }}
+      >
         Welcome! What kind of user are you?
       </div>
-      <div className="select-login-container">
+      <div
+        className="select-login-container"
+        style={{ visibility: displaySelect ? "visible" : "hidden" }}
+      >
         <div
           className="select-login-elem"
           onClick={() => {
@@ -64,7 +75,12 @@ function SelectLogin() {
             handleSelect("admin");
           }}
         >
-          <img src={AdminImage} alt="Admin Image" className="select-image" />
+          <img
+            src={AdminImage}
+            alt="Admin Image"
+            className="select-image"
+            onLoad={handleDisplayImages}
+          />
           <div className="select-text">Admin</div>
         </div>
       </div>

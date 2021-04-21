@@ -10,7 +10,6 @@ import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import SelectLogin from "components/pages/SelectLogin";
-import DELETELogin from "components/pages/DELETELogin";
 import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";

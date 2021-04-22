@@ -12,7 +12,7 @@ mentee = Blueprint("mentee", __name__)
 def add_fav_mentor():
     try:
         data = request.get_json()
-        mentor_uid = data["mentor_uid"]
+        mentor_id = data["mentor_id"]
         mentee_uid = data["mentee_uid"]
     except:
         msg = "invalid parameters provided"
@@ -21,14 +21,14 @@ def add_fav_mentor():
     print()
     try:
         mentee = MenteeProfile.objects.get(firebase_uid=mentee_uid)
-        if mentor_uid in mentee.favorite_mentors_uids:
-            mentee.favorite_mentors_uids.remove(mentor_uid)
+        if mentor_id in mentee.favorite_mentors_ids:
+            mentee.favorite_mentors_ids.remove(mentor_id)
             msg = (
-                f"Deleted mentor: {mentor_uid} from mentee: {mentee.name} favorite list"
+                f"Deleted mentor: {mentor_id} from mentee: {mentee.name} favorite list"
             )
         else:
-            mentee.favorite_mentors_uids.append(mentor_uid)
-            msg = f"Added mentor: {mentor_uid} to mentee: {mentee.name} favorite list"
+            mentee.favorite_mentors_ids.append(mentor_id)
+            msg = f"Added mentor: {mentor_id} to mentee: {mentee.name} favorite list"
         mentee.save()
     except:
         msg = "Failed to saved mentor as favorite"

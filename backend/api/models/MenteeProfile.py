@@ -24,7 +24,7 @@ class MenteeProfile(Document, Mixin):
     email_notifications = BooleanField(required=True)
     is_private = BooleanField(required=True)
     video = EmbeddedDocumentField(Video)
-    favorite_mentors_uids = ListField(StringField())
+    favorite_mentors_ids = ListField(StringField())
 
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.id} \n name: {self.name}

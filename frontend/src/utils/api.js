@@ -249,7 +249,7 @@ export const EditFavMentorById = (mentee_id, mentor_id) => {
   const requestExtension = `/mentee/addFavMentor`;
   const data = {
     mentee_uid: mentee_id,
-    mentor_uid: mentor_id,
+    mentor_id: mentor_id,
   };
   return instance.put(requestExtension, data).then(
     (response) => response,

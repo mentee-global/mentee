@@ -51,9 +51,8 @@ function Gallery() {
   useEffect(() => {
     function initializeFavorites() {
       let fav_set = new Set();
-      mentee.favorite_mentors_uids.forEach((uid) => {
-        console.log(uid);
-        fav_set.add(uid);
+      mentee.favorite_mentors_ids.forEach((id) => {
+        fav_set.add(id);
       });
       setFavoriteIds(fav_set);
     }
@@ -62,8 +61,8 @@ function Gallery() {
     }
   }, [mentee]);
 
-  function onEditFav(mentor_uid) {
-    EditFavMentorById(mentee.firebase_uid, mentor_uid);
+  function onEditFav(mentor_id) {
+    EditFavMentorById(mentee.firebase_uid, mentor_id);
   }
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {
@@ -197,7 +196,7 @@ function Gallery() {
                 mentor.offers_group_appointments,
                 mentor.offers_in_person
               )}
-              favorite={favorite_mentorIds.has(mentor.firebase_uid)}
+              favorite={favorite_mentorIds.has(mentor._id["$oid"])}
               onEditFav={onEditFav}
               image={mentor.image}
             />

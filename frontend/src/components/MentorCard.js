@@ -11,8 +11,6 @@ import {
   HeartFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
-import { getCurrentUser, getMenteeID } from "utils/auth.service";
-import { EditFavMentorById } from "../utils/api";
 import useAuth from "../utils/hooks/useAuth";
 
 import MenteeButton from "./MenteeButton";
@@ -55,8 +53,7 @@ function MentorCard(props) {
 
   function onFavoriteClick() {
     setFavorite(!favorite);
-    console.log("hit");
-    props.onEditFav(props.firebase_uid);
+    props.onEditFav(props.id);
   }
 
   return (
@@ -81,12 +78,12 @@ function MentorCard(props) {
                 shape="circle"
                 icon={
                   favorite ? (
-                    <HeartFilled style={{ color: "#ff9cb3" }}></HeartFilled>
+                    <HeartFilled style={{ color: "#e4bb4f" }}></HeartFilled>
                   ) : (
-                    <HeartOutlined></HeartOutlined>
+                    <HeartOutlined style={{ color: "#e4bb4f"}}></HeartOutlined>
                   )
                 }
-                style={{ border: "none" }}
+                style={{ border: "none"}}
                 onClick={onFavoriteClick}
               />
             </div>

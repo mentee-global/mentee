@@ -12,7 +12,7 @@ import { fetchMentorByID, editMentorProfile, fetchMenteeByID, editMenteeProfile}
 
 function Profile() {
   const history = useHistory();
-  const [isMentor, setIsMentor] = useState(false);
+  const [isMentor, setIsMentor] = useState(true);
   const [user, setUser] = useState({});
   const [onEdit, setEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(false);

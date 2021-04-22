@@ -148,6 +148,7 @@ function MentorApplication() {
                 <Form>
                 <Form.Item
                   name="first-name"
+                  className="input-form"
                   rules={[
                     {
                       required: true,
@@ -164,6 +165,7 @@ function MentorApplication() {
                 </Form.Item>
                 <Form.Item
                   name="last-name"
+                  className="input-form"
                   rules={[
                     {
                       required: true,
@@ -179,6 +181,7 @@ function MentorApplication() {
                 </Form.Item>
                 <Form.Item
                   name="cell-number"
+                  className="input-form"
                   rules={[
                     {
                       required: true,
@@ -199,6 +202,7 @@ function MentorApplication() {
                 <Form>
                 <Form.Item
                   name="business-number"
+                  className="input-form"
                   rules={[
                     {
                       required: false,
@@ -215,6 +219,7 @@ function MentorApplication() {
                 </Form.Item>
                 <Form.Item
                   name="email"
+                  className="input-form-two"
                   rules={[
                     {
                       required: true,
@@ -231,6 +236,7 @@ function MentorApplication() {
                 </Form.Item>
                 <Form.Item
                   name="hear-about-us"
+                  className = "input-form-two"
                   rules={[
                     {
                       required: true,
@@ -247,6 +253,7 @@ function MentorApplication() {
                 </Form.Item>
                 <Form.Item
                   name="why-mentee"
+                  className="input-form-two"
                   rules={[
                     {
                       required: true,
@@ -363,20 +370,19 @@ function MentorApplication() {
     }
 
     function pageThree() {
-      console.log(sectors);
       return (
-      <div className="page-two-containere">
-      <div className="flex flex-row">
-        <div className="page-two-column-container">
-          <div className="page-two-header">
-            <h2>Work Information </h2>
-          </div>
+        <div className="page-three-header">
+            <h1>Work Information</h1>
+          <div className="page-one-column-container">
+          <div className="column-one">
           <div className="work-sectors-question">
               *Which sector(s) do you work in? (Check all that apply)
               <div className="work-sectors--answer-choices">
               <Checkbox.Group options={workSectors} value= {sectors} onChange={onChangeCheck2}/>
               </div>
-              <div className="role-description-question">
+          </div>
+          <div className="column-two">
+          <div className="role-description-question">
                   <div className="role-description-answers">
                   <Form.Item
                   name="role-description"
@@ -449,7 +455,7 @@ function MentorApplication() {
           </div>
           </div>
           </div>
-        </div>
+          </div>
   )
   }
 
@@ -489,19 +495,19 @@ function MentorApplication() {
   }
   function pageFour() {
     return (
-    <div className="page-two-containere">
-    <div className="flex flex-row">
-      <div className="page-two-column-container">
-        <div className="page-two-header">
-          <h2>Specialization Information </h2>
-        </div>
+      <div className="page-two-header">
+        <h2>Specialization Information </h2>
+        <div className="page-one-column-container">
+        <div className="column-one">
         <div className="special-topics-question">
             *What special topics could you teach or offer guidance on? (For
             any region or country- you will be asked next about location.)
             <div className="special-topics-answer-choices">
             <Checkbox.Group options={specialTopics} value= {topics} onChange={onChangeCheck3}/>
             </div>
-            <div className="region-question">
+        </div>
+        <div className="column-two">
+        <div className="region-question">
                 <div className="region-answers">
                 <Form.Item
                 name="region-question"
@@ -582,7 +588,7 @@ function MentorApplication() {
         </div>
         </div>
         </div>
-      </div>
+        </div>
 )
 }
 
@@ -595,38 +601,38 @@ function successPage() {
 }
     
     return (
-        <>
-        <div className="page-header">
-          
-        </div>
-          <Steps current={current}>
-            {steps.map(item => (
-              <Step key={item.title} title={item.title} />
-            ))}
-          </Steps>
-          <div className="steps-content">{steps[current].content}</div>
-          <div className="steps-action">
-          <div className="next-button">
-            {current < steps.length - 1 && (
-              <MenteeButton 
-              content={<b>Next ></b>}
-              width={"7%"}
-              onClick={() => next()}
-    
-             />
-            )}
-          </div>
-          <div className="previous-button">
-            {current > 0 && (
-              <MenteeButton 
-              content={<b> Previous</b>}
-              width={"7%"}
-              onClick={() => prev()}
-             />
-            )}
+      <div>
+    {isSubmitted ? successPage()  : (
+                <div>
+                <Steps current={current}>
+                {steps.map(item => (
+                  <Step key={item.title} title={item.title} />
+                ))}
+              </Steps>
+              <div className="steps-content">{steps[current].content}</div>
+              <div className="steps-action">
+              <div className="next-button">
+                {current < steps.length - 1 && (
+                  <MenteeButton 
+                  content={<b>Next ></b>}
+                  width={"7%"}
+                  onClick={() => next()}
+        
+                 />
+                )}
+              </div>
+              <div className="previous-button">
+                {current > 0 && (
+                  <MenteeButton 
+                  content={<b> Previous</b>}
+                  width={"7%"}
+                  onClick={() => prev()}
+                 />
+                )}
+                </div>
+                </div>
+
             </div>
-            </div>
-        </>
-      );
-}
+      )}
+     </div>)}
 export default MentorApplication; 

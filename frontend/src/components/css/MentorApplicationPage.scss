@@ -17,15 +17,27 @@ width: 100%;
 
 .column-one {
     padding:5%;
-    padding-bottom:70%;
+    padding-bottom:28%;
     width: 600%;    
 
 }
 
 .column-two {
     padding: 5%;
-    padding-top:5%;
-    padding-bottom:40%; 
+    padding-top:0.5%;
+    padding-bottom:3em; 
     width: 800%;  
 }
 
+.input-form { 
+    padding-bottom:10%;
+}
+
+.input-form-two { 
+    padding-bottom:15%;
+}
+
+.next-button {
+    display: flex;
+    align-self: right;
+}

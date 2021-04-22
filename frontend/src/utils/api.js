@@ -134,8 +134,8 @@ export const deleteAppointment = (id) => {
   );
 };
 
-export const getAppointmentsByMentorID = (id) => {
-  const requestExtension = `/appointment/mentor/${id}`;
+export const getAppointmentsByMentorID = (id, accountType) => {
+  const requestExtension = `/appointment/${accountType}/${id}`;
   return instance.get(requestExtension).then(
     (response) => response.data.result,
     (err) => {

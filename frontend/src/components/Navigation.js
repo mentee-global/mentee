@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Layout } from "antd";
-import { isLoggedIn } from "utils/auth.service";
-import useAuth from "utils/hooks/useAuth";
+import usePersistedState from "utils/hooks/usePersistedState";
+import { ACCOUNT_TYPE } from "utils/consts";
 
-import MentorNavHeader from "./MentorNavHeader";
-import MenteeNavHeader from "./MenteeNavHeader";
+import UserNavHeader from "./UserNavHeader";
+import GuestNavHeader from "./GuestNavHeader";
 import AdminNavHeader from "./AdminNavHeader";
-import NavigationSidebar from "./NavigationSidebar";
+import MentorSidebar from "./MentorSidebar";
 import AdminSidebar from "./AdminSidebar";
-import firebase from "firebase";
+import MenteeSideBar from "./MenteeSidebar";
+import useAuth from "utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
 
@@ -17,6 +18,10 @@ const { Content } = Layout;
 
 function Navigation(props) {
   const history = useHistory();
+  const [permissions, setPermissions] = usePersistedState(
+    "permissions",
+    ACCOUNT_TYPE.MENTOR
+  );
   const { isAdmin, onAuthUpdate, onAuthStateChanged } = useAuth();
 
   useEffect(() => {
@@ -34,17 +39,19 @@ function Navigation(props) {
           isAdmin ? (
             <AdminNavHeader />
           ) : (
-            <MentorNavHeader />
+            <UserNavHeader />
           )
         ) : (
-          <MenteeNavHeader />
+          <GuestNavHeader />
         )}
         {props.needsAuth ? (
           <Layout>
-            {isAdmin ? (
-              <AdminSidebar />
+            {permissions === ACCOUNT_TYPE.ADMIN ? (
+              <AdminSidebar selectedPage={props.page} />
+            ) : permissions === ACCOUNT_TYPE.MENTOR ? (
+              <MentorSidebar selectedPage={props.page} />
             ) : (
-              <NavigationSidebar selectedPage={props.page} />
+              <MenteeSideBar selectedPage={props.page} />
             )}
             <Content className="navigation-content">{props.content}</Content>
           </Layout>

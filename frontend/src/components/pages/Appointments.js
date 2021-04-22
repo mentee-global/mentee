@@ -6,17 +6,19 @@ import {
   InfoCircleFilled,
   SmileOutlined,
 } from "@ant-design/icons";
-import "../css/Appointments.scss";
-import { formatAppointments } from "../../utils/dateFormatting";
-import AvailabilityCalendar from "../AvailabilityCalendar";
+import "components/css/Appointments.scss";
+import { formatAppointments } from "utils/dateFormatting";
+import AvailabilityCalendar from "components/AvailabilityCalendar";
 import {
   acceptAppointment,
   getAppointmentsByMentorID,
   deleteAppointment,
-} from "../../utils/api";
+} from "utils/api";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
+import useAuth from "utils/hooks/useAuth";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -43,17 +45,22 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getAppointments() {
       const mentorID = await getMentorID();
-      const appointmentsResponse = await getAppointmentsByMentorID(mentorID);
+      const appointmentsResponse = await getAppointmentsByMentorID(
+        mentorID,
+        ACCOUNT_TYPE.MENTOR
+      );
       const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
       }
     }
-    getAppointments();
+
+    onAuthStateChanged(getAppointments);
   }, [appointmentClick]);
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {
@@ -233,7 +240,7 @@ function Appointments() {
         <Col span={18} className="appointments-column">
           <div className="appointments-welcome-box">
             <div className="appointments-welcome-text">
-              Welcome, {appointments.mentor_name}
+              Welcome, {appointments.name}
             </div>
             <div className="appointments-tabs">
               {Object.values(Tabs).map((tab, index) => (

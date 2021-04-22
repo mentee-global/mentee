@@ -83,10 +83,10 @@ export const uploadAccountImage = (data, id, type) => {
   );
 };
 
-export const createAccountProfile = (profile, type) => {
+export const createAccountProfile = async (profile, type) => {
   profile["account_type"] = type;
   const requestExtension = `/account`;
-  return instance.post(requestExtension, profile).then(
+  return await instance.post(requestExtension, profile).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -134,8 +134,8 @@ export const deleteAppointment = (id) => {
   );
 };
 
-export const getAppointmentsByMentorID = (id) => {
-  const requestExtension = `/appointment/mentor/${id}`;
+export const getAppointmentsByMentorID = (id, accountType) => {
+  const requestExtension = `/appointment/${accountType}/${id}`;
   return instance.get(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -178,7 +178,7 @@ export const editAvailability = (timeslots, id) => {
 
 export const fetchMentorsAppointments = () => {
   const requestExtension = "/appointment/mentors";
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -188,7 +188,7 @@ export const fetchMentorsAppointments = () => {
 
 export const fetchAllAppointments = () => {
   const requestExtension = "/appointment/";
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -275,7 +275,7 @@ export const adminUploadEmails = (file, password, isMentor) => {
   } else {
     formData.append("mentorOrMentee", "false");
   }
-  return instance.post(requestExtension, formData).then(
+  return authPost(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -285,7 +285,7 @@ export const adminUploadEmails = (file, password, isMentor) => {
 
 export const getAdmin = (id) => {
   const requestExtension = `/admin/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response && response.data.result.admin,
     (err) => console.error(err)
   );

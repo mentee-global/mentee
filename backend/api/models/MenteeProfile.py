@@ -8,6 +8,7 @@ from api.models import Education, Video, Image, Users
 class MenteeProfile(Document, Mixin):
     """"Mentee Profile Collection."""
 
+    firebase_uid = StringField()
     name = StringField(required=True)
     gender = StringField(required=True)
     location = StringField()

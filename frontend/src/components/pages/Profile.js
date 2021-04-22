@@ -2,23 +2,25 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button } from "antd";
-import { getMentorID, getMenteeID } from "utils/auth.service"; //! create getMenteeID
+import { getMentorID, getIdTokenResult, getMenteeID } from "utils/auth.service";
+import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
-import { fetchMentorByID, editMentorProfile, fetchMenteeByID, editMenteeProfile } from "utils/api";
+import { fetchMentorByID, editMentorProfile, fetchMenteeByID, editMenteeProfile} from "utils/api";
 
 function Profile() {
   const history = useHistory();
-  const [isMentor, setIsMentor] = useState(true);
+  const [isMentor, setIsMentor] = useState(false);
   const [user, setUser] = useState({});
   const [onEdit, setEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(false);
   const [form] = Form.useForm();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    fetchUser();
+    onAuthStateChanged(fetchUser);
   }, []);
 
   useEffect(() => {
@@ -29,17 +31,18 @@ function Profile() {
     if (isMentor) {
       const mentorID = await getMentorID();
       const mentorData = await fetchMentorByID(mentorID);
+
       if (mentorData) {
         setUser(mentorData);
       }
     } else {
       const menteeID = await getMenteeID();
       const menteeData = await fetchMenteeByID(menteeID);
+
       if (menteeData) {
-        setUser(menteeData);
+        setUser(menteeData)
       }
-    }
-    
+    } 
   };
 
   const handleSaveEdits = () => {
@@ -85,7 +88,11 @@ function Profile() {
   const onFinish = (values) => {
     async function saveEdits() {
       const new_values = { ...values, phone_number: values.phone };
-      await editMentorProfile(new_values, await getMentorID());
+      if (isMentor) {
+        await editMentorProfile(new_values, await getMentorID());
+      } else {
+        await editMenteeProfile(new_values, await getMentorID());
+      }
       handleSaveEdits();
     }
 
@@ -139,7 +146,7 @@ function Profile() {
             <div className="modal-mentee-availability-switch">
               <div className="modal-mentee-availability-switch-text">
                 Email notifications
-              </div> 
+              </div>
               <Form.Item name="email_notifications">
                 <Switch
                   size="small"
@@ -171,26 +178,6 @@ function Profile() {
     );
   }
 
-  function renderProfileContent() {
-    if (isMentor) {
-      return (
-        <ProfileContent>
-          mentor={user}
-          isMentor={true}
-          handleSaveEdits={handleSaveEdits}
-        </ProfileContent>
-      );
-    } else {
-      return (
-        <ProfileContent>
-          mentee={user}
-          isMentor={false}
-          handleSaveEdits={handleSaveEdits}
-        </ProfileContent>
-      );
-    }
-  }
-
   return (
     <div className="background-color-strip">
       <div className="mentor-profile-content">
@@ -201,7 +188,11 @@ function Profile() {
         />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
-            {renderProfileContent()}
+            <ProfileContent
+              mentor={user}
+              isMentor={isMentor}
+              handleSaveEdits={handleSaveEdits}
+            />
           </div>
           <fieldset className="mentor-profile-contact">
             <legend className="mentor-profile-contact-header">

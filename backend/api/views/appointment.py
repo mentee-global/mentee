@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from api.models import AppointmentRequest, Availability, MentorProfile
+from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     ApppointmentForm,
@@ -12,23 +12,57 @@ from api.utils.constants import (
     MENTOR_APPT_TEMPLATE,
     MENTEE_APPT_TEMPLATE,
     APPT_TIME_FORMAT,
+    Account,
 )
+from api.utils.require_auth import admin_only
 
 appointment = Blueprint("appointment", __name__)
 
-# GET request for appointments by mentor id
-@appointment.route("/mentor/<string:mentor_id>", methods=["GET"])
-def get_requests_by_mentor(mentor_id):
+# GET request for appointments by account id
+@appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
+def get_requests_by_id(account_type, id):
+    account = None
     try:
-        mentor = MentorProfile.objects.get(id=mentor_id)
+        if account_type == Account.MENTOR:
+            account = MentorProfile.objects.get(id=id)
+        elif account_type == Account.Mentee:
+            account = MenteeProfile.objects.get(id=id)
     except:
-        msg = "No mentor found with that id"
+        msg = "No account found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    # Update appointment requests that don't have a mentee id
+    if account_type == Account.MENTEE:
+        by_email = AppointmentRequest.objects(email=account.email).filter(
+            mentee_id__not__exists=True
+        )
+        for appointment in by_email:
+            appointment.mentee_id = id
+            appointment.save()
+    elif account_type == Account.MENTOR:
+        not_verified = AppointmentRequest.objects(mentor_id=account.id).filter(
+            mentee_id__not__exists=True
+        )
+        for appointment in not_verified:
+            try:
+                mentee = MenteeProfile.objects.get(email=appointment.email)
+            except:
+                msg = "Could not find Mentee with that email"
+                logger.info(msg)
+                continue
+            appointment.mentee_id = mentee.id
+            appointment.save()
+
+    # Fetch appointments by respective mentee/mentor id
+    res = None
+    if account_type == Account.MENTEE:
+        res = AppointmentRequest.objects(mentee_id=id)
+    elif account_type == Account.MENTOR:
+        res = AppointmentRequest.objects(mentor_id=id)
+
     # Includes mentor name because appointments page does not fetch all mentor info
-    requests = AppointmentRequest.objects(mentor_id=mentor_id)
-    return create_response(data={"mentor_name": mentor.name, "requests": requests})
+    return create_response(data={"name": account.name, "requests": res})
 
 
 # POST request for Mentee Appointment
@@ -174,6 +208,7 @@ def delete_request(appointment_id):
 
 # GET all appointments per mentor
 @appointment.route("/mentors", methods=["GET"])
+@admin_only
 def get_mentors_appointments():
     mentors = MentorProfile.objects()
     appointments = AppointmentRequest.objects()
@@ -207,6 +242,7 @@ def get_mentors_appointments():
 
 
 @appointment.route("/", methods=["GET"])
+@admin_only
 def get_appointments():
     appointments = AppointmentRequest.objects()
     mentors = MentorProfile.objects().only("name", "id")

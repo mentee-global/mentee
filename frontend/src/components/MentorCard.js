@@ -80,10 +80,10 @@ function MentorCard(props) {
                   favorite ? (
                     <HeartFilled style={{ color: "#e4bb4f" }}></HeartFilled>
                   ) : (
-                    <HeartOutlined style={{ color: "#e4bb4f"}}></HeartOutlined>
+                    <HeartOutlined style={{ color: "#e4bb4f" }}></HeartOutlined>
                   )
                 }
-                style={{ border: "none"}}
+                style={{ border: "none" }}
                 onClick={onFavoriteClick}
               />
             </div>

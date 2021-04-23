@@ -75,17 +75,10 @@ def create_appointment():
         return create_response(status=422, message=msg)
     new_appointment = AppointmentRequest(
         mentor_id=data.get("mentor_id"),
+        mentee_id=data.get("mentee_id"),
         accepted=data.get("accepted"),
-        name=data.get("name"),
-        email=data.get("email"),
-        phone_number=data.get("phone_number"),
-        languages=data.get("languages"),
-        age=data.get("age"),
-        gender=data.get("gender"),
-        location=data.get("location"),
-        specialist_categories=data.get("specialist_categories"),
+        topic=data.get("topic"),
         message=data.get("message"),
-        organization=data.get("organization"),
         allow_texts=data.get("allow_texts"),
         allow_calls=data.get("allow_calls"),
     )

@@ -57,7 +57,6 @@ function Gallery() {
       });
       setFavoriteIds(fav_set);
       setPageLoaded(true);
-      console.log("got here");
     }
     if (isMentee) {
       initializeFavorites();

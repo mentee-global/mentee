@@ -12,7 +12,7 @@ import { fetchMentorByID, editMentorProfile, fetchMenteeByID, editMenteeProfile}
 
 function Profile() {
   const history = useHistory();
-  const [isMentor, setIsMentor] = useState(true);
+  const [isMentor, setIsMentor] = useState(false);
   const [user, setUser] = useState({});
   const [onEdit, setEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(false);
@@ -190,7 +190,7 @@ function Profile() {
           <div className="mentor-profile-info">
             <ProfileContent
               mentor={user}
-              isMentor={isMentor}
+              isMentor={false}
               handleSaveEdits={handleSaveEdits}
             />
           </div>

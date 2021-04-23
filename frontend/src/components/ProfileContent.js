@@ -31,6 +31,19 @@ function ProfileContent(props) {
     ));
   };
 
+  const getSpecializations = (isMentor) => {
+    if (isMentor) {
+      return (
+        <div>
+          <div className="mentor-profile-heading">
+            <b>Specializations</b>
+          </div>
+          <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
+        </div>
+      );
+    }
+  }
+
   const getEducations = (educations) => {
     if (!educations || !educations[0]) {
       return;
@@ -128,10 +141,7 @@ function ProfileContent(props) {
       </div>
       <div className="mentor-profile-about">{props.mentor.biography}</div>
       <br />
-      <div className="mentor-profile-heading">
-        <b>Specializations</b>
-      </div>
-      <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
+      {getSpecializations(props.isMentor)}
       <br />
       <div className="mentor-profile-heading">
         <b>Education</b>

@@ -96,7 +96,7 @@ function Login() {
               onClick={async () => {
                 setLoggingIn(true);
 
-                const res = await login(email, password, ACCOUNT_TYPE.MENTOR);
+                const res = await login(email, password, ACCOUNT_TYPE.MENTEE);
                 if (!res || !res.success) {
                   setErrorMessage(
                     LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG

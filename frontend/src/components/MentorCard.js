@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography } from "antd";
+import { Avatar, Typography, Button } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
   StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
+  HeartOutlined,
+  HeartFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
+import useAuth from "../utils/hooks/useAuth";
 
 import MenteeButton from "./MenteeButton";
 
@@ -38,12 +41,19 @@ const styles = {
 };
 
 function MentorCard(props) {
+  const { isAdmin, isMentor, isMentee } = useAuth();
+  const [favorite, setFavorite] = useState(props.favorite);
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;
     } else {
       return <img src={image} alt="" />;
     }
+  }
+
+  function onFavoriteClick() {
+    setFavorite(!favorite);
+    props.onEditFav(props.id);
   }
 
   return (
@@ -62,6 +72,22 @@ function MentorCard(props) {
               Speaks: {props.languages.join(", ")}
             </Title>
           </div>
+          {isMentee && (
+            <div className="favorite-button">
+              <Button
+                shape="circle"
+                icon={
+                  favorite ? (
+                    <HeartFilled style={{ color: "#e4bb4f" }}></HeartFilled>
+                  ) : (
+                    <HeartOutlined style={{ color: "#e4bb4f" }}></HeartOutlined>
+                  )
+                }
+                style={{ border: "none" }}
+                onClick={onFavoriteClick}
+              />
+            </div>
+          )}
         </div>
         <h3 className="gallery-lesson-types">
           <span className="gallery-dot" />
@@ -110,6 +136,7 @@ function MentorCard(props) {
           </h4>
         )}
         <hr className="gallery-solid-border" />
+        <div className="bookmark-button"></div>
         <NavLink to={"/gallery/" + props.id}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />

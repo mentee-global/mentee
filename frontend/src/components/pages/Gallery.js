@@ -1,21 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { fetchMentors } from "../../utils/api";
+import React, { useState, useEffect, useCallback } from "react";
+import { fetchMenteeByID, fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
 import { Input, Checkbox, Modal, Result } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn } from "utils/auth.service";
+import { isLoggedIn, getMenteeID } from "utils/auth.service";
 import { useLocation } from "react-router";
+import { EditFavMentorById } from "../../utils/api";
+import useAuth from "../../utils/hooks/useAuth";
 
 function Gallery() {
+  const { isAdmin, isMentor, isMentee } = useAuth();
   const [mentors, setMentors] = useState([]);
+  const [mentee, setMentee] = useState();
   const [specializations, setSpecializations] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
+  const [favorite_mentorIds, setFavoriteIds] = useState(new Set());
   const verified = location.state && location.state.verified;
 
   useEffect(() => {
@@ -30,6 +35,36 @@ function Gallery() {
     }
   }, [verified]);
 
+  useEffect(() => {
+    async function getMentee() {
+      const mentee_id = await getMenteeID();
+      const mentee_data = await fetchMenteeByID(mentee_id);
+      if (mentee_data) {
+        setMentee(mentee_data);
+      }
+    }
+    if (isMentee) {
+      getMentee();
+    }
+  }, [isMentee]);
+
+  useEffect(() => {
+    function initializeFavorites() {
+      let fav_set = new Set();
+      mentee.favorite_mentors_ids.forEach((id) => {
+        fav_set.add(id);
+      });
+      setFavoriteIds(fav_set);
+    }
+    if (isMentee) {
+      initializeFavorites();
+    }
+  }, [mentee]);
+
+  function onEditFav(mentor_id) {
+    EditFavMentorById(mentee.firebase_uid, mentor_id);
+  }
+
   function getLessonTypes(offers_group_appointments, offers_in_person) {
     let output = "1-on-1 | virtual";
     if (offers_group_appointments) {
@@ -41,7 +76,7 @@ function Gallery() {
     return output;
   }
 
-  function getFilteredMentors() {
+  const getFilteredMentors = useCallback(() => {
     return mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
@@ -55,7 +90,7 @@ function Gallery() {
 
       return matchesSpecializations && matchesLanguages && matchesName;
     });
-  }
+  }, [favorite_mentorIds]);
 
   // Add some kind of error 403 code
   return !(isLoggedIn() || verified) ? (
@@ -156,10 +191,13 @@ function Gallery() {
               website={mentor.website}
               linkedin={mentor.linkedin}
               id={mentor._id["$oid"]}
+              firebase_uid={mentor.firebase_uid}
               lesson_types={getLessonTypes(
                 mentor.offers_group_appointments,
                 mentor.offers_in_person
               )}
+              favorite={favorite_mentorIds.has(mentor._id["$oid"])}
+              onEditFav={onEditFav}
               image={mentor.image}
             />
           ))}

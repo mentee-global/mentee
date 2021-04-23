@@ -256,7 +256,7 @@ function MenteeAppointmentModal(props) {
       </Modal>
       <Modal
         forceRender
-        title="Your Information"
+        title="Meeting Information"
         visible={formModalVisible}
         onCancel={closeModals}
         className="appointment-modal"
@@ -295,7 +295,7 @@ function MenteeAppointmentModal(props) {
               <div className="flex flex-row">
                 <div className="modal-mentee-appointment-col-container">
                   <div className="modal-mentee-appointment-header-text">
-                    About You
+                    Meeting Topic*
                   </div>
                   <Form.Item
                     name="topic"
@@ -308,46 +308,18 @@ function MenteeAppointmentModal(props) {
                     <ModalInput
                       style={styles.modalInput}
                       value={topic}
-                      type="text"
+                      type="dropdown-single"
                       title="Topic*"
+                      options={SPECIALIZATIONS}
                       clicked={inputClicked[0]}
                       index={0}
                       handleClick={handleClick}
                       onChange={(e) => setTopic(e.target.value)}
                     />
                   </Form.Item>
-                </div>
-                <div className="modal-mentee-appointment-col-container">
-                  <div className="modal-mentee-appointment-header-text">
-                    Contact Information
-                  </div>
-                  <div className="modal-mentee-availability-switches">
-                    <div className="modal-mentee-availability-switch">
-                      <div className="modal-mentee-availability-switch-text">
-                        Allow calls
-                      </div>
-                      <Switch
-                        size="small"
-                        checked={canCall}
-                        handleClick={handleClick}
-                        onChange={(e) => setCanCall(e)}
-                      />
-                    </div>
-                    <div className="modal-mentee-availability-switch">
-                      <div className="modal-mentee-availability-switch-text">
-                        Allow texting
-                      </div>
-                      <Switch
-                        size="small"
-                        checked={canText}
-                        handleClick={handleClick}
-                        onChange={(e) => setCanText(e)}
-                      />
-                    </div>
-                  </div>
                   <div className="modal-mentee-appointment-message-container">
                     <div className="modal-mentee-appointment-header-text">
-                      Message to Mentor
+                      Message to Mentor*
                     </div>
                     <ModalInput
                       style={styles.modalInput}
@@ -358,7 +330,32 @@ function MenteeAppointmentModal(props) {
                       handleClick={handleClick}
                       onChange={(e) => setMessage(e.target.value)}
                       value={message}
+                      large
                     />
+                  </div>
+                  <div className="modal-mentee-availability-switches">
+                    <div className="modal-mentee-availability-switch">
+                      <div className="modal-mentee-availability-switch-text">
+                        Allow calls*
+                      </div>
+                      <Switch
+                        size="small"
+                        checked={canCall}
+                        handleClick={handleClick}
+                        onChange={(e) => setCanCall(e)}
+                      />
+                    </div>
+                    <div className="modal-mentee-availability-switch">
+                      <div className="modal-mentee-availability-switch-text">
+                        Allow texting*
+                      </div>
+                      <Switch
+                        size="small"
+                        checked={canText}
+                        handleClick={handleClick}
+                        onChange={(e) => setCanText(e)}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

@@ -293,17 +293,18 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                <div className="donation-question">
-                *As a MENTEE global mentor, you wll have your own profile page where
+              <div className="donation-question">
+                <p3>*As a MENTEE global mentor, you wll have your own profile page where <br>
+                </br>
                 you will highlight your skills and how you can help our mentees
-                either synchronously or asynchronously. You will also have thte opportunity 
+                either synchronously or asynchronously. <br></br>You will also have the opportunity 
                 to post your own videos that share your specific guidance or lessons to help our mentees.
-                Additionally, you will have a networking space that will allow you to get to know othere
-                specialists froom around the world and networking events that are online and global.
-                MENTEE is a volunteer organization and we are 100% sustained by donations. Are you able to offer
-                a donation for one year?*
+               <br></br> Additionally, you will have a networking space that will allow you to get to know other
+                specialists <br></br>from around the world and networking events that are online and global.
+                <br></br>MENTEE is a volunteer organization and we are 100% sustained by donations. <br></br>Are you able to offer
+                a donation for one year?*</p3>
                 </div>
-                    <Radio.Group name="donation" onChange={onChange1} value={offerDonation}>
+                    <Radio.Group className="donation" onChange={onChange1} value={offerDonation}>
                         <Radio  value={"Yes, I can offer a donation now to help suppourt this work!"}>Yes, I can offer a donation now to help suppourt this work! (https://www.menteteglobal.org/donate)
                         </Radio>
                         <Radio value={"No, unfortunately I cannot offer a donation now but please ask me again."}>No, unfortunately I cannot offer a donation now but please ask me again.
@@ -386,6 +387,7 @@ function MentorApplication() {
                   <div className="role-description-answers">
                   <Form.Item
                   name="role-description"
+                  className="input-form"
                   rules={[
                     {
                       required: true,
@@ -406,6 +408,7 @@ function MentorApplication() {
                   <div className="employer-name-answers">
                   <Form.Item
                   name="employer-name"
+                  className="input-form"
                   rules={[
                     {
                       required: true,
@@ -511,6 +514,7 @@ function MentorApplication() {
                 <div className="region-answers">
                 <Form.Item
                 name="region-question"
+                className="input-form"
                 rules={[
                   {
                     required: false,
@@ -533,6 +537,7 @@ function MentorApplication() {
                 <div className="contact-other-answers">
                 <Form.Item
                 name="contact-other"
+                className="input-form"
                 rules={[
                   {
                     required: true,
@@ -558,6 +563,7 @@ function MentorApplication() {
                 <div className="languages-answers">
                 <Form.Item
                 name="languages"
+                className="input-form"
                 rules={[
                   {
                     required: true,

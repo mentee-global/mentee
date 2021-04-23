@@ -1,43 +1,53 @@
 .page-one-column-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 3%;
+    width: 80%;
+    padding: 3em; 
     padding-top: 1%;
 
 }
 
 .donation-question {
-width: 100%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+    white-space: pre;
+
 }
 
 .column-one {
-    padding:5%;
-    padding-bottom:28%;
-    width: 600%;    
+    padding:3em; 
+    padding-bottom:3em; 
+    width: 500%;    
 
 }
 
 .column-two {
-    padding: 5%;
-    padding-top:0.5%;
+    padding: 3em; 
+    padding-top:3em; 
     padding-bottom:3em; 
     width: 800%;  
 }
 
 .input-form { 
-    padding-bottom:10%;
+    padding-bottom:3em;
 }
 
 .input-form-two { 
-    padding-bottom:15%;
+    padding-bottom:3em;
 }
 
 .next-button {
-    display: flex;
-    align-self: right;
+    position: relative;
+    bottom: 5em;
+    left: 60em;
+
+}
+
+.previous-button {
+    position: relative;
+    bottom: 4   em;
+    left: 60em;
+
+}
+
+.page-one-header {
+    color: #FFECBD;
 }

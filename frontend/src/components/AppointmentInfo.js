@@ -82,7 +82,7 @@ function AppointmentInfo(props) {
         <div>
           <div className="ar-phone">Allows calls/texts</div>
           <div className="ar-phone">Call/text: {phone_number}</div>
-          <div className="ar-email">{props.modalAppointment.email}</div>
+          <div className="ar-email">{mentee.email}</div>
         </div>
       );
     } else if (allow_calls) {
@@ -90,7 +90,7 @@ function AppointmentInfo(props) {
         <div>
           <div className="ar-phone">Allows calls</div>
           <div className="ar-phone">Call: {phone_number}</div>
-          <div className="ar-email">{props.modalAppointment.email}</div>
+          <div className="ar-email">{mentee.email}</div>
         </div>
       );
     } else if (allow_texts == true) {
@@ -98,7 +98,7 @@ function AppointmentInfo(props) {
         <div>
           <div className="ar-phone">Allows texts</div>
           <div className="ar-phone">Text: {phone_number}</div>
-          <div className="ar-email">{props.modalAppointment.email}</div>
+          <div className="ar-email">{mentee.email}</div>
         </div>
       );
     }

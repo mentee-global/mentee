@@ -5,13 +5,7 @@ import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import MenteeVerificationModal from "./MenteeVerificationModal";
-import {
-  LANGUAGES,
-  SPECIALIZATIONS,
-  GENDERS,
-  AGES,
-  APPOINTMENT_FORM_KEYS,
-} from "../utils/consts";
+import { SPECIALIZATIONS, APPOINTMENT_FORM_KEYS } from "../utils/consts";
 import { createAppointment, editAvailability } from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
@@ -35,7 +29,7 @@ function MenteeAppointmentModal(props) {
   const [daySlots, setDaySlots] = useState([]);
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [formModalVisible, setFormModalVisible] = useState(false);
-  const numInputs = 11;
+  const numInputs = 2;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
@@ -140,6 +134,7 @@ function MenteeAppointmentModal(props) {
       start_time: moment(time.start_time.$date).format(),
       end_time: moment(time.end_time.$date).format(),
     };
+    console.log(appointment);
 
     await createAppointment(appointment);
 
@@ -309,29 +304,37 @@ function MenteeAppointmentModal(props) {
                       style={styles.modalInput}
                       value={topic}
                       type="dropdown-single"
-                      title="Topic*"
                       options={SPECIALIZATIONS}
                       clicked={inputClicked[0]}
                       index={0}
                       handleClick={handleClick}
-                      onChange={(e) => setTopic(e.target.value)}
+                      onChange={(e) => setTopic(e)}
                     />
                   </Form.Item>
                   <div className="modal-mentee-appointment-message-container">
                     <div className="modal-mentee-appointment-header-text">
                       Message to Mentor*
                     </div>
-                    <ModalInput
-                      style={styles.modalInput}
-                      type="textarea"
-                      maxRows={11}
-                      clicked={inputClicked[10]}
-                      index={10}
-                      handleClick={handleClick}
-                      onChange={(e) => setMessage(e.target.value)}
-                      value={message}
-                      large
-                    />
+                    <Form.Item
+                      name="message"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <ModalInput
+                        style={styles.modalInput}
+                        type="textarea"
+                        maxRows={11}
+                        clicked={inputClicked[1]}
+                        index={1}
+                        handleClick={handleClick}
+                        onChange={(e) => setMessage(e.target.value)}
+                        value={message}
+                        large
+                      />
+                    </Form.Item>
                   </div>
                   <div className="modal-mentee-availability-switches">
                     <div className="modal-mentee-availability-switch">

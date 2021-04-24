@@ -26,6 +26,7 @@ class AppointmentRequest(Document, Mixin):
     age = StringField()
     gender = StringField()
     location = StringField()
+    specialist_categories = ListField(StringField(), required=True)
 
     def __repr__(self):
         return f"""<AppointmentRequest mentor_id: {self.mentor_id}

@@ -25,7 +25,7 @@ def get_requests_by_id(account_type, id):
     try:
         if account_type == Account.MENTOR:
             account = MentorProfile.objects.get(id=id)
-        elif account_type == Account.Mentee:
+        elif account_type == Account.MENTEE:
             account = MenteeProfile.objects.get(id=id)
     except:
         msg = "No account found with that id"
@@ -41,7 +41,7 @@ def get_requests_by_id(account_type, id):
             appointment.mentee_id = id
             appointment.save()
     elif account_type == Account.MENTOR:
-        not_verified = AppointmentRequest.objects(mentor_id=account.id).filter(
+        not_verified = AppointmentRequest.objects(mentor_id=id).filter(
             mentee_id__not__exists=True
         )
         for appointment in not_verified:

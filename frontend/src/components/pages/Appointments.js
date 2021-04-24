@@ -186,6 +186,7 @@ function Appointments() {
                 <p>{appointmentsObject.date_name}</p>
               </div>
               <div className="appointments-row">
+                {/* TODO: Change the appointment component to fetch mentee info */}
                 {appointmentsObject.appointments.map((appointment, index) => (
                   <Appointment
                     key={index}

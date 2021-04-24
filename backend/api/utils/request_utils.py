@@ -74,6 +74,7 @@ class MessageForm(Form):
 class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
     mentee_id = StringField(validators=[InputRequired()])
+    name = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)
     topic = StringField(validators=[InputRequired()])
     message = StringField()

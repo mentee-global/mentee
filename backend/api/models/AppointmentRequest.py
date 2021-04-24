@@ -10,6 +10,7 @@ class AppointmentRequest(Document, Mixin):
 
     mentor_id = ObjectIdField(required=True)
     mentee_id = ObjectIdField()
+    name = StringField()
     timeslot = EmbeddedDocumentField(Availability, required=True)
     topic = StringField(required=True)
     accepted = BooleanField(required=True)
@@ -19,7 +20,6 @@ class AppointmentRequest(Document, Mixin):
 
     # Legacy Fields
     organization = StringField()
-    name = StringField()
     email = StringField()
     phone_number = StringField()
     languages = ListField(StringField())

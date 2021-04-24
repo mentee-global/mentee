@@ -1,17 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "antd";
+import { fetchMenteeByID } from "utils/api";
 import MenteeButton from "./MenteeButton";
 import { EnvironmentOutlined, CommentOutlined } from "@ant-design/icons";
 
 import "./css/Appointments.scss";
 
 function AppointmentInfo(props) {
+  const [mentee, setMentee] = useState({});
+
+  useEffect(() => {
+    async function getMentee() {
+      const menteeInfo = await fetchMenteeByID(props.modalAppointment.menteeID);
+
+      if (menteeInfo) {
+        setMentee(menteeInfo);
+      }
+    }
+    getMentee();
+  }, [props.modalAppointment]);
+
   const getLanguages = (languages) => {
     return languages.join(" • ");
-  };
-
-  const getCategories = (specialist_categories) => {
-    return specialist_categories.join(", ");
   };
 
   const getSubtext = (gender, organization) => {
@@ -110,38 +120,33 @@ function AppointmentInfo(props) {
             {allowsContact(
               props.modalAppointment.allow_calls,
               props.modalAppointment.allow_texts,
-              props.modalAppointment.phone_number
+              mentee.phone_number
             )}
           </div>
           <div className="ar-modal-title">
-            {props.modalAppointment.name}, {props.modalAppointment.age}
+            {mentee.name}, {mentee.age}
           </div>
         </div>
         <div className="personal-info">
           <div className="ar-title-subtext">
-            {getSubtext(
-              props.modalAppointment.gender,
-              props.modalAppointment.organization
-            )}
+            {getSubtext(mentee.gender, mentee.organization)}
           </div>
           <div className="ar-languages">
             <CommentOutlined className="ar-icon"></CommentOutlined>
-            {getLanguages(props.modalAppointment.languages || [])}
+            {getLanguages(mentee.languages || [])}
           </div>
           <div className="ar-location">
             <EnvironmentOutlined className="ar-icon"></EnvironmentOutlined>
-            {props.modalAppointment.location}
+            {mentee.location}
           </div>
         </div>
         <div className="ar-apt-date">{props.modalAppointment.date}</div>
         <div className="ar-apt-time">{props.modalAppointment.time}</div>
         <div className="vl"></div>
         <div className="ar-categories-title">Seeking help in:</div>
-        <div className="ar-categories">
-          {getCategories(props.modalAppointment.specialist_categories || [])}
-        </div>
+        <div className="ar-categories">{props.modalAppointment.topic}</div>
         <div className="ar-goals-title">Note:</div>
-        <div className="ar-goals">{props.modalAppointment.description}</div>
+        <div className="ar-goals">{props.modalAppointment.message}</div>
       </div>
     </Modal>
   );

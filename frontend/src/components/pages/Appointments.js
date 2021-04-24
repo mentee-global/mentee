@@ -13,9 +13,10 @@ import {
   acceptAppointment,
   getAppointmentsByMentorID,
   deleteAppointment,
+  fetchMenteeByID,
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
-import { getMentorID } from "utils/auth.service";
+import { getMenteeID, getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 import useAuth from "utils/hooks/useAuth";
@@ -39,7 +40,6 @@ const Tabs = Object.freeze({
   },
 });
 function Appointments() {
-  const history = useHistory();
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
@@ -101,7 +101,7 @@ function Appointments() {
       </Button>
     );
   };
-  const getAppointmentButton = (tab, props) => {
+  const getAppointmentButton = (tab, info) => {
     if (tab === Tabs.upcoming) {
       return (
         <Button
@@ -112,31 +112,31 @@ function Appointments() {
             />
           }
           type="text"
-          onClick={() => ViewAppointmentDetails(props)}
+          onClick={() => ViewAppointmentDetails(info)}
         ></Button>
       );
     } else if (tab === Tabs.pending) {
       return (
         <MenteeButton
           content={<b>Review</b>}
-          onClick={() => AcceptRejectAppointment(props)}
+          onClick={() => AcceptRejectAppointment(info)}
         ></MenteeButton>
       );
     }
   };
-  const Appointment = (props) => {
+  const Appointment = ({ info }) => {
     return (
       <div className="appointment-card">
         <div>
           <div className="appointment-mentee-name">
-            <b>{props.name}</b>
+            <b>{info.name}</b>
           </div>
           <div className="appointment-time">
-            <ClockCircleOutlined /> {props.time}
+            <ClockCircleOutlined /> {info.time}
           </div>
-          <div className="appointment-description">{props.description}</div>
+          <div className="appointment-description">{info.topic}</div>
         </div>
-        {getAppointmentButton(currentTab, props)}
+        {getAppointmentButton(currentTab, info)}
       </div>
     );
   };
@@ -188,25 +188,7 @@ function Appointments() {
               <div className="appointments-row">
                 {/* TODO: Change the appointment component to fetch mentee info */}
                 {appointmentsObject.appointments.map((appointment, index) => (
-                  <Appointment
-                    key={index}
-                    name={appointment.name}
-                    date={appointment.date}
-                    time={appointment.time}
-                    description={appointment.description}
-                    id={appointment.id}
-                    email={appointment.email}
-                    age={appointment.age}
-                    phone_number={appointment.phone_number}
-                    languages={appointment.languages}
-                    gender={appointment.gender}
-                    ethnicity={appointment.ethnicity}
-                    location={appointment.location}
-                    specialist_categories={appointment.specialist_categories}
-                    organization={appointment.organization}
-                    allow_calls={appointment.allow_calls}
-                    allow_texts={appointment.allow_texts}
-                  />
+                  <Appointment key={index} info={appointment} />
                 ))}
               </div>
             </div>

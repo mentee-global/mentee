@@ -92,6 +92,7 @@ def create_appointment():
     new_appointment = AppointmentRequest(
         mentor_id=data.get("mentor_id"),
         mentee_id=data.get("mentee_id"),
+        name=mentee.name,
         accepted=data.get("accepted"),
         topic=data.get("topic"),
         message=data.get("message"),

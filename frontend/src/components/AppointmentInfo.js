@@ -102,7 +102,7 @@ function AppointmentInfo(props) {
         </div>
       );
     }
-    return <div className="ar-email-only">{props.modalAppointment.email}</div>;
+    return <div className="ar-email-only">{mentee.email}</div>;
   };
 
   return (
@@ -118,8 +118,8 @@ function AppointmentInfo(props) {
         <div>
           <div>
             {allowsContact(
-              props.modalAppointment.allow_calls,
-              props.modalAppointment.allow_texts,
+              props.modalAppointment.allowCalls,
+              props.modalAppointment.allowTexts,
               mentee.phone_number
             )}
           </div>

@@ -1,21 +1,24 @@
 .page-one-column-container {
     display: flex;
     justify-content: space-between;
-    width: 80%;
+    width: 100%;
     padding: 3em; 
-    padding-top: 1%;
+    padding-top: 3em;
+    background-color: white;
 
 }
 
 .donation-question {
-    white-space: pre;
+    overflow-wrap: break-word;
+    
 
 }
 
 .column-one {
+    display: flex;
     padding:3em; 
     padding-bottom:3em; 
-    width: 500%;    
+    width: 50%;    
 
 }
 
@@ -23,7 +26,7 @@
     padding: 3em; 
     padding-top:3em; 
     padding-bottom:3em; 
-    width: 800%;  
+    width: 50%;  
 }
 
 .input-form { 
@@ -43,7 +46,7 @@
 
 .previous-button {
     position: relative;
-    bottom: 4   em;
+    bottom: 4em;
     left: 60em;
 
 }
@@ -51,3 +54,53 @@
 .page-one-header {
     color: #FFECBD;
 }
+// .steps-content {
+//     min-height: 200px;
+//     margin-top: 16px;
+//     padding-top: 80px;
+//     text-align: center;
+//     border-radius: 2px;
+//   }
+  
+//   .steps-action {
+//     margin-top: 24px;
+//   }
+
+  .navigation-content { 
+      overflow-x: hidden;
+      margin-left: 0px;
+      background-color: #FCF6E8;
+  }
+  
+
+  .ant-steps-item-tail::after {
+      display: none;
+  }
+
+  .ant-steps-item {
+      width: 5%;
+      flex: none;
+ 
+  }
+
+  .instructions {
+      margin: 3em;
+      background-color: white;
+      padding: 1em;
+  }
+
+  .para-2 {
+      margin-top: 5em;
+  }
+
+  .background {
+      background-color: #FCF6E8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+  }
+
+  .container {
+    margin-left: 0%;
+  }

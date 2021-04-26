@@ -261,10 +261,10 @@ function MentorApplication() {
                   ]}
                 >
                   <div className="why-mentee-question">
-                  *Please share why you would like to becoome apart of our MENTEE Mentor Specialist team?
+                  *Please share why you would like to become apart of our MENTEE Mentor Specialist team?
                   </div>
                   <TextArea autoSize
-                    placeholder="*Please share why you would like to becoome apart of our MENTEE Mentor Specialist team?"
+                    placeholder="*Please share why you would like to become apart of our MENTEE Mentor Specialist team?"
                     style={{ overflow: "hidden" }}
                     value = {whyMentee}
                     onChange={(e) => setWhyMentee(e.target.value)}
@@ -282,8 +282,7 @@ function MentorApplication() {
           <div className="page-two-header">
               <h1>Commitments</h1>
           <div className="page-one-column-container">
-            <div className="page-two-column">
-            <div className="donation-answer-choices">
+            <div className="column-one">
                 <Form layout="inline">
                 <Form.Item
                   name="why-mentee"
@@ -293,17 +292,14 @@ function MentorApplication() {
                     },
                   ]}
                 >
-              <div className="donation-question">
-                <p3>*As a MENTEE global mentor, you wll have your own profile page where <br>
-                </br>
+                <p3 className="donation-question">*As a MENTEE global mentor, you wll have your own profile page where 
                 you will highlight your skills and how you can help our mentees
-                either synchronously or asynchronously. <br></br>You will also have the opportunity 
+                either synchronously or asynchronously. You will also have the opportunity 
                 to post your own videos that share your specific guidance or lessons to help our mentees.
-               <br></br> Additionally, you will have a networking space that will allow you to get to know other
-                specialists <br></br>from around the world and networking events that are online and global.
-                <br></br>MENTEE is a volunteer organization and we are 100% sustained by donations. <br></br>Are you able to offer
+               Additionally, you will have a networking space that will allow you to get to know other
+                specialists from around the world and networking events that are online and global.
+                MENTEE is a volunteer organization and we are 100% sustained by donations. Are you able to offer
                 a donation for one year?*</p3>
-                </div>
                     <Radio.Group className="donation" onChange={onChange1} value={offerDonation}>
                         <Radio  value={"Yes, I can offer a donation now to help suppourt this work!"}>Yes, I can offer a donation now to help suppourt this work! (https://www.menteteglobal.org/donate)
                         </Radio>
@@ -316,7 +312,6 @@ function MentorApplication() {
                 </Radio.Group>
                 </Form.Item>
                 </Form>
-                </div>
                 <div className="mentoring-options-question">
                     *Please choose the option(s) that is right for you
                     <div className="mentoring-options-answers">
@@ -324,7 +319,7 @@ function MentorApplication() {
                     </div>
                 </div>
             </div>
-            <div className="page-two-column-two">
+            <div className="column-two">
             <div className="time-options-question">
                   *Please choose the option(s) that is right for you  
                   <div className="time-options-answers">
@@ -375,15 +370,16 @@ function MentorApplication() {
         <div className="page-three-header">
             <h1>Work Information</h1>
           <div className="page-one-column-container">
-          <div className="column-one">
-          <div className="work-sectors-question">
+            <div className="column-one">
+              <div className="work-sectors-question">
               *Which sector(s) do you work in? (Check all that apply)
               <div className="work-sectors--answer-choices">
               <Checkbox.Group options={workSectors} value= {sectors} onChange={onChangeCheck2}/>
               </div>
+              </div>
           </div>
           <div className="column-two">
-          <div className="role-description-question">
+            <div className="role-description-question">
                   <div className="role-description-answers">
                   <Form.Item
                   name="role-description"
@@ -458,7 +454,7 @@ function MentorApplication() {
           </div>
           </div>
           </div>
-          </div>
+      
   )
   }
 
@@ -509,12 +505,13 @@ function MentorApplication() {
             <Checkbox.Group options={specialTopics} value= {topics} onChange={onChangeCheck3}/>
             </div>
         </div>
+        </div>
         <div className="column-two">
         <div className="region-question">
                 <div className="region-answers">
                 <Form.Item
                 name="region-question"
-                className="input-form"
+                className="input-form-two"
                 rules={[
                   {
                     required: false,
@@ -537,7 +534,7 @@ function MentorApplication() {
                 <div className="contact-other-answers">
                 <Form.Item
                 name="contact-other"
-                className="input-form"
+                className="input-form-two"
                 rules={[
                   {
                     required: true,
@@ -563,7 +560,7 @@ function MentorApplication() {
                 <div className="languages-answers">
                 <Form.Item
                 name="languages"
-                className="input-form"
+                className="input-form-two"
                 rules={[
                   {
                     required: true,
@@ -594,7 +591,7 @@ function MentorApplication() {
         </div>
         </div>
         </div>
-        </div>
+        
 )
 }
 
@@ -607,12 +604,29 @@ function successPage() {
 }
     
     return (
+      <div className="background">
+        <div className="instructions">
+          <h1>Welcome to MENTEE!</h1>
+          <p1>
+            We appreciate your interest in becoming a volunteer Global Mentor for MENTEE, a global nonprofit accelerating
+            personal and Professional growth to make the world a better, healthier place. 
+          </p1>
+          <br></br>
+          <br></br>
+          <p2 className="para-2">
+          Fill out the application below to join our Specialist team for 2021-2022 year.
+          </p2>
+          <br></br>
+          <br></br>
+          *Required
+
+        </div>
       <div>
     {isSubmitted ? successPage()  : (
-                <div>
-                <Steps current={current}>
+                <div className="container">
+                <Steps progressDot current={current}>
                 {steps.map(item => (
-                  <Step key={item.title} title={item.title} />
+                  <Step key={item.title}  />
                 ))}
               </Steps>
               <div className="steps-content">{steps[current].content}</div>
@@ -640,5 +654,6 @@ function successPage() {
 
             </div>
       )}
+     </div>
      </div>)}
 export default MentorApplication; 

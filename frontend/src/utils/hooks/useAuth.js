@@ -12,7 +12,7 @@ const onAuthStateChanged = (f) => {
 
 const useAuth = () => {
   const [roleState, setRoleState] = useState({
-    role: null,
+    role: ACCOUNT_TYPE.GUEST,
     isAdmin: false,
     isMentor: false,
     isMentee: false,
@@ -25,7 +25,7 @@ const useAuth = () => {
 
   const resetRoleState = () => {
     setRoleState({
-      role: null,
+      role: ACCOUNT_TYPE.GUEST,
       isAdmin: false,
       isMentor: false,
       isMentee: false,
@@ -40,10 +40,9 @@ const useAuth = () => {
       await getIdTokenResult()
         .then((idTokenResult) => {
           const { role, profileId } = idTokenResult.claims;
-
           setProfileId(profileId);
           setRoleState({
-            role,
+            role: role,
             isAdmin: role === ACCOUNT_TYPE.ADMIN,
             isMentor: role === ACCOUNT_TYPE.MENTOR,
             isMentee: role === ACCOUNT_TYPE.MENTEE,
@@ -60,6 +59,7 @@ const useAuth = () => {
     isAdmin: roleState.isAdmin,
     isMentor: roleState.isMentor,
     isMentee: roleState.isMentee,
+    profileId: profileId,
     resetRoleState,
     onAuthUpdate,
     onAuthStateChanged,

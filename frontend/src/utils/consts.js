@@ -24,6 +24,7 @@ export const ACCOUNT_TYPE = {
   ADMIN: 0,
   MENTOR: 1,
   MENTEE: 2,
+  GUEST: 3,
 };
 
 export const APP_STATUS = {

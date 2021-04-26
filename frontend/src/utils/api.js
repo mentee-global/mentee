@@ -134,8 +134,8 @@ export const deleteAppointment = (id) => {
   );
 };
 
-export const getAppointmentsByMentorID = (id) => {
-  const requestExtension = `/appointment/mentor/${id}`;
+export const getAppointmentsByMentorID = (id, accountType) => {
+  const requestExtension = `/appointment/${accountType}/${id}`;
   return instance.get(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -241,6 +241,20 @@ export const deleteMentorById = (id) => {
     (err) => {
       console.error(err);
       return false;
+    }
+  );
+};
+
+export const EditFavMentorById = (mentee_id, mentor_id) => {
+  const requestExtension = `/mentee/addFavMentor`;
+  const data = {
+    mentee_uid: mentee_id,
+    mentor_id: mentor_id,
+  };
+  return instance.put(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
     }
   );
 };

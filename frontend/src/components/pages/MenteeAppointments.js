@@ -19,20 +19,35 @@ const appointmentTabs = Object.freeze({
   },
 });
 
+function AppointmentCard({ info }) {
+  return (
+    <div className="appointment-card-container">
+      <div></div>
+    </div>
+  );
+}
+
 function MenteeAppointments() {
-  const [appointments, setAppointments] = useState([]);
+  const [appointments, setAppointments] = useState({});
+  const [visibleAppts, setVisibleAppts] = useState([]);
   const { profileId } = useAuth();
 
   useEffect(() => {
     async function getAppointments() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
+      // TODO: Change this format appointments since it doesn't fit with this page
       const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {
+        console.log(formattedAppointments);
         setAppointments(formattedAppointments);
       }
     }
     getAppointments();
   }, [profileId]);
+
+  const handleOverlayChange = (newSelect) => {
+    setVisibleAppts(appointments[newSelect.key]);
+  };
 
   return (
     <>
@@ -43,7 +58,11 @@ function MenteeAppointments() {
             options={appointmentTabs}
             defaultValue={appointmentTabs.upcoming}
             className="overlay-style"
+            onChange={handleOverlayChange}
           />
+          {visibleAppts.map((elem) => (
+            <AppointmentCard info={elem} />
+          ))}
         </div>
       </div>
     </>

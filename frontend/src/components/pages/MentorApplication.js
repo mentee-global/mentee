@@ -142,7 +142,7 @@ function MentorApplication() {
       console.log(firstName);
         return (
               <div className="page-one-header">
-                <h1>Personal Information</h1>
+                <h1 className="header-one">Personal Information</h1>
               <div className="page-one-column-container">
                 <div className="column-one">
                 <Form>
@@ -280,19 +280,12 @@ function MentorApplication() {
     function pageTwo() {
         return (
           <div className="page-two-header">
-              <h1>Commitments</h1>
+              <h1 className="header-two">Commitments</h1>
           <div className="page-one-column-container">
-            <div className="column-one">
+            <div className="column-one-page-two">
                 <Form layout="inline">
-                <Form.Item
-                  name="why-mentee"
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                <p3 className="donation-question">*As a MENTEE global mentor, you wll have your own profile page where 
+                  <div className="page-two-margin">
+                  <p3 className="donation-question">*As a MENTEE global mentor, you wll have your own profile page where 
                 you will highlight your skills and how you can help our mentees
                 either synchronously or asynchronously. You will also have the opportunity 
                 to post your own videos that share your specific guidance or lessons to help our mentees.
@@ -300,8 +293,9 @@ function MentorApplication() {
                 specialists from around the world and networking events that are online and global.
                 MENTEE is a volunteer organization and we are 100% sustained by donations. Are you able to offer
                 a donation for one year?*</p3>
-                    <Radio.Group className="donation" onChange={onChange1} value={offerDonation}>
-                        <Radio  value={"Yes, I can offer a donation now to help suppourt this work!"}>Yes, I can offer a donation now to help suppourt this work! (https://www.menteteglobal.org/donate)
+
+                <Radio.Group className="donation" onChange={onChange1} value={offerDonation}>
+                        <Radio  value={"Yes, I can offer a donation now to help suppourt this work!"}>Yes, I can offer a donation now to help suppourt this work! <br></br>(https://www.menteteglobal.org/donate)
                         </Radio>
                         <Radio value={"No, unfortunately I cannot offer a donation now but please ask me again."}>No, unfortunately I cannot offer a donation now but please ask me again.
                           
@@ -310,20 +304,31 @@ function MentorApplication() {
                             
                             </Radio>
                 </Radio.Group>
-                </Form.Item>
-                </Form>
-                <div className="mentoring-options-question">
-                    *Please choose the option(s) that is right for you
-                    <div className="mentoring-options-answers">
-                    <Checkbox.Group options={workOptions} defaultValue={mentoringOptions} onChange={onChangeCheck}/>
+                  </div>
+
+
+             
+                    <div className="page-two-margin">
+                      <div>
+                      *Please choose the option(s) that is right for you
+                      </div>
+                     
+                      <Checkbox.Group options={workOptions} defaultValue={mentoringOptions} onChange={onChangeCheck}/>
                     </div>
-                </div>
+                    
+              
+                  
+          
+                </Form>
             </div>
-            <div className="column-two">
-            <div className="time-options-question">
-                  *Please choose the option(s) that is right for you  
-                  <div className="time-options-answers">
-                  <Radio.Group onChange={onChange2} value={commitTime}>
+            <div className="column-two-page-two">
+                 <div className="page-two-margin">
+                   <div>
+                   *Please choose the option(s) that is right for you 
+                   </div>
+                 
+                               
+                 <Radio.Group onChange={onChange2} value={commitTime}>
                         <Radio value={"I can mentor several times a month."}>I can mentor several times a month.
                         </Radio>
                         <Radio value={"I can mentor 1-2 times a month."}>I can mentor 1-2 times a month.
@@ -332,25 +337,33 @@ function MentorApplication() {
                           </Radio>
                         <Radio value={"I can mentor a few times a year."}>I can mentor a few times a year.
                         </Radio>
-                        </Radio.Group>
-                    </div>
-                </div>
+                        </Radio.Group> 
+                 </div>
+                  
+            
 
-                <div className="immigrant-family-question">
+                  <div className="page-two-margin">  
+                  <div>
                   *Are you an immigrant or refugee or do you come from an immigrant family or refugee family?
-                  <div className="immigrant-family-answers">
+                  </div>
+                  
                   <Radio.Group onChange={onChange3} value={immigrantStatus}>
                         <Radio value={'Yes'}>Yes
                         </Radio>
                         <Radio value={'No'}>No
                         </Radio>
                         </Radio.Group>
+                  </div>
+          
+                
+            
+              
+                  <div className="page-two-margin" >
+                    <div>
+                    *If you are accepted as a Specialist, would you like to commit to...
                     </div>
-                </div>
 
-                <div className="immigrant-family-question">
-                  *If you are accepted as a Specialist, would you like to commit to...
-                  <div className="immigrant-family-answers">
+      
                   <Radio.Group name="a" onChange={onChange4} value={specialistTime}>
                         <Radio value={"One year with us"}>One year with us
                         </Radio>
@@ -358,7 +371,9 @@ function MentorApplication() {
                         </Radio>
                         </Radio.Group>
                     </div>
-                </div>
+                
+
+             
             </div>
             </div>
             </div>
@@ -368,7 +383,7 @@ function MentorApplication() {
     function pageThree() {
       return (
         <div className="page-three-header">
-            <h1>Work Information</h1>
+            <h1 className="header-three">Work Information</h1>
           <div className="page-one-column-container">
             <div className="column-one">
               <div className="work-sectors-question">
@@ -495,7 +510,7 @@ function MentorApplication() {
   function pageFour() {
     return (
       <div className="page-two-header">
-        <h2>Specialization Information </h2>
+        <h1 className="header-four">Specialization Information </h1>
         <div className="page-one-column-container">
         <div className="column-one">
         <div className="special-topics-question">

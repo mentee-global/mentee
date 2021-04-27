@@ -14,7 +14,7 @@
 
 }
 
-.column-one {
+.column-one, .column-one-page-two {
     display: flex;
     padding:3em; 
     padding-bottom:3em; 
@@ -22,7 +22,7 @@
 
 }
 
-.column-two {
+.column-two, .column-two-page-two{
     padding: 3em; 
     padding-top:3em; 
     padding-bottom:3em; 
@@ -49,10 +49,41 @@
     bottom: 4em;
     left: 60em;
 
+
 }
 
-.page-one-header {
-    color: #FFECBD;
+.header-one {
+    position: relative;
+    top: 3em;
+    left: 4em;
+}
+
+.header-two {
+    position: relative;
+    top: 1em;
+    left: 10em;
+}
+
+.header-three {
+    position: relative;
+    top: 3em;
+    left: 4em;
+}
+
+
+.header-four {
+    position: relative;
+    top: 1em;
+    left: 10em;
+    display: inline;
+}
+
+
+
+.page-two-header {
+    display: flex;
+    justify-content: space-between;
+   width: 80%;
 }
 // .steps-content {
 //     min-height: 200px;
@@ -80,8 +111,13 @@
   .ant-steps-item {
       width: 5%;
       flex: none;
- 
+      position: relative;
+      top: 3em;
+      left: 4em;
   }
+
+ 
+  
 
   .instructions {
       margin: 3em;
@@ -104,3 +140,17 @@
   .container {
     margin-left: 0%;
   }
+
+  .column-one-page-two {
+    padding: 3em; 
+  }
+
+  .column-two-page-two {
+    padding: 3em; 
+  }
+
+  .page-two-margin {
+      margin-bottom:3em;
+  }
+
+ 

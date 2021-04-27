@@ -10,7 +10,7 @@ import Sidebar from "./Sidebar";
 const pages = {
   appointments: {
     name: "Appointments",
-    path: "/appointments",
+    path: "/mentee-appointments",
     icon: <CalendarOutlined />,
   },
   favorites: {

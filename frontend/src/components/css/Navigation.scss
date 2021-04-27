@@ -31,6 +31,9 @@
 .ant-tooltip-inner {
   color: white;
 }
+.ant-collapse-content > .ant-collapse-content-box{
+  padding: 0;
+}
 
 .navigation-menu-item-selected {
   background-color:$nav-menu-item-selected-color;
@@ -40,6 +43,21 @@
 .navigation-submenu {
   color: $nav-submenu-color;
 }
+
+.navigation-messages {
+  bottom: 0px;
+  width: 25%;
+  max-height: 60vh;
+  position: fixed;
+  right: 5%;
+}
+
+.message-box {
+  height: 60vh;
+  width: 100%;
+  overflow: auto;
+}
+
 
 .profile-picture {
   float: right;

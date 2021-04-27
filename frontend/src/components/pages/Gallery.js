@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { fetchMenteeByID, fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
-import { Input, Checkbox, Modal, Result } from "antd";
+import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
@@ -21,6 +21,7 @@ function Gallery() {
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
   const [favorite_mentorIds, setFavoriteIds] = useState(new Set());
+  const [pageLoaded, setPageLoaded] = useState(false);
   const verified = location.state && location.state.verified;
 
   useEffect(() => {
@@ -43,7 +44,9 @@ function Gallery() {
         setMentee(mentee_data);
       }
     }
-    if (isMentee) {
+    console.log("hit")
+    console.log(isMentee)
+    if (isMentee) { 
       getMentee();
     }
   }, [isMentee]);
@@ -55,6 +58,7 @@ function Gallery() {
         fav_set.add(id);
       });
       setFavoriteIds(fav_set);
+      setPageLoaded(true);
     }
     if (isMentee) {
       initializeFavorites();
@@ -76,7 +80,7 @@ function Gallery() {
     return output;
   }
 
-  const getFilteredMentors = useCallback(() => {
+  function getFilteredMentors() {
     return mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
@@ -90,7 +94,7 @@ function Gallery() {
 
       return matchesSpecializations && matchesLanguages && matchesName;
     });
-  }, [favorite_mentorIds]);
+  }
 
   // Add some kind of error 403 code
   return !(isLoggedIn() || verified) ? (
@@ -180,7 +184,8 @@ function Gallery() {
         </div>
 
         <div className="gallery-mentor-container">
-          {getFilteredMentors().map((mentor, key) => (
+          
+          {(isMentee && !pageLoaded) ? <div className="loadingIcon"> <Spin/> </div>: getFilteredMentors().map((mentor, key) => (
             <MentorCard
               key={key}
               name={mentor.name}

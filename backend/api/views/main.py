@@ -75,7 +75,7 @@ def create_mentor_profile():
     try:
         account_type = int(data["account_type"])
     except:
-        msg = "Missing account_type param or account_type param is not an int"
+        msg = "Missing account_type param or account_type param is not an int!"
         logger.info(msg)
         return create_response(status=422, message=msg)
 

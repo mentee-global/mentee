@@ -36,7 +36,6 @@ function MenteeAppointments() {
   useEffect(() => {
     async function getAppointments() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
-      // TODO: Change this format appointments since it doesn't fit with this page
       const formattedAppointments = formatAppointments(
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE

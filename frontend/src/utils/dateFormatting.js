@@ -108,5 +108,3 @@ export const formatAppointments = (data, type) => {
   output.past.reverse();
   return output;
 };
-
-export const menteeFormatAppointments = (data) => {};

@@ -51,7 +51,10 @@ function Appointments() {
     async function getAppointments() {
       const mentorID = await getMentorID();
       const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
-      const formattedAppointments = formatAppointments(appointmentsResponse);
+      const formattedAppointments = formatAppointments(
+        appointmentsResponse,
+        ACCOUNT_TYPE.MENTOR
+      );
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
       }

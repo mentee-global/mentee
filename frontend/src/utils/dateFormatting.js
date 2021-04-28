@@ -1,6 +1,7 @@
 import moment from "moment";
+import { ACCOUNT_TYPE } from "utils/consts";
 
-export const formatAppointments = (data) => {
+export const formatAppointments = (data, type) => {
   if (!data) {
     return;
   }
@@ -53,12 +54,16 @@ export const formatAppointments = (data) => {
     const formattedAppointment = {
       description: appointment.message,
       id: appointment._id.$oid,
-      name: appointment.name,
-      email: appointment.email,
-      age: appointment.age,
       date: startTime.format("dddd MMMM Do, YYYY"),
       time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
+      allow_texts: appointment.allow_texts,
+      allow_calls: appointment.allow_calls,
+      mentee_name: appointment.mentee_name,
+      mentor_name: appointment.mentor_name,
+      // Legacy Fields
+      email: appointment.email,
+      age: appointment.age,
       email: appointment.email,
       phone_number: appointment.phone_number,
       languages: appointment.languages,
@@ -68,9 +73,13 @@ export const formatAppointments = (data) => {
       mentorship_goals: appointment.mentorship_goals,
       specialist_categories: appointment.specialist_categories,
       organization: appointment.organization,
-      allow_texts: appointment.allow_texts,
-      allow_calls: appointment.allow_calls,
+      name: appointment.name,
     };
+
+    if (type == ACCOUNT_TYPE.MENTEE) {
+      output[currentKey].push(formattedAppointment);
+      continue;
+    }
 
     // case where there is no dates at all in current type of appointment
     if (output[currentKey].length < 1) {

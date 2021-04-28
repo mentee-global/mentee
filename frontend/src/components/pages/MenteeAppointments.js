@@ -3,6 +3,7 @@ import { fetchAppointmentsByMenteeId } from "utils/api";
 import useAuth from "utils/hooks/useAuth";
 import { formatAppointments } from "utils/dateFormatting";
 import OverlaySelect from "components/OverlaySelect";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 const appointmentTabs = Object.freeze({
   upcoming: {
@@ -21,8 +22,8 @@ const appointmentTabs = Object.freeze({
 
 function AppointmentCard({ info }) {
   return (
-    <div className="appointment-card-container">
-      <div></div>
+    <div className="card-container">
+      <div className="card-header"></div>
     </div>
   );
 }
@@ -36,7 +37,10 @@ function MenteeAppointments() {
     async function getAppointments() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
       // TODO: Change this format appointments since it doesn't fit with this page
-      const formattedAppointments = formatAppointments(appointmentsResponse);
+      const formattedAppointments = formatAppointments(
+        appointmentsResponse,
+        ACCOUNT_TYPE.MENTEE
+      );
       if (formattedAppointments) {
         console.log(formattedAppointments);
         setAppointments(formattedAppointments);

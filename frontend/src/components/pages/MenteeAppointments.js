@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
+
 import { fetchAppointmentsByMenteeId } from "utils/api";
-import useAuth from "utils/hooks/useAuth";
 import { formatAppointments } from "utils/dateFormatting";
-import OverlaySelect from "components/OverlaySelect";
 import { ACCOUNT_TYPE } from "utils/consts";
+import OverlaySelect from "components/OverlaySelect";
+import useAuth from "utils/hooks/useAuth";
+
+import "components/css/MenteeAppointments.scss";
+import ApptData from "utils/MenteeApptsData.json";
 
 const appointmentTabs = Object.freeze({
   upcoming: {
@@ -22,8 +26,8 @@ const appointmentTabs = Object.freeze({
 
 function AppointmentCard({ info }) {
   return (
-    <div className="card-container">
-      <div className="card-header"></div>
+    <div className="mentee-appt-card">
+      <div className="mentee-appt-card-header">Hello</div>
     </div>
   );
 }
@@ -42,7 +46,8 @@ function MenteeAppointments() {
       );
       if (formattedAppointments) {
         console.log(formattedAppointments);
-        setAppointments(formattedAppointments);
+        setAppointments(ApptData);
+        setVisibleAppts(ApptData.past);
       }
     }
     getAppointments();
@@ -54,13 +59,13 @@ function MenteeAppointments() {
 
   return (
     <>
-      <div className="appointments-section">
-        <div className="appointments-header">Welcome John!</div>
-        <div className="appointments-container">
+      <div className="mentee-appts-section">
+        <div className="mentee-appts-header">Welcome John!</div>
+        <div className="mentee-appts-container">
           <OverlaySelect
             options={appointmentTabs}
             defaultValue={appointmentTabs.upcoming}
-            className="overlay-style"
+            className="mentee-appts-overlay-style"
             onChange={handleOverlayChange}
           />
           {visibleAppts.map((elem) => (

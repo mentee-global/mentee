@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Menu, Dropdown } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 
+/**
+ * Wrapper component for the dropdown component in Antd
+ * Given an object of all possible desired options
+ * Display it as an overlay and call respective onChange function
+ */
 function OverlaySelect({
   onReset,
   defaultValue,
@@ -17,6 +22,7 @@ function OverlaySelect({
 
   const handleClick = (newOption) => {
     setOption(newOption);
+    // Call parent onChange function
     onChange(newOption.key);
   };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { fetchAppointmentsByMenteeId } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, PROFILE_URL } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
 import useAuth from "utils/hooks/useAuth";
 
@@ -24,10 +24,18 @@ const appointmentTabs = Object.freeze({
   },
 });
 
-function AppointmentCard({ info }) {
+function AppointmentCard({ info, status }) {
   return (
     <div className="mentee-appt-card">
-      <div className="mentee-appt-card-header">Hello</div>
+      <div className="mentee-appt-card-header">
+        Meeting with <a href={PROFILE_URL + info.mentorId}>{info.mentorName}</a>
+      </div>
+      <div className="mentee-appt-card-time">
+        {info.date}
+        <br />
+        {info.time}
+      </div>
+      <div className="mentee-appt-card-topic">{info.topic}</div>
     </div>
   );
 }
@@ -35,6 +43,7 @@ function AppointmentCard({ info }) {
 function MenteeAppointments() {
   const [appointments, setAppointments] = useState({});
   const [visibleAppts, setVisibleAppts] = useState([]);
+  const [currentTab, setCurrentTab] = useState("upcoming");
   const { profileId } = useAuth();
 
   useEffect(() => {
@@ -47,20 +56,21 @@ function MenteeAppointments() {
       if (formattedAppointments) {
         console.log(formattedAppointments);
         setAppointments(ApptData);
-        setVisibleAppts(ApptData.past);
+        setVisibleAppts(ApptData.upcoming);
       }
     }
     getAppointments();
   }, [profileId]);
 
   const handleOverlayChange = (newSelect) => {
-    setVisibleAppts(appointments[newSelect.key]);
+    setVisibleAppts(appointments[newSelect]);
+    setCurrentTab(newSelect);
   };
 
   return (
     <>
       <div className="mentee-appts-section">
-        <div className="mentee-appts-header">Welcome John!</div>
+        <div className="mentee-appts-header">Welcome {ApptData.name}</div>
         <div className="mentee-appts-container">
           <OverlaySelect
             options={appointmentTabs}
@@ -69,7 +79,7 @@ function MenteeAppointments() {
             onChange={handleOverlayChange}
           />
           {visibleAppts.map((elem) => (
-            <AppointmentCard info={elem} />
+            <AppointmentCard info={elem} status={currentTab} />
           ))}
         </div>
       </div>

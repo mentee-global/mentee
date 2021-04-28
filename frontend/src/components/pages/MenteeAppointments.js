@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MenuOutlined } from "@ant-design/icons";
 
 import { fetchAppointmentsByMenteeId } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
@@ -35,7 +36,9 @@ function AppointmentCard({ info, status }) {
         <br />
         {info.time}
       </div>
-      <div className="mentee-appt-card-topic">{info.topic}</div>
+      <div className="mentee-appt-card-topic">
+        <MenuOutlined /> {info.topic}
+      </div>
     </div>
   );
 }
@@ -70,7 +73,7 @@ function MenteeAppointments() {
   return (
     <>
       <div className="mentee-appts-section">
-        <div className="mentee-appts-header">Welcome {ApptData.name}</div>
+        <div className="mentee-appts-header">Welcome {ApptData.name}!</div>
         <div className="mentee-appts-container">
           <OverlaySelect
             options={appointmentTabs}

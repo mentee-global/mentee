@@ -50,3 +50,13 @@
 .mentee-appt-card-topic {
   text-overflow: ellipsis;
 }
+
+@media only screen and (max-width: 768px) {
+  .mentee-appts-section {
+    width: 100%;
+  }
+  .mentee-appt-card {
+    margin-right: 2em;
+    padding: 1em 1.5em;
+  }
+}

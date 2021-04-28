@@ -54,16 +54,12 @@ export const formatAppointments = (data, type) => {
     const formattedAppointment = {
       description: appointment.message,
       id: appointment._id.$oid,
+      name: appointment.name,
+      email: appointment.email,
+      age: appointment.age,
       date: startTime.format("dddd MMMM Do, YYYY"),
       time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
-      allow_texts: appointment.allow_texts,
-      allow_calls: appointment.allow_calls,
-      mentee_name: appointment.mentee_name,
-      mentor_name: appointment.mentor_name,
-      // Legacy Fields
-      email: appointment.email,
-      age: appointment.age,
       email: appointment.email,
       phone_number: appointment.phone_number,
       languages: appointment.languages,
@@ -73,7 +69,8 @@ export const formatAppointments = (data, type) => {
       mentorship_goals: appointment.mentorship_goals,
       specialist_categories: appointment.specialist_categories,
       organization: appointment.organization,
-      name: appointment.name,
+      allow_texts: appointment.allow_texts,
+      allow_calls: appointment.allow_calls,
     };
 
     if (type == ACCOUNT_TYPE.MENTEE) {
@@ -111,3 +108,5 @@ export const formatAppointments = (data, type) => {
   output.past.reverse();
   return output;
 };
+
+export const menteeFormatAppointments = (data) => {};

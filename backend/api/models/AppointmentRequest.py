@@ -8,6 +8,9 @@ from api.models import Availability
 class AppointmentRequest(Document, Mixin):
     """Appointment Request Collection."""
 
+    # TODO: Make the names required fields
+    mentor_name = ObjectIdField()
+    mentee_name = StringField()
     mentor_id = ObjectIdField(required=True)
     mentee_id = ObjectIdField()
     timeslot = EmbeddedDocumentField(Availability, required=True)

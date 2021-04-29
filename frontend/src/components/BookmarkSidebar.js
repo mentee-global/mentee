@@ -10,6 +10,7 @@ function BookmarkSidebar({ bookmarks }) {
     <div className="mentee-bookmark-section">
       <div className="mentee-bookmark-add">
         <img src={BookmarkImage} />
+        {/* TODO: Implement Add mentors functionality */}
         <MenteeButton content="Add Mentors +" radius="6px" />
       </div>
       <div className="mentee-bookmark-header">

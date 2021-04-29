@@ -33,6 +33,13 @@ export const APP_STATUS = {
   REJECTED: "Rejected",
   OFFER_MADE: "Offer Made",
 };
+
+export const APPOINTMENT_STATUS = {
+  PENDING: "pending",
+  ACCEPTED: "accepted",
+  REJECTED: "rejected",
+};
+
 export const LANGUAGES = [
   "Arabic",
   "Bengali",

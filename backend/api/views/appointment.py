@@ -13,6 +13,7 @@ from api.utils.constants import (
     MENTEE_APPT_TEMPLATE,
     APPT_TIME_FORMAT,
     Account,
+    APPT_STATUS
 )
 from api.utils.require_auth import admin_only
 
@@ -75,7 +76,7 @@ def create_appointment():
         return create_response(status=422, message=msg)
     new_appointment = AppointmentRequest(
         mentor_id=data.get("mentor_id"),
-        accepted=data.get("accepted"),
+        status=data.get("status"),
         name=data.get("name"),
         email=data.get("email"),
         phone_number=data.get("phone_number"),
@@ -151,7 +152,7 @@ def put_appointment(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    appointment.accepted = True
+    appointment.status = APPT_STATUS["ACCEPTED"]
 
     for timeslot in mentor.availability:
         if timeslot == appointment.timeslot:
@@ -202,7 +203,8 @@ def delete_request(appointment_id):
         if not res_email:
             logger.info("Failed to send email")
 
-    request.delete()
+    request.status = APPT_STATUS["REJECTED"]
+    request.save()
     return create_response(status=200, message=f"Success")
 
 

@@ -84,6 +84,7 @@ class ApppointmentForm(Form):
     specialist_categories = FieldList(StringField(), validators=[validators.required()])
     message = StringField()
     organization = StringField(validators=[InputRequired()])
+    status = StringField(validators=[InputRequired()])
 
 
 def is_invalid_form(form_data) -> Tuple[str, bool]:

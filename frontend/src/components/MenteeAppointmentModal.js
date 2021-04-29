@@ -11,6 +11,7 @@ import {
   GENDERS,
   AGES,
   APPOINTMENT_FORM_KEYS,
+  APPOINTMENT_STATUS,
 } from "../utils/consts";
 import { createAppointment, editAvailability } from "../utils/api";
 import "./css/AntDesign.scss";
@@ -156,7 +157,7 @@ function MenteeAppointmentModal(props) {
     }
 
     // Manually set keys to values for accepted and timeslot
-    appointment["accepted"] = false;
+    appointment["status"] = APPOINTMENT_STATUS.PENDING;
     appointment["timeslot"] = {
       start_time: moment(time.start_time.$date).format(),
       end_time: moment(time.end_time.$date).format(),

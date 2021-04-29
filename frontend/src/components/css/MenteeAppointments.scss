@@ -51,6 +51,34 @@
   text-overflow: ellipsis;
 }
 
+.status-section {
+  float: right;
+  display: flex;
+  margin-top: -10px;
+}
+
+.status-denied,
+.status-accepted,
+.status-pending {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+  margin-left: 5px;
+}
+
+.status-denied {
+  background: #ff4d4f;
+}
+
+.status-accepted {
+  background: #6fcf97;
+}
+
+.status-pending {
+  background: #ffdb6f;
+}
+
 @media only screen and (max-width: 768px) {
   .mentee-appts-section {
     width: 100%;
@@ -58,5 +86,12 @@
   .mentee-appt-card {
     margin-right: 2em;
     padding: 1em 1.5em;
+  }
+  .status-section {
+    float: none;
+  }
+  .mentee-appt-card-time,
+  .mentee-appt-card-header {
+    padding-left: 0;
   }
 }

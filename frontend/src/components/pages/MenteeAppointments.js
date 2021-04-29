@@ -3,7 +3,7 @@ import { MenuOutlined } from "@ant-design/icons";
 
 import { fetchAppointmentsByMenteeId } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
-import { ACCOUNT_TYPE, PROFILE_URL } from "utils/consts";
+import { ACCOUNT_TYPE, PROFILE_URL, APPOINTMENT_STATUS } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
 import useAuth from "utils/hooks/useAuth";
 
@@ -15,19 +15,18 @@ const appointmentTabs = Object.freeze({
     text: "All Upcoming",
     key: "upcoming",
   },
-  pending: {
-    text: "All Pending",
-    key: "pending",
-  },
   past: {
     text: "All Past",
     key: "past",
   },
 });
 
-function AppointmentCard({ info, status }) {
+function AppointmentCard({ info }) {
   return (
     <div className="mentee-appt-card">
+      <div className="status-section">
+        {info.status} <div className={`status-${info.status}`} />
+      </div>
       <div className="mentee-appt-card-header">
         Meeting with <a href={PROFILE_URL + info.mentorId}>{info.mentorName}</a>
       </div>
@@ -46,7 +45,6 @@ function AppointmentCard({ info, status }) {
 function MenteeAppointments() {
   const [appointments, setAppointments] = useState({});
   const [visibleAppts, setVisibleAppts] = useState([]);
-  const [currentTab, setCurrentTab] = useState("upcoming");
   const { profileId } = useAuth();
 
   useEffect(() => {
@@ -68,7 +66,6 @@ function MenteeAppointments() {
 
   const handleOverlayChange = (newSelect) => {
     setVisibleAppts(appointments[newSelect]);
-    setCurrentTab(newSelect);
   };
 
   return (
@@ -83,7 +80,7 @@ function MenteeAppointments() {
             onChange={handleOverlayChange}
           />
           {visibleAppts.map((elem) => (
-            <AppointmentCard info={elem} status={currentTab} />
+            <AppointmentCard info={elem} />
           ))}
         </div>
       </div>

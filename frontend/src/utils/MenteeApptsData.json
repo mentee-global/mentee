@@ -14,7 +14,7 @@
       "id": "6084a519cb7e3ddc3c98c841",
       "isoTime": "2021-04-27T00:00:00-05:00",
       "time": "12:00 am - 12:00 am",
-      "status": "ACCEPTED"
+      "status": "accepted"
     },
     {
       "mentorName": "Mentor Name",
@@ -29,7 +29,7 @@
       "id": "6084a519cb7e3ddc3c98c841",
       "isoTime": "2021-04-27T00:00:00-05:00",
       "time": "12:00 am - 12:00 am",
-      "status": "REJECTED"
+      "status": "denied"
     },
     {
       "mentorName": "Mentor Name",
@@ -44,7 +44,7 @@
       "id": "6084a519cb7e3ddc3c98c841",
       "isoTime": "2021-04-27T00:00:00-05:00",
       "time": "12:00 am - 12:00 am",
-      "status": "PENDING"
+      "status": "pending"
     }
   ],
   "upcoming": [
@@ -61,7 +61,7 @@
       "id": "6084a519cb7e3ddc3c98c841",
       "isoTime": "2021-04-27T00:00:00-05:00",
       "time": "12:00 am - 12:00 am",
-      "status": "ACCEPTED"
+      "status": "accepted"
     },
     {
       "mentorName": "Really long name",
@@ -76,7 +76,7 @@
       "id": "6084a519cb7e3ddc3c98c841",
       "isoTime": "2021-04-27T00:00:00-05:00",
       "time": "12:00 am - 12:00 am",
-      "status": "REJECTED"
+      "status": "denied"
     },
     {
       "mentorName": "Mentor Name",
@@ -91,7 +91,7 @@
       "id": "6084a519cb7e3ddc3c98c841",
       "isoTime": "2021-04-27T00:00:00-05:00",
       "time": "12:00 am - 12:00 am",
-      "status": "PENDING"
+      "status": "pending"
     }
   ]
 }

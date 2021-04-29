@@ -436,7 +436,7 @@ function MentorApplication() {
                 </Form.Item>
                   </div>
               </div>
-              <div className="time-at-company-question">
+              <div className="page-three-padding">
                   *How long have you been with this company? 
                   <div className="time-options-answers">
                   <Radio.Group onChange={onChange5} value={companyTime}>
@@ -451,7 +451,7 @@ function MentorApplication() {
                         </Radio.Group>
                     </div>
                 </div>
-                <div className="linkedin-question">
+                <div className="page-three-padding">
                   *Are you on Linkedin? (Your linkedin profile will be connected
                   with our MENETEE Specialist profile unless you prefer they
                   remain seperate.) 
@@ -599,7 +599,7 @@ function MentorApplication() {
               <div className="submit-button">
               <MenteeButton 
               content={<b> Submit</b>}
-              width={"7%"}
+              width={"15%"}
               onClick={handleSubmit}
              />
               </div>  
@@ -659,7 +659,7 @@ function successPage() {
               <div className="previous-button">
                 {current > 0 && (
                   <MenteeButton 
-                  content={<b> Previous</b>}
+                  content={<b>Prev</b>}
                   width={"7%"}
                   onClick={() => prev()}
                  />

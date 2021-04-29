@@ -71,7 +71,7 @@ function MenteeAppointments() {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="mentee-appointments-page">
       <div className="mentee-appts-section">
         <div className="mentee-appts-header">Welcome {ApptData.name}!</div>
         <div className="mentee-appts-container">
@@ -86,7 +86,7 @@ function MenteeAppointments() {
           ))}
         </div>
       </div>
-      <BookmarkSidebar bookmarks={BookMarkData} />
+      <BookmarkSidebar bookmarks={BookMarkData.bookmarks} />
     </div>
   );
 }

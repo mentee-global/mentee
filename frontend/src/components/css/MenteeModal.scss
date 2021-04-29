@@ -43,7 +43,7 @@
 .modal-mentee-appointment-heading-text {
   color: $mentee-appointment-text-color;
   font-size: 1em;
-  width: 40%;
+  width: 45%;
   justify-content: center;
   align-items: flex-start;
   font-weight: bold;
@@ -54,6 +54,7 @@
   flex-direction: column;
   padding-left: 10px;
   align-items: center;
+  align-self: center;
 }
 
 .modal-mentee-appointment-heading-divider {
@@ -65,13 +66,13 @@
 
 .modal-mentee-appointment-heading-date {
   color: $theme-orange-dark;
-  font-size: 2em;
+  font-size: 1.5em;
   font-weight: bold;
 }
 
 .modal-mentee-appointment-heading-day {
   color: $theme-orange;
-  font-size: 3vh;
+  font-size: 1em;
   font-weight: bold;
   margin-top: -15%;
 }

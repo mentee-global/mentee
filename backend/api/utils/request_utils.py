@@ -76,7 +76,6 @@ class ApppointmentForm(Form):
     mentee_id = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)
     topic = StringField(validators=[InputRequired()])
-    message = StringField()
 
 
 def is_invalid_form(form_data) -> Tuple[str, bool]:

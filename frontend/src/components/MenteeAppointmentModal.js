@@ -34,6 +34,7 @@ function MenteeAppointmentModal(props) {
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
   const [date, setDate] = useState();
+  const [dateHeading, setDateHeading] = useState();
   const [time, setTime] = useState();
   const [topic, setTopic] = useState();
   const [canCall, setCanCall] = useState(false);
@@ -98,6 +99,7 @@ function MenteeAppointmentModal(props) {
 
   function handleDateChange(e) {
     setDate(moment(e._d).format("YYYY-MM-DD"));
+    setDateHeading(moment(e._d));
   }
 
   function closeModals() {
@@ -279,11 +281,11 @@ function MenteeAppointmentModal(props) {
               <div className="modal-mentee-appointment-heading-divider" />
               <div className="modal-mentee-appointment-heading-date-container">
                 <div className="modal-mentee-appointment-heading-date">
-                  {date}
+                  {dateHeading && dateHeading.format("MM/DD")}
                 </div>
-                {/* <div className="modal-mentee-appointment-heading-day">
-                  Tuesday
-                </div> */}
+                <div className="modal-mentee-appointment-heading-day">
+                  {dateHeading && dateHeading.format("dddd")}
+                </div>
               </div>
             </div>
             <div className="modal-mentee-inner-container">

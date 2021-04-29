@@ -1,7 +1,11 @@
 import React from "react";
 
-function BookmarkSidebar() {
-  return <div className="mentee-bookmark-section">Hello</div>;
+function BookmarkSidebar({ bookmarks }) {
+  return (
+    <div className="mentee-bookmark-section">
+      <div className="mentee-bookmark-add"></div>
+    </div>
+  );
 }
 
 export default BookmarkSidebar;

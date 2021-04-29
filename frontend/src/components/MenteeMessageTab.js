@@ -9,9 +9,6 @@ import {
 const {Panel} = Collapse;
 
 function MenteeMessageTab() {
-    const genExtra = () => (
-      <UpOutlined/>
-    );
     const data = [
         {
           title: 'Ant Design Title 1',
@@ -39,8 +36,8 @@ function MenteeMessageTab() {
         }
     ];
     return (
-        <Collapse accordion className="navigation-messages">
-            <Panel header={<><MessageOutlined/> Messages</>} showArrow={false} extra={<UpOutlined/>}>
+        <Collapse accordion className="navigation-messages" expandIcon={(props) => <UpOutlined rotate={props.isActive ? 180 : 0}/>} expandIconPosition={"right"}>
+            <Panel header={<><MessageOutlined/> Messages</>} >
               <div className="message-box">
                 <List
                     itemLayout="horizontal"

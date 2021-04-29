@@ -1,14 +1,24 @@
 import React, { useState } from "react";
-import { Collapse, List } from "antd";
+import { Collapse, List, Avatar } from "antd";
 import "./css/Navigation.scss";
 import {
   UpOutlined,
-  MessageOutlined
+  MessageOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 
 const {Panel} = Collapse;
 
+
 function MenteeMessageTab() {
+    const getMessagePreview = (message) => {
+      let preview = message
+      if(preview.length > 50) {
+        preview = preview.slice(0, 50)+"..."
+      }
+      return preview
+    };
+    const sampleMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ligula lectus, commodo eget risus nec, auctor tempor. "
     const data = [
         {
           title: 'Ant Design Title 1',
@@ -36,22 +46,23 @@ function MenteeMessageTab() {
         }
     ];
     return (
-        <Collapse accordion className="navigation-messages" expandIcon={(props) => <UpOutlined rotate={props.isActive ? 180 : 0}/>} expandIconPosition={"right"}>
+        <Collapse accordion className="navigation-messages" expandIcon={(props) => <UpOutlined style={{ color: "#e4bb4f" }} rotate={props.isActive ? 180 : 0}/>} expandIconPosition={"right"}>
             <Panel header={<><MessageOutlined/> Messages</>} >
               <div className="message-box">
                 <List
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={item => (
-                    <List.Item>
+                    <List.Item style={{padding:"20px"}}>
                     <List.Item.Meta
-                    title={<a href="https://ant.design">{item.title}</a>}
-                    description="1"
+                    avatar={<Avatar size="large" icon={<UserOutlined/>} />}
+                    title={<div style={{display:"flex", justifyContent: "space-between"}}><b>Bernie Sanders</b><span>3 days ago</span></div>}
+                    description={getMessagePreview(sampleMessage)}
                     />
                     </List.Item>
                   )}
                 />
-              </div>,
+              </div>
             </Panel>
         </Collapse>
     )

@@ -3,6 +3,7 @@ import { Collapse, List, Avatar } from "antd";
 import "./css/Navigation.scss";
 import {
   UpOutlined,
+  RightOutlined,
   MessageOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -53,7 +54,7 @@ function MenteeMessageTab() {
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={item => (
-                    <List.Item style={{padding:"20px"}}>
+                    <List.Item style={{paddingLeft:"20px", paddingRight:"20px", paddingTop:"10px", paddingBottom:"10px"}} actions={[<RightOutlined style={{ color: "#e4bb4f" }}/>]}>
                     <List.Item.Meta
                     avatar={<Avatar size="large" icon={<UserOutlined/>} />}
                     title={<div style={{display:"flex", justifyContent: "space-between"}}><b>Bernie Sanders</b><span>3 days ago</span></div>}

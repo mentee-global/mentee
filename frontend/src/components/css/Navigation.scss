@@ -35,6 +35,10 @@
   padding: 0;
 }
 
+.ant-list-split .ant-list-item {
+  border-bottom: 0.25px solid #E4BB4F;
+}
+
 .navigation-menu-item-selected {
   background-color:$nav-menu-item-selected-color;
   pointer-events: none;
@@ -46,7 +50,7 @@
 
 .navigation-messages {
   bottom: 0px;
-  width: 25%;
+  width: 30%;
   position: fixed;
   right: 20%;
   box-shadow: 0 6px 5px 0 rgba(0, 0, 0, 0.19);

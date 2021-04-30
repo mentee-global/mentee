@@ -58,16 +58,13 @@ function AdminAppointmentData() {
         appt.appointment.name.match(new RegExp(searchValue, "i"))
       );
     });
-    // setFiltering(!filtering);
     setFilterData(newFiltered);
   };
   const handleResetFilters = () => {
     setFilterData(appointments);
     setResetFilters(!resetFilters);
-    // setFiltering(!filtering);
   };
   const handleSortData = (sortingKey) => {
-    // setFiltering(!filtering);
     const isAscending = sortingKey === keys.ASCENDING;
     const newSorted = filterData.sort((a, b) => {
       const aDate = moment(a.appointment.timeslot.start_time.$date);
@@ -84,7 +81,6 @@ function AdminAppointmentData() {
       );
     });
     setFilterData(newFiltered);
-    // setFiltering(!filtering);
   };
 
   const handleAppointmentDownload = async () => {

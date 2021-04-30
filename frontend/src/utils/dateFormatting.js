@@ -12,7 +12,9 @@ export const formatAppointments = (data) => {
     pending: [],
     past: [],
   };
-  const appointments = data.requests;
+  const appointments = data.requests.filter((elem) => {
+    return elem.status !== APPOINTMENT_STATUS.REJECTED;
+  });
   const now = moment();
 
   appointments.sort((a, b) =>

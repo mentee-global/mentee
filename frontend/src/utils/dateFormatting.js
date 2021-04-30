@@ -58,24 +58,17 @@ export const formatAppointments = (data) => {
     let keyInfo = appointmentType[currentKey];
 
     const formattedAppointment = {
-      description: appointment.message,
+      message: appointment.message,
       id: appointment._id.$oid,
+      mentorID: appointment.mentor_id.$oid,
+      menteeID: appointment.mentee_id && appointment.mentee_id.$oid,
       name: appointment.name,
-      email: appointment.email,
-      age: appointment.age,
       date: startTime.format("dddd MMMM Do, YYYY"),
       time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
-      phone_number: appointment.phone_number,
-      languages: appointment.languages,
-      gender: appointment.gender,
-      ethnicity: appointment.ethnicity,
-      location: appointment.location,
-      mentorship_goals: appointment.mentorship_goals,
-      specialist_categories: appointment.specialist_categories,
-      organization: appointment.organization,
-      allow_texts: appointment.allow_texts,
-      allow_calls: appointment.allow_calls,
+      topic: appointment.topic,
+      allowTexts: appointment.allow_texts,
+      allowCalls: appointment.allow_calls,
     };
 
     // case where there is no dates at all in current type of appointment

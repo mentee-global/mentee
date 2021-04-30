@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Button } from "antd";
+import { Avatar, Typography, Button, Rate } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -51,9 +51,9 @@ function MentorCard(props) {
     }
   }
 
-  function onFavoriteClick() {
-    setFavorite(!favorite);
-    props.onEditFav(props.id);
+  function onFavoriteClick(fav) {
+    setFavorite(!fav);
+    props.onEditFav(props.id, fav);
   }
 
   return (
@@ -74,7 +74,7 @@ function MentorCard(props) {
           </div>
           {isMentee && (
             <div className="favorite-button">
-              <Button
+              {/* <Button
                 shape="circle"
                 icon={
                   favorite ? (
@@ -85,7 +85,8 @@ function MentorCard(props) {
                 }
                 style={{ border: "none" }}
                 onClick={onFavoriteClick}
-              />
+              /> */}
+              <Rate character={<HeartFilled />} count={1} defaultValue={favorite ? 1 : 0} onChange={(number) => onFavoriteClick(number)}/>
             </div>
           )}
         </div>

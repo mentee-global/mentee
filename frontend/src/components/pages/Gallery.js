@@ -63,8 +63,8 @@ function Gallery() {
     }
   }, [mentee]);
 
-  function onEditFav(mentor_id) {
-    EditFavMentorById(mentee.firebase_uid, mentor_id);
+  function onEditFav(mentor_id, favorite) {
+    EditFavMentorById(mentee.firebase_uid, mentor_id, favorite);
   }
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {

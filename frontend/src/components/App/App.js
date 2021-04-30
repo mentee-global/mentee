@@ -4,8 +4,6 @@ import Appointments from "components/pages/Appointments";
 import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
-import Messages from "components/pages/Messages";
-import Favorites from "components/pages/Favorites";
 import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
@@ -51,22 +49,6 @@ function App() {
         path="/profile"
         component={() => (
           <Navigation content={<Profile />} page="profile" needsAuth={true} />
-        )}
-      />
-      <Route
-        path="/favorites"
-        component={() => (
-          <Navigation
-            content={<Favorites />}
-            page="favorites"
-            needsAuth={true}
-          />
-        )}
-      />
-      <Route
-        path="/messages"
-        component={() => (
-          <Navigation content={<Messages />} page="messages" needsAuth={true} />
         )}
       />
       <Route

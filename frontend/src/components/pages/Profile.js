@@ -192,7 +192,7 @@ function Profile() {
           <div className="mentor-profile-info">
             <ProfileContent
               mentor={user}
-              isMentor={false}
+              isMentor={isMentor}
               handleSaveEdits={handleSaveEdits}
             />
           </div>

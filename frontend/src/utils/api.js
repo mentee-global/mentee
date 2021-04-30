@@ -250,7 +250,7 @@ export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   const data = {
     mentee_uid: mentee_id,
     mentor_id: mentor_id,
-    favorite: favorite
+    favorite: favorite,
   };
   return instance.put(requestExtension, data).then(
     (response) => response,

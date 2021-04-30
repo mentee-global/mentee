@@ -1,4 +1,5 @@
 import moment from "moment";
+import { APPOINTMENT_STATUS } from "./consts";
 
 export const formatAppointments = (data) => {
   if (!data) {
@@ -43,7 +44,11 @@ export const formatAppointments = (data) => {
     const endTime = moment(timeslot.end_time.$date);
 
     let currentKey = "upcoming";
-    if (!appointment.accepted && startTime.isSameOrAfter(now)) {
+    if (
+      (appointment.status === APPOINTMENT_STATUS.PENDING ||
+        (appointment.accepted !== undefined && !appointment.accepted)) &&
+      startTime.isSameOrAfter(now)
+    ) {
       currentKey = "pending";
     } else if (startTime.isBefore(now)) {
       currentKey = "past";

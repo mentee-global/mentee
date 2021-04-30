@@ -12,7 +12,7 @@ class AppointmentRequest(Document, Mixin):
     mentee_id = ObjectIdField()
     timeslot = EmbeddedDocumentField(Availability, required=True)
     message = StringField()
-    status = StringField(required=True)
+    status = StringField()
     allow_texts = BooleanField()
     allow_calls = BooleanField()
 

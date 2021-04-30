@@ -42,8 +42,4 @@ MENTOR_APP_STATES = {
 }
 
 # Appointment Status
-APPT_STATUS = {
-    "PENDING": "pending",
-    "DENIED": "denied",
-    "ACCEPTED": "accepted"
-}
+APPT_STATUS = {"PENDING": "pending", "DENIED": "denied", "ACCEPTED": "accepted"}

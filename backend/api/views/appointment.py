@@ -13,7 +13,7 @@ from api.utils.constants import (
     MENTEE_APPT_TEMPLATE,
     APPT_TIME_FORMAT,
     Account,
-    APPT_STATUS
+    APPT_STATUS,
 )
 from api.utils.require_auth import admin_only
 

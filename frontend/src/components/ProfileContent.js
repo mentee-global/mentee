@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
+import MenteeProfileModal from "./MenteeProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import "./css/Profile.scss";
 
@@ -41,6 +42,8 @@ function ProfileContent(props) {
           <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
         </div>
       );
+    } else {
+      console.log("afwo;eijflk")
     }
   };
 
@@ -77,13 +80,21 @@ function ProfileContent(props) {
             />
           </div>
         ) : (
-          <div className="mentor-profile-button">
-            <MenteeAppointmentModal
-              mentor_name={props.mentor.name}
-              availability={props.mentor.availability}
-              mentor_id={props.id}
-              handleUpdateMentor={props.handleUpdateMentor}
-            />
+          <div>
+            <div className="mentor-profile-button">
+              <MenteeProfileModal
+                mentee={props.mentor}
+                onSave={props.handleSaveEdits}
+              />
+            </div>
+            <div className="mentor-profile-button">
+              <MenteeAppointmentModal
+                mentor_name={props.mentor.name}
+                availability={props.mentor.availability}
+                mentor_id={props.id}
+                handleUpdateMentor={props.handleUpdateMentor}
+              />
+            </div>
           </div>
         )}
       </div>

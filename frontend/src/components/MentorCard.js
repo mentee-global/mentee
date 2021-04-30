@@ -86,7 +86,12 @@ function MentorCard(props) {
                 style={{ border: "none" }}
                 onClick={onFavoriteClick}
               /> */}
-              <Rate character={<HeartFilled />} count={1} defaultValue={favorite ? 1 : 0} onChange={(number) => onFavoriteClick(number)}/>
+              <Rate
+                character={<HeartFilled />}
+                count={1}
+                defaultValue={favorite ? 1 : 0}
+                onChange={(number) => onFavoriteClick(number)}
+              />
             </div>
           )}
         </div>

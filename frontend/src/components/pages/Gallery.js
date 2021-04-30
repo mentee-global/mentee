@@ -182,28 +182,34 @@ function Gallery() {
         </div>
 
         <div className="gallery-mentor-container">
-          
-          {(isMentee && !pageLoaded) ? <div className="loadingIcon"> <Spin/> </div>: getFilteredMentors().map((mentor, key) => (
-            <MentorCard
-              key={key}
-              name={mentor.name}
-              languages={mentor.languages}
-              professional_title={mentor.professional_title}
-              location={mentor.location}
-              specializations={mentor.specializations}
-              website={mentor.website}
-              linkedin={mentor.linkedin}
-              id={mentor._id["$oid"]}
-              firebase_uid={mentor.firebase_uid}
-              lesson_types={getLessonTypes(
-                mentor.offers_group_appointments,
-                mentor.offers_in_person
-              )}
-              favorite={favorite_mentorIds.has(mentor._id["$oid"])}
-              onEditFav={onEditFav}
-              image={mentor.image}
-            />
-          ))}
+          {isMentee && !pageLoaded ? (
+            <div className="loadingIcon">
+              {" "}
+              <Spin />{" "}
+            </div>
+          ) : (
+            getFilteredMentors().map((mentor, key) => (
+              <MentorCard
+                key={key}
+                name={mentor.name}
+                languages={mentor.languages}
+                professional_title={mentor.professional_title}
+                location={mentor.location}
+                specializations={mentor.specializations}
+                website={mentor.website}
+                linkedin={mentor.linkedin}
+                id={mentor._id["$oid"]}
+                firebase_uid={mentor.firebase_uid}
+                lesson_types={getLessonTypes(
+                  mentor.offers_group_appointments,
+                  mentor.offers_in_person
+                )}
+                favorite={favorite_mentorIds.has(mentor._id["$oid"])}
+                onEditFav={onEditFav}
+                image={mentor.image}
+              />
+            ))
+          )}
         </div>
       </div>
     </>

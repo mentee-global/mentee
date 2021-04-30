@@ -42,7 +42,7 @@ function ProfileContent(props) {
         </div>
       );
     }
-  }
+  };
 
   const getEducations = (educations) => {
     if (!educations || !educations[0]) {

@@ -8,7 +8,12 @@ import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
-import { fetchMentorByID, editMentorProfile, fetchMenteeByID, editMenteeProfile} from "utils/api";
+import {
+  fetchMentorByID,
+  editMentorProfile,
+  fetchMenteeByID,
+  editMenteeProfile,
+} from "utils/api";
 
 function Profile() {
   const history = useHistory();
@@ -40,9 +45,9 @@ function Profile() {
       const menteeData = await fetchMenteeByID(menteeID);
 
       if (menteeData) {
-        setUser(menteeData)
+        setUser(menteeData);
       }
-    } 
+    }
   };
 
   const handleSaveEdits = () => {
@@ -159,10 +164,7 @@ function Profile() {
                 Text notifications
               </div>
               <Form.Item name="text_notifications">
-                <Switch
-                  size="small"
-                  defaultChecked={user.text_notifications}
-                />
+                <Switch size="small" defaultChecked={user.text_notifications} />
               </Form.Item>
             </div>
           </div>

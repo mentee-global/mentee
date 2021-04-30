@@ -26,7 +26,7 @@ def download_appointments():
     for appt in appointments:
         mentor = MentorProfile.objects(id=appt.mentor_id).first()
         mentee = None
-        if (appt.mentee_id):
+        if appt.mentee_id:
             mentee = MenteeProfile.objects(id=appt.mentee_id).first()
         appts.append(
             [

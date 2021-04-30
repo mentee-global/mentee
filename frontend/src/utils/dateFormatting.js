@@ -64,7 +64,6 @@ export const formatAppointments = (data) => {
       date: startTime.format("dddd MMMM Do, YYYY"),
       time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
-      email: appointment.email,
       phone_number: appointment.phone_number,
       languages: appointment.languages,
       gender: appointment.gender,

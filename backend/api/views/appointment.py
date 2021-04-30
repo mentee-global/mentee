@@ -192,7 +192,7 @@ def delete_request(appointment_id):
         return create_response(status=422, message=msg)
 
     if mentee.email_notifications:
-        start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
+        start_time = appointment.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
         res_email = send_email(
             recipient=mentee.email,
             subject="Mentee Appointment Notification",

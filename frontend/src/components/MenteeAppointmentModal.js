@@ -136,7 +136,6 @@ function MenteeAppointmentModal(props) {
       start_time: moment(time.start_time.$date).format(),
       end_time: moment(time.end_time.$date).format(),
     };
-    console.log(appointment);
 
     await createAppointment(appointment);
 
@@ -199,7 +198,6 @@ function MenteeAppointmentModal(props) {
               <Calendar
                 fullscreen={false}
                 onSelect={handleDateChange}
-                // onPanalChange={(v, m) => console.log(v, m)}
                 disabledDate={disabledDate}
               />
               <div className="modal-mentee-appointment-datetime-header">

@@ -6,13 +6,13 @@ import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn, getMenteeID } from "utils/auth.service";
+import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { EditFavMentorById } from "../../utils/api";
 import useAuth from "../../utils/hooks/useAuth";
 
 function Gallery() {
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const { isAdmin, isMentor, isMentee, onAuthStateChanged } = useAuth();
   const [mentors, setMentors] = useState([]);
   const [mentee, setMentee] = useState();
   const [specializations, setSpecializations] = useState([]);
@@ -20,9 +20,8 @@ function Gallery() {
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
-  const [favorite_mentorIds, setFavoriteIds] = useState(new Set());
+  const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
   const [pageLoaded, setPageLoaded] = useState(false);
-  const verified = location.state && location.state.verified;
 
   useEffect(() => {
     async function getMentors() {
@@ -31,10 +30,15 @@ function Gallery() {
         setMentors(mentor_data);
       }
     }
-    if (verified) {
-      getMentors();
+
+    getMentors();
+  }, []);
+
+  useEffect(() => {
+    if (isMentor || isAdmin) {
+      setPageLoaded(true);
     }
-  }, [verified]);
+  }, [isMentor, isAdmin]);
 
   useEffect(() => {
     async function getMentee() {
@@ -55,7 +59,7 @@ function Gallery() {
       mentee.favorite_mentors_ids.forEach((id) => {
         fav_set.add(id);
       });
-      setFavoriteIds(fav_set);
+      setFavoriteMentorIds(fav_set);
       setPageLoaded(true);
     }
     if (isMentee) {
@@ -78,8 +82,8 @@ function Gallery() {
     return output;
   }
 
-  const getFilteredMentors = useCallback(() => {
-    return mentors.filter((mentor) => {
+  const getFilteredMentors = () =>
+    mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
         specializations.length === 0 ||
@@ -92,10 +96,9 @@ function Gallery() {
 
       return matchesSpecializations && matchesLanguages && matchesName;
     });
-  }, [favorite_mentorIds]);
 
   // Add some kind of error 403 code
-  return !(isLoggedIn() || verified) ? (
+  return !isLoggedIn() ? (
     <Result
       status="403"
       title="403"
@@ -182,7 +185,7 @@ function Gallery() {
         </div>
 
         <div className="gallery-mentor-container">
-          {isMentee && !pageLoaded ? (
+          {!pageLoaded ? (
             <div className="loadingIcon">
               {" "}
               <Spin />{" "}
@@ -204,7 +207,7 @@ function Gallery() {
                   mentor.offers_group_appointments,
                   mentor.offers_in_person
                 )}
-                favorite={favorite_mentorIds.has(mentor._id["$oid"])}
+                favorite={favoriteMentorIds.has(mentor._id["$oid"])}
                 onEditFav={onEditFav}
                 image={mentor.image}
               />

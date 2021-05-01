@@ -11,7 +11,7 @@ import { formatAppointments } from "utils/dateFormatting";
 import AvailabilityCalendar from "components/AvailabilityCalendar";
 import {
   acceptAppointment,
-  getAppointmentsByMentorID,
+  fetchAppointmentsByMentorId,
   deleteAppointment,
   fetchMenteeByID,
 } from "utils/api";
@@ -50,11 +50,11 @@ function Appointments() {
   useEffect(() => {
     async function getAppointments() {
       const mentorID = await getMentorID();
-      const appointmentsResponse = await getAppointmentsByMentorID(
-        mentorID,
+      const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
+      const formattedAppointments = formatAppointments(
+        appointmentsResponse,
         ACCOUNT_TYPE.MENTOR
       );
-      const formattedAppointments = formatAppointments(appointmentsResponse);
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
       }

@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, BrowserRouter as Router } from "react-router-dom";
 import Appointments from "components/pages/Appointments";
+import MenteeAppointments from "components/pages/MenteeAppointments";
 import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
@@ -37,6 +38,16 @@ function App() {
           <Navigation
             content={<Appointments />}
             page="appointments"
+            needsAuth={true}
+          />
+        )}
+      />
+      <Route
+        path="/mentee-appointments"
+        component={() => (
+          <Navigation
+            content={<MenteeAppointments />}
+            page="mentee-appointments"
             needsAuth={true}
           />
         )}

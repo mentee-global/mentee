@@ -1,7 +1,8 @@
 import moment from "moment";
 import { APPOINTMENT_STATUS } from "./consts";
+import { ACCOUNT_TYPE } from "utils/consts";
 
-export const formatAppointments = (data) => {
+export const formatAppointments = (data, type) => {
   if (!data) {
     return;
   }
@@ -70,6 +71,11 @@ export const formatAppointments = (data) => {
       allowTexts: appointment.allow_texts,
       allowCalls: appointment.allow_calls,
     };
+
+    if (type == ACCOUNT_TYPE.MENTEE) {
+      output[currentKey].push(formattedAppointment);
+      continue;
+    }
 
     // case where there is no dates at all in current type of appointment
     if (output[currentKey].length < 1) {

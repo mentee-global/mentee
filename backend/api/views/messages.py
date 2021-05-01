@@ -83,7 +83,7 @@ def create_message():
             recipient_id=data.get("recipient_id"),
             email=data.get("email"),
             link=data.get("link"),
-            time=data.get("time"),
+            time=datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z"),
             # read=data.get("read"),
         )
     except:

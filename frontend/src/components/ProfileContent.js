@@ -78,7 +78,10 @@ function ProfileContent(props) {
         />
       );
     // Mentee public profile
-    else return <MenteeButton content="Message" />;
+    else
+      return (
+        <MenteeButton style={{ fontWeight: "bold" }} content="Send Message" />
+      );
   };
 
   return (
@@ -111,33 +114,29 @@ function ProfileContent(props) {
             {getLanguages(account.languages || [])}
           </span>
         )}
-        {mentorPublic && (
-          <>
-            {account.website && (
-              <span>
-                <LinkOutlined className="mentor-profile-tag" />
-                <a
-                  href={formatLinkForHref(account.website)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {account.website}
-                </a>
-              </span>
-            )}
-            {account.linkedin && (
-              <span>
-                <LinkedinOutlined className="mentor-profile-tag" />
-                <a
-                  href={formatLinkForHref(account.linkedin)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {account.linkedin}
-                </a>
-              </span>
-            )}
-          </>
+        {account.website && (
+          <span>
+            <LinkOutlined className="mentor-profile-tag" />
+            <a
+              href={formatLinkForHref(account.website)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {account.website}
+            </a>
+          </span>
+        )}
+        {account.linkedin && (
+          <span>
+            <LinkedinOutlined className="mentor-profile-tag" />
+            <a
+              href={formatLinkForHref(account.linkedin)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {account.linkedin}
+            </a>
+          </span>
         )}
       </div>
       <br />

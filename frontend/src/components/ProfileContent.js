@@ -42,8 +42,6 @@ function ProfileContent(props) {
           <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
         </div>
       );
-    } else {
-      console.log("afwo;eijflk")
     }
   };
 
@@ -80,7 +78,7 @@ function ProfileContent(props) {
             />
           </div>
         ) : (
-          <div>
+          <div className="mentor-profile-modal-buttons">
             <div className="mentor-profile-button">
               <MenteeProfileModal
                 mentee={props.mentor}

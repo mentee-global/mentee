@@ -58,6 +58,12 @@
   .mentor-profile-about {
     width: 90%;
   }
+
+  .mentor-profile-modal-buttons {
+    display: flex;
+    flex-direction: row;
+    margin-right: 2vw;
+  }
   
   .mentor-specialization-tag {
     border: 3px solid $specialization-tag-border;
@@ -105,10 +111,6 @@
     font-size: 12px;
     text-decoration: underline;
     color: $edit-contact-color;
-  }
-  
-  .mentor-profile-button {
-    margin-right: 2vw;
   }
   
   .mentor-profile-input {

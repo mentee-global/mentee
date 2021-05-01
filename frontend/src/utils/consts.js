@@ -103,16 +103,9 @@ export const AGES = [
 // Keys for fields of Appointments
 export const APPOINTMENT_FORM_KEYS = [
   "mentor_id",
-  "name",
-  "email",
-  "phone_number",
-  "languages",
-  "age",
-  "gender",
-  "location",
-  "specialist_categories",
+  "mentee_id",
+  "topic",
   "message",
-  "organization",
   "allow_calls",
   "allow_texts",
 ];

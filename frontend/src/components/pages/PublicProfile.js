@@ -4,25 +4,25 @@ import { Avatar } from "antd";
 
 import ProfileContent from "../ProfileContent";
 import ProfileVideos from "../ProfileVideos";
-import { fetchMentorByID } from "../../utils/api";
+import { fetchAccountById } from "../../utils/api";
 
 import "../css/PublicProfile.scss";
 
-function PublicProfile(props) {
-  const [mentor, setMentor] = useState({});
+function PublicProfile({ accountType, id }) {
+  const [account, setAccount] = useState({});
   const [updateContent, setUpdateContent] = useState(false);
 
   useEffect(() => {
-    async function getMentor() {
-      const mentor_data = await fetchMentorByID(props.id);
-      if (mentor_data) {
-        setMentor(mentor_data);
+    async function getAccount() {
+      const accountData = await fetchAccountById(id, accountType);
+      if (accountData) {
+        setAccount(accountData);
       }
     }
-    getMentor();
-  }, [updateContent, props.id]);
+    getAccount();
+  }, [updateContent, id]);
 
-  const handleUpdateMentor = () => {
+  const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
   };
 
@@ -31,17 +31,18 @@ function PublicProfile(props) {
       <div className="mentor-profile-content-public">
         <Avatar
           size={120}
-          src={mentor.image && mentor.image.url}
+          src={account.image && account.image.url}
           icon={<UserOutlined />}
         />
         <ProfileContent
-          mentor={mentor}
-          id={props.id}
-          handleUpdateMentor={handleUpdateMentor}
+          account={account}
+          id={id}
+          handleUpdateAccount={handleUpdateAccount}
+          accountType={accountType}
         />
       </div>
       <div className="mentor-profile-videos">
-        <ProfileVideos videos={mentor.videos} />
+        <ProfileVideos videos={account.videos} />
       </div>
     </div>
   );

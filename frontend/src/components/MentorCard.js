@@ -16,6 +16,7 @@ import useAuth from "../utils/hooks/useAuth";
 import MenteeButton from "./MenteeButton";
 
 import "./css/Gallery.scss";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 const { Title, Text } = Typography;
 
@@ -131,7 +132,7 @@ function MentorCard(props) {
         )}
         <hr className="gallery-solid-border" />
         <div className="bookmark-button"></div>
-        <NavLink to={"/gallery/" + props.id}>
+        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />
           </div>

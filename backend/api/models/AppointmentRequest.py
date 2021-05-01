@@ -13,6 +13,7 @@ class AppointmentRequest(Document, Mixin):
     name = StringField(required=True)
     timeslot = EmbeddedDocumentField(Availability, required=True)
     topic = StringField(required=True)
+    message = StringField()
     status = StringField()
     allow_texts = BooleanField()
     allow_calls = BooleanField()

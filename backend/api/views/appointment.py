@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from api.models import AppointmentRequest, Availability, MentorProfile
+from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.request_utils import (
     ApppointmentForm,
@@ -12,24 +12,57 @@ from api.utils.constants import (
     MENTOR_APPT_TEMPLATE,
     MENTEE_APPT_TEMPLATE,
     APPT_TIME_FORMAT,
+    Account,
 )
 from api.utils.require_auth import admin_only
 
 appointment = Blueprint("appointment", __name__)
 
-# GET request for appointments by mentor id
-@appointment.route("/mentor/<string:mentor_id>", methods=["GET"])
-def get_requests_by_mentor(mentor_id):
+# GET request for appointments by account id
+@appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
+def get_requests_by_id(account_type, id):
+    account = None
     try:
-        mentor = MentorProfile.objects.get(id=mentor_id)
+        if account_type == Account.MENTOR:
+            account = MentorProfile.objects.get(id=id)
+        elif account_type == Account.MENTEE:
+            account = MenteeProfile.objects.get(id=id)
     except:
-        msg = "No mentor found with that id"
+        msg = "No account found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    # Update appointment requests that don't have a mentee id
+    if account_type == Account.MENTEE:
+        by_email = AppointmentRequest.objects(email=account.email).filter(
+            mentee_id__not__exists=True
+        )
+        for appointment in by_email:
+            appointment.mentee_id = id
+            appointment.save()
+    elif account_type == Account.MENTOR:
+        not_verified = AppointmentRequest.objects(mentor_id=id).filter(
+            mentee_id__not__exists=True
+        )
+        for appointment in not_verified:
+            try:
+                mentee = MenteeProfile.objects.get(email=appointment.email)
+            except:
+                msg = "Could not find Mentee with that email"
+                logger.info(msg)
+                continue
+            appointment.mentee_id = mentee.id
+            appointment.save()
+
+    # Fetch appointments by respective mentee/mentor id
+    res = None
+    if account_type == Account.MENTEE:
+        res = AppointmentRequest.objects(mentee_id=id)
+    elif account_type == Account.MENTOR:
+        res = AppointmentRequest.objects(mentor_id=id)
+
     # Includes mentor name because appointments page does not fetch all mentor info
-    requests = AppointmentRequest.objects(mentor_id=mentor_id)
-    return create_response(data={"mentor_name": mentor.name, "requests": requests})
+    return create_response(data={"name": account.name, "requests": res})
 
 
 # POST request for Mentee Appointment
@@ -40,19 +73,29 @@ def create_appointment():
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
         return create_response(status=422, message=msg)
+
+    # Gets mentor's and mentee's email and sends a notification to them about the appointment
+    try:
+        mentor = MentorProfile.objects.get(id=data.get("mentor_id"))
+    except:
+        msg = "No mentor found with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    try:
+        mentee = MenteeProfile.objects.get(id=data.get("mentee_id"))
+    except:
+        msg = "No mentee found with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
     new_appointment = AppointmentRequest(
         mentor_id=data.get("mentor_id"),
+        mentee_id=data.get("mentee_id"),
+        name=mentee.name,
         accepted=data.get("accepted"),
-        name=data.get("name"),
-        email=data.get("email"),
-        phone_number=data.get("phone_number"),
-        languages=data.get("languages"),
-        age=data.get("age"),
-        gender=data.get("gender"),
-        location=data.get("location"),
-        specialist_categories=data.get("specialist_categories"),
+        topic=data.get("topic"),
         message=data.get("message"),
-        organization=data.get("organization"),
         allow_texts=data.get("allow_texts"),
         allow_calls=data.get("allow_calls"),
     )
@@ -62,32 +105,25 @@ def create_appointment():
         start_time=time_data.get("start_time"), end_time=time_data.get("end_time")
     )
 
-    # Gets mentor's email and sends a notification to them about the appointment
-    try:
-        mentor = MentorProfile.objects.get(id=data.get("mentor_id"))
-    except:
-        msg = "No mentor found with that id"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
 
-    mentee_email, res_msg = send_email(
-        recipient=new_appointment.email,
-        template_id=MENTEE_APPT_TEMPLATE,
-        data={"confirmation": True, "name": mentor.name, "date": start_time},
-    )
-    if not mentee_email:
-        msg = "Failed to send mentee email " + res_msg
-        logger.info(msg)
+    if mentee.email_notifications:
+        res, res_msg = send_email(
+            recipient=mentee.email,
+            template_id=MENTEE_APPT_TEMPLATE,
+            data={"confirmation": True, "name": mentor.name, "date": start_time},
+        )
+        if not res:
+            msg = "Failed to send mentee email " + res_msg
+            logger.info(msg)
 
     if mentor.email_notifications:
-        mentor_email, res_msg = send_email(
+        res, res_msg = send_email(
             recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
         )
 
-        if not mentor_email:
+        if not res:
             msg = "Failed to send an email " + res_msg
             logger.info(msg)
 
@@ -104,7 +140,7 @@ def create_appointment():
     new_appointment.save()
 
     return create_response(
-        message=f"Successfully created appointment with MentorID: {new_appointment.mentor_id} as Mentee Name: {new_appointment.name}"
+        message=f"Successfully created appointment with MentorID: {new_appointment.mentor_id} as MenteeID: {new_appointment.mentee_id}"
     )
 
 
@@ -113,8 +149,9 @@ def put_appointment(id):
     try:
         appointment = AppointmentRequest.objects.get(id=id)
         mentor = MentorProfile.objects.get(id=appointment.mentor_id)
+        mentee = MenteeProfile.objects.get(id=appointment.mentee_id)
     except:
-        msg = "No appointment or mentor found (or both) with that id"
+        msg = "No appointment or account found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
@@ -125,15 +162,16 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
-    start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
-    res_email = send_email(
-        recipient=appointment.email,
-        subject="Mentee Appointment Notification",
-        data={"name": mentor.name, "date": start_time, "approved": True},
-        template_id=MENTEE_APPT_TEMPLATE,
-    )
-    if not res_email:
-        logger.info("Failed to send email")
+    if mentee.email_notifications:
+        start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
+        res_email = send_email(
+            recipient=mentee.email,
+            subject="Mentee Appointment Notification",
+            data={"name": mentor.name, "date": start_time, "approved": True},
+            template_id=MENTEE_APPT_TEMPLATE,
+        )
+        if not res_email:
+            logger.info("Failed to send email")
 
     mentor.save()
     appointment.save()
@@ -146,22 +184,17 @@ def put_appointment(id):
 def delete_request(appointment_id):
     try:
         request = AppointmentRequest.objects.get(id=appointment_id)
+        mentor = MentorProfile.objects.get(id=request.mentor_id)
+        mentee = MenteeProfile.objects.get(id=appointment.mentee_id)
     except:
-        msg = "The request you attempted to delete was not found"
+        msg = "No appointment or account found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    try:
-        mentor = MentorProfile.objects.get(id=request.mentor_id)
-    except:
-        msg = "No mentor found with that id"
-        logger.info(msg)
-        mentor = False
-
-    if mentor:
-        start_time = request.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
+    if mentee.email_notifications:
+        start_time = appointment.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
         res_email = send_email(
-            recipient=request.email,
+            recipient=mentee.email,
             subject="Mentee Appointment Notification",
             data={"name": mentor.name, "date": start_time, "approved": False},
             template_id=MENTEE_APPT_TEMPLATE,

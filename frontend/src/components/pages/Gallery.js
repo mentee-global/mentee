@@ -78,7 +78,7 @@ function Gallery() {
     return output;
   }
 
-  function getFilteredMentors() {
+  const getFilteredMentors = useCallback(() => {
     return mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
@@ -92,7 +92,7 @@ function Gallery() {
 
       return matchesSpecializations && matchesLanguages && matchesName;
     });
-  }
+  }, [favorite_mentorIds]);
 
   // Add some kind of error 403 code
   return !(isLoggedIn() || verified) ? (

@@ -74,18 +74,6 @@ function MentorCard(props) {
           </div>
           {isMentee && (
             <div className="favorite-button">
-              {/* <Button
-                shape="circle"
-                icon={
-                  favorite ? (
-                    <HeartFilled style={{ color: "#e4bb4f" }}></HeartFilled>
-                  ) : (
-                    <HeartOutlined style={{ color: "#e4bb4f" }}></HeartOutlined>
-                  )
-                }
-                style={{ border: "none" }}
-                onClick={onFavoriteClick}
-              /> */}
               <Rate
                 character={<HeartFilled />}
                 count={1}

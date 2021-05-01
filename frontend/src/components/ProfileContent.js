@@ -6,7 +6,7 @@ import {
   LinkedinOutlined,
 } from "@ant-design/icons";
 
-import MenteeButton from "components/MenteeButton";
+import PublicMessageModal from "components/PublicMessageModal";
 import { formatLinkForHref } from "utils/misc";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MentorProfileModal from "./MentorProfileModal";
@@ -78,10 +78,7 @@ function ProfileContent(props) {
         />
       );
     // Mentee public profile
-    else
-      return (
-        <MenteeButton style={{ fontWeight: "bold" }} content="Send Message" />
-      );
+    else return <PublicMessageModal />;
   };
 
   return (

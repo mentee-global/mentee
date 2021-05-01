@@ -260,6 +260,16 @@ export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   );
 };
 
+export const sendMessage = (data) => {
+  const requestExtension = `/messages/`;
+  return instance.post(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const updateApplicationById = async (data, id) => {
   const requestExtension = `/application/${id}`;
   return await authPut(requestExtension, data).then(

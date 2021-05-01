@@ -488,7 +488,7 @@ function MenteeProfileModal(props) {
                 valid={isValid[7]}
                 validate={validate}
               />
-            </div> 
+            </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}

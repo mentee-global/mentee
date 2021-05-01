@@ -59,9 +59,14 @@
 .message-box {
   height: 60vh;
   width: 100%;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
+.message-box .ant-list-item:hover {
+  box-shadow: 0 0 4px #eee;
+  cursor: pointer;
+}
 
 .profile-picture {
   float: right;

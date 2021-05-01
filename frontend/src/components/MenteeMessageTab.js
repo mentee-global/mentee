@@ -1,17 +1,22 @@
 import React, { useState } from "react";
-import { Collapse, List, Avatar } from "antd";
+import { Collapse, List, Avatar, Drawer } from "antd";
 import "./css/Navigation.scss";
 import {
   UpOutlined,
   RightOutlined,
   MessageOutlined,
   UserOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 
 const {Panel} = Collapse;
 
 
 function MenteeMessageTab() {
+    const [visible, setVisible] = useState(false);
+    const [drawerMessage, setDrawerMessage] = useState();
+    const [drawerUser, setDrawerUser] = useState();
+
     const getMessagePreview = (message) => {
       let preview = message
       if(preview.length > 50) {
@@ -19,7 +24,19 @@ function MenteeMessageTab() {
       }
       return preview
     };
+    
+    const showDrawer = (user, message) => {
+      setDrawerUser(user)
+      setDrawerMessage(message)
+      setVisible(true)
+    }
+    
+    const closeDrawer = () => {
+      setVisible(false)
+    }
+
     const sampleMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ligula lectus, commodo eget risus nec, auctor tempor. "
+    
     const data = [
         {
           title: 'Ant Design Title 1',
@@ -48,13 +65,13 @@ function MenteeMessageTab() {
     ];
     return (
         <Collapse accordion className="navigation-messages" expandIcon={(props) => <UpOutlined style={{ color: "#e4bb4f" }} rotate={props.isActive ? 180 : 0}/>} expandIconPosition={"right"}>
-            <Panel header={<><MessageOutlined/> Messages</>} >
+            <Panel header={<><MessageOutlined/> <b>Messages</b></>} >
               <div className="message-box">
                 <List
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={item => (
-                    <List.Item style={{paddingLeft:"20px", paddingRight:"20px", paddingTop:"10px", paddingBottom:"10px"}} actions={[<RightOutlined style={{ color: "#e4bb4f" }}/>]}>
+                    <List.Item style={{paddingLeft:"20px", paddingRight:"20px", paddingTop:"10px", paddingBottom:"10px"}} actions={[<RightOutlined style={{ color: "#e4bb4f" }}/>]} onClick={(user, message) => showDrawer("Bernie Sanders", sampleMessage)}>
                     <List.Item.Meta
                     avatar={<Avatar size="large" icon={<UserOutlined/>} />}
                     title={<div style={{display:"flex", justifyContent: "space-between"}}><b>Bernie Sanders</b><span>3 days ago</span></div>}
@@ -63,6 +80,17 @@ function MenteeMessageTab() {
                     </List.Item>
                   )}
                 />
+                <Drawer
+                    title={<><ArrowLeftOutlined style={{color: "#e4bb4f"}} onClick={closeDrawer}/> <b>{drawerUser}</b></>}
+                    placement="right"
+                    closable={false}
+                    visible={visible}
+                    getContainer={false}
+                    style={{ position: 'absolute'}}
+                    width={"100%"}
+                >
+                    <p>{drawerMessage}</p>
+                </Drawer>
               </div>
             </Panel>
         </Collapse>

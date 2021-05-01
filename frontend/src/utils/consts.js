@@ -37,7 +37,7 @@ export const APP_STATUS = {
 export const APPOINTMENT_STATUS = {
   PENDING: "pending",
   DENIED: "denied",
-  ACCEPTED: "approved",
+  ACCEPTED: "accepted",
 };
 
 export const LANGUAGES = [

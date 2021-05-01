@@ -26,7 +26,7 @@ function AppointmentInfo(props) {
 
   const getSubtext = (gender, organization) => {
     var subtextInfo = [gender];
-    if (organization != undefined) {
+    if (organization !== undefined) {
       subtextInfo.push(organization);
     }
     return subtextInfo.join(" • ");
@@ -93,7 +93,7 @@ function AppointmentInfo(props) {
           <div className="ar-email">{mentee.email}</div>
         </div>
       );
-    } else if (allow_texts == true) {
+    } else if (allow_texts === true) {
       return (
         <div>
           <div className="ar-phone">Allows texts</div>

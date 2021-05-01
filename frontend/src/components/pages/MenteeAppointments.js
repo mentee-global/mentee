@@ -6,9 +6,11 @@ import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, PROFILE_URL, APPOINTMENT_STATUS } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
 import useAuth from "utils/hooks/useAuth";
+import BookmarkSidebar from "components/BookmarkSidebar";
 
 import "components/css/MenteeAppointments.scss";
 import ApptData from "utils/MenteeApptsData.json";
+import BookMarkData from "utils/MenteeBookMarks.json";
 
 const appointmentTabs = Object.freeze({
   upcoming: {
@@ -56,7 +58,6 @@ function MenteeAppointments() {
       );
       if (formattedAppointments) {
         // TODO: Connect this to the backend once #289 is ready
-        console.log(formattedAppointments);
         setAppointments(ApptData);
         setVisibleAppts(ApptData.upcoming);
       }
@@ -69,7 +70,7 @@ function MenteeAppointments() {
   };
 
   return (
-    <>
+    <div className="mentee-appointments-page">
       <div className="mentee-appts-section">
         <div className="mentee-appts-header">Welcome {ApptData.name}!</div>
         <div className="mentee-appts-container">
@@ -84,7 +85,8 @@ function MenteeAppointments() {
           ))}
         </div>
       </div>
-    </>
+      <BookmarkSidebar bookmarks={BookMarkData.bookmarks} />
+    </div>
   );
 }
 

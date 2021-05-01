@@ -1,4 +1,5 @@
 import moment from "moment";
+import { APPOINTMENT_STATUS } from "./consts";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 export const formatAppointments = (data, type) => {
@@ -12,7 +13,9 @@ export const formatAppointments = (data, type) => {
     pending: [],
     past: [],
   };
-  const appointments = data.requests;
+  const appointments = data.requests.filter(
+    (elem) => elem.status !== APPOINTMENT_STATUS.REJECTED
+  );
   const now = moment();
 
   appointments.sort((a, b) =>
@@ -44,7 +47,11 @@ export const formatAppointments = (data, type) => {
     const endTime = moment(timeslot.end_time.$date);
 
     let currentKey = "upcoming";
-    if (!appointment.accepted && startTime.isSameOrAfter(now)) {
+    if (
+      (appointment.status === APPOINTMENT_STATUS.PENDING ||
+        (appointment.accepted !== undefined && !appointment.accepted)) &&
+      startTime.isSameOrAfter(now)
+    ) {
       currentKey = "pending";
     } else if (startTime.isBefore(now)) {
       currentKey = "past";

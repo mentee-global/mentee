@@ -13,8 +13,8 @@ class AppointmentRequest(Document, Mixin):
     name = StringField(required=True)
     timeslot = EmbeddedDocumentField(Availability, required=True)
     topic = StringField(required=True)
-    accepted = BooleanField(required=True)
     message = StringField()
+    status = StringField()
     allow_texts = BooleanField()
     allow_calls = BooleanField()
 
@@ -26,6 +26,7 @@ class AppointmentRequest(Document, Mixin):
     age = StringField()
     gender = StringField()
     location = StringField()
+    accepted = BooleanField()
     specialist_categories = ListField(StringField())
 
     def __repr__(self):

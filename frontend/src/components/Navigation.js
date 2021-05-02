@@ -59,7 +59,7 @@ function Navigation(props) {
         ) : (
           <Content className="navigation-content">{props.content}</Content>
         )}
-        {isMentee && <MenteeMessageTab/>}
+        {isMentee && <MenteeMessageTab />}
       </Layout>
     </div>
   );

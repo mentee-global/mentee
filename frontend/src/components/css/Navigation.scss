@@ -68,8 +68,21 @@
   cursor: pointer;
 }
 
+.ant-drawer-header {
+  border-bottom: 0.25px solid #E4BB4F;
+}
+
 .ant-drawer-body {
   padding-top: 10px;
+}
+
+.ant-drawer-footer {
+  text-align: center;
+  border-top: 0.25px solid #E4BB4F;
+}
+
+.ant-collapse-content {
+  border-top: 0.25px solid #E4BB4F;
 }
 
 .drawerHeader {

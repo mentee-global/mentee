@@ -247,11 +247,13 @@ function Gallery() {
 
             mentees.map((mentee, key) => (
               <MentorCard
+                mentee
                 key={key}
                 name={mentee.name}
                 languages={mentee.languages}
                 location={mentee.location}
-                mentee
+                gender={mentee.gender}
+                organization={mentee.organization}
               />
             ))
           )}

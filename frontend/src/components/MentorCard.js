@@ -172,7 +172,7 @@ function MentorCard(props) {
             }
 
           </div>
-          {props.mentee && (
+          {isMentee && !props.mentee && (
             <div className="favorite-button">
               <Rate
                 character={<HeartFilled />}
@@ -203,7 +203,7 @@ function MentorCard(props) {
         {!props.mentee ? (
           <h3 className="gallery-headers">
             <StarOutlined style={styles.icon} />
-            Specializations: {props.specializations.join(", ")}
+            Specializations: {props.specializations && props.specializations.join(", ")}
           </h3>
         ) : <h3 className="gallery-headers">
             <MessageOutlined style={styles.icon} />

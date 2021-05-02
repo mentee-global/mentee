@@ -3,7 +3,7 @@ import { APPOINTMENT_STATUS } from "./consts";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 export const formatAppointments = (data, type) => {
-  if (!data) {
+  if (!data || !data.requests) {
     return;
   }
 

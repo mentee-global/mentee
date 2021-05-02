@@ -77,7 +77,10 @@ function ApplicationOrganizer() {
    */
   function filterApplications(desiredState) {
     return applicationData
-      .filter((state) => state.application_state === desiredState)
+      .filter(
+        (state) =>
+          state.application_state.toLowerCase() === desiredState.toLowerCase()
+      )
       .map((application) => ({
         id: application._id.$oid,
         content:

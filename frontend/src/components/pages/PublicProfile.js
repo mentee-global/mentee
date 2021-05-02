@@ -37,7 +37,7 @@ function PublicProfile({ accountType, id }) {
           (!isMentor ? " mentee-public-content" : "")
         }
       >
-        <div>
+        <div style={{ minWidth: "65%" }}>
           <Avatar
             size={120}
             src={account.image && account.image.url}

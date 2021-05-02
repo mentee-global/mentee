@@ -65,15 +65,16 @@ function GuestNavHeader({ history }) {
               }}
             />
           </span>
-          {/** TODO: Generalize this to be Login instead of just Mentor Login */}
           <span className="navigation-header-button">
             <MenteeButton
               width="9em"
               content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
               onClick={async () => {
                 let redirect = "/select-login";
-                if (isMentor || isMentee) {
+                if (isMentor) {
                   redirect = "/appointments";
+                } else if (isMentee) {
+                  redirect = "/mentee-appointments";
                 } else if (isAdmin) {
                   redirect = "/account-data";
                 }

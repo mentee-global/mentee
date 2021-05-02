@@ -62,11 +62,13 @@ function ProfileContent(props) {
   }, [accountType]);
 
   const getProfileButton = () => {
-    if (isMentor)
+    // In editable profile page
+    if (isMentor && !accountType)
       return (
         <MentorProfileModal mentor={account} onSave={props.handleSaveEdits} />
       );
 
+    // In public mentor profile
     if (accountType == ACCOUNT_TYPE.MENTOR)
       return (
         <MenteeAppointmentModal

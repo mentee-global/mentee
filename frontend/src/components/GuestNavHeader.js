@@ -75,7 +75,7 @@ function GuestNavHeader({ history }) {
                 if (isMentor) {
                   redirect = "/appointments";
                 } else if (isMentee) {
-                  redirect = "/messages";
+                  redirect = "/mentee-appointments";
                 } else if (isAdmin) {
                   redirect = "/account-data";
                 }

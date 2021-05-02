@@ -33,8 +33,8 @@ const getSpecializationTags = (specializations) => {
   ));
 };
 
-const getEducations = (educations) => {
-  if (!educations || !educations[0]) {
+const getEducations = (educations = []) => {
+  if (!educations || !educations.length) {
     return;
   }
   return educations.map((education) => (
@@ -54,7 +54,7 @@ const getEducations = (educations) => {
 
 function ProfileContent(props) {
   const { account, id, handleUpdateAccount, accountType } = props;
-  const { profileId } = useAuth();
+  const { profileId, isMentor } = useAuth();
   const [mentorPublic, setMentorPublic] = useState(false);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function ProfileContent(props) {
   }, [accountType]);
 
   const getProfileButton = () => {
-    if (props.isMentor)
+    if (isMentor)
       return (
         <MentorProfileModal mentor={account} onSave={props.handleSaveEdits} />
       );

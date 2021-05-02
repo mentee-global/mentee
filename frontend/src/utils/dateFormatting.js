@@ -20,9 +20,6 @@ export const formatAppointments = (data, type) => {
     );
   }
 
-  console.log(appointments.length);
-  console.log(data.requests.length);
-
   const now = moment();
 
   appointments.sort((a, b) =>

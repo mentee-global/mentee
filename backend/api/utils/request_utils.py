@@ -73,17 +73,10 @@ class MessageForm(Form):
 
 class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
+    mentee_id = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)
-    name = StringField(validators=[InputRequired()])
-    email = StringField(validators=[InputRequired()])
-    phone_number = StringField()
-    languages = FieldList(StringField(), validators=[validators.required()])
-    age = StringField(validators=[InputRequired()])
-    gender = StringField(validators=[InputRequired()])
-    location = StringField()
-    specialist_categories = FieldList(StringField(), validators=[validators.required()])
-    message = StringField()
-    organization = StringField(validators=[InputRequired()])
+    topic = StringField(validators=[InputRequired()])
+    status = StringField(validators=[InputRequired()])
 
 
 def is_invalid_form(form_data) -> Tuple[str, bool]:

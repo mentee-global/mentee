@@ -9,9 +9,12 @@ import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeProfileModal from "./MenteeProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
+import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
+  const { profileId } = useAuth();
+
   const getMeetingMethods = () => {
     const in_person = props.mentor.offers_in_person
       ? "In person | Online"

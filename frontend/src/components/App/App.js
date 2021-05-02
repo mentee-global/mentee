@@ -1,11 +1,10 @@
 import React from "react";
 import { Route, BrowserRouter as Router } from "react-router-dom";
 import Appointments from "components/pages/Appointments";
+import MenteeAppointments from "components/pages/MenteeAppointments";
 import Home from "components/pages/Home";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
-import Messages from "components/pages/Messages";
-import Favorites from "components/pages/Favorites";
 import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
@@ -42,6 +41,16 @@ function App() {
         )}
       />
       <Route
+        path="/mentee-appointments"
+        component={() => (
+          <Navigation
+            content={<MenteeAppointments />}
+            page="mentee-appointments"
+            needsAuth={true}
+          />
+        )}
+      />
+      <Route
         path="/videos"
         component={() => (
           <Navigation content={<Videos />} page="videos" needsAuth={true} />
@@ -51,22 +60,6 @@ function App() {
         path="/profile"
         component={() => (
           <Navigation content={<Profile />} page="profile" needsAuth={true} />
-        )}
-      />
-      <Route
-        path="/favorites"
-        component={() => (
-          <Navigation
-            content={<Favorites />}
-            page="favorites"
-            needsAuth={true}
-          />
-        )}
-      />
-      <Route
-        path="/messages"
-        component={() => (
-          <Navigation content={<Messages />} page="messages" needsAuth={true} />
         )}
       />
       <Route

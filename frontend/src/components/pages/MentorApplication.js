@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Steps, message, Form, Input, Radio, Row, Col, Checkbox} from 'antd';
+import React, {useState } from "react";
+import { Steps, Form, Input, Radio, Checkbox, LeftOutlined} from 'antd';
+import {CaretLeftOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
 import MentorApplicationPage from "../css/MentorApplicationPage.scss";
 import { createApplication } from "../../utils/api";
@@ -281,7 +282,7 @@ function MentorApplication() {
         return (
           <div className="page-two-header">
               <h1 className="header-two">Commitments</h1>
-          <div className="page-one-column-container">
+          <div className="page-two-column-container">
             <div className="column-one-page-two">
                 <Form layout="inline">
                   <div className="page-two-margin">
@@ -379,12 +380,12 @@ function MentorApplication() {
             </div>
     )
     }
-
+  
     function pageThree() {
       return (
         <div className="page-three-header">
             <h1 className="header-three">Work Information</h1>
-          <div className="page-one-column-container">
+          <div className="page-three-column-container">
             <div className="column-one">
               <div className="work-sectors-question">
               *Which sector(s) do you work in? (Check all that apply)
@@ -511,7 +512,7 @@ function MentorApplication() {
     return (
       <div className="page-two-header">
         <h1 className="header-four">Specialization Information </h1>
-        <div className="page-one-column-container">
+        <div className="page-four-column-container">
         <div className="column-one">
         <div className="special-topics-question">
             *What special topics could you teach or offer guidance on? (For
@@ -617,11 +618,11 @@ function successPage() {
       </div>
     ) 
 }
-    
+
     return (
       <div className="background">
         <div className="instructions">
-          <h1>Welcome to MENTEE!</h1>
+          <h1 className="welcome-page">Welcome to MENTEE!</h1>
           <p1>
             We appreciate your interest in becoming a volunteer Global Mentor for MENTEE, a global nonprofit accelerating
             personal and Professional growth to make the world a better, healthier place. 
@@ -633,7 +634,7 @@ function successPage() {
           </p2>
           <br></br>
           <br></br>
-          *Required
+          <p2 className="welcome-page">*Required</p2>
 
         </div>
       <div>
@@ -650,7 +651,6 @@ function successPage() {
                 {current < steps.length - 1 && (
                   <MenteeButton 
                   content={<b>Next ></b>}
-                  width={"7%"}
                   onClick={() => next()}
         
                  />
@@ -659,8 +659,7 @@ function successPage() {
               <div className="previous-button">
                 {current > 0 && (
                   <MenteeButton 
-                  content={<b>Prev</b>}
-                  width={"7%"}
+                  content={<CaretLeftOutlined />}
                   onClick={() => prev()}
                  />
                 )}

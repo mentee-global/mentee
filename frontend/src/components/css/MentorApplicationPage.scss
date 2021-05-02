@@ -1,12 +1,45 @@
 .page-one-column-container {
     display: flex;
     justify-content: space-between;
+    width: 89%;
+    padding: 2em; 
+    padding-top: 3em;
+    background-color: white;
+
+}
+
+
+.page-two-column-container {
+    display: flex;
+    justify-content: space-between;
+    width: 10x  0%;
+    padding: 7em; 
+    padding-left: 5em;
+    padding-top: 3em;
+    background-color: white;
+
+}
+
+.page-three-column-container {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    padding: 3em; 
+    padding-top: 3em;
+    background-color: white;
+
+}
+
+.page-four-column-container {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
     padding: 3em; 
     padding-top: 3em;
     background-color: white;
 
 }
+
 
 .donation-question {
     overflow-wrap: break-word;
@@ -26,7 +59,7 @@
     padding: 3em; 
     padding-top:3em; 
     padding-bottom:3em; 
-    width: 50%;  
+    width: 100%;  
 }
 
 .input-form { 
@@ -40,32 +73,35 @@
 .next-button {
     position: relative;
     bottom: 5em;
-    left:60em;
+    left:75em;
 
 }
 
 .previous-button {
     position: relative;
-    bottom: 4em;
-    left: 60em;
+    bottom: 5em;
+    left: 75em;
 }
 
 .header-one {
     position: relative;
     top: 3em;
     left: 4em;
+    color: #e4bb50;
 }
 
 .header-two {
     position: relative;
     top: 1em;
     left: 10em;
+    color: #e4bb50;
 }
 
 .header-three {
     position: relative;
     top: 3em;
     left: 4em;
+    color: #e4bb50;
 }
 
 
@@ -74,6 +110,7 @@
     top: 1em;
     left: 10em;
     display: inline;
+    color: #e4bb50;
 }
 
 
@@ -116,6 +153,10 @@
       
   }
 
+  .steps-content {
+      width:191vh;
+  }
+
  
   
 
@@ -138,7 +179,7 @@
   }
 
   .container {
-    margin-left: 0%;
+    margin-left: 5%;
   }
 
   .column-one-page-two {
@@ -146,7 +187,7 @@
   }
 
   .column-two-page-two {
-    padding: 3em; 
+    padding: 4em; 
   }
 
   .page-two-margin, .page-three-padding {
@@ -158,5 +199,9 @@
     top: 16em;
     left: 5em;
   }
+
+ .welcome-page {
+     color: #e4bb50;
+ }
 
  

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Steps, message, Form, Input, Radio, Row, Col, Checkbox } from "antd";
+import React, { useState } from "react";
+import { Steps, Form, Input, Radio, Checkbox, LeftOutlined } from "antd";
+import { CaretLeftOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
 import MentorApplicationPage from "../css/MentorApplicationPage.scss";
 import { createApplication } from "../../utils/api";
@@ -419,6 +420,30 @@ function MentorApplication() {
               </Radio.Group>
             </div>
           </div>
+
+          <div className="page-two-margin">
+            <div>
+              *Are you an immigrant or refugee or do you come from an immigrant
+              family or refugee family?
+            </div>
+
+            <Radio.Group onChange={onChange3} value={immigrantStatus}>
+              <Radio value={"Yes"}>Yes</Radio>
+              <Radio value={"No"}>No</Radio>
+            </Radio.Group>
+          </div>
+
+          <div className="page-two-margin">
+            <div>
+              *If you are accepted as a Specialist, would you like to commit
+              to...
+            </div>
+
+            <Radio.Group name="a" onChange={onChange4} value={specialistTime}>
+              <Radio value={"One year with us"}>One year with us</Radio>
+              <Radio value={"Two years with us"}>Two years with us</Radio>
+            </Radio.Group>
+          </div>
         </div>
       </div>
     );
@@ -561,17 +586,15 @@ function MentorApplication() {
       <div className="page-one-header">
         <h1 className="header-four">Specialization Information </h1>
         <div className="page-one-column-container">
-          <div className="column-one">
-            <div className="special-topics-question">
-              *What special topics could you teach or offer guidance on? (For
-              any region or country- you will be asked next about location.)
-              <div className="special-topics-answer-choices">
-                <Checkbox.Group
-                  options={specialTopics}
-                  value={topics}
-                  onChange={onChangeCheck3}
-                />
-              </div>
+          <div className="special-topics-question">
+            *What special topics could you teach or offer guidance on? (For any
+            region or country- you will be asked next about location.)
+            <div className="special-topics-answer-choices">
+              <Checkbox.Group
+                options={specialTopics}
+                value={topics}
+                onChange={onChangeCheck3}
+              />
             </div>
           </div>
           <div className="column-two">
@@ -671,7 +694,7 @@ function MentorApplication() {
   return (
     <div className="background">
       <div className="instructions">
-        <h1>Welcome to MENTEE!</h1>
+        <h1 className="welcome-page">Welcome to MENTEE!</h1>
         <p1>
           We appreciate your interest in becoming a volunteer Global Mentor for
           MENTEE, a global nonprofit accelerating personal and Professional
@@ -685,42 +708,35 @@ function MentorApplication() {
         </p2>
         <br></br>
         <br></br>
-        *Required
+        <p2 className="welcome-page">*Required</p2>
       </div>
-      <div>
-        {isSubmitted ? (
-          successPage()
-        ) : (
-          <div className="container">
-            <Steps progressDot current={current}>
-              {steps.map((item) => (
-                <Step key={item.title} />
-              ))}
-            </Steps>
-            <div className="steps-content">{steps[current].content}</div>
-            <div className="steps-action">
-              <div className="next-button">
-                {current < steps.length - 1 && (
-                  <MenteeButton
-                    content={<b>Next ></b>}
-                    width={"7%"}
-                    onClick={() => next()}
-                  />
-                )}
-              </div>
-              <div className="previous-button">
-                {current > 0 && (
-                  <MenteeButton
-                    content={<b>Prev</b>}
-                    width={"7%"}
-                    onClick={() => prev()}
-                  />
-                )}
-              </div>
+      {isSubmitted ? (
+        successPage()
+      ) : (
+        <div className="container">
+          <Steps progressDot current={current}>
+            {steps.map((item) => (
+              <Step key={item.title} />
+            ))}
+          </Steps>
+          <div className="steps-content">{steps[current].content}</div>
+          <div className="steps-action">
+            <div className="next-button">
+              {current < steps.length - 1 && (
+                <MenteeButton content={<b>Next ></b>} onClick={() => next()} />
+              )}
+            </div>
+            <div className="previous-button">
+              {current > 0 && (
+                <MenteeButton
+                  content={<CaretLeftOutlined />}
+                  onClick={() => prev()}
+                />
+              )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,7 +13,7 @@ export const formatAppointments = (data, type) => {
     pending: [],
     past: [],
   };
-  let appointments;
+  let appointments = data.requests;
   if (type == ACCOUNT_TYPE.MENTOR) {
     appointments = data.requests.filter(
       (elem) => !elem.status || elem.status !== APPOINTMENT_STATUS.REJECTED

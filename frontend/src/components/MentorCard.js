@@ -238,6 +238,6 @@ function MentorCard(props) {
       </div>
     </div>
   );
-}
+            }
 
 export default MentorCard;

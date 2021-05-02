@@ -68,6 +68,21 @@
   cursor: pointer;
 }
 
+.ant-drawer-body {
+  padding-top: 10px;
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.drawerHeader span {
+  color: #7A7A7A;
+  font-size: 11px;
+}
+
 .profile-picture {
   float: right;
   font-size: 30px;

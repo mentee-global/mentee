@@ -1,87 +1,86 @@
-.page-one-column-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 3em; 
-    padding-top: 3em;
-    background-color: white;
+$text-yellow: #E4BB4F;
 
+.page-one-header {
+  width: 80vw;
+}
+
+.page-one-column-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 3em;
+  padding-top: 3em;
+  background-color: white;
 }
 
 .donation-question {
-    overflow-wrap: break-word;
-    
-
+  overflow-wrap: break-word;
 }
 
-.column-one, .column-one-page-two {
-    display: flex;
-    padding:3em; 
-    padding-bottom:3em; 
-    width: 50%;    
-
+.column-one,
+.column-one-page-two {
+  display: flex;
+  padding: 3em;
+  padding-bottom: 3em;
+  width: 50%;
 }
 
-.column-two, .column-two-page-two{
-    padding: 3em; 
-    padding-top:3em; 
-    padding-bottom:3em; 
-    width: 50%;  
+.column-two,
+.column-two-page-two {
+  padding: 3em;
+  padding-top: 3em;
+  padding-bottom: 3em;
+  width: 50%;
 }
 
-.input-form { 
-    padding-bottom:3em;
+.input-form {
+  padding-bottom: 3em;
 }
 
-.input-form-two { 
-    padding-bottom:3em;
+.input-form-two {
+  padding-bottom: 3em;
 }
 
 .next-button {
-    position: relative;
-    bottom: 5em;
-    left:60em;
-
+  position: relative;
+  bottom: 5em;
+  left: 60em;
 }
 
 .previous-button {
-    position: relative;
-    bottom: 4em;
-    left: 60em;
+  position: relative;
+  bottom: 4em;
+  left: 60em;
 }
 
 .header-one {
-    position: relative;
-    top: 3em;
-    left: 4em;
+  position: relative;
+  top: 3em;
+  left: 4em;
 }
 
 .header-two {
-    position: relative;
-    top: 1em;
-    left: 10em;
+  position: relative;
+  top: 1em;
+  left: 10em;
 }
 
 .header-three {
-    position: relative;
-    top: 3em;
-    left: 4em;
+  position: relative;
+  top: 3em;
+  left: 4em;
 }
-
 
 .header-four {
-    position: relative;
-    top: 1em;
-    left: 10em;
-    display: inline;
+  position: relative;
+  top: 1em;
+  left: 10em;
+  display: inline;
 }
 
-
-
 .page-two-header {
-    display: flex;
-    justify-content: space-between;
-   width: 80%;
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
 }
 // .steps-content {
 //     min-height: 200px;
@@ -90,73 +89,66 @@
 //     text-align: center;
 //     border-radius: 2px;
 //   }
-  
+
 //   .steps-action {
 //     margin-top: 24px;
 //   }
 
-  .navigation-content { 
-      overflow-x: hidden;
-      margin-left: 0px;
-      background-color: #FCF6E8;
-  }
-  
+.navigation-content {
+  overflow-x: hidden;
+  margin-left: 0px;
+  background-color: #fcf6e8;
+}
 
-  .ant-steps-item-tail::after {
-      display: none;
-      color: orange;
-  }
+.ant-steps-item-tail::after {
+  display: none;
+  color: orange;
+}
 
-  .ant-steps-item {
-      width: 5%;
-      flex: none;
-      position: relative;
-      top: 3em;
-      left: 4em;
-      
-  }
+.ant-steps-item {
+  width: 5%;
+  flex: none;
+  position: relative;
+  top: 3em;
+  left: 4em;
+}
 
- 
-  
+.instructions {
+  margin: 3em;
+  background-color: white;
+  padding: 1em;
+}
 
-  .instructions {
-      margin: 3em;
-      background-color: white;
-      padding: 1em;
-  }
+.para-2 {
+  margin-top: 5em;
+}
 
-  .para-2 {
-      margin-top: 5em;
-  }
+.background {
+  background-color: #fcf6e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .background {
-      background-color: #FCF6E8;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      
-  }
+.container {
+  margin-left: 0%;
+}
 
-  .container {
-    margin-left: 0%;
-  }
+.column-one-page-two {
+  padding: 3em;
+}
 
-  .column-one-page-two {
-    padding: 3em; 
-  }
+.column-two-page-two {
+  padding: 3em;
+}
 
-  .column-two-page-two {
-    padding: 3em; 
-  }
+.page-two-margin,
+.page-three-padding {
+  margin-bottom: 3em;
+}
 
-  .page-two-margin, .page-three-padding {
-      margin-bottom:3em;
-  }
-
-  .submit-button {
-    position: relative;
-    top: 16em;
-    left: 5em;
-  }
-
- 
+.submit-button {
+  position: relative;
+  top: 16em;
+  left: 5em;
+}

@@ -114,7 +114,6 @@ export const createApplication = (application) => {
   );
 };
 
-
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
   return instance.post(requestExtension, appointment).then(

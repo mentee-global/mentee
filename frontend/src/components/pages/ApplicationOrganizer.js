@@ -76,7 +76,7 @@ function ApplicationOrganizer() {
    * Filters application by application state and items stored in the corresponding named columns
    */
   function filterApplications(desiredState) {
-    const data = applicationData
+    return applicationData
       .filter((state) => state.application_state === desiredState)
       .map((application) => ({
         id: application._id.$oid,
@@ -87,8 +87,6 @@ function ApplicationOrganizer() {
           application.specializations,
         ...application,
       }));
-    console.log(data);
-    return data;
   }
 
   /**

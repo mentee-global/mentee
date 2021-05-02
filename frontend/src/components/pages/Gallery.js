@@ -65,8 +65,8 @@ function Gallery() {
     }
   }, [mentee]);
 
-  function onEditFav(mentor_id) {
-    EditFavMentorById(mentee.firebase_uid, mentor_id);
+  function onEditFav(mentor_id, favorite) {
+    EditFavMentorById(mentee.firebase_uid, mentor_id, favorite);
   }
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {
@@ -184,28 +184,34 @@ function Gallery() {
         </div>
 
         <div className="gallery-mentor-container">
-          
-          {(isMentee && !pageLoaded) ? <div className="loadingIcon"> <Spin/> </div>: getFilteredMentors().map((mentor, key) => (
-            <MentorCard
-              key={key}
-              name={mentor.name}
-              languages={mentor.languages}
-              professional_title={mentor.professional_title}
-              location={mentor.location}
-              specializations={mentor.specializations}
-              website={mentor.website}
-              linkedin={mentor.linkedin}
-              id={mentor._id["$oid"]}
-              firebase_uid={mentor.firebase_uid}
-              lesson_types={getLessonTypes(
-                mentor.offers_group_appointments,
-                mentor.offers_in_person
-              )}
-              favorite={favorite_mentorIds.has(mentor._id["$oid"])}
-              onEditFav={onEditFav}
-              image={mentor.image}
-            />
-          ))}
+          {isMentee && !pageLoaded ? (
+            <div className="loadingIcon">
+              {" "}
+              <Spin />{" "}
+            </div>
+          ) : (
+            getFilteredMentors().map((mentor, key) => (
+              <MentorCard
+                key={key}
+                name={mentor.name}
+                languages={mentor.languages}
+                professional_title={mentor.professional_title}
+                location={mentor.location}
+                specializations={mentor.specializations}
+                website={mentor.website}
+                linkedin={mentor.linkedin}
+                id={mentor._id["$oid"]}
+                firebase_uid={mentor.firebase_uid}
+                lesson_types={getLessonTypes(
+                  mentor.offers_group_appointments,
+                  mentor.offers_in_person
+                )}
+                favorite={favorite_mentorIds.has(mentor._id["$oid"])}
+                onEditFav={onEditFav}
+                image={mentor.image}
+              />
+            ))
+          )}
         </div>
       </div>
     </>

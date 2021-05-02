@@ -6,7 +6,7 @@ from api.models import Education, Video, Availability, Image
 
 
 class MentorProfile(Document, Mixin):
-    """"Mentor Profile Collection."""
+    """Mentor Profile Collection."""
 
     firebase_uid = StringField()
     user_id = ReferenceField("Users")

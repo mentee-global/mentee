@@ -9,6 +9,18 @@ import moment from "moment";
 import AdminAppointmentModal from "./AdminAppointmentModal";
 import "./css/AdminAppointments.scss";
 
+const getTopics = (data) => {
+  if (data.topic) {
+    return data.topic;
+  } else {
+    return data.specialist_categories.map((category, i) => {
+      return i < data.specialist_categories.length - 1
+        ? `${category}, `
+        : category;
+    });
+  }
+};
+
 function AdminAppointmentCard({ data, render }) {
   const [visible, setVisible] = useState(false);
   const [dateFormat, setDateFormat] = useState({});
@@ -75,14 +87,7 @@ function AdminAppointmentCard({ data, render }) {
         <div>
           <StarOutlined /> Meeting Topic:
         </div>
-        <div>
-          {data &&
-            data.appointment.specialist_categories.map((category, i) => {
-              return i < data.appointment.specialist_categories.length - 1
-                ? `${category}, `
-                : category;
-            })}
-        </div>
+        <div>{data && getTopics(data.appointment)}</div>
       </div>
     </div>
   );

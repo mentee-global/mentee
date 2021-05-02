@@ -79,6 +79,7 @@ function ApplicationOrganizer() {
     return applicationData
       .filter(
         (state) =>
+          state.application_state &&
           state.application_state.toLowerCase() === desiredState.toLowerCase()
       )
       .map((application) => ({

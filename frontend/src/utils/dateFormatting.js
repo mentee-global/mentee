@@ -13,9 +13,16 @@ export const formatAppointments = (data, type) => {
     pending: [],
     past: [],
   };
-  const appointments = data.requests.filter(
-    (elem) => elem.status !== APPOINTMENT_STATUS.REJECTED
-  );
+  let appointments;
+  if (type == ACCOUNT_TYPE.MENTOR) {
+    appointments = data.requests.filter(
+      (elem) => !elem.status || elem.status !== APPOINTMENT_STATUS.REJECTED
+    );
+  }
+
+  console.log(appointments.length);
+  console.log(data.requests.length);
+
   const now = moment();
 
   appointments.sort((a, b) =>

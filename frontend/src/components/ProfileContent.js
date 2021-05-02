@@ -78,7 +78,14 @@ function ProfileContent(props) {
         />
       );
     // Mentee public profile
-    else return <PublicMessageModal />;
+    else
+      return (
+        <PublicMessageModal
+          menteeName={account.name}
+          menteeID={id}
+          mentorID={profileId}
+        />
+      );
   };
 
   return (

@@ -28,11 +28,19 @@ function PublicMessageModal(props) {
   const [email, setEmail] = useState();
   const [website, setWebsite] = useState();
   const [message, setMessage] = useState();
-  const mentorID = props.mentor_id;
-  const menteeID = props.mentee_id;
+  const mentorID = props.mentorID;
+  const menteeID = props.menteeID;
 
   // useState values
-  const values = [mentorID, menteeID, name, message, email, website];
+  const values = [
+    message,
+    name,
+    mentorID,
+    props.menteeName,
+    menteeID,
+    email,
+    website,
+  ];
 
   // Resets form fields on close
   useEffect(() => {
@@ -64,7 +72,7 @@ function PublicMessageModal(props) {
       }
     }
 
-    data["time"] = moment().toISOString();
+    data["time"] = moment().format("YYYY-MM-DD, HH:mm:ssZZ");
     await sendMessage(data);
   }
 

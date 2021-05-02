@@ -28,10 +28,10 @@ export const ACCOUNT_TYPE = {
 };
 
 export const APP_STATUS = {
-  PENDING: "Pending",
-  REVIEWED: "Reviewed",
-  REJECTED: "Rejected",
-  OFFER_MADE: "Offer Made",
+  PENDING: "PENDING",
+  REVIEWED: "REVIEWED",
+  REJECTED: "REJECTED",
+  OFFER_MADE: "OFFER MADE",
 };
 
 export const APPOINTMENT_STATUS = {

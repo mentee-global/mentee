@@ -44,6 +44,7 @@ function ApplicationOrganizer() {
           }
         );
         setApplicationData(newApplications);
+        console.log(newApplications);
       }
     };
 
@@ -75,7 +76,7 @@ function ApplicationOrganizer() {
    * Filters application by application state and items stored in the corresponding named columns
    */
   function filterApplications(desiredState) {
-    return applicationData
+    const data = applicationData
       .filter((state) => state.application_state === desiredState)
       .map((application) => ({
         id: application._id.$oid,
@@ -86,6 +87,8 @@ function ApplicationOrganizer() {
           application.specializations,
         ...application,
       }));
+    console.log(data);
+    return data;
   }
 
   /**

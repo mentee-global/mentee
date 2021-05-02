@@ -421,29 +421,7 @@ function MentorApplication() {
             </div>
           </div>
 
-          <div className="page-two-margin">
-            <div>
-              *Are you an immigrant or refugee or do you come from an immigrant
-              family or refugee family?
-            </div>
-
-            <Radio.Group onChange={onChange3} value={immigrantStatus}>
-              <Radio value={"Yes"}>Yes</Radio>
-              <Radio value={"No"}>No</Radio>
-            </Radio.Group>
-          </div>
-
-          <div className="page-two-margin">
-            <div>
-              *If you are accepted as a Specialist, would you like to commit
-              to...
-            </div>
-
-            <Radio.Group name="a" onChange={onChange4} value={specialistTime}>
-              <Radio value={"One year with us"}>One year with us</Radio>
-              <Radio value={"Two years with us"}>Two years with us</Radio>
-            </Radio.Group>
-          </div>
+  
         </div>
       </div>
     );
@@ -673,7 +651,6 @@ function MentorApplication() {
             <div className="submit-button">
               <MenteeButton
                 content={<b> Submit</b>}
-                width={"15%"}
                 onClick={handleSubmit}
               />
             </div>
@@ -686,7 +663,7 @@ function MentorApplication() {
   function successPage() {
     return (
       <div className="success-message">
-        <h1>You have sucessfully submitted your global mentor application</h1>
+        <h1 className="success-message">You have sucessfully submitted your global mentor application</h1>
       </div>
     );
   }

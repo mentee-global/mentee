@@ -1,48 +1,15 @@
 .page-one-header {
-  width: 80vw;
+  width: 65vw;
 }
 
 .page-one-column-container {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding: 2em;
+  padding: 3em;
   padding-top: 3em;
   background-color: white;
 }
-
-// .page-two-column-container {
-//   display: flex;
-//   justify-content: space-between;
-//   width: 10x 0%;
-//   padding: 7em;
-//   padding-left: 5em;
-//   padding-top: 3em;
-//   background-color: white;
-// }
-
-// .page-three-column-container {
-//   display: flex;
-//   justify-content: space-between;
-//   width: 90%;
-//   padding: 3em;
-//   padding-top: 3em;
-//   background-color: white;
-// }
-
-// .page-four-column-container {
-//   display: flex;
-//   justify-content: space-between;
-//   width: 100%;
-//   padding: 3em;
-//   padding-top: 3em;
-//   background-color: white;
-// }
-
-.page-one-header {
-  width: 80vw;
-}
-
 .donation-question {
   overflow-wrap: break-word;
 }
@@ -96,8 +63,8 @@
 
 .header-two {
   position: relative;
-  top: 1em;
-  left: 10em;
+  top: 3em;
+  left: 4em;
   color: #e4bb50;
 }
 
@@ -110,8 +77,8 @@
 
 .header-four {
   position: relative;
-  top: 1em;
-  left: 10em;
+  top: 2em;
+  left: 2em;
   display: inline;
   color: #e4bb50;
 }
@@ -121,17 +88,6 @@
   justify-content: space-between;
   width: 80%;
 }
-// .steps-content {
-//     min-height: 200px;
-//     margin-top: 16px;
-//     padding-top: 80px;
-//     text-align: center;
-//     border-radius: 2px;
-//   }
-
-//   .steps-action {
-//     margin-top: 24px;
-//   }
 
 .navigation-content {
   overflow-x: hidden;
@@ -153,7 +109,7 @@
 }
 
 .steps-content {
-  width: 191vh;
+  width: 129vh;
 }
 
 .instructions {
@@ -174,7 +130,7 @@
 }
 
 .container {
-  margin-left: 5%;
+  margin-left: 8%;
 }
 
 .column-one-page-two {
@@ -192,10 +148,14 @@
 
 .submit-button {
   position: relative;
-  top: 16em;
-  left: 5em;
+  top: 14.5em;
+  left: 34em;
 }
 
 .welcome-page {
   color: #e4bb50;
+}
+
+.success-message {
+    color: #e4bb50;
 }

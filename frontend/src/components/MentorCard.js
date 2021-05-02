@@ -147,7 +147,6 @@ function MentorCard(props) {
 
 
 
-
   return (
     <div className="gallery-mentor-card">
       <div className="gallery-card-body">
@@ -157,14 +156,14 @@ function MentorCard(props) {
             <Title style={styles.title} className="gallery-title-text">
               {props.name}
             </Title>
-            {!isMentee ? (
+            {!props.mentee ? (
               <div>
                 <Title style={styles.subTitle} type="secondary" level={5}>
                   {props.professional_title}
                 </Title>
 
                 <Title style={styles.subTitle} type="secondary" level={5}>
-                  Speaks: {props.languages.join(", ")}
+                  Speaks: {props.languages && props.languages.join(", ")}
                 </Title>
               </div>
             ) : <Title style={styles.subTitle} type="secondary" level={5}>
@@ -173,7 +172,7 @@ function MentorCard(props) {
             }
 
           </div>
-          {isMentee && (
+          {props.mentee && (
             <div className="favorite-button">
               <Rate
                 character={<HeartFilled />}
@@ -185,7 +184,7 @@ function MentorCard(props) {
           )}
         </div>
 
-        {!isMentee && (
+        {!props.mentee && (
           <h3 className="gallery-lesson-types">
             <span className="gallery-dot" />
             {props.lesson_types}
@@ -201,16 +200,16 @@ function MentorCard(props) {
           </div>
         )}
 
-        {!isMentee ? (
+        {!props.mentee ? (
           <h3 className="gallery-headers">
             <StarOutlined style={styles.icon} />
             Specializations: {props.specializations.join(", ")}
           </h3>
         ) : <h3 className="gallery-headers">
             <MessageOutlined style={styles.icon} />
-            Languages: {props.languages.join(", ")}
+            Languages: {props.languages && props.languages.join(", ")}
           </h3>}
-        {!isMentee && (
+        {!props.mentee && (
           <div>
             {props.linkedin && (
               <h4 className="gallery-info-section">

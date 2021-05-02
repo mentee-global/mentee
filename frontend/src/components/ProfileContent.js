@@ -8,9 +8,12 @@ import {
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
+import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
+  const { profileId } = useAuth();
+
   const getMeetingMethods = () => {
     const in_person = props.mentor.offers_in_person
       ? "In person | Online"
@@ -69,6 +72,7 @@ function ProfileContent(props) {
               mentor_name={props.mentor.name}
               availability={props.mentor.availability}
               mentor_id={props.id}
+              mentee_id={profileId}
               handleUpdateMentor={props.handleUpdateMentor}
             />
           </div>

@@ -145,8 +145,8 @@ export const deleteAppointment = (id) => {
   );
 };
 
-export const getAppointmentsByMentorID = (id) => {
-  const requestExtension = `/appointment/mentor/${id}`;
+export const fetchAppointmentsById = (id, accountType) => {
+  const requestExtension = `/appointment/${accountType}/${id}`;
   return instance.get(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -256,6 +256,21 @@ export const deleteMentorById = (id) => {
   );
 };
 
+export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
+  const requestExtension = `/mentee/editFavMentor`;
+  const data = {
+    mentee_uid: mentee_id,
+    mentor_id: mentor_id,
+    favorite: favorite,
+  };
+  return instance.put(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const updateApplicationById = async (data, id) => {
   const requestExtension = `/application/${id}`;
   return await authPut(requestExtension, data).then(
@@ -346,4 +361,12 @@ export const fetchMentors = async () => {
 
 export const fetchMentees = async () => {
   return await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+};
+
+export const fetchAppointmentsByMenteeId = async (id) => {
+  return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTEE);
+};
+
+export const fetchAppointmentsByMentorId = async (id) => {
+  return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTOR);
 };

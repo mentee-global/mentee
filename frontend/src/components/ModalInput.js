@@ -22,6 +22,7 @@ function ModalInput(props) {
     defaultValue,
     valid,
     validate,
+    large,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -133,7 +134,7 @@ function ModalInput(props) {
       case "textarea":
         return (
           <Input.TextArea
-            className="input-textarea"
+            className={"input-textarea" + large ? " large-textarea" : ""}
             autoSize={{ maxRows: maxRows ?? 1 }}
             onClick={() => handleClick(index)}
             onChange={handleOnChange}

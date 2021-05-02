@@ -19,6 +19,7 @@ import AdminAccountData from "components/pages/AdminAccountData";
 import MentorApplication from "components/pages/MentorApplication";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
+import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
 
 function App() {
@@ -67,6 +68,12 @@ function App() {
         path="/gallery"
         exact
         component={() => <Navigation content={<Gallery />} needsAuth={false} />}
+      />
+
+      <Route
+        path="/mentee-gallery"
+        exact
+        component={() => <Navigation content={<MenteeGallery />} needsAuth={false} />}
       />
 
       <Route

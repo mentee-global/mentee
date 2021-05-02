@@ -57,176 +57,81 @@ function MentorCard(props) {
     props.onEditFav(props.id, fav);
   }
 
-  //   return (
-  //     <div className="gallery-mentor-card">
-  //       <div className="gallery-card-body">
-  //         <div className="gallery-card-header">
-  //           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
-  //           <div className="gallery-header-text gallery-info-section">
-  //             <Title style={styles.title} className="gallery-title-text">
-  //               {props.name}
-  //             </Title>
-  //             <Title style={styles.subTitle} type="secondary" level={5}>
-  //               {props.gender}
-  //             </Title>
-  //           </div>
-  //           {isMentee && (
-  //             <div className="favorite-button">
-  //               <Rate
-  //                 character={<HeartFilled />}
-  //                 count={1}
-  //                 defaultValue={favorite ? 1 : 0}
-  //                 onChange={(number) => onFavoriteClick(number)}
-  //               />
-  //             </div>
-  //           )}
-  //         </div>
-  //         <h3 className="gallery-headers">
-  //           <MessageOutlined style={styles.icon} />
-  //           Languages:
-  //         </h3>
-  //         <Text className="gallery-list-items">
-  //           {props.languages.join(", ")}
-  //         </Text>
-  //       </div>
-  //       {props.location && (
-  //         <div className="gallery-info-section">
-  //           <h3 className="gallery-headers">
-  //             <EnvironmentOutlined style={styles.icon} />
-  //             Location:
-  //             </h3>
-  //           <Text className="gallery-list-items">{props.location}</Text>
-  //         </div>
-  //       )}
-
-  //       <hr className="gallery-solid-border" />
-  //       <h3 className="gallery-headers">
-  //         <StarOutlined style={styles.icon} />
-  //         Specializations:
-  //         </h3>
-  //       <Text className="gallery-list-items">
-  //         {props.specializations.join(", ")}
-  //       </Text>
-  //       {props.website && (
-  //         <h4 className="gallery-info-section">
-  //           <LinkOutlined style={styles.icon} />
-  //           <a
-  //             className="gallery-links"
-  //             href={formatLinkForHref(props.website)}
-  //             target="_blank"
-  //             rel="noopener noreferrer"
-  //           >
-  //             {props.website}
-  //           </a>
-  //         </h4>
-  //       )}
-  //       {props.linkedin && (
-  //         <h4 className="gallery-info-section">
-  //           <LinkedinOutlined style={styles.icon} />
-  //           <a
-  //             className="gallery-links"
-  //             href={formatLinkForHref(props.linkedin)}
-  //             target="_blank"
-  //             rel="noopener noreferrer"
-  //           >
-  //             linkedin
-  //             </a>
-  //         </h4>
-  //       )}
-  //       <hr className="gallery-solid-border" />
-  //       <div className="bookmark-button"></div>
-  //       <NavLink to={"/gallery/" + props.id}>
-  //         <div className="gallery-button">
-  //           <MenteeButton content="View Profile" />
-  //         </div>
-  //       </NavLink>
-  //     </div>
-
-  //   )
-  // }
-
-
-
-
-  return (
-    <div className="gallery-mentor-card">
-      <div className="gallery-card-body">
-        <div className="gallery-card-header">
-          <Avatar size={90} icon={getImage(props.image && props.image.url)} />
-          <div className="gallery-header-text gallery-info-section">
-            <Title style={styles.title} className="gallery-title-text">
-              {props.name}
-            </Title>
-            {!isMentee ? (
-              <div>
-                <Title style={styles.subTitle} type="secondary" level={5}>
-                  {props.professional_title}
-                </Title>
-
-                <Title style={styles.subTitle} type="secondary" level={5}>
-                  Speaks: {props.languages.join(", ")}
-                </Title>
-              </div>
-            ) : <Title style={styles.subTitle} type="secondary" level={5}>
-                {props.gender} {props.organization}
+    return (
+      <div className="gallery-mentor-card">
+        <div className="gallery-card-body">
+          <div className="gallery-card-header">
+            <Avatar size={90} icon={getImage(props.image && props.image.url)} />
+            <div className="gallery-header-text gallery-info-section">
+              <Title style={styles.title} className="gallery-title-text">
+                {props.name}
               </Title>
-            }
-
-          </div>
-          {isMentee && (
-            <div className="favorite-button">
-              <Rate
-                character={<HeartFilled />}
-                count={1}
-                defaultValue={favorite ? 1 : 0}
-                onChange={(number) => onFavoriteClick(number)}
-              />
+              <Title style={styles.subTitle} type="secondary" level={5}>
+                {props.gender}
+              </Title>
             </div>
-          )}
-        </div>
-
-        {!isMentee && (
-          <h3 className="gallery-lesson-types">
-            <span className="gallery-dot" />
-            {props.lesson_types}
+            {isMentee && (
+              <div className="favorite-button">
+                <Rate
+                  character={<HeartFilled />}
+                  count={1}
+                  defaultValue={favorite ? 1 : 0}
+                  onChange={(number) => onFavoriteClick(number)}
+                />
+              </div>
+            )}
+          </div>
+          <h3 className="gallery-headers">
+            <MessageOutlined style={styles.icon} />
+            Languages:
           </h3>
-        )}
+          <Text className="gallery-list-items">
+            {props.languages.join(", ")}
+          </Text>
+        </div>
         {props.location && (
           <div className="gallery-info-section">
             <h3 className="gallery-headers">
               <EnvironmentOutlined style={styles.icon} />
               Location:
-          </h3>
+              </h3>
             <Text className="gallery-list-items">{props.location}</Text>
           </div>
         )}
 
-        {!isMentee ? (
-          <h3 className="gallery-headers">
-            <StarOutlined style={styles.icon} />
-            Specializations: {props.specializations.join(", ")}
+        <hr className="gallery-solid-border" />
+        <h3 className="gallery-headers">
+          <StarOutlined style={styles.icon} />
+          Specializations:
           </h3>
-        ) : <h3 className="gallery-headers">
-            <MessageOutlined style={styles.icon} />
-            Languages: {props.languages.join(", ")}
-          </h3>}
-        {!isMentee && (
-          <div>
-            {props.linkedin && (
-              <h4 className="gallery-info-section">
-                <LinkedinOutlined style={styles.icon} />
-                <a
-                  className="gallery-links"
-                  href={formatLinkForHref(props.linkedin)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  linkedin
-          </a>
-              </h4>
-            )}
-
-          </div>
+        <Text className="gallery-list-items">
+          {props.specializations.join(", ")}
+        </Text>
+        {props.website && (
+          <h4 className="gallery-info-section">
+            <LinkOutlined style={styles.icon} />
+            <a
+              className="gallery-links"
+              href={formatLinkForHref(props.website)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {props.website}
+            </a>
+          </h4>
+        )}
+        {props.linkedin && (
+          <h4 className="gallery-info-section">
+            <LinkedinOutlined style={styles.icon} />
+            <a
+              className="gallery-links"
+              href={formatLinkForHref(props.linkedin)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              linkedin
+              </a>
+          </h4>
         )}
         <hr className="gallery-solid-border" />
         <div className="bookmark-button"></div>
@@ -236,8 +141,11 @@ function MentorCard(props) {
           </div>
         </NavLink>
       </div>
-    </div>
-  );
-            }
+
+    )
+  }
+
+
+
 
 export default MentorCard;

@@ -44,7 +44,6 @@ function ApplicationOrganizer() {
           }
         );
         setApplicationData(newApplications);
-        console.log(newApplications);
       }
     };
 

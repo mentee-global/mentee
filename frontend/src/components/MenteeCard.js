@@ -2,13 +2,9 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Avatar, Typography, Button, Rate } from "antd";
 import {
-  LinkOutlined,
-  LinkedinOutlined,
-  StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
   MessageOutlined,
-  HeartOutlined,
   HeartFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
@@ -58,7 +54,7 @@ function MenteeCard(props) {
   }
 
 
-  console.log(props.gender, props.organization); 
+  console.log(props.gender, props.organization);
   return (
     <div className="gallery-mentor-card">
       <div className="gallery-card-body">

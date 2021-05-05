@@ -19,7 +19,6 @@ function Gallery() {
     const [query, setQuery] = useState();
     const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
     const location = useLocation();
-    const [favorite_mentorIds, setFavoriteIds] = useState(new Set());
     const [pageLoaded, setPageLoaded] = useState(false);
     const verified = location.state && location.state.verified;
 
@@ -55,23 +54,23 @@ function Gallery() {
 
 
 
-    useEffect(() => {
-        function initializeFavorites() {
-            let fav_set = new Set();
-            mentee.favorite_mentors_ids.forEach((id) => {
-                fav_set.add(id);
-            });
-            setFavoriteIds(fav_set);
-            setPageLoaded(true);
-        }
-        if (isMentee) {
-            initializeFavorites();
-        }
-    }, [mentee]);
+    // useEffect(() => {
+    //     function initializeFavorites() {
+    //         let fav_set = new Set();
+    //         mentee.favorite_mentors_ids.forEach((id) => {
+    //             fav_set.add(id);
+    //         });
+    //         setFavoriteIds(fav_set);
+    //         setPageLoaded(true);
+    //     }
+    //     if (isMentee) {
+    //         initializeFavorites();
+    //     }
+    // }, [mentee]);
 
-    function onEditFav(mentor_id, favorite) {
-        EditFavMentorById(mentee.firebase_uid, mentor_id, favorite);
-    }
+    // function onEditFav(mentor_id, favorite) {
+    //     EditFavMentorById(mentee.firebase_uid, mentor_id, favorite);
+    // }
 
     const getFilteredMentees = useCallback(() => {
         return mentees.filter((mentee) => {
@@ -84,7 +83,7 @@ function Gallery() {
 
             return matchesLanguages && matchesName;
         });
-    }, []);
+    }, [favorite_mentorIds]);
 
     // Add some kind of error 403 code
     return !(isLoggedIn() || verified) ? (
@@ -142,7 +141,7 @@ function Gallery() {
                     </div>
                 </Modal>
 
-                <div className="gallery-container"> q
+                <div className="gallery-container">
                     <div className="gallery-filter-container mobile-invisible">
                         <div className="gallery-filter-header">Filter By:</div>
                         <Input
@@ -179,6 +178,7 @@ function Gallery() {
                                             location={mentee.location}
                                             gender={mentee.gender}
                                             organization={mentee.organization}
+                                            image={mentee.image}
                                         />
                                     )
 

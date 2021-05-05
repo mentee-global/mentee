@@ -1,9 +1,9 @@
 .page-one-header {
-  width: 65vw;
+  width: 80vw;
 }
 
 .page-one-column-container {
-  display: flex;
+   display: flex;
   justify-content: space-between;
   width: 100%;
   padding: 3em;
@@ -109,7 +109,8 @@
 }
 
 .steps-content {
-  width: 129vh;
+  width: 190vh;
+  position: relative;
 }
 
 .instructions {

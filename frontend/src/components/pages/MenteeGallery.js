@@ -14,15 +14,12 @@ import useAuth from "../../utils/hooks/useAuth";
 function Gallery() {
     const { isAdmin, isMentor, isMentee } = useAuth();
     const [mentees, setMentees] = useState([]);
-    const [mentee, setMentee] = useState();
     const [languages, setLanguages] = useState([]);
     const [query, setQuery] = useState();
     const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
     const location = useLocation();
     const [pageLoaded, setPageLoaded] = useState(false);
     const verified = location.state && location.state.verified;
-
-
 
     useEffect(() => {
         async function getMentees() {
@@ -37,43 +34,9 @@ function Gallery() {
 
     }, []);
 
-
-
-    useEffect(() => {
-        async function getMentee() {
-            const mentee_id = await getMenteeID();
-            const mentee_data = await fetchMenteeByID(mentee_id);
-            if (mentee_data) {
-                setMentee(mentee_data);
-            }
-        }
-        if (isMentee) {
-            getMentee();
-        }
-    }, [isMentee]);
-
-
-
-    // useEffect(() => {
-    //     function initializeFavorites() {
-    //         let fav_set = new Set();
-    //         mentee.favorite_mentors_ids.forEach((id) => {
-    //             fav_set.add(id);
-    //         });
-    //         setFavoriteIds(fav_set);
-    //         setPageLoaded(true);
-    //     }
-    //     if (isMentee) {
-    //         initializeFavorites();
-    //     }
-    // }, [mentee]);
-
-    // function onEditFav(mentor_id, favorite) {
-    //     EditFavMentorById(mentee.firebase_uid, mentor_id, favorite);
-    // }
-
     const getFilteredMentees = useCallback(() => {
         return mentees.filter((mentee) => {
+            console.log(mentee.name);
             // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
             const matchesLanguages =
                 languages.length === 0 ||
@@ -83,7 +46,7 @@ function Gallery() {
 
             return matchesLanguages && matchesName;
         });
-    }, [favorite_mentorIds]);
+    }, []);
 
     // Add some kind of error 403 code
     return !(isLoggedIn() || verified) ? (
@@ -169,7 +132,9 @@ function Gallery() {
 
 
                                 mentees.map((mentee, key) => {
-                                    console.log(mentee.location)
+
+                                    console.log(getFilteredMentees())
+
                                     return (
                                         <MenteeCard
                                             key={key}
@@ -179,6 +144,7 @@ function Gallery() {
                                             gender={mentee.gender}
                                             organization={mentee.organization}
                                             image={mentee.image}
+                                        // firebase ids?? 
                                         />
                                     )
 

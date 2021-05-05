@@ -53,8 +53,6 @@ function MenteeCard(props) {
     props.onEditFav(props.id, fav);
   }
 
-
-  console.log(props.gender, props.organization);
   return (
     <div className="gallery-mentor-card">
       <div className="gallery-card-body">
@@ -65,7 +63,7 @@ function MenteeCard(props) {
               {props.name}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
-              {props.gender} {props.organization}
+              {props.gender} {"|"} {props.organization}
             </Title>
           </div>
           {isMentee && (
@@ -81,14 +79,14 @@ function MenteeCard(props) {
         </div>
         {props.location && (
           <div className="gallery-info-section">
-            <h3 className="gallery-headers">
+            <h3 className="mentee-gallery-headers">
               <EnvironmentOutlined style={styles.icon} />
               Location:
             </h3>
             <Text className="gallery-list-items">{props.location}</Text>
           </div>
         )}
-        <h3 className="gallery-headers">
+        <h3 className="mentee-gallery-headers">
           <MessageOutlined style={styles.icon} />
           Languages:
         </h3>

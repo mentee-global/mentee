@@ -34,10 +34,8 @@ function Gallery() {
 
     }, []);
 
-    const getFilteredMentees = useCallback(() => {
-        console.log("hi", mentees)
+    const getFilteredMentees = () => {
         return mentees.filter((mentee) => {
-            console.log(mentee.name);
             // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
             const matchesLanguages =
                 languages.length === 0 ||
@@ -47,7 +45,7 @@ function Gallery() {
 
             return matchesLanguages && matchesName;
         });
-    }, [mentees]);
+    };
 
     // Add some kind of error 403 code
     return !(isLoggedIn() || verified) ? (
@@ -133,8 +131,6 @@ function Gallery() {
 
                                 
                                 getFilteredMentees().map((mentee, key) => {
-                        
-
                                     return (
                                         <MenteeCard
                                             key={key}

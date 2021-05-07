@@ -129,7 +129,7 @@ function Gallery() {
                             </div>
                         ) : (
 
-                                
+
                                 getFilteredMentees().map((mentee, key) => {
                                     return (
                                         <MenteeCard

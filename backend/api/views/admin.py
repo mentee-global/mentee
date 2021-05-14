@@ -35,6 +35,7 @@ def delete_mentor(mentor_id):
             logger.info(msg)
             return create_response(status=422, message=msg)
 
+        verified = None
         if login.verified:
             try:
                 verified = VerifiedEmail.objects.get(email=email)

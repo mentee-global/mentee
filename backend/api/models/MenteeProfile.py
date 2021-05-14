@@ -6,7 +6,7 @@ from api.models import Education, Video, Image, Users
 
 
 class MenteeProfile(Document, Mixin):
-    """"Mentee Profile Collection."""
+    """Mentee Profile Collection."""
 
     firebase_uid = StringField()
     name = StringField(required=True)

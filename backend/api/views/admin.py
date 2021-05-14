@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, serialize_list, logger
 from api.models import MentorProfile, Users, VerifiedEmail, Admin
 from api.utils.require_auth import admin_only
@@ -20,24 +21,38 @@ def delete_mentor(mentor_id):
         msg = "No mentors currently exist with ID " + mentor_id
         logger.info(msg)
         return create_response(status=422, message=msg)
-    user_id = mentor.user_id.id
-    email = mentor.user_id.email
-    try:
-        login = Users.objects.get(id=user_id)
-    except:
-        msg = "No mentors currently exist with user_id " + user_id
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-    if login.verified:
+
+    user_id = mentor.user_id
+    firebase_uid = mentor.firebase_uid
+    email = mentor.email
+    login = None
+
+    if not firebase_uid:
         try:
-            verified = VerifiedEmail.objects.get(email=email)
+            login = Users.objects.get(id=user_id.id)
         except:
+            msg = "No mentors currently exist with user_id " + user_id
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+
+        if login.verified:
+            try:
+                verified = VerifiedEmail.objects.get(email=email)
+            except:
+                msg = "No verified mentors currently exist with email " + email
+                logger.info(msg)
+
+        login.delete()
+        if verified:
+            verified.delete()
+    else:
+        login = firebase_admin_auth.get_user(firebase_uid)
+
+        if not login.email_verified:
             msg = "No verified mentors currently exist with email " + email
             logger.info(msg)
+
     mentor.delete()
-    login.delete()
-    if verified:
-        verified.delete()
     return create_response(status=200, message="Successful deletion")
 
 

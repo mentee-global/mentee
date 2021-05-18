@@ -69,32 +69,26 @@ function MentorApplication() {
   const [onLinkedin, setOnLinkedin] = useState(1);
 
   const onChange1 = (e) => {
-    console.log("radio checked", e);
     setOfferDonation(e.target.value);
   };
 
   const onChange2 = (e) => {
-    console.log("radio checked", e);
     setCommitTime(e.target.value);
   };
 
   const onChange3 = (e) => {
-    console.log("radio checked", e);
     setImmigrantStatus(e.target.value);
   };
 
   const onChange4 = (e) => {
-    console.log("radio checked", e);
     setSpecialistTime(e.target.value);
   };
 
   const onChange5 = (e) => {
-    console.log("radio checked", e);
     setCompanyTime(e.target.value);
   };
 
   const onChange6 = (e) => {
-    console.log("radio checked", e);
     setOnLinkedin(e.target.value);
   };
 
@@ -104,27 +98,22 @@ function MentorApplication() {
   const [topics, setTopics] = useState([]);
 
   function onChangeCheck(checkedValues) {
-    console.log("checked = ", checkedValues);
     let optionsSelected = [];
     checkedValues.forEach((value) => {
-      console.log(value);
       optionsSelected.push(value);
     });
     setMentoringOptions(optionsSelected);
   }
 
   function onChangeCheck2(checkedValues) {
-    console.log("checked = ", checkedValues);
     let optionsSelected = [];
     checkedValues.forEach((value) => {
       optionsSelected.push(value);
     });
-    console.log("sectors", optionsSelected);
     setSectors(optionsSelected);
   }
 
   function onChangeCheck3(checkedValues) {
-    console.log("checked = ", checkedValues);
     let optionsSelected = [];
     checkedValues.forEach((value) => {
       optionsSelected.push(value);
@@ -553,7 +542,6 @@ function MentorApplication() {
         knowledge_location: knowledgeLocation,
         date_submitted: new Date(),
       };
-      console.log(data);
       await createApplication(data);
     }
     submitApplication();

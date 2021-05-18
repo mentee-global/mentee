@@ -4,13 +4,12 @@ import { Result } from "antd";
 
 import { fetchAppointmentsByMenteeId } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
-import { ACCOUNT_TYPE, PROFILE_URL, APPOINTMENT_STATUS } from "utils/consts";
+import { ACCOUNT_TYPE, PROFILE_URL } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
 import useAuth from "utils/hooks/useAuth";
 import BookmarkSidebar from "components/BookmarkSidebar";
 
 import "components/css/MenteeAppointments.scss";
-import ApptData from "utils/MenteeApptsData.json";
 import BookMarkData from "utils/MenteeBookMarks.json";
 
 const appointmentTabs = Object.freeze({
@@ -73,7 +72,7 @@ function MenteeAppointments() {
   return (
     <div className="mentee-appointments-page">
       <div className="mentee-appts-section">
-        <div className="mentee-appts-header">Welcome {ApptData.name}!</div>
+        <div className="mentee-appts-header">Welcome {appointments.name}!</div>
         <div className="mentee-appts-container">
           <OverlaySelect
             options={appointmentTabs}

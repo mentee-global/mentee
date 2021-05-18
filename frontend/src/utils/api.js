@@ -268,6 +268,14 @@ export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   );
 };
 
+export const getFavMentorsById = (mentee_id) => {
+  const requestExtension = `/mentee/favorites/${mentee_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.favorites,
+    (err) => console.error(err)
+  );
+};
+
 export const sendMessage = (data) => {
   const requestExtension = `/messages/`;
   return instance.post(requestExtension, data).then(

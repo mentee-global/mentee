@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MenuOutlined } from "@ant-design/icons";
 
-import { fetchAppointmentsByMenteeId } from "utils/api";
+import { fetchAppointmentsByMenteeId, getFavMentorsById } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, PROFILE_URL, APPOINTMENT_STATUS } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
@@ -47,22 +47,29 @@ function AppointmentCard({ info }) {
 function MenteeAppointments() {
   const [appointments, setAppointments] = useState({});
   const [visibleAppts, setVisibleAppts] = useState([]);
+  const [favMentors, setFavMentors] = useState([]);
   const { profileId } = useAuth();
 
   useEffect(() => {
-    async function getAppointments() {
+    async function getData() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
+      const resFavMentors = await getFavMentorsById(profileId);
+      console.log(resFavMentors);
+
       const formattedAppointments = formatAppointments(
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE
       );
-      if (formattedAppointments) {
+      if (formattedAppointments && favMentors) {
         // TODO: Connect this to the backend once #289 is ready
         setAppointments(ApptData);
         setVisibleAppts(ApptData.upcoming);
+        setFavMentors(resFavMentors);
+      } else {
+        console.error("Failed to fetch appointments or favorite mentors");
       }
     }
-    getAppointments();
+    getData();
   }, [profileId]);
 
   const handleOverlayChange = (newSelect) => {
@@ -85,7 +92,7 @@ function MenteeAppointments() {
           ))}
         </div>
       </div>
-      <BookmarkSidebar bookmarks={BookMarkData.bookmarks} />
+      <BookmarkSidebar bookmarks={favMentors} />
     </div>
   );
 }

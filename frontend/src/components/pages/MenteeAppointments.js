@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, SmileOutlined } from "@ant-design/icons";
+import { Result } from "antd";
 
 import { fetchAppointmentsByMenteeId } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
@@ -82,9 +83,14 @@ function MenteeAppointments() {
             className="mentee-appts-overlay-style"
             onChange={handleOverlayChange}
           />
-          {visibleAppts.map((elem) => (
-            <AppointmentCard info={elem} />
-          ))}
+          {!visibleAppts || !visibleAppts.length ? (
+            <Result
+              icon={<SmileOutlined style={{ color: "#A58123" }} />}
+              title="There are currently no appointments"
+            />
+          ) : (
+            visibleAppts.map((elem) => <AppointmentCard info={elem} />)
+          )}
         </div>
       </div>
       <BookmarkSidebar bookmarks={BookMarkData.bookmarks} />

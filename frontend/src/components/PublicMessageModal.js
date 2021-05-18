@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Modal } from "antd";
+import { Form, Modal, Alert, notification } from "antd";
 import moment from "moment";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -28,6 +28,7 @@ function PublicMessageModal(props) {
   const [email, setEmail] = useState();
   const [website, setWebsite] = useState();
   const [message, setMessage] = useState();
+  const [failed, setFailed] = useState(false);
   const mentorID = props.mentorID;
   const menteeID = props.menteeID;
 
@@ -58,11 +59,10 @@ function PublicMessageModal(props) {
 
   function closeModals() {
     setFormModalVisible(false);
+    setFailed(false);
   }
 
   async function handleBookAppointment() {
-    setFormModalVisible(false);
-
     const data = {};
 
     // Match keys to useState value
@@ -73,7 +73,14 @@ function PublicMessageModal(props) {
     }
 
     data["time"] = moment().format("YYYY-MM-DD, HH:mm:ssZZ");
-    await sendMessage(data);
+    if (!(await sendMessage(data))) {
+      setFailed(true);
+      return;
+    }
+    setFormModalVisible(false);
+    notification["success"]({
+      message: "successfully sent message",
+    });
   }
 
   return (
@@ -93,13 +100,26 @@ function PublicMessageModal(props) {
         className="appointment-info-modal"
         style={{ overflow: "hidden" }}
         footer={
-          <MenteeButton content="Send" htmlType="submit" form="message-form" />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Alert
+              style={{ visibility: failed ? "visible" : "hidden" }}
+              message="Failed to send message"
+              type="error"
+            />
+            <MenteeButton
+              width="8em"
+              content="Send"
+              htmlType="submit"
+              form="message-form"
+              style={{ justifySelf: "flex-end" }}
+            />
+          </div>
         }
       >
         <Form
           id="message-form"
           form={form}
-          onFinish={handleBookAppointment}
+          onFinish={() => handleBookAppointment()}
           validateMessages={validationMessage}
           scrollToFirstError
         >

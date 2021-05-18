@@ -5,7 +5,6 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
-import { Alert } from "antd";
 
 import PublicMessageModal from "components/PublicMessageModal";
 import { formatLinkForHref } from "utils/misc";

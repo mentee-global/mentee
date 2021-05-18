@@ -142,11 +142,14 @@
 
 .mentee-bookmark-mentor-name {
   font-weight: bold;
+  cursor: pointer;
+  width: fit-content;
 }
 
 .mentee-bookmark-mentor-title {
   font-size: 0.75em;
   color: #727272;
+  width: fit-content;
 }
 
 .bookmark-heart {

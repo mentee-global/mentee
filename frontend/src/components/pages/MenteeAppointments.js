@@ -54,7 +54,6 @@ function MenteeAppointments() {
     async function getData() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
       const resFavMentors = await getFavMentorsById(profileId);
-      console.log(resFavMentors);
 
       const formattedAppointments = formatAppointments(
         appointmentsResponse,

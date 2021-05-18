@@ -60,6 +60,18 @@ export const LANGUAGES = [
   "Urdu",
 ];
 
+export const AGERANGES = [
+  "16-18",
+  "19-22",
+  "23-25",
+  "26-30",
+  "30s",
+  "40s",
+  "50s",
+  "60s",
+  "70s+",
+];
+
 export const SPECIALIZATIONS = [
   "Advocacy and Activism",
   "Arts: Design/Music/Dance and More",

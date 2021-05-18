@@ -1,29 +1,27 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { fetchMenteeByID, fetchMentors, fetchMentees } from "../../utils/api";
+import { fetchMenteeByID, fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn, getMenteeID } from "utils/auth.service";
+import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { EditFavMentorById } from "../../utils/api";
 import useAuth from "../../utils/hooks/useAuth";
 
 function Gallery() {
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const { isAdmin, isMentor, isMentee, onAuthStateChanged } = useAuth();
   const [mentors, setMentors] = useState([]);
-  const [mentees, setMentees] = useState([]);
   const [mentee, setMentee] = useState();
   const [specializations, setSpecializations] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
-  const [favorite_mentorIds, setFavoriteIds] = useState(new Set());
+  const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
   const [pageLoaded, setPageLoaded] = useState(false);
-  const verified = location.state && location.state.verified;
 
   useEffect(() => {
     async function getMentors() {
@@ -32,24 +30,15 @@ function Gallery() {
         setMentors(mentor_data);
       }
     }
-    setPageLoaded(true);
-    if (verified) {
-      getMentors();
-    }
-  }, [verified]);
+
+    getMentors();
+  }, []);
 
   useEffect(() => {
-    async function getMentees() {
-      const mentee_data = await fetchMentees();
-      if (mentee_data) {
-        setMentees(mentee_data);
-        setPageLoaded(true);
-      }
+    if (isMentor || isAdmin) {
+      setPageLoaded(true);
     }
-    if (verified) {
-      getMentees();
-    }
-  }, [verified]);
+  }, [isMentor, isAdmin]);
 
   useEffect(() => {
     async function getMentee() {
@@ -70,7 +59,7 @@ function Gallery() {
       mentee.favorite_mentors_ids.forEach((id) => {
         fav_set.add(id);
       });
-      setFavoriteIds(fav_set);
+      setFavoriteMentorIds(fav_set);
       setPageLoaded(true);
     }
     if (isMentee) {
@@ -93,8 +82,8 @@ function Gallery() {
     return output;
   }
 
-  const getFilteredMentors = useCallback(() => {
-    return mentors.filter((mentor) => {
+  const getFilteredMentors = () =>
+    mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
         specializations.length === 0 ||
@@ -107,23 +96,9 @@ function Gallery() {
 
       return matchesSpecializations && matchesLanguages && matchesName;
     });
-  }, [favorite_mentorIds]);
-
-  const getFilteredMentees = useCallback(() => {
-    return mentees.filter((mentee) => {
-      // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
-      const matchesLanguages =
-        languages.length === 0 ||
-        languages.some((l) => mentee.languages.indexOf(l) >= 0);
-      const matchesName =
-        !query || mentee.name.toUpperCase().includes(query.toUpperCase());
-
-      return matchesLanguages && matchesName;
-    });
-  }, [favorite_mentorIds]);
 
   // Add some kind of error 403 code
-  return !(isLoggedIn() || verified) ? (
+  return !isLoggedIn() ? (
     <Result
       status="403"
       title="403"
@@ -169,19 +144,13 @@ function Gallery() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          {isMentor && (
-            <div>
-              <div className="gallery-filter-section-title">
-                Specializations
-              </div>
-              <Checkbox.Group
-                defaultValue={specializations}
-                options={SPECIALIZATIONS}
-                onChange={(checked) => setSpecializations(checked)}
-                value={specializations}
-              />
-            </div>
-          )}
+          <div className="gallery-filter-section-title">Specializations</div>
+          <Checkbox.Group
+            defaultValue={specializations}
+            options={SPECIALIZATIONS}
+            onChange={(checked) => setSpecializations(checked)}
+            value={specializations}
+          />
           <div className="gallery-filter-section-title">Languages</div>
           <Checkbox.Group
             defaultValue={languages}
@@ -222,38 +191,25 @@ function Gallery() {
               <Spin />{" "}
             </div>
           ) : (
-            // getFilteredMentors().map((mentor, key) => (
-            //   <MentorCard
-            //     key={key}
-            //     name={mentor.name}
-            //     languages={mentor.languages}
-            //     professional_title={mentor.professional_title}
-            //     location={mentor.location}
-            //     specializations={mentor.specializations}
-            //     website={mentor.website}
-            //     linkedin={mentor.linkedin}
-            //     id={mentor._id["$oid"]}
-            //     firebase_uid={mentor.firebase_uid}
-            //     lesson_types={getLessonTypes(
-            //       mentor.offers_group_appointments,
-            //       mentor.offers_in_person
-            //     )}
-            //     favorite={favorite_mentorIds.has(mentor._id["$oid"])}
-            //     onEditFav={onEditFav}
-            //     image={mentor.image}
-            //   />
-
-            // ))
-
-            mentees.map((mentee, key) => (
+            getFilteredMentors().map((mentor, key) => (
               <MentorCard
-                mentee
                 key={key}
-                name={mentee.name}
-                languages={mentee.languages}
-                location={mentee.location}
-                gender={mentee.gender}
-                organization={mentee.organization}
+                name={mentor.name}
+                languages={mentor.languages}
+                professional_title={mentor.professional_title}
+                location={mentor.location}
+                specializations={mentor.specializations}
+                website={mentor.website}
+                linkedin={mentor.linkedin}
+                id={mentor._id["$oid"]}
+                firebase_uid={mentor.firebase_uid}
+                lesson_types={getLessonTypes(
+                  mentor.offers_group_appointments,
+                  mentor.offers_in_person
+                )}
+                favorite={favoriteMentorIds.has(mentor._id["$oid"])}
+                onEditFav={onEditFav}
+                image={mentor.image}
               />
             ))
           )}

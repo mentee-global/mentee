@@ -39,18 +39,12 @@ const styles = {
 
 function MenteeCard(props) {
   const { isAdmin, isMentor, isMentee } = useAuth();
-  const [favorite, setFavorite] = useState(props.favorite);
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;
     } else {
       return <img src={image} alt="" />;
     }
-  }
-
-  function onFavoriteClick(fav) {
-    setFavorite(!fav);
-    props.onEditFav(props.id, fav);
   }
 
   return (
@@ -60,22 +54,12 @@ function MenteeCard(props) {
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
-              {props.name}
+              {props.name} {"|"} {props.age}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
               {props.gender} {"|"} {props.organization}
             </Title>
           </div>
-          {isMentee && (
-            <div className="favorite-button">
-              <Rate
-                character={<HeartFilled />}
-                count={1}
-                defaultValue={favorite ? 1 : 0}
-                onChange={(number) => onFavoriteClick(number)}
-              />
-            </div>
-          )}
         </div>
         {props.location && (
           <div className="gallery-info-section">
@@ -90,9 +74,7 @@ function MenteeCard(props) {
           <MessageOutlined style={styles.icon} />
           Languages:
         </h3>
-        <Text className="gallery-list-items">
-          {props.languages.join(", ")}
-        </Text>
+        <Text className="gallery-list-items">{props.languages.join(", ")}</Text>
         <hr className="gallery-solid-border" />
         <div className="bookmark-button"></div>
         <NavLink to={"/gallery/" + props.id}>

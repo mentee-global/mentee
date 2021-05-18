@@ -72,7 +72,7 @@ def create_message():
     validate_data = MessageForm.from_json(data)
     msg, is_invalid = is_invalid_form(validate_data)
 
-    if True:
+    if is_invalid:
         return create_response(status=422, message=msg)
     try:
         message = Message(

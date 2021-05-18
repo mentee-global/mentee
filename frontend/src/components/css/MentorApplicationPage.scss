@@ -6,8 +6,10 @@
    display: flex;
   justify-content: space-between;
   // width: 100%;
-  padding: 3em;
+  padding-bottom: 1em;
   padding-top: 3em;
+  padding-left: 6em;
+  padding-right: 6em;
   background-color: white;
 }
 .donation-question {
@@ -19,19 +21,15 @@
 }
 
 .column-one,
-.column-one-page-two {
-  display: flex;
-  padding: 3em;
-  padding-bottom: 3em;
+.column-two,
+.column-one-page-two,
+.column-two-page-two {
+  padding-top: 3em;
   width: 50%;
 }
 
-.column-two,
-.column-two-page-two {
-  padding: 3em;
-  padding-top: 3em;
-  padding-bottom: 3em;
-  width: 50%;
+.column-one, .column-one-page-two {
+  padding-right: 3em;
 }
 
 .input-form {
@@ -43,15 +41,7 @@
 }
 
 .next-button {
-  position: relative;
-  bottom: 5em;
-  left: 70em;
-}
-
-.previous-button {
-  position: relative;
-  bottom: 5em;
-  left: 75em;
+  margin-left: 1em;
 }
 
 .header-one {
@@ -115,6 +105,13 @@
   width: 75vw;
 }
 
+.steps-action {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 6em;
+  padding-bottom: 3em;
+}
+
 .instructions {
   margin: 3em;
   background-color: white;
@@ -137,12 +134,10 @@
 }
 
 .column-one-page-two {
-  padding: 3em;
   width: 50%;
 }
 
 .column-two-page-two {
-  padding: 4em;
   width: 50%;
 }
 
@@ -163,4 +158,8 @@
 
 .success-message {
     color: #e4bb50;
+}
+
+.special-topics-question {
+  width: 50%;
 }

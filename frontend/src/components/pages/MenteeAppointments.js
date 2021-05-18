@@ -12,6 +12,8 @@ import BookmarkSidebar from "components/BookmarkSidebar";
 import "components/css/MenteeAppointments.scss";
 import BookMarkData from "utils/MenteeBookMarks.json";
 
+// TODO: Update the appointment formatter to support legacy status
+
 const appointmentTabs = Object.freeze({
   upcoming: {
     text: "All Upcoming",

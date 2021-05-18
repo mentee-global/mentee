@@ -39,6 +39,7 @@ def edit_fav_mentor():
         return create_response(status=422, message=msg)
     return create_response(status=200, message=msg)
 
+
 @mentee.route("/favorites/<id>", methods=["GET"])
 def get_favorites(id):
     try:
@@ -57,13 +58,17 @@ def get_favorites(id):
         except:
             msg = f"failed to fetch mentor by id: {mentor_id}"
             continue
-        mentor_list.append({
-            "name": mentor.name,
-            "title": mentor.professional_title,
-            "id": mentor_id,
-            "image": mentor.image,
-        })
+        mentor_list.append(
+            {
+                "name": mentor.name,
+                "title": mentor.professional_title,
+                "id": mentor_id,
+                "image": mentor.image,
+            }
+        )
 
     logger.info(mentor_list)
 
-    return create_response(status=200, data={"favorites": mentor_list}, message="success")
+    return create_response(
+        status=200, data={"favorites": mentor_list}, message="success"
+    )

@@ -44,9 +44,9 @@ function GuestNavHeader({ history }) {
                       pathname: "/not-found",
                     });
                   }}
-                  // onClick={() => {
-                  //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
-                  // }}
+                // onClick={() => {
+                //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
+                // }}
                 />
               </span>
             </>
@@ -60,6 +60,19 @@ function GuestNavHeader({ history }) {
               onVerified={() => {
                 history.push({
                   pathname: "/gallery",
+                  state: { verified: true },
+                });
+              }}
+            />
+          </span>
+          <span className="navigation-header-button">
+            <MenteeVerificationModal
+              content={<b>Find a Mentee</b>}
+              theme="light"
+              width="9em"
+              onVerified={() => {
+                history.push({
+                  pathname: "/mentee-gallery",
                   state: { verified: true },
                 });
               }}

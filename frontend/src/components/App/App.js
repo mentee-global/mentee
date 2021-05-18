@@ -68,10 +68,15 @@ function App() {
         component={() => <Navigation content={<Gallery />} needsAuth={false} />}
       />
       <Route
-        path="/gallery/:id"
+        path="/gallery/:type/:id"
         component={(props) => (
           <Navigation
-            content={<PublicProfile id={props.match.params.id} />}
+            content={
+              <PublicProfile
+                id={props.match.params.id}
+                accountType={props.match.params.type}
+              />
+            }
             needsAuth={false}
           />
         )}

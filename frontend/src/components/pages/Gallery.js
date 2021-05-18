@@ -44,9 +44,7 @@ function Gallery() {
         setMentee(mentee_data);
       }
     }
-    console.log("hit")
-    console.log(isMentee)
-    if (isMentee) { 
+    if (isMentee) {
       getMentee();
     }
   }, [isMentee]);

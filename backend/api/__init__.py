@@ -99,6 +99,7 @@ def create_app(test_config=None):
     app.register_blueprint(admin.admin, url_prefix="/api")
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")
+    app.register_blueprint(messages.messages, url_prefix="/api/messages")
     # register error handlers
     def not_found(e):
         return app.send_static_file("index.html")

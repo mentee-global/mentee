@@ -306,6 +306,16 @@ export const getAdmin = (id) => {
   );
 };
 
+export const getMessages = (user_id) => {
+  const requestExtension = `/messages/?recipient_id=${user_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 /**
  * Wrapper function calls to general account endpoints
  * This helps with avoiding the need to change multiple files

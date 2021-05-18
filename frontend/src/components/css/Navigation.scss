@@ -31,12 +31,12 @@
 .ant-tooltip-inner {
   color: white;
 }
-.ant-collapse-content > .ant-collapse-content-box{
+.ant-collapse-content > .ant-collapse-content-box {
   padding: 0;
 }
 
 .ant-list-split .ant-list-item {
-  border-bottom: 0.25px solid #E4BB4F;
+  border-bottom: 0.25px solid #e4bb4f;
 }
 
 .navigation-menu-item-selected {
@@ -69,7 +69,7 @@
 }
 
 .ant-drawer-header {
-  border-bottom: 0.25px solid #E4BB4F;
+  border-bottom: 0.25px solid #e4bb4f;
 }
 
 .ant-drawer-body {
@@ -78,11 +78,11 @@
 
 .ant-drawer-footer {
   text-align: center;
-  border-top: 0.25px solid #E4BB4F;
+  border-top: 0.25px solid #e4bb4f;
 }
 
 .ant-collapse-content {
-  border-top: 0.25px solid #E4BB4F;
+  border-top: 0.25px solid #e4bb4f;
 }
 
 .drawerHeader {
@@ -92,7 +92,7 @@
 }
 
 .drawerHeader span {
-  color: #7A7A7A;
+  color: #7a7a7a;
   font-size: 11px;
 }
 
@@ -149,4 +149,13 @@
 .navigation-header-button {
   margin-right: 10px;
   width: 100%;
+}
+
+.loadingIcon {
+  margin: 30px 0;
+  margin-bottom: 20px;
+  padding-top: 10%;
+  padding-left: 40%;
+  text-align: center;
+  border-radius: 4px;
 }

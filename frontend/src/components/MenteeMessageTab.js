@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import { Collapse, List, Avatar, Drawer, Space, Button, Row, Col} from "antd";
+import React, { useState, useEffect } from "react";
+import { Collapse, List, Avatar, Drawer, Space, Button, Spin } from "antd";
+import { getMessages } from "../utils/api";
+import useAuth from "../utils/hooks/useAuth";
+import { isLoggedIn } from "utils/auth.service";
 import "./css/Navigation.scss";
 import {
   UpOutlined,
@@ -7,71 +10,27 @@ import {
   MessageOutlined,
   UserOutlined,
   ArrowLeftOutlined,
-  MailOutlined
+  MailOutlined,
 } from "@ant-design/icons";
 
 const { Panel } = Collapse;
 
-const data = [
-  {
-    sender_name: "Bernie Sanders",
-    email: "bernie@gmail.com",
-    link: "berniesanders.com",
-    time: new Date("April 8, 2021 16:56:00"),
-    message:
-      "Hello! My name is Bernie Sanders and I am interested in connecting withyou. We have similar backgrounds so I think we could help each other out. Feel free to contact me at my email! Looking forward to hearing from you!",
-  },
-  {
-    sender_name: "Barack Obama",
-    email: "Obama@gmail.com",
-    link: "barackobama.com",
-    time: new Date("April 5, 2021 16:56:00"),
-    message:
-      "Hello! My name is Barack Obama and I am interested in connecting withyou. We have similar backgrounds so I think we could help each other out. Feel free to contact me at my email! Looking forward to hearing from you!",
-  },
-  {
-    sender_name: "Joe Biden",
-    email: "biden@gmail.com",
-    link: "joebiden.com",
-    time: new Date("April 7, 2021 16:56:00"),
-    message:
-      "Hello! My name is Joe Biden and I am interested in connecting withyou. We have similar backgrounds so I think we could help each other out. Feel free to contact me at my email! Looking forward to hearing from you!",
-  },
-  {
-    sender_name: "John Doe",
-    email: "jdoe@gmail.com",
-    link: "jd.com",
-    time: new Date("April 9, 2021 22:53:00"),
-    message:
-      "Hello! My name is John and I am interested in connecting withyou. We have similar backgrounds so I think we could help each other out. Feel free to contact me at my email! Looking forward to hearing from you!",
-  },
-  {
-    sender_name: "Bob Ross",
-    email: "ross@gmail.com",
-    link: "ross.com",
-    time: new Date("April 3, 2021 16:56:00"),
-    message: "Hello would you like to witness some beautiful trees?",
-  },
-  {
-    sender_name: "Steve Jobs",
-    email: "jobs@gmail.com",
-    link: "apple.com",
-    time: new Date("April 1, 2021 16:56:00"),
-    message: "Ayo home boy wya",
-  },
-  {
-    sender_name: "Mark Zuckerburg",
-    email: "zuck@gmail.com",
-    link: "facebook.com",
-    time: new Date("March 24, 2021 16:56:00"),
-    message: "U want internship?",
-  },
-];
+const drawerHolder = {
+  user_name: "Bernie Sanders",
+  email: "bernie@gmail.com",
+  link: "berniesanders.com",
+  time: new Date("April 8, 2021 16:56:00"),
+  message:
+    "Hello! My name is Bernie Sanders and I am interested in connecting withyou. We have similar backgrounds so I think we could help each other out. Feel free to contact me at my email! Looking forward to hearing from you!",
+};
 
-function MenteeMessageTab() {
+function MenteeMessageTab(props) {
   const [visible, setVisible] = useState(false);
-  const [drawerItem, setDrawerItem] = useState(data[0]);
+  const [drawerItem, setDrawerItem] = useState(drawerHolder);
+  const [messages, setMessages] = useState([]);
+  const [messagesLoaded, setMessagesLoaded] = useState(false);
   const previewCutoff = 50;
+  const emptyMessage = "No Messages";
 
   const getMessagePreview = (message) => {
     let preview = message;
@@ -80,6 +39,17 @@ function MenteeMessageTab() {
     }
     return preview;
   };
+
+  useEffect(() => {
+    async function fetchMessages() {
+      const m = await getMessages(props.user_id);
+      setMessages(m);
+      setMessagesLoaded(true);
+    }
+    if (isLoggedIn()) {
+      fetchMessages();
+    }
+  }, []);
 
   const timeSince = (date) => {
     var seconds = Math.floor((new Date() - date) / 1000);
@@ -151,8 +121,12 @@ function MenteeMessageTab() {
       >
         <div className="message-box">
           <List
+            locale={{
+              emptyText: emptyMessage,
+            }}
             itemLayout="horizontal"
-            dataSource={data}
+            loading={!messagesLoaded}
+            dataSource={messages}
             renderItem={(item) => (
               <List.Item
                 style={{
@@ -173,8 +147,8 @@ function MenteeMessageTab() {
                         justifyContent: "space-between",
                       }}
                     >
-                      <b>{item.sender_name}</b>
-                      <span>{timeSince(item.time)} ago</span>
+                      <b>{item.user_name}</b>
+                      <span>{timeSince(item.time["$date"])} ago</span>
                     </div>
                   }
                   description={getMessagePreview(item.message)}
@@ -189,11 +163,20 @@ function MenteeMessageTab() {
                   style={{ color: "#e4bb4f" }}
                   onClick={closeDrawer}
                 />{" "}
-                <b>{drawerItem.sender_name}</b>
+                <b>{drawerItem.user_name}</b>
               </Space>
             }
             footer={
-              <Button type="primary" shape="round" href={"mailto:"+drawerItem.email} icon={<MailOutlined />} size={"middle"} style={{background: "#e4bb4f", borderColor: "#e4bb4f"}}>Reply Over Email</Button>
+              <Button
+                type="primary"
+                shape="round"
+                href={"mailto:" + drawerItem.email}
+                icon={<MailOutlined />}
+                size={"middle"}
+                style={{ background: "#e4bb4f", borderColor: "#e4bb4f" }}
+              >
+                Reply Over Email
+              </Button>
             }
             placement="right"
             closable={false}
@@ -206,7 +189,7 @@ function MenteeMessageTab() {
               <Space direction="vertical" style={{ width: "100%" }}>
                 <div className="drawerHeader">
                   <span>{drawerItem.email}</span>
-                  <span>{getFormattedDate(drawerItem.time)}</span>
+                  <span>{getFormattedDate(drawerItem.time["$date"])}</span>
                 </div>
                 <div className="drawerHeader">
                   <span>{drawerItem.link}</span>
@@ -214,7 +197,6 @@ function MenteeMessageTab() {
               </Space>
               <p>{drawerItem.message}</p>
             </Space>
-
           </Drawer>
         </div>
       </Panel>

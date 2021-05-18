@@ -72,8 +72,10 @@ function GuestNavHeader({ history }) {
               content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
               onClick={async () => {
                 let redirect = "/select-login";
-                if (isMentor || isMentee) {
+                if (isMentor) {
                   redirect = "/appointments";
+                } else if (isMentee) {
+                  redirect = "/mentee-appointments";
                 } else if (isAdmin) {
                   redirect = "/account-data";
                 }

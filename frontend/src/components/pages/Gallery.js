@@ -82,7 +82,6 @@ function Gallery() {
     return output;
   }
 
-
   const getFilteredMentors = () =>
     mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options

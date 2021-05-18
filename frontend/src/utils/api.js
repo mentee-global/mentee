@@ -256,7 +256,7 @@ export const deleteMentorById = (id) => {
 export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   const requestExtension = `/mentee/editFavMentor`;
   const data = {
-    mentee_uid: mentee_id,
+    mentee_id: mentee_id,
     mentor_id: mentor_id,
     favorite: favorite,
   };

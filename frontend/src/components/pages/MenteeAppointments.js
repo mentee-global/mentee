@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { MenuOutlined } from "@ant-design/icons";
+import { message } from "antd";
 
-import { fetchAppointmentsByMenteeId, getFavMentorsById } from "utils/api";
+import {
+  fetchAppointmentsByMenteeId,
+  getFavMentorsById,
+  EditFavMentorById,
+} from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, PROFILE_URL, APPOINTMENT_STATUS } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
@@ -10,7 +15,6 @@ import BookmarkSidebar from "components/BookmarkSidebar";
 
 import "components/css/MenteeAppointments.scss";
 import ApptData from "utils/MenteeApptsData.json";
-import BookMarkData from "utils/MenteeBookMarks.json";
 
 const appointmentTabs = Object.freeze({
   upcoming: {
@@ -75,6 +79,17 @@ function MenteeAppointments() {
     setVisibleAppts(appointments[newSelect]);
   };
 
+  const handleUnfavorite = async (mentorId, name) => {
+    const res = await EditFavMentorById(profileId, mentorId, false);
+    if (!res) {
+      message.error(`failed to unfavorite mentor ${name}`, 3);
+    } else {
+      message.success(`successfully unfavorite mentor ${name}`, 3);
+      const newFav = favMentors.filter((mentor) => mentor.id != mentorId);
+      setFavMentors(newFav);
+    }
+  };
+
   return (
     <div className="mentee-appointments-page">
       <div className="mentee-appts-section">
@@ -91,7 +106,7 @@ function MenteeAppointments() {
           ))}
         </div>
       </div>
-      <BookmarkSidebar bookmarks={favMentors} />
+      <BookmarkSidebar bookmarks={favMentors} unfavorite={handleUnfavorite} />
     </div>
   );
 }

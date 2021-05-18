@@ -3,7 +3,7 @@ import { APPOINTMENT_STATUS } from "./consts";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 export const formatAppointments = (data, type) => {
-  if (!data) {
+  if (!data || !data.requests) {
     return;
   }
 
@@ -13,9 +13,13 @@ export const formatAppointments = (data, type) => {
     pending: [],
     past: [],
   };
-  const appointments = data.requests.filter(
-    (elem) => elem.status !== APPOINTMENT_STATUS.REJECTED
-  );
+  let appointments = data.requests;
+  if (type == ACCOUNT_TYPE.MENTOR) {
+    appointments = data.requests.filter(
+      (elem) => !elem.status || elem.status !== APPOINTMENT_STATUS.REJECTED
+    );
+  }
+
   const now = moment();
 
   appointments.sort((a, b) =>

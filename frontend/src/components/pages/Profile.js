@@ -175,7 +175,7 @@ function Profile() {
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <ProfileContent
-              mentor={mentor}
+              account={mentor}
               isMentor={true}
               handleSaveEdits={handleSaveEdits}
             />

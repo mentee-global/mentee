@@ -27,6 +27,14 @@ const authPut = async (url, data, config) =>
     })
     .catch(console.error);
 
+const authDelete = async (url, config) =>
+  instance
+    .delete(url, {
+      ...config,
+      headers: { Authorization: await getUserIdToken() },
+    })
+    .catch(console.error);
+
 export const fetchAccountById = (id, type) => {
   if (!id) return;
   const requestExtension = `/account/${id}`;
@@ -247,7 +255,7 @@ export const downloadAllApplicationData = async () => {
 
 export const deleteMentorById = (id) => {
   const requestExtension = `/mentor/${id}`;
-  return instance.delete(requestExtension).then(
+  return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -264,6 +272,16 @@ export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
     favorite: favorite,
   };
   return instance.put(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const sendMessage = (data) => {
+  const requestExtension = `/messages/`;
+  return instance.post(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);

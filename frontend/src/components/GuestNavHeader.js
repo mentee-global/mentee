@@ -65,7 +65,6 @@ function GuestNavHeader({ history }) {
               }}
             />
           </span>
-          {/** TODO: Generalize this to be Login instead of just Mentor Login */}
           <span className="navigation-header-button">
             <MenteeButton
               width="9em"

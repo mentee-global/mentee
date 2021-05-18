@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 
 import PublicMessageModal from "components/PublicMessageModal";
+import MenteeButton from "components/MenteeButton";
 import { formatLinkForHref } from "utils/misc";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MentorProfileModal from "./MentorProfileModal";

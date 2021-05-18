@@ -10,16 +10,21 @@ def admin_only(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         headers = request.headers
+        role = None
 
         try:
             token = headers.get("Authorization")
             claims = firebase_admin_auth.verify_id_token(token)
             role = claims.get("role")
-
-            if role == Account.ADMIN:
-                # TODO: inject new token/role in response
-                return fn(*args, **kwargs)
         except:
+            msg = "Error parsing token"
+            logger.info(msg)
+            return create_response(status=500, message=msg)
+
+        if role == Account.ADMIN:
+            # TODO: inject new token/role in response
+            return fn(*args, **kwargs)
+        else:
             msg = "Unauthorized"
             logger.info(msg)
             return create_response(status=401, message=msg)

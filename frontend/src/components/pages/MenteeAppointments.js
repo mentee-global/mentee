@@ -27,10 +27,11 @@ function AppointmentCard({ info }) {
   return (
     <div className="mentee-appt-card">
       <div className="status-section">
-        {info.status} <div className={`status-${info.status}`} />
+        {info.status ?? "pending"}{" "}
+        <div className={`status-${info.status ?? "pending"}`} />
       </div>
       <div className="mentee-appt-card-header">
-        Meeting with <a href={PROFILE_URL + info.mentorId}>{info.mentorName}</a>
+        Meeting with <a href={PROFILE_URL + info.mentorID}>{info.mentorName}</a>
       </div>
       <div className="mentee-appt-card-time">
         {info.date}
@@ -56,10 +57,11 @@ function MenteeAppointments() {
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE
       );
+      console.log(formattedAppointments);
       if (formattedAppointments) {
         // TODO: Connect this to the backend once #289 is ready
-        setAppointments(ApptData);
-        setVisibleAppts(ApptData.upcoming);
+        setAppointments(formattedAppointments);
+        setVisibleAppts(formattedAppointments.upcoming);
       }
     }
     getAppointments();

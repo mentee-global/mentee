@@ -68,12 +68,14 @@ export const formatAppointments = (data, type) => {
       mentorID: appointment.mentor_id.$oid,
       menteeID: appointment.mentee_id && appointment.mentee_id.$oid,
       name: appointment.name,
+      mentorName: appointment.mentor_name,
       date: startTime.format("dddd MMMM Do, YYYY"),
       time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
       isoTime: startTime.format(),
       topic: appointment.topic,
       allowTexts: appointment.allow_texts,
       allowCalls: appointment.allow_calls,
+      status: appointment.status,
     };
 
     if (type == ACCOUNT_TYPE.MENTEE) {

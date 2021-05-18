@@ -58,9 +58,7 @@ function MenteeAppointments() {
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE
       );
-      console.log(formattedAppointments);
       if (formattedAppointments) {
-        // TODO: Connect this to the backend once #289 is ready
         setAppointments(formattedAppointments);
         setVisibleAppts(formattedAppointments.upcoming);
       }

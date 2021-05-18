@@ -5,9 +5,9 @@ import {
   LinkOutlined,
   LinkedinOutlined,
 } from "@ant-design/icons";
+import { Alert } from "antd";
 
 import PublicMessageModal from "components/PublicMessageModal";
-import MenteeButton from "components/MenteeButton";
 import { formatLinkForHref } from "utils/misc";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MentorProfileModal from "./MentorProfileModal";

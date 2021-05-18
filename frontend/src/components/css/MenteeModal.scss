@@ -1,209 +1,214 @@
 @import "_app";
 
-.appointment-modal {
-    width: 60% !important;
+.appointment-date-modal {
+  width: 50% !important;
+}
+
+.appointment-info-modal {
+  width: 30% !important;
 }
 
 .modal-container {
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
-    width: 100%;
-    overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .modal-container-row {
-    display: flex;
-    flex-direction: row;
-    height: 80vh;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 80vh;
+  width: 100%;
 }
 
 .modal-mentee-inner-container {
-    display: flex;
-    flex-direction: column;
-    padding: 3%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 3%;
 }
 
 .modal-mentee-appointment-heading-container {
-    display: flex;
-    flex-direction: row;
-    height: fit-content;
-    width: 100%;
-    padding: 3%;
-    padding-top: 2%;
-    border-bottom: 2px solid $mentee-appointment-heading-border-color;
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
+  width: 100%;
+  padding: 3%;
+  padding-top: 2%;
+  border-bottom: 2px solid $mentee-appointment-heading-border-color;
 }
 
 .modal-mentee-appointment-heading-text {
-    color: $mentee-appointment-text-color;
-    font-size: 3vh;
-    width: 40%;
-    justify-content: center;
-    align-items: flex-start;
-    font-weight: bold;
+  color: $mentee-appointment-text-color;
+  font-size: 1em;
+  width: 45%;
+  justify-content: center;
+  align-items: flex-start;
+  font-weight: bold;
 }
 
 .modal-mentee-appointment-heading-date-container {
-    display: flex;
-    flex-direction: column;
-    padding-left: 10px;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  align-items: center;
+  align-self: center;
 }
 
 .modal-mentee-appointment-heading-divider {
-    margin-top: 1%;
-    margin-bottom: -1%;
-    width: 1px;
-    border-right: 1px solid $theme-orange;
+  margin-top: 1%;
+  margin-bottom: -1%;
+  width: 1px;
+  border-right: 1px solid $theme-orange;
 }
 
 .modal-mentee-appointment-heading-date {
-    color: $theme-orange-dark;
-    font-size: 5vh;
-    font-weight: bold;
+  color: $theme-orange-dark;
+  font-size: 1.5em;
+  font-weight: bold;
 }
 
 .modal-mentee-appointment-heading-day {
-    color: $theme-orange;
-    font-size: 3vh;
-    font-weight: bold;
-    margin-top: -15%;
+  color: $theme-orange;
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: -15%;
 }
 
 .modal-mentee-appointment-header-text {
-    font-size: 2.5vh;
-    font-weight: bold;
+  font-size: 1em;
+  font-weight: bold;
 }
 
 .flex {
-    display: flex;
+  display: flex;
 }
 
 .modal-mentee-appointment-col-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .modal-mentee-appointment-message-container {
-    display: flex;
-    flex-direction: column;
-    flex: 4;
-    margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 4;
+  margin-top: 10px;
 }
 
 .modal-mentee-appointment-switches {
-    display: flex;
-    flex: 2;
-    flex-direction: column;
+  display: flex;
+  flex: 2;
+  flex-direction: column;
 }
 
 .modal-mentee-availability-switch {
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
 }
 
-
 .modal-mentee-availability-switch-text {
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    color: $mentee-appointment-text-color;
-    margin-right: 10px;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: $mentee-appointment-text-color;
+  margin-right: 10px;
 }
 
 .modal-mentee-appointment-contact-container {
-    flex: 1;
+  flex: 1;
 }
 
 .modal-mentee-appointment-info-container {
-    display: flex;
-    flex: 0.3;
-    flex-direction: column;
-    border-right: 1px solid $mentee-appointment-info-border;
-    padding: 4%;
+  display: flex;
+  flex: 0.3;
+  flex-direction: column;
+  border-right: 1px solid $mentee-appointment-info-border;
+  padding: 4%;
 }
 
 .modal-mentee-appointment-datetime-container {
-    display: flex;
-    flex: 0.7;
-    flex-direction: column;
+  display: flex;
+  flex: 0.7;
+  flex-direction: column;
 }
 
 .modal-mentee-appointment-profile-icon {
-    margin-top: 20%;
-    margin-bottom: 5%;
+  margin-top: 20%;
+  margin-bottom: 5%;
 }
 
 .modal-mentee-appointment-datetime-header {
-    display: flex;
-    flex-direction: row;
-    flex: 0.1;
-    width: 100%;
-    border-top: 2px solid $theme-orange;
-    padding-top: 1%;
+  display: flex;
+  flex-direction: row;
+  flex: 0.1;
+  width: 100%;
+  border-top: 2px solid $theme-orange;
+  padding-top: 1%;
 }
 
 .modal-mentee-appointment-datetime-text {
-    display: flex;
-    flex: 0.6;
-    justify-content: flex-end;
-    font-size: 2.5vh;
-    font-weight: bold;
-    padding-right: 6px;
+  display: flex;
+  flex: 0.6;
+  justify-content: flex-end;
+  font-size: 2.5vh;
+  font-weight: bold;
+  padding-right: 6px;
 }
 
 .modal-mentee-appointment-datetime-timezone {
-    display: flex;
-    flex: 0.4;
-    font-size: 2.5vh;
-    font-style: italic;
-    border-left: 1px solid $theme-orange;
-    padding-left: 4px;
+  display: flex;
+  flex: 0.4;
+  font-size: 2.5vh;
+  font-style: italic;
+  border-left: 1px solid $theme-orange;
+  padding-left: 4px;
 }
 
 .modal-mentee-appointment-timeslots-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .modal-mentee-appointment-timeslot {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 1.5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5%;
 }
 
-.modal-mentee-appointment-datetime-container-header{
-    display: flex;
-    flex: 0.88;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 5%;
-    padding-top: 7%;
-    overflow-y: scroll;
+.modal-mentee-appointment-datetime-container-header {
+  display: flex;
+  flex: 0.88;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 5%;
+  padding-top: 7%;
+  overflow-y: scroll;
 }
 
-.modal-mentee-appointment-datetime-container-footer{
-    display: flex;
-    flex: 0.12;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 5%;
-    width: 100%;
+.modal-mentee-appointment-datetime-container-footer {
+  display: flex;
+  flex: 0.12;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 5%;
+  width: 100%;
 }
-.input-text{
-    overflow:hidden;
+.input-text {
+  overflow: hidden;
 }
 
 .bold {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .ant-picker-calendar-date-value:hover,
@@ -219,34 +224,37 @@
 }
 
 .ant-switch-checked {
-    background: $theme-orange;
+  background: $theme-orange;
 }
 
 @media only screen and (max-width: 1100px) {
-    .appointment-modal {
-        width: 85% !important;
-    }
+  .appointment-modal,
+  .appointment-info-modal {
+    width: 85% !important;
+  }
 }
 
 @media only screen and (max-width: 760px) {
-    .appointment-modal {
-        width: 100% !important;
-    }
-    .modal-container-row {
-        flex-direction: column;
-        height: 100%;
-        margin-bottom: 12px;
-    }
-    .modal-mentee-appointment-info-container {
-        padding: 0px 5%;
-    }
-    .modal-mentee-appointment-profile-icon {
-        margin: 12px 0px;
-    }
-    .modal-mentee-appointment-datetime-container-header {
-        padding-top: 0px;
-    }
-    .flex {
-        flex-direction: column;
-    }
-}   
+  .appointment-modal,
+  .appointment-info-modal {
+    width: 100% !important;
+  }
+
+  .modal-container-row {
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 12px;
+  }
+  .modal-mentee-appointment-info-container {
+    padding: 0px 5%;
+  }
+  .modal-mentee-appointment-profile-icon {
+    margin: 12px 0px;
+  }
+  .modal-mentee-appointment-datetime-container-header {
+    padding-top: 0px;
+  }
+  .flex {
+    flex-direction: column;
+  }
+}

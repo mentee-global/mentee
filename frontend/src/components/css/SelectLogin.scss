@@ -1,0 +1,59 @@
+@import "_app";
+
+.select-login-page {
+  background-color: #ffdb6f;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.select-login-header {
+  text-align: center;
+  font-size: 3em;
+  color: white;
+  font-weight: bold;
+}
+
+.select-login-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.select-login-elem {
+  background-color: white;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  margin: 4%;
+}
+
+.select-login-elem:hover {
+  transition: 0.4s;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.select-image {
+  width: 23vw;
+}
+
+.select-text {
+  text-align: center;
+  color: #a58123;
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: -15%;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+  .select-image {
+    width: 90%;
+  }
+  .select-login-container {
+    flex-direction: column;
+  }
+}

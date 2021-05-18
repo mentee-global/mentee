@@ -22,6 +22,7 @@ function ModalInput(props) {
     defaultValue,
     valid,
     validate,
+    large,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -78,13 +79,13 @@ function ModalInput(props) {
     return style;
   }
 
-  // const returnDropdownItems = (items) => {
-  //   let options = [];
-  //   for (let i = 0; i < items.length; i++) {
-  //     options.push(<Option key={items[i]}>{items[i]}</Option>);
-  //   }
-  //   return options;
-  // };
+  const returnDropdownItems = (items) => {
+    let options = [];
+    for (let i = 0; i < items.length; i++) {
+      options.push(<Option key={items[i]}>{items[i]}</Option>);
+    }
+    return options;
+  };
 
   const InputBox = () => {
     switch (type) {
@@ -133,7 +134,7 @@ function ModalInput(props) {
       case "textarea":
         return (
           <Input.TextArea
-            className="input-textarea"
+            className={"input-textarea" + (large ? " large-textarea" : "")}
             autoSize={{ maxRows: maxRows ?? 1 }}
             onClick={() => handleClick(index)}
             onChange={handleOnChange}

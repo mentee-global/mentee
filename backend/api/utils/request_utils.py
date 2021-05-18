@@ -60,19 +60,23 @@ class AvailabilityForm(Form):
     end_time = StringField(validators=[InputRequired()])
 
 
+class MessageForm(Form):
+    message = StringField(validators=[InputRequired()])
+    user_name = StringField(validators=[InputRequired()])
+    user_id = StringField(validators=[InputRequired()])
+    recipient_name = StringField(validators=[InputRequired()])
+    recipient_id = StringField(validators=[InputRequired()])
+    email = StringField()
+    link = StringField()
+    time = StringField(validators=[InputRequired()])
+
+
 class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])
+    mentee_id = StringField(validators=[InputRequired()])
     timeslot = FormField(AvailabilityForm)
-    name = StringField(validators=[InputRequired()])
-    email = StringField(validators=[InputRequired()])
-    phone_number = StringField()
-    languages = FieldList(StringField(), validators=[validators.required()])
-    age = StringField(validators=[InputRequired()])
-    gender = StringField(validators=[InputRequired()])
-    location = StringField()
-    specialist_categories = FieldList(StringField(), validators=[validators.required()])
-    message = StringField()
-    organization = StringField(validators=[InputRequired()])
+    topic = StringField(validators=[InputRequired()])
+    status = StringField(validators=[InputRequired()])
 
 
 # class MentorApplicationForm(Form):

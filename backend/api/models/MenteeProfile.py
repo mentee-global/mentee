@@ -2,11 +2,11 @@ from api.core import Mixin
 from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
-from api.models import Education, Video, Image, Users
+from api.models import Education, Video, Image, Users, MentorProfile
 
 
 class MenteeProfile(Document, Mixin):
-    """"Mentee Profile Collection."""
+    """Mentee Profile Collection."""
 
     firebase_uid = StringField()
     name = StringField(required=True)
@@ -24,6 +24,7 @@ class MenteeProfile(Document, Mixin):
     email_notifications = BooleanField(required=True)
     is_private = BooleanField(required=True)
     video = EmbeddedDocumentField(Video)
+    favorite_mentors_ids = ListField(StringField())
 
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.id} \n name: {self.name}

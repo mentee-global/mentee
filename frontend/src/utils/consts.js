@@ -24,6 +24,7 @@ export const ACCOUNT_TYPE = {
   ADMIN: 0,
   MENTOR: 1,
   MENTEE: 2,
+  GUEST: 3,
 };
 
 export const APP_STATUS = {
@@ -32,6 +33,13 @@ export const APP_STATUS = {
   REJECTED: "Rejected",
   OFFER_MADE: "Offer Made",
 };
+
+export const APPOINTMENT_STATUS = {
+  PENDING: "pending",
+  DENIED: "denied",
+  ACCEPTED: "accepted",
+};
+
 export const LANGUAGES = [
   "Arabic",
   "Bengali",
@@ -95,18 +103,23 @@ export const AGES = [
 // Keys for fields of Appointments
 export const APPOINTMENT_FORM_KEYS = [
   "mentor_id",
-  "name",
-  "email",
-  "phone_number",
-  "languages",
-  "age",
-  "gender",
-  "location",
-  "specialist_categories",
+  "mentee_id",
+  "topic",
   "message",
-  "organization",
   "allow_calls",
   "allow_texts",
+];
+
+// Keys for fields of Message
+export const MESSAGE_FORM_KEYS = [
+  "message",
+  "user_name",
+  "user_id",
+  "recipient_name",
+  "recipient_id",
+  "email",
+  "link",
+  "time",
 ];
 
 // Error messages for login

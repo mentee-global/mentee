@@ -11,6 +11,7 @@ import {
 } from "utils/auth.service";
 import { REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import useQuery from "utils/hooks/useQuery";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
@@ -18,6 +19,9 @@ import "../css/Register.scss";
 import Logo from "../../resources/logo.png";
 
 function Register({ history }) {
+  const query = useQuery();
+  const registerAs = query.get("as");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -48,7 +52,11 @@ function Register({ history }) {
   const submitForm = async () => {
     setSaving(true);
     if (!checkErrors()) {
-      const res = await register(email, password, ACCOUNT_TYPE.MENTOR);
+      const res = await register(
+        email,
+        password,
+        registerAs ? parseInt(registerAs, 10) : ACCOUNT_TYPE.MENTOR
+      );
       // sign in
       if (res && res.success) {
         await sendVerificationEmail(email);

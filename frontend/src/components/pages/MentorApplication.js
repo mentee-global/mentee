@@ -420,8 +420,6 @@ function MentorApplication() {
               </Radio.Group>
             </div>
           </div>
-
-  
         </div>
       </div>
     );
@@ -649,10 +647,7 @@ function MentorApplication() {
               </div>
             </div>
             <div className="submit-button">
-              <MenteeButton
-                content={<b> Submit</b>}
-                onClick={handleSubmit}
-              />
+              <MenteeButton content={<b> Submit</b>} onClick={handleSubmit} />
             </div>
           </div>
         </div>
@@ -663,7 +658,9 @@ function MentorApplication() {
   function successPage() {
     return (
       <div className="success-message">
-        <h1 className="success-message">You have sucessfully submitted your global mentor application</h1>
+        <h1 className="success-message">
+          You have sucessfully submitted your global mentor application
+        </h1>
       </div>
     );
   }
@@ -696,20 +693,25 @@ function MentorApplication() {
               <Step key={item.title} />
             ))}
           </Steps>
-          <div className="steps-content">{steps[current].content}</div>
-          <div className="steps-action">
-            <div className="next-button">
-              {current < steps.length - 1 && (
-                <MenteeButton content={<b>Next ></b>} onClick={() => next()} />
-              )}
-            </div>
-            <div className="previous-button">
-              {current > 0 && (
-                <MenteeButton
-                  content={<CaretLeftOutlined />}
-                  onClick={() => prev()}
-                />
-              )}
+          <div className="steps-content">
+            {steps[current].content}
+            <div className="steps-action">
+              <div className="next-button">
+                {current < steps.length - 1 && (
+                  <MenteeButton
+                    content={<b>Next ></b>}
+                    onClick={() => next()}
+                  />
+                )}
+              </div>
+              <div className="previous-button">
+                {current > 0 && (
+                  <MenteeButton
+                    content={<CaretLeftOutlined />}
+                    onClick={() => prev()}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

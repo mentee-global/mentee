@@ -634,9 +634,6 @@ function MentorApplication() {
                 </Form.Item>
               </div>
             </div>
-            <div className="submit-button">
-              <MenteeButton content={<b> Submit</b>} onClick={handleSubmit} />
-            </div>
           </div>
         </div>
       </div>
@@ -685,15 +682,16 @@ function MentorApplication() {
             {steps[current].content}
             <div className="steps-action">
               <div className="next-button">
-                {current == 4 }
-                <div>
-                {current < steps.length - 1 && (
-                  <MenteeButton
-                    content={<b>Next ></b>}
-                    onClick={() => next()}
-                  />
-                )}
-                </div>
+                {current === 3 ? (
+                  <MenteeButton content={<b> Submit</b>} onClick={handleSubmit} />
+                ) : (                <div>
+                  {current < steps.length - 1 && (
+                    <MenteeButton
+                      content={<b>Next ></b>}
+                      onClick={() => next()}
+                    />
+                  )}
+                  </div>)}
               </div>
               <div className="previous-button">
                 {current > 0 && (

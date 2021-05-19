@@ -242,6 +242,7 @@ def get_mentors_appointments():
 
     return create_response(data={"mentorData": data}, status=200, message="Success")
 
+
 # GET all appointments per mentor
 @appointment.route("/mentees", methods=["GET"])
 @admin_only
@@ -260,6 +261,7 @@ def get_mentees_appointments():
         )
 
     return create_response(data={"menteeData": data}, status=200, message="Success")
+
 
 @appointment.route("/", methods=["GET"])
 @admin_only

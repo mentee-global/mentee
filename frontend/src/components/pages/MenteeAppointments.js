@@ -59,6 +59,7 @@ function MenteeAppointments() {
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE
       );
+
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
         setVisibleAppts(formattedAppointments.upcoming);

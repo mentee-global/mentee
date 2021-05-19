@@ -14,7 +14,7 @@ export const formatAppointments = (data, type) => {
     past: [],
   };
   let appointments = data.requests;
-  if (type == ACCOUNT_TYPE.MENTOR) {
+  if (type === ACCOUNT_TYPE.MENTOR) {
     appointments = data.requests.filter(
       (elem) => !elem.status || elem.status !== APPOINTMENT_STATUS.REJECTED
     );
@@ -77,8 +77,14 @@ export const formatAppointments = (data, type) => {
       allowCalls: appointment.allow_calls,
       status: appointment.status,
     };
+    if (!appointment.status) {
+      formattedAppointment.status = appointment.accepted
+        ? APPOINTMENT_STATUS.ACCEPTED
+        : APPOINTMENT_STATUS.PENDING;
+    }
 
-    if (type == ACCOUNT_TYPE.MENTEE) {
+    // Short process for formatting into Mentee's Appointment Page
+    if (type === ACCOUNT_TYPE.MENTEE) {
       output[currentKey].push(formattedAppointment);
       continue;
     }

@@ -275,16 +275,18 @@ function AdminAccountData() {
             title="Link to Profile"
             dataIndex="id"
             key="id"
-            render={(id) => (
-              <a
-                style={{ color: "black" }}
-                href={formatLinkForHref(`${PROFILE_URL}${id}`)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <LinkOutlined /> {`${PROFILE_URL}${id}`}
-              </a>
-            )}
+            render={(id, data) =>
+              !data.is_private && (
+                <a
+                  style={{ color: "black" }}
+                  href={formatLinkForHref(`${PROFILE_URL}${id}`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <LinkOutlined /> {`${PROFILE_URL}${id}`}
+                </a>
+              )
+            }
             align="center"
           />
         </Table>

@@ -3,7 +3,7 @@ import { MenuOutlined } from "@ant-design/icons";
 
 import { fetchAppointmentsByMenteeId } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
-import { ACCOUNT_TYPE, PROFILE_URL, APPOINTMENT_STATUS } from "utils/consts";
+import { ACCOUNT_TYPE, MENTOR_PROFILE, APPOINTMENT_STATUS } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
 import useAuth from "utils/hooks/useAuth";
 import BookmarkSidebar from "components/BookmarkSidebar";
@@ -30,7 +30,8 @@ function AppointmentCard({ info }) {
         {info.status} <div className={`status-${info.status}`} />
       </div>
       <div className="mentee-appt-card-header">
-        Meeting with <a href={PROFILE_URL + info.mentorId}>{info.mentorName}</a>
+        Meeting with{" "}
+        <a href={MENTOR_PROFILE + info.mentorId}>{info.mentorName}</a>
       </div>
       <div className="mentee-appt-card-time">
         {info.date}

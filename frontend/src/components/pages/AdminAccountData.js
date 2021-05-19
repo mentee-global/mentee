@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Button,
-  Breadcrumb,
-  Input,
-  Spin,
-  Popconfirm,
-  message,
-} from "antd";
+import { Button, Breadcrumb, Input, Spin, message } from "antd";
 import {
   DownloadOutlined,
   ReloadOutlined,
-  LinkOutlined,
   PlusOutlined,
   UserOutlined,
-  DeleteOutlined,
 } from "@ant-design/icons";
 import "../css/AdminAccountData.scss";
 import {
@@ -23,13 +13,10 @@ import {
   deleteMentorById,
   fetchMenteesAppointments,
 } from "../../utils/api";
-import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
-import { PROFILE_URL } from "../../utils/consts";
 import UploadEmails from "../UploadEmails";
+import AdminDataTable from "../AdminDataTable";
 import useAuth from "utils/hooks/useAuth";
-
-const { Column } = Table;
 
 const keys = {
   MENTORS: 0,
@@ -62,8 +49,13 @@ function AdminAccountData() {
       const menteeRes = await fetchMenteesAppointments();
       console.log(menteeRes);
       if (mentorRes && menteeRes) {
+        const newMenteeData = menteeRes.menteeData.map((elem) => ({
+          ...elem,
+          isMentee: true,
+        }));
+
         setMentorData(mentorRes.mentorData);
-        setMenteeData(menteeRes.menteeData);
+        setMenteeData(newMenteeData);
         setDisplayData(mentorRes.mentorData);
         setFilterData(mentorRes.mentorData);
       } else {
@@ -224,72 +216,7 @@ function AdminAccountData() {
         </div>
       </div>
       <Spin spinning={isReloading}>
-        <Table dataSource={filterData}>
-          <Column title="Name" dataIndex="name" key="name" />
-          <Column
-            title="No. of Appointments"
-            dataIndex="numOfAppointments"
-            key="numOfAppointments"
-            align="center"
-          />
-          <Column
-            title="Appointments Available?"
-            dataIndex="appointmentsAvailable"
-            key="appointmentsAvailable"
-            align="center"
-          />
-          <Column
-            title="Videos Posted?"
-            dataIndex="videosUp"
-            key="videosUp"
-            align="center"
-          />
-          <Column
-            title="Picture Uploaded?"
-            dataIndex="profilePicUp"
-            key="profilePicUp"
-            align="center"
-          />
-          <Column
-            title="Delete"
-            dataIndex={["id", "name"]}
-            key="id"
-            render={(text, data) => (
-              <Popconfirm
-                title={`Are you sure you want to delete ${data.name}?`}
-                onConfirm={() => {
-                  handleDeleteAccount(data.id, data.name);
-                }}
-                onCancel={() =>
-                  message.info(`No deletion has been for ${data.name}`)
-                }
-                okText="Yes"
-                cancelText="No"
-              >
-                <DeleteOutlined className="delete-user-btn" />
-              </Popconfirm>
-            )}
-            align="center"
-          />
-          <Column
-            title="Link to Profile"
-            dataIndex="id"
-            key="id"
-            render={(id, data) =>
-              !data.is_private && (
-                <a
-                  style={{ color: "black" }}
-                  href={formatLinkForHref(`${PROFILE_URL}${id}`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <LinkOutlined /> {`${PROFILE_URL}${id}`}
-                </a>
-              )
-            }
-            align="center"
-          />
-        </Table>
+        <AdminDataTable data={filterData} deleteAccount={handleDeleteAccount} />
       </Spin>
     </div>
   );

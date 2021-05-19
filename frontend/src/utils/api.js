@@ -184,8 +184,8 @@ export const editAvailability = (timeslots, id) => {
   );
 };
 
-export const fetchMentorsAppointments = () => {
-  const requestExtension = "/appointment/mentors";
+export const fetchAppointmentsByType = (accountType) => {
+  const requestExtension = `/appointment/${accountType}`;
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -386,4 +386,12 @@ export const fetchAppointmentsByMenteeId = async (id) => {
 
 export const fetchAppointmentsByMentorId = async (id) => {
   return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTOR);
+};
+
+export const fetchMentorsAppointments = async () => {
+  return await fetchAppointmentsByType("mentors");
+};
+
+export const fetchMenteesAppointments = async () => {
+  return await fetchAppointmentsByType("mentees");
 };

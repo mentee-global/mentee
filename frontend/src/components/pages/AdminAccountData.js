@@ -21,6 +21,7 @@ import {
   fetchMentorsAppointments,
   downloadMentorsData,
   deleteMentorById,
+  fetchMenteesAppointments,
 } from "../../utils/api";
 import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
@@ -45,6 +46,7 @@ function AdminAccountData() {
   const [reload, setReload] = useState(true);
   const [resetFilters, setResetFilters] = useState(false);
   const [mentorData, setMentorData] = useState([]);
+  const [menteeData, setMenteeData] = useState([]);
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
@@ -56,12 +58,16 @@ function AdminAccountData() {
   useEffect(() => {
     async function getData() {
       setIsReloading(true);
-      const res = await fetchMentorsAppointments();
-      if (res) {
-        setMentorData(res.mentorData);
-        // TODO: Add Mentee Data state
-        setDisplayData(res.mentorData);
-        setFilterData(res.mentorData);
+      const mentorRes = await fetchMentorsAppointments();
+      const menteeRes = await fetchMenteesAppointments();
+      console.log(menteeRes);
+      if (mentorRes && menteeRes) {
+        setMentorData(mentorRes.mentorData);
+        setMenteeData(menteeRes.menteeData);
+        setDisplayData(mentorRes.mentorData);
+        setFilterData(mentorRes.mentorData);
+      } else {
+        message.error("Could not fetch account data");
       }
       setIsReloading(false);
     }
@@ -89,7 +95,6 @@ function AdminAccountData() {
 
   const handleMentorsDownload = async () => {
     setIsMentorDownload(true);
-    // TODO: Check up on why this isn't working..
     const file = await downloadMentorsData();
     setDownloadFile(file);
     setIsMentorDownload(false);
@@ -118,10 +123,9 @@ function AdminAccountData() {
     if (key === keys.MENTORS) {
       newData = mentorData;
     } else if (key === keys.MENTEES) {
-      //TODO: Add Mentee Data
+      newData = menteeData;
     } else if (key === keys.ALL) {
-      // TODO: Add Mentee Data
-      newData = mentorData.concat([]);
+      newData = mentorData.concat(menteeData);
     }
 
     setDisplayData(newData);

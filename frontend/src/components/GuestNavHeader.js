@@ -41,12 +41,12 @@ function GuestNavHeader({ history }) {
                   content={<b>{"Apply"}</b>}
                   onClick={() => {
                     history.push({
-                      pathname: "/not-found",
+                      pathname: "/application-page",
                     });
                   }}
-                  // onClick={() => {
-                  //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
-                  // }}
+                // onClick={() => {
+                //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
+                // }}
                 />
               </span>
             </>

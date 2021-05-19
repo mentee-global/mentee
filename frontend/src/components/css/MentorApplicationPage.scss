@@ -1,13 +1,15 @@
 .page-one-header {
-  width: 80vw;
+  // width: 80vw;
 }
 
 .page-one-column-container {
    display: flex;
   justify-content: space-between;
-  width: 100%;
-  padding: 3em;
+  // width: 100%;
+  padding-bottom: 1em;
   padding-top: 3em;
+  padding-left: 6em;
+  padding-right: 6em;
   background-color: white;
 }
 .donation-question {
@@ -19,19 +21,15 @@
 }
 
 .column-one,
-.column-one-page-two {
-  display: flex;
-  padding: 3em;
-  padding-bottom: 3em;
+.column-two,
+.column-one-page-two,
+.column-two-page-two {
+  padding-top: 3em;
   width: 50%;
 }
 
-.column-two,
-.column-two-page-two {
-  padding: 3em;
-  padding-top: 3em;
-  padding-bottom: 3em;
-  width: 100%;
+.column-one, .column-one-page-two {
+  padding-right: 3em;
 }
 
 .input-form {
@@ -43,15 +41,7 @@
 }
 
 .next-button {
-  position: relative;
-  bottom: 5em;
-  left: 75em;
-}
-
-.previous-button {
-  position: relative;
-  bottom: 5em;
-  left: 75em;
+  margin-left: 1em;
 }
 
 .header-one {
@@ -109,8 +99,17 @@
 }
 
 .steps-content {
-  width: 190vh;
+  // width: 190vh;
   position: relative;
+  background-color: white;
+  width: 75vw;
+}
+
+.steps-action {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 6em;
+  padding-bottom: 3em;
 }
 
 .instructions {
@@ -131,15 +130,15 @@
 }
 
 .container {
-  margin-left: 8%;
+  // margin-left: 8%;
 }
 
 .column-one-page-two {
-  padding: 3em;
+  width: 50%;
 }
 
 .column-two-page-two {
-  padding: 4em;
+  width: 50%;
 }
 
 .page-two-margin,
@@ -148,10 +147,9 @@
 }
 
 .submit-button {
-  position: relative;
-  top: 14.5em;
-  left: 34em;
+  margin-left: 20em;
 }
+
 
 .welcome-page {
   color: #e4bb50;
@@ -159,4 +157,8 @@
 
 .success-message {
     color: #e4bb50;
+}
+
+.special-topics-question {
+  width: 50%;
 }

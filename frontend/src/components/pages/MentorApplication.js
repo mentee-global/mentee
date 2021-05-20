@@ -196,10 +196,11 @@ function MentorApplication() {
                 rules={[
                   {
                     required: true,
+                    message: 'Input something!',
                   },
                 ]}
               >
-                *Last Name*
+                *Last Name
                 <Input
                   placeholder="*Last Name*"
                   value={lastName}

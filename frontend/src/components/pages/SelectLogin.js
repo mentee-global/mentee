@@ -10,7 +10,7 @@ const Logins = Object.freeze({
   mentee: {
     title: "Mentee",
     type: ACCOUNT_TYPE.MENTEE,
-    redirect: "/messages",
+    redirect: "/mentee-appointments",
   },
   mentor: {
     title: "Mentor",

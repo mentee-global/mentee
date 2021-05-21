@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Button } from "antd";
+import { Avatar, Typography, Button, Rate } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -16,6 +16,7 @@ import useAuth from "../utils/hooks/useAuth";
 import MenteeButton from "./MenteeButton";
 
 import "./css/Gallery.scss";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 const { Title, Text } = Typography;
 
@@ -51,9 +52,9 @@ function MentorCard(props) {
     }
   }
 
-  function onFavoriteClick() {
-    setFavorite(!favorite);
-    props.onEditFav(props.id);
+  function onFavoriteClick(fav) {
+    setFavorite(!fav);
+    props.onEditFav(props.id, fav);
   }
 
   return (
@@ -74,17 +75,11 @@ function MentorCard(props) {
           </div>
           {isMentee && (
             <div className="favorite-button">
-              <Button
-                shape="circle"
-                icon={
-                  favorite ? (
-                    <HeartFilled style={{ color: "#e4bb4f" }}></HeartFilled>
-                  ) : (
-                    <HeartOutlined style={{ color: "#e4bb4f" }}></HeartOutlined>
-                  )
-                }
-                style={{ border: "none" }}
-                onClick={onFavoriteClick}
+              <Rate
+                character={<HeartFilled />}
+                count={1}
+                defaultValue={favorite ? 1 : 0}
+                onChange={(number) => onFavoriteClick(number)}
               />
             </div>
           )}
@@ -137,7 +132,7 @@ function MentorCard(props) {
         )}
         <hr className="gallery-solid-border" />
         <div className="bookmark-button"></div>
-        <NavLink to={"/gallery/" + props.id}>
+        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />
           </div>

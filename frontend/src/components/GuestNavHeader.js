@@ -65,7 +65,6 @@ function GuestNavHeader({ history }) {
               }}
             />
           </span>
-          {/** TODO: Generalize this to be Login instead of just Mentor Login */}
           <span className="navigation-header-button">
             <MenteeButton
               width="9em"
@@ -75,7 +74,7 @@ function GuestNavHeader({ history }) {
                 if (isMentor) {
                   redirect = "/appointments";
                 } else if (isMentee) {
-                  redirect = "/messages";
+                  redirect = "/mentee-appointments";
                 } else if (isAdmin) {
                   redirect = "/account-data";
                 }

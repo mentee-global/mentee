@@ -27,6 +27,14 @@ const authPut = async (url, data, config) =>
     })
     .catch(console.error);
 
+const authDelete = async (url, config) =>
+  instance
+    .delete(url, {
+      ...config,
+      headers: { Authorization: await getUserIdToken() },
+    })
+    .catch(console.error);
+
 export const fetchAccountById = (id, type) => {
   if (!id) return;
   const requestExtension = `/account/${id}`;
@@ -134,7 +142,7 @@ export const deleteAppointment = (id) => {
   );
 };
 
-export const getAppointmentsByMentorID = (id, accountType) => {
+export const fetchAppointmentsById = (id, accountType) => {
   const requestExtension = `/appointment/${accountType}/${id}`;
   return instance.get(requestExtension).then(
     (response) => response.data.result,
@@ -236,7 +244,7 @@ export const downloadAllApplicationData = async () => {
 
 export const deleteMentorById = (id) => {
   const requestExtension = `/mentor/${id}`;
-  return instance.delete(requestExtension).then(
+  return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -245,13 +253,24 @@ export const deleteMentorById = (id) => {
   );
 };
 
-export const EditFavMentorById = (mentee_id, mentor_id) => {
-  const requestExtension = `/mentee/addFavMentor`;
+export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
+  const requestExtension = `/mentee/editFavMentor`;
   const data = {
     mentee_uid: mentee_id,
     mentor_id: mentor_id,
+    favorite: favorite,
   };
   return instance.put(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const sendMessage = (data) => {
+  const requestExtension = `/messages/`;
+  return instance.post(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -305,6 +324,16 @@ export const getAdmin = (id) => {
   );
 };
 
+export const getMessages = (user_id) => {
+  const requestExtension = `/messages/?recipient_id=${user_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 /**
  * Wrapper function calls to general account endpoints
  * This helps with avoiding the need to change multiple files
@@ -349,4 +378,12 @@ export const fetchMentors = async () => {
 
 export const fetchMentees = async () => {
   return await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+};
+
+export const fetchAppointmentsByMenteeId = async (id) => {
+  return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTEE);
+};
+
+export const fetchAppointmentsByMentorId = async (id) => {
+  return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTOR);
 };

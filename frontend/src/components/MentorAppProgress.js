@@ -24,7 +24,7 @@ function MentorAppProgress({ progress }) {
         newStatus["style"] = { background: "#DADADA" };
         break;
     }
-    newStatus["text"] = progress + (progress == "Offer" ? " Made" : "");
+    newStatus["text"] = progress;
     setStatus(newStatus);
   }, []);
 

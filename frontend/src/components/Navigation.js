@@ -13,6 +13,7 @@ import MenteeSideBar from "./MenteeSidebar";
 import useAuth from "utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
+import MenteeMessageTab from "./MenteeMessageTab";
 
 const { Content } = Layout;
 
@@ -22,7 +23,13 @@ function Navigation(props) {
     "permissions",
     ACCOUNT_TYPE.MENTOR
   );
-  const { isAdmin, onAuthUpdate, onAuthStateChanged } = useAuth();
+  const {
+    isAdmin,
+    isMentee,
+    onAuthUpdate,
+    onAuthStateChanged,
+    profileId,
+  } = useAuth();
 
   useEffect(() => {
     onAuthStateChanged((user) => {
@@ -58,6 +65,7 @@ function Navigation(props) {
         ) : (
           <Content className="navigation-content">{props.content}</Content>
         )}
+        {isMentee && <MenteeMessageTab user_id={profileId} />}
       </Layout>
     </div>
   );

@@ -16,11 +16,11 @@
 }
 
 .navigation-sidebar {
-    box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.244974);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
 }
 
 .navigation-menu-item {
-    background-color: $nav-menu-item-color;
+  background-color: $nav-menu-item-color;
 }
 
 .navigation-menu-item:hover {
@@ -31,14 +31,69 @@
 .ant-tooltip-inner {
   color: white;
 }
+.ant-collapse-content > .ant-collapse-content-box {
+  padding: 0;
+}
+
+.ant-list-split .ant-list-item {
+  border-bottom: 0.25px solid #e4bb4f;
+}
 
 .navigation-menu-item-selected {
-  background-color:$nav-menu-item-selected-color;
+  background-color: $nav-menu-item-selected-color;
   pointer-events: none;
 }
 
 .navigation-submenu {
   color: $nav-submenu-color;
+}
+
+.navigation-messages {
+  bottom: 0px;
+  width: 30%;
+  position: fixed;
+  right: 20%;
+  box-shadow: 0 6px 5px 0 rgba(0, 0, 0, 0.19);
+}
+
+.message-box {
+  height: 60vh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.message-box .ant-list-item:hover {
+  box-shadow: 0 0 4px #eee;
+  cursor: pointer;
+}
+
+.ant-drawer-header {
+  border-bottom: 0.25px solid #e4bb4f;
+}
+
+.ant-drawer-body {
+  padding-top: 10px;
+}
+
+.ant-drawer-footer {
+  text-align: center;
+  border-top: 0.25px solid #e4bb4f;
+}
+
+.ant-collapse-content {
+  border-top: 0.25px solid #e4bb4f;
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.drawerHeader span {
+  color: #7a7a7a;
+  font-size: 11px;
 }
 
 .profile-picture {
@@ -94,4 +149,13 @@
 .navigation-header-button {
   margin-right: 10px;
   width: 100%;
+}
+
+.loadingIcon {
+  margin: 30px 0;
+  margin-bottom: 20px;
+  padding-top: 10%;
+  padding-left: 40%;
+  text-align: center;
+  border-radius: 4px;
 }

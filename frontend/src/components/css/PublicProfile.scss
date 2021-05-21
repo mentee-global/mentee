@@ -5,19 +5,24 @@
   padding: 2%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   // For desktop screens
   .mentor-profile-content-public {
     padding: 3%;
     width: 70%;
-    background: linear-gradient(180deg, #FCF6E8 20%, white 20%);
+    background: linear-gradient(180deg, #fcf6e8 20%, white 20%);
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.245);
+  }
+
+  .mentee-public-content {
+    width: 100% !important;
+    display: flex;
   }
 
   .mentor-profile-flexbox {
     display: flex;
-    border-left: 15vh solid #FFF7E2;
-    border-right: 15vh solid #FFF7E2;
+    border-left: 15vh solid #fff7e2;
+    border-right: 15vh solid #fff7e2;
     flex-direction: row;
     padding: 0;
   }
@@ -30,7 +35,7 @@
   }
 
   .mentor-profile-videos-search {
-    background: #F4F4F4;
+    background: #f4f4f4;
     border-radius: 25px;
     margin-top: 2%;
     margin-bottom: 5%;
@@ -38,16 +43,16 @@
   }
 
   .mentor-profile-videos-search input {
-    background: #F4F4F4;
+    background: #f4f4f4;
     color: #828282;
   }
 
   .mentor-profile-videos-divider {
-    border: 1px solid #DADADA;
+    border: 1px solid #dadada;
   }
 
   .pinned-video-default-preview {
-    background: #E0E0E0;
+    background: #e0e0e0;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
     border-radius: 8px;
     width: 100%;
@@ -55,7 +60,7 @@
   }
 
   .video-default-preview {
-    background: #E0E0E0;
+    background: #e0e0e0;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
     border-radius: 8px;
     width: 100%;

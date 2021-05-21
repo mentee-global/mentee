@@ -25,9 +25,10 @@ function MentorAppInfo({ info }) {
     <div className="info-container">
       <div className="single-info-section" style={{ marginTop: "0em" }}>
         <div className="answer">
-          {`Submission Date: ${moment(info.date_submitted.$date).format(
-            "MMMM, D, YYYY"
-          )}`}
+          {info.date_submitted &&
+            `Submission Date: ${moment(info.date_submitted.$date).format(
+              "MMMM, D, YYYY"
+            )}`}
         </div>
       </div>
       <div className="single-info-section">
@@ -93,17 +94,19 @@ function MentorAppInfo({ info }) {
         <div style={{ width: "50%" }}>
           <div className="question">{questions.languages}</div>
           <div className="answer">
-            {info &&
-              info.languages.map((elem) => {
-                return <div>• {elem}</div>;
-              })}
+            {info.languages &&
+              (!Array.isArray(info.languages)
+                ? info.languages
+                : info.languages.map((elem) => {
+                    return <div>• {elem}</div>;
+                  }))}
           </div>
         </div>
       </div>
       <div className="single-info-section">
         <div className="question">{questions.topics}</div>
         <div className="answer">
-          {info &&
+          {info.specializations &&
             info.specializations.map((elem) => {
               return <div>• {elem}</div>;
             })}

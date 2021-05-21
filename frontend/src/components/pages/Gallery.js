@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { fetchMenteeByID, fetchMentors } from "../../utils/api";
 import MentorCard from "../MentorCard";
-import { Input, Checkbox, Modal, Result } from "antd";
+import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn, getMenteeID } from "utils/auth.service";
+import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { EditFavMentorById } from "../../utils/api";
 import useAuth from "../../utils/hooks/useAuth";
 
 function Gallery() {
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const { isAdmin, isMentor, isMentee, onAuthStateChanged } = useAuth();
   const [mentors, setMentors] = useState([]);
   const [mentee, setMentee] = useState();
   const [specializations, setSpecializations] = useState([]);
@@ -20,8 +20,8 @@ function Gallery() {
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
-  const [favorite_mentorIds, setFavoriteIds] = useState(new Set());
-  const verified = location.state && location.state.verified;
+  const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
+  const [pageLoaded, setPageLoaded] = useState(false);
 
   useEffect(() => {
     async function getMentors() {
@@ -30,10 +30,15 @@ function Gallery() {
         setMentors(mentor_data);
       }
     }
-    if (verified) {
-      getMentors();
+
+    getMentors();
+  }, []);
+
+  useEffect(() => {
+    if (isMentor || isAdmin) {
+      setPageLoaded(true);
     }
-  }, [verified]);
+  }, [isMentor, isAdmin]);
 
   useEffect(() => {
     async function getMentee() {
@@ -54,15 +59,16 @@ function Gallery() {
       mentee.favorite_mentors_ids.forEach((id) => {
         fav_set.add(id);
       });
-      setFavoriteIds(fav_set);
+      setFavoriteMentorIds(fav_set);
+      setPageLoaded(true);
     }
     if (isMentee) {
       initializeFavorites();
     }
   }, [mentee]);
 
-  function onEditFav(mentor_id) {
-    EditFavMentorById(mentee.firebase_uid, mentor_id);
+  function onEditFav(mentor_id, favorite) {
+    EditFavMentorById(mentee.firebase_uid, mentor_id, favorite);
   }
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {
@@ -76,8 +82,8 @@ function Gallery() {
     return output;
   }
 
-  const getFilteredMentors = useCallback(() => {
-    return mentors.filter((mentor) => {
+  const getFilteredMentors = () =>
+    mentors.filter((mentor) => {
       // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
       const matchesSpecializations =
         specializations.length === 0 ||
@@ -90,10 +96,9 @@ function Gallery() {
 
       return matchesSpecializations && matchesLanguages && matchesName;
     });
-  }, [favorite_mentorIds]);
 
   // Add some kind of error 403 code
-  return !(isLoggedIn() || verified) ? (
+  return !isLoggedIn() ? (
     <Result
       status="403"
       title="403"
@@ -180,27 +185,34 @@ function Gallery() {
         </div>
 
         <div className="gallery-mentor-container">
-          {getFilteredMentors().map((mentor, key) => (
-            <MentorCard
-              key={key}
-              name={mentor.name}
-              languages={mentor.languages}
-              professional_title={mentor.professional_title}
-              location={mentor.location}
-              specializations={mentor.specializations}
-              website={mentor.website}
-              linkedin={mentor.linkedin}
-              id={mentor._id["$oid"]}
-              firebase_uid={mentor.firebase_uid}
-              lesson_types={getLessonTypes(
-                mentor.offers_group_appointments,
-                mentor.offers_in_person
-              )}
-              favorite={favorite_mentorIds.has(mentor._id["$oid"])}
-              onEditFav={onEditFav}
-              image={mentor.image}
-            />
-          ))}
+          {!pageLoaded ? (
+            <div className="loadingIcon">
+              {" "}
+              <Spin />{" "}
+            </div>
+          ) : (
+            getFilteredMentors().map((mentor, key) => (
+              <MentorCard
+                key={key}
+                name={mentor.name}
+                languages={mentor.languages}
+                professional_title={mentor.professional_title}
+                location={mentor.location}
+                specializations={mentor.specializations}
+                website={mentor.website}
+                linkedin={mentor.linkedin}
+                id={mentor._id["$oid"]}
+                firebase_uid={mentor.firebase_uid}
+                lesson_types={getLessonTypes(
+                  mentor.offers_group_appointments,
+                  mentor.offers_in_person
+                )}
+                favorite={favoriteMentorIds.has(mentor._id["$oid"])}
+                onEditFav={onEditFav}
+                image={mentor.image}
+              />
+            ))
+          )}
         </div>
       </div>
     </>

@@ -43,7 +43,7 @@ function ProfileContent(props) {
         </div>
       );
     } else {
-      console.log("afwo;eijflk")
+      console.log("afwo;eijflk");
     }
   };
 

@@ -54,7 +54,8 @@ export const formatAppointments = (data, type) => {
     if (
       (appointment.status === APPOINTMENT_STATUS.PENDING ||
         (appointment.accepted !== undefined && !appointment.accepted)) &&
-      startTime.isSameOrAfter(now)
+      startTime.isSameOrAfter(now) &&
+      type !== ACCOUNT_TYPE.MENTEE
     ) {
       currentKey = "pending";
     } else if (startTime.isBefore(now)) {

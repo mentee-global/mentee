@@ -63,6 +63,7 @@ function MenteeAppointments() {
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE
       );
+      console.log(formattedAppointments);
       if (formattedAppointments && favMentors) {
         setAppointments(formattedAppointments);
         setVisibleAppts(formattedAppointments.upcoming);

@@ -191,13 +191,8 @@ function Profile() {
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <ProfileContent
-<<<<<<< HEAD
               mentor={user}
               isMentor={isMentor}
-=======
-              account={mentor}
-              isMentor={true}
->>>>>>> 41d138dd52ff5f16bde5be296cf88ffa4a58db8d
               handleSaveEdits={handleSaveEdits}
             />
           </div>

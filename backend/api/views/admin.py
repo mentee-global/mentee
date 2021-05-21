@@ -22,12 +22,12 @@ def delete_account(role, id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    user_id = account.user_id
     firebase_uid = account.firebase_uid
     email = account.email
     login = None
 
     if not firebase_uid:
+        user_id = account.user_id
         try:
             login = Users.objects.get(id=user_id.id)
         except:

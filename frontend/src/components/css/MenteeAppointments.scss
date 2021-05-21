@@ -125,6 +125,7 @@
   border: 0.5px solid #e4bb4f;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 8px;
+  min-height: 4em;
 }
 
 .mentee-bookmark-card {
@@ -155,6 +156,10 @@
 .bookmark-heart {
   float: right;
   margin: 0.5em 0.5em 0 0;
+}
+
+.bookmark-spin {
+  margin-top: 1.5em;
 }
 
 @media only screen and (max-width: 768px) {

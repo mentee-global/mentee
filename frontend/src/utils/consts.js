@@ -12,9 +12,15 @@ export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
 
+<<<<<<< HEAD
 export const MENTEE_PROFILE = FRONT_BASE_URL + "gallery/2/";
 
 export const MENTOR_PROFILE = FRONT_BASE_URL + "gallery/1/";
+=======
+export const PROFILE_URL = FRONT_BASE_URL + "gallery/";
+export const MENTOR_PROFILE = "gallery/1";
+export const MENTEE_PROFILE = "gallery/2";
+>>>>>>> origin/dev
 
 export const REGISTRATION_STAGE = {
   START: 0,

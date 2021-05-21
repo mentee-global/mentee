@@ -55,6 +55,21 @@ def get_requests_by_id(account_type, id):
             appointment.mentee_id = mentee.id
             appointment.save()
 
+    # Update appointment requests that don't have a mentor_name
+    if account_type == Account.MENTEE:
+        missing_name = AppointmentRequest.objects(mentee_id=id).filter(
+            mentor_name__not__exists=True
+        )
+        for appointment in missing_name:
+            try:
+                mentor = MentorProfile.objects.get(id=appointment.mentor_id)
+            except:
+                msg = f"Could not find mentor with given id"
+                logger.info(msg)
+                continue
+            appointment.mentor_name = mentor.name
+            appointment.save()
+
     # Fetch appointments by respective mentee/mentor id
     res = None
     if account_type == Account.MENTEE:
@@ -94,6 +109,7 @@ def create_appointment():
         mentor_id=data.get("mentor_id"),
         mentee_id=data.get("mentee_id"),
         name=mentee.name,
+        mentor_name=mentor.name,
         status=data.get("status"),
         topic=data.get("topic"),
         message=data.get("message"),

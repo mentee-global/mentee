@@ -82,9 +82,9 @@ function MenteeAppointments() {
   const handleUnfavorite = async (mentorId, name) => {
     const res = await EditFavMentorById(profileId, mentorId, false);
     if (!res) {
-      message.error(`failed to unfavorite mentor ${name}`, 3);
+      message.error(`Failed to unfavorite mentor ${name}`, 3);
     } else {
-      message.success(`successfully unfavorite mentor ${name}`, 3);
+      message.success(`Successfully unfavorite mentor ${name}`, 3);
       const newFav = favMentors.filter((mentor) => mentor.id != mentorId);
       setFavMentors(newFav);
     }

@@ -256,9 +256,9 @@ export const deleteMentorById = (id) => {
 export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   const requestExtension = `/mentee/editFavMentor`;
   const data = {
-    mentee_id: mentee_id,
-    mentor_id: mentor_id,
-    favorite: favorite,
+    mentee_id,
+    mentor_id,
+    favorite,
   };
   return instance.put(requestExtension, data).then(
     (response) => response,

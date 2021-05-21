@@ -314,7 +314,6 @@ function MentorApplication() {
         <h1 className="header-two">Commitments</h1>
         <div className="page-one-column-container">
           <div className="column-one-page-two">
-            <Form layout="inline">
               <div className="page-two-margin">
                 <p3 className="donation-question">
                   *As a MENTEE global mentor, you wll have your own profile page
@@ -328,7 +327,7 @@ function MentorApplication() {
                   volunteer organization and we are 100% sustained by donations.
                   Are you able to offer a donation for one year?*
                 </p3>
-
+                <Form layout="inline"></Form>
                 <Radio.Group
                   className="donation"
                   onChange={onChange1}
@@ -365,7 +364,6 @@ function MentorApplication() {
                   onChange={onChangeCheck}
                 />
               </div>
-            </Form>
           </div>
           <div className="column-two-page-two">
             <div className="page-two-margin">
@@ -434,8 +432,8 @@ function MentorApplication() {
             </div>
           </div>
           <div className="column-two">
-            <div className="role-description-question">
-              <div className="role-description-answers">
+            <div>
+              {"*Your full title and a brief description of your role."}
                 <Form.Item
                   name="role-description"
                   className="input-form"
@@ -445,7 +443,7 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  *Your full title and a brief description of your role.
+                  
                   <Input
                     type="text"
                     placeholder="*Your full title and a brief description of your role."
@@ -453,10 +451,10 @@ function MentorApplication() {
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </Form.Item>
-              </div>
-            </div>
-            <div className="employer-name-question">
-              <div className="employer-name-answers">
+                </div>
+    
+                <div>
+                {"*Full name of your company/employer"} 
                 <Form.Item
                   name="employer-name"
                   className="input-form"
@@ -465,8 +463,7 @@ function MentorApplication() {
                       required: true,
                     },
                   ]}
-                >
-                  *Full name of your company/employer
+                >          
                   <Input
                     type="text"
                     placeholder="*Full name of your company/employer"
@@ -474,8 +471,9 @@ function MentorApplication() {
                     onChange={(e) => setEmployer(e.target.value)}
                   />
                 </Form.Item>
-              </div>
-            </div>
+                </div>
+             
+           
             <div className="page-three-padding">
               *How long have you been with this company?
               <div className="time-options-answers">
@@ -622,9 +620,7 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  *Do you speak a language(s) other than English? If yes, please
-                  write the language(s) below and include your fluency level
-                  (conversational, fluent, native).
+                  {"*Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level(conversational, fluent, native)."}
                   <Input
                     type="text"
                     placeholder="*Do you speak a language(s) other than English? If yes, please

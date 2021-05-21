@@ -2,6 +2,10 @@ import moment from "moment";
 import { APPOINTMENT_STATUS } from "./consts";
 import { ACCOUNT_TYPE } from "utils/consts";
 
+const isPending = (appointment) =>
+  appointment.status === APPOINTMENT_STATUS.PENDING ||
+  (appointment.accepted !== undefined && !appointment.accepted);
+
 export const formatAppointments = (data, type) => {
   if (!data || !data.requests) {
     return;
@@ -52,8 +56,7 @@ export const formatAppointments = (data, type) => {
 
     let currentKey = "upcoming";
     if (
-      (appointment.status === APPOINTMENT_STATUS.PENDING ||
-        (appointment.accepted !== undefined && !appointment.accepted)) &&
+      isPending(appointment) &&
       startTime.isSameOrAfter(now) &&
       type !== ACCOUNT_TYPE.MENTEE
     ) {

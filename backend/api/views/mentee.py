@@ -12,6 +12,7 @@ mentee = Blueprint("mentee", __name__)
 def edit_fav_mentor():
     try:
         data = request.get_json()
+        logger.info(data)
         mentor_id = data["mentor_id"]
         mentee_id = data["mentee_id"]
         favorite = bool(data["favorite"])

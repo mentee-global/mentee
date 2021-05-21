@@ -67,6 +67,8 @@ function MenteeAppointments() {
         // TODO: Connect this to the backend once #289 is ready
         setAppointments(ApptData);
         setVisibleAppts(ApptData.upcoming);
+
+        resFavMentors.map((elem) => (elem.id = elem._id.$oid));
         setFavMentors(resFavMentors);
       } else {
         console.error("Failed to fetch appointments or favorite mentors");

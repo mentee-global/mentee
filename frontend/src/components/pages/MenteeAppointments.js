@@ -8,7 +8,7 @@ import {
   EditFavMentorById,
 } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
-import { ACCOUNT_TYPE, PROFILE_URL } from "utils/consts";
+import { ACCOUNT_TYPE, MENTOR_PROFILE } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
 import useAuth from "utils/hooks/useAuth";
 import BookmarkSidebar from "components/BookmarkSidebar";
@@ -34,7 +34,10 @@ function AppointmentCard({ info }) {
         <div className={`status-${info.status ?? "pending"}`} />
       </div>
       <div className="mentee-appt-card-header">
-        Meeting with <a href={PROFILE_URL + info.mentorID}>{info.mentorName}</a>
+        Meeting with{" "}
+        <a href={`${MENTOR_PROFILE}/${info.mentorID}`}>
+          {info.mentorName ?? "Mentor Not Found"}
+        </a>
       </div>
       <div className="mentee-appt-card-time">
         {info.date}
@@ -63,7 +66,7 @@ function MenteeAppointments() {
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE
       );
-      console.log(formattedAppointments);
+
       if (formattedAppointments && favMentors) {
         setAppointments(formattedAppointments);
         setVisibleAppts(formattedAppointments.upcoming);

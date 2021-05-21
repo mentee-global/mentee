@@ -13,7 +13,7 @@ class AppointmentRequest(Document, Mixin):
     name = StringField(required=True)
     mentor_name = StringField()
     timeslot = EmbeddedDocumentField(Availability, required=True)
-    topic = StringField(required=True)
+    topic = StringField()
     message = StringField()
     status = StringField()
     allow_texts = BooleanField()

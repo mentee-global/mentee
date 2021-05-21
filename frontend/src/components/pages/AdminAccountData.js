@@ -10,7 +10,7 @@ import "../css/AdminAccountData.scss";
 import {
   fetchMentorsAppointments,
   downloadMentorsData,
-  deleteMentorById,
+  deleteAccountById,
   fetchMenteesAppointments,
 } from "../../utils/api";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
@@ -67,12 +67,8 @@ function AdminAccountData() {
     onAuthStateChanged(getData);
   }, [reload]);
 
-  const handleDeleteAccount = async (mentorId, name) => {
-    if (!mentorId) {
-      message.error("Could not get specified mentor id");
-      return;
-    }
-    const success = await deleteMentorById(mentorId);
+  const handleDeleteAccount = async (id, accountType, name) => {
+    const success = await deleteAccountById(id, accountType);
     if (success) {
       message.success(`Successfully deleted ${name}`);
       setReload(!reload);

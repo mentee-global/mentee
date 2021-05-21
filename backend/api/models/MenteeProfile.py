@@ -9,6 +9,7 @@ class MenteeProfile(Document, Mixin):
     """Mentee Profile Collection."""
 
     firebase_uid = StringField()
+    user_id = ReferenceField("Users")
     name = StringField(required=True)
     gender = StringField(required=True)
     location = StringField()

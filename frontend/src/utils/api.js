@@ -242,8 +242,8 @@ export const downloadAllApplicationData = async () => {
   );
 };
 
-export const deleteMentorById = (id) => {
-  const requestExtension = `/mentor/${id}`;
+export const deleteAccountById = (id, accountType) => {
+  const requestExtension = `/${accountType}/${id}`;
   return authDelete(requestExtension).then(
     (response) => response,
     (err) => {

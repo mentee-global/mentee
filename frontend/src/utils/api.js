@@ -256,15 +256,23 @@ export const deleteMentorById = (id) => {
 export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   const requestExtension = `/mentee/editFavMentor`;
   const data = {
-    mentee_uid: mentee_id,
-    mentor_id: mentor_id,
-    favorite: favorite,
+    mentee_id,
+    mentor_id,
+    favorite,
   };
   return instance.put(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
     }
+  );
+};
+
+export const getFavMentorsById = (mentee_id) => {
+  const requestExtension = `/mentee/favorites/${mentee_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.favorites,
+    (err) => console.error(err)
   );
 };
 

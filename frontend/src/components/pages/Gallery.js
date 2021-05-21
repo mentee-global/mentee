@@ -12,7 +12,7 @@ import { EditFavMentorById } from "../../utils/api";
 import useAuth from "../../utils/hooks/useAuth";
 
 function Gallery() {
-  const { isAdmin, isMentor, isMentee, onAuthStateChanged } = useAuth();
+  const { isAdmin, isMentor, isMentee, profileId } = useAuth();
   const [mentors, setMentors] = useState([]);
   const [mentee, setMentee] = useState();
   const [specializations, setSpecializations] = useState([]);
@@ -68,7 +68,7 @@ function Gallery() {
   }, [mentee]);
 
   function onEditFav(mentor_id, favorite) {
-    EditFavMentorById(mentee.firebase_uid, mentor_id, favorite);
+    EditFavMentorById(profileId, mentor_id, favorite);
   }
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {

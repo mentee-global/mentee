@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { MenuOutlined, SmileOutlined } from "@ant-design/icons";
-import { Result } from "antd";
+import { Result, message } from "antd";
 
-import { fetchAppointmentsByMenteeId } from "utils/api";
+import {
+  fetchAppointmentsByMenteeId,
+  getFavMentorsById,
+  EditFavMentorById,
+} from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, PROFILE_URL } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
@@ -10,9 +14,6 @@ import useAuth from "utils/hooks/useAuth";
 import BookmarkSidebar from "components/BookmarkSidebar";
 
 import "components/css/MenteeAppointments.scss";
-import BookMarkData from "utils/MenteeBookMarks.json";
-
-// TODO: Update the appointment formatter to support legacy status
 
 const appointmentTabs = Object.freeze({
   upcoming: {
@@ -50,26 +51,44 @@ function AppointmentCard({ info }) {
 function MenteeAppointments() {
   const [appointments, setAppointments] = useState({});
   const [visibleAppts, setVisibleAppts] = useState([]);
+  const [favMentors, setFavMentors] = useState([]);
   const { profileId } = useAuth();
 
   useEffect(() => {
-    async function getAppointments() {
+    async function getData() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
+      const resFavMentors = await getFavMentorsById(profileId);
+
       const formattedAppointments = formatAppointments(
         appointmentsResponse,
         ACCOUNT_TYPE.MENTEE
       );
-
-      if (formattedAppointments) {
+      if (formattedAppointments && favMentors) {
         setAppointments(formattedAppointments);
         setVisibleAppts(formattedAppointments.upcoming);
+
+        resFavMentors.map((elem) => (elem.id = elem._id.$oid));
+        setFavMentors(resFavMentors);
+      } else {
+        console.error("Failed to fetch appointments or favorite mentors");
       }
     }
-    getAppointments();
+    getData();
   }, [profileId]);
 
   const handleOverlayChange = (newSelect) => {
     setVisibleAppts(appointments[newSelect]);
+  };
+
+  const handleUnfavorite = async (mentorId, name) => {
+    const res = await EditFavMentorById(profileId, mentorId, false);
+    if (!res) {
+      message.error(`Failed to unfavorite mentor ${name}`, 3);
+    } else {
+      message.success(`Successfully unfavorite mentor ${name}`, 3);
+      const newFav = favMentors.filter((mentor) => mentor.id != mentorId);
+      setFavMentors(newFav);
+    }
   };
 
   return (
@@ -93,7 +112,7 @@ function MenteeAppointments() {
           )}
         </div>
       </div>
-      <BookmarkSidebar bookmarks={BookMarkData.bookmarks} />
+      <BookmarkSidebar bookmarks={favMentors} unfavorite={handleUnfavorite} />
     </div>
   );
 }

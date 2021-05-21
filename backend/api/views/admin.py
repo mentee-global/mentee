@@ -12,7 +12,7 @@ import io
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
 # DELETE request for specific account based on id
-@admin.route("/<int:account_type>/<string:id>", methods=["DELETE"])
+@admin.route("/<int:role>/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_account(role, id):
     try:

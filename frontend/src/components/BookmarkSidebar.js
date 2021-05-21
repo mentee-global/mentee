@@ -50,7 +50,7 @@ function BookmarkSidebar({ bookmarks, unfavorite }) {
                   {mentor.name}
                 </div>
                 <div className="mentee-bookmark-mentor-title">
-                  {mentor.title}
+                  {mentor.professional_title}
                 </div>
               </div>
             </div>

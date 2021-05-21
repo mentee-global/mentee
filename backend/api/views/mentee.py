@@ -46,28 +46,19 @@ def get_favorites(id):
         mentee = MenteeProfile.objects.get(id=id)
     except:
         msg = f"Failed to fetch mentee by id: {id}"
-        logger.info(msg)
         return create_response(status=422, message=msg)
 
     favorites = mentee.favorite_mentors_ids
-    logger.info(favorites)
     mentor_list = list()
     for mentor_id in favorites:
         try:
-            mentor = MentorProfile.objects.get(id=mentor_id)
+            mentor = MentorProfile.objects.only(
+                "name", "professional_title", "id", "image"
+            ).get(id=mentor_id)
         except:
             msg = f"failed to fetch mentor by id: {mentor_id}"
             continue
-        mentor_list.append(
-            {
-                "name": mentor.name,
-                "title": mentor.professional_title,
-                "id": mentor_id,
-                "image": mentor.image,
-            }
-        )
-
-    logger.info(mentor_list)
+        mentor_list.append(mentor)
 
     return create_response(
         status=200, data={"favorites": mentor_list}, message="success"

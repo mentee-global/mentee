@@ -159,6 +159,7 @@ def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
 
     return True, ""
 
+
 def get_profile_model(role):
     if role == Account.MENTOR:
         return MentorProfile

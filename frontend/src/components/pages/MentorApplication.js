@@ -173,8 +173,9 @@ function MentorApplication() {
         <div className="page-one-column-container">
           <div className="column-one">
             <Form>
+              {"*First Name"}
               <Form.Item
-                name="first-name"
+                name="First Name"
                 className="input-form"
                 rules={[
                   {
@@ -182,7 +183,7 @@ function MentorApplication() {
                   },
                 ]}
               >
-                *First Name
+               
                 <Input
                   type="text"
                   placeholder="*First Name"
@@ -190,25 +191,27 @@ function MentorApplication() {
                   onChange={(e) => setFirstName(e.target.value)}
                 />
               </Form.Item>
+              {"*Last Name"}
               <Form.Item
-                name="last-name"
+            
+                name="Last Name"
                 className="input-form"
                 rules={[
                   {
                     required: true,
-                    message: 'Input something!',
                   },
                 ]}
               >
-                *Last Name
+                
                 <Input
                   placeholder="*Last Name*"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </Form.Item>
+              {"*Cell Phone Number"}
               <Form.Item
-                name="cell-number"
+                name="Cell Phone Number"
                 className="input-form"
                 rules={[
                   {
@@ -216,7 +219,7 @@ function MentorApplication() {
                   },
                 ]}
               >
-                *Cell Phone Number*
+                
                 <Input
                   type="text"
                   placeholder="*Cell Phone Number*"
@@ -245,8 +248,9 @@ function MentorApplication() {
                   onChange={(e) => setBusinessNum(e.target.value)}
                 />
               </Form.Item>
+              {"*Email"}
               <Form.Item
-                name="email"
+                name="Email"
                 className="input-form-two"
                 rules={[
                   {
@@ -254,7 +258,6 @@ function MentorApplication() {
                   },
                 ]}
               >
-                *Email
                 <Input
                   type="text"
                   placeholder="*Email"
@@ -262,8 +265,9 @@ function MentorApplication() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Form.Item>
+              {"*From whom or where did you hear about us?"}
               <Form.Item
-                name="hear-about-us"
+                name="Hear About Us"
                 className="input-form-two"
                 rules={[
                   {
@@ -271,7 +275,7 @@ function MentorApplication() {
                   },
                 ]}
               >
-                *From whom or where did you hear about us?
+                
                 <Input
                   type="text"
                   placeholder="*From whom or where did you hear about us?"
@@ -279,8 +283,9 @@ function MentorApplication() {
                   onChange={(e) => setHearAbout(e.target.value)}
                 />
               </Form.Item>
+              {"*Please share why you would like to become apart of our MENTEE Mentor Specialist team?"}
               <Form.Item
-                name="why-mentee"
+                name="Why Mentee?"
                 className="input-form-two"
                 rules={[
                   {
@@ -288,10 +293,6 @@ function MentorApplication() {
                   },
                 ]}
               >
-                <div className="why-mentee-question">
-                  *Please share why you would like to become apart of our MENTEE
-                  Mentor Specialist team?
-                </div>
                 <TextArea
                   autoSize
                   placeholder="*Please share why you would like to become apart of our MENTEE Mentor Specialist team?"

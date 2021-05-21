@@ -20,7 +20,7 @@ class MentorApplication(Document, Mixin):
     linkedin = StringField(required=True)
     why_join_mentee = StringField(required=True)
     commit_time = StringField(required=True)
-    specialist_time = StringField(required=True)
+    specialist_time = StringField()
     immigrant_status = StringField(required=True)
     languages = StringField(required=True)
     specializations = ListField(StringField(), required=True)

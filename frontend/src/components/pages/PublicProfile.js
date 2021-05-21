@@ -4,45 +4,59 @@ import { Avatar } from "antd";
 
 import ProfileContent from "../ProfileContent";
 import ProfileVideos from "../ProfileVideos";
-import { fetchMentorByID } from "../../utils/api";
+import { fetchAccountById } from "../../utils/api";
 
 import "../css/PublicProfile.scss";
+import { ACCOUNT_TYPE } from "utils/consts";
+import MenteeVideo from "components/MenteeVideo";
 
-function PublicProfile(props) {
-  const [mentor, setMentor] = useState({});
+function PublicProfile({ accountType, id }) {
+  const [account, setAccount] = useState({});
   const [updateContent, setUpdateContent] = useState(false);
+  const [isMentor, setIsMentor] = useState(accountType == ACCOUNT_TYPE.MENTOR);
 
   useEffect(() => {
-    async function getMentor() {
-      const mentor_data = await fetchMentorByID(props.id);
-      if (mentor_data) {
-        setMentor(mentor_data);
+    async function getAccount() {
+      const accountData = await fetchAccountById(id, accountType);
+      if (accountData) {
+        setAccount(accountData);
       }
     }
-    getMentor();
-  }, [updateContent, props.id]);
+    getAccount();
+  }, [updateContent, id]);
 
-  const handleUpdateMentor = () => {
+  const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
   };
 
   return (
     <div className="mentor-profile-flexbox">
-      <div className="mentor-profile-content-public">
-        <Avatar
-          size={120}
-          src={mentor.image && mentor.image.url}
-          icon={<UserOutlined />}
-        />
-        <ProfileContent
-          mentor={mentor}
-          id={props.id}
-          handleUpdateMentor={handleUpdateMentor}
-        />
+      <div
+        className={
+          "mentor-profile-content-public" +
+          (!isMentor ? " mentee-public-content" : "")
+        }
+      >
+        <div style={{ minWidth: "65%" }}>
+          <Avatar
+            size={120}
+            src={account.image && account.image.url}
+            icon={<UserOutlined />}
+          />
+          <ProfileContent
+            account={account}
+            id={id}
+            handleUpdateAccount={handleUpdateAccount}
+            accountType={accountType}
+          />
+        </div>
+        {!isMentor && <MenteeVideo video={account.video} />}
       </div>
-      <div className="mentor-profile-videos">
-        <ProfileVideos videos={mentor.videos} />
-      </div>
+      {isMentor && (
+        <div className="mentor-profile-videos">
+          <ProfileVideos videos={account.videos} />
+        </div>
+      )}
     </div>
   );
 }

@@ -15,7 +15,7 @@ import MenteeLogoSmall from "../resources/menteeSmall.png";
 
 const { Header } = Layout;
 
-function MenteeNavHeader({ history }) {
+function GuestNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const { isAdmin, isMentor, isMentee } = useAuth();
 
@@ -36,38 +36,27 @@ function MenteeNavHeader({ history }) {
             <>
               <span className="navigation-header-button">
                 <MenteeButton
-                  width="100%"
+                  width="9em"
                   theme="light"
                   content={<b>{"Apply"}</b>}
                   onClick={() => {
                     history.push({
-                      pathname: "/not-found",
+                      pathname: "/application-page",
                     });
                   }}
-                  // onClick={() => {
-                  //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
-                  // }}
-                />
-              </span>
-              <span className="navigation-header-button">
-                <MenteeButton
-                  width="100%"
-                  theme="light"
-                  content={<b>{"Admin Portal"}</b>}
-                  onClick={() => {
-                    history.push({
-                      pathname: isAdmin ? "/account-data" : "/admin-login",
-                    });
-                  }}
+                // onClick={() => {
+                //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
+                // }}
                 />
               </span>
             </>
           )}
+          {/* TODO: Update this since verification modal will not longer be needed anymore! */}
           <span className="navigation-header-button">
             <MenteeVerificationModal
               content={<b>Find a Mentor</b>}
               theme="light"
-              width="100%"
+              width="9em"
               onVerified={() => {
                 history.push({
                   pathname: "/gallery",
@@ -78,11 +67,19 @@ function MenteeNavHeader({ history }) {
           </span>
           <span className="navigation-header-button">
             <MenteeButton
-              width="100%"
-              content={<b>{isLoggedIn() ? "Your Profile" : "Mentor Log In"}</b>}
-              onClick={() => {
+              width="9em"
+              content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
+              onClick={async () => {
+                let redirect = "/select-login";
+                if (isMentor) {
+                  redirect = "/appointments";
+                } else if (isMentee) {
+                  redirect = "/mentee-appointments";
+                } else if (isAdmin) {
+                  redirect = "/account-data";
+                }
                 history.push({
-                  pathname: "/login",
+                  pathname: isLoggedIn() ? redirect : "/select-login",
                 });
               }}
             />
@@ -93,4 +90,4 @@ function MenteeNavHeader({ history }) {
   );
 }
 
-export default withRouter(MenteeNavHeader);
+export default withRouter(GuestNavHeader);

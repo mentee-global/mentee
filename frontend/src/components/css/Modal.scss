@@ -2,14 +2,24 @@
   width: 40% !important;
 }
 
+.modal-window-large {
+  width: 80% !important;
+}
+
 @media only screen and (max-width: 1400px) {
   .modal-window {
     width: 75% !important;
+  }
+  .modal-window-large {
+    width: 85% !important;
   }
 }
 
 @media only screen and (max-width: 720px) {
   .modal-window {
+    width: 100% !important;
+  }
+  .modal-window-large {
     width: 100% !important;
   }
 }

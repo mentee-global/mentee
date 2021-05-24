@@ -34,10 +34,12 @@ function MenteeProfileModal(props) {
   const [languages, setLanguages] = useState(null);
   const [organization, setOrganization] = useState(null);
   const [educations, setEducations] = useState([]);
+  const [video, setVideo] = useState([null]);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [privacy, setPrivacy] = useState(true);
 
   useEffect(() => {
     if (props.mentee) {
@@ -56,6 +58,8 @@ function MenteeProfileModal(props) {
         ? JSON.parse(JSON.stringify(props.mentee.education))
         : [];
       setEducations(newEducation);
+      setVideo(props.mentee.video);
+      setPrivacy(props.mentee.is_private);
 
       if (props.mentee.education) {
         let newInputs = (props.mentee.education.length - 1) * 4;
@@ -218,6 +222,16 @@ function MenteeProfileModal(props) {
     setEdited(true);
   }
 
+  function handleVideoChange(e) {
+    setVideo(e.target.value);
+    setEdited(true);
+  }
+
+  function handlePrivacyChange(e) {
+    setPrivacy(e.target.value);
+    setEdited(true);
+  }
+
   function handleSchoolChange(e, index) {
     const newEducations = [...educations];
     let education = newEducations[index];
@@ -343,6 +357,8 @@ function MenteeProfileModal(props) {
       organization: organization,
       biography: about,
       location: location,
+      video: video,
+      privacy: privacy
     };
 
     setSaving(true);
@@ -381,7 +397,7 @@ function MenteeProfileModal(props) {
             </Button>
           </div>
         }
-        className="modal-window"
+        className="modal-window-large"
       >
         <div className="modal-container">
           <div className="modal-profile-container">
@@ -532,6 +548,22 @@ function MenteeProfileModal(props) {
               <PlusCircleFilled className="modal-education-add-icon" />
               <div className="modal-education-add-text">Add more</div>
             </div>
+            <div className="modal-education-header">Add Videos</div>
+            <div>Introduce yourself via YouTube video!</div>
+            <div className = "modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                clicked={inputClicked[6]}
+                index={6}
+                handleClick={handleClick}
+                onChange={handleVideoChange}
+                value={"Paste Link"}
+              />
+            </div>
+            <div className="modal-education-header">Account Privacy</div>
+            <Checkbox onChange={handlePrivacyChange} value={privacy}>Private Account</Checkbox>
+            <div>You'll be able to see your information, but your account will not show up when people are browsing accounts.</div>
           </div>
         </div>
       </Modal>

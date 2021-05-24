@@ -4,24 +4,27 @@ import {
   CommentOutlined,
   LinkOutlined,
   LinkedinOutlined,
+  LockFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeProfileModal from "./MenteeProfileModal";
-import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
-  const getMeetingMethods = () => {
-    const in_person = props.mentor.offers_in_person
-      ? "In person | Online"
-      : "Online";
-    const group_session = props.mentor.offers_group_appointments
-      ? "Group Meetings | 1-on-1"
-      : "1-on-1";
-    return in_person + " | " + group_session;
-  };
+  const getTitle = (name, age) => {
+    if (props.isMentor) {
+      return name;
+    } else {
+      return name + ", " + age;
+    }
+  }
 
+  const getPrivacy = (privacy) => {
+    if (privacy) {
+      return <LockFilled></LockFilled>
+    }
+  }
   const getLanguages = (languages) => {
     return languages.join(" • ");
   };
@@ -42,8 +45,6 @@ function ProfileContent(props) {
           <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
         </div>
       );
-    } else {
-      console.log("afwo;eijflk");
     }
   };
 
@@ -71,7 +72,8 @@ function ProfileContent(props) {
   return (
     <div>
       <div className="mentor-profile-name">
-        {props.mentor.name}
+        {getTitle(props.mentor.name, props.mentor.age)}
+        {getPrivacy(props.mentor.privacy)}
         {props.isMentor ? (
           <div className="mentor-profile-button">
             <MentorProfileModal
@@ -80,27 +82,13 @@ function ProfileContent(props) {
             />
           </div>
         ) : (
-          <div>
-            <div className="mentor-profile-button">
-              <MenteeProfileModal
-                mentee={props.mentor}
-                onSave={props.handleSaveEdits}
-              />
-            </div>
-            <div className="mentor-profile-button">
-              <MenteeAppointmentModal
-                mentor_name={props.mentor.name}
-                availability={props.mentor.availability}
-                mentor_id={props.id}
-                handleUpdateMentor={props.handleUpdateMentor}
-              />
-            </div>
+          <div className="mentor-profile-button">
+            <MenteeProfileModal
+              mentee={props.mentor}
+              onSave={props.handleSaveEdits}
+            />
           </div>
         )}
-      </div>
-      <div className="mentor-profile-heading">
-        {props.mentor.professional_title} <t className="yellow-dot">•</t>{" "}
-        {getMeetingMethods()}
       </div>
       <div>
         {props.mentor.location && (

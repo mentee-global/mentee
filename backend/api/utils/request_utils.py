@@ -10,6 +10,7 @@ from sendgrid.helpers.mail import Mail
 from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
 from api.models import MentorProfile, MenteeProfile, Admin
+from api.utils.constants import Account
 
 wtforms_json.init()
 

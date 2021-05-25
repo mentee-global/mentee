@@ -556,25 +556,15 @@ function MentorApplication() {
             *What special topics could you teach or offer guidance on? (For any
             region or country- you will be asked next about location.)
             <Form>
-            <Form.Item
-                name="First Name"
-                className="input-form"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
+              
             <div className="special-topics-answer-choices">
               <Checkbox.Group
                 options={specialTopics}
                 value={topics}
                 onChange={onChangeCheck3}
               />
-            </Form>
             </div>
-            
-      
+          </Form>
           </div>
           <div className="column-two">
                 <Form>

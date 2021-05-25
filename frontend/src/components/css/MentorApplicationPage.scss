@@ -11,6 +11,7 @@
   padding-left: 6em;
   padding-right: 6em;
   background-color: white;
+  overflow:auto;
 }
 
 
@@ -28,18 +29,22 @@
 .column-two-page-two {
   padding-top: 3em;
   width: 50%;
+  overflow:auto;
 }
 
 .column-one, .column-one-page-two {
   padding-right: 3em;
+  overflow:auto;
 }
 
 .input-form {
   padding-bottom: 3em;
+  overflow:auto;
 }
 
 .input-form-two {
   padding-bottom: 3em;
+  overflow:auto;
 }
 
 .next-button {

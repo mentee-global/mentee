@@ -152,6 +152,7 @@ function Gallery() {
                   organization={mentee.organization}
                   image={mentee.image}
                   age={mentee.age}
+                  id={mentee._id["$oid"]}
                 />
               );
             })

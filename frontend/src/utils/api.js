@@ -267,15 +267,23 @@ export const deleteMentorById = (id) => {
 export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   const requestExtension = `/mentee/editFavMentor`;
   const data = {
-    mentee_uid: mentee_id,
-    mentor_id: mentor_id,
-    favorite: favorite,
+    mentee_id,
+    mentor_id,
+    favorite,
   };
   return instance.put(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
     }
+  );
+};
+
+export const getFavMentorsById = (mentee_id) => {
+  const requestExtension = `/mentee/favorites/${mentee_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.favorites,
+    (err) => console.error(err)
   );
 };
 
@@ -332,6 +340,16 @@ export const getAdmin = (id) => {
   return authGet(requestExtension).then(
     (response) => response && response.data.result.admin,
     (err) => console.error(err)
+  );
+};
+
+export const getMessages = (user_id) => {
+  const requestExtension = `/messages/?recipient_id=${user_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
   );
 };
 

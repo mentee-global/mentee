@@ -11,7 +11,7 @@ import { formatLinkForHref } from "utils/misc";
 import useAuth from "../utils/hooks/useAuth";
 
 import MenteeButton from "./MenteeButton";
-
+import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Gallery.scss";
 
 const { Title, Text } = Typography;
@@ -78,7 +78,7 @@ function MenteeCard(props) {
         <Text className="gallery-list-items">{props.languages.join(", ")}</Text>
         <hr className="gallery-solid-border" />
         <div className="bookmark-button"></div>
-        <NavLink to={"/gallery/" + props.id}>
+        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />
           </div>

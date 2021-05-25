@@ -216,7 +216,11 @@ function AdminAccountData() {
         </div>
       </div>
       <Spin spinning={isReloading}>
-        <AdminDataTable data={filterData} deleteAccount={handleDeleteAccount} />
+        <AdminDataTable
+          data={filterData}
+          deleteAccount={handleDeleteAccount}
+          isMentee={displayOption === keys.MENTEES}
+        />
       </Spin>
     </div>
   );

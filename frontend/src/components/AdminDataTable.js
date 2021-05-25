@@ -8,7 +8,7 @@ import { MENTEE_PROFILE, MENTOR_PROFILE } from "utils/consts";
 
 const { Column } = Table;
 
-function AdminDataTable({ data, deleteAccount }) {
+function AdminDataTable({ data, deleteAccount, isMentee }) {
   return (
     <Table
       dataSource={data}
@@ -29,24 +29,32 @@ function AdminDataTable({ data, deleteAccount }) {
         key="numOfAppointments"
         align="center"
       />
-      <Column
-        title="Appointments Available?"
-        dataIndex="appointmentsAvailable"
-        key="appointmentsAvailable"
-        align="center"
-      />
-      <Column
-        title="Videos Posted?"
-        dataIndex="videosUp"
-        key="videosUp"
-        align="center"
-      />
-      <Column
-        title="Picture Uploaded?"
-        dataIndex="profilePicUp"
-        key="profilePicUp"
-        align="center"
-      />
+      {!isMentee && (
+        <>
+          <Column
+            title="Appointments Available?"
+            dataIndex="appointmentsAvailable"
+            key="appointmentsAvailable"
+            align="center"
+            render={(text) => (text ? text : "N/A")}
+          />
+          <Column
+            title="Videos Posted?"
+            dataIndex="videosUp"
+            key="videosUp"
+            align="center"
+            render={(text) => (text ? text : "N/A")}
+          />
+          <Column
+            title="Picture Uploaded?"
+            dataIndex="profilePicUp"
+            key="profilePicUp"
+            align="center"
+            render={(text) => (text ? text : "N/A")}
+          />
+        </>
+      )}
+
       <Column
         title="Delete"
         dataIndex={["id", "name"]}

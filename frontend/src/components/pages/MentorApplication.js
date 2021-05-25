@@ -432,10 +432,11 @@ function MentorApplication() {
             </div>
           </div>
           <div className="column-two">
+            <Form>
             <div>
               {"*Your full title and a brief description of your role."}
                 <Form.Item
-                  name="role-description"
+                  name="Role Description"
                   className="input-form"
                   rules={[
                     {
@@ -456,7 +457,7 @@ function MentorApplication() {
                 <div>
                 {"*Full name of your company/employer"} 
                 <Form.Item
-                  name="employer-name"
+                  name="Employer Name"
                   className="input-form"
                   rules={[
                     {
@@ -472,6 +473,7 @@ function MentorApplication() {
                   />
                 </Form.Item>
                 </div>
+                </Form>
              
            
             <div className="page-three-padding">
@@ -553,17 +555,30 @@ function MentorApplication() {
           <div className="special-topics-question">
             *What special topics could you teach or offer guidance on? (For any
             region or country- you will be asked next about location.)
+            <Form>
+            <Form.Item
+                name="First Name"
+                className="input-form"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
             <div className="special-topics-answer-choices">
               <Checkbox.Group
                 options={specialTopics}
                 value={topics}
                 onChange={onChangeCheck3}
               />
+            </Form>
             </div>
+            
+      
           </div>
           <div className="column-two">
-            <div className="region-question">
-              <div className="region-answers">
+                <Form>
+                {"Please share which region(s), country(s), state(s), cities your knowledge is based in"}
                 <Form.Item
                   name="region-question"
                   className="input-form-two"
@@ -573,8 +588,6 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  Please share which region(s), country(s), state(s), cities
-                  your knowledge is based in
                   <Input
                     type="text"
                     placeholder="Please share which region(s), country(s), state(s), cities your 
@@ -583,12 +596,10 @@ function MentorApplication() {
                     onChange={(e) => setknowledgeLocation(e.target.value)}
                   />
                 </Form.Item>
-              </div>
-            </div>
-            <div className="contact-other-question">
-              <div className="contact-other-answers">
+             
+                {"*If you know someone who would be a great MENTEE Specialist, please share their name, email, and we'll contact them!"}
                 <Form.Item
-                  name="contact-other"
+                  name="Potential MENTEE Specialist"
                   className="input-form-two"
                   rules={[
                     {
@@ -596,8 +607,6 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  *If you know someone who would be a great MENTEE Specialist,
-                  please share their name, email, and we'll contact them!
                   <Input
                     type="text"
                     placeholder="*If you know someone who would be a great MENTEE 
@@ -607,12 +616,10 @@ function MentorApplication() {
                     onChange={(e) => setReferral(e.target.value)}
                   />
                 </Form.Item>
-              </div>
-            </div>
-            <div className="languages-question">
-              <div className="languages-answers">
+                
+                {"*Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level(conversational, fluent, native)."}
                 <Form.Item
-                  name="languages"
+                  name="Languages Other Than English"
                   className="input-form-two"
                   rules={[
                     {
@@ -620,7 +627,6 @@ function MentorApplication() {
                     },
                   ]}
                 >
-                  {"*Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level(conversational, fluent, native)."}
                   <Input
                     type="text"
                     placeholder="*Do you speak a language(s) other than English? If yes, please
@@ -630,8 +636,8 @@ function MentorApplication() {
                     onChange={(e) => setLanguages(e.target.value)}
                   />
                 </Form.Item>
-              </div>
-            </div>
+                </Form>
+             
           </div>
         </div>
       </div>

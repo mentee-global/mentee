@@ -243,7 +243,7 @@ export const downloadAllApplicationData = async () => {
 };
 
 export const deleteAccountById = (id, accountType) => {
-  const requestExtension = `/${accountType}/${id}`;
+  const requestExtension = `/account/${accountType}/${id}`;
   return authDelete(requestExtension).then(
     (response) => response,
     (err) => {

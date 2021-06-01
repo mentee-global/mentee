@@ -12,7 +12,7 @@ import io
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
 # DELETE request for specific account based on id
-@admin.route("/<int:role>/<string:id>", methods=["DELETE"])
+@admin.route("/account/<int:role>/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_account(role, id):
     try:
@@ -27,6 +27,11 @@ def delete_account(role, id):
     login = None
 
     if not firebase_uid:
+        # MenteeProfile does not contain user_id field
+        if role == Account.MENTEE:
+            account.delete()
+            return create_response(status=200, message="Successful deletion")
+
         user_id = account.user_id
         try:
             login = Users.objects.get(id=user_id.id)

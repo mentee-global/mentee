@@ -29,6 +29,12 @@ export const ACCOUNT_TYPE = {
   GUEST: 3,
 };
 
+export const PLURAL_TYPE = {
+  MENTORS: "mentors",
+  MENTEES: "mentees",
+  ADMINS: "admins",
+};
+
 export const APP_STATUS = {
   PENDING: "Pending",
   REVIEWED: "Reviewed",

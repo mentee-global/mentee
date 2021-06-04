@@ -47,7 +47,6 @@ function AdminAccountData() {
       setIsReloading(true);
       const mentorRes = await fetchMentorsAppointments();
       const menteeRes = await fetchMenteesAppointments();
-      console.log(menteeRes);
       if (mentorRes && menteeRes) {
         const newMenteeData = menteeRes.menteeData.map((elem) => ({
           ...elem,

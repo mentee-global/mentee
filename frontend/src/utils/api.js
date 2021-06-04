@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL, ACCOUNT_TYPE } from "utils/consts";
+import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
 
 const instance = axios.create({
@@ -396,10 +396,8 @@ export const fetchAppointmentsByMentorId = async (id) => {
   return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTOR);
 };
 
-export const fetchMentorsAppointments = async () => {
-  return await fetchAppointmentsByType("mentors");
-};
+export const fetchMentorsAppointments = async () =>
+  await fetchAppointmentsByType(PLURAL_TYPE.MENTORS);
 
-export const fetchMenteesAppointments = async () => {
-  return await fetchAppointmentsByType("mentees");
-};
+export const fetchMenteesAppointments = async () =>
+  await fetchAppointmentsByType(PLURAL_TYPE.MENTEES);

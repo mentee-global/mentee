@@ -62,7 +62,7 @@ export const LANGUAGES = [
   "Urdu",
 ];
 
-export const AGERANGES = [
+export const AGE_RANGES = [
   "16-18",
   "19-22",
   "23-25",

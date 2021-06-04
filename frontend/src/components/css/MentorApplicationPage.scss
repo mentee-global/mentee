@@ -170,3 +170,20 @@
   width: 50%;
 }
 
+.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+  background-color: #E4BB4F;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+  background: #FFECBD;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+  background-color: #FFECBD;
+}
+
+.ant-steps ant-steps-horizontal ant-steps-label-vertical ant-steps-dot {
+  display: flex;
+  justify-content: flex-end;
+} 
+

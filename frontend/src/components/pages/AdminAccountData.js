@@ -57,6 +57,7 @@ function AdminAccountData() {
         setMenteeData(newMenteeData);
         setDisplayData(mentorRes.mentorData);
         setFilterData(mentorRes.mentorData);
+        setResetFilters(!resetFilters);
       } else {
         message.error("Could not fetch account data");
       }

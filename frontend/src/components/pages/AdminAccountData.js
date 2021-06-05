@@ -47,7 +47,6 @@ function AdminAccountData() {
       setIsReloading(true);
       const mentorRes = await fetchMentorsAppointments();
       const menteeRes = await fetchMenteesAppointments();
-      console.log(menteeRes);
       if (mentorRes && menteeRes) {
         const newMenteeData = menteeRes.menteeData.map((elem) => ({
           ...elem,
@@ -212,7 +211,11 @@ function AdminAccountData() {
         </div>
       </div>
       <Spin spinning={isReloading}>
-        <AdminDataTable data={filterData} deleteAccount={handleDeleteAccount} />
+        <AdminDataTable
+          data={filterData}
+          deleteAccount={handleDeleteAccount}
+          isMentee={displayOption === keys.MENTEES}
+        />
       </Spin>
     </div>
   );

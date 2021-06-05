@@ -1,22 +1,31 @@
 import React from "react";
 import { Table, Popconfirm, message } from "antd";
 import { LinkOutlined, DeleteOutlined } from "@ant-design/icons";
+import { JsonToTable } from "react-json-to-table";
 
 import "./css/AdminAccountData.scss";
 import { formatLinkForHref } from "utils/misc";
-import { ACCOUNT_TYPE, MENTEE_PROFILE, MENTOR_PROFILE } from "utils/consts";
+import { MENTEE_PROFILE, MENTOR_PROFILE, ACCOUNT_TYPE } from "utils/consts";
 
 const { Column } = Table;
 
-function AdminDataTable({ data, deleteAccount }) {
+const getTableCompliant = (account) => {
+  const newAccount = JSON.parse(JSON.stringify(account));
+  Object.keys(newAccount).forEach((key) => {
+    if (typeof newAccount[key] === "boolean") {
+      newAccount[key] = newAccount[key] ? "Yes" : "No";
+    }
+  });
+  return newAccount;
+};
+
+function AdminDataTable({ data, deleteAccount, isMentee }) {
   return (
     <Table
       dataSource={data}
       expandable={{
         expandedRowRender: (account) => (
-          <p>
-            <pre>{JSON.stringify(account, null, 2)}</pre>
-          </p>
+          <JsonToTable json={getTableCompliant(account)} />
         ),
         rowExpandable: (account) => account.is_private,
       }}
@@ -29,24 +38,32 @@ function AdminDataTable({ data, deleteAccount }) {
         key="numOfAppointments"
         align="center"
       />
-      <Column
-        title="Appointments Available?"
-        dataIndex="appointmentsAvailable"
-        key="appointmentsAvailable"
-        align="center"
-      />
-      <Column
-        title="Videos Posted?"
-        dataIndex="videosUp"
-        key="videosUp"
-        align="center"
-      />
-      <Column
-        title="Picture Uploaded?"
-        dataIndex="profilePicUp"
-        key="profilePicUp"
-        align="center"
-      />
+      {!isMentee && (
+        <>
+          <Column
+            title="Appointments Available?"
+            dataIndex="appointmentsAvailable"
+            key="appointmentsAvailable"
+            align="center"
+            render={(text) => (text ? text : "N/A")}
+          />
+          <Column
+            title="Videos Posted?"
+            dataIndex="videosUp"
+            key="videosUp"
+            align="center"
+            render={(text) => (text ? text : "N/A")}
+          />
+          <Column
+            title="Picture Uploaded?"
+            dataIndex="profilePicUp"
+            key="profilePicUp"
+            align="center"
+            render={(text) => (text ? text : "N/A")}
+          />
+        </>
+      )}
+
       <Column
         title="Delete"
         dataIndex={["id", "name"]}

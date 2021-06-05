@@ -16,7 +16,7 @@ jobs:
             /home/circleci/.local/bin/black . --check 
   frontend-format:
     docker:
-      - image: circleci/node
+      - image: cimg/node:14.17.0
     steps:
       - checkout
       - run:

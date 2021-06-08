@@ -12,9 +12,9 @@ export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
 
-export const PROFILE_URL = FRONT_BASE_URL + "gallery/";
-export const MENTOR_PROFILE = "gallery/1";
-export const MENTEE_PROFILE = "gallery/2";
+export const MENTEE_PROFILE = FRONT_BASE_URL + "gallery/2/";
+
+export const MENTOR_PROFILE = FRONT_BASE_URL + "gallery/1/";
 
 export const REGISTRATION_STAGE = {
   START: 0,
@@ -27,6 +27,12 @@ export const ACCOUNT_TYPE = {
   MENTOR: 1,
   MENTEE: 2,
   GUEST: 3,
+};
+
+export const PLURAL_TYPE = {
+  MENTORS: "mentors",
+  MENTEES: "mentees",
+  ADMINS: "admins",
 };
 
 export const APP_STATUS = {

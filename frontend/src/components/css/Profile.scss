@@ -37,6 +37,20 @@
     font-weight: bold;
     font-size: 20px;
   }
+
+  .mentor-profile-decorations {
+    display: flex;
+    align-items: center;
+  }
+
+  .mentor-lock-symbol {
+    margin-left: 0.5em;
+  }
+
+  .mentor-lock-symbol svg {
+    color: #A58123;
+    font-size: 0.9em;
+  }
   
   .mentor-profile-heading {
     color: $mentor-profile-heading-color;

@@ -16,6 +16,8 @@ export const MENTEE_PROFILE = FRONT_BASE_URL + "gallery/2/";
 
 export const MENTOR_PROFILE = FRONT_BASE_URL + "gallery/1/";
 
+export const MENTEE_DEFAULT_VIDEO_NAME = "Introduction";
+
 export const REGISTRATION_STAGE = {
   START: 0,
   VERIFY_EMAIL: 1,
@@ -66,6 +68,18 @@ export const LANGUAGES = [
   "Spanish",
   "Swahili",
   "Urdu",
+];
+
+export const AGE_RANGES = [
+  "16-18",
+  "19-22",
+  "23-25",
+  "26-30",
+  "30s",
+  "40s",
+  "50s",
+  "60s",
+  "70s+",
 ];
 
 export const SPECIALIZATIONS = [

@@ -23,7 +23,7 @@ function Login() {
   const [loggingIn, setLoggingIn] = useState(false);
   const [permissions, setPermissions] = usePersistedState(
     "permissions",
-    ACCOUNT_TYPE.MENTOR
+    ACCOUNT_TYPE.MENTEE
   );
 
   useEffect(() => {

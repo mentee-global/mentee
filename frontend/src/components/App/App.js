@@ -72,9 +72,10 @@ function App() {
       <Route
         path="/mentee-gallery"
         exact
-        component={() => <Navigation content={<MenteeGallery />} needsAuth={false} />}
+        component={() => (
+          <Navigation content={<MenteeGallery />} needsAuth={false} />
+        )}
       />
-
 
       <Route
         path="/gallery/:type/:id"

@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, BrowserRouter as Router } from "react-router-dom";
+import { Route, BrowserRouter as Router, Redirect } from "react-router-dom";
 import Appointments from "components/pages/Appointments";
 import MenteeAppointments from "components/pages/MenteeAppointments";
 import Home from "components/pages/Home";
@@ -20,7 +20,8 @@ import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
 import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
-import MenteeRegisterForm from 'components/pages/MenteeRegisterForm';
+import MenteeRegisterForm from "components/pages/MenteeRegisterForm";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 function App() {
   return (
@@ -119,16 +120,31 @@ function App() {
         )}
       />
       <Route
-        path="/create-profile"
-        component={() => (
-          <Navigation content={<RegisterForm />} needsAuth={false} />
-        )}
+        path="/create-profile/:type"
+        component={(props) => {
+          const type = parseInt(props.match.params.type, 10);
+          return (
+            <Navigation
+              content={
+                type === ACCOUNT_TYPE.MENTOR ? (
+                  <RegisterForm />
+                ) : type === ACCOUNT_TYPE.MENTEE ? (
+                  <MenteeRegisterForm />
+                ) : (
+                  <Redirect to="/" />
+                )
+              }
+              needsAuth={false}
+            />
+          );
+        }}
       />
       <Route
         path="/create-mentee-profile"
         component={() => (
           <Navigation content={<MenteeRegisterForm />} needsAuth={false} />
-        )}/>
+        )}
+      />
       <Route
         path="/organizer"
         component={() => (

@@ -115,7 +115,7 @@ function Login() {
                       await sendVerificationEmail(email);
                       history.push("/verify");
                     } else if (res.result.redirectToCreateProfile) {
-                      history.push("/create-profile");
+                      history.push(`/create-profile/${loginProps.type}`);
                     } else {
                       history.push(loginProps.redirect);
                     }

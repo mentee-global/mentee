@@ -367,8 +367,6 @@ function MenteeProfileModal(props) {
       },
     };
 
-    console.log(updatedProfile);
-
     setSaving(true);
     saveEdits(updatedProfile);
   };

@@ -10,9 +10,16 @@ import {
   getCurrentUser,
   getUserEmail,
 } from "utils/auth.service";
-import { createMentorProfile } from "utils/api";
+import { createMenteeProfile } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS, REGISTRATION_STAGE } from "utils/consts";
+import {
+  LANGUAGES,
+  SPECIALIZATIONS,
+  REGISTRATION_STAGE,
+  MENTEE_DEFAULT_VIDEO_NAME,
+  AGE_RANGES,
+} from "utils/consts";
+import moment from "moment";
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
@@ -38,6 +45,8 @@ function MenteeRegisterForm(props) {
   const [email, setEmail] = useState();
   const [phone, setPhone] = useState();
   const [organization, setOrganization] = useState();
+  const [privacy, setPrivacy] = useState(false);
+  const [video, setVideo] = useState();
 
   function renderEducationInputs() {
     return (
@@ -207,16 +216,24 @@ function MenteeRegisterForm(props) {
     setIsValid(newValidArray);
   };
 
+  function handleVideoChange(e) {
+    setVideo(e.target.value);
+  }
+
+  function handlePrivacyChange(e) {
+    setPrivacy(e.target.checked);
+  }
+
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
-      const res = await createMentorProfile(data);
-      const mentorId =
+      const res = await createMenteeProfile(data);
+      const menteeId =
         res && res.data && res.data.result ? res.data.result.mentorId : false;
 
       setSaving(false);
       setValidate(false);
 
-      if (mentorId) {
+      if (menteeId) {
         setError(false);
         setIsValid([...isValid].fill(true));
         await refreshToken();
@@ -235,8 +252,8 @@ function MenteeRegisterForm(props) {
       return;
     }
 
-    const firebase_user = getCurrentUser();
     const email = await getUserEmail();
+    const firebase_user = getCurrentUser();
     const newProfile = {
       firebase_uid: firebase_user ? firebase_user.uid : undefined,
       name,
@@ -249,6 +266,13 @@ function MenteeRegisterForm(props) {
       languages: languages,
       biography,
       organization,
+      video: {
+        title: MENTEE_DEFAULT_VIDEO_NAME,
+        url: video,
+        tag: MENTEE_DEFAULT_VIDEO_NAME,
+        date_uploaded: moment().format(),
+      },
+      is_private: privacy,
     };
 
     setSaving(true);
@@ -336,7 +360,7 @@ function MenteeRegisterForm(props) {
         <div className="modal-input-container">
           <ModalInput
             style={styles.modalInput}
-            type="dropdown-multiple"
+            type="dropdown-single"
             title="Age *"
             clicked={inputClicked[4]}
             index={4}
@@ -345,8 +369,8 @@ function MenteeRegisterForm(props) {
               setAge(e);
               validateNotEmpty(e, 4);
             }}
-            options={LANGUAGES}
-            value={languages}
+            options={AGE_RANGES}
+            value={age}
             valid={isValid[4]}
             validate={validate}
           />
@@ -371,14 +395,13 @@ function MenteeRegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Email"
+            title="Email *"
             clicked={inputClicked[6]}
             index={6}
             handleClick={handleClick}
             onChange={(e) => setEmail(e.target.value)}
-            options={LANGUAGES}
-            value={languages}
-            valid={isValid[7]}
+            value={email}
+            valid={isValid[6]}
             validate={validate}
           />
           <ModalInput
@@ -392,11 +415,11 @@ function MenteeRegisterForm(props) {
             value={phone}
           />
         </div>
-        <div className="modal-input-container" style={{width: "50%"}}>
+        <div className="modal-input-container" style={{ width: "50%" }}>
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Organization Affliation"
+            title="Organization Affliation *"
             clicked={inputClicked[8]}
             index={8}
             handleClick={handleClick}
@@ -414,6 +437,35 @@ function MenteeRegisterForm(props) {
         >
           <PlusCircleFilled className="modal-education-add-icon" />
           <div className="modal-education-add-text">Add more</div>
+        </div>
+        <div className="modal-education-header">Add Videos</div>
+        <div className="modal-education-body">
+          <div>Introduce yourself via YouTube video!</div>
+        </div>
+        <div className="modal-input-container">
+          <ModalInput
+            style={styles.modalInput}
+            type="text"
+            clicked={inputClicked[6]}
+            index={6}
+            handleClick={handleClick}
+            onChange={handleVideoChange}
+            placeholder="Paste Link"
+          />
+        </div>
+        <div className="modal-education-header">Account Privacy</div>
+        <div className="modal-education-body">
+          <Checkbox
+            onChange={handlePrivacyChange}
+            value={privacy}
+            checked={privacy}
+          >
+            Private Account
+          </Checkbox>
+          <div>
+            You'll be able to see your information, but your account will not
+            show up when people are browsing accounts.
+          </div>
         </div>
       </div>
     </div>

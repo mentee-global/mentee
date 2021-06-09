@@ -49,6 +49,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             ]
     elif profile_type == Account.MENTEE:
         new_profile = MenteeProfile(
+            firebase_uid=data["firebase_uid"],
             name=data["name"],
             # TODO: Change this to the actual email and remove default
             email=data.get("email", "email@gmail.com"),

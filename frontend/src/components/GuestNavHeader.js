@@ -66,6 +66,19 @@ function GuestNavHeader({ history }) {
             />
           </span>
           <span className="navigation-header-button">
+            <MenteeVerificationModal
+              content={<b>Find a Mentee</b>}
+              theme="light"
+              width="9em"
+              onVerified={() => {
+                history.push({
+                  pathname: "/mentee-gallery",
+                  state: { verified: true },
+                });
+              }}
+            />
+          </span>
+          <span className="navigation-header-button">
             <MenteeButton
               width="9em"
               content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}

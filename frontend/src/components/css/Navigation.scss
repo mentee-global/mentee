@@ -68,6 +68,21 @@
   cursor: pointer;
 }
 
+@media (max-width: 1050px) {
+  // For tablet screens
+  .navigation-messages {
+    width: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  // For mobile screens
+  .navigation-messages {
+    width: 75%;
+    right: 0;
+  }
+}
+
 .ant-drawer-header {
   border-bottom: 0.25px solid #e4bb4f;
 }

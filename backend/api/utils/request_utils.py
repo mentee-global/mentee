@@ -81,6 +81,32 @@ class ApppointmentForm(Form):
     status = StringField(validators=[InputRequired()])
 
 
+# class MentorApplicationForm(Form):
+# email = StringField(validators=[InputRequired()])
+# name = StringField(validators=[InputRequired()])
+# cell_number = StringField(validators=[InputRequired()])
+# business_number = StringField()
+# hear_about_us = StringField(validators=[InputRequired()])
+# offer_donation = BooleanField(validators=[InputRequired()])
+# mentoring_options = FieldList(StringField(), validators=[InputRequired()])
+# employer_name = StringField(validators=[InputRequired()])
+# work_sectors = FieldList(StringField(), validators=[InputRequired()])
+# role_description = StringField(validators=[InputRequired()])
+# time_at_current_company = StringField(validators=[InputRequired()])
+# linkedin = StringField(validators=[InputRequired()])
+# why_join_mentee = StringField(validators=[InputRequired()])
+# commit_time = StringField(validators=[InputRequired()])
+# specialist_time = StringField(validators=[InputRequired()])
+# immigrant_status = StringField(validators=[InputRequired()])
+# languages = StringField(validators=[InputRequired()])
+# specializations = FieldList(StringField(), validators=[InputRequired()])
+# knowledge_location = StringField(validators=[InputRequired()])
+# referral = StringField()
+# application_state = StringField(validators=[InputRequired()])
+# date_submitted = FieldList(validators=[InputRequired()])
+# notes = StringField()
+
+
 def is_invalid_form(form_data) -> Tuple[str, bool]:
     """Using WTForms, validates the inputed form based on above schemas
     :param form_data - From the POST Request converted from JSON

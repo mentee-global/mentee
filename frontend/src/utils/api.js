@@ -112,6 +112,16 @@ export const fetchApplications = async () => {
   );
 };
 
+export const createApplication = (application) => {
+  const requestExtension = `/application/new`;
+  return instance.post(requestExtension, application).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
   return instance.post(requestExtension, appointment).then(

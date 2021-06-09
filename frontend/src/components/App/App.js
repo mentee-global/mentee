@@ -18,6 +18,7 @@ import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
+import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
 
 function App() {
@@ -67,6 +68,15 @@ function App() {
         exact
         component={() => <Navigation content={<Gallery />} needsAuth={false} />}
       />
+
+      <Route
+        path="/mentee-gallery"
+        exact
+        component={() => (
+          <Navigation content={<MenteeGallery />} needsAuth={false} />
+        )}
+      />
+
       <Route
         path="/gallery/:type/:id"
         component={(props) => (

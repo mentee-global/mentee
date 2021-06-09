@@ -140,12 +140,6 @@ function App() {
         }}
       />
       <Route
-        path="/create-mentee-profile"
-        component={() => (
-          <Navigation content={<MenteeRegisterForm />} needsAuth={false} />
-        )}
-      />
-      <Route
         path="/organizer"
         component={() => (
           <Navigation

@@ -72,9 +72,7 @@ function ProfileContent(props) {
   return (
     <div>
       <div className="mentor-profile-name">
-        <div>
-          {getTitle(props.mentor.name, props.mentor.age, props.mentor.is_private)}
-        </div>
+        {getTitle(props.mentor.name, props.mentor.age)}
         <div>
           {getPrivacy(props.mentor.is_private)}
         </div>

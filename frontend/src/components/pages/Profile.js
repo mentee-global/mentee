@@ -17,12 +17,11 @@ import {
 
 function Profile() {
   const history = useHistory();
-  const [isMentor, setIsMentor] = useState(false);
   const [user, setUser] = useState({});
   const [onEdit, setEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(false);
   const [form] = Form.useForm();
-  const { onAuthStateChanged } = useAuth();
+  const { onAuthStateChanged, isMentor } = useAuth();
 
   useEffect(() => {
     onAuthStateChanged(fetchUser);
@@ -33,8 +32,8 @@ function Profile() {
   }, [editedUser]);
 
   const fetchUser = async () => {
-    if (isMentor) {
-      const mentorID = await getMentorID();
+    const mentorID = await getMentorID();
+    if (mentorID) {
       const mentorData = await fetchMentorByID(mentorID);
 
       if (mentorData) {

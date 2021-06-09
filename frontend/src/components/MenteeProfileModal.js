@@ -224,7 +224,6 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
-    console.log(e.target.value);
     setVideo(e.target.value);
     setEdited(true);
   }
@@ -363,9 +362,9 @@ function MenteeProfileModal(props) {
       video: {
         title: MENTEE_DEFAULT_VIDEO_NAME,
         url: video,
-        tag: "",
-        date_uploaded: moment().format()
-      }
+        tag: MENTEE_DEFAULT_VIDEO_NAME,
+        date_uploaded: moment().format(),
+      },
     };
 
     console.log(updatedProfile);

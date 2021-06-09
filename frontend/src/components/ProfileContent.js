@@ -13,7 +13,7 @@ import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
-  const {isMentor, isMentee} = useAuth();
+  const { isMentor, isMentee } = useAuth();
   const getTitle = (name, age) => {
     if (props.isMentor) {
       return name;
@@ -75,8 +75,8 @@ function ProfileContent(props) {
     <div>
       <div className="mentor-profile-name">
         <div className="mentor-profile-decorations">
-        {getTitle(props.mentor.name, props.mentor.age)}
-        <div>{getPrivacy(props.mentor.is_private)}</div>
+          {getTitle(props.mentor.name, props.mentor.age)}
+          <div>{getPrivacy(props.mentor.is_private)}</div>
         </div>
         {props.isMentor ? (
           <div className="mentor-profile-button">
@@ -85,13 +85,15 @@ function ProfileContent(props) {
               onSave={props.handleSaveEdits}
             />
           </div>
-        ) : isMentee && (
-          <div className="mentor-profile-button">
-            <MenteeProfileModal
-              mentee={props.mentor}
-              onSave={props.handleSaveEdits}
-            />
-          </div>
+        ) : (
+          isMentee && (
+            <div className="mentor-profile-button">
+              <MenteeProfileModal
+                mentee={props.mentor}
+                onSave={props.handleSaveEdits}
+              />
+            </div>
+          )
         )}
       </div>
       <div>

@@ -72,8 +72,10 @@ function ProfileContent(props) {
   return (
     <div>
       <div className="mentor-profile-name">
+        <div className="mentor-profile-decorations">
         {getTitle(props.mentor.name, props.mentor.age)}
         <div>{getPrivacy(props.mentor.is_private)}</div>
+        </div>
         {props.isMentor ? (
           <div className="mentor-profile-button">
             <MentorProfileModal

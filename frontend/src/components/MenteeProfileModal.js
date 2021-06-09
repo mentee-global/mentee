@@ -357,7 +357,7 @@ function MenteeProfileModal(props) {
       organization: organization,
       biography: about,
       location: location,
-      is_private: privacy
+      is_private: privacy,
     };
 
     setSaving(true);
@@ -549,7 +549,7 @@ function MenteeProfileModal(props) {
             </div>
             <div className="modal-education-header">Add Videos</div>
             <div>Introduce yourself via YouTube video!</div>
-            <div className = "modal-input-container">
+            <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
                 type="text"
@@ -561,8 +561,17 @@ function MenteeProfileModal(props) {
               />
             </div>
             <div className="modal-education-header">Account Privacy</div>
-            <Checkbox onChange={handlePrivacyChange} value={privacy} checked={privacy}>Private Account</Checkbox>
-            <div>You'll be able to see your information, but your account will not show up when people are browsing accounts.</div>
+            <Checkbox
+              onChange={handlePrivacyChange}
+              value={privacy}
+              checked={privacy}
+            >
+              Private Account
+            </Checkbox>
+            <div>
+              You'll be able to see your information, but your account will not
+              show up when people are browsing accounts.
+            </div>
           </div>
         </div>
       </Modal>

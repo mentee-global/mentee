@@ -19,6 +19,7 @@ import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
 import NotFound from "components/pages/NotFound";
+import MenteeRegisterForm from 'components/pages/MenteeRegisterForm';
 
 function App() {
   return (
@@ -113,6 +114,11 @@ function App() {
           <Navigation content={<RegisterForm />} needsAuth={false} />
         )}
       />
+      <Route
+        path="/create-mentee-profile"
+        component={() => (
+          <Navigation content={<MenteeRegisterForm />} needsAuth={false} />
+        )}/>
       <Route
         path="/organizer"
         component={() => (

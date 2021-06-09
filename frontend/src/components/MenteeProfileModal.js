@@ -228,7 +228,7 @@ function MenteeProfileModal(props) {
   }
 
   function handlePrivacyChange(e) {
-    setPrivacy(e.target.value);
+    setPrivacy(e.target.checked);
     setEdited(true);
   }
 
@@ -357,8 +357,7 @@ function MenteeProfileModal(props) {
       organization: organization,
       biography: about,
       location: location,
-      video: video,
-      privacy: privacy
+      is_private: privacy
     };
 
     setSaving(true);
@@ -397,7 +396,7 @@ function MenteeProfileModal(props) {
             </Button>
           </div>
         }
-        className="modal-window-large"
+        className="modal-window"
       >
         <div className="modal-container">
           <div className="modal-profile-container">
@@ -562,7 +561,7 @@ function MenteeProfileModal(props) {
               />
             </div>
             <div className="modal-education-header">Account Privacy</div>
-            <Checkbox onChange={handlePrivacyChange} value={privacy}>Private Account</Checkbox>
+            <Checkbox onChange={handlePrivacyChange} value={privacy} checked={privacy}>Private Account</Checkbox>
             <div>You'll be able to see your information, but your account will not show up when people are browsing accounts.</div>
           </div>
         </div>

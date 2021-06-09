@@ -22,7 +22,7 @@ function ProfileContent(props) {
 
   const getPrivacy = (privacy) => {
     if (privacy) {
-      return <LockFilled></LockFilled>
+      return <LockFilled className="mentor-lock-symbol"/>
     }
   }
   const getLanguages = (languages) => {
@@ -72,8 +72,12 @@ function ProfileContent(props) {
   return (
     <div>
       <div className="mentor-profile-name">
-        {getTitle(props.mentor.name, props.mentor.age)}
-        {getPrivacy(props.mentor.privacy)}
+        <div>
+          {getTitle(props.mentor.name, props.mentor.age, props.mentor.is_private)}
+        </div>
+        <div>
+          {getPrivacy(props.mentor.is_private)}
+        </div>
         {props.isMentor ? (
           <div className="mentor-profile-button">
             <MentorProfileModal

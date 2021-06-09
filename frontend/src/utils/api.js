@@ -228,9 +228,29 @@ export const downloadMentorsData = async () => {
   const requestExtension = "/download/accounts/all";
   return authGet(requestExtension, {
     responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTOR,
+    },
   }).then(
     (response) => {
       downloadBlob(response, "mentor_data.xlsx");
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const downloadMenteesData = async () => {
+  const requestExtension = "/download/accounts/all";
+  return authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTEE,
+    },
+  }).then(
+    (response) => {
+      downloadBlob(response, "mentee_data.xlsx");
     },
     (err) => {
       console.error(err);

@@ -4,7 +4,7 @@ from datetime import datetime
 from io import BytesIO
 from api.core import create_response, logger
 from api.models import AppointmentRequest, Admin, MentorProfile, MenteeProfile
-from flask import send_file, Blueprint
+from flask import send_file, Blueprint, request
 from api.utils.require_auth import admin_only
 from firebase_admin import auth as firebase_admin_auth
 from api.utils.constants import Account
@@ -74,16 +74,34 @@ def download_appointments():
 @download.route("/accounts/all", methods=["GET"])
 @admin_only
 def download_accounts_info():
+    data = request.args
+    account_type = int(data.get("account_type", 0))
+    accounts = None
+
     try:
         admins = Admin.objects()
         admin_ids = [admin.firebase_uid for admin in admins]
 
-        accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
+        if account_type == Account.MENTOR:
+            accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
+        elif account_type == Account.MENTEE:
+            accounts = MenteeProfile.objects(firebase_uid__nin=admin_ids)
     except:
         msg = "Failed to get accounts"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    if account_type == Account.MENTOR:
+        return download_mentor_accounts(accounts)
+    elif account_type == Account.MENTEE:
+        return download_mentee_accounts(accounts)
+
+    msg = "Invalid input"
+    logger.info(msg)
+    return create_response(status=422, message=msg)
+
+
+def download_mentor_accounts(accounts):
     accts = []
 
     for acct in accounts:
@@ -153,6 +171,67 @@ def download_accounts_info():
         "available times",
         "text_notifications",
         "email_notifications",
+    ]
+    return generate_sheet("accounts", accts, columns)
+
+
+def download_mentee_accounts(accounts):
+    accts = []
+
+    for acct in accounts:
+        educations = []
+        for edu in acct.education:
+            educations.append(
+                "{0} in {1} from {2}, graduated in {3}".format(
+                    edu.education_level,
+                    " and ".join(edu.majors),
+                    edu.school,
+                    edu.graduation_year,
+                )
+            )
+        accts.append(
+            [
+                acct.name,
+                acct.gender,
+                acct.location,
+                acct.age,
+                acct.email,
+                acct.phone_number,
+                acct.image.url if acct.image else "None",
+                "|".join(educations),
+                ",".join(acct.languages),
+                acct.biography,
+                "Yes" if acct.image and acct.image.url else "No",
+                "Yes" if acct.video else "No",
+                int(acct.text_notifications)
+                if acct.text_notifications != None
+                else "N/A",
+                int(acct.email_notifications)
+                if acct.email_notifications != None
+                else "N/A",
+                int(acct.is_private) if acct.is_private != None else "N/A",
+                acct.video.url if acct.video else "None",
+                ",".join(acct.favorite_mentors_ids),
+            ]
+        )
+    columns = [
+        "mentee name",
+        "gender",
+        "location",
+        "age",
+        "email",
+        "phone number",
+        "image url",
+        "educations",
+        "languages",
+        "biography",
+        "profile pic up",
+        "video(s) up",
+        "text_notifications",
+        "email_notifications",
+        "private account",
+        "video url",
+        "favorite_mentor_ids",
     ]
     return generate_sheet("accounts", accts, columns)
 

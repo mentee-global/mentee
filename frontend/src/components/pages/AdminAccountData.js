@@ -10,6 +10,7 @@ import "../css/AdminAccountData.scss";
 import {
   fetchMentorsAppointments,
   downloadMentorsData,
+  downloadMenteesData,
   deleteAccountById,
   fetchMenteesAppointments,
 } from "../../utils/api";
@@ -88,10 +89,10 @@ function AdminAccountData() {
     setIsMentorDownload(false);
   };
 
-  const handleMenteesDownload = () => {
+  const handleMenteesDownload = async () => {
     setIsMenteeDownload(true);
-    // TODO: Add Mentee Account Downloads
-    console.log("Calling endpoint to download accounts");
+    const file = await downloadMenteesData();
+    setDownloadFile(file);
     setIsMenteeDownload(false);
   };
 

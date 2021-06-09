@@ -19,14 +19,6 @@ function PublicProfile({ accountType, id }) {
 
   useEffect(() => {
     async function getAccount() {
-      // enforce mentee privacy
-      if (parseInt(accountType, 10) === ACCOUNT_TYPE.MENTEE) {
-        const res = await getMenteePrivateStatus(id);
-        if (!res || res.private) {
-          history.push("/mentee-gallery");
-        }
-      }
-
       const accountData = await fetchAccountById(id, accountType);
       if (accountData) {
         setAccount(accountData);

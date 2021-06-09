@@ -4,19 +4,29 @@ import { Avatar } from "antd";
 
 import ProfileContent from "../ProfileContent";
 import ProfileVideos from "../ProfileVideos";
-import { fetchAccountById } from "../../utils/api";
+import { fetchAccountById, getMenteePrivateStatus } from "../../utils/api";
 
 import "../css/PublicProfile.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MenteeVideo from "components/MenteeVideo";
+import { useHistory } from "react-router-dom";
 
 function PublicProfile({ accountType, id }) {
+  const history = useHistory();
   const [account, setAccount] = useState({});
   const [updateContent, setUpdateContent] = useState(false);
   const [isMentor, setIsMentor] = useState(accountType == ACCOUNT_TYPE.MENTOR);
 
   useEffect(() => {
     async function getAccount() {
+      // enforce mentee privacy
+      if (parseInt(accountType, 10) === ACCOUNT_TYPE.MENTEE) {
+        const res = await getMenteePrivateStatus(id);
+        if (!res || res.private) {
+          history.push("/mentee-gallery");
+        }
+      }
+
       const accountData = await fetchAccountById(id, accountType);
       if (accountData) {
         setAccount(accountData);

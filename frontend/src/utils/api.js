@@ -352,6 +352,16 @@ export const getMessages = (user_id) => {
   );
 };
 
+export const getMenteePrivateStatus = (profileId) => {
+  const requestExtension = `/account/${profileId}/private`;
+  return instance.get(requestExtension).then(
+    (response) => response.data && response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 /**
  * Wrapper function calls to general account endpoints
  * This helps with avoiding the need to change multiple files

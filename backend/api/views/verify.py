@@ -16,7 +16,7 @@ def verify_email():
     password = request.args.get("password", default="")
 
     try:
-        account = VerifiedEmail.objects.get(email=email)
+        account = VerifiedEmail.objects.get(email=email)[0]
     except:
         return create_response(
             data={"is_verified": False},

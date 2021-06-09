@@ -76,8 +76,10 @@ def upload_mentor_emails():
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
         for line in reader:
-            email = VerifiedEmail(email=line[0], is_mentor=isMentor, password=password)
-            email.save()
+            duplicates = VerifiedEmail.objects().get(email=line[0], is_mentor=isMentor, password=password)
+            if not duplicates:
+                email = VerifiedEmail(email=line[0], is_mentor=isMentor, password=password)
+                email.save()
     return create_response(status=200, message="success")
 
 

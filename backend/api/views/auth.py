@@ -12,7 +12,7 @@ from api.utils.constants import (
     ADMIN_ROLE,
     Account,
 )
-from api.utils.request_utils import send_email
+from api.utils.request_utils import send_email, get_profile_model
 from api.utils.firebase import client as firebase_client
 from api.utils.profile_parse import new_profile
 import requests
@@ -111,15 +111,6 @@ def register():
             ).decode("utf-8"),
         },
     )
-
-
-def get_profile_model(role):
-    if role == Account.MENTOR:
-        return MentorProfile
-    elif role == Account.MENTEE:
-        return MenteeProfile
-    elif role == Account.ADMIN:
-        return Admin
 
 
 @auth.route("/login", methods=["POST"])

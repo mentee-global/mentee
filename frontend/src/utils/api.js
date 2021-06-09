@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL, ACCOUNT_TYPE } from "utils/consts";
+import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
 
 const instance = axios.create({
@@ -194,8 +194,8 @@ export const editAvailability = (timeslots, id) => {
   );
 };
 
-export const fetchMentorsAppointments = () => {
-  const requestExtension = "/appointment/mentors";
+export const fetchAppointmentsByType = (accountType) => {
+  const requestExtension = `/appointment/${accountType}`;
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -252,8 +252,8 @@ export const downloadAllApplicationData = async () => {
   );
 };
 
-export const deleteMentorById = (id) => {
-  const requestExtension = `/mentor/${id}`;
+export const deleteAccountById = (id, accountType) => {
+  const requestExtension = `/account/${accountType}/${id}`;
   return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
@@ -405,3 +405,9 @@ export const fetchAppointmentsByMenteeId = async (id) => {
 export const fetchAppointmentsByMentorId = async (id) => {
   return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTOR);
 };
+
+export const fetchMentorsAppointments = async () =>
+  await fetchAppointmentsByType(PLURAL_TYPE.MENTORS);
+
+export const fetchMenteesAppointments = async () =>
+  await fetchAppointmentsByType(PLURAL_TYPE.MENTEES);

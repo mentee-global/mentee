@@ -9,6 +9,8 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
+from api.models import MentorProfile, MenteeProfile, Admin
+from api.utils.constants import Account
 
 wtforms_json.init()
 
@@ -183,3 +185,12 @@ def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
         return False, str(e)
 
     return True, ""
+
+
+def get_profile_model(role):
+    if role == Account.MENTOR:
+        return MentorProfile
+    elif role == Account.MENTEE:
+        return MenteeProfile
+    elif role == Account.ADMIN:
+        return Admin

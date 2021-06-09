@@ -35,7 +35,7 @@ function AppointmentCard({ info }) {
       </div>
       <div className="mentee-appt-card-header">
         Meeting with{" "}
-        <a href={`${MENTOR_PROFILE}/${info.mentorID}`}>
+        <a href={`${MENTOR_PROFILE}${info.mentorID}`}>
           {info.mentorName ?? "Mentor Not Found"}
         </a>
       </div>

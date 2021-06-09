@@ -35,7 +35,7 @@ function MenteeProfileModal(props) {
   const [languages, setLanguages] = useState(null);
   const [organization, setOrganization] = useState(null);
   const [educations, setEducations] = useState([]);
-  const [video, setVideo] = useState();
+  const [videoUrl, setVideoUrl] = useState();
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
@@ -59,7 +59,7 @@ function MenteeProfileModal(props) {
         ? JSON.parse(JSON.stringify(props.mentee.education))
         : [];
       setEducations(newEducation);
-      setVideo(props.mentee.video);
+      setVideoUrl(props.mentee.video && props.mentee.video.url);
       setPrivacy(props.mentee.is_private);
 
       if (props.mentee.education) {
@@ -224,7 +224,7 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
-    setVideo(e.target.value);
+    setVideoUrl(e.target.value);
     setEdited(true);
   }
 
@@ -361,11 +361,13 @@ function MenteeProfileModal(props) {
       is_private: privacy,
       video: {
         title: MENTEE_DEFAULT_VIDEO_NAME,
-        url: video,
+        url: videoUrl,
         tag: MENTEE_DEFAULT_VIDEO_NAME,
         date_uploaded: moment().format(),
       },
     };
+
+    console.log("up", updatedProfile);
 
     setSaving(true);
     saveEdits(updatedProfile);

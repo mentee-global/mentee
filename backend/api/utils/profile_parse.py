@@ -1,4 +1,5 @@
 from bson import ObjectId
+from api.core import logger
 from api.models import db, Education, Video, MentorProfile, MenteeProfile, Image
 from api.utils.request_utils import imgur_client
 from api.utils.constants import Account
@@ -140,10 +141,10 @@ def edit_profile(data: dict = {}, profile: object = None):
         if "video" in data:
             video_data = data.get("video")
             profile.video = Video(
-                title=video.get("title"),
-                url=video.get("url"),
-                tag=video.get("tag"),
-                date_uploaded=video.get("date_uploaded"),
+                title=video_data.get("title"),
+                url=video_data.get("url"),
+                tag=video_data.get("tag"),
+                date_uploaded=video_data.get("date_uploaded"),
             )
 
     profile.name = data.get("name", profile.name)

@@ -45,6 +45,7 @@ function PublicProfile({ accountType, id }) {
           />
           <ProfileContent
             account={account}
+            mentor={account}
             id={id}
             handleUpdateAccount={handleUpdateAccount}
             accountType={accountType}

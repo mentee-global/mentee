@@ -9,9 +9,11 @@ import {
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeProfileModal from "./MenteeProfileModal";
+import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
+  const {isMentor, isMentee} = useAuth();
   const getTitle = (name, age) => {
     if (props.isMentor) {
       return name;
@@ -83,7 +85,7 @@ function ProfileContent(props) {
               onSave={props.handleSaveEdits}
             />
           </div>
-        ) : (
+        ) : isMentee && (
           <div className="mentor-profile-button">
             <MenteeProfileModal
               mentee={props.mentor}

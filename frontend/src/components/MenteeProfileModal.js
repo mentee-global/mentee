@@ -8,9 +8,10 @@ import {
   PlusCircleFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { LANGUAGES } from "../utils/consts";
+import { LANGUAGES, MENTEE_DEFAULT_VIDEO_NAME } from "../utils/consts";
 import { editMenteeProfile, uploadMenteeImage } from "../utils/api";
 import { getMenteeID } from "../utils/auth.service";
+import moment from "moment";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 
@@ -34,7 +35,7 @@ function MenteeProfileModal(props) {
   const [languages, setLanguages] = useState(null);
   const [organization, setOrganization] = useState(null);
   const [educations, setEducations] = useState([]);
-  const [video, setVideo] = useState([null]);
+  const [video, setVideo] = useState();
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
@@ -223,6 +224,7 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
+    console.log(e.target.value);
     setVideo(e.target.value);
     setEdited(true);
   }
@@ -358,7 +360,15 @@ function MenteeProfileModal(props) {
       biography: about,
       location: location,
       is_private: privacy,
+      video: {
+        title: MENTEE_DEFAULT_VIDEO_NAME,
+        url: video,
+        tag: "",
+        date_uploaded: moment().format()
+      }
     };
+
+    console.log(updatedProfile);
 
     setSaving(true);
     saveEdits(updatedProfile);
@@ -557,7 +567,7 @@ function MenteeProfileModal(props) {
                 index={6}
                 handleClick={handleClick}
                 onChange={handleVideoChange}
-                value={"Paste Link"}
+                placeholder="Paste Link"
               />
             </div>
             <div className="modal-education-header">Account Privacy</div>

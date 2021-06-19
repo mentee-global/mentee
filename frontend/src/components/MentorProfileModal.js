@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
+import ImgCrop from "antd-img-crop";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import {
@@ -412,20 +413,22 @@ function MentorProfileModal(props) {
                   : image && image.url
               }
             />
-            <Upload
-              action={(file) => {
-                setImage(file);
-                setChangedImage(true);
-              }}
-              accept=".png,.jpg,.jpeg"
-              showUploadList={false}
-            >
-              <Button
-                shape="circle"
-                icon={<EditFilled />}
-                className="modal-profile-icon-edit"
-              />
-            </Upload>
+            <ImgCrop rotate>
+              <Upload
+                onChange={async (file) => {
+                  setImage(file.file.originFileObj);
+                  setChangedImage(true);
+                }}
+                accept=".png,.jpg,.jpeg"
+                showUploadList={false}
+              >
+                <Button
+                  shape="circle"
+                  icon={<EditFilled />}
+                  className="modal-profile-icon-edit"
+                />
+              </Upload>
+            </ImgCrop>
           </div>
           <div className="modal-inner-container">
             <div className="modal-input-container">

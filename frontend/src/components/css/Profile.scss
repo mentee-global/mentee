@@ -6,30 +6,34 @@
   padding: 2%;
 }
 
+// TODO: Fix this. It is currently a temp fix for hidden edit
+.mentor-profile-contact {
+  margin-bottom: 3.5em;
+}
 
 @media (min-width: 768px) {
   //For desktop
   .background-color-strip {
     height: 20%;
     background: $background-color-strip-color;
-    background-color: #FCF6E8;
+    background-color: #fcf6e8;
   }
-  
+
   .mentor-profile-content {
     padding-top: 5%;
     padding-left: 5%;
   }
-  
+
   .mentor-profile-content-flexbox {
     display: flex;
     flex-direction: row;
     padding: 0;
   }
-  
+
   .mentor-profile-info {
     width: 70%;
   }
-  
+
   .mentor-profile-name {
     display: flex;
     justify-content: space-between;
@@ -48,31 +52,31 @@
   }
 
   .mentor-lock-symbol svg {
-    color: #A58123;
+    color: #a58123;
     font-size: 0.9em;
   }
-  
+
   .mentor-profile-heading {
     color: $mentor-profile-heading-color;
   }
-  
+
   .yellow-dot {
     color: $yellow-dot-color;
   }
-  
+
   .mentor-profile-tag-first {
     margin-right: 1%;
   }
-  
+
   .mentor-profile-tag {
     margin-right: 1%;
     margin-left: 3%;
   }
-  
+
   .mentor-profile-about {
     width: 90%;
   }
-  
+
   .mentor-specialization-tag {
     border: 3px solid $specialization-tag-border;
     border-radius: 13px;
@@ -85,11 +89,11 @@
     margin-top: 2%;
     margin-right: 2%;
   }
-  
+
   .mentor-profile-education {
     margin-top: 2%;
   }
-  
+
   .mentor-profile-contact {
     border-top-color: $specialization-tag-border;
     border-top-width: 5vh;
@@ -100,48 +104,48 @@
     padding: 1%;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
   }
-  
+
   .mentor-profile-contact-header {
     font-size: 20px;
     font-weight: bold;
     background: $specialization-tag-border;
     height: 5vh;
   }
-  
+
   .mentor-profile-contact-icon {
     align-self: flex-start;
     margin-top: 3.5%;
     margin-right: 5%;
   }
-  
+
   .mentor-profile-contact-edit {
     font-weight: bold;
     font-size: 12px;
     text-decoration: underline;
     color: $edit-contact-color;
   }
-  
+
   .mentor-profile-button {
     margin-right: 2vw;
   }
-  
+
   .mentor-profile-input {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin-bottom: 2%;
   }
-  
+
   .mentor-profile-editing-footer {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
-  
+
   .mentor-profile-notifications-container {
     flex: 0.7;
   }
-  
+
   .mentor-profile-save-container {
     display: flex;
     flex: 0.3;

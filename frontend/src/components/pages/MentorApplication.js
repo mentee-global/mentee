@@ -544,8 +544,16 @@ function MentorApplication() {
       };
       await createApplication(data);
     }
+
     submitApplication();
-    setIsSubmitted(true);
+    var res = submitApplication();
+    if (res === 200) {
+      console.log("sucess")
+      setIsSubmitted(true);
+    } else {
+      console.log("Fail")
+    }
+    
   }
   function pageFour() {
     return (

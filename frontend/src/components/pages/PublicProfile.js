@@ -9,10 +9,8 @@ import { fetchAccountById, getMenteePrivateStatus } from "../../utils/api";
 import "../css/PublicProfile.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MenteeVideo from "components/MenteeVideo";
-import { useHistory } from "react-router-dom";
 
 function PublicProfile({ accountType, id }) {
-  const history = useHistory();
   const [account, setAccount] = useState({});
   const [updateContent, setUpdateContent] = useState(false);
   const [isMentor, setIsMentor] = useState(accountType == ACCOUNT_TYPE.MENTOR);

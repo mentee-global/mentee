@@ -59,110 +59,28 @@ const specialTopics = [
   "Technology Training",
 ];
 
+const STEPS = {
+  PAGE_ONE: 0,
+  PAGE_TWO: 1,
+  PAGE_THREE: 2,
+  PAGE_FOUR: 3,
+};
+
 function MentorApplication() {
   const [submitError, setSubmitError] = useState();
 
   // on change for radiio buttons
-  const [offerDonation, setOfferDonation] = useState(1);
-  const [commitTime, setCommitTime] = useState(1);
-  const [immigrantStatus, setImmigrantStatus] = useState(1);
-  const [specialistTime, setSpecialistTime] = useState(1);
-  const [companyTime, setCompanyTime] = useState(1);
-  const [onLinkedin, setOnLinkedin] = useState(1);
-
-  // validation
-  const [isChecked1, setIsChecked1] = useState(false);
-  const [isChecked2, setIsChecked2] = useState(false);
-  const [isChecked3, setIsChecked3] = useState(false);
-
-  const onChange1 = (e) => {
-    setOfferDonation(e.target.value);
-  };
-
-  const onChange2 = (e) => {
-    setCommitTime(e.target.value);
-  };
-
-  const onChange3 = (e) => {
-    setImmigrantStatus(e.target.value);
-  };
-
-  const onChange4 = (e) => {
-    setSpecialistTime(e.target.value);
-  };
-
-  const onChange5 = (e) => {
-    setCompanyTime(e.target.value);
-  };
-
-  const onChange6 = (e) => {
-    setOnLinkedin(e.target.value);
-  };
+  const [offerDonation, setOfferDonation] = useState();
+  const [commitTime, setCommitTime] = useState();
+  const [immigrantStatus, setImmigrantStatus] = useState();
+  const [specialistTime, setSpecialistTime] = useState();
+  const [companyTime, setCompanyTime] = useState();
+  const [onLinkedin, setOnLinkedin] = useState();
 
   // on change for checked boxes
   const [mentoringOptions, setMentoringOptions] = useState([]);
   const [sectors, setSectors] = useState([]);
   const [topics, setTopics] = useState([]);
-
-  function onChangeCheck(checkedValues) {
-    if (checkedValues.length > 0) {
-      setIsChecked1(true);
-    } else {
-      setIsChecked1(false);
-    }
-    let optionsSelected = [];
-    checkedValues.forEach((value) => {
-      optionsSelected.push(value);
-    });
-    setMentoringOptions(optionsSelected);
-  }
-
-  function onChangeCheck2(checkedValues) {
-    if (checkedValues.length > 0) {
-      setIsChecked2(true);
-    } else {
-      setIsChecked2(false);
-    }
-    let optionsSelected = [];
-    checkedValues.forEach((value) => {
-      optionsSelected.push(value);
-    });
-    setSectors(optionsSelected);
-  }
-
-  function onChangeCheck3(checkedValues) {
-    if (checkedValues.length > 0) {
-      setIsChecked3(true);
-    } else {
-      setIsChecked3(false);
-    }
-    let optionsSelected = [];
-    checkedValues.forEach((value) => {
-      optionsSelected.push(value);
-    });
-    setTopics(optionsSelected);
-  }
-
-  const validation1 = (rule, value, callback) => {
-    if (isChecked1) {
-      return callback();
-    }
-    return callback("Please select an option.");
-  };
-
-  const validation2 = (rule, value, callback) => {
-    if (isChecked2) {
-      return callback();
-    }
-    return callback("Please select an option.");
-  };
-
-  const validation3 = (rule, value, callback) => {
-    if (isChecked3) {
-      return callback();
-    }
-    return callback("Please select an option.");
-  };
 
   // sets text fields
   const [firstName, setFirstName] = useState(null);
@@ -177,6 +95,46 @@ function MentorApplication() {
   const [knowledgeLocation, setknowledgeLocation] = useState(null);
   const [referral, setReferral] = useState(null);
   const [languages, setLanguages] = useState(null);
+  const [current, setCurrent] = useState(0);
+  const [buttonState, setButtonState] = useState(0);
+
+  const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
+
+  const onChange1 = (e) => setOfferDonation(e.target.value);
+  const onChange2 = (e) => setCommitTime(e.target.value);
+  const onChange3 = (e) => setImmigrantStatus(e.target.value);
+  const onChange4 = (e) => setSpecialistTime(e.target.value);
+  const onChange5 = (e) => setCompanyTime(e.target.value);
+  const onChange6 = (e) => setOnLinkedin(e.target.value);
+
+  function onChangeCheck(checkedValues) {
+    let optionsSelected = [];
+    checkedValues.forEach((value) => {
+      optionsSelected.push(value);
+    });
+    setMentoringOptions(optionsSelected);
+  }
+
+  function onChangeCheck2(checkedValues) {
+    let optionsSelected = [];
+    checkedValues.forEach((value) => {
+      optionsSelected.push(value);
+    });
+    setSectors(optionsSelected);
+  }
+
+  function onChangeCheck3(checkedValues) {
+    let optionsSelected = [];
+    checkedValues.forEach((value) => {
+      optionsSelected.push(value);
+    });
+    setTopics(optionsSelected);
+  }
+
+  const shouldShowErrors = (step) => (v) =>
+    (!v || (typeof v === "object" && v.length === 0)) &&
+    current === step &&
+    showMissingFieldErrors;
 
   // creates steps layout
   const steps = [
@@ -198,13 +156,44 @@ function MentorApplication() {
     },
   ];
 
-  const [current, setCurrent] = useState(0);
-  const [buttonState, setButtonState] = useState(0);
+  const verifyRequiredFieldsAreFilled = () => {
+    const requiredQuestions = {
+      [STEPS.PAGE_ONE]: [
+        firstName,
+        lastName,
+        cell,
+        email,
+        hearAbout,
+        whyMentee,
+      ],
+      [STEPS.PAGE_TWO]: [
+        offerDonation,
+        mentoringOptions,
+        commitTime,
+        immigrantStatus,
+        specialistTime,
+      ],
+      [STEPS.PAGE_THREE]: [sectors, title, employer, companyTime, onLinkedin],
+      [STEPS.PAGE_FOUR]: [topics, knowledgeLocation, referral, languages],
+    };
 
-  const [showPageTwoErrors, setShowPageTwoErrors] = useState(false);
-  const [showPageThreeErrors, setShowPageThreeErrors] = useState(false);
+    if (
+      requiredQuestions[current].some(
+        (x) => !x || (typeof x === "object" && x.length === 0)
+      )
+    ) {
+      setShowMissingFieldErrors(true);
+      return false;
+    }
+
+    if (showMissingFieldErrors) setShowMissingFieldErrors(false);
+
+    return true;
+  };
 
   const next = () => {
+    if (!verifyRequiredFieldsAreFilled()) return;
+
     setCurrent(current + 1);
   };
 
@@ -213,6 +202,7 @@ function MentorApplication() {
   };
 
   function pageOne() {
+    const isMissingError = shouldShowErrors(STEPS.PAGE_ONE);
     return (
       <div className="page-one-header">
         <h1 className="header-one">Personal Information</h1>
@@ -229,6 +219,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(firstName) && (
+                  <p style={{ color: "red" }}>Please input first name.</p>
+                )}
                 <Input
                   type="text"
                   placeholder="*First Name"
@@ -246,6 +239,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(lastName) && (
+                  <p style={{ color: "red" }}>Please input last name.</p>
+                )}
                 <Input
                   placeholder="*Last Name*"
                   value={lastName}
@@ -262,6 +258,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(cell) && (
+                  <p style={{ color: "red" }}>Please input cell.</p>
+                )}
                 <Input
                   type="text"
                   placeholder="*Cell Phone Number*"
@@ -300,6 +299,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(email) && (
+                  <p style={{ color: "red" }}>Please input email.</p>
+                )}
                 <Input
                   type="text"
                   placeholder="*Email"
@@ -317,6 +319,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(hearAbout) && (
+                  <p style={{ color: "red" }}>Please add input.</p>
+                )}
                 <Input
                   type="text"
                   placeholder="*From whom or where did you hear about us?"
@@ -336,6 +341,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(whyMentee) && (
+                  <p style={{ color: "red" }}>Please add input.</p>
+                )}
                 <TextArea
                   autoSize
                   placeholder="*Please share why you would like to become apart of our MENTEE Mentor Specialist team?"
@@ -352,6 +360,7 @@ function MentorApplication() {
   }
 
   function pageTwo() {
+    const isMissingError = shouldShowErrors(STEPS.PAGE_TWO);
     return (
       <div className="page-one-header">
         <h1 className="header-two">Commitments</h1>
@@ -370,9 +379,11 @@ function MentorApplication() {
                 organization and we are 100% sustained by donations. Are you
                 able to offer a donation for one year?*
               </p3>
-
               <Form name="radio-validation-1">
                 <Form.Item name="checkbox">
+                  {isMissingError(offerDonation) && (
+                    <p style={{ color: "red" }}>Please select an option.</p>
+                  )}
                   <Radio.Group
                     className="donation"
                     onChange={onChange1}
@@ -404,7 +415,10 @@ function MentorApplication() {
             <div className="page-two-margin">
               <div>*Please choose the option(s) that is right for you</div>
               <Form name="checkbox-validation">
-                <Form.Item name="checkbox" rules={[{ validator: validation1 }]}>
+                <Form.Item name="checkbox">
+                  {isMissingError(mentoringOptions) && (
+                    <p style={{ color: "red" }}>Please select an option.</p>
+                  )}
                   <Checkbox.Group
                     options={workOptions}
                     defaultValue={mentoringOptions}
@@ -417,6 +431,9 @@ function MentorApplication() {
           <div className="column-two-page-two">
             <div className="page-two-margin">
               <div>*Please choose the option(s) that is right for you</div>
+              {isMissingError(commitTime) && (
+                <p style={{ color: "red" }}>Please select an option.</p>
+              )}
               <Radio.Group onChange={onChange2} value={commitTime}>
                 <Radio value={"I can mentor several times a month."}>
                   I can mentor several times a month.
@@ -437,6 +454,9 @@ function MentorApplication() {
                 *Are you an immigrant or refugee or do you come from an
                 immigrant family or refugee family?
               </div>
+              {isMissingError(immigrantStatus) && (
+                <p style={{ color: "red" }}>Please select an option.</p>
+              )}
               <Radio.Group onChange={onChange3} value={immigrantStatus}>
                 <Radio value={"Yes"}>Yes</Radio>
                 <Radio value={"No"}>No</Radio>
@@ -447,6 +467,9 @@ function MentorApplication() {
                 *If you are accepted as a Specialist, would you like to commit
                 to...
               </div>
+              {isMissingError(specialistTime) && (
+                <p style={{ color: "red" }}>Please select an option.</p>
+              )}
               <Radio.Group name="a" onChange={onChange4} value={specialistTime}>
                 <Radio value={"One year with us"}>One year with us</Radio>
                 <Radio value={"Two years with us"}>Two years with us</Radio>
@@ -459,6 +482,7 @@ function MentorApplication() {
   }
 
   function pageThree() {
+    const isMissingError = shouldShowErrors(STEPS.PAGE_THREE);
     return (
       <div className="page-one-header">
         <h1 className="header-three">Work Information</h1>
@@ -468,10 +492,10 @@ function MentorApplication() {
               *Which sector(s) do you work in? (Check all that apply)
               <div className="work-sectors--answer-choices">
                 <Form name="checkbox-validation">
-                  <Form.Item
-                    name="checkbox"
-                    rules={[{ validator: validation2 }]}
-                  >
+                  <Form.Item name="checkbox">
+                    {isMissingError(sectors) && (
+                      <p style={{ color: "red" }}>Please select an option.</p>
+                    )}
                     <Checkbox.Group
                       options={workSectors}
                       value={sectors}
@@ -495,6 +519,9 @@ function MentorApplication() {
                     },
                   ]}
                 >
+                  {isMissingError(title) && (
+                    <p style={{ color: "red" }}>Please add title.</p>
+                  )}
                   <Input
                     type="text"
                     placeholder="*Your full title and a brief description of your role."
@@ -515,6 +542,9 @@ function MentorApplication() {
                     },
                   ]}
                 >
+                  {isMissingError(employer) && (
+                    <p style={{ color: "red" }}>Please add input.</p>
+                  )}
                   <Input
                     type="text"
                     placeholder="*Full name of your company/employer"
@@ -528,6 +558,9 @@ function MentorApplication() {
             <div className="page-three-padding">
               *How long have you been with this company?
               <div className="time-options-answers">
+                {isMissingError(companyTime) && (
+                  <p style={{ color: "red" }}>Please select an option.</p>
+                )}
                 <Radio.Group onChange={onChange5} value={companyTime}>
                   <Radio value={"Less than one year."}>
                     Less than one year.
@@ -543,6 +576,9 @@ function MentorApplication() {
               with our MENETEE Specialist profile unless you prefer they remain
               seperate.)
               <div className="time-options-answers">
+                {isMissingError(onLinkedin) && (
+                  <p style={{ color: "red" }}>Please select an option.</p>
+                )}
                 <Radio.Group onChange={onChange6} value={onLinkedin}>
                   <Radio value={"Yes"}>Yes</Radio>
                   <Radio value={"No"}>No</Radio>
@@ -566,6 +602,9 @@ function MentorApplication() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   function handleSubmit(event) {
     event.preventDefault();
+
+    if (!verifyRequiredFieldsAreFilled()) return;
+
     async function submitApplication() {
       // onOk send the put request
       const data = {
@@ -605,6 +644,7 @@ function MentorApplication() {
   }
 
   function pageFour() {
+    const isMissingError = shouldShowErrors(STEPS.PAGE_FOUR);
     return (
       <div className="page-one-header">
         <div className="page-four-header-container">
@@ -622,10 +662,10 @@ function MentorApplication() {
             <Form>
               <div className="special-topics-answer-choices">
                 <Form name="checkbox-validation">
-                  <Form.Item
-                    name="checkbox"
-                    rules={[{ validator: validation3 }]}
-                  >
+                  <Form.Item name="checkbox">
+                    {isMissingError(topics) && (
+                      <p style={{ color: "red" }}>Please select an option.</p>
+                    )}
                     <Checkbox.Group
                       options={specialTopics}
                       value={topics}
@@ -639,17 +679,20 @@ function MentorApplication() {
           <div className="column-two">
             <Form>
               {
-                "Please share which region(s), country(s), state(s), cities your knowledge is based in"
+                "*Please share which region(s), country(s), state(s), cities your knowledge is based in"
               }
               <Form.Item
                 name="region-question"
                 className="input-form-two"
                 rules={[
                   {
-                    required: false,
+                    required: true,
                   },
                 ]}
               >
+                {isMissingError(knowledgeLocation) && (
+                  <p style={{ color: "red" }}>Please add input.</p>
+                )}
                 <Input
                   type="text"
                   placeholder="Please share which region(s), country(s), state(s), cities your 
@@ -671,6 +714,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(referral) && (
+                  <p style={{ color: "red" }}>Please add input.</p>
+                )}
                 <Input
                   type="text"
                   placeholder="*If you know someone who would be a great MENTEE 
@@ -693,6 +739,9 @@ function MentorApplication() {
                   },
                 ]}
               >
+                {isMissingError(languages) && (
+                  <p style={{ color: "red" }}>Please add input.</p>
+                )}
                 <Input
                   type="text"
                   placeholder="*Do you speak a language(s) other than English? If yes, please

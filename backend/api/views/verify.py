@@ -13,20 +13,14 @@ verify = Blueprint("verify", __name__)  # initialize blueprint
 @verify.route("/verifyEmail", methods=["GET"])
 def verify_email():
     email = request.args.get("email", default="")
-    password = request.args.get("password", default="")
-
+    
     try:
-        account = VerifiedEmail.objects.get(email=email)[0]
+        account = VerifiedEmail.objects.get(email=email)
     except:
         return create_response(
             data={"is_verified": False},
             status=401,
             message="Could not find email in database",
-        )
-
-    if not account.is_mentor and password != account.password:
-        return create_response(
-            data={"is_verified": False}, status=401, message="Password is incorrect"
         )
 
     return create_response(

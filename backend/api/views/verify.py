@@ -13,7 +13,7 @@ verify = Blueprint("verify", __name__)  # initialize blueprint
 @verify.route("/verifyEmail", methods=["GET"])
 def verify_email():
     email = request.args.get("email", default="")
-    
+
     try:
         account = VerifiedEmail.objects.get(email=email)
     except:

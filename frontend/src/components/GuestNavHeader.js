@@ -44,9 +44,6 @@ function GuestNavHeader({ history }) {
                       pathname: "/application-page",
                     });
                   }}
-                // onClick={() => {
-                //   window.location.href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO";
-                // }}
                 />
               </span>
             </>

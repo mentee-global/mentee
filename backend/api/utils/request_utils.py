@@ -1,6 +1,7 @@
 import os
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
+from wtforms.fields.core import DateField, DateTimeField
 from wtforms.validators import InputRequired
 from wtforms import validators
 import wtforms_json
@@ -79,30 +80,28 @@ class ApppointmentForm(Form):
     status = StringField(validators=[InputRequired()])
 
 
-# class MentorApplicationForm(Form):
-# email = StringField(validators=[InputRequired()])
-# name = StringField(validators=[InputRequired()])
-# cell_number = StringField(validators=[InputRequired()])
-# business_number = StringField()
-# hear_about_us = StringField(validators=[InputRequired()])
-# offer_donation = BooleanField(validators=[InputRequired()])
-# mentoring_options = FieldList(StringField(), validators=[InputRequired()])
-# employer_name = StringField(validators=[InputRequired()])
-# work_sectors = FieldList(StringField(), validators=[InputRequired()])
-# role_description = StringField(validators=[InputRequired()])
-# time_at_current_company = StringField(validators=[InputRequired()])
-# linkedin = StringField(validators=[InputRequired()])
-# why_join_mentee = StringField(validators=[InputRequired()])
-# commit_time = StringField(validators=[InputRequired()])
-# specialist_time = StringField(validators=[InputRequired()])
-# immigrant_status = StringField(validators=[InputRequired()])
-# languages = StringField(validators=[InputRequired()])
-# specializations = FieldList(StringField(), validators=[InputRequired()])
-# knowledge_location = StringField(validators=[InputRequired()])
-# referral = StringField()
-# application_state = StringField(validators=[InputRequired()])
-# date_submitted = FieldList(validators=[InputRequired()])
-# notes = StringField()
+class MentorApplicationForm(Form):
+    email = StringField(validators=[InputRequired()])
+    name = StringField(validators=[InputRequired()])
+    cell_number = StringField(validators=[InputRequired()])
+    business_number = StringField()
+    hear_about_us = StringField(validators=[InputRequired()])
+    offer_donation = BooleanField(validators=[InputRequired()])
+    mentoring_options = FieldList(StringField(), validators=[validators.required()])
+    employer_name = StringField(validators=[InputRequired()])
+    work_sectors = FieldList(StringField(), validators=[validators.required()])
+    role_description = StringField(validators=[InputRequired()])
+    time_at_current_company = StringField(validators=[InputRequired()])
+    linkedin = StringField(validators=[InputRequired()])
+    why_join_mentee = StringField(validators=[InputRequired()])
+    commit_time = StringField(validators=[InputRequired()])
+    specialist_time = StringField(validators=[InputRequired()])
+    immigrant_status = StringField(validators=[InputRequired()])
+    languages = StringField(validators=[InputRequired()])
+    specializations = FieldList(StringField(), validators=[validators.required()])
+    knowledge_location = StringField(validators=[InputRequired()])
+    referral = StringField()
+    notes = StringField()
 
 
 def is_invalid_form(form_data) -> Tuple[str, bool]:

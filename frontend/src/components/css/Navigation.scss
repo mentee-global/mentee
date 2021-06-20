@@ -31,6 +31,13 @@
 .ant-tooltip-inner {
   color: white;
 }
+.ant-collapse-content > .ant-collapse-content-box {
+  padding: 0;
+}
+
+.ant-list-split .ant-list-item {
+  border-bottom: 0.25px solid #e4bb4f;
+}
 
 .navigation-menu-item-selected {
   background-color: $nav-menu-item-selected-color;
@@ -39,6 +46,69 @@
 
 .navigation-submenu {
   color: $nav-submenu-color;
+}
+
+.navigation-messages {
+  bottom: 0px;
+  width: 30%;
+  position: fixed;
+  right: 20%;
+  box-shadow: 0 6px 5px 0 rgba(0, 0, 0, 0.19);
+}
+
+.message-box {
+  height: 60vh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.message-box .ant-list-item:hover {
+  box-shadow: 0 0 4px #eee;
+  cursor: pointer;
+}
+
+@media (max-width: 1050px) {
+  // For tablet screens
+  .navigation-messages {
+    width: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  // For mobile screens
+  .navigation-messages {
+    width: 75%;
+    right: 0;
+  }
+}
+
+.ant-drawer-header {
+  border-bottom: 0.25px solid #e4bb4f;
+}
+
+.ant-drawer-body {
+  padding-top: 10px;
+}
+
+.ant-drawer-footer {
+  text-align: center;
+  border-top: 0.25px solid #e4bb4f;
+}
+
+.ant-collapse-content {
+  border-top: 0.25px solid #e4bb4f;
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.drawerHeader span {
+  color: #7a7a7a;
+  font-size: 11px;
 }
 
 .profile-picture {
@@ -94,4 +164,13 @@
 .navigation-header-button {
   margin-right: 10px;
   width: 100%;
+}
+
+.loadingIcon {
+  margin: 30px 0;
+  margin-bottom: 20px;
+  padding-top: 10%;
+  padding-left: 40%;
+  text-align: center;
+  border-radius: 4px;
 }

@@ -12,8 +12,9 @@ mentee = Blueprint("mentee", __name__)
 def edit_fav_mentor():
     try:
         data = request.get_json()
+        logger.info(data)
         mentor_id = data["mentor_id"]
-        mentee_uid = data["mentee_uid"]
+        mentee_id = data["mentee_id"]
         favorite = bool(data["favorite"])
     except:
         msg = "invalid parameters provided"
@@ -21,7 +22,7 @@ def edit_fav_mentor():
         return create_response(status=422, message=msg)
     print()
     try:
-        mentee = MenteeProfile.objects.get(firebase_uid=mentee_uid)
+        mentee = MenteeProfile.objects.get(id=mentee_id)
         if not favorite and mentor_id in mentee.favorite_mentors_ids:
             mentee.favorite_mentors_ids.remove(mentor_id)
             msg = (
@@ -38,3 +39,28 @@ def edit_fav_mentor():
         logger.info(msg)
         return create_response(status=422, message=msg)
     return create_response(status=200, message=msg)
+
+
+@mentee.route("/favorites/<id>", methods=["GET"])
+def get_favorites(id):
+    try:
+        mentee = MenteeProfile.objects.get(id=id)
+    except:
+        msg = f"Failed to fetch mentee by id: {id}"
+        return create_response(status=422, message=msg)
+
+    favorites = mentee.favorite_mentors_ids
+    mentor_list = list()
+    for mentor_id in favorites:
+        try:
+            mentor = MentorProfile.objects.only(
+                "name", "professional_title", "id", "image"
+            ).get(id=mentor_id)
+        except:
+            msg = f"failed to fetch mentor by id: {mentor_id}"
+            continue
+        mentor_list.append(mentor)
+
+    return create_response(
+        status=200, data={"favorites": mentor_list}, message="success"
+    )

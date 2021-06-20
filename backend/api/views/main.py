@@ -29,7 +29,9 @@ def get_accounts(account_type):
     if account_type == Account.MENTOR:
         accounts = MentorProfile.objects().exclude("availability", "videos")
     elif account_type == Account.MENTEE:
-        accounts = MenteeProfile.objects().exclude("video", "phone_number", "email")
+        accounts = MenteeProfile.objects(is_private=False).exclude(
+            "video", "phone_number", "email"
+        )
     else:
         msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)
@@ -220,3 +222,16 @@ def uploadImage(id):
 
     account.save()
     return create_response(status=200, message=f"Success")
+
+
+# GET request for /account/<id>/private
+@main.route("/account/<id>/private", methods=["GET"])
+def is_mentee_account_private(id):
+    try:
+        mentee = MenteeProfile.objects.get(id=id)
+    except:
+        msg = "No mentee with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    return create_response(data={"private": True if mentee.is_private else False})

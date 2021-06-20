@@ -19,6 +19,7 @@ function UploadEmails(props) {
           }}
         />
       }
+      onCancel={() => props.setUploadModalVisible(false)}
     >
       {" "}
       <div className="dragdrops">

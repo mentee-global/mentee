@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
-import ImgCrop from "antd-img-crop";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import {
@@ -9,15 +8,16 @@ import {
   PlusCircleFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
-import { editMentorProfile, uploadMentorImage } from "../utils/api";
-import { getMentorID } from "../utils/auth.service";
+import { LANGUAGES, MENTEE_DEFAULT_VIDEO_NAME } from "../utils/consts";
+import { editMenteeProfile, uploadMenteeImage } from "../utils/api";
+import { getMenteeID } from "../utils/auth.service";
+import moment from "moment";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 
 const INITIAL_NUM_INPUTS = 14;
 
-function MentorProfileModal(props) {
+function MenteeProfileModal(props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(
@@ -26,42 +26,44 @@ function MentorProfileModal(props) {
   const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
   const [validate, setValidate] = useState(false);
   const [name, setName] = useState(null);
-  const [title, setTitle] = useState(null);
   const [about, setAbout] = useState(null);
-  const [inPersonAvailable, setInPersonAvailable] = useState(null);
-  const [groupAvailable, setGroupAvailable] = useState(null);
   const [location, setLocation] = useState(null);
-  const [website, setWebsite] = useState(null);
+  const [gender, setGender] = useState(null);
+  const [age, setAge] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [email, setEmail] = useState(null);
   const [languages, setLanguages] = useState(null);
-  const [linkedin, setLinkedin] = useState(null);
-  const [specializations, setSpecializations] = useState(null);
+  const [organization, setOrganization] = useState(null);
   const [educations, setEducations] = useState([]);
+  const [videoUrl, setVideoUrl] = useState();
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [privacy, setPrivacy] = useState(true);
 
   useEffect(() => {
-    if (props.mentor) {
-      setName(props.mentor.name);
-      setTitle(props.mentor.professional_title);
-      setAbout(props.mentor.biography);
-      setInPersonAvailable(props.mentor.offers_in_person);
-      setGroupAvailable(props.mentor.offers_group_appointments);
-      setLocation(props.mentor.location);
-      setWebsite(props.mentor.website);
-      setLinkedin(props.mentor.linkedin);
-      setImage(props.mentor.image);
-      setSpecializations(props.mentor.specializations);
-      setLanguages(props.mentor.languages);
+    if (props.mentee) {
+      setName(props.mentee.name);
+      setAbout(props.mentee.biography);
+      setLocation(props.mentee.location);
+      setAge(props.mentee.age);
+      setGender(props.mentee.gender);
+      setPhone(props.mentee.phone);
+      setEmail(props.mentee.email);
+      setImage(props.mentee.image);
+      setLanguages(props.mentee.languages);
+      setOrganization(props.mentee.organization);
       // Deep copy of array of objects
-      const newEducation = props.mentor.education
-        ? JSON.parse(JSON.stringify(props.mentor.education))
+      const newEducation = props.mentee.education
+        ? JSON.parse(JSON.stringify(props.mentee.education))
         : [];
       setEducations(newEducation);
+      setVideoUrl(props.mentee.video && props.mentee.video.url);
+      setPrivacy(props.mentee.is_private);
 
-      if (props.mentor.education) {
-        let newInputs = (props.mentor.education.length - 1) * 4;
+      if (props.mentee.education) {
+        let newInputs = (props.mentee.education.length - 1) * 4;
         setNumInputs(INITIAL_NUM_INPUTS + newInputs);
 
         let newValid = [...isValid];
@@ -71,7 +73,7 @@ function MentorProfileModal(props) {
         setIsValid(newValid);
       }
     }
-  }, [props.mentor, modalVisible]);
+  }, [props.mentee, modalVisible]);
 
   function renderEducationInputs() {
     return (
@@ -173,26 +175,8 @@ function MentorProfileModal(props) {
     setIsValid(newValid);
   }
 
-  function handleTitleChange(e) {
-    setTitle(e.target.value);
-    setEdited(true);
-    let newValid = [...isValid];
-    newValid[1] = !!e.target.value;
-    setIsValid(newValid);
-  }
-
   function handleAboutChange(e) {
     setAbout(e.target.value);
-    setEdited(true);
-  }
-
-  function handleInPersonAvailableChange(e) {
-    setInPersonAvailable(e.target.checked);
-    setEdited(true);
-  }
-
-  function handleGroupAvailableChange(e) {
-    setGroupAvailable(e.target.checked);
     setEdited(true);
   }
 
@@ -201,8 +185,23 @@ function MentorProfileModal(props) {
     setEdited(true);
   }
 
-  function handleWebsiteChange(e) {
-    setWebsite(e.target.value);
+  function handleAgeChange(e) {
+    setAge(e.target.value);
+    setEdited(true);
+  }
+
+  function handleGenderChange(e) {
+    setGender(e.target.value);
+    setEdited(true);
+  }
+
+  function handlePhoneChange(e) {
+    setPhone(e.target.value);
+    setEdited(true);
+  }
+
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
     setEdited(true);
   }
 
@@ -219,20 +218,19 @@ function MentorProfileModal(props) {
     setIsValid(newValid);
   }
 
-  function handleLinkedinChange(e) {
-    setLinkedin(e.target.value);
+  function handleOrganizationChange(e) {
+    setOrganization(e.target.value);
     setEdited(true);
   }
 
-  function handleSpecializationsChange(e) {
-    let specializationsSelected = [];
-    e.forEach((value) => specializationsSelected.push(value));
-    setSpecializations(specializationsSelected);
+  function handleVideoChange(e) {
+    setVideoUrl(e.target.value);
     setEdited(true);
+  }
 
-    let newValid = [...isValid];
-    newValid[9] = !!specializationsSelected.length;
-    setIsValid(newValid);
+  function handlePrivacyChange(e) {
+    setPrivacy(e.target.checked);
+    setEdited(true);
   }
 
   function handleSchoolChange(e, index) {
@@ -323,11 +321,11 @@ function MentorProfileModal(props) {
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      const mentorID = await getMentorID();
-      await editMentorProfile(data, mentorID);
+      const menteeID = await getMenteeID();
+      await editMenteeProfile(data, menteeID);
 
       if (changedImage) {
-        await uploadMentorImage(image, await getMentorID());
+        await uploadMenteeImage(image, await getMenteeID());
       }
 
       setSaving(false);
@@ -351,16 +349,22 @@ function MentorProfileModal(props) {
 
     const updatedProfile = {
       name: name,
-      professional_title: title,
-      linkedin: linkedin,
-      website: website,
+      age: age,
+      gender: gender,
+      phone: phone,
+      email: email,
       education: educations,
       languages: languages,
-      specializations: specializations,
+      organization: organization,
       biography: about,
-      offers_in_person: inPersonAvailable,
-      offers_group_appointments: groupAvailable,
       location: location,
+      is_private: privacy,
+      video: {
+        title: MENTEE_DEFAULT_VIDEO_NAME,
+        url: videoUrl,
+        tag: MENTEE_DEFAULT_VIDEO_NAME,
+        date_uploaded: moment().format(),
+      },
     };
 
     setSaving(true);
@@ -413,22 +417,20 @@ function MentorProfileModal(props) {
                   : image && image.url
               }
             />
-            <ImgCrop rotate>
-              <Upload
-                onChange={async (file) => {
-                  setImage(file.file.originFileObj);
-                  setChangedImage(true);
-                }}
-                accept=".png,.jpg,.jpeg"
-                showUploadList={false}
-              >
-                <Button
-                  shape="circle"
-                  icon={<EditFilled />}
-                  className="modal-profile-icon-edit"
-                />
-              </Upload>
-            </ImgCrop>
+            <Upload
+              action={(file) => {
+                setImage(file);
+                setChangedImage(true);
+              }}
+              accept=".png,.jpg,.jpeg"
+              showUploadList={false}
+            >
+              <Button
+                shape="circle"
+                icon={<EditFilled />}
+                className="modal-profile-icon-edit"
+              />
+            </Upload>
           </div>
           <div className="modal-inner-container">
             <div className="modal-input-container">
@@ -442,18 +444,6 @@ function MentorProfileModal(props) {
                 onChange={handleNameChange}
                 value={name}
                 valid={isValid[0]}
-                validate={validate}
-              />
-              <ModalInput
-                style={styles.modalInput}
-                type="text"
-                title="Professional Title *"
-                clicked={inputClicked[1]}
-                index={1}
-                handleClick={handleClick}
-                onChange={handleTitleChange}
-                value={title}
-                valid={isValid[1]}
                 validate={validate}
               />
             </div>
@@ -471,30 +461,8 @@ function MentorProfileModal(props) {
                 value={about}
               />
             </div>
-            <div className="divider" />
-            <div className="modal-availability-checkbox">
-              <Checkbox
-                className="modal-availability-checkbox-text"
-                clicked={inputClicked[3]}
-                index={3}
-                handleClick={handleClick}
-                onChange={handleInPersonAvailableChange}
-                checked={inPersonAvailable}
-              >
-                Available in-person?
-              </Checkbox>
-              <div></div>
-              <Checkbox
-                className="modal-availability-checkbox-text"
-                clicked={inputClicked[4]}
-                index={4}
-                handleClick={handleClick}
-                onChange={handleGroupAvailableChange}
-                checked={groupAvailable}
-              >
-                Available for group appointments?
-              </Checkbox>
-            </div>
+          </div>
+          <div className="modal-inner-container">
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
@@ -509,15 +477,25 @@ function MentorProfileModal(props) {
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="Website"
+                title="Gender"
                 clicked={inputClicked[6]}
                 index={6}
                 handleClick={handleClick}
-                onChange={handleWebsiteChange}
-                value={website}
+                onChange={handleGenderChange}
+                value={gender}
               />
             </div>
             <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="Age"
+                clicked={inputClicked[6]}
+                index={6}
+                handleClick={handleClick}
+                onChange={handleAgeChange}
+                value={age}
+              />
               <ModalInput
                 style={styles.modalInput}
                 type="dropdown-multiple"
@@ -532,30 +510,39 @@ function MentorProfileModal(props) {
                 valid={isValid[7]}
                 validate={validate}
               />
+            </div>
+            <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="LinkedIn"
-                clicked={inputClicked[8]}
-                index={8}
+                title="Email"
+                clicked={inputClicked[6]}
+                index={6}
                 handleClick={handleClick}
-                onChange={handleLinkedinChange}
-                value={linkedin}
+                onChange={handleEmailChange}
+                value={email}
+              />
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="Phone"
+                clicked={inputClicked[6]}
+                index={6}
+                handleClick={handleClick}
+                onChange={handlePhoneChange}
+                value={phone}
               />
             </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
-                type="dropdown-multiple"
-                title="Specializations"
-                clicked={inputClicked[9]}
-                index={9}
+                type="text"
+                title="Organizaton"
+                clicked={inputClicked[6]}
+                index={6}
                 handleClick={handleClick}
-                onChange={handleSpecializationsChange}
-                options={SPECIALIZATIONS}
-                value={specializations}
-                valid={isValid[9]}
-                validate={validate}
+                onChange={handleOrganizationChange}
+                value={organization}
               />
             </div>
             <div className="modal-education-header">Education</div>
@@ -566,6 +553,31 @@ function MentorProfileModal(props) {
             >
               <PlusCircleFilled className="modal-education-add-icon" />
               <div className="modal-education-add-text">Add more</div>
+            </div>
+            <div className="modal-education-header">Add Videos</div>
+            <div>Introduce yourself via YouTube video!</div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                clicked={inputClicked[6]}
+                index={6}
+                handleClick={handleClick}
+                onChange={handleVideoChange}
+                placeholder="Paste Link"
+              />
+            </div>
+            <div className="modal-education-header">Account Privacy</div>
+            <Checkbox
+              onChange={handlePrivacyChange}
+              value={privacy}
+              checked={privacy}
+            >
+              Private Account
+            </Checkbox>
+            <div>
+              You'll be able to see your information, but your account will not
+              show up when people are browsing accounts.
             </div>
           </div>
         </div>
@@ -593,4 +605,4 @@ const styles = {
   },
 };
 
-export default MentorProfileModal;
+export default MenteeProfileModal;

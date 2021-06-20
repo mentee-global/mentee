@@ -4,6 +4,8 @@
   display: flex;
   flex-direction: row;
   padding: 1vh;
+  background-color: white;
+  
 }
 
 .gallery-filter-container {
@@ -73,7 +75,7 @@
 }
 
 .gallery-links {
-  color: #7a7a7a;
+  // color: #7a7a7a;
   margin-top: 10px;
   margin-top: 10px;
   text-decoration: none;
@@ -106,7 +108,16 @@
 .gallery-headers {
   color: $theme-orange-dark;
   margin: 0;
+  text-align: left;
 }
+
+.mentee-gallery-headers {
+  color: $theme-orange-dark;
+  margin: 0;
+  text-align: left;
+
+}
+
 
 .gallery-list-items {
   display: block;
@@ -159,3 +170,5 @@
     display: grid;
   }
 }
+
+

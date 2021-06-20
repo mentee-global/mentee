@@ -3,7 +3,8 @@
 .appointments-body {
   padding: 22px;
   background-color: $admin-appointment-body;
-  height: 100%;
+  height: auto;
+  min-height: 100%;
   font-family: Helvetica;
 }
 

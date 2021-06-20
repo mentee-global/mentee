@@ -112,6 +112,16 @@ export const fetchApplications = async () => {
   );
 };
 
+export const createApplication = (application) => {
+  const requestExtension = `/application/new`;
+  return instance.post(requestExtension, application).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
   return instance.post(requestExtension, appointment).then(
@@ -218,9 +228,29 @@ export const downloadMentorsData = async () => {
   const requestExtension = "/download/accounts/all";
   return authGet(requestExtension, {
     responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTOR,
+    },
   }).then(
     (response) => {
       downloadBlob(response, "mentor_data.xlsx");
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const downloadMenteesData = async () => {
+  const requestExtension = "/download/accounts/all";
+  return authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTEE,
+    },
+  }).then(
+    (response) => {
+      downloadBlob(response, "mentee_data.xlsx");
     },
     (err) => {
       console.error(err);
@@ -336,6 +366,16 @@ export const getMessages = (user_id) => {
   const requestExtension = `/messages/?recipient_id=${user_id}`;
   return instance.get(requestExtension).then(
     (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getMenteePrivateStatus = (profileId) => {
+  const requestExtension = `/account/${profileId}/private`;
+  return instance.get(requestExtension).then(
+    (response) => response.data && response.data.result,
     (err) => {
       console.error(err);
     }

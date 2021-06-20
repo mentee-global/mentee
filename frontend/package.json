@@ -9,6 +9,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "antd": "^4.7.3",
+    "antd-img-crop": "^3.14.1",
     "axios": "^0.21.0",
     "dropzone": "^5.8.1",
     "firebase": "^8.2.9",

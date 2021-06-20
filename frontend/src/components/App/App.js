@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, BrowserRouter as Router } from "react-router-dom";
+import { Route, BrowserRouter as Router, Redirect } from "react-router-dom";
 import Appointments from "components/pages/Appointments";
 import MenteeAppointments from "components/pages/MenteeAppointments";
 import Home from "components/pages/Home";
@@ -18,7 +18,10 @@ import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
+import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
+import MenteeRegisterForm from "components/pages/MenteeRegisterForm";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 function App() {
   return (
@@ -67,6 +70,15 @@ function App() {
         exact
         component={() => <Navigation content={<Gallery />} needsAuth={false} />}
       />
+
+      <Route
+        path="/mentee-gallery"
+        exact
+        component={() => (
+          <Navigation content={<MenteeGallery />} needsAuth={false} />
+        )}
+      />
+
       <Route
         path="/gallery/:type/:id"
         component={(props) => (
@@ -108,10 +120,24 @@ function App() {
         )}
       />
       <Route
-        path="/create-profile"
-        component={() => (
-          <Navigation content={<RegisterForm />} needsAuth={false} />
-        )}
+        path="/create-profile/:type"
+        component={(props) => {
+          const type = parseInt(props.match.params.type, 10);
+          return (
+            <Navigation
+              content={
+                type === ACCOUNT_TYPE.MENTOR ? (
+                  <RegisterForm />
+                ) : type === ACCOUNT_TYPE.MENTEE ? (
+                  <MenteeRegisterForm />
+                ) : (
+                  <Redirect to="/" />
+                )
+              }
+              needsAuth={false}
+            />
+          );
+        }}
       />
       <Route
         path="/organizer"

@@ -68,28 +68,48 @@ function MentorApplication() {
   const [companyTime, setCompanyTime] = useState(1);
   const [onLinkedin, setOnLinkedin] = useState(1);
 
+    // validation 
+    const [isChecked1, setIsChecked1] = useState(false); 
+    const [isChecked2, setIsChecked2] = useState(false); 
+    const [isChecked3, setIsChecked3] = useState(false); 
+
+    const [isClicked1, setIsClicked1] = useState(false); 
+    const [isClicked2, setIsClicked2] = useState(false); 
+    const [isClicked3, setIsClicked3] = useState(false); 
+    const [isClicked4, setIsClicked4] = useState(false); 
+    const [isClicked5, setIsClicked5] = useState(false); 
+    const [isClicked6, setIsClicked6] = useState(false); 
+
+
+
   const onChange1 = (e) => {
     setOfferDonation(e.target.value);
+    setIsClicked1(true); 
   };
 
   const onChange2 = (e) => {
     setCommitTime(e.target.value);
+    setIsClicked2(true); 
   };
 
   const onChange3 = (e) => {
     setImmigrantStatus(e.target.value);
+    setIsClicked3(true); 
   };
 
   const onChange4 = (e) => {
     setSpecialistTime(e.target.value);
+    setIsClicked4(true); 
   };
 
   const onChange5 = (e) => {
     setCompanyTime(e.target.value);
+    setIsClicked5(true); 
   };
 
   const onChange6 = (e) => {
     setOnLinkedin(e.target.value);
+    setIsClicked6(true); 
   };
 
   // on change for checked boxes
@@ -98,6 +118,11 @@ function MentorApplication() {
   const [topics, setTopics] = useState([]);
 
   function onChangeCheck(checkedValues) {
+    if (checkedValues.length > 0) {
+      setIsChecked1(true); 
+    } else {
+      setIsChecked1(false);
+    }
     let optionsSelected = [];
     checkedValues.forEach((value) => {
       optionsSelected.push(value);
@@ -106,6 +131,11 @@ function MentorApplication() {
   }
 
   function onChangeCheck2(checkedValues) {
+    if (checkedValues.length > 0) {
+      setIsChecked2(true); 
+    } else {
+      setIsChecked2(false);
+    }
     let optionsSelected = [];
     checkedValues.forEach((value) => {
       optionsSelected.push(value);
@@ -114,12 +144,84 @@ function MentorApplication() {
   }
 
   function onChangeCheck3(checkedValues) {
+    if (checkedValues.length > 0) {
+      setIsChecked3(true); 
+    } else {
+      setIsChecked3(false);
+    }
     let optionsSelected = [];
     checkedValues.forEach((value) => {
       optionsSelected.push(value);
     });
     setTopics(optionsSelected);
   }
+
+   const validation1 = (rule, value, callback) => {
+        if(isChecked1) {
+            return callback()
+        }
+        return callback("Please accept the terms and conditions")
+    };
+
+
+   const validation2 = (rule, value, callback) => {
+    if(isChecked2) {
+        return callback()
+    }
+    return callback("Please accept the terms and conditions")
+};
+
+
+const validation3 = (rule, value, callback) => {
+  if(isChecked3) {
+      return callback()
+  }
+  return callback("Please accept the terms and conditions")
+};
+
+const radioValidation1 = (rule, value, callback) => {
+  if(showPageTwoErrors && isClicked1 === false) {
+      return callback()
+  }
+  return callback("Please accept the terms and conditions")
+};
+
+const radioValidation2 = (rule, value, callback) => {
+  if(showPageTwoErrors && isClicked2) {
+      return callback()
+  }
+  return callback("Please accept the terms and conditions")
+};
+
+
+const radioValidation3 = (rule, value, callback) => {
+  if(showPageTwoErrors && isClicked3) {
+      return callback()
+  }
+  return callback("Please accept the terms and conditions")
+};
+
+const radioValidation4 = (rule, value, callback) => {
+  if(showPageTwoErrors && isClicked4) {
+      return callback()
+  }
+  return callback("Please accept the terms and conditions")
+};
+
+const radioValidation5 = (rule, value, callback) => {
+  if(showPageThreeErrors && isClicked5) {
+      return callback()
+  }
+  return callback("Please accept the terms and conditions")
+};
+
+const radioValidation6 = (rule, value, callback) => {
+  if(showPageThreeErrors && isClicked6) {
+      return callback()
+  }
+  return callback("Please accept the terms and conditions")
+};
+
 
   // sets text fields
   const [firstName, setFirstName] = useState(null);
@@ -134,6 +236,9 @@ function MentorApplication() {
   const [knowledgeLocation, setknowledgeLocation] = useState(null);
   const [referral, setReferral] = useState(null);
   const [languages, setLanguages] = useState(null);
+
+
+
 
   // creates steps layout
   const steps = [
@@ -157,7 +262,30 @@ function MentorApplication() {
 
   const [current, setCurrent] = useState(0);
   const [buttonState, setButtonState] = useState(0);
+
+  const [showPageTwoErrors, setShowPageTwoErrors] = useState(false);
+  const [showPageThreeErrors, setShowPageThreeErrors] = useState(false); 
+
+
   const next = () => {
+    const pageTwoRadioQuestions = [isClicked1, isClicked2, isClicked3, isClicked4];
+    const pageThreeRadioQuestions = [isClicked5, isClicked6]; 
+    
+
+    if(pageTwoRadioQuestions.some(x => x === false) && current != 0) {
+      setShowPageTwoErrors(true);
+      return;
+    } 
+
+    if(pageThreeRadioQuestions.some(x => x === false) && current != 0) {
+      setShowPageThreeErrors(true);
+      return; 
+    } else if (current === 0) {
+      setCurrent(current + 1);
+    }
+
+
+
     setCurrent(current + 1);
   };
 
@@ -327,8 +455,16 @@ function MentorApplication() {
                   volunteer organization and we are 100% sustained by donations.
                   Are you able to offer a donation for one year?*
                 </p3>
-                <Form layout="inline"></Form>
-                <Radio.Group
+
+
+                <Form name="checkbox-validation">
+               
+            <Form.Item
+                name="checkbox"
+                rules={[{validator: radioValidation1}]}>
+               
+
+               <Radio.Group
                   className="donation"
                   onChange={onChange1}
                   value={offerDonation}
@@ -353,16 +489,42 @@ function MentorApplication() {
                     I'm unable to offer a donation.
                   </Radio>
                 </Radio.Group>
+            </Form.Item>
+            </Form>
+
+
+
+
+
+
+ 
               </div>
 
               <div className="page-two-margin">
                 <div>*Please choose the option(s) that is right for you</div>
+                
 
-                <Checkbox.Group
+
+                <Form name="checkbox-validation">
+               
+            <Form.Item
+                name="checkbox"
+                rules={[{validator: validation1}]}>
+               
+
+               <Checkbox.Group
                   options={workOptions}
                   defaultValue={mentoringOptions}
                   onChange={onChangeCheck}
                 />
+            </Form.Item>
+            </Form>
+
+
+
+
+
+
               </div>
           </div>
           <div className="column-two-page-two">
@@ -423,11 +585,30 @@ function MentorApplication() {
             <div className="work-sectors-question">
               *Which sector(s) do you work in? (Check all that apply)
               <div className="work-sectors--answer-choices">
-                <Checkbox.Group
+
+
+
+              <Form name="checkbox-validation">
+            <Form.Item
+                name="checkbox"
+                rules={[{validator: validation2}]}>
+               
+
+           
+               <Checkbox.Group
                   options={workSectors}
                   value={sectors}
                   onChange={onChangeCheck2}
                 />
+            </Form.Item>
+            </Form>
+
+
+
+
+
+
+
               </div>
             </div>
           </div>
@@ -566,11 +747,22 @@ function MentorApplication() {
             <Form>
               
             <div className="special-topics-answer-choices">
-              <Checkbox.Group
+            <Form name="checkbox-validation">
+            <Form.Item
+                name="checkbox"
+                rules={[{validator: validation3}]}>
+               
+
+           
+               <Checkbox.Group
                 options={specialTopics}
                 value={topics}
                 onChange={onChangeCheck3}
               />
+            </Form.Item>
+            </Form>
+
+        
             </div>
           </Form>
           </div>

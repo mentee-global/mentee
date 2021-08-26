@@ -44,7 +44,6 @@ function MenteeRegisterForm(props) {
   const [biography, setBiography] = useState();
   const [gender, setGender] = useState();
   const [age, setAge] = useState();
-  const [email, setEmail] = useState();
   const [phone, setPhone] = useState();
   const [organization, setOrganization] = useState();
   const [privacy, setPrivacy] = useState(false);
@@ -399,18 +398,6 @@ function MenteeRegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Email *"
-            clicked={inputClicked[6]}
-            index={6}
-            handleClick={handleClick}
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            valid={isValid[6]}
-            validate={validate}
-          />
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
             title="Phone"
             clicked={inputClicked[7]}
             index={7}
@@ -418,11 +405,6 @@ function MenteeRegisterForm(props) {
             onChange={(e) => setPhone(e.target.value)}
             value={phone}
           />
-        </div>
-        <div
-          className="modal-input-container"
-          style={{ width: !isMobile ? "50%" : "auto" }}
-        >
           <ModalInput
             style={styles.modalInput}
             type="text"

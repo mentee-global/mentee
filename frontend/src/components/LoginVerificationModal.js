@@ -36,7 +36,6 @@ function LoginVerificationModal(props) {
     }
 
     const registrationStage = await getRegistrationStage();
-    console.log(registrationStage);
     if (isLoggedIn() && registrationStage === null) {
       setIsVisible(false);
       props.onVerified();

@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { Input, Button } from "antd";
 import {
-  isLoggedIn,
-  getRegistrationStage,
   sendVerificationEmail,
   getUserEmail,
   isUserVerified,
@@ -11,8 +9,6 @@ import {
   isUserAdmin,
   isUserMentee,
   refreshToken,
-  getCurrentUser,
-  getUserIdToken,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
 import { ACCOUNT_TYPE } from "utils/consts";

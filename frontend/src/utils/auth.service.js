@@ -17,7 +17,10 @@ const post = (url, data, params) =>
   instance
     .post(url, data, params)
     .then((res) => res.data)
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      console.error(err);
+      return err?.response;
+    });
 
 const getIdToken = (forceRefresh) => getCurrentUser().getIdToken(forceRefresh);
 export const getIdTokenResult = (forceRefresh) =>

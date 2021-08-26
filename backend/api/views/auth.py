@@ -7,9 +7,6 @@ from api.utils.constants import (
     AUTH_URL,
     USER_VERIFICATION_TEMPLATE,
     USER_FORGOT_PASSWORD_TEMPLATE,
-    MENTOR_ROLE,
-    MENTEE_ROLE,
-    ADMIN_ROLE,
     Account,
 )
 from api.utils.request_utils import send_email, get_profile_model
@@ -51,6 +48,23 @@ def verify_email():
         return create_response(status=422, message=msg)
 
     return create_response(message="Sent verification link to email")
+
+def check_email_in_use(email, model_to_remove):
+    profile_models = [get_profile_model(Account.MENTEE), get_profile_model(Account.MENTOR), get_profile_model(Account.ADMIN)]
+    profile_models.remove(model_to_remove)
+    for profile_model in profile_models:
+        profile = None
+        try:
+            profile = profile_model.objects.get(email=email)
+        except:
+            # Could not find email in current profile model
+            continue
+
+        if profile:
+            logger.info("email found!")
+            return True
+    logger.info("email not found!")
+    return False
 
 
 def create_firebase_user(email, password):
@@ -122,6 +136,13 @@ def login():
     firebase_user = None
 
     profile_model = get_profile_model(role)
+
+    # Check if this email is already in use in another role
+    if check_email_in_use(email, profile_model):
+        msg = "This is an existing email already being in use"
+        return create_response(
+            status=422, message=msg, data={"existingEmail": True}
+        )
 
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(

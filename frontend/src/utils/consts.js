@@ -152,4 +152,5 @@ export const LOGIN_ERROR_MSGS = {
     "Please reset password. A link to reset your password has been sent to your email.",
   SERVER_ERROR_MSG: "Something went wrong.",
   RECREATE_ACCOUNT_ERROR_MSG: "Please re-register your account.",
+  EXISTING_EMAIL: "This email is already in use in another role",
 };

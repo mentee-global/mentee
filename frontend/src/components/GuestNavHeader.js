@@ -79,10 +79,11 @@ function GuestNavHeader({ history }) {
               />
             </span>
             <span className="navigation-header-button">
-              <MenteeButton
-                width="9em"
+              <LoginVerificationModal
+                loginButton
                 content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
-                onClick={async () => {
+                width="9em"
+                onVerified={async () => {
                   let redirect = "/select-login";
                   if (isMentor) {
                     redirect = "/appointments";
@@ -92,7 +93,7 @@ function GuestNavHeader({ history }) {
                     redirect = "/account-data";
                   }
                   history.push({
-                    pathname: isLoggedIn() ? redirect : "/select-login",
+                    pathname: redirect,
                   });
                 }}
               />

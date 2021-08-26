@@ -199,9 +199,11 @@ export const getRegistrationStage = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
       const claims = idTokenResult.claims;
+      console.log(claims);
+      console.log(idTokenResult);
 
       if (!claims.email_verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
-      if (!claims.mentorId) return REGISTRATION_STAGE.PROFILE_CREATION;
+      if (!claims.profileId) return REGISTRATION_STAGE.PROFILE_CREATION;
       return null;
     });
   }

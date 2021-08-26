@@ -49,8 +49,13 @@ def verify_email():
 
     return create_response(message="Sent verification link to email")
 
+
 def check_email_in_use(email, model_to_remove):
-    profile_models = [get_profile_model(Account.MENTEE), get_profile_model(Account.MENTOR), get_profile_model(Account.ADMIN)]
+    profile_models = [
+        get_profile_model(Account.MENTEE),
+        get_profile_model(Account.MENTOR),
+        get_profile_model(Account.ADMIN),
+    ]
     profile_models.remove(model_to_remove)
     for profile_model in profile_models:
         profile = None
@@ -140,9 +145,7 @@ def login():
     # Check if this email is already in use in another role
     if check_email_in_use(email, profile_model):
         msg = "This is an existing email already being in use"
-        return create_response(
-            status=422, message=msg, data={"existingEmail": True}
-        )
+        return create_response(status=422, message=msg, data={"existingEmail": True})
 
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(

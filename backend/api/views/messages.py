@@ -120,4 +120,5 @@ def contact_mentor(mentor_id):
         f"Sending an email to {mentor.email} with message: {data.get('message', '')} as mentee {mentee.email}"
     )
     return create_response(status=200, message="successfully sent email message")
+    # TODO: Add this
     # res, res_msg = send_email(mentor.email, "Mentee Contacting", )

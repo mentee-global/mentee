@@ -227,20 +227,6 @@
   background: $theme-orange;
 }
 
-.no-appointments-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.message-modal-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1em;
-}
-
 @media only screen and (max-width: 1100px) {
   .appointment-modal,
   .appointment-info-modal {
@@ -250,8 +236,6 @@
 
 @media only screen and (max-width: 760px) {
   .appointment-modal,
-  .contact-me-modal,
-  .appointment-date-modal,
   .appointment-info-modal {
     width: 100% !important;
   }

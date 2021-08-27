@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
+import { message } from "antd";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -379,6 +380,18 @@ export const getMenteePrivateStatus = (profileId) => {
     (err) => {
       console.error(err);
     }
+  );
+};
+
+export const sendMenteeMentorEmail = (mentorId, menteeId, message) => {
+  const requestExtension = `/messages/mentor/${mentorId}`;
+  const data = {
+    mentee_id: menteeId,
+    message: message,
+  };
+  return instance.post(requestExtension, data).then(
+    (response) => response,
+    (err) => console.error(err)
   );
 };
 

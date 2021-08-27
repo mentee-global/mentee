@@ -9,7 +9,11 @@ import {
   APPOINTMENT_FORM_KEYS,
   APPOINTMENT_STATUS,
 } from "../utils/consts";
-import { createAppointment, editAvailability } from "../utils/api";
+import {
+  createAppointment,
+  editAvailability,
+  sendMenteeMentorEmail,
+} from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -34,6 +38,7 @@ function MenteeAppointmentModal(props) {
   const [daySlots, setDaySlots] = useState([]);
   const [calendarModalVisible, setCalendarModalVisible] = useState(false);
   const [formModalVisible, setFormModalVisible] = useState(false);
+  const [contactModalVisible, setContactModalVisible] = useState(false);
   const numInputs = 2;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
@@ -111,6 +116,7 @@ function MenteeAppointmentModal(props) {
     setTime(null);
     setCalendarModalVisible(false);
     setFormModalVisible(false);
+    setContactModalVisible(false);
   }
 
   function updateModal() {
@@ -215,7 +221,18 @@ function MenteeAppointmentModal(props) {
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
                 {!isAvailable ? (
-                  <h1>There are no appointments available</h1>
+                  <div className="no-appointments-section">
+                    <h1>There are no appointments available</h1>
+                    <MenteeButton
+                      content={"Contact Me"}
+                      borderOnClick
+                      onClick={() => {
+                        setCalendarModalVisible(false);
+                        setContactModalVisible(true);
+                        setValidate(false);
+                      }}
+                    />
+                  </div>
                 ) : (
                   dayTimeSlots.map((timeSlot, index) => (
                     <div
@@ -370,6 +387,42 @@ function MenteeAppointmentModal(props) {
             </div>
           </div>
         </Form>
+      </Modal>
+      <Modal
+        forceRender
+        title="        " // Uses Unicode spaces to get desired heading
+        visible={contactModalVisible}
+        onCancel={() => closeModals()}
+        className="contact-me-modal"
+        style={{ overflow: "hidden" }}
+        footer={null}
+      >
+        <div className="message-modal-container">
+          <h1>Send message to {props.mentor_name}</h1>
+          <ModalInput
+            style={styles.modalInput}
+            type="textarea"
+            handleClick={handleClick}
+            onChange={(e) => setMessage(e.target.value)}
+            value={message}
+            large
+          />
+          <br />
+          <MenteeButton
+            width={120}
+            content={"Send Message"}
+            onClick={async () => {
+              const res = await sendMenteeMentorEmail(
+                mentorID,
+                menteeID,
+                message
+              );
+              if (!res) {
+                console.log("Failed to send message");
+              }
+            }}
+          />
+        </div>
       </Modal>
     </span>
   );

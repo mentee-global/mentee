@@ -1,7 +1,7 @@
 from os import path
 from flask import Blueprint, request, jsonify
 from api.models import MentorProfile, MenteeProfile, Users, Message
-from api.utils.request_utils import MessageForm, is_invalid_form
+from api.utils.request_utils import MessageForm, is_invalid_form, send_email
 from api.core import create_response, serialize_list, logger
 from api.models import db
 from datetime import datetime
@@ -100,3 +100,24 @@ def create_message():
         status=201,
         message=f"Successfully saved message: {message.message} from user: {message.user_name} to: {message.recipient_name} sent on: {message.time}",
     )
+
+
+@messages.route("/mentor/<string:mentor_id>", methods=["POST"])
+def contact_mentor(mentor_id):
+    data = request.get_json()
+    if "mentee_id" not in data:
+        return create_response(status=422, message="missing mentee_id")
+
+    mentee_id = data["mentee_id"]
+    try:
+        mentor = MentorProfile.objects.get(id=mentor_id)
+        mentee = MenteeProfile.objects.get(id=mentee_id)
+    except:
+        msg = "Could not find mentor or mentee for given ids"
+        return create_response(status=422, message=msg)
+
+    logger.info(
+        f"Sending an email to {mentor.email} with message: {data.get('message', '')} as mentee {mentee.email}"
+    )
+    return create_response(status=200, message="successfully sent email message")
+    # res, res_msg = send_email(mentor.email, "Mentee Contacting", )

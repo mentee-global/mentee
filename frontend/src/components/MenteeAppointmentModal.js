@@ -114,6 +114,7 @@ function MenteeAppointmentModal(props) {
 
   function closeModals() {
     setTime(null);
+    setMessage(null);
     setCalendarModalVisible(false);
     setFormModalVisible(false);
     setContactModalVisible(false);

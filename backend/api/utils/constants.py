@@ -14,6 +14,7 @@ MENTEE_APPT_TEMPLATE = "d-2ce963b36c91457c89c916a111d658bd"
 USER_VERIFICATION_TEMPLATE = "d-7bd09ab8f8484cee9227a9a25ad527ec"
 USER_FORGOT_PASSWORD_TEMPLATE = "d-df1adcced8ab461ca72ceae5eecfc566"
 MENTOR_APP_OFFER = "d-3a7a5db2cf4e412e9e68e729a7b52813"
+MENTOR_CONTACT_ME = "d-d6c6d8f33c3b4970937a9dbd85f97d1a"
 
 # This lacks timezone so you'll need to add that according to whatever code you're working with
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"

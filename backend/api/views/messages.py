@@ -2,6 +2,7 @@ from os import path
 from flask import Blueprint, request, jsonify
 from api.models import MentorProfile, MenteeProfile, Users, Message
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email
+from api.utils.constants import MENTOR_CONTACT_ME
 from api.core import create_response, serialize_list, logger
 from api.models import db
 from datetime import datetime
@@ -116,8 +117,21 @@ def contact_mentor(mentor_id):
         msg = "Could not find mentor or mentee for given ids"
         return create_response(status=422, message=msg)
 
+    res, res_msg = send_email(
+        mentor.email,
+        data={
+            "response_email": mentee.email,
+            "message": data.get("message", ""),
+            "name": mentee.name,
+        },
+        template_id=MENTOR_CONTACT_ME,
+    )
+    if not res:
+        msg = "Failed to send mentee email " + res_msg
+        logger.info(msg)
+        return create_response(status=500, message="Failed to send message")
+
     logger.info(
         f"Sending an email to {mentor.email} with message: {data.get('message', '')} as mentee {mentee.email}"
     )
     return create_response(status=200, message="successfully sent email message")
-    # res, res_msg = send_email(mentor.email, "Mentee Contacting", )

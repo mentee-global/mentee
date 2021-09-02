@@ -420,6 +420,7 @@ function MenteeAppointmentModal(props) {
               if (!res) {
                 console.log("Failed to send message");
               }
+              closeModals();
             }}
           />
         </div>

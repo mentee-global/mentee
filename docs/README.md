@@ -1,6 +1,58 @@
-# MENTEE
+<h1 align="center">
+  <a href="https://www.menteeglobal.org/"><img src="https://i.imgur.com/DSHhzX9.png" alt="MENTEE Logo" width="150"></a>
+  <br/>
+  MENTEE
+  </br>
+</h1>
+
+<p align="center">
+    <img src="https://img.shields.io/github/checks-status/hack4impact-uiuc/mentee/dev?style=flat-square">
+    <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
+</p>
+
+<h4 align="center">A project by <a href="https://uiuc.hack4impact.org/" target="_blank">Hack4Impact UIUC</a> in collaboration with <a href="https://www.menteeglobal.org/" target="_blank">MENTEE.</a></h4>
+
+<p align="center">
+  <a href="#background">Background</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#technologies">Technologies</a> •
+  <a href="#team">Team</a> •
+  <a href="#license">License</a>
+</p>
+
+## Background
 
 Connecting immigrant and refugee youth with a network of mentors.
+
+## Usage
+
+Install:
+
+- [Yarn](https://yarnpkg.com/)
+- [Poetry](https://python-poetry.org/)
+- [concurrently](https://www.npmjs.com/package/concurrently)
+
+To install/update dependencies:
+
+```bash
+$ yarn setup
+```
+
+To run both backend and frontend
+
+```bash
+$ yarn start
+```
+
+To format both sides
+
+```bash
+$ yarn format
+```
+
+## Technologies
+
+This application is built with React, Flask, MongoDB, and Ant Design
 
 ## Team
 
@@ -8,8 +60,8 @@ Connecting immigrant and refugee youth with a network of mentors.
   <tr>
     <td align="center"><a href="https://www.linkedin.com/in/al490/"><img src="https://uiuc.hack4impact.org/images/people/angela_luo.jpg" width="75px;" alt="Angela Luo"/><br /><b>Angela Luo</b></a><br /><sub>Product Manager</sub></td>
     <td align="center"><a href="https://www.linkedin.com/in/lamgtran/"><img src="https://uiuc.hack4impact.org/images/people/lam_tran.jpg" width="75px;" alt="Lam Tran"/><br /><b>Lam Tran</b></a><br /><sub>Product Manager</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/kendall-hester/"><img src="https://uiuc.hack4impact.org/images/people/kendall_hester.jpg" width="75px;" alt="Kendall Hester"/><br /><b>Kendall Hester</b></a><br /><sub>Technical Lead</sub></td>
     <td align="center"><a href="https://www.linkedin.com/in/kelleychau/"><img src="https://ca.slack-edge.com/T6VL1BSEA-UFV1VN24B-ef42f0861a51-512" width="75px;" alt="Kelley Chau"/><br /><b>Kelley Chau</b></a><br /><sub>Technical Lead</sub></td>
+    <td align="center"><a href="https://www.linkedin.com/in/kendall-hester/"><img src="https://uiuc.hack4impact.org/images/people/kendall_hester.jpg" width="75px;" alt="Kendall Hester"/><br /><b>Kendall Hester</b></a><br /><sub>Technical Lead</sub></td>
     <td align="center"><a href="http://leonardogalindo.me/"><img src="https://uiuc.hack4impact.org/images/people/leonardo_galindo.jpg" width="75px;" alt="Leonardo Galindo"/><br /><b>Leonardo Galindo</b></a><br /><sub>Technical Lead</sub></td>
     <td align="center"><a href="https://www.linkedin.com/in/faith-losbanes-527a97196/"><img src="https://uiuc.hack4impact.org/images/people/faith_losbanes.jpg" width="75px;" alt="Faith Losbanes"/><br /><b>Faith Losbanes</b></a><br /><sub>Product Designer</sub></td>
   </tr>
@@ -23,17 +75,6 @@ Connecting immigrant and refugee youth with a network of mentors.
   </tr>
 </table>
 
-## Running the project
+## License
 
-Make sure to follow backend and frontend setups
-
-### Starting the project after setup
-
-First you need to install [concurrently](https://www.npmjs.com/package/concurrently)
-`npm install -g concurrently`
-
-To run both backend and frontend
-`yarn start`
-
-To format both backend and frontend
-`yarn format`
+[MIT](https://github.com/hack4impact-uiuc/mentee/blob/master/LICENSE) licensed. Copyright © 2021 [Hack4Impact UIUC](https://github.com/hack4impact-uiuc).

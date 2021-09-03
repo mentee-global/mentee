@@ -1,7 +1,6 @@
 import axios from "axios";
 import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
-import { message } from "antd";
 
 const instance = axios.create({
   baseURL: API_URL,

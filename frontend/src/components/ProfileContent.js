@@ -14,6 +14,7 @@ import PublicMessageModal from "./PublicMessageModal";
 import { ACCOUNT_TYPE } from "utils/consts";
 import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
+import MentorContactModal from "./MentorContactModal";
 
 function ProfileContent(props) {
   const { accountType } = props;
@@ -88,15 +89,24 @@ function ProfileContent(props) {
             {isMentee &&
               (props.isMentor ||
                 parseInt(accountType, 10) === ACCOUNT_TYPE.MENTOR) && (
-                <MenteeAppointmentModal
-                  mentor_name={props.mentor.name}
-                  availability={props.mentor.availability}
-                  mentor_id={
-                    props.mentor && props.mentor._id && props.mentor._id["$oid"]
-                  }
-                  mentee_id={profileId}
-                  handleUpdateMentor={props.handleUpdateAccount}
-                />
+                <>
+                  <MentorContactModal
+                    mentorName={props.mentor?.name}
+                    mentorId={props.mentor?._id?.$oid}
+                    menteeId={profileId}
+                  />
+                  <MenteeAppointmentModal
+                    mentor_name={props.mentor.name}
+                    availability={props.mentor.availability}
+                    mentor_id={
+                      props.mentor &&
+                      props.mentor._id &&
+                      props.mentor._id["$oid"]
+                    }
+                    mentee_id={profileId}
+                    handleUpdateMentor={props.handleUpdateAccount}
+                  />
+                </>
               )}
           </div>
           <div className="mentor-profile-send-msg-btn">

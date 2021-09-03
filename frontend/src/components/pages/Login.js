@@ -92,9 +92,13 @@ function Login() {
                 const res = await login(email, password, loginProps.type);
 
                 if (!res || !res.success) {
-                  setErrorMessage(
-                    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
-                  );
+                  if (res?.data?.result?.existingEmail) {
+                    setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+                  } else {
+                    setErrorMessage(
+                      LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+                    );
+                  }
                   setError(true);
                 } else if (res.result.passwordReset) {
                   setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
@@ -110,7 +114,6 @@ function Login() {
                   .onAuthStateChanged(async (user) => {
                     unsubscribe();
                     if (!user) return;
-
                     if (res.result.redirectToVerify) {
                       await sendVerificationEmail(email);
                       history.push("/verify");

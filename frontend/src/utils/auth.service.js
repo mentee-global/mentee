@@ -1,7 +1,6 @@
 import axios from "axios";
 import firebase from "firebase";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
-import { useAuth } from "utils/hooks/useAuth";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -17,7 +16,10 @@ const post = (url, data, params) =>
   instance
     .post(url, data, params)
     .then((res) => res.data)
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      console.error(err);
+      return err?.response;
+    });
 
 const getIdToken = (forceRefresh) => getCurrentUser().getIdToken(forceRefresh);
 export const getIdTokenResult = (forceRefresh) =>
@@ -198,7 +200,7 @@ export const getRegistrationStage = async () => {
       const claims = idTokenResult.claims;
 
       if (!claims.email_verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
-      if (!claims.mentorId) return REGISTRATION_STAGE.PROFILE_CREATION;
+      if (!claims.profileId) return REGISTRATION_STAGE.PROFILE_CREATION;
       return null;
     });
   }

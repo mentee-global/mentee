@@ -382,6 +382,18 @@ export const getMenteePrivateStatus = (profileId) => {
   );
 };
 
+export const sendMenteeMentorEmail = (mentorId, menteeId, message) => {
+  const requestExtension = `/messages/mentor/${mentorId}`;
+  const data = {
+    mentee_id: menteeId,
+    message: message,
+  };
+  return instance.post(requestExtension, data).then(
+    (response) => response,
+    (err) => console.error(err)
+  );
+};
+
 /**
  * Wrapper function calls to general account endpoints
  * This helps with avoiding the need to change multiple files

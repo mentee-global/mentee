@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { Input, Button } from "antd";
 import {
-  isLoggedIn,
-  getRegistrationStage,
   sendVerificationEmail,
   getUserEmail,
   isUserVerified,
@@ -13,7 +11,11 @@ import {
   refreshToken,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
+<<<<<<< HEAD
 import { REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
+=======
+import { ACCOUNT_TYPE } from "utils/consts";
+>>>>>>> origin/dev
 
 import "../css/Home.scss";
 import "../css/Login.scss";
@@ -38,7 +40,8 @@ function Verify({ history, sent }) {
               <br />
               <t className="verify-header-text-description">
                 A verification email has been sent to your email. Please click
-                the link contained inside to verify your account.
+                the link contained inside to verify your account. <br />
+                (Refresh this page if you verified your email)
               </t>
             </div>
           </div>

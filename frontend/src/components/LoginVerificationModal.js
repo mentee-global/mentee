@@ -2,8 +2,10 @@ import { Modal, Input } from "antd";
 import React, { useState, useEffect } from "react";
 import MenteeButton from "./MenteeButton";
 import { verify } from "../utils/verifyMentee";
-import { isLoggedIn } from "utils/auth.service";
+import { isLoggedIn, getRegistrationStage } from "utils/auth.service";
+import { REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
 import useAuth from "../utils/hooks/useAuth";
+import usePersistedState from "utils/hooks/usePersistedState";
 
 import "./css/VerificationModal.scss";
 import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
@@ -18,20 +20,35 @@ import { useHistory } from "react-router-dom";
 function LoginVerificationModal(props) {
   const history = useHistory();
   const [isVisible, setIsVisible] = useState(false);
+  const [permissions, setPermissions] = usePersistedState(
+    "permissions",
+    ACCOUNT_TYPE.MENTEE
+  );
   const { onAuthStateChanged } = useAuth();
 
   /**
    * This is the entry point for whether one
    * is allowed to view a page or modal.
    */
-  const handleViewPermission = () => {
-    if (isLoggedIn()) {
+  const handleViewPermission = async () => {
+    if (props.loginButton) {
+      history.push("/select-login");
+    }
+
+    const registrationStage = await getRegistrationStage();
+    if (isLoggedIn() && registrationStage === null) {
       setIsVisible(false);
       props.onVerified();
       return;
     }
 
-    setIsVisible(true);
+    if (registrationStage === REGISTRATION_STAGE.VERIFY_EMAIL) {
+      history.push("/verify");
+    } else if (registrationStage === REGISTRATION_STAGE.PROFILE_CREATION) {
+      history.push(`/create-profile/${permissions}`);
+    } else {
+      setIsVisible(true);
+    }
   };
 
   return (

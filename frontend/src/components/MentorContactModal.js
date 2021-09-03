@@ -1,8 +1,12 @@
 import React, { useState } from "react";
+import { Modal } from "antd";
 import { sendMenteeMentorEmail } from "../utils/api";
 import MenteeButton from "./MenteeButton";
 import ModalInput from "./ModalInput";
-import { Modal } from "antd";
+
+import "./css/AntDesign.scss";
+import "./css/Modal.scss";
+import "./css/MenteeModal.scss";
 
 function MentorContactModal({ mentorId, menteeId, mentorName }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -54,7 +58,6 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               <br />
             </>
           )}
-
           <MenteeButton
             width={120}
             content={"Send Message"}

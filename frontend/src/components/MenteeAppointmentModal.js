@@ -108,7 +108,6 @@ function MenteeAppointmentModal(props) {
 
   function closeModals() {
     setTime(null);
-    setMessage(null);
     setCalendarModalVisible(false);
     setFormModalVisible(false);
   }
@@ -215,9 +214,7 @@ function MenteeAppointmentModal(props) {
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
                 {!isAvailable ? (
-                  <div className="no-appointments-section">
-                    <h1>There are no appointments available</h1>
-                  </div>
+                  <h1>There are no appointments available</h1>
                 ) : (
                   dayTimeSlots.map((timeSlot, index) => (
                     <div

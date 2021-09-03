@@ -11,11 +11,7 @@ import {
   refreshToken,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
-<<<<<<< HEAD
-import { REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
-=======
 import { ACCOUNT_TYPE } from "utils/consts";
->>>>>>> origin/dev
 
 import "../css/Home.scss";
 import "../css/Login.scss";

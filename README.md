@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://www.menteeglobal.org/"><img src="https://user-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_auto/1436329/48392_475417.png" alt="MENTEE Logo" width="350"></a>
+  <a href="https://www.menteeglobal.org/"><img src="https://svgshare.com/i/_nS.svg" alt="MENTEE Logo" width="150"></a>
   <br/>
   MENTEE
   </br>

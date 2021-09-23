@@ -56,7 +56,7 @@ function ProfileContent(props) {
     }
   };
 
-  console.log(props.mentor.biography)
+  console.log(props.mentor.biography);
 
   const getEducations = (educations) => {
     if (!educations || !educations[0]) {

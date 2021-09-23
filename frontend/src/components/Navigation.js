@@ -23,8 +23,13 @@ function Navigation(props) {
     "permissions",
     ACCOUNT_TYPE.MENTOR
   );
-  const { isAdmin, isMentee, onAuthUpdate, onAuthStateChanged, profileId } =
-    useAuth();
+  const {
+    isAdmin,
+    isMentee,
+    onAuthUpdate,
+    onAuthStateChanged,
+    profileId,
+  } = useAuth();
 
   useEffect(() => {
     onAuthStateChanged((user) => {

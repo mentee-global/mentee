@@ -29,9 +29,12 @@ function BookmarkSidebar({ bookmarks, unfavorite }) {
       </div>
       <div className="mentee-bookmark-display">
         <Spin
-          spinning={!bookmarks || !bookmarks.length}
+          spinning={!bookmarks}
           className="bookmark-spin"
         >
+          <div style={!bookmarks.length ? {display:'block'} : {display:'none'}}>
+            No favorite contacts
+          </div>
           {bookmarks.map((mentor) => (
             <div className="mentee-bookmark-card">
               <Avatar

@@ -24,9 +24,8 @@ function AdminAppointmentData() {
   const [appointments, setAppointments] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [render, setRender] = useState(false);
-  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(
-    false
-  );
+  const [isDownloadingAppointments, setIsDownloadingAppointments] =
+    useState(false);
   const [downloadFile, setDownloadFile] = useState(null);
 
   const { onAuthStateChanged } = useAuth();

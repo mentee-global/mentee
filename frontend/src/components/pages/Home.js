@@ -7,7 +7,7 @@ import Health from "../../resources/focus-for-health.svg";
 import useAuth from "../../utils/hooks/useAuth";
 
 function Home({ history }) {
-  const {isMentor} = useAuth();
+  const { isMentor } = useAuth();
   return (
     <div className="home-background">
       <div className="home-content">
@@ -19,9 +19,9 @@ function Home({ history }) {
             content={isMentor ? <b>Find a Mentee</b> : <b>Find a Mentor</b>}
             theme="dark"
             onVerified={() => {
-              let redirect = "/gallery"
+              let redirect = "/gallery";
               if (isMentor) {
-                redirect = "/mentee-gallery"
+                redirect = "/mentee-gallery";
               }
               history.push({
                 pathname: redirect,

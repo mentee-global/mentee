@@ -269,11 +269,11 @@ function MenteeRegisterForm(props) {
       organization,
       video: video
         ? {
-            title: MENTEE_DEFAULT_VIDEO_NAME,
-            url: video,
-            tag: MENTEE_DEFAULT_VIDEO_NAME,
-            date_uploaded: moment().format(),
-          }
+          title: MENTEE_DEFAULT_VIDEO_NAME,
+          url: video,
+          tag: MENTEE_DEFAULT_VIDEO_NAME,
+          date_uploaded: moment().format(),
+        }
         : undefined,
       is_private: privacy,
     };
@@ -293,15 +293,6 @@ function MenteeRegisterForm(props) {
         )}
         <div>
           {validate && <b style={styles.alertToast}>Missing Fields</b>}
-          <Button
-            type="default"
-            shape="round"
-            className="regular-button"
-            onClick={handleSaveEdits}
-            loading={saving}
-          >
-            Save
-          </Button>
         </div>
       </div>
       <div className="modal-inner-container">
@@ -323,6 +314,17 @@ function MenteeRegisterForm(props) {
             valid={isValid[0]}
             validate={validate}
           />
+
+        <Button
+          type="default"
+          shape="round"
+          className="regular-button"
+          style={styles.saveButton}
+          onClick={handleSaveEdits}
+          loading={saving}
+        >
+        Save
+          </Button>
         </div>
         <div className="modal-input-container">
           <ModalInput
@@ -473,6 +475,11 @@ const styles = {
     display: "inline-block",
     marginRight: 10,
   },
+
+  saveButton: {
+    position: "relative",
+    top: "60em"
+  }
 };
 
 export default withRouter(MenteeRegisterForm);

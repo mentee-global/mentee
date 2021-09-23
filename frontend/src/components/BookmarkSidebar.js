@@ -28,11 +28,12 @@ function BookmarkSidebar({ bookmarks, unfavorite }) {
         <HeartFilled /> Favorite Contacts
       </div>
       <div className="mentee-bookmark-display">
-        <Spin
-          spinning={!bookmarks}
-          className="bookmark-spin"
-        >
-          <div style={!bookmarks.length ? {display:'block'} : {display:'none'}}>
+        <Spin spinning={!bookmarks} className="bookmark-spin">
+          <div
+            style={
+              !bookmarks.length ? { display: "block" } : { display: "none" }
+            }
+          >
             No favorite contacts
           </div>
           {bookmarks.map((mentor) => (

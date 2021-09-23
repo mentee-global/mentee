@@ -100,12 +100,12 @@ function GuestNavHeader({ history }) {
             </span>
           </div>
         ) : (
-            <MobileGuestNavHeader
-              setDrawerVisible={setDrawerVisible}
-              drawerVisible={drawerVisible}
-              history={history}
-            />
-          )}
+          <MobileGuestNavHeader
+            setDrawerVisible={setDrawerVisible}
+            drawerVisible={drawerVisible}
+            history={history}
+          />
+        )}
       </div>
     </Header>
   );

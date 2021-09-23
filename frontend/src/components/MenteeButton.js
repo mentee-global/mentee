@@ -24,7 +24,7 @@ function MenteeButton(props) {
         ...props.style,
         width: props.width,
         height: props.height,
-        borderRadius: props.radius ?? "13px",
+        borderRadius: props.radius ?? "13pxn",
         border: props.border,
       }}
       onClick={props.onClick}

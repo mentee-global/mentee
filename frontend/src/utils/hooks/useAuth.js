@@ -1,16 +1,24 @@
 import React, { useCallback, useState, useEffect } from "react";
 import firebase from "firebase";
-import { getIdTokenResult } from "utils/auth.service";
+import { getIdTokenResult, logout } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { useHistory } from "react-router-dom";
 
 const onAuthStateChanged = (f) => {
   const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    if (user === null) {
+      logout();
+      unsubscribe();
+      return;
+    }
+
     f(user);
     unsubscribe();
   });
 };
 
 const useAuth = () => {
+  const history = useHistory();
   const [roleState, setRoleState] = useState({
     role: ACCOUNT_TYPE.GUEST,
     isAdmin: false,
@@ -37,7 +45,7 @@ const useAuth = () => {
     firebase.auth().onAuthStateChanged(async (user) => {
       if (!user) return;
 
-      await getIdTokenResult()
+      await getIdTokenResult(true)
         .then((idTokenResult) => {
           const { role, profileId } = idTokenResult.claims;
           setProfileId(profileId);

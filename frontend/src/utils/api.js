@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL, ACCOUNT_TYPE } from "utils/consts";
+import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
 
 const instance = axios.create({
@@ -194,8 +194,8 @@ export const editAvailability = (timeslots, id) => {
   );
 };
 
-export const fetchMentorsAppointments = () => {
-  const requestExtension = "/appointment/mentors";
+export const fetchAppointmentsByType = (accountType) => {
+  const requestExtension = `/appointment/${accountType}`;
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -228,9 +228,29 @@ export const downloadMentorsData = async () => {
   const requestExtension = "/download/accounts/all";
   return authGet(requestExtension, {
     responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTOR,
+    },
   }).then(
     (response) => {
       downloadBlob(response, "mentor_data.xlsx");
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const downloadMenteesData = async () => {
+  const requestExtension = "/download/accounts/all";
+  return authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTEE,
+    },
+  }).then(
+    (response) => {
+      downloadBlob(response, "mentee_data.xlsx");
     },
     (err) => {
       console.error(err);
@@ -252,8 +272,8 @@ export const downloadAllApplicationData = async () => {
   );
 };
 
-export const deleteMentorById = (id) => {
-  const requestExtension = `/mentor/${id}`;
+export const deleteAccountById = (id, accountType) => {
+  const requestExtension = `/account/${accountType}/${id}`;
   return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
@@ -266,15 +286,23 @@ export const deleteMentorById = (id) => {
 export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
   const requestExtension = `/mentee/editFavMentor`;
   const data = {
-    mentee_uid: mentee_id,
-    mentor_id: mentor_id,
-    favorite: favorite,
+    mentee_id,
+    mentor_id,
+    favorite,
   };
   return instance.put(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
     }
+  );
+};
+
+export const getFavMentorsById = (mentee_id) => {
+  const requestExtension = `/mentee/favorites/${mentee_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.favorites,
+    (err) => console.error(err)
   );
 };
 
@@ -334,6 +362,38 @@ export const getAdmin = (id) => {
   );
 };
 
+export const getMessages = (user_id) => {
+  const requestExtension = `/messages/?recipient_id=${user_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getMenteePrivateStatus = (profileId) => {
+  const requestExtension = `/account/${profileId}/private`;
+  return instance.get(requestExtension).then(
+    (response) => response.data && response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const sendMenteeMentorEmail = (mentorId, menteeId, message) => {
+  const requestExtension = `/messages/mentor/${mentorId}`;
+  const data = {
+    mentee_id: menteeId,
+    message: message,
+  };
+  return instance.post(requestExtension, data).then(
+    (response) => response,
+    (err) => console.error(err)
+  );
+};
+
 /**
  * Wrapper function calls to general account endpoints
  * This helps with avoiding the need to change multiple files
@@ -387,3 +447,9 @@ export const fetchAppointmentsByMenteeId = async (id) => {
 export const fetchAppointmentsByMentorId = async (id) => {
   return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTOR);
 };
+
+export const fetchMentorsAppointments = async () =>
+  await fetchAppointmentsByType(PLURAL_TYPE.MENTORS);
+
+export const fetchMenteesAppointments = async () =>
+  await fetchAppointmentsByType(PLURAL_TYPE.MENTEES);

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
-import MentorImage from "resources/MentorLogin.svg";
-import MenteeLogin from "resources/MenteeLogin.svg";
-import AdminImage from "resources/AdminLogin.svg";
+import MentorImage from "resources/mentor-login-logo.png";
+import MenteeLogin from "resources/mentee-login-logo.png";
+import AdminImage from "resources/admin-login-logo.png";
 import "components/css/SelectLogin.scss";
 
 const Logins = Object.freeze({

@@ -1,6 +1,5 @@
-
 .page-one-column-container {
-   display: flex;
+  display: flex;
   justify-content: space-between;
   // width: 100%;
   padding-bottom: 1em;
@@ -8,9 +7,8 @@
   padding-left: 6em;
   padding-right: 6em;
   background-color: white;
-  overflow:auto;
+  overflow: auto;
 }
-
 
 .donation-question {
   overflow-wrap: break-word;
@@ -26,22 +24,23 @@
 .column-two-page-two {
   padding-top: 3em;
   width: 50%;
-  overflow:auto;
+  overflow: auto;
 }
 
-.column-one, .column-one-page-two {
+.column-one,
+.column-one-page-two {
   padding-right: 3em;
-  overflow:auto;
+  overflow: auto;
 }
 
 .input-form {
   padding-bottom: 3em;
-  overflow:auto;
+  overflow: auto;
 }
 
 .input-form-two {
   padding-bottom: 3em;
-  overflow:auto;
+  overflow: auto;
 }
 
 .next-button {
@@ -81,12 +80,6 @@
   display: flex;
   justify-content: space-between;
   width: 80%;
-}
-
-.navigation-content {
-  overflow-x: hidden;
-  margin-left: 0px;
-  background-color: #fcf6e8;
 }
 
 .ant-steps-item-tail::after {
@@ -154,33 +147,72 @@
   margin-left: 20em;
 }
 
-
 .welcome-page {
   color: #e4bb50;
 }
 
 .success-message {
-    color: #e4bb50;
+  color: #e4bb50;
 }
 
 .special-topics-question {
   width: 50%;
 }
 
-.ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
-  background-color: #E4BB4F;
+.ant-steps-item-process
+  .ant-steps-item-icon
+  > .ant-steps-icon
+  .ant-steps-icon-dot {
+  background-color: #e4bb4f;
 }
 
-.ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
-  background: #FFECBD;
+.ant-steps-item-wait
+  .ant-steps-item-icon
+  > .ant-steps-icon
+  .ant-steps-icon-dot {
+  background: #ffecbd;
 }
 
-.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
-  background-color: #FFECBD;
+.ant-steps-item-finish
+  .ant-steps-item-icon
+  > .ant-steps-icon
+  .ant-steps-icon-dot {
+  background-color: #ffecbd;
 }
 
 .ant-steps ant-steps-horizontal ant-steps-label-vertical ant-steps-dot {
   display: flex;
   justify-content: flex-end;
-} 
+}
 
+.page-four-header-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.page-four-submit-error {
+  color: red;
+  margin-right: 2em;
+  margin-top: 1em;
+}
+
+
+// mobile
+@media (max-width: 768px) {
+  .steps-content {
+    width: auto;
+    margin: 0em 1em;
+  }
+
+  .page-one-column-container {
+    flex-direction: column;
+  }
+
+  .page-one-column-container > div {
+    width: 100%;
+  }
+
+  .header-four {
+    left: 4em;
+  }
+}

@@ -3,11 +3,13 @@ from api.models import MentorApplication, VerifiedEmail
 from api.core import create_response, serialize_list, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import MENTOR_APP_STATES, MENTOR_APP_OFFER
-from api.utils.request_utils import send_email, is_invalid_form
+from api.utils.request_utils import send_email, is_invalid_form, MentorApplicationForm
 
 apply = Blueprint("apply", __name__)
 
 # GET request for all mentor applications
+
+
 @apply.route("/", methods=["GET"])
 @admin_only
 def get_applications():
@@ -117,21 +119,22 @@ def edit_application(id):
             logger.info(msg)
 
         # Add to verified emails
-        new_verified = VerifiedEmail(email=mentor_email, is_mentor=True)
-        new_verified.save()
+        if not VerifiedEmail.objects(email=mentor_email):
+            new_verified = VerifiedEmail(email=mentor_email, is_mentor=True)
+            new_verified.save()
 
     return create_response(status=200, message=f"Success")
 
 
 # POST request for Mentee Appointment
 @apply.route("/new", methods=["POST"])
-def create_appointment():
+def create_application():
     data = request.get_json()
-    logger.info(data)
-    # validate_data = MentorApplication.from_json(data)
-    # msg, is_invalid = is_invalid_form(validate_data)
-    # if is_invalid:
-    # return create_response(status=422, message=msg)
+
+    validate_data = MentorApplicationForm.from_json(data)
+    msg, is_invalid = is_invalid_form(validate_data)
+    if is_invalid:
+        return create_response(status=422, message=msg)
 
     new_application = MentorApplication(
         name=data.get("name"),

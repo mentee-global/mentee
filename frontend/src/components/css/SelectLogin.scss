@@ -28,6 +28,13 @@
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   margin: 4%;
+  padding: 2em;
+  width: 23vw;
+  height: 23vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .select-login-elem:hover {
@@ -37,7 +44,7 @@
 }
 
 .select-image {
-  width: 23vw;
+  width: 6vw;
 }
 
 .select-text {
@@ -45,15 +52,31 @@
   color: #a58123;
   font-size: 2em;
   font-weight: bold;
-  margin-top: -15%;
   margin-bottom: 5px;
 }
 
 @media (max-width: 768px) {
   .select-image {
-    width: 90%;
+    width: 30vw;
   }
   .select-login-container {
     flex-direction: column;
+  }
+
+  .select-login-header {
+    font-size: 2.5em;
+  }
+  .select-login-page {
+    height: auto;
+    display: block;
+  }
+
+  .select-login-elem {
+    width: 90%;
+    height: auto;
+  }
+
+  .select-text {
+    margin-top: 1em;
   }
 }

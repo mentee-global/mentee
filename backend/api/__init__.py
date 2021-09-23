@@ -8,8 +8,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_mongoengine import MongoEngine
 
-from api.core import all_exception_handler
-
+from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -100,11 +99,16 @@ def create_app(test_config=None):
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")
     app.register_blueprint(messages.messages, url_prefix="/api/messages")
-    # register error handlers
+
+    app.register_error_handler(Exception, all_exception_handler)
+
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def catch_all(path):
+        return app.send_static_file("index.html")
+
     @app.errorhandler(404)
     def not_found(e):
         return app.send_static_file("index.html")
-
-    app.register_error_handler(Exception, all_exception_handler)
 
     return app

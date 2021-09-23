@@ -75,7 +75,12 @@ function AppointmentInfo(props) {
 
   const allowsContact = (allow_calls, allow_texts, phone_number) => {
     if (!phone_number) {
-      return <div className="ar-phone">No Phone Number</div>;
+      return (
+        <div>
+          <div className="ar-phone">No Phone Number</div>
+          <div className="ar-email">{mentee.email}</div>
+        </div>
+      );
     }
     if (allow_calls && allow_texts) {
       return (

@@ -1,7 +1,6 @@
 import axios from "axios";
 import firebase from "firebase";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
-import { useAuth } from "utils/hooks/useAuth";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -17,10 +16,14 @@ const post = (url, data, params) =>
   instance
     .post(url, data, params)
     .then((res) => res.data)
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      console.error(err);
+      return err?.response;
+    });
 
-const getIdToken = () => getCurrentUser().getIdToken(true);
-export const getIdTokenResult = () => getCurrentUser().getIdTokenResult(true);
+const getIdToken = (forceRefresh) => getCurrentUser().getIdToken(forceRefresh);
+export const getIdTokenResult = (forceRefresh) =>
+  getCurrentUser().getIdTokenResult(forceRefresh);
 
 // Role is where you put "admin" or "mentor"- right now we only support mentor
 export const register = async (email, password, role) =>
@@ -82,16 +85,18 @@ export const logout = async () =>
 export const refreshToken = async () => {
   // need initial token from registration
   if (isLoggedIn()) {
-    return await getIdToken().then(async (idToken) => {
-      const token = await post("/refreshToken", {
-        token: idToken,
-        role: await getRole(),
-      }).then((data) => data && data.result.token);
+    return await getCurrentUser()
+      .getIdToken(true)
+      .then(async (idToken) => {
+        const token = await post("/refreshToken", {
+          token: idToken,
+          role: await getRole(),
+        }).then((data) => data && data.result.token);
 
-      await firebase.auth().signInWithCustomToken(token);
+        await firebase.auth().signInWithCustomToken(token);
 
-      return token;
-    });
+        return token;
+      });
   }
 };
 
@@ -195,7 +200,7 @@ export const getRegistrationStage = async () => {
       const claims = idTokenResult.claims;
 
       if (!claims.email_verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
-      if (!claims.mentorId) return REGISTRATION_STAGE.PROFILE_CREATION;
+      if (!claims.profileId) return REGISTRATION_STAGE.PROFILE_CREATION;
       return null;
     });
   }

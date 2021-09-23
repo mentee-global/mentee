@@ -1,0 +1,8 @@
+{
+  "root": "frontend/artifacts/",
+  "clean_urls": true,
+  "routes": {
+    "/static/**": "static/",
+    "/**": "index.html"
+  }
+}

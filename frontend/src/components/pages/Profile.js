@@ -2,57 +2,77 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button } from "antd";
-import { getMentorID, getIdTokenResult } from "utils/auth.service";
+import {
+  getMentorID,
+  getMenteeID,
+  logout,
+  getCurrentUser,
+} from "utils/auth.service";
 import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
-import { fetchMentorByID, editMentorProfile } from "utils/api";
+import {
+  fetchMentorByID,
+  editMentorProfile,
+  fetchMenteeByID,
+  editMenteeProfile,
+} from "utils/api";
 
 function Profile() {
   const history = useHistory();
-  const [mentor, setMentor] = useState({});
+  const [user, setUser] = useState({});
   const [onEdit, setEditing] = useState(false);
-  const [editedMentor, setEditedMentor] = useState(false);
+  const [editedUser, setEditedUser] = useState(false);
   const [form] = Form.useForm();
-  const { onAuthStateChanged } = useAuth();
+  const { onAuthStateChanged, isMentor, profileId } = useAuth();
 
   useEffect(() => {
-    onAuthStateChanged(fetchMentor);
+    onAuthStateChanged(fetchUser);
   }, []);
 
   useEffect(() => {
-    fetchMentor();
-  }, [editedMentor]);
+    fetchUser();
+  }, [editedUser]);
 
-  const fetchMentor = async () => {
+  const fetchUser = async () => {
     const mentorID = await getMentorID();
-    const mentorData = await fetchMentorByID(mentorID);
+    if (mentorID) {
+      const mentorData = await fetchMentorByID(mentorID);
 
-    if (mentorData) {
-      setMentor(mentorData);
+      if (mentorData) {
+        setUser(mentorData);
+      }
+    } else {
+      const menteeID = await getMenteeID();
+      const menteeData = await fetchMenteeByID(menteeID);
+
+      if (menteeData) {
+        setUser(menteeData);
+      }
     }
   };
 
   const handleSaveEdits = () => {
-    setEditedMentor(!editedMentor);
+    setEditedUser(!editedUser);
   };
 
   function renderContactInfo() {
     return (
       <div>
-        {mentor.email && (
+        {user.email && (
           <div>
             <MailOutlined className="mentor-profile-contact-icon" />
-            {mentor.email}
+            {user.email}
             <br />
           </div>
         )}
-        {mentor.phone_number && (
+        {user.phone_number && (
           <div>
             <PhoneOutlined className="mentor-profile-contact-icon" />
-            {mentor.phone_number}
+            {user.phone_number}
             <br />
           </div>
         )}
@@ -78,7 +98,11 @@ function Profile() {
   const onFinish = (values) => {
     async function saveEdits() {
       const new_values = { ...values, phone_number: values.phone };
-      await editMentorProfile(new_values, await getMentorID());
+      if (isMentor) {
+        await editMentorProfile(new_values, await getMentorID());
+      } else {
+        await editMenteeProfile(new_values, await getMentorID());
+      }
       handleSaveEdits();
     }
 
@@ -95,10 +119,10 @@ function Profile() {
         onFinish={onFinish}
         validateMessages={validateMessages}
         initialValues={{
-          email: mentor.email,
-          phone: mentor.phone_number,
-          email_notifications: mentor.email_notifications,
-          text_notifications: mentor.text_notifications,
+          email: user.email,
+          phone: user.phone_number,
+          email_notifications: user.email_notifications,
+          text_notifications: user.text_notifications,
         }}
       >
         <div className="mentor-profile-input">
@@ -136,7 +160,7 @@ function Profile() {
               <Form.Item name="email_notifications">
                 <Switch
                   size="small"
-                  defaultChecked={mentor.email_notifications}
+                  defaultChecked={user.email_notifications}
                 />
               </Form.Item>
             </div>
@@ -145,10 +169,7 @@ function Profile() {
                 Text notifications
               </div>
               <Form.Item name="text_notifications">
-                <Switch
-                  size="small"
-                  defaultChecked={mentor.text_notifications}
-                />
+                <Switch size="small" defaultChecked={user.text_notifications} />
               </Form.Item>
             </div>
           </div>
@@ -169,15 +190,19 @@ function Profile() {
       <div className="mentor-profile-content">
         <Avatar
           size={120}
-          src={mentor.image && mentor.image.url}
+          src={user.image && user.image.url}
           icon={<UserOutlined />}
         />
         <div className="mentor-profile-content-flexbox">
           <div className="mentor-profile-info">
             <ProfileContent
-              account={mentor}
-              isMentor={true}
+              mentor={user}
+              isMentor={isMentor}
+              accountType={isMentor && ACCOUNT_TYPE.MENTOR}
               handleSaveEdits={handleSaveEdits}
+              showEditBtn={
+                user && user._id && profileId && profileId === user._id["$oid"]
+              }
             />
           </div>
           <fieldset className="mentor-profile-contact">

@@ -4,7 +4,6 @@ import { Form, Modal, Calendar, Avatar, Switch } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import MenteeVerificationModal from "./MenteeVerificationModal";
 import {
   SPECIALIZATIONS,
   APPOINTMENT_FORM_KEYS,
@@ -14,6 +13,7 @@ import { createAppointment, editAvailability } from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
+import MenteeVerificationModal from "./MenteeVerificationModal";
 
 const DAY = 24 * 60 * 60 * 1000;
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;

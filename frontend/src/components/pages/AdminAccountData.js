@@ -1,34 +1,23 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Button,
-  Breadcrumb,
-  Input,
-  Spin,
-  Popconfirm,
-  message,
-} from "antd";
+import { Button, Breadcrumb, Input, Spin, message } from "antd";
 import {
   DownloadOutlined,
   ReloadOutlined,
-  LinkOutlined,
   PlusOutlined,
   UserOutlined,
-  DeleteOutlined,
 } from "@ant-design/icons";
 import "../css/AdminAccountData.scss";
 import {
   fetchMentorsAppointments,
   downloadMentorsData,
-  deleteMentorById,
+  downloadMenteesData,
+  deleteAccountById,
+  fetchMenteesAppointments,
 } from "../../utils/api";
-import { formatLinkForHref } from "utils/misc";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
-import { PROFILE_URL } from "../../utils/consts";
 import UploadEmails from "../UploadEmails";
+import AdminDataTable from "../AdminDataTable";
 import useAuth from "utils/hooks/useAuth";
-
-const { Column } = Table;
 
 const keys = {
   MENTORS: 0,
@@ -45,6 +34,7 @@ function AdminAccountData() {
   const [reload, setReload] = useState(true);
   const [resetFilters, setResetFilters] = useState(false);
   const [mentorData, setMentorData] = useState([]);
+  const [menteeData, setMenteeData] = useState([]);
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
@@ -56,12 +46,21 @@ function AdminAccountData() {
   useEffect(() => {
     async function getData() {
       setIsReloading(true);
-      const res = await fetchMentorsAppointments();
-      if (res) {
-        setMentorData(res.mentorData);
-        // TODO: Add Mentee Data state
-        setDisplayData(res.mentorData);
-        setFilterData(res.mentorData);
+      const mentorRes = await fetchMentorsAppointments();
+      const menteeRes = await fetchMenteesAppointments();
+      if (mentorRes && menteeRes) {
+        const newMenteeData = menteeRes.menteeData.map((elem) => ({
+          ...elem,
+          isMentee: true,
+        }));
+
+        setMentorData(mentorRes.mentorData);
+        setMenteeData(newMenteeData);
+        setDisplayData(mentorRes.mentorData);
+        setFilterData(mentorRes.mentorData);
+        setResetFilters(!resetFilters);
+      } else {
+        message.error("Could not fetch account data");
       }
       setIsReloading(false);
     }
@@ -69,12 +68,8 @@ function AdminAccountData() {
     onAuthStateChanged(getData);
   }, [reload]);
 
-  const handleDeleteAccount = async (mentorId, name) => {
-    if (!mentorId) {
-      message.error("Could not get specified mentor id");
-      return;
-    }
-    const success = await deleteMentorById(mentorId);
+  const handleDeleteAccount = async (id, accountType, name) => {
+    const success = await deleteAccountById(id, accountType);
     if (success) {
       message.success(`Successfully deleted ${name}`);
       setReload(!reload);
@@ -89,16 +84,15 @@ function AdminAccountData() {
 
   const handleMentorsDownload = async () => {
     setIsMentorDownload(true);
-    // TODO: Check up on why this isn't working..
     const file = await downloadMentorsData();
     setDownloadFile(file);
     setIsMentorDownload(false);
   };
 
-  const handleMenteesDownload = () => {
+  const handleMenteesDownload = async () => {
     setIsMenteeDownload(true);
-    // TODO: Add Mentee Account Downloads
-    console.log("Calling endpoint to download accounts");
+    const file = await downloadMenteesData();
+    setDownloadFile(file);
     setIsMenteeDownload(false);
   };
 
@@ -118,10 +112,9 @@ function AdminAccountData() {
     if (key === keys.MENTORS) {
       newData = mentorData;
     } else if (key === keys.MENTEES) {
-      //TODO: Add Mentee Data
+      newData = menteeData;
     } else if (key === keys.ALL) {
-      // TODO: Add Mentee Data
-      newData = mentorData.concat([]);
+      newData = mentorData.concat(menteeData);
     }
 
     setDisplayData(newData);
@@ -220,70 +213,11 @@ function AdminAccountData() {
         </div>
       </div>
       <Spin spinning={isReloading}>
-        <Table dataSource={filterData}>
-          <Column title="Name" dataIndex="name" key="name" />
-          <Column
-            title="No. of Appointments"
-            dataIndex="numOfAppointments"
-            key="numOfAppointments"
-            align="center"
-          />
-          <Column
-            title="Appointments Available?"
-            dataIndex="appointmentsAvailable"
-            key="appointmentsAvailable"
-            align="center"
-          />
-          <Column
-            title="Videos Posted?"
-            dataIndex="videosUp"
-            key="videosUp"
-            align="center"
-          />
-          <Column
-            title="Picture Uploaded?"
-            dataIndex="profilePicUp"
-            key="profilePicUp"
-            align="center"
-          />
-          <Column
-            title="Delete"
-            dataIndex={["id", "name"]}
-            key="id"
-            render={(text, data) => (
-              <Popconfirm
-                title={`Are you sure you want to delete ${data.name}?`}
-                onConfirm={() => {
-                  handleDeleteAccount(data.id, data.name);
-                }}
-                onCancel={() =>
-                  message.info(`No deletion has been for ${data.name}`)
-                }
-                okText="Yes"
-                cancelText="No"
-              >
-                <DeleteOutlined className="delete-user-btn" />
-              </Popconfirm>
-            )}
-            align="center"
-          />
-          <Column
-            title="Link to Profile"
-            dataIndex="id"
-            key="id"
-            render={(id) => (
-              <a
-                style={{ color: "black" }}
-                href={formatLinkForHref(`${PROFILE_URL}${id}`)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <LinkOutlined /> {`${PROFILE_URL}${id}`}
-              </a>
-            )}
-            align="center"
-          />
-        </Table>
+        <AdminDataTable
+          data={filterData}
+          deleteAccount={handleDeleteAccount}
+          isMentee={displayOption === keys.MENTEES}
+        />
       </Spin>
     </div>
   );

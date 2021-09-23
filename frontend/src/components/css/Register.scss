@@ -42,11 +42,6 @@
   width: 30%;
 }
 
-.verify-honeycomb {
-  height: 100%;
-  width: 100%;
-}
-
 .verify-resend-link, .verify-resend-link:focus {
   color: $mentee-button-regular;
   margin-left: 5px;
@@ -56,4 +51,16 @@
 
 .verify-resend-link:hover {
   color: $register-link-hover;
+}
+
+@media (max-width: 768px) {
+  .register-container {
+    height: 60vh;
+    width: 100%;
+  }
+
+  .verify-container {
+    height: 40vh;
+    width: 100%;
+  }
 }

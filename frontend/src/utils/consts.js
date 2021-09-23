@@ -12,7 +12,11 @@ export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";
 
-export const PROFILE_URL = FRONT_BASE_URL + "gallery/";
+export const MENTEE_PROFILE = FRONT_BASE_URL + "gallery/2/";
+
+export const MENTOR_PROFILE = FRONT_BASE_URL + "gallery/1/";
+
+export const MENTEE_DEFAULT_VIDEO_NAME = "Introduction";
 
 export const REGISTRATION_STAGE = {
   START: 0,
@@ -25,6 +29,12 @@ export const ACCOUNT_TYPE = {
   MENTOR: 1,
   MENTEE: 2,
   GUEST: 3,
+};
+
+export const PLURAL_TYPE = {
+  MENTORS: "mentors",
+  MENTEES: "mentees",
+  ADMINS: "admins",
 };
 
 export const APP_STATUS = {
@@ -58,6 +68,18 @@ export const LANGUAGES = [
   "Spanish",
   "Swahili",
   "Urdu",
+];
+
+export const AGE_RANGES = [
+  "16-18",
+  "19-22",
+  "23-25",
+  "26-30",
+  "30s",
+  "40s",
+  "50s",
+  "60s",
+  "70s+",
 ];
 
 export const SPECIALIZATIONS = [
@@ -130,4 +152,5 @@ export const LOGIN_ERROR_MSGS = {
     "Please reset password. A link to reset your password has been sent to your email.",
   SERVER_ERROR_MSG: "Something went wrong.",
   RECREATE_ACCOUNT_ERROR_MSG: "Please re-register your account.",
+  EXISTING_EMAIL: "This email is already in use in another role",
 };

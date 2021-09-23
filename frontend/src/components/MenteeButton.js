@@ -15,7 +15,9 @@ function MenteeButton(props) {
 
   return (
     <Button
-      className={getButtonClass(props.theme, props.borderOnClick)}
+      className={`${getButtonClass(props.theme, props.borderOnClick)} ${
+        props.className
+      }`}
       disabled={props.disabled ?? false}
       loading={props.loading ?? false}
       style={{

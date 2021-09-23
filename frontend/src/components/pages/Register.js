@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import { Input } from "antd";
 import MenteeVerificationModal from "../MenteeVerificationModal";
+import { useMediaQuery } from "react-responsive";
 import {
   getRegistrationStage,
   isLoggedIn,
@@ -21,6 +22,7 @@ import Logo from "../../resources/logo.png";
 function Register({ history }) {
   const query = useQuery();
   const registerAs = query.get("as");
+  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -146,7 +148,7 @@ function Register({ history }) {
             </NavLink>
           </div>
         </div>
-        <img className="logo" src={Logo} alt="" />
+        {!isMobile && <img className="logo" src={Logo} alt="" />}
       </div>
     </div>
   );

@@ -43,7 +43,6 @@ function MenteeVerificationModal(props) {
     setIsVerifying(true);
     const res = await verify(email, password, props.mentor);
     setIsVerifying(false);
-
     setVerified(res);
     if (!res) {
       setError(true);
@@ -86,9 +85,8 @@ function MenteeVerificationModal(props) {
         style={props.style}
         loading={props.loading}
       />
-
       <Modal
-        title={"Verify " + (props.mentor ? "Mentor" : "Mentee")}
+        title="Verify your email"
         visible={isVisible}
         className="verification-modal"
         onCancel={() => {
@@ -105,19 +103,13 @@ function MenteeVerificationModal(props) {
         <div className="verification-body">
           <div className="verification-header">
             You must confirm your email is approved through <b>MENTEE</b> to
-            continue. {!props.mentor && "If you're a mentor please log in."}
+            continue.
           </div>
           <div className="verification-input-container">
             <Input
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            {!props.mentor && (
-              <Input.Password
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            )}
             <MenteeButton
               content="Check Registration"
               radius="4px"

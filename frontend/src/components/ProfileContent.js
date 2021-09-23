@@ -1,146 +1,190 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   EnvironmentOutlined,
   CommentOutlined,
   LinkOutlined,
   LinkedinOutlined,
+  LockFilled,
 } from "@ant-design/icons";
-
-import PublicMessageModal from "components/PublicMessageModal";
 import { formatLinkForHref } from "utils/misc";
-import { ACCOUNT_TYPE } from "utils/consts";
 import MentorProfileModal from "./MentorProfileModal";
+import MenteeProfileModal from "./MenteeProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
+import PublicMessageModal from "./PublicMessageModal";
+import { ACCOUNT_TYPE } from "utils/consts";
 import useAuth from "utils/hooks/useAuth";
-
 import "./css/Profile.scss";
-
-const getMeetingMethods = (account) => {
-  const in_person = account.offers_in_person ? "In person | Online" : "Online";
-  const group_session = account.offers_group_appointments
-    ? "Group Meetings | 1-on-1"
-    : "1-on-1";
-  return in_person + " | " + group_session;
-};
-
-const getLanguages = (languages) => {
-  return languages.join(" • ");
-};
-
-const getSpecializationTags = (specializations) => {
-  return specializations.map((specialization, idx) => (
-    <div className="mentor-specialization-tag">{specialization}</div>
-  ));
-};
-
-const getEducations = (educations = []) => {
-  if (!educations || !educations.length) {
-    return;
-  }
-  return educations.map((education) => (
-    <>
-      {education.majors.map((major) => (
-        <div className="mentor-profile-education">
-          <b>{education.school}</b>
-          <br />
-          {education.education_level}, {major}
-          <br />
-          <t className="mentor-profile-heading">{education.graduation_year}</t>
-        </div>
-      ))}
-    </>
-  ));
-};
+import MentorContactModal from "./MentorContactModal";
 
 function ProfileContent(props) {
-  const { account, id, handleUpdateAccount, accountType } = props;
-  const { profileId, isMentor } = useAuth();
-  const [mentorPublic, setMentorPublic] = useState(false);
+  const { accountType } = props;
+  const { isMentor, isMentee, profileId } = useAuth();
 
-  useEffect(() => {
-    setMentorPublic(accountType == ACCOUNT_TYPE.MENTOR || props.isMentor);
-  }, [accountType]);
+  const getTitle = (name, age) => {
+    if (parseInt(accountType, 10) === ACCOUNT_TYPE.MENTOR && name) {
+      return name;
+    } else if (name && age) {
+      return name + ", " + age;
+    }
+  };
 
-  const getProfileButton = () => {
-    // In editable profile page
-    if (isMentor && !accountType)
-      return (
-        <MentorProfileModal mentor={account} onSave={props.handleSaveEdits} />
-      );
+  const getPrivacy = (privacy) => {
+    if (privacy) {
+      return <LockFilled className="mentor-lock-symbol" />;
+    }
+  };
+  const getLanguages = (languages) => {
+    return languages.join(" • ");
+  };
 
-    // In public mentor profile
-    if (accountType == ACCOUNT_TYPE.MENTOR)
+  const getSpecializationTags = (specializations) => {
+    return specializations.map((specialization, idx) => (
+      <div className="mentor-specialization-tag">{specialization}</div>
+    ));
+  };
+
+  const getSpecializations = (isMentor) => {
+    if (isMentor) {
       return (
-        <MenteeAppointmentModal
-          mentor_name={account.name}
-          availability={account.availability}
-          mentor_id={id}
-          mentee_id={profileId}
-          handleUpdateMentor={handleUpdateAccount}
-        />
+        <div>
+          <div className="mentor-profile-heading">
+            <b>Specializations</b>
+          </div>
+          <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
+        </div>
       );
-    // Mentee public profile
-    else
-      return (
-        <PublicMessageModal
-          menteeName={account.name}
-          menteeID={id}
-          mentorID={profileId}
-        />
-      );
+    }
+  };
+
+  const getEducations = (educations) => {
+    if (!educations || !educations[0]) {
+      return;
+    }
+    return educations.map((education) => (
+      <>
+        {education.majors.map((major) => (
+          <div className="mentor-profile-education">
+            <b>{education.school}</b>
+            <br />
+            {education.education_level}, {major}
+            <br />
+            <t className="mentor-profile-heading">
+              {education.graduation_year}
+            </t>
+          </div>
+        ))}
+      </>
+    ));
   };
 
   return (
     <div>
       <div className="mentor-profile-name">
-        {account.name}
-        <div className="mentor-profile-button">{getProfileButton()}</div>
-      </div>
-      <div className="mentor-profile-heading">
-        {mentorPublic ? account.professional_title : account.gender}{" "}
-        <t className="yellow-dot">•</t>{" "}
-        {mentorPublic ? getMeetingMethods(account) : account.organization}
+        <div className="mentor-profile-decorations">
+          {getTitle(props.mentor.name, props.mentor.age)}
+          <div>{getPrivacy(props.mentor.is_private)}</div>
+        </div>
+        <div className="mentor-profile-actions">
+          <div className="mentor-profile-book-appt-btn">
+            {isMentee &&
+              (props.isMentor ||
+                parseInt(accountType, 10) === ACCOUNT_TYPE.MENTOR) && (
+                <>
+                  <MentorContactModal
+                    mentorName={props.mentor?.name}
+                    mentorId={props.mentor?._id?.$oid}
+                    menteeId={profileId}
+                  />
+                  <MenteeAppointmentModal
+                    mentor_name={props.mentor.name}
+                    availability={props.mentor.availability}
+                    mentor_id={
+                      props.mentor &&
+                      props.mentor._id &&
+                      props.mentor._id["$oid"]
+                    }
+                    mentee_id={profileId}
+                    handleUpdateMentor={props.handleUpdateAccount}
+                  />
+                </>
+              )}
+          </div>
+          <div className="mentor-profile-send-msg-btn">
+            {!props.isMentor &&
+              parseInt(accountType, 10) !== ACCOUNT_TYPE.MENTOR &&
+              props.mentor &&
+              props.mentor._id &&
+              props.mentor._id["$oid"] !== profileId &&
+              profileId && (
+                <PublicMessageModal
+                  menteeName={props.mentor.name}
+                  menteeID={
+                    props.mentor && props.mentor._id && props.mentor._id["$oid"]
+                  }
+                  mentorID={profileId}
+                />
+              )}
+          </div>
+        </div>
+        {isMentor && props.showEditBtn ? (
+          <div className="mentor-profile-button">
+            <MentorProfileModal
+              mentor={props.mentor}
+              onSave={props.handleSaveEdits}
+            />
+          </div>
+        ) : (
+          isMentee &&
+          props.showEditBtn && (
+            <div className="mentor-profile-button">
+              <MenteeProfileModal
+                mentee={props.mentor}
+                onSave={props.handleSaveEdits}
+              />
+            </div>
+          )
+        )}
       </div>
       <div>
-        {account.location && (
+        {props.mentor.location && (
           <span>
             <EnvironmentOutlined className="mentor-profile-tag-first" />
-            {account.location}
+            {props.mentor.location}
           </span>
         )}
-        {account.languages && account.languages.length > 0 && (
+        {props.mentor.languages && props.mentor.languages.length > 0 && (
           <span>
             <CommentOutlined
               className={
-                !account.location
+                !props.mentor.location
                   ? "mentor-profile-tag-first"
                   : "mentor-profile-tag"
               }
             />
-            {getLanguages(account.languages || [])}
+            {getLanguages(props.mentor.languages || [])}
           </span>
         )}
-        {account.website && (
+        {props.mentor.website && (
           <span>
             <LinkOutlined className="mentor-profile-tag" />
             <a
-              href={formatLinkForHref(account.website)}
+              href={formatLinkForHref(props.mentor.website)}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {account.website}
+              {props.mentor.website}
             </a>
           </span>
         )}
-        {account.linkedin && (
+        {props.mentor.linkedin && (
           <span>
             <LinkedinOutlined className="mentor-profile-tag" />
             <a
-              href={formatLinkForHref(account.linkedin)}
+              href={formatLinkForHref(props.mentor.linkedin)}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {account.linkedin}
+              {props.mentor.linkedin}
             </a>
           </span>
         )}
@@ -149,21 +193,14 @@ function ProfileContent(props) {
       <div className="mentor-profile-heading">
         <b>About</b>
       </div>
-      <div className="mentor-profile-about">{account.biography}</div>
+      <div className="mentor-profile-about">{props.mentor.biography}</div>
       <br />
-      {mentorPublic && (
-        <>
-          <div className="mentor-profile-heading">
-            <b>Specializations</b>
-          </div>
-          <div>{getSpecializationTags(account.specializations || [])}</div>
-          <br />
-        </>
-      )}
+      {getSpecializations(props.isMentor)}
+      <br />
       <div className="mentor-profile-heading">
         <b>Education</b>
       </div>
-      <div>{getEducations(account.education)}</div>
+      <div>{getEducations(props.mentor.education)}</div>
     </div>
   );
 }

@@ -8,7 +8,6 @@ import { REGISTRATION_STAGE } from "utils/consts";
 import "../css/Home.scss";
 import "../css/Login.scss";
 import "../css/Register.scss";
-import Honeycomb from "../../resources/honeycomb.png";
 
 function ForgotPassword({ history }) {
   const [email, setEmail] = useState();
@@ -47,9 +46,6 @@ function ForgotPassword({ history }) {
               <t className="verify-header-text-description">
                 Please enter email for the password reset link to be sent to.
               </t>
-            </div>
-            <div className="verify-header-image">
-              <img className="verify-honeycomb" src={Honeycomb} alt="" />
             </div>
           </div>
           <div

@@ -5,6 +5,7 @@
     padding-left: 15%;
     padding-right: 15%;
     padding-top: 2%;
+    padding-bottom: 4%;
 }
 
 .register-header-container {
@@ -23,3 +24,24 @@
     padding-right: 3%;
 }
 
+@media (max-width: 768px) {
+    .modal-inner-container {
+        flex-direction: column;
+        width: 100%;
+        margin-left: 0px;
+        margin-right: 41px;
+    }
+
+    .modal-input-container {
+        flex-direction: column;
+        margin: 0;
+    }
+
+    .modal-education-add-container {
+        flex-direction: row;
+    }
+
+    .modal-education-delete-container {
+        flex-direction: row;
+    }
+}

@@ -108,3 +108,10 @@
   color: $register-link-hover;
   text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+  .login-container {
+    height: 60%;
+    width: 100%;
+  }
+}

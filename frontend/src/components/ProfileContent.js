@@ -6,7 +6,7 @@ import {
   LinkedinOutlined,
   LockFilled,
 } from "@ant-design/icons";
-import { formatLinkForHref } from "utils/misc";
+import { formatLinkForHref, truncate, truncateString } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeProfileModal from "./MenteeProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
@@ -55,6 +55,8 @@ function ProfileContent(props) {
       );
     }
   };
+
+  console.log(props.mentor.biography)
 
   const getEducations = (educations) => {
     if (!educations || !educations[0]) {

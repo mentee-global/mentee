@@ -5,7 +5,6 @@ import {
   LinkOutlined,
   LinkedinOutlined,
   LockFilled,
-  HeartFilled,
   StarFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
@@ -29,7 +28,6 @@ function ProfileContent(props) {
   const [mentee, setMentee] = useState();
   const [favorite, setFavorite] = useState(false);
 
-
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
 
   useEffect(() => {
@@ -52,8 +50,8 @@ function ProfileContent(props) {
         fav_set.add(id);
       });
       setFavoriteMentorIds(fav_set);
-      console.log(props)
-      console.log(fav_set.has(props.id))
+      console.log(props);
+      console.log(fav_set.has(props.id));
       setFavorite(fav_set.has(props.id));
     }
     if (isMentee) {
@@ -127,7 +125,7 @@ function ProfileContent(props) {
     ));
   };
 
-  console.log(favoriteMentorIds)
+  console.log(favoriteMentorIds);
 
   return (
     <div>
@@ -135,7 +133,7 @@ function ProfileContent(props) {
         <div className="mentor-profile-decorations">
           {getTitle(props.mentor.name, props.mentor.age)}
           <div>{getPrivacy(props.mentor.is_private)}</div>
-          {isMentee && favoriteMentorIds.size &&  (
+          {isMentee && favoriteMentorIds.size && (
             <div className="favorite-button-profile">
               <Rate
                 character={<StarFilled />}
@@ -146,9 +144,8 @@ function ProfileContent(props) {
             </div>
           )}
         </div>
-        
+
         <div className="mentor-profile-actions">
-        
           <div className="mentor-profile-book-appt-btn">
             {isMentee &&
               (props.isMentor ||

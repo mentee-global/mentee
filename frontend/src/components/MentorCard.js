@@ -7,8 +7,6 @@ import {
   StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
-  HeartOutlined,
-  HeartFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import useAuth from "../utils/hooks/useAuth";
@@ -76,7 +74,7 @@ function MentorCard(props) {
           {isMentee && (
             <div className="favorite-button">
               <Rate
-                character={<HeartFilled />}
+                character={<StarFilled />}
                 count={1}
                 defaultValue={favorite ? 1 : 0}
                 onChange={(number) => onFavoriteClick(number)}

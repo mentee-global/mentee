@@ -56,11 +56,14 @@ function MenteeAppointments() {
   const [visibleAppts, setVisibleAppts] = useState([]);
   const [favMentors, setFavMentors] = useState([]);
   const { profileId } = useAuth();
+  const [isLoading, setisLoading] = useState(true);
 
   useEffect(() => {
     async function getData() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
+      setisLoading(true);
       const resFavMentors = await getFavMentorsById(profileId);
+      setisLoading(false);
 
       const formattedAppointments = formatAppointments(
         appointmentsResponse,
@@ -116,7 +119,7 @@ function MenteeAppointments() {
           )}
         </div>
       </div>
-      <BookmarkSidebar bookmarks={favMentors} unfavorite={handleUnfavorite} />
+      <BookmarkSidebar bookmarks={favMentors} unfavorite={handleUnfavorite} isLoading={isLoading} />
     </div>
   );
 }

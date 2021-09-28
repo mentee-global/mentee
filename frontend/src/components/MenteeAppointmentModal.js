@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { Form, Modal, Calendar, Avatar, Switch } from "antd";
+import { Form, Modal, Calendar, Avatar, Switch, Space, notification } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -171,6 +171,19 @@ function MenteeAppointmentModal(props) {
     return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
   }
 
+  function openNotificationWithIcon(type, message, description)
+    notification[type]({
+      message:
+      // add message based on type 
+      // if type == success || type == failure 
+      description:
+        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+        // content of the appointment if success 
+    });
+  };
+
+
+
   return (
     <span>
       <MenteeVerificationModal
@@ -313,6 +326,7 @@ function MenteeAppointmentModal(props) {
                       index={0}
                       handleClick={handleClick}
                       onChange={(e) => setTopic(e)}
+                      openNotificationWithIcon = {openNotificationWithIcon('success')}
                     />
                   </Form.Item>
                   <div className="modal-mentee-appointment-message-container">

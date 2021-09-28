@@ -29,7 +29,7 @@ function Profile() {
   const [editedUser, setEditedUser] = useState(false);
 
   const [form] = Form.useForm();
-  
+
   const { onAuthStateChanged, isMentor, profileId, isMentee } = useAuth();
 
   useEffect(() => {
@@ -57,7 +57,6 @@ function Profile() {
       }
     }
   };
-  
 
   const handleSaveEdits = () => {
     setEditedUser(!editedUser);

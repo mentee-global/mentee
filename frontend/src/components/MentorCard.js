@@ -7,6 +7,7 @@ import {
   StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
+  StarFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import useAuth from "../utils/hooks/useAuth";

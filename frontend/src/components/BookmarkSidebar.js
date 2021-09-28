@@ -32,7 +32,7 @@ function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
           <div className="no-favorites-text">
             {!isLoading && bookmarks && !bookmarks.length
               ? <>No favorited Mentors</> 
-              : <></>
+              : null
             }
           </div>
           {bookmarks.map((mentor) => (

@@ -63,7 +63,7 @@ function MenteeAppointments() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
       setisLoading(true);
       const resFavMentors = await getFavMentorsById(profileId);
-      setisLoading(false);
+      
 
       const formattedAppointments = formatAppointments(
         appointmentsResponse,
@@ -76,6 +76,7 @@ function MenteeAppointments() {
 
         resFavMentors.map((elem) => (elem.id = elem._id.$oid));
         setFavMentors(resFavMentors);
+        setisLoading(false);
       } else {
         console.error("Failed to fetch appointments or favorite mentors");
       }

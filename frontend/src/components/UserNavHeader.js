@@ -20,13 +20,13 @@ function UserNavHeader() {
   const history = useHistory();
   const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
   const [user, setUser] = useState();
-  
+
   useEffect(() => {
     async function getUser() {
       const userData = await fetchAccountById(profileId, role);
       if (userData) {
         setUser(userData);
-        console.log("hello" + user)
+        console.log("hello" + user);
       }
     }
 
@@ -76,7 +76,9 @@ function UserNavHeader() {
             <div className="profile-name">
               <b>{user.name}</b>
               <br />
-              {user.professional_title ? user.professional_title : "Position Here"}
+              {user.professional_title
+                ? user.professional_title
+                : "Position Here"}
             </div>
             <div className="profile-picture">
               <Avatar

@@ -26,6 +26,7 @@ function UserNavHeader() {
       const userData = await fetchAccountById(profileId, role);
       if (userData) {
         setUser(userData);
+        console.log("hello" + user)
       }
     }
 
@@ -73,9 +74,9 @@ function UserNavHeader() {
         {user && (
           <>
             <div className="profile-name">
-              <b>hello</b>
+              <b>{user.name}</b>
               <br />
-              {user.professional_title}
+              {user.professional_title ? user.professional_title : "Position Here"}
             </div>
             <div className="profile-picture">
               <Avatar

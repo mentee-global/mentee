@@ -20,7 +20,7 @@ function UserNavHeader() {
   const history = useHistory();
   const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
   const [user, setUser] = useState();
-
+  
   useEffect(() => {
     async function getUser() {
       const userData = await fetchAccountById(profileId, role);
@@ -73,7 +73,7 @@ function UserNavHeader() {
         {user && (
           <>
             <div className="profile-name">
-              <b>{user.name}</b>
+              <b>hello</b>
               <br />
               {user.professional_title}
             </div>

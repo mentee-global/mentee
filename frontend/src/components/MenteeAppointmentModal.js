@@ -171,16 +171,13 @@ function MenteeAppointmentModal(props) {
     return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
   }
 
-  function openNotificationWithIcon(type, message, description)
-    notification[type]({
-      message:
-      // add message based on type 
-      // if type == success || type == failure 
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+  function openNotificationWithIcon(message, descriptionInfo) {
+    notification['sucess']({
+      message: "You have successfully booked an appointment!",
+      description: descriptionInfo 
         // content of the appointment if success 
     });
-  };
+  }
 
 
 
@@ -326,7 +323,7 @@ function MenteeAppointmentModal(props) {
                       index={0}
                       handleClick={handleClick}
                       onChange={(e) => setTopic(e)}
-                      openNotificationWithIcon = {openNotificationWithIcon('success')}
+                    
                     />
                   </Form.Item>
                   <div className="modal-mentee-appointment-message-container">

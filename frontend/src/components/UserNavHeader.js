@@ -7,6 +7,7 @@ import { Avatar, Layout, Dropdown, Menu } from "antd";
 import { UserOutlined, CaretDownOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
+import LoginVerificationModal from "./LoginVerificationModal";
 
 import "./css/Navigation.scss";
 
@@ -19,6 +20,7 @@ function UserNavHeader() {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const history = useHistory();
   const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
+  const { isMentor } = useAuth();
   const [user, setUser] = useState();
 
   useEffect(() => {
@@ -72,6 +74,35 @@ function UserNavHeader() {
         </div>
         {user && (
           <>
+          {isMentor ?
+            <span className="navigation-header-button">
+              <LoginVerificationModal
+                // className="mobile-nav-btn-login-modal"
+                content={<b>Find a Mentee</b>}
+                theme="light"
+                width="9em"
+                onVerified={() => {
+                  history.push({
+                    pathname: "/mentee-gallery",
+                    state: { verified: true },
+                  });
+                }}
+              /> 
+              </span> :
+              <span className="navigation-header-button">
+                <LoginVerificationModal
+                // className="mobile-nav-btn-login-modal"
+                content={<b>Find a Mentor</b>}
+                theme="light"
+                width="9em"
+                onVerified={() => {
+                  history.push({
+                    pathname: "/gallery",
+                    state: { verified: true },
+                  });
+                }}
+                /> 
+              </span> }
             <div className="profile-name">
               <b>{user.name}</b>
               <br />

@@ -42,15 +42,15 @@ function Navigation(props) {
   return (
     <div>
       <Layout className="navigation-layout">
-        {props.needsAuth ? (
+        {/* {props.needsAuth ? (
           isAdmin ? (
             <AdminNavHeader />
           ) : (
             <UserNavHeader />
           )
-        ) : (
+        ) : ( */}
           <GuestNavHeader />
-        )}
+        {/* )} */}
         {props.needsAuth ? (
           <Layout>
             {permissions === ACCOUNT_TYPE.ADMIN ? (

@@ -1,25 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { Layout, Drawer, Button } from "antd";
+import { logout } from "utils/auth.service";
+import { Avatar, Layout, Drawer, Button, Menu, Dropdown } from "antd";
 import { withRouter } from "react-router-dom";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
+import { fetchAccountById } from "utils/api";
 import useAuth from "../utils/hooks/useAuth";
-
+import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";
 
 import MenteeLogo from "../resources/mentee.png";
 import MenteeLogoSmall from "../resources/menteeSmall.png";
-import Icon, { MenuOutlined } from "@ant-design/icons";
+import Icon, { UserOutlined, MenuOutlined, CaretDownOutlined } from "@ant-design/icons";
 
 const { Header } = Layout;
 
 function GuestNavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
+  const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
   const { isAdmin, isMentor, isMentee } = useAuth();
   const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const [user, setUser] = useState();
+
+  const logoutUser = () => {
+    logout().then(() => {
+      resetRoleState();
+      history.push("/");
+    });
+  };
+
+  useEffect(() => {
+    async function getUser() {
+      const userData = await fetchAccountById(profileId, role);
+      if (userData) {
+        setUser(userData);
+      }
+    }
+
+    // Don't fetch if guest
+    if (role == ACCOUNT_TYPE.GUEST || user) return;
+    onAuthStateChanged(getUser);
+  }, [role]);
+    const dropdownMenu = (
+      <Menu className="dropdown-menu">
+        <Menu.Item key="edit-profile">
+          <NavLink to="/profile">
+            <b>Edit Profile</b>
+          </NavLink>
+        </Menu.Item>
+        <Menu.Divider />
+        {
+        <Menu.Item key="sign-out" onClick={logoutUser}>
+          <b>Sign Out</b>
+        </Menu.Item>
+        } 
+      </Menu>
+    );
+    
+
 
   return (
     <Header className="navigation-header">
@@ -37,6 +79,8 @@ function GuestNavHeader({ history }) {
           <div style={{ display: "flex" }}>
             {!isMobile && (
               <>
+                {isMentee || isMentor || isAdmin ?
+                <></> :
                 <span className="navigation-header-button">
                   <MenteeButton
                     width="9em"
@@ -49,35 +93,42 @@ function GuestNavHeader({ history }) {
                     }}
                   />
                 </span>
+                }
               </>
             )}
             {/* TODO: Update this since verification modal will not longer be needed anymore! */}
-            <span className="navigation-header-button">
-              <LoginVerificationModal
-                content={<b>Find a Mentor</b>}
-                theme="light"
-                width="9em"
-                onVerified={() => {
-                  history.push({
-                    pathname: "/gallery",
-                    state: { verified: true },
-                  });
-                }}
-              />
-            </span>
-            <span className="navigation-header-button">
-              <LoginVerificationModal
-                content={<b>Find a Mentee</b>}
-                theme="light"
-                width="9em"
-                onVerified={() => {
-                  history.push({
-                    pathname: "/mentee-gallery",
-                    state: { verified: true },
-                  });
-                }}
-              />
-            </span>
+            { isMentor || isAdmin ?
+              <></> :
+              <span className="navigation-header-button">
+                <LoginVerificationModal
+                  content={<b>Find a Mentor</b>}
+                  theme="light"
+                  width="9em"
+                  onVerified={() => {
+                    history.push({
+                      pathname: "/gallery",
+                      state: { verified: true },
+                    });
+                  }}
+                />
+              </span>
+            }
+            { isMentee || isAdmin ?
+              <></> :
+              <span className="navigation-header-button">
+                <LoginVerificationModal
+                  content={<b>Find a Mentee</b>}
+                  theme="light"
+                  width="9em"
+                  onVerified={() => {
+                    history.push({
+                      pathname: "/mentee-gallery",
+                      state: { verified: true },
+                    });
+                  }}
+                />
+              </span> 
+            }
             <span className="navigation-header-button">
               <LoginVerificationModal
                 loginButton
@@ -97,7 +148,7 @@ function GuestNavHeader({ history }) {
                   });
                 }}
               />
-            </span>
+            </span> 
           </div>
         ) : (
           <MobileGuestNavHeader
@@ -106,6 +157,28 @@ function GuestNavHeader({ history }) {
             history={history}
           />
         )}
+        {user ?
+          <>
+            <div className="profile-name">
+              <b>{user.name}</b>
+              <br />
+              {user.professional_title}
+            </div>
+            <div className="profile-picture">
+              <Avatar
+                size={40}
+                src={user.image && user.image.url}
+                icon={<UserOutlined />}
+              />
+            </div>
+            <div className="profile-caret">
+            <Dropdown overlay={dropdownMenu} trigger={["click"]}>
+              <CaretDownOutlined />
+            </Dropdown>
+            </div>
+            </> :
+            <></>
+        }
       </div>
     </Header>
   );
@@ -139,18 +212,24 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
               });
             }}
           />
-          <LoginVerificationModal
-            className="mobile-nav-btn-login-modal"
-            content={<b>Find a Mentor</b>}
-            theme="light"
-            width="9em"
-            onVerified={() => {
-              history.push({
-                pathname: "/gallery",
-                state: { verified: true },
-              });
-            }}
-          />
+          </div>
+          {isMentor || isAdmin ?
+            <></> :
+            <LoginVerificationModal
+              className="mobile-nav-btn-login-modal"
+              content={<b>Find a Mentor</b>}
+              theme="light"
+              width="9em"
+              onVerified={() => {
+                history.push({
+                  pathname: "/gallery",
+                  state: { verified: true },
+                });
+              }}
+            /> 
+          }
+          { isMentee || isAdmin ?
+          <></> :
           <LoginVerificationModal
             className="mobile-nav-btn-login-modal"
             content={<b>Find a Mentee</b>}
@@ -163,6 +242,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
               });
             }}
           />
+          }
           <MenteeButton
             className="mobile-nav-btn"
             content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
@@ -181,7 +261,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
               });
             }}
           />
-        </div>
+        
       </Drawer>
     </div>
   );

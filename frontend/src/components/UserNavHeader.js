@@ -26,7 +26,6 @@ function UserNavHeader() {
       const userData = await fetchAccountById(profileId, role);
       if (userData) {
         setUser(userData);
-        console.log("hello" + user);
       }
     }
 

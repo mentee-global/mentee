@@ -14,7 +14,11 @@ import "./css/Navigation.scss";
 import { getAdminID } from "utils/auth.service";
 import MenteeLogo from "../resources/mentee.png";
 import MenteeLogoSmall from "../resources/menteeSmall.png";
-import Icon, { UserOutlined, MenuOutlined, CaretDownOutlined } from "@ant-design/icons";
+import Icon, {
+  UserOutlined,
+  MenuOutlined,
+  CaretDownOutlined,
+} from "@ant-design/icons";
 
 const { Header } = Layout;
 
@@ -32,7 +36,7 @@ function GuestNavHeader({ history }) {
         const adminId = await getAdminID();
         const admin = await getAdmin(adminId);
         if (admin) {
-          setUser(admin)
+          setUser(admin);
         }
       } else {
         const userData = await fetchAccountById(profileId, role);
@@ -53,24 +57,21 @@ function GuestNavHeader({ history }) {
     });
   };
 
-
-    const dropdownMenu = (
-      <Menu className="dropdown-menu">
-        <Menu.Item key="edit-profile">
-          <NavLink to="/profile">
-            <b>Edit Profile</b>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Divider />
-        {
+  const dropdownMenu = (
+    <Menu className="dropdown-menu">
+      <Menu.Item key="edit-profile">
+        <NavLink to="/profile">
+          <b>Edit Profile</b>
+        </NavLink>
+      </Menu.Item>
+      <Menu.Divider />
+      {
         <Menu.Item key="sign-out" onClick={logoutUser}>
           <b>Sign Out</b>
         </Menu.Item>
-        } 
-      </Menu>
-    );
-    
-
+      }
+    </Menu>
+  );
 
   return (
     <Header className="navigation-header">
@@ -88,26 +89,28 @@ function GuestNavHeader({ history }) {
           <div style={{ display: "flex" }}>
             {!isMobile && (
               <>
-                {isMentee || isMentor ?
-                <></> :
-                <span className="navigation-header-button">
-                  <MenteeButton
-                    width="9em"
-                    theme="light"
-                    content={<b>{"Apply"}</b>}
-                    onClick={() => {
-                      history.push({
-                        pathname: "/application-page",
-                      });
-                    }}
-                  />
-                </span>
-                }
+                {isMentee || isMentor ? (
+                  <></>
+                ) : (
+                  <span className="navigation-header-button">
+                    <MenteeButton
+                      width="9em"
+                      theme="light"
+                      content={<b>{"Apply"}</b>}
+                      onClick={() => {
+                        history.push({
+                          pathname: "/application-page",
+                        });
+                      }}
+                    />
+                  </span>
+                )}
               </>
             )}
             {/* TODO: Update this since verification modal will not longer be needed anymore! */}
-            { isMentor ?
-              <></> :
+            {isMentor ? (
+              <></>
+            ) : (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentor</b>}
@@ -121,9 +124,10 @@ function GuestNavHeader({ history }) {
                   }}
                 />
               </span>
-            }
-            { isMentee ?
-              <></> :
+            )}
+            {isMentee ? (
+              <></>
+            ) : (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentee</b>}
@@ -136,8 +140,8 @@ function GuestNavHeader({ history }) {
                     });
                   }}
                 />
-              </span> 
-            }
+              </span>
+            )}
             <span className="navigation-header-button">
               <LoginVerificationModal
                 loginButton
@@ -157,8 +161,8 @@ function GuestNavHeader({ history }) {
                   });
                 }}
               />
-            </span> 
-            {user ?
+            </span>
+            {user ? (
               <>
                 <div className="profile-name">
                   <b>{user.name}</b>
@@ -177,9 +181,10 @@ function GuestNavHeader({ history }) {
                     <CaretDownOutlined />
                   </Dropdown>
                 </div>
-                </> :
-                <></>
-              }
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         ) : (
           <MobileGuestNavHeader
@@ -188,7 +193,6 @@ function GuestNavHeader({ history }) {
             history={history}
           />
         )}
-
       </div>
     </Header>
   );
@@ -222,24 +226,26 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
               });
             }}
           />
-          </div>
-          { isMentor ?
-            <></> :
-            <LoginVerificationModal
-              className="mobile-nav-btn-login-modal"
-              content={<b>Find a Mentor</b>}
-              theme="light"
-              width="9em"
-              onVerified={() => {
-                history.push({
-                  pathname: "/gallery",
-                  state: { verified: true },
-                });
-              }}
-            /> 
-          }
-          { isMentee ?
-          <></> :
+        </div>
+        {isMentor ? (
+          <></>
+        ) : (
+          <LoginVerificationModal
+            className="mobile-nav-btn-login-modal"
+            content={<b>Find a Mentor</b>}
+            theme="light"
+            width="9em"
+            onVerified={() => {
+              history.push({
+                pathname: "/gallery",
+                state: { verified: true },
+              });
+            }}
+          />
+        )}
+        {isMentee ? (
+          <></>
+        ) : (
           <LoginVerificationModal
             className="mobile-nav-btn-login-modal"
             content={<b>Find a Mentee</b>}
@@ -252,26 +258,25 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
               });
             }}
           />
-          }
-          <MenteeButton
-            className="mobile-nav-btn"
-            content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
-            width="9em"
-            onClick={async () => {
-              let redirect = "/select-login";
-              if (isMentor) {
-                redirect = "/appointments";
-              } else if (isMentee) {
-                redirect = "/mentee-appointments";
-              } else if (isAdmin) {
-                redirect = "/account-data";
-              }
-              history.push({
-                pathname: isLoggedIn() ? redirect : "/select-login",
-              });
-            }}
-          />
-        
+        )}
+        <MenteeButton
+          className="mobile-nav-btn"
+          content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
+          width="9em"
+          onClick={async () => {
+            let redirect = "/select-login";
+            if (isMentor) {
+              redirect = "/appointments";
+            } else if (isMentee) {
+              redirect = "/mentee-appointments";
+            } else if (isAdmin) {
+              redirect = "/account-data";
+            }
+            history.push({
+              pathname: isLoggedIn() ? redirect : "/select-login",
+            });
+          }}
+        />
       </Drawer>
     </div>
   );

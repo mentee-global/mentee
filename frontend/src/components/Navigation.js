@@ -49,7 +49,7 @@ function Navigation(props) {
             <UserNavHeader />
           )
         ) : ( */}
-          <GuestNavHeader />
+        <GuestNavHeader />
         {/* )} */}
         {props.needsAuth ? (
           <Layout>

@@ -74,35 +74,37 @@ function UserNavHeader() {
         </div>
         {user && (
           <>
-          {isMentor ?
-            <span className="navigation-header-button">
-              <LoginVerificationModal
-                // className="mobile-nav-btn-login-modal"
-                content={<b>Find a Mentee</b>}
-                theme="light"
-                width="9em"
-                onVerified={() => {
-                  history.push({
-                    pathname: "/mentee-gallery",
-                    state: { verified: true },
-                  });
-                }}
-              /> 
-              </span> :
+            {isMentor ? (
               <span className="navigation-header-button">
                 <LoginVerificationModal
-                // className="mobile-nav-btn-login-modal"
-                content={<b>Find a Mentor</b>}
-                theme="light"
-                width="9em"
-                onVerified={() => {
-                  history.push({
-                    pathname: "/gallery",
-                    state: { verified: true },
-                  });
-                }}
-                /> 
-              </span> }
+                  // className="mobile-nav-btn-login-modal"
+                  content={<b>Find a Mentee</b>}
+                  theme="light"
+                  width="9em"
+                  onVerified={() => {
+                    history.push({
+                      pathname: "/mentee-gallery",
+                      state: { verified: true },
+                    });
+                  }}
+                />
+              </span>
+            ) : (
+              <span className="navigation-header-button">
+                <LoginVerificationModal
+                  // className="mobile-nav-btn-login-modal"
+                  content={<b>Find a Mentor</b>}
+                  theme="light"
+                  width="9em"
+                  onVerified={() => {
+                    history.push({
+                      pathname: "/gallery",
+                      state: { verified: true },
+                    });
+                  }}
+                />
+              </span>
+            )}
             <div className="profile-name">
               <b>{user.name}</b>
               <br />

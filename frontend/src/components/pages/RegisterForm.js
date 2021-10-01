@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
@@ -267,9 +266,7 @@ function RegisterForm(props) {
             Error or missing fields, try again.
           </div>
         )}
-        <div>
-          {validate && <b style={styles.alertToast}>Missing Fields</b>}
-        </div>
+        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
       </div>
       <div className="modal-inner-container">
         <div className="modal-input-container">
@@ -452,9 +449,8 @@ const styles = {
   },
   saveButton: {
     position: "relative",
-    top: "60em"
-  }
+    top: "60em",
+  },
 };
 
 export default withRouter(RegisterForm);
-

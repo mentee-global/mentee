@@ -71,9 +71,11 @@ This application is built with React, Flask, MongoDB, and Ant Design
     <td align="center"><a href="https://www.linkedin.com/in/daniel-moon1/"><img src="https://uiuc.hack4impact.org/images/people/daniel_moon.jpg" width="75px;" alt="Daniel Moon"/><br /><b>Daniel Moon</b></a><br /><sub>Software Developer</sub></td>
     <td align="center"><a href="https://www.linkedin.com/in/feiyuwong/"><img src="https://uiuc.hack4impact.org/images/people/andy_wong.jpg" width="75px;" alt="Andy Wong"/><br /><b>Andy Wong</b></a><br /><sub>Software Developer</sub></td>
     <td align="center"><a href="https://www.linkedin.com/in/ishaan-r-sharma/"><img src="https://uiuc.hack4impact.org/images/people/ishaan_sharma.jpg" width="75px;" alt="Ishaan Sharma"/><br /><b>Ishaan Sharma</b></a><br /><sub>Software Developer</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/zayyan-faizal/"><img src="https://uiuc.hack4impact.org/images/people/zayyan_faizal.jpg" width="75px;" alt="Zayyan Faizal"/><br /><b>Zayyan Faizal</b></a><br /><sub>Software Developer</sub></td>
-
+    <td align="center"><a href="https://www.linkedin.com/in/luciana-toledo-lopez/"><img src="https://avatars.githubusercontent.com/u/55062455?v=4" width="75px;" alt="Luciana Toledo-López"/><br /><b>Luciana Toledo-Lopez</b></a><br /><sub>Software Developer</sub></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://www.linkedin.com/in/zayyan-faizal/"><img src="https://uiuc.hack4impact.org/images/people/zayyan_faizal.jpg" width="75px;" alt="Zayyan Faizal"/><br /><b>Zayyan Faizal</b></a><br /><sub>Software Developer</sub></td>
+    </tr>
 </table>
 
 ## License

@@ -140,8 +140,8 @@ function App() {
                 ) : type === ACCOUNT_TYPE.MENTEE ? (
                   <MenteeRegisterForm />
                 ) : (
-                      <Redirect to="/" />
-                    )
+                  <Redirect to="/" />
+                )
               }
               needsAuth={false}
             />

@@ -292,7 +292,14 @@ def get_appointments():
         mentor_by_id[mentor["id"]] = mentor.name
 
     res_appts = []
-    for index in range(len(appointments) - 1):
+
+    #page_count is the number of appts per page; can be changed as needed
+
+    page_number = 2
+    page_count = 12
+    start_index = page_count*(page_number - 1)
+
+    for index in range(start_index, start_index + page_count):
         current_id = appointments[index].mentor_id
         res_appts.append(
             {

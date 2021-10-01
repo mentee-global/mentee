@@ -13,7 +13,7 @@ function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
   const redirectToProfile = (mentorId) => {
     history.push(`/gallery/1/${mentorId}`);
   };
-  
+
   return (
     <div className="mentee-bookmark-section">
       <div className="mentee-bookmark-add">
@@ -30,10 +30,9 @@ function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
       <div className="mentee-bookmark-display">
         <Spin spinning={isLoading} className="bookmark-spin">
           <div className="no-favorites-text">
-            {!isLoading && bookmarks && !bookmarks.length
-              ? <>No favorited Mentors</> 
-              : null
-            }
+            {!isLoading && bookmarks && !bookmarks.length ? (
+              <>No favorited Mentors</>
+            ) : null}
           </div>
           {bookmarks.map((mentor) => (
             <div className="mentee-bookmark-card">

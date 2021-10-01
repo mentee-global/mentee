@@ -63,7 +63,6 @@ function MenteeAppointments() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
       setisLoading(true);
       const resFavMentors = await getFavMentorsById(profileId);
-      
 
       const formattedAppointments = formatAppointments(
         appointmentsResponse,
@@ -120,7 +119,11 @@ function MenteeAppointments() {
           )}
         </div>
       </div>
-      <BookmarkSidebar bookmarks={favMentors} unfavorite={handleUnfavorite} isLoading={isLoading} />
+      <BookmarkSidebar
+        bookmarks={favMentors}
+        unfavorite={handleUnfavorite}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

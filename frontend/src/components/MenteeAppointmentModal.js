@@ -17,6 +17,7 @@ import MenteeVerificationModal from "./MenteeVerificationModal";
 
 const DAY = 24 * 60 * 60 * 1000;
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const TYPE = 'success';
 
 // Form validateMessages sends values here
 const validationMessage = {
@@ -28,6 +29,7 @@ const validationMessage = {
 
 function MenteeAppointmentModal(props) {
   const [form] = Form.useForm();
+  const [content, setContent] = useState("");
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
   const [daySlots, setDaySlots] = useState([]);
@@ -48,6 +50,10 @@ function MenteeAppointmentModal(props) {
   const [isAvailable, setIsAvailable] = useState(false);
   const mentorID = props.mentor_id;
   const menteeID = props.mentee_id;
+
+  // notification 
+  const mentorName = props.mentor_name
+  const [notifDate, setNotifDate] = useState();
 
   // useState values
   const values = [mentorID, menteeID, topic, message, canCall, canText];
@@ -103,6 +109,9 @@ function MenteeAppointmentModal(props) {
 
   function handleDateChange(e) {
     setDate(moment(e._d).format("YYYY-MM-DD"));
+
+    // date for notif
+    setNotifDate(moment(e._d).format("MM-DD"))
     setDateHeading(moment(e._d));
   }
 
@@ -113,6 +122,8 @@ function MenteeAppointmentModal(props) {
   }
 
   function updateModal() {
+  
+
     if (time) {
       setCalendarModalVisible(false);
       setFormModalVisible(true);
@@ -122,7 +133,7 @@ function MenteeAppointmentModal(props) {
     }
   }
 
-  async function handleBookAppointment() {
+  async function handleBookAppointment() {  
     setFormModalVisible(false);
 
     const appointment = {};
@@ -141,8 +152,16 @@ function MenteeAppointmentModal(props) {
       end_time: moment(time.end_time.$date).format(),
     };
 
-    await createAppointment(appointment);
 
+    let timeInterval = moment(time.start_time.$date).format("hh:mm A") + " - " + 
+    moment(time.end_time.$date).format("hh:mm A");
+
+    const res = await createAppointment(appointment);
+    // condition with success 
+    if (res) {
+      openNotificationWithIcon(timeInterval); 
+    }
+  
     // Find matching appointment and PUT request for mentor availability
     const changeTime = [...timeSlots];
     let index = 0;
@@ -171,14 +190,14 @@ function MenteeAppointmentModal(props) {
     return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
   }
 
-  function openNotificationWithIcon(message, descriptionInfo) {
-    notification['sucess']({
-      message: "You have successfully booked an appointment!",
-      description: descriptionInfo 
-        // content of the appointment if success 
+  // notification component for when mentee succesfully books an appointment 
+  // type change if we want to add 
+  const openNotificationWithIcon = (timeInterval) => {
+    notification[TYPE]({
+      message: 'You have successfully booked an appointment!',
+      description: "Appointment with " + mentorName + " on " + notifDate + " from " + timeInterval 
     });
-  }
-
+  };
 
 
   return (
@@ -226,37 +245,53 @@ function MenteeAppointmentModal(props) {
                 {!isAvailable ? (
                   <h1>There are no appointments available</h1>
                 ) : (
-                  dayTimeSlots.map((timeSlot, index) => (
-                    <div
-                      key={index}
-                      className="modal-mentee-appointment-timeslot"
-                    >
-                      <MenteeButton
+                    dayTimeSlots.map((timeSlot, index) => (
+                      
+                      <div
                         key={index}
-                        width={170}
-                        content={
-                          moment(timeSlot.start_time.$date).format("hh:mm A") +
-                          "-" +
-                          moment(timeSlot.end_time.$date).format("hh:mm A")
-                        }
-                        theme="light"
-                        borderOnClick={true}
-                        onClick={() => setTime(timeSlot)}
-                      />
-                    </div>
-                  ))
-                )}
+          
+                        className="modal-mentee-appointment-timeslot"
+
+                      >
+
+                        <MenteeButton
+                          key={index}
+                          width={170}
+                        
+                          content={
+                            moment(timeSlot.start_time.$date).format("hh:mm A") +
+                            "-" +
+                            moment(timeSlot.end_time.$date).format("hh:mm A")
+                          }
+                          theme="light"
+                          borderOnClick={true}
+                          onClick={() => setTime(timeSlot)}
+                        />
+
+                      </div>
+
+                    ))
+                    
+                  )}
+                  
               </div>
             </div>
             <div className="modal-mentee-appointment-datetime-container-footer">
               {validate && (
                 <b style={styles.alertToast}>Appointment Time Not Chosen</b>
+
               )}
+
               <MenteeButton
                 width={120}
                 content={"continue"}
                 onClick={() => {
                   updateModal();
+                  //`${content}`
+                  //console.log(timeInterval);
+
+                  // how to make sure validation is true 
+                  // how to add content of who the appt is with and time and date 
                 }}
               />
             </div>
@@ -275,6 +310,9 @@ function MenteeAppointmentModal(props) {
             content="Book Appointment"
             htmlType="submit"
             form="appointment-form"
+            // fix date format
+            // get time 
+            // conditional when everything is succesfull 
           />
         }
       >
@@ -323,7 +361,7 @@ function MenteeAppointmentModal(props) {
                       index={0}
                       handleClick={handleClick}
                       onChange={(e) => setTopic(e)}
-                    
+
                     />
                   </Form.Item>
                   <div className="modal-mentee-appointment-message-container">
@@ -354,7 +392,7 @@ function MenteeAppointmentModal(props) {
                   <div className="modal-mentee-availability-switches">
                     <div className="modal-mentee-availability-switch">
                       <div className="modal-mentee-availability-switch-text">
-                        Allow calls*
+                        Allow calls
                       </div>
                       <Switch
                         size="small"
@@ -365,7 +403,7 @@ function MenteeAppointmentModal(props) {
                     </div>
                     <div className="modal-mentee-availability-switch">
                       <div className="modal-mentee-availability-switch-text">
-                        Allow texting*
+                        Allow texting
                       </div>
                       <Switch
                         size="small"

@@ -289,11 +289,6 @@ function MenteeAppointmentModal(props) {
                 content={"continue"}
                 onClick={() => {
                   updateModal();
-                  //`${content}`
-                  //console.log(timeInterval);
-
-                  // how to make sure validation is true
-                  // how to add content of who the appt is with and time and date
                 }}
               />
             </div>
@@ -312,9 +307,6 @@ function MenteeAppointmentModal(props) {
             content="Book Appointment"
             htmlType="submit"
             form="appointment-form"
-            // fix date format
-            // get time
-            // conditional when everything is succesfull
           />
         }
       >

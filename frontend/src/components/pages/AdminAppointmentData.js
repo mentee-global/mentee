@@ -4,7 +4,7 @@ import { Breadcrumb, Input, Button, Row, Col, Spin } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
 import {
-  fetchAllAppointments,
+  fetchPaginatedAppointments,
   downloadAllApplicationData,
 } from "../../utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
@@ -27,6 +27,8 @@ function AdminAppointmentData() {
   const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(
     false
   );
+  const [pageNumber, setPageNumber] = useState(1);
+  const [appointmentCount, setAppointmentCount] = useState(0);
   const [downloadFile, setDownloadFile] = useState(null);
 
   const { onAuthStateChanged } = useAuth();
@@ -34,18 +36,30 @@ function AdminAppointmentData() {
   useEffect(() => {
     async function getAppointments() {
       setIsLoading(true);
-      const res = await fetchAllAppointments();
+      const res = await fetchPaginatedAppointments(pageNumber);
 
       if (res) {
         const sorted = res.appointments.reverse();
         setAppointments(sorted);
         setFilterData(sorted);
+        setAppointmentCount(res.totalAppointments);
       }
       setIsLoading(false);
     }
 
     onAuthStateChanged(getAppointments);
-  }, []);
+  }, [pageNumber]);
+
+  const incrementPageNumber = () => {
+    if (pageNumber * 12 <= appointmentCount) {
+      setPageNumber(pageNumber+1)
+    }
+  }
+  const decrementPageNumber = () => {
+    if (pageNumber > 0) {
+      setPageNumber(pageNumber-1)
+    }
+  }
 
   const handleSearchAppointment = (searchValue) => {
     if (!searchValue) {
@@ -132,6 +146,12 @@ function AdminAppointmentData() {
             loading={isDownloadingAppointments}
           >
             Appointment Data
+          </Button>
+          <Button onClick={() => decrementPageNumber()}>
+            Prev Page
+          </Button>
+          <Button onClick={() => incrementPageNumber()}>
+            Next Page
           </Button>
         </div>
       </div>

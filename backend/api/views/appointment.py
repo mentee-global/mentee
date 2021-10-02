@@ -279,10 +279,14 @@ def get_mentees_appointments():
     return create_response(data={"menteeData": data}, status=200, message="Success")
 
 
-@appointment.route("/", methods=["GET"])
+@appointment.route("/all/<int:page_number>", methods=["GET"])
 @admin_only
-def get_appointments():
-    appointments = AppointmentRequest.objects()
+def get_appointments(page_number):   
+
+    #page_count is the number of appts per page; can be changed as needed
+    page_count = 12
+    start_index = page_count*(page_number - 1)
+    appointments = AppointmentRequest.objects[start_index:start_index+page_count]
     mentors = MentorProfile.objects().only("name", "id")
 
     # TODO: Fix this.. It is too slow :(((
@@ -293,13 +297,7 @@ def get_appointments():
 
     res_appts = []
 
-    #page_count is the number of appts per page; can be changed as needed
-
-    page_number = 2
-    page_count = 12
-    start_index = page_count*(page_number - 1)
-
-    for index in range(start_index, start_index + page_count):
+    for index in range(len(appointments)):
         current_id = appointments[index].mentor_id
         res_appts.append(
             {
@@ -309,5 +307,5 @@ def get_appointments():
         )
 
     return create_response(
-        data={"appointments": res_appts}, status=200, message="Success"
+        data={"appointments": res_appts, "totalAppointments": AppointmentRequest.objects.count()}, status=200, message="Success"
     )

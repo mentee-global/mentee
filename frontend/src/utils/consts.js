@@ -20,7 +20,7 @@ export const MENTEE_DEFAULT_VIDEO_NAME = "Introduction";
 
 export const MENTEE_GALLERY_PAGE = "/mentee-gallery";
 
-export const MENTOR_GALLERY_PAGE = "";
+export const MENTOR_GALLERY_PAGE = "/gallery";
 
 export const REGISTRATION_STAGE = {
   START: 0,

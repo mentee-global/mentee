@@ -2,4 +2,6 @@
 venv
 node_modules
 backend/firebase_service_key.json
+package-lock.json
+package.json
 yarn.lock

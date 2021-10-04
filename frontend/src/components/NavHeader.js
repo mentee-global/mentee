@@ -22,7 +22,7 @@ import Icon, {
 
 const { Header } = Layout;
 
-function GuestNavHeader({ history }) {
+function NavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
   const { isAdmin, isMentor, isMentee } = useAuth();
@@ -47,6 +47,7 @@ function GuestNavHeader({ history }) {
     }
     // Don't fetch if guest
     if (role == ACCOUNT_TYPE.GUEST || user) return;
+
     onAuthStateChanged(getUser);
   }, [role]);
 
@@ -55,6 +56,7 @@ function GuestNavHeader({ history }) {
       resetRoleState();
       history.push("/");
     });
+    setUser();
   };
 
   const dropdownMenu = (
@@ -282,4 +284,4 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
   );
 }
 
-export default withRouter(GuestNavHeader);
+export default withRouter(NavHeader);

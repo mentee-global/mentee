@@ -25,7 +25,8 @@ import MenteeVerificationModal from "./MenteeVerificationModal";
 
 const DAY = 24 * 60 * 60 * 1000;
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const TYPE = "success";
+const SUCCESS = "success";
+const ERROR = "error";
 
 // Form validateMessages sends values here
 const validationMessage = {
@@ -166,7 +167,9 @@ function MenteeAppointmentModal(props) {
     const res = await createAppointment(appointment);
     // condition with success
     if (res) {
-      openNotificationWithIcon(timeInterval);
+      openNotificationWithIcon(SUCCESS, timeInterval);
+    } else {
+      openNotificationWithIcon(ERROR, timeInterval);
     }
 
     // Find matching appointment and PUT request for mentor availability
@@ -199,18 +202,18 @@ function MenteeAppointmentModal(props) {
 
   // notification component for when mentee succesfully books an appointment
   // type change if we want to add
-  const openNotificationWithIcon = (timeInterval) => {
-    notification[TYPE]({
-      message: "You Have Successfully Booked an Appointment!",
-      description:
-        "Appointment with " +
-        mentorName +
-        " on " +
-        notifDate +
-        " from " +
-        timeInterval,
-    });
-  };
+  function openNotificationWithIcon(type, timeInterval) {
+    if (type === SUCCESS) {
+      notification[type]({
+        message: "You Have Successfully Booked an Appointment!",
+        description: `Appointment with ${mentorName} on ${notifDate} from ${timeInterval}`,
+      });
+    } else if (type === ERROR) {
+      notification[type]({
+        message: "Error in booking appointment!",
+      });
+    }
+  }
 
   return (
     <span>

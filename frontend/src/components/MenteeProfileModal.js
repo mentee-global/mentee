@@ -183,7 +183,6 @@ function MenteeProfileModal(props) {
     }
 
     setName(name);
-    
   }
 
   function handleAboutChange(e) {
@@ -371,11 +370,8 @@ function MenteeProfileModal(props) {
     newValidArray.splice(10 + educationIndex * 4, 4);
     setIsValid(newValidArray);
   };
-  console.log(isValid);
-  console.log(validate);
 
   const handleSaveEdits = () => {
-
     async function saveEdits(data) {
       const menteeID = await getMenteeID();
       await editMenteeProfile(data, menteeID);
@@ -427,7 +423,6 @@ function MenteeProfileModal(props) {
       setSaving(true);
       saveEdits(updatedProfile);
     }
-    
   };
 
   return (
@@ -450,7 +445,9 @@ function MenteeProfileModal(props) {
         style={{ overflow: "hidden" }}
         footer={
           <div>
-            {validate && <b style={styles.alertToast}>Missing or Error Fields</b>}
+            {validate && (
+              <b style={styles.alertToast}>Missing or Error Fields</b>
+            )}
             <Button
               type="default"
               shape="round"
@@ -592,7 +589,7 @@ function MenteeProfileModal(props) {
                 value={email}
                 valid={isValid[4]}
                 validate={validate}
-                errorPresent={!validateEmail(email)}
+                errorPresent={email && !validateEmail(email)}
                 errorMessage="Invalid email address."
               />
               <ModalInput

@@ -168,7 +168,6 @@ function ModalInput(props) {
   };
 
 
-  console.log(type, getContainerStyle(), valid);
   return (
     <div style={getContainerStyle()}>
       <div style={getTextStyle()}>{title}</div>

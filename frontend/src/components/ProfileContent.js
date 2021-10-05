@@ -78,7 +78,7 @@ function ProfileContent(props) {
   };
 
   return (
-    <div>
+    <div className="mentor-profile-video-flexbox">
       <div className="mentor-profile-name">
         <div className="mentor-profile-decorations">
           {getTitle(props.mentor.name, props.mentor.age)}

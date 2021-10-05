@@ -155,7 +155,7 @@
   border-radius: 4px;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 640px) {
   .gallery-mentor-container {
     flex: 5;
     display: grid;
@@ -179,3 +179,23 @@
 }
 
 
+@media only screen and (max-width: 1200px) {
+  .gallery-mentor-container {
+    flex: 5;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
+    grid-gap: 1rem;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .gallery-mentor-container {
+    flex: 5;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    grid-gap: 1rem;
+    height: 100%;
+    overflow: hidden;
+  }
+}

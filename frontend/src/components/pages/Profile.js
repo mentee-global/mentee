@@ -19,7 +19,6 @@ import {
   editMentorProfile,
   fetchMenteeByID,
   editMenteeProfile,
-  EditFavMentorById,
 } from "utils/api";
 
 function Profile() {

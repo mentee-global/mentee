@@ -17,9 +17,7 @@ import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
 import MentorContactModal from "./MentorContactModal";
 import { getMenteeID } from "utils/auth.service";
-import { fetchMenteeByID } from "../utils/api";
-
-import { EditFavMentorById } from "../utils/api";
+import { fetchMenteeByID, editFavMentorById } from "../utils/api";
 import { Rate } from "antd";
 
 function ProfileContent(props) {
@@ -50,8 +48,6 @@ function ProfileContent(props) {
         fav_set.add(id);
       });
       setFavoriteMentorIds(fav_set);
-      console.log(props);
-      console.log(fav_set.has(props.id));
       setFavorite(fav_set.has(props.id));
     }
     if (isMentee) {
@@ -60,7 +56,7 @@ function ProfileContent(props) {
   }, [mentee]);
 
   function onEditFav(mentor_id, favorite) {
-    EditFavMentorById(profileId, mentor_id, favorite);
+    editFavMentorById(profileId, mentor_id, favorite);
   }
 
   function onFavoriteClick(fav) {
@@ -125,15 +121,13 @@ function ProfileContent(props) {
     ));
   };
 
-  console.log(favoriteMentorIds);
-
   return (
     <div>
       <div className="mentor-profile-name">
         <div className="mentor-profile-decorations">
           {getTitle(props.mentor.name, props.mentor.age)}
           <div>{getPrivacy(props.mentor.is_private)}</div>
-          {isMentee && favoriteMentorIds.size && (
+          {isMentee && favoriteMentorIds.size && accountType == 1 && (
             <div className="favorite-button-profile">
               <Rate
                 character={<StarFilled />}

@@ -5,7 +5,7 @@ import { Result, message } from "antd";
 import {
   fetchAppointmentsByMenteeId,
   getFavMentorsById,
-  EditFavMentorById,
+  editFavMentorById,
 } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, MENTOR_PROFILE } from "utils/consts";
@@ -85,7 +85,7 @@ function MenteeAppointments() {
   };
 
   const handleUnfavorite = async (mentorId, name) => {
-    const res = await EditFavMentorById(profileId, mentorId, false);
+    const res = await editFavMentorById(profileId, mentorId, false);
     if (!res) {
       message.error(`Failed to unfavorite mentor ${name}`, 3);
     } else {

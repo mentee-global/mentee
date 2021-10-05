@@ -7,7 +7,19 @@ import {
 } from "@ant-design/icons";
 import "./css/AdminAppointments.scss";
 
-function AdminAppointmentModal({ data, visible, dateFormat, status }) {
+const getTopics = (data) => {
+  if (data.topic) {
+    return data.topic;
+  } else {
+    return data.specialist_categories.map((category, i) => {
+      return i < data.specialist_categories.length - 1
+        ? `${category}, `
+        : category;
+    });
+  }
+};
+
+function AdminAppointmentModal({ data, visible, dateFormat, status, onClose }) {
   const getContactPermissions = () => {
     if (!data) {
       return;
@@ -34,6 +46,7 @@ function AdminAppointmentModal({ data, visible, dateFormat, status }) {
         title="Appointment Details"
         footer={null}
         width="40%"
+        onCancel={onClose}
       >
         <div className="modal-body">
           <div className="modal-header">
@@ -54,7 +67,7 @@ function AdminAppointmentModal({ data, visible, dateFormat, status }) {
                 {data ? getContactPermissions() : ""} <br />
                 {data && data.appointment.phone_number}
                 <br />
-                <a>{data.appointment.email}</a>
+                <a>{data?.appointment.email}</a>
                 <br />
               </div>
             </div>
@@ -65,18 +78,18 @@ function AdminAppointmentModal({ data, visible, dateFormat, status }) {
                 Mentor
               </div>
               <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
-                {data.mentor}
+                {data?.mentor}
               </div>
               <div className="modal-info-header" style={{ fontSize: ".9em" }}>
                 Mentee
               </div>
               <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
-                {data.appointment.name}
+                {data?.appointment.name}
               </div>
               <div className="modal-info-text">
-                {`${data.appointment.age} • `}
-                {`${data.appointment.gender} `}
-                {`• ${data.appointment.organization}`}
+                {`${data?.appointment.age} • `}
+                {`${data?.appointment.gender} `}
+                {`• ${data?.appointment.organization}`}
               </div>
               <div className="modal-info-text">
                 <MessageOutlined />{" "}
@@ -94,17 +107,7 @@ function AdminAppointmentModal({ data, visible, dateFormat, status }) {
                 <div>
                   <StarOutlined /> Meeting Topic:
                 </div>
-                <div>
-                  {data &&
-                    data.appointment.specialist_categories.map(
-                      (category, i) => {
-                        return i <
-                          data.appointment.specialist_categories.length - 1
-                          ? `${category}, `
-                          : category;
-                      }
-                    )}
-                </div>
+                <div>{data && getTopics(data.appointment)}</div>
               </div>
             </div>
             <div className="modal-note">

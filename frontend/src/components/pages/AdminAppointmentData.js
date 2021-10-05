@@ -9,6 +9,7 @@ import {
 } from "../../utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
+import AdminAppointmentModal from "components/AdminAppointmentModal";
 import "../css/AdminAppointments.scss";
 import { SPECIALIZATIONS } from "utils/consts";
 import useAuth from "utils/hooks/useAuth";
@@ -28,6 +29,8 @@ function AdminAppointmentData() {
     false
   );
   const [downloadFile, setDownloadFile] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   const { onAuthStateChanged } = useAuth();
 
@@ -90,8 +93,26 @@ function AdminAppointmentData() {
     setIsDownloadingAppointments(false);
   };
 
+  const handleAppointmentClick = (appointmentData) => {
+    setSelectedAppointment(appointmentData);
+    setVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setVisible(false);
+  };
+
   return (
     <div className="appointments-body">
+      {selectedAppointment && (
+        <AdminAppointmentModal
+          visible={visible}
+          data={selectedAppointment.data}
+          dateFormat={selectedAppointment.dateFormat}
+          status={selectedAppointment.status}
+          onClose={handleCloseModal}
+        />
+      )}
       <div style={{ display: "none" }}>
         <iframe src={downloadFile} />
       </div>
@@ -138,10 +159,14 @@ function AdminAppointmentData() {
       <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>
         <div className="appointments-table">
           <Row gutter={[16, 16]} justify="start">
-            {filterData.map((data) => {
+            {filterData.map((data, key) => {
               return (
-                <Col span={6}>
-                  <AdminAppointmentCard data={data} render={render} />
+                <Col span={6} key={key}>
+                  <AdminAppointmentCard
+                    data={data}
+                    render={render}
+                    onClick={handleAppointmentClick}
+                  />
                 </Col>
               );
             })}

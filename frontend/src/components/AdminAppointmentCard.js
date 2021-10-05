@@ -6,7 +6,6 @@ import {
   QuestionCircleTwoTone,
 } from "@ant-design/icons";
 import moment from "moment";
-import AdminAppointmentModal from "./AdminAppointmentModal";
 import "./css/AdminAppointments.scss";
 
 const getTopics = (data) => {
@@ -21,8 +20,7 @@ const getTopics = (data) => {
   }
 };
 
-function AdminAppointmentCard({ data, render }) {
-  const [visible, setVisible] = useState(false);
+function AdminAppointmentCard({ data, render, onClick }) {
   const [dateFormat, setDateFormat] = useState({});
   const [status, setStatus] = useState({});
 
@@ -58,13 +56,12 @@ function AdminAppointmentCard({ data, render }) {
   }, [render]);
 
   return (
-    <div className="card-container" onClick={() => setVisible(!visible)}>
-      <AdminAppointmentModal
-        visible={visible}
-        data={data}
-        dateFormat={dateFormat}
-        status={status}
-      />
+    <div
+      className="card-container"
+      onClick={() =>
+        onClick({ status: status, dateFormat: dateFormat, data: data })
+      }
+    >
       <div className="card-header">
         <div className="card-date">
           <div>{dateFormat && dateFormat.date}</div>
@@ -77,11 +74,11 @@ function AdminAppointmentCard({ data, render }) {
       </div>
       <div className="card-mentor">
         <div style={{ fontSize: ".9em", color: "#7A7A7A" }}>Mentor</div>
-        <b>{data.mentor}</b>
+        <b>{data?.mentor}</b>
       </div>
       <div className="card-mentee">
         <div style={{ fontSize: ".9em", color: "#7A7A7A" }}>Mentee</div>
-        <b>{data.appointment.name}</b>
+        <b>{data?.appointment?.name}</b>
       </div>
       <div className="card-topic">
         <div>

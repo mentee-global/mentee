@@ -17,6 +17,7 @@ import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
+import { validateUrl } from "utils/misc";
 
 function RegisterForm(props) {
   const history = useHistory();
@@ -208,6 +209,76 @@ function RegisterForm(props) {
     setIsValid(newValidArray);
   };
 
+  function handleNameChange(e) {
+    const name = e.target.value;
+
+    if (name.length < 50) {
+      let newValid = [...isValid];
+
+      newValid[0] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[0] = false;
+      setIsValid(newValid);
+    }
+    setName(name);
+  }
+  function handleAboutChange(e) {
+    const about = e.target.value;
+
+    if (about.length < 255) {
+      let newValid = [...isValid];
+
+      newValid[8] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[8] = false;
+      setIsValid(newValid);
+    }
+
+    setAbout(about);
+  }
+
+  function handleWebsiteChange(e) {
+    const website = e.target.value;
+
+    if (validateUrl(website)) {
+      let newValid = [...isValid];
+
+      newValid[3] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[3] = false;
+      setIsValid(newValid);
+    }
+
+    setWebsite(website);
+  }
+
+  function handleLinkedinChange(e) {
+    const linkedin = e.target.value;
+
+    if (validateUrl(linkedin)) {
+      let newValid = [...isValid];
+
+      newValid[2] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[2] = false;
+      setIsValid(newValid);
+    }
+
+    setLinkedin(linkedin);
+  }
+
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
       const res = await createMentorProfile(data);
@@ -252,9 +323,10 @@ function RegisterForm(props) {
       offers_in_person: inPersonAvailable,
       offers_group_appointments: groupAvailable,
     };
-
-    setSaving(true);
-    await saveEdits(newProfile);
+    if (isValid.includes(false)) {
+      setSaving(true);
+      await saveEdits(newProfile);
+    }
   };
 
   return (
@@ -288,15 +360,12 @@ function RegisterForm(props) {
             clicked={inputClicked[0]}
             index={0}
             handleClick={handleClick}
-            onChange={(e) => {
-              setName(e.target.value);
-              let newValid = [...isValid];
-              newValid[0] = !!e.target.value;
-              setIsValid(newValid);
-            }}
+            onChange={handleNameChange}
             value={name}
             valid={isValid[0]}
             validate={validate}
+            errorPresent={name && name.length > 50}
+            errorMessage="Name field is too long."
           />
           <ModalInput
             style={styles.modalInput}
@@ -326,8 +395,12 @@ function RegisterForm(props) {
             clicked={inputClicked[2]}
             index={2}
             handleClick={handleClick}
-            onChange={(e) => setAbout(e.target.value)}
+            onChange={handleAboutChange}
             value={about}
+            valid={isValid[8]}
+            validate={validate}
+            errorPresent={about && about.length > 255}
+            errorMessage="About field is too long."
           />
         </div>
         <div className="divider" />
@@ -372,8 +445,12 @@ function RegisterForm(props) {
             clicked={inputClicked[6]}
             index={6}
             handleClick={handleClick}
-            onChange={(e) => setWebsite(e.target.value)}
+            onChange={handleWebsiteChange}
             value={website}
+            valid={isValid[3]}
+            validate={validate}
+            errorPresent={website && !validateUrl(website)}
+            errorMessage="Invalid URL."
           />
         </div>
         <div className="modal-input-container">
@@ -401,8 +478,12 @@ function RegisterForm(props) {
             clicked={inputClicked[8]}
             index={8}
             handleClick={handleClick}
-            onChange={(e) => setLinkedin(e.target.value)}
+            onChange={handleLinkedinChange}
             value={linkedin}
+            valid={isValid[2]}
+            validate={validate}
+            errorPresent={linkedin && !validateUrl(linkedin)}
+            errorMessage="Invalid URL."
           />
         </div>
         <div className="modal-input-container">

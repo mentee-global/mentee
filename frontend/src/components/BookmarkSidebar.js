@@ -7,7 +7,7 @@ import MenteeButton from "./MenteeButton";
 import BookmarkImage from "resources/AddBookmarkMentor.svg";
 import "components/css/MenteeAppointments.scss";
 
-function BookmarkSidebar({ bookmarks, unfavorite }) {
+function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
   const history = useHistory();
 
   const redirectToProfile = (mentorId) => {
@@ -28,10 +28,12 @@ function BookmarkSidebar({ bookmarks, unfavorite }) {
         <HeartFilled /> Favorite Contacts
       </div>
       <div className="mentee-bookmark-display">
-        <Spin
-          spinning={!bookmarks || !bookmarks.length}
-          className="bookmark-spin"
-        >
+        <Spin spinning={isLoading} className="bookmark-spin">
+          <div className="no-favorites-text">
+            {!isLoading && bookmarks && !bookmarks.length ? (
+              <>No favorited Mentors</>
+            ) : null}
+          </div>
           {bookmarks.map((mentor) => (
             <div className="mentee-bookmark-card">
               <Avatar

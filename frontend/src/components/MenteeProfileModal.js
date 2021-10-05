@@ -14,6 +14,7 @@ import { getMenteeID } from "../utils/auth.service";
 import moment from "moment";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
+import { validateEmail } from "utils/misc";
 
 const INITIAL_NUM_INPUTS = 14;
 
@@ -205,8 +206,22 @@ function MenteeProfileModal(props) {
   }
 
   function handleLocationChange(e) {
-    setLocation(e.target.value);
-    setEdited(true);
+    const location = e.target.value;
+
+    if (location.length < 70) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[9] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[9] = false;
+      setIsValid(newValid);
+    }
+
+    setLocation(location);
   }
 
   function handleAgeChange(e) {
@@ -225,8 +240,22 @@ function MenteeProfileModal(props) {
   }
 
   function handleEmailChange(e) {
-    setEmail(e.target.value);
-    setEdited(true);
+    const email = e.target.value;
+
+    if (validateEmail(email)) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[4] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[4] = false;
+      setIsValid(newValid);
+    }
+
+    setEmail(email);
   }
 
   function handleLanguageChange(e) {
@@ -491,6 +520,8 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleAboutChange}
                 value={about}
+                valid={isValid[8]}
+                validate={validate}
                 errorPresent={about && about.length > 255}
                 errorMessage="About field is too long."
               />
@@ -507,6 +538,10 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLocationChange}
                 value={location}
+                valid={isValid[9]}
+                validate={validate}
+                errorPresent={location && location.length > 70}
+                errorMessage="Location field is too long."
               />
               <ModalInput
                 style={styles.modalInput}
@@ -555,6 +590,10 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleEmailChange}
                 value={email}
+                valid={isValid[4]}
+                validate={validate}
+                errorPresent={!validateEmail(email)}
+                errorMessage="Invalid email address."
               />
               <ModalInput
                 style={styles.modalInput}

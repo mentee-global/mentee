@@ -166,18 +166,42 @@ function MenteeProfileModal(props) {
   }
 
   function handleNameChange(e) {
-    setName(e.target.value);
-    setEdited(true);
-    let newValid = [...isValid];
+    const name = e.target.value;
 
-    newValid[0] = !!e.target.value;
+    if (name.length < 50) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-    setIsValid(newValid);
+      newValid[0] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[0] = false;
+      setIsValid(newValid);
+    }
+
+    setName(name);
+    
   }
 
   function handleAboutChange(e) {
-    setAbout(e.target.value);
-    setEdited(true);
+    const about = e.target.value;
+
+    if (about.length < 255) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[8] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[8] = false;
+      setIsValid(newValid);
+    }
+
+    setAbout(about);
   }
 
   function handleLocationChange(e) {
@@ -318,8 +342,11 @@ function MenteeProfileModal(props) {
     newValidArray.splice(10 + educationIndex * 4, 4);
     setIsValid(newValidArray);
   };
+  console.log(isValid);
+  console.log(validate);
 
   const handleSaveEdits = () => {
+
     async function saveEdits(data) {
       const menteeID = await getMenteeID();
       await editMenteeProfile(data, menteeID);
@@ -367,8 +394,11 @@ function MenteeProfileModal(props) {
       },
     };
 
-    setSaving(true);
-    saveEdits(updatedProfile);
+    if (!isValid.includes(false)) {
+      setSaving(true);
+      saveEdits(updatedProfile);
+    }
+    
   };
 
   return (
@@ -391,7 +421,7 @@ function MenteeProfileModal(props) {
         style={{ overflow: "hidden" }}
         footer={
           <div>
-            {validate && <b style={styles.alertToast}>Missing Fields</b>}
+            {validate && <b style={styles.alertToast}>Missing or Error Fields</b>}
             <Button
               type="default"
               shape="round"
@@ -445,6 +475,8 @@ function MenteeProfileModal(props) {
                 value={name}
                 valid={isValid[0]}
                 validate={validate}
+                errorPresent={name && name.length > 50}
+                errorMessage="Name field is too long."
               />
             </div>
             <div className="modal-input-container">
@@ -459,6 +491,8 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleAboutChange}
                 value={about}
+                errorPresent={about && about.length > 255}
+                errorMessage="About field is too long."
               />
             </div>
           </div>

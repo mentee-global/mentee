@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
@@ -39,9 +39,17 @@ const VideoSubmit = (props) => {
             className="video-submit-input"
             rules={[
               {
-                required: matchYoutubeUrl(value) || validateVimeoURL(value),
-                message: "Please input a video link",
+                required: true,
+                message: "Please input valid a Youtube or Vimeo link",
               },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || matchYoutubeUrl(getFieldValue('url')) || validateVimeoURL(getFieldValue('url'))) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Please input valid a Youtube or Vimeo link'));
+                },
+              }),
             ]}
           >
             <Input placeholder="Video Link" />

@@ -40,14 +40,14 @@ const VideoSubmit = (props) => {
             rules={[
               {
                 required: true,
-                message: "Please input valid a Youtube or Vimeo link",
+                message: "Please input a valid Youtube or Vimeo link",
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || matchYoutubeUrl(getFieldValue('url')) || validateVimeoURL(getFieldValue('url'))) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Please input valid a Youtube or Vimeo link'));
+                  return Promise.reject(new Error('Please input a valid Youtube or Vimeo link'));
                 },
               }),
             ]}

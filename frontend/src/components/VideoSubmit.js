@@ -1,4 +1,4 @@
-import React, from "react";
+import React from "react";
 import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";

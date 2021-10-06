@@ -4,6 +4,7 @@ import { LinkOutlined, DeleteOutlined } from "@ant-design/icons";
 import { JsonToTable } from "react-json-to-table";
 
 import "./css/AdminAccountData.scss";
+
 import { formatLinkForHref } from "utils/misc";
 import { MENTEE_PROFILE, MENTOR_PROFILE, ACCOUNT_TYPE } from "utils/consts";
 

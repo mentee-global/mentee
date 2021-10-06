@@ -3,6 +3,7 @@ import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import "../components/css/Videos.scss";
+import {matchYoutubeUrl, validateVimeoURL} from "utils/misc.js";
 
 const VideoSubmit = (props) => {
   return (
@@ -38,7 +39,7 @@ const VideoSubmit = (props) => {
             className="video-submit-input"
             rules={[
               {
-                required: true,
+                required: matchYoutubeUrl(value) || validateVimeoURL(value),
                 message: "Please input a video link",
               },
             ]}

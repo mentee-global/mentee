@@ -100,9 +100,15 @@ function AdminAccountData() {
     const newData = [...filterData];
     const isAscending = key === keys.ASCENDING;
     newData.sort((a, b) => {
-      return isAscending
-        ? b.appointments.length - a.appointments.length
-        : a.appointments.length - b.appointments.length;
+      if (a.appointments && b.appointments) {
+        return isAscending
+          ? b.appointments.length - a.appointments.length
+          : a.appointments.length - b.appointments.length;
+      } else {
+        return isAscending
+          ? b.numOfAppointments - a.numOfAppointments
+          : a.numOfAppointments - b.numOfAppointments;
+      }
     });
     setFilterData(newData);
   };

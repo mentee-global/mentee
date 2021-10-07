@@ -3,7 +3,7 @@ import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import "../components/css/Videos.scss";
-import {matchYoutubeUrl, validateVimeoURL} from "utils/misc.js";
+import { matchYoutubeUrl, validateVimeoURL } from "utils/misc.js";
 
 const VideoSubmit = (props) => {
   return (
@@ -44,10 +44,16 @@ const VideoSubmit = (props) => {
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || matchYoutubeUrl(getFieldValue('url')) || validateVimeoURL(getFieldValue('url'))) {
+                  if (
+                    !value ||
+                    matchYoutubeUrl(getFieldValue("url")) ||
+                    validateVimeoURL(getFieldValue("url"))
+                  ) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Please input a valid Youtube or Vimeo link'));
+                  return Promise.reject(
+                    new Error("Please input a valid Youtube or Vimeo link")
+                  );
                 },
               }),
             ]}

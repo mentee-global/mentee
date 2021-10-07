@@ -35,6 +35,15 @@
   grid-gap: 1rem;
   height: 100%;
   overflow: hidden;
+
+  @media only screen and (max-width: 1200px) {
+    grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
+  }
+
+  @media only screen and (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  }
+
 }
 
 .gallery-mentor-card {
@@ -125,7 +134,6 @@
 
 }
 
-
 .gallery-list-items {
   display: block;
   text-align: left;
@@ -156,15 +164,6 @@
 }
 
 @media only screen and (max-width: 640px) {
-  .gallery-mentor-container {
-    flex: 5;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-    grid-gap: 1rem;
-    height: 100%;
-    overflow: hidden;
-  }
-
   .gallery-filter-container {
     margin: 0;
   }
@@ -175,27 +174,5 @@
     margin-top: 2%;
     margin-left: 2%;
     display: grid;
-  }
-}
-
-
-@media only screen and (max-width: 1200px) {
-  .gallery-mentor-container {
-    flex: 5;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
-    grid-gap: 1rem;
-    height: 100%;
-    overflow: hidden;
-  }
-}
-@media only screen and (max-width: 768px) {
-  .gallery-mentor-container {
-    flex: 5;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-    grid-gap: 1rem;
-    height: 100%;
-    overflow: hidden;
   }
 }

@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from api.models import MentorApplication, VerifiedEmail
 from api.core import create_response, serialize_list, logger
 from api.utils.require_auth import admin_only
-from api.utils.constants import MENTOR_APP_STATES, MENTOR_APP_OFFER
+from api.utils.constants import MENTOR_APP_STATES, MENTOR_APP_OFFER, MENTOR_APP_SUBMITTED, MENTOR_APP_REJECTED
 from api.utils.request_utils import send_email, is_invalid_form, MentorApplicationForm
 
 apply = Blueprint("apply", __name__)
@@ -114,14 +114,27 @@ def edit_application(id):
             recipient=mentor_email,
             subject="MENTEE Application Status",
             template_id=MENTOR_APP_OFFER,
-        )
+
+        ) 
         if not success:
             logger.info(msg)
+
 
         # Add to verified emails
         if not VerifiedEmail.objects(email=mentor_email):
             new_verified = VerifiedEmail(email=mentor_email, is_mentor=True)
             new_verified.save()
+    
+    # send out rejection emails when put in rejected column 
+    if application.application_state == MENTOR_APP_STATES["REJECTED"]:
+        mentor_email = application.email
+        success, msg = send_email(
+        recipient=mentor_email,
+        subject="Thank you for your interest in Mentee, " + application.name,
+        template_id=MENTOR_APP_REJECTED,
+        )
+        if not success:
+            logger.info(msg)
 
     return create_response(status=200, message=f"Success")
 
@@ -163,6 +176,17 @@ def create_application():
     )
 
     new_application.save()
+    # Send a notification email
+    # change template_id 
+    print("on line 181")
+    mentor_email = new_application.email
+    success, msg = send_email(
+        recipient=mentor_email,
+        subject="MENTEE Application Recieved!",
+        template_id=MENTOR_APP_SUBMITTED,
+    )
+    if not success:
+        logger.info(msg)
 
     return create_response(
         message=f"Successfully created application with name {new_application.name}"

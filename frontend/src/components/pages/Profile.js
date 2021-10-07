@@ -39,7 +39,6 @@ function Profile() {
 
   const fetchUser = async () => {
     const mentorID = await getMentorID();
-    console.log(mentorID)
     if (mentorID) {
       const mentorData = await fetchMentorByID(mentorID);
 
@@ -48,7 +47,6 @@ function Profile() {
       }
     } else {
       const menteeID = await getMenteeID();
-      console.log(menteeID)
       const menteeData = await fetchMenteeByID(menteeID);
 
       if (menteeData) {
@@ -103,7 +101,7 @@ function Profile() {
       if (isMentor) {
         await editMentorProfile(new_values, await getMentorID());
       } else {
-        await editMenteeProfile(new_values, await getMentorID());
+        await editMenteeProfile(new_values, await getMenteeID());
       }
       handleSaveEdits();
     }

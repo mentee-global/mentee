@@ -114,7 +114,6 @@ def edit_application(id):
             recipient=mentor_email,
             subject="MENTEE Application Status",
             template_id=MENTOR_APP_OFFER,
-
         ) 
         if not success:
             logger.info(msg)
@@ -176,9 +175,7 @@ def create_application():
     )
 
     new_application.save()
-    # Send a notification email
-    # change template_id 
-    print("on line 181")
+
     mentor_email = new_application.email
     success, msg = send_email(
         recipient=mentor_email,

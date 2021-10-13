@@ -22,79 +22,101 @@ function AdminAppointmentData() {
   const [isLoading, setIsLoading] = useState(false);
   const [resetFilters, setResetFilters] = useState(false);
   const [appointments, setAppointments] = useState([]);
-  const [filterData, setFilterData] = useState([]);
+//  const [filterData, setFilterData] = useState([]);
   const [render, setRender] = useState(false);
-  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(
-    false
-  );
+  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
   const [appointmentCount, setAppointmentCount] = useState(0);
   const [downloadFile, setDownloadFile] = useState(null);
+  const [searchValue, setSearchValue] = useState("NONE")
+  const [filterValue, setFilterValue] = useState("NONE")
 
   const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getAppointments() {
       setIsLoading(true);
-      const res = await fetchPaginatedAppointments(pageNumber);
+      const res = await fetchPaginatedAppointments(pageNumber, searchValue, filterValue);
 
       if (res) {
         const sorted = res.appointments.reverse();
         setAppointments(sorted);
-        setFilterData(sorted);
+//        setFilterData(sorted);
         setAppointmentCount(res.totalAppointments);
       }
       setIsLoading(false);
     }
 
     onAuthStateChanged(getAppointments);
-  }, [pageNumber]);
+  }, [pageNumber, searchValue, filterValue]);
 
   const incrementPageNumber = () => {
-    if (pageNumber * 12 <= appointmentCount) {
+    if (pageNumber * 12 < appointmentCount) {
       setPageNumber(pageNumber+1)
     }
   }
   const decrementPageNumber = () => {
-    if (pageNumber > 0) {
+    if (pageNumber > 1) {
       setPageNumber(pageNumber-1)
     }
   }
 
-  const handleSearchAppointment = (searchValue) => {
-    if (!searchValue) {
+  const handleSearchAppointment = (searchVal) => {
+    /*if (!searchValue) {
       setFilterData(appointments);
+    }*/
+    if (searchVal != "") {
+      setSearchValue(searchVal)
+    } else {
+      setSearchValue("NONE")
     }
-
+    setPageNumber(1)
+    /*if (searchVal != "") {
+      setSearchValue(searchVal)
+      setPageNumber(1)
+      console.log(searchVal)
+    } else {
+      console.log(":(")
+    } */
+    /*
     const newFiltered = filterData.filter((appt) => {
       return (
         appt.mentor.match(new RegExp(searchValue, "i")) ||
         appt.appointment.name.match(new RegExp(searchValue, "i"))
       );
     });
-    setFilterData(newFiltered);
+    setFilterData(newFiltered);*/
   };
   const handleResetFilters = () => {
+    /*
     setFilterData(appointments);
     setResetFilters(!resetFilters);
+    */
+    if (filterValue != "NONE") {
+      setFilterValue("NONE")
+      setPageNumber(1)
+    }
   };
   const handleSortData = (sortingKey) => {
     const isAscending = sortingKey === keys.ASCENDING;
-    const newSorted = filterData.sort((a, b) => {
+    const newSorted = appointments.sort((a, b) => {
       const aDate = moment(a.appointment.timeslot.start_time.$date);
       const bDate = moment(b.appointment.timeslot.start_time.$date);
       return isAscending ? bDate.diff(aDate) : aDate.diff(bDate);
     });
-    setFilterData(newSorted);
+    //setFilterData(newSorted);
     setRender(!render);
   };
   const handleSpecializationsDisplay = (index) => {
-    const newFiltered = filterData.filter((appt) => {
+    /*const newFiltered = filterData.filter((appt) => {
       return appt.appointment.specialist_categories.includes(
         SPECIALIZATIONS[index]
       );
     });
-    setFilterData(newFiltered);
+    setFilterData(newFiltered);*/
+    console.log(SPECIALIZATIONS[index])
+    setFilterValue(SPECIALIZATIONS[index])
+    setPageNumber(1)
   };
 
   const handleAppointmentDownload = async () => {
@@ -158,7 +180,7 @@ function AdminAppointmentData() {
       <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>
         <div className="appointments-table">
           <Row gutter={[16, 16]} justify="start">
-            {filterData.map((data) => {
+            {appointments.map((data) => {
               return (
                 <Col span={6}>
                   <AdminAppointmentCard data={data} render={render} />

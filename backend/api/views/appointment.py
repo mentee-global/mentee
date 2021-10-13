@@ -279,17 +279,33 @@ def get_mentees_appointments():
     return create_response(data={"menteeData": data}, status=200, message="Success")
 
 
-@appointment.route("/all/<int:page_number>", methods=["GET"])
+@appointment.route("/all/<int:page_number>/<string:search>/<string:filter>", methods=["GET"])
 @admin_only
-def get_appointments(page_number):   
+def get_appointments(page_number, search, filter):   
 
     #page_count is the number of appts per page; can be changed as needed
     page_count = 12
     start_index = page_count*(page_number - 1)
-    appointments = AppointmentRequest.objects[start_index:start_index+page_count]
+    total_count = 0
+    if search == "NONE" and filter == "NONE":
+        logger.info("hi")
+        appointments = AppointmentRequest.objects[start_index:start_index+page_count]
+        total_count = AppointmentRequest.objects[start_index:start_index+page_count].count()
+    elif search == "NONE":
+        logger.info("hii")
+        appointments = AppointmentRequest.objects(specialist_categories__contains=filter)[start_index:start_index+page_count]
+        total_count = AppointmentRequest.objects(specialist_categories__contains=filter)[start_index:start_index+page_count].count()
+    elif filter == "NONE":
+        logger.info(AppointmentRequest.objects(name__istartswith=search)[start_index:start_index+page_count].count())
+        appointments = AppointmentRequest.objects(name__istartswith=search)[start_index:start_index+page_count]
+        total_count = AppointmentRequest.objects(name__istartswith=search)[start_index:start_index+page_count].count()
+    else:
+        logger.info("hiiii")
+        appointments = AppointmentRequest.objects(name__istartswith=search)(specialist_categories__contains=filter)[start_index:start_index+page_count]
+        total_count = AppointmentRequest.objects(name__istartswith=search)(specialist_categories__contains=filter)[start_index:start_index+page_count].count()
+
     mentors = MentorProfile.objects().only("name", "id")
 
-    # TODO: Fix this.. It is too slow :(((
     mentor_by_id = {}
 
     for mentor in mentors:
@@ -307,5 +323,5 @@ def get_appointments(page_number):
         )
 
     return create_response(
-        data={"appointments": res_appts, "totalAppointments": AppointmentRequest.objects.count()}, status=200, message="Success"
+        data={"appointments": res_appts, "totalAppointments": total_count}, status=200, message="Success"
     )

@@ -47,6 +47,7 @@ function NavHeader({ history }) {
     }
     // Don't fetch if guest
     if (role == ACCOUNT_TYPE.GUEST || user) return;
+
     onAuthStateChanged(getUser);
   }, [role]);
 

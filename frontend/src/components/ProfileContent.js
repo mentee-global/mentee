@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   EnvironmentOutlined,
   CommentOutlined,
   LinkOutlined,
   LinkedinOutlined,
   LockFilled,
+  StarFilled,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
@@ -15,10 +16,53 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
 import MentorContactModal from "./MentorContactModal";
+import { getMenteeID } from "utils/auth.service";
+import { fetchMenteeByID, editFavMentorById } from "../utils/api";
+import { Rate } from "antd";
 
 function ProfileContent(props) {
   const { accountType } = props;
   const { isMentor, isMentee, profileId } = useAuth();
+  const [mentee, setMentee] = useState();
+  const [favorite, setFavorite] = useState(false);
+
+  const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
+
+  useEffect(() => {
+    async function getMentee() {
+      const mentee_id = await getMenteeID();
+      const mentee_data = await fetchMenteeByID(mentee_id);
+      if (mentee_data) {
+        setMentee(mentee_data);
+      }
+    }
+    if (isMentee) {
+      getMentee();
+    }
+  }, [isMentee]);
+
+  useEffect(() => {
+    function initializeFavorites() {
+      let fav_set = new Set();
+      mentee.favorite_mentors_ids.forEach((id) => {
+        fav_set.add(id);
+      });
+      setFavoriteMentorIds(fav_set);
+      setFavorite(fav_set.has(props.id));
+    }
+    if (isMentee) {
+      initializeFavorites();
+    }
+  }, [mentee]);
+
+  function onEditFav(mentor_id, favorite) {
+    editFavMentorById(profileId, mentor_id, favorite);
+  }
+
+  function onFavoriteClick(fav) {
+    setFavorite(!fav);
+    onEditFav(props.id, fav);
+  }
 
   const getTitle = (name, age) => {
     if (parseInt(accountType, 10) === ACCOUNT_TYPE.MENTOR && name) {
@@ -83,7 +127,18 @@ function ProfileContent(props) {
         <div className="mentor-profile-decorations">
           {getTitle(props.mentor.name, props.mentor.age)}
           <div>{getPrivacy(props.mentor.is_private)}</div>
+          {isMentee && favoriteMentorIds.size && accountType == 1 && (
+            <div className="favorite-button-profile">
+              <Rate
+                character={<StarFilled />}
+                count={1}
+                defaultValue={favorite ? 1 : 0}
+                onChange={(number) => onFavoriteClick(number)}
+              />
+            </div>
+          )}
         </div>
+
         <div className="mentor-profile-actions">
           <div className="mentor-profile-book-appt-btn">
             {isMentee &&

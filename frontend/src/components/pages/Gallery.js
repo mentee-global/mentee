@@ -8,7 +8,7 @@ import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
-import { EditFavMentorById } from "../../utils/api";
+import { editFavMentorById } from "../../utils/api";
 import useAuth from "../../utils/hooks/useAuth";
 
 function Gallery() {
@@ -68,7 +68,7 @@ function Gallery() {
   }, [mentee]);
 
   function onEditFav(mentor_id, favorite) {
-    EditFavMentorById(profileId, mentor_id, favorite);
+    editFavMentorById(profileId, mentor_id, favorite);
   }
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {

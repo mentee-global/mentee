@@ -23,19 +23,25 @@ function AdminAppointmentData() {
   const [resetFilters, setResetFilters] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [render, setRender] = useState(false);
-  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(false);
+  const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(
+    false
+  );
   const [pageNumber, setPageNumber] = useState(1);
   const [appointmentCount, setAppointmentCount] = useState(0);
   const [downloadFile, setDownloadFile] = useState(null);
-  const [searchValue, setSearchValue] = useState("NONE")
-  const [filterValue, setFilterValue] = useState("NONE")
+  const [searchValue, setSearchValue] = useState("NONE");
+  const [filterValue, setFilterValue] = useState("NONE");
 
   const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getAppointments() {
       setIsLoading(true);
-      const res = await fetchPaginatedAppointments(pageNumber, searchValue, filterValue);
+      const res = await fetchPaginatedAppointments(
+        pageNumber,
+        searchValue,
+        filterValue
+      );
 
       if (res) {
         const sorted = res.appointments.reverse();
@@ -50,27 +56,27 @@ function AdminAppointmentData() {
 
   const incrementPageNumber = () => {
     if (pageNumber * 12 < appointmentCount) {
-      setPageNumber(pageNumber+1)
+      setPageNumber(pageNumber + 1);
     }
-  }
+  };
   const decrementPageNumber = () => {
     if (pageNumber > 1) {
-      setPageNumber(pageNumber-1)
+      setPageNumber(pageNumber - 1);
     }
-  }
+  };
 
   const handleSearchAppointment = (searchVal) => {
     if (searchVal != "") {
-      setSearchValue(searchVal)
+      setSearchValue(searchVal);
     } else {
-      setSearchValue("NONE")
+      setSearchValue("NONE");
     }
-    setPageNumber(1)
+    setPageNumber(1);
   };
   const handleResetFilters = () => {
     if (filterValue != "NONE") {
-      setFilterValue("NONE")
-      setPageNumber(1)
+      setFilterValue("NONE");
+      setPageNumber(1);
     }
   };
   const handleSortData = (sortingKey) => {
@@ -84,8 +90,8 @@ function AdminAppointmentData() {
     setAppointments(newSorted);
   };
   const handleSpecializationsDisplay = (index) => {
-    setFilterValue(SPECIALIZATIONS[index])
-    setPageNumber(1)
+    setFilterValue(SPECIALIZATIONS[index]);
+    setPageNumber(1);
   };
 
   const handleAppointmentDownload = async () => {
@@ -138,12 +144,8 @@ function AdminAppointmentData() {
           >
             Appointment Data
           </Button>
-          <Button onClick={() => decrementPageNumber()}>
-            Prev Page
-          </Button>
-          <Button onClick={() => incrementPageNumber()}>
-            Next Page
-          </Button>
+          <Button onClick={() => decrementPageNumber()}>Prev Page</Button>
+          <Button onClick={() => incrementPageNumber()}>Next Page</Button>
         </div>
       </div>
       <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>

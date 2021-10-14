@@ -280,26 +280,48 @@ def get_mentees_appointments():
     return create_response(data={"menteeData": data}, status=200, message="Success")
 
 
-@appointment.route("/all/<int:page_number>/<string:search>/<string:filter>", methods=["GET"])
+@appointment.route(
+    "/all/<int:page_number>/<string:search>/<string:filter>", methods=["GET"]
+)
 @admin_only
-def get_appointments(page_number, search, filter):   
+def get_appointments(page_number, search, filter):
 
-    #page_count is the number of appts per page; can be changed as needed
+    # page_count is the number of appts per page; can be changed as needed
     page_count = 12
-    start_index = page_count*(page_number - 1)
+    start_index = page_count * (page_number - 1)
     total_count = 0
     if search == "NONE" and filter == "NONE":
-        appointments = AppointmentRequest.objects[start_index:start_index+page_count]
-        total_count = AppointmentRequest.objects[start_index:start_index+page_count].count()
+        appointments = AppointmentRequest.objects[
+            start_index : start_index + page_count
+        ]
+        total_count = AppointmentRequest.objects[
+            start_index : start_index + page_count
+        ].count()
     elif search == "NONE":
-        appointments = AppointmentRequest.objects(specialist_categories__contains=filter)[start_index:start_index+page_count]
-        total_count = AppointmentRequest.objects(specialist_categories__contains=filter)[start_index:start_index+page_count].count()
+        appointments = AppointmentRequest.objects(
+            specialist_categories__contains=filter
+        )[start_index : start_index + page_count]
+        total_count = AppointmentRequest.objects(
+            specialist_categories__contains=filter
+        )[start_index : start_index + page_count].count()
     elif filter == "NONE":
-        appointments = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))[start_index:start_index+page_count]
-        total_count = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))[start_index:start_index+page_count].count()
+        appointments = AppointmentRequest.objects(
+            Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
+        )[start_index : start_index + page_count]
+        total_count = AppointmentRequest.objects(
+            Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
+        )[start_index : start_index + page_count].count()
     else:
-        appointments = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))(specialist_categories__contains=filter)[start_index:start_index+page_count]
-        total_count = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))(specialist_categories__contains=filter)[start_index:start_index+page_count].count()
+        appointments = AppointmentRequest.objects(
+            Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
+        )(specialist_categories__contains=filter)[
+            start_index : start_index + page_count
+        ]
+        total_count = AppointmentRequest.objects(
+            Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
+        )(specialist_categories__contains=filter)[
+            start_index : start_index + page_count
+        ].count()
 
     mentors = MentorProfile.objects().only("name", "id")
 
@@ -320,5 +342,7 @@ def get_appointments(page_number, search, filter):
         )
 
     return create_response(
-        data={"appointments": res_appts, "totalAppointments": total_count}, status=200, message="Success"
+        data={"appointments": res_appts, "totalAppointments": total_count},
+        status=200,
+        message="Success",
     )

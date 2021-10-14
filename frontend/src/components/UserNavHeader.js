@@ -41,6 +41,18 @@ function UserNavHeader() {
     });
   };
 
+  const getUserType = () => {
+    if (role == ACCOUNT_TYPE.MENTOR) {
+      return <>Mentor</>
+    }
+    if (role == ACCOUNT_TYPE.MENTEE) {
+      return <>Mentee</>
+    }
+    if (role == ACCOUNT_TYPE.ADMIN) {
+      return <>Admin</>
+    }
+  }
+
   const dropdownMenu = (
     <Menu className="dropdown-menu">
       <Menu.Item key="edit-profile">
@@ -75,9 +87,7 @@ function UserNavHeader() {
             <div className="profile-name">
               <b>{user.name}</b>
               <br />
-              {user.professional_title
-                ? user.professional_title
-                : "Position Here"}
+              {getUserType()}
             </div>
             <div className="profile-picture">
               <Avatar

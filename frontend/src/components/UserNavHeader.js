@@ -43,15 +43,15 @@ function UserNavHeader() {
 
   const getUserType = () => {
     if (role == ACCOUNT_TYPE.MENTOR) {
-      return <>Mentor</>
+      return <>Mentor</>;
     }
     if (role == ACCOUNT_TYPE.MENTEE) {
-      return <>Mentee</>
+      return <>Mentee</>;
     }
     if (role == ACCOUNT_TYPE.ADMIN) {
-      return <>Admin</>
+      return <>Admin</>;
     }
-  }
+  };
 
   const dropdownMenu = (
     <Menu className="dropdown-menu">

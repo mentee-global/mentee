@@ -16,6 +16,7 @@ from api.utils.constants import (
     APPT_STATUS,
 )
 from api.utils.require_auth import admin_only
+from mongoengine.queryset.visitor import Q
 
 appointment = Blueprint("appointment", __name__)
 
@@ -288,21 +289,17 @@ def get_appointments(page_number, search, filter):
     start_index = page_count*(page_number - 1)
     total_count = 0
     if search == "NONE" and filter == "NONE":
-        logger.info("hi")
         appointments = AppointmentRequest.objects[start_index:start_index+page_count]
         total_count = AppointmentRequest.objects[start_index:start_index+page_count].count()
     elif search == "NONE":
-        logger.info("hii")
         appointments = AppointmentRequest.objects(specialist_categories__contains=filter)[start_index:start_index+page_count]
         total_count = AppointmentRequest.objects(specialist_categories__contains=filter)[start_index:start_index+page_count].count()
     elif filter == "NONE":
-        logger.info(AppointmentRequest.objects(name__istartswith=search)[start_index:start_index+page_count].count())
-        appointments = AppointmentRequest.objects(name__istartswith=search)[start_index:start_index+page_count]
-        total_count = AppointmentRequest.objects(name__istartswith=search)[start_index:start_index+page_count].count()
+        appointments = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))[start_index:start_index+page_count]
+        total_count = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))[start_index:start_index+page_count].count()
     else:
-        logger.info("hiiii")
-        appointments = AppointmentRequest.objects(name__istartswith=search)(specialist_categories__contains=filter)[start_index:start_index+page_count]
-        total_count = AppointmentRequest.objects(name__istartswith=search)(specialist_categories__contains=filter)[start_index:start_index+page_count].count()
+        appointments = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))(specialist_categories__contains=filter)[start_index:start_index+page_count]
+        total_count = AppointmentRequest.objects(Q(name__istartswith=search) | Q(mentor_name__istartswith=search))(specialist_categories__contains=filter)[start_index:start_index+page_count].count()
 
     mentors = MentorProfile.objects().only("name", "id")
 

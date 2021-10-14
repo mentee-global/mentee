@@ -22,7 +22,6 @@ function AdminAppointmentData() {
   const [isLoading, setIsLoading] = useState(false);
   const [resetFilters, setResetFilters] = useState(false);
   const [appointments, setAppointments] = useState([]);
-//  const [filterData, setFilterData] = useState([]);
   const [render, setRender] = useState(false);
   const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
@@ -41,7 +40,6 @@ function AdminAppointmentData() {
       if (res) {
         const sorted = res.appointments.reverse();
         setAppointments(sorted);
-//        setFilterData(sorted);
         setAppointmentCount(res.totalAppointments);
       }
       setIsLoading(false);
@@ -62,36 +60,14 @@ function AdminAppointmentData() {
   }
 
   const handleSearchAppointment = (searchVal) => {
-    /*if (!searchValue) {
-      setFilterData(appointments);
-    }*/
     if (searchVal != "") {
       setSearchValue(searchVal)
     } else {
       setSearchValue("NONE")
     }
     setPageNumber(1)
-    /*if (searchVal != "") {
-      setSearchValue(searchVal)
-      setPageNumber(1)
-      console.log(searchVal)
-    } else {
-      console.log(":(")
-    } */
-    /*
-    const newFiltered = filterData.filter((appt) => {
-      return (
-        appt.mentor.match(new RegExp(searchValue, "i")) ||
-        appt.appointment.name.match(new RegExp(searchValue, "i"))
-      );
-    });
-    setFilterData(newFiltered);*/
   };
   const handleResetFilters = () => {
-    /*
-    setFilterData(appointments);
-    setResetFilters(!resetFilters);
-    */
     if (filterValue != "NONE") {
       setFilterValue("NONE")
       setPageNumber(1)
@@ -104,17 +80,10 @@ function AdminAppointmentData() {
       const bDate = moment(b.appointment.timeslot.start_time.$date);
       return isAscending ? bDate.diff(aDate) : aDate.diff(bDate);
     });
-    //setFilterData(newSorted);
     setRender(!render);
+    setAppointments(newSorted);
   };
   const handleSpecializationsDisplay = (index) => {
-    /*const newFiltered = filterData.filter((appt) => {
-      return appt.appointment.specialist_categories.includes(
-        SPECIALIZATIONS[index]
-      );
-    });
-    setFilterData(newFiltered);*/
-    console.log(SPECIALIZATIONS[index])
     setFilterValue(SPECIALIZATIONS[index])
     setPageNumber(1)
   };

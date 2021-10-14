@@ -288,3 +288,36 @@ def refresh_token():
             ).decode("utf-8"),
         },
     )
+
+# TODO: Implement a more robust and front end facing way of updating your password
+@auth.route("/updateEmail", methods=["PUT"])
+def update_email():
+    data = request.json
+    if not data:
+        return create_response(status=422, message="Missing json data")
+
+    new_email = data.get("newEmail", "")
+    firebase_uid = data.get("firebaseUID", None)
+    role = data.get("role", None)
+
+    if not new_email or firebase_uid is None or role is None:
+        return create_response(
+            status=422,
+            message="Missing required params: new_email, firebase_uid, and role"
+        )
+
+    firebase_admin_auth.update_user(
+        firebase_uid,
+        email=new_email
+    )
+
+    # Update the profile model email too
+    profile_model = get_profile_model(role)
+    profile = profile_model.objects.get(firebase_uid=firebase_uid)
+    profile.email = new_email
+    profile.save()
+
+    return create_response(
+        status=200,
+        message="Successfully updated email"
+    )

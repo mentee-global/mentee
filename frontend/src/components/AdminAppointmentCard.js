@@ -12,11 +12,7 @@ const getTopics = (data) => {
   if (data.topic) {
     return data.topic;
   } else {
-    return data.specialist_categories.map((category, i) => {
-      return i < data.specialist_categories.length - 1
-        ? `${category}, `
-        : category;
-    });
+    return data.specialist_categories.join(", ");
   }
 };
 

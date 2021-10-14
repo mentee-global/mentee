@@ -11,11 +11,7 @@ const getTopics = (data) => {
   if (data.topic) {
     return data.topic;
   } else {
-    return data.specialist_categories.map((category, i) => {
-      return i < data.specialist_categories.length - 1
-        ? `${category}, `
-        : category;
-    });
+    return data.specialist_categories.join(", ");
   }
 };
 
@@ -87,18 +83,13 @@ function AdminAppointmentModal({ data, visible, dateFormat, status, onClose }) {
                 {data?.appointment.name}
               </div>
               <div className="modal-info-text">
-                {`${data?.appointment.age} • `}
+                {`${data?.appointment.age} \u00b7 `}
                 {`${data?.appointment.gender} `}
-                {`• ${data?.appointment.organization}`}
+                {`\u00b7 ${data?.appointment.organization}`}
               </div>
               <div className="modal-info-text">
                 <MessageOutlined />{" "}
-                {data &&
-                  data.appointment.languages.map((value, i) => {
-                    return i < data.appointment.languages.length - 1
-                      ? `${value} • `
-                      : `${value}`;
-                  })}
+                {data && data.appointment.languages.join(" \u00b7 ") /*Middot*/}
               </div>
               <div className="modal-info-text">
                 <EnvironmentOutlined /> {data && data.appointment.location}

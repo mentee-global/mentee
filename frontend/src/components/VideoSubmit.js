@@ -3,6 +3,7 @@ import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import "../components/css/Videos.scss";
+import ReactPlayer from 'react-player'
 import {matchYoutubeUrl, validateVimeoURL} from "utils/misc.js";
 
 const VideoSubmit = (props) => {
@@ -40,14 +41,14 @@ const VideoSubmit = (props) => {
             rules={[
               {
                 required: true,
-                message: "Please input a valid Youtube or Vimeo link",
+                message: "Please input a valid video link",
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || matchYoutubeUrl(getFieldValue('url')) || validateVimeoURL(getFieldValue('url'))) {
+                  if (!value || ReactPlayer.canPlay(getFieldValue("url")) ) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Please input a valid Youtube or Vimeo link'));
+                  return Promise.reject(new Error('Please input a valid video link'));
                 },
               }),
             ]}

@@ -291,18 +291,7 @@ function MenteeRegisterForm(props) {
             Error or missing fields, try again.
           </div>
         )}
-        <div>
-          {validate && <b style={styles.alertToast}>Missing Fields</b>}
-          <Button
-            type="default"
-            shape="round"
-            className="regular-button"
-            onClick={handleSaveEdits}
-            loading={saving}
-          >
-            Save
-          </Button>
-        </div>
+        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
       </div>
       <div className="modal-inner-container">
         <div className="modal-input-container">
@@ -323,6 +312,17 @@ function MenteeRegisterForm(props) {
             valid={isValid[0]}
             validate={validate}
           />
+
+          <Button
+            type="default"
+            shape="round"
+            className="regular-button"
+            style={styles.saveButton}
+            onClick={handleSaveEdits}
+            loading={saving}
+          >
+            Save
+          </Button>
         </div>
         <div className="modal-input-container">
           <ModalInput
@@ -472,6 +472,11 @@ const styles = {
     color: "#FF0000",
     display: "inline-block",
     marginRight: 10,
+  },
+
+  saveButton: {
+    position: "relative",
+    top: "60em",
   },
 };
 

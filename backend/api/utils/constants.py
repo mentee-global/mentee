@@ -16,6 +16,9 @@ USER_FORGOT_PASSWORD_TEMPLATE = "d-df1adcced8ab461ca72ceae5eecfc566"
 MENTOR_APP_OFFER = "d-3a7a5db2cf4e412e9e68e729a7b52813"
 MENTOR_CONTACT_ME = "d-d6c6d8f33c3b4970937a9dbd85f97d1a"
 
+MENTOR_APP_SUBMITTED = "d-753727e2c7df4509b251a576645d829a"
+MENTOR_APP_REJECTED = "d-5158980fcf9a4247b018ef0d832d796c"
+
 # This lacks timezone so you'll need to add that according to whatever code you're working with
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
 

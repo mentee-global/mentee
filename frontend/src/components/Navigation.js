@@ -4,9 +4,7 @@ import { Layout } from "antd";
 import usePersistedState from "utils/hooks/usePersistedState";
 import { ACCOUNT_TYPE } from "utils/consts";
 
-import UserNavHeader from "./UserNavHeader";
-import GuestNavHeader from "./GuestNavHeader";
-import AdminNavHeader from "./AdminNavHeader";
+import NavHeader from "./NavHeader";
 import MentorSidebar from "./MentorSidebar";
 import AdminSidebar from "./AdminSidebar";
 import MenteeSideBar from "./MenteeSidebar";
@@ -42,15 +40,7 @@ function Navigation(props) {
   return (
     <div>
       <Layout className="navigation-layout">
-        {props.needsAuth ? (
-          isAdmin ? (
-            <AdminNavHeader />
-          ) : (
-            <UserNavHeader />
-          )
-        ) : (
-          <GuestNavHeader />
-        )}
+        <NavHeader />
         {props.needsAuth ? (
           <Layout>
             {permissions === ACCOUNT_TYPE.ADMIN ? (

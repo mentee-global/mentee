@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { logout } from "utils/auth.service";
@@ -8,7 +8,7 @@ import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
 import { fetchAccountById, getAdmin } from "utils/api";
-import useAuth from "../utils/hooks/useAuth";
+import { useAuth, AuthContext } from "../utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";
 import { getAdminID } from "utils/auth.service";
@@ -24,8 +24,15 @@ const { Header } = Layout;
 
 function NavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
-  const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const {
+    onAuthStateChanged,
+    resetRoleState,
+    profileId,
+    role,
+    isAdmin,
+    isMentee,
+    isMentor,
+  } = useContext(AuthContext);
   const [drawerVisible, setDrawerVisible] = useState(false);
 
   const [user, setUser] = useState();
@@ -47,7 +54,6 @@ function NavHeader({ history }) {
     }
     // Don't fetch if guest
     if (role == ACCOUNT_TYPE.GUEST || user) return;
-
     onAuthStateChanged(getUser);
   }, [role]);
 

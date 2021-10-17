@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import firebase from "firebase";
 import { getIdTokenResult, logout } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -17,7 +17,7 @@ const onAuthStateChanged = (f) => {
   });
 };
 
-const useAuth = () => {
+export const useAuth = () => {
   const history = useHistory();
   const [roleState, setRoleState] = useState({
     role: ACCOUNT_TYPE.GUEST,
@@ -75,3 +75,13 @@ const useAuth = () => {
 };
 
 export default useAuth;
+
+export const AuthContext = createContext();
+
+export function ProvideAuth({ children }) {
+  const userContext = useAuth();
+
+  return (
+    <AuthContext.Provider value={userContext}>{children}</AuthContext.Provider>
+  );
+}

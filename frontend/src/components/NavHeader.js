@@ -170,15 +170,16 @@ function NavHeader({ history }) {
                 }}
               />
             </span>
-            {isLoggedIn() && 
-            <span className="navigation-header-button">
-              <MenteeButton
-                width="9em"
-                theme="light"
-                content={<b>{"Logout"}</b>}
-                onClick={logoutUser}
-              />
-            </span> }
+            {isLoggedIn() && (
+              <span className="navigation-header-button">
+                <MenteeButton
+                  width="9em"
+                  theme="light"
+                  content={<b>{"Logout"}</b>}
+                  onClick={logoutUser}
+                />
+              </span>
+            )}
             {user ? (
               <>
                 <div className="profile-name">

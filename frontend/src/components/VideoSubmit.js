@@ -3,8 +3,7 @@ import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import "../components/css/Videos.scss";
-import ReactPlayer from 'react-player'
-
+import ReactPlayer from "react-player";
 
 const VideoSubmit = (props) => {
   return (
@@ -45,10 +44,12 @@ const VideoSubmit = (props) => {
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || ReactPlayer.canPlay(getFieldValue("url")) ) {
+                  if (!value || ReactPlayer.canPlay(getFieldValue("url"))) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Please input a valid video link'));
+                  return Promise.reject(
+                    new Error("Please input a valid video link")
+                  );
                 },
               }),
             ]}

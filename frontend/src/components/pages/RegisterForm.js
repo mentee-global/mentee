@@ -539,7 +539,7 @@ const styles = {
     margin: 18,
     padding: 4,
     paddingTop: 6,
-    marginBottom: "40px"
+    marginBottom: "40px",
   },
   alertToast: {
     color: "#FF0000",

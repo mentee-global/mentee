@@ -675,7 +675,7 @@ const styles = {
     margin: 18,
     padding: 4,
     paddingTop: 6,
-    marginBottom: "40px"
+    marginBottom: "40px",
   },
   footer: {
     borderRadius: 13,

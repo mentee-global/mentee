@@ -139,7 +139,6 @@ function MentorCard(props) {
             </div>
           </NavLink>
         </div>
-        
       </div>
     </div>
   );

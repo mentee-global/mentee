@@ -212,7 +212,7 @@ function RegisterForm(props) {
   function handleNameChange(e) {
     const name = e.target.value;
 
-    if (name.length < 50) {
+    if (name.length <= 50) {
       let newValid = [...isValid];
 
       newValid[0] = true;
@@ -225,10 +225,28 @@ function RegisterForm(props) {
     }
     setName(name);
   }
+
+  function handleTitleChange(e) {
+    const title = e.target.value;
+
+    if (title.length <= 80) {
+      let newValid = [...isValid];
+
+      newValid[1] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[1] = false;
+      setIsValid(newValid);
+    }
+    setTitle(title);
+  }
+
   function handleAboutChange(e) {
     const about = e.target.value;
 
-    if (about.length < 255) {
+    if (about.length <= 255) {
       let newValid = [...isValid];
 
       newValid[8] = true;
@@ -323,7 +341,7 @@ function RegisterForm(props) {
       offers_in_person: inPersonAvailable,
       offers_group_appointments: groupAvailable,
     };
-    if (isValid.includes(false)) {
+    if (!isValid.includes(false)) {
       setSaving(true);
       await saveEdits(newProfile);
     }
@@ -339,7 +357,7 @@ function RegisterForm(props) {
           </div>
         )}
         <div>
-          {validate && <b style={styles.alertToast}>Missing Fields</b>}
+          {validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
           <Button
             type="default"
             shape="round"
@@ -374,12 +392,9 @@ function RegisterForm(props) {
             clicked={inputClicked[1]}
             index={1}
             handleClick={handleClick}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              let newValid = [...isValid];
-              newValid[1] = !!e.target.value;
-              setIsValid(newValid);
-            }}
+            onChange={handleTitleChange}
+            errorPresent={title && title.length > 80}
+            errorMessage="Title field is too long."
             value={title}
             valid={isValid[1]}
             validate={validate}
@@ -524,6 +539,7 @@ const styles = {
     margin: 18,
     padding: 4,
     paddingTop: 6,
+    marginBottom: "40px"
   },
   alertToast: {
     color: "#FF0000",

@@ -377,7 +377,7 @@ function MenteeRegisterForm(props) {
         </div>
         <div className="modal-input-container">
           <ModalInput
-            style={styles.modalInput}
+            style={styles.textareaInput}
             type="textarea"
             maxRows={3}
             hasBorder={false}
@@ -526,6 +526,13 @@ const styles = {
     margin: 18,
     padding: 4,
     paddingTop: 6,
+  },
+  textareaInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6,
+    marginBottom: "80px"
   },
   alertToast: {
     color: "#FF0000",

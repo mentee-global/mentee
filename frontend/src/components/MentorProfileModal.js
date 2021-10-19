@@ -168,7 +168,7 @@ function MentorProfileModal(props) {
     console.log("hello");
     const name = e.target.value;
 
-    if (name.length < 50) {
+    if (name.length <= 50) {
       setEdited(true);
       let newValid = [...isValid];
 
@@ -195,7 +195,7 @@ function MentorProfileModal(props) {
   function handleAboutChange(e) {
     const about = e.target.value;
 
-    if (about.length < 255) {
+    if (about.length <= 255) {
       setEdited(true);
       let newValid = [...isValid];
 
@@ -224,7 +224,7 @@ function MentorProfileModal(props) {
   function handleLocationChange(e) {
     const location = e.target.value;
 
-    if (location.length < 70) {
+    if (location.length <= 70) {
       setEdited(true);
       let newValid = [...isValid];
 
@@ -532,7 +532,7 @@ function MentorProfileModal(props) {
             </div>
             <div className="modal-input-container">
               <ModalInput
-                style={styles.modalInput}
+                style={styles.textAreaInput}
                 type="textarea"
                 maxRows={3}
                 hasBorder={false}
@@ -669,6 +669,13 @@ const styles = {
     margin: 18,
     padding: 4,
     paddingTop: 6,
+  },
+  textAreaInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6,
+    marginBottom: "40px"
   },
   footer: {
     borderRadius: 13,

@@ -46,6 +46,14 @@ function ModalInput(props) {
       ...styles.container,
       ...props.style,
     };
+
+    if (type === "textarea") {
+      style = {
+        ...styles.textAreaContainer,
+        ...props.style,
+      };
+    }
+
     if (hasBorder) {
       style = {
         ...style,
@@ -182,6 +190,11 @@ const styles = {
     width: "100%",
     backgroundColor: "#FFFDF5",
   },
+  textAreaContainer: {
+    flex: 1,
+    flexDirection: "column",
+    width: "100%",
+  },
   border: {
     borderBottomStyle: "solid",
     borderBottomWidth: 3,
@@ -191,7 +204,8 @@ const styles = {
     flex: 1,
     fontWeight: "bold",
     color: "#828282",
-    marginLeft: 11,
+    paddingLeft: 11,
+    backgroundColor: "#FFFDF5",
   },
   clicked: {
     color: "#F2C94C",

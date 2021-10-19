@@ -507,9 +507,9 @@ function MenteeProfileModal(props) {
             </div>
             <div className="modal-input-container">
               <ModalInput
-                style={styles.modalInput}
+                style={styles.textArea}
                 type="textarea"
-                maxRows={3}
+                maxRows={4}
                 hasBorder={false}
                 title="About"
                 clicked={inputClicked[2]}
@@ -660,6 +660,13 @@ const styles = {
   modalInput: {
     height: 65,
     margin: 18,
+    padding: 4,
+    paddingTop: 6,
+  },
+  textArea: {
+    height: "100%",
+    marginLeft: 18,
+    marginRight: 18,
     padding: 4,
     paddingTop: 6,
   },

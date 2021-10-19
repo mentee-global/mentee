@@ -287,7 +287,7 @@ export const deleteAccountById = (id, accountType) => {
   );
 };
 
-export const EditFavMentorById = (mentee_id, mentor_id, favorite) => {
+export const editFavMentorById = (mentee_id, mentor_id, favorite) => {
   const requestExtension = `/mentee/editFavMentor`;
   const data = {
     mentee_id,

@@ -3,6 +3,7 @@ import { Modal } from "antd";
 import { sendMenteeMentorEmail } from "../utils/api";
 import MenteeButton from "./MenteeButton";
 import ModalInput from "./ModalInput";
+import thankYouImage from "../resources/thankYou.png";
 
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
@@ -77,17 +78,41 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               }
             }}
           />
+
+          <button
+            onClick={() => {
+              closeModal();
+              setConfirmationModal(true);
+            }}
+          >
+            test
+          </button>
         </div>
       </Modal>
       <Modal
         forceRender
         visible={confirmationModal}
-        onCancel={() => closeModal()}
-        className="contact-me-modal"
+        onCancel={() => setConfirmationModal(false)}
+        className="modal-mentee-confirmation-modal"
         style={{ overflow: "hidden" }}
         footer={null}
       >
-        <div style={{height:"400px", width:"550px"}}>Thank you!</div>
+        <div className="modal-mentee-confirmation-content">
+          <img
+            className="modal-mentee-confirmation-modal-art"
+            src={thankYouImage}
+          />
+          <div className="modal-mentee-confirmation-modal-text">
+            <div className="modal-mentee-confirmation-modal-title">
+              {" "}
+              Thank you!{" "}
+            </div>
+            <div className="modal-mentee-confirmation-modal-body">
+              Your mentor will be getting back to you soon! Feel free to browse
+              the mentor page and reach out to other mentors.
+            </div>
+          </div>
+        </div>
       </Modal>
     </span>
   );

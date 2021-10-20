@@ -78,15 +78,6 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               }
             }}
           />
-
-          <button
-            onClick={() => {
-              closeModal();
-              setConfirmationModal(true);
-            }}
-          >
-            test
-          </button>
         </div>
       </Modal>
       <Modal

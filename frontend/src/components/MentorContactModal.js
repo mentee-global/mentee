@@ -12,6 +12,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useState(false);
 
   const closeModal = () => {
     setModalVisible(false);
@@ -72,10 +73,21 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
                 setError(true);
               } else {
                 closeModal();
+                setConfirmationModal(true);
               }
             }}
           />
         </div>
+      </Modal>
+      <Modal
+        forceRender
+        visible={confirmationModal}
+        onCancel={() => closeModal()}
+        className="contact-me-modal"
+        style={{ overflow: "hidden" }}
+        footer={null}
+      >
+        <div style={{height:"400px", width:"550px"}}>Thank you!</div>
       </Modal>
     </span>
   );

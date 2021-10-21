@@ -11,6 +11,9 @@ import "./css/MenteeModal.scss";
 function MentorContactModal({ mentorId, menteeId, mentorName }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("");
+  const [responseEmail, setResponseEmail] = useState("");
+  const [interestAreas, setInterestAreas] = useState([]);
+  const [communicationMethod, setCommunicationMethod] = useState("");
   const [error, setError] = useState(false);
 
   const closeModal = () => {
@@ -65,6 +68,9 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               const res = await sendMenteeMentorEmail(
                 mentorId,
                 menteeId,
+                responseEmail,
+                interestAreas,
+                communicationMethod,
                 message
               );
               if (!res) {

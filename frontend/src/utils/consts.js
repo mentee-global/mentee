@@ -18,6 +18,10 @@ export const MENTOR_PROFILE = FRONT_BASE_URL + "gallery/1/";
 
 export const MENTEE_DEFAULT_VIDEO_NAME = "Introduction";
 
+export const MENTEE_GALLERY_PAGE = "/mentee-gallery";
+
+export const MENTOR_GALLERY_PAGE = "/gallery";
+
 export const REGISTRATION_STAGE = {
   START: 0,
   VERIFY_EMAIL: 1,

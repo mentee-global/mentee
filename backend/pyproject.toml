@@ -32,6 +32,8 @@ firebase-admin = "^4.5.2"
 requests = "^2.25.1"
 Pyrebase4 = "^4.4.3"
 twilio = "^6.53.0"
+Flask-SocketIO = "^5.1.1"
+eventlet = "^0.32.0"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

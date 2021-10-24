@@ -142,11 +142,6 @@ def login():
 
     profile_model = get_profile_model(role)
 
-    # Check if this email is already in use in another role
-    if check_email_in_use(email, profile_model):
-        msg = "This is an existing email already being in use"
-        return create_response(status=422, message=msg, data={"existingEmail": True})
-
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password

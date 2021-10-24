@@ -5,7 +5,7 @@ import { Result, message } from "antd";
 import {
   fetchAppointmentsByMenteeId,
   getFavMentorsById,
-  EditFavMentorById,
+  editFavMentorById,
 } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, MENTOR_PROFILE } from "utils/consts";
@@ -56,10 +56,12 @@ function MenteeAppointments() {
   const [visibleAppts, setVisibleAppts] = useState([]);
   const [favMentors, setFavMentors] = useState([]);
   const { profileId } = useAuth();
+  const [isLoading, setisLoading] = useState(true);
 
   useEffect(() => {
     async function getData() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
+      setisLoading(true);
       const resFavMentors = await getFavMentorsById(profileId);
 
       const formattedAppointments = formatAppointments(
@@ -73,6 +75,7 @@ function MenteeAppointments() {
 
         resFavMentors.map((elem) => (elem.id = elem._id.$oid));
         setFavMentors(resFavMentors);
+        setisLoading(false);
       } else {
         console.error("Failed to fetch appointments or favorite mentors");
       }
@@ -85,7 +88,7 @@ function MenteeAppointments() {
   };
 
   const handleUnfavorite = async (mentorId, name) => {
-    const res = await EditFavMentorById(profileId, mentorId, false);
+    const res = await editFavMentorById(profileId, mentorId, false);
     if (!res) {
       message.error(`Failed to unfavorite mentor ${name}`, 3);
     } else {
@@ -116,7 +119,11 @@ function MenteeAppointments() {
           )}
         </div>
       </div>
-      <BookmarkSidebar bookmarks={favMentors} unfavorite={handleUnfavorite} />
+      <BookmarkSidebar
+        bookmarks={favMentors}
+        unfavorite={handleUnfavorite}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

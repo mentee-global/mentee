@@ -5,9 +5,7 @@ import {
   EnvironmentOutlined,
   UserOutlined,
   MessageOutlined,
-  HeartFilled,
 } from "@ant-design/icons";
-import { formatLinkForHref } from "utils/misc";
 import useAuth from "../utils/hooks/useAuth";
 
 import MenteeButton from "./MenteeButton";

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import ReactPlayer from "react-player";
 import {
   UserOutlined,
   EditFilled,
@@ -42,6 +43,7 @@ function MenteeProfileModal(props) {
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
   const [privacy, setPrivacy] = useState(true);
+  const [isVideoValid, setIsVideoValid] = useState(true);
 
   useEffect(() => {
     if (props.mentee) {
@@ -276,8 +278,14 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
-    setVideoUrl(e.target.value);
-    setEdited(true);
+    if (ReactPlayer.canPlay(e.target.value)) {
+      setVideoUrl(e.target.value);
+      setEdited(true);
+      setIsVideoValid(true);
+    } else {
+      setEdited(true);
+      setIsVideoValid(false);
+    }
   }
 
   function handlePrivacyChange(e) {
@@ -636,6 +644,9 @@ function MenteeProfileModal(props) {
                 onChange={handleVideoChange}
                 placeholder="Paste Link"
               />
+            </div>
+            <div className="no-favorites-text">
+              {!isVideoValid ? <>Input Valid Video Link</> : null}
             </div>
             <div className="modal-education-header">Account Privacy</div>
             <Checkbox

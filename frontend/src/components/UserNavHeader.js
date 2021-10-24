@@ -20,6 +20,7 @@ function UserNavHeader() {
   const history = useHistory();
   const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
   const [user, setUser] = useState();
+  console.log(role);
 
   useEffect(() => {
     async function getUser() {
@@ -28,6 +29,7 @@ function UserNavHeader() {
         setUser(userData);
       }
     }
+    console.log(role);
 
     // Don't fetch if guest
     if (role == ACCOUNT_TYPE.GUEST || user) return;
@@ -42,13 +44,13 @@ function UserNavHeader() {
   };
 
   const getUserType = () => {
-    if (role == ACCOUNT_TYPE.MENTOR) {
+    if (role === ACCOUNT_TYPE.MENTOR) {
       return <>Mentor</>;
     }
-    if (role == ACCOUNT_TYPE.MENTEE) {
+    if (role === ACCOUNT_TYPE.MENTEE) {
       return <>Mentee</>;
     }
-    if (role == ACCOUNT_TYPE.ADMIN) {
+    if (role === ACCOUNT_TYPE.ADMIN) {
       return <>Admin</>;
     }
   };

@@ -4,8 +4,11 @@ import LoginVerificationModal from "../LoginVerificationModal";
 import "../css/Home.scss";
 import Logo from "../../resources/logo.png";
 import Health from "../../resources/focus-for-health.svg";
+import useAuth from "../../utils/hooks/useAuth";
+import { MENTEE_GALLERY_PAGE, MENTOR_GALLERY_PAGE } from "../../utils/consts";
 
 function Home({ history }) {
+  const { isMentor } = useAuth();
   return (
     <div className="home-background">
       <div className="home-content">
@@ -14,11 +17,15 @@ function Home({ history }) {
           <p className="home-text">Find a global mentor now...</p>
           <br />
           <LoginVerificationModal
-            content={<b>Find a Mentor</b>}
+            content={isMentor ? <b>Find a Mentee</b> : <b>Find a Mentor</b>}
             theme="dark"
             onVerified={() => {
+              let redirect = MENTOR_GALLERY_PAGE;
+              if (isMentor) {
+                redirect = MENTEE_GALLERY_PAGE;
+              }
               history.push({
-                pathname: "/gallery",
+                pathname: redirect,
                 state: { verified: true },
               });
             }}

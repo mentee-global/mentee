@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { Form, Modal, Calendar, Avatar, Switch } from "antd";
+import {
+  Form,
+  Modal,
+  Calendar,
+  Avatar,
+  Switch,
+  Space,
+  notification,
+} from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -17,6 +25,8 @@ import MenteeVerificationModal from "./MenteeVerificationModal";
 
 const DAY = 24 * 60 * 60 * 1000;
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const SUCCESS = "success";
+const ERROR = "error";
 
 // Form validateMessages sends values here
 const validationMessage = {
@@ -28,6 +38,7 @@ const validationMessage = {
 
 function MenteeAppointmentModal(props) {
   const [form] = Form.useForm();
+  const [content, setContent] = useState("");
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
   const [daySlots, setDaySlots] = useState([]);
@@ -48,6 +59,10 @@ function MenteeAppointmentModal(props) {
   const [isAvailable, setIsAvailable] = useState(false);
   const mentorID = props.mentor_id;
   const menteeID = props.mentee_id;
+
+  // notification
+  const mentorName = props.mentor_name;
+  const [notifDate, setNotifDate] = useState();
 
   // useState values
   const values = [mentorID, menteeID, topic, message, canCall, canText];
@@ -103,6 +118,9 @@ function MenteeAppointmentModal(props) {
 
   function handleDateChange(e) {
     setDate(moment(e._d).format("YYYY-MM-DD"));
+
+    // date for notif
+    setNotifDate(moment(e._d).format("MM-DD"));
     setDateHeading(moment(e._d));
   }
 
@@ -141,7 +159,18 @@ function MenteeAppointmentModal(props) {
       end_time: moment(time.end_time.$date).format(),
     };
 
-    await createAppointment(appointment);
+    let timeInterval =
+      moment(time.start_time.$date).format("hh:mm A") +
+      " - " +
+      moment(time.end_time.$date).format("hh:mm A");
+
+    const res = await createAppointment(appointment);
+    // condition with success
+    if (res) {
+      openNotificationWithIcon(SUCCESS, timeInterval);
+    } else {
+      openNotificationWithIcon(ERROR, timeInterval);
+    }
 
     // Find matching appointment and PUT request for mentor availability
     const changeTime = [...timeSlots];
@@ -169,6 +198,21 @@ function MenteeAppointmentModal(props) {
     // disable/return true if date is in the past or not in availability
     let dateInPast = date && date.valueOf() < Date.now() - DAY;
     return dateInPast || !daySlots.includes(moment(date).format("YYYY-MM-DD"));
+  }
+
+  // notification component for when mentee succesfully books an appointment
+  // type change if we want to add
+  function openNotificationWithIcon(type, timeInterval) {
+    if (type === SUCCESS) {
+      notification[type]({
+        message: "You Have Successfully Booked an Appointment!",
+        description: `Appointment with ${mentorName} on ${notifDate} from ${timeInterval}`,
+      });
+    } else if (type === ERROR) {
+      notification[type]({
+        message: "Error in booking appointment!",
+      });
+    }
   }
 
   return (
@@ -242,6 +286,7 @@ function MenteeAppointmentModal(props) {
               {validate && (
                 <b style={styles.alertToast}>Appointment Time Not Chosen</b>
               )}
+
               <MenteeButton
                 width={120}
                 content={"continue"}
@@ -343,7 +388,7 @@ function MenteeAppointmentModal(props) {
                   <div className="modal-mentee-availability-switches">
                     <div className="modal-mentee-availability-switch">
                       <div className="modal-mentee-availability-switch-text">
-                        Allow calls*
+                        Allow calls
                       </div>
                       <Switch
                         size="small"
@@ -354,7 +399,7 @@ function MenteeAppointmentModal(props) {
                     </div>
                     <div className="modal-mentee-availability-switch">
                       <div className="modal-mentee-availability-switch-text">
-                        Allow texting*
+                        Allow texting
                       </div>
                       <Switch
                         size="small"

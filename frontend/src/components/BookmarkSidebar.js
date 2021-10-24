@@ -1,13 +1,13 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { Avatar, Spin } from "antd";
-import { UserOutlined, HeartFilled } from "@ant-design/icons";
+import { UserOutlined, StarFilled } from "@ant-design/icons";
 
 import MenteeButton from "./MenteeButton";
 import BookmarkImage from "resources/AddBookmarkMentor.svg";
 import "components/css/MenteeAppointments.scss";
 
-function BookmarkSidebar({ bookmarks, unfavorite }) {
+function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
   const history = useHistory();
 
   const redirectToProfile = (mentorId) => {
@@ -25,13 +25,15 @@ function BookmarkSidebar({ bookmarks, unfavorite }) {
         />
       </div>
       <div className="mentee-bookmark-header">
-        <HeartFilled /> Favorite Contacts
+        <StarFilled /> Favorite Contacts
       </div>
       <div className="mentee-bookmark-display">
-        <Spin
-          spinning={!bookmarks || !bookmarks.length}
-          className="bookmark-spin"
-        >
+        <Spin spinning={isLoading} className="bookmark-spin">
+          <div className="no-favorites-text">
+            {!isLoading && bookmarks && !bookmarks.length ? (
+              <>No favorited Mentors</>
+            ) : null}
+          </div>
           {bookmarks.map((mentor) => (
             <div className="mentee-bookmark-card">
               <Avatar
@@ -41,7 +43,7 @@ function BookmarkSidebar({ bookmarks, unfavorite }) {
                 style={{ minWidth: "30px" }}
               />
               <div className="mentee-bookmark-mentor-info">
-                <HeartFilled
+                <StarFilled
                   className="bookmark-heart"
                   onClick={() => unfavorite(mentor.id, mentor.name)}
                 />

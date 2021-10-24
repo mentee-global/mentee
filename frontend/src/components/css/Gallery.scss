@@ -50,6 +50,8 @@
   background-color: white;
   border: 2px solid $theme-orange;
   border-radius: 8px;
+  position: relative;
+  height: 33em;
 }
 
 .gallery-mentor-card:hover {
@@ -144,6 +146,12 @@
 .gallery-card-body {
   padding: 20px;
   padding-top: 0px;
+}
+
+.gallery-card-footer {
+  position: absolute;
+  bottom: 0px;
+  width: 90%;
 }
 
 .gallery-button {

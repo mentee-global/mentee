@@ -57,6 +57,18 @@ function NavHeader({ history }) {
     onAuthStateChanged(getUser);
   }, [role]);
 
+  const getUserType = () => {
+    if (role === ACCOUNT_TYPE.MENTOR) {
+      return "Mentor";
+    }
+    if (role === ACCOUNT_TYPE.MENTEE) {
+      return "Mentee";
+    }
+    if (role === ACCOUNT_TYPE.ADMIN) {
+      return "Admin";
+    }
+  };
+
   const logoutUser = () => {
     logout().then(() => {
       resetRoleState();
@@ -183,9 +195,11 @@ function NavHeader({ history }) {
             {user ? (
               <>
                 <div className="profile-name">
-                  <b>{user.name}</b>
-                  <br />
-                  {user.professional_title}
+                  <b>
+                    {user.name}
+                    <br />
+                    {getUserType()}
+                  </b>
                 </div>
                 <div className="profile-picture">
                   <Avatar

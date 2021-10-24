@@ -1,17 +1,19 @@
 import os
 import logging
 import firebase_admin
-import pyrebase
 
 from flask import Flask, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_mongoengine import MongoEngine
+from flask_socketio import SocketIO
 
 from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
 
 load_dotenv()
+
+socketio = SocketIO(cors_allowed_origins="*")
 
 
 class RequestFormatter(logging.Formatter):
@@ -111,4 +113,5 @@ def create_app(test_config=None):
     def not_found(e):
         return app.send_static_file("index.html")
 
+    socketio.init_app(app)
     return app

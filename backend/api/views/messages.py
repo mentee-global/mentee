@@ -1,14 +1,36 @@
 from os import path
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Flask
 from api.models import MentorProfile, MenteeProfile, Users, Message
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email
 from api.utils.constants import MENTOR_CONTACT_ME
 from api.core import create_response, serialize_list, logger
 from api.models import db
 from datetime import datetime
+from flask_socketio import SocketIO, send, emit 
+from flask_cors import CORS
+
+
 
 
 messages = Blueprint("messages", __name__)
+privateMessaging = Flask(__name__)
+socketio = SocketIO(privateMessaging)
+CORS(privateMessaging)
+
+@socketio.on('connect')
+def test_connect():
+    print('CONNECT EVENT happened...')
+    emit('Success', {'data': 'Connected'})
+
+# @socketio.on('send-message')
+# def handle_message(message):
+#     print(message)
+#     send(message, broadcast=True)
+
+
+# @socketio.on('json')
+# def handle_json(json):
+#     send(json, json=True)
 
 
 @messages.route("/", methods=["GET"])

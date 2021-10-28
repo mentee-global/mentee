@@ -19,6 +19,7 @@ import Icon, {
   MenuOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
+import usePersistedState from "utils/hooks/usePersistedState";
 
 const { Header } = Layout;
 
@@ -34,7 +35,7 @@ function NavHeader({ history }) {
     isMentor,
   } = useContext(AuthContext);
   const [drawerVisible, setDrawerVisible] = useState(false);
-
+  const [verified, setVerified] = usePersistedState("verified");
   const [user, setUser] = useState();
 
   useEffect(() => {
@@ -71,6 +72,7 @@ function NavHeader({ history }) {
 
   const logoutUser = () => {
     logout().then(() => {
+      setVerified(false);
       resetRoleState();
       history.push("/");
     });
@@ -182,7 +184,7 @@ function NavHeader({ history }) {
                 }}
               />
             </span>
-            {isLoggedIn() && (
+            {isLoggedIn() && !verified && (
               <span className="navigation-header-button">
                 <MenteeButton
                   width="9em"

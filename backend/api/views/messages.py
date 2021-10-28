@@ -6,16 +6,12 @@ from api.utils.constants import MENTOR_CONTACT_ME
 from api.core import create_response, serialize_list, logger
 from api.models import db
 from datetime import datetime
-from flask_socketio import SocketIO, send, emit 
-from flask_cors import CORS
-
-
-
+from api import socketio
+from flask_socketio import *
 
 messages = Blueprint("messages", __name__)
 privateMessaging = Flask(__name__)
-socketio = SocketIO(privateMessaging)
-CORS(privateMessaging)
+socketio = SocketIO(privateMessaging, logger=True)
 
 @socketio.on('connect')
 def test_connect():
@@ -157,3 +153,8 @@ def contact_mentor(mentor_id):
         f"Sending an email to {mentor.email} with message: {data.get('message', '')} as mentee {mentee.email}"
     )
     return create_response(status=200, message="successfully sent email message")
+
+
+@socketio.on("message")
+def handle_message(data):
+    logger.info(data)

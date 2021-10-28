@@ -1,6 +1,7 @@
 alembic==1.5.7; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
+bidict==0.21.3; python_version >= "3.6"
 cachecontrol==0.12.6; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.5"
-cachetools==4.2.1; python_version >= "3.5" and python_version < "4.0" and (python_version >= "3.5" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.5" and python_full_version >= "3.6.0")
+cachetools==4.2.1; python_version >= "3.5" and python_version < "4.0" and (python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5")
 certifi==2020.12.5; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
 cffi==1.14.5; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
 chardet==4.0.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
@@ -8,11 +9,13 @@ click==7.1.2; python_version >= "2.7" and python_full_version < "3.0.0" or pytho
 cryptography==3.4.6; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6"
 dnspython==2.1.0; python_version >= "3.6"
 email-validator==1.1.2
+eventlet==0.32.0
 firebase-admin==4.5.3; python_version >= "3.5"
 flask-cors==3.0.10
 flask-migrate==2.1.1
 flask-mongoengine==1.0.0
 flask-script==2.0.6
+flask-socketio==5.1.1; python_version >= "3.6"
 flask-sqlalchemy==2.5.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
 flask-wtf==0.14.3
 flask==1.1.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
@@ -23,8 +26,8 @@ gcloud==0.18.3
 google-api-core==1.26.1; python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.6.0"
 google-api-python-client==2.0.2; python_version >= "3.6"
 google-auth-httplib2==0.1.0; python_version >= "3.6"
-google-auth==1.28.0; python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.6.0"
-google-cloud-core==1.6.0; python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.6.0"
+google-auth==1.28.0; python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or python_full_version >= "3.6.0" and python_version >= "3.6" and platform_python_implementation != "PyPy"
+google-cloud-core==1.6.0; python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or python_full_version >= "3.6.0" and python_version >= "3.6" and platform_python_implementation != "PyPy"
 google-cloud-firestore==2.0.2; platform_python_implementation != "PyPy" and python_version >= "3.6"
 google-cloud-storage==1.36.2; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
 google-crc32c==1.1.2; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
@@ -52,7 +55,7 @@ pandas==1.2.3; python_full_version >= "3.7.1"
 ply==3.8
 proto-plus==1.18.0; platform_python_implementation != "PyPy" and python_version >= "3.6"
 protobuf==4.0.0rc2; python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.6.0"
-pyasn1-modules==0.2.8; python_version >= "3.5" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.5" and python_full_version >= "3.6.0"
+pyasn1-modules==0.2.8; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5"
 pyasn1==0.4.8; python_version >= "3.5" and python_version < "4"
 pycparser==2.20; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
 pycryptodome==3.10.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
@@ -63,14 +66,16 @@ pyrebase4==4.4.3
 python-dateutil==2.8.1; python_full_version >= "3.7.1"
 python-dotenv==0.15.0
 python-editor==1.0.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
+python-engineio==4.2.1; python_version >= "3.6"
 python-http-client==3.3.2; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
 python-jwt==3.3.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
-pytz==2021.1; platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.7.1"
+python-socketio==5.4.1; python_version >= "3.6"
+pytz==2021.1; platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.7.1" and (python_version >= "3.5" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.5" and python_full_version >= "3.6.0")
 requests-toolbelt==0.9.1
 requests==2.25.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
-rsa==4.7.2; python_version >= "3.5" and python_version < "4" and (python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.6.0")
+rsa==4.7.2; python_version >= "3.5" and python_version < "4" and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6")
 sendgrid==6.6.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
-six==1.15.0; platform_python_implementation != "PyPy" and python_version >= "3.5" and python_full_version >= "3.7.1" and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0") and (python_version >= "3.5" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.5" and python_full_version >= "3.6.0") and (python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.6.0") and (python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5")
+six==1.15.0; platform_python_implementation != "PyPy" and python_version >= "3.6" and python_full_version >= "3.7.1" and (python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5") and (python_version >= "3.5" and python_full_version < "3.0.0" and platform_python_implementation != "PyPy" or platform_python_implementation != "PyPy" and python_version >= "3.5" and python_full_version >= "3.6.0") and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6")
 sqlalchemy==1.4.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
 starkbank-ecdsa==1.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
 twilio==6.54.0

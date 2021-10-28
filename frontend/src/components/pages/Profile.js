@@ -103,7 +103,7 @@ function Profile() {
       if (isMentor) {
         await editMentorProfile(new_values, await getMentorID());
       } else {
-        await editMenteeProfile(new_values, await getMentorID());
+        await editMenteeProfile(new_values, await getMenteeID());
       }
       handleSaveEdits();
     }

@@ -133,11 +133,11 @@ def contact_mentor(mentor_id):
         msg = "Failed to send mentee email " + res_msg
         logger.info(msg)
         return create_response(status=500, message="Failed to send message")
-    '''
+    """
     logger.info(
         f"Sending an email to {mentor.email} with interest areas: {data.get("interest_areas", "")}, communication method: {data.get("communication_method", "")}, and message: {data.get('message', '')} as mentee {mentee.email}"
     )
-    '''
+    """
     return create_response(status=200, message="successfully sent email message")
 
 

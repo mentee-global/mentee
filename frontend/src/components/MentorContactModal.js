@@ -24,9 +24,11 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
   };
 
   const addInterestArea = (e) => {
-    setInterestAreas(e)
-  }
-  const filteredOptions = SPECIALIZATIONS.filter(o => !interestAreas.includes(o));
+    setInterestAreas(e);
+  };
+  const filteredOptions = SPECIALIZATIONS.filter(
+    (o) => !interestAreas.includes(o)
+  );
   return (
     <span>
       <MenteeButton
@@ -47,76 +49,89 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
         style={{ overflow: "hidden" }}
         footer={null}
       >
-      <h1>Reach Out to {mentorName}</h1>
-      <h2>your name and email will be sent to this mentor</h2>
-      <Form>
-      <Form.Item
-      label="select"
-      name="Choose Interest Areas"
-      rules={[{ required: true, message: "Please select an interest area!" }]}>
-      <Select mode="tags" value={interestAreas}
-      onChange={addInterestArea}>
-        {filteredOptions.map(item => (
-          <Select.Option key={item} value={item}>
-            {item}
-          </Select.Option>
-        ))}
-      </Select>
-      </Form.Item>
-      <Form.Item
-      label="radio"
-      name="What is your preferred communication method?"
-      rules={[{ required: true, message: "Please select communication method!" }]}>
-      <Radio.Group onChange={(e) => setCommunicationMethod(e.target.value)}>
-        <Space direction="vertical">
-          <Radio value={"Email"}>Email</Radio>
-          <Radio value={"Phone"}>Phone</Radio>
-          <Radio value={"WhatsApp"}>WhatsApp</Radio>
-          <Radio value={"Other"}>Other</Radio>
-        </Space>
-      </Radio.Group>
-      </Form.Item>
-        <div className="message-modal-container">
-          
-          <ModalInput
-            style={styles.modalInput}
-            type="textarea"
-            handleClick={() => {}}
-            onChange={(e) => setMessage(e.target.value)}
-            value={message}
-            large
-          />
-          <br />
-          {error && (
-            <>
-              <b style={{ color: "red" }}>
-                Failed to send message, please try again
-              </b>
-              <br />
-            </>
-          )}
-          <MenteeButton
-            width={120}
-            content={"Send Message"}
-            onClick={async () => {
-              const res = await sendMenteeMentorEmail(
-                mentorId,
-                menteeId,
-                responseEmail,
-                interestAreas,
-                communicationMethod,
-                message
-              );
-              if (!res) {
-                console.log("Failed to send message");
-                setError(true);
-              } else {
-                closeModal();
-              }
-            }}
-          />
-        </div>
-      </Form>
+        <h1>Reach Out to {mentorName}</h1>
+        <h2>your name and email will be sent to this mentor</h2>
+        <Form>
+          <Form.Item
+            label="select"
+            name="Choose Interest Areas"
+            rules={[
+              { required: true, message: "Please select an interest area!" },
+            ]}
+          >
+            <Select
+              mode="tags"
+              value={interestAreas}
+              onChange={addInterestArea}
+            >
+              {filteredOptions.map((item) => (
+                <Select.Option key={item} value={item}>
+                  {item}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="radio"
+            name="What is your preferred communication method?"
+            rules={[
+              {
+                required: true,
+                message: "Please select communication method!",
+              },
+            ]}
+          >
+            <Radio.Group
+              onChange={(e) => setCommunicationMethod(e.target.value)}
+            >
+              <Space direction="vertical">
+                <Radio value={"Email"}>Email</Radio>
+                <Radio value={"Phone"}>Phone</Radio>
+                <Radio value={"WhatsApp"}>WhatsApp</Radio>
+                <Radio value={"Other"}>Other</Radio>
+              </Space>
+            </Radio.Group>
+          </Form.Item>
+          <div className="message-modal-container">
+            <ModalInput
+              style={styles.modalInput}
+              type="textarea"
+              handleClick={() => {}}
+              onChange={(e) => setMessage(e.target.value)}
+              value={message}
+              large
+            />
+            <br />
+            {error && (
+              <>
+                <b style={{ color: "red" }}>
+                  Failed to send message, please try again
+                </b>
+                <br />
+              </>
+            )}
+            <MenteeButton
+              width={120}
+              content={"Send Message"}
+              onClick={async () => {
+                const res = await sendMenteeMentorEmail(
+                  mentorId,
+                  menteeId,
+                  responseEmail,
+                  interestAreas,
+                  communicationMethod,
+                  message
+                );
+                if (!res) {
+                  console.log("Failed to send message");
+                  setError(true);
+                } else {
+                  closeModal();
+                }
+              }}
+            />
+          </div>
+        </Form>
       </Modal>
     </span>
   );

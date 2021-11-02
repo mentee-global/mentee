@@ -172,7 +172,7 @@ function AdminAppointmentData() {
       <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>
         <div className="appointments-table">
           <Row gutter={[16, 16]} justify="start">
-            {filterData.map((data, key) => {
+            {appointments.map((data, key) => {
               return (
                 <Col span={6} key={key}>
                   <AdminAppointmentCard

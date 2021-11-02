@@ -41,7 +41,7 @@ function Navigation(props) {
     <div>
       <Layout className="navigation-layout">
         <NavHeader />
-        {props.needsAuth ? (
+        {props.needsAuth && !props.ignoreSidebar? (
           <Layout>
             {permissions === ACCOUNT_TYPE.ADMIN ? (
               <AdminSidebar selectedPage={props.page} />

@@ -23,6 +23,7 @@ import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
 import MenteeRegisterForm from "components/pages/MenteeRegisterForm";
 import { ACCOUNT_TYPE } from "utils/consts";
+import Messages from "components/pages/Messages";
 
 function App() {
   return (
@@ -192,6 +193,12 @@ function App() {
         path="/not-found"
         component={() => (
           <Navigation content={<NotFound />} needsAuth={false} />
+        )}
+      />
+      <Route
+        path="/messages"
+        component={() => (
+          <Navigation content={<Messages />} page="messages" needsAuth={true} ignoreSidebar={true} />
         )}
       />
     </Router>

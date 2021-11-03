@@ -104,13 +104,12 @@ function MessagesSidebar({ history, activeMessageId }) {
         {data.map((chat) => {
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
             if (chat.otherId == activeMessageId) {
-              return <MessageCard key={chat.otherId} chat={chat} active/>;
+              return <MessageCard key={chat.otherId} chat={chat} active />;
             } else {
-              return <MessageCard key={chat.otherId} chat={chat}/>;
+              return <MessageCard key={chat.otherId} chat={chat} />;
             }
-            
           } else {
-            return <></>
+            return <></>;
           }
         })}
       </div>

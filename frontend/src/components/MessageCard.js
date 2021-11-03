@@ -6,18 +6,23 @@ import { useHistory } from "react-router";
 function MessageCard(props) {
   const history = useHistory();
   const { latestMessage, numNew, timeLatest, otherId } = props.chat;
-  
+
   const openMessage = () => {
-    history.push(`/messages/${otherId}`)
-  }
+    history.push(`/messages/${otherId}`);
+  };
 
   return (
-    <Card onClick={openMessage} className={`message-${props.active ? "active-" : ""}card`}>
+    <Card
+      onClick={openMessage}
+      className={`message-${props.active ? "active-" : ""}card`}
+    >
       <Meta
         avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
         title={<div className="message-card-title">{otherId}</div>}
-        description={<div className="message-card-description">{latestMessage}</div>}
-        style={{color: "white"}}
+        description={
+          <div className="message-card-description">{latestMessage}</div>
+        }
+        style={{ color: "white" }}
       />
     </Card>
   );

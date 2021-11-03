@@ -141,3 +141,44 @@ def contact_mentor(mentor_id):
 @socketio.on("message")
 def handle_message(data):
     logger.info(data)
+
+  
+  
+  
+  # convosJSON = {
+  #   "conversations": [
+  #     {
+  #       "name": "John Doe",
+  #       "profileImage": "https://profilepic.com",
+  #       "recentMessage": "Hello, how are you?"
+  #     },
+  #     {
+  #       "name": "John Doe",
+  #       "profileImage": "https://profilepic.com",
+  #       "recentMessage": "Hello, how are you?"
+  #     },
+  #     {
+  #       "name": "John Doe",
+  #       "profileImage": "https://profilepic.com",
+  #       "recentMessage": "Hello, how are you?"
+  #     },
+  #   ]
+  # }
+
+
+    # messagesJSON = {
+  #   "messages": [
+  #     {
+  #       "message": "a quick brown fox jumps over the lazy dog",
+  #       "timestamp": "something something UTC",
+  #     },
+  #     {
+  #       "message": "John Doe",
+  #       "timestamp": "something something UTC",
+  #     },
+  #     {
+  #       "message": "John Doe",
+  #       "timestamp": "something something UTC",
+  #     },
+  #   ]
+  # }

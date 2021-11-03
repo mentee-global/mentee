@@ -7,15 +7,17 @@ import MessagesSidebar from "components/MessagesSidebar";
 import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
 
-function Messages({ history }) {
+function Messages(props) {
+  const {history} = props;
+  const activeMessageId = props.match.params.receiverId;
   const { isMentor } = useAuth();
-
+  console.log(props.match);
 
   return (
     <Layout className="messages-container">
       <Layout className="messages-subcontainer">
-        <MessagesSidebar />
-        <MessagesChatArea />
+        <MessagesSidebar activeMessageId={activeMessageId}/>
+        <MessagesChatArea activeMessageId/>
       </Layout>
     </Layout>
   );

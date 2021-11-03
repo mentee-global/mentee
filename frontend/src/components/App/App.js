@@ -196,7 +196,7 @@ function App() {
         )}
       />
       <Route
-        path="/messages"
+        path="/messages/:receiverId"
         component={() => (
           <Navigation content={<Messages />} page="messages" needsAuth={true} ignoreSidebar={true} />
         )}

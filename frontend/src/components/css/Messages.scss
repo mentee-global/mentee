@@ -36,11 +36,37 @@
 }
 
 .message-card {
+
   width: 90%;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 3%;
+  border: 1px solid #e8e8e8;
+  box-sizing: border-box;
+  border-radius: 7px;
 }
+
+.message-card:hover {
+  background-color: #e8e8e8;
+  cursor: pointer;
+}
+
+.message-active-card {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3%;
+  background: rgba(249, 220, 132, 0.3);
+  border: 1px solid #F9DC84;
+  box-sizing: border-box;
+  border-radius: 7px;
+}
+
+.message-card-description {
+  color: #707C97;
+}
+
+
 
 .messages-search-input {
     margin-top: 1em;

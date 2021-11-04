@@ -7,7 +7,6 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
 import { login, sendVerificationEmail } from "utils/auth.service";
 import { fetchUser } from "features/user/userSlice";
-import useAuth from "utils/hooks/useAuth";
 import MenteeButton from "../MenteeButton";
 import usePersistedState from "utils/hooks/usePersistedState";
 import "../css/Login.scss";

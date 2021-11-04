@@ -138,12 +138,27 @@ def contact_mentor(mentor_id):
     return create_response(status=200, message="successfully sent email message")
 
 
+@messages.route("/direct/", methods=["GET"])
+def get_direct_messages():
+    messageQuery = {'recipient_id': request.args["user_id"], 'sender_id': request.args["user_id"]}
+    try:
+        messages = DirectMessage.objects.filter(**messageQuery)
+    except:
+        msg = "Invalid parameters provided"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    msg = "Success"
+    if not messages:
+        msg = "Messages could not be found with parameters provided"
+    return create_response(data={"Messages": messages}, status=200, message=msg)
+
 @socketio.on("message")
 def handle_message(data):
     logger.info(data)
 
-  
-  
+
+    
+
   
   # convosJSON = {
   #   "conversations": [

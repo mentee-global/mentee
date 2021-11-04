@@ -67,6 +67,10 @@ def update_message(message_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+@messages.route("/", methods=["PUT"])
+def mark_as_read(sender_id, receiver_id):
+    messages = Message.objects.get(user_id=sender_id, recipient_id=receiver_id)
+    messages.find( { 'read': False } ).update( { '$set': { 'read': True } } )
 
 @messages.route("/", methods=["POST"])
 def create_message():
@@ -141,3 +145,7 @@ def contact_mentor(mentor_id):
 @socketio.on("message")
 def handle_message(data):
     logger.info(data)
+
+
+
+

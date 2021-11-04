@@ -14,6 +14,7 @@ import { editMentorProfile, uploadMentorImage } from "../utils/api";
 import { getMentorID } from "../utils/auth.service";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
+import { validateUrl } from "utils/misc";
 
 const INITIAL_NUM_INPUTS = 14;
 
@@ -164,13 +165,23 @@ function MentorProfileModal(props) {
   }
 
   function handleNameChange(e) {
-    setName(e.target.value);
-    setEdited(true);
-    let newValid = [...isValid];
+    console.log("hello");
+    const name = e.target.value;
 
-    newValid[0] = !!e.target.value;
+    if (name.length <= 50) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-    setIsValid(newValid);
+      newValid[0] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[0] = false;
+      setIsValid(newValid);
+    }
+
+    setName(name);
   }
 
   function handleTitleChange(e) {
@@ -182,8 +193,22 @@ function MentorProfileModal(props) {
   }
 
   function handleAboutChange(e) {
-    setAbout(e.target.value);
-    setEdited(true);
+    const about = e.target.value;
+
+    if (about.length <= 255) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[7] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[7] = false;
+      setIsValid(newValid);
+    }
+
+    setAbout(about);
   }
 
   function handleInPersonAvailableChange(e) {
@@ -197,13 +222,41 @@ function MentorProfileModal(props) {
   }
 
   function handleLocationChange(e) {
-    setLocation(e.target.value);
-    setEdited(true);
+    const location = e.target.value;
+
+    if (location.length <= 70) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[10] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[10] = false;
+      setIsValid(newValid);
+    }
+
+    setLocation(location);
   }
 
   function handleWebsiteChange(e) {
-    setWebsite(e.target.value);
-    setEdited(true);
+    const website = e.target.value;
+
+    if (validateUrl(website)) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[3] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[3] = false;
+      setIsValid(newValid);
+    }
+
+    setWebsite(website);
   }
 
   function handleLanguageChange(e) {
@@ -220,8 +273,22 @@ function MentorProfileModal(props) {
   }
 
   function handleLinkedinChange(e) {
-    setLinkedin(e.target.value);
-    setEdited(true);
+    const linkedin = e.target.value;
+
+    if (validateUrl(linkedin)) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[2] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[2] = false;
+      setIsValid(newValid);
+    }
+
+    setLinkedin(linkedin);
   }
 
   function handleSpecializationsChange(e) {
@@ -363,8 +430,10 @@ function MentorProfileModal(props) {
       location: location,
     };
 
-    setSaving(true);
-    saveEdits(updatedProfile);
+    if (!isValid.includes(false)) {
+      setSaving(true);
+      saveEdits(updatedProfile);
+    }
   };
 
   return (
@@ -387,7 +456,9 @@ function MentorProfileModal(props) {
         style={{ overflow: "hidden" }}
         footer={
           <div>
-            {validate && <b style={styles.alertToast}>Missing Fields</b>}
+            {validate && (
+              <b style={styles.alertToast}>Missing or Error Fields</b>
+            )}
             <Button
               type="default"
               shape="round"
@@ -443,6 +514,8 @@ function MentorProfileModal(props) {
                 value={name}
                 valid={isValid[0]}
                 validate={validate}
+                errorPresent={name && name.length > 50}
+                errorMessage="Name field is too long."
               />
               <ModalInput
                 style={styles.modalInput}
@@ -459,7 +532,7 @@ function MentorProfileModal(props) {
             </div>
             <div className="modal-input-container">
               <ModalInput
-                style={styles.modalInput}
+                style={styles.textAreaInput}
                 type="textarea"
                 maxRows={3}
                 hasBorder={false}
@@ -469,6 +542,10 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleAboutChange}
                 value={about}
+                valid={isValid[7]}
+                validate={validate}
+                errorPresent={about && about.length > 255}
+                errorMessage="About field is too long."
               />
             </div>
             <div className="divider" />
@@ -505,6 +582,10 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLocationChange}
                 value={location}
+                valid={isValid[10]}
+                validate={validate}
+                errorPresent={location && location.length > 70}
+                errorMessage="Location field is too long."
               />
               <ModalInput
                 style={styles.modalInput}
@@ -515,6 +596,10 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleWebsiteChange}
                 value={website}
+                valid={isValid[3]}
+                validate={validate}
+                errorPresent={website && !validateUrl(website)}
+                errorMessage="Invalid URL."
               />
             </div>
             <div className="modal-input-container">
@@ -541,6 +626,10 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLinkedinChange}
                 value={linkedin}
+                valid={isValid[2]}
+                validate={validate}
+                errorPresent={linkedin && !validateUrl(linkedin)}
+                errorMessage="Invalid URL."
               />
             </div>
             <div className="modal-input-container">
@@ -580,6 +669,13 @@ const styles = {
     margin: 18,
     padding: 4,
     paddingTop: 6,
+  },
+  textAreaInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6,
+    marginBottom: "40px",
   },
   footer: {
     borderRadius: 13,

@@ -25,6 +25,7 @@ function Login() {
     "permissions",
     ACCOUNT_TYPE.MENTEE
   );
+  const [verified, setVerified] = usePersistedState("verified", false);
 
   useEffect(() => {
     if (!location.state) {
@@ -120,6 +121,7 @@ function Login() {
                     } else if (res.result.redirectToCreateProfile) {
                       history.push(`/create-profile/${loginProps.type}`);
                     } else {
+                      setVerified(true);
                       history.push(loginProps.redirect);
                     }
                   });

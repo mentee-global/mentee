@@ -35,7 +35,7 @@ function NavHeader({ history }) {
     isMentor,
   } = useContext(AuthContext);
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [verified, setVerified] = usePersistedState("verified");
+  const [verified, setVerified] = usePersistedState("verified", false);
   const [user, setUser] = useState();
 
   useEffect(() => {

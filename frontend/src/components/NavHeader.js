@@ -87,11 +87,9 @@ function NavHeader({ history }) {
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
-      {
-        <Menu.Item key="sign-out" onClick={logoutUser}>
-          <b>Sign Out</b>
-        </Menu.Item>
-      }
+      <Menu.Item key="sign-out" onClick={logoutUser}>
+        <b>Sign Out</b>
+      </Menu.Item>
     </Menu>
   );
 

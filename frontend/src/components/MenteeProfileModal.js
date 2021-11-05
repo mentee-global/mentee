@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import ReactPlayer from "react-player";
 import {
   UserOutlined,
   EditFilled,
@@ -14,6 +15,7 @@ import { getMenteeID } from "../utils/auth.service";
 import moment from "moment";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
+import { validateEmail } from "utils/misc";
 
 const INITIAL_NUM_INPUTS = 14;
 
@@ -41,6 +43,7 @@ function MenteeProfileModal(props) {
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
   const [privacy, setPrivacy] = useState(true);
+  const [isVideoValid, setIsVideoValid] = useState(true);
 
   useEffect(() => {
     if (props.mentee) {
@@ -166,23 +169,60 @@ function MenteeProfileModal(props) {
   }
 
   function handleNameChange(e) {
-    setName(e.target.value);
-    setEdited(true);
-    let newValid = [...isValid];
+    const name = e.target.value;
 
-    newValid[0] = !!e.target.value;
+    if (name.length < 50) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-    setIsValid(newValid);
+      newValid[0] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[0] = false;
+      setIsValid(newValid);
+    }
+
+    setName(name);
   }
 
   function handleAboutChange(e) {
-    setAbout(e.target.value);
-    setEdited(true);
+    const about = e.target.value;
+
+    if (about.length < 255) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[8] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[8] = false;
+      setIsValid(newValid);
+    }
+
+    setAbout(about);
   }
 
   function handleLocationChange(e) {
-    setLocation(e.target.value);
-    setEdited(true);
+    const location = e.target.value;
+
+    if (location.length < 70) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[9] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[9] = false;
+      setIsValid(newValid);
+    }
+
+    setLocation(location);
   }
 
   function handleAgeChange(e) {
@@ -201,8 +241,22 @@ function MenteeProfileModal(props) {
   }
 
   function handleEmailChange(e) {
-    setEmail(e.target.value);
-    setEdited(true);
+    const email = e.target.value;
+
+    if (validateEmail(email)) {
+      setEdited(true);
+      let newValid = [...isValid];
+
+      newValid[4] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[4] = false;
+      setIsValid(newValid);
+    }
+
+    setEmail(email);
   }
 
   function handleLanguageChange(e) {
@@ -224,8 +278,14 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
-    setVideoUrl(e.target.value);
-    setEdited(true);
+    if (ReactPlayer.canPlay(e.target.value)) {
+      setVideoUrl(e.target.value);
+      setEdited(true);
+      setIsVideoValid(true);
+    } else {
+      setEdited(true);
+      setIsVideoValid(false);
+    }
   }
 
   function handlePrivacyChange(e) {
@@ -367,8 +427,10 @@ function MenteeProfileModal(props) {
       },
     };
 
-    setSaving(true);
-    saveEdits(updatedProfile);
+    if (!isValid.includes(false)) {
+      setSaving(true);
+      saveEdits(updatedProfile);
+    }
   };
 
   return (
@@ -391,7 +453,9 @@ function MenteeProfileModal(props) {
         style={{ overflow: "hidden" }}
         footer={
           <div>
-            {validate && <b style={styles.alertToast}>Missing Fields</b>}
+            {validate && (
+              <b style={styles.alertToast}>Missing or Error Fields</b>
+            )}
             <Button
               type="default"
               shape="round"
@@ -445,13 +509,15 @@ function MenteeProfileModal(props) {
                 value={name}
                 valid={isValid[0]}
                 validate={validate}
+                errorPresent={name && name.length > 50}
+                errorMessage="Name field is too long."
               />
             </div>
             <div className="modal-input-container">
               <ModalInput
-                style={styles.modalInput}
+                style={styles.textArea}
                 type="textarea"
-                maxRows={3}
+                maxRows={4}
                 hasBorder={false}
                 title="About"
                 clicked={inputClicked[2]}
@@ -459,6 +525,10 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleAboutChange}
                 value={about}
+                valid={isValid[8]}
+                validate={validate}
+                errorPresent={about && about.length > 255}
+                errorMessage="About field is too long."
               />
             </div>
           </div>
@@ -473,6 +543,10 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLocationChange}
                 value={location}
+                valid={isValid[9]}
+                validate={validate}
+                errorPresent={location && location.length > 70}
+                errorMessage="Location field is too long."
               />
               <ModalInput
                 style={styles.modalInput}
@@ -521,6 +595,10 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleEmailChange}
                 value={email}
+                valid={isValid[4]}
+                validate={validate}
+                errorPresent={email && !validateEmail(email)}
+                errorMessage="Invalid email address."
               />
               <ModalInput
                 style={styles.modalInput}
@@ -567,6 +645,9 @@ function MenteeProfileModal(props) {
                 placeholder="Paste Link"
               />
             </div>
+            <div className="no-favorites-text">
+              {!isVideoValid ? <>Input Valid Video Link</> : null}
+            </div>
             <div className="modal-education-header">Account Privacy</div>
             <Checkbox
               onChange={handlePrivacyChange}
@@ -590,6 +671,13 @@ const styles = {
   modalInput: {
     height: 65,
     margin: 18,
+    padding: 4,
+    paddingTop: 6,
+  },
+  textArea: {
+    height: "100%",
+    marginLeft: 18,
+    marginRight: 18,
     padding: 4,
     paddingTop: 6,
   },

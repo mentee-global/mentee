@@ -23,6 +23,8 @@ function ModalInput(props) {
     valid,
     validate,
     large,
+    errorPresent,
+    errorMessage,
   } = props;
   const [isClicked, setIsClicked] = useState(clicked);
 
@@ -44,6 +46,14 @@ function ModalInput(props) {
       ...styles.container,
       ...props.style,
     };
+
+    if (type === "textarea") {
+      style = {
+        ...styles.textAreaContainer,
+        ...props.style,
+      };
+    }
+
     if (hasBorder) {
       style = {
         ...style,
@@ -91,62 +101,74 @@ function ModalInput(props) {
     switch (type) {
       case "text":
         return (
-          <Input
-            className="input-text"
-            onClick={() => handleClick(index)}
-            onChange={handleOnChange}
-            bordered={false}
-            placeholder={placeholder}
-            value={props.value}
-            defaultValue={defaultValue}
-          />
+          <div>
+            <Input
+              className="input-text"
+              onClick={() => handleClick(index)}
+              onChange={handleOnChange}
+              bordered={false}
+              placeholder={placeholder}
+              value={props.value}
+              defaultValue={defaultValue}
+            />
+            {errorPresent && <p className="input-error">{errorMessage}</p>}
+          </div>
         );
       case "dropdown-single":
         return (
-          <Select
-            className="input-text"
-            onClick={() => handleClick(index)}
-            allowClear
-            bordered={false}
-            style={{ width: "100%" }}
-            placeholder="Please select"
-            onChange={handleOnChange}
-            value={props.value}
-            defaultValue={defaultValue}
-          >
-            {returnDropdownItems(options)}
-          </Select>
+          <div>
+            <Select
+              className="input-text"
+              onClick={() => handleClick(index)}
+              allowClear
+              bordered={false}
+              style={{ width: "100%" }}
+              placeholder="Please select"
+              onChange={handleOnChange}
+              value={props.value}
+              defaultValue={defaultValue}
+            >
+              {returnDropdownItems(options)}
+            </Select>
+            {errorPresent && <p className="input-error">{errorMessage}</p>}
+          </div>
         );
       case "dropdown-multiple":
         return (
-          <Select
-            className="input-text"
-            onClick={() => handleClick(index)}
-            mode={onEducationChange ? "tags" : "multiple"}
-            allowClear
-            bordered={false}
-            style={{ width: "100%" }}
-            placeholder={placeholder || "Please select"}
-            onChange={handleOnChange}
-            value={props.value}
-            tokenSeparators={[","]}
-            defaultValue={defaultValue}
-          >
-            {returnDropdownItems(options)}
-          </Select>
+          <div>
+            <Select
+              className="input-text"
+              onClick={() => handleClick(index)}
+              mode={onEducationChange ? "tags" : "multiple"}
+              allowClear
+              bordered={false}
+              style={{ width: "100%" }}
+              placeholder={placeholder || "Please select"}
+              onChange={handleOnChange}
+              value={props.value}
+              tokenSeparators={[","]}
+              defaultValue={defaultValue}
+            >
+              {returnDropdownItems(options)}
+            </Select>
+            {errorPresent && <p className="input-error">{errorMessage}</p>}
+          </div>
         );
       case "textarea":
         return (
-          <Input.TextArea
-            className={"input-textarea" + (large ? " large-textarea" : "")}
-            autoSize={{ maxRows: maxRows ?? 1 }}
-            onClick={() => handleClick(index)}
-            onChange={handleOnChange}
-            bordered={false}
-            placeholder={placeholder}
-            value={props.value}
-            defaultValue={defaultValue}
-          />
+          <div>
+            <Input.TextArea
+              className={"input-textarea" + (large ? " large-textarea" : "")}
+              autoSize={{ maxRows: maxRows ?? 1 }}
+              onClick={() => handleClick(index)}
+              onChange={handleOnChange}
+              bordered={false}
+              placeholder={placeholder}
+              value={props.value}
+              defaultValue={defaultValue}
+            />
+            {errorPresent && <p className="input-error">{errorMessage}</p>}
+          </div>
         );
       default:
         return null;
@@ -168,6 +190,11 @@ const styles = {
     width: "100%",
     backgroundColor: "#FFFDF5",
   },
+  textAreaContainer: {
+    flex: 1,
+    flexDirection: "column",
+    width: "100%",
+  },
   border: {
     borderBottomStyle: "solid",
     borderBottomWidth: 3,
@@ -177,7 +204,8 @@ const styles = {
     flex: 1,
     fontWeight: "bold",
     color: "#828282",
-    marginLeft: 11,
+    paddingLeft: 11,
+    backgroundColor: "#FFFDF5",
   },
   clicked: {
     color: "#F2C94C",

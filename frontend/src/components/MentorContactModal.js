@@ -102,14 +102,6 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               large
             />
             <br />
-            {error && (
-              <>
-                <b style={{ color: "red" }}>
-                  Failed to send message, please try again
-                </b>
-                <br />
-              </>
-            )}
             <MenteeButton
               width={120}
               content={"Send Message"}
@@ -123,7 +115,6 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
                   message
                 );
                 if (!res) {
-                  console.log("Failed to send message");
                   setError(true);
                 } else {
                   closeModal();

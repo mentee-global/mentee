@@ -8,16 +8,20 @@ import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
 
 function Messages(props) {
-  const {history} = props;
+  const { history } = props;
   const activeMessageId = props.match.params.receiverId;
   const { isMentor } = useAuth();
   console.log(props.match);
 
   return (
-    <Layout className="messages-container">
-      <Layout className="messages-subcontainer">
-        <MessagesSidebar activeMessageId={activeMessageId}/>
-        <MessagesChatArea activeMessageId/>
+    <Layout className="messages-container" style={{ backgroundColor: "white" }}>
+      <MessagesSidebar activeMessageId={activeMessageId} />
+
+      <Layout
+        className="messages-subcontainer"
+        style={{ backgroundColor: "white" }}
+      >
+        <MessagesChatArea activeMessageId={activeMessageId} />
       </Layout>
     </Layout>
   );

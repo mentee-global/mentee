@@ -12,6 +12,7 @@ function MessagesSidebar({ history, activeMessageId }) {
     searchInput: {
       borderRadius: 10,
       marginBottom: 5,
+      backgroundColor: "white"
     },
   };
 

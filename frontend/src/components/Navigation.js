@@ -55,7 +55,7 @@ function Navigation(props) {
         ) : (
           <Content className="navigation-content">{props.content}</Content>
         )}
-        {isMentee && <MenteeMessageTab user_id={profileId} />}
+        {/* {isMentee && <MenteeMessageTab user_id={profileId} />} */}
       </Layout>
     </div>
   );

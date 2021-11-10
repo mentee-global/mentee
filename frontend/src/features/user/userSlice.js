@@ -6,6 +6,7 @@ export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async ({ id, role }) => {
     console.log(id);
+    console.log(role);
     const isAdmin = role === ACCOUNT_TYPE.ADMIN;
     const res = isAdmin ? await getAdmin(id) : await fetchAccountById(id, role);
     console.log(res);

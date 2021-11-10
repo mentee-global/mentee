@@ -5,7 +5,7 @@ import { logout } from "utils/auth.service";
 import { Avatar, Layout, Drawer, Button, Menu, Dropdown } from "antd";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { resetUser } from "features/user/userSlice";
+import { resetUser, fetchUser } from "features/user/userSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
@@ -41,26 +41,14 @@ function NavHeader({ history }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // async function getUser() {
-    //   if (role == ACCOUNT_TYPE.ADMIN) {
-    //     const adminId = await getAdminID();
-    //     const admin = await getAdmin(adminId);
-    //     if (admin) {
-    //       setUser(admin);
-    //     }
-    //   } else {
-    //     const userData = await fetchAccountById(profileId, role);
-    //     if (userData) {
-    //       setUser(userData);
-    //     }
-    //   }
-    // }
-    // Don't fetch if guest
+    if (profileId) {
+      dispatch(fetchUser({ id: profileId, role }));
+    }
   }, [role]);
 
   const getUserType = () => {
     if (role === ACCOUNT_TYPE.MENTOR) {
-      return "Mentor";
+      return user ? user.professional_title : "Mentor";
     }
     if (role === ACCOUNT_TYPE.MENTEE) {
       return "Mentee";
@@ -164,11 +152,11 @@ function NavHeader({ history }) {
               </span>
             )}
             <span className="navigation-header-button">
-              <LoginVerificationModal
+              <MenteeButton
                 loginButton
                 content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
                 width="9em"
-                onVerified={async () => {
+                onClick={async () => {
                   let redirect = "/select-login";
                   if (isMentor) {
                     redirect = "/appointments";

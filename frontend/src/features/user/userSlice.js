@@ -1,15 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchAccountById, getAdmin } from "utils/api";
+import { fetchAccountById, getAdmin, editAccountProfile } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async ({ id, role }) => {
-    console.log(id);
-    console.log(role);
     const isAdmin = role === ACCOUNT_TYPE.ADMIN;
     const res = isAdmin ? await getAdmin(id) : await fetchAccountById(id, role);
-    console.log(res);
+    return res;
+  }
+);
+
+export const updateAndFetchUser = createAsyncThunk(
+  "user/updateUser",
+  async ({ data, id, role }, thunkAPI) => {
+    const res = await editAccountProfile(data, id, role);
+    thunkAPI.dispatch(fetchUser({ id, role }));
     return res;
   }
 );
@@ -32,9 +38,9 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.status = "succeeded";
-        console.log(action.payload);
         state.user = action.payload;
-      });
+      })
+      .addCase(updateAndFetchUser.fulfilled, (state, action) => {});
   },
 });
 

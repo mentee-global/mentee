@@ -127,7 +127,7 @@ function ProfileContent(props) {
         <div className="mentor-profile-decorations">
           {getTitle(props.mentor.name, props.mentor.age)}
           <div>{getPrivacy(props.mentor.is_private)}</div>
-          {isMentee && favoriteMentorIds.size && accountType == 1 && (
+          {isMentee && favoriteMentorIds.size && accountType == 1 ? (
             <div className="favorite-button-profile">
               <Rate
                 character={<StarFilled />}
@@ -136,7 +136,7 @@ function ProfileContent(props) {
                 onChange={(number) => onFavoriteClick(number)}
               />
             </div>
-          )}
+          ) : null}
         </div>
 
         <div className="mentor-profile-actions">

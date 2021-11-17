@@ -1,62 +1,48 @@
-import React from "react";
-import { Avatar, Card, Col, Divider, Layout, Row, Input, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { Avatar, Card, Col, Divider, Layout, Row, Input, Button, message } from "antd";
+import { withRouter } from "react-router-dom";
+
 import Meta from "antd/lib/card/Meta";
 import { SendOutlined, SettingOutlined } from "@ant-design/icons";
+import { getMessageData } from "utils/dummyData";
+import useAuth from "utils/hooks/useAuth";
 
-function MessagesChatArea({ history, activeMessageId }) {
+function MessagesChatArea(props) {
   const { Content, Footer, Header } = Layout;
   const { TextArea } = Input;
+  const { profileId } = useAuth();
+  const [activeMessageId, setActiveMessageId] = useState("");
+
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (!messages.length && activeMessageId && profileId) {
+      setMessages(getMessageData(profileId, activeMessageId));
+    }
+  });
+
+  useEffect(() => {
+    setActiveMessageId(props.match ? props.match.params.receiverId : null);
+    if (activeMessageId && profileId) {
+      setMessages(getMessageData(profileId, activeMessageId));
+    }
+  }, [props.location]);
+
+  console.log(profileId)
 
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
 
-  let convo = [
-    {
-      from: "Josh",
-      content: ["sup", "youre stupid", "hi baby"],
-    },
-    {
-      from: "me",
-      content: ["noooo", "don't say that", "how about we all goin on a trip"],
-    },
-    {
-      from: "Josh",
-      content: ["sup", "youre stupid", "hi baby"],
-    },
-    {
-      from: "me",
-      content: ["noooo", "don't say that", "how about we all goin on a trip"],
-    },
-    {
-      from: "Josh",
-      content: ["sup", "youre stupid", "hi baby"],
-    },
-    {
-      from: "me",
-      content: ["noooo", "don't say that", "how about we all goin on a trip"],
-    },
-    {
-      from: "Josh",
-      content: ["sup", "youre stupid", "hi baby"],
-    },
-    {
-      from: "me",
-      content: ["noooo", "don't say that", "how about we all goin on a trip"],
-    },
-    {
-      from: "Josh",
-      content: ["sup", "youre stupid", "hi baby"],
-    },
-    {
-      from: "me",
-      content: ["noooo", "don't say that", "how about we all goin on a trip"],
-    },
-  ];
-
   const sendMessage = (e) => {
     // add code to return message
   };
+
+  console.log(messages);
+  console.log(activeMessageId);
+  if (!messages.length) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -74,34 +60,30 @@ function MessagesChatArea({ history, activeMessageId }) {
         />
       </Header>
       <Content className="conversation-box">
-        {convo.map((block) => {
+        {messages.map((block) => {
           return (
             <div
               className={`chatRight__items you-${
-                block.from == "me" ? "sent" : "recieved"
+                block.sender_id == profileId ? "sent" : "recieved"
               }`}
             >
               <div className="chatRight__inner" data-chat="person1">
-                {block.from != "me" && (
+                {block.sender_id != profileId && (
                   <span>
                     <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
                   </span>
                 )}
 
                 <div className="convo">
-                  {block.content.map((message) => {
-                    return (
-                      <div
-                        className={`bubble-${
-                          block.from == "me" ? "sent" : "recieved"
-                        }`}
-                      >
-                        {message}
-                      </div>
-                    );
-                  })}
+                  <div
+                    className={`bubble-${
+                      block.sender_id == profileId ? "sent" : "recieved"
+                    }`}
+                  >
+                    {block.body}
+                  </div>
                 </div>
-                {block.from == "me" && (
+                {block.sender_id == profileId && (
                   <span>
                     <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
                   </span>
@@ -137,4 +119,4 @@ function MessagesChatArea({ history, activeMessageId }) {
   );
 }
 
-export default MessagesChatArea;
+export default withRouter(MessagesChatArea);

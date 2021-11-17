@@ -195,6 +195,12 @@ function App() {
           <Navigation content={<NotFound />} needsAuth={false} />
         )}
       />
+      {/* <Route
+        path="/messages"
+        component={() => (
+          <Navigation content={<Messages />} page="messages" needsAuth={true} ignoreSidebar={true} />
+        )}
+      /> */}
       <Route
         path="/messages/:receiverId"
         component={() => (

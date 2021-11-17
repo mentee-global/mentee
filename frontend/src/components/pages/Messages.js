@@ -9,19 +9,18 @@ import MessagesChatArea from "components/MessagesChatArea";
 
 function Messages(props) {
   const { history } = props;
-  const activeMessageId = props.match.params.receiverId;
   const { isMentor } = useAuth();
   console.log(props.match);
 
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
-      <MessagesSidebar activeMessageId={activeMessageId} />
+      <MessagesSidebar />
 
       <Layout
         className="messages-subcontainer"
         style={{ backgroundColor: "white" }}
       >
-        <MessagesChatArea activeMessageId={activeMessageId} />
+        <MessagesChatArea />
       </Layout>
     </Layout>
   );

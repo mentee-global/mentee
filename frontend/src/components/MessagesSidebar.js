@@ -1,12 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router";
+import { withRouter } from "react-router-dom";
+
 import { Divider, Input, Layout } from "antd";
 import MessageCard from "./MessageCard";
 import { SearchOutlined } from "@ant-design/icons";
+import useAuth from "utils/hooks/useAuth";
+import { getLatestMessages } from "utils/dummyData";
 
-function MessagesSidebar({ history, activeMessageId }) {
+function MessagesSidebar(props) {
   const { Sider } = Layout;
+  const history = useHistory();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [latestConvos, setLatestConvos] = useState([]);
+  const [activeMessageId, setActiveMessageId] = useState("");
+
+  const {profileId} = useAuth();
+
+  useEffect(() => {
+    if (!latestConvos.length) {
+      const data = getLatestMessages(profileId);
+      console.log("data", data);
+      history.push(`/messages/${data[0].otherId}`);
+      setLatestConvos(data);
+    }
+    
+  }, [latestConvos]);
+
+  useEffect(() => {
+    setActiveMessageId(props.match ? props.match.params.receiverId : null);
+  });
+
 
   const styles = {
     searchInput: {
@@ -16,76 +41,13 @@ function MessagesSidebar({ history, activeMessageId }) {
     },
   };
 
-  const data = [
-    {
-      otherId: "Jane Jockey",
-      latestMessage: "Hi man what's up!",
-      numNew: 5,
-      timeLatest: "2021-10-27T00:52:26+0000",
-    },
-    {
-      otherId: "Brett James",
-      latestMessage: "Sorry bruv, running late.",
-      numNew: 3,
-      timeLatest: "2021-10-27T00:52:26+0000",
-    },
-    {
-      otherId: "Joshua Carrey",
-      latestMessage: "I love you too :)))",
-      numNew: 0,
-      timeLatest: "2021-10-27T00:52:20+0000",
-    },
-    {
-      otherId: "Rajesh Ramesh",
-      latestMessage: "Yeah man, Nikhil is mad cute.",
-      numNew: 2,
-      timeLatest: "2021-10-27T00:52:18+0000",
-    },
-    {
-      otherId: "Kane Papi",
-      latestMessage: "Hi man what's up!",
-      numNew: 5,
-      timeLatest: "2021-10-27T00:52:26+0000",
-    },
-    {
-      otherId: "Lava Bowl",
-      latestMessage: "Sorry bruv, running late.",
-      numNew: 3,
-      timeLatest: "2021-10-27T00:52:26+0000",
-    },
-    {
-      otherId: "Hallo",
-      latestMessage: "I love you too :)))",
-      numNew: 0,
-      timeLatest: "2021-10-27T00:52:20+0000",
-    },
-    {
-      otherId: "Yah Yah",
-      latestMessage: "Yeah man, Nikhil is mad cute.",
-      numNew: 2,
-      timeLatest: "2021-10-27T00:52:18+0000",
-    },
-    {
-      otherId: "fdafdafd",
-      latestMessage: "Sorry bruv, running late.",
-      numNew: 3,
-      timeLatest: "2021-10-27T00:52:26+0000",
-    },
-    {
-      otherId: "f fdfsf d",
-      latestMessage: "I love you too :)))",
-      numNew: 0,
-      timeLatest: "2021-10-27T00:52:20+0000",
-    },
-    {
-      otherId: "BEEB",
-      latestMessage: "Yeah man, Nikhil is mad cute.",
-      numNew: 2,
-      timeLatest: "2021-10-27T00:52:18+0000",
-    },
-  ];
 
-  console.log(activeMessageId);
+  console.log(props.match);
+  console.log(latestConvos);
+
+  if (!latestConvos.length) {
+    return <div>Loading...</div>
+  }
 
   return (
     <Sider width={400} className="messages-sidebar-background">
@@ -102,12 +64,14 @@ function MessagesSidebar({ history, activeMessageId }) {
         />
       </div>
       <div className="messages-sidebar">
-        {data.map((chat) => {
+        {latestConvos.map((chat) => {
+          
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
             if (chat.otherId == activeMessageId) {
-              return <MessageCard key={chat.otherId} chat={chat} active />;
+              console.log(chat.otherId, activeMessageId)
+              return <MessageCard key={chat.otherId} chat={chat} active={true} />;
             } else {
-              return <MessageCard key={chat.otherId} chat={chat} />;
+              return <MessageCard key={chat.otherId} chat={chat} active={false}/>;
             }
           } else {
             return <></>;
@@ -118,4 +82,4 @@ function MessagesSidebar({ history, activeMessageId }) {
   );
 }
 
-export default MessagesSidebar;
+export default withRouter(MessagesSidebar);;

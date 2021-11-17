@@ -9,7 +9,7 @@ notifications = Blueprint("notifications", __name__)
 
 
 @notifications.route("/notifications/<id>", methods=["GET"])
-def get_11_most_recent_unread_dms(id):
+def get_unread_dm_count(id):
     try:
         notifications = DirectMessage.objects(
             Q(recipient_id=id) & Q(message_read=False)

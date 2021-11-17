@@ -12,7 +12,8 @@ notifications = Blueprint("notifications", __name__)
 def get_11_most_recent_unread_dms(id):
     try:
         notifications = DirectMessage.objects(
-            Q(recipient_id=id) & Q(message_read=False)).count()
+            Q(recipient_id=id) & Q(message_read=False)
+        ).count()
     except Exception as e:
         msg = "No mentee with that id"
         logger.info(e)

@@ -14,6 +14,7 @@ from .VerifiedEmail import VerifiedEmail
 from .MenteeProfile import MenteeProfile
 from .Message import Message
 from .Admin import Admin
+from .DirectMessage import DirectMessage
 
 __all__ = [
     "db",
@@ -29,6 +30,7 @@ __all__ = [
     "MenteeProfile",
     "Message",
     "Admin",
+    "DirectMessage",
 ]
 
 # You must import all of the new Models you create to this page

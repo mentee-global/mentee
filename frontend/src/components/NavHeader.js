@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { logout } from "utils/auth.service";
@@ -8,7 +8,7 @@ import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
 import { fetchAccountById, getAdmin } from "utils/api";
-import { useAuth, AuthContext } from "../utils/hooks/useAuth";
+import useAuth from "../utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";
 import { getAdminID } from "utils/auth.service";
@@ -19,7 +19,6 @@ import Icon, {
   MenuOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import usePersistedState from "utils/hooks/usePersistedState";
 
 const { Header } = Layout;
 
@@ -28,14 +27,14 @@ function NavHeader({ history }) {
   const {
     onAuthStateChanged,
     resetRoleState,
+    isAdmin,
+    isMentor,
+    isMentee,
     profileId,
     role,
-    isAdmin,
-    isMentee,
-    isMentor,
-  } = useContext(AuthContext);
+  } = useAuth();
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [verified, setVerified] = usePersistedState("verified");
+
   const [user, setUser] = useState();
 
   useEffect(() => {
@@ -55,6 +54,7 @@ function NavHeader({ history }) {
     }
     // Don't fetch if guest
     if (role == ACCOUNT_TYPE.GUEST || user) return;
+
     onAuthStateChanged(getUser);
   }, [role]);
 
@@ -72,7 +72,6 @@ function NavHeader({ history }) {
 
   const logoutUser = () => {
     logout().then(() => {
-      setVerified(false);
       resetRoleState();
       history.push("/");
     });
@@ -184,16 +183,6 @@ function NavHeader({ history }) {
                 }}
               />
             </span>
-            {isLoggedIn() && !verified && (
-              <span className="navigation-header-button">
-                <MenteeButton
-                  width="9em"
-                  theme="light"
-                  content={<b>{"Logout"}</b>}
-                  onClick={logoutUser}
-                />
-              </span>
-            )}
             {user ? (
               <>
                 <div className="profile-name">

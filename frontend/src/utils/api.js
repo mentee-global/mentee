@@ -204,8 +204,12 @@ export const fetchAppointmentsByType = (accountType) => {
   );
 };
 
-export const fetchAllAppointments = () => {
-  const requestExtension = "/appointment/";
+export const fetchPaginatedAppointments = (
+  pageNumber,
+  searchValue,
+  filterValue
+) => {
+  const requestExtension = `/appointment/all/${pageNumber}/${searchValue}/${filterValue}`;
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {

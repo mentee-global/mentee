@@ -158,7 +158,7 @@ def chat(msg, methods=["POST"]):
         message_read = msg["message_read"],
         sender_id = msg["sender_id"] ,
         recipient_id = msg["rid"],
-        created_at = datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z")
+        created_at = datetime.strptime("%Y-%m-%d, %H:%M:%S%z")
         )
         socketio.emit(
         "message",

@@ -168,6 +168,16 @@ def chat(msg, methods=["POST"]):
     )
     except:
         msg = "Invalid parameter provided"
+        logger.info(msg)
+        return create_response(status=500, message="Failed to send message")
+    try:
+        message.save()
+        msg = "successfully sent message"
+    except:
+        msg = "Error in meessage"
+        logger.info(msg)
+        return create_response(status=500, message="Failed to send message")
+    return create_response(status=200, message="successfully sent message")
 
 
 

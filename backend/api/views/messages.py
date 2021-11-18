@@ -7,26 +7,11 @@ from api.core import create_response, serialize_list, logger
 from api.models import db
 from datetime import datetime
 from api import socketio
-from flask_socketio import *
+from flask_socketio import send, emit, join_room
+from api.models import DirectMessage
 
 messages = Blueprint("messages", __name__)
-privateMessaging = Flask(__name__)
-socketio = SocketIO(privateMessaging, logger=True)
-
-@socketio.on('connect')
-def test_connect():
-    print('CONNECT EVENT happened...')
-    emit('Success', {'data': 'Connected'})
-
-# @socketio.on('send-message')
-# def handle_message(message):
-#     print(message)
-#     send(message, broadcast=True)
-
-
-# @socketio.on('json')
-# def handle_json(json):
-#     send(json, json=True)
+direct_message = Blueprint("direct", __name__)
 
 
 @messages.route("/", methods=["GET"])
@@ -154,7 +139,38 @@ def contact_mentor(mentor_id):
     )
     return create_response(status=200, message="successfully sent email message")
 
-
 @socketio.on("message")
 def handle_message(data):
+    send(data)
     logger.info(data)
+
+@socketio.on('join-chat')
+def join(msg):
+    room = msg["rid"]
+    join_room(room = room)
+    emit("jointed-chat", {"data" : msg['data']}, room =room)
+
+@socketio.on("outgoing")
+def chat(msg, methods=["POST"]):
+    try:
+        message = DirectMessage(
+        body = msg["body"],
+        message_read = msg["message_read"],
+        sender_id = msg["sender_id"] ,
+        recipient_id = msg["rid"],
+        created_at = datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z")
+        )
+        socketio.emit(
+        "message",
+        msg,
+        room=msg["rid"],
+        include_self=False,
+    )
+    except:
+        msg = "Invalid parameter provided"
+
+
+
+
+
+

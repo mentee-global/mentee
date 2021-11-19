@@ -73,6 +73,13 @@ class MessageForm(Form):
     link = StringField()
     time = StringField(validators=[InputRequired()])
 
+class DirectMessageForm(Form):
+    body = StringField(validators=[InputRequired()])
+    message_read = BooleanField(validators=[InputRequired()])
+    recipient_id = StringField(validators=[InputRequired()])
+    sender_id = StringField(validators=[InputRequired()])
+    created_at = StringField(validators=[InputRequired()])
+
 
 class ApppointmentForm(Form):
     mentor_id = StringField(validators=[InputRequired()])

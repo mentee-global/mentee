@@ -1,13 +1,14 @@
 from os import path
 from flask import Blueprint, request, jsonify
-from api.models import MentorProfile, MenteeProfile, Users, Message
-from api.utils.request_utils import MessageForm, is_invalid_form, send_email
+from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage
+from api.utils.request_utils import DirectMessageForm, MessageForm, is_invalid_form, send_email
 from api.utils.constants import MENTOR_CONTACT_ME
 from api.core import create_response, serialize_list, logger
 from api.models import db
 from datetime import datetime
 from api import socketio
 from flask_socketio import send, emit
+from mongoengine.queryset.visitor import Q
 
 messages = Blueprint("messages", __name__)
 
@@ -138,18 +139,40 @@ def contact_mentor(mentor_id):
     return create_response(status=200, message="successfully sent email message")
 
 
+@messages.route("/direct/", methods=["POST"])
+def post_messages():
+  data = request.get_json()["body"]
+  for i in data:
+      print(i)
+      validate_data = DirectMessageForm.from_json(i)
+      msg, is_invalid = is_invalid_form(validate_data)
+      # print(DirectMessage.objects)
+      dm = DirectMessage(
+          sender_id=i['sender_id']["$oid"],
+          recipient_id=i['recipient_id']["$oid"],
+          body=i['body'],
+          created_at=datetime.now(),
+          message_read=False,
+      )
+      dm.save()
+      print('success')
+
 @messages.route("/direct/", methods=["GET"])
 def get_direct_messages():
-    messageQuery = {'recipient_id': request.args["user_id"], 'sender_id': request.args["user_id"]}
+
+    
     try:
-        messages = DirectMessage.objects.filter(**messageQuery)
+      messages = DirectMessage.objects(
+        Q(sender_id=request.args.get("sender_id")) & Q(recipient_id=request.args.get("recipient_id")) |
+        Q(sender_id=request.args.get("recipient_id")) & Q(recipient_id=request.args.get("sender_id"))
+      )
     except:
         msg = "Invalid parameters provided"
         logger.info(msg)
         return create_response(status=422, message=msg)
     msg = "Success"
     if not messages:
-        msg = "Messages could not be found with parameters provided"
+        msg = request.args
     return create_response(data={"Messages": messages}, status=200, message=msg)
 
 @socketio.on("message")

@@ -73,6 +73,7 @@ class MessageForm(Form):
     link = StringField()
     time = StringField(validators=[InputRequired()])
 
+
 class DirectMessageForm(Form):
     body = StringField(validators=[InputRequired()])
     message_read = BooleanField(validators=[InputRequired()])

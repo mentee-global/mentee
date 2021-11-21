@@ -139,28 +139,9 @@ def contact_mentor(mentor_id):
     return create_response(status=200, message="successfully sent email message")
 
 
-@messages.route("/direct/", methods=["POST"])
-def post_messages():
-  data = request.get_json()["body"]
-  for i in data:
-      print(i)
-      validate_data = DirectMessageForm.from_json(i)
-      msg, is_invalid = is_invalid_form(validate_data)
-      # print(DirectMessage.objects)
-      dm = DirectMessage(
-          sender_id=i['sender_id']["$oid"],
-          recipient_id=i['recipient_id']["$oid"],
-          body=i['body'],
-          created_at=datetime.now(),
-          message_read=False,
-      )
-      dm.save()
-      print('success')
 
 @messages.route("/direct/", methods=["GET"])
-def get_direct_messages():
-
-    
+def get_direct_messages():    
     try:
       messages = DirectMessage.objects(
         Q(sender_id=request.args.get("sender_id")) & Q(recipient_id=request.args.get("recipient_id")) |
@@ -180,43 +161,3 @@ def handle_message(data):
     logger.info(data)
 
 
-    
-
-  
-  # convosJSON = {
-  #   "conversations": [
-  #     {
-  #       "name": "John Doe",
-  #       "profileImage": "https://profilepic.com",
-  #       "recentMessage": "Hello, how are you?"
-  #     },
-  #     {
-  #       "name": "John Doe",
-  #       "profileImage": "https://profilepic.com",
-  #       "recentMessage": "Hello, how are you?"
-  #     },
-  #     {
-  #       "name": "John Doe",
-  #       "profileImage": "https://profilepic.com",
-  #       "recentMessage": "Hello, how are you?"
-  #     },
-  #   ]
-  # }
-
-
-    # messagesJSON = {
-  #   "messages": [
-  #     {
-  #       "message": "a quick brown fox jumps over the lazy dog",
-  #       "timestamp": "something something UTC",
-  #     },
-  #     {
-  #       "message": "John Doe",
-  #       "timestamp": "something something UTC",
-  #     },
-  #     {
-  #       "message": "John Doe",
-  #       "timestamp": "something something UTC",
-  #     },
-  #   ]
-  # }

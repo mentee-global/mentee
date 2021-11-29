@@ -51,8 +51,12 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
         style={{ overflow: "hidden" }}
         footer={null}
       >
-        <h1 className="modal-mentee-appointment-contact-header">Reach Out to {mentorName}</h1>
-        <h3 className="modal-mentee-appointment-contact-description">Your name and email will be sent to this mentor</h3>
+        <h1 className="modal-mentee-appointment-contact-header">
+          Reach Out to {mentorName}
+        </h1>
+        <h3 className="modal-mentee-appointment-contact-description">
+          Your name and email will be sent to this mentor
+        </h3>
         <Form>
           <Form.Item
             label="Choose Interest Areas"

@@ -24,8 +24,15 @@ const { Header } = Layout;
 
 function NavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
-  const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const {
+    onAuthStateChanged,
+    resetRoleState,
+    isAdmin,
+    isMentor,
+    isMentee,
+    profileId,
+    role,
+  } = useAuth();
   const [drawerVisible, setDrawerVisible] = useState(false);
 
   const [user, setUser] = useState();
@@ -50,6 +57,18 @@ function NavHeader({ history }) {
 
     onAuthStateChanged(getUser);
   }, [role]);
+
+  const getUserType = () => {
+    if (role === ACCOUNT_TYPE.MENTOR) {
+      return "Mentor";
+    }
+    if (role === ACCOUNT_TYPE.MENTEE) {
+      return "Mentee";
+    }
+    if (role === ACCOUNT_TYPE.ADMIN) {
+      return "Admin";
+    }
+  };
 
   const logoutUser = () => {
     logout().then(() => {
@@ -167,9 +186,11 @@ function NavHeader({ history }) {
             {user ? (
               <>
                 <div className="profile-name">
-                  <b>{user.name}</b>
-                  <br />
-                  {user.professional_title}
+                  <b>
+                    {user.name}
+                    <br />
+                    {getUserType()}
+                  </b>
                 </div>
                 <div className="profile-picture">
                   <Avatar

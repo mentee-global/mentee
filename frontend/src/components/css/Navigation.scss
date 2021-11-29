@@ -117,9 +117,12 @@
 
 .profile-name {
   float: right;
+  margin-top: 15px;
+  margin-left: 1%;
   font-size: 15px;
-  text-align: center;
-  margin: 1%;
+  line-height: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .profile-caret {

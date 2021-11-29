@@ -4,7 +4,7 @@ import { Breadcrumb, Input, Button, Row, Col, Spin } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
 import {
-  fetchAllAppointments,
+  fetchPaginatedAppointments,
   downloadAllApplicationData,
 } from "../../utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
@@ -23,12 +23,15 @@ function AdminAppointmentData() {
   const [isLoading, setIsLoading] = useState(false);
   const [resetFilters, setResetFilters] = useState(false);
   const [appointments, setAppointments] = useState([]);
-  const [filterData, setFilterData] = useState([]);
   const [render, setRender] = useState(false);
   const [isDownloadingAppointments, setIsDownloadingAppointments] = useState(
     false
   );
+  const [pageNumber, setPageNumber] = useState(1);
+  const [appointmentCount, setAppointmentCount] = useState(0);
   const [downloadFile, setDownloadFile] = useState(null);
+  const [searchValue, setSearchValue] = useState("NONE");
+  const [filterValue, setFilterValue] = useState("NONE");
   const [visible, setVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
@@ -37,53 +40,61 @@ function AdminAppointmentData() {
   useEffect(() => {
     async function getAppointments() {
       setIsLoading(true);
-      const res = await fetchAllAppointments();
+      const res = await fetchPaginatedAppointments(
+        pageNumber,
+        searchValue,
+        filterValue
+      );
 
       if (res) {
         const sorted = res.appointments.reverse();
         setAppointments(sorted);
-        setFilterData(sorted);
+        setAppointmentCount(res.totalAppointments);
       }
       setIsLoading(false);
     }
 
     onAuthStateChanged(getAppointments);
-  }, []);
+  }, [pageNumber, searchValue, filterValue]);
 
-  const handleSearchAppointment = (searchValue) => {
-    if (!searchValue) {
-      setFilterData(appointments);
+  const incrementPageNumber = () => {
+    if (pageNumber * 12 < appointmentCount) {
+      setPageNumber(pageNumber + 1);
     }
+  };
+  const decrementPageNumber = () => {
+    if (pageNumber > 1) {
+      setPageNumber(pageNumber - 1);
+    }
+  };
 
-    const newFiltered = filterData.filter((appt) => {
-      return (
-        appt.mentor.match(new RegExp(searchValue, "i")) ||
-        appt.appointment.name.match(new RegExp(searchValue, "i"))
-      );
-    });
-    setFilterData(newFiltered);
+  const handleSearchAppointment = (searchVal) => {
+    if (searchVal != "") {
+      setSearchValue(searchVal);
+    } else {
+      setSearchValue("NONE");
+    }
+    setPageNumber(1);
   };
   const handleResetFilters = () => {
-    setFilterData(appointments);
-    setResetFilters(!resetFilters);
+    if (filterValue != "NONE") {
+      setFilterValue("NONE");
+      setPageNumber(1);
+    }
   };
   const handleSortData = (sortingKey) => {
     const isAscending = sortingKey === keys.ASCENDING;
-    const newSorted = filterData.sort((a, b) => {
+    const newSorted = appointments.sort((a, b) => {
       const aDate = moment(a.appointment.timeslot.start_time.$date);
       const bDate = moment(b.appointment.timeslot.start_time.$date);
       return isAscending ? bDate.diff(aDate) : aDate.diff(bDate);
     });
-    setFilterData(newSorted);
     setRender(!render);
+    setAppointments(newSorted);
   };
   const handleSpecializationsDisplay = (index) => {
-    const newFiltered = filterData.filter((appt) => {
-      return appt.appointment.specialist_categories.includes(
-        SPECIALIZATIONS[index]
-      );
-    });
-    setFilterData(newFiltered);
+    setFilterValue(SPECIALIZATIONS[index]);
+    setPageNumber(1);
   };
 
   const handleAppointmentDownload = async () => {
@@ -154,12 +165,14 @@ function AdminAppointmentData() {
           >
             Appointment Data
           </Button>
+          <Button onClick={() => decrementPageNumber()}>Prev Page</Button>
+          <Button onClick={() => incrementPageNumber()}>Next Page</Button>
         </div>
       </div>
       <Spin spinning={isLoading} size="large" style={{ height: "100vh" }}>
         <div className="appointments-table">
           <Row gutter={[16, 16]} justify="start">
-            {filterData.map((data, key) => {
+            {appointments.map((data, key) => {
               return (
                 <Col span={6} key={key}>
                   <AdminAppointmentCard

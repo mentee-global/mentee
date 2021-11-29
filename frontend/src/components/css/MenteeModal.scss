@@ -124,6 +124,16 @@
   flex: 1;
 }
 
+.modal-mentee-appointment-contact-header {
+  margin: auto;
+  width: 60%;
+}
+
+.modal-mentee-appointment-contact-description {
+  margin: auto;
+  width: 70%;
+}
+
 .modal-mentee-appointment-info-container {
   display: flex;
   flex: 0.3;
@@ -237,6 +247,12 @@
 .input-text {
   overflow: hidden;
 }
+
+.input-error {
+  margin-top: 5px;
+  color: "#FF0000";
+}
+
 
 .bold {
   font-weight: bold;

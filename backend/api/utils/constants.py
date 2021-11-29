@@ -15,7 +15,7 @@ USER_VERIFICATION_TEMPLATE = "d-7bd09ab8f8484cee9227a9a25ad527ec"
 USER_FORGOT_PASSWORD_TEMPLATE = "d-df1adcced8ab461ca72ceae5eecfc566"
 MENTOR_APP_OFFER = "d-3a7a5db2cf4e412e9e68e729a7b52813"
 MENTOR_CONTACT_ME = "d-d6c6d8f33c3b4970937a9dbd85f97d1a"
-
+WEEKLY_NOTIF_REMINDER = "d-9155757f51f14d538a613881bf0211d"
 MENTOR_APP_SUBMITTED = "d-753727e2c7df4509b251a576645d829a"
 MENTOR_APP_REJECTED = "d-5158980fcf9a4247b018ef0d832d796c"
 
@@ -28,6 +28,8 @@ MENTEE_ROLE = "mentee"
 ADMIN_ROLE = "admin"
 
 # Account types
+
+
 class Account(Enum):
     ADMIN = 0
     MENTOR = 1
@@ -46,4 +48,5 @@ MENTOR_APP_STATES = {
 }
 
 # Appointment Status
-APPT_STATUS = {"PENDING": "pending", "DENIED": "denied", "ACCEPTED": "accepted"}
+APPT_STATUS = {"PENDING": "pending",
+               "DENIED": "denied", "ACCEPTED": "accepted"}

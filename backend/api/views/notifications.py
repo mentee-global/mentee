@@ -3,7 +3,8 @@ from api.core import create_response, logger
 from flask import Blueprint
 from mongoengine.queryset.visitor import Q
 from api.models import DirectMessage
-
+from api.utils.request_utils import send_email
+from api.utils.constants import WEEKLY_NOTIF_REMINDER
 
 notifications = Blueprint("notifications", __name__)
 
@@ -20,3 +21,15 @@ def get_unread_dm_count(id):
         return create_response(status=422, message=msg)
 
     return create_response(data={"notifications": notifications})
+
+
+@notifications.route("/<id>", methods=["GET"])
+def send_weekly_email(user, notifications):
+    res, res_msg = send_email(
+        recipient=user.email,
+        template_id=WEEKLY_NOTIF_REMINDER,
+        data={"notification_count": notifications},
+    )
+    if not res:
+        msg = "Failed to send mentee email " + res_msg
+        logger.info(msg)

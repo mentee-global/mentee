@@ -144,7 +144,7 @@ function Profile() {
             name="phone"
             rules={[
               {
-                min: 10,
+                len: 10,
               },
             ]}
           >

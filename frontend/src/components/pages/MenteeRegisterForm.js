@@ -145,6 +145,15 @@ function MenteeRegisterForm(props) {
     setIsValid(tempValid);
   }
 
+  function handlePhoneChange(e, index) {
+    const phoneNumber = e.target.value;
+    let newValid = [...isValid];
+    newValid[7] = phoneNumber.length === 10;
+    setIsValid(newValid);
+
+    setPhone(e.target.value);
+  }
+
   function handleSchoolChange(e, index) {
     const newEducations = [...educations];
     let education = newEducations[index];
@@ -269,11 +278,11 @@ function MenteeRegisterForm(props) {
       organization,
       video: video
         ? {
-            title: MENTEE_DEFAULT_VIDEO_NAME,
-            url: video,
-            tag: MENTEE_DEFAULT_VIDEO_NAME,
-            date_uploaded: moment().format(),
-          }
+          title: MENTEE_DEFAULT_VIDEO_NAME,
+          url: video,
+          tag: MENTEE_DEFAULT_VIDEO_NAME,
+          date_uploaded: moment().format(),
+        }
         : undefined,
       is_private: privacy,
     };
@@ -402,8 +411,10 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[7]}
             index={7}
             handleClick={handleClick}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={handlePhoneChange}
             value={phone}
+            valid={isValid[7]} // needs check on index
+            validate={validate}
           />
           <ModalInput
             style={styles.modalInput}

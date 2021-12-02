@@ -124,6 +124,16 @@
   flex: 1;
 }
 
+.modal-mentee-appointment-contact-header {
+  margin: auto;
+  width: 60%;
+}
+
+.modal-mentee-appointment-contact-description {
+  margin: auto;
+  width: 70%;
+}
+
 .modal-mentee-appointment-info-container {
   display: flex;
   flex: 0.3;
@@ -203,6 +213,37 @@
   padding-right: 5%;
   width: 100%;
 }
+
+.modal-mentee-confirmation-modal {
+  width: 70% !important;
+  height: 50%;
+}
+
+.modal-mentee-confirmation-content {
+  display: inline-flex;
+  padding: 2rem;
+}
+
+.modal-mentee-confirmation-modal-title {
+  font-weight: bold;
+  padding: 1rem;
+  display: inline;
+}
+
+.modal-mentee-confirmation-modal-text {
+  margin: auto;
+}
+
+.modal-mentee-confirmation-modal-body {
+  padding: 1rem;
+  display: inline-block;
+}
+
+.modal-mentee-confirmation-modal-art {
+  padding: 1rem;
+  max-width: 30%;
+}
+
 .input-text {
   overflow: hidden;
 }

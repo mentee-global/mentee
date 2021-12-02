@@ -4,6 +4,8 @@ import { useMediaQuery } from "react-responsive";
 import { logout } from "utils/auth.service";
 import { Avatar, Layout, Drawer, Button, Menu, Dropdown } from "antd";
 import { withRouter } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { resetUser, fetchUser } from "features/user/userSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
@@ -35,32 +37,18 @@ function NavHeader({ history }) {
   } = useAuth();
   const [drawerVisible, setDrawerVisible] = useState(false);
 
-  const [user, setUser] = useState();
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    async function getUser() {
-      if (role == ACCOUNT_TYPE.ADMIN) {
-        const adminId = await getAdminID();
-        const admin = await getAdmin(adminId);
-        if (admin) {
-          setUser(admin);
-        }
-      } else {
-        const userData = await fetchAccountById(profileId, role);
-        if (userData) {
-          setUser(userData);
-        }
-      }
+    if (profileId) {
+      dispatch(fetchUser({ id: profileId, role }));
     }
-    // Don't fetch if guest
-    if (role == ACCOUNT_TYPE.GUEST || user) return;
-
-    onAuthStateChanged(getUser);
   }, [role]);
 
   const getUserType = () => {
     if (role === ACCOUNT_TYPE.MENTOR) {
-      return "Mentor";
+      return user ? user.professional_title : "Mentor";
     }
     if (role === ACCOUNT_TYPE.MENTEE) {
       return "Mentee";
@@ -73,9 +61,9 @@ function NavHeader({ history }) {
   const logoutUser = () => {
     logout().then(() => {
       resetRoleState();
+      dispatch(resetUser());
       history.push("/");
     });
-    setUser();
   };
 
   const dropdownMenu = (
@@ -164,11 +152,11 @@ function NavHeader({ history }) {
               </span>
             )}
             <span className="navigation-header-button">
-              <LoginVerificationModal
+              <MenteeButton
                 loginButton
                 content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
                 width="9em"
-                onVerified={async () => {
+                onClick={async () => {
                   let redirect = "/select-login";
                   if (isMentor) {
                     redirect = "/appointments";

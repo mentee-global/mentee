@@ -8,6 +8,10 @@
   margin-left: 0px;
   background-color: white;
   overflow: auto;
+
+  > div {
+    padding-bottom: 8em;
+  }
 }
 
 .navigation-header {

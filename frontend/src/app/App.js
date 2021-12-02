@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, BrowserRouter as Router, Redirect } from "react-router-dom";
+import { Layout } from "antd";
 import Appointments from "components/pages/Appointments";
 import MenteeAppointments from "components/pages/MenteeAppointments";
 import Home from "components/pages/Home";
@@ -22,11 +23,15 @@ import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
 import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
 import MenteeRegisterForm from "components/pages/MenteeRegisterForm";
+import NavHeader from "components/NavHeader";
 import { ACCOUNT_TYPE } from "utils/consts";
+
+import "components/css/Navigation.scss";
 
 function App() {
   return (
     <Router>
+      <NavHeader />
       <Route
         path="/"
         exact

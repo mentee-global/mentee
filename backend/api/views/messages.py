@@ -192,6 +192,7 @@ def get_sidebar(user_id):
         logger.info(e)
         return create_response(status=422, message="Something went wrong!")
 
+
 @messages.route("/direct/", methods=["GET"])
 def get_direct_messages():
     try:
@@ -209,6 +210,7 @@ def get_direct_messages():
     if not messages:
         msg = request.args
     return create_response(data={"Messages": messages}, status=200, message=msg)
+
 
 @socketio.on("message")
 def handle_message(data):

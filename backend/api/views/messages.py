@@ -69,8 +69,18 @@ def update_message(message_id):
 
 @messages.route("/", methods=["PUT"])
 def mark_as_read(sender_id, receiver_id):
-    messages = Message.objects.get(user_id=sender_id, recipient_id=receiver_id)
-    messages.find( { 'read': False } ).update( { '$set': { 'read': True } } )
+    try:
+        messages = Message.objects.get(user_id=sender_id, recipient_id=receiver_id)
+    except:
+        msg = "Could not find conversation"
+    try:
+        messages.find( { 'read': False } ).update( { '$set': { 'read': True } } )
+        return create_response(status=200, message=f"conversation between sender {sender_id} and receiver {receiver_id} marked as read")
+    except:
+        msg = "Failed to mark conversation as read"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    
 
 @messages.route("/", methods=["POST"])
 def create_message():

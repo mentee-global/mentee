@@ -16,7 +16,7 @@ class Message(Document, Mixin):
     email = StringField()
     link = StringField()
     time = DateTimeField(required=True)
-    # read = BooleanField(required=True)
+    read = BooleanField(required=True)
 
     def __repr__(self):
         return f"<Message:{self.message} \n Sent by:{self.user_name} to :{self.recipient_name}>"

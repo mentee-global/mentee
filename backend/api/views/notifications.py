@@ -71,6 +71,4 @@ def send_weekly_emails():
             if not res:
                 msg = "Failed to send mentee email " + res_msg
                 logger.info(msg)
-    return create_response(
-        message="Successfully sent weekly notification emails"
-    )
+    return create_response(message="Successfully sent weekly notification emails")

@@ -144,14 +144,15 @@ def contact_mentor(mentor_id):
 def get_sidebar(user_id):
     try:
         sentMessages = DirectMessage.objects.filter(
-            Q(sender_id=user_id) | Q(recipient_id=user_id)).order_by('-created_at')
+            Q(sender_id=user_id) | Q(recipient_id=user_id)
+        ).order_by("-created_at")
 
         contacts = []
         sidebarContacts = set()
         for message in sentMessages:
-            otherId = message['recipient_id']
-            if message['recipient_id'] == user_id:
-                otherId = message['sender_id']
+            otherId = message["recipient_id"]
+            if message["recipient_id"] == user_id:
+                otherId = message["sender_id"]
 
             if otherId not in sidebarContacts:
                 otherUser = None
@@ -168,16 +169,17 @@ def get_sidebar(user_id):
 
                 otherUser = json.loads(otherUser.to_json())
                 otherUserObj = {
-                    "name": otherUser['name'],
+                    "name": otherUser["name"],
                 }
 
-                if 'image' in otherUser:
-                    otherUserObj['image'] = otherUser['image']['url']
+                if "image" in otherUser:
+                    otherUserObj["image"] = otherUser["image"]["url"]
 
-                sidebarObject = {'otherId': str(otherId),
-                                 'otherUser': otherUserObj,
-                                 'latestMessage': json.loads(message.to_json())
-                                 }
+                sidebarObject = {
+                    "otherId": str(otherId),
+                    "otherUser": otherUserObj,
+                    "latestMessage": json.loads(message.to_json()),
+                }
 
                 contacts.append(sidebarObject)
                 sidebarContacts.add(otherId)

@@ -21,6 +21,8 @@ from mongoengine.queryset.visitor import Q
 appointment = Blueprint("appointment", __name__)
 
 # GET request for appointments by account id
+
+
 @appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
 def get_requests_by_id(account_type, id):
     account = None
@@ -123,7 +125,8 @@ def create_appointment():
         start_time=time_data.get("start_time"), end_time=time_data.get("end_time")
     )
 
-    date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
+    date_object = datetime.strptime(
+        time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
 
     if mentee.email_notifications:
@@ -181,7 +184,8 @@ def put_appointment(id):
             break
 
     if mentee.email_notifications:
-        start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
+        start_time = appointment.timeslot.start_time.strftime(
+            APPT_TIME_FORMAT + " GMT")
         res_email = send_email(
             recipient=mentee.email,
             subject="Mentee Appointment Notification",
@@ -210,7 +214,8 @@ def delete_request(appointment_id):
         return create_response(status=422, message=msg)
 
     if mentee.email_notifications:
-        start_time = appointment.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
+        start_time = appointment.timeslot.start_time.strftime(
+            f"{APPT_TIME_FORMAT} GMT")
         res_email = send_email(
             recipient=mentee.email,
             subject="Mentee Appointment Notification",
@@ -292,35 +297,35 @@ def get_appointments(page_number, search, filter):
     total_count = 0
     if search == "NONE" and filter == "NONE":
         appointments = AppointmentRequest.objects[
-            start_index : start_index + page_count
+            start_index: start_index + page_count
         ]
         total_count = AppointmentRequest.objects[
-            start_index : start_index + page_count
+            start_index: start_index + page_count
         ].count()
     elif search == "NONE":
         appointments = AppointmentRequest.objects(
             specialist_categories__contains=filter
-        )[start_index : start_index + page_count]
+        )[start_index: start_index + page_count]
         total_count = AppointmentRequest.objects(
             specialist_categories__contains=filter
-        )[start_index : start_index + page_count].count()
+        )[start_index: start_index + page_count].count()
     elif filter == "NONE":
         appointments = AppointmentRequest.objects(
             Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
-        )[start_index : start_index + page_count]
+        )[start_index: start_index + page_count]
         total_count = AppointmentRequest.objects(
             Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
-        )[start_index : start_index + page_count].count()
+        )[start_index: start_index + page_count].count()
     else:
         appointments = AppointmentRequest.objects(
             Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
         )(specialist_categories__contains=filter)[
-            start_index : start_index + page_count
+            start_index: start_index + page_count
         ]
         total_count = AppointmentRequest.objects(
             Q(name__istartswith=search) | Q(mentor_name__istartswith=search)
         )(specialist_categories__contains=filter)[
-            start_index : start_index + page_count
+            start_index: start_index + page_count
         ].count()
 
     mentors = MentorProfile.objects().only("name", "id")

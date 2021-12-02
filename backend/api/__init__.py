@@ -87,6 +87,7 @@ def create_app(test_config=None):
         download,
         mentee,
         messages,
+        notifications,
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -101,6 +102,7 @@ def create_app(test_config=None):
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")
     app.register_blueprint(messages.messages, url_prefix="/api/messages")
+    app.register_blueprint(notifications.notifications, url_prefix="/api/notifications")
 
     app.register_error_handler(Exception, all_exception_handler)
 

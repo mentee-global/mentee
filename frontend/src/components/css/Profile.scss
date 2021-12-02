@@ -11,6 +11,13 @@
   margin-bottom: 3.5em;
 }
 
+.profile-loading {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (min-width: 768px) {
   //For desktop
   .background-color-strip {

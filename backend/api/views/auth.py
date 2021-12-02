@@ -199,6 +199,8 @@ def login():
                     "token": firebase_admin_auth.create_custom_token(
                         firebase_uid, {"role": role}
                     ).decode("utf-8"),
+                    "profileId": profile_id,
+                    "role": role,
                 },
             )
             # pass
@@ -213,6 +215,8 @@ def login():
             "token": firebase_admin_auth.create_custom_token(
                 firebase_uid, {"role": role, "profileId": profile_id}
             ).decode("utf-8"),
+            "profileId": profile_id,
+            "role": role,
         },
     )
 

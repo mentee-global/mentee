@@ -809,7 +809,7 @@ function MentorApplication() {
                   <div>
                     {current < steps.length - 1 && (
                       <MenteeButton
-                        content={<b>Next ></b>}
+                        content={<b>Next</b>}
                         onClick={() => next()}
                       />
                     )}

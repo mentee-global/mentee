@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
-import { Form, Input, Avatar, Switch, Button } from "antd";
-import {
-  getMentorID,
-  getMenteeID,
-  logout,
-  getCurrentUser,
-} from "utils/auth.service";
+import { Form, Input, Avatar, Switch, Button, Spin } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "features/user/userSlice";
+import { getMentorID, getMenteeID } from "utils/auth.service";
 import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -23,42 +20,17 @@ import {
 
 function Profile() {
   const history = useHistory();
-  const [user, setUser] = useState({});
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
   const [onEdit, setEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(false);
 
   const [form] = Form.useForm();
 
-  const { onAuthStateChanged, isMentor, profileId, isMentee } = useAuth();
-
-  useEffect(() => {
-    onAuthStateChanged(fetchUser);
-  }, []);
-
-  useEffect(() => {
-    fetchUser();
-  }, [editedUser]);
-
-  const fetchUser = async () => {
-    const mentorID = await getMentorID();
-    if (mentorID) {
-      const mentorData = await fetchMentorByID(mentorID);
-
-      if (mentorData) {
-        setUser(mentorData);
-      }
-    } else {
-      const menteeID = await getMenteeID();
-      const menteeData = await fetchMenteeByID(menteeID);
-
-      if (menteeData) {
-        setUser(menteeData);
-      }
-    }
-  };
+  const { onAuthStateChanged, isMentor, profileId, isMentee, role } = useAuth();
 
   const handleSaveEdits = () => {
-    setEditedUser(!editedUser);
+    dispatch(fetchUser({ id: profileId, role }));
   };
 
   function renderContactInfo() {
@@ -188,34 +160,45 @@ function Profile() {
   }
 
   return (
-    <div className="background-color-strip">
-      <div className="mentor-profile-content">
-        <Avatar
-          size={120}
-          src={user.image && user.image.url}
-          icon={<UserOutlined />}
-        />
-        <div className="mentor-profile-content-flexbox">
-          <div className="mentor-profile-info">
-            <ProfileContent
-              mentor={user}
-              isMentor={isMentor}
-              accountType={isMentor && ACCOUNT_TYPE.MENTOR}
-              handleSaveEdits={handleSaveEdits}
-              showEditBtn={
-                user && user._id && profileId && profileId === user._id["$oid"]
-              }
-            />
-          </div>
-          <fieldset className="mentor-profile-contact">
-            <legend className="mentor-profile-contact-header">
-              Contact Info
-            </legend>
-            {onEdit ? renderEditInfo() : renderContactInfo()}
-          </fieldset>
+    <>
+      {!user ? (
+        <div className="profile-loading">
+          <Spin size="large" />
         </div>
-      </div>
-    </div>
+      ) : (
+        <div className="background-color-strip">
+          <div className="mentor-profile-content">
+            <Avatar
+              size={120}
+              src={user.image && user.image.url}
+              icon={<UserOutlined />}
+            />
+            <div className="mentor-profile-content-flexbox">
+              <div className="mentor-profile-info">
+                <ProfileContent
+                  mentor={user}
+                  isMentor={isMentor}
+                  accountType={isMentor && ACCOUNT_TYPE.MENTOR}
+                  handleSaveEdits={handleSaveEdits}
+                  showEditBtn={
+                    user &&
+                    user._id &&
+                    profileId &&
+                    profileId === user._id["$oid"]
+                  }
+                />
+              </div>
+              <fieldset className="mentor-profile-contact">
+                <legend className="mentor-profile-contact-header">
+                  Contact Info
+                </legend>
+                {onEdit ? renderEditInfo() : renderContactInfo()}
+              </fieldset>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

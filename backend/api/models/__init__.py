@@ -13,7 +13,9 @@ from .MentorApplication import MentorApplication
 from .VerifiedEmail import VerifiedEmail
 from .MenteeProfile import MenteeProfile
 from .Message import Message
+from .DirectMessage import DirectMessage
 from .Admin import Admin
+from .DirectMessage import DirectMessage
 
 __all__ = [
     "db",
@@ -28,7 +30,9 @@ __all__ = [
     "MentorApplication",
     "MenteeProfile",
     "Message",
+    "DirectMessage",
     "Admin",
+    "DirectMessage",
 ]
 
 # You must import all of the new Models you create to this page

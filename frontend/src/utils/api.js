@@ -204,8 +204,12 @@ export const fetchAppointmentsByType = (accountType) => {
   );
 };
 
-export const fetchAllAppointments = () => {
-  const requestExtension = "/appointment/";
+export const fetchPaginatedAppointments = (
+  pageNumber,
+  searchValue,
+  filterValue
+) => {
+  const requestExtension = `/appointment/all/${pageNumber}/${searchValue}/${filterValue}`;
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -382,10 +386,20 @@ export const getMenteePrivateStatus = (profileId) => {
   );
 };
 
-export const sendMenteeMentorEmail = (mentorId, menteeId, message) => {
+export const sendMenteeMentorEmail = (
+  mentorId,
+  menteeId,
+  responseEmail,
+  interestAreas,
+  communicationMethod,
+  message
+) => {
   const requestExtension = `/messages/mentor/${mentorId}`;
   const data = {
     mentee_id: menteeId,
+    response_email: responseEmail,
+    interest_areas: interestAreas,
+    communication_method: communicationMethod,
     message: message,
   };
   return instance.post(requestExtension, data).then(

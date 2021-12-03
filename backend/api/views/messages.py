@@ -1,13 +1,15 @@
 from os import path
 from flask import Blueprint, request, jsonify
-from api.models import MentorProfile, MenteeProfile, Users, Message
+from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email
 from api.utils.constants import MENTOR_CONTACT_ME
 from api.core import create_response, serialize_list, logger
 from api.models import db
+import json
 from datetime import datetime
 from api import socketio
 from flask_socketio import send, emit
+from mongoengine.queryset.visitor import Q
 
 messages = Blueprint("messages", __name__)
 
@@ -122,6 +124,8 @@ def contact_mentor(mentor_id):
         mentor.email,
         data={
             "response_email": mentee.email,
+            "interest_areas": data.get("interest_areas", ""),
+            "communication_method": data.get("communication_method", ""),
             "message": data.get("message", ""),
             "name": mentee.name,
         },
@@ -131,11 +135,81 @@ def contact_mentor(mentor_id):
         msg = "Failed to send mentee email " + res_msg
         logger.info(msg)
         return create_response(status=500, message="Failed to send message")
-
+    """
     logger.info(
-        f"Sending an email to {mentor.email} with message: {data.get('message', '')} as mentee {mentee.email}"
+        f"Sending an email to {mentor.email} with interest areas: {data.get("interest_areas", "")}, communication method: {data.get("communication_method", "")}, and message: {data.get('message', '')} as mentee {mentee.email}"
     )
+    """
     return create_response(status=200, message="successfully sent email message")
+
+
+@messages.route("/contacts/<string:user_id>", methods=["GET"])
+def get_sidebar(user_id):
+    try:
+        sentMessages = DirectMessage.objects.filter(
+            Q(sender_id=user_id) | Q(recipient_id=user_id)
+        ).order_by("-created_at")
+
+        contacts = []
+        sidebarContacts = set()
+        for message in sentMessages:
+            otherId = message["recipient_id"]
+            if message["recipient_id"] == user_id:
+                otherId = message["sender_id"]
+
+            if otherId not in sidebarContacts:
+                otherUser = None
+                try:
+                    otherUser = MentorProfile.objects.get(user_id=otherId)
+                except:
+                    pass
+                if not otherUser:
+                    try:
+                        otherUser = MenteeProfile.objects.get(id=otherId)
+                    except:
+                        msg = "Could not find mentor or mentee for given ids"
+                        return create_response(status=422, message=msg)
+
+                otherUser = json.loads(otherUser.to_json())
+                otherUserObj = {
+                    "name": otherUser["name"],
+                }
+
+                if "image" in otherUser:
+                    otherUserObj["image"] = otherUser["image"]["url"]
+
+                sidebarObject = {
+                    "otherId": str(otherId),
+                    "otherUser": otherUserObj,
+                    "latestMessage": json.loads(message.to_json()),
+                }
+
+                contacts.append(sidebarObject)
+                sidebarContacts.add(otherId)
+
+        return create_response(data={"data": contacts}, status=200, message="res")
+    except Exception as e:
+        logger.info(e)
+        return create_response(status=422, message="Something went wrong!")
+
+
+@messages.route("/direct/", methods=["GET"])
+def get_direct_messages():
+    try:
+        messages = DirectMessage.objects(
+            Q(sender_id=request.args.get("sender_id"))
+            & Q(recipient_id=request.args.get("recipient_id"))
+            | Q(sender_id=request.args.get("recipient_id"))
+            & Q(recipient_id=request.args.get("sender_id"))
+        )
+    except:
+        msg = "Invalid parameters provided"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    msg = "Success"
+    if not messages:
+        msg = request.args
+    return create_response(data={"Messages": messages}, status=200, message=msg)
 
 
 @socketio.on("message")

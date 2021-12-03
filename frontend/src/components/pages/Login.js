@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation, NavLink } from "react-router-dom";
 import { Input } from "antd";
+import firebase from "firebase";
+import { useDispatch } from "react-redux";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
 import { login, sendVerificationEmail } from "utils/auth.service";
+import { fetchUser } from "features/user/userSlice";
 import MenteeButton from "../MenteeButton";
-import firebase from "firebase";
 import usePersistedState from "utils/hooks/usePersistedState";
 import "../css/Login.scss";
 
 function Login() {
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [loginProps, setLoginProps] = useState({});
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -120,6 +123,12 @@ function Login() {
                     } else if (res.result.redirectToCreateProfile) {
                       history.push(`/create-profile/${loginProps.type}`);
                     } else {
+                      dispatch(
+                        fetchUser({
+                          id: res.result.profileId,
+                          role: res.result.role,
+                        })
+                      );
                       history.push(loginProps.redirect);
                     }
                   });

@@ -13,6 +13,7 @@ from .MentorApplication import MentorApplication
 from .VerifiedEmail import VerifiedEmail
 from .MenteeProfile import MenteeProfile
 from .Message import Message
+from .DirectMessage import DirectMessage
 from .Admin import Admin
 from .DirectMessage import DirectMessage
 
@@ -29,6 +30,7 @@ __all__ = [
     "MentorApplication",
     "MenteeProfile",
     "Message",
+    "DirectMessage",
     "Admin",
     "DirectMessage",
 ]

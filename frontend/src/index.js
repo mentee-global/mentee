@@ -2,9 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
 import "./index.scss";
-import App from "components/App/App";
+import App from "app/App";
 import * as serviceWorker from "utils/serviceWorker";
 import firebase from "firebase";
+import { Provider } from "react-redux";
+import store from "./app/store";
 
 firebase.initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -20,7 +22,9 @@ firebase.analytics();
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );

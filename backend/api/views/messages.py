@@ -69,7 +69,7 @@ def update_message(message_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-@messages.route("/", methods=["PUT"])
+@messages.route("/<string:sender_id>/<string:receiver_id>", methods=["PUT"])
 def mark_as_read(sender_id, receiver_id):
     try:
         messages = Message.objects.get(user_id=sender_id, recipient_id=receiver_id)
@@ -225,6 +225,22 @@ def get_direct_messages():
         msg = request.args
     return create_response(data={"Messages": messages}, status=200, message=msg)
 
+@messages.route("/direct/", methods=["POST"])
+def post_messages():
+  data = request.get_json()["body"]
+  for i in data:
+      validate_data = DirectMessageForm.from_json(i)
+      msg, is_invalid = is_invalid_form(validate_data)
+      # print(DirectMessage.objects)
+      dm = DirectMessage(
+          sender_id=i['sender_id']["$oid"],
+          recipient_id=i['recipient_id']["$oid"],
+          body=i['body'],
+          created_at=datetime.now(),
+          message_read=False,
+      )
+      dm.save()
+      print('success')
 
 @socketio.on("message")
 def handle_message(data):

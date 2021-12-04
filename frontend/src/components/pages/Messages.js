@@ -28,9 +28,6 @@ function Messages(props) {
     setSocket(newSocket);
     return () => newSocket.close();
   }, [setSocket]);
-  
-
-  
 
   useEffect(() => {
     async function getData() {
@@ -69,7 +66,8 @@ function Messages(props) {
   }, [profileId, activeMessageId]);
 
   if (profileId) {
-    socket.on(profileId, (data) => {
+    console.log("listening to ... " + profileId);
+    socket.once(profileId, (data) => {
       console.log(data);
     });
   }

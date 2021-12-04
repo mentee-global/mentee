@@ -230,6 +230,7 @@ def chat(msg, methods=["POST"]):
         created_at=msg["time"]
         )
         # msg['created_at'] = time
+        logger.info(msg["recipient_id"])
         socketio.emit(msg["recipient_id"], msg)
     
     except Exception as e:

@@ -158,7 +158,7 @@ def get_sidebar(user_id):
             if otherId not in sidebarContacts:
                 otherUser = None
                 try:
-                    otherUser = MentorProfile.objects.get(user_id=otherId)
+                    otherUser = MentorProfile.objects.get(id=otherId)
                 except:
                     pass
                 if not otherUser:

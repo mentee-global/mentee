@@ -30,17 +30,18 @@ const randomSentences = [
 ];
 
 export const getLatestMessages = (meId) => {
-    return randomNames.map((i, name) => {
-        return {
-            otherId: i,
-            otherName: name,
-            latestMessage: message(
-              i,
-              "latest message" + i,
-              meId,
-              Math.floor(Date.now() / 1000))
-        }
-    });
+  return randomNames.map((i, name) => {
+    return {
+      otherId: i,
+      otherName: name,
+      latestMessage: message(
+        i,
+        "latest message" + i,
+        meId,
+        Math.floor(Date.now() / 1000)
+      ),
+    };
+  });
 };
 
 export const getMessageData = (personOneId, personTwoId) => {

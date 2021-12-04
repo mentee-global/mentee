@@ -74,14 +74,14 @@ def update_message(message_id):
 @messages.route("/", methods=["POST"])
 def create_message():
     data = request.get_json()
-    
+
     try:
         message = DirectMessage(
             body=data["message"],
             message_read=False,
             sender_id=data["user_id"],
             recipient_id=data["recipient_id"],
-            created_at=data.get("time")
+            created_at=data.get("time"),
         )
     except Exception as e:
         msg = "Invalid parameter provided"
@@ -130,16 +130,15 @@ def contact_mentor(mentor_id):
         msg = "Failed to send mentee email " + res_msg
         logger.info(msg)
         return create_response(status=500, message="Failed to send message")
-    
+
     try:
         message = DirectMessage(
             body=data.get("message", "Hello"),
             message_read=False,
             sender_id=mentee_id,
             recipient_id=mentor_id,
-            created_at=datetime.today().isoformat()
+            created_at=datetime.today().isoformat(),
         )
-
 
         socketio.emit(mentor_id, json.loads(message.to_json()))
     except Exception as e:
@@ -152,7 +151,7 @@ def contact_mentor(mentor_id):
         msg = "Failed to save message"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    
+
     return create_response(status=200, message="successfully sent email message")
 
 
@@ -235,25 +234,25 @@ def chat(msg, methods=["POST"]):
     # print("here")
     try:
         message = DirectMessage(
-        body=msg["body"],
-        message_read=msg["message_read"],
-        sender_id=msg["sender_id"],
-        recipient_id=msg["recipient_id"],
-        created_at=msg["time"]
+            body=msg["body"],
+            message_read=msg["message_read"],
+            sender_id=msg["sender_id"],
+            recipient_id=msg["recipient_id"],
+            created_at=msg["time"],
         )
         # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
-    
+
     except Exception as e:
         # msg="Invalid parameter provided"
         logger.info(e)
-        return create_response(status = 500, message = "Failed to send message")
+        return create_response(status=500, message="Failed to send message")
     try:
         message.save()
-        msg="successfully sent message"
+        msg = "successfully sent message"
     except:
-        msg="Error in meessage"
+        msg = "Error in meessage"
         logger.info(msg)
-        return create_response(status = 500, message = "Failed to send message")
-    return create_response(status = 200, message = "successfully sent message")
+        return create_response(status=500, message="Failed to send message")
+    return create_response(status=200, message="successfully sent message")

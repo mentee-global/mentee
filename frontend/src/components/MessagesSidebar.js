@@ -16,18 +16,17 @@ function MessagesSidebar(props) {
   // const [latestConvos, setLatestConvos] = useState([]);
   const [activeMessageId, setActiveMessageId] = useState("");
 
-
   const styles = {
     searchInput: {
       borderRadius: 10,
       marginBottom: 5,
-      backgroundColor: "white"
+      backgroundColor: "white",
     },
   };
-  const {latestConvos} = props;
+  const { latestConvos } = props;
 
   if (!latestConvos || !latestConvos.length) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
   return (
     <Sider width={400} className="messages-sidebar-background">
@@ -45,13 +44,16 @@ function MessagesSidebar(props) {
       </div>
       <div className="messages-sidebar">
         {latestConvos.map((chat) => {
-          
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
             if (chat.otherId == activeMessageId) {
-              console.log(chat.otherId, activeMessageId)
-              return <MessageCard key={chat.otherId} chat={chat} active={true} />;
+              console.log(chat.otherId, activeMessageId);
+              return (
+                <MessageCard key={chat.otherId} chat={chat} active={true} />
+              );
             } else {
-              return <MessageCard key={chat.otherId} chat={chat} active={false}/>;
+              return (
+                <MessageCard key={chat.otherId} chat={chat} active={false} />
+              );
             }
           } else {
             return <></>;
@@ -62,4 +64,4 @@ function MessagesSidebar(props) {
   );
 }
 
-export default withRouter(MessagesSidebar);;
+export default withRouter(MessagesSidebar);

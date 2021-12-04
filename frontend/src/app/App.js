@@ -209,7 +209,12 @@ function App() {
       <Route
         path="/messages/:receiverId"
         component={() => (
-          <Navigation content={<Messages />} page="messages" needsAuth={true} ignoreSidebar={true} />
+          <Navigation
+            content={<Messages />}
+            page="messages"
+            needsAuth={true}
+            ignoreSidebar={true}
+          />
         )}
       />
     </Router>

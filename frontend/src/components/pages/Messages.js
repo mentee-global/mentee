@@ -22,7 +22,7 @@ function Messages(props) {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (profileId) {
+    if (profileId && messages.length) {
       if (socket === null) {
         setSocket(io(URL));
       }
@@ -31,13 +31,7 @@ function Messages(props) {
           console.log("listening to ... " + profileId);
           socket.on(profileId, (data) => {
             if (data.sender_id == activeMessageId) {
-
-              console.log("messages ", messages)
-              let newList = JSON.parse(JSON.stringify(messages))
-              console.log("newListBefore", newList)
-              newList.push(data)
-              console.log("newList", newList)
-              setMessages(newList)
+              setMessages([...messages, data])
             } else {
               const messageCard = {
                 latestMessage: data,
@@ -54,7 +48,7 @@ function Messages(props) {
       }
     }
     
-  }, [profileId, socket]);
+  }, [messages, profileId, socket]);
 
   useEffect(() => {
     async function getData() {
@@ -90,6 +84,10 @@ function Messages(props) {
     }
   }, [profileId, activeMessageId]);
 
+  const addMyMessage = (msg) => {
+    setMessages([...messages, msg])
+  }
+
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
       <MessagesSidebar latestConvos={latestConvos} />
@@ -102,6 +100,7 @@ function Messages(props) {
           messages={messages}
           activeMessageId={activeMessageId}
           socket={socket}
+          addMyMessage={addMyMessage}
         />
       </Layout>
     </Layout>

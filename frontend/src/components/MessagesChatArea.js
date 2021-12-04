@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Card, Col, Divider, Layout, Row, Input, Button, message } from "antd";
+import {
+  Avatar,
+  Card,
+  Col,
+  Divider,
+  Layout,
+  Row,
+  Input,
+  Button,
+  message,
+} from "antd";
 import { withRouter } from "react-router-dom";
 
 import Meta from "antd/lib/card/Meta";
@@ -10,17 +20,13 @@ import { getMessageData } from "utils/api";
 
 function MessagesChatArea(props) {
   const { Content, Footer, Header } = Layout;
-  const {socket} = props;
+  const { socket } = props;
   const { TextArea } = Input;
-  
+
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
 
   // const [messages, setMessages] = useState([]);
-
-
-
-  
 
   // console.log(profileId)
 
@@ -30,20 +36,29 @@ function MessagesChatArea(props) {
 
   const sendMessage = (e) => {
     let today = new Date();
-    let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    let dateTime = date+' '+time;
-    socket.emit("send", {
+    let date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    let time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let dateTime = date + " " + time;
+    const msg = {
       body: messageText,
       message_read: false,
       sender_id: profileId,
       recipient_id: activeMessageId,
-      time: dateTime
-    });
-    console.log("sent")
+      time: dateTime,
+    };
+    socket.emit("send", msg);
+    msg["sender_id"] = { $oid: msg["sender_id"] };
+    msg["recipient_id"] = { $oid: msg["recipient_id"] };
+    props.addMyMessage(msg);
   };
 
-  const {messages, activeMessageId} = props;
+  const { messages, activeMessageId } = props;
 
   // console.log(messages);
   // console.log(activeMessageId);
@@ -68,7 +83,6 @@ function MessagesChatArea(props) {
       </Header>
       <Content className="conversation-box">
         {messages.map((block) => {
-
           return (
             <div
               className={`chatRight__items you-${

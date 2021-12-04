@@ -24,6 +24,22 @@ def get_unread_dm_count(id):
     return create_response(data={"notifications": notifications})
 
 
+@notifications.route("/notifications/<id>", methods=["PUT"])
+def update_unread_count(recipient, sender):
+    try:
+        messages = DirectMessage.objects(
+            Q(recipient_id=recipient) & Q(
+                message_read=False) & Q(sender_id=sender)
+        )
+    except Exception as e:
+        msg = "failed"
+        logger.info(e)
+        return create_response(status=422, message=msg)
+    messages.update({'$set': {'read': True}})
+    messages.save()
+    return create_response(status=200, message="Success")
+
+
 @notifications.route("/weeklyemails", methods=["GET"])
 def send_weekly_emails():
     try:

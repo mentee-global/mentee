@@ -27,6 +27,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "socket.io-client": "^4.4.0",
     "superagent": "^6.1.0"
   },
   "scripts": {

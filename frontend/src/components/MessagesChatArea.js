@@ -4,29 +4,23 @@ import { withRouter } from "react-router-dom";
 
 import Meta from "antd/lib/card/Meta";
 import { SendOutlined, SettingOutlined } from "@ant-design/icons";
-import { getMessageData } from "utils/dummyData";
+// import { getMessageData } from "utils/dummyData";
 import useAuth from "utils/hooks/useAuth";
+import { getMessageData } from "utils/api";
 
 function MessagesChatArea(props) {
   const { Content, Footer, Header } = Layout;
+  const {socket} = props;
   const { TextArea } = Input;
+  
   const { profileId } = useAuth();
-  const [activeMessageId, setActiveMessageId] = useState("");
+  const [messageText, setMessageText] = useState("");
 
-  const [messages, setMessages] = useState([]);
+  // const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    if (!messages.length && activeMessageId && profileId) {
-      setMessages(getMessageData(profileId, activeMessageId));
-    }
-  });
 
-  useEffect(() => {
-    setActiveMessageId(props.match ? props.match.params.receiverId : null);
-    if (activeMessageId && profileId) {
-      setMessages(getMessageData(profileId, activeMessageId));
-    }
-  }, [props.location]);
+
+  
 
   console.log(profileId)
 
@@ -35,12 +29,25 @@ function MessagesChatArea(props) {
   */
 
   const sendMessage = (e) => {
-    // add code to return message
+    let today = new Date();
+    let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let dateTime = date+' '+time;
+    socket.emit("send", {
+      body: messageText,
+      message_read: false,
+      sender_id: profileId,
+      recipient_id: activeMessageId,
+      time: dateTime
+    });
+    console.log("sent")
   };
+
+  const {messages, activeMessageId} = props;
 
   console.log(messages);
   console.log(activeMessageId);
-  if (!messages.length) {
+  if (!activeMessageId || !messages || !messages.length) {
     return <div>Loading...</div>;
   }
 
@@ -61,14 +68,15 @@ function MessagesChatArea(props) {
       </Header>
       <Content className="conversation-box">
         {messages.map((block) => {
+
           return (
             <div
               className={`chatRight__items you-${
-                block.sender_id == profileId ? "sent" : "recieved"
+                block.sender_id.$oid == profileId ? "sent" : "recieved"
               }`}
             >
               <div className="chatRight__inner" data-chat="person1">
-                {block.sender_id != profileId && (
+                {block.sender_id.$oid != profileId && (
                   <span>
                     <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
                   </span>
@@ -77,13 +85,13 @@ function MessagesChatArea(props) {
                 <div className="convo">
                   <div
                     className={`bubble-${
-                      block.sender_id == profileId ? "sent" : "recieved"
+                      block.sender_id.$oid == profileId ? "sent" : "recieved"
                     }`}
                   >
                     {block.body}
                   </div>
                 </div>
-                {block.sender_id == profileId && (
+                {block.sender_id.$oid == profileId && (
                   <span>
                     <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
                   </span>
@@ -99,6 +107,7 @@ function MessagesChatArea(props) {
             <TextArea
               className="message-input"
               placeholder="Send a message..."
+              onChange={(e) => setMessageText(e.target.value)}
               autoSize={{ minRows: 1, maxRows: 3 }}
             />
           </Col>

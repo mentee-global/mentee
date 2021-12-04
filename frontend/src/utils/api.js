@@ -389,6 +389,16 @@ export const getDirectMessages = (user_id) => {
 export const getLatestMessages = (user_id) => {
   const requestExtension = `/messages/contacts/${user_id}`;
   return instance.get(requestExtension).then(
+    (response) => response.data.result.data,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getMessageData = (sender_id, recipient_id) => {
+  const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
+  return instance.get(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {
       console.error(err);

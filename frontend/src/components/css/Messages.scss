@@ -1,10 +1,10 @@
 @import "_app";
 
 .messages-container {
-  overflow: hidden;
+  // overflow: hidden;
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 95%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -109,6 +109,7 @@
   margin-top: 10px;
   margin-bottom: 10px;
   overflow-y: auto;
+  height: 100%;
 }
 
 .bubble-recieved {

@@ -13,23 +13,8 @@ function MessagesSidebar(props) {
   const history = useHistory();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [latestConvos, setLatestConvos] = useState([]);
+  // const [latestConvos, setLatestConvos] = useState([]);
   const [activeMessageId, setActiveMessageId] = useState("");
-
-  const {profileId} = useAuth();
-
-  useEffect(() => {
-    if (!latestConvos.length) {
-      const data = getLatestMessages("61845c00fc13ae059700059e");
-      console.log("data", data);
-      history.push(`/messages/61845c00fc13ae059700059e`);
-      setLatestConvos(data["result"]["Messages"]);
-    }
-  }, []);
-
-  useEffect(() => {
-    setActiveMessageId(props.match ? props.match.params.receiverId : null);
-  });
 
 
   const styles = {
@@ -41,12 +26,12 @@ function MessagesSidebar(props) {
   };
 
   console.log(props.match);
-  console.log(latestConvos);
 
-  if (!latestConvos.length) {
+  const {latestConvos} = props;
+
+  if (!latestConvos || !latestConvos.length) {
     return <div>Loading...</div>
   }
-
   return (
     <Sider width={400} className="messages-sidebar-background">
       <div className="messages-sidebar-header">

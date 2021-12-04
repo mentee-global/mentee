@@ -8,8 +8,9 @@ from api.models import db
 import json
 from datetime import datetime
 from api import socketio
-from flask_socketio import send, emit
 from mongoengine.queryset.visitor import Q
+from flask_socketio import join_room, leave_room
+
 
 messages = Blueprint("messages", __name__)
 
@@ -151,14 +152,14 @@ def get_sidebar(user_id):
             Q(sender_id=user_id) | Q(recipient_id=user_id)
         ).order_by("-created_at")
 
-        
-
         contacts = []
         sidebarContacts = set()
         for message in sentMessages:
             otherId = message["recipient_id"]
             if message["recipient_id"] == user_id:
                 otherId = message["sender_id"]
+            # if otherId == user_id:
+            #     continue
 
             if otherId not in sidebarContacts:
                 otherUser = None
@@ -215,6 +216,29 @@ def get_direct_messages():
     return create_response(data={"Messages": messages}, status=200, message=msg)
 
 
-@socketio.on("message")
-def handle_message(data):
-    logger.info(data)
+@socketio.on("send")
+def chat(msg, methods=["POST"]):
+    print("here")
+    try:
+        message = DirectMessage(
+        body=msg["body"],
+        message_read=msg["message_read"],
+        sender_id=msg["sender_id"],
+        recipient_id=msg["recipient_id"],
+        created_at=msg["time"]
+        )
+        # msg['created_at'] = time
+        socketio.emit(msg["recipient_id"], msg)
+    
+    except Exception as e:
+        # msg="Invalid parameter provided"
+        logger.info(e)
+        return create_response(status = 500, message = "Failed to send message")
+    try:
+        message.save()
+        msg="successfully sent message"
+    except:
+        msg="Error in meessage"
+        logger.info(msg)
+        return create_response(status = 500, message = "Failed to send message")
+    return create_response(status = 200, message = "successfully sent message")

@@ -93,6 +93,8 @@ def create_message():
         msg = "Failed to save message"
         logger.info(msg)
         return create_response(status=422, message=msg)
+
+    socketio.emit(data["recipient_id"], json.loads(message.to_json()))
     return create_response(
         status=201,
         message=f"Successfully saved message",
@@ -128,11 +130,29 @@ def contact_mentor(mentor_id):
         msg = "Failed to send mentee email " + res_msg
         logger.info(msg)
         return create_response(status=500, message="Failed to send message")
-    """
-    logger.info(
-        f"Sending an email to {mentor.email} with interest areas: {data.get("interest_areas", "")}, communication method: {data.get("communication_method", "")}, and message: {data.get('message', '')} as mentee {mentee.email}"
-    )
-    """
+    
+    try:
+        message = DirectMessage(
+            body=data.get("message", "Hello"),
+            message_read=False,
+            sender_id=mentee_id,
+            recipient_id=mentor_id,
+            created_at=datetime.today().isoformat()
+        )
+
+
+        socketio.emit(mentor_id, json.loads(message.to_json()))
+    except Exception as e:
+        msg = "Invalid parameter provided"
+        logger.info(e)
+        return create_response(status=422, message=msg)
+    try:
+        message.save()
+    except:
+        msg = "Failed to save message"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    
     return create_response(status=200, message="successfully sent email message")
 
 
@@ -223,7 +243,7 @@ def chat(msg, methods=["POST"]):
         )
         # msg['created_at'] = time
         logger.info(msg["recipient_id"])
-        socketio.emit(msg["recipient_id"], msg)
+        socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
     
     except Exception as e:
         # msg="Invalid parameter provided"

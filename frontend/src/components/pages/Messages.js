@@ -22,32 +22,33 @@ function Messages(props) {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (profileId && messages.length) {
+    if (profileId && messages?.length) {
       if (socket === null) {
         setSocket(io(URL));
       }
-  
+
       if (socket) {
-          console.log("listening to ... " + profileId);
-          socket.on(profileId, (data) => {
-            if (data.sender_id == activeMessageId) {
-              setMessages([...messages, data])
-            } else {
-              const messageCard = {
-                latestMessage: data,
-                otherUser: {
-                  name: data.sender_id,
-                  image: "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg"
-                },
-                otherId: data.sender_id,
-                new: true // use to indicate new message card UI
-              }
-              setLatestConvos([messageCard, ...latestConvos])
-            }
-          });
+        console.log("listening to ... " + profileId);
+        socket.on(profileId, (data) => {
+          if (data?.sender_id?.$oid == activeMessageId) {
+            setMessages([...messages, data]);
+          } else {
+            console.log(data);
+            const messageCard = {
+              latestMessage: data,
+              otherUser: {
+                name: data?.sender_id?.$oid,
+                image:
+                  "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg",
+              },
+              otherId: data?.sender_id?.$oid,
+              new: true, // use to indicate new message card UI
+            };
+            setLatestConvos([messageCard, ...latestConvos]);
+          }
+        });
       }
     }
-    
   }, [messages, profileId, socket]);
 
   useEffect(() => {
@@ -85,8 +86,8 @@ function Messages(props) {
   }, [profileId, activeMessageId]);
 
   const addMyMessage = (msg) => {
-    setMessages([...messages, msg])
-  }
+    setMessages([...messages, msg]);
+  };
 
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>

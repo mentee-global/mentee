@@ -74,26 +74,18 @@ def update_message(message_id):
 @messages.route("/", methods=["POST"])
 def create_message():
     data = request.get_json()
-    validate_data = MessageForm.from_json(data)
-    msg, is_invalid = is_invalid_form(validate_data)
-
-    if is_invalid:
-        return create_response(status=422, message=msg)
+    
     try:
-        message = Message(
-            message=data.get("message"),
-            user_name=data.get("user_name"),
-            user_id=data.get("user_id"),
-            recipient_name=data.get("recipient_name"),
-            recipient_id=data.get("recipient_id"),
-            email=data.get("email"),
-            link=data.get("link"),
-            time=datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z"),
-            # read=data.get("read"),
+        message = DirectMessage(
+            body=data["message"],
+            message_read=False,
+            sender_id=data["user_id"],
+            recipient_id=data["recipient_id"],
+            created_at=data.get("time")
         )
-    except:
+    except Exception as e:
         msg = "Invalid parameter provided"
-        logger.info(msg)
+        logger.info(e)
         return create_response(status=422, message=msg)
     try:
         message.save()
@@ -103,7 +95,7 @@ def create_message():
         return create_response(status=422, message=msg)
     return create_response(
         status=201,
-        message=f"Successfully saved message: {message.message} from user: {message.user_name} to: {message.recipient_name} sent on: {message.time}",
+        message=f"Successfully saved message",
     )
 
 

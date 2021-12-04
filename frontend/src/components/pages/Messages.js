@@ -9,8 +9,6 @@ import MessagesChatArea from "components/MessagesChatArea";
 import { getLatestMessages, getMessageData } from "utils/api";
 import { io } from "socket.io-client";
 
-
-
 function Messages(props) {
   const { history } = props;
   const [latestConvos, setLatestConvos] = useState([]);
@@ -18,39 +16,33 @@ function Messages(props) {
   const [messages, setMessages] = useState([]);
 
   const URL = "http://localhost:5000";
-  const socket = io(URL, { autoConnect: true });
 
   console.log(props.match);
 
-  const {profileId} = useAuth();
+  const { profileId } = useAuth();
+
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = io(URL);
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [setSocket]);
+  
+
+  
 
   useEffect(() => {
     async function getData() {
       const data = await getLatestMessages(profileId);
-      console.log(data)
+      console.log(data);
       setLatestConvos(data);
       history.push(`/messages/${data[0].otherId}`);
-
     }
-
-    socket.on(profileId, (data) => {
-      console.log(data)
-      // if (data.sender_id == activeMessageId) {
-      //   // const message = {
-      //   //   body: data.body,
-      //   //   created_at: data.created_at
-      //   // }
-      //   // setMessages([...messages, io.msg.body])
-      // } else {
-      //   // create a new sidebar card and append to front
-      // }
-      
-    });
 
     if (profileId) {
       getData();
     }
-   
   }, [profileId]);
 
   useEffect(() => {
@@ -67,27 +59,34 @@ function Messages(props) {
   useEffect(() => {
     async function getData() {
       const data = await getMessageData(profileId, activeMessageId);
-      console.log(data)
+      console.log(data);
       setMessages(data);
     }
 
     if (profileId && activeMessageId) {
       getData();
     }
-   
   }, [profileId, activeMessageId]);
 
-
+  if (profileId) {
+    socket.on(profileId, (data) => {
+      console.log(data);
+    });
+  }
 
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
-      <MessagesSidebar latestConvos={latestConvos}/>
+      <MessagesSidebar latestConvos={latestConvos} />
 
       <Layout
         className="messages-subcontainer"
         style={{ backgroundColor: "white" }}
       >
-        <MessagesChatArea messages={messages} activeMessageId={activeMessageId} socket={socket}/>
+        <MessagesChatArea
+          messages={messages}
+          activeMessageId={activeMessageId}
+          socket={socket}
+        />
       </Layout>
     </Layout>
   );

@@ -5,5 +5,35 @@
 ></script>
 <script type="text/javascript" charset="utf-8">
   var socket = io("http://localhost:5000");
-  socket.emit("message", { data: "I'm connected!" });
+  function connectToServer() {
+    socket.emit("join-chat", { 
+      otherUser: "5fa1cd36175c6900087a1855",
+      curUser:  "6194252538715b7c4b437180",
+      userName: "Praneeth" 
+    });
+  }
+
+  function getChatMembers() {
+    socket.emit("join-chat", { 
+      otherUser: "5fa1cd36175c6900087a1855",
+      curUser:  "6194252538715b7c4b437180",
+      userName: "Praneeth" 
+    });
+  }
+
+  socket.on("joined-chat", data => {
+    console.log(data)
+    document.getElementById('status').innerHTML = data;
+  });
+
 </script>
+<div id="status"></div>
+
+<div id="members"></div>
+
+<button onclick="connectToServer()">
+  connect
+</button>
+<button onclick="getChatMembers()">
+  get members
+</button>

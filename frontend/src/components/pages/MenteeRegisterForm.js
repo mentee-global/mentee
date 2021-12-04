@@ -225,6 +225,58 @@ function MenteeRegisterForm(props) {
     setPrivacy(e.target.checked);
   }
 
+  function handleNameChange(e) {
+    const name = e.target.value;
+
+    if (name.length < 50) {
+      let newValid = [...isValid];
+
+      newValid[0] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[0] = false;
+      setIsValid(newValid);
+    }
+    setName(name);
+  }
+  function handleBiographyChange(e) {
+    const biography = e.target.value;
+
+    if (biography.length < 255) {
+      let newValid = [...isValid];
+
+      newValid[8] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[8] = false;
+      setIsValid(newValid);
+    }
+
+    setBiography(biography);
+  }
+
+  function handleLocationChange(e) {
+    const location = e.target.value;
+
+    if (location.length < 70) {
+      let newValid = [...isValid];
+
+      newValid[9] = true;
+
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[9] = false;
+      setIsValid(newValid);
+    }
+
+    setLocation(location);
+  }
+
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
       const res = await createMenteeProfile(data);
@@ -278,8 +330,10 @@ function MenteeRegisterForm(props) {
       is_private: privacy,
     };
 
-    setSaving(true);
-    await saveEdits(newProfile);
+    if (!isValid.includes(false)) {
+      setSaving(true);
+      await saveEdits(newProfile);
+    }
   };
 
   return (
@@ -302,15 +356,12 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[0]}
             index={0}
             handleClick={handleClick}
-            onChange={(e) => {
-              setName(e.target.value);
-              let newValid = [...isValid];
-              newValid[0] = !!e.target.value;
-              setIsValid(newValid);
-            }}
+            onChange={handleNameChange}
             value={name}
             valid={isValid[0]}
             validate={validate}
+            errorPresent={name && name.length > 50}
+            errorMessage="Name field is too long."
           />
 
           <Button
@@ -326,7 +377,7 @@ function MenteeRegisterForm(props) {
         </div>
         <div className="modal-input-container">
           <ModalInput
-            style={styles.modalInput}
+            style={styles.textareaInput}
             type="textarea"
             maxRows={3}
             hasBorder={false}
@@ -334,8 +385,12 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[1]}
             index={1}
             handleClick={handleClick}
-            onChange={(e) => setBiography(e.target.value)}
+            onChange={handleBiographyChange}
             value={biography}
+            valid={isValid[8]}
+            validate={validate}
+            errorPresent={biography && biography.length > 255}
+            errorMessage="Biography field is too long."
           />
         </div>
         <div className="modal-input-container">
@@ -346,8 +401,12 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[2]}
             index={2}
             handleClick={handleClick}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={handleLocationChange}
             value={location}
+            valid={isValid[9]}
+            validate={validate}
+            errorPresent={location && location.length > 70}
+            errorMessage="Location field is too long."
           />
           <ModalInput
             style={styles.modalInput}
@@ -467,6 +526,13 @@ const styles = {
     margin: 18,
     padding: 4,
     paddingTop: 6,
+  },
+  textareaInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6,
+    marginBottom: "80px",
   },
   alertToast: {
     color: "#FF0000",

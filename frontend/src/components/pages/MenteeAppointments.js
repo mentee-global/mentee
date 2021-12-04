@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MenuOutlined, SmileOutlined } from "@ant-design/icons";
 import { Result, message } from "antd";
+import { useSelector } from "react-redux";
 
 import {
   fetchAppointmentsByMenteeId,
@@ -57,6 +58,7 @@ function MenteeAppointments() {
   const [favMentors, setFavMentors] = useState([]);
   const { profileId } = useAuth();
   const [isLoading, setisLoading] = useState(true);
+  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     async function getData() {
@@ -101,7 +103,7 @@ function MenteeAppointments() {
   return (
     <div className="mentee-appointments-page">
       <div className="mentee-appts-section">
-        <div className="mentee-appts-header">Welcome {appointments.name}!</div>
+        <div className="mentee-appts-header">Welcome {user?.name}!</div>
         <div className="mentee-appts-container">
           <OverlaySelect
             options={appointmentTabs}

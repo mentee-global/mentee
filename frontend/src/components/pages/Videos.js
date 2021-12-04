@@ -1,54 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import { Row, Col, Button, Form, Input, Select } from "antd";
 import moment from "moment";
+import { useSelector, useDispatch } from "react-redux";
 import MentorVideo from "../MentorVideo";
 import VideoSubmit from "../VideoSubmit";
-import { getMentorID } from "utils/auth.service";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
-import { fetchMentorByID, editMentorProfile } from "utils/api";
+import { updateAndFetchUser } from "features/user/userSlice";
+import { ACCOUNT_TYPE } from "utils/consts.js";
 import useAuth from "utils/hooks/useAuth";
 import "../css/Videos.scss";
 
 function Videos() {
-  const history = useHistory();
+  const dispatch = useDispatch();
   const [videos, setVideos] = useState([]);
-  const [name, setName] = useState("");
+  const user = useSelector((state) => state.user.user);
   const [filtered, setFiltered] = useState([]);
   const [selectFilter, setSelectFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
-  const [mentorID, setMentorID] = useState("");
   const [form] = Form.useForm();
-  const { onAuthStateChanged } = useAuth();
+  const { profileId } = useAuth();
 
   useEffect(() => {
-    async function getVideos() {
-      const newMentorID = await getMentorID();
-      const mentor = await fetchMentorByID(newMentorID);
-      if (mentor) {
-        let videos = mentor.videos;
-        // Formats all dates from objects (in Epoch) to MongoDB parsable
-        videos.forEach((video, index) => {
-          const date = video.date_uploaded.$date;
-          videos[index].date_uploaded = moment(date).format();
-        });
+    if (user) {
+      let videos = JSON.parse(JSON.stringify(user.videos));
+      // Formats all dates from objects (in Epoch) to MongoDB parsable
+      videos.forEach((video, index) => {
+        const date = video.date_uploaded.$date;
+        videos[index].date_uploaded = moment(date).format();
+      });
 
-        setName(mentor.name);
-        setVideos(videos);
-        setFiltered(videos);
-      }
-      setMentorID(newMentorID);
+      setVideos(videos);
+      setFiltered(videos);
     }
+  }, [user]);
 
-    onAuthStateChanged(getVideos);
-  }, [mentorID]);
-
-  async function updateVideos(data, id) {
-    const update = {
-      videos: data,
+  function updateVideos(updates, id) {
+    const data = {
+      videos: updates,
     };
-    await editMentorProfile(update, id);
+    dispatch(updateAndFetchUser({ data, id, role: ACCOUNT_TYPE.MENTOR }));
   }
 
   const handleSearchVideo = (query) => {
@@ -69,24 +60,7 @@ function Videos() {
     let id = newVideos.indexOf(video);
     newVideos.splice(id, 1);
     setVideos(newVideos);
-
-    if (selectFilter !== "") {
-      const filteredVideos = newVideos.filter((video, index, arr) => {
-        return SPECIALIZATIONS.indexOf(video.tag) === selectFilter;
-      });
-      newVideos = filteredVideos;
-    }
-    if (titleFilter !== "") {
-      let titleFiltered = [];
-      for (let video in newVideos) {
-        if (video.title.search(titleFilter) > -1) {
-          titleFiltered.push(video);
-        }
-      }
-      newVideos = titleFiltered;
-    }
-    setFiltered(newVideos);
-    updateVideos(newVideos, mentorID);
+    updateVideos(newVideos, profileId);
   };
 
   const handleVideoTag = (id, specialization) => {
@@ -98,7 +72,7 @@ function Videos() {
     newVideos[id] = video;
     setVideos(newVideos);
     setFiltered(newVideos);
-    updateVideos(newVideos, mentorID);
+    updateVideos(newVideos, profileId);
   };
 
   const handlePinVideo = (id) => {
@@ -110,7 +84,7 @@ function Videos() {
     newVideos.unshift(video);
     setVideos(newVideos);
     setFiltered(newVideos);
-    updateVideos(newVideos, mentorID);
+    updateVideos(newVideos, profileId);
   };
 
   const filterSpecialization = (value) => {
@@ -145,7 +119,7 @@ function Videos() {
     handleClearFilters();
     setVideos(newVideos);
     setFiltered(newVideos);
-    updateVideos(newVideos, mentorID);
+    updateVideos(newVideos, profileId);
   };
 
   const VideosContainer = () => {
@@ -175,7 +149,7 @@ function Videos() {
   return (
     <div style={{ height: "100%" }}>
       <div className="videos-header">
-        <h1 className="videos-header-title">Welcome, {name}</h1>
+        <h1 className="videos-header-title">Welcome, {user?.name}</h1>
       </div>
       <div className="filter-card">
         <h1 style={{ fontWeight: "bold", fontSize: 18 }}>Your Uploads</h1>

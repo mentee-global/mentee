@@ -30,6 +30,7 @@
   height: 600px;
   width: 100%;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .modal-profile-container {
@@ -154,7 +155,9 @@
   font-size: 18px;
   font-weight: 500;
   overflow-y: scroll;
-  background-color: inherit;
+  background-color: "#FFFDF5";
+  margin-bottom: 5px;
+  height: 15em !important;
 }
 
 .large-textarea {
@@ -180,7 +183,7 @@
   margin: 0;
 }
 .ant-input {
-  background-color: inherit !important;
+  background-color: #fffdf5 !important;
 }
 
 ant-form-item-has-error,

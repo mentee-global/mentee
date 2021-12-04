@@ -6,6 +6,7 @@ import {
   InfoCircleFilled,
   SmileOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 import "components/css/Appointments.scss";
 import { formatAppointments } from "utils/dateFormatting";
 import AvailabilityCalendar from "components/AvailabilityCalendar";
@@ -44,6 +45,7 @@ function Appointments() {
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const user = useSelector((state) => state.user.user);
   const [modalAppointment, setModalAppointment] = useState({});
   const { onAuthStateChanged } = useAuth();
 
@@ -223,7 +225,7 @@ function Appointments() {
         <Col span={18} className="appointments-column">
           <div className="appointments-welcome-box">
             <div className="appointments-welcome-text">
-              Welcome, {appointments.name}
+              Welcome, {user?.name}
             </div>
             <div className="appointments-tabs">
               {Object.values(Tabs).map((tab, index) => (

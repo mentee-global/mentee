@@ -6,7 +6,7 @@ import { Divider, Input, Layout } from "antd";
 import MessageCard from "./MessageCard";
 import { SearchOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
-import { getLatestMessages } from "utils/dummyData";
+import { getLatestMessages } from "utils/api";
 
 function MessagesSidebar(props) {
   const { Sider } = Layout;
@@ -20,13 +20,12 @@ function MessagesSidebar(props) {
 
   useEffect(() => {
     if (!latestConvos.length) {
-      const data = getLatestMessages(profileId);
+      const data = getLatestMessages("61845c00fc13ae059700059e");
       console.log("data", data);
-      history.push(`/messages/${data[0].otherId}`);
-      setLatestConvos(data);
+      history.push(`/messages/61845c00fc13ae059700059e`);
+      setLatestConvos(data["result"]["Messages"]);
     }
-    
-  }, [latestConvos]);
+  }, []);
 
   useEffect(() => {
     setActiveMessageId(props.match ? props.match.params.receiverId : null);
@@ -40,7 +39,6 @@ function MessagesSidebar(props) {
       backgroundColor: "white"
     },
   };
-
 
   console.log(props.match);
   console.log(latestConvos);

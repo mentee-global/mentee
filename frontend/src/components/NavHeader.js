@@ -21,6 +21,7 @@ import Icon, {
   MenuOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
+import NotificationBell from "./NotificationBell";
 
 const { Header } = Layout;
 
@@ -173,6 +174,7 @@ function NavHeader({ history }) {
             </span>
             {user ? (
               <>
+                <NotificationBell />
                 <div className="profile-name">
                   <b>
                     {user.name}

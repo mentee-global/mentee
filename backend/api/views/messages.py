@@ -156,7 +156,9 @@ def get_sidebar(user_id):
         sidebarContacts = set()
         for message in sentMessages:
             otherId = message["recipient_id"]
-            if message["recipient_id"] == user_id:
+            # print(otherId + " " + user_id)
+
+            if str(otherId) == user_id:
                 otherId = message["sender_id"]
             # if otherId == user_id:
             #     continue
@@ -194,7 +196,7 @@ def get_sidebar(user_id):
         return create_response(data={"data": contacts}, status=200, message="res")
     except Exception as e:
         logger.info(e)
-        return create_response(status=422, message="Something went wrong!")
+        return create_response(status=422, message=str(e))
 
 
 @messages.route("/direct/", methods=["GET"])
@@ -218,7 +220,7 @@ def get_direct_messages():
 
 @socketio.on("send")
 def chat(msg, methods=["POST"]):
-    print("here")
+    # print("here")
     try:
         message = DirectMessage(
         body=msg["body"],

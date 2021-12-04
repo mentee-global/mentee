@@ -77,8 +77,6 @@ function Messages(props) {
    
   }, [profileId, activeMessageId]);
 
-  
-
 
 
   return (

@@ -17,22 +17,48 @@ function Messages(props) {
 
   const URL = "http://localhost:5000";
 
-  console.log(props.match);
-
   const { profileId } = useAuth();
 
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(URL);
-    setSocket(newSocket);
-    return () => newSocket.close();
-  }, [setSocket]);
+    if (profileId) {
+      if (socket === null) {
+        setSocket(io(URL));
+      }
+  
+      if (socket) {
+          console.log("listening to ... " + profileId);
+          socket.on(profileId, (data) => {
+            if (data.sender_id == activeMessageId) {
+
+              console.log("messages ", messages)
+              let newList = JSON.parse(JSON.stringify(messages))
+              console.log("newListBefore", newList)
+              newList.push(data)
+              console.log("newList", newList)
+              setMessages(newList)
+            } else {
+              const messageCard = {
+                latestMessage: data,
+                otherUser: {
+                  name: data.sender_id,
+                  image: "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg"
+                },
+                otherId: data.sender_id,
+                new: true // use to indicate new message card UI
+              }
+              setLatestConvos([messageCard, ...latestConvos])
+            }
+          });
+      }
+    }
+    
+  }, [profileId, socket]);
 
   useEffect(() => {
     async function getData() {
       const data = await getLatestMessages(profileId);
-      console.log(data);
       setLatestConvos(data);
       history.push(`/messages/${data[0].otherId}`);
     }
@@ -56,7 +82,6 @@ function Messages(props) {
   useEffect(() => {
     async function getData() {
       const data = await getMessageData(profileId, activeMessageId);
-      console.log(data);
       setMessages(data);
     }
 
@@ -64,13 +89,6 @@ function Messages(props) {
       getData();
     }
   }, [profileId, activeMessageId]);
-
-  if (profileId) {
-    console.log("listening to ... " + profileId);
-    socket.once(profileId, (data) => {
-      console.log(data);
-    });
-  }
 
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>

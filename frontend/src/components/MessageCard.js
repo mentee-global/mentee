@@ -11,9 +11,9 @@ function MessageCard(props) {
     history.push(`/messages/${otherId}`);
   };
 
-  console.log(props.active)
+  // console.log(props.active)
   const name = `message-${props.active ? "active-" : ""}card`;
-  console.log(name);
+  // console.log(name);
   return (
     <Card
       onClick={openMessage}

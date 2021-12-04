@@ -24,9 +24,6 @@ function MessagesSidebar(props) {
       backgroundColor: "white"
     },
   };
-
-  console.log(props.match);
-
   const {latestConvos} = props;
 
   if (!latestConvos || !latestConvos.length) {

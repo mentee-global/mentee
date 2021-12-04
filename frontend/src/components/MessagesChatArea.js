@@ -22,7 +22,7 @@ function MessagesChatArea(props) {
 
   
 
-  console.log(profileId)
+  // console.log(profileId)
 
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
@@ -45,8 +45,8 @@ function MessagesChatArea(props) {
 
   const {messages, activeMessageId} = props;
 
-  console.log(messages);
-  console.log(activeMessageId);
+  // console.log(messages);
+  // console.log(activeMessageId);
   if (!activeMessageId || !messages || !messages.length) {
     return <div>Loading...</div>;
   }

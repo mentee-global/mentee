@@ -36,7 +36,6 @@ const styles = {
 };
 
 function MenteeCard(props) {
-  const { isAdmin, isMentor, isMentee } = useAuth();
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;

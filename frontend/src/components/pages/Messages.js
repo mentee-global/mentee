@@ -8,13 +8,15 @@ import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
 import { getLatestMessages, getMessageData } from "utils/api";
 import { io } from "socket.io-client";
+import usePersistedState from "utils/hooks/usePersistedState";
+
 
 function Messages(props) {
   const { history } = props;
   const [latestConvos, setLatestConvos] = useState([]);
   const [activeMessageId, setActiveMessageId] = useState("");
+  const [userType, setUserType] = useState();
   const [messages, setMessages] = useState([]);
-
   const { profileId } = useAuth();
 
   const [socket, setSocket] = useState(null);
@@ -26,12 +28,10 @@ function Messages(props) {
       }
 
       if (socket) {
-        console.log("listening to ... " + profileId);
         socket.on(profileId, (data) => {
           if (data?.sender_id?.$oid == activeMessageId) {
             setMessages([...messages, data]);
           } else {
-            console.log(data);
             const messageCard = {
               latestMessage: data,
               otherUser: {
@@ -53,7 +53,12 @@ function Messages(props) {
     async function getData() {
       const data = await getLatestMessages(profileId);
       setLatestConvos(data);
-      history.push(`/messages/${data[0].otherId}`);
+      if (data?.length) {
+        history.push(`/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`);
+      } else {
+        history.push("/messages/1");
+      }
+      
     }
 
     if (profileId) {
@@ -62,11 +67,15 @@ function Messages(props) {
   }, [profileId]);
 
   useEffect(() => {
+    var user_type = new URLSearchParams(props.location.search).get("user_type")
     setActiveMessageId(props.match ? props.match.params.receiverId : null);
+    setUserType(user_type);
   });
 
   useEffect(() => {
+    var user_type = new URLSearchParams(props.location.search).get("user_type")
     setActiveMessageId(props.match ? props.match.params.receiverId : null);
+    setUserType(user_type);
     if (activeMessageId && profileId) {
       setMessages(getMessageData(profileId, activeMessageId));
     }
@@ -90,7 +99,6 @@ function Messages(props) {
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
       <MessagesSidebar latestConvos={latestConvos} />
-
       <Layout
         className="messages-subcontainer"
         style={{ backgroundColor: "white" }}
@@ -100,6 +108,8 @@ function Messages(props) {
           activeMessageId={activeMessageId}
           socket={socket}
           addMyMessage={addMyMessage}
+          otherId={activeMessageId}
+          userType={userType}
         />
       </Layout>
     </Layout>

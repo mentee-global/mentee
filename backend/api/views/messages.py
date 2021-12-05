@@ -176,20 +176,22 @@ def get_sidebar(user_id):
 
             if otherId not in sidebarContacts:
                 otherUser = None
+                user_type = 1
                 try:
                     otherUser = MentorProfile.objects.get(id=otherId)
                 except:
                     pass
                 if not otherUser:
+                    user_type = 2
                     try:
                         otherUser = MenteeProfile.objects.get(id=otherId)
                     except:
                         msg = "Could not find mentor or mentee for given ids"
                         return create_response(status=422, message=msg)
-
                 otherUser = json.loads(otherUser.to_json())
                 otherUserObj = {
                     "name": otherUser["name"],
+                    "user_type": user_type,
                 }
 
                 if "image" in otherUser:

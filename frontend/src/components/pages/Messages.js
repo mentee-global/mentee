@@ -10,7 +10,6 @@ import { getLatestMessages, getMessageData } from "utils/api";
 import { io } from "socket.io-client";
 import usePersistedState from "utils/hooks/usePersistedState";
 
-
 function Messages(props) {
   const { history } = props;
   const [latestConvos, setLatestConvos] = useState([]);
@@ -54,11 +53,12 @@ function Messages(props) {
       const data = await getLatestMessages(profileId);
       setLatestConvos(data);
       if (data?.length) {
-        history.push(`/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`);
+        history.push(
+          `/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`
+        );
       } else {
         history.push("/messages/1");
       }
-      
     }
 
     if (profileId) {
@@ -67,13 +67,13 @@ function Messages(props) {
   }, [profileId]);
 
   useEffect(() => {
-    var user_type = new URLSearchParams(props.location.search).get("user_type")
+    var user_type = new URLSearchParams(props.location.search).get("user_type");
     setActiveMessageId(props.match ? props.match.params.receiverId : null);
     setUserType(user_type);
   });
 
   useEffect(() => {
-    var user_type = new URLSearchParams(props.location.search).get("user_type")
+    var user_type = new URLSearchParams(props.location.search).get("user_type");
     setActiveMessageId(props.match ? props.match.params.receiverId : null);
     setUserType(user_type);
     if (activeMessageId && profileId) {
@@ -98,7 +98,10 @@ function Messages(props) {
 
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
-      <MessagesSidebar latestConvos={latestConvos} activeMessageId={activeMessageId}/>
+      <MessagesSidebar
+        latestConvos={latestConvos}
+        activeMessageId={activeMessageId}
+      />
       <Layout
         className="messages-subcontainer"
         style={{ backgroundColor: "white" }}

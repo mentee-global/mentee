@@ -1,6 +1,6 @@
 import { Avatar, Card } from "antd";
 import Meta from "antd/lib/card/Meta";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { fetchAccountById } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -10,17 +10,16 @@ function MessageCard(props) {
   const history = useHistory();
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
-  const {isAdmin, isMentee, isMentor} = useAuth();
-
+  const { isAdmin, isMentee, isMentor } = useAuth();
 
   const openMessage = () => {
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);
   };
   // console.log(isMentor, isMentee);
 
-  useEffect(() => { 
+  useEffect(() => {
     async function fetchAccount() {
-      console.log(otherId)
+      console.log(otherId);
       var otherType = 0;
       if (isMentor) {
         otherType = ACCOUNT_TYPE.MENTEE;
@@ -36,7 +35,7 @@ function MessageCard(props) {
         account = await fetchAccountById(otherId, ACCOUNT_TYPE.MENTEE);
         setAccountData(account);
       }
-    } 
+    }
     fetchAccount();
   }, [otherId, isMentor, isMentee, isAdmin]);
 
@@ -45,16 +44,20 @@ function MessageCard(props) {
   console.log(props.active, name);
   return (
     <Card onClick={openMessage} className={name}>
-      {accountData ? 
-      <div>
-        <Meta
-        avatar={<Avatar src={accountData.image?.url} />}
-        title={<div className="message-card-title">{accountData.name}</div>}
-        description={
-          <div className="message-card-description">{latestMessage.body}</div>
-        }
-        style={{ color: "white" }}
-      /></div> : null}
+      {accountData ? (
+        <div>
+          <Meta
+            avatar={<Avatar src={accountData.image?.url} />}
+            title={<div className="message-card-title">{accountData.name}</div>}
+            description={
+              <div className="message-card-description">
+                {latestMessage.body}
+              </div>
+            }
+            style={{ color: "white" }}
+          />
+        </div>
+      ) : null}
     </Card>
   );
 }

@@ -31,15 +31,13 @@ function MessagesChatArea(props) {
   const { isAdmin, isMentor, isMentee } = useAuth();
   const { messages, activeMessageId, otherId, userType } = props;
 
-
-
-  useEffect(() => { 
+  useEffect(() => {
     async function fetchAccount() {
       var account = await fetchAccountById(otherId, userType);
       if (account) {
         setAccountData(account);
-      } 
-    } 
+      }
+    }
     fetchAccount();
   }, [otherId]);
 
@@ -75,7 +73,6 @@ function MessagesChatArea(props) {
     props.addMyMessage(msg);
   };
 
-
   // console.log(messages);
   // console.log(activeMessageId);
   if (!activeMessageId || !messages || !messages.length) {
@@ -89,16 +86,18 @@ function MessagesChatArea(props) {
         orientation="left"
         type="vertical"
       />
-      {accountData ?
-      <Header className="chat-area-header">
-        <Meta
-          className=""
-          avatar={<Avatar src={accountData.image?.url}/>}
-          title={accountData.name}
-          description={accountData.professional_title}
-        /> 
-      </Header> : <div></div>
-      }
+      {accountData ? (
+        <Header className="chat-area-header">
+          <Meta
+            className=""
+            avatar={<Avatar src={accountData.image?.url} />}
+            title={accountData.name}
+            description={accountData.professional_title}
+          />
+        </Header>
+      ) : (
+        <div></div>
+      )}
       <Content className="conversation-box">
         {messages.map((block) => {
           return (

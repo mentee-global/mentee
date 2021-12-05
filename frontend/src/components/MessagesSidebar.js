@@ -44,7 +44,9 @@ function MessagesSidebar(props) {
       <div className="messages-sidebar">
         {latestConvos.map((chat) => {
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
-            {console.log(chat.otherId, " j ", activeMessageId)}
+            {
+              console.log(chat.otherId, " j ", activeMessageId);
+            }
             if (chat.otherId == activeMessageId) {
               return (
                 <MessageCard key={chat.otherId} chat={chat} active={true} />

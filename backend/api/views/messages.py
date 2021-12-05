@@ -8,8 +8,9 @@ from api.models import db
 import json
 from datetime import datetime
 from api import socketio
-from flask_socketio import send, emit
 from mongoengine.queryset.visitor import Q
+from flask_socketio import join_room, leave_room
+
 
 messages = Blueprint("messages", __name__)
 
@@ -73,26 +74,18 @@ def update_message(message_id):
 @messages.route("/", methods=["POST"])
 def create_message():
     data = request.get_json()
-    validate_data = MessageForm.from_json(data)
-    msg, is_invalid = is_invalid_form(validate_data)
 
-    if is_invalid:
-        return create_response(status=422, message=msg)
     try:
-        message = Message(
-            message=data.get("message"),
-            user_name=data.get("user_name"),
-            user_id=data.get("user_id"),
-            recipient_name=data.get("recipient_name"),
-            recipient_id=data.get("recipient_id"),
-            email=data.get("email"),
-            link=data.get("link"),
-            time=datetime.strptime(data.get("time"), "%Y-%m-%d, %H:%M:%S%z"),
-            # read=data.get("read"),
+        message = DirectMessage(
+            body=data["message"],
+            message_read=False,
+            sender_id=data["user_id"],
+            recipient_id=data["recipient_id"],
+            created_at=data.get("time"),
         )
-    except:
+    except Exception as e:
         msg = "Invalid parameter provided"
-        logger.info(msg)
+        logger.info(e)
         return create_response(status=422, message=msg)
     try:
         message.save()
@@ -100,9 +93,11 @@ def create_message():
         msg = "Failed to save message"
         logger.info(msg)
         return create_response(status=422, message=msg)
+
+    socketio.emit(data["recipient_id"], json.loads(message.to_json()))
     return create_response(
         status=201,
-        message=f"Successfully saved message: {message.message} from user: {message.user_name} to: {message.recipient_name} sent on: {message.time}",
+        message=f"Successfully saved message",
     )
 
 
@@ -135,17 +130,35 @@ def contact_mentor(mentor_id):
         msg = "Failed to send mentee email " + res_msg
         logger.info(msg)
         return create_response(status=500, message="Failed to send message")
-    """
-    logger.info(
-        f"Sending an email to {mentor.email} with interest areas: {data.get("interest_areas", "")}, communication method: {data.get("communication_method", "")}, and message: {data.get('message', '')} as mentee {mentee.email}"
-    )
-    """
+
+    try:
+        message = DirectMessage(
+            body=data.get("message", "Hello"),
+            message_read=False,
+            sender_id=mentee_id,
+            recipient_id=mentor_id,
+            created_at=datetime.today().isoformat(),
+        )
+
+        socketio.emit(mentor_id, json.loads(message.to_json()))
+    except Exception as e:
+        msg = "Invalid parameter provided"
+        logger.info(e)
+        return create_response(status=422, message=msg)
+    try:
+        message.save()
+    except:
+        msg = "Failed to save message"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
     return create_response(status=200, message="successfully sent email message")
 
 
 @messages.route("/contacts/<string:user_id>", methods=["GET"])
 def get_sidebar(user_id):
     try:
+        print(user_id)
         sentMessages = DirectMessage.objects.filter(
             Q(sender_id=user_id) | Q(recipient_id=user_id)
         ).order_by("-created_at")
@@ -154,13 +167,17 @@ def get_sidebar(user_id):
         sidebarContacts = set()
         for message in sentMessages:
             otherId = message["recipient_id"]
-            if message["recipient_id"] == user_id:
+            # print(otherId + " " + user_id)
+
+            if str(otherId) == user_id:
                 otherId = message["sender_id"]
+            # if otherId == user_id:
+            #     continue
 
             if otherId not in sidebarContacts:
                 otherUser = None
                 try:
-                    otherUser = MentorProfile.objects.get(user_id=otherId)
+                    otherUser = MentorProfile.objects.get(id=otherId)
                 except:
                     pass
                 if not otherUser:
@@ -190,7 +207,7 @@ def get_sidebar(user_id):
         return create_response(data={"data": contacts}, status=200, message="res")
     except Exception as e:
         logger.info(e)
-        return create_response(status=422, message="Something went wrong!")
+        return create_response(status=422, message=str(e))
 
 
 @messages.route("/direct/", methods=["GET"])
@@ -212,6 +229,30 @@ def get_direct_messages():
     return create_response(data={"Messages": messages}, status=200, message=msg)
 
 
-@socketio.on("message")
-def handle_message(data):
-    logger.info(data)
+@socketio.on("send")
+def chat(msg, methods=["POST"]):
+    # print("here")
+    try:
+        message = DirectMessage(
+            body=msg["body"],
+            message_read=msg["message_read"],
+            sender_id=msg["sender_id"],
+            recipient_id=msg["recipient_id"],
+            created_at=msg["time"],
+        )
+        # msg['created_at'] = time
+        logger.info(msg["recipient_id"])
+        socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
+
+    except Exception as e:
+        # msg="Invalid parameter provided"
+        logger.info(e)
+        return create_response(status=500, message="Failed to send message")
+    try:
+        message.save()
+        msg = "successfully sent message"
+    except:
+        msg = "Error in meessage"
+        logger.info(msg)
+        return create_response(status=500, message="Failed to send message")
+    return create_response(status=200, message="successfully sent message")

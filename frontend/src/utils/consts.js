@@ -1,11 +1,11 @@
-const BASE_URL =
+export const BASE_URL =
   process.env.NODE_ENV === "production"
     ? process.env.REACT_APP_ENV === "development"
       ? "https://mentee-dev.herokuapp.com/"
       : "https://mentee-h4i.herokuapp.com/"
     : "http://localhost:5000/";
 
-const FRONT_BASE_URL =
+export const FRONT_BASE_URL =
   process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
 
 export const API_URL = BASE_URL + "api/";

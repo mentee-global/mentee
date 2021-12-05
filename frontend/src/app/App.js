@@ -25,6 +25,7 @@ import NotFound from "components/pages/NotFound";
 import MenteeRegisterForm from "components/pages/MenteeRegisterForm";
 import NavHeader from "components/NavHeader";
 import { ACCOUNT_TYPE } from "utils/consts";
+import Messages from "components/pages/Messages";
 
 import "components/css/Navigation.scss";
 
@@ -197,6 +198,23 @@ function App() {
         path="/not-found"
         component={() => (
           <Navigation content={<NotFound />} needsAuth={false} />
+        )}
+      />
+      {/* <Route
+        path="/messages"
+        component={() => (
+          <Navigation content={<Messages />} page="messages" needsAuth={true} ignoreSidebar={true} />
+        )}
+      /> */}
+      <Route
+        path="/messages/:receiverId"
+        component={() => (
+          <Navigation
+            content={<Messages />}
+            page="messages"
+            needsAuth={true}
+            ignoreSidebar={true}
+          />
         )}
       />
     </Router>

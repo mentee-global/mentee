@@ -39,7 +39,7 @@ function Navigation(props) {
   return (
     <div>
       <Layout className="navigation-layout">
-        {props.needsAuth ? (
+        {props.needsAuth && !props.ignoreSidebar ? (
           <Layout>
             {permissions === ACCOUNT_TYPE.ADMIN ? (
               <AdminSidebar selectedPage={props.page} />
@@ -53,7 +53,7 @@ function Navigation(props) {
         ) : (
           <Content className="navigation-content">{props.content}</Content>
         )}
-        {isMentee && <MenteeMessageTab user_id={profileId} />}
+        {/* {isMentee && <MenteeMessageTab user_id={profileId} />} */}
       </Layout>
     </div>
   );

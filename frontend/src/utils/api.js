@@ -376,6 +376,36 @@ export const getMessages = (user_id) => {
   );
 };
 
+export const getDirectMessages = (user_id) => {
+  const requestExtension = `/direct/messages/?recipient_id=${user_id}&sender_id=${user_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getLatestMessages = (user_id) => {
+  const requestExtension = `/messages/contacts/${user_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.data,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getMessageData = (sender_id, recipient_id) => {
+  const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const getMenteePrivateStatus = (profileId) => {
   const requestExtension = `/account/${profileId}/private`;
   return instance.get(requestExtension).then(

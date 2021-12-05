@@ -172,18 +172,21 @@ function NavHeader({ history }) {
                 }}
               />
             </span>
-            <span className="navigation-header-button">
-              <MenteeButton
-                loginButton
-                content={<b>{isLoggedIn() && "Messages"}</b>}
-                width="9em"
-                onClick={() => {
-                  history.push({
-                    pathname: "/messages/1",
-                  });
-                }}
-              />
-            </span>
+            {isLoggedIn() && (
+              <span className="navigation-header-button">
+                <MenteeButton
+                  loginButton
+                  content={<b>{"Messages"}</b>}
+                  width="9em"
+                  onClick={() => {
+                    history.push({
+                      pathname: "/messages/1",
+                    });
+                  }}
+                />
+              </span>
+            )}
+
             {user ? (
               <>
                 <NotificationBell />

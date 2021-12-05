@@ -126,12 +126,20 @@
 
 .modal-mentee-appointment-contact-header {
   margin: auto;
-  width: 60%;
+  width: 100%;
+  color: #203150;
+  font-size: 22px;
+}
+
+.modal-mentee-appointment-contact-header, .modal-mentee-appointment-contact-description {
+  float: left;
+  font-family: Helvetica;
 }
 
 .modal-mentee-appointment-contact-description {
   margin: auto;
-  width: 70%;
+  width: 100%;
+  color: #00000060
 }
 
 .modal-mentee-appointment-info-container {
@@ -287,6 +295,21 @@
   justify-content: center;
   padding: 1em;
 }
+
+.contact-me-submit-button {
+  background-color: #203150;
+  color: white;
+  border: none;
+  padding: 5px 27px;
+  float:left;
+  text-decoration: none;
+  font-size: 12px;
+  margin: 4px 14px;
+  cursor: pointer;
+  display: flex;
+  border-radius: 2px;
+}
+
 
 @media only screen and (max-width: 1100px) {
   .appointment-modal,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Radio, Space, Form, Select } from "antd";
+import { Modal, Radio, Space, Form, Select, Input } from "antd";
 import { sendMenteeMentorEmail } from "../utils/api";
 import { SPECIALIZATIONS } from "../utils/consts.js";
 import MenteeButton from "./MenteeButton";
@@ -51,13 +51,17 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
         style={{ overflow: "hidden" }}
         footer={null}
       >
-        <h1 className="modal-mentee-appointment-contact-header">
-          Reach Out to {mentorName}
-        </h1>
-        <h3 className="modal-mentee-appointment-contact-description">
-          Your name and email will be sent to this mentor
-        </h3>
-        <Form>
+        <Form layout="vertical" style={{padding: "30px"}}>
+          <Form.Item>
+            <h1 className="modal-mentee-appointment-contact-header">
+              Reach Out to {mentorName}
+            </h1>
+          </Form.Item>
+          <Form.Item>
+            <h3 className="modal-mentee-appointment-contact-description">
+              Your name and email will be sent to this mentor
+            </h3>
+          </Form.Item>
           <Form.Item
             label="Choose Interest Areas"
             name="Choose Interest Areas"
@@ -69,6 +73,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               mode="tags"
               value={interestAreas}
               onChange={addInterestArea}
+              style={{minWidth: "100px"}}
             >
               {filteredOptions.map((item) => (
                 <Select.Option key={item} value={item}>
@@ -98,19 +103,27 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               </Space>
             </Radio.Group>
           </Form.Item>
-          <div className="message-modal-container">
-            <ModalInput
-              style={styles.modalInput}
-              type="textarea"
-              handleClick={() => {}}
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
-              large
-            />
-            <br />
-            <MenteeButton
-              width={120}
-              content={"Send Message"}
+          <Form.Item
+            label="Briefly introduce yourself and what you are looking to gain from a Mentor."
+            name="Custom Message"
+            style={{paddingTop: "12px"}}
+            rules={[
+              { required: true, message: "Please write an introduction!" },
+            ]}
+          >
+            <div className="message-modal-container">
+              <Input.TextArea
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
+                handleClick={() => {}}
+                style={styles.modalInput}
+              />
+              <br />           
+            </div>
+          </Form.Item>
+          <Form.Item>
+            <button
+              className="contact-me-submit-button"
               onClick={async () => {
                 const res = await sendMenteeMentorEmail(
                   mentorId,
@@ -127,8 +140,10 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
                   setConfirmationModal(true);
                 }
               }}
-            />
-          </div>
+            >
+              Submit
+            </button> 
+          </Form.Item> 
         </Form>
       </Modal>
       <Modal
@@ -162,10 +177,9 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
 
 const styles = {
   modalInput: {
-    marginTop: 20,
-    width: "95%",
+    marginTop: -5,
     overflow: "hidden",
-  },
+  }
 };
 
 export default MentorContactModal;

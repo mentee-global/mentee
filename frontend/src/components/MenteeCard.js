@@ -51,9 +51,7 @@ function MenteeCard(props) {
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
-            <div className="gallery-header-name">
-              {props.name}
-            </div>
+            <div className="gallery-header-name">{props.name}</div>
             <div className="gallery-header-description">
               {props.gender} {"|"} {props.organization}
             </div>

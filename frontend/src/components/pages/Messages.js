@@ -98,7 +98,7 @@ function Messages(props) {
 
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
-      <MessagesSidebar latestConvos={latestConvos} />
+      <MessagesSidebar latestConvos={latestConvos} activeMessageId={activeMessageId}/>
       <Layout
         className="messages-subcontainer"
         style={{ backgroundColor: "white" }}

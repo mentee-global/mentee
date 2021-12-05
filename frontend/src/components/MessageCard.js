@@ -42,7 +42,7 @@ function MessageCard(props) {
 
   // console.log(props.active)
   const name = `message-${props.active ? "active-" : ""}card`;
-  // console.log(name);
+  console.log(props.active, name);
   return (
     <Card onClick={openMessage} className={name}>
       {accountData ? 

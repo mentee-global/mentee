@@ -131,7 +131,7 @@ function MentorCard(props) {
         )}
       </div>
       <div className="gallery-card-footer">
-        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>
+        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />
           </div>

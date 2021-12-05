@@ -11,7 +11,7 @@ import {
   message,
 } from "antd";
 import { withRouter } from "react-router-dom";
-import { ACCOUNT_TYPE } from "utils/consts";
+
 import Meta from "antd/lib/card/Meta";
 import { SendOutlined, SettingOutlined } from "@ant-design/icons";
 // import { getMessageData } from "utils/dummyData";
@@ -26,9 +26,7 @@ function MessagesChatArea(props) {
 
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
-
   const [accountData, setAccountData] = useState({});
-  const { isAdmin, isMentor, isMentee } = useAuth();
   const { messages, activeMessageId, otherId, userType } = props;
 
   useEffect(() => {
@@ -40,6 +38,8 @@ function MessagesChatArea(props) {
     }
     fetchAccount();
   }, [otherId]);
+
+
 
   // const [messages, setMessages] = useState([]);
 
@@ -109,7 +109,8 @@ function MessagesChatArea(props) {
               <div className="chatRight__inner" data-chat="person1">
                 {block.sender_id.$oid != profileId && (
                   <span>
-                    <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
+                    {console.log(accountData)}
+                    <Avatar src={accountData.image?.url} />{" "}
                   </span>
                 )}
 
@@ -122,11 +123,6 @@ function MessagesChatArea(props) {
                     {block.body}
                   </div>
                 </div>
-                {block.sender_id.$oid == profileId && (
-                  <span>
-                    <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
-                  </span>
-                )}
               </div>
             </div>
           );

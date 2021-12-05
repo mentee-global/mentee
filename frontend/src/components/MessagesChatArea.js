@@ -39,8 +39,6 @@ function MessagesChatArea(props) {
     fetchAccount();
   }, [otherId]);
 
-
-
   // const [messages, setMessages] = useState([]);
 
   // console.log(profileId)

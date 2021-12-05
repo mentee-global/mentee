@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import "../css/Messages.scss";
 import useAuth from "../../utils/hooks/useAuth";
-import { BASE_URL } from "utils/consts";
+import { BASE_URL } from "../../utils/consts";
 import MessagesSidebar from "components/MessagesSidebar";
 import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
@@ -21,32 +21,37 @@ function Messages(props) {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (profileId && messages?.length) {
-      if (socket === null) {
-        setSocket(io(BASE_URL));
-      }
+    const newSocket = io(BASE_URL);
+    setSocket(newSocket);
+    return () => socket?.close();
+  }, [setSocket]);
 
-      if (socket) {
-        socket.on(profileId, (data) => {
-          if (data?.sender_id?.$oid == activeMessageId) {
-            setMessages([...messages, data]);
-          } else {
-            const messageCard = {
-              latestMessage: data,
-              otherUser: {
-                name: data?.sender_id?.$oid,
-                image:
-                  "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg",
-              },
-              otherId: data?.sender_id?.$oid,
-              new: true, // use to indicate new message card UI
-            };
-            setLatestConvos([messageCard, ...latestConvos]);
-          }
-        });
-      }
+  const messageListener = (data) => {
+    if (data?.sender_id?.$oid == activeMessageId) {
+      setMessages([...messages, data]);
+    } else {
+      const messageCard = {
+        latestMessage: data,
+        otherUser: {
+          name: data?.sender_id?.$oid,
+          image:
+            "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg",
+        },
+        otherId: data?.sender_id?.$oid,
+        new: true, // use to indicate new message card UI
+      };
+      setLatestConvos([messageCard, ...latestConvos]);
     }
-  }, [messages, profileId, socket]);
+  };
+  
+  useEffect(() => {
+    if (socket && profileId) {
+      socket.on(profileId, messageListener);
+      return () => {
+        socket.off(profileId, messageListener);
+      };
+    }
+  }, [socket, profileId, messages]);
 
   useEffect(() => {
     async function getData() {
@@ -73,12 +78,15 @@ function Messages(props) {
   });
 
   useEffect(() => {
-    var user_type = new URLSearchParams(props.location.search).get("user_type");
-    setActiveMessageId(props.match ? props.match.params.receiverId : null);
-    setUserType(user_type);
-    if (activeMessageId && profileId) {
-      setMessages(getMessageData(profileId, activeMessageId));
+    async function getData() {
+      var user_type = new URLSearchParams(props.location.search).get("user_type");
+      setActiveMessageId(props.match ? props.match.params.receiverId : null);
+      setUserType(user_type);
+      if (activeMessageId && profileId) {
+        setMessages(await getMessageData(profileId, activeMessageId));
+      }
     }
+    getData();
   }, [props.location]);
 
   useEffect(() => {

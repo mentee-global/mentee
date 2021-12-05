@@ -50,13 +50,10 @@ function MenteeCard(props) {
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
-            <Title style={styles.title} className="gallery-title-text">
-              {props.name}
-              {","} {props.age}
-            </Title>
-            <Title style={styles.subTitle} type="secondary" level={5}>
+            <div className="gallery-header-name">{props.name}</div>
+            <div className="gallery-header-description">
               {props.gender} {"|"} {props.organization}
-            </Title>
+            </div>
           </div>
         </div>
         {props.location && (
@@ -73,8 +70,8 @@ function MenteeCard(props) {
           Languages:
         </h3>
         <Text className="gallery-list-items">{props.languages.join(", ")}</Text>
-        <hr className="gallery-solid-border" />
-        <div className="bookmark-button"></div>
+      </div>
+      <div className="gallery-card-footer">
         <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>
           <div className="gallery-button">
             <MenteeButton content="View Profile" />

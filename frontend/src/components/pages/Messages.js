@@ -43,7 +43,7 @@ function Messages(props) {
       setLatestConvos([messageCard, ...latestConvos]);
     }
   };
-  
+
   useEffect(() => {
     if (socket && profileId) {
       socket.on(profileId, messageListener);
@@ -79,7 +79,9 @@ function Messages(props) {
 
   useEffect(() => {
     async function getData() {
-      var user_type = new URLSearchParams(props.location.search).get("user_type");
+      var user_type = new URLSearchParams(props.location.search).get(
+        "user_type"
+      );
       setActiveMessageId(props.match ? props.match.params.receiverId : null);
       setUserType(user_type);
       if (activeMessageId && profileId) {

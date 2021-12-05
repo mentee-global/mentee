@@ -186,7 +186,6 @@ function NavHeader({ history }) {
             </span>
             {user ? (
               <>
-              
                 <NotificationBell />
                 <div className="profile-name">
                   <b>

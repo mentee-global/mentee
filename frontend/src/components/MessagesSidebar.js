@@ -5,8 +5,6 @@ import { withRouter } from "react-router-dom";
 import { Divider, Input, Layout } from "antd";
 import MessageCard from "./MessageCard";
 import { SearchOutlined } from "@ant-design/icons";
-import useAuth from "utils/hooks/useAuth";
-import { getLatestMessages } from "utils/api";
 
 function MessagesSidebar(props) {
   const { Sider } = Layout;
@@ -44,9 +42,6 @@ function MessagesSidebar(props) {
       <div className="messages-sidebar">
         {latestConvos.map((chat) => {
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
-            {
-              console.log(chat.otherId, " j ", activeMessageId);
-            }
             if (chat.otherId == activeMessageId) {
               return (
                 <MessageCard key={chat.otherId} chat={chat} active={true} />

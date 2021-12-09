@@ -1,6 +1,6 @@
 name: Deploy to Prod
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
@@ -27,9 +27,9 @@ jobs:
       - name: run yarn build
         uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: "12"
           check-latest: true
-      
+
       - name: Install and Build
         env:
           # set CI to false because warnings are treated as errors if CI=true
@@ -38,21 +38,21 @@ jobs:
           REACT_APP_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           REACT_APP_ENV: production
         run: yarn install && yarn run build
-      
+
       - name: save build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: frontend-build
-          path:  ${{ github.workspace }}/frontend/build
+          path: ${{ github.workspace }}/frontend/build
           retention-days: 1
           if-no-files-found: error
-        
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Downloading build artifacts
         uses: actions/download-artifact@v2
         with:

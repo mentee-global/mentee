@@ -2,58 +2,68 @@ import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import "../css/Messages.scss";
 import useAuth from "../../utils/hooks/useAuth";
-import { BASE_URL } from "utils/consts";
+import { BASE_URL } from "../../utils/consts";
 import MessagesSidebar from "components/MessagesSidebar";
 import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
 import { getLatestMessages, getMessageData } from "utils/api";
 import { io } from "socket.io-client";
+import usePersistedState from "utils/hooks/usePersistedState";
 
 function Messages(props) {
   const { history } = props;
   const [latestConvos, setLatestConvos] = useState([]);
   const [activeMessageId, setActiveMessageId] = useState("");
+  const [userType, setUserType] = useState();
   const [messages, setMessages] = useState([]);
-
   const { profileId } = useAuth();
 
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (profileId && messages?.length) {
-      if (socket === null) {
-        setSocket(io(BASE_URL));
-      }
+    const newSocket = io(BASE_URL);
+    setSocket(newSocket);
+    return () => socket?.close();
+  }, [setSocket]);
 
-      if (socket) {
-        console.log("listening to ... " + profileId);
-        socket.on(profileId, (data) => {
-          if (data?.sender_id?.$oid == activeMessageId) {
-            setMessages([...messages, data]);
-          } else {
-            console.log(data);
-            const messageCard = {
-              latestMessage: data,
-              otherUser: {
-                name: data?.sender_id?.$oid,
-                image:
-                  "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg",
-              },
-              otherId: data?.sender_id?.$oid,
-              new: true, // use to indicate new message card UI
-            };
-            setLatestConvos([messageCard, ...latestConvos]);
-          }
-        });
-      }
+  const messageListener = (data) => {
+    if (data?.sender_id?.$oid == activeMessageId) {
+      setMessages([...messages, data]);
+    } else {
+      const messageCard = {
+        latestMessage: data,
+        otherUser: {
+          name: data?.sender_id?.$oid,
+          image:
+            "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg",
+        },
+        otherId: data?.sender_id?.$oid,
+        new: true, // use to indicate new message card UI
+      };
+      setLatestConvos([messageCard, ...latestConvos]);
     }
-  }, [messages, profileId, socket]);
+  };
+
+  useEffect(() => {
+    if (socket && profileId) {
+      socket.on(profileId, messageListener);
+      return () => {
+        socket.off(profileId, messageListener);
+      };
+    }
+  }, [socket, profileId, messages]);
 
   useEffect(() => {
     async function getData() {
       const data = await getLatestMessages(profileId);
       setLatestConvos(data);
-      history.push(`/messages/${data[0].otherId}`);
+      if (data?.length) {
+        history.push(
+          `/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`
+        );
+      } else {
+        history.push("/messages/1");
+      }
     }
 
     if (profileId) {
@@ -62,14 +72,23 @@ function Messages(props) {
   }, [profileId]);
 
   useEffect(() => {
+    var user_type = new URLSearchParams(props.location.search).get("user_type");
     setActiveMessageId(props.match ? props.match.params.receiverId : null);
+    setUserType(user_type);
   });
 
   useEffect(() => {
-    setActiveMessageId(props.match ? props.match.params.receiverId : null);
-    if (activeMessageId && profileId) {
-      setMessages(getMessageData(profileId, activeMessageId));
+    async function getData() {
+      var user_type = new URLSearchParams(props.location.search).get(
+        "user_type"
+      );
+      setActiveMessageId(props.match ? props.match.params.receiverId : null);
+      setUserType(user_type);
+      if (activeMessageId && profileId) {
+        setMessages(await getMessageData(profileId, activeMessageId));
+      }
     }
+    getData();
   }, [props.location]);
 
   useEffect(() => {
@@ -89,8 +108,10 @@ function Messages(props) {
 
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
-      <MessagesSidebar latestConvos={latestConvos} />
-
+      <MessagesSidebar
+        latestConvos={latestConvos}
+        activeMessageId={activeMessageId}
+      />
       <Layout
         className="messages-subcontainer"
         style={{ backgroundColor: "white" }}
@@ -100,6 +121,8 @@ function Messages(props) {
           activeMessageId={activeMessageId}
           socket={socket}
           addMyMessage={addMyMessage}
+          otherId={activeMessageId}
+          userType={userType}
         />
       </Layout>
     </Layout>

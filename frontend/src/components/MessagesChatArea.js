@@ -17,6 +17,7 @@ import { SendOutlined, SettingOutlined } from "@ant-design/icons";
 // import { getMessageData } from "utils/dummyData";
 import useAuth from "utils/hooks/useAuth";
 import { getMessageData } from "utils/api";
+import { fetchAccountById } from "utils/api";
 
 function MessagesChatArea(props) {
   const { Content, Footer, Header } = Layout;
@@ -25,6 +26,18 @@ function MessagesChatArea(props) {
 
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
+  const [accountData, setAccountData] = useState({});
+  const { messages, activeMessageId, otherId, userType } = props;
+
+  useEffect(() => {
+    async function fetchAccount() {
+      var account = await fetchAccountById(otherId, userType);
+      if (account) {
+        setAccountData(account);
+      }
+    }
+    fetchAccount();
+  }, [otherId]);
 
   // const [messages, setMessages] = useState([]);
 
@@ -58,8 +71,6 @@ function MessagesChatArea(props) {
     props.addMyMessage(msg);
   };
 
-  const { messages, activeMessageId } = props;
-
   // console.log(messages);
   // console.log(activeMessageId);
   if (!activeMessageId || !messages || !messages.length) {
@@ -73,14 +84,18 @@ function MessagesChatArea(props) {
         orientation="left"
         type="vertical"
       />
-      <Header className="chat-area-header">
-        <Meta
-          className=""
-          avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-          title="Nikhil Goat"
-          description="Professional model and product designer."
-        />
-      </Header>
+      {accountData ? (
+        <Header className="chat-area-header">
+          <Meta
+            className=""
+            avatar={<Avatar src={accountData.image?.url} />}
+            title={accountData.name}
+            description={accountData.professional_title}
+          />
+        </Header>
+      ) : (
+        <div></div>
+      )}
       <Content className="conversation-box">
         {messages.map((block) => {
           return (
@@ -92,7 +107,8 @@ function MessagesChatArea(props) {
               <div className="chatRight__inner" data-chat="person1">
                 {block.sender_id.$oid != profileId && (
                   <span>
-                    <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
+                    {console.log(accountData)}
+                    <Avatar src={accountData.image?.url} />{" "}
                   </span>
                 )}
 
@@ -105,11 +121,6 @@ function MessagesChatArea(props) {
                     {block.body}
                   </div>
                 </div>
-                {block.sender_id.$oid == profileId && (
-                  <span>
-                    <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
-                  </span>
-                )}
               </div>
             </div>
           );

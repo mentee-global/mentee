@@ -14,7 +14,6 @@ function MessagesSidebar(props) {
 
   const [searchQuery, setSearchQuery] = useState("");
   // const [latestConvos, setLatestConvos] = useState([]);
-  const [activeMessageId, setActiveMessageId] = useState("");
 
   const styles = {
     searchInput: {
@@ -23,7 +22,7 @@ function MessagesSidebar(props) {
       backgroundColor: "white",
     },
   };
-  const { latestConvos } = props;
+  const { latestConvos, activeMessageId } = props;
 
   if (!latestConvos || !latestConvos.length) {
     return <div>Loading...</div>;
@@ -45,8 +44,10 @@ function MessagesSidebar(props) {
       <div className="messages-sidebar">
         {latestConvos.map((chat) => {
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
+            {
+              console.log(chat.otherId, " j ", activeMessageId);
+            }
             if (chat.otherId == activeMessageId) {
-              console.log(chat.otherId, activeMessageId);
               return (
                 <MessageCard key={chat.otherId} chat={chat} active={true} />
               );

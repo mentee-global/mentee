@@ -1,18 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Badge } from "antd";
 import { BellOutlined } from "@ant-design/icons";
-import {notificationsRducer} from "app/store"
- 
-
+import {fetchNotificationsCount} from "features/notificationsSlice"
+import useInterval from "utils/hooks/useInterval";
 import "./css/Navigation.scss";
 
 
 
 function NotificationBell() {
-  const store = Redux.createStore(notificationsRducer)
-  const [count, setcount] = useState(store.getState());
+  const count = useSelector((state) => state.notifications.count);
+  const dispatch = useDispatch();
+  const profileID = useSelector((state) => state.user.user.profileId);
   
 
+  useInterval(() => {
+    dispatch(fetchNotificationsCount({ id: profileID }));
+    
+  }, 5000);
 
   return (
     <div className="notifications-section">

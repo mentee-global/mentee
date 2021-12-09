@@ -10,7 +10,7 @@ from api.utils.constants import WEEKLY_NOTIF_REMINDER
 notifications = Blueprint("notifications", __name__)
 
 
-@notifications.route("/notifications/<id>", methods=["GET"])
+@notifications.route("/<id>", methods=["GET"])
 def get_unread_dm_count(id):
     try:
         notifications = DirectMessage.objects(
@@ -38,20 +38,6 @@ def update_unread_count(recipient, sender):
     messages.update({'$set': {'read': True}})
     messages.save()
     return create_response(status=200, message="Success")
-
-
-@notifications.route("/newlyread", methods=["GET"])
-def get_unread_count(recipient, sender):
-    try:
-        messages_count = DirectMessage.objects(
-            Q(recipient_id=recipient) & Q(
-                message_read=False) & Q(sender_id=sender).count()
-        )
-    except Exception as e:
-        msg = "failed to find the messages"
-        logger.info(e)
-        return create_response(status=422, message=msg)
-    return create_response(data={"messages_count": messages_count})
 
 
 @notifications.route("/weeklyemails", methods=["GET"])

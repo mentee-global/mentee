@@ -4,7 +4,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { decrement } from "features/notificationsSlice";
 import { useDispatch } from "react-redux";
-import { get_unread_count, update_unread_count } from "backend/views/notifications.py"
+//import { get_unread_count, update_unread_count } from "backend/views/notifications.py"
 
 function MessageCard(props) {
   const history = useHistory();
@@ -18,9 +18,9 @@ function MessageCard(props) {
   const openMessage = () => {
     history.push(`/messages/${otherId}`);
     
-    dispatch(decrement(get_unread_count(otherID, name)));
+    //dispatch(decrement(get_unread_count(otherID, name)));
 
-    update_unread_count(otherID, name);
+    //update_unread_count(otherID, name);
 
   };
 

@@ -44,8 +44,7 @@ function MessageCard(props) {
   }, [otherId, isMentor, isMentee, isAdmin]);
 
   // console.log(props.active)
-  const name = `message-${props.active ? "active-" : ""}card`;
-  console.log(props.active, name);
+
 
   return (
     <Card onClick={openMessage} className={name}>

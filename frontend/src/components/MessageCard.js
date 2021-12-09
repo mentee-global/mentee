@@ -45,7 +45,6 @@ function MessageCard(props) {
 
   // console.log(props.active)
 
-
   return (
     <Card onClick={openMessage} className={name}>
       {accountData ? (

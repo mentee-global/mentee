@@ -28,14 +28,13 @@ def get_unread_dm_count(id):
 def update_unread_count(recipient, sender):
     try:
         messages = DirectMessage.objects(
-            Q(recipient_id=recipient) & Q(
-                message_read=False) & Q(sender_id=sender)
+            Q(recipient_id=recipient) & Q(message_read=False) & Q(sender_id=sender)
         )
     except Exception as e:
         msg = "failed"
         logger.info(e)
         return create_response(status=422, message=msg)
-    messages.update({'$set': {'read': True}})
+    messages.update({"$set": {"read": True}})
     messages.save()
     return create_response(status=200, message="Success")
 

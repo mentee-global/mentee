@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {getUnreadDmCount } from "utils/api";
+import { getUnreadDmCount } from "utils/api";
 
 export const fetchNotificationsCount = createAsyncThunk(
   "fetchNotificationsCount",
@@ -13,7 +13,7 @@ export const notificationsSlice = createSlice({
   name: "notifications",
   initialState: {
     count: 0,
-    status: "idle"
+    status: "idle",
   },
   reducers: {
     resetNotifications(state, action) {
@@ -29,7 +29,7 @@ export const notificationsSlice = createSlice({
       .addCase(fetchNotificationsCount.fulfilled, (state, action) => {
         state.count = action.payload;
         state.status = "succeeded";
-      })
+      });
   },
 });
 

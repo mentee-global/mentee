@@ -17,14 +17,12 @@ function MessageCard(props) {
 
   const openMessage = () => {
     history.push(`/messages/${otherId}`);
-    
+
     //dispatch(decrement(get_unread_count(otherID, name)));
 
     //update_unread_count(otherID, name);
-
   };
 
-  
   return (
     <Card onClick={openMessage} className={name}>
       <Meta

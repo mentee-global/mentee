@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Radio, Space, Form, Select, Input } from "antd";
+import { Modal, Radio, Space, Form, Select, Input, Button } from "antd";
 import { sendMenteeMentorEmail } from "../utils/api";
 import { SPECIALIZATIONS } from "../utils/consts.js";
 import MenteeButton from "./MenteeButton";
@@ -23,6 +23,8 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
     setModalVisible(false);
     setMessage(null);
     setError(false);
+    setInterestAreas([])
+    setCommunicationMethod(null)
   };
 
   const addInterestArea = (e) => {
@@ -31,6 +33,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
   const filteredOptions = SPECIALIZATIONS.filter(
     (o) => !interestAreas.includes(o)
   );
+
   return (
     <span>
       <MenteeButton
@@ -51,7 +54,26 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
         style={{ overflow: "hidden" }}
         footer={null}
       >
-        <Form layout="vertical" style={{padding: "30px"}}>
+        <Form 
+          layout="vertical" 
+          style={{padding: "30px"}}
+          onFinish={async () => {
+            const res = await sendMenteeMentorEmail(
+              mentorId,
+              menteeId,
+              responseEmail,
+              interestAreas,
+              communicationMethod,
+              message
+            );
+            if (!res) {
+              setError(true);
+            } else {
+              closeModal();
+              setConfirmationModal(true);
+            }
+          }}
+        >
           <Form.Item>
             <h1 className="modal-mentee-appointment-contact-header">
               Reach Out to {mentorName}
@@ -122,27 +144,13 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
             </div>
           </Form.Item>
           <Form.Item>
-            <button
+            <Button
+              type="primary" 
+              htmlType="submit"
               className="contact-me-submit-button"
-              onClick={async () => {
-                const res = await sendMenteeMentorEmail(
-                  mentorId,
-                  menteeId,
-                  responseEmail,
-                  interestAreas,
-                  communicationMethod,
-                  message
-                );
-                if (!res) {
-                  setError(true);
-                } else {
-                  closeModal();
-                  setConfirmationModal(true);
-                }
-              }}
             >
               Submit
-            </button> 
+            </Button> 
           </Form.Item> 
         </Form>
       </Modal>

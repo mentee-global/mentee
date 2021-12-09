@@ -8,8 +8,10 @@ import "./css/Navigation.scss";
 
 function NotificationBell() {
   const count = useSelector((state) => state.notifications.count);
+  console.log(count);
   const dispatch = useDispatch();
-  const profileID = useSelector((state) => state.user.user.profileId);
+  const profileID = useSelector((state) => state.user.user._id.$oid);
+  console.log(profileID);
 
   useInterval(() => {
     dispatch(fetchNotificationsCount({ id: profileID }));
@@ -17,7 +19,7 @@ function NotificationBell() {
 
   return (
     <div className="notifications-section">
-      <Badge count={count} size="small">
+      <Badge count={count ?? 0} size="small">
         <BellOutlined className="notifications-icon" />
       </Badge>
     </div>

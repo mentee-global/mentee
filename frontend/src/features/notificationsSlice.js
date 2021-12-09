@@ -5,7 +5,7 @@ export const fetchNotificationsCount = createAsyncThunk(
   "fetchNotificationsCount",
   async ({ id }) => {
     const res = await getUnreadDmCount(id);
-    return res;
+    return res.notifications;
   }
 );
 

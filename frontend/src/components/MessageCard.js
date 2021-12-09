@@ -12,7 +12,6 @@ function MessageCard(props) {
   const [accountData, setAccountData] = useState({});
   const { isAdmin, isMentee, isMentor } = useAuth();
 
-
   // console.log(props.active)
   const name = `message-${props.active ? "active-" : ""}card`;
   // console.log(name);

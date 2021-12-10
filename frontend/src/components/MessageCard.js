@@ -13,7 +13,6 @@ function MessageCard(props) {
   const openMessage = () => {
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);
   };
-  // console.log(isMentor, isMentee);
 
   useEffect(() => {
     async function fetchAccount() {
@@ -27,11 +26,9 @@ function MessageCard(props) {
       }
     }
     fetchAccount();
-  }, [otherId]);
+  }, []);
 
-  // console.log(props.active)
   const name = `message-${props.active ? "active-" : ""}card`;
-  console.log(props.active, name);
   return (
     <Card onClick={openMessage} className={name}>
       {accountData ? (

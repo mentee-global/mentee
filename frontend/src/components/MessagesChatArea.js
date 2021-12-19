@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Avatar,
+  Alert,
   Card,
   Col,
   Divider,
@@ -39,13 +40,14 @@ function MessagesChatArea(props) {
     fetchAccount();
   }, [otherId]);
 
-  // const [messages, setMessages] = useState([]);
-
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
 
   const sendMessage = (e) => {
+    if (!messageText.replace(/\s/g, "").length) {
+      return;
+    }
     let today = new Date();
     let date =
       today.getFullYear() +
@@ -67,6 +69,7 @@ function MessagesChatArea(props) {
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
     props.addMyMessage(msg);
+    return;
   };
 
   if (!activeMessageId || !messages || !messages.length) {

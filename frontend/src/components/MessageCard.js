@@ -4,13 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { fetchAccountById } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
-import useAuth from "utils/hooks/useAuth";
 
 function MessageCard(props) {
   const history = useHistory();
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
-  const { isAdmin, isMentee, isMentor } = useAuth();
 
   // console.log(props.active)
   const name = `message-${props.active ? "active-" : ""}card`;
@@ -19,19 +17,10 @@ function MessageCard(props) {
   const openMessage = () => {
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);
   };
-  // console.log(isMentor, isMentee);
 
   useEffect(() => {
     async function fetchAccount() {
-      console.log(otherId);
-      var otherType = 0;
-      if (isMentor) {
-        otherType = ACCOUNT_TYPE.MENTEE;
-      } else if (isMentee) {
-        otherType = ACCOUNT_TYPE.MENTOR;
-      } else {
-        otherType = ACCOUNT_TYPE.ADMIN;
-      }
+      var otherType = otherUser.user_type;
       var account = await fetchAccountById(otherId, otherType);
       if (account) {
         setAccountData(account);
@@ -41,9 +30,7 @@ function MessageCard(props) {
       }
     }
     fetchAccount();
-  }, [otherId, isMentor, isMentee, isAdmin]);
-
-  // console.log(props.active)
+  }, []);
 
   return (
     <Card onClick={openMessage} className={name}>

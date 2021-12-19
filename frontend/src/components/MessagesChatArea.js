@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Alert,
-  Card,
-  Col,
-  Divider,
-  Layout,
-  Row,
-  Input,
-  Button,
-  message,
-} from "antd";
+import { Avatar, Col, Divider, Layout, Row, Input, Button } from "antd";
 import { withRouter } from "react-router-dom";
 
 import Meta from "antd/lib/card/Meta";
-import { SendOutlined, SettingOutlined } from "@ant-design/icons";
-// import { getMessageData } from "utils/dummyData";
+import { SendOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
-import { getMessageData } from "utils/api";
 import { fetchAccountById } from "utils/api";
 
 function MessagesChatArea(props) {

@@ -9,10 +9,7 @@ function MessageCard(props) {
   const history = useHistory();
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
-
-  // console.log(props.active)
   const name = `message-${props.active ? "active-" : ""}card`;
-  // console.log(name);
 
   const openMessage = () => {
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);

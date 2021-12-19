@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Badge } from "antd";
 import { BellOutlined } from "@ant-design/icons";
-import { fetchNotificationsCount } from "features/notificationsSlice";
+import { fetchNotificationsCount } from "features/notifications/notificationsSlice";
 import useInterval from "utils/hooks/useInterval";
 import "./css/Navigation.scss";
 

@@ -45,7 +45,7 @@ function MessagesChatArea(props) {
   */
 
   const sendMessage = (e) => {
-    if (!messageText.replace(/\s/g, '').length) {
+    if (!messageText.replace(/\s/g, "").length) {
       return;
     }
     let today = new Date();

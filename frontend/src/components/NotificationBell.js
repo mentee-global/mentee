@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Badge } from "antd";
 import { BellOutlined } from "@ant-design/icons";
@@ -8,10 +8,12 @@ import "./css/Navigation.scss";
 
 function NotificationBell() {
   const count = useSelector((state) => state.notifications.count);
-  console.log(count);
   const dispatch = useDispatch();
-  const profileID = useSelector((state) => state.user.user._id.$oid);
-  console.log(profileID);
+  const profileID = useSelector((state) => state.user.user?._id?.$oid);
+
+  useEffect(() => {
+    dispatch(fetchNotificationsCount({ id: profileID }));
+  }, []);
 
   useInterval(() => {
     dispatch(fetchNotificationsCount({ id: profileID }));

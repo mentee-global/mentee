@@ -193,6 +193,19 @@ export const getUnreadDMCount = (id) => {
   );
 };
 
+export const updateUnreadDMCount = (recipient, sender) => {
+  const data = {
+    recipient,
+    sender,
+  };
+  console.log(data);
+  const requestExtension = `/notifications/update`;
+  return instance.put(requestExtension, data).then(
+    (response) => response,
+    (err) => err
+  );
+};
+
 export const editAvailability = (timeslots, id) => {
   const requestExtension = `/availability/${id}`;
   let availability = { Availability: timeslots };

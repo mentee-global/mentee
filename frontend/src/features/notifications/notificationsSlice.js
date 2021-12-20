@@ -1,11 +1,21 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getUnreadDMCount } from "utils/api";
+import { getUnreadDMCount, updateUnreadDMCount } from "utils/api";
 
 export const fetchNotificationsCount = createAsyncThunk(
   "fetchNotificationsCount",
   async ({ id }) => {
     const res = await getUnreadDMCount(id);
     return res.notifications;
+  }
+);
+
+// TODO: Make this so that if it fails it should rerun
+export const updateNotificationsCount = createAsyncThunk(
+  "updateNotificationsCount",
+  async ({ recipient, sender }, thunkAPI) => {
+    const res = await updateUnreadDMCount(recipient, sender);
+    thunkAPI.dispatch(fetchNotificationsCount({ id: recipient }));
+    return res;
   }
 );
 

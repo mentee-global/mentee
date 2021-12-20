@@ -1,17 +1,24 @@
-import { Avatar, Card } from "antd";
-import Meta from "antd/lib/card/Meta";
 import React, { useEffect, useState } from "react";
+import { Avatar, Card } from "antd";
+import { useSelector, useDispatch } from "react-redux";
+import Meta from "antd/lib/card/Meta";
+import { updateNotificationsCount } from "features/notifications/notificationsSlice";
 import { useHistory } from "react-router";
 import { fetchAccountById } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 function MessageCard(props) {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const thisUserId = useSelector((state) => state.user.user._id.$oid);
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
   const name = `message-${props.active ? "active-" : ""}card`;
 
   const openMessage = () => {
+    dispatch(
+      updateNotificationsCount({ recipient: thisUserId, sender: otherId })
+    );
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);
   };
 

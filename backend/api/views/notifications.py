@@ -28,9 +28,12 @@ def get_unread_dm_count(id):
 
 @notifications.route("/update", methods=["PUT"])
 def update_unread_count():
-    data = request.get_json() or dict()
+    data = request.get_json()
+    if not data:
+        return create_response(status=422, message="Missing data from PUT request")
+
     recipient = data.get("recipient", None)
-    sender = data.get.get("sender", None)
+    sender = data.get("sender", None)
     if not recipient or not sender:
         return create_response(status=422, message="Missing IDs for recipient/sender")
 
@@ -42,8 +45,7 @@ def update_unread_count():
         msg = "failed"
         logger.info(e)
         return create_response(status=422, message=msg)
-    messages.update({"$set": {"read": True}})
-    messages.save()
+    messages.update(set__message_read=True)
     return create_response(status=200, message="Success")
 
 

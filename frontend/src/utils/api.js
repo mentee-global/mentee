@@ -183,7 +183,7 @@ export const fetchAvailability = (id) => {
   );
 };
 
-export const getUnreadDmCount = (id) => {
+export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;
   return instance.get(requestExtension).then(
     (response) => response.data.result,

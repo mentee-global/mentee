@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getUnreadDmCount } from "utils/api";
+import { getUnreadDMCount } from "utils/api";
 
 export const fetchNotificationsCount = createAsyncThunk(
   "fetchNotificationsCount",
   async ({ id }) => {
-    const res = await getUnreadDmCount(id);
+    const res = await getUnreadDMCount(id);
     return res.notifications;
   }
 );

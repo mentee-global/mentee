@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from flask.globals import request
 from api.core import create_response, logger
 from flask import Blueprint
 from api.models.MenteeProfile import MenteeProfile, MentorProfile
@@ -25,7 +27,13 @@ def get_unread_dm_count(id):
 
 
 @notifications.route("/update", methods=["PUT"])
-def update_unread_count(recipient, sender):
+def update_unread_count():
+    data = request.get_json() or dict()
+    recipient = data.get("recipient", None)
+    sender = data.get.get("sender", None)
+    if not recipient or not sender:
+        return create_response(status=422, message="Missing IDs for recipient/sender")
+
     try:
         messages = DirectMessage.objects(
             Q(recipient_id=recipient) & Q(message_read=False) & Q(sender_id=sender)

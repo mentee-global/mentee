@@ -20,12 +20,12 @@ def runserver():
 
 @manager.command
 def runprod():
-    socketio.run(app, debug=True, host="0.0.0.0")
+    socketio.run(app, debug=True, host="0.0.0.0", port=5000)
 
 
 @manager.command
 def runworker():
-    socketio.run(app, debug=False)
+    socketio.run(app, debug=True)
 
 
 if __name__ == "__main__":

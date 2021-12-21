@@ -129,16 +129,13 @@ function MentorCard(props) {
             </a>
           </h4>
         )}
-        <div className="bookmark-button"></div>
-        <div className="gallery-card-footer">
-          <hr className="gallery-solid-border" />
-
-          <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
-            <div className="gallery-button">
-              <MenteeButton content="View Profile" />
-            </div>
-          </NavLink>
-        </div>
+      </div>
+      <div className="gallery-card-footer">
+        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
+          <div className="gallery-button">
+            <MenteeButton content="View Profile" />
+          </div>
+        </NavLink>
       </div>
     </div>
   );

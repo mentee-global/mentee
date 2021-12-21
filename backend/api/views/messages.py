@@ -2,7 +2,7 @@ from os import path
 from flask import Blueprint, request, jsonify
 from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email
-from api.utils.constants import MENTOR_CONTACT_ME
+from api.utils.constants import Account, MENTOR_CONTACT_ME
 from api.core import create_response, serialize_list, logger
 from api.models import db
 import json
@@ -158,7 +158,6 @@ def contact_mentor(mentor_id):
 @messages.route("/contacts/<string:user_id>", methods=["GET"])
 def get_sidebar(user_id):
     try:
-        print(user_id)
         sentMessages = DirectMessage.objects.filter(
             Q(sender_id=user_id) | Q(recipient_id=user_id)
         ).order_by("-created_at")
@@ -176,20 +175,22 @@ def get_sidebar(user_id):
 
             if otherId not in sidebarContacts:
                 otherUser = None
+                user_type = Account.MENTOR.value
                 try:
                     otherUser = MentorProfile.objects.get(id=otherId)
                 except:
                     pass
                 if not otherUser:
+                    user_type = Account.MENTEE.value
                     try:
                         otherUser = MenteeProfile.objects.get(id=otherId)
                     except:
                         msg = "Could not find mentor or mentee for given ids"
                         return create_response(status=422, message=msg)
-
                 otherUser = json.loads(otherUser.to_json())
                 otherUserObj = {
                     "name": otherUser["name"],
+                    "user_type": user_type,
                 }
 
                 if "image" in otherUser:

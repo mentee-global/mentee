@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Avatar,
+  Alert,
   Card,
   Col,
   Divider,
@@ -17,6 +18,7 @@ import { SendOutlined, SettingOutlined } from "@ant-design/icons";
 // import { getMessageData } from "utils/dummyData";
 import useAuth from "utils/hooks/useAuth";
 import { getMessageData } from "utils/api";
+import { fetchAccountById } from "utils/api";
 
 function MessagesChatArea(props) {
   const { Content, Footer, Header } = Layout;
@@ -25,16 +27,27 @@ function MessagesChatArea(props) {
 
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
+  const [accountData, setAccountData] = useState({});
+  const { messages, activeMessageId, otherId, userType } = props;
 
-  // const [messages, setMessages] = useState([]);
-
-  // console.log(profileId)
+  useEffect(() => {
+    async function fetchAccount() {
+      var account = await fetchAccountById(otherId, userType);
+      if (account) {
+        setAccountData(account);
+      }
+    }
+    fetchAccount();
+  }, [otherId]);
 
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
 
   const sendMessage = (e) => {
+    if (!messageText.replace(/\s/g, "").length) {
+      return;
+    }
     let today = new Date();
     let date =
       today.getFullYear() +
@@ -56,12 +69,9 @@ function MessagesChatArea(props) {
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
     props.addMyMessage(msg);
+    return;
   };
 
-  const { messages, activeMessageId } = props;
-
-  // console.log(messages);
-  // console.log(activeMessageId);
   if (!activeMessageId || !messages || !messages.length) {
     return <div>Loading...</div>;
   }
@@ -73,14 +83,18 @@ function MessagesChatArea(props) {
         orientation="left"
         type="vertical"
       />
-      <Header className="chat-area-header">
-        <Meta
-          className=""
-          avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-          title="Nikhil Goat"
-          description="Professional model and product designer."
-        />
-      </Header>
+      {accountData ? (
+        <Header className="chat-area-header">
+          <Meta
+            className=""
+            avatar={<Avatar src={accountData.image?.url} />}
+            title={accountData.name}
+            description={accountData.professional_title}
+          />
+        </Header>
+      ) : (
+        <div></div>
+      )}
       <Content className="conversation-box">
         {messages.map((block) => {
           return (
@@ -92,7 +106,7 @@ function MessagesChatArea(props) {
               <div className="chatRight__inner" data-chat="person1">
                 {block.sender_id.$oid != profileId && (
                   <span>
-                    <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
+                    <Avatar src={accountData.image?.url} />{" "}
                   </span>
                 )}
 
@@ -105,11 +119,6 @@ function MessagesChatArea(props) {
                     {block.body}
                   </div>
                 </div>
-                {block.sender_id.$oid == profileId && (
-                  <span>
-                    <Avatar src="https://joeschmoe.io/api/v1/random" />{" "}
-                  </span>
-                )}
               </div>
             </div>
           );

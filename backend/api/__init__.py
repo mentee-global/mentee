@@ -53,6 +53,8 @@ def create_app(test_config=None):
     strm.setLevel(logging.DEBUG)
     strm.setFormatter(formatter)
 
+    gunicorn_error_logger = logging.getLogger("gunicorn.error")
+    app.logger.handlers.extend(gunicorn_error_logger.handlers)
     app.logger.addHandler(strm)
     app.logger.setLevel(logging.DEBUG)
 
@@ -105,15 +107,6 @@ def create_app(test_config=None):
     app.register_blueprint(notifications.notifications, url_prefix="/api/notifications")
 
     app.register_error_handler(Exception, all_exception_handler)
-
-    @app.route("/", defaults={"path": ""})
-    @app.route("/<path:path>")
-    def catch_all(path):
-        return app.send_static_file("index.html")
-
-    @app.errorhandler(404)
-    def not_found(e):
-        return app.send_static_file("index.html")
 
     socketio.init_app(app)
     return app

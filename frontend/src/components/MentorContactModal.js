@@ -23,8 +23,8 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
     setModalVisible(false);
     setMessage(null);
     setError(false);
-    setInterestAreas([])
-    setCommunicationMethod(null)
+    setInterestAreas([]);
+    setCommunicationMethod(null);
   };
 
   const addInterestArea = (e) => {
@@ -54,9 +54,9 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
         style={{ overflow: "hidden" }}
         footer={null}
       >
-        <Form 
-          layout="vertical" 
-          style={{padding: "30px"}}
+        <Form
+          layout="vertical"
+          style={{ padding: "30px" }}
           onFinish={async () => {
             const res = await sendMenteeMentorEmail(
               mentorId,
@@ -95,7 +95,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               mode="tags"
               value={interestAreas}
               onChange={addInterestArea}
-              style={{minWidth: "100px"}}
+              style={{ minWidth: "100px" }}
             >
               {filteredOptions.map((item) => (
                 <Select.Option key={item} value={item}>
@@ -128,7 +128,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
           <Form.Item
             label="Briefly introduce yourself and what you are looking to gain from a Mentor."
             name="Custom Message"
-            style={{paddingTop: "12px"}}
+            style={{ paddingTop: "12px" }}
             rules={[
               { required: true, message: "Please write an introduction!" },
             ]}
@@ -140,18 +140,18 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
                 handleClick={() => {}}
                 style={styles.modalInput}
               />
-              <br />           
+              <br />
             </div>
           </Form.Item>
           <Form.Item>
             <Button
-              type="primary" 
+              type="primary"
               htmlType="submit"
               className="contact-me-submit-button"
             >
               Submit
-            </Button> 
-          </Form.Item> 
+            </Button>
+          </Form.Item>
         </Form>
       </Modal>
       <Modal
@@ -187,7 +187,7 @@ const styles = {
   modalInput: {
     marginTop: -5,
     overflow: "hidden",
-  }
+  },
 };
 
 export default MentorContactModal;

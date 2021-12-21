@@ -112,10 +112,7 @@ function Messages(props) {
         latestConvos={latestConvos}
         activeMessageId={activeMessageId}
       />
-      <Layout
-        className="messages-subcontainer"
-        style={{ backgroundColor: "white" }}
-      >
+      <Layout style={{ backgroundColor: "white" }}>
         <MessagesChatArea
           messages={messages}
           activeMessageId={activeMessageId}

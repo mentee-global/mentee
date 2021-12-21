@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 
 import { Divider, Input, Layout } from "antd";
@@ -8,10 +7,8 @@ import { SearchOutlined } from "@ant-design/icons";
 
 function MessagesSidebar(props) {
   const { Sider } = Layout;
-  const history = useHistory();
 
   const [searchQuery, setSearchQuery] = useState("");
-  // const [latestConvos, setLatestConvos] = useState([]);
 
   const styles = {
     searchInput: {

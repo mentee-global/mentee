@@ -149,6 +149,7 @@ function ProfileContent(props) {
                     mentorName={props.mentor?.name}
                     mentorId={props.mentor?._id?.$oid}
                     menteeId={profileId}
+                    mentorSpecializations={props.mentor?.specializations}
                   />
                   <MenteeAppointmentModal
                     mentor_name={props.mentor.name}

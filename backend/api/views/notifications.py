@@ -42,7 +42,7 @@ def update_unread_count():
             Q(recipient_id=recipient) & Q(message_read=False) & Q(sender_id=sender)
         )
     except Exception as e:
-        msg = "failed"
+        msg = "Mongoengine: failed to fetch message objects"
         logger.info(e)
         return create_response(status=422, message=msg)
     messages.update(set__message_read=True)

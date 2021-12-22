@@ -57,8 +57,11 @@ function MentorCard(props) {
   }
 
   function truncate(str, maxLength) {
-
-      return str.length > maxLength ? <Tooltip title = {str}> {str.substring(0, maxLength-3) + "..."} </Tooltip> : str;
+    return str.length > maxLength ? (
+      <Tooltip title={str}> {str.substring(0, maxLength - 3) + "..."} </Tooltip>
+    ) : (
+      str
+    );
   }
 
   return (
@@ -74,7 +77,7 @@ function MentorCard(props) {
               {truncate(props.professional_title, 35)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
-                    Speaks: {truncate(props.languages.join(", "), 30)} 
+              Speaks: {truncate(props.languages.join(", "), 30)}
             </Title>
           </div>
           {isMentee && (
@@ -99,7 +102,7 @@ function MentorCard(props) {
               Location:
             </h3>
             <Text className="gallery-list-items">
-                {truncate(props.location, 45)}
+              {truncate(props.location, 45)}
             </Text>
           </div>
         )}

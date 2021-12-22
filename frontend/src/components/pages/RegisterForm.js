@@ -41,6 +41,47 @@ function RegisterForm(props) {
   const [educations, setEducations] = useState([]);
   const [saving, setSaving] = useState(false);
 
+  const [localProfile, setLocalProfile] = useState({});
+
+  useEffect(() => {
+    const mentor = JSON.parse(localStorage.getItem('mentor'));
+    console.log(mentor)
+    if (mentor) {
+        setName(mentor.name)
+    }
+
+    // if (props.mentee) {
+    //   setName(props.mentee.name);
+    //   setAbout(props.mentee.biography);
+    //   setLocation(props.mentee.location);
+    //   setAge(props.mentee.age);
+    //   setGender(props.mentee.gender);
+    //   setPhone(props.mentee.phone);
+    //   setEmail(props.mentee.email);
+    //   setImage(props.mentee.image);
+    //   setLanguages(props.mentee.languages);
+    //   setOrganization(props.mentee.organization);
+    //   // Deep copy of array of objects
+    //   const newEducation = props.mentee.education
+    //     ? JSON.parse(JSON.stringify(props.mentee.education))
+    //     : [];
+    //   setEducations(newEducation);
+    //   setVideoUrl(props.mentee.video && props.mentee.video.url);
+    //   setPrivacy(props.mentee.is_private);
+
+    //   if (props.mentee.education) {
+    //     let newInputs = (props.mentee.education.length - 1) * 4;
+    //     setNumInputs(INITIAL_NUM_INPUTS + newInputs);
+
+    //     let newValid = [...isValid];
+    //     for (let i = 0; i < newInputs; i++) {
+    //       newValid.push(true);
+    //     }
+    //     setIsValid(newValid);
+    //   }
+    // }
+  });
+
   function renderEducationInputs() {
     return (
       educations &&
@@ -224,6 +265,10 @@ function RegisterForm(props) {
       setIsValid(newValid);
     }
     setName(name);
+    let newLocalProfile = {...localProfile, name: name}
+    setLocalProfile(newLocalProfile)
+    console.log(newLocalProfile)
+    localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
   }
 
   function handleTitleChange(e) {

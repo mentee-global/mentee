@@ -50,6 +50,7 @@ function RegisterForm(props) {
         setLocalProfile(mentor)
         setName(mentor.name)
         setAbout(mentor.biography)
+        setLocation(mentor.location)
     }
 
     // if (props.mentee) {
@@ -346,6 +347,19 @@ function RegisterForm(props) {
     setLinkedin(linkedin);
   }
 
+  function handleLocationChange(e) {
+      const location = e.target.value
+      setLocation(location)
+      let newLocalProfile = {...localProfile, location : location}
+      setLocalProfile(newLocalProfile)
+      localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
+  }
+//   function updateLocalStorage(field, value) {
+//     let newLocalProfile = {...localProfile, field : value}
+//     setLocalProfile(newLocalProfile)
+//     localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
+//   }
+
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
       const res = await createMentorProfile(data);
@@ -508,7 +522,7 @@ function RegisterForm(props) {
             clicked={inputClicked[5]}
             index={5}
             handleClick={handleClick}
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={handleLocationChange}
             value={location}
           />
           <ModalInput

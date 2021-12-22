@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Button, Rate } from "antd";
+import { Avatar, Typography, Button, Rate, Tooltip } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -56,6 +56,10 @@ function MentorCard(props) {
     props.onEditFav(props.id, fav);
   }
 
+  function truncate(str, maxLength) {
+      return str.length > maxLength ? str.substring(0, maxLength-3) + "..." : str;
+  }
+
   return (
     <div className="gallery-mentor-card">
       <div className="gallery-card-body">
@@ -69,7 +73,9 @@ function MentorCard(props) {
               {props.professional_title}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
-              Speaks: {props.languages.join(", ")}
+                <Tooltip title = {props.languages.join(", ")}>
+                    Speaks: {truncate(props.languages.join(", "), 30)} 
+                </Tooltip>
             </Title>
           </div>
           {isMentee && (
@@ -93,7 +99,9 @@ function MentorCard(props) {
               <EnvironmentOutlined style={styles.icon} />
               Location:
             </h3>
-            <Text className="gallery-list-items">{props.location}</Text>
+            <Text className="gallery-list-items">
+                {truncate(props.location, 45)}
+            </Text>
           </div>
         )}
         <h3 className="gallery-headers">
@@ -101,7 +109,9 @@ function MentorCard(props) {
           Specializations:
         </h3>
         <Text className="gallery-list-items">
-          {props.specializations.join(", ")}
+            <Tooltip title = {props.specializations.join(", ")}>
+          {truncate(props.specializations.join(", "), 87)}
+            </Tooltip>
         </Text>
         {props.website && (
           <h4 className="gallery-info-section">

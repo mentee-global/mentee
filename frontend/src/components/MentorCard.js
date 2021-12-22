@@ -21,14 +21,14 @@ const { Title, Text } = Typography;
 
 const styles = {
   title: {
-    fontSize: "35px",
+    fontSize: "2em",
     whiteSpace: "normal",
     overflow: "visible",
     textOverflow: "ellipsis",
     margin: 0,
   },
   subTitle: {
-    fontSize: "18px",
+    fontSize: "1.2em",
     whiteSpace: "normal",
     overflow: "visible",
     textOverflow: "ellipsis",
@@ -67,10 +67,10 @@ function MentorCard(props) {
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
-              {props.name}
+              {truncate(props.name, 15)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
-              {props.professional_title}
+              {truncate(props.professional_title, 35)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
                 <Tooltip title = {props.languages.join(", ")}>

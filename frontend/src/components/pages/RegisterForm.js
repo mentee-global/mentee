@@ -47,7 +47,9 @@ function RegisterForm(props) {
     const mentor = JSON.parse(localStorage.getItem('mentor'));
     console.log(mentor)
     if (mentor) {
+        setLocalProfile(mentor)
         setName(mentor.name)
+        setAbout(mentor.biography)
     }
 
     // if (props.mentee) {
@@ -80,7 +82,7 @@ function RegisterForm(props) {
     //     setIsValid(newValid);
     //   }
     // }
-  });
+  }, []);
 
   function renderEducationInputs() {
     return (
@@ -267,7 +269,6 @@ function RegisterForm(props) {
     setName(name);
     let newLocalProfile = {...localProfile, name: name}
     setLocalProfile(newLocalProfile)
-    console.log(newLocalProfile)
     localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
   }
 
@@ -304,6 +305,9 @@ function RegisterForm(props) {
     }
 
     setAbout(about);
+    let newLocalProfile = {...localProfile, biography: about}
+    setLocalProfile(newLocalProfile)
+    localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
   }
 
   function handleWebsiteChange(e) {

@@ -56,6 +56,8 @@ function MessagesChatArea(props) {
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
     props.addMyMessage(msg);
+
+    setMessageText("");
     return;
   };
 
@@ -123,6 +125,7 @@ function MessagesChatArea(props) {
         <TextArea
           className="message-input"
           placeholder="Send a message..."
+          value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
           autoSize={{ minRows: 1, maxRows: 3 }}
         />

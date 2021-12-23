@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Avatar, Col, Divider, Layout, Row, Input, Button } from "antd";
 import { withRouter } from "react-router-dom";
 
@@ -17,6 +17,15 @@ function MessagesChatArea(props) {
   const [accountData, setAccountData] = useState({});
   const { messages, activeMessageId, otherId, userType } = props;
 
+  const messagesEndRef = useRef(null);
+  const scrollToBottom = () => {
+    if (messagesEndRef.current != null) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  };
   useEffect(() => {
     async function fetchAccount() {
       var account = await fetchAccountById(otherId, userType);
@@ -25,7 +34,8 @@ function MessagesChatArea(props) {
       }
     }
     fetchAccount();
-  }, [otherId]);
+    scrollToBottom();
+  }, [otherId, messages]);
 
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
@@ -120,6 +130,7 @@ function MessagesChatArea(props) {
             </div>
           );
         })}
+        <div ref={messagesEndRef} />
       </div>
       <div className="conversation-footer">
         <TextArea

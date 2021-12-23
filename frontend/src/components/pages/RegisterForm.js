@@ -190,7 +190,7 @@ function RegisterForm(props) {
   function validateNotEmpty(arr, index) {
     let tempValid = isValid;
     tempValid[index] = arr.length > 0;
-    setIsValid(tempValid);
+    setIsValid(tempValid); 
   }
 
   function handleSchoolChange(e, index) {

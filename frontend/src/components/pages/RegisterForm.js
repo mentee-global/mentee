@@ -47,42 +47,54 @@ function RegisterForm(props) {
     const mentor = JSON.parse(localStorage.getItem('mentor'));
     console.log(mentor)
     if (mentor) {
+        let newValid = [...isValid];
         setLocalProfile(mentor)
+
         setName(mentor.name)
+        if (mentor.name && mentor.name > 50) {
+            newValid[0] = false
+        }
         setAbout(mentor.biography)
+        if (mentor.biography && mentor.biography.length > 255) {
+            newValid[8] = false
+        }
         setLocation(mentor.location)
+        setTitle(mentor.professional_title)
+        if (mentor.professional_title && mentor.professional_title > 80) {
+            newValid[1] = false
+        }
+        setWebsite(mentor.website);
+        if (!validateUrl(mentor.website)) {
+            newValid[3] = false
+        }
+        setLinkedin(mentor.linkedin)
+        if (!validateUrl(mentor.linkedin)) {
+            newValid[2] = false
+        }
+        setInPersonAvailable(mentor.offers_in_person);
+        setGroupAvailable(mentor.offers_group_appointments);
+
+        setSpecializations(mentor.specializations);
+        if (mentor.specializations && mentor.specializations.length <= 0) {
+            newValid[9] = false
+        }
+
+        setLanguages(mentor.languages);
+        if (mentor.languages && mentor.languages.length <= 0) {
+            newValid[7] = false
+        }
+        const newEducation = mentor.education
+            ? JSON.parse(JSON.stringify(mentor.education))
+            : [];
+        setEducations(newEducation);
+        newEducation.forEach((education, index)=> {
+            newValid = [...newValid, true, true, true, true]
+            newValid[10 + index * 4] = !!education.school
+            newValid[10 + index * 4 + 1] = !!education.graduation_year;
+            newValid[10 + index * 4 + 2] = !!education.majors.length;
+            newValid[10 + index * 4 + 3] = !!education.education_level;
+        });
     }
-
-    // if (props.mentee) {
-    //   setName(props.mentee.name);
-    //   setAbout(props.mentee.biography);
-    //   setLocation(props.mentee.location);
-    //   setAge(props.mentee.age);
-    //   setGender(props.mentee.gender);
-    //   setPhone(props.mentee.phone);
-    //   setEmail(props.mentee.email);
-    //   setImage(props.mentee.image);
-    //   setLanguages(props.mentee.languages);
-    //   setOrganization(props.mentee.organization);
-    //   // Deep copy of array of objects
-    //   const newEducation = props.mentee.education
-    //     ? JSON.parse(JSON.stringify(props.mentee.education))
-    //     : [];
-    //   setEducations(newEducation);
-    //   setVideoUrl(props.mentee.video && props.mentee.video.url);
-    //   setPrivacy(props.mentee.is_private);
-
-    //   if (props.mentee.education) {
-    //     let newInputs = (props.mentee.education.length - 1) * 4;
-    //     setNumInputs(INITIAL_NUM_INPUTS + newInputs);
-
-    //     let newValid = [...isValid];
-    //     for (let i = 0; i < newInputs; i++) {
-    //       newValid.push(true);
-    //     }
-    //     setIsValid(newValid);
-    //   }
-    // }
   }, []);
 
   function renderEducationInputs() {
@@ -187,6 +199,8 @@ function RegisterForm(props) {
     education.school = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = {...localProfile, education: newEducations}
+    updateLocalStorage(newLocalProfile)
 
     let newValid = [...isValid];
     newValid[10 + index * 4] = !!education.school;
@@ -199,6 +213,8 @@ function RegisterForm(props) {
     education.graduation_year = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = {...localProfile, education: newEducations}
+    updateLocalStorage(newLocalProfile)
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 1] = !!education.graduation_year;
@@ -213,6 +229,8 @@ function RegisterForm(props) {
     education.majors = majors;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = {...localProfile, education: newEducations}
+    updateLocalStorage(newLocalProfile)
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 2] = !!education.majors.length;
@@ -225,6 +243,8 @@ function RegisterForm(props) {
     education.education_level = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = {...localProfile, education: newEducations}
+    updateLocalStorage(newLocalProfile)
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 3] = !!education.education_level;
@@ -240,6 +260,9 @@ function RegisterForm(props) {
       graduation_year: "",
     });
     setEducations(newEducations);
+    let newLocalProfile = {...localProfile, education: newEducations}
+    updateLocalStorage(newLocalProfile)
+
     setIsValid([...isValid, true, true, true, true]);
   };
 
@@ -247,6 +270,8 @@ function RegisterForm(props) {
     const newEducations = [...educations];
     newEducations.splice(educationIndex, 1);
     setEducations(newEducations);
+    let newLocalProfile = {...localProfile, education: newEducations}
+    updateLocalStorage(newLocalProfile)
 
     const newValidArray = [...isValid];
     newValidArray.splice(10 + educationIndex * 4, 4);
@@ -269,8 +294,7 @@ function RegisterForm(props) {
     }
     setName(name);
     let newLocalProfile = {...localProfile, name: name}
-    setLocalProfile(newLocalProfile)
-    localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
+    updateLocalStorage(newLocalProfile)
   }
 
   function handleTitleChange(e) {
@@ -288,6 +312,8 @@ function RegisterForm(props) {
       setIsValid(newValid);
     }
     setTitle(title);
+    let newLocalProfile = {...localProfile, professional_title: title}
+    updateLocalStorage(newLocalProfile)
   }
 
   function handleAboutChange(e) {
@@ -307,8 +333,7 @@ function RegisterForm(props) {
 
     setAbout(about);
     let newLocalProfile = {...localProfile, biography: about}
-    setLocalProfile(newLocalProfile)
-    localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
+    updateLocalStorage(newLocalProfile)
   }
 
   function handleWebsiteChange(e) {
@@ -320,6 +345,7 @@ function RegisterForm(props) {
       newValid[3] = true;
 
       setIsValid(newValid);
+
     } else {
       let newValid = [...isValid];
       newValid[3] = false;
@@ -327,6 +353,8 @@ function RegisterForm(props) {
     }
 
     setWebsite(website);
+    let newLocalProfile = {...localProfile, website: website}
+    updateLocalStorage(newLocalProfile)
   }
 
   function handleLinkedinChange(e) {
@@ -338,6 +366,7 @@ function RegisterForm(props) {
       newValid[2] = true;
 
       setIsValid(newValid);
+
     } else {
       let newValid = [...isValid];
       newValid[2] = false;
@@ -345,20 +374,21 @@ function RegisterForm(props) {
     }
 
     setLinkedin(linkedin);
+    let newLocalProfile = {...localProfile, linkedin: linkedin}
+    updateLocalStorage(newLocalProfile)
   }
 
   function handleLocationChange(e) {
       const location = e.target.value
       setLocation(location)
       let newLocalProfile = {...localProfile, location : location}
-      setLocalProfile(newLocalProfile)
-      localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
+      updateLocalStorage(newLocalProfile)
   }
-//   function updateLocalStorage(field, value) {
-//     let newLocalProfile = {...localProfile, field : value}
-//     setLocalProfile(newLocalProfile)
-//     localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
-//   }
+
+  function updateLocalStorage(newLocalProfile) {
+    setLocalProfile(newLocalProfile)
+    localStorage.setItem('mentor', JSON.stringify(newLocalProfile));
+  }
 
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
@@ -497,7 +527,12 @@ function RegisterForm(props) {
             clicked={inputClicked[3]}
             index={3}
             handleClick={handleClick}
-            onChange={(e) => setInPersonAvailable(e.target.checked)}
+            onChange={(e) => {
+                setInPersonAvailable(e.target.checked);
+                let newLocalProfile = {...localProfile, offers_in_person: e.target.checked};
+                updateLocalStorage(newLocalProfile);
+            }
+            }
             checked={inPersonAvailable}
           >
             Available in-person?
@@ -508,7 +543,11 @@ function RegisterForm(props) {
             clicked={inputClicked[4]}
             index={4}
             handleClick={handleClick}
-            onChange={(e) => setGroupAvailable(e.target.checked)}
+            onChange={(e) => {
+                setGroupAvailable(e.target.checked);
+                let newLocalProfile = {...localProfile, offers_group_appointments: e.target.checked};
+                updateLocalStorage(newLocalProfile);
+            }}
             checked={groupAvailable}
           >
             Available for group appointments?
@@ -551,6 +590,8 @@ function RegisterForm(props) {
             onChange={(e) => {
               setLanguages(e);
               validateNotEmpty(e, 7);
+              let newLocalProfile = {...localProfile, languages: e};
+              updateLocalStorage(newLocalProfile);
             }}
             placeholder="Ex. English, Spanish"
             options={LANGUAGES}
@@ -584,6 +625,9 @@ function RegisterForm(props) {
             onChange={(e) => {
               setSpecializations(e);
               validateNotEmpty(e, 9);
+
+              let newLocalProfile = {...localProfile, specializations: e};
+              updateLocalStorage(newLocalProfile);
             }}
             options={SPECIALIZATIONS}
             value={specializations}

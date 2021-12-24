@@ -17,7 +17,10 @@ function Home({ history }) {
           <p className="home-text">Find a global mentor now...</p>
           <br />
           <LoginVerificationModal
-            content={isMentor && <b>Find a Mentee</b> || isMentee && <b>Find a Mentor</b>}
+            content={
+              (isMentor && <b>Find a Mentee</b>) ||
+              (isMentee && <b>Find a Mentor</b>)
+            }
             theme="dark"
             onVerified={() => {
               let redirect = MENTOR_GALLERY_PAGE;

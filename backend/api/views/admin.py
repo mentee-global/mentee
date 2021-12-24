@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from firebase_admin import auth as firebase_admin_auth
-from api.core import create_response, serialize_list, logger
-from api.models import MentorProfile, MenteeProfile, Users, VerifiedEmail, Admin
+from api.core import create_response, logger
+from api.models import Users, VerifiedEmail, Admin
 from api.utils.require_auth import admin_only
 from api.utils.request_utils import get_profile_model
 from api.utils.constants import Account
@@ -11,10 +11,20 @@ import io
 
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
-# DELETE request for specific account based on id
+
 @admin.route("/account/<int:role>/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_account(role, id):
+    """Allows for the deletion of a specific account from the
+    Mentee/Mentor documents
+
+    Args:
+        role (Account): Specifies role of account
+        id (int): The _id of the specific account document
+
+    Returns:
+        HTTP Response
+    """
     try:
         account = get_profile_model(role).objects.get(id=id)
     except:
@@ -62,13 +72,14 @@ def delete_account(role, id):
     return create_response(status=200, message="Successful deletion")
 
 
-@admin.route("/upload/mentors", methods=["GET", "POST"])
+@admin.route("/upload/accounts", methods=["POST"])
 @admin_only
-def upload_mentor_emails():
-    if request.method == "GET":
-        uploads = VerifiedEmail.objects().get(is_mentor=True)
-        return create_response(data={"uploads": uploads})
+def upload_account_emails():
+    """Upload account emails to permit registering
 
+    Returns:
+        HTTP Response
+    """
     f = request.files["fileupload"]
     password = request.form["pass"]
     isMentor = request.form["mentorOrMentee"] == "true"
@@ -90,6 +101,14 @@ def upload_mentor_emails():
 @admin.route("/admin/<id>", methods=["GET"])
 @admin_only
 def get_admin(id):
+    """Get admin account info
+
+    Args:
+        id (int): ObjectId of Admin
+
+    Returns:
+        HTTP Response
+    """
     try:
         admin = Admin.objects.get(id=id)
     except:

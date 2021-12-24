@@ -341,7 +341,7 @@ export const getApplicationById = async (id) => {
 };
 
 export const adminUploadEmails = (file, password, isMentor) => {
-  const requestExtension = "/upload/mentors";
+  const requestExtension = "/upload/accounts";
   let formData = new FormData();
   formData.append("fileupload", file);
   formData.append("pass", password);

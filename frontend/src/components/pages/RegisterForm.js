@@ -399,15 +399,6 @@ function RegisterForm(props) {
             valid={isValid[1]}
             validate={validate}
           />
-          <Button
-            type="default"
-            shape="round"
-            className="regular-button"
-            onClick={handleSaveEdits}
-            loading={saving}
-          >
-            Save
-          </Button>
         </div>
         <div className="modal-input-container">
           <ModalInput

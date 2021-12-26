@@ -10,7 +10,7 @@ import { ACCOUNT_TYPE } from "utils/consts";
 function MessageCard(props) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const thisUserId = useSelector((state) => state.user.user._id.$oid);
+  const thisUserId = useSelector((state) => state.user.user?._id?.$oid);
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
   const name = `message-${props.active ? "active-" : ""}card`;

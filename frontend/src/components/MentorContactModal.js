@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { Modal, Radio, Space, Form, Select } from "antd";
+import { Modal, Radio, Space, Form, Select, Input, Button } from "antd";
 import { sendMenteeMentorEmail } from "../utils/api";
-import { SPECIALIZATIONS } from "../utils/consts.js";
 import MenteeButton from "./MenteeButton";
-import ModalInput from "./ModalInput";
 import thankYouImage from "../resources/thankYou.png";
 
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
 
-function MentorContactModal({ mentorId, menteeId, mentorName }) {
+function MentorContactModal({
+  mentorId,
+  menteeId,
+  mentorName,
+  mentorSpecializations,
+}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState("");
   const [responseEmail, setResponseEmail] = useState("");
@@ -23,14 +26,17 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
     setModalVisible(false);
     setMessage(null);
     setError(false);
+    setInterestAreas([]);
+    setCommunicationMethod(null);
   };
 
   const addInterestArea = (e) => {
     setInterestAreas(e);
   };
-  const filteredOptions = SPECIALIZATIONS.filter(
+  const filteredOptions = mentorSpecializations.filter(
     (o) => !interestAreas.includes(o)
   );
+
   return (
     <span>
       <MenteeButton
@@ -51,13 +57,36 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
         style={{ overflow: "hidden" }}
         footer={null}
       >
-        <h1 className="modal-mentee-appointment-contact-header">
-          Reach Out to {mentorName}
-        </h1>
-        <h3 className="modal-mentee-appointment-contact-description">
-          Your name and email will be sent to this mentor
-        </h3>
-        <Form>
+        <Form
+          layout="vertical"
+          style={{ padding: "30px" }}
+          onFinish={async () => {
+            const res = await sendMenteeMentorEmail(
+              mentorId,
+              menteeId,
+              responseEmail,
+              interestAreas,
+              communicationMethod,
+              message
+            );
+            if (!res) {
+              setError(true);
+            } else {
+              closeModal();
+              setConfirmationModal(true);
+            }
+          }}
+        >
+          <Form.Item>
+            <h1 className="modal-mentee-appointment-contact-header">
+              Reach Out to {mentorName}
+            </h1>
+          </Form.Item>
+          <Form.Item>
+            <h3 className="modal-mentee-appointment-contact-description">
+              Your name and email will be sent to this mentor
+            </h3>
+          </Form.Item>
           <Form.Item
             label="Choose Interest Areas"
             name="Choose Interest Areas"
@@ -69,6 +98,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               mode="tags"
               value={interestAreas}
               onChange={addInterestArea}
+              style={{ minWidth: "100px" }}
             >
               {filteredOptions.map((item) => (
                 <Select.Option key={item} value={item}>
@@ -80,6 +110,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
           <Form.Item
             label="Preferred communication method"
             name="What is your preferred communication method?"
+            style={{ paddingTop: "12px" }}
             rules={[
               {
                 required: true,
@@ -98,37 +129,35 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
               </Space>
             </Radio.Group>
           </Form.Item>
-          <div className="message-modal-container">
-            <ModalInput
-              style={styles.modalInput}
-              type="textarea"
-              handleClick={() => {}}
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
-              large
-            />
-            <br />
-            <MenteeButton
-              width={120}
-              content={"Send Message"}
-              onClick={async () => {
-                const res = await sendMenteeMentorEmail(
-                  mentorId,
-                  menteeId,
-                  responseEmail,
-                  interestAreas,
-                  communicationMethod,
-                  message
-                );
-                if (!res) {
-                  setError(true);
-                } else {
-                  closeModal();
-                  setConfirmationModal(true);
-                }
-              }}
-            />
-          </div>
+          <Form.Item
+            label="Briefly introduce yourself and what you are looking to gain from a Mentor."
+            name="Custom Message"
+            style={{ paddingTop: "12px" }}
+            rules={[
+              { required: true, message: "Please write an introduction!" },
+            ]}
+          >
+            <div className="message-modal-container">
+              <Input.TextArea
+                placeholder="Hi Jim! I’m a junior at Oxford University studying Economics. I saw that you’re knowledgeable in Personal Finance, which is something I’m interested in, and I’d love to learn more about your experiences. Thank you for your time!"
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
+                handleClick={() => {}}
+                style={styles.modalInput}
+                autoSize={{ minRows: 3 }}
+              />
+              <br />
+            </div>
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="contact-me-submit-button"
+            >
+              Submit
+            </Button>
+          </Form.Item>
         </Form>
       </Modal>
       <Modal
@@ -162,8 +191,7 @@ function MentorContactModal({ mentorId, menteeId, mentorName }) {
 
 const styles = {
   modalInput: {
-    marginTop: 20,
-    width: "95%",
+    marginTop: -5,
     overflow: "hidden",
   },
 };

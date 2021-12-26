@@ -5,7 +5,7 @@ import { logout } from "utils/auth.service";
 import { Avatar, Layout, Drawer, Button, Menu, Dropdown } from "antd";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { resetUser, fetchUser } from "features/user/userSlice";
+import { resetUser, fetchUser } from "features/userSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";

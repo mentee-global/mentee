@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "features/user/userSlice";
+import { fetchUser } from "features/userSlice";
 import { getMentorID, getMenteeID } from "utils/auth.service";
 import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";

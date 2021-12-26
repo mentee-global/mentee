@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Card } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import Meta from "antd/lib/card/Meta";
-import { updateNotificationsCount } from "features/notifications/notificationsSlice";
+import { updateNotificationsCount } from "features/notificationsSlice";
 import { useHistory } from "react-router";
 import { fetchAccountById } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";

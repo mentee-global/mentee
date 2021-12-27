@@ -25,7 +25,6 @@ function MessagesSidebar(props) {
         <h1>My Messages</h1>
       </div>
       <Divider className="header-divider" orientation="left"></Divider>
-      {latestConvos && latestConvos.length > 0 &&
       <div className="messages-search-input">
         <Input
           placeholder="Search for a mentor..."
@@ -34,7 +33,6 @@ function MessagesSidebar(props) {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-        }
       <div className="messages-sidebar">
         {latestConvos && latestConvos.length > 0 && latestConvos.map((chat) => {
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {

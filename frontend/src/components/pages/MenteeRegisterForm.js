@@ -53,18 +53,19 @@ function MenteeRegisterForm(props) {
 
   useEffect(() => {
     const mentee = JSON.parse(localStorage.getItem("mentee"));
-    console.log(mentee)
+    console.log(mentee);
     if (mentee) {
       let newValid = [...isValid];
       setLocalProfile(mentee);
 
       setName(mentee.name);
-      if (mentee.name && mentee.name > 50) {
+      if (mentee.name && mentee.name.length > 50) {
+        console.log("hello");
         newValid[0] = false;
       }
 
-      setVideo(mentee.video)
-      setPrivacy(mentee.is_private)
+      setVideo(mentee.video);
+      setPrivacy(mentee.is_private);
 
       setBiography(mentee.biography);
       if (mentee.biography && mentee.biography.length > 255) {
@@ -72,16 +73,16 @@ function MenteeRegisterForm(props) {
       }
       setLocation(mentee.location);
       if (mentee.location && mentee.location.length >= 70) {
-          newValid[9] = false;
+        newValid[9] = false;
       }
-      setGender(mentee.gender)
-      setAge(mentee.age)
-      setLanguages(mentee.languages)
+      setGender(mentee.gender);
+      setAge(mentee.age);
+      setLanguages(mentee.languages);
       if (mentee.languages && mentee.languages.length <= 0) {
         newValid[5] = false;
       }
-      setPhone(mentee.phone_number)
-      setOrganization(mentee.organization)
+      setPhone(mentee.phone_number);
+      setOrganization(mentee.organization);
       const newEducation = mentee.education
         ? JSON.parse(JSON.stringify(mentee.education))
         : [];
@@ -93,7 +94,8 @@ function MenteeRegisterForm(props) {
         newValid[10 + index * 4 + 2] = !!education.majors.length;
         newValid[10 + index * 4 + 3] = !!education.education_level;
       });
-      setIsValid(newValid)
+      setIsValid(newValid);
+      console.log(newValid);
     }
   }, []);
 
@@ -285,13 +287,13 @@ function MenteeRegisterForm(props) {
 
   function handleVideoChange(e) {
     setVideo(e.target.value);
-    let newLocalProfile = { ...localProfile, video: e.target.value};
+    let newLocalProfile = { ...localProfile, video: e.target.value };
     updateLocalStorage(newLocalProfile);
   }
 
   function handlePrivacyChange(e) {
     setPrivacy(e.target.checked);
-    let newLocalProfile = { ...localProfile, is_private: e.target.checked};
+    let newLocalProfile = { ...localProfile, is_private: e.target.checked };
     updateLocalStorage(newLocalProfile);
   }
 
@@ -310,7 +312,7 @@ function MenteeRegisterForm(props) {
       setIsValid(newValid);
     }
     setName(name);
-    let newLocalProfile = { ...localProfile, name: name};
+    let newLocalProfile = { ...localProfile, name: name };
     updateLocalStorage(newLocalProfile);
   }
   function handleBiographyChange(e) {
@@ -329,7 +331,7 @@ function MenteeRegisterForm(props) {
     }
 
     setBiography(biography);
-    let newLocalProfile = { ...localProfile, biography: biography};
+    let newLocalProfile = { ...localProfile, biography: biography };
     updateLocalStorage(newLocalProfile);
   }
 
@@ -349,43 +351,42 @@ function MenteeRegisterForm(props) {
     }
 
     setLocation(location);
-    let newLocalProfile = { ...localProfile, location: location};
+    let newLocalProfile = { ...localProfile, location: location };
     updateLocalStorage(newLocalProfile);
   }
 
   function handleGenderChange(e) {
     const gender = e.target.value;
-    setGender(gender)
-    let newLocalProfile = { ...localProfile, gender: gender};
+    setGender(gender);
+    let newLocalProfile = { ...localProfile, gender: gender };
     updateLocalStorage(newLocalProfile);
   }
 
   function handleAgeChange(e) {
     setAge(e);
-    let newLocalProfile = { ...localProfile, age : age};
+    let newLocalProfile = { ...localProfile, age: e };
     updateLocalStorage(newLocalProfile);
-    validateNotEmpty(e, 4)
+    validateNotEmpty(e, 4);
   }
 
   function handleLanguageChange(e) {
-    setLanguages(e)
-    validateNotEmpty(e, 5)
-    let newLocalProfile = { ...localProfile, languages: e};
+    setLanguages(e);
+    validateNotEmpty(e, 5);
+    let newLocalProfile = { ...localProfile, languages: e };
     updateLocalStorage(newLocalProfile);
   }
 
   function handlePhoneChange(e) {
-    setPhone(e.target.value)
-    let newLocalProfile = { ...localProfile, phone_number: e.target.value};
+    setPhone(e.target.value);
+    let newLocalProfile = { ...localProfile, phone_number: e.target.value };
     updateLocalStorage(newLocalProfile);
   }
 
   function handleOrganizationChange(e) {
-    setOrganization(e.target.value)
-    let newLocalProfile = { ...localProfile, organization: e.target.value};
+    setOrganization(e.target.value);
+    let newLocalProfile = { ...localProfile, organization: e.target.value };
     updateLocalStorage(newLocalProfile);
   }
-  
 
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
@@ -455,8 +456,7 @@ function MenteeRegisterForm(props) {
             Error or missing fields, try again.
           </div>
         )}
-        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}
-        </div>
+        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
       </div>
       <div className="modal-inner-container">
         <div className="modal-input-container">
@@ -544,6 +544,7 @@ function MenteeRegisterForm(props) {
             handleClick={handleClick}
             onChange={handleLanguageChange}
             validate={validate}
+            valid={isValid[5]}
             value={languages}
           />
         </div>
@@ -616,9 +617,9 @@ function MenteeRegisterForm(props) {
             style={styles.saveButton}
             onClick={handleSaveEdits}
             loading={saving}
-        >
+          >
             Save
-        </Button>
+          </Button>
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ import useAuth from "../../utils/hooks/useAuth";
 import { MENTEE_GALLERY_PAGE, MENTOR_GALLERY_PAGE } from "../../utils/consts";
 
 function Home({ history }) {
-  const { isMentor } = useAuth();
+  const { isMentor, isMentee } = useAuth();
   return (
     <div className="home-background">
       <div className="home-content">
@@ -17,7 +17,10 @@ function Home({ history }) {
           <p className="home-text">Find a global mentor now...</p>
           <br />
           <LoginVerificationModal
-            content={isMentor ? <b>Find a Mentee</b> : <b>Find a Mentor</b>}
+            content={
+              (isMentor && <b>Find a Mentee</b>) ||
+              (isMentee && <b>Find a Mentor</b>)
+            }
             theme="dark"
             onVerified={() => {
               let redirect = MENTOR_GALLERY_PAGE;

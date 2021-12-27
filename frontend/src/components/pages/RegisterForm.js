@@ -423,7 +423,7 @@ function RegisterForm(props) {
         const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
           unsubscribe();
           history.push("/profile");
-          history.go(0)
+          history.go(0);
         });
       } else {
         setError(true);

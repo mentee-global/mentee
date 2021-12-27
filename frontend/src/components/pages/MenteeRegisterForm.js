@@ -3,22 +3,10 @@ import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
 import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
-import {
-  getRegistrationStage,
-  isLoggedIn,
-  refreshToken,
-  getCurrentUser,
-  getUserEmail,
-} from "utils/auth.service";
+import { refreshToken, getCurrentUser, getUserEmail } from "utils/auth.service";
 import { createMenteeProfile } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
-import {
-  LANGUAGES,
-  SPECIALIZATIONS,
-  REGISTRATION_STAGE,
-  MENTEE_DEFAULT_VIDEO_NAME,
-  AGE_RANGES,
-} from "utils/consts";
+import { LANGUAGES, MENTEE_DEFAULT_VIDEO_NAME, AGE_RANGES } from "utils/consts";
 import { useMediaQuery } from "react-responsive";
 import moment from "moment";
 import "../css/AntDesign.scss";
@@ -53,14 +41,12 @@ function MenteeRegisterForm(props) {
 
   useEffect(() => {
     const mentee = JSON.parse(localStorage.getItem("mentee"));
-    console.log(mentee);
     if (mentee) {
       let newValid = [...isValid];
       setLocalProfile(mentee);
 
       setName(mentee.name);
       if (mentee.name && mentee.name.length > 50) {
-        console.log("hello");
         newValid[0] = false;
       }
 
@@ -95,7 +81,6 @@ function MenteeRegisterForm(props) {
         newValid[10 + index * 4 + 3] = !!education.education_level;
       });
       setIsValid(newValid);
-      console.log(newValid);
     }
   }, []);
 

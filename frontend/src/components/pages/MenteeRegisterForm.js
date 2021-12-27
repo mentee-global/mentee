@@ -455,7 +455,8 @@ function MenteeRegisterForm(props) {
             Error or missing fields, try again.
           </div>
         )}
-        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
+        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}
+        </div>
       </div>
       <div className="modal-inner-container">
         <div className="modal-input-container">
@@ -473,17 +474,6 @@ function MenteeRegisterForm(props) {
             errorPresent={name && name.length > 50}
             errorMessage="Name field is too long."
           />
-
-          <Button
-            type="default"
-            shape="round"
-            className="regular-button"
-            style={styles.saveButton}
-            onClick={handleSaveEdits}
-            loading={saving}
-          >
-            Save
-          </Button>
         </div>
         <div className="modal-input-container">
           <ModalInput
@@ -603,6 +593,7 @@ function MenteeRegisterForm(props) {
             handleClick={handleClick}
             onChange={handleVideoChange}
             placeholder="Paste Link"
+            value={video}
           />
         </div>
         <div className="modal-education-header">Account Privacy</div>
@@ -618,6 +609,16 @@ function MenteeRegisterForm(props) {
             You'll be able to see your information, but your account will not
             show up when people are browsing accounts.
           </div>
+          <Button
+            type="default"
+            shape="round"
+            className="regular-button"
+            style={styles.saveButton}
+            onClick={handleSaveEdits}
+            loading={saving}
+        >
+            Save
+        </Button>
         </div>
       </div>
     </div>
@@ -646,7 +647,7 @@ const styles = {
 
   saveButton: {
     position: "relative",
-    top: "60em",
+    top: "2em",
   },
 };
 

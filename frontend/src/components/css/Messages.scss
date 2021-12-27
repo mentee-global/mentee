@@ -147,6 +147,18 @@
   padding: 12px;
 }
 
+.no-messages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+  width: 100%;
+}
+
+.start-convo {
+  font-size: larger;
+}
+
 .bubble-received {
   background-color: #f4f5f9;
   color: #323e4a;

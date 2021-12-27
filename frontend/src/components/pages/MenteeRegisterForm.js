@@ -49,6 +49,54 @@ function MenteeRegisterForm(props) {
   const [privacy, setPrivacy] = useState(false);
   const [video, setVideo] = useState();
 
+  const [localProfile, setLocalProfile] = useState({});
+
+  useEffect(() => {
+    const mentee = JSON.parse(localStorage.getItem("mentee"));
+    console.log(mentee)
+    if (mentee) {
+      let newValid = [...isValid];
+      setLocalProfile(mentee);
+
+      setName(mentee.name);
+      if (mentee.name && mentee.name > 50) {
+        newValid[0] = false;
+      }
+
+      setVideo(mentee.video)
+      setPrivacy(mentee.is_private)
+
+      setBiography(mentee.biography);
+      if (mentee.biography && mentee.biography.length > 255) {
+        newValid[8] = false;
+      }
+      setLocation(mentee.location);
+      if (mentee.location && mentee.location.length >= 70) {
+          newValid[9] = false;
+      }
+      setGender(mentee.gender)
+      setAge(mentee.age)
+      setLanguages(mentee.languages)
+      if (mentee.languages && mentee.languages.length <= 0) {
+        newValid[5] = false;
+      }
+      setPhone(mentee.phone_number)
+      setOrganization(mentee.organization)
+      const newEducation = mentee.education
+        ? JSON.parse(JSON.stringify(mentee.education))
+        : [];
+      setEducations(newEducation);
+      newEducation.forEach((education, index) => {
+        newValid = [...newValid, true, true, true, true];
+        newValid[10 + index * 4] = !!education.school;
+        newValid[10 + index * 4 + 1] = !!education.graduation_year;
+        newValid[10 + index * 4 + 2] = !!education.majors.length;
+        newValid[10 + index * 4 + 3] = !!education.education_level;
+      });
+      setIsValid(newValid)
+    }
+  }, []);
+
   function renderEducationInputs() {
     return (
       educations &&
@@ -145,12 +193,19 @@ function MenteeRegisterForm(props) {
     setIsValid(tempValid);
   }
 
+  function updateLocalStorage(newLocalProfile) {
+    setLocalProfile(newLocalProfile);
+    localStorage.setItem("mentee", JSON.stringify(newLocalProfile));
+  }
+
   function handleSchoolChange(e, index) {
     const newEducations = [...educations];
     let education = newEducations[index];
     education.school = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = { ...localProfile, education: newEducations };
+    updateLocalStorage(newLocalProfile);
 
     let newValid = [...isValid];
     newValid[10 + index * 4] = !!education.school;
@@ -163,6 +218,8 @@ function MenteeRegisterForm(props) {
     education.graduation_year = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = { ...localProfile, education: newEducations };
+    updateLocalStorage(newLocalProfile);
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 1] = !!education.graduation_year;
@@ -177,6 +234,8 @@ function MenteeRegisterForm(props) {
     education.majors = majors;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = { ...localProfile, education: newEducations };
+    updateLocalStorage(newLocalProfile);
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 2] = !!education.majors.length;
@@ -189,6 +248,8 @@ function MenteeRegisterForm(props) {
     education.education_level = e.target.value;
     newEducations[index] = education;
     setEducations(newEducations);
+    let newLocalProfile = { ...localProfile, education: newEducations };
+    updateLocalStorage(newLocalProfile);
 
     let newValid = [...isValid];
     newValid[10 + index * 4 + 3] = !!education.education_level;
@@ -204,6 +265,9 @@ function MenteeRegisterForm(props) {
       graduation_year: "",
     });
     setEducations(newEducations);
+    let newLocalProfile = { ...localProfile, education: newEducations };
+    updateLocalStorage(newLocalProfile);
+
     setIsValid([...isValid, true, true, true, true]);
   };
 
@@ -211,6 +275,8 @@ function MenteeRegisterForm(props) {
     const newEducations = [...educations];
     newEducations.splice(educationIndex, 1);
     setEducations(newEducations);
+    let newLocalProfile = { ...localProfile, education: newEducations };
+    updateLocalStorage(newLocalProfile);
 
     const newValidArray = [...isValid];
     newValidArray.splice(10 + educationIndex * 4, 4);
@@ -219,10 +285,14 @@ function MenteeRegisterForm(props) {
 
   function handleVideoChange(e) {
     setVideo(e.target.value);
+    let newLocalProfile = { ...localProfile, video: e.target.value};
+    updateLocalStorage(newLocalProfile);
   }
 
   function handlePrivacyChange(e) {
     setPrivacy(e.target.checked);
+    let newLocalProfile = { ...localProfile, is_private: e.target.checked};
+    updateLocalStorage(newLocalProfile);
   }
 
   function handleNameChange(e) {
@@ -240,6 +310,8 @@ function MenteeRegisterForm(props) {
       setIsValid(newValid);
     }
     setName(name);
+    let newLocalProfile = { ...localProfile, name: name};
+    updateLocalStorage(newLocalProfile);
   }
   function handleBiographyChange(e) {
     const biography = e.target.value;
@@ -257,6 +329,8 @@ function MenteeRegisterForm(props) {
     }
 
     setBiography(biography);
+    let newLocalProfile = { ...localProfile, biography: biography};
+    updateLocalStorage(newLocalProfile);
   }
 
   function handleLocationChange(e) {
@@ -275,7 +349,43 @@ function MenteeRegisterForm(props) {
     }
 
     setLocation(location);
+    let newLocalProfile = { ...localProfile, location: location};
+    updateLocalStorage(newLocalProfile);
   }
+
+  function handleGenderChange(e) {
+    const gender = e.target.value;
+    setGender(gender)
+    let newLocalProfile = { ...localProfile, gender: gender};
+    updateLocalStorage(newLocalProfile);
+  }
+
+  function handleAgeChange(e) {
+    setAge(e);
+    let newLocalProfile = { ...localProfile, age : age};
+    updateLocalStorage(newLocalProfile);
+    validateNotEmpty(e, 4)
+  }
+
+  function handleLanguageChange(e) {
+    setLanguages(e)
+    validateNotEmpty(e, 5)
+    let newLocalProfile = { ...localProfile, languages: e};
+    updateLocalStorage(newLocalProfile);
+  }
+
+  function handlePhoneChange(e) {
+    setPhone(e.target.value)
+    let newLocalProfile = { ...localProfile, phone_number: e.target.value};
+    updateLocalStorage(newLocalProfile);
+  }
+
+  function handleOrganizationChange(e) {
+    setOrganization(e.target.value)
+    let newLocalProfile = { ...localProfile, organization: e.target.value};
+    updateLocalStorage(newLocalProfile);
+  }
+  
 
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
@@ -415,7 +525,7 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[3]}
             index={3}
             handleClick={handleClick}
-            onChange={(e) => setGender(e.target.value)}
+            onChange={handleGenderChange}
             value={gender}
           />
         </div>
@@ -427,10 +537,7 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[4]}
             index={4}
             handleClick={handleClick}
-            onChange={(e) => {
-              setAge(e);
-              validateNotEmpty(e, 4);
-            }}
+            onChange={handleAgeChange}
             options={AGE_RANGES}
             value={age}
             valid={isValid[4]}
@@ -445,10 +552,7 @@ function MenteeRegisterForm(props) {
             index={5}
             options={LANGUAGES}
             handleClick={handleClick}
-            onChange={(e) => {
-              setLanguages(e);
-              validateNotEmpty(e, 5);
-            }}
+            onChange={handleLanguageChange}
             validate={validate}
             value={languages}
           />
@@ -461,7 +565,7 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[7]}
             index={7}
             handleClick={handleClick}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={handlePhoneChange}
             value={phone}
           />
           <ModalInput
@@ -471,7 +575,7 @@ function MenteeRegisterForm(props) {
             clicked={inputClicked[8]}
             index={8}
             handleClick={handleClick}
-            onChange={(e) => setOrganization(e.target.value)}
+            onChange={handleOrganizationChange}
             value={organization}
             valid={isValid[8]}
             validate={validate}

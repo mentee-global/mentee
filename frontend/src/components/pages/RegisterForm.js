@@ -93,6 +93,7 @@ function RegisterForm(props) {
         newValid[10 + index * 4 + 2] = !!education.majors.length;
         newValid[10 + index * 4 + 3] = !!education.education_level;
       });
+      setIsValid(newValid)
     }
   }, []);
 

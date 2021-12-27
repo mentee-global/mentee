@@ -34,21 +34,25 @@ function MessagesSidebar(props) {
         />
       </div>
       <div className="messages-sidebar">
-        {latestConvos && latestConvos.length > 0 && latestConvos.map((chat) => {
-          if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
-            if (chat.otherId == activeMessageId) {
-              return (
-                <MessageCard key={chat.otherId} chat={chat} active={true} />
-              );
+        {latestConvos &&
+          latestConvos.length > 0 &&
+          latestConvos.map((chat) => {
+            if (
+              chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())
+            ) {
+              if (chat.otherId == activeMessageId) {
+                return (
+                  <MessageCard key={chat.otherId} chat={chat} active={true} />
+                );
+              } else {
+                return (
+                  <MessageCard key={chat.otherId} chat={chat} active={false} />
+                );
+              }
             } else {
-              return (
-                <MessageCard key={chat.otherId} chat={chat} active={false} />
-              );
+              return <></>;
             }
-          } else {
-            return <></>;
-          }
-        })}
+          })}
       </div>
     </Sider>
   );

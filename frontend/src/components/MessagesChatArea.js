@@ -60,7 +60,9 @@ function MessagesChatArea(props) {
   };
 
   if (!activeMessageId || !messages || !messages.length) {
-    return <div>Loading...</div>;
+    return (
+        <h1>No Messages</h1>
+    )
   }
 
   const OldHeader = () => (

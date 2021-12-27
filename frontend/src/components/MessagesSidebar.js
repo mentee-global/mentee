@@ -19,15 +19,13 @@ function MessagesSidebar(props) {
   };
   const { latestConvos, activeMessageId } = props;
 
-  if (!latestConvos || !latestConvos.length) {
-    return <div>Loading...</div>;
-  }
   return (
     <Sider width={400} className="messages-sidebar-background">
       <div className="messages-sidebar-header">
         <h1>My Messages</h1>
       </div>
       <Divider className="header-divider" orientation="left"></Divider>
+      {latestConvos && latestConvos.length > 0 &&
       <div className="messages-search-input">
         <Input
           placeholder="Search for a mentor..."
@@ -36,8 +34,9 @@ function MessagesSidebar(props) {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
+        }
       <div className="messages-sidebar">
-        {latestConvos.map((chat) => {
+        {latestConvos && latestConvos.length > 0 && latestConvos.map((chat) => {
           if (chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())) {
             if (chat.otherId == activeMessageId) {
               return (

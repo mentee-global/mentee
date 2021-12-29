@@ -8,7 +8,6 @@ import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
 import { getLatestMessages, getMessageData } from "utils/api";
 import { io } from "socket.io-client";
-import usePersistedState from "utils/hooks/usePersistedState";
 
 function Messages(props) {
   const { history } = props;

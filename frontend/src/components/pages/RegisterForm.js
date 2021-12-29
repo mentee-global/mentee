@@ -50,7 +50,7 @@ function RegisterForm(props) {
       setLocalProfile(mentor);
 
       setName(mentor.name);
-      if (mentor.name && mentor.name > 50) {
+      if (mentor.name && mentor.name.length > 50) {
         newValid[0] = false;
       }
       setAbout(mentor.biography);
@@ -59,7 +59,7 @@ function RegisterForm(props) {
       }
       setLocation(mentor.location);
       setTitle(mentor.professional_title);
-      if (mentor.professional_title && mentor.professional_title > 80) {
+      if (mentor.professional_title && mentor.professional_title.length > 80) {
         newValid[1] = false;
       }
       setWebsite(mentor.website);
@@ -93,6 +93,7 @@ function RegisterForm(props) {
         newValid[10 + index * 4 + 2] = !!education.majors.length;
         newValid[10 + index * 4 + 3] = !!education.education_level;
       });
+      setIsValid(newValid);
     }
   }, []);
 
@@ -422,6 +423,7 @@ function RegisterForm(props) {
         const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
           unsubscribe();
           history.push("/profile");
+          history.go(0);
         });
       } else {
         setError(true);

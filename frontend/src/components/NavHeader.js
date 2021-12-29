@@ -118,9 +118,7 @@ function NavHeader({ history }) {
               </>
             )}
             {/* TODO: Update this since verification modal will not longer be needed anymore! */}
-            {isMentor ? (
-              <></>
-            ) : (
+            {isMentee && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentor</b>}
@@ -135,9 +133,7 @@ function NavHeader({ history }) {
                 />
               </span>
             )}
-            {isMentee ? (
-              <></>
-            ) : (
+            {isMentor && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentee</b>}
@@ -255,9 +251,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
             }}
           />
         </div>
-        {isMentor ? (
-          <></>
-        ) : (
+        {isMentee && (
           <LoginVerificationModal
             className="mobile-nav-btn-login-modal"
             content={<b>Find a Mentor</b>}
@@ -271,9 +265,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
             }}
           />
         )}
-        {isMentee ? (
-          <></>
-        ) : (
+        {isMentor && (
           <LoginVerificationModal
             className="mobile-nav-btn-login-modal"
             content={<b>Find a Mentee</b>}

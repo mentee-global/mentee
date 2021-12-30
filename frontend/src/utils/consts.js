@@ -62,6 +62,7 @@ export const LANGUAGES = [
   "English",
   "French",
   "German",
+  "Hebrew",
   "Hindi",
   "Italian",
   "Japanese",
@@ -72,6 +73,7 @@ export const LANGUAGES = [
   "Spanish",
   "Swahili",
   "Urdu",
+  "Other",
 ];
 
 export const AGE_RANGES = [
@@ -88,9 +90,12 @@ export const AGE_RANGES = [
 
 export const SPECIALIZATIONS = [
   "Advocacy and Activism",
+  "Architecture",
   "Arts: Design/Music/Dance and More",
   "Citizenship",
+  "Computer Science",
   "Education, Personal Guidance On Next Steps",
+  "Engineering",
   "Entrepreneurship",
   "Finance, Business",
   "Finance, Personal",
@@ -99,17 +104,22 @@ export const SPECIALIZATIONS = [
   "Interview Skills & Practice",
   "Journalism",
   "Language Lessons",
+  "Law",
   "Letter Writing and Other Communications",
   "Legal Issues, Business",
   "Legal Issues, Related to Personal Issues (Excluding Citizenship)",
   "Media/Public Relations",
   "Medicine",
   "Nonprofits/NGOs",
+  "Political Science",
   "Professional Speaking",
+  "Psychology: The Study of Clinical Practice (Not Personal Issues)",
   "Resume Writing",
   "Self Confidence",
   "Small Businesses",
+  "Teaching: Skills & Methods",
   "Technology Training",
+  "Tourism",
   "Other",
 ];
 

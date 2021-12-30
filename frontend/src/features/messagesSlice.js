@@ -1,10 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { io } from "socket.io-client";
-import { BASE_URL } from "utils/consts";
 
 /**
  * Messages
- * - Initialize the socket
+ * - Initialize the socket **
  * - Event Reconnect: Dispatch refetch of notifications
  * - Event New Message: If we are not on the specific chat, add one to notificationsSlice
  */
@@ -22,19 +20,15 @@ import { BASE_URL } from "utils/consts";
 export const messagesSlice = createSlice({
   name: "messages",
   initialState: {
-    socket: null,
+    activeMessageId: null,
   },
   reducers: {
-    createSocket(state, action) {
-      state.socket = io(BASE_URL);
-    },
-    destroySocket: (state, action) => {
-      state.socket.close();
-      state.socket = null;
+    setActiveMessageId(state, action) {
+      state.activeMessageId = action.payload;
     },
   },
 });
 
-export const { createSocket, destroySocket } = messagesSlice.actions;
+export const { setActiveMessageId } = messagesSlice.actions;
 
 export default messagesSlice.reducer;

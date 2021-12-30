@@ -28,11 +28,13 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import Messages from "components/pages/Messages";
 
 import "components/css/Navigation.scss";
+import SocketComponent from "components/SocketComponent";
 
 function App() {
   return (
     <Router>
       <NavHeader />
+      <SocketComponent />
       <Route
         path="/"
         exact

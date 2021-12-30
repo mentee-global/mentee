@@ -15,7 +15,7 @@ export const updateNotificationsCount = createAsyncThunk(
   async ({ recipient, sender }, thunkAPI) => {
     const res = await updateUnreadDMCount(recipient, sender);
     thunkAPI.dispatch(fetchNotificationsCount({ id: recipient }));
-    return res;
+    return;
   }
 );
 
@@ -26,10 +26,9 @@ export const notificationsSlice = createSlice({
     status: "idle",
   },
   reducers: {
-    resetNotifications(state, action) {
-      state.count = 0;
+    notificationIncrement(state, action) {
+      state.count = state.count + 1;
     },
-    decrement: (state, action) => state.count - action.payload,
   },
   extraReducers(builder) {
     builder
@@ -43,6 +42,6 @@ export const notificationsSlice = createSlice({
   },
 });
 
-export const { resetNotifications, decrement } = notificationsSlice.actions;
+export const { notificationIncrement } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

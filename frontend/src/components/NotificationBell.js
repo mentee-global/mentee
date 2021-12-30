@@ -2,7 +2,10 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Badge } from "antd";
 import { BellOutlined } from "@ant-design/icons";
-import { fetchNotificationsCount } from "features/notificationsSlice";
+import {
+  fetchNotificationsCount,
+  notificationIncrement,
+} from "features/notificationsSlice";
 import useInterval from "utils/hooks/useInterval";
 import "./css/Navigation.scss";
 
@@ -14,10 +17,6 @@ function NotificationBell() {
   useEffect(() => {
     dispatch(fetchNotificationsCount({ id: profileID }));
   }, []);
-
-  useInterval(() => {
-    dispatch(fetchNotificationsCount({ id: profileID }));
-  }, 5000);
 
   return (
     <div className="notifications-section">

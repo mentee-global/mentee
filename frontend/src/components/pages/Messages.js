@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import MessagesSidebar from "components/MessagesSidebar";
-import { Layout } from "antd";
+import { Layout, message } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
 import { getLatestMessages, getMessageData } from "utils/api";
 import socket from "utils/socket";
@@ -34,17 +34,22 @@ function Messages(props) {
         })
       );
     } else {
-      const messageCard = {
-        latestMessage: data,
-        otherUser: {
-          name: data?.sender_id?.$oid,
-          image:
-            "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg",
-        },
-        otherId: data?.sender_id?.$oid,
-        new: true, // use to indicate new message card UI
-      };
-      setLatestConvos([messageCard, ...latestConvos]);
+      // const messageCard = {
+      //   latestMessage: data,
+      //   otherUser: {
+      //     name: data?.sender_id?.$oid,
+      //     image:
+      //       "https://image.shutterstock.com/image-vector/fake-stamp-vector-grunge-rubber-260nw-1049845097.jpg",
+      //   },
+      //   otherId: data?.sender_id?.$oid,
+      //   new: true, // use to indicate new message card UI
+      // };
+
+      async function fetchLatest() {
+        const data = await getLatestMessages(profileId);
+        setLatestConvos(data);
+      }
+      fetchLatest();
     }
   };
 

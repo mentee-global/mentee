@@ -125,10 +125,23 @@
   justify-content: flex-start;
 }
 
+.conversation-footer {
+  --chat-footer-height: 60px;
+  --messages-sidebar: 400px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 12px;
+  position: absolute;
+  bottom: 0;
+  width: calc(100vw - var(--messages-sidebar));
+}
+
 .conversation-container {
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - #{$nav-header-height});
+  padding-bottom: 60px; // synced with --chat-footer-height, for some reason var() doesn't work
+  height: calc(100vh - #{$nav-header-height});
 }
 
 .conversation-content {
@@ -136,13 +149,6 @@
   overflow-y: auto;
   padding: 12px;
   max-height: calc(100vh - #{$nav-header-height} - var(--chat-header-height));
-}
-
-.conversation-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding: 12px;
 }
 
 .no-messages {
@@ -167,6 +173,7 @@
   width: fit-content;
   float: left;
   clear: left;
+  overflow-wrap: break-word;
 }
 
 .convo {
@@ -183,6 +190,7 @@
   float: right;
   width: fit-content;
   clear: right;
+  overflow-wrap: break-word;
 }
 
 .chatRight__items > .chatRight__inner {

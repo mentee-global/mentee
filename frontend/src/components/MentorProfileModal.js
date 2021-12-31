@@ -165,7 +165,6 @@ function MentorProfileModal(props) {
   }
 
   function handleNameChange(e) {
-    console.log("hello");
     const name = e.target.value;
 
     if (name.length <= 50) {

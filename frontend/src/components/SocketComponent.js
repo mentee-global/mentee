@@ -18,7 +18,6 @@ function SocketComponent() {
   useEffect(() => {
     if (socket) {
       socket.onAny((event, ...args) => {
-        console.log(event);
         if (event === profileId) {
           const message = args[0];
           if (!message) return;
@@ -28,6 +27,9 @@ function SocketComponent() {
         }
       });
     }
+    return () => {
+      socket.offAny();
+    };
   }, [profileId, activeMessageId]);
 
   useEffect(() => {

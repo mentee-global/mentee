@@ -198,7 +198,6 @@ export const updateUnreadDMCount = (recipient, sender) => {
     recipient,
     sender,
   };
-  console.log(data);
   const requestExtension = `/notifications/update`;
   return instance.put(requestExtension, data).then(
     (response) => response,

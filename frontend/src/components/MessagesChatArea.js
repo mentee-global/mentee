@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Avatar, Col, Divider, Layout, Row, Input, Button } from "antd";
+import { Avatar, Col, Divider, Layout, Row, Input, Button, Spin } from "antd";
 import { withRouter } from "react-router-dom";
 
 import Meta from "antd/lib/card/Meta";
@@ -15,7 +15,7 @@ function MessagesChatArea(props) {
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
   const [accountData, setAccountData] = useState({});
-  const { messages, activeMessageId, otherId, userType } = props;
+  const { messages, activeMessageId, otherId, userType, loading } = props;
 
   const messagesEndRef = useRef(null);
   const scrollToBottom = () => {
@@ -34,8 +34,11 @@ function MessagesChatArea(props) {
       }
     }
     fetchAccount();
-    scrollToBottom();
   }, [otherId, messages]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [loading, messages]);
 
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
@@ -108,32 +111,34 @@ function MessagesChatArea(props) {
         <div></div>
       )}
       <div className="conversation-content">
-        {messages.map((block) => {
-          return (
-            <div
-              className={`chatRight__items you-${
-                block.sender_id.$oid == profileId ? "sent" : "received"
-              }`}
-            >
-              <div className="chatRight__inner" data-chat="person1">
-                {block.sender_id.$oid != profileId && (
-                  <span>
-                    <Avatar src={accountData.image?.url} />{" "}
-                  </span>
-                )}
-                <div className="convo">
-                  <div
-                    className={`bubble-${
-                      block.sender_id.$oid == profileId ? "sent" : "received"
-                    }`}
-                  >
-                    {block.body}
+        <Spin spinning={loading}>
+          {messages.map((block) => {
+            return (
+              <div
+                className={`chatRight__items you-${
+                  block.sender_id.$oid == profileId ? "sent" : "received"
+                }`}
+              >
+                <div className="chatRight__inner" data-chat="person1">
+                  {block.sender_id.$oid != profileId && (
+                    <span>
+                      <Avatar src={accountData.image?.url} />{" "}
+                    </span>
+                  )}
+                  <div className="convo">
+                    <div
+                      className={`bubble-${
+                        block.sender_id.$oid == profileId ? "sent" : "received"
+                      }`}
+                    >
+                      {block.body}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </Spin>
         <div ref={messagesEndRef} />
       </div>
       <div className="conversation-footer">

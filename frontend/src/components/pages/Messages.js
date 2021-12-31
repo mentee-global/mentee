@@ -21,12 +21,13 @@ function Messages(props) {
   );
   const [userType, setUserType] = useState();
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
 
   // TODO: Fix this so that it doesn't add a new chat if one already exists
   const messageListener = (data) => {
     if (data?.sender_id?.$oid == activeMessageId) {
-      setMessages([...messages, data]);
+      setMessages((prevMessages) => [...prevMessages, data]);
       dispatch(
         updateNotificationsCount({
           recipient: profileId,
@@ -60,7 +61,7 @@ function Messages(props) {
         socket.off(profileId, messageListener);
       };
     }
-  }, [socket, profileId, messages]);
+  }, [socket, profileId]);
 
   useEffect(() => {
     async function getData() {
@@ -103,26 +104,29 @@ function Messages(props) {
         setActiveMessageId(props.match ? props.match.params.receiverId : null)
       );
       setUserType(user_type);
+
       if (activeMessageId && profileId) {
+        setLoading(true);
         setMessages(await getMessageData(profileId, activeMessageId));
+        setLoading(false);
       }
     }
     getData();
-  }, [props.location]);
+  }, [activeMessageId]);
 
-  useEffect(() => {
-    async function getData() {
-      const data = await getMessageData(profileId, activeMessageId);
-      setMessages(data);
-    }
+  // useEffect(() => {
+  //   async function getData() {
+  //     const data = await getMessageData(profileId, activeMessageId);
+  //     setMessages(data);
+  //   }
 
-    if (profileId && activeMessageId) {
-      getData();
-    }
-  }, [profileId, activeMessageId]);
+  //   if (profileId && activeMessageId) {
+  //     getData();
+  //   }
+  // }, [profileId, activeMessageId]);
 
   const addMyMessage = (msg) => {
-    setMessages([...messages, msg]);
+    setMessages((prevMessages) => [...prevMessages, msg]);
   };
 
   return (
@@ -139,6 +143,7 @@ function Messages(props) {
           addMyMessage={addMyMessage}
           otherId={activeMessageId}
           userType={userType}
+          loading={loading}
         />
       </Layout>
     </Layout>

@@ -67,8 +67,6 @@ export const getMessageData = (personOneId, personTwoId) => {
       );
     }
   });
-
-  console.log(convo);
   return convo;
 };
 

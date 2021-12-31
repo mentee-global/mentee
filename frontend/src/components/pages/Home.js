@@ -14,7 +14,7 @@ function Home({ history }) {
       <div className="home-content">
         <div className="home-text-container">
           <h1 className="home-header">Welcome to MENTEE</h1>
-          <p className="home-text">Find a global mentor now...</p>
+          <p className="home-text">{/** Homepage Tagline placeholder */}</p>
           <br />
           <LoginVerificationModal
             content={

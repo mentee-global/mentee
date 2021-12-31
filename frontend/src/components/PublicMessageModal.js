@@ -4,18 +4,11 @@ import moment from "moment";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { MESSAGE_FORM_KEYS } from "../utils/consts";
+import { useSelector } from "react-redux";
 import { sendMessage } from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
-
-// Form validateMessages sends values here
-const validationMessage = {
-  required: "Please enter your ${name}",
-  types: {
-    email: "Not a valid email",
-  },
-};
 
 const antdMessage = message;
 
@@ -26,9 +19,7 @@ function PublicMessageModal(props) {
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
   ); // each index represents an input box, respectively
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [website, setWebsite] = useState();
+  const user = useSelector((state) => state.user.user);
   const [message, setMessage] = useState();
   const mentorID = props.mentorID;
   const menteeID = props.menteeID;
@@ -36,12 +27,12 @@ function PublicMessageModal(props) {
   // useState values
   const values = [
     message,
-    name,
+    user?.name,
     mentorID,
     props.menteeName,
     menteeID,
-    email,
-    website,
+    user?.email,
+    user?.website ?? user?.linkedin ?? "",
   ];
 
   // Resets form fields on close
@@ -111,60 +102,12 @@ function PublicMessageModal(props) {
           id="message-form"
           form={form}
           onFinish={() => handleBookAppointment()}
-          validateMessages={validationMessage}
           scrollToFirstError
         >
           <div className="modal-container" style={{ height: "fit-content" }}>
             <div className="modal-mentee-inner-container">
               <div className="flex flex-row">
                 <div className="modal-mentee-appointment-col-container">
-                  <div className="modal-mentee-appointment-header-text">
-                    Your Name*
-                  </div>
-                  <Form.Item
-                    name="name"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <ModalInput
-                      style={styles.modalInput}
-                      value={name}
-                      type="text"
-                      clicked={inputClicked[0]}
-                      index={0}
-                      handleClick={handleClick}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </Form.Item>
-                  <div className="modal-mentee-appointment-header-text">
-                    Your Email*
-                  </div>
-                  <Form.Item
-                    name="email"
-                    rules={[
-                      {
-                        type: "email",
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <ModalInput
-                      style={styles.modalInput}
-                      value={email}
-                      type="text"
-                      clicked={inputClicked[1]}
-                      index={1}
-                      handleClick={handleClick}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </Form.Item>
-
-                  <div className="modal-mentee-appointment-header-text">
-                    Message*
-                  </div>
                   <Form.Item
                     name="message"
                     rules={[
@@ -184,21 +127,6 @@ function PublicMessageModal(props) {
                       value={message}
                     />
                   </Form.Item>
-                  <div className="modal-mentee-appointment-header-text">
-                    Link your profile or website!{" "}
-                    <a style={{ color: "grey" }}>(Optional)</a>
-                  </div>
-                  <Form.Item name="website">
-                    <ModalInput
-                      style={styles.modalInput}
-                      value={website}
-                      type="text"
-                      clicked={inputClicked[3]}
-                      index={3}
-                      handleClick={handleClick}
-                      onChange={(e) => setWebsite(e.target.value)}
-                    />
-                  </Form.Item>
                 </div>
               </div>
             </div>
@@ -214,10 +142,6 @@ const styles = {
     marginTop: 20,
     width: "95%",
     overflow: "hidden",
-  },
-  contactInput: {
-    marginTop: 16,
-    width: "95%",
   },
   alertToast: {
     color: "#FF0000",

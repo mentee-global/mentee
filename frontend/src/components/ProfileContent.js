@@ -18,7 +18,7 @@ import "./css/Profile.scss";
 import MentorContactModal from "./MentorContactModal";
 import { getMenteeID } from "utils/auth.service";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
-import { Rate } from "antd";
+import { Rate, Tooltip } from "antd";
 
 function ProfileContent(props) {
   const { accountType } = props;
@@ -138,7 +138,6 @@ function ProfileContent(props) {
             </div>
           ) : null}
         </div>
-
         <div className="mentor-profile-actions">
           <div className="mentor-profile-book-appt-btn">
             {isMentee &&
@@ -190,47 +189,76 @@ function ProfileContent(props) {
           )
         )}
       </div>
-      <div>
+      <div className="mentor-profile-tags-container">
         {props.mentor.location && (
-          <span>
-            <EnvironmentOutlined className="mentor-profile-tag-first" />
-            {props.mentor.location}
+          <span className="mentor-profile-tag">
+            <EnvironmentOutlined className="mentor-profile-tag-icon" />
+            <Tooltip title={props.mentor.location} placement="topLeft">
+              {" "}
+              {props.mentor.location}{" "}
+            </Tooltip>
           </span>
         )}
         {props.mentor.languages && props.mentor.languages.length > 0 && (
-          <span>
-            <CommentOutlined
-              className={
-                !props.mentor.location
-                  ? "mentor-profile-tag-first"
-                  : "mentor-profile-tag"
-              }
-            />
-            {getLanguages(props.mentor.languages || [])}
+          <span className="mentor-profile-tag">
+            <CommentOutlined className="mentor-profile-tag-icon" />
+            <Tooltip
+              title={getLanguages(props.mentor.languages || [])}
+              placement="topLeft"
+            >
+              {" "}
+              {getLanguages(props.mentor.languages || [])}{" "}
+            </Tooltip>
           </span>
         )}
         {props.mentor.website && (
-          <span>
-            <LinkOutlined className="mentor-profile-tag" />
-            <a
-              href={formatLinkForHref(props.mentor.website)}
-              target="_blank"
-              rel="noopener noreferrer"
+          <span className="mentor-profile-tag">
+            <LinkOutlined className="mentor-profile-tag-icon" />
+            <Tooltip
+              title={
+                <a
+                  href={formatLinkForHref(props.mentor.website)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {props.mentor.website}
+                </a>
+              }
+              placement="topLeft"
             >
-              {props.mentor.website}
-            </a>
+              <a
+                href={formatLinkForHref(props.mentor.website)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {props.mentor.website}
+              </a>
+            </Tooltip>
           </span>
         )}
         {props.mentor.linkedin && (
-          <span>
-            <LinkedinOutlined className="mentor-profile-tag" />
-            <a
-              href={formatLinkForHref(props.mentor.linkedin)}
-              target="_blank"
-              rel="noopener noreferrer"
+          <span className="mentor-profile-tag">
+            <LinkedinOutlined className="mentor-profile-tag-icon" />
+            <Tooltip
+              title={
+                <a
+                  href={formatLinkForHref(props.mentor.linkedin)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {props.mentor.linkedin}
+                </a>
+              }
+              placement="topLeft"
             >
-              {props.mentor.linkedin}
-            </a>
+              <a
+                href={formatLinkForHref(props.mentor.linkedin)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {props.mentor.linkedin}
+              </a>
+            </Tooltip>
           </span>
         )}
       </div>
@@ -240,7 +268,7 @@ function ProfileContent(props) {
       </div>
       <div className="mentor-profile-about">{props.mentor.biography}</div>
       <br />
-      {getSpecializations(props.isMentor)}
+      {getSpecializations(props.mentor.specializations)}
       <br />
       <div className="mentor-profile-heading">
         <b>Education</b>

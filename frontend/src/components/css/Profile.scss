@@ -21,14 +21,14 @@
 @media (min-width: 768px) {
   //For desktop
   .background-color-strip {
-    height: 20%;
+    height: 170px;
     background: $background-color-strip-color;
     background-color: #fcf6e8;
   }
 
   .mentor-profile-content {
-    padding-top: 5%;
-    padding-left: 5%;
+    padding-top: 80px;
+    padding-left: 40px;
   }
 
   .mentor-profile-content-flexbox {
@@ -81,13 +81,20 @@
     color: $yellow-dot-color;
   }
 
-  .mentor-profile-tag-first {
-    margin-right: 1%;
+  .mentor-profile-tags-container {
+    display: flex;
   }
 
   .mentor-profile-tag {
-    margin-right: 1%;
-    margin-left: 3%;
+    max-width: 25%;
+    padding-right: 20px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .mentor-profile-tag-icon {
+    margin-right: 4px;
   }
 
   .mentor-profile-about {
@@ -101,20 +108,15 @@
     font-weight: bold;
     display: inline-block;
     text-align: center;
-    min-width: 15%;
-    padding-left: 3%;
-    padding-right: 3%;
-    margin-top: 2%;
-    margin-right: 2%;
-  }
-
-  .mentor-profile-education {
-    margin-top: 2%;
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-top: 6px;
+    margin-right: 6px;
   }
 
   .mentor-profile-contact {
     border-top-color: $specialization-tag-border;
-    border-top-width: 5vh;
+    border-top-width: 36px;
     border-top-style: solid;
     border-radius: 8px;
     width: 25%;
@@ -127,7 +129,7 @@
     font-size: 20px;
     font-weight: bold;
     background: $specialization-tag-border;
-    height: 5vh;
+    height: 36px;
   }
 
   .mentor-profile-contact-icon {

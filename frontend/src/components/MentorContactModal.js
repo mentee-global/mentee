@@ -33,9 +33,9 @@ function MentorContactModal({
   const addInterestArea = (e) => {
     setInterestAreas(e);
   };
-  const filteredOptions = mentorSpecializations.filter(
-    (o) => !interestAreas.includes(o)
-  );
+  const filteredOptions = mentorSpecializations
+    ? mentorSpecializations.filter((o) => !interestAreas.includes(o))
+    : [];
 
   return (
     <span>

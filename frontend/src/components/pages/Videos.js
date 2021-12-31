@@ -149,10 +149,10 @@ function Videos() {
   return (
     <div style={{ height: "100%" }}>
       <div className="videos-header">
-        <h1 className="videos-header-title">Welcome, {user?.name}</h1>
+        <div className="videos-header-title">Welcome, {user?.name}</div>
       </div>
       <div className="filter-card">
-        <h1 style={{ fontWeight: "bold", fontSize: 18 }}>Your Uploads</h1>
+        <h1 className="videos-upload-title">Your Uploads</h1>
         <div className="filters">
           <Input.Search
             style={{ width: 300 }}

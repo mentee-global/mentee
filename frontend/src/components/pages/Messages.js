@@ -24,7 +24,6 @@ function Messages(props) {
   const [loading, setLoading] = useState(false);
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
 
-  // TODO: Fix this so that it doesn't add a new chat if one already exists
   const messageListener = (data) => {
     if (data?.sender_id?.$oid == activeMessageId) {
       setMessages((prevMessages) => [...prevMessages, data]);

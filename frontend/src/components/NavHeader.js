@@ -241,19 +241,23 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
         visible={drawerVisible}
       >
         <div className="drawer-btn-container">
-          <MenteeButton
-            className="mobile-nav-btn"
-            width="9em"
-            theme="light"
-            content={<b>{"Apply"}</b>}
-            onClick={() => {
-              history.push({
-                pathname: "/application-page",
-              });
-            }}
-          />
+          {isMentee || isMentor ? (
+            <></>
+          ) : (
+            <MenteeButton
+              className="mobile-nav-btn"
+              width="9em"
+              theme="light"
+              content={<b>{"Apply"}</b>}
+              onClick={() => {
+                history.push({
+                  pathname: "/application-page",
+                });
+              }}
+            />
+          )}
         </div>
-        {(isMentee||isAdmin) && (
+        {(isMentee || isAdmin) && (
           <LoginVerificationModal
             className="mobile-nav-btn-login-modal"
             content={<b>Find a Mentor</b>}

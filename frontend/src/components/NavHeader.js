@@ -133,8 +133,8 @@ function NavHeader({ history }) {
                 />
               </span>
             )}
-            {(isMentor || isAdmin) && (
-              <span className="navigation-header-button">
+            
+            {isLoggedIn() &&  <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentee</b>}
                   theme="light"
@@ -147,7 +147,8 @@ function NavHeader({ history }) {
                   }}
                 />
               </span>
-            )}
+            }
+            
             <span className="navigation-header-button">
               <MenteeButton
                 loginButton
@@ -168,7 +169,7 @@ function NavHeader({ history }) {
                 }}
               />
             </span>
-            {isLoggedIn() && (
+            {isLoggedIn() && !isAdmin && (
               <span className="navigation-header-button">
                 <MenteeButton
                   loginButton

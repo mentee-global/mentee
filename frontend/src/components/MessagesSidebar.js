@@ -25,12 +25,12 @@ function MessagesSidebar(props) {
       </div>
       <Divider className="header-divider" orientation="left"></Divider>
       <div className="messages-search-input">
-        <Input
+        {/* <Input
           placeholder="Search for a mentor..."
           prefix={<SearchOutlined />}
           style={styles.searchInput}
           onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        /> */}
       </div>
       <div className="messages-sidebar">
         {latestConvos &&

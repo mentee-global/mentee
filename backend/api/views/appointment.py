@@ -149,7 +149,7 @@ def create_appointment():
 
     if mentor.text_notifications:
         res, res_msg = send_sms(
-            text="You received a new appointment request!\nCheckout https://mentee-h4i.herokuapp.com/",
+            text="You received a new appointment request!\nCheckout https://mentee-global.vercel.app.com/",
             recipient=mentor.phone_number,
         )
 

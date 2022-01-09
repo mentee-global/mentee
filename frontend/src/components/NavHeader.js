@@ -118,7 +118,7 @@ function NavHeader({ history }) {
               </>
             )}
             {/* TODO: Update this since verification modal will not longer be needed anymore! */}
-            {isMentee && (
+            {(isMentee || isAdmin) && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentor</b>}
@@ -133,7 +133,7 @@ function NavHeader({ history }) {
                 />
               </span>
             )}
-            {isMentor && (
+            {(isMentor || isAdmin) && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentee</b>}

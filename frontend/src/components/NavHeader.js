@@ -133,8 +133,9 @@ function NavHeader({ history }) {
                 />
               </span>
             )}
-            
-            {isLoggedIn() &&  <span className="navigation-header-button">
+
+            {isLoggedIn() && (
+              <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>Find a Mentee</b>}
                   theme="light"
@@ -147,8 +148,8 @@ function NavHeader({ history }) {
                   }}
                 />
               </span>
-            }
-            
+            )}
+
             <span className="navigation-header-button">
               <MenteeButton
                 loginButton

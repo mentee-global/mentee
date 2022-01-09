@@ -253,7 +253,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
             }}
           />
         </div>
-        {isMentee && (
+        {(isMentee||isAdmin) && (
           <LoginVerificationModal
             className="mobile-nav-btn-login-modal"
             content={<b>Find a Mentor</b>}
@@ -267,7 +267,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
             }}
           />
         )}
-        {isMentor && (
+        {isLoggedIn() && (
           <LoginVerificationModal
             className="mobile-nav-btn-login-modal"
             content={<b>Find a Mentee</b>}

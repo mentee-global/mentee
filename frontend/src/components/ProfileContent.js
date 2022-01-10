@@ -18,7 +18,7 @@ import "./css/Profile.scss";
 import MentorContactModal from "./MentorContactModal";
 import { getMenteeID } from "utils/auth.service";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
-import { Rate, Tooltip } from "antd";
+import { Rate, Tooltip, Switch } from "antd";
 
 function ProfileContent(props) {
   const { accountType } = props;
@@ -150,17 +150,20 @@ function ProfileContent(props) {
                     menteeId={profileId}
                     mentorSpecializations={props.mentor?.specializations}
                   />
-                   <MenteeAppointmentModal
-                  mentor_name={props.mentor.name}
-                  availability={props.mentor.availability}
-                  mentor_id={
-                    props.mentor && props.mentor._id && props.mentor._id["$oid"]
-                  }
-                  mentee_id={profileId}
-                  handleUpdateMentor={props.handleUpdateAccount}
-                />
+                  {props.mentor?.taking_appointments && (
+                    <MenteeAppointmentModal
+                      mentor_name={props.mentor.name}
+                      availability={props.mentor.availability}
+                      mentor_id={
+                        props.mentor &&
+                        props.mentor._id &&
+                        props.mentor._id["$oid"]
+                      }
+                      mentee_id={profileId}
+                      handleUpdateMentor={props.handleUpdateAccount}
+                    />
+                  )}
                 </>
-
               )}
           </div>
           <div className="mentor-profile-send-msg-btn">

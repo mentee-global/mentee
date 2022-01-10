@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Col, Row, Result } from "antd";
+import { Button, Col, Row, Result, Switch } from "antd";
 import {
   ClockCircleOutlined,
   InfoCircleFilled,
   SmileOutlined,
 } from "@ant-design/icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "components/css/Appointments.scss";
 import { formatAppointments } from "utils/dateFormatting";
 import AvailabilityCalendar from "components/AvailabilityCalendar";
@@ -15,12 +15,14 @@ import {
   fetchAppointmentsByMentorId,
   deleteAppointment,
   fetchMenteeByID,
+  editMentorProfile,
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getMenteeID, getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 import useAuth from "utils/hooks/useAuth";
+import { fetchUser } from "features/userSlice";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -47,7 +49,9 @@ function Appointments() {
   const [modalVisible, setModalVisible] = useState(false);
   const user = useSelector((state) => state.user.user);
   const [modalAppointment, setModalAppointment] = useState({});
-  const { onAuthStateChanged } = useAuth();
+  const { onAuthStateChanged, role, profileId } = useAuth();
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     async function getAppointments() {
@@ -64,6 +68,27 @@ function Appointments() {
 
     onAuthStateChanged(getAppointments);
   }, [appointmentClick]);
+
+  useEffect(() => {
+    async function addTakingAppointments() {
+      console.log(user);
+      if (user && user.taking_appointments === undefined) {
+        const new_user = { ...user, taking_appointments: false };
+        await editMentorProfile(new_user, profileId);
+        dispatch(fetchUser({ id: profileId, role }));
+      }
+    }
+    addTakingAppointments();
+  }, [user]);
+
+  async function handleTakeAppointments(e) {
+    console.log(e);
+    const new_user = { ...user, taking_appointments: e };
+    console.log(new_user);
+    await editMentorProfile(new_user, profileId);
+    dispatch(fetchUser({ id: profileId, role }));
+  }
+
   async function handleAppointmentClick(id, didAccept) {
     if (didAccept) {
       await acceptAppointment(id);
@@ -154,6 +179,18 @@ function Appointments() {
     return (
       <div>
         <div className="availability-container">
+          <Switch
+            onChange={handleTakeAppointments}
+            checked={user?.taking_appointments}
+          />
+        </div>
+        <div
+          className="availability-container"
+          style={{
+            opacity: user?.taking_appointments ? 1 : 0.25,
+            pointerEvents: user?.taking_appointments ? "initial" : "none",
+          }}
+        >
           <div className="calendar-header">
             Set available hours by specific date
           </div>

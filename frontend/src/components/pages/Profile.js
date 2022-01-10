@@ -33,6 +33,17 @@ function Profile() {
     dispatch(fetchUser({ id: profileId, role }));
   };
 
+  useEffect(() => {
+    async function addTakingAppointments() {
+      if (isMentor && user.taking_appointments === undefined) {
+        const new_user = { ...user, taking_appointments: false };
+        await editMentorProfile(new_user, profileId);
+        handleSaveEdits();
+      }
+    }
+    addTakingAppointments();
+  }, [user]);
+
   function renderContactInfo() {
     return (
       <div>

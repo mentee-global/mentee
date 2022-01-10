@@ -31,6 +31,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             offers_group_appointments=data["offers_group_appointments"],
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
+            taking_appointments=data.get("taking_appointments", False),
         )
 
         new_profile.website = data.get("website")
@@ -154,6 +155,9 @@ def edit_profile(data: dict = {}, profile: object = None):
     profile.phone_number = data.get("phone_number", profile.phone_number)
     profile.languages = data.get("languages", profile.languages)
     profile.biography = data.get("biography", profile.biography)
+    profile.taking_appointments = data.get(
+        "taking_appointments", profile.taking_appointments
+    )
     profile.text_notifications = data.get(
         "text_notifications", profile.text_notifications
     )

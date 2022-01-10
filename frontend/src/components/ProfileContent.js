@@ -18,7 +18,7 @@ import "./css/Profile.scss";
 import MentorContactModal from "./MentorContactModal";
 import { getMenteeID } from "utils/auth.service";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
-import { Rate, Tooltip, Switch } from "antd";
+import { Rate, Tooltip } from "antd";
 
 function ProfileContent(props) {
   const { accountType } = props;

@@ -71,7 +71,6 @@ function Appointments() {
 
   useEffect(() => {
     async function addTakingAppointments() {
-      console.log(user);
       if (user && user.taking_appointments === undefined) {
         const new_user = { ...user, taking_appointments: false };
         await editMentorProfile(new_user, profileId);
@@ -82,9 +81,7 @@ function Appointments() {
   }, [user]);
 
   async function handleTakeAppointments(e) {
-    console.log(e);
     const new_user = { ...user, taking_appointments: e };
-    console.log(new_user);
     await editMentorProfile(new_user, profileId);
     dispatch(fetchUser({ id: profileId, role }));
   }

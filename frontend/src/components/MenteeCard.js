@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Button, Rate } from "antd";
+import { Avatar, Typography, Button, Rate, Tooltip } from "antd";
 import {
   EnvironmentOutlined,
   UserOutlined,
@@ -16,14 +16,14 @@ const { Title, Text } = Typography;
 
 const styles = {
   title: {
-    fontSize: "35px",
+    fontSize: "2em",
     whiteSpace: "normal",
     overflow: "visible",
     textOverflow: "ellipsis",
     margin: 0,
   },
   subTitle: {
-    fontSize: "18px",
+    fontSize: "1.5em px",
     whiteSpace: "normal",
     overflow: "visible",
     textOverflow: "ellipsis",
@@ -44,13 +44,23 @@ function MenteeCard(props) {
     }
   }
 
+  function truncate(str, maxLength) {
+    return str.length > maxLength ? (
+      <Tooltip title={str}> {str.substring(0, maxLength - 3) + "..."} </Tooltip>
+    ) : (
+      str
+    );
+  }
+
   return (
     <div className="gallery-mentor-card">
       <div className="gallery-card-body">
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
-            <div className="gallery-header-name">{props.name}</div>
+            <Title style={styles.title} className="gallery-title-text">
+              {truncate(props.name, 15)}
+            </Title>
             <div className="gallery-header-description">
               {props.gender} {"|"} {props.organization}
             </div>

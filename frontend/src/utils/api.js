@@ -36,10 +36,10 @@ const authDelete = async (url, config) =>
     .catch(console.error);
 
 /**
- * Returns mentee or mentor account model.
+ * Returns mentee or mentor account model. 
  * @param {*} id - Account ObjectId
  * @param {*} type - from utils/consts, use: ACCOUNT_TYPE.MENTEE or ACCOUNT_TYPE.MENTOR
- * @returns mentee or mentor account data.
+ * @returns mentee or mentor account data. 
  */
 export const fetchAccountById = (id, type) => {
   if (!id) return;
@@ -58,6 +58,11 @@ export const fetchAccountById = (id, type) => {
     );
 };
 
+/**
+ * Get all mentee accounts or get all mentor accounts. This is used to display both galleries. 
+ * @param {*} type - from utils/consts, use: ACCOUNT_TYPE.MENTEE or ACCOUNT_TYPE.MENTOR
+ * @returns list of all account data in JSON format
+ */
 export const fetchAccounts = (type) => {
   const requestExtension = `/accounts/${type}`;
   return instance.get(requestExtension).then(
@@ -84,6 +89,7 @@ export const editAccountProfile = (profile, id, type) => {
     );
 };
 
+/**Sets account profile pictures */
 export const uploadAccountImage = (data, id, type) => {
   let formData = new FormData();
   formData.append("image", data);
@@ -108,6 +114,7 @@ export const createAccountProfile = async (profile, type) => {
   );
 };
 
+/**Gets all mentor applications, used for the Admin Portal */
 export const fetchApplications = async () => {
   const requestExtension = "/application/";
   return await authGet(requestExtension).then(
@@ -118,6 +125,7 @@ export const fetchApplications = async () => {
   );
 };
 
+/**Creates/Submits a new mentor application */
 export const createApplication = (application) => {
   const requestExtension = `/application/new`;
   return instance.post(requestExtension, application).then(
@@ -128,6 +136,7 @@ export const createApplication = (application) => {
   );
 };
 
+/**Adds new appointment_request model between mentor and mentee to database*/
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
   return instance.post(requestExtension, appointment).then(
@@ -138,6 +147,7 @@ export const createAppointment = (appointment) => {
   );
 };
 
+/** changes appointment_request field "accepted" from false to true when mentor accepts the appointment request*/
 export const acceptAppointment = (id) => {
   const requestExtension = `/appointment/accept/${id}`;
   return instance.put(requestExtension, {}).then(
@@ -158,6 +168,7 @@ export const deleteAppointment = (id) => {
   );
 };
 
+/**Returns all appointments that involve the user with the id and accountType given */
 export const fetchAppointmentsById = (id, accountType) => {
   const requestExtension = `/appointment/${accountType}/${id}`;
   return instance.get(requestExtension).then(
@@ -179,6 +190,7 @@ export const getIsEmailVerified = (email, password) => {
   );
 };
 
+/**Gets mentor's available dates/times to have an appointment */
 export const fetchAvailability = (id) => {
   const requestExtension = `/availability/${id}`;
   return instance.get(requestExtension).then(
@@ -232,6 +244,7 @@ export const fetchAppointmentsByType = (accountType) => {
   );
 };
 
+/**Fetch a paginated subset of appointments to show on admin portal */
 export const fetchPaginatedAppointments = (
   pageNumber,
   searchValue,

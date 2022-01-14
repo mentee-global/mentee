@@ -35,6 +35,12 @@ const authDelete = async (url, config) =>
     })
     .catch(console.error);
 
+/**
+ * Returns mentee or mentor account model.
+ * @param {*} id - Account ObjectId
+ * @param {*} type - from utils/consts, use: ACCOUNT_TYPE.MENTEE or ACCOUNT_TYPE.MENTOR
+ * @returns mentee or mentor account data.
+ */
 export const fetchAccountById = (id, type) => {
   if (!id) return;
   const requestExtension = `/account/${id}`;

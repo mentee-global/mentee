@@ -1,22 +1,24 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Avatar, Col, Divider, Layout, Row, Input, Button, Spin } from "antd";
 import { withRouter } from "react-router-dom";
-
+import { ACCOUNT_TYPE } from "utils/consts";
 import Meta from "antd/lib/card/Meta";
 import { SendOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
 import { fetchAccountById } from "utils/api";
-
+import MenteeAppointmentModal from "./MenteeAppointmentModal";
 function MessagesChatArea(props) {
   const { Content, Header } = Layout;
   const { socket } = props;
   const { TextArea } = Input;
-
+  
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
   const [accountData, setAccountData] = useState({});
+  const [updateContent, setUpdateContent] = useState(false);
+  const [isBookingVisible, setBookingVisible] = useState(false);
+  const [currentMentor, setCurrentMentor] = useState("");
   const { messages, activeMessageId, otherId, userType, loading } = props;
-
   const messagesEndRef = useRef(null);
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
@@ -34,16 +36,38 @@ function MessagesChatArea(props) {
       }
     }
     fetchAccount();
-  }, [otherId, messages]);
-
+  }, [updateContent,otherId, messages]);
   useEffect(() => {
     scrollToBottom();
   }, [loading, messages]);
-
+ 
+  const handleUpdateAccount = () => {
+    setUpdateContent(!updateContent);
+  };
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
-
+    const messageListener = (data) => {
+      alert("inside callBack"+data);
+    };
+    useEffect(() => {
+      alert("inside use effect");
+      setBookingVisible(true);
+      if (socket && otherId) {
+        alert("inisde use 2 "+otherId);
+        socket.on(otherId, messageListener);
+        alert("inside use 3"+messageListener);
+        
+      }
+    }, [socket, otherId,isBookingVisible]);
+ 
+  const sendInvite=(e) =>{
+    alert("inisde set invite "+otherId);
+      setBookingVisible(true);
+      setCurrentMentor(otherId);
+    e.preventDefault();
+    socket.emit(otherId, true);
+  };
   const sendMessage = (e) => {
     if (!messageText.replace(/\s/g, "").length) {
       return;
@@ -69,11 +93,9 @@ function MessagesChatArea(props) {
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
     props.addMyMessage(msg);
-
     setMessageText("");
     return;
   };
-
   if (!activeMessageId || !messages || !messages.length) {
     return (
       <div className="no-messages">
@@ -81,7 +103,6 @@ function MessagesChatArea(props) {
       </div>
     );
   }
-
   const OldHeader = () => (
     <Header className="chat-area-header">
       <Meta
@@ -92,7 +113,7 @@ function MessagesChatArea(props) {
       />
     </Header>
   );
-
+ 
   return (
     <div className="conversation-container">
       {accountData ? (
@@ -105,6 +126,17 @@ function MessagesChatArea(props) {
             <div className="messages-chat-area-header-title">
               {accountData.professional_title}
             </div>
+            {parseInt(userType, 10) !== ACCOUNT_TYPE.MENTEE && isBookingVisible && currentMentor==otherId  && (
+            <div className="mentor-profile-book-appt-btn">
+            <MenteeAppointmentModal
+                      mentor_name={accountData.name}
+                      availability={accountData.availability}
+                      mentor_id={otherId}
+                      mentee_id={profileId}
+                      handleUpdateMentor={handleUpdateAccount}
+                    />
+             </div>
+            )}
           </div>
         </div>
       ) : (
@@ -157,9 +189,20 @@ function MessagesChatArea(props) {
           icon={<SendOutlined rotate={315} />}
           size={48}
         />
+        {parseInt(userType, 10) !== ACCOUNT_TYPE.MENTOR  && (
+          <div> 
+          <Button
+          onClick={sendInvite}
+          className="send-message-button"
+          shape="circle"
+          type="primary"
+          icon={<SendOutlined rotate={315} />}
+          size={48}
+        />
+          </div>
+        )} 
       </div>
     </div>
   );
 }
-
 export default withRouter(MessagesChatArea);

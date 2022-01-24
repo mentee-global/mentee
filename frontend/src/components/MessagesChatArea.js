@@ -7,6 +7,7 @@ import { SendOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
 import { fetchAccountById } from "utils/api";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
+import socketInvite from "utils/socket";
 function MessagesChatArea(props) {
   const { Content, Header } = Layout;
   const { socket } = props;
@@ -15,10 +16,10 @@ function MessagesChatArea(props) {
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
   const [accountData, setAccountData] = useState({});
+  const [isAlreadyInvited, setIsAlreadyInvited] = useState(false);
   const [updateContent, setUpdateContent] = useState(false);
-  const [isBookingVisible, setBookingVisible] = useState(false);
   const [currentMentor, setCurrentMentor] = useState("");
-  const { messages, activeMessageId, otherId, userType, loading } = props;
+  const { messages, activeMessageId, otherId, userType, loading ,isBookingVisible,inviteeId } = props;
   const messagesEndRef = useRef(null);
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
@@ -34,6 +35,14 @@ function MessagesChatArea(props) {
       if (account) {
         setAccountData(account);
       }
+      if(parseInt(userType, 10) === ACCOUNT_TYPE.MENTOR){
+      var profileAcount=await fetchAccountById(profileId, ACCOUNT_TYPE.MENTEE);
+      if(profileAcount){
+        setIsAlreadyInvited(profileAcount.favorite_mentors_ids.indexOf(otherId) >= 0);
+        
+      }
+
+      }
     }
     fetchAccount();
   }, [updateContent,otherId, messages]);
@@ -47,26 +56,14 @@ function MessagesChatArea(props) {
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
-    const messageListener = (data) => {
-      alert("inside callBack"+data);
-    };
-    useEffect(() => {
-      alert("inside use effect");
-      setBookingVisible(true);
-      if (socket && otherId) {
-        alert("inisde use 2 "+otherId);
-        socket.on(otherId, messageListener);
-        alert("inside use 3"+messageListener);
-        
-      }
-    }, [socket, otherId,isBookingVisible]);
- 
-  const sendInvite=(e) =>{
-    alert("inisde set invite "+otherId);
-      setBookingVisible(true);
-      setCurrentMentor(otherId);
-    e.preventDefault();
-    socket.emit(otherId, true);
+   
+ const sendInvite=(e) =>{
+    const msg = {
+        sender_id: profileId,
+        recipient_id: activeMessageId,
+      };
+      socketInvite.emit("invite", msg);
+      return;
   };
   const sendMessage = (e) => {
     if (!messageText.replace(/\s/g, "").length) {
@@ -126,7 +123,7 @@ function MessagesChatArea(props) {
             <div className="messages-chat-area-header-title">
               {accountData.professional_title}
             </div>
-            {parseInt(userType, 10) !== ACCOUNT_TYPE.MENTEE && isBookingVisible && currentMentor==otherId  && (
+            { ( (isBookingVisible && inviteeId === otherId) || isAlreadyInvited )  && (
             <div className="mentor-profile-book-appt-btn">
             <MenteeAppointmentModal
                       mentor_name={accountData.name}

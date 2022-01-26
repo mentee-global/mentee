@@ -12,11 +12,11 @@ function MessagesChatArea(props) {
   const { Content, Header } = Layout;
   const { socket } = props;
   const { TextArea } = Input;
-  
-  const { profileId } = useAuth();
+  const { profileId ,isMentee,isMentor} = useAuth();
   const [messageText, setMessageText] = useState("");
   const [accountData, setAccountData] = useState({});
   const [isAlreadyInvited, setIsAlreadyInvited] = useState(false);
+  const [isAlreadyInvitedByMentor, setIsAlreadyInvitedByMentor] = useState(false);
   const [updateContent, setUpdateContent] = useState(false);
   const [currentMentor, setCurrentMentor] = useState("");
   const { messages, activeMessageId, otherId, userType, loading ,isBookingVisible,inviteeId } = props;
@@ -34,12 +34,14 @@ function MessagesChatArea(props) {
       var account = await fetchAccountById(otherId, userType);
       if (account) {
         setAccountData(account);
-      }
+        if(parseInt(userType, 10) !== ACCOUNT_TYPE.MENTOR){
+        setIsAlreadyInvitedByMentor(account.favorite_mentors_ids.indexOf(otherId) >= 0);
+        }
+       }
       if(parseInt(userType, 10) === ACCOUNT_TYPE.MENTOR){
       var profileAcount=await fetchAccountById(profileId, ACCOUNT_TYPE.MENTEE);
       if(profileAcount){
         setIsAlreadyInvited(profileAcount.favorite_mentors_ids.indexOf(otherId) >= 0);
-        
       }
 
       }
@@ -58,6 +60,7 @@ function MessagesChatArea(props) {
   */
    
  const sendInvite=(e) =>{
+  
     const msg = {
         sender_id: profileId,
         recipient_id: activeMessageId,
@@ -123,7 +126,7 @@ function MessagesChatArea(props) {
             <div className="messages-chat-area-header-title">
               {accountData.professional_title}
             </div>
-            { ( (isBookingVisible && inviteeId === otherId) || isAlreadyInvited )  && (
+            {((isBookingVisible && inviteeId === otherId) || isAlreadyInvited )  && (
             <div className="mentor-profile-book-appt-btn">
             <MenteeAppointmentModal
                       mentor_name={accountData.name}
@@ -134,6 +137,18 @@ function MessagesChatArea(props) {
                     />
              </div>
             )}
+            {isMentor && !isAlreadyInvitedByMentor && (
+          <div> 
+            <Button
+                onClick={sendInvite}
+                type="default"
+                shape="round"
+                className="regular-button"
+                >
+                 Send invite
+                </Button>
+          </div>
+          )}
           </div>
         </div>
       ) : (
@@ -186,18 +201,7 @@ function MessagesChatArea(props) {
           icon={<SendOutlined rotate={315} />}
           size={48}
         />
-        {parseInt(userType, 10) !== ACCOUNT_TYPE.MENTOR  && (
-          <div> 
-          <Button
-          onClick={sendInvite}
-          className="send-message-button"
-          shape="circle"
-          type="primary"
-          icon={<SendOutlined rotate={315} />}
-          size={48}
-        />
-          </div>
-        )} 
+         
       </div>
     </div>
   );

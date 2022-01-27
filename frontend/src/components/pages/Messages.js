@@ -22,23 +22,30 @@ function Messages(props) {
   const [userType, setUserType] = useState();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isBookingVisible, setBookingVisible] = useState(false);
+  const [inviteeId, setinviteeId] = useState();
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
 
   const messageListener = (data) => {
-    if (data?.sender_id?.$oid == activeMessageId) {
-      setMessages((prevMessages) => [...prevMessages, data]);
-      dispatch(
-        updateNotificationsCount({
-          recipient: profileId,
-          sender: data.sender_id.$oid,
-        })
-      );
+    if (data.allowBooking === "true") {
+      setBookingVisible(true);
+      setinviteeId(data.inviteeId);
     } else {
-      async function fetchLatest() {
-        const data = await getLatestMessages(profileId);
-        setLatestConvos(data);
+      if (data?.sender_id?.$oid == activeMessageId) {
+        setMessages((prevMessages) => [...prevMessages, data]);
+        dispatch(
+          updateNotificationsCount({
+            recipient: profileId,
+            sender: data.sender_id.$oid,
+          })
+        );
+      } else {
+        async function fetchLatest() {
+          const data = await getLatestMessages(profileId);
+          setLatestConvos(data);
+        }
+        fetchLatest();
       }
-      fetchLatest();
     }
   };
 
@@ -132,6 +139,8 @@ function Messages(props) {
           otherId={activeMessageId}
           userType={userType}
           loading={loading}
+          isBookingVisible={isBookingVisible}
+          inviteeId={inviteeId}
         />
       </Layout>
     </Layout>

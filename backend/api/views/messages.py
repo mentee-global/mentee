@@ -257,6 +257,7 @@ def chat(msg, methods=["POST"]):
         return create_response(status=500, message="Failed to send message")
     return create_response(status=200, message="successfully sent message")
 
+
 @socketio.on("invite")
 def invite(msg, methods=["POST"]):
     print("inisdede new created inivte cintrlloererer")
@@ -264,10 +265,10 @@ def invite(msg, methods=["POST"]):
         # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         inviteObject = {
-                    "inviteeId": msg["sender_id"],
-                    "allowBooking": "true",
-                }
-        socketio.emit(msg["recipient_id"],inviteObject)
+            "inviteeId": msg["sender_id"],
+            "allowBooking": "true",
+        }
+        socketio.emit(msg["recipient_id"], inviteObject)
 
     except Exception as e:
         # msg="Invalid parameter provided"
@@ -282,10 +283,5 @@ def invite(msg, methods=["POST"]):
         msg = "Failed to saved mentor as favorite"
         logger.info(e)
         return create_response(status=422, message=msg)
-    
+
     return create_response(status=200, message="successfully sent invite")
-
-    
-
-
-   

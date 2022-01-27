@@ -12,14 +12,24 @@ function MessagesChatArea(props) {
   const { Content, Header } = Layout;
   const { socket } = props;
   const { TextArea } = Input;
-  const { profileId ,isMentee,isMentor} = useAuth();
+  const { profileId, isMentee, isMentor } = useAuth();
   const [messageText, setMessageText] = useState("");
   const [accountData, setAccountData] = useState({});
   const [isAlreadyInvited, setIsAlreadyInvited] = useState(false);
-  const [isAlreadyInvitedByMentor, setIsAlreadyInvitedByMentor] = useState(false);
+  const [isAlreadyInvitedByMentor, setIsAlreadyInvitedByMentor] = useState(
+    false
+  );
   const [updateContent, setUpdateContent] = useState(false);
   const [currentMentor, setCurrentMentor] = useState("");
-  const { messages, activeMessageId, otherId, userType, loading ,isBookingVisible,inviteeId } = props;
+  const {
+    messages,
+    activeMessageId,
+    otherId,
+    userType,
+    loading,
+    isBookingVisible,
+    inviteeId,
+  } = props;
   const messagesEndRef = useRef(null);
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
@@ -34,39 +44,44 @@ function MessagesChatArea(props) {
       var account = await fetchAccountById(otherId, userType);
       if (account) {
         setAccountData(account);
-        if(parseInt(userType, 10) !== ACCOUNT_TYPE.MENTOR){
-        setIsAlreadyInvitedByMentor(account.favorite_mentors_ids.indexOf(otherId) >= 0);
+        if (parseInt(userType, 10) !== ACCOUNT_TYPE.MENTOR) {
+          setIsAlreadyInvitedByMentor(
+            account.favorite_mentors_ids.indexOf(otherId) >= 0
+          );
         }
-       }
-      if(parseInt(userType, 10) === ACCOUNT_TYPE.MENTOR){
-      var profileAcount=await fetchAccountById(profileId, ACCOUNT_TYPE.MENTEE);
-      if(profileAcount){
-        setIsAlreadyInvited(profileAcount.favorite_mentors_ids.indexOf(otherId) >= 0);
       }
-
+      if (parseInt(userType, 10) === ACCOUNT_TYPE.MENTOR) {
+        var profileAcount = await fetchAccountById(
+          profileId,
+          ACCOUNT_TYPE.MENTEE
+        );
+        if (profileAcount) {
+          setIsAlreadyInvited(
+            profileAcount.favorite_mentors_ids.indexOf(otherId) >= 0
+          );
+        }
       }
     }
     fetchAccount();
-  }, [updateContent,otherId, messages]);
+  }, [updateContent, otherId, messages]);
   useEffect(() => {
     scrollToBottom();
   }, [loading, messages]);
- 
+
   const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
   };
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
-   
- const sendInvite=(e) =>{
-  
+
+  const sendInvite = (e) => {
     const msg = {
-        sender_id: profileId,
-        recipient_id: activeMessageId,
-      };
-      socketInvite.emit("invite", msg);
-      return;
+      sender_id: profileId,
+      recipient_id: activeMessageId,
+    };
+    socketInvite.emit("invite", msg);
+    return;
   };
   const sendMessage = (e) => {
     if (!messageText.replace(/\s/g, "").length) {
@@ -113,7 +128,7 @@ function MessagesChatArea(props) {
       />
     </Header>
   );
- 
+
   return (
     <div className="conversation-container">
       {accountData ? (
@@ -126,29 +141,30 @@ function MessagesChatArea(props) {
             <div className="messages-chat-area-header-title">
               {accountData.professional_title}
             </div>
-            {((isBookingVisible && inviteeId === otherId) || isAlreadyInvited )  && (
-            <div className="mentor-profile-book-appt-btn">
-            <MenteeAppointmentModal
-                      mentor_name={accountData.name}
-                      availability={accountData.availability}
-                      mentor_id={otherId}
-                      mentee_id={profileId}
-                      handleUpdateMentor={handleUpdateAccount}
-                    />
-             </div>
+            {((isBookingVisible && inviteeId === otherId) ||
+              isAlreadyInvited) && (
+              <div className="mentor-profile-book-appt-btn">
+                <MenteeAppointmentModal
+                  mentor_name={accountData.name}
+                  availability={accountData.availability}
+                  mentor_id={otherId}
+                  mentee_id={profileId}
+                  handleUpdateMentor={handleUpdateAccount}
+                />
+              </div>
             )}
             {isMentor && !isAlreadyInvitedByMentor && (
-          <div> 
-            <Button
-                onClick={sendInvite}
-                type="default"
-                shape="round"
-                className="regular-button"
+              <div>
+                <Button
+                  onClick={sendInvite}
+                  type="default"
+                  shape="round"
+                  className="regular-button"
                 >
-                 Send invite
+                  Send invite
                 </Button>
-          </div>
-          )}
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -201,7 +217,6 @@ function MessagesChatArea(props) {
           icon={<SendOutlined rotate={315} />}
           size={48}
         />
-         
       </div>
     </div>
   );

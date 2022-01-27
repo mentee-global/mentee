@@ -20,6 +20,7 @@ function MessagesChatArea(props) {
     false
   );
   const [updateContent, setUpdateContent] = useState(false);
+  const [isInviteSent, setIsInviteSent] = useState(false);
   const [currentMentor, setCurrentMentor] = useState("");
   const {
     messages,
@@ -31,6 +32,7 @@ function MessagesChatArea(props) {
     inviteeId,
   } = props;
   const messagesEndRef = useRef(null);
+  const buttonRef = useRef(null);
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
       messagesEndRef.current.scrollIntoView({
@@ -76,13 +78,38 @@ function MessagesChatArea(props) {
   */
 
   const sendInvite = (e) => {
-    const msg = {
+    const inviteMsg = {
       sender_id: profileId,
       recipient_id: activeMessageId,
     };
-    socketInvite.emit("invite", msg);
+    setIsInviteSent(true);
+    socketInvite.emit("invite", inviteMsg);
+    let today = new Date();
+    let date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    let time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let dateTime = date + " " + time;
+    const msg = {
+      body:
+        "Pls check my calender under Booking Appointment to schdule a session.",
+      message_read: false,
+      sender_id: profileId,
+      recipient_id: activeMessageId,
+      time: dateTime,
+    };
+    socket.emit("send", msg);
+    msg["sender_id"] = { $oid: msg["sender_id"] };
+    msg["recipient_id"] = { $oid: msg["recipient_id"] };
+    props.addMyMessage(msg);
+    setMessageText("");
     return;
   };
+
   const sendMessage = (e) => {
     if (!messageText.replace(/\s/g, "").length) {
       return;
@@ -156,6 +183,7 @@ function MessagesChatArea(props) {
             {isMentor && !isAlreadyInvitedByMentor && (
               <div>
                 <Button
+                  disabled={isInviteSent}
                   onClick={sendInvite}
                   type="default"
                   shape="round"
@@ -210,10 +238,12 @@ function MessagesChatArea(props) {
           autoSize={{ minRows: 1, maxRows: 3 }}
         />
         <Button
+          id="sendMessagebtn"
           onClick={sendMessage}
           className="send-message-button"
           shape="circle"
           type="primary"
+          ref={buttonRef}
           icon={<SendOutlined rotate={315} />}
           size={48}
         />

@@ -3,7 +3,7 @@ export const BASE_URL =
     ? process.env.REACT_APP_ENV === "development"
       ? "https://mentee-dev.vercel.app/"
       : "https://mentee-global.vercel.app/"
-    : "http://localhost:5000/";*/
+    : "http://localhost:5000/";
 
 //export const BASE_URL =
 //  process.env.NODE_ENV === "production"

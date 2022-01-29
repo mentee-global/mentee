@@ -73,6 +73,31 @@ function MessagesChatArea(props) {
   const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
   };
+  const handleSuccessBooking = (chatMsg) => {
+    let today = new Date();
+    let date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    let time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let dateTime = date + " " + time;
+    const msg = {
+      body: chatMsg,
+      message_read: false,
+      sender_id: profileId,
+      recipient_id: activeMessageId,
+      time: dateTime,
+    };
+    socket.emit("send", msg);
+    msg["sender_id"] = { $oid: msg["sender_id"] };
+    msg["recipient_id"] = { $oid: msg["recipient_id"] };
+    props.addMyMessage(msg);
+    setMessageText("");
+    return;
+  };
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
@@ -177,6 +202,7 @@ function MessagesChatArea(props) {
                   mentor_id={otherId}
                   mentee_id={profileId}
                   handleUpdateMentor={handleUpdateAccount}
+                  handleSuccessBooking={handleSuccessBooking}
                 />
               </div>
             )}

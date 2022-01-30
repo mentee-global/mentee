@@ -121,7 +121,8 @@ function MessagesChatArea(props) {
     let dateTime = date + " " + time;
     const msg = {
       body:
-        "Pls check my calender under Booking Appointment to schdule a session.",
+        //        "Pls check my calender under Booking Appointment to schdule a session.",
+        "Thank you for reaching out for a session! Please look at my availability by clicking on the Book Appointment button under my name here in Messages and select an option that works for you.",
       message_read: false,
       sender_id: profileId,
       recipient_id: activeMessageId,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Col, Row, Result, Switch } from "antd";
+import { Button, Col, Row, Result, Switch, Badge } from "antd";
 import {
   ClockCircleOutlined,
   InfoCircleFilled,
@@ -50,7 +50,7 @@ function Appointments() {
   const user = useSelector((state) => state.user.user);
   const [modalAppointment, setModalAppointment] = useState({});
   const { onAuthStateChanged, role, profileId } = useAuth();
-
+  const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -62,6 +62,9 @@ function Appointments() {
         ACCOUNT_TYPE.MENTOR
       );
       if (formattedAppointments) {
+        setPendingAppointmentCount(
+          formattedAppointments["pending"][0]["appointments"].length
+        );
         setAppointments(formattedAppointments);
       }
     }
@@ -114,16 +117,31 @@ function Appointments() {
     };
   };
   const Tab = (props) => {
-    return (
-      <Button
-        type="default"
-        shape="round"
-        style={getButtonStyle(props.tab)}
-        onClick={() => setCurrentTab(props.tab)}
-      >
-        <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-      </Button>
-    );
+    if (props.text == "All Pending") {
+      return (
+        <Button
+          type="default"
+          shape="round"
+          style={getButtonStyle(props.tab)}
+          onClick={() => setCurrentTab(props.tab)}
+        >
+          <Badge count={pendingAppointmentCount ?? 0} size="small">
+            <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
+          </Badge>
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          type="default"
+          shape="round"
+          style={getButtonStyle(props.tab)}
+          onClick={() => setCurrentTab(props.tab)}
+        >
+          <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
+        </Button>
+      );
+    }
   };
   const getAppointmentButton = (tab, info) => {
     if (tab === Tabs.upcoming) {

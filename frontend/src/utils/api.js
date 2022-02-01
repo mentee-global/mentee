@@ -380,6 +380,20 @@ export const adminUploadEmails = (file, password, isMentor) => {
   );
 };
 
+export const adminUploadEmailsText = (messageText, companyTime) => {
+  const requestExtension = "/upload/accountsEmails";
+  let formData = new FormData();
+  formData.append("messageText", messageText);
+  formData.append("companyTime", companyTime);
+
+  return authPost(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const getAdmin = (id) => {
   const requestExtension = `/admin/${id}`;
   return authGet(requestExtension).then(

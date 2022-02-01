@@ -98,6 +98,27 @@ def upload_account_emails():
     return create_response(status=200, message="success")
 
 
+@admin.route("/upload/accountsEmails", methods=["POST"])
+@admin_only
+def upload_account_emailText():
+    """Upload account emails to permit registering
+
+    Returns:
+        HTTP Response
+    """
+
+    isMentor = request.form["companyTime"] == "true"
+    messageText = request.form["messageText"]
+
+    for email in messageText.split(";"):
+        duplicates = VerifiedEmail.objects(email=email, is_mentor=isMentor, password="")
+        if not duplicates:
+            email = VerifiedEmail(email=email, is_mentor=isMentor, password="")
+            email.save()
+
+    return create_response(status=200, message="success")
+
+
 @admin.route("/admin/<id>", methods=["GET"])
 @admin_only
 def get_admin(id):

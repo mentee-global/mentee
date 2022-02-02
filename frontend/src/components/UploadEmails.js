@@ -46,14 +46,14 @@ function UploadEmails(props) {
       <div className="dragdrops">
         <h1>Add Bulk Users</h1>
         <h2>
-          Profile to add :
+          Profiles to add : <span>&nbsp;&nbsp;</span>
           <Radio.Group onChange={onChange5} value={companyTime}>
             <Radio value={"true"}>Mentor</Radio>
             <Radio value={"false"}>Mentee</Radio>
           </Radio.Group>
         </h2>
         <h4>
-          Enter multiple email addresses,seperated by semicolon ';' then submit
+          Enter multiple email addresses, seperated by semicolon ';' then submit
         </h4>
         <div>
           <Form onFinish={() => onFinish(messageText, companyTime)}>

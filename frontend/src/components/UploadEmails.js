@@ -8,37 +8,40 @@ import "./css/UploadEmails.scss";
 
 function UploadEmails(props) {
   const { TextArea } = Input;
-  const onChange5 = (e) => setCompanyTime(e.target.value);
-  const [companyTime, setCompanyTime] = useState();
+  const onChangeIsMentor = (e) => setIsMentor(e.target.value);
+  const [isMentor, setIsMentor] = useState();
   const [messageText, setMessageText] = useState("");
 
-  const onFinish = useCallback((messageText, companyTime) => {
+  const onFinish = useCallback((messageText, isMentor) => {
+    var emails = messageText.split(";");
+
+    for (var i = 0; i < emails.length; i++) {
+      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emails[i])) {
+        alert("Invalid email: " + emails[i]);
+        return;
+      }
+    }
     async function uploadEmailsText(messageText) {
-      await adminUploadEmailsText(messageText, companyTime);
+      await adminUploadEmailsText(messageText, isMentor);
     }
 
     uploadEmailsText(messageText);
 
     setMessageText("");
-    setCompanyTime("");
+    setIsMentor("");
     success();
   }, []);
 
   const success = () => {
     message.success("This is a success message");
+    props.setUploadModalVisible(false);
   };
 
   return (
     <Modal
       visible={props.uploadModalVisible}
       setUploadModalVisible={props.setUploadModalVisible}
-      footer={
-        <MenteeButton
-          content="Done"
-          onClick={() => {
-            props.setUploadModalVisible(false);
-          }}
-        />
+      footer={<div></div>
       }
       onCancel={() => props.setUploadModalVisible(false)}
     >
@@ -47,7 +50,7 @@ function UploadEmails(props) {
         <h1>Add Bulk Users</h1>
         <h2>
           Profiles to add : <span>&nbsp;&nbsp;</span>
-          <Radio.Group onChange={onChange5} value={companyTime}>
+          <Radio.Group onChange={onChangeIsMentor} value={isMentor}>
             <Radio value={"true"}>Mentor</Radio>
             <Radio value={"false"}>Mentee</Radio>
           </Radio.Group>
@@ -56,7 +59,7 @@ function UploadEmails(props) {
           Enter multiple email addresses, seperated by semicolon ';' then submit
         </h4>
         <div>
-          <Form onFinish={() => onFinish(messageText, companyTime)}>
+          <Form onFinish={() => onFinish(messageText, isMentor)}>
             <Form.Item>
               <TextArea
                 className="message-input"
@@ -68,7 +71,7 @@ function UploadEmails(props) {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button className="regular-button" htmlType="submit">
                 Submit
               </Button>
             </Form.Item>

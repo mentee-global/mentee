@@ -107,7 +107,7 @@ def upload_account_emailText():
         HTTP Response
     """
 
-    isMentor = request.form["companyTime"] == "true"
+    isMentor = request.form["isMentor"] == "true"
     messageText = request.form["messageText"]
 
     for email in messageText.split(";"):

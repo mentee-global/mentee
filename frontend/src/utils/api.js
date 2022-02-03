@@ -380,11 +380,11 @@ export const adminUploadEmails = (file, password, isMentor) => {
   );
 };
 
-export const adminUploadEmailsText = (messageText, companyTime) => {
+export const adminUploadEmailsText = (messageText, isMentor) => {
   const requestExtension = "/upload/accountsEmails";
   let formData = new FormData();
   formData.append("messageText", messageText);
-  formData.append("companyTime", companyTime);
+  formData.append("isMentor", isMentor);
 
   return authPost(requestExtension, formData).then(
     (response) => response,

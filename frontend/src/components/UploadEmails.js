@@ -11,12 +11,22 @@ function UploadEmails(props) {
   const onChangeIsMentor = (e) => setIsMentor(e.target.value);
   const [isMentor, setIsMentor] = useState();
   const [messageText, setMessageText] = useState("");
-
+  const [isMissing, setIsMissing] = useState(false);
   const onFinish = useCallback((messageText, isMentor) => {
     var emails = messageText.split(";");
 
+    if (!isMentor) {
+      setIsMissing(true);
+      return;
+    }
+    setIsMissing(false);
+
     for (var i = 0; i < emails.length; i++) {
-      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emails[i])) {
+      if (
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+          emails[i].replace(/\s/g, "")
+        )
+      ) {
         alert("Invalid email: " + emails[i]);
         return;
       }
@@ -41,8 +51,7 @@ function UploadEmails(props) {
     <Modal
       visible={props.uploadModalVisible}
       setUploadModalVisible={props.setUploadModalVisible}
-      footer={<div></div>
-      }
+      footer={<div></div>}
       onCancel={() => props.setUploadModalVisible(false)}
     >
       {" "}
@@ -54,6 +63,12 @@ function UploadEmails(props) {
             <Radio value={"true"}>Mentor</Radio>
             <Radio value={"false"}>Mentee</Radio>
           </Radio.Group>
+          {isMissing && (
+            <h5>
+              {" "}
+              <p style={{ color: "red" }}>Please select an option.</p>
+            </h5>
+          )}
         </h2>
         <h4>
           Enter multiple email addresses, seperated by semicolon ';' then submit

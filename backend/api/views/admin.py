@@ -111,6 +111,7 @@ def upload_account_emailText():
     messageText = request.form["messageText"]
 
     for email in messageText.split(";"):
+        email = email.replace(" ", "")
         duplicates = VerifiedEmail.objects(email=email, is_mentor=isMentor, password="")
         if not duplicates:
             email = VerifiedEmail(email=email, is_mentor=isMentor, password="")

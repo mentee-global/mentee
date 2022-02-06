@@ -73,6 +73,7 @@ function MessagesChatArea(props) {
   const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
   };
+
   const handleSuccessBooking = (chatMsg) => {
     let today = new Date();
     let date =
@@ -98,6 +99,7 @@ function MessagesChatArea(props) {
     setMessageText("");
     return;
   };
+
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */

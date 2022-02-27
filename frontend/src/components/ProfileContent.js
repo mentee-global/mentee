@@ -150,19 +150,6 @@ function ProfileContent(props) {
                     menteeId={profileId}
                     mentorSpecializations={props.mentor?.specializations}
                   />
-                  {props.mentor?.taking_appointments && (
-                    <MenteeAppointmentModal
-                      mentor_name={props.mentor.name}
-                      availability={props.mentor.availability}
-                      mentor_id={
-                        props.mentor &&
-                        props.mentor._id &&
-                        props.mentor._id["$oid"]
-                      }
-                      mentee_id={profileId}
-                      handleUpdateMentor={props.handleUpdateAccount}
-                    />
-                  )}
                 </>
               )}
           </div>

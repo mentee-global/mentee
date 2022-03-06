@@ -37,7 +37,7 @@ $ poetry run start
 
 ### Verifying
 
-Install [Postman](https://www.getpostman.com/downloads/) or your app of choice for testing API calls, or go onto "collections" on MongoDB Atlas.
+Install [Postman](https://www.getpostman.com/downloads/) or your app of choice for testing API calls, or go onto "collections" on MongoDB Atlas
 
 Then, make Postman calls to verify that the server works:
 

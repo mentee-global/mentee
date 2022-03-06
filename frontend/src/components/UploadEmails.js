@@ -1,115 +1,99 @@
 import React, { useCallback, useState } from "react";
-import { Modal, Form, Input, Button, message } from "antd";
+import { Modal, Form, Input, Button, message, Radio } from "antd";
 import { useDropzone } from "react-dropzone";
-import { adminUploadEmails } from "utils/api";
+import { adminUploadEmails, adminUploadEmailsText } from "utils/api";
 import MenteeButton from "./MenteeButton";
 
 import "./css/UploadEmails.scss";
 
 function UploadEmails(props) {
-  return (
-    <Modal
-      visible={props.uploadModalVisible}
-      setUploadModalVisible={props.setUploadModalVisible}
-      footer={
-        <MenteeButton
-          content="Done"
-          onClick={() => {
-            props.setUploadModalVisible(false);
-          }}
-        />
-      }
-      onCancel={() => props.setUploadModalVisible(false)}
-    >
-      {" "}
-      <div className="dragdrops">
-        <div className="dragdrop">
-          <h3>Add Mentors</h3>
-          {DragDrop(true)}
-        </div>
-        <div className="dragdrop">
-          <h3>Add Mentees</h3>
-          {DragDrop(false)}
-        </div>
-      </div>
-    </Modal>
-  );
-}
+  const { TextArea } = Input;
+  const onChangeIsMentor = (e) => setIsMentor(e.target.value);
+  const [isMentor, setIsMentor] = useState();
+  const [messageText, setMessageText] = useState("");
+  const [isMissing, setIsMissing] = useState(false);
+  const onFinish = useCallback((messageText, isMentor) => {
+    var emails = messageText.split(";");
 
-function DragDrop(isMentor) {
-  const [password, setPassword] = useState("");
-  const [files, setFiles] = useState([]);
-
-  const onDrop = (acceptedFiles) => {
-    setFiles(acceptedFiles);
-  };
-
-  const file_names = files.map((file) => <li> {file.path} </li>);
-
-  const onFinish = useCallback((files, password, mentor) => {
-    async function uploadEmails(file) {
-      await adminUploadEmails(file, password, mentor);
+    if (!isMentor) {
+      setIsMissing(true);
+      return;
     }
-    files.forEach((file) => {
-      uploadEmails(file);
-    });
-    setFiles([]);
-    setPassword("");
+    setIsMissing(false);
+
+    for (var i = 0; i < emails.length; i++) {
+      if (
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
+          emails[i].replace(/\s/g, "")
+        )
+      ) {
+        alert("Invalid email: " + emails[i]);
+        return;
+      }
+    }
+    async function uploadEmailsText(messageText) {
+      await adminUploadEmailsText(messageText, isMentor);
+    }
+
+    uploadEmailsText(messageText);
+
+    setMessageText("");
+    setIsMentor("");
     success();
   }, []);
 
   const success = () => {
     message.success("This is a success message");
+    props.setUploadModalVisible(false);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: ".csv",
-  });
-
-  const includePassword = () => {
-    if (isMentor) {
-      return <div></div>;
-    } else {
-      return (
-        <Form.Item label="Password">
-          <Input
-            name="inputtedPassword"
-            type="text"
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-        </Form.Item>
-      );
-    }
-  };
-  //
   return (
-    <div>
-      <Form
-        onFinish={() => onFinish(files, password, isMentor)}
-        initialValues={{ inputtedPassword: "" }}
-      >
-        <Form.Item>
-          <div {...getRootProps()}>
-            <p>Drag 'n' drop some files here, or click to select files</p>
-            <em>(Only *.csv files will be accepted)</em>
-            <input {...getInputProps()} />
-          </div>
-          <aside>
-            <h4>Uploaded Files: </h4>
-            <ul type="circle">{file_names}</ul>
-          </aside>
-        </Form.Item>
-        {includePassword()}
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+    <Modal
+      visible={props.uploadModalVisible}
+      setUploadModalVisible={props.setUploadModalVisible}
+      footer={<div></div>}
+      onCancel={() => props.setUploadModalVisible(false)}
+    >
+      {" "}
+      <div className="dragdrops">
+        <h1>Add Bulk Users</h1>
+        <h2>
+          Profiles to add : <span>&nbsp;&nbsp;</span>
+          <Radio.Group onChange={onChangeIsMentor} value={isMentor}>
+            <Radio value={"true"}>Mentor</Radio>
+            <Radio value={"false"}>Mentee</Radio>
+          </Radio.Group>
+          {isMissing && (
+            <h5>
+              {" "}
+              <p style={{ color: "red" }}>Please select an option.</p>
+            </h5>
+          )}
+        </h2>
+        <h4>
+          Enter multiple email addresses, seperated by semicolon ';' then submit
+        </h4>
+        <div>
+          <Form onFinish={() => onFinish(messageText, isMentor)}>
+            <Form.Item>
+              <TextArea
+                className="message-input"
+                placeholder="Enter email(s)"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                autoSize={{ minRows: 4, maxRows: 10 }}
+              />
+            </Form.Item>
+
+            <Form.Item>
+              <Button className="regular-button" htmlType="submit">
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </div>
+    </Modal>
   );
 }
 

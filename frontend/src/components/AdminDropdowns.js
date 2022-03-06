@@ -146,11 +146,11 @@ export function SortByDateDropdown(props) {
   const options = {
     ASCENDING: {
       key: 0,
-      text: "Appointment Timeslot (newest)",
+      text: "Date added (newest)",
     },
     DESCENDING: {
       key: 1,
-      text: "Appointment Timeslot (oldest)",
+      text: "Date added (oldest)",
     },
   };
 

@@ -36,10 +36,10 @@ const authDelete = async (url, config) =>
     .catch(console.error);
 
 /**
- * Returns mentee or mentor account model. 
+ * Returns mentee or mentor account model.
  * @param {*} id - Account ObjectId
  * @param {*} type - from utils/consts, use: ACCOUNT_TYPE.MENTEE or ACCOUNT_TYPE.MENTOR
- * @returns mentee or mentor account data. 
+ * @returns mentee or mentor account data.
  */
 export const fetchAccountById = (id, type) => {
   if (!id) return;
@@ -59,7 +59,7 @@ export const fetchAccountById = (id, type) => {
 };
 
 /**
- * Get all mentee accounts or get all mentor accounts. This is used to display both galleries. 
+ * Get all mentee accounts or get all mentor accounts. This is used to display both galleries.
  * @param {*} type - from utils/consts, use: ACCOUNT_TYPE.MENTEE or ACCOUNT_TYPE.MENTOR
  * @returns list of all account data in JSON format
  */
@@ -244,13 +244,8 @@ export const fetchAppointmentsByType = (accountType) => {
   );
 };
 
-/**Fetch a paginated subset of appointments to show on admin portal */
-export const fetchPaginatedAppointments = (
-  pageNumber,
-  searchValue,
-  filterValue
-) => {
-  const requestExtension = `/appointment/all/${pageNumber}/${searchValue}/${filterValue}`;
+export const fetchAllAppointments = () => {
+  const requestExtension = "/appointment/";
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
@@ -391,6 +386,20 @@ export const adminUploadEmails = (file, password, isMentor) => {
   } else {
     formData.append("mentorOrMentee", "false");
   }
+  return authPost(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const adminUploadEmailsText = (messageText, isMentor) => {
+  const requestExtension = "/upload/accountsEmails";
+  let formData = new FormData();
+  formData.append("messageText", messageText);
+  formData.append("isMentor", isMentor);
+
   return authPost(requestExtension, formData).then(
     (response) => response,
     (err) => {

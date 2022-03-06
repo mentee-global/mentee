@@ -13,16 +13,18 @@ import { fetchAvailability, editAvailability } from "../utils/api";
 /**
  * Moment.js documentation: {@link https://momentjs.com/docs/}
  */
-function AvailabilityCalendar() {
+function AvailabilityCalendar(props) {
   const [saved, setSaved] = useState({}); //  Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
   const [lockmodal, setLockModal] = useState(false); // Locks modal when panel changes
   const [timeSlots, setTimeSlots] = useState([]);
+  const [bookedTimeSlots, setBookedTimeSlots] = useState([]);
   const [trigger, setTrigger] = useState(false); // Trigger for getSetdays UseEffect
   const format = "YYYY-MM-DDTHH:mm:ss.SSSZ";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone; // Gives timezone of browser
+  const appointmentdata = props.appointmentdata;
 
   /**
    * Gets appointments from backend and finds the days in format "YYYY-MM-DD"
@@ -33,6 +35,26 @@ function AvailabilityCalendar() {
       const mentorID = await getMentorID();
       const availability_data = await fetchAvailability(mentorID);
       const set = [];
+
+      if (appointmentdata) {
+        {
+          appointmentdata.map((appointmentsObject, index) => {
+            if (
+              !saved.hasOwnProperty(
+                moment.parseZone(appointmentsObject.date)
+              ) &&
+              !set.hasOwnProperty(appointmentsObject.date)
+            ) {
+              // .format strips data to find just year, month, and day
+              set[
+                moment.parseZone(appointmentsObject.date).format("YYYY-MM-DD")
+              ] = true;
+            }
+          });
+        }
+      }
+      setSaved(set);
+
       if (availability_data) {
         const availability = availability_data.availability;
         availability.forEach((time) => {
@@ -59,18 +81,32 @@ function AvailabilityCalendar() {
   async function getAvailability() {
     const mentorID = await getMentorID();
     const availability_data = await fetchAvailability(mentorID);
-    if (availability_data) {
-      const availability = availability_data.availability;
-      const times = [];
 
+    if (availability_data) {
+      const times = [];
+      const availability = availability_data.availability;
       availability.forEach((element) => {
         times.push([
           moment.parseZone(element.start_time.$date),
           moment.parseZone(element.end_time.$date),
         ]);
       });
-
       setTimeSlots(times);
+    }
+    if (appointmentdata) {
+      const bookedTimes = [];
+      {
+        appointmentdata.map((appointmentsObject, index) => {
+          const appointments = appointmentsObject.appointments;
+          appointments.forEach((element) => {
+            bookedTimes.push([
+              moment.parseZone(element.timeslot.start_time.$date),
+              moment.parseZone(element.timeslot.end_time.$date),
+            ]);
+          });
+        });
+      }
+      setBookedTimeSlots(bookedTimes);
     }
   }
 
@@ -184,6 +220,16 @@ function AvailabilityCalendar() {
     return returnSlots;
   };
 
+  const getBookedTimeSlots = (day) => {
+    let returnSlots = [];
+    for (let i = 0; i < bookedTimeSlots.length; i++) {
+      if (day === bookedTimeSlots[i][0].format("YYYY-MM-DD")) {
+        returnSlots.push([bookedTimeSlots[i], i]);
+      }
+    }
+    return returnSlots;
+  };
+
   /**
    * Renders each cell of calendar
    * @param {moment} value
@@ -238,6 +284,25 @@ function AvailabilityCalendar() {
           <h5 className="date">{date.format("dddd")}</h5>
         </div>
         <div className="all-timeslots-wrapper">
+          {getBookedTimeSlots(date.format("YYYY-MM-DD")).map(
+            (bookedTimeSlot, index) => (
+              <Fragment key={`${index}`}>
+                <div className="timeslot-wrapper">
+                  <TimePicker
+                    format="h:mm A"
+                    value={moment(bookedTimeSlot[0][0], "HH:mm")}
+                    disabled={true}
+                  />
+                  <h1 className="timeslot"> - </h1>
+                  <TimePicker
+                    format="h:mm A"
+                    value={moment(bookedTimeSlot[0][1])}
+                    disabled={true}
+                  />
+                </div>
+              </Fragment>
+            )
+          )}
           {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">

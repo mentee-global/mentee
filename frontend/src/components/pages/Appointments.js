@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Col, Row, Result, Switch } from "antd";
+import { Button, Col, Row, Result, Switch, Badge } from "antd";
 import {
   ClockCircleOutlined,
   InfoCircleFilled,
@@ -50,19 +50,25 @@ function Appointments() {
   const user = useSelector((state) => state.user.user);
   const [modalAppointment, setModalAppointment] = useState({});
   const { onAuthStateChanged, role, profileId } = useAuth();
-
+  const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
     async function getAppointments() {
       const mentorID = await getMentorID();
       const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
+
       const formattedAppointments = formatAppointments(
         appointmentsResponse,
         ACCOUNT_TYPE.MENTOR
       );
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
+        if (formattedAppointments["pending"][0]) {
+          setPendingAppointmentCount(
+            formattedAppointments["pending"][0]["appointments"].length
+          );
+        }
       }
     }
 
@@ -114,16 +120,31 @@ function Appointments() {
     };
   };
   const Tab = (props) => {
-    return (
-      <Button
-        type="default"
-        shape="round"
-        style={getButtonStyle(props.tab)}
-        onClick={() => setCurrentTab(props.tab)}
-      >
-        <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-      </Button>
-    );
+    if (props.text == "All Pending") {
+      return (
+        <Button
+          type="default"
+          shape="round"
+          style={getButtonStyle(props.tab)}
+          onClick={() => setCurrentTab(props.tab)}
+        >
+          <Badge count={pendingAppointmentCount ?? 0} size="small">
+            <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
+          </Badge>
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          type="default"
+          shape="round"
+          style={getButtonStyle(props.tab)}
+          onClick={() => setCurrentTab(props.tab)}
+        >
+          <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
+        </Button>
+      );
+    }
   };
   const getAppointmentButton = (tab, info) => {
     if (tab === Tabs.upcoming) {
@@ -172,15 +193,10 @@ function Appointments() {
     setModalVisible(true);
     setModalAppointment(props);
   };
-  const AvailabilityTab = () => {
+  const AvailabilityTab = ({ data }) => {
     return (
       <div>
-        <div className="availability-container">
-          <Switch
-            onChange={handleTakeAppointments}
-            checked={user?.taking_appointments}
-          />
-        </div>
+        <div className="availability-container"></div>
         <div
           className="availability-container"
           style={{
@@ -192,7 +208,7 @@ function Appointments() {
             Set available hours by specific date
           </div>
           <div className="calendar-container">
-            <AvailabilityCalendar />
+            <AvailabilityCalendar appointmentdata={data} />
           </div>
         </div>
       </div>
@@ -240,7 +256,7 @@ function Appointments() {
       case Tabs.past:
         return <Appointments data={appointments[currentTab.key]} />;
       case Tabs.availability:
-        return <AvailabilityTab />;
+        return <AvailabilityTab data={appointments["upcoming"]} />;
       default:
         return <div />;
     }

@@ -80,6 +80,7 @@ export const formatAppointments = (data, type) => {
       allowTexts: appointment.allow_texts,
       allowCalls: appointment.allow_calls,
       status: appointment.status,
+      timeslot: appointment.timeslot,
     };
     if (!appointment.status) {
       formattedAppointment.status = appointment.accepted

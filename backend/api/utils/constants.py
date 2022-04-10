@@ -26,6 +26,7 @@ APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
 MENTOR_ROLE = "mentor"
 MENTEE_ROLE = "mentee"
 ADMIN_ROLE = "admin"
+PARTNER_ROLE="partner"
 
 # Account types
 
@@ -34,6 +35,7 @@ class Account(Enum):
     ADMIN = 0
     MENTOR = 1
     MENTEE = 2
+    PARTNER=3
 
     def __eq__(self, other):
         return self.value == other

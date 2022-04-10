@@ -1,3 +1,4 @@
+from email import message
 from flask import Blueprint, request, jsonify
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
@@ -139,16 +140,16 @@ def login():
     password = data.get("password")
     role = data.get("role")
     firebase_user = None
+    
+
 
     profile_model = get_profile_model(role)
-
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
         )
     except Exception as e:
         if Users.objects(email=email) or profile_model.objects(email=email):
-            # user = Users.objects.get(email=email)
 
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
@@ -191,6 +192,7 @@ def login():
         if role != Account.ADMIN:
             # user failed to create profile during registration phase
             # prompt frontend to return user to appropriate phase
+
             return create_response(
                 message="Logged in",
                 data={
@@ -208,7 +210,7 @@ def login():
         msg = "Couldn't find profile with these credentials"
         logger.info(msg)
         return create_response(status=422, message=msg)
-
+    
     return create_response(
         message="Logged in",
         data={

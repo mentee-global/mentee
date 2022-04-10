@@ -15,48 +15,49 @@ import MenteeMessageTab from "./MenteeMessageTab";
 const { Content } = Layout;
 
 function Navigation(props) {
-  const history = useHistory();
-  const [permissions, setPermissions] = usePersistedState(
-    "permissions",
-    ACCOUNT_TYPE.MENTOR
-  );
-  const {
-    isAdmin,
-    isMentee,
-    onAuthUpdate,
-    onAuthStateChanged,
-    profileId,
-  } = useAuth();
+	const history = useHistory();
+	const [permissions, setPermissions] = usePersistedState(
+		"permissions",
+		ACCOUNT_TYPE.MENTOR
+	);
+	const {
+		isAdmin,
+		isMentee,
+		isPartner,
+		onAuthUpdate,
+		onAuthStateChanged,
+		profileId,
+	} = useAuth();
 
-  useEffect(() => {
-    onAuthStateChanged((user) => {
-      if (!user && props.needsAuth) {
-        history.push("/select-login");
-      }
-    });
-  }, [history, props.needsAuth]);
+	useEffect(() => {
+		onAuthStateChanged((user) => {
+			if (!user && props.needsAuth) {
+				history.push("/login");
+			}
+		});
+	}, [history, props.needsAuth]);
 
-  return (
-    <div>
-      <Layout className="navigation-layout">
-        {props.needsAuth && !props.ignoreSidebar ? (
-          <Layout>
-            {permissions === ACCOUNT_TYPE.ADMIN ? (
-              <AdminSidebar selectedPage={props.page} />
-            ) : permissions === ACCOUNT_TYPE.MENTOR ? (
-              <MentorSidebar selectedPage={props.page} />
-            ) : (
-              <MenteeSideBar selectedPage={props.page} />
-            )}
-            <Content className="navigation-content">{props.content}</Content>
-          </Layout>
-        ) : (
-          <Content className="navigation-content">{props.content}</Content>
-        )}
-        {/* {isMentee && <MenteeMessageTab user_id={profileId} />} */}
-      </Layout>
-    </div>
-  );
+	return (
+		<div>
+			<Layout className="navigation-layout">
+				{props.needsAuth && !props.ignoreSidebar ? (
+					<Layout>
+						{permissions === ACCOUNT_TYPE.ADMIN ? (
+							<AdminSidebar selectedPage={props.page} />
+						) : permissions === ACCOUNT_TYPE.MENTOR ? (
+							<MentorSidebar selectedPage={props.page} />
+						) : (
+							<MenteeSideBar selectedPage={props.page} />
+						)}
+						<Content className="navigation-content">{props.content}</Content>
+					</Layout>
+				) : (
+					<Content className="navigation-content">{props.content}</Content>
+				)}
+				{/* {isMentee && <MenteeMessageTab user_id={profileId} />} */}
+			</Layout>
+		</div>
+	);
 }
 
 export default Navigation;

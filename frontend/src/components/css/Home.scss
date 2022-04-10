@@ -1,62 +1,94 @@
 .home-background {
-  background-color: #F8D15B;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	background-color: #f8d15b;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
 }
 
 .home-content {
-  height: 90%;
-  width: 90%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+	width: 80%;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: flex-start;
 }
 
 .home-text-container {
-  height: 50%;
-  width: 50%;
+	text-align: center;
+	margin-top: 30px;
+	height: fit-content;
 }
 
 .home-header {
-  color: white;
-  font-weight: bold;
-  font-size: 300%;
+	color: white;
+	font-weight: bold;
+	font-size: 200%;
 }
 
+.home-header span {
+	color: #644a0a;
+}
 .home-text {
-  color: #644A0A;
-  font-weight: bold;
+	color: white;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 180%;
 }
-
-.logo{
-  height: 60vh;
-  width: 60vh;
+.buttons-container {
+	display: flex;
+	flex-direction: row;
+}
+.applyCon,
+.loginCon {
+	width: 120px;
+	height: 160px;
+	background-color: white;
+	text-align: center;
+	color: #a58123;
+	font-size: 170%;
+	line-height: 180%;
+	margin: 10px;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+}
+.applyImage {
+	width: 90px;
+	height: 110px;
+	margin-top: 15px;
+}
+.logo {
+	height: 60vh;
+	width: 60vh;
 }
 
 .focus-for-health {
-  position: absolute;
-  bottom: 8px;
-  right: 16px;
-  font-size: 18px;
-  width: 40vh
+	position: absolute;
+	bottom: 8px;
+	right: 16px;
+	font-size: 18px;
+	width: 40vh;
 }
 
 @media only screen and (max-width: 1024px) {
-  .logo{
-    height: 20vh;
-    width: 20vh;
-  }
-  .home-content {
-    height: fit-content;
-  }
-  .home-background {
-    height: 100%;
-    width: 100%;
-  }
-  .home-header {
-    font-size: 5vh;
-  }
+	.logo {
+		height: 20vh;
+		width: 20vh;
+	}
+	.home-content {
+		height: fit-content;
+	}
+	.home-background {
+		height: 100%;
+		width: 100%;
+	}
+	.home-header {
+		font-size: 5vh;
+	}
 }

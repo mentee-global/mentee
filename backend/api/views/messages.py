@@ -1,4 +1,4 @@
-from os import confstr, path
+from os import  path
 from flask import Blueprint, request, jsonify
 from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email

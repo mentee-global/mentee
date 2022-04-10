@@ -1,0 +1,103 @@
+.container {
+	background-color: #ffdb6f;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.home-header {
+	color: white;
+	font-weight: bold;
+	font-size: 160%;
+}
+
+.home-header span {
+	color: #644a0a;
+}
+.home-text {
+	color: white;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 120%;
+}
+.emailPart {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 80%;
+	max-width: 600px;
+}
+.emailPart p {
+	font-size: 1.4rem;
+	color: white;
+	margin: 10px;
+}
+.emailIn {
+	flex-grow: 1;
+	height: fit-content;
+}
+.roleGroup {
+	font-weight: 600;
+	letter-spacing: 1px;
+}
+.formsPart {
+	margin-top: 20px;
+	background-color: #c4c4c4;
+	position: relative;
+	width: 80%;
+	flex-grow: 1;
+	min-height: 400px;
+	padding: 10px;
+	margin-bottom: 30px;
+}
+.applySubmit {
+	padding: 0 20px;
+	height: 27px;
+	position: absolute;
+	right: 2%;
+	bottom: 2%;
+	background: #e4bb4f;
+	border-radius: 10px;
+	text-align: center;
+	color: white;
+	cursor: pointer;
+	text-align: center;
+}
+.testbtn {
+	padding: 0 20px;
+	height: 27px;
+	position: absolute;
+	right: 18%;
+	bottom: 18%;
+	background: #e4bb4f;
+	border-radius: 10px;
+	text-align: center;
+	color: white;
+	cursor: pointer;
+	text-align: center;
+}
+.error {
+	font-weight: 600;
+	color: red;
+}
+.steps {
+	width: 80%;
+	max-width: 600px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+.step {
+	width: 30%;
+	object-fit: contain;
+	color: white;
+	cursor: pointer;
+}
+.hide {
+	display: none;
+}
+h1 {
+	color: white;
+}

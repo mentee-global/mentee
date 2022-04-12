@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from api.models import MentorApplication, VerifiedEmail
+from api.models import MentorApplication, VerifiedEmail,Users
 from api.core import create_response, serialize_list, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import (
@@ -15,11 +15,34 @@ apply = Blueprint("apply", __name__)
 # GET request for all mentor applications
 
 
-@apply.route("/", methods=["GET"])
-@admin_only
+@apply.route("/apps", methods=["GET"])
+#@admin_only
 def get_applications():
+    new_application = MentorApplication(
+        name='name',
+        email='email',
+        business_number='423',
+        cell_number='data.get("cell_number")',
+        hear_about_us='data.get("email")',
+        offer_donation=True,
+        employer_name='data.get("employer_name")',
+        role_description='data.get("role_description")',
+        time_at_current_company='data.get("time_at_current_company")',
+        linkedin='data.get("linkedin")',
+        why_join_mentee='data.get("why_join_mentee")',
+        commit_time='data.get("commit_time")',
+        specialist_time='data.get("specialist_time")',
+        immigrant_status='data.get("immigrant_status")',
+        languages='data.get("languages")',
+        referral='data.get("referral")',
+        knowledge_location='data.get("knowledge_location")',
+        notes='data.get("notes", "")',
+        application_state="PENDING",
+    )
+
+    new_application.save()
     application = MentorApplication.objects.only(
-        "name", "specializations", "id", "application_state"
+        "name","id", "application_state"
     )
 
     return create_response(data={"mentor_applications": application})
@@ -38,6 +61,16 @@ def get_application_by_id(id):
 
     return create_response(data={"mentor_application": application})
 
+@apply.route("/checkConfirm/<email>", methods=["GET"])
+def get_application_by_email(email):
+    try:
+        application = MentorApplication.objects.get(email=email)
+    except:
+        msg = "No application currently exist with this email " + email
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    return create_response(data={"state":application.application_state})
 
 # DELETE request for mentor application by object ID
 @apply.route("/<id>", methods=["DELETE"])
@@ -146,7 +179,6 @@ def edit_application(id):
 @apply.route("/new", methods=["POST"])
 def create_application():
     data = request.get_json()
-
     validate_data = MentorApplicationForm.from_json(data)
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
@@ -155,26 +187,22 @@ def create_application():
     new_application = MentorApplication(
         name=data.get("name"),
         email=data.get("email"),
-        specializations=data.get("specializations"),
-        business_number=data.get("business_number"),
         cell_number=data.get("cell_number"),
         hear_about_us=data.get("email"),
         offer_donation=data.get("offer_donation"),
-        mentoring_options=data.get("mentoring_options"),
         employer_name=data.get("employer_name"),
-        work_sectors=data.get("work_sectors"),
         role_description=data.get("role_description"),
-        time_at_current_company=data.get("time_at_current_company"),
-        linkedin=data.get("linkedin"),
-        why_join_mentee=data.get("why_join_mentee"),
-        commit_time=data.get("commit_time"),
-        specialist_time=data.get("specialist_time"),
         immigrant_status=data.get("immigrant_status"),
         languages=data.get("languages"),
         referral=data.get("referral"),
         knowledge_location=data.get("knowledge_location"),
+        isColorPerson=data.get("isColorPerson"),
+        isMarginalized=data.get("isMarginalized"),
+        isFamilyNative=data.get("isFamilyNative"),
+        isEconomically=data.get("isEconomically"),
+        identify=data.get("identify"),
+        pastLiveLocation=data.get("pastLiveLocation"),
         date_submitted=data.get("date_submitted"),
-        notes=data.get("notes", ""),
         application_state="PENDING",
     )
 

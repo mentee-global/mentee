@@ -62,7 +62,7 @@ function Login() {
 		console.log(roleObject);
 		setLoggingIn(true);
 		setLoading(true);
-		const res = await login(email, password, roleObject.type);
+		const res = await login(email, password, ACCOUNT_TYPE.ADMIN);
 		console.log(res.result);
 		setLoading(false);
 

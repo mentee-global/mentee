@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../components/css/Apply.scss";
 import { Steps, Form, Input, Radio, Checkbox, LeftOutlined } from "antd";
 import { ACCOUNT_TYPE } from "utils/consts";
 import ApplyStep from "../../resources/applystep.png";
 import ApplyStep2 from "../../resources/applystep2.png";
-
+import { getMentorAppState, fetchApplications } from "../../utils/api";
 import ProfileStep from "../../resources/profilestep.png";
 import ProfileStep2 from "../../resources/profilestep2.png";
 import TrianStep from "../../resources/trainstep.png";
@@ -13,7 +13,7 @@ import MentorApplication from "./MentorApplication";
 
 const Apply = () => {
 	const [email, setEmail] = useState("");
-	const [role, setRole] = useState(1);
+	const [role, setRole] = useState(null);
 	const [isapply, setIsApply] = useState(true);
 	const [confirmApply, setConfirmApply] = useState(false);
 	const [approveApply, setApproveApply] = useState(false);
@@ -21,6 +21,41 @@ const Apply = () => {
 	const [istrain, setIstrain] = useState(false);
 	const [isbuild, setIsBuild] = useState(false);
 	const [err, seterr] = useState(false);
+
+	const submitHandler = () => {
+		if (email == "") {
+			seterr(true);
+			return;
+		}
+		setConfirmApply(true);
+	};
+
+	useEffect(() => {
+		async function checkConfirmation() {
+			if (role) {
+				if (email != "") {
+					if (role === ACCOUNT_TYPE.MENTOR) {
+						const state = await getMentorAppState(email);
+						if (state) {
+							if (state === "PENDING") {
+								setConfirmApply(true);
+							} else {
+								setConfirmApply(false);
+							}
+							if (state === "APPROVED") {
+								setApproveApply(true);
+							} else {
+								setApproveApply(false);
+							}
+						}
+						return state;
+					}
+				}
+			}
+		}
+		//check this email already send application and pending
+		checkConfirmation();
+	}, [role, email]);
 
 	return (
 		<div className="container">
@@ -46,7 +81,6 @@ const Apply = () => {
 				className="roleGroup"
 				onChange={(e) => setRole(e.target.value)}
 				value={role}
-				defaultValue={ACCOUNT_TYPE.MENTOR}
 			>
 				<Radio value={ACCOUNT_TYPE.MENTEE}>Mentee</Radio>
 				<Radio value={ACCOUNT_TYPE.MENTOR}>Mentor</Radio>
@@ -98,7 +132,30 @@ const Apply = () => {
 								you will be contacted shortly.
 							</h1>
 						) : (
-							<MentorApplication></MentorApplication>
+							<>
+								{approveApply ? (
+									<h1>Your application approved continue training</h1>
+								) : (
+									""
+								)}
+								{!approveApply && role === ACCOUNT_TYPE.MENTOR ? (
+									<MentorApplication
+										submitHandler={submitHandler}
+									></MentorApplication>
+								) : (
+									""
+								)}
+								{!approveApply && role === ACCOUNT_TYPE.MENTEE ? (
+									<div>mentee form</div>
+								) : (
+									""
+								)}
+								{!approveApply && role === ACCOUNT_TYPE.PARTNER ? (
+									<div>partner form</div>
+								) : (
+									""
+								)}
+							</>
 						)}
 					</div>
 				) : (
@@ -108,28 +165,6 @@ const Apply = () => {
 				<div className="trainpart">{istrain ? <h1>train list</h1> : ""}</div>
 				<div className="buildpart">{isbuild ? <h1>Build form</h1> : ""}</div>
 				{}
-				<div
-					className={`testbtn${isapply ? "" : " hide"}`}
-					onClick={() => {
-						setApproveApply(true);
-						setIsApply(false);
-						setIstrain(true);
-					}}
-				>
-					approve from here for test
-				</div>
-				<div
-					className={`applySubmit ${isapply ? "" : " hide"}`}
-					onClick={() => {
-						if (email == "") {
-							seterr(true);
-							return;
-						}
-						setConfirmApply(true);
-					}}
-				>
-					Submit
-				</div>
 
 				<div
 					className={`applySubmit ${istrain ? "" : " hide"}`}

@@ -1,12 +1,24 @@
-.page-one-column-container {
-	display: flex;
-	justify-content: space-between;
+.background {
+	padding: 10px;
+}
+.container {
 	width: 100%;
-	padding-bottom: 1em;
-	padding-top: 3em;
-	padding-left: 6em;
-	padding-right: 6em;
-	background-color: white;
+}
+.page-one-column-container {
+	width: 100%;
+	padding: 5px;
+}
+.page-one-column-container form {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: flex-start;
+	width: 100%;
+}
+.page-one-column-container form > div {
+	width: 700px;
+	font-size: 1.4rem;
+	color: white;
 }
 
 .donation-question {
@@ -15,107 +27,14 @@
 
 .donation-question {
 	overflow-wrap: break-word;
-}
-
-.column-one,
-.column-two,
-.column-one-page-two,
-.column-two-page-two {
-	padding-top: 3em;
-	width: 50%;
-	overflow: auto;
-}
-
-.column-one,
-.column-one-page-two {
-	padding-right: 3em;
-	overflow: auto;
 }
 
 .input-form {
-	padding-bottom: 3em;
+	font-size: 1.4rem;
+
+	padding: 10px 4px;
+	margin: 10px 4px;
 	overflow: auto;
-}
-
-.input-form-two {
-	padding-bottom: 3em;
-	overflow: auto;
-}
-
-.next-button {
-	margin-left: 1em;
-}
-
-.header-one {
-	position: relative;
-	top: 3em;
-	left: 4em;
-	color: #e4bb50;
-}
-
-.header-two {
-	position: relative;
-	top: 3em;
-	left: 4em;
-	color: #e4bb50;
-}
-
-.header-three {
-	position: relative;
-	top: 3em;
-	left: 4em;
-	color: #e4bb50;
-}
-
-.header-four {
-	position: relative;
-	top: 2em;
-	left: 2em;
-	display: inline;
-	color: #e4bb50;
-}
-
-.page-two-header {
-	display: flex;
-	justify-content: space-between;
-	width: 80%;
-}
-
-.ant-steps-item-tail::after {
-	display: none;
-	color: orange;
-}
-
-.ant-steps-item {
-	width: 5%;
-	flex: none;
-	position: relative;
-	top: 3em;
-	left: 4em;
-}
-
-.steps-content {
-	// width: 190vh;
-	position: relative;
-	background-color: white;
-	width: 75vw;
-}
-
-.steps-action {
-	display: flex;
-	flex-direction: row-reverse;
-	margin-right: 6em;
-	padding-bottom: 3em;
-}
-
-.instructions {
-	margin: 3em;
-	background-color: white;
-	padding: 1em;
-}
-
-.para-2 {
-	margin-top: 5em;
 }
 
 .background {
@@ -125,44 +44,8 @@
 	align-items: center;
 }
 
-.container {
-	// margin-left: 8%;
-}
-
-.column-one-page-two {
-	width: 50%;
-}
-
-.column-two-page-two {
-	width: 50%;
-}
-
-.page-two-margin,
-.page-three-padding {
-	margin-bottom: 3em;
-}
-
-.submit-button {
-	margin-left: 20em;
-}
-
 .welcome-page {
 	color: #e4bb50;
-}
-
-.success-message {
-	color: #e4bb50;
-}
-
-.special-topics-question {
-	width: 50%;
-}
-
-.ant-steps-item-process
-	.ant-steps-item-icon
-	> .ant-steps-icon
-	.ant-steps-icon-dot {
-	background-color: #e4bb4f;
 }
 
 .ant-steps-item-wait
@@ -196,21 +79,12 @@
 }
 
 // mobile
-@media (max-width: 768px) {
-	.steps-content {
-		width: auto;
-		margin: 0em 1em;
-	}
-
+@media (max-width: 800px) {
 	.page-one-column-container {
 		flex-direction: column;
 	}
 
-	.page-one-column-container > div {
+	.page-one-column-container form > div {
 		width: 100%;
-	}
-
-	.header-four {
-		left: 4em;
 	}
 }

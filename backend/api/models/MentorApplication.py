@@ -30,21 +30,20 @@ class MentorApplication(Document, Mixin):
     def __repr__(self):
         return f"""<Mentor Application email: {self.email}
                 \n name: {self.name}
-                \n business_number: {self.business_number}
                 \n cell_number: {self.cell_number}
                 \n hear_about_us: {self.hear_about_us}
                 \n offer_donation: {self.offer_donation} 
                 \n employer_name: {self.employer_name}
-                \n role_description: {self.role_description}
-                \n time_at_current_company: {self.time_at_current_company}
-                \n linkedin: {self.linkedin}
-                \n why_join_mentee: {self.why_join_mentee}
-                \n commit_time: {self.commit_time}
-              
+                \n role_description: {self.role_description}              
                 \n immigrant_status: {self.immigrant_status}
                 \n languages: {self.languages}
                 \n referral: {self.referral}
                 \n knowledge_location: {self. immigrant_status}
                 \n date_submitted: {self.date_submitted}
-                \n notes: {self.notes}
+                \n isColorPerson: {self.isColorPerson}
+                \n isMarginalized: {self.isMarginalized}
+                \n isFamilyNative: {self.isFamilyNative}
+                \n isEconomically: {self.isEconomically}
+                \n identify: {self.identify}
+                \n pastLiveLocation: {self.pastLiveLocation}
                 \n application_state: {self.application_state}>"""

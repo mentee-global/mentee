@@ -9,5 +9,8 @@
         "setup:backend": "cd backend && poetry install",
         "setup:frontend": "cd frontend && yarn",
         "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\""
+    },
+    "dependencies": {
+        "sass": "^1.50.0"
     }
 }

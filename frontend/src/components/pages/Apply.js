@@ -4,13 +4,16 @@ import { Steps, Form, Input, Radio, Checkbox, LeftOutlined } from "antd";
 import { ACCOUNT_TYPE } from "utils/consts";
 import ApplyStep from "../../resources/applystep.png";
 import ApplyStep2 from "../../resources/applystep2.png";
-import { getMentorAppState, fetchApplications } from "../../utils/api";
+import { getAppState, fetchApplications } from "../../utils/api";
 import ProfileStep from "../../resources/profilestep.png";
 import ProfileStep2 from "../../resources/profilestep2.png";
 import TrianStep from "../../resources/trainstep.png";
 import TrianStep2 from "../../resources/trainstep2.png";
 import MentorApplication from "./MentorApplication";
-
+import MenteeApplication from "./MenteeApplication";
+import PartnerApplication from "./PartnerApplication";
+import TrainingList from "components/TrainingList";
+import BuildProfile from "components/BuildProfile";
 const Apply = () => {
 	const [email, setEmail] = useState("");
 	const [role, setRole] = useState(null);
@@ -23,10 +26,6 @@ const Apply = () => {
 	const [err, seterr] = useState(false);
 
 	const submitHandler = () => {
-		if (email == "") {
-			seterr(true);
-			return;
-		}
 		setConfirmApply(true);
 	};
 
@@ -34,22 +33,26 @@ const Apply = () => {
 		async function checkConfirmation() {
 			if (role) {
 				if (email != "") {
-					if (role === ACCOUNT_TYPE.MENTOR) {
-						const state = await getMentorAppState(email);
-						if (state) {
-							if (state === "PENDING") {
-								setConfirmApply(true);
-							} else {
-								setConfirmApply(false);
-							}
-							if (state === "APPROVED") {
-								setApproveApply(true);
-							} else {
-								setApproveApply(false);
-							}
-						}
-						return state;
+					const state = await getAppState(email, role);
+					console.log(state, "here");
+					console.log(state === "APPROVED");
+					if (state === "PENDING") {
+						setConfirmApply(true);
+						setApproveApply(false);
+					} else if (state == "APPROVED") {
+						console.log("wal3");
+						setApproveApply(true);
+						setConfirmApply(false);
+					} else {
+						console.log("here");
+						setConfirmApply(false);
+						setApproveApply(false);
+						setIsApply(true);
+						setIsBuild(false);
+						setIstrain(false);
 					}
+
+					return state;
 				}
 			}
 		}
@@ -130,6 +133,13 @@ const Apply = () => {
 							<h1>
 								Thank you for applying! Your application will be reviewed and
 								you will be contacted shortly.
+								<button
+									onClick={(e) => {
+										setApproveApply(true);
+									}}
+								>
+									approve from here for test
+								</button>
 							</h1>
 						) : (
 							<>
@@ -141,17 +151,25 @@ const Apply = () => {
 								{!approveApply && role === ACCOUNT_TYPE.MENTOR ? (
 									<MentorApplication
 										submitHandler={submitHandler}
+										role={ACCOUNT_TYPE.MENTOR}
 									></MentorApplication>
 								) : (
 									""
 								)}
 								{!approveApply && role === ACCOUNT_TYPE.MENTEE ? (
-									<div>mentee form</div>
+									<MenteeApplication
+										submitHandler={submitHandler}
+										role={ACCOUNT_TYPE.MENTEE}
+									></MenteeApplication>
 								) : (
 									""
 								)}
 								{!approveApply && role === ACCOUNT_TYPE.PARTNER ? (
-									<div>partner form</div>
+									<PartnerApplication
+										submitHandler={submitHandler}
+										role={ACCOUNT_TYPE.PARTNER}
+										headEmail={email}
+									></PartnerApplication>
 								) : (
 									""
 								)}
@@ -162,22 +180,22 @@ const Apply = () => {
 					""
 				)}
 
-				<div className="trainpart">{istrain ? <h1>train list</h1> : ""}</div>
-				<div className="buildpart">{isbuild ? <h1>Build form</h1> : ""}</div>
-				{}
-
-				<div
-					className={`applySubmit ${istrain ? "" : " hide"}`}
-					onClick={() => {
-						setIsApply(false);
-						setIsBuild(true);
-						setIstrain(false);
-					}}
-				>
-					I confirm I have completed all trainings
+				<div className="trainpart">{istrain ? <TrainingList /> : ""}</div>
+				<div className="buildpart">
+					{isbuild ? <BuildProfile role={role} headEmail={email} /> : ""}
 				</div>
-				<div className={`applySubmit ${isbuild ? "" : " hide"}`}>
-					Submit my profile
+				{}
+				<div className="btnContainer">
+					<div
+						className={`applySubmit ${istrain ? "" : " hide"}`}
+						onClick={() => {
+							setIsApply(false);
+							setIsBuild(true);
+							setIstrain(false);
+						}}
+					>
+						I confirm I have completed all trainings
+					</div>
 				</div>
 			</div>
 		</div>

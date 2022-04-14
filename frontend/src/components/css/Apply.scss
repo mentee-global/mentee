@@ -3,6 +3,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin-bottom: 10px;
 }
 .home-header {
 	color: white;
@@ -49,20 +50,26 @@
 	flex-grow: 1;
 	min-height: 400px;
 	padding: 10px;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
+}
+.btnContainer {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	flex-direction: row;
+	margin-bottom: 10px;
 }
 .applySubmit {
-	padding: 0 20px;
-	height: 27px;
-	position: absolute;
-	right: 2%;
-	bottom: 2%;
+	font-size: large;
+	margin-top: 15px;
+	padding: 5px;
 	background: #e4bb4f;
 	border-radius: 10px;
 	text-align: center;
 	color: white;
 	cursor: pointer;
 	text-align: center;
+	width: fit-content;
 }
 .testbtn {
 	padding: 0 20px;

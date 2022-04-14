@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from api.models import MentorApplication, VerifiedEmail,Users
+from sqlalchemy import null
+from api.models import MentorApplication, VerifiedEmail,Users,MenteeApplication,PartnerApplication
 from api.core import create_response, serialize_list, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import (
@@ -8,7 +9,8 @@ from api.utils.constants import (
     MENTOR_APP_SUBMITTED,
     MENTOR_APP_REJECTED,
 )
-from api.utils.request_utils import send_email, is_invalid_form, MentorApplicationForm
+from api.utils.request_utils import send_email, is_invalid_form, MentorApplicationForm,MenteeApplicationForm,PartnerApplicationForm
+from api.utils.constants import Account
 
 apply = Blueprint("apply", __name__)
 
@@ -16,35 +18,11 @@ apply = Blueprint("apply", __name__)
 
 
 @apply.route("/apps", methods=["GET"])
-#@admin_only
+@admin_only
 def get_applications():
-    new_application = MentorApplication(
-        name='name',
-        email='email',
-        business_number='423',
-        cell_number='data.get("cell_number")',
-        hear_about_us='data.get("email")',
-        offer_donation=True,
-        employer_name='data.get("employer_name")',
-        role_description='data.get("role_description")',
-        time_at_current_company='data.get("time_at_current_company")',
-        linkedin='data.get("linkedin")',
-        why_join_mentee='data.get("why_join_mentee")',
-        commit_time='data.get("commit_time")',
-        specialist_time='data.get("specialist_time")',
-        immigrant_status='data.get("immigrant_status")',
-        languages='data.get("languages")',
-        referral='data.get("referral")',
-        knowledge_location='data.get("knowledge_location")',
-        notes='data.get("notes", "")',
-        application_state="PENDING",
-    )
-
-    new_application.save()
     application = MentorApplication.objects.only(
         "name","id", "application_state"
     )
-
     return create_response(data={"mentor_applications": application})
 
 
@@ -61,14 +39,20 @@ def get_application_by_id(id):
 
     return create_response(data={"mentor_application": application})
 
-@apply.route("/checkConfirm/<email>", methods=["GET"])
-def get_application_by_email(email):
+@apply.route("/checkConfirm/<email>/<role>", methods=["GET"])
+def get_application_by_email(email,role):
+    application=null
     try:
-        application = MentorApplication.objects.get(email=email)
+        if role==Account.MENTOR:
+             application = MentorApplication.objects.get(email=email)
+        if role==Account.MENTEE:
+             application = MenteeApplication.objects.get(email=email)
+        if role==Account.PARTNER:
+             application = PartnerApplication.objects.get(email=email)          
     except:
         msg = "No application currently exist with this email " + email
         logger.info(msg)
-        return create_response(status=422, message=msg)
+        return create_response(data={'state':"",'message':msg})
 
     return create_response(data={"state":application.application_state})
 
@@ -179,32 +163,62 @@ def edit_application(id):
 @apply.route("/new", methods=["POST"])
 def create_application():
     data = request.get_json()
-    validate_data = MentorApplicationForm.from_json(data)
+    role = data.get("role")
+    if role==Account.MENTOR:
+        validate_data = MentorApplicationForm.from_json(data)
+    if role==Account.MENTEE:
+        validate_data = MenteeApplicationForm.from_json(data)
+    if role==Account.PARTNER:
+        validate_data = PartnerApplicationForm.from_json(data)        
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
         return create_response(status=422, message=msg)
-
-    new_application = MentorApplication(
-        name=data.get("name"),
-        email=data.get("email"),
-        cell_number=data.get("cell_number"),
-        hear_about_us=data.get("email"),
-        offer_donation=data.get("offer_donation"),
-        employer_name=data.get("employer_name"),
-        role_description=data.get("role_description"),
-        immigrant_status=data.get("immigrant_status"),
-        languages=data.get("languages"),
-        referral=data.get("referral"),
-        knowledge_location=data.get("knowledge_location"),
-        isColorPerson=data.get("isColorPerson"),
-        isMarginalized=data.get("isMarginalized"),
-        isFamilyNative=data.get("isFamilyNative"),
-        isEconomically=data.get("isEconomically"),
-        identify=data.get("identify"),
-        pastLiveLocation=data.get("pastLiveLocation"),
-        date_submitted=data.get("date_submitted"),
-        application_state="PENDING",
-    )
+    if role==Account.MENTOR:
+        new_application = MentorApplication(
+            name=data.get("name"),
+            email=data.get("email"),
+            cell_number=data.get("cell_number"),
+            hear_about_us=data.get("hear_about_us"),
+            offer_donation=data.get("offer_donation"),
+            employer_name=data.get("employer_name"),
+            role_description=data.get("role_description"),
+            immigrant_status=data.get("immigrant_status"),
+            languages=data.get("languages"),
+            referral=data.get("referral"),
+            knowledge_location=data.get("knowledge_location"),
+            isColorPerson=data.get("isColorPerson"),
+            isMarginalized=data.get("isMarginalized"),
+            isFamilyNative=data.get("isFamilyNative"),
+            isEconomically=data.get("isEconomically"),
+            identify=data.get("identify"),
+            pastLiveLocation=data.get("pastLiveLocation"),
+            date_submitted=data.get("date_submitted"),
+            application_state="PENDING",
+        )
+    if role==Account.MENTEE:
+        new_application=MenteeApplication(
+            email=data.get("email"),
+            name=data.get("name"),
+            age=data.get("age"),
+            immigrant_status=data.get("immigrant_status"),
+            Country=data.get("Country"),
+            identify=data.get("identify"),
+            language=data.get("language"),
+            topics=data.get("topics"),
+            workstate=data.get("workstate"),
+            isSocial=data.get("isSocial"),
+            questions=data.get("questions"),
+            application_state="PENDING",
+            date_submitted=data.get("date_submitted"),
+        )
+    if role==Account.PARTNER:
+        new_application=PartnerApplication(
+            email=data.get("email"),
+            name=data.get("name"),
+            Country=data.get("Country"),
+            application_state="PENDING",
+            date_submitted=data.get("date_submitted"),
+        )
 
     new_application.save()
 

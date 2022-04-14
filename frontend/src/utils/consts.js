@@ -32,8 +32,8 @@ export const ACCOUNT_TYPE = {
 	ADMIN: "0",
 	MENTOR: "1",
 	MENTEE: "2",
-	GUEST: "3",
-	PARTNER: "4",
+	PARTNER: "3",
+	GUEST: "4",
 };
 
 export const PLURAL_TYPE = {

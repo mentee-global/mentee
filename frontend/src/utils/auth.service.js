@@ -43,7 +43,19 @@ export const register = async (email, password, role) =>
 
 		return data;
 	});
+export const newRegister = async (data) =>
+	await post("/newRegister", data).then(async (data) => {
+		if (data && data.success) {
+			const result = data.result;
+			await firebase
+				.auth()
+				.signInWithCustomToken(result.token)
+				.then((userCredential) => {})
+				.catch((error) => {});
+		}
 
+		return data;
+	});
 export const sendVerificationEmail = (email) => {
 	return post("/verifyEmail", {
 		email,

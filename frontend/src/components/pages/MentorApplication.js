@@ -473,9 +473,12 @@ function MentorApplication(props) {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	function handleSubmit(event) {
 		event.preventDefault();
-		props.submitHandler();
 
 		if (!verifyRequiredFieldsAreFilled()) return;
+		if (props.headEmail === "") {
+			setSubmitError(true);
+			return;
+		}
 
 		async function submitApplication() {
 			// onOk send the put request
@@ -498,6 +501,7 @@ function MentorApplication(props) {
 				identify: identify,
 				pastLiveLocation: pastLiveLocation,
 				date_submitted: new Date(),
+				role: props.role,
 			};
 
 			const res = await createApplication(data);
@@ -505,6 +509,7 @@ function MentorApplication(props) {
 			if (res) {
 				setIsSubmitted(true);
 				console.log(res);
+				props.submitHandler();
 			} else {
 				setSubmitError(true);
 			}
@@ -532,9 +537,20 @@ function MentorApplication(props) {
 
 			<div className="container">
 				{pageOne()}
-				<div className="next-button">
-					<MenteeButton content={<b> Submit</b>} onClick={handleSubmit} />
+				<div className="submit-button">
+					<MenteeButton
+						width="150px"
+						content={<b> Submit</b>}
+						onClick={handleSubmit}
+					/>
 				</div>
+				{submitError ? (
+					<h1 className="error">
+						Some thing went wrong check you add your Email at Top
+					</h1>
+				) : (
+					""
+				)}
 			</div>
 		</div>
 	);

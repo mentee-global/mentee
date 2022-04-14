@@ -22,11 +22,6 @@ const Logins = Object.freeze({
 		type: ACCOUNT_TYPE.MENTOR,
 		redirect: "/appointments",
 	},
-	admin: {
-		title: "Admin",
-		type: ACCOUNT_TYPE.ADMIN,
-		redirect: "/account-data",
-	},
 	partner: {
 		title: "Partner",
 		type: ACCOUNT_TYPE.PARTNER,
@@ -62,7 +57,7 @@ function Login() {
 		console.log(roleObject);
 		setLoggingIn(true);
 		setLoading(true);
-		const res = await login(email, password, ACCOUNT_TYPE.ADMIN);
+		const res = await login(email, password, roleObject.type);
 		console.log(res.result);
 		setLoading(false);
 
@@ -83,14 +78,12 @@ function Login() {
 		setPermissions(roleObject.type);
 		const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
 			unsubscribe();
+			console.log("user", user);
 			if (!user) return;
 
 			if (res.result.redirectToVerify) {
 				await sendVerificationEmail(email);
 				history.push("/verify");
-			} else if (res.result.redirectToCreateProfile) {
-				console.log(`/create-profile/${roleObject.type}`);
-				history.push(`/create-profile/${roleObject.type}`);
 			} else {
 				dispatch(
 					fetchUser({

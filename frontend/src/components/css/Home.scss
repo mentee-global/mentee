@@ -25,7 +25,7 @@
 .home-header {
 	color: white;
 	font-weight: bold;
-	font-size: 200%;
+	font-size: 48px;
 }
 
 .home-header span {
@@ -33,10 +33,10 @@
 }
 .home-text {
 	color: white;
-	font-family: "Abel";
+	font-family: Abel;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 180%;
+	font-size: 48px;
 }
 .buttons-container {
 	display: flex;
@@ -44,8 +44,7 @@
 }
 .applyCon,
 .loginCon {
-	width: 120px;
-	height: 160px;
+	width: 220px;
 	background-color: white;
 	text-align: center;
 	color: #a58123;
@@ -57,10 +56,11 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
+	border-radius: 10px;
 }
 .applyImage {
-	width: 90px;
-	height: 110px;
+	width: 160px;
+	object-fit: contain;
 	margin-top: 15px;
 }
 .logo {
@@ -90,5 +90,11 @@
 	}
 	.home-header {
 		font-size: 5vh;
+	}
+}
+
+@media (max-width: 600px) {
+	.buttons-container {
+		flex-direction: column;
 	}
 }

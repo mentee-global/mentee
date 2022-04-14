@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Form, Input, Radio } from "antd";
+import { Form, Input, Radio, Checkbox } from "antd";
 import MenteeButton from "../MenteeButton";
 import { createApplication } from "../../utils/api";
 import "../../components/css/MentorApplicationPage.scss";
 // constant declarations
-immigrantOptions = [
+const immigrantOptions = [
 	"I am a refugee",
 	"I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
 	"I am black.",
@@ -13,9 +13,9 @@ immigrantOptions = [
 	"I identify as LGTBQ.",
 	"I have economic hardship.",
 	"I come from a country at war.",
-	"Other",
+	"other",
 ];
-topicOptions = [
+const topicOptions = [
 	"Advocacy and Activism",
 	",Architecture",
 	"Arts:Dance/Design/Music and More",
@@ -48,19 +48,20 @@ topicOptions = [
 	"Technology Training",
 	"Tourism: Field of",
 	"Writing: Improving writing skills, writing books/articles, scholarly writing",
-	"Other",
+	"other",
 ];
-workOptions = [
+const workOptions = [
 	"I work part-time.",
 	"I work full-time.",
 	"I attend technical school.",
 	"I am a college/university student attaining my first degree.",
 	"I am a college/university students attaining my second or third degree.",
-	"Other",
+	"other",
 ];
 const { TextArea } = Input;
-function MentorApplication(props) {
+function MenteeApplication(props) {
 	const [submitError, setSubmitError] = useState();
+	const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
 
 	// sets text fields
 	const [firstName, setFirstName] = useState(null);
@@ -72,6 +73,7 @@ function MentorApplication(props) {
 	const [otherImmigrantStatus, setotherImmigrantStatus] = useState("");
 	const [Country, setCountry] = useState(null);
 	const [identify, setidentify] = useState(null);
+	const [otherIdentify, setOtherIdentify] = useState("");
 	const [language, setLanguage] = useState(null);
 	const [otherLanguage, setotherLanguage] = useState("");
 	const [topics, setTopics] = useState([]);
@@ -79,6 +81,7 @@ function MentorApplication(props) {
 	const [workstate, setWorkstate] = useState(null);
 	const [otherWorkState, setotherWorkState] = useState("");
 	const [isSocial, setIsSocial] = useState(null);
+	const [otherIsSocial, setOtherIsSocial] = useState("");
 	const [questions, setQuestions] = useState(null);
 	function onChangeCheck5(checkedValues) {
 		let optionsSelected = [];
@@ -214,7 +217,7 @@ function MentorApplication(props) {
 							},
 						]}
 					>
-						{isMissingError(cell) && (
+						{isMissingError(organization) && (
 							<p style={{ color: "red" }}>Please input cell.</p>
 						)}
 						<Input
@@ -227,7 +230,7 @@ function MentorApplication(props) {
 					<div className="input-form">
 						*Let us know more about you. Check ALL of the boxes that apply.
 						<div className="time-options-answers">
-							{isMissingError(companyTime) && (
+							{isMissingError(age) && (
 								<p style={{ color: "red" }}>Please select an option.</p>
 							)}
 							<Radio.Group onChange={(e) => setAge(e.target.value)} value={age}>
@@ -262,6 +265,28 @@ function MentorApplication(props) {
 							onChange={onChangeCheck3}
 						/>
 					</Form.Item>
+					{immigrantStatus == "other" ? (
+						<Form.Item
+							className="input-form"
+							rules={[
+								{
+									required: true,
+								},
+							]}
+						>
+							{isMissingError(otherImmigrantStatus) && (
+								<p style={{ color: "red" }}>Please input cell.</p>
+							)}
+							<Input
+								type="text"
+								placeholder="*Other"
+								value={otherImmigrantStatus}
+								onChange={(e) => setotherImmigrantStatus(e.target.value)}
+							/>
+						</Form.Item>
+					) : (
+						""
+					)}
 					<div>
 						{
 							"*What country are you or your family originally from, if you are a refugee or immigrant?"
@@ -275,7 +300,7 @@ function MentorApplication(props) {
 							},
 						]}
 					>
-						{isMissingError(cell) && (
+						{isMissingError(Country) && (
 							<p style={{ color: "red" }}>Please input cell.</p>
 						)}
 						<Input
@@ -298,10 +323,33 @@ function MentorApplication(props) {
 								<Radio value={"As a male"}>As a male</Radio>
 								<Radio value={"As a female"}>As a female</Radio>
 								<Radio value={"As LGBTQ+"}>As LGBTQ+</Radio>
-								<Radio value={"Other"}>Other</Radio>
+								<Radio value={"other"}>Other</Radio>
 							</Radio.Group>
 						</div>
 					</div>
+					{identify == "other" ? (
+						<Form.Item
+							className="input-form"
+							rules={[
+								{
+									required: true,
+								},
+							]}
+						>
+							{isMissingError(otherIdentify) && (
+								<p style={{ color: "red" }}>Please input cell.</p>
+							)}
+							<Input
+								type="text"
+								placeholder="*other"
+								value={otherIdentify}
+								onChange={(e) => setOtherIdentify(e.target.value)}
+							/>
+						</Form.Item>
+					) : (
+						""
+					)}
+
 					<div className="input-form">
 						*What is your native language?
 						<div className="time-options-answers">
@@ -331,29 +379,37 @@ function MentorApplication(props) {
 								<Radio value={"Spanish"}>Spanish</Radio>
 								<Radio value={"Swahili"}>Swahili</Radio>
 								<Radio value={"Urdu"}>Urdu</Radio>
-								<Radio value={"Other"}>Other</Radio>
+								<Radio value={"other"}>Other</Radio>
 							</Radio.Group>
 						</div>
 					</div>
-					<div>{"*If you checked other above, please explain."}</div>
-					<Form.Item
-						className="input-form"
-						rules={[
-							{
-								required: true,
-							},
-						]}
-					>
-						{isMissingError(otherLanguage) && (
-							<p style={{ color: "red" }}>Please input cell.</p>
-						)}
-						<Input
-							type="text"
-							placeholder="*Country"
-							value={otherLanguage}
-							onChange={(e) => setotherLanguage(e.target.value)}
-						/>
-					</Form.Item>
+					{language == "other" ? (
+						<Form.Item
+							className="input-form"
+							rules={[
+								{
+									required: true,
+								},
+							]}
+						>
+							{isMissingError(otherLanguage) && (
+								<p style={{ color: "red" }}>Please input cell.</p>
+							)}
+							<Input
+								type="text"
+								placeholder="*other"
+								value={otherLanguage}
+								onChange={(e) => setotherLanguage(e.target.value)}
+							/>
+						</Form.Item>
+					) : (
+						""
+					)}
+					<div>
+						{
+							"-What special topics would you be interested in? If one is not on the list please add it in other:"
+						}
+					</div>
 					<Form.Item className="input-form">
 						{isMissingError(topics) && (
 							<p style={{ color: "red" }}>Please select an option.</p>
@@ -364,25 +420,33 @@ function MentorApplication(props) {
 							onChange={onChangeCheck5}
 						/>
 					</Form.Item>
-					<div>{"*Other special topics"}</div>
-					<Form.Item
-						className="input-form"
-						rules={[
-							{
-								required: true,
-							},
-						]}
-					>
-						{isMissingError(otherTopics) && (
-							<p style={{ color: "red" }}>Please input cell.</p>
-						)}
-						<Input
-							type="text"
-							placeholder="*other"
-							value={otherTopics}
-							onChange={(e) => setOtherTopics(e.target.value)}
-						/>
-					</Form.Item>
+					{topics == "other" ? (
+						<Form.Item
+							className="input-form"
+							rules={[
+								{
+									required: true,
+								},
+							]}
+						>
+							{isMissingError(otherTopics) && (
+								<p style={{ color: "red" }}>Please input cell.</p>
+							)}
+							<Input
+								type="text"
+								placeholder="*other"
+								value={otherTopics}
+								onChange={(e) => setOtherTopics(e.target.value)}
+							/>
+						</Form.Item>
+					) : (
+						""
+					)}
+					<div>
+						{
+							"*What do you currently do? Please check ALL the options that apply to you. If you select Other, please be specific"
+						}
+					</div>
 					<Form.Item className="input-form">
 						{isMissingError(workstate) && (
 							<p style={{ color: "red" }}>Please select an option.</p>
@@ -393,7 +457,69 @@ function MentorApplication(props) {
 							onChange={onChangeCheck7}
 						/>
 					</Form.Item>
-					<div>{"*Other Work State"}</div>
+					{workstate == "other" ? (
+						<Form.Item
+							className="input-form"
+							rules={[
+								{
+									required: true,
+								},
+							]}
+						>
+							{isMissingError(otherWorkState) && (
+								<p style={{ color: "red" }}>Please input cell.</p>
+							)}
+							<Input
+								type="text"
+								placeholder="*other"
+								value={otherWorkState}
+								onChange={(e) => setotherWorkState(e.target.value)}
+							/>
+						</Form.Item>
+					) : (
+						""
+					)}
+
+					<div className="input-form">
+						*Would you be interested in being highlighted as one of our mentees
+						on social media?
+						<div className="time-options-answers">
+							{isMissingError(isSocial) && (
+								<p style={{ color: "red" }}>Please select an option.</p>
+							)}
+							<Radio.Group
+								onChange={(e) => setIsSocial(e.target.value)}
+								value={isSocial}
+							>
+								<Radio value={"yes"}>Yes!</Radio>
+								<Radio value={"No"}>No, thank you.</Radio>
+								<Radio value={"other"}>Other</Radio>
+							</Radio.Group>
+						</div>
+					</div>
+					{isSocial == "other" ? (
+						<Form.Item
+							className="input-form"
+							rules={[
+								{
+									required: true,
+								},
+							]}
+						>
+							{isMissingError(otherIsSocial) && (
+								<p style={{ color: "red" }}>Please input cell.</p>
+							)}
+							<Input
+								type="text"
+								placeholder="*other"
+								value={otherIsSocial}
+								onChange={(e) => setOtherIsSocial(e.target.value)}
+							/>
+						</Form.Item>
+					) : (
+						""
+					)}
+					<div>{"*Do you have any questions?"}</div>
 					<Form.Item
 						className="input-form"
 						rules={[
@@ -402,14 +528,14 @@ function MentorApplication(props) {
 							},
 						]}
 					>
-						{isMissingError(otherWorkState) && (
+						{isMissingError(questions) && (
 							<p style={{ color: "red" }}>Please input cell.</p>
 						)}
 						<Input
 							type="text"
-							placeholder="*other"
-							value={otherWorkState}
-							onChange={(e) => setotherWorkState(e.target.value)}
+							placeholder="*questions"
+							value={questions}
+							onChange={(e) => setQuestions(e.target.value)}
 						/>
 					</Form.Item>
 				</Form>
@@ -420,9 +546,30 @@ function MentorApplication(props) {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	function handleSubmit(event) {
 		event.preventDefault();
-		props.submitHandler();
+		if (immigrantStatus == "other") {
+			setImmigrantStatus(otherImmigrantStatus);
+		}
+		if (identify == "other") {
+			setidentify(otherIdentify);
+		}
+		if (language == "other") {
+			setLanguage(otherLanguage);
+		}
+		if (topics == "other") {
+			setTopics(otherTopics);
+		}
+		if (workstate == "other") {
+			setWorkstate(otherWorkState);
+		}
+		if (isSocial == "other") {
+			setIsSocial(otherIsSocial);
+		}
 
 		if (!verifyRequiredFieldsAreFilled()) return;
+		if (props.headEmail === "") {
+			setSubmitError(true);
+			return;
+		}
 
 		async function submitApplication() {
 			// onOk send the put request
@@ -431,17 +578,15 @@ function MentorApplication(props) {
 				name: firstName + " " + lastName,
 				age: age,
 				immigrant_status: immigrantStatus,
-				otherImmigrantStatus: otherImmigrantStatus,
 				Country: Country,
 				identify: identify,
 				language: language,
 				topics: topics,
-				otherTopics: otherTopics,
 				workstate: workstate,
-				otherWorkState: otherWorkState,
 				isSocial: isSocial,
 				questions: questions,
 				date_submitted: new Date(),
+				role: props.role,
 			};
 
 			const res = await createApplication(data);
@@ -449,6 +594,7 @@ function MentorApplication(props) {
 			if (res) {
 				setIsSubmitted(true);
 				console.log(res);
+				props.submitHandler();
 			} else {
 				setSubmitError(true);
 			}
@@ -462,9 +608,11 @@ function MentorApplication(props) {
 			<div className="instructions">
 				<h1 className="welcome-page">Welcome to MENTEE!</h1>
 				<p>
-					We appreciate your interest in becoming a volunteer Global Mentor for
-					MENTEE, a global nonprofit accelerating personal and Professional
-					growth to make the world a better, healthier place.
+					We appreciate your interest in becoming part of the MENTEE community!
+					You will gain access to our global mentors and supportive programs. We
+					can't wait to see all you will achieve. Remember, as a mentee you can
+					stay here and actively seek mentorship, learning, and development for
+					life if you'd like to stay with us that long :)
 				</p>
 				<p className="para-2">
 					Fill out the application below to join our Specialist team for
@@ -476,11 +624,22 @@ function MentorApplication(props) {
 
 			<div className="container">
 				{pageOne()}
-				<div className="next-button">
-					<MenteeButton content={<b> Submit</b>} onClick={handleSubmit} />
+				<div className="submit-button">
+					<MenteeButton
+						width="150px"
+						content={<b> Submit</b>}
+						onClick={handleSubmit}
+					/>
 				</div>
+				{submitError ? (
+					<h1 className="error">
+						Some thing went wrong check you add your Email at Top
+					</h1>
+				) : (
+					""
+				)}
 			</div>
 		</div>
 	);
 }
-export default MentorApplication;
+export default MenteeApplication;

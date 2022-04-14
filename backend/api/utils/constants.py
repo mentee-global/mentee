@@ -32,10 +32,10 @@ PARTNER_ROLE="partner"
 
 
 class Account(Enum):
-    ADMIN = 0
-    MENTOR = 1
-    MENTEE = 2
-    PARTNER=3
+    ADMIN = '0'
+    MENTOR = '1'
+    MENTEE = '2'
+    PARTNER='3'
 
     def __eq__(self, other):
         return self.value == other

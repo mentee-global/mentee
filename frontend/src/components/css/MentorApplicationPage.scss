@@ -7,6 +7,7 @@
 .page-one-column-container {
 	width: 100%;
 	padding: 5px;
+	margin-bottom: 30px;
 }
 .page-one-column-container form {
 	display: flex;
@@ -66,16 +67,11 @@
 	display: flex;
 	justify-content: flex-end;
 }
-
-.page-four-header-container {
+.submit-button {
+	margin-bottom: 20px;
 	display: flex;
-	justify-content: space-between;
-}
-
-.page-four-submit-error {
-	color: red;
-	margin-right: 2em;
-	margin-top: 1em;
+	flex-direction: row;
+	justify-content: center;
 }
 
 // mobile
@@ -87,4 +83,12 @@
 	.page-one-column-container form > div {
 		width: 100%;
 	}
+}
+.error {
+	color: red;
+	text-align: center;
+	font-size: medium;
+	font-weight: 400;
+	opacity: 70%;
+	font-family: Arial, Helvetica, sans-serif;
 }

@@ -8,6 +8,8 @@ from .Video import Video
 from .Availability import Availability
 from .Image import Image
 from .MentorProfile import MentorProfile
+from .MenteeApplication import MenteeApplication
+from .PartnerApplication import PartnerApplication
 from .AppointmentRequest import AppointmentRequest
 from .MentorApplication import MentorApplication
 from .VerifiedEmail import VerifiedEmail
@@ -16,6 +18,8 @@ from .Message import Message
 from .DirectMessage import DirectMessage
 from .Admin import Admin
 from .DirectMessage import DirectMessage
+from .Training import Training
+from .NewProfile import NewProfile
 
 __all__ = [
     "db",
@@ -33,6 +37,10 @@ __all__ = [
     "DirectMessage",
     "Admin",
     "DirectMessage",
+    "MenteeApplication",
+    "PartnerApplication",
+    "Training",
+    "NewProfile"
 ]
 
 # You must import all of the new Models you create to this page

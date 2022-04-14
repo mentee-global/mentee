@@ -1,8 +1,9 @@
 from email import message
 from flask import Blueprint, request, jsonify
+from sqlalchemy import false
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile, Admin, MenteeProfile
+from api.models import db, Users, MentorProfile, Admin, MenteeProfile,NewProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import (
     AUTH_URL,
@@ -132,6 +133,49 @@ def register():
         },
     )
 
+@auth.route("/newRegister", methods=["POST"])
+def newregister():
+    data = request.json
+    name=data.get('name')
+    email = data.get("email")
+    password = data.get("password")
+    role = data.get("role")
+    video_url=data.get('video_url')
+    phone_number=data.get('phone_number')
+    date_submitted=data.get('date_submitted')
+    
+    firebase_user, error_http_response = create_firebase_user(email, password)
+    #if error_http_response:
+    #    return error_http_response
+
+    # account created
+    firebase_uid = firebase_user.uid
+    profile=NewProfile(
+        name=name,
+        email=email,
+        password=password,
+        video_url=video_url,
+        role=role,
+        phone_number=phone_number,
+        date_submitted=date_submitted
+    )
+    profile.save()
+    user=Users(
+        firebase_uid=firebase_uid,
+        email=email,
+        role=role,
+        verified=False,
+    )
+    user.save()
+    return create_response(
+        message="Created account",
+        data={
+            "token": firebase_admin_auth.create_custom_token(
+                firebase_uid, {"role": role}
+            ).decode("utf-8"),
+        },
+    )
+
 
 @auth.route("/login", methods=["POST"])
 def login():
@@ -203,7 +247,9 @@ def login():
                     ).decode("utf-8"),
                     "profileId": profile_id,
                     "role": role,
+                    "firebase_user":firebase_user
                 },
+                
             )
             # pass
 

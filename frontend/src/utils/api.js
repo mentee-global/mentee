@@ -122,11 +122,19 @@ export const createApplication = (application) => {
 	);
 };
 let state = "";
-export const getMentorAppState = async (email) => {
-	const requestExtension = `/application/checkConfirm/${email}`;
+export const getAppState = async (email, role) => {
+	const requestExtension = `/application/checkConfirm/${email}/${role}`;
 	const res = await instance.get(requestExtension);
 	state = res.data.result.state;
+	console.log(state);
 	return state;
+};
+export const getTrainings = async () => {
+	const requestExtension = `/training`;
+	const res = await instance.get(requestExtension);
+	const trains = res.data.result.trainings;
+	console.log(res);
+	return trains;
 };
 export const createAppointment = (appointment) => {
 	const requestExtension = `/appointment/`;

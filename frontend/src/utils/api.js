@@ -129,6 +129,16 @@ export const getAppState = async (email, role) => {
 	console.log(state);
 	return state;
 };
+
+let ishave = "";
+export const isHaveAccount = async (email) => {
+	const requestExtension = `/application/checkHaveAccount/${email}`;
+	const res = await instance.get(requestExtension);
+	ishave = res.data.result.isHave;
+	console.log(ishave);
+	return ishave;
+};
+
 export const getTrainings = async () => {
 	const requestExtension = `/training`;
 	const res = await instance.get(requestExtension);

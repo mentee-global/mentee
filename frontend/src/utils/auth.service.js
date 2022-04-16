@@ -70,7 +70,7 @@ export const login = async (email, password, role) =>
 	await post("/login", {
 		email: email && email.trim(),
 		password: password && password.trim(),
-		role: role && role.trim(),
+		role: String(role) && String(role).trim(),
 	}).then(async (data) => {
 		if (data && data.success && data.result.token) {
 			await firebase
@@ -159,6 +159,7 @@ export const getMentorID = async () => {
 	if (isLoggedIn()) {
 		return await getIdTokenResult().then((idTokenResult) => {
 			if (idTokenResult.claims.role == ACCOUNT_TYPE.MENTOR) {
+				console.log("yes role", idTokenResult.claims);
 				return idTokenResult.claims.profileId;
 			}
 		});

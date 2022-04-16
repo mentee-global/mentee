@@ -17,7 +17,7 @@
 	width: 100%;
 }
 .page-one-column-container form > div {
-	width: 700px;
+	width: 70%;
 	font-size: 1.4rem;
 	color: white;
 }
@@ -43,10 +43,13 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	border-radius: 10px;
+	border: 1px solid white;
 }
 
 .welcome-page {
 	color: #e4bb50;
+	text-align: center;
 }
 
 .ant-steps-item-wait

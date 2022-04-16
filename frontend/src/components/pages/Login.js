@@ -28,6 +28,9 @@ const Logins = Object.freeze({
 		redirect: "/partner-page",
 	},
 });
+const getRoleObject = (key) => {
+	return { ...Logins[key] };
+};
 function Login() {
 	const history = useHistory();
 	const location = useLocation();
@@ -53,49 +56,51 @@ function Login() {
 	};
 	const handleSelect = async (key) => {
 		console.log(key);
-		setroleObject({ ...Logins[key] });
-		console.log(roleObject);
-		setLoggingIn(true);
-		setLoading(true);
-		const res = await login(email, password, roleObject.type);
-		console.log(res.result);
-		setLoading(false);
+		let RoleObj = getRoleObject(key);
+		if (RoleObj) {
+			console.log(RoleObj);
+			setLoggingIn(true);
+			setLoading(true);
+			const res = await login(email, password, RoleObj.type);
+			console.log(res?.result);
+			setLoading(false);
 
-		if (!res || !res.success) {
-			if (res?.data?.result?.existingEmail) {
-				setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
-			} else {
-				setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
+			if (!res || !res.success) {
+				if (res?.data?.result?.existingEmail) {
+					setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+				} else {
+					setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
+				}
+				setError(true);
+			} else if (res.result.passwordReset) {
+				setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
+				setError(true);
+			} else if (res.result.recreateAccount) {
+				setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
+				setError(true);
 			}
-			setError(true);
-		} else if (res.result.passwordReset) {
-			setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
-			setError(true);
-		} else if (res.result.recreateAccount) {
-			setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
-			setError(true);
+			setPermissions(RoleObj.type);
+			const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+				unsubscribe();
+				if (!user) return;
+
+				if (res.result.redirectToVerify) {
+					await sendVerificationEmail(email);
+					history.push("/verify");
+				} else {
+					dispatch(
+						fetchUser({
+							id: res.result.profileId,
+							role: res.result.role,
+						})
+					);
+					history.push(RoleObj.redirect);
+				}
+			});
+
+			setLoggingIn(false);
+			setroleObject(RoleObj);
 		}
-		setPermissions(roleObject.type);
-		const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-			unsubscribe();
-			console.log("user", user);
-			if (!user) return;
-
-			if (res.result.redirectToVerify) {
-				await sendVerificationEmail(email);
-				history.push("/verify");
-			} else {
-				dispatch(
-					fetchUser({
-						id: res.result.profileId,
-						role: res.result.role,
-					})
-				);
-				history.push(roleObject.redirect);
-			}
-		});
-
-		setLoggingIn(false);
 	};
 	function handleInputFocus(index) {
 		let newClickedInput = [false, false];

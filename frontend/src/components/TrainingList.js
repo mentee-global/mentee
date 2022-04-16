@@ -21,7 +21,7 @@ const TrainingList = () => {
 				{trainings?.map((train) => (
 					<List.Item key={train.id}>
 						<a href={train.url} target="_blank">
-							<h1>{train.name}</h1>
+							<h1 className="chapter">{train.name}</h1>
 						</a>
 						<p className="trainingDesc">
 							{train.description} Lorem ipsum dolor sit amet consectetur

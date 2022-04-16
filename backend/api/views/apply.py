@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy import null
-from api.models import MentorApplication, VerifiedEmail,Users,MenteeApplication,PartnerApplication
+from sqlalchemy import false, null
+from api.models import MentorApplication, VerifiedEmail,Users,MenteeApplication,PartnerApplication,MenteeProfile,MentorProfile,NewProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import (
@@ -11,7 +11,7 @@ from api.utils.constants import (
 )
 from api.utils.request_utils import send_email, is_invalid_form, MentorApplicationForm,MenteeApplicationForm,PartnerApplicationForm
 from api.utils.constants import Account
-
+from firebase_admin import auth as firebase_admin_auth
 apply = Blueprint("apply", __name__)
 
 # GET request for all mentor applications
@@ -38,6 +38,16 @@ def get_application_by_id(id):
         return create_response(status=422, message=msg)
 
     return create_response(data={"mentor_application": application})
+
+@apply.route('/checkHaveAccount/<email>',methods=['GET'])
+def get_is_has_Account(email):
+    try:
+        user = firebase_admin_auth.get_user_by_email(email)
+    except:
+        return create_response(data={'isHave':False})
+    return create_response(data={'isHave':True})    
+
+
 
 @apply.route("/checkConfirm/<email>/<role>", methods=["GET"])
 def get_application_by_email(email,role):
@@ -214,8 +224,12 @@ def create_application():
     if role==Account.PARTNER:
         new_application=PartnerApplication(
             email=data.get("email"),
-            name=data.get("name"),
-            Country=data.get("Country"),
+            organization=data.get("organization"),
+            contanctPerson=data.get("contanctPerson"),
+            personEmail=data.get("personEmail"),
+            relationShip=data.get("relationShip"),
+            howBuild=data.get("howBuild"),
+            SDGS=data.get("SDGS"),
             application_state="PENDING",
             date_submitted=data.get("date_submitted"),
         )
@@ -232,5 +246,5 @@ def create_application():
         logger.info(msg)
 
     return create_response(
-        message=f"Successfully created application with name {new_application.name}"
+        message=f"Successfully created application with name {new_application.email}"
     )

@@ -44,14 +44,13 @@
 }
 .formsPart {
 	margin-top: 20px;
-	background-color: #c4c4c4;
-	position: relative;
 	width: 80%;
 	flex-grow: 1;
-	min-height: 400px;
-	padding: 10px;
-	margin-bottom: 20px;
+	border-radius: 5px;
+	border: 5px solid white;
+	margin-bottom: 15px;
 }
+
 .btnContainer {
 	display: flex;
 	justify-content: center;

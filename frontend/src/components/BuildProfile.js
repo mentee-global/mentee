@@ -224,7 +224,7 @@ function BuildProfile(props) {
 				<div className="submit-button">
 					<MenteeButton
 						width="150px"
-						content={<b> Submit my profile</b>}
+						content={<b className="submit_profile"> Submit my profile</b>}
 						onClick={handleSubmit}
 					/>
 				</div>

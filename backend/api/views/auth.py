@@ -13,7 +13,6 @@ from api.utils.constants import (
 )
 from api.utils.request_utils import send_email, get_profile_model
 from api.utils.firebase import client as firebase_client
-from api.utils.profile_parse import new_profile
 import requests
 import pyrebase
 import os
@@ -94,6 +93,10 @@ def create_firebase_user(email, password):
         error_http_response = create_response(status=500, message=msg)
 
     return firebase_user, error_http_response
+@auth.route('/hat',methods=["GET"])
+def hat():
+    ps= MentorProfile.objects
+    return create_response(message='does',data={'ps':ps})
 
 
 @auth.route("/register", methods=["POST"])
@@ -186,7 +189,7 @@ def login():
     firebase_user = None
     
 
-
+    
     profile_model = get_profile_model(role)
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
@@ -318,8 +321,9 @@ def refresh_token():
 
     profile_model = get_profile_model(role)
     profile_id = None
-
+    ps=profile_model.objects
     try:
+        
         profile = profile_model.objects.get(firebase_uid=firebase_uid)
         profile_id = str(profile.id)
     except:
@@ -331,7 +335,7 @@ def refresh_token():
         status=200,
         data={
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": role, "profileId": profile_id}
+                firebase_uid, {"role": role, "profileId": profile_id,'profile':ps}
             ).decode("utf-8"),
         },
     )

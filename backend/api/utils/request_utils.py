@@ -10,7 +10,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
-from api.models import MentorProfile, MenteeProfile, Admin
+from api.models import MentorProfile, MenteeProfile, Admin,NewProfile
 from api.utils.constants import Account
 
 wtforms_json.init()
@@ -122,11 +122,20 @@ class MenteeApplicationForm(Form):
     workstate =FieldList(StringField(), validators=[validators.required()])
     isSocial = StringField(validators=[InputRequired()])
     questions = BooleanField(validators=[InputRequired()])
+    role=StringField(validators=[InputRequired()])
+
 
 class PartnerApplicationForm(Form):
     email = StringField(validators=[InputRequired()])
-    name = StringField(validators=[InputRequired()])
-    Country = StringField(validators=[InputRequired()])
+    organization = StringField(validators=[InputRequired()])
+    contanctPerson = StringField(validators=[InputRequired()])
+    personEmail = StringField(validators=[InputRequired()])
+    relationShip = FieldList(StringField(), validators=[validators.required()])
+    SDGS = FieldList(StringField(), validators=[validators.required()])
+    howBuild = StringField(validators=[InputRequired()])
+    role=StringField(validators=[InputRequired()])
+
+
 
 
 
@@ -211,9 +220,11 @@ def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
 
 
 def get_profile_model(role):
-    if role == Account.MENTOR:
+    if role == "{}".format(Account.MENTOR.value):
         return MentorProfile
-    elif role == Account.MENTEE:
+    elif role ==  "{}".format(Account.MENTEE.value):
         return MenteeProfile
-    elif role == Account.ADMIN:
+    elif role == "{}".format(Account.ADMIN.value):
         return Admin
+    elif role=="{}".format(Account.PARTNER.value):
+        return NewProfile     

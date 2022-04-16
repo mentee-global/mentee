@@ -79,7 +79,7 @@ function Home({ history }) {
 					{!isLoggedIn() ? (
 						<div
 							className="loginCon"
-							onClick={async () => {
+							onClick={() => {
 								let redirect = "/login";
 								history.push({
 									pathname: redirect,
@@ -97,11 +97,6 @@ function Home({ history }) {
 					)}
 				</div>
 			</div>
-			<img
-				className="focus-for-health"
-				src={Health}
-				alt="Focus for Health Logo"
-			/>
 		</div>
 	);
 }

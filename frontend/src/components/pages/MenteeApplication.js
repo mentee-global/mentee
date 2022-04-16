@@ -66,7 +66,6 @@ function MenteeApplication(props) {
 	// sets text fields
 	const [firstName, setFirstName] = useState(null);
 	const [lastName, setLastName] = useState(null);
-	const [email, setEmail] = useState(null);
 	const [organization, setOrganization] = useState(null);
 	const [age, setAge] = useState(null);
 	const [immigrantStatus, setImmigrantStatus] = useState([]);
@@ -78,7 +77,7 @@ function MenteeApplication(props) {
 	const [otherLanguage, setotherLanguage] = useState("");
 	const [topics, setTopics] = useState([]);
 	const [otherTopics, setOtherTopics] = useState("");
-	const [workstate, setWorkstate] = useState(null);
+	const [workstate, setWorkstate] = useState([]);
 	const [otherWorkState, setotherWorkState] = useState("");
 	const [isSocial, setIsSocial] = useState(null);
 	const [otherIsSocial, setOtherIsSocial] = useState("");
@@ -114,7 +113,6 @@ function MenteeApplication(props) {
 		const requiredQuestions = [
 			firstName,
 			lastName,
-			email,
 			organization,
 			age,
 			immigrantStatus,
@@ -183,26 +181,7 @@ function MenteeApplication(props) {
 							onChange={(e) => setLastName(e.target.value)}
 						/>
 					</Form.Item>
-					<div>{"*Email"}</div>
 
-					<Form.Item
-						className="input-form"
-						rules={[
-							{
-								required: true,
-							},
-						]}
-					>
-						{isMissingError(email) && (
-							<p style={{ color: "red" }}>Please input email.</p>
-						)}
-						<Input
-							type="text"
-							placeholder="*Email"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-						/>
-					</Form.Item>
 					<div>
 						{" "}
 						{
@@ -265,7 +244,7 @@ function MenteeApplication(props) {
 							onChange={onChangeCheck3}
 						/>
 					</Form.Item>
-					{immigrantStatus == "other" ? (
+					{immigrantStatus.includes("other") ? (
 						<Form.Item
 							className="input-form"
 							rules={[
@@ -420,7 +399,7 @@ function MenteeApplication(props) {
 							onChange={onChangeCheck5}
 						/>
 					</Form.Item>
-					{topics == "other" ? (
+					{topics.includes("other") ? (
 						<Form.Item
 							className="input-form"
 							rules={[
@@ -457,7 +436,7 @@ function MenteeApplication(props) {
 							onChange={onChangeCheck7}
 						/>
 					</Form.Item>
-					{workstate == "other" ? (
+					{workstate.includes("other") ? (
 						<Form.Item
 							className="input-form"
 							rules={[
@@ -546,8 +525,20 @@ function MenteeApplication(props) {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	function handleSubmit(event) {
 		event.preventDefault();
-		if (immigrantStatus == "other") {
-			setImmigrantStatus(otherImmigrantStatus);
+		let imms = immigrantStatus;
+		let topicss = topics;
+		let states = workstate;
+		if (immigrantStatus.includes("other")) {
+			if (otherImmigrantStatus) {
+				setShowMissingFieldErrors(false);
+				imms = imms.filter(function (value, index, arr) {
+					return value != "other";
+				});
+				imms.push("Other: " + otherImmigrantStatus);
+			} else {
+				setShowMissingFieldErrors(true);
+				return false;
+			}
 		}
 		if (identify == "other") {
 			setidentify(otherIdentify);
@@ -555,11 +546,29 @@ function MenteeApplication(props) {
 		if (language == "other") {
 			setLanguage(otherLanguage);
 		}
-		if (topics == "other") {
-			setTopics(otherTopics);
+		if (topics.includes("other")) {
+			if (otherTopics) {
+				setShowMissingFieldErrors(false);
+				topicss = topicss.filter(function (value, index, arr) {
+					return value != "other";
+				});
+				topicss.push("Other: " + otherTopics);
+			} else {
+				setShowMissingFieldErrors(true);
+				return false;
+			}
 		}
-		if (workstate == "other") {
-			setWorkstate(otherWorkState);
+		if (workstate.includes("other")) {
+			if (otherWorkState) {
+				setShowMissingFieldErrors(false);
+				states = states.filter(function (value, index, arr) {
+					return value != "other";
+				});
+				states.push("Other: " + otherWorkState);
+			} else {
+				setShowMissingFieldErrors(true);
+				return false;
+			}
 		}
 		if (isSocial == "other") {
 			setIsSocial(otherIsSocial);
@@ -574,15 +583,15 @@ function MenteeApplication(props) {
 		async function submitApplication() {
 			// onOk send the put request
 			const data = {
-				email: email,
+				email: props.headEmail,
 				name: firstName + " " + lastName,
 				age: age,
-				immigrant_status: immigrantStatus,
+				immigrant_status: imms,
 				Country: Country,
 				identify: identify,
 				language: language,
-				topics: topics,
-				workstate: workstate,
+				topics: topicss,
+				workstate: states,
 				isSocial: isSocial,
 				questions: questions,
 				date_submitted: new Date(),

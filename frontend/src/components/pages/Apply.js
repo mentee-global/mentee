@@ -4,7 +4,7 @@ import { Steps, Form, Input, Radio, Checkbox, LeftOutlined } from "antd";
 import { ACCOUNT_TYPE } from "utils/consts";
 import ApplyStep from "../../resources/applystep.png";
 import ApplyStep2 from "../../resources/applystep2.png";
-import { getAppState, fetchApplications } from "../../utils/api";
+import { getAppState, fetchApplications, isHaveAccount } from "../../utils/api";
 import ProfileStep from "../../resources/profilestep.png";
 import ProfileStep2 from "../../resources/profilestep2.png";
 import TrianStep from "../../resources/trainstep.png";
@@ -14,6 +14,7 @@ import MenteeApplication from "./MenteeApplication";
 import PartnerApplication from "./PartnerApplication";
 import TrainingList from "components/TrainingList";
 import BuildProfile from "components/BuildProfile";
+import { useHistory } from "react-router";
 const Apply = () => {
 	const [email, setEmail] = useState("");
 	const [role, setRole] = useState(null);
@@ -24,6 +25,8 @@ const Apply = () => {
 	const [istrain, setIstrain] = useState(false);
 	const [isbuild, setIsBuild] = useState(false);
 	const [err, seterr] = useState(false);
+	const [ishavee, setishavee] = useState(false);
+	const history = useHistory();
 
 	const submitHandler = () => {
 		setConfirmApply(true);
@@ -32,7 +35,15 @@ const Apply = () => {
 	useEffect(() => {
 		async function checkConfirmation() {
 			if (role) {
-				if (email != "") {
+				if (email.length > 7) {
+					const isHave = await isHaveAccount(email);
+					if (isHave == true) {
+						setishavee(true);
+						setTimeout(() => {
+							history.push("/login");
+						}, 2000);
+						return;
+					}
 					const state = await getAppState(email, role);
 					console.log(state, "here");
 					console.log(state === "APPROVED");
@@ -43,6 +54,8 @@ const Apply = () => {
 						console.log("wal3");
 						setApproveApply(true);
 						setConfirmApply(false);
+						setIsApply(false);
+						setIstrain(true);
 					} else {
 						console.log("here");
 						setConfirmApply(false);
@@ -80,6 +93,11 @@ const Apply = () => {
 					}}
 				/>
 			</div>
+			{ishavee && (
+				<p className="error">
+					You Already have account you will be redirect to login page
+				</p>
+			)}
 			<Radio.Group
 				className="roleGroup"
 				onChange={(e) => setRole(e.target.value)}
@@ -136,6 +154,9 @@ const Apply = () => {
 								<button
 									onClick={(e) => {
 										setApproveApply(true);
+										setConfirmApply(false);
+										setIsApply(false);
+										setIstrain(true);
 									}}
 								>
 									approve from here for test
@@ -152,6 +173,7 @@ const Apply = () => {
 									<MentorApplication
 										submitHandler={submitHandler}
 										role={ACCOUNT_TYPE.MENTOR}
+										headEmail={email}
 									></MentorApplication>
 								) : (
 									""
@@ -160,6 +182,7 @@ const Apply = () => {
 									<MenteeApplication
 										submitHandler={submitHandler}
 										role={ACCOUNT_TYPE.MENTEE}
+										headEmail={email}
 									></MenteeApplication>
 								) : (
 									""

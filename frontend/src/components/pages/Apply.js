@@ -14,16 +14,17 @@ import MenteeApplication from "./MenteeApplication";
 import PartnerApplication from "./PartnerApplication";
 import TrainingList from "components/TrainingList";
 import BuildProfile from "components/BuildProfile";
+import RegisterForm from "./RegisterForm";
 import { useHistory } from "react-router";
 const Apply = () => {
 	const [email, setEmail] = useState("");
 	const [role, setRole] = useState(null);
-	const [isapply, setIsApply] = useState(true);
+	const [isapply, setIsApply] = useState(false);
 	const [confirmApply, setConfirmApply] = useState(false);
 	const [approveApply, setApproveApply] = useState(false);
 	const [approveTrainning, setApproveTrainning] = useState(false);
 	const [istrain, setIstrain] = useState(false);
-	const [isbuild, setIsBuild] = useState(false);
+	const [isbuild, setIsBuild] = useState(true);
 	const [err, seterr] = useState(false);
 	const [ishavee, setishavee] = useState(false);
 	const history = useHistory();
@@ -74,7 +75,7 @@ const Apply = () => {
 	}, [role, email]);
 
 	return (
-		<div className="container">
+		<div className="container2">
 			<h1 className="home-header">
 				Welcome to <span>MENTEE!</span>
 			</h1>
@@ -103,14 +104,20 @@ const Apply = () => {
 				onChange={(e) => setRole(e.target.value)}
 				value={role}
 			>
-				<Radio value={ACCOUNT_TYPE.MENTEE}>Mentee</Radio>
-				<Radio value={ACCOUNT_TYPE.MENTOR}>Mentor</Radio>
-				<Radio value={ACCOUNT_TYPE.PARTNER}>Partner</Radio>
+				<Radio className="role" value={ACCOUNT_TYPE.MENTEE}>
+					Mentee
+				</Radio>
+				<Radio className="role" value={ACCOUNT_TYPE.MENTOR}>
+					Mentor
+				</Radio>
+				<Radio className="role" value={ACCOUNT_TYPE.PARTNER}>
+					Partner
+				</Radio>
 			</Radio.Group>
 			<div className="steps">
 				<img
 					src={isapply ? ApplyStep : ApplyStep2}
-					className="step"
+					className="step0"
 					alt="apply"
 					onClick={() => {
 						setIsApply(true);
@@ -202,15 +209,30 @@ const Apply = () => {
 				) : (
 					""
 				)}
+				{istrain ? (
+					<div className="trainpart">
+						{" "}
+						<TrainingList />
+					</div>
+				) : (
+					""
+				)}
+				{isbuild ? (
+					<div className="buildpart">
+						{role === ACCOUNT_TYPE.PARTNER ? (
+							<BuildProfile role={role} headEmail={email} />
+						) : (
+							""
+						)}
+						{role === ACCOUNT_TYPE.MENTOR ? <RegisterForm></RegisterForm> : ""}
+					</div>
+				) : (
+					""
+				)}
 
-				<div className="trainpart">{istrain ? <TrainingList /> : ""}</div>
-				<div className="buildpart">
-					{isbuild ? <BuildProfile role={role} headEmail={email} /> : ""}
-				</div>
-				{}
 				<div className="btnContainer">
 					<div
-						className={`applySubmit ${istrain ? "" : " hide"}`}
+						className={`applySubmit2 ${istrain ? "" : " hide"}`}
 						onClick={() => {
 							setIsApply(false);
 							setIsBuild(true);

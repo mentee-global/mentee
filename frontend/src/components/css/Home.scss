@@ -1,99 +1,120 @@
 .home-background {
-	background-color: #f8d15b;
-	height: 100%;
+	position: absolute;
 	width: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: center;
+	height: 936px;
+	left: 0px;
+	top: 73px;
+	background: #ffdb6f;
 }
-
 .home-content {
-	width: 80%;
 	display: flex;
 	align-items: center;
 	flex-direction: column;
 	justify-content: flex-start;
+	position: relative;
 }
 
 .home-text-container {
+	position: absolute;
+	height: 73px;
+	top: 0px;
 	text-align: center;
-	height: fit-content;
+	margin: auto;
+	margin-top: 10px;
 }
 
-.home-header {
-	color: white;
-	font-weight: bold;
-	font-size: 48px;
-}
-
-.home-header span {
-	color: #644a0a;
-}
-.home-text {
-	color: white;
-	font-family: Abel;
+.home-header2 {
+	font-family: "Abel";
 	font-style: normal;
 	font-weight: 400;
 	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
+}
+
+.home-header2 span {
+	color: #644a0a;
+}
+.home-text2 {
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
 }
 .buttons-container {
 	display: flex;
 	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	position: absolute;
+	top: 329px;
 }
-.applyCon,
-.loginCon {
-	width: 220px;
+.applyCon {
 	background-color: white;
 	text-align: center;
 	color: #a58123;
-	font-size: 170%;
-	line-height: 180%;
-	margin: 10px;
 	cursor: pointer;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-between;
 	border-radius: 10px;
+	width: 252px;
+	height: 252px;
+	position: relative;
+	margin-right: 40px;
+}
+.loginCon {
+	background-color: white;
+	text-align: center;
+	color: #a58123;
+	cursor: pointer;
+	border-radius: 10px;
+	width: 252px;
+	height: 252px;
+	position: relative;
 }
 .applyImage {
-	width: 160px;
-	object-fit: contain;
-	margin-top: 15px;
-}
-.logo {
-	height: 60vh;
-	width: 60vh;
-}
-
-.focus-for-health {
 	position: absolute;
-	bottom: 8px;
-	right: 16px;
-	font-size: 18px;
-	width: 40vh;
+	left: 25.87%;
+	right: 26.13%;
+	top: 16%;
+	bottom: 36%;
 }
 
-@media only screen and (max-width: 1024px) {
-	.logo {
-		height: 20vh;
-		width: 20vh;
-	}
-	.home-content {
-		height: fit-content;
-	}
-	.home-background {
-		height: 100%;
-		width: 100%;
-	}
-	.home-header {
-		font-size: 5vh;
-	}
+.loginText {
+	position: absolute;
+	left: 30.67%;
+	right: 30.93%;
+	top: 83.73%;
+	bottom: 2.93%;
+
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 30px;
+	line-height: 38px;
+	text-align: center;
+
+	color: #a58123;
 }
 
 @media (max-width: 600px) {
 	.buttons-container {
 		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.applyCon {
+		position: relative;
+		left: 0;
+		margin-bottom: 20px;
+		margin-right: 0px;
+	}
+	.loginCon {
+		position: relative;
+		left: 0;
+	}
+	.home-background {
+		height: 1090px;
 	}
 }

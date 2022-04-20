@@ -144,7 +144,7 @@ function MenteeApplication(props) {
 		return (
 			<div className="page-one-column-container">
 				<Form>
-					<div> {"*First Name"}</div>
+					<div> {"First Name"}</div>
 					<Form.Item
 						className="input-form"
 						rules={[
@@ -158,12 +158,12 @@ function MenteeApplication(props) {
 						)}
 						<Input
 							type="text"
-							placeholder="*First Name"
+							placeholder="First Name"
 							value={firstName}
 							onChange={(e) => setFirstName(e.target.value)}
 						/>
 					</Form.Item>
-					<div> {"*Last Name"}</div>
+					<div> {"Last Name"}</div>
 					<Form.Item
 						className="input-form"
 						rules={[
@@ -176,7 +176,7 @@ function MenteeApplication(props) {
 							<p style={{ color: "red" }}>Please input last name.</p>
 						)}
 						<Input
-							placeholder="*Last Name*"
+							placeholder="Last Name"
 							value={lastName}
 							onChange={(e) => setLastName(e.target.value)}
 						/>
@@ -185,7 +185,7 @@ function MenteeApplication(props) {
 					<div>
 						{" "}
 						{
-							"*What organization is supporting you locally or what organization are you affiliated with? "
+							"What organization is supporting you locally or what organization are you affiliated with? "
 						}
 					</div>
 					<Form.Item
@@ -201,13 +201,15 @@ function MenteeApplication(props) {
 						)}
 						<Input
 							type="text"
-							placeholder="*Organiztion"
+							placeholder="Organiztion"
 							value={organization}
 							onChange={(e) => setOrganization(e.target.value)}
 						/>
 					</Form.Item>
+					<div>
+						{"Let us know more about you. Check ALL of the boxes that apply."}
+					</div>
 					<div className="input-form">
-						*Let us know more about you. Check ALL of the boxes that apply.
 						<div className="time-options-answers">
 							{isMissingError(age) && (
 								<p style={{ color: "red" }}>Please select an option.</p>
@@ -230,7 +232,7 @@ function MenteeApplication(props) {
 					</div>
 					<div>
 						{
-							"*Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
+							"Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
 						}
 					</div>
 
@@ -258,7 +260,7 @@ function MenteeApplication(props) {
 							)}
 							<Input
 								type="text"
-								placeholder="*Other"
+								placeholder="Other"
 								value={otherImmigrantStatus}
 								onChange={(e) => setotherImmigrantStatus(e.target.value)}
 							/>
@@ -268,7 +270,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"*What country are you or your family originally from, if you are a refugee or immigrant?"
+							"What country are you or your family originally from, if you are a refugee or immigrant?"
 						}
 					</div>
 					<Form.Item
@@ -284,13 +286,14 @@ function MenteeApplication(props) {
 						)}
 						<Input
 							type="text"
-							placeholder="*Country"
+							placeholder="Country"
 							value={Country}
 							onChange={(e) => setCountry(e.target.value)}
 						/>
 					</Form.Item>
+					<div>{"Let us know more about you. How do you identify?"}</div>
+
 					<div className="input-form">
-						*Let us know more about you. How do you identify?
 						<div className="time-options-answers">
 							{isMissingError(identify) && (
 								<p style={{ color: "red" }}>Please select an option.</p>
@@ -320,7 +323,7 @@ function MenteeApplication(props) {
 							)}
 							<Input
 								type="text"
-								placeholder="*other"
+								placeholder="other"
 								value={otherIdentify}
 								onChange={(e) => setOtherIdentify(e.target.value)}
 							/>
@@ -328,9 +331,8 @@ function MenteeApplication(props) {
 					) : (
 						""
 					)}
-
+					<div>{"What is your native language?"}</div>
 					<div className="input-form">
-						*What is your native language?
 						<div className="time-options-answers">
 							{isMissingError(language) && (
 								<p style={{ color: "red" }}>Please select an option.</p>
@@ -376,7 +378,7 @@ function MenteeApplication(props) {
 							)}
 							<Input
 								type="text"
-								placeholder="*other"
+								placeholder="other"
 								value={otherLanguage}
 								onChange={(e) => setotherLanguage(e.target.value)}
 							/>
@@ -413,7 +415,7 @@ function MenteeApplication(props) {
 							)}
 							<Input
 								type="text"
-								placeholder="*other"
+								placeholder="other"
 								value={otherTopics}
 								onChange={(e) => setOtherTopics(e.target.value)}
 							/>
@@ -423,7 +425,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"*What do you currently do? Please check ALL the options that apply to you. If you select Other, please be specific"
+							"What do you currently do? Please check ALL the options that apply to you. If you select Other, please be specific"
 						}
 					</div>
 					<Form.Item className="input-form">
@@ -450,7 +452,7 @@ function MenteeApplication(props) {
 							)}
 							<Input
 								type="text"
-								placeholder="*other"
+								placeholder="other"
 								value={otherWorkState}
 								onChange={(e) => setotherWorkState(e.target.value)}
 							/>
@@ -458,10 +460,13 @@ function MenteeApplication(props) {
 					) : (
 						""
 					)}
+					<div>
+						{
+							"	Would you be interested in being highlighted as one of our menteeson social media?"
+						}
+					</div>
 
 					<div className="input-form">
-						*Would you be interested in being highlighted as one of our mentees
-						on social media?
 						<div className="time-options-answers">
 							{isMissingError(isSocial) && (
 								<p style={{ color: "red" }}>Please select an option.</p>
@@ -490,7 +495,7 @@ function MenteeApplication(props) {
 							)}
 							<Input
 								type="text"
-								placeholder="*other"
+								placeholder="other"
 								value={otherIsSocial}
 								onChange={(e) => setOtherIsSocial(e.target.value)}
 							/>
@@ -498,7 +503,7 @@ function MenteeApplication(props) {
 					) : (
 						""
 					)}
-					<div>{"*Do you have any questions?"}</div>
+					<div>{"Do you have any questions?"}</div>
 					<Form.Item
 						className="input-form"
 						rules={[
@@ -512,7 +517,7 @@ function MenteeApplication(props) {
 						)}
 						<Input
 							type="text"
-							placeholder="*questions"
+							placeholder="questions"
 							value={questions}
 							onChange={(e) => setQuestions(e.target.value)}
 						/>
@@ -616,38 +621,31 @@ function MenteeApplication(props) {
 		<div className="background">
 			<div className="instructions">
 				<h1 className="welcome-page">Welcome to MENTEE!</h1>
-				<p>
+				<p className="para-1">
 					We appreciate your interest in becoming part of the MENTEE community!
 					You will gain access to our global mentors and supportive programs. We
 					can't wait to see all you will achieve. Remember, as a mentee you can
 					stay here and actively seek mentorship, learning, and development for
 					life if you'd like to stay with us that long :)
 				</p>
-				<p className="para-2">
-					Fill out the application below to join our Specialist team for
-					2021-2022 year.
-				</p>
 				<br></br>
-				<p className="welcome-page">*Required</p>
 			</div>
 
-			<div className="container">
-				{pageOne()}
-				<div className="submit-button">
-					<MenteeButton
-						width="150px"
-						content={<b> Submit</b>}
-						onClick={handleSubmit}
-					/>
-				</div>
-				{submitError ? (
-					<h1 className="error">
-						Some thing went wrong check you add your Email at Top
-					</h1>
-				) : (
-					""
-				)}
+			{pageOne()}
+			<div className="submit-button">
+				<MenteeButton
+					width="205px"
+					content={<b> Submit</b>}
+					onClick={handleSubmit}
+				/>
 			</div>
+			{submitError ? (
+				<h1 className="error">
+					Some thing went wrong check you add your Email at Top
+				</h1>
+			) : (
+				""
+			)}
 		</div>
 	);
 }

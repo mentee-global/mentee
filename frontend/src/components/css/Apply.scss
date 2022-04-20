@@ -1,74 +1,148 @@
-.container {
-	background-color: #ffdb6f;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-bottom: 10px;
+.container2 {
+	position: absolute;
+	width: 100%;
+	left: 0px;
+	right: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	top: 88px;
+	background: #ffdb6f;
+	height: 4400px;
 }
 .home-header {
-	color: white;
-	font-weight: bold;
-	font-size: 160%;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	margin-top: 36px;
+	color: #ffffff;
+	text-align: center;
 }
 
 .home-header span {
 	color: #644a0a;
 }
 .home-text {
-	color: white;
+	height: 68px;
+	text-align: center;
 	font-family: "Abel";
 	font-style: normal;
 	font-weight: 400;
-	font-size: 120%;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
 }
 .emailPart {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+	align-items: center;
 	width: 80%;
-	max-width: 600px;
+	position: absolute;
+	height: 54px;
+	top: 301px;
+	left: 10%;
 }
 .emailPart p {
-	font-size: 1.4rem;
-	color: white;
-	margin: 10px;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
+	margin-right: 100px;
 }
 .emailIn {
 	flex-grow: 1;
 	height: fit-content;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 31px;
+	color: #6f6a6a;
+	margin-bottom: 40px;
 }
 .roleGroup {
-	font-weight: 600;
-	letter-spacing: 1px;
+	width: 80%;
+	position: absolute;
+	height: 37.76px;
+	top: 406px;
+	left: 10%;
+
+	/* or 92% */
+
+	/* Character/Title .85 */
+
+	color: rgba(0, 0, 0, 0.85);
+}
+.role {
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 22px;
+	margin-right: 123px;
 }
 .formsPart {
-	margin-top: 20px;
+	position: absolute;
+	top: 735px;
+	left: 10%;
 	width: 80%;
-	flex-grow: 1;
-	border-radius: 5px;
-	border: 5px solid white;
-	margin-bottom: 15px;
+	background: #fffbfb;
+
+	border-radius: 10px;
+}
+.trainpart {
+	min-height: 500px;
+}
+.buildpart {
+	overflow-x: hidden;
+}
+.steps {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	position: absolute;
+	top: 478px;
+	left: 10%;
+	width: 80%;
 }
 
-.btnContainer {
-	display: flex;
-	justify-content: center;
-	width: 100%;
-	flex-direction: row;
-	margin-bottom: 10px;
+.step0 {
+	width: 314px;
+	height: 244px;
 }
-.applySubmit {
-	font-size: large;
-	margin-top: 15px;
-	padding: 5px;
+.step {
+	width: 332px;
+	height: 257px;
+}
+
+.applySubmit2 {
+	font-weight: 400;
+	font-size: 23px;
 	background: #e4bb4f;
-	border-radius: 10px;
 	text-align: center;
 	color: white;
 	cursor: pointer;
 	text-align: center;
 	width: fit-content;
+	font-family: "Roboto";
+	font-style: normal;
+	width: 500px;
+	height: 70px;
+	line-height: 70px;
+	/* identical to box height */
+
+	color: #ffffff;
+}
+.btnContainer {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	margin: 50px;
 }
 .testbtn {
 	padding: 0 20px;
@@ -87,20 +161,7 @@
 	font-weight: 600;
 	color: red;
 }
-.steps {
-	width: 80%;
-	max-width: 600px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
-	align-items: center;
-}
-.step {
-	width: 30%;
-	object-fit: contain;
-	color: white;
-	cursor: pointer;
-}
+
 .hide {
 	display: none;
 }

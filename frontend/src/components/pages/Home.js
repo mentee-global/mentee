@@ -29,13 +29,13 @@ function Home({ history }) {
 		<div className="home-background">
 			<div className="home-content">
 				<div className="home-text-container">
-					<h1 className="home-header">
+					<h1 className="home-header2">
 						Welcome to <span>MENTEE!</span>
 					</h1>
 					{isLoggedIn() ? (
 						""
 					) : (
-						<p className="home-text">
+						<p className="home-text2">
 							{/** Homepage Tagline placeholder */}
 							Are you a new or existing user?
 						</p>
@@ -73,7 +73,7 @@ function Home({ history }) {
 							}}
 						>
 							<img className="applyImage" src={Applyimg} alt="apply" />
-							APPLY
+							<div className="loginText">APPLY</div>
 						</div>
 					)}
 					{!isLoggedIn() ? (
@@ -87,12 +87,13 @@ function Home({ history }) {
 							}}
 						>
 							<img className="applyImage" src={loginimg} alt="login" />
-							LOGIN
+							<div className="loginText">LOGIN</div>
 						</div>
 					) : (
 						<div className="loginCon" onClick={logoutUser}>
 							<img className="applyImage" src={loginimg} alt="login" />
-							LOGOUT
+
+							<div className="loginText">LOGOUT</div>
 						</div>
 					)}
 				</div>

@@ -280,19 +280,15 @@ function PartnerApplication(props) {
 	}
 
 	return (
-		<div className="background">
+		<div className="background2">
 			<div className="instructions">
 				<h1 className="welcome-page">Welcome to MENTEE!</h1>
-				<p>
+				<p className="para-1">
 					We appreciate your interest in becoming a volunteer Global Partner for
 					MENTEE, a global nonprofit accelerating personal and Professional
 					growth to make the world a better, healthier place.
+					<br></br>
 				</p>
-				<p className="para-2">
-					Fill out the application below to join our team for 2021-2022 year.
-				</p>
-				<br></br>
-				<p className="welcome-page">*Required</p>
 			</div>
 
 			<div className="container">

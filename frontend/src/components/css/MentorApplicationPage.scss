@@ -1,13 +1,59 @@
-.background {
-	padding: 10px;
+.page-one-column-container input[type="text"],
+textarea {
+	background-color: #fcf6e8 !important;
 }
-.container {
-	width: 100%;
+.background {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border-radius: 10px;
+	border: 2px solid white;
+	padding: 10px;
+	background-color: white;
+	border-radius: 10px;
+	height: 3500px;
+}
+.background2 {
+	height: 1800px !important;
+}
+
+.welcome-page {
+	position: absolute;
+	left: 46px;
+	top: 24px;
+	width: 199px;
+	height: 44px;
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 20px;
+	line-height: 22px;
+	/* or 110% */
+	color: #e4bb4f;
+}
+.para-1 {
+	position: absolute;
+	height: 858px;
+	left: 5%;
+	width: 90%;
+	top: 69px;
+	background: #fffbfb;
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 20px;
+	line-height: 22px;
+	/* or 110% */
+
+	/* Character/Title .85 */
+
+	color: rgba(0, 0, 0, 0.85);
 }
 .page-one-column-container {
-	width: 100%;
-	padding: 5px;
-	margin-bottom: 30px;
+	width: 90%;
+	left: 5%;
+	top: 217px;
+	position: absolute;
 }
 .page-one-column-container form {
 	display: flex;
@@ -17,9 +63,16 @@
 	width: 100%;
 }
 .page-one-column-container form > div {
-	width: 70%;
-	font-size: 1.4rem;
-	color: white;
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 20px;
+	line-height: 22px;
+	/* or 110% */
+
+	/* Character/Title .85 */
+
+	color: rgba(0, 0, 0, 0.85);
 }
 
 .donation-question {
@@ -32,24 +85,10 @@
 
 .input-form {
 	font-size: 1.4rem;
-
-	padding: 10px 4px;
-	margin: 10px 4px;
+	width: 761px;
+	background: #fcf6e8;
+	margin: 54px 0;
 	overflow: auto;
-}
-
-.background {
-	background-color: #fcf6e8;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	border-radius: 10px;
-	border: 1px solid white;
-}
-
-.welcome-page {
-	color: #e4bb50;
-	text-align: center;
 }
 
 .ant-steps-item-wait
@@ -71,10 +110,23 @@
 	justify-content: flex-end;
 }
 .submit-button {
-	margin-bottom: 20px;
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
+	position: absolute;
+	left: 70.5%;
+	right: 20.43%;
+	bottom: 1%;
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 400;
+	width: 220px;
+	font-size: 23px;
+	line-height: 27px;
+	/* identical to box height */
+
+	color: #ffffff;
+	height: 46px;
+}
+.sub2 {
+	bottom: 2% !important;
 }
 
 // mobile

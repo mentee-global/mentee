@@ -109,48 +109,47 @@ function Login() {
 	}
 	return (
 		<div className="containerr">
-			<h1 className="home-header">
+			<h1 className="home-header3">
 				Welcome to <span>MENTEE!</span>
 			</h1>
 			<div className="page-background">
 				<div className="login-content">
-					<div className="login-container">
-						<h1 className="login-text">
-							Please Login {roleObject && roleObject.title}
-						</h1>
-						{error && <div className="login-error">{errorMessage}</div>}
-						<div
-							className={`login-input-container${
-								inputFocus[0] ? "__clicked" : ""
-							}`}
-						>
-							<Input
-								className="login-input"
-								onFocus={() => handleInputFocus(0)}
-								disabled={loggingIn}
-								onChange={(e) => setEmail(e.target.value)}
-								bordered={false}
-								placeholder="Email"
-							/>
-						</div>
-						<div
-							className={`login-input-container${
-								inputFocus[1] ? "__clicked" : ""
-							}`}
-						>
-							<Input.Password
-								className="login-input"
-								disabled={loggingIn}
-								iconRender={(visible) =>
-									visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-								}
-								onFocus={() => handleInputFocus(1)}
-								onChange={(e) => setPassword(e.target.value)}
-								bordered={false}
-								placeholder="Password"
-							/>
-						</div>
-						{/*
+					<h1 className="login-text">
+						Please Login {roleObject && roleObject.title}
+					</h1>
+					{error && <div className="login-error">{errorMessage}</div>}
+					<div
+						className={`login-input-container${
+							inputFocus[0] ? "__clicked" : ""
+						}`}
+					>
+						<Input
+							className="login-input"
+							onFocus={() => handleInputFocus(0)}
+							disabled={loggingIn}
+							onChange={(e) => setEmail(e.target.value)}
+							bordered={false}
+							placeholder="Email"
+						/>
+					</div>
+					<div
+						className={`login-input-container${
+							inputFocus[1] ? "__clicked" : ""
+						}`}
+					>
+						<Input.Password
+							className="login-input_pass"
+							disabled={loggingIn}
+							iconRender={(visible) =>
+								visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+							}
+							onFocus={() => handleInputFocus(1)}
+							onChange={(e) => setPassword(e.target.value)}
+							bordered={false}
+							placeholder="Password"
+						/>
+					</div>
+					{/*
 							<div className="account-help-container">
 								<div className="account-link">
 									Don't Have an account?{" "}
@@ -169,10 +168,10 @@ function Login() {
 								</div>
 							</div>
 						*/}
-					</div>
 				</div>
+				{loading ? <h1>Loading ..</h1> : ""}
 			</div>
-			{loading ? <h1>Loading ..</h1> : ""}
+
 			<SelectLogin
 				displaySelect={displaySelect}
 				handleDisplayImages={handleDisplayImages}

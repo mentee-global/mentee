@@ -19,12 +19,12 @@ import { useHistory } from "react-router";
 const Apply = () => {
 	const [email, setEmail] = useState("");
 	const [role, setRole] = useState(null);
-	const [isapply, setIsApply] = useState(false);
+	const [isapply, setIsApply] = useState(true);
 	const [confirmApply, setConfirmApply] = useState(false);
 	const [approveApply, setApproveApply] = useState(false);
 	const [approveTrainning, setApproveTrainning] = useState(false);
 	const [istrain, setIstrain] = useState(false);
-	const [isbuild, setIsBuild] = useState(true);
+	const [isbuild, setIsBuild] = useState(false);
 	const [err, seterr] = useState(false);
 	const [ishavee, setishavee] = useState(false);
 	const history = useHistory();

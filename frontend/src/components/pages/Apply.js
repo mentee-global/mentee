@@ -127,7 +127,7 @@ const Apply = () => {
 				/>
 				<img
 					src={istrain ? TrianStep2 : TrianStep}
-					className="step"
+					className="step1"
 					alt="trainning"
 					onClick={() => {
 						if (approveApply) {
@@ -139,7 +139,7 @@ const Apply = () => {
 				/>
 				<img
 					src={isbuild ? ProfileStep2 : ProfileStep}
-					className="step"
+					className="step2"
 					alt="profile"
 					onClick={() => {
 						if (approveTrainning) {

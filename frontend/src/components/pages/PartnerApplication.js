@@ -186,12 +186,12 @@ function PartnerApplication(props) {
 						) : (
 							""
 						)}
-						<div>
-							{
-								"*What SDGs does your organization/institution/company care about?"
-							}
-						</div>
 					</Form.Item>
+					<div>
+						{
+							"*What SDGs does your organization/institution/company care about?"
+						}
+					</div>
 					<Form.Item className="input-form">
 						{isMissingError(SDGS) && (
 							<p style={{ color: "red" }}>Please select an option.</p>
@@ -293,7 +293,7 @@ function PartnerApplication(props) {
 
 			<div className="container">
 				{pageOne()}
-				<div className="submit-button">
+				<div className="submit-button sbtn">
 					<MenteeButton
 						width="150px"
 						content={<b> Submit</b>}

@@ -5,9 +5,10 @@
 	right: 0px;
 	margin-left: auto;
 	margin-right: auto;
-	top: 88px;
+	top: 87px;
 	background: #ffdb6f;
-	height: 4400px;
+	height: 100%;
+	overflow: auto;
 }
 .home-header {
 	font-family: "Abel";
@@ -15,9 +16,12 @@
 	font-weight: 400;
 	font-size: 48px;
 	line-height: 61px;
-	margin-top: 36px;
 	color: #ffffff;
 	text-align: center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 36px;
 }
 
 .home-header span {
@@ -32,45 +36,55 @@
 	font-size: 48px;
 	line-height: 61px;
 	color: #ffffff;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 109px;
 }
 .emailPart {
+	position: absolute;
+	width: 60%;
+	left: 20%;
+	right: 20%;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: flex-start;
 	align-items: center;
-	align-items: center;
-	width: 80%;
-	position: absolute;
-	height: 54px;
-	top: 301px;
-	left: 10%;
+	top: 310px;
 }
 .emailPart p {
+	width: 141px;
+	height: 54px;
 	font-family: "Abel";
 	font-style: normal;
 	font-weight: 400;
 	font-size: 48px;
 	line-height: 61px;
 	color: #ffffff;
-	margin-right: 100px;
 }
 .emailIn {
-	flex-grow: 1;
-	height: fit-content;
+	width: 522px;
+	height: 54px;
 	font-family: "Abel";
 	font-style: normal;
 	font-weight: 400;
 	font-size: 24px;
 	line-height: 31px;
 	color: #6f6a6a;
-	margin-bottom: 40px;
+	margin-bottom: 35px;
+	margin-left: 156px;
 }
+
 .roleGroup {
-	width: 80%;
 	position: absolute;
+	width: 60%;
 	height: 37.76px;
-	top: 406px;
-	left: 10%;
+	left: 20%;
+	right: 20%;
+	top: 414px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
 
 	/* or 92% */
 
@@ -84,15 +98,16 @@
 	font-weight: 400;
 	font-size: 24px;
 	line-height: 22px;
-	margin-right: 123px;
 }
 .formsPart {
 	position: absolute;
+	width: 68%;
+	min-height: 858px;
+	left: 16%;
 	top: 735px;
-	left: 10%;
-	width: 80%;
-	background: #fffbfb;
+	right: 16%;
 
+	background: #fffbfb;
 	border-radius: 10px;
 }
 .trainpart {
@@ -103,19 +118,25 @@
 }
 .steps {
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-evenly;
+	align-items: center;
 	flex-direction: row;
 	position: absolute;
-	top: 478px;
-	left: 10%;
-	width: 80%;
+	top: 471px;
+	left: 20%;
+	right: 20%;
+	width: 60%;
 }
 
 .step0 {
 	width: 314px;
 	height: 244px;
 }
-.step {
+.step1 {
+	width: 332px;
+	height: 257px;
+}
+.step2 {
 	width: 332px;
 	height: 257px;
 }
@@ -164,7 +185,4 @@
 
 .hide {
 	display: none;
-}
-h1 {
-	color: white;
 }

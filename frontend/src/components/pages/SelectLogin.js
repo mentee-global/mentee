@@ -24,7 +24,11 @@ function SelectLogin({ displaySelect, handleSelect, handleDisplayImages }) {
 						handleSelect("mentee");
 					}}
 				>
-					<img src={MenteeLogin} alt="Mentee Image" className="select-image" />
+					<img
+						src={MenteeLogin}
+						alt="Mentee Image"
+						className="select-image mentee-image"
+					/>
 					<div className="select-text">Mentee</div>
 				</div>
 				<div
@@ -33,7 +37,7 @@ function SelectLogin({ displaySelect, handleSelect, handleDisplayImages }) {
 						handleSelect("mentor");
 					}}
 				>
-					<img src={MentorImage} alt="Mentor Image" className="select-image" />
+					<img src={MentorImage} alt="Mentor Image" className="mentor-image" />
 					<div className="select-text">Mentor</div>
 				</div>
 				<div
@@ -45,7 +49,7 @@ function SelectLogin({ displaySelect, handleSelect, handleDisplayImages }) {
 					<img
 						src={PartnerImage}
 						alt="Partner Image"
-						className="select-image"
+						className="select-image partner-image"
 						onLoad={handleDisplayImages}
 					/>
 					<div className="select-text">Partner</div>

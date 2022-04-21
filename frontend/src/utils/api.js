@@ -404,8 +404,6 @@ export const getApplicationById = async (id) => {
 		}
 	);
 };
-l;
-
 export const adminUploadEmails = (file, password, isMentor) => {
 	const requestExtension = "/upload/accounts";
 	let formData = new FormData();

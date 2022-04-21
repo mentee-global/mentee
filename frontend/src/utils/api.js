@@ -91,9 +91,13 @@ export const uploadAccountImage = (data, id, type) => {
 	);
 };
 
-export const createAccountProfile = async (profile, type) => {
+export const createAccountProfile = async (profile, type, isHave) => {
 	profile["account_type"] = type;
-	const requestExtension = `/account`;
+	let requestExtension = `/account`;
+	if (isHave == true) {
+		requestExtension = `/accountProfile`;
+	}
+
 	return await instance.post(requestExtension, profile).then(
 		(response) => response,
 		(err) => {
@@ -129,14 +133,33 @@ export const getAppState = async (email, role) => {
 	console.log(state);
 	return state;
 };
-
-let ishave = "";
-export const isHaveAccount = async (email) => {
-	const requestExtension = `/application/checkHaveAccount/${email}`;
+let isHaveProfile = false;
+export const isHaveProfilee = async (email, role) => {
+	const requestExtension = `/application/isHaveProfile/${email}/${role}`;
 	const res = await instance.get(requestExtension);
-	ishave = res.data.result.isHave;
-	console.log(ishave);
-	return ishave;
+	isHaveProfile = res.data.result.isHaveProfile;
+	let rightRole = null;
+	if (res.data.result.rightRole) {
+		rightRole = res.data.result.rightRole;
+	}
+	console.log(isHaveProfile);
+	return { isHaveProfile, rightRole };
+};
+export const changeStateBuildProfile = async (email, role) => {
+	const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
+	const res = await instance.get(requestExtension);
+	state = res.data.result.state;
+	console.log(state);
+	return state;
+};
+
+export const isHaveAccount = async (email, role) => {
+	const requestExtension = `/application/checkHaveAccount/${email}/${role}`;
+	const res = await instance.get(requestExtension);
+	let isHave = res.data.result.isHave;
+	let isHaveProfile = res.data.result.isHaveProfile;
+	console.log(isHave, isHaveProfile);
+	return { isHave, isHaveProfile };
 };
 
 export const getTrainings = async () => {
@@ -381,6 +404,7 @@ export const getApplicationById = async (id) => {
 		}
 	);
 };
+l;
 
 export const adminUploadEmails = (file, password, isMentor) => {
 	const requestExtension = "/upload/accounts";
@@ -500,8 +524,8 @@ export const sendMenteeMentorEmail = (
  * should there be a need to change the value for ACCOUNT_TYPE
  */
 
-export const createMentorProfile = async (data) => {
-	return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR);
+export const createMentorProfile = async (data, isHave) => {
+	return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, isHave);
 };
 
 export const createMenteeProfile = async (data) => {

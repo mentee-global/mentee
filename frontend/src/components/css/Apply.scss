@@ -158,6 +158,8 @@
 	/* identical to box height */
 
 	color: #ffffff;
+	position: absolute;
+	bottom: 7%;
 }
 .btnContainer {
 	display: flex;
@@ -185,4 +187,6 @@
 
 .hide {
 	display: none;
+}
+.applypart h1 {
 }

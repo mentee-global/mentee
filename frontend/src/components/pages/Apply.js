@@ -4,7 +4,13 @@ import { Steps, Form, Input, Radio, Checkbox, LeftOutlined } from "antd";
 import { ACCOUNT_TYPE } from "utils/consts";
 import ApplyStep from "../../resources/applystep.png";
 import ApplyStep2 from "../../resources/applystep2.png";
-import { getAppState, fetchApplications, isHaveAccount } from "../../utils/api";
+import {
+	getAppState,
+	fetchApplications,
+	isHaveAccount,
+	changeStateBuildProfile,
+	isHaveProfilee,
+} from "../../utils/api";
 import ProfileStep from "../../resources/profilestep.png";
 import ProfileStep2 from "../../resources/profilestep2.png";
 import TrianStep from "../../resources/trainstep.png";
@@ -14,8 +20,11 @@ import MenteeApplication from "./MenteeApplication";
 import PartnerApplication from "./PartnerApplication";
 import TrainingList from "components/TrainingList";
 import BuildProfile from "components/BuildProfile";
-import RegisterForm from "./RegisterForm";
+import MentorProfileForm from "./MentorProfileForm";
 import { useHistory } from "react-router";
+import { useLocation } from "react-router-dom";
+import { AccountBookFilled } from "@ant-design/icons";
+
 const Apply = () => {
 	const [email, setEmail] = useState("");
 	const [role, setRole] = useState(null);
@@ -26,23 +35,49 @@ const Apply = () => {
 	const [istrain, setIstrain] = useState(false);
 	const [isbuild, setIsBuild] = useState(false);
 	const [err, seterr] = useState(false);
+	const [err2, seterr2] = useState(false);
 	const [ishavee, setishavee] = useState(false);
 	const history = useHistory();
+	const location = useLocation();
 
 	const submitHandler = () => {
 		setConfirmApply(true);
 	};
+	useEffect(() => {
+		if (location.state) {
+			if (location.state.email) {
+				setEmail(location.state.email);
+			}
+			if (location.state.role) {
+				setRole(location.state.role);
+			}
+		}
+	}, []);
 
 	useEffect(() => {
 		async function checkConfirmation() {
 			if (role) {
 				if (email.length > 7) {
-					const isHave = await isHaveAccount(email);
-					if (isHave == true) {
+					const { isHave, isHaveProfile } = await isHaveAccount(email, role);
+					console.log(isHave, isHaveProfile);
+					if (isHave == true && isHaveProfile == true) {
 						setishavee(true);
 						setTimeout(() => {
 							history.push("/login");
 						}, 2000);
+						return;
+					} else if (isHave == true && isHaveProfile == false) {
+						setIsApply(false);
+						setIstrain(false);
+						setIsBuild(true);
+						setApproveTrainning(true);
+						return;
+					}
+					if (role == ACCOUNT_TYPE.PARTNER) {
+						setIsApply(false);
+						setIstrain(false);
+						setIsBuild(true);
+						setApproveTrainning(true);
 						return;
 					}
 					const state = await getAppState(email, role);
@@ -57,6 +92,11 @@ const Apply = () => {
 						setConfirmApply(false);
 						setIsApply(false);
 						setIstrain(true);
+					} else if (state == "BuildProfile") {
+						setIsApply(false);
+						setIstrain(false);
+						setIsBuild(true);
+						setApproveTrainning(true);
 					} else {
 						console.log("here");
 						setConfirmApply(false);
@@ -224,7 +264,15 @@ const Apply = () => {
 						) : (
 							""
 						)}
-						{role === ACCOUNT_TYPE.MENTOR ? <RegisterForm></RegisterForm> : ""}
+						{role === ACCOUNT_TYPE.MENTOR ? (
+							<MentorProfileForm
+								headEmail={email}
+								role={role}
+								isHave={ishavee}
+							></MentorProfileForm>
+						) : (
+							""
+						)}
 					</div>
 				) : (
 					""
@@ -233,14 +281,20 @@ const Apply = () => {
 				<div className="btnContainer">
 					<div
 						className={`applySubmit2 ${istrain ? "" : " hide"}`}
-						onClick={() => {
-							setIsApply(false);
-							setIsBuild(true);
-							setIstrain(false);
+						onClick={async () => {
+							let state = await changeStateBuildProfile(email, role);
+							if ((state = "BuildProfile")) {
+								setIsApply(false);
+								setIsBuild(true);
+								setIstrain(false);
+							} else {
+								seterr2(true);
+							}
 						}}
 					>
 						I confirm I have completed all trainings
 					</div>
+					{err2 && <p>Something went wrong check your internet connection</p>}
 				</div>
 			</div>
 		</div>

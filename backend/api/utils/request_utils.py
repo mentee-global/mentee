@@ -220,12 +220,11 @@ def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
 
 
 def get_profile_model(role):
-    return MentorProfile
-    if role == "{}".format(Account.MENTOR.value):
+    if role == Account.MENTOR:
         return MentorProfile
-    elif role ==  "{}".format(Account.MENTEE.value):
+    elif role == Account.MENTEE:
         return MenteeProfile
-    elif role == "{}".format(Account.ADMIN.value):
+    elif role == Account.ADMIN:
         return Admin
-    elif role=="{}".format(Account.PARTNER.value):
+    elif role==Account.PARTNER:
         return NewProfile     

@@ -10,14 +10,21 @@ import {
 	getCurrentUser,
 	getUserEmail,
 } from "utils/auth.service";
-import { createMentorProfile } from "utils/api";
+import { createMentorProfile, getAppState, isHaveAccount } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS, REGISTRATION_STAGE } from "utils/consts";
+import {
+	LANGUAGES,
+	SPECIALIZATIONS,
+	REGISTRATION_STAGE,
+	MENTEE_DEFAULT_VIDEO_NAME,
+} from "utils/consts";
+
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
 import { validateUrl } from "utils/misc";
+import moment from "moment";
 
 function RegisterForm(props) {
 	const history = useHistory();
@@ -40,7 +47,10 @@ function RegisterForm(props) {
 	const [specializations, setSpecializations] = useState([]);
 	const [educations, setEducations] = useState([]);
 	const [saving, setSaving] = useState(false);
-
+	const [password, setPassword] = useState(null);
+	const [confirmPassword, setConfirmPassword] = useState(null);
+	const [video, setVideo] = useState(null);
+	const [err, setErr] = useState(false);
 	const [localProfile, setLocalProfile] = useState({});
 
 	useEffect(() => {
@@ -48,7 +58,7 @@ function RegisterForm(props) {
 		if (mentor) {
 			let newValid = [...isValid];
 			setLocalProfile(mentor);
-
+			setVideo(mentor.video);
 			setName(mentor.name);
 			if (mentor.name && mentor.name.length > 50) {
 				newValid[0] = false;
@@ -303,6 +313,40 @@ function RegisterForm(props) {
 		let newLocalProfile = { ...localProfile, name: name };
 		updateLocalStorage(newLocalProfile);
 	}
+	function handlePassChange(e) {
+		const pass = e.target.value;
+
+		if (pass.length >= 8) {
+			let newValid = [...isValid];
+
+			newValid[30] = true;
+
+			setIsValid(newValid);
+		} else {
+			let newValid = [...isValid];
+			newValid[30] = false;
+			setIsValid(newValid);
+		}
+		setPassword(pass);
+	}
+	function handlePassConfirmChange(e) {
+		const pass = e.target.value;
+
+		if (pass === password) {
+			let newValid = [...isValid];
+
+			newValid[31] = true;
+
+			setIsValid(newValid);
+		} else {
+			let newValid = [...isValid];
+			newValid[31] = false;
+			setIsValid(newValid);
+		}
+		setConfirmPassword(pass);
+		let newLocalProfile = { ...localProfile, password: pass };
+		updateLocalStorage(newLocalProfile);
+	}
 
 	function handleTitleChange(e) {
 		const title = e.target.value;
@@ -407,6 +451,11 @@ function RegisterForm(props) {
 		};
 		updateLocalStorage(newLocalProfile);
 	}
+	function handleVideoChange(e) {
+		setVideo(e.target.value);
+		let newLocalProfile = { ...localProfile, video: e.target.value };
+		updateLocalStorage(newLocalProfile);
+	}
 
 	function updateLocalStorage(newLocalProfile) {
 		setLocalProfile(newLocalProfile);
@@ -415,23 +464,28 @@ function RegisterForm(props) {
 
 	const handleSaveEdits = async () => {
 		async function saveEdits(data) {
-			const res = await createMentorProfile(data);
+			const { isHave, isHaveProfile } = await isHaveAccount(
+				props.headEmail,
+				props.role
+			);
+			if (isHave == false) {
+				const state = await getAppState(props.headEmail, props.role);
+				if (state != "BuildProfile") {
+					setErr(true);
+					return;
+				}
+			}
+
+			const res = await createMentorProfile(data, isHave);
 			const mentorId =
 				res && res.data && res.data.result ? res.data.result.mentorId : false;
 
 			setSaving(false);
 			setValidate(false);
-
 			if (mentorId) {
 				setError(false);
 				setIsValid([...isValid].fill(true));
-				await refreshToken();
-
-				const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-					unsubscribe();
-					history.push("/profile");
-					history.go(0);
-				});
+				history.push("/");
 			} else {
 				setError(true);
 			}
@@ -442,12 +496,10 @@ function RegisterForm(props) {
 			return;
 		}
 
-		const firebase_user = getCurrentUser();
 		const email = await getUserEmail();
 		const newProfile = {
-			firebase_uid: firebase_user ? firebase_user.uid : undefined,
 			name: name,
-			email: email,
+			email: props.headEmail,
 			professional_title: title,
 			linkedin: linkedin,
 			website: website,
@@ -457,6 +509,15 @@ function RegisterForm(props) {
 			biography: about,
 			offers_in_person: inPersonAvailable,
 			offers_group_appointments: groupAvailable,
+			password: password,
+			video: video
+				? {
+						title: MENTEE_DEFAULT_VIDEO_NAME,
+						url: video,
+						tag: MENTEE_DEFAULT_VIDEO_NAME,
+						date_uploaded: moment().format(),
+				  }
+				: undefined,
 		};
 		if (!isValid.includes(false)) {
 			setSaving(true);
@@ -485,6 +546,7 @@ function RegisterForm(props) {
 						Save
 					</Button>
 				</div>
+				{err && <p>Please complete apply and training steps first</p>}
 			</div>
 			<div className="modal-inner-container">
 				<div className="modal-input-container">
@@ -502,6 +564,7 @@ function RegisterForm(props) {
 						errorPresent={name && name.length > 50}
 						errorMessage="Name field is too long."
 					/>
+
 					<ModalInput
 						style={styles.modalInput}
 						type="text"
@@ -517,6 +580,41 @@ function RegisterForm(props) {
 						validate={validate}
 					/>
 				</div>
+				{props.isHave ? (
+					<div className="modal-input-container">
+						<ModalInput
+							style={styles.modalInput}
+							type="password"
+							title="Password *"
+							clicked={inputClicked[30]}
+							index={30}
+							handleClick={handleClick}
+							onChange={handlePassChange}
+							value={password}
+							valid={isValid[30]}
+							validate={validate}
+							errorPresent={password && password.length > 50}
+							errorMessage="password field is too long."
+						/>
+						<ModalInput
+							style={styles.modalInput}
+							type="password"
+							title="Confirm Password *"
+							clicked={inputClicked[31]}
+							index={31}
+							handleClick={handleClick}
+							onChange={handlePassConfirmChange}
+							value={confirmPassword}
+							valid={isValid[31]}
+							validate={validate}
+							errorPresent={password != confirmPassword}
+							errorMessage="password not match."
+						/>
+					</div>
+				) : (
+					""
+				)}
+
 				<div className="modal-input-container Bio">
 					<ModalInput
 						style={styles.modalInput}
@@ -649,6 +747,22 @@ function RegisterForm(props) {
 				>
 					<PlusCircleFilled className="modal-education-add-icon" />
 					<div className="modal-education-add-text">Add more</div>
+				</div>
+				<div className="modal-education-header">Add Videos</div>
+				<div className="modal-education-body">
+					<div>Introduce yourself via YouTube video!</div>
+				</div>
+				<div className="modal-input-container">
+					<ModalInput
+						style={styles.modalInput}
+						type="text"
+						clicked={inputClicked[6]}
+						index={6}
+						handleClick={handleClick}
+						onChange={handleVideoChange}
+						placeholder="Paste Link"
+						value={video}
+					/>
 				</div>
 			</div>
 		</div>

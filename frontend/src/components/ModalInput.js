@@ -114,6 +114,21 @@ function ModalInput(props) {
 						{errorPresent && <p className="input-error">{errorMessage}</p>}
 					</div>
 				);
+			case "password":
+				return (
+					<div>
+						<Input
+							type="password"
+							className="input-text"
+							onClick={() => handleClick(index)}
+							onChange={handleOnChange}
+							bordered={false}
+							placeholder={placeholder}
+							value={props.value}
+						/>
+						{errorPresent && <p className="input-error">{errorMessage}</p>}
+					</div>
+				);
 			case "dropdown-single":
 				return (
 					<div>

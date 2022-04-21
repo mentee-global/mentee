@@ -13,7 +13,7 @@ import SelectLogin from "components/pages/SelectLogin";
 import Login from "components/pages/Login";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
-import RegisterForm from "components/pages/RegisterForm";
+import RegisterForm from "components/pages/MentorProfileForm";
 import ForgotPassword from "components/pages/ForgotPassword";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
@@ -29,6 +29,7 @@ import Messages from "components/pages/Messages";
 import Apply from "../components/pages/Apply";
 import "components/css/Navigation.scss";
 import SocketComponent from "components/SocketComponent";
+import MentorProfileForm from "components/pages/MentorProfileForm";
 
 function App() {
 	return (
@@ -141,11 +142,11 @@ function App() {
 						<Navigation
 							content={
 								type === ACCOUNT_TYPE.MENTOR ? (
-									<RegisterForm />
+									<MentorProfileForm />
 								) : type === ACCOUNT_TYPE.MENTEE ? (
 									<MenteeRegisterForm />
 								) : (
-									<RegisterForm />
+									<MentorProfileForm />
 								)
 							}
 							needsAuth={false}

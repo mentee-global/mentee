@@ -38,20 +38,100 @@ def get_application_by_id(id):
         return create_response(status=422, message=msg)
 
     return create_response(data={"mentor_application": application})
-
-@apply.route('/checkHaveAccount/<email>',methods=['GET'])
-def get_is_has_Account(email):
+####################################################################################
+@apply.route('/checkHaveAccount/<email>/<role>',methods=['GET'])
+def get_is_has_Account(email,role):
+    role=int(role)
+    application=null
     try:
         user = firebase_admin_auth.get_user_by_email(email)
     except:
         return create_response(data={'isHave':False})
-    return create_response(data={'isHave':True})    
 
+    try:
+        if role==Account.MENTOR:
+             application = MentorProfile.objects.get(email=email)
+        if role==Account.MENTEE:
+             application = MenteeProfile.objects.get(email=email)
+        if role==Account.PARTNER:
+             application = NewProfile.objects.get(email=email)  
 
+                
+    except:
+        msg = "No application currently exist with this email " + email
+        logger.info(msg)
+        return create_response(data={'isHaveProfile':False,'isHave':True,'message':msg})
+
+    return create_response(data={'isHave':True,'isHaveProfile':True})    
+
+############################################################################################
 
 @apply.route("/checkConfirm/<email>/<role>", methods=["GET"])
 def get_application_by_email(email,role):
+    role=int(role)
     application=null
+
+
+    try:
+        if role==Account.MENTOR:
+             application = MentorApplication.objects.get(email=email)
+        if role==Account.MENTEE:
+             application = MenteeApplication.objects.get(email=email)
+        if role==Account.PARTNER:
+             application = PartnerApplication.objects.get(email=email)    
+        if application is null:
+            return create_response(data={'state':'',"message":'no application found','type':role==Account.MENTOR,'role':role,'role2':Account.MENTOR})           
+    except:
+        msg = "No application currently exist with this email " + email
+        logger.info(msg)
+        return create_response(data={'state':"",'message':msg})
+
+    return create_response(data={"state":application.application_state})
+
+@apply.route("/isHaveProfile/<email>/<role>", methods=["GET"])
+def isHaveprofile_existing_account(email,role):
+    role=int(role)
+    application=null
+
+
+    try:
+        if role==Account.MENTOR:
+             application = MentorProfile.objects.get(email=email)
+        if role==Account.MENTEE:
+             application = MenteeProfile.objects.get(email=email)
+        if role==Account.PARTNER:
+             application = NewProfile.objects.get(email=email)  
+
+                
+    except:
+        try:
+            application = MentorProfile.objects.get(email=email)
+            rightRole=Account.MENTOR
+            return create_response(data={'isHaveProfile':False,'rightRole':rightRole.value})
+
+        except:
+            try:
+                application = MenteeProfile.objects.get(email=email)
+                rightRole=Account.MENTEE
+                return create_response(data={'isHaveProfile':False,'rightRole':rightRole.value})
+
+            except:
+                try:
+                    application = NewProfile.objects.get(email=email)
+                    rightRole=Account.PARTNER
+                    return create_response(data={'isHaveProfile':False,'rightRole':rightRole.value})
+
+                except:
+                    msg = "No application currently exist with this email " + email
+                    logger.info(msg)
+                    return create_response(data={'isHaveProfile':False,'message':msg})
+
+    return create_response(data={'isHaveProfile':True})     
+
+@apply.route("/changeStateBuildProfile/<email>/<role>", methods=["GET"])
+def changestatetobuildprofile(email,role):
+    application=null
+    role=int(role)
     try:
         if role==Account.MENTOR:
              application = MentorApplication.objects.get(email=email)
@@ -63,7 +143,9 @@ def get_application_by_email(email,role):
         msg = "No application currently exist with this email " + email
         logger.info(msg)
         return create_response(data={'state':"",'message':msg})
-
+        
+    application['application_state']="BuildProfile"
+    application.save()
     return create_response(data={"state":application.application_state})
 
 # DELETE request for mentor application by object ID

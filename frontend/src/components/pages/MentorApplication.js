@@ -46,7 +46,6 @@ function MentorApplication(props) {
 			firstName,
 			lastName,
 			cell,
-			email,
 			hearAbout,
 			pastLiveLocation,
 			offerDonation,
@@ -451,6 +450,7 @@ function MentorApplication(props) {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	function handleSubmit(event) {
 		event.preventDefault();
+		console.log("dd");
 
 		if (!verifyRequiredFieldsAreFilled()) return;
 		if (props.headEmail === "") {
@@ -461,7 +461,7 @@ function MentorApplication(props) {
 		async function submitApplication() {
 			// onOk send the put request
 			const data = {
-				email: email,
+				email: props.headEmail,
 				name: firstName + " " + lastName,
 				cell_number: cell,
 				hear_about_us: hearAbout,

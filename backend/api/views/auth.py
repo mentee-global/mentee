@@ -190,7 +190,7 @@ def login():
     
 
     
-    profile_model = get_profile_model(role)
+    profile_model = get_profile_model(int(role))
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
@@ -262,7 +262,7 @@ def login():
     
     return create_response(
         message="Logged in",
-        data={
+        data={"redirectToVerify": not firebase_admin_user.email_verified,
             "token": firebase_admin_auth.create_custom_token(
                 firebase_uid, {"role": role, "profileId": profile_id}
             ).decode("utf-8"),

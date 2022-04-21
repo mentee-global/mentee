@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from api.views.auth import create_firebase_user
 from bson import ObjectId
 from api.models import (
     db,
@@ -7,6 +8,7 @@ from api.models import (
     AppointmentRequest,
     Users,
     Image,
+    Video
 )
 from api.core import create_response, logger
 from api.utils.request_utils import (
@@ -19,6 +21,8 @@ from api.utils.request_utils import (
 )
 from api.utils.profile_parse import new_profile, edit_profile
 from api.utils.constants import Account
+from firebase_admin import auth as firebase_admin_auth
+
 
 main = Blueprint("main", __name__)  # initialize blueprint
 
@@ -73,7 +77,13 @@ def get_account(id):
 @main.route("/account", methods=["POST"])
 def create_mentor_profile():
     data = request.json
-
+    email = data.get("email")
+    password = data.get("password")
+    firebase_user, error_http_response = create_firebase_user(email, password)
+    firebase_uid = firebase_user.uid
+    data['firebase_uid']=firebase_uid
+    if error_http_response:
+       return error_http_response
     try:
         account_type = int(data["account_type"])
     except:
@@ -104,6 +114,7 @@ def create_mentor_profile():
             if is_invalid:
                 logger.info(msg)
                 return create_response(status=422, message=msg)
+                
     elif "video" in data and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
@@ -111,7 +122,110 @@ def create_mentor_profile():
         if is_invalid:
             logger.info(msg)
             return create_response(status=422, message=msg)
+    if "video" in data and account_type == Account.MENTOR:
+        validate_video = VideoForm.from_json(data["video"])
 
+        msg, is_invalid = is_invalid_form(validate_video)
+        if is_invalid:
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+        video_data = data.get("video")
+        data['video'] = Video(
+                title=video_data.get("title"),
+                url=video_data.get("url"),
+                tag=video_data.get("tag"),
+                date_uploaded=video_data.get("date_uploaded"),
+            )    
+    if "education" in data:
+        for education in data["education"]:
+            validate_education = EducationForm.from_json(education)
+
+            msg, is_invalid = is_invalid_form(validate_education)
+            if is_invalid:
+                return create_response(status=422, message=msg)
+
+    logger.info(data)
+    new_account = new_profile(data=data, profile_type=account_type)
+
+    if not new_account:
+        msg = "Could not parse Account Data"
+        logger.info(msg)
+        create_response(status=400, message=msg)
+
+    new_account.save()
+    user=Users(
+        firebase_uid=firebase_uid,
+        email=email,
+        role="{}".format(account_type),
+        verified=False,
+    )
+    user.save()
+    return create_response(
+        message=f"Successfully created Mentor Profile account {new_account.name}",
+        data={"mentorId": str(new_account.id),
+        "token": firebase_admin_auth.create_custom_token(
+                firebase_uid, {"role": account_type}
+            ).decode("utf-8"),},
+    )
+@main.route("/accountProfile", methods=["POST"])
+def create_profile_existing_account():
+    data = request.json
+    email = data.get("email")
+    user = firebase_admin_auth.get_user_by_email(email)
+    data['firebase_uid']=user.uid
+    try:
+        account_type = int(data["account_type"])
+    except:
+        msg = "Missing account_type param or account_type param is not an int"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    validate_data = None
+    if account_type == Account.MENTOR:
+        validate_data = MentorForm.from_json(data)
+    elif account_type == Account.MENTEE:
+        validate_data = MenteeForm.from_json(data)
+    else:
+        msg = "Level param does not match existing account types"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    msg, is_invalid = is_invalid_form(validate_data)
+    if is_invalid:
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    if "videos" in data and account_type == Account.MENTOR:
+        for video in data["videos"]:
+            validate_video = VideoForm.from_json(video)
+
+            msg, is_invalid = is_invalid_form(validate_video)
+            if is_invalid:
+                logger.info(msg)
+                return create_response(status=422, message=msg)
+                
+    elif "video" in data and account_type == Account.MENTEE:
+        validate_video = VideoForm.from_json(data["video"])
+
+        msg, is_invalid = is_invalid_form(validate_video)
+        if is_invalid:
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+             
+    if "video" in data and account_type == Account.MENTOR:
+        validate_video = VideoForm.from_json(data["video"])
+
+        msg, is_invalid = is_invalid_form(validate_video)
+        if is_invalid:
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+        video_data = data.get("video")
+        data['video'] = Video(
+                title=video_data.get("title"),
+                url=video_data.get("url"),
+                tag=video_data.get("tag"),
+                date_uploaded=video_data.get("date_uploaded"),
+            )     
     if "education" in data:
         for education in data["education"]:
             validate_education = EducationForm.from_json(education)
@@ -130,9 +244,14 @@ def create_mentor_profile():
 
     new_account.save()
     return create_response(
-        message=f"Successfully created Mentor Profile {new_account.name}",
-        data={"mentorId": str(new_account.id)},
+        message=f"Successfully created Mentor Profile for existing account {new_account.name}",
+        data={"mentorId": str(new_account.id),
+        "token": firebase_admin_auth.create_custom_token(
+                new_account.firebase_uid, {"role": account_type}
+            ).decode("utf-8"),},
     )
+
+
 
 
 # PUT requests for /account

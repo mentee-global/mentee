@@ -10,7 +10,7 @@ import { fetchUser } from "features/userSlice";
 import usePersistedState from "utils/hooks/usePersistedState";
 import SelectLogin from "./SelectLogin";
 import "../css/Login.scss";
-
+import { isHaveProfilee, isHaveAccount } from "../../utils/api";
 const Logins = Object.freeze({
 	mentee: {
 		title: "Mentee",
@@ -61,45 +61,79 @@ function Login() {
 			console.log(RoleObj);
 			setLoggingIn(true);
 			setLoading(true);
-			const res = await login(email, password, RoleObj.type);
-			console.log(res?.result);
-			setLoading(false);
-
-			if (!res || !res.success) {
-				if (res?.data?.result?.existingEmail) {
-					setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
-				} else {
+			const { isHaveProfile, rightRole } = await isHaveProfilee(
+				email,
+				RoleObj.type
+			);
+			if (rightRole) {
+				if (rightRole !== RoleObj.type) {
+					setErrorMessage("wrong Role please choose account right Role");
+					setError(true);
+					setLoading(false);
+					return;
+					//return wrong Role
+				}
+			} else {
+				setError(false);
+				const { isHave } = await isHaveAccount(email, RoleObj.type);
+				if (isHaveProfile == false && isHave == true) {
+					//redirect to apply with role and email passed
+					history.push({
+						pathname: "/application-page",
+						state: { email: email, role: RoleObj.type },
+					});
+					return;
+				} else if (isHaveProfile == false && isHave == false) {
 					setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
+					setError(true);
+					return;
+				} else if (isHaveProfile == true && isHave == true) {
+					setError(false);
+					const res = await login(email, password, RoleObj.type);
+					console.log(res?.result);
+					setLoading(false);
+
+					if (!res || !res.success) {
+						if (res?.data?.result?.existingEmail) {
+							setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+						} else {
+							setErrorMessage(
+								LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+							);
+						}
+						setError(true);
+					} else if (res.result.passwordReset) {
+						setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
+						setError(true);
+					} else if (res.result.recreateAccount) {
+						setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
+						setError(true);
+					}
+					setPermissions(RoleObj.type);
+					const unsubscribe = firebase
+						.auth()
+						.onAuthStateChanged(async (user) => {
+							unsubscribe();
+							if (!user) return;
+
+							if (res.result.redirectToVerify) {
+								await sendVerificationEmail(email);
+								history.push("/verify");
+							} else {
+								dispatch(
+									fetchUser({
+										id: res.result.profileId,
+										role: res.result.role,
+									})
+								);
+								history.push(RoleObj.redirect);
+							}
+						});
+
+					setLoggingIn(false);
+					setroleObject(RoleObj);
 				}
-				setError(true);
-			} else if (res.result.passwordReset) {
-				setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
-				setError(true);
-			} else if (res.result.recreateAccount) {
-				setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
-				setError(true);
 			}
-			setPermissions(RoleObj.type);
-			const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-				unsubscribe();
-				if (!user) return;
-
-				if (res.result.redirectToVerify) {
-					await sendVerificationEmail(email);
-					history.push("/verify");
-				} else {
-					dispatch(
-						fetchUser({
-							id: res.result.profileId,
-							role: res.result.role,
-						})
-					);
-					history.push(RoleObj.redirect);
-				}
-			});
-
-			setLoggingIn(false);
-			setroleObject(RoleObj);
 		}
 	};
 	function handleInputFocus(index) {
@@ -117,7 +151,7 @@ function Login() {
 					<h1 className="login-text">
 						Please Login {roleObject && roleObject.title}
 					</h1>
-					{error && <div className="login-error">{errorMessage}</div>}
+
 					<div
 						className={`login-input-container${
 							inputFocus[0] ? "__clicked" : ""
@@ -169,9 +203,9 @@ function Login() {
 							</div>
 						*/}
 				</div>
-				{loading ? <h1>Loading ..</h1> : ""}
 			</div>
-
+			{error && <h1 className="login-error">{errorMessage}</h1>}
+			{loading ? <h1 className="loadingg">Loading ..</h1> : ""}
 			<SelectLogin
 				displaySelect={displaySelect}
 				handleDisplayImages={handleDisplayImages}

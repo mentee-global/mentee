@@ -32,10 +32,12 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
             taking_appointments=data.get("taking_appointments", False),
+            
         )
 
         new_profile.website = data.get("website")
         new_profile.linkedin = data.get("linkedin")
+        new_profile.video=data.get('video')
 
         if "videos" in data:
             video_data = data.get("videos")
@@ -121,7 +123,14 @@ def edit_profile(data: dict = {}, profile: object = None):
         )
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.website = data.get("website", profile.website)
-
+        if "video" in data:
+            video_data = data.get("video")
+            profile.video = Video(
+                title=video_data.get("title"),
+                url=video_data.get("url"),
+                tag=video_data.get("tag"),
+                date_uploaded=video_data.get("date_uploaded"),
+            )
         # Create video objects for each item in list
         if "videos" in data:
             video_data = data.get("videos")

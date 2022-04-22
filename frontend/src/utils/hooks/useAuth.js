@@ -55,8 +55,8 @@ const useAuth = () => {
 						role: role,
 						isAdmin: role === `${ACCOUNT_TYPE.ADMIN}`,
 						isMentor: role === `${ACCOUNT_TYPE.MENTOR}`,
-						isMentee: role === `ACCOUNT_TYPE.MENTEE`,
-						isPartner: role === `ACCOUNT_TYPE.PARTNER`,
+						isMentee: role === `${ACCOUNT_TYPE.MENTEE}`,
+						isPartner: role === `${ACCOUNT_TYPE.PARTNER}`,
 					});
 
 					Promise.resolve(idTokenResult).then(onAuthUpdate);

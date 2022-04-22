@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 #import certifi
 
 load_dotenv()
-
 #ca = certifi.where()
 socketio = SocketIO(cors_allowed_origins="*")
 
@@ -68,7 +67,7 @@ def create_app(test_config=None):
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-    #,'tlsCAFile':ca
+    
     #app.config["MONGODB_SETTINGS"]={  'db': 'mentee',
     #'host': 'localhost',
     #'port': 27017}

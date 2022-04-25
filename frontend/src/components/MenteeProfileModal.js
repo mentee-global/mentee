@@ -9,7 +9,11 @@ import {
 	PlusCircleFilled,
 	DeleteOutlined,
 } from "@ant-design/icons";
-import { LANGUAGES, MENTEE_DEFAULT_VIDEO_NAME } from "../utils/consts";
+import {
+	LANGUAGES,
+	MENTEE_DEFAULT_VIDEO_NAME,
+	SPECIALIZATIONS,
+} from "../utils/consts";
 import { editMenteeProfile, uploadMenteeImage } from "../utils/api";
 import { getMenteeID } from "../utils/auth.service";
 import moment from "moment";
@@ -36,6 +40,7 @@ function MenteeProfileModal(props) {
 	const [email, setEmail] = useState(null);
 	const [languages, setLanguages] = useState(null);
 	const [organization, setOrganization] = useState(null);
+	const [specializations, setSpecializations] = useState(null);
 	const [educations, setEducations] = useState([]);
 	const [videoUrl, setVideoUrl] = useState();
 	const [image, setImage] = useState(null);
@@ -57,6 +62,8 @@ function MenteeProfileModal(props) {
 			setImage(props.mentee.image);
 			setLanguages(props.mentee.languages);
 			setOrganization(props.mentee.organization);
+			setSpecializations(props.mentee.specializations);
+
 			// Deep copy of array of objects
 			const newEducation = props.mentee.education
 				? JSON.parse(JSON.stringify(props.mentee.education))
@@ -223,6 +230,16 @@ function MenteeProfileModal(props) {
 		}
 
 		setLocation(location);
+	}
+	function handleSpecializationsChange(e) {
+		let specializationsSelected = [];
+		e.forEach((value) => specializationsSelected.push(value));
+		setSpecializations(specializationsSelected);
+		setEdited(true);
+
+		let newValid = [...isValid];
+		newValid[99] = !!specializationsSelected.length;
+		setIsValid(newValid);
 	}
 
 	function handleAgeChange(e) {
@@ -413,6 +430,7 @@ function MenteeProfileModal(props) {
 			gender: gender,
 			phone: phone,
 			email: email,
+			specializations: specializations,
 			education: educations,
 			languages: languages,
 			organization: organization,
@@ -501,7 +519,7 @@ function MenteeProfileModal(props) {
 							<ModalInput
 								style={styles.modalInput}
 								type="text"
-								title="Name *"
+								title="Full Name *"
 								clicked={inputClicked[0]}
 								index={0}
 								handleClick={handleClick}
@@ -582,6 +600,21 @@ function MenteeProfileModal(props) {
 								options={LANGUAGES}
 								value={languages}
 								valid={isValid[7]}
+								validate={validate}
+							/>
+						</div>
+						<div className="modal-input-container">
+							<ModalInput
+								style={styles.modalInput}
+								type="dropdown-multiple"
+								title="Areas of interest"
+								clicked={inputClicked[99]}
+								index={99}
+								handleClick={handleClick}
+								onChange={handleSpecializationsChange}
+								options={SPECIALIZATIONS}
+								value={specializations}
+								valid={isValid[99]}
 								validate={validate}
 							/>
 						</div>

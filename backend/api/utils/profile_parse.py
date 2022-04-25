@@ -1,3 +1,4 @@
+from api.models.PartnerProfile import PartnerProfile
 from bson import ObjectId
 from api.core import logger
 from api.models import db, Education, Video, MentorProfile, MenteeProfile, Image
@@ -19,8 +20,28 @@ def new_profile(data: dict = {}, profile_type: int = -1):
         return None
 
     new_profile = None
+    if profile_type==Account.PARTNER:
+        new_profile = PartnerProfile(
+            firebase_uid=data["firebase_uid"],
+            email=data["email"],
+            organization=data["organization"],
+            location=data["location"],
+            regions=data["regions"],
+            intro=data["intro"],
+            open_grants=data.get('open_grants'),
+            open_projects=data.get('open_projects'),
+            topics=data.get('topics'),
+            sdgs=data.get('sdgs'),
+            email_notifications=data.get("email_notifications", True),
+            text_notifications=data.get("text_notifications", False),
+            
+        )
+        new_profile.website = data.get("website")
+        new_profile.linkedin = data.get("linkedin")
+        new_profile.person_name=data.get('person_name')
+        return new_profile
 
-    if profile_type == Account.MENTOR:
+    elif profile_type == Account.MENTOR:
         new_profile = MentorProfile(
             firebase_uid=data["firebase_uid"],
             name=data["name"],
@@ -121,6 +142,9 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.offers_in_person = data.get(
             "offers_in_person", profile.offers_in_person
         )
+        profile.taking_appointments = data.get(
+        "taking_appointments", profile.taking_appointments
+        )
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.website = data.get("website", profile.website)
         if "video" in data:
@@ -148,6 +172,8 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.gender = data.get("gender", profile.gender)
         profile.organization = data.get("organization", profile.organization)
         profile.is_private = data.get("is_private", profile.is_private)
+        profile.specializations = data.get("specializations", profile.specializations)
+
 
         if "video" in data:
             video_data = data.get("video")
@@ -164,9 +190,6 @@ def edit_profile(data: dict = {}, profile: object = None):
     profile.phone_number = data.get("phone_number", profile.phone_number)
     profile.languages = data.get("languages", profile.languages)
     profile.biography = data.get("biography", profile.biography)
-    profile.taking_appointments = data.get(
-        "taking_appointments", profile.taking_appointments
-    )
     profile.text_notifications = data.get(
         "text_notifications", profile.text_notifications
     )

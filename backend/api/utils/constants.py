@@ -29,6 +29,13 @@ ADMIN_ROLE = "admin"
 PARTNER_ROLE="partner"
 
 # Account types
+NEW_APPLICATION_STATUS = {
+	'PENDING': "PENDING",
+	'APPROVED': "APPROVED",
+	'BUILDPROFILE': "BuildProfile",
+	'COMPLETED': "COMPLETED",
+	'REJECTED': "REJECTED",
+}
 
 
 class Account(Enum):

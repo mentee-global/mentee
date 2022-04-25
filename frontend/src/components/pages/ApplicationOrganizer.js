@@ -4,36 +4,40 @@ import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { fetchApplications, updateApplicationById } from "../../utils/api";
 import MentorApplicationView from "../MentorApplicationView";
-import { APP_STATUS } from "../../utils/consts";
+import { APP_STATUS, NEW_APPLICATION_STATUS } from "../../utils/consts";
 import useAuth from "utils/hooks/useAuth";
 
 const { confirm } = Modal;
 
-function ApplicationOrganizer() {
+function ApplicationOrganizer({ isMentor }) {
 	const { onAuthStateChanged } = useAuth();
 	const [applicationData, setApplicationData] = useState([]);
 	const [columns, setColumns] = useState({
 		[1]: {
-			name: "Pending",
+			name: NEW_APPLICATION_STATUS.PENDING,
 			items: [],
 		},
 		[2]: {
-			name: "Reviewed",
+			name: NEW_APPLICATION_STATUS.APPROVED,
 			items: [],
 		},
 		[3]: {
-			name: "Rejected",
+			name: NEW_APPLICATION_STATUS.BUILDPROFILE,
 			items: [],
 		},
 		[4]: {
-			name: "Offer Made",
+			name: NEW_APPLICATION_STATUS.COMPLETED,
+			items: [],
+		},
+		[5]: {
+			name: NEW_APPLICATION_STATUS.REJECTED,
 			items: [],
 		},
 	});
 
 	useEffect(() => {
 		const getAllApplications = async () => {
-			const applications = await fetchApplications();
+			const applications = await fetchApplications(isMentor);
 			if (applications) {
 				const newApplications = applications.mentor_applications.map(
 					(app, index) => {
@@ -53,24 +57,64 @@ function ApplicationOrganizer() {
 	useEffect(() => {
 		setColumns({
 			[1]: {
-				name: "Pending",
-				items: filterApplications(APP_STATUS.PENDING),
+				name: NEW_APPLICATION_STATUS.PENDING,
+				items: filterApplications(NEW_APPLICATION_STATUS.PENDING),
 			},
 			[2]: {
-				name: "Reviewed",
-				items: filterApplications(APP_STATUS.REVIEWED),
+				name: NEW_APPLICATION_STATUS.APPROVED,
+				items: filterApplications(NEW_APPLICATION_STATUS.APPROVED),
 			},
 			[3]: {
-				name: "Rejected",
-				items: filterApplications(APP_STATUS.REJECTED),
+				name: NEW_APPLICATION_STATUS.BUILDPROFILE,
+				items: filterApplications(NEW_APPLICATION_STATUS.BUILDPROFILE),
 			},
 			[4]: {
-				name: "Offer Made",
-				items: filterApplications(APP_STATUS.OFFER_MADE),
+				name: NEW_APPLICATION_STATUS.COMPLETED,
+				items: filterApplications(NEW_APPLICATION_STATUS.COMPLETED),
+			},
+			[5]: {
+				name: NEW_APPLICATION_STATUS.REJECTED,
+				items: filterApplications(NEW_APPLICATION_STATUS.REJECTED),
 			},
 		});
 	}, [applicationData]);
 
+	const updateApps = async () => {
+		const applications = await fetchApplications(isMentor);
+		if (applications) {
+			const newApplications = applications.mentor_applications.map(
+				(app, index) => {
+					return {
+						...app,
+						index: index,
+					};
+				}
+			);
+			setApplicationData(newApplications);
+			setColumns({
+				[1]: {
+					name: NEW_APPLICATION_STATUS.PENDING,
+					items: filterApplications(NEW_APPLICATION_STATUS.PENDING),
+				},
+				[2]: {
+					name: NEW_APPLICATION_STATUS.APPROVED,
+					items: filterApplications(NEW_APPLICATION_STATUS.APPROVED),
+				},
+				[3]: {
+					name: NEW_APPLICATION_STATUS.BUILDPROFILE,
+					items: filterApplications(NEW_APPLICATION_STATUS.BUILDPROFILE),
+				},
+				[4]: {
+					name: NEW_APPLICATION_STATUS.COMPLETED,
+					items: filterApplications(NEW_APPLICATION_STATUS.COMPLETED),
+				},
+				[5]: {
+					name: NEW_APPLICATION_STATUS.REJECTED,
+					items: filterApplications(NEW_APPLICATION_STATUS.REJECTED),
+				},
+			});
+		}
+	};
 	/**
 	 * Filters application by application state and items stored in the corresponding named columns
 	 */
@@ -83,11 +127,10 @@ function ApplicationOrganizer() {
 			)
 			.map((application) => ({
 				id: application._id.$oid,
-				content:
-					"Name: " +
-					application.name +
-					" Specializations: " +
-					application.specializations,
+				content: {
+					name: `Name: ${application.name}`,
+					email: `Email: ${application.email}`,
+				},
 				...application,
 			}));
 	}
@@ -106,7 +149,7 @@ function ApplicationOrganizer() {
 					const data = {
 						application_state: name,
 					};
-					await updateApplicationById(data, id);
+					await updateApplicationById(data, id, isMentor);
 				}
 				updateApplication();
 			},
@@ -177,7 +220,14 @@ function ApplicationOrganizer() {
 	};
 
 	return (
-		<div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
+		<div
+			style={{
+				display: "flex",
+				justifyContent: "center",
+				height: "100%",
+				overflowX: "auto",
+			}}
+		>
 			<DragDropContext
 				onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
 			>
@@ -230,7 +280,12 @@ function ApplicationOrganizer() {
 																			...provided.draggableProps.style,
 																		}}
 																	>
-																		<MentorApplicationView data={item} />
+																		<MentorApplicationView
+																			data={item}
+																			handleApp={updateApps}
+																			isMentor={isMentor}
+																			isNew={item.hasOwnProperty("identify")}
+																		/>
 																	</div>
 																);
 															}}

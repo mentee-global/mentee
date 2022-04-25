@@ -19,15 +19,16 @@ import MentorApplication from "./MentorApplication";
 import MenteeApplication from "./MenteeApplication";
 import PartnerApplication from "./PartnerApplication";
 import TrainingList from "components/TrainingList";
-import BuildProfile from "components/BuildProfile";
 import MentorProfileForm from "./MentorProfileForm";
+import MenteeProfileForm from "./MenteeProfileForm";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
 import { AccountBookFilled } from "@ant-design/icons";
+import PartnerProfileForm from "components/PartnerProfileForm";
 
 const Apply = () => {
 	const [email, setEmail] = useState("");
-	const [role, setRole] = useState(null);
+	const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
 	const [isapply, setIsApply] = useState(true);
 	const [confirmApply, setConfirmApply] = useState(false);
 	const [approveApply, setApproveApply] = useState(false);
@@ -37,6 +38,8 @@ const Apply = () => {
 	const [err, seterr] = useState(false);
 	const [err2, seterr2] = useState(false);
 	const [ishavee, setishavee] = useState(false);
+	const [isProfile, setIsprofile] = useState(null);
+	const [isVerify, setIsVerify] = useState(null);
 	const history = useHistory();
 	const location = useLocation();
 
@@ -57,27 +60,45 @@ const Apply = () => {
 	useEffect(() => {
 		async function checkConfirmation() {
 			if (role) {
-				if (email.length > 7) {
-					const { isHave, isHaveProfile } = await isHaveAccount(email, role);
-					console.log(isHave, isHaveProfile);
+				if (email.length > 12) {
+					const { isHave, isHaveProfile, isVerified } = await isHaveAccount(
+						email,
+						role
+					);
+					setIsVerify(isVerified);
 					if (isHave == true && isHaveProfile == true) {
+						setIsprofile(true);
 						setishavee(true);
 						setTimeout(() => {
 							history.push("/login");
 						}, 2000);
 						return;
 					} else if (isHave == true && isHaveProfile == false) {
+						setIsprofile(false);
+						setishavee(true);
 						setIsApply(false);
 						setIstrain(false);
 						setIsBuild(true);
 						setApproveTrainning(true);
 						return;
 					}
-					if (role == ACCOUNT_TYPE.PARTNER) {
+					if (role == ACCOUNT_TYPE.PARTNER && isVerified) {
 						setIsApply(false);
 						setIstrain(false);
 						setIsBuild(true);
 						setApproveTrainning(true);
+						return;
+					}
+					if (role == ACCOUNT_TYPE.PARTNER && !isVerified) {
+						setIsApply(false);
+						setIstrain(false);
+						setIsBuild(false);
+						return;
+					}
+					if (role != ACCOUNT_TYPE.PARTNER && isVerified) {
+						setIsApply(false);
+						setIstrain(false);
+						setIsBuild(true);
 						return;
 					}
 					const state = await getAppState(email, role);
@@ -134,7 +155,7 @@ const Apply = () => {
 					}}
 				/>
 			</div>
-			{ishavee && (
+			{ishavee && isProfile == true && (
 				<p className="error">
 					You Already have account you will be redirect to login page
 				</p>
@@ -195,19 +216,9 @@ const Apply = () => {
 				{isapply ? (
 					<div className="applypart">
 						{!approveApply && confirmApply ? (
-							<h1>
+							<h1 className="applymessage">
 								Thank you for applying! Your application will be reviewed and
 								you will be contacted shortly.
-								<button
-									onClick={(e) => {
-										setApproveApply(true);
-										setConfirmApply(false);
-										setIsApply(false);
-										setIstrain(true);
-									}}
-								>
-									approve from here for test
-								</button>
 							</h1>
 						) : (
 							<>
@@ -234,15 +245,6 @@ const Apply = () => {
 								) : (
 									""
 								)}
-								{!approveApply && role === ACCOUNT_TYPE.PARTNER ? (
-									<PartnerApplication
-										submitHandler={submitHandler}
-										role={ACCOUNT_TYPE.PARTNER}
-										headEmail={email}
-									></PartnerApplication>
-								) : (
-									""
-								)}
 							</>
 						)}
 					</div>
@@ -259,8 +261,12 @@ const Apply = () => {
 				)}
 				{isbuild ? (
 					<div className="buildpart">
-						{role === ACCOUNT_TYPE.PARTNER ? (
-							<BuildProfile role={role} headEmail={email} />
+						{role === ACCOUNT_TYPE.PARTNER && isVerify ? (
+							<PartnerProfileForm
+								role={role}
+								headEmail={email}
+								isHave={ishavee}
+							/>
 						) : (
 							""
 						)}
@@ -270,6 +276,15 @@ const Apply = () => {
 								role={role}
 								isHave={ishavee}
 							></MentorProfileForm>
+						) : (
+							""
+						)}
+						{role === ACCOUNT_TYPE.MENTEE ? (
+							<MenteeProfileForm
+								headEmail={email}
+								role={role}
+								isHave={ishavee}
+							></MenteeProfileForm>
 						) : (
 							""
 						)}
@@ -283,7 +298,7 @@ const Apply = () => {
 						className={`applySubmit2 ${istrain ? "" : " hide"}`}
 						onClick={async () => {
 							let state = await changeStateBuildProfile(email, role);
-							if ((state = "BuildProfile")) {
+							if (state == "BuildProfile") {
 								setIsApply(false);
 								setIsBuild(true);
 								setIstrain(false);

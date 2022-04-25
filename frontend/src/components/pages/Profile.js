@@ -189,7 +189,7 @@ function Profile() {
 								<ProfileContent
 									mentor={user}
 									isMentor={isMentor}
-									accountType={isMentor && ACCOUNT_TYPE.MENTOR}
+									accountType={role}
 									handleSaveEdits={handleSaveEdits}
 									showEditBtn={
 										user &&

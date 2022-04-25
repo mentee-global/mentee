@@ -22,6 +22,7 @@ function Navigation(props) {
 	);
 	const {
 		isAdmin,
+		isMentor,
 		isMentee,
 		isPartner,
 		onAuthUpdate,
@@ -42,9 +43,9 @@ function Navigation(props) {
 			<Layout className="navigation-layout">
 				{props.needsAuth && !props.ignoreSidebar ? (
 					<Layout>
-						{permissions === ACCOUNT_TYPE.ADMIN ? (
+						{isAdmin ? (
 							<AdminSidebar selectedPage={props.page} />
-						) : permissions === ACCOUNT_TYPE.MENTOR ? (
+						) : isMentor ? (
 							<MentorSidebar selectedPage={props.page} />
 						) : (
 							<MenteeSideBar selectedPage={props.page} />

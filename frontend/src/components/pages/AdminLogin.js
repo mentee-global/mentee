@@ -27,11 +27,16 @@ const Logins = Object.freeze({
 		type: ACCOUNT_TYPE.PARTNER,
 		redirect: "/partner-page",
 	},
+	admin: {
+		title: "Admin",
+		type: ACCOUNT_TYPE.ADMIN,
+		redirect: "/account-data",
+	},
 });
 const getRoleObject = (key) => {
 	return { ...Logins[key] };
 };
-function Login() {
+function AdminLogin() {
 	const history = useHistory();
 	const location = useLocation();
 	const dispatch = useDispatch();
@@ -48,7 +53,7 @@ function Login() {
 	const [loggingIn, setLoggingIn] = useState(false);
 	const [permissions, setPermissions] = usePersistedState(
 		"permissions",
-		ACCOUNT_TYPE.MENTEE
+		ACCOUNT_TYPE.ADMIN
 	);
 
 	const handleDisplayImages = () => {
@@ -61,79 +66,46 @@ function Login() {
 			console.log(RoleObj);
 			setLoggingIn(true);
 			setLoading(true);
-			const { isHaveProfile, rightRole } = await isHaveProfilee(
-				email,
-				RoleObj.type
-			);
-			if (rightRole) {
-				if (rightRole !== RoleObj.type) {
-					setErrorMessage("wrong Role please choose account right Role");
-					setError(true);
-					setLoading(false);
-					return;
-					//return wrong Role
-				}
-			} else {
-				setError(false);
-				const { isHave } = await isHaveAccount(email, RoleObj.type);
-				if (isHaveProfile == false && isHave == true) {
-					//redirect to apply with role and email passed
-					history.push({
-						pathname: "/application-page",
-						state: { email: email, role: RoleObj.type },
-					});
-					return;
-				} else if (isHaveProfile == false && isHave == false) {
+			setError(false);
+			const res = await login(email, password, RoleObj.type);
+			console.log(res?.result);
+			setLoading(false);
+
+			if (!res || !res.success) {
+				if (res?.data?.result?.existingEmail) {
+					setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+				} else {
 					setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
-					setError(true);
-					return;
-				} else if (isHaveProfile == true) {
-					setError(false);
-					const res = await login(email, password, RoleObj.type);
-					console.log(res?.result);
-					setLoading(false);
-
-					if (!res || !res.success) {
-						if (res?.data?.result?.existingEmail) {
-							setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
-						} else {
-							setErrorMessage(
-								LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
-							);
-						}
-						setError(true);
-					} else if (res.result.passwordReset) {
-						setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
-						setError(true);
-					} else if (res.result.recreateAccount) {
-						setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
-						setError(true);
-					}
-					setPermissions(RoleObj.type);
-					const unsubscribe = firebase
-						.auth()
-						.onAuthStateChanged(async (user) => {
-							unsubscribe();
-							if (!user) return;
-
-							if (res.result.redirectToVerify) {
-								await sendVerificationEmail(email);
-								history.push("/verify");
-							} else {
-								dispatch(
-									fetchUser({
-										id: res.result.profileId,
-										role: res.result.role,
-									})
-								);
-								history.push(RoleObj.redirect);
-							}
-						});
-
-					setLoggingIn(false);
-					setroleObject(RoleObj);
 				}
+				setError(true);
+			} else if (res.result.passwordReset) {
+				setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
+				setError(true);
+			} else if (res.result.recreateAccount) {
+				setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
+				setError(true);
 			}
+			setPermissions(RoleObj.type);
+			const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+				unsubscribe();
+				if (!user) return;
+
+				if (res.result.redirectToVerify) {
+					await sendVerificationEmail(email);
+					history.push("/verify");
+				} else {
+					dispatch(
+						fetchUser({
+							id: res.result.profileId,
+							role: Number(res.result.role),
+						})
+					);
+					history.push(RoleObj.redirect);
+				}
+			});
+
+			setLoggingIn(false);
+			setroleObject(RoleObj);
 		}
 	};
 	function handleInputFocus(index) {
@@ -183,25 +155,6 @@ function Login() {
 							placeholder="Password"
 						/>
 					</div>
-					{/*
-							<div className="account-help-container">
-								<div className="account-link">
-									Don't Have an account?{" "}
-									<NavLink to={`/register`} className="login-register-link">
-										Register
-									</NavLink>
-								</div>
-								<div className="account-link">
-									<div>Forgot password?</div>
-									<NavLink
-										to="/forgot-password"
-										className="login-register-link"
-									>
-										Reset it
-									</NavLink>
-								</div>
-							</div>
-						*/}
 				</div>
 			</div>
 			{error && <h1 className="login-error">{errorMessage}</h1>}
@@ -210,9 +163,10 @@ function Login() {
 				displaySelect={displaySelect}
 				handleDisplayImages={handleDisplayImages}
 				handleSelect={handleSelect}
+				isAdmin={true}
 			></SelectLogin>
 		</div>
 	);
 }
 
-export default Login;
+export default AdminLogin;

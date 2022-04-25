@@ -1,6 +1,7 @@
+from email.mime import application
 from flask import Blueprint, request, jsonify
 from sqlalchemy import false, null
-from api.models import MentorApplication, VerifiedEmail,Users,MenteeApplication,PartnerApplication,MenteeProfile,MentorProfile,NewProfile
+from api.models import NewMentorApplication, VerifiedEmail,Users,MenteeApplication,PartnerApplication,MenteeProfile,MentorProfile,PartnerProfile,MentorApplication
 from api.core import create_response, serialize_list, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import (
@@ -8,8 +9,9 @@ from api.utils.constants import (
     MENTOR_APP_OFFER,
     MENTOR_APP_SUBMITTED,
     MENTOR_APP_REJECTED,
+    NEW_APPLICATION_STATUS,
 )
-from api.utils.request_utils import send_email, is_invalid_form, MentorApplicationForm,MenteeApplicationForm,PartnerApplicationForm
+from api.utils.request_utils import send_email, is_invalid_form,send_email_html, MentorApplicationForm,MenteeApplicationForm,PartnerApplicationForm
 from api.utils.constants import Account
 from firebase_admin import auth as firebase_admin_auth
 apply = Blueprint("apply", __name__)
@@ -17,13 +19,32 @@ apply = Blueprint("apply", __name__)
 # GET request for all mentor applications
 
 
-@apply.route("/apps", methods=["GET"])
+@apply.route("/", methods=["GET"])
 @admin_only
 def get_applications():
-    application = MentorApplication.objects.only(
-        "name","id", "application_state"
+    new_application = NewMentorApplication.objects.only(
+        "name","id", "application_state","email","identify"
+    )
+
+    old_application=MentorApplication.objects.only( 
+        "name","id", "application_state","email"
+    )
+
+
+    application = [y for x in [new_application, old_application] for y in x]
+    return create_response(data={"mentor_applications": application})
+
+@apply.route("/menteeApps", methods=["GET"])
+@admin_only
+def get_mentee_applications():
+    application = MenteeApplication.objects.only(
+        "name","id", "application_state","email"
     )
     return create_response(data={"mentor_applications": application})
+
+
+
+
 
 
 # GET request for mentor applications for by id
@@ -31,22 +52,46 @@ def get_applications():
 @admin_only
 def get_application_by_id(id):
     try:
-        application = MentorApplication.objects.get(id=id)
+        application = NewMentorApplication.objects.get(id=id)
     except:
-        msg = "No application currently exist with this id " + id
-        logger.info(msg)
-        return create_response(status=422, message=msg)
+        try:
 
-    return create_response(data={"mentor_application": application})
+            application=MentorApplication.objects.get(id=id)
+            return create_response(data={"mentor_application": application,'type':'old'})
+        except:
+            msg = "No application currently exist with this id " + id
+            logger.info(msg)
+            return create_response(status=200, message=msg)
+
+    return create_response(data={"mentor_application": application,'type':'new'})
+
+# GET request for mentee applications for by id
+@apply.route("/mentee/<id>", methods=["GET"])
+@admin_only
+def get_application_mentee_by_id(id):
+    try:
+        application = MenteeApplication.objects.get(id=id)
+    except:
+            msg = "No application currently exist with this id " + id
+            logger.info(msg)
+            return create_response(status=200, message=msg)
+
+    return create_response(data={"mentor_application": application})    
 ####################################################################################
 @apply.route('/checkHaveAccount/<email>/<role>',methods=['GET'])
 def get_is_has_Account(email,role):
     role=int(role)
     application=null
+    isVerified=null
+    try:
+        email=VerifiedEmail.objects.get(email=email,role=str(role))
+        isVerified=True
+    except:
+        isVerified=False
     try:
         user = firebase_admin_auth.get_user_by_email(email)
     except:
-        return create_response(data={'isHave':False})
+        return create_response(data={'isHave':False,'isVerified':isVerified})
 
     try:
         if role==Account.MENTOR:
@@ -54,15 +99,15 @@ def get_is_has_Account(email,role):
         if role==Account.MENTEE:
              application = MenteeProfile.objects.get(email=email)
         if role==Account.PARTNER:
-             application = NewProfile.objects.get(email=email)  
+             application = PartnerProfile.objects.get(email=email)  
 
                 
     except:
         msg = "No application currently exist with this email " + email
         logger.info(msg)
-        return create_response(data={'isHaveProfile':False,'isHave':True,'message':msg})
+        return create_response(data={'isHaveProfile':False,'isHave':True,'message':msg,'isVerified':isVerified})
 
-    return create_response(data={'isHave':True,'isHaveProfile':True})    
+    return create_response(data={'isHave':True,'isHaveProfile':True,'isVerified':isVerified})    
 
 ############################################################################################
 
@@ -70,11 +115,12 @@ def get_is_has_Account(email,role):
 def get_application_by_email(email,role):
     role=int(role)
     application=null
-
-
     try:
         if role==Account.MENTOR:
-             application = MentorApplication.objects.get(email=email)
+            try:
+                application = NewMentorApplication.objects.get(email=email)
+            except:
+                application =MentorApplication.objects.get(email=email)    
         if role==Account.MENTEE:
              application = MenteeApplication.objects.get(email=email)
         if role==Account.PARTNER:
@@ -93,14 +139,13 @@ def isHaveprofile_existing_account(email,role):
     role=int(role)
     application=null
 
-
     try:
         if role==Account.MENTOR:
              application = MentorProfile.objects.get(email=email)
         if role==Account.MENTEE:
              application = MenteeProfile.objects.get(email=email)
         if role==Account.PARTNER:
-             application = NewProfile.objects.get(email=email)  
+             application = PartnerProfile.objects.get(email=email)  
 
                 
     except:
@@ -117,7 +162,7 @@ def isHaveprofile_existing_account(email,role):
 
             except:
                 try:
-                    application = NewProfile.objects.get(email=email)
+                    application = PartnerProfile.objects.get(email=email)
                     rightRole=Account.PARTNER
                     return create_response(data={'isHaveProfile':False,'rightRole':rightRole.value})
 
@@ -134,7 +179,10 @@ def changestatetobuildprofile(email,role):
     role=int(role)
     try:
         if role==Account.MENTOR:
-             application = MentorApplication.objects.get(email=email)
+            try:
+                application = NewMentorApplication.objects.get(email=email)
+            except:
+                application =MentorApplication.objects.get(email=email)    
         if role==Account.MENTEE:
              application = MenteeApplication.objects.get(email=email)
         if role==Account.PARTNER:
@@ -143,17 +191,30 @@ def changestatetobuildprofile(email,role):
         msg = "No application currently exist with this email " + email
         logger.info(msg)
         return create_response(data={'state':"",'message':msg})
-        
-    application['application_state']="BuildProfile"
-    application.save()
-    return create_response(data={"state":application.application_state})
+    if  application['application_state']==NEW_APPLICATION_STATUS['APPROVED']:
+        application['application_state']=NEW_APPLICATION_STATUS['BUILDPROFILE']
+        application.save()
+        success, msg = send_email_html(
+            recipient=application['email'],
+            subject="Congratulation for completing training",
+            html_content="<h1>Congratulation for complete Mentee training now you can build your profile to complete apply process</h1>"
+        )
+        if not success:
+            logger.info(msg)
 
+        return create_response(data={"state":application.application_state})
+    else:
+        return create_response(data={"state":application.application_state})
+    
 # DELETE request for mentor application by object ID
 @apply.route("/<id>", methods=["DELETE"])
 @admin_only
 def delete_application(id):
     try:
-        application = MentorApplication.objects.get(id=id)
+        try:
+            application = NewMentorApplication.objects.get(id=id)
+        except:
+            application = MentorApplication.objects.get(id=id)
     except:
         msg = "The application you attempted to delete was not found"
         logger.info(msg)
@@ -164,89 +225,79 @@ def delete_application(id):
 
 
 # PUT requests for /application by object ID
-@apply.route("/<id>", methods=["PUT"])
+@apply.route("/<id>/<role>", methods=["PUT"])
 @admin_only
-def edit_application(id):
+def edit_application(id,role):
     data = request.get_json()
+    role =int(role)
     logger.info(data)
     # Try to retrieve Mentor application from database
-    try:
-        application = MentorApplication.objects.get(id=id)
-    except:
-        msg = "No application with that object id"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
+    if role ==Account.MENTOR:
 
-    # Edit fields or keep original data if no added data
-    application.name = data.get("name", application.name)
-    application.email = data.get("email", application.email)
-    application.business_number = data.get(
-        "business_number", application.business_number
-    )
-    application.cell_number = data.get("cell_number", application.cell_number)
-    application.hear_about_us = data.get("hear_about_us", application.hear_about_us)
-    application.offer_donation = data.get("offer_donation", application.offer_donation)
-    application.mentoring_options = data.get(
-        "mentoring_options", application.mentoring_options
-    )
-    application.employer_name = data.get("employer_name", application.employer_name)
-    application.role_description = data.get(
-        "role_description", application.role_description
-    )
-    application.time_at_current_company = data.get(
-        "time_at_current_company", application.time_at_current_company
-    )
-    application.linkedin = data.get("linkedin", application.linkedin)
-    application.why_join_mentee = data.get(
-        "why_join_mentee", application.why_join_mentee
-    )
-    application.commit_time = data.get("commit_time", application.commit_time)
-    application.referral = data.get("referral", application.referral)
-    application.knowledge_location = data.get(
-        "knowledge_location", application.knowledge_location
-    )
+        try:
+            try:
+                application = NewMentorApplication.objects.get(id=id)
+            except:
+                application = MentorApplication.objects.get(id=id)
+        except:
+            msg = "No application with that object id"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+    if role ==Account.MENTEE:
+        try:
+            application = MenteeApplication.objects.get(id=id)
+        except:
+            msg = "No application with that object id"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+
+
+  
     application.application_state = data.get(
-        "application_state", application.application_state
-    )
-    application.immigrant_status = data.get(
-        "immigrant_status", application.immigrant_status
-    )
-    application.work_sectors = data.get("work_sectors", application.work_sectors)
-    application.specializations = data.get(
-        "specializations", application.specializations
-    )
-    application.languages = data.get("languages", application.languages)
-    application.date_submitted = data.get("date_submitted", application.date_submitted)
+        "application_state", application.application_state)
     application.notes = data.get("notes", application.notes)
-
     application.save()
 
     # Send a notification email
-    if application.application_state == MENTOR_APP_STATES["OFFER_MADE"]:
+    if application.application_state == NEW_APPLICATION_STATUS['APPROVED']:
         mentor_email = application.email
-        success, msg = send_email(
+        success, msg = send_email_html(
             recipient=mentor_email,
-            subject="MENTEE Application Status",
-            template_id=MENTOR_APP_OFFER,
+            subject="MENTEE Application has been approved",
+            html_content="<h1>MENTEE Application has been approved you can now start your training</h1>"
         )
         if not success:
             logger.info(msg)
 
+
         # Add to verified emails
-        if not VerifiedEmail.objects(email=mentor_email):
-            new_verified = VerifiedEmail(email=mentor_email, is_mentor=True)
-            new_verified.save()
 
     # send out rejection emails when put in rejected column
-    if application.application_state == MENTOR_APP_STATES["REJECTED"]:
+    if application.application_state == NEW_APPLICATION_STATUS['REJECTED']:
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
             subject="Thank you for your interest in Mentee, " + application.name,
             template_id=MENTOR_APP_REJECTED,
         )
+    if application.application_state == NEW_APPLICATION_STATUS['COMPLETED']:
+        mentor_email = application.email
+        success, msg = send_email_html(
+            recipient=mentor_email,
+            subject="Your account have been successfully Created " + application.name,
+            html_content="<h1>Your Mentee account has been successfully Created you can now login to Mentee</h1>"
+        )    
         if not success:
             logger.info(msg)
+    if application.application_state == NEW_APPLICATION_STATUS['BUILDPROFILE']:
+        mentor_email = application.email
+        success, msg = send_email_html(
+            recipient=mentor_email,
+            subject="Congratulation for completing training",
+            html_content="<h1>Congratulation for complete Mentee  training now you can build your profile to complete apply process</h1>"
+        )    
+        if not success:
+            logger.info(msg)        
 
     return create_response(status=200, message=f"Success")
 
@@ -256,6 +307,7 @@ def edit_application(id):
 def create_application():
     data = request.get_json()
     role = data.get("role")
+
     if role==Account.MENTOR:
         validate_data = MentorApplicationForm.from_json(data)
     if role==Account.MENTEE:
@@ -266,7 +318,7 @@ def create_application():
     if is_invalid:
         return create_response(status=422, message=msg)
     if role==Account.MENTOR:
-        new_application = MentorApplication(
+        new_application = NewMentorApplication(
             name=data.get("name"),
             email=data.get("email"),
             cell_number=data.get("cell_number"),
@@ -287,6 +339,7 @@ def create_application():
             date_submitted=data.get("date_submitted"),
             application_state="PENDING",
         )
+    
     if role==Account.MENTEE:
         new_application=MenteeApplication(
             email=data.get("email"),
@@ -303,26 +356,13 @@ def create_application():
             application_state="PENDING",
             date_submitted=data.get("date_submitted"),
         )
-    if role==Account.PARTNER:
-        new_application=PartnerApplication(
-            email=data.get("email"),
-            organization=data.get("organization"),
-            contanctPerson=data.get("contanctPerson"),
-            personEmail=data.get("personEmail"),
-            relationShip=data.get("relationShip"),
-            howBuild=data.get("howBuild"),
-            SDGS=data.get("SDGS"),
-            application_state="PENDING",
-            date_submitted=data.get("date_submitted"),
-        )
-
     new_application.save()
 
     mentor_email = new_application.email
     success, msg = send_email(
         recipient=mentor_email,
         subject="MENTEE Application Recieved!",
-        template_id=MENTOR_APP_SUBMITTED,
+        template_id= MENTOR_APP_SUBMITTED ,
     )
     if not success:
         logger.info(msg)

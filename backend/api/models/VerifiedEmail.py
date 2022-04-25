@@ -7,8 +7,8 @@ from mongoengine import *
 # change it if needed for other types
 class VerifiedEmail(Document, Mixin):
     email = StringField(required=True)
-    is_mentor = BooleanField(required=True)
+    role = StringField(required=True)
     password = StringField()
 
     def __repr__(self):
-        return f"<VerifiedEmail email: {self.email} is_mentor: {self.is_mentor} password: {self.password}"
+        return f"<VerifiedEmail email: {self.email} role: {self.role} password: {self.password}"

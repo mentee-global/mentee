@@ -53,6 +53,7 @@ function MentorApplication(props) {
 			title,
 			employer,
 			knowledgeLocation,
+			companyTime,
 			referral,
 			languages,
 			isFamilyNative,
@@ -299,7 +300,7 @@ function MentorApplication(props) {
 							<Radio value={"No"}>No</Radio>
 						</Radio.Group>
 					</div>
-					<div>did you grow up economically challenged?</div>
+					<div>Did you grow up economically challenged?</div>
 					<div className="input-form">
 						{isMissingError(isEconomically) && (
 							<p style={{ color: "red" }}>Please select an option.</p>
@@ -467,15 +468,17 @@ function MentorApplication(props) {
 				hear_about_us: hearAbout,
 				offer_donation: offerDonation,
 				employer_name: employer,
+				companyTime: companyTime,
 				role_description: title,
-				immigrant_status: immigrantStatus,
+				immigrant_status: immigrantStatus == "Yes" ? true : false,
 				languages: languages,
+				specialistTime: specialistTime,
 				referral: referral,
 				knowledge_location: knowledgeLocation,
-				isColorPerson: isColorPerson,
-				isMarginalized: isMarginalized,
-				isFamilyNative: isFamilyNative,
-				isEconomically: isEconomically,
+				isColorPerson: isColorPerson == "Yes" ? true : false,
+				isMarginalized: isMarginalized == "Yes" ? true : false,
+				isFamilyNative: isFamilyNative == "Yes" ? true : false,
+				isEconomically: isEconomically == "Yes" ? true : false,
 				identify: identify,
 				pastLiveLocation: pastLiveLocation,
 				date_submitted: new Date(),

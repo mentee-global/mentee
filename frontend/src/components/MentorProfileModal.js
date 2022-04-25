@@ -527,7 +527,7 @@ function MentorProfileModal(props) {
 							<ModalInput
 								style={styles.modalInput}
 								type="text"
-								title="Name *"
+								title="Full Name *"
 								clicked={inputClicked[0]}
 								index={0}
 								handleClick={handleClick}

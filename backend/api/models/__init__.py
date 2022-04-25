@@ -11,7 +11,7 @@ from .MentorProfile import MentorProfile
 from .MenteeApplication import MenteeApplication
 from .PartnerApplication import PartnerApplication
 from .AppointmentRequest import AppointmentRequest
-from .MentorApplication import MentorApplication
+from .NewMentorApplication import NewMentorApplication
 from .VerifiedEmail import VerifiedEmail
 from .MenteeProfile import MenteeProfile
 from .Message import Message
@@ -19,7 +19,8 @@ from .DirectMessage import DirectMessage
 from .Admin import Admin
 from .DirectMessage import DirectMessage
 from .Training import Training
-from .NewProfile import NewProfile
+from .PartnerProfile import PartnerProfile
+from .MentorApplication import MentorApplication
 
 __all__ = [
     "db",
@@ -31,7 +32,7 @@ __all__ = [
     "AppointmentRequest",
     "Image",
     "VerifiedEmail",
-    "MentorApplication",
+    "NewMentorApplication",
     "MenteeProfile",
     "Message",
     "DirectMessage",
@@ -40,7 +41,8 @@ __all__ = [
     "MenteeApplication",
     "PartnerApplication",
     "Training",
-    "NewProfile"
+    "PartnerProfile",
+    "MentorApplication"
 ]
 
 # You must import all of the new Models you create to this page

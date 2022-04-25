@@ -13,7 +13,7 @@ export const API_URL = BASE_URL + "api/";
 export const AUTH_URL = BASE_URL + "auth/";
 
 export const MENTEE_PROFILE = FRONT_BASE_URL + "gallery/2/";
-
+export const PARTNER_PROFILE = FRONT_BASE_URL + "gallery/3/";
 export const MENTOR_PROFILE = FRONT_BASE_URL + "gallery/1/";
 
 export const MENTEE_DEFAULT_VIDEO_NAME = "Introduction";
@@ -54,7 +54,20 @@ export const APPOINTMENT_STATUS = {
 	DENIED: "denied",
 	ACCEPTED: "accepted",
 };
-
+export const REGIONS = [
+	"N. America",
+	"Central America",
+	"S. America",
+	"Caribbean",
+	"Europe",
+	"Middle East",
+	"N. Africa",
+	"Sub-Sahara Africa",
+	"Central Asia",
+	"East Asia",
+	"South/SE Asia",
+	"Oceana",
+];
 export const LANGUAGES = [
 	"Arabic",
 	"Bengali",
@@ -158,6 +171,32 @@ export const MESSAGE_FORM_KEYS = [
 	"link",
 	"time",
 ];
+export const SDGS = [
+	"SDG 1: No poverty",
+	"SDG 2: Zero Hunger",
+	"SDG 3: Good Health & Well-being",
+	"SDG 4: Quality Education",
+	"SDG 5: Gender Equality",
+	"SDG 6: Clean Water and Sanitation",
+	"SDG 7: Affordable and Clean Energy",
+	"SDG 8: Decent Work and Economic Growth",
+	"SDG 9: Industry, Innovation and Infrastructures",
+	"SDG 10: Reduced Inequality",
+	"SDG 11: Sustainable Cities and Communities",
+	"SDG 12: Responsible Consumption and Production",
+	"SDG 13: Climate Action",
+	"SDG 14: Life Below Water",
+	"SDG 15: Life on Land",
+	"SDG 16: Peace and Justice Strong Institutions",
+	"SDG 17: Partnership to Achieve the Goals",
+];
+export const NEW_APPLICATION_STATUS = {
+	PENDING: "PENDING",
+	APPROVED: "APPROVED",
+	BUILDPROFILE: "BuildProfile",
+	COMPLETED: "COMPLETED",
+	REJECTED: "REJECTED",
+};
 
 // Error messages for login
 export const LOGIN_ERROR_MSGS = {

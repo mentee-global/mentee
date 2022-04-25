@@ -15,20 +15,20 @@ import PublicMessageModal from "./PublicMessageModal";
 import { ACCOUNT_TYPE } from "utils/consts";
 import useAuth from "utils/hooks/useAuth";
 import "./css/Profile.scss";
-import MentorContactModal from "./MentorContactModal";
 import { getMenteeID } from "utils/auth.service";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
 import { Rate, Tooltip } from "antd";
+import MentorContactModal from "./MentorContactModal";
 
 function ProfileContent(props) {
-	const { accountType } = props;
+	const { accountType, account } = props;
 	const { isMentor, isMentee, profileId } = useAuth();
 	const [mentee, setMentee] = useState();
 	const [favorite, setFavorite] = useState(false);
-
 	const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
 
 	useEffect(() => {
+		console.log(accountType);
 		async function getMentee() {
 			const mentee_id = await getMenteeID();
 			const mentee_data = await fetchMenteeByID(mentee_id);
@@ -69,6 +69,8 @@ function ProfileContent(props) {
 			return name;
 		} else if (name && age) {
 			return name + ", " + age;
+		} else {
+			return account.organization;
 		}
 	};
 
@@ -88,13 +90,31 @@ function ProfileContent(props) {
 	};
 
 	const getSpecializations = (isMentor) => {
-		if (isMentor) {
+		if (accountType == ACCOUNT_TYPE.MENTOR) {
 			return (
 				<div>
 					<div className="mentor-profile-heading">
 						<b>Specializations</b>
 					</div>
 					<div>{getSpecializationTags(props.mentor.specializations || [])}</div>
+				</div>
+			);
+		} else if (accountType == ACCOUNT_TYPE.MENTEE) {
+			return (
+				<div>
+					<div className="mentor-profile-heading">
+						<b>Areas of interest</b>
+					</div>
+					<div>{getSpecializationTags(props.mentor.specializations || [])}</div>
+				</div>
+			);
+		} else {
+			return (
+				<div>
+					<div className="mentor-profile-heading">
+						<b>Regions Work In</b>
+					</div>
+					<div>{getSpecializationTags(account?.regions || [])}</div>
 				</div>
 			);
 		}
@@ -189,6 +209,8 @@ function ProfileContent(props) {
 					)
 				)}
 			</div>
+			<br />
+
 			<div className="mentor-profile-tags-container">
 				{props.mentor.location && (
 					<span className="mentor-profile-tag">
@@ -263,23 +285,68 @@ function ProfileContent(props) {
 				)}
 			</div>
 			<br />
-			<div className="mentor-profile-heading">
-				<b>About</b>
-			</div>
-			<div className="mentor-profile-about">{props.mentor.biography}</div>
+			{accountType == ACCOUNT_TYPE.PARTNER ? (
+				<>
+					{" "}
+					<div className="mentor-profile-heading">
+						<b>Brief Introduction to Your Org/Inst/Corp</b>
+					</div>
+					<div className="mentor-profile-about">{account.intro}</div>
+				</>
+			) : (
+				<>
+					<div className="mentor-profile-heading">
+						<b>Bio</b>
+					</div>
+					<div className="mentor-profile-about">{props.mentor.biography}</div>
+				</>
+			)}
+
 			<br />
 			{getSpecializations(props.mentor.specializations)}
 			<br />
-			<div className="mentor-profile-heading">
-				<b>Education</b>
-			</div>
-			<div>{getEducations(props.mentor.education)}</div>
-			<br></br>
-			<div className="mentor-profile-heading">
-				<b>Video</b>
-			</div>
+			{accountType != ACCOUNT_TYPE.PARTNER && (
+				<>
+					<div className="mentor-profile-heading">
+						<b>Education</b>
+					</div>
+					<div>{getEducations(props.mentor.education)}</div>
+				</>
+			)}
+			<br />
+			{accountType == ACCOUNT_TYPE.PARTNER && (
+				<>
+					<div className="mentor-profile-heading">
+						<b>Contact Person's Full Name</b>
+					</div>
+					<div className="mentor-profile-about">{account.person_name}</div>
+					<br /> <br />
+					<div className="mentor-profile-heading">
+						<b>Current & Upcoming Project Topics </b>
+					</div>
+					<div className="mentor-profile-about">{account.topics}</div>
+					<br /> <br />
+					<div className="mentor-profile-heading">
+						<b>Open to Collaboration on Grants</b>
+					</div>
+					<div className="mentor-profile-about">
+						{account.open_grants ? "Yes" : "No"}
+					</div>
+					<br /> <br />
+					<div className="mentor-profile-heading">
+						<b>Open to Collaboration on Projects</b>
+					</div>
+					<div className="mentor-profile-about">
+						{account.open_projects ? "Yes" : "No"}
+					</div>
+				</>
+			)}
+
 			{props.mentor.video && (
 				<div className="mentor-profile-heading">
+					<div className="mentor-profile-heading">
+						<b>Video</b>
+					</div>
 					<LinkOutlined className="mentor-profile-tag-icon" />
 					<Tooltip
 						title={

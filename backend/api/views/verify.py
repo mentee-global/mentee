@@ -24,7 +24,7 @@ def verify_email():
         )
 
     return create_response(
-        data={"is_verified": True, "is_mentor": account.is_mentor},
+        data={"is_verified": True, "role": account.role},
         status=200,
         message="Successfully returned verification",
     )

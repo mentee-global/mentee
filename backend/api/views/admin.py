@@ -107,14 +107,14 @@ def upload_account_emailText():
         HTTP Response
     """
 
-    isMentor = request.form["isMentor"] == "true"
+    role = request.form["role"] 
     messageText = request.form["messageText"]
 
     for email in messageText.split(";"):
         email = email.replace(" ", "")
-        duplicates = VerifiedEmail.objects(email=email, is_mentor=isMentor, password="")
+        duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
         if not duplicates:
-            email = VerifiedEmail(email=email, is_mentor=isMentor, password="")
+            email = VerifiedEmail(email=email,role=str(role), password="")
             email.save()
 
     return create_response(status=200, message="success")

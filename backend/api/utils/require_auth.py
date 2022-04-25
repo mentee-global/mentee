@@ -21,7 +21,7 @@ def admin_only(fn):
             logger.info(msg)
             return create_response(status=500, message=msg)
 
-        if role == Account.ADMIN:
+        if int(role) == Account.ADMIN:
             # TODO: inject new token/role in response
             return fn(*args, **kwargs)
         else:

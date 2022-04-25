@@ -1,4 +1,5 @@
 import pandas as pd
+from api.models.PartnerProfile import PartnerProfile
 import xlsxwriter
 from datetime import datetime
 from io import BytesIO
@@ -86,6 +87,10 @@ def download_accounts_info():
             accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
         elif account_type == Account.MENTEE:
             accounts = MenteeProfile.objects(firebase_uid__nin=admin_ids)
+        elif account_type == Account.PARTNER:
+            accounts = PartnerProfile.objects(firebase_uid__nin=admin_ids)
+
+
     except:
         msg = "Failed to get accounts"
         logger.info(msg)
@@ -95,6 +100,8 @@ def download_accounts_info():
         return download_mentor_accounts(accounts)
     elif account_type == Account.MENTEE:
         return download_mentee_accounts(accounts)
+    elif account_type == Account.PARTNER:
+        return download_partner_accounts(accounts)    
 
     msg = "Invalid input"
     logger.info(msg)
@@ -118,31 +125,65 @@ def download_mentor_accounts(accounts):
         accts.append(
             [
                 acct.name,
-                acct.location,
                 acct.email,
-                acct.phone_number,
                 acct.professional_title,
                 acct.linkedin,
                 acct.website,
                 "Yes" if acct.image and acct.image.url else "No",
                 acct.image.url if acct.image else "None",
+                acct.video.url if acct.video else "None",
                 "Yes" if len(acct.videos) >= 0 else "No",
                 "|".join(educations),
                 ",".join(acct.languages),
                 ",".join(acct.specializations),
                 acct.biography,
-                int(acct.offers_in_person) if acct.offers_in_person != None else "N/A",
-                int(acct.offers_group_appointments)
-                if acct.offers_group_appointments != None
-                else "N/A",
-                ",".join(
-                    [
-                        avail.start_time.strftime("UTC: %m/%d/%Y, %H:%M:%S")
-                        + "---"
-                        + avail.end_time.strftime("UTC: %m/%d/%Y, %H:%M:%S")
-                        for avail in acct.availability
-                    ]
-                ),
+                "Yes" if acct.taking_appointments else "No",
+                "Yes" if acct.offers_in_person else "No",
+                "Yes" if acct.offers_group_appointments else "No",
+                "Yes" if acct.text_notifications else "No",
+                "Yes" if acct.email_notifications else "No",
+            ]
+        )
+    columns = [
+        "mentor Full Name",
+        "email",
+        "professional_title",
+        "linkedin",
+        "website",
+        "profile pic up",
+        "image url",
+        "video url"
+        "video(s) up",
+        "educations",
+        "languages",
+        "specializations",
+        "biography",
+        "taking_appointments",
+        "offers_in_person",
+        "offers_group_appointments",
+        "text_notifications",
+        "email_notifications",
+    ]
+    return generate_sheet("accounts", accts, columns)
+
+
+def download_partner_accounts(accounts):
+    accts = []
+
+    for acct in accounts:
+        accts.append(
+            [   
+                acct.email,
+                acct.organization,
+                acct.location,
+                acct.person_name,
+                ",".join(acct.regions),
+                acct.intro,
+                acct.website,
+                acct.linkedin,
+                acct.sdgs,
+                acct.topics,
+                acct.image.url if acct.image else "None",
                 int(acct.text_notifications)
                 if acct.text_notifications != None
                 else "N/A",
@@ -152,28 +193,21 @@ def download_mentor_accounts(accounts):
             ]
         )
     columns = [
-        "mentor name",
-        "location",
-        "email",
-        "phone_number",
-        "professional_title",
-        "linkedin",
-        "website",
-        "profile pic up",
-        "image url",
-        "video(s) up",
-        "educations",
-        "languages",
-        "specializations",
-        "biography",
-        "offers_in_person",
-        "offers_group_appointments",
-        "available times",
+        "Email",
+        "Organization/Institution/Corporation Full Name",
+        "Headquarters Location",
+        "Contact Person's Full Name",
+        "Regions Work In",
+        "Brief Introduction",
+        "Website",
+        "LinkedIn",
+        "SDGS",
+        "Project Topics",
+        "Image Url",
         "text_notifications",
         "email_notifications",
     ]
     return generate_sheet("accounts", accts, columns)
-
 
 def download_mentee_accounts(accounts):
     accts = []
@@ -200,7 +234,9 @@ def download_mentee_accounts(accounts):
                 acct.image.url if acct.image else "None",
                 "|".join(educations),
                 ",".join(acct.languages),
+                "|".join(acct.specializations),
                 acct.biography,
+                acct.organization,
                 "Yes" if acct.image and acct.image.url else "No",
                 "Yes" if acct.video else "No",
                 int(acct.text_notifications)
@@ -224,7 +260,9 @@ def download_mentee_accounts(accounts):
         "image url",
         "educations",
         "languages",
+        "Areas of interest"
         "biography",
+        "Organization Affiliation",
         "profile pic up",
         "video(s) up",
         "text_notifications",

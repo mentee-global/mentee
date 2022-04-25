@@ -106,8 +106,11 @@ export const createAccountProfile = async (profile, type, isHave) => {
 	);
 };
 
-export const fetchApplications = async () => {
-	const requestExtension = "/application/";
+export const fetchApplications = async (isMentor) => {
+	let requestExtension = "/application/";
+	if (isMentor == false) {
+		requestExtension = "/application/menteeApps";
+	}
 	return await authGet(requestExtension).then(
 		(response) => response && response.data.result,
 		(err) => {
@@ -158,8 +161,9 @@ export const isHaveAccount = async (email, role) => {
 	const res = await instance.get(requestExtension);
 	let isHave = res.data.result.isHave;
 	let isHaveProfile = res.data.result.isHaveProfile;
-	console.log(isHave, isHaveProfile);
-	return { isHave, isHaveProfile };
+	let isVerified = res.data.result.isVerified;
+	console.log(isHave, isHaveProfile, isVerified);
+	return { isHave, isHaveProfile, isVerified };
 };
 
 export const getTrainings = async () => {
@@ -326,7 +330,22 @@ export const downloadMenteesData = async () => {
 		}
 	);
 };
-
+export const downloadPartnersData = async () => {
+	const requestExtension = "/download/accounts/all";
+	return authGet(requestExtension, {
+		responseType: "blob",
+		params: {
+			account_type: ACCOUNT_TYPE.PARTNER,
+		},
+	}).then(
+		(response) => {
+			downloadBlob(response, "partner_data.xlsx");
+		},
+		(err) => {
+			console.error(err);
+		}
+	);
+};
 export const downloadAllApplicationData = async () => {
 	const requestExtension = "/download/appointments/all";
 	return authGet(requestExtension, {
@@ -385,8 +404,11 @@ export const sendMessage = (data) => {
 	);
 };
 
-export const updateApplicationById = async (data, id) => {
-	const requestExtension = `/application/${id}`;
+export const updateApplicationById = async (data, id, isMentor) => {
+	let requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTOR}`;
+	if (isMentor == false) {
+		requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
+	}
 	return await authPut(requestExtension, data).then(
 		(response) => response,
 		(err) => {
@@ -395,8 +417,11 @@ export const updateApplicationById = async (data, id) => {
 	);
 };
 
-export const getApplicationById = async (id) => {
-	const requestExtension = `/application/${id}`;
+export const getApplicationById = async (id, isMentor) => {
+	let requestExtension = `/application/${id}`;
+	if (isMentor == false) {
+		requestExtension = `/application/mentee/${id}`;
+	}
 	return authGet(requestExtension).then(
 		(response) => response.data.result.mentor_application,
 		(err) => {
@@ -422,11 +447,11 @@ export const adminUploadEmails = (file, password, isMentor) => {
 	);
 };
 
-export const adminUploadEmailsText = (messageText, isMentor) => {
+export const adminUploadEmailsText = (messageText, role) => {
 	const requestExtension = "/upload/accountsEmails";
 	let formData = new FormData();
 	formData.append("messageText", messageText);
-	formData.append("isMentor", isMentor);
+	formData.append("role", role);
 
 	return authPost(requestExtension, formData).then(
 		(response) => response,
@@ -528,6 +553,9 @@ export const createMentorProfile = async (data, isHave) => {
 
 export const createMenteeProfile = async (data) => {
 	return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE);
+};
+export const createPartnerProfile = async (data) => {
+	return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER);
 };
 
 export const editMentorProfile = async (data, id) => {

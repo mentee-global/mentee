@@ -3,114 +3,92 @@ import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
 import { Checkbox, Button } from "antd";
 import ModalInput from "../ModalInput";
-import {
-	getRegistrationStage,
-	isLoggedIn,
-	refreshToken,
-	getCurrentUser,
-	getUserEmail,
-} from "utils/auth.service";
-import { createMentorProfile, getAppState, isHaveAccount } from "utils/api";
+import { refreshToken, getCurrentUser, getUserEmail } from "utils/auth.service";
+import { createMenteeProfile, getAppState, isHaveAccount } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import {
 	LANGUAGES,
-	SPECIALIZATIONS,
-	REGISTRATION_STAGE,
 	MENTEE_DEFAULT_VIDEO_NAME,
+	AGE_RANGES,
+	SPECIALIZATIONS,
 } from "utils/consts";
-
+import { useMediaQuery } from "react-responsive";
+import moment from "moment";
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
-import { validateUrl } from "utils/misc";
-import moment from "moment";
 
-function RegisterForm(props) {
+function MenteeRegisterForm(props) {
 	const history = useHistory();
+	const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
 	const numInputs = 14;
 	const [inputClicked, setInputClicked] = useState(
 		new Array(numInputs).fill(false)
 	); // each index represents an input box, respectively
 	const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
 	const [validate, setValidate] = useState(false);
+	const [saving, setSaving] = useState(false);
 	const [error, setError] = useState(false);
 	const [name, setName] = useState(null);
-	const [title, setTitle] = useState(null);
-	const [about, setAbout] = useState(null);
-	const [inPersonAvailable, setInPersonAvailable] = useState(false);
-	const [groupAvailable, setGroupAvailable] = useState(false);
 	const [location, setLocation] = useState(null);
-	const [website, setWebsite] = useState(null);
 	const [languages, setLanguages] = useState([]);
-	const [linkedin, setLinkedin] = useState(null);
-	const [specializations, setSpecializations] = useState([]);
 	const [educations, setEducations] = useState([]);
-	const [saving, setSaving] = useState(false);
+	const [biography, setBiography] = useState();
+	const [gender, setGender] = useState();
+	const [age, setAge] = useState();
+	const [phone, setPhone] = useState();
+	const [organization, setOrganization] = useState();
+	const [privacy, setPrivacy] = useState(false);
+	const [video, setVideo] = useState();
 	const [password, setPassword] = useState(null);
 	const [confirmPassword, setConfirmPassword] = useState(null);
-	const [video, setVideo] = useState(null);
-	const [err, setErr] = useState(false);
 	const [localProfile, setLocalProfile] = useState({});
+	const [specializations, setSpecializations] = useState([]);
+	const [err, setErr] = useState(false);
 
 	useEffect(() => {
-		const mentor = JSON.parse(localStorage.getItem("mentor"));
-		if (mentor) {
+		const mentee = JSON.parse(localStorage.getItem("mentee"));
+		if (mentee) {
 			let newValid = [...isValid];
-			setLocalProfile(mentor);
-			setVideo(mentor.video);
-			setName(mentor.name);
-			if (mentor.name && mentor.name.length > 50) {
+			setLocalProfile(mentee);
+
+			setName(mentee.name);
+			if (mentee.name && mentee.name.length > 50) {
 				newValid[0] = false;
 			}
-			setAbout(mentor.biography);
-			if (mentor.biography && mentor.biography.length > 255) {
+			setSpecializations(mentee.specializations);
+			setVideo(mentee.video);
+			setPrivacy(mentee.is_private);
+
+			setBiography(mentee.biography);
+			if (mentee.biography && mentee.biography.length > 255) {
 				newValid[8] = false;
 			}
-			setLocation(mentor.location);
-			setTitle(mentor.professional_title);
-			if (mentor.professional_title && mentor.professional_title.length > 80) {
-				newValid[1] = false;
-			}
-			if (mentor.website) {
-				setWebsite(mentor.website);
-				if (!validateUrl(mentor.website)) {
-					newValid[3] = false;
-				}
-			}
-			if (mentor.linkedin) {
-				setLinkedin(mentor.linkedin);
-				if (!validateUrl(mentor.linkedin)) {
-					newValid[2] = false;
-				}
-			}
-
-			setInPersonAvailable(mentor.offers_in_person);
-			setGroupAvailable(mentor.offers_group_appointments);
-
-			setSpecializations(mentor.specializations);
-			if (mentor.specializations && mentor.specializations.length <= 0) {
+			setLocation(mentee.location);
+			if (mentee.location && mentee.location.length >= 70) {
 				newValid[9] = false;
 			}
-
-			setLanguages(mentor.languages);
-			if (mentor.languages && mentor.languages.length <= 0) {
-				newValid[7] = false;
+			setGender(mentee.gender);
+			setAge(mentee.age);
+			setLanguages(mentee.languages);
+			if (mentee.languages && mentee.languages.length <= 0) {
+				newValid[5] = false;
 			}
-			if (mentor.education) {
-				const newEducation = mentor.education
-					? JSON.parse(JSON.stringify(mentor.education))
-					: [];
-				setEducations(newEducation);
-				newEducation.forEach((education, index) => {
-					newValid = [...newValid, true, true, true, true];
-					newValid[10 + index * 4] = !!education.school;
-					newValid[10 + index * 4 + 1] = !!education.graduation_year;
-					newValid[10 + index * 4 + 2] = !!education.majors.length;
-					newValid[10 + index * 4 + 3] = !!education.education_level;
-				});
-				setIsValid(newValid);
-			}
+			setPhone(mentee.phone_number);
+			setOrganization(mentee.organization);
+			const newEducation = mentee.education
+				? JSON.parse(JSON.stringify(mentee.education))
+				: [];
+			setEducations(newEducation);
+			newEducation.forEach((education, index) => {
+				newValid = [...newValid, true, true, true, true];
+				newValid[10 + index * 4] = !!education.school;
+				newValid[10 + index * 4 + 1] = !!education.graduation_year;
+				newValid[10 + index * 4 + 2] = !!education.majors.length;
+				newValid[10 + index * 4 + 3] = !!education.education_level;
+			});
+			setIsValid(newValid);
 		}
 	}, []);
 
@@ -210,6 +188,11 @@ function RegisterForm(props) {
 		setIsValid(tempValid);
 	}
 
+	function updateLocalStorage(newLocalProfile) {
+		setLocalProfile(newLocalProfile);
+		localStorage.setItem("mentee", JSON.stringify(newLocalProfile));
+	}
+
 	function handleSchoolChange(e, index) {
 		const newEducations = [...educations];
 		let education = newEducations[index];
@@ -295,10 +278,22 @@ function RegisterForm(props) {
 		setIsValid(newValidArray);
 	};
 
+	function handleVideoChange(e) {
+		setVideo(e.target.value);
+		let newLocalProfile = { ...localProfile, video: e.target.value };
+		updateLocalStorage(newLocalProfile);
+	}
+
+	function handlePrivacyChange(e) {
+		setPrivacy(e.target.checked);
+		let newLocalProfile = { ...localProfile, is_private: e.target.checked };
+		updateLocalStorage(newLocalProfile);
+	}
+
 	function handleNameChange(e) {
 		const name = e.target.value;
 
-		if (name.length <= 50) {
+		if (name.length < 50) {
 			let newValid = [...isValid];
 
 			newValid[0] = true;
@@ -347,30 +342,10 @@ function RegisterForm(props) {
 		let newLocalProfile = { ...localProfile, password: pass };
 		updateLocalStorage(newLocalProfile);
 	}
+	function handleBiographyChange(e) {
+		const biography = e.target.value;
 
-	function handleTitleChange(e) {
-		const title = e.target.value;
-
-		if (title.length <= 80) {
-			let newValid = [...isValid];
-
-			newValid[1] = true;
-
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[1] = false;
-			setIsValid(newValid);
-		}
-		setTitle(title);
-		let newLocalProfile = { ...localProfile, professional_title: title };
-		updateLocalStorage(newLocalProfile);
-	}
-
-	function handleAboutChange(e) {
-		const about = e.target.value;
-
-		if (about.length <= 255) {
+		if (biography.length < 255) {
 			let newValid = [...isValid];
 
 			newValid[8] = true;
@@ -382,84 +357,62 @@ function RegisterForm(props) {
 			setIsValid(newValid);
 		}
 
-		setAbout(about);
-		let newLocalProfile = { ...localProfile, biography: about };
-		updateLocalStorage(newLocalProfile);
-	}
-
-	function handleWebsiteChange(e) {
-		const website = e.target.value;
-		if (website != "" && website != null) {
-			if (validateUrl(website)) {
-				let newValid = [...isValid];
-
-				newValid[3] = true;
-
-				setIsValid(newValid);
-			} else {
-				let newValid = [...isValid];
-				newValid[3] = false;
-				setIsValid(newValid);
-			}
-		}
-		setWebsite(website);
-		let newLocalProfile = { ...localProfile, website: website };
-		updateLocalStorage(newLocalProfile);
-	}
-
-	function handleLinkedinChange(e) {
-		const linkedin = e.target.value;
-		if (linkedin != "" && linkedin != null) {
-			if (validateUrl(linkedin)) {
-				let newValid = [...isValid];
-
-				newValid[2] = true;
-
-				setIsValid(newValid);
-			} else {
-				let newValid = [...isValid];
-				newValid[2] = false;
-				setIsValid(newValid);
-			}
-		}
-		setLinkedin(linkedin);
-		let newLocalProfile = { ...localProfile, linkedin: linkedin };
+		setBiography(biography);
+		let newLocalProfile = { ...localProfile, biography: biography };
 		updateLocalStorage(newLocalProfile);
 	}
 
 	function handleLocationChange(e) {
 		const location = e.target.value;
+
+		if (location.length < 70) {
+			let newValid = [...isValid];
+
+			newValid[9] = true;
+
+			setIsValid(newValid);
+		} else {
+			let newValid = [...isValid];
+			newValid[9] = false;
+			setIsValid(newValid);
+		}
+
 		setLocation(location);
 		let newLocalProfile = { ...localProfile, location: location };
 		updateLocalStorage(newLocalProfile);
 	}
 
-	function handleGroupAvailChange(e) {
-		setGroupAvailable(e.target.checked);
-		let newLocalProfile = {
-			...localProfile,
-			offers_group_appointments: e.target.checked,
-		};
+	function handleGenderChange(e) {
+		const gender = e.target.value;
+		setGender(gender);
+		let newLocalProfile = { ...localProfile, gender: gender };
 		updateLocalStorage(newLocalProfile);
 	}
 
-	function handleInPersonChange(e) {
-		setInPersonAvailable(e.target.checked);
-		let newLocalProfile = {
-			...localProfile,
-			offers_in_person: e.target.checked,
-		};
+	function handleAgeChange(e) {
+		setAge(e);
+		let newLocalProfile = { ...localProfile, age: e };
 		updateLocalStorage(newLocalProfile);
+		validateNotEmpty(e, 4);
 	}
-	function handleVideoChange(e) {
-		setVideo(e.target.value);
-		let newLocalProfile = { ...localProfile, video: e.target.value };
+
+	function handleLanguageChange(e) {
+		setLanguages(e);
+		validateNotEmpty(e, 5);
+		let newLocalProfile = { ...localProfile, languages: e };
 		updateLocalStorage(newLocalProfile);
 	}
 
-	function updateLocalStorage(newLocalProfile) {
-		setLocalProfile(newLocalProfile);
-		localStorage.setItem("mentor", JSON.stringify(newLocalProfile));
+	function handlePhoneChange(e) {
+		setPhone(e.target.value);
+		let newLocalProfile = { ...localProfile, phone_number: e.target.value };
+		updateLocalStorage(newLocalProfile);
+	}
+
+	function handleOrganizationChange(e) {
+		setOrganization(e.target.value);
+		let newLocalProfile = { ...localProfile, organization: e.target.value };
+		updateLocalStorage(newLocalProfile);
 	}
 
 	const handleSaveEdits = async () => {
@@ -475,14 +428,14 @@ function RegisterForm(props) {
 					return;
 				}
 			}
-
-			const res = await createMentorProfile(data, isHave);
-			const mentorId =
+			const res = await createMenteeProfile(data);
+			const menteeId =
 				res && res.data && res.data.result ? res.data.result.mentorId : false;
 
 			setSaving(false);
 			setValidate(false);
-			if (mentorId) {
+
+			if (menteeId) {
 				setError(false);
 				setIsValid([...isValid].fill(true));
 				history.push("/");
@@ -497,18 +450,18 @@ function RegisterForm(props) {
 		}
 
 		const newProfile = {
-			name: name,
+			name,
+			password: password,
+			gender,
+			location,
+			age,
 			email: props.headEmail,
-			professional_title: title,
-			linkedin: linkedin,
-			website: website,
+			phone_number: phone,
 			education: educations,
 			languages: languages,
+			biography,
+			organization,
 			specializations: specializations,
-			biography: about,
-			offers_in_person: inPersonAvailable,
-			offers_group_appointments: groupAvailable,
-			password: password,
 			video: video
 				? {
 						title: MENTEE_DEFAULT_VIDEO_NAME,
@@ -517,7 +470,9 @@ function RegisterForm(props) {
 						date_uploaded: moment().format(),
 				  }
 				: undefined,
+			is_private: privacy,
 		};
+
 		if (!isValid.includes(false)) {
 			setSaving(true);
 			await saveEdits(newProfile);
@@ -533,19 +488,7 @@ function RegisterForm(props) {
 						Error or missing fields, try again.
 					</div>
 				)}
-				<div>
-					{validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
-					<Button
-						type="default"
-						shape="round"
-						className="regular-button"
-						onClick={handleSaveEdits}
-						loading={saving}
-					>
-						Save
-					</Button>
-				</div>
-				{err && <p>Please complete apply and training steps first</p>}
+				<div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
 			</div>
 			<div className="modal-inner-container">
 				<div className="modal-input-container">
@@ -562,21 +505,6 @@ function RegisterForm(props) {
 						validate={validate}
 						errorPresent={name && name.length > 50}
 						errorMessage="Name field is too long."
-					/>
-
-					<ModalInput
-						style={styles.modalInput}
-						type="text"
-						title="Professional Title *"
-						clicked={inputClicked[1]}
-						index={1}
-						handleClick={handleClick}
-						onChange={handleTitleChange}
-						errorPresent={title && title.length > 80}
-						errorMessage="Title field is too long."
-						value={title}
-						valid={isValid[1]}
-						validate={validate}
 					/>
 				</div>
 				{!props.isHave ? (
@@ -613,131 +541,120 @@ function RegisterForm(props) {
 				) : (
 					""
 				)}
-
 				<div className="modal-input-container Bio">
 					<ModalInput
-						style={styles.modalInput}
+						style={styles.textareaInput}
 						type="textarea"
 						maxRows={3}
 						hasBorder={false}
-						title="Bio *"
-						clicked={inputClicked[2]}
-						index={2}
+						title="Biography *"
+						clicked={inputClicked[1]}
+						index={1}
 						handleClick={handleClick}
-						onChange={handleAboutChange}
-						value={about}
+						onChange={handleBiographyChange}
+						value={biography}
 						valid={isValid[8]}
 						validate={validate}
-						errorPresent={about && about.length > 255}
-						errorMessage="About field is too long."
+						errorPresent={biography && biography.length > 255}
+						errorMessage="Biography field is too long."
 					/>
-				</div>
-				<div className="divider" />
-				<div className="modal-availability-checkbox">
-					<Checkbox
-						className="modal-availability-checkbox-text"
-						clicked={inputClicked[3]}
-						index={3}
-						handleClick={handleClick}
-						onChange={handleInPersonChange}
-						checked={inPersonAvailable}
-					>
-						Available in-person?
-					</Checkbox>
-					<div></div>
-					<Checkbox
-						className="modal-availability-checkbox-text"
-						clicked={inputClicked[4]}
-						index={4}
-						handleClick={handleClick}
-						onChange={handleGroupAvailChange}
-						checked={groupAvailable}
-					>
-						Available for group appointments?
-					</Checkbox>
 				</div>
 				<div className="modal-input-container">
 					<ModalInput
 						style={styles.modalInput}
 						type="text"
 						title="Location"
-						clicked={inputClicked[5]}
-						index={5}
+						clicked={inputClicked[2]}
+						index={2}
 						handleClick={handleClick}
 						onChange={handleLocationChange}
 						value={location}
+						valid={isValid[9]}
+						validate={validate}
+						errorPresent={location && location.length > 70}
+						errorMessage="Location field is too long."
 					/>
 					<ModalInput
 						style={styles.modalInput}
 						type="text"
-						title="Website"
-						clicked={inputClicked[6]}
-						index={6}
+						title="Gender *"
+						clicked={inputClicked[3]}
+						index={3}
 						handleClick={handleClick}
-						onChange={handleWebsiteChange}
-						value={website}
-						errorPresent={website && !validateUrl(website)}
-						errorMessage="Invalid URL."
-						valid={isValid[3]}
-						validate={validate}
+						onChange={handleGenderChange}
+						value={gender}
 					/>
 				</div>
 				<div className="modal-input-container">
 					<ModalInput
 						style={styles.modalInput}
+						type="dropdown-single"
+						title="Age *"
+						clicked={inputClicked[4]}
+						index={4}
+						handleClick={handleClick}
+						onChange={handleAgeChange}
+						options={AGE_RANGES}
+						value={age}
+						valid={isValid[4]}
+						validate={validate}
+					/>
+					<ModalInput
+						style={styles.modalInput}
 						type="dropdown-multiple"
-						title="Languages *"
+						title="Language(s)*"
+						placeholder="Ex. English, Spanish"
+						clicked={inputClicked[5]}
+						index={5}
+						options={LANGUAGES}
+						handleClick={handleClick}
+						onChange={handleLanguageChange}
+						validate={validate}
+						valid={isValid[5]}
+						value={languages}
+					/>
+				</div>
+				<div className="modal-input-container">
+					<ModalInput
+						style={styles.modalInput}
+						type="text"
+						title="Phone"
 						clicked={inputClicked[7]}
 						index={7}
 						handleClick={handleClick}
-						onChange={(e) => {
-							setLanguages(e);
-							validateNotEmpty(e, 7);
-							let newLocalProfile = { ...localProfile, languages: e };
-							updateLocalStorage(newLocalProfile);
-						}}
-						placeholder="Ex. English, Spanish"
-						options={LANGUAGES}
-						value={languages}
-						valid={isValid[7]}
-						validate={validate}
+						onChange={handlePhoneChange}
+						value={phone}
 					/>
 					<ModalInput
 						style={styles.modalInput}
 						type="text"
-						title="LinkedIn"
+						title="Organization Affliation *"
 						clicked={inputClicked[8]}
 						index={8}
 						handleClick={handleClick}
-						onChange={handleLinkedinChange}
-						value={linkedin}
-						errorPresent={linkedin && !validateUrl(linkedin)}
-						errorMessage="Invalid URL."
-						valid={isValid[2]}
+						onChange={handleOrganizationChange}
+						value={organization}
+						valid={isValid[8]}
 						validate={validate}
 					/>
 				</div>
-				<div className="modal-input-container">
-					<ModalInput
-						style={styles.modalInput}
-						type="dropdown-multiple"
-						title="Specializations *"
-						clicked={inputClicked[9]}
-						index={9}
-						handleClick={handleClick}
-						onChange={(e) => {
-							setSpecializations(e);
-							validateNotEmpty(e, 9);
-
-							let newLocalProfile = { ...localProfile, specializations: e };
-							updateLocalStorage(newLocalProfile);
-						}}
-						options={SPECIALIZATIONS}
-						value={specializations}
-						valid={isValid[9]}
-						validate={validate}
-					/>
-				</div>
+				<ModalInput
+					style={styles.modalInput}
+					type="dropdown-multiple"
+					title="Areas of interest "
+					clicked={inputClicked[99]}
+					index={99}
+					handleClick={handleClick}
+					onChange={(e) => {
+						setSpecializations(e);
+						let newLocalProfile = { ...localProfile, specializations: e };
+						updateLocalStorage(newLocalProfile);
+					}}
+					options={SPECIALIZATIONS}
+					value={specializations}
+					valid={isValid[99]}
+					validate={validate}
+				/>
 				<div className="modal-education-header">Education</div>
 				{renderEducationInputs()}
 				<div
@@ -763,6 +680,31 @@ function RegisterForm(props) {
 						value={video}
 					/>
 				</div>
+				<div className="modal-education-header">Account Privacy</div>
+				<div className="modal-education-body">
+					<Checkbox
+						onChange={handlePrivacyChange}
+						value={privacy}
+						checked={privacy}
+					>
+						Private Account
+					</Checkbox>
+					<div>
+						You'll be able to see your information, but your account will not
+						show up when people are browsing accounts.
+					</div>
+					{err && <p>Please complete apply and training steps first</p>}
+					<Button
+						type="default"
+						shape="round"
+						className="regular-button"
+						style={styles.saveButton}
+						onClick={handleSaveEdits}
+						loading={saving}
+					>
+						Save
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
@@ -774,17 +716,24 @@ const styles = {
 		margin: 18,
 		padding: 4,
 		paddingTop: 6,
-		marginBottom: "40px",
+	},
+	textareaInput: {
+		height: 65,
+		margin: 18,
+		padding: 4,
+		paddingTop: 6,
+		marginBottom: "80px",
 	},
 	alertToast: {
 		color: "#FF0000",
 		display: "inline-block",
 		marginRight: 10,
 	},
+
 	saveButton: {
 		position: "relative",
-		top: "60em",
+		top: "2em",
 	},
 };
 
-export default withRouter(RegisterForm);
+export default withRouter(MenteeRegisterForm);

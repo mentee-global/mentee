@@ -16,9 +16,10 @@ class MenteeApplication(Document, Mixin):
     topics =ListField(StringField(), required=True)
     workstate =ListField(StringField(), required=True)
     isSocial = StringField(required=True)
-    questions = BooleanField(required=True)
+    questions = StringField(required=True)
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
+    notes=StringField()
 
     def __repr__(self):
         return f"""Mentee Application email: {self.email}

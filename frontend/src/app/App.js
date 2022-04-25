@@ -11,6 +11,7 @@ import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import SelectLogin from "components/pages/SelectLogin";
 import Login from "components/pages/Login";
+import AdminLogin from "components/pages/AdminLogin";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import RegisterForm from "components/pages/MentorProfileForm";
@@ -22,7 +23,6 @@ import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
 import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
-import MenteeRegisterForm from "components/pages/MenteeRegisterForm";
 import NavHeader from "components/NavHeader";
 import { ACCOUNT_TYPE } from "utils/consts";
 import Messages from "components/pages/Messages";
@@ -119,6 +119,12 @@ function App() {
 				component={() => <Navigation content={<Login />} needsAuth={false} />}
 			/>
 			<Route
+				path="/admin"
+				component={() => (
+					<Navigation content={<AdminLogin />} needsAuth={false} />
+				)}
+			/>
+			<Route
 				path="/register"
 				component={() => (
 					<Navigation content={<Register />} needsAuth={false} />
@@ -134,31 +140,22 @@ function App() {
 					<Navigation content={<ForgotPassword />} needsAuth={false} />
 				)}
 			/>
-			<Route
-				path="/create-profile/:type"
-				component={(props) => {
-					const type = parseInt(props.match.params.type, 10);
-					return (
-						<Navigation
-							content={
-								type === ACCOUNT_TYPE.MENTOR ? (
-									<MentorProfileForm />
-								) : type === ACCOUNT_TYPE.MENTEE ? (
-									<MenteeRegisterForm />
-								) : (
-									<MentorProfileForm />
-								)
-							}
-							needsAuth={false}
-						/>
-					);
-				}}
-			/>
+
 			<Route
 				path="/organizer"
 				component={() => (
 					<Navigation
-						content={<ApplicationOrganizer />}
+						content={<ApplicationOrganizer isMentor={true} />}
+						needsAuth={true}
+						page="applications"
+					/>
+				)}
+			/>
+			<Route
+				path="/menteeOrganizer"
+				component={() => (
+					<Navigation
+						content={<ApplicationOrganizer isMentor={false} />}
 						needsAuth={true}
 						page="applications"
 					/>

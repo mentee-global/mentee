@@ -1,9 +1,10 @@
+from csv import excel
 from email import message
 from flask import Blueprint, request, jsonify
 from sqlalchemy import false
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile, Admin, MenteeProfile,NewProfile
+from api.models import db, Users, MentorProfile, Admin, MenteeProfile,PartnerProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import (
     AUTH_URL,
@@ -153,7 +154,7 @@ def newregister():
 
     # account created
     firebase_uid = firebase_user.uid
-    profile=NewProfile(
+    profile=PartnerProfile(
         name=name,
         email=email,
         password=password,
@@ -187,46 +188,48 @@ def login():
     password = data.get("password")
     role = data.get("role")
     firebase_user = None
-    
-
-    
     profile_model = get_profile_model(int(role))
+    
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
         )
-    except Exception as e:
-        if Users.objects(email=email) or profile_model.objects(email=email):
+        firebase_uid = firebase_user["localId"]
+       
+         
 
+    except Exception as e:
+        try:
+          user = firebase_admin_auth.get_user_by_email(email)
+          msg = "Could not login"
+          logger.info(msg)
+          return create_response(status=422, message=msg)
+            
+        except:
+            if Users.objects(email=email) or profile_model.objects(email=email):                 
             # old account, need to create a firebase account
             # no password -> no sign-in methods -> forced to reset password
-            firebase_user, error_http_response = create_firebase_user(email, None)
-
-            if error_http_response:
-                return error_http_response
+             firebase_user, error_http_response = create_firebase_user(email, None)
 
             # user.delete()
-
             # send password reset email
             error = send_forgot_password_email(email)
 
             msg = "Created new Firebase account for existing user"
             logger.info(msg)
-            return (
-                error
-                and error
-                or create_response(
-                    status=201, message=msg, data={"passwordReset": True}
-                )
-            )
-        else:
-            msg = "Could not login"
-            logger.info(msg)
-            return create_response(status=422, message=msg)
+            return create_response(message="couldn't create firebase account ",status=422)
+            
 
-    firebase_uid = firebase_user["localId"]
     firebase_admin_user = firebase_admin_auth.get_user(firebase_uid)
     profile_id = None
+    if not Users.objects(email=email):
+          user=Users(
+          firebase_uid=firebase_uid,
+          email=email,
+          role="{}".format(role),
+          verified=firebase_admin_user.email_verified,   
+         )
+          user.save()
 
     try:
         profile = profile_model.objects.get(email=email)

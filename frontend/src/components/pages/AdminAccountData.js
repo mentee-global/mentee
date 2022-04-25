@@ -13,16 +13,20 @@ import {
 	downloadMenteesData,
 	deleteAccountById,
 	fetchMenteesAppointments,
+	fetchAccounts,
+	downloadPartnersData,
 } from "../../utils/api";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import UploadEmails from "../UploadEmails";
 import AdminDataTable from "../AdminDataTable";
 import useAuth from "utils/hooks/useAuth";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 const keys = {
 	MENTORS: 0,
 	MENTEES: 1,
-	ALL: 2,
+	PARTNER: 2,
+	ALL: 3,
 	ASCENDING: 0,
 	DESCENDING: 1,
 };
@@ -31,6 +35,7 @@ function AdminAccountData() {
 	const [isReloading, setIsReloading] = useState(false);
 	const [isMentorDownload, setIsMentorDownload] = useState(false);
 	const [isMenteeDownload, setIsMenteeDownload] = useState(false);
+	const [isPartnerDownload, setIsPartnerDownload] = useState(false);
 	const [reload, setReload] = useState(true);
 	const [resetFilters, setResetFilters] = useState(false);
 	const [mentorData, setMentorData] = useState([]);
@@ -40,6 +45,7 @@ function AdminAccountData() {
 	const [filterData, setFilterData] = useState([]);
 	const [downloadFile, setDownloadFile] = useState(null);
 	const [uploadModalVisible, setUploadModalVisible] = useState(false);
+	const [partnerData, setPartnerData] = useState([]);
 
 	const { onAuthStateChanged } = useAuth();
 
@@ -48,6 +54,7 @@ function AdminAccountData() {
 			setIsReloading(true);
 			const mentorRes = await fetchMentorsAppointments();
 			const menteeRes = await fetchMenteesAppointments();
+			const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
 			if (mentorRes && menteeRes) {
 				const newMenteeData = menteeRes.menteeData.map((elem) => ({
 					...elem,
@@ -59,6 +66,7 @@ function AdminAccountData() {
 				setDisplayData(mentorRes.mentorData);
 				setFilterData(mentorRes.mentorData);
 				setResetFilters(!resetFilters);
+				setPartnerData(Partners);
 			} else {
 				message.error("Could not fetch account data");
 			}
@@ -95,6 +103,12 @@ function AdminAccountData() {
 		setDownloadFile(file);
 		setIsMenteeDownload(false);
 	};
+	const handlePartnersDownload = async () => {
+		setIsPartnerDownload(true);
+		const file = await downloadPartnersData();
+		setDownloadFile(file);
+		setIsPartnerDownload(false);
+	};
 
 	const handleSortData = (key) => {
 		const newData = [...filterData];
@@ -121,6 +135,8 @@ function AdminAccountData() {
 			newData = menteeData;
 		} else if (key === keys.ALL) {
 			newData = mentorData.concat(menteeData);
+		} else if (key == keys.PARTNER) {
+			newData = partnerData;
 		}
 
 		setDisplayData(newData);
@@ -133,10 +149,16 @@ function AdminAccountData() {
 			setFilterData(displayData);
 			return;
 		}
-
-		let newFiltered = displayData.filter((account) => {
-			return account.name.match(new RegExp(name, "i"));
-		});
+		let newFiltered = [];
+		if (displayOption !== keys.PARTNER) {
+			newFiltered = displayData.filter((account) => {
+				return account.name.match(new RegExp(name, "i"));
+			});
+		} else {
+			newFiltered = displayData.filter((account) => {
+				return account.organization.match(new RegExp(name, "i"));
+			});
+		}
 		setFilterData(newFiltered);
 	};
 
@@ -166,6 +188,8 @@ function AdminAccountData() {
 						? "Mentors"
 						: displayOption === keys.MENTEES
 						? "Mentees"
+						: displayOption === keys.PARTNER
+						? "Partners"
 						: "All"}
 				</div>
 				<div className="table-button-group">
@@ -207,6 +231,15 @@ function AdminAccountData() {
 					>
 						Mentee Account Data
 					</Button>
+					<Button
+						className="table-button"
+						icon={<DownloadOutlined />}
+						onClick={() => handlePartnersDownload()}
+						loading={isPartnerDownload}
+					>
+						Partner Account Data
+					</Button>
+
 					<ReloadOutlined
 						className="table-button"
 						style={{ fontSize: "16px" }}
@@ -223,6 +256,7 @@ function AdminAccountData() {
 					data={filterData}
 					deleteAccount={handleDeleteAccount}
 					isMentee={displayOption === keys.MENTEES}
+					isPartner={displayOption === keys.PARTNER}
 				/>
 			</Spin>
 		</div>

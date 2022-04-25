@@ -462,7 +462,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"	Would you be interested in being highlighted as one of our menteeson social media?"
+							"	Would you be interested in being highlighted as one of our mentees on social media?"
 						}
 					</div>
 

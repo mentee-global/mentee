@@ -25,10 +25,11 @@ class MenteeProfile(Document, Mixin):
     is_private = BooleanField(required=True)
     video = EmbeddedDocumentField(Video)
     favorite_mentors_ids = ListField(StringField())
+    specializations = ListField(StringField())
+
 
     def __repr__(self):
-        return f"""<MenteeProfile user_id:{self.id} \n name: {self.name}
+        return f"""<MenteeProfile user_id:{self.firebase_uid} \n name: {self.name}
                 \n age: {self.age} gender: {self.gender}
                 \n organization: {self.organization} 
-                \n linkedin: {self.linkedin} \n website: {self.website}
                 \n image: {self.image} \n biography: {self.biography}"""

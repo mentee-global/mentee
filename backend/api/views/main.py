@@ -90,18 +90,15 @@ def create_mentor_profile():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-    firebase_user, error_http_response = create_firebase_user(email, password)
-    if error_http_response:
-       return error_http_response
-    firebase_uid = firebase_user.uid
-    data['firebase_uid']=firebase_uid   
     try:
         account_type = int(data["account_type"])
     except:
         msg = "Missing account_type param or account_type param is not an int"
         logger.info(msg)
         return create_response(status=422, message=msg)
+    data['firebase_uid']='temp'
 
+    
     validate_data = None
     if account_type == Account.MENTOR:
         validate_data = MentorForm.from_json(data)
@@ -171,7 +168,13 @@ def create_mentor_profile():
         msg = "Could not parse Account Data"
         logger.info(msg)
         create_response(status=400, message=msg)
-
+        
+    firebase_user, error_http_response = create_firebase_user(email, password)
+    if error_http_response:
+                    return error_http_response
+ 
+    firebase_uid = firebase_user.uid
+    data['firebase_uid']=firebase_uid   
     new_account.save()
     user=Users(
         firebase_uid=firebase_uid,

@@ -55,6 +55,7 @@ function RegisterForm(props) {
 
 	useEffect(() => {
 		const mentor = JSON.parse(localStorage.getItem("mentor"));
+		/*
 		if (mentor) {
 			let newValid = [...isValid];
 			setLocalProfile(mentor);
@@ -111,7 +112,7 @@ function RegisterForm(props) {
 				});
 				setIsValid(newValid);
 			}
-		}
+		}*/
 	}, []);
 
 	function renderEducationInputs() {

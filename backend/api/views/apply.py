@@ -84,12 +84,12 @@ def get_is_has_Account(email,role):
     application=null
     isVerified=null
     try:
-        email=VerifiedEmail.objects.get(email=email,role=str(role))
+        email2=VerifiedEmail.objects.get(email=email,role=str(role))
         isVerified=True
     except:
         isVerified=False
     try:
-        user = firebase_admin_auth.get_user_by_email(email)
+        user = firebase_admin_auth.get_user_by_email(email.replace(" ",""))
     except:
         return create_response(data={'isHave':False,'isVerified':isVerified})
 
@@ -346,13 +346,13 @@ def create_application():
             name=data.get("name"),
             age=data.get("age"),
             immigrant_status=data.get("immigrant_status"),
-            Country=data.get("Country"),
+            Country=data.get("Country",""),
             identify=data.get("identify"),
             language=data.get("language"),
             topics=data.get("topics"),
             workstate=data.get("workstate"),
             isSocial=data.get("isSocial"),
-            questions=data.get("questions"),
+            questions=data.get("questions",""),
             application_state="PENDING",
             date_submitted=data.get("date_submitted"),
         )

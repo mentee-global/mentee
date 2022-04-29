@@ -28,7 +28,7 @@ import PartnerProfileForm from "components/PartnerProfileForm";
 
 const Apply = () => {
 	const [email, setEmail] = useState("");
-	const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
+	const [role, setRole] = useState(null);
 	const [isapply, setIsApply] = useState(true);
 	const [confirmApply, setConfirmApply] = useState(false);
 	const [approveApply, setApproveApply] = useState(false);
@@ -38,7 +38,7 @@ const Apply = () => {
 	const [err, seterr] = useState(false);
 	const [err2, seterr2] = useState(false);
 	const [ishavee, setishavee] = useState(false);
-	const [isProfile, setIsprofile] = useState(null);
+	const [isProfile, setIsprofile] = useState(false);
 	const [isVerify, setIsVerify] = useState(null);
 	const history = useHistory();
 	const location = useLocation();
@@ -66,6 +66,7 @@ const Apply = () => {
 						role
 					);
 					setIsVerify(isVerified);
+					setishavee(isHave);
 					if (isHave == true && isHaveProfile == true) {
 						setIsprofile(true);
 						setishavee(true);
@@ -74,13 +75,15 @@ const Apply = () => {
 						}, 2000);
 						return;
 					} else if (isHave == true && isHaveProfile == false) {
-						setIsprofile(false);
-						setishavee(true);
-						setIsApply(false);
-						setIstrain(false);
-						setIsBuild(true);
-						setApproveTrainning(true);
-						return;
+						if (location.state) {
+							setIsprofile(false);
+							setishavee(true);
+							setIsApply(false);
+							setIstrain(false);
+							setIsBuild(true);
+							setApproveTrainning(true);
+							return;
+						}
 					}
 					if (role == ACCOUNT_TYPE.PARTNER && isVerified) {
 						setIsApply(false);
@@ -88,46 +91,45 @@ const Apply = () => {
 						setIsBuild(true);
 						setApproveTrainning(true);
 						return;
-					}
-					if (role == ACCOUNT_TYPE.PARTNER && !isVerified) {
+					} else if (role == ACCOUNT_TYPE.PARTNER && !isVerified) {
 						setIsApply(false);
 						setIstrain(false);
 						setIsBuild(false);
 						return;
-					}
-					if (role != ACCOUNT_TYPE.PARTNER && isVerified) {
+					} else if (role != ACCOUNT_TYPE.PARTNER && isVerified) {
 						setIsApply(false);
 						setIstrain(false);
 						setIsBuild(true);
 						return;
-					}
-					const state = await getAppState(email, role);
-					console.log(state, "here");
-					console.log(state === "APPROVED");
-					if (state === "PENDING") {
-						setConfirmApply(true);
-						setApproveApply(false);
-					} else if (state == "APPROVED") {
-						console.log("wal3");
-						setApproveApply(true);
-						setConfirmApply(false);
-						setIsApply(false);
-						setIstrain(true);
-					} else if (state == "BuildProfile") {
-						setIsApply(false);
-						setIstrain(false);
-						setIsBuild(true);
-						setApproveTrainning(true);
 					} else {
-						console.log("here");
-						setConfirmApply(false);
-						setApproveApply(false);
-						setIsApply(true);
-						setIsBuild(false);
-						setIstrain(false);
-					}
+						const state = await getAppState(email, role);
+						console.log(state, "here");
+						console.log(state === "APPROVED");
+						if (state === "PENDING") {
+							setConfirmApply(true);
+							setApproveApply(false);
+						} else if (state == "APPROVED") {
+							console.log("wal3");
+							setApproveApply(true);
+							setConfirmApply(false);
+							setIsApply(false);
+							setIstrain(true);
+						} else if (state == "BuildProfile") {
+							setIsApply(false);
+							setIstrain(false);
+							setIsBuild(true);
+							setApproveTrainning(true);
+						} else {
+							console.log("here");
+							setConfirmApply(false);
+							setApproveApply(false);
+							setIsApply(true);
+							setIsBuild(false);
+							setIstrain(false);
+						}
 
-					return state;
+						return state;
+					}
 				}
 			}
 		}
@@ -146,9 +148,10 @@ const Apply = () => {
 			<div className="emailPart">
 				<p>Email:</p>
 				<Input
-					type="text"
+					type="email"
 					className="emailIn"
 					placeholder="Email"
+					value={email}
 					onChange={(e) => {
 						setEmail(e.target.value);
 						seterr(false);
@@ -212,7 +215,10 @@ const Apply = () => {
 				/>
 			</div>
 			{err ? <p className="error">Email Required</p> : ""}
-			<div className="formsPart">
+
+			<div
+				className={isapply && (confirmApply || approveApply) ? "" : "formsPart"}
+			>
 				{isapply ? (
 					<div className="applypart">
 						{!approveApply && confirmApply ? (
@@ -223,7 +229,9 @@ const Apply = () => {
 						) : (
 							<>
 								{approveApply ? (
-									<h1>Your application approved continue training</h1>
+									<h1 className="applymessage">
+										Your application has been approved continue to training
+									</h1>
 								) : (
 									""
 								)}

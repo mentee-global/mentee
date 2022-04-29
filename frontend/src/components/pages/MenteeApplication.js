@@ -116,13 +116,11 @@ function MenteeApplication(props) {
 			organization,
 			age,
 			immigrantStatus,
-			Country,
 			identify,
 			language,
 			topics,
 			workstate,
 			isSocial,
-			questions,
 		];
 
 		if (
@@ -154,7 +152,7 @@ function MenteeApplication(props) {
 						]}
 					>
 						{isMissingError(firstName) && (
-							<p style={{ color: "red" }}>Please input first name.</p>
+							<p style={{ color: "red" }}>Please input first name. *</p>
 						)}
 						<Input
 							type="text"
@@ -173,7 +171,7 @@ function MenteeApplication(props) {
 						]}
 					>
 						{isMissingError(lastName) && (
-							<p style={{ color: "red" }}>Please input last name.</p>
+							<p style={{ color: "red" }}>Please input last name. *</p>
 						)}
 						<Input
 							placeholder="Last Name"
@@ -185,7 +183,7 @@ function MenteeApplication(props) {
 					<div>
 						{" "}
 						{
-							"What organization is supporting you locally or what organization are you affiliated with? "
+							"What organization is supporting you locally or what organization are you affiliated with? *"
 						}
 					</div>
 					<Form.Item
@@ -207,12 +205,12 @@ function MenteeApplication(props) {
 						/>
 					</Form.Item>
 					<div>
-						{"Let us know more about you. Check ALL of the boxes that apply."}
+						{"Let us know more about you. Check ALL of the boxes that apply. *"}
 					</div>
 					<div className="input-form">
 						<div className="time-options-answers">
 							{isMissingError(age) && (
-								<p style={{ color: "red" }}>Please select an option.</p>
+								<p style={{ color: "red" }}>Please select an option. *</p>
 							)}
 							<Radio.Group onChange={(e) => setAge(e.target.value)} value={age}>
 								<Radio value={"I am 18-22 years old."}>
@@ -232,7 +230,7 @@ function MenteeApplication(props) {
 					</div>
 					<div>
 						{
-							"Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
+							"Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific. *"
 						}
 					</div>
 
@@ -277,13 +275,10 @@ function MenteeApplication(props) {
 						className="input-form"
 						rules={[
 							{
-								required: true,
+								required: false,
 							},
 						]}
 					>
-						{isMissingError(Country) && (
-							<p style={{ color: "red" }}>Please input cell.</p>
-						)}
 						<Input
 							type="text"
 							placeholder="Country"
@@ -291,12 +286,12 @@ function MenteeApplication(props) {
 							onChange={(e) => setCountry(e.target.value)}
 						/>
 					</Form.Item>
-					<div>{"Let us know more about you. How do you identify?"}</div>
+					<div>{"Let us know more about you. How do you identify? *"}</div>
 
 					<div className="input-form">
 						<div className="time-options-answers">
 							{isMissingError(identify) && (
-								<p style={{ color: "red" }}>Please select an option.</p>
+								<p style={{ color: "red" }}>Please select an option. *</p>
 							)}
 							<Radio.Group
 								onChange={(e) => setidentify(e.target.value)}
@@ -331,11 +326,11 @@ function MenteeApplication(props) {
 					) : (
 						""
 					)}
-					<div>{"What is your native language?"}</div>
+					<div>{"What is your native language? *"}</div>
 					<div className="input-form">
 						<div className="time-options-answers">
 							{isMissingError(language) && (
-								<p style={{ color: "red" }}>Please select an option.</p>
+								<p style={{ color: "red" }}>Please select an option. *</p>
 							)}
 							<Radio.Group
 								onChange={(e) => setLanguage(e.target.value)}
@@ -388,7 +383,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"-What special topics would you be interested in? If one is not on the list please add it in other:"
+							"-What special topics would you be interested in? If one is not on the list please add it in other: *"
 						}
 					</div>
 					<Form.Item className="input-form">
@@ -425,7 +420,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"What do you currently do? Please check ALL the options that apply to you. If you select Other, please be specific"
+							"What do you currently do? Please check ALL the options that apply to you. If you select Other, please be specific *"
 						}
 					</div>
 					<Form.Item className="input-form">
@@ -462,7 +457,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"	Would you be interested in being highlighted as one of our mentees on social media?"
+							"	Would you be interested in being highlighted as one of our mentees on social media? *"
 						}
 					</div>
 
@@ -512,9 +507,6 @@ function MenteeApplication(props) {
 							},
 						]}
 					>
-						{isMissingError(questions) && (
-							<p style={{ color: "red" }}>Please input cell.</p>
-						)}
 						<Input
 							type="text"
 							placeholder="questions"

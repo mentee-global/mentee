@@ -35,7 +35,7 @@ function Profile() {
 
 	useEffect(() => {
 		async function addTakingAppointments() {
-			if (isMentor && user.taking_appointments === undefined) {
+			if (isMentor && user?.taking_appointments === undefined) {
 				const new_user = { ...user, taking_appointments: false };
 				await editMentorProfile(new_user, profileId);
 				handleSaveEdits();

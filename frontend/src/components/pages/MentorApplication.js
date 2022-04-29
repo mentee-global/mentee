@@ -15,6 +15,7 @@ function MentorApplication(props) {
 	const [firstName, setFirstName] = useState(null);
 	const [lastName, setLastName] = useState(null);
 	const [cell, setCell] = useState(null);
+	const [numErr, setNumbErr] = useState(false);
 	const [email, setEmail] = useState(null);
 	const [hearAbout, setHearAbout] = useState(null);
 	const [pastLiveLocation, setpastLiveLocation] = useState(null);
@@ -82,7 +83,7 @@ function MentorApplication(props) {
 		return (
 			<div className="page-one-column-container">
 				<Form>
-					<div> {"First Name"}</div>
+					<div> {"First Name *"}</div>
 					<Form.Item
 						className="input-form"
 						rules={[
@@ -101,7 +102,7 @@ function MentorApplication(props) {
 							onChange={(e) => setFirstName(e.target.value)}
 						/>
 					</Form.Item>
-					<div> {"Last Name"}</div>
+					<div> {"Last Name *"}</div>
 					<Form.Item
 						className="input-form"
 						rules={[
@@ -119,7 +120,7 @@ function MentorApplication(props) {
 							onChange={(e) => setLastName(e.target.value)}
 						/>
 					</Form.Item>
-					<div> {"Cell Phone Number"}</div>
+					<div> {"Cell Phone Number *"}</div>
 					<Form.Item
 						className="input-form"
 						rules={[
@@ -131,14 +132,15 @@ function MentorApplication(props) {
 						{isMissingError(cell) && (
 							<p style={{ color: "red" }}>Please input cell.</p>
 						)}
+
 						<Input
-							type="text"
+							type="number"
 							placeholder="Cell Phone Number"
 							value={cell}
 							onChange={(e) => setCell(e.target.value)}
 						/>
 					</Form.Item>
-					<div>{"From whom or where did you hear about us?"}</div>
+					<div>{"From whom or where did you hear about us? *"}</div>
 
 					<Form.Item
 						className="input-form"
@@ -160,7 +162,7 @@ function MentorApplication(props) {
 					</Form.Item>
 					<div>
 						{
-							"Please share which region(s), country(s), state(s), cities your knowledge is based in"
+							"Please share which region(s), country(s), state(s), cities your knowledge is based in *"
 						}
 					</div>
 					<Form.Item
@@ -183,7 +185,7 @@ function MentorApplication(props) {
 						/>
 					</Form.Item>
 					<div>
-						{"Where have you lived in your life besides where you live now?"}
+						{"Where have you lived in your life besides where you live now? *"}
 					</div>
 
 					<Form.Item
@@ -205,7 +207,7 @@ function MentorApplication(props) {
 							onChange={(e) => setpastLiveLocation(e.target.value)}
 						/>
 					</Form.Item>
-					<div>{"Full name of your company/employer"}</div>
+					<div>{"Full name of your company/employer *"}</div>
 
 					<Form.Item
 						className="input-form"
@@ -220,12 +222,12 @@ function MentorApplication(props) {
 						)}
 						<Input
 							type="text"
-							placeholder="Full name of your company/employer"
+							placeholder="Full name of your company/employer *"
 							value={employer}
 							onChange={(e) => setEmployer(e.target.value)}
 						/>
 					</Form.Item>
-					<div>{"Your full title and a brief description of your role."}</div>
+					<div>{"Your full title and a brief description of your role. *"}</div>
 
 					<Form.Item
 						className="input-form"
@@ -240,12 +242,12 @@ function MentorApplication(props) {
 						)}
 						<Input
 							type="text"
-							placeholder="Your full title and a brief description of your role."
+							placeholder="Your full title and a brief description of your role. *"
 							value={title}
 							onChange={(e) => setTitle(e.target.value)}
 						/>
 					</Form.Item>
-					<div> How long have you been with this company?</div>
+					<div> How long have you been with this company? *</div>
 					<div className="input-form">
 						<div className="time-options-answers">
 							{isMissingError(companyTime) && (
@@ -262,6 +264,7 @@ function MentorApplication(props) {
 					</div>
 					<div>
 						If you are accepted as a Specialist, would you like to commit to...
+						*
 					</div>
 					<div className="input-form">
 						{isMissingError(specialistTime) && (
@@ -274,23 +277,24 @@ function MentorApplication(props) {
 					</div>
 					<div>
 						Are you an immigrant or refugee or do you come from an immigrant
-						family or refugee family?
+						family or refugee family? *
 					</div>
+
 					<div className="input-form">
 						{isMissingError(immigrantStatus) && (
-							<p style={{ color: "red" }}>Please select an option.</p>
+							<p style={{ color: "red" }}>Please select an option. *</p>
 						)}
 						<Radio.Group onChange={onChange3} value={immigrantStatus}>
 							<Radio value={"Yes"}>Yes</Radio>
 							<Radio value={"No"}>No</Radio>
 						</Radio.Group>
 					</div>
+					<div>
+						Are you or your family from a native or aboriginal community? *
+					</div>
 					<div className="input-form">
-						<div>
-							Are you or your family from a native or aboriginal community?
-						</div>
 						{isMissingError(isFamilyNative) && (
-							<p style={{ color: "red" }}>Please select an option.</p>
+							<p style={{ color: "red" }}>Please select an option. *</p>
 						)}
 						<Radio.Group
 							onChange={(e) => setisFamilyNative(e.target.value)}
@@ -300,10 +304,10 @@ function MentorApplication(props) {
 							<Radio value={"No"}>No</Radio>
 						</Radio.Group>
 					</div>
-					<div>Did you grow up economically challenged?</div>
+					<div>Did you grow up economically challenged? *</div>
 					<div className="input-form">
 						{isMissingError(isEconomically) && (
-							<p style={{ color: "red" }}>Please select an option.</p>
+							<p style={{ color: "red" }}>Please select an option. *</p>
 						)}
 						<Radio.Group
 							onChange={(e) => setisEconomically(e.target.value)}
@@ -313,10 +317,10 @@ function MentorApplication(props) {
 							<Radio value={"No"}>No</Radio>
 						</Radio.Group>
 					</div>
-					<div>Would you consider yourself of person of color</div>
+					<div>Would you consider yourself of person of color *</div>
 					<div className="input-form">
 						{isMissingError(isColorPerson) && (
-							<p style={{ color: "red" }}>Please select an option.</p>
+							<p style={{ color: "red" }}>Please select an option. *</p>
 						)}
 						<Radio.Group
 							onChange={(e) => setisColorPerson(e.target.value)}
@@ -329,7 +333,7 @@ function MentorApplication(props) {
 					<div>How do you identify?</div>
 					<div className="input-form">
 						{isMissingError(identify) && (
-							<p style={{ color: "red" }}>Please select an option.</p>
+							<p style={{ color: "red" }}>Please select an option. *</p>
 						)}
 						<Radio.Group
 							onChange={(e) => setidentify(e.target.value)}
@@ -342,7 +346,7 @@ function MentorApplication(props) {
 						</Radio.Group>
 					</div>
 					<div>
-						Would you define yourself as having been or currently marginalized
+						Would you define yourself as having been or currently marginalized *
 					</div>
 					<div className="input-form">
 						{isMissingError(isMarginalized) && (
@@ -371,7 +375,7 @@ function MentorApplication(props) {
 						]}
 					>
 						{isMissingError(languages) && (
-							<p style={{ color: "red" }}>Please add input.</p>
+							<p style={{ color: "red" }}>Please add input. *</p>
 						)}
 						<Input
 							type="text"
@@ -384,7 +388,7 @@ function MentorApplication(props) {
 					</Form.Item>
 					<div>
 						{
-							"If you know someone who would be a great MENTEE Specialist, please share their name, email, and we'll contact them!"
+							"If you know someone who would be a great MENTEE Specialist, please share their name, email, and we'll contact them! *"
 						}
 					</div>
 
@@ -410,7 +414,7 @@ function MentorApplication(props) {
 					</Form.Item>
 					<div>
 						{
-							"MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
+							"MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year? *"
 						}
 					</div>
 					<Form.Item className="input-form">

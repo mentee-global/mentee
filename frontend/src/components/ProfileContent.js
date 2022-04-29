@@ -65,11 +65,12 @@ function ProfileContent(props) {
 	}
 
 	const getTitle = (name, age) => {
-		if (parseInt(accountType, 10) === ACCOUNT_TYPE.MENTOR && name) {
+		console.log(accountType, "d");
+		if (accountType == ACCOUNT_TYPE.MENTOR && name) {
 			return name;
 		} else if (name && age) {
 			return name + ", " + age;
-		} else {
+		} else if (accountType == ACCOUNT_TYPE.PARTNER) {
 			return account.organization;
 		}
 	};

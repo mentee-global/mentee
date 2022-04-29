@@ -551,11 +551,11 @@ export const createMentorProfile = async (data, isHave) => {
 	return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, isHave);
 };
 
-export const createMenteeProfile = async (data) => {
-	return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE);
+export const createMenteeProfile = async (data, isHave) => {
+	return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE, isHave);
 };
-export const createPartnerProfile = async (data) => {
-	return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER);
+export const createPartnerProfile = async (data, isHave) => {
+	return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER, isHave);
 };
 
 export const editMentorProfile = async (data, id) => {

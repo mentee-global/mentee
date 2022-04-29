@@ -44,7 +44,7 @@ function RegisterForm(props) {
 	const [intro, setIntro] = useState(null);
 	const [website, setWebsite] = useState(null);
 	const [linkedin, setLinkedin] = useState(null);
-	const [sdgs, setSdgs] = useState(null);
+	const [sdgs, setSdgs] = useState([]);
 	const [topics, setTopics] = useState(null);
 	const [open_grants, setOpenGrants] = useState(false);
 	const [open_projects, setOpenProjects] = useState(false);
@@ -53,10 +53,11 @@ function RegisterForm(props) {
 	const [password, setPassword] = useState(null);
 	const [confirmPassword, setConfirmPassword] = useState(null);
 	const [err, setErr] = useState(false);
+	const [sdgErr, setSdgErr] = useState(false);
 	const [localProfile, setLocalProfile] = useState({});
 
 	useEffect(() => {
-		const partner = JSON.parse(localStorage.getItem("partner"));
+		/*const partner = JSON.parse(localStorage.getItem("partner"));
 		if (partner) {
 			let newValid = [...isValid];
 			setLocalProfile(partner);
@@ -102,7 +103,7 @@ function RegisterForm(props) {
 
 			setOpenGrants(partner.open_grants);
 			setOpenProjects(partner.open_projects);
-		}
+		}*/
 	}, []);
 
 	function handleClick(index) {
@@ -243,6 +244,10 @@ function RegisterForm(props) {
 				newValid[3] = false;
 				setIsValid(newValid);
 			}
+		} else {
+			let newValid = [...isValid];
+			newValid[2] = true;
+			setIsValid(newValid);
 		}
 		setWebsite(website);
 		let newLocalProfile = { ...localProfile, website: website };
@@ -263,6 +268,10 @@ function RegisterForm(props) {
 				newValid[2] = false;
 				setIsValid(newValid);
 			}
+		} else {
+			let newValid = [...isValid];
+			newValid[2] = true;
+			setIsValid(newValid);
 		}
 		setLinkedin(linkedin);
 		let newLocalProfile = { ...localProfile, linkedin: linkedin };
@@ -301,7 +310,7 @@ function RegisterForm(props) {
 
 	const handleSaveEdits = async () => {
 		async function saveEdits(data) {
-			const res = await createPartnerProfile(data, props.role, false);
+			const res = await createPartnerProfile(data, props.isHave);
 			const mentorId =
 				res && res.data && res.data.result ? res.data.result.mentorId : false;
 
@@ -336,6 +345,12 @@ function RegisterForm(props) {
 			open_grants: open_grants,
 			open_projects: open_projects,
 		};
+		if (sdgs.length == 0) {
+			setSdgErr(true);
+			return;
+		} else {
+			setSdgErr(false);
+		}
 		if (!isValid.includes(false)) {
 			setSaving(true);
 			await saveEdits(newProfile);
@@ -517,25 +532,22 @@ function RegisterForm(props) {
 						validate={validate}
 					/>
 				</div>
-				<div className="modal-input-container">
-					<ModalInput
-						style={styles.modalInput}
-						type="dropdown-single"
-						title="Sustainable Development Goals Your Work Supports  *"
-						clicked={inputClicked[7]}
-						index={7}
-						handleClick={handleClick}
-						onChange={(e) => {
-							setRegions(e);
-							validateNotEmpty(e, 7);
+				<div className="modal-input-container sdgs">
+					<p className="sdgtext">Sustainable Development Goals Your Work Supports *</p>
 
-							let newLocalProfile = { ...localProfile, sdgs: e };
-							updateLocalStorage(newLocalProfile);
-						}}
+					{sdgErr && <p>Please input cell</p>}
+					<Checkbox.Group
 						options={SDGS}
 						value={sdgs}
-						valid={isValid[7]}
-						validate={validate}
+						onChange={(checkedValues) => {
+							let optionsSelected = [];
+							checkedValues.forEach((value) => {
+								optionsSelected.push(value);
+							});
+							setSdgs(optionsSelected);
+							let newLocalProfile = { ...localProfile, sdgs: optionsSelected };
+							updateLocalStorage(newLocalProfile);
+						}}
 					/>
 				</div>
 			</div>

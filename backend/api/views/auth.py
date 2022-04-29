@@ -79,7 +79,7 @@ def create_firebase_user(email, password):
     error_http_response = None
 
     try:
-        firebase_user = firebase_admin_auth.create_user(
+         firebase_user = firebase_admin_auth.create_user(
             email=email,
             email_verified=False,
             password=password,

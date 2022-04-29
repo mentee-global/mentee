@@ -10,7 +10,7 @@ from flask_socketio import SocketIO
 
 from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
-#import certifi
+import certifi
 
 load_dotenv()
 #ca = certifi.where()

@@ -114,6 +114,7 @@ function ModalInput(props) {
 						{errorPresent && <p className="input-error">{errorMessage}</p>}
 					</div>
 				);
+
 			case "password":
 				return (
 					<div>

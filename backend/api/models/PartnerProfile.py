@@ -18,7 +18,7 @@ class PartnerProfile(Document, Mixin):
     intro = StringField(required=True)
     website = StringField()
     linkedin = StringField()
-    sdgs = StringField()
+    sdgs = ListField(StringField(), required=True)
     topics=StringField()
     open_grants=BooleanField(required=True)
     open_projects=BooleanField(required=True)

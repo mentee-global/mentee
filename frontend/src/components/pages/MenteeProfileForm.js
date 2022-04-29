@@ -49,7 +49,9 @@ function MenteeRegisterForm(props) {
 
 	useEffect(() => {
 		const mentee = JSON.parse(localStorage.getItem("mentee"));
+		/*
 		if (mentee) {
+			
 			let newValid = [...isValid];
 			setLocalProfile(mentee);
 
@@ -89,7 +91,7 @@ function MenteeRegisterForm(props) {
 				newValid[10 + index * 4 + 3] = !!education.education_level;
 			});
 			setIsValid(newValid);
-		}
+		}*/
 	}, []);
 
 	function renderEducationInputs() {
@@ -428,7 +430,7 @@ function MenteeRegisterForm(props) {
 					return;
 				}
 			}
-			const res = await createMenteeProfile(data);
+			const res = await createMenteeProfile(data, props.isHave);
 			const menteeId =
 				res && res.data && res.data.result ? res.data.result.mentorId : false;
 

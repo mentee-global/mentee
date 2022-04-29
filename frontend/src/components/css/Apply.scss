@@ -189,7 +189,20 @@
 	display: none;
 }
 .applymessage {
-	padding: 50px;
-	font-size: 32px;
+	position: absolute;
+	width: 800px;
+	height: 321px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	top: 781px;
+
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 64px;
+	line-height: 82px;
 	text-align: center;
+
+	color: #ffffff;
 }

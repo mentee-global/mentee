@@ -133,9 +133,10 @@ def get_admin(id):
     """
     try:
         admin = Admin.objects.get(id=id)
+        return create_response(data={"admin": admin})
+
     except:
         msg = "Admin does not exist"
         logger.info(msg)
         return create_response(status=422, message=msg)
-
-    return create_response(data={"admin": admin})
+ 

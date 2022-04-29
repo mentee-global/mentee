@@ -25,7 +25,7 @@ function Verify({ history, sent }) {
 
 	return (
 		<div className="home-background">
-			<div className="login-content">
+			<div className="login-content2">
 				<div className="verify-container">
 					<div className="verify-header-container">
 						<div className="verify-header-text">
@@ -42,7 +42,7 @@ function Verify({ history, sent }) {
 							</t>
 						</div>
 					</div>
-					<div className="login-button">
+					<div className="verify-login-button">
 						<MenteeButton
 							content={<b>Confirm</b>}
 							width={"50%"}

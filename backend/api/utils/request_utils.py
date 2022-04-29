@@ -66,7 +66,7 @@ class PartnerForm(Form):
     location = StringField(validators=[InputRequired()])
     intro = StringField(validators=[InputRequired()])
     regions = FieldList(StringField(), validators=[validators.required()])
-    sdgs = StringField(validators=[InputRequired()])
+    sdgs = FieldList(StringField(), validators=[validators.required()])
 
 class AvailabilityForm(Form):
     start_time = StringField(validators=[InputRequired()])
@@ -120,13 +120,11 @@ class MenteeApplicationForm(Form):
     name = StringField(validators=[InputRequired()])
     age = StringField(validators=[InputRequired()])
     immigrant_status = FieldList(StringField(), validators=[validators.required()])
-    Country = StringField(validators=[InputRequired()])
     identify = StringField(validators=[InputRequired()])
     language = StringField(validators=[InputRequired()])
     topics = FieldList(StringField(), validators=[validators.required()])
     workstate =FieldList(StringField(), validators=[validators.required()])
     isSocial = StringField(validators=[InputRequired()])
-    questions = BooleanField(validators=[InputRequired()])
     role=StringField(validators=[InputRequired()])
 
 

@@ -25,6 +25,7 @@ import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
 import { AccountBookFilled } from "@ant-design/icons";
 import PartnerProfileForm from "components/PartnerProfileForm";
+import { validate } from "email-validator";
 
 const Apply = () => {
 	const [email, setEmail] = useState("");
@@ -59,8 +60,8 @@ const Apply = () => {
 
 	useEffect(() => {
 		async function checkConfirmation() {
-			if (role) {
-				if (email.length > 12) {
+			if (validate(email)) {
+				if (role) {
 					const { isHave, isHaveProfile, isVerified } = await isHaveAccount(
 						email,
 						role
@@ -155,6 +156,7 @@ const Apply = () => {
 					onChange={(e) => {
 						setEmail(e.target.value);
 						seterr(false);
+						setRole(null);
 					}}
 				/>
 			</div>
@@ -167,6 +169,7 @@ const Apply = () => {
 				className="roleGroup"
 				onChange={(e) => setRole(e.target.value)}
 				value={role}
+				disabled={!validate(email)}
 			>
 				<Radio className="role" value={ACCOUNT_TYPE.MENTEE}>
 					Mentee
@@ -184,9 +187,11 @@ const Apply = () => {
 					className="step0"
 					alt="apply"
 					onClick={() => {
-						setIsApply(true);
-						setIsBuild(false);
-						setIstrain(false);
+						if (!isbuild && istrain) {
+							setIsApply(true);
+							setIsBuild(false);
+							setIstrain(false);
+						}
 					}}
 				/>
 				<img
@@ -215,9 +220,24 @@ const Apply = () => {
 				/>
 			</div>
 			{err ? <p className="error">Email Required</p> : ""}
+			{role == ACCOUNT_TYPE.PARTNER && !isVerify ? (
+				<h1 className="applymessage">
+					Email is not pre-registered as a Partner by an Admin. So please
+					contact administrator to create your user in the system before being
+					able to Build profile
+				</h1>
+			) : (
+				""
+			)}
 
 			<div
-				className={isapply && (confirmApply || approveApply) ? "" : "formsPart"}
+				className={
+					(isapply && (confirmApply || approveApply)) ||
+					!role ||
+					(role == ACCOUNT_TYPE.PARTNER && !isVerify)
+						? ""
+						: "formsPart"
+				}
 			>
 				{isapply ? (
 					<div className="applypart">

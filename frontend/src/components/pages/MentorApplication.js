@@ -340,7 +340,7 @@ function MentorApplication(props) {
 							value={identify}
 						>
 							<Radio value={"man"}>as a man</Radio>
-							<Radio value={"woman"}>as a oman</Radio>
+							<Radio value={"woman"}>as a woman</Radio>
 							<Radio value={"LGTBQ+"}>as LGTBQ+</Radio>
 							<Radio value={"other"}>other</Radio>
 						</Radio.Group>

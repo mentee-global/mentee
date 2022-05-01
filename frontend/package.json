@@ -1,57 +1,58 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@ant-design/icons": "^4.2.2",
-    "@material-ui/core": "^4.11.3",
-    "@reduxjs/toolkit": "^1.6.2",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "antd": "^4.7.3",
-    "antd-img-crop": "^3.14.1",
-    "axios": "^0.21.0",
-    "dropzone": "^5.8.1",
-    "email-validator": "^2.0.4",
-    "firebase": "^8.2.9",
-    "prettier": "^2.1.2",
-    "pretty-quick": "^3.1.0",
-    "react": "^16.13.1",
-    "react-beautiful-dnd": "^13.0.0",
-    "react-dom": "^16.13.1",
-    "react-dropzone": "^11.3.1",
-    "react-json-to-table": "^0.1.7",
-    "react-player": "^2.7.0",
-    "react-responsive": "^8.2.0",
-    "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
-    "socket.io-client": "^4.4.0",
-    "superagent": "^6.1.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "format": "pretty-quick --staged {src,test}/**/*.{js,jsx,json,css}",
-    "format:all": "prettier --write {src,test}/**/*.{js,jsx,json,css}",
-    "format:check": "prettier --list-different {src,test}/**/*.js"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+	"name": "frontend",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@ant-design/icons": "^4.2.2",
+		"@material-ui/core": "^4.11.3",
+		"@reduxjs/toolkit": "^1.6.2",
+		"@testing-library/jest-dom": "^4.2.4",
+		"@testing-library/react": "^9.3.2",
+		"@testing-library/user-event": "^7.1.2",
+		"antd": "^4.7.3",
+		"antd-img-crop": "^3.14.1",
+		"axios": "^0.21.0",
+		"dropzone": "^5.8.1",
+		"email-validator": "^2.0.4",
+		"node-sass": "4.14.1",
+		"firebase": "^8.2.9",
+		"prettier": "^2.1.2",
+		"pretty-quick": "^3.1.0",
+		"react": "^16.13.1",
+		"react-beautiful-dnd": "^13.0.0",
+		"react-dom": "^16.13.1",
+		"react-dropzone": "^11.3.1",
+		"react-json-to-table": "^0.1.7",
+		"react-player": "^2.7.0",
+		"react-responsive": "^8.2.0",
+		"react-router": "^5.2.0",
+		"react-router-dom": "^5.2.0",
+		"react-scripts": "3.4.3",
+		"socket.io-client": "^4.4.0",
+		"superagent": "^6.1.0"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject",
+		"format": "pretty-quick --staged {src,test}/**/*.{js,jsx,json,css}",
+		"format:all": "prettier --write {src,test}/**/*.{js,jsx,json,css}",
+		"format:check": "prettier --list-different {src,test}/**/*.js"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
 }

@@ -3,8 +3,10 @@ import {
 	DatabaseOutlined,
 	UsergroupAddOutlined,
 	SearchOutlined,
+	LineHeightOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
+import { ListItemIcon } from "@material-ui/core";
 
 const pages = {
 	applications: {
@@ -27,6 +29,12 @@ const pages = {
 		name: "Verified Emails",
 		path: "/verified-emails",
 		icon: <SearchOutlined />,
+		isSubMenu: false,
+	},
+	Trainings: {
+		name: "Trainings",
+		path: "/trainings",
+		icon: <LineHeightOutlined />,
 		isSubMenu: false,
 	},
 	reports: {

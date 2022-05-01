@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { List } from "antd";
 import { getTrainings } from "utils/api";
 import "./css/TrainingList.scss";
-const TrainingList = () => {
+const TrainingList = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [trainings, setTrainings] = useState(null);
 	useEffect(() => {
 		setLoading(true);
-		getTrainings()
+		getTrainings(props.role)
 			.then((trains) => {
 				setTrainings(trains);
 				setLoading(false);

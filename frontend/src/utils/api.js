@@ -166,12 +166,56 @@ export const isHaveAccount = async (email, role) => {
 	return { isHave, isHaveProfile, isVerified };
 };
 
-export const getTrainings = async () => {
-	const requestExtension = `/training`;
+export const getTrainings = async (role) => {
+	const requestExtension = `/training/${role}`;
 	const res = await instance.get(requestExtension);
 	const trains = res.data.result.trainings;
-	console.log(res);
-	return trains;
+	let newTrain = [];
+	for (let train of trains) {
+		train.id = train._id["$oid"];
+		newTrain.push(train);
+	}
+	console.log(newTrain);
+	return newTrain;
+};
+export const deleteTrainbyId = (id, accountType) => {
+	const requestExtension = `/training/${id}`;
+	return authDelete(requestExtension).then(
+		(response) => response,
+		(err) => {
+			console.error(err);
+			return false;
+		}
+	);
+};
+export const getTrainById = async (id) => {
+	const requestExtension = `/training/train/${id}`;
+	let response = await authGet(requestExtension);
+	const Train = response.data.result.train;
+	console.log(Train);
+	return Train;
+};
+export const EditTrainById = async (id, name, url, description, role) => {
+	const requestExtension = `/training/${id}`;
+	let response = await authPut(requestExtension, {
+		name: name,
+		url: url,
+		description: description,
+		role: role,
+	});
+	let Train = response.data.result.train;
+	return Train;
+};
+export const newTrainCreate = async (name, url, description, role) => {
+	const requestExtension = `/training/${role}`;
+	let response = await authPost(requestExtension, {
+		name: name,
+		url: url,
+		description: description,
+	});
+
+	let Train = response.data.result.train;
+	return Train;
 };
 export const createAppointment = (appointment) => {
 	const requestExtension = `/appointment/`;
@@ -299,52 +343,37 @@ const downloadBlob = (response, filename) => {
 
 export const downloadMentorsData = async () => {
 	const requestExtension = "/download/accounts/all";
-	return authGet(requestExtension, {
+	let response = await authGet(requestExtension, {
 		responseType: "blob",
 		params: {
 			account_type: ACCOUNT_TYPE.MENTOR,
 		},
-	}).then(
-		(response) => {
-			downloadBlob(response, "mentor_data.xlsx");
-		},
-		(err) => {
-			console.error(err);
-		}
-	);
+	});
+
+	downloadBlob(response, "mentee_data.xlsx");
 };
 
 export const downloadMenteesData = async () => {
 	const requestExtension = "/download/accounts/all";
-	return authGet(requestExtension, {
+	let response = await authGet(requestExtension, {
 		responseType: "blob",
 		params: {
 			account_type: ACCOUNT_TYPE.MENTEE,
 		},
-	}).then(
-		(response) => {
-			downloadBlob(response, "mentee_data.xlsx");
-		},
-		(err) => {
-			console.error(err);
-		}
-	);
+	});
+
+	downloadBlob(response, "mentee_data.xlsx");
 };
 export const downloadPartnersData = async () => {
 	const requestExtension = "/download/accounts/all";
-	return authGet(requestExtension, {
+	let response = await authGet(requestExtension, {
 		responseType: "blob",
 		params: {
 			account_type: ACCOUNT_TYPE.PARTNER,
 		},
-	}).then(
-		(response) => {
-			downloadBlob(response, "partner_data.xlsx");
-		},
-		(err) => {
-			console.error(err);
-		}
-	);
+	});
+
+	downloadBlob(response, "mentee_data.xlsx");
 };
 export const downloadAllApplicationData = async () => {
 	const requestExtension = "/download/appointments/all";

@@ -130,8 +130,8 @@ def download_mentor_accounts(accounts):
                 acct.linkedin,
                 acct.website,
                 "Yes" if acct.image and acct.image.url else "No",
-                acct.image.url if acct.image else "None",
-                acct.video.url if acct.video else "None",
+                acct.image.url if acct.image else "No",
+                acct.video.url if acct.video else "No",
                 "Yes" if len(acct.videos) >= 0 else "No",
                 "|".join(educations),
                 ",".join(acct.languages),
@@ -152,7 +152,7 @@ def download_mentor_accounts(accounts):
         "website",
         "profile pic up",
         "image url",
-        "video url"
+        "video url",
         "video(s) up",
         "educations",
         "languages",
@@ -260,7 +260,7 @@ def download_mentee_accounts(accounts):
         "image url",
         "educations",
         "languages",
-        "Areas of interest"
+        "Areas of interest",
         "biography",
         "Organization Affiliation",
         "profile pic up",
@@ -270,6 +270,7 @@ def download_mentee_accounts(accounts):
         "private account",
         "video url",
         "favorite_mentor_ids",
+        
     ]
     return generate_sheet("accounts", accts, columns)
 

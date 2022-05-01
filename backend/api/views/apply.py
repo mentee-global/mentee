@@ -10,6 +10,9 @@ from api.utils.constants import (
     MENTOR_APP_SUBMITTED,
     MENTOR_APP_REJECTED,
     NEW_APPLICATION_STATUS,
+    APP_APROVED,
+    TRAINING_COMPLETED,
+    PROFILE_COMPLETED
 )
 from api.utils.request_utils import send_email, is_invalid_form,send_email_html, MentorApplicationForm,MenteeApplicationForm,PartnerApplicationForm
 from api.utils.constants import Account
@@ -194,10 +197,11 @@ def changestatetobuildprofile(email,role):
     if  application['application_state']==NEW_APPLICATION_STATUS['APPROVED']:
         application['application_state']=NEW_APPLICATION_STATUS['BUILDPROFILE']
         application.save()
-        success, msg = send_email_html(
+        success, msg = send_email(
             recipient=application['email'],
             subject="Congratulation for completing training",
-            html_content="<h1>Congratulation for complete Mentee training now you can build your profile to complete apply process</h1>"
+            template_id=TRAINING_COMPLETED,
+
         )
         if not success:
             logger.info(msg)
@@ -259,12 +263,23 @@ def edit_application(id,role):
     application.save()
 
     # Send a notification email
-    if application.application_state == NEW_APPLICATION_STATUS['APPROVED']:
+    if application.application_state == NEW_APPLICATION_STATUS['PENDING']:
         mentor_email = application.email
-        success, msg = send_email_html(
+        success, msg = send_email(
             recipient=mentor_email,
             subject="MENTEE Application has been approved",
-            html_content="<h1>MENTEE Application has been approved you can now start your training</h1>"
+            template_id=MENTOR_APP_SUBMITTED,
+
+        )
+        if not success:
+            logger.info(msg)
+    if application.application_state == NEW_APPLICATION_STATUS['APPROVED']:
+        mentor_email = application.email
+        success, msg = send_email(
+            recipient=mentor_email,
+            subject="MENTEE Application has been approved",
+            template_id=APP_APROVED,
+
         )
         if not success:
             logger.info(msg)
@@ -282,19 +297,21 @@ def edit_application(id,role):
         )
     if application.application_state == NEW_APPLICATION_STATUS['COMPLETED']:
         mentor_email = application.email
-        success, msg = send_email_html(
+        success, msg = send_email(
             recipient=mentor_email,
             subject="Your account have been successfully Created " + application.name,
-            html_content="<h1>Your Mentee account has been successfully Created you can now login to Mentee</h1>"
+            template_id=PROFILE_COMPLETED,
+
         )    
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS['BUILDPROFILE']:
         mentor_email = application.email
-        success, msg = send_email_html(
+        success, msg = send_email(
             recipient=mentor_email,
             subject="Congratulation for completing training",
-            html_content="<h1>Congratulation for complete Mentee  training now you can build your profile to complete apply process</h1>"
+            template_id=TRAINING_COMPLETED,
+
         )    
         if not success:
             logger.info(msg)        

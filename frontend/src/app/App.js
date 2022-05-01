@@ -30,6 +30,7 @@ import Apply from "../components/pages/Apply";
 import "components/css/Navigation.scss";
 import SocketComponent from "components/SocketComponent";
 import MentorProfileForm from "components/pages/MentorProfileForm";
+import { Trainings } from "components/Trainings";
 
 function App() {
 	return (
@@ -178,6 +179,16 @@ function App() {
 						content={<AdminAppointmentData />}
 						needsAuth={true}
 						page="allAppointments"
+					/>
+				)}
+			/>
+			<Route
+				path="/trainings"
+				component={() => (
+					<Navigation
+						content={<Trainings />}
+						needsAuth={true}
+						page="trainings"
 					/>
 				)}
 			/>

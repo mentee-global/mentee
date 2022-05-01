@@ -282,7 +282,7 @@ const Apply = () => {
 				{istrain ? (
 					<div className="trainpart">
 						{" "}
-						<TrainingList />
+						<TrainingList role={role} />
 					</div>
 				) : (
 					""

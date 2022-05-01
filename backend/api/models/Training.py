@@ -11,6 +11,7 @@ class Training(Document, Mixin):
     url = StringField(required=True)
     description = StringField(required=True)
     date_submitted = DateTimeField(required=True)
+    role=StringField(required=True)
 
     def __repr__(self):
         return f"""<Training  : {self.name}

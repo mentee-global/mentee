@@ -1,0 +1,208 @@
+.container2 {
+	position: absolute;
+	width: 100%;
+	left: 0px;
+	right: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	top: 87px;
+	background: #ffdb6f;
+	height: 100%;
+	overflow: auto;
+}
+.home-header {
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
+	text-align: center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 36px;
+}
+
+.home-header span {
+	color: #644a0a;
+}
+.home-text {
+	height: 68px;
+	text-align: center;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 109px;
+}
+.emailPart {
+	position: absolute;
+	width: 60%;
+	left: 20%;
+	right: 20%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	top: 310px;
+}
+.emailPart p {
+	width: 141px;
+	height: 54px;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
+}
+.emailIn {
+	width: 522px;
+	height: 54px;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 31px;
+	color: #6f6a6a;
+	margin-bottom: 35px;
+	margin-left: 156px;
+}
+
+.roleGroup {
+	position: absolute;
+	width: 60%;
+	height: 37.76px;
+	left: 20%;
+	right: 20%;
+	top: 414px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+
+	/* or 92% */
+
+	/* Character/Title .85 */
+
+	color: rgba(0, 0, 0, 0.85);
+}
+.role {
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 22px;
+}
+.formsPart {
+	position: absolute;
+	width: 68%;
+	min-height: 858px;
+	left: 16%;
+	top: 735px;
+	right: 16%;
+
+	background: #fffbfb;
+	border-radius: 10px;
+}
+.trainpart {
+	min-height: 500px;
+}
+.buildpart {
+	overflow-x: hidden;
+}
+.steps {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	flex-direction: row;
+	position: absolute;
+	top: 471px;
+	left: 20%;
+	right: 20%;
+	width: 60%;
+}
+
+.step0 {
+	width: 314px;
+	height: 244px;
+}
+.step1 {
+	width: 332px;
+	height: 257px;
+}
+.step2 {
+	width: 332px;
+	height: 257px;
+}
+
+.applySubmit2 {
+	font-weight: 400;
+	font-size: 23px;
+	background: #e4bb4f;
+	text-align: center;
+	color: white;
+	cursor: pointer;
+	text-align: center;
+	width: fit-content;
+	font-family: "Roboto";
+	font-style: normal;
+	width: 500px;
+	height: 70px;
+	line-height: 70px;
+	/* identical to box height */
+
+	color: #ffffff;
+	position: absolute;
+	bottom: 12%;
+}
+.btnContainer {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	margin: 50px;
+}
+.testbtn {
+	padding: 0 20px;
+	height: 27px;
+	position: absolute;
+	right: 18%;
+	bottom: 18%;
+	background: #e4bb4f;
+	border-radius: 10px;
+	text-align: center;
+	color: white;
+	cursor: pointer;
+	text-align: center;
+}
+.error {
+	font-weight: 600;
+	color: red;
+}
+
+.hide {
+	display: none;
+}
+.applymessage {
+	position: absolute;
+	width: 800px;
+	height: 321px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	top: 781px;
+
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 64px;
+	line-height: 82px;
+	text-align: center;
+
+	color: #ffffff;
+}

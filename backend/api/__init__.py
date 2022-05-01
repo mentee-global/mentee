@@ -10,9 +10,10 @@ from flask_socketio import SocketIO
 
 from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
+import certifi
 
 load_dotenv()
-
+#ca = certifi.where()
 socketio = SocketIO(cors_allowed_origins="*")
 
 
@@ -66,6 +67,10 @@ def create_app(test_config=None):
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    #,'tlsCAFile':ca
+    #app.config["MONGODB_SETTINGS"]={  'db': 'mentee',
+    #'host': 'localhost',
+    #'port': 27017}
 
     # firebase
     firebase_admin.initialize_app()
@@ -90,6 +95,7 @@ def create_app(test_config=None):
         mentee,
         messages,
         notifications,
+        training,
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -100,6 +106,7 @@ def create_app(test_config=None):
     app.register_blueprint(availability.availability, url_prefix="/api/availability")
     app.register_blueprint(verify.verify, url_prefix="/api")
     app.register_blueprint(apply.apply, url_prefix="/api/application")
+    app.register_blueprint(training.training, url_prefix="/api/training")
     app.register_blueprint(admin.admin, url_prefix="/api")
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")

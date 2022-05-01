@@ -1,82 +1,122 @@
 @import "_app";
 
 .select-login-page {
-  background-color: #ffdb6f;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	width: 100%;
 }
 
 .select-login-header {
-  text-align: center;
-  font-size: 3em;
-  color: white;
-  font-weight: bold;
+	position: absolute;
+	height: 68px;
+	top: 468px;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	text-align: center;
+	color: #ffffff;
 }
 
 .select-login-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	position: absolute;
+	top: 571px;
 }
 
 .select-login-elem {
-  background-color: white;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
-  margin: 4%;
-  padding: 2em;
-  width: 23vw;
-  height: 23vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
+	margin-right: 35.86px;
+	background: #ffffff;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 5px;
+	width: 312.76px;
+	height: 312.76px;
+	position: relative;
 }
 
 .select-login-elem:hover {
-  transition: 0.4s;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
+	transition: 0.4s;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
+	cursor: pointer;
 }
 
 .select-image {
-  width: 6vw;
+	position: absolute;
+	left: 10.15%;
+	right: 10.15%;
+	top: 7.27%;
+	bottom: 28.38%;
+	width: 190px;
+	height: 170px;
+}
+.mentee-image {
+	position: absolute;
+	left: 25.07%;
+	right: 25.33%;
+	top: 13.6%;
+	bottom: 36.8%;
+	width: 155.13px;
+	height: 155.13px;
+}
+.mentor-image {
+	position: absolute;
+	left: 15.15%;
+	right: 15.15%;
+	top: 9.27%;
+	bottom: 28.38%;
+	width: 218px;
+	height: 195px;
+}
+.partner-image {
+	position: absolute;
+	left: 24.53%;
+	right: 24.53%;
+	top: 11.47%;
+	bottom: 37.6%;
+	width: 159.3px;
+	height: 159.3px;
 }
 
 .select-text {
-  text-align: center;
-  color: #a58123;
-  font-size: 2em;
-  font-weight: bold;
-  margin-bottom: 5px;
+	position: absolute;
+	left: 30.67%;
+	right: 30.93%;
+	top: 85.33%;
+	bottom: 1.33%;
+
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 30px;
+	line-height: 38px;
+	text-align: center;
+
+	color: #a58123;
 }
 
-@media (max-width: 768px) {
-  .select-image {
-    width: 30vw;
-  }
-  .select-login-container {
-    flex-direction: column;
-  }
+@media (max-width: 600px) {
+	.select-login-container {
+		flex-direction: column;
+		align-items: center;
+		top: 670px;
+	}
 
-  .select-login-header {
-    font-size: 2.5em;
-  }
-  .select-login-page {
-    height: auto;
-    display: block;
-  }
+	.select-login-page {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-  .select-login-elem {
-    width: 90%;
-    height: auto;
-  }
-
-  .select-text {
-    margin-top: 1em;
-  }
+	.select-login-elem {
+		margin-bottom: 20px;
+	}
+	.select-login-header {
+		margin: 70px 0px;
+	}
 }

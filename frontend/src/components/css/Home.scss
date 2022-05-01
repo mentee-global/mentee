@@ -1,62 +1,120 @@
 .home-background {
-  background-color: #F8D15B;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	position: absolute;
+	min-height: 936px;
+	height: 100%;
+	top: 87px;
+	background: #ffdb6f;
+	width: 100%;
 }
-
 .home-content {
-  height: 90%;
-  width: 90%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: flex-start;
+	position: relative;
 }
 
 .home-text-container {
-  height: 50%;
-  width: 50%;
+	position: absolute;
+	height: 73px;
+	top: 0px;
+	text-align: center;
+	margin: auto;
+	margin-top: 10px;
 }
 
-.home-header {
-  color: white;
-  font-weight: bold;
-  font-size: 300%;
+.home-header2 {
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
 }
 
-.home-text {
-  color: #644A0A;
-  font-weight: bold;
+.home-header2 span {
+	color: #644a0a;
+}
+.home-text2 {
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
+}
+.buttons-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	position: absolute;
+	top: 329px;
+}
+.applyCon {
+	background-color: white;
+	text-align: center;
+	color: #a58123;
+	cursor: pointer;
+	border-radius: 10px;
+	width: 252px;
+	height: 252px;
+	position: relative;
+	margin-right: 40px;
+}
+.loginCon {
+	background-color: white;
+	text-align: center;
+	color: #a58123;
+	cursor: pointer;
+	border-radius: 10px;
+	width: 252px;
+	height: 252px;
+	position: relative;
+}
+.applyImage {
+	position: absolute;
+	left: 25.87%;
+	right: 26.13%;
+	top: 16%;
+	bottom: 36%;
 }
 
-.logo{
-  height: 60vh;
-  width: 60vh;
+.loginText {
+	position: absolute;
+	left: 30.67%;
+	right: 30.93%;
+	top: 83.73%;
+	bottom: 2.93%;
+
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 30px;
+	line-height: 38px;
+	text-align: center;
+
+	color: #a58123;
 }
 
-.focus-for-health {
-  position: absolute;
-  bottom: 8px;
-  right: 16px;
-  font-size: 18px;
-  width: 40vh
-}
+@media (max-width: 600px) {
+	.buttons-container {
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
 
-@media only screen and (max-width: 1024px) {
-  .logo{
-    height: 20vh;
-    width: 20vh;
-  }
-  .home-content {
-    height: fit-content;
-  }
-  .home-background {
-    height: 100%;
-    width: 100%;
-  }
-  .home-header {
-    font-size: 5vh;
-  }
+	.applyCon {
+		position: relative;
+		left: 0;
+		margin-bottom: 20px;
+		margin-right: 0px;
+	}
+	.loginCon {
+		position: relative;
+		left: 0;
+	}
+	.home-background {
+		height: 1090px;
+	}
 }

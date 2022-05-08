@@ -1,39 +1,107 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { Modal } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { fetchApplications, updateApplicationById } from "../../utils/api";
+import { Modal, Select, Table, Button } from "antd";
+import { ExclamationCircleOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+	fetchApplications,
+	updateApplicationById,
+	getApplicationById,
+	downloadMentorsApps,
+	downloadMenteeApps,
+} from "../../utils/api";
 import MentorApplicationView from "../MentorApplicationView";
 import { APP_STATUS, NEW_APPLICATION_STATUS } from "../../utils/consts";
 import useAuth from "utils/hooks/useAuth";
+import ModalInput from "../ModalInput";
 
+import { EditOutlined } from "@ant-design/icons";
 const { confirm } = Modal;
+const { Option } = Select;
 
 function ApplicationOrganizer({ isMentor }) {
 	const { onAuthStateChanged } = useAuth();
 	const [applicationData, setApplicationData] = useState([]);
-	const [columns, setColumns] = useState({
-		[1]: {
-			name: NEW_APPLICATION_STATUS.PENDING,
-			items: [],
+	const [filterdData, setFilterdData] = useState([]);
+	const [appState, setAppstate] = useState("all");
+	const [visible, setVisible] = useState(false);
+	const [selectedID, setSelectedID] = useState(null);
+	const [appInfo, setAppInfo] = useState({});
+
+	const columns = [
+		{
+			title: "Name",
+			dataIndex: "name",
+			key: "name",
+			render: (name) => <a>{name}</a>,
 		},
-		[2]: {
-			name: NEW_APPLICATION_STATUS.APPROVED,
-			items: [],
+		{
+			title: "Email",
+			dataIndex: "email",
+			key: "email",
+			render: (email) => <a>{email}</a>,
 		},
-		[3]: {
-			name: NEW_APPLICATION_STATUS.BUILDPROFILE,
-			items: [],
+		{
+			title: "Notes",
+			dataIndex: "notes",
+			key: "notes",
+			render: (notes) => <a>{notes}</a>,
 		},
-		[4]: {
-			name: NEW_APPLICATION_STATUS.COMPLETED,
-			items: [],
+		{
+			title: "Application State",
+			dataIndex: "id",
+			key: "application_state",
+			render: (id, record) => (
+				<>
+					<ModalInput
+						style={styles.modalInput}
+						type="dropdown-single"
+						title={""}
+						onChange={async (e) => {
+							console.log(record, id);
+							const dataa = {
+								application_state: e,
+							};
+							await updateApplicationById(dataa, id, isMentor);
+							await updateApps();
+						}}
+						options={[
+							NEW_APPLICATION_STATUS.PENDING,
+							NEW_APPLICATION_STATUS.APPROVED,
+							NEW_APPLICATION_STATUS.BUILDPROFILE,
+							NEW_APPLICATION_STATUS.COMPLETED,
+							NEW_APPLICATION_STATUS.REJECTED,
+						]}
+						value={record.application_state}
+						handleClick={() => {}}
+					/>
+				</>
+			),
 		},
-		[5]: {
-			name: NEW_APPLICATION_STATUS.REJECTED,
-			items: [],
+
+		{
+			title: "Full Application",
+			dataIndex: "id",
+			key: "id",
+			render: (id) => (
+				<>
+					<EditOutlined
+						className="delete-user-btn"
+						onClick={async () => {
+							setSelectedID(id);
+							const info = await getApplicationById(id, isMentor);
+							if (info) {
+								setAppInfo(info);
+								//setAppstate(info.application_state);
+							}
+							setVisible(true);
+						}}
+					/>
+				</>
+			),
+
+			align: "center",
 		},
-	});
+	];
 
 	useEffect(() => {
 		const getAllApplications = async () => {
@@ -44,40 +112,17 @@ function ApplicationOrganizer({ isMentor }) {
 						return {
 							...app,
 							index: index,
+							id: app._id["$oid"],
 						};
 					}
 				);
 				setApplicationData(newApplications);
+				setFilterdData(newApplications);
 			}
 		};
 
 		onAuthStateChanged(getAllApplications);
 	}, []);
-
-	useEffect(() => {
-		setColumns({
-			[1]: {
-				name: NEW_APPLICATION_STATUS.PENDING,
-				items: filterApplications(NEW_APPLICATION_STATUS.PENDING),
-			},
-			[2]: {
-				name: NEW_APPLICATION_STATUS.APPROVED,
-				items: filterApplications(NEW_APPLICATION_STATUS.APPROVED),
-			},
-			[3]: {
-				name: NEW_APPLICATION_STATUS.BUILDPROFILE,
-				items: filterApplications(NEW_APPLICATION_STATUS.BUILDPROFILE),
-			},
-			[4]: {
-				name: NEW_APPLICATION_STATUS.COMPLETED,
-				items: filterApplications(NEW_APPLICATION_STATUS.COMPLETED),
-			},
-			[5]: {
-				name: NEW_APPLICATION_STATUS.REJECTED,
-				items: filterApplications(NEW_APPLICATION_STATUS.REJECTED),
-			},
-		});
-	}, [applicationData]);
 
 	const updateApps = async () => {
 		const applications = await fetchApplications(isMentor);
@@ -87,223 +132,123 @@ function ApplicationOrganizer({ isMentor }) {
 					return {
 						...app,
 						index: index,
+						id: app._id["$oid"],
 					};
 				}
 			);
-			setApplicationData(newApplications);
-			setColumns({
-				[1]: {
-					name: NEW_APPLICATION_STATUS.PENDING,
-					items: filterApplications(NEW_APPLICATION_STATUS.PENDING),
-				},
-				[2]: {
-					name: NEW_APPLICATION_STATUS.APPROVED,
-					items: filterApplications(NEW_APPLICATION_STATUS.APPROVED),
-				},
-				[3]: {
-					name: NEW_APPLICATION_STATUS.BUILDPROFILE,
-					items: filterApplications(NEW_APPLICATION_STATUS.BUILDPROFILE),
-				},
-				[4]: {
-					name: NEW_APPLICATION_STATUS.COMPLETED,
-					items: filterApplications(NEW_APPLICATION_STATUS.COMPLETED),
-				},
-				[5]: {
-					name: NEW_APPLICATION_STATUS.REJECTED,
-					items: filterApplications(NEW_APPLICATION_STATUS.REJECTED),
-				},
-			});
+			if (appState != "all") {
+				setApplicationData(newApplications);
+				setFilterdData(filterApplications(newApplications, appState));
+			} else {
+				setApplicationData(newApplications);
+				setFilterdData(newApplications);
+			}
 		}
 	};
 	/**
 	 * Filters application by application state and items stored in the corresponding named columns
 	 */
-	function filterApplications(desiredState) {
-		return applicationData
-			.filter(
-				(state) =>
-					state.application_state &&
-					state.application_state.toLowerCase() === desiredState.toLowerCase()
-			)
-			.map((application) => ({
-				id: application._id.$oid,
-				content: {
-					name: `Name: ${application.name}`,
-					email: `Email: ${application.email}`,
-				},
-				...application,
-			}));
-	}
-
-	/**
-	 * Confirmation modal when item is dragged to a new column destination
-	 */
-	function showConfirm(name, id, removed, sourceItems, sourceColumn, sourceID) {
-		confirm({
-			title: "Move this Application?",
-			icon: <ExclamationCircleOutlined />,
-			onOk() {
-				// updates application state of item based on destination column name
-				async function updateApplication() {
-					// onOk send the put request
-					const data = {
-						application_state: name,
-					};
-					await updateApplicationById(data, id, isMentor);
-				}
-				updateApplication();
-			},
-			onCancel() {
-				// puts item back into source column if canceled
-				sourceItems.push(removed);
-				setColumns({
-					...columns,
-					[sourceID]: {
-						...sourceColumn,
-						items: sourceItems,
-					},
-				});
-			},
-		});
-	}
-
-	/**
-	 * Handles dragging of item to a new column
-	 */
-	const onDragEnd = (result, columns, setColumns) => {
-		// if no designated column to switch then keep app in curr column
-		if (!result.destination) return;
-
-		const { source, destination } = result;
-		if (source.droppableId !== destination.droppableId) {
-			const sourceColumn = columns[source.droppableId];
-			const destColumn = columns[destination.droppableId];
-			const sourceItems = [...sourceColumn.items];
-			const destItems = [...destColumn.items];
-			const [removed] = sourceItems.splice(source.index, 1);
-			destItems.splice(destination.index, 0, removed);
-			setColumns({
-				...columns,
-				[source.droppableId]: {
-					...sourceColumn,
-					items: sourceItems,
-				},
-				[destination.droppableId]: {
-					...destColumn,
-					items: destItems,
-				},
-			});
-
-			var destColumnName = columns[destination.droppableId].name;
-			var destItemId = destItems[destination.index].id;
-			showConfirm(
-				destColumnName,
-				destItemId,
-				removed,
-				sourceItems,
-				sourceColumn,
-				source.droppableId
-			);
+	function filterApplications(data, appStatee) {
+		if (appStatee == "all") {
+			return data;
 		} else {
-			const column = columns[source.droppableId];
-			const copiedItems = [...column.items];
-			const [removed] = copiedItems.splice(source.index, 1);
-			copiedItems.splice(destination.index, 0, removed);
-			setColumns({
-				...columns,
-				[source.droppableId]: {
-					...column,
-					items: copiedItems,
-				},
-			});
+			return data
+				.filter(
+					(state) =>
+						state.application_state &&
+						state.application_state.toLowerCase() === appStatee.toLowerCase()
+				)
+				.map((application) => ({
+					id: application._id.$oid,
+					...application,
+				}));
 		}
+	}
+	const handleModalClose = async () => {
+		await updateApps();
+		setVisible(false);
 	};
 
 	return (
 		<div
 			style={{
 				display: "flex",
-				justifyContent: "center",
-				height: "100%",
+				justifyContent: "flex-start",
 				overflowX: "auto",
+				flexDirection: "column",
 			}}
 		>
-			<DragDropContext
-				onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
-			>
-				{/* Mapping each columns from the list. */}
-				{Object.entries(columns).map(([columnId, column]) => {
-					return (
-						<div
-							style={{
-								display: "flex",
-								flexDirection: "column",
-								alignItems: "center",
-							}}
-							key={columnId}
-						>
-							<h2>{column.name}</h2>
-							<div style={{ margin: 10 }}>
-								<Droppable droppableId={columnId} key={columnId}>
-									{/* Causes the droppable item to change color of columm when picked up. */}
+			<div className="btn-dc">
+				<Button
+					className="btn-d"
+					icon={<DownloadOutlined />}
+					onClick={async () => {
+						await downloadMentorsApps();
+					}}
+				>
+					Mentor Appications
+				</Button>
+				<Button
+					className="btn-d"
+					icon={<DownloadOutlined />}
+					onClick={async () => {
+						await downloadMenteeApps();
+					}}
+				>
+					Mentee Appications
+				</Button>
+			</div>
+			<div style={{ fontSize: 20, fontWeight: 400, padding: 10 }}>
+				Applications State
+			</div>
 
-									{(provided, currentApp) => {
-										//printData()
-										return (
-											<div
-												{...provided.droppableProps}
-												ref={provided.innerRef}
-												style={{
-													background: currentApp.isDraggingOver
-														? "#F8D15B"
-														: "#F5F5F5",
-													padding: 4,
-													width: 250,
-													minHeight: 500,
-												}}
-											>
-												{/* Mapping each item from list that corresponds to the column */}
-												{column.items.map((item, index) => {
-													return (
-														<Draggable
-															key={item.id}
-															draggableId={item.id}
-															index={index}
-														>
-															{(provided) => {
-																return (
-																	<div
-																		ref={provided.innerRef}
-																		{...provided.draggableProps}
-																		{...provided.dragHandleProps}
-																		style={{
-																			...provided.draggableProps.style,
-																		}}
-																	>
-																		<MentorApplicationView
-																			data={item}
-																			handleApp={updateApps}
-																			isMentor={isMentor}
-																			isNew={item.hasOwnProperty("identify")}
-																		/>
-																	</div>
-																);
-															}}
-														</Draggable>
-													);
-												})}
-												{provided.placeholder}
-											</div>
-										);
-									}}
-								</Droppable>
-							</div>
-						</div>
-					);
+			<Select
+				style={{ width: 160, height: 50, padding: 10 }}
+				onChange={(value) => {
+					setAppstate(value);
+					setFilterdData(filterApplications(applicationData, value));
+				}}
+				placeholder="Role"
+				value={appState}
+			>
+				{" "}
+				{Object.keys(NEW_APPLICATION_STATUS).map((state) => {
+					return <Option value={state}>{state}</Option>;
 				})}
-			</DragDropContext>
+				<Option value={"all"}>All</Option>
+			</Select>
+			<div style={{ margin: 10 }}>
+				<Table columns={columns} dataSource={filterdData} />;
+			</div>
+			{selectedID && (
+				<Modal
+					visible={visible}
+					footer={null}
+					className="app-modal"
+					onCancel={() => handleModalClose()}
+				>
+					<MentorApplicationView
+						id={selectedID}
+						isMentor={isMentor}
+						isNew={applicationData
+							.filter((item) => item.id == selectedID)
+							.hasOwnProperty("identify")}
+						visible={visible}
+						appInfo={appInfo}
+					/>
+				</Modal>
+			)}
 		</div>
 	);
 }
+const styles = {
+	modalInput: {
+		height: 65,
+		margin: 18,
+		padding: 4,
+		paddingTop: 6,
+		marginBottom: "40px",
+	},
+};
 
 export default ApplicationOrganizer;

@@ -4,13 +4,13 @@ import xlsxwriter
 from datetime import datetime
 from io import BytesIO
 from api.core import create_response, logger
-from api.models import AppointmentRequest, Admin, MentorProfile, MenteeProfile
+from api.models import AppointmentRequest, Admin, MentorProfile, MenteeProfile,NewMentorApplication,MenteeApplication
 from flask import send_file, Blueprint, request
 from api.utils.require_auth import admin_only
 from firebase_admin import auth as firebase_admin_auth
 from api.utils.constants import Account
 
-download = Blueprint("download", __name__)
+download= Blueprint("download", __name__)
 
 
 @download.route("/appointments/all", methods=["GET"])
@@ -106,6 +106,131 @@ def download_accounts_info():
     msg = "Invalid input"
     logger.info(msg)
     return create_response(status=422, message=msg)
+
+
+@download.route("/apps/all", methods=["GET"])
+@admin_only
+def download_apps_info():
+    data = request.args
+    account_type = int(data.get("account_type", 0))
+    apps = None
+
+    try:
+
+        if account_type == Account.MENTOR:
+            apps = NewMentorApplication.objects
+        elif account_type == Account.MENTEE:
+            apps = MenteeApplication.objects
+
+
+    except:
+        msg = "Failed to get accounts"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    if account_type == Account.MENTOR:
+        return download_mentor_apps(apps)
+    elif account_type == Account.MENTEE:
+        return download_mentee_apps(apps)
+   
+
+    msg = "Invalid input"
+    logger.info(msg)
+    return create_response(status=422, message=msg)
+
+def download_mentor_apps(apps):
+    accts = []
+
+    for acct in apps:
+        accts.append(
+            [
+                acct.name,
+                acct.email,
+                acct.cell_number,
+                acct.hear_about_us,
+                acct.offer_donation,
+                acct.employer_name,
+                acct.role_description,
+                "Yes" if acct.immigrant_status else "No",
+                acct.languages,
+                acct.referral,
+                acct.companyTime,
+                acct.specialistTime,
+                acct.knowledge_location,
+                "Yes" if acct.isColorPerson else "No",
+                "Yes" if acct.isMarginalized else "No",
+                "Yes" if acct.isFamilyNative else "No",
+                "Yes" if acct.isEconomically else "No",
+                acct.identify,
+                acct.pastLiveLocation,
+                acct.application_state,
+                acct.notes
+            ]
+        )
+    columns = [
+        " Full Name",
+        "email",
+        "cell number",
+        "hear about us",
+        "offer donation",
+        "company/employer",
+        "role description",
+        "immigrant status",
+        "Languages",
+        "referral",
+        "company experience years",
+        "commit as special period",
+        "regions knowledge based in",
+        "is color person",
+        "is marginalized",
+        "is family native",
+        "is economically",
+        "identify",
+        "past live location",
+        "application state",
+        "notes"
+    ]
+    return generate_sheet("accounts", accts, columns)
+
+def download_mentee_apps(apps):
+    accts = []
+
+    for acct in apps:
+        accts.append(
+            [
+                acct.name,
+                acct.email,
+                acct.age,
+                ",".join(acct.immigrant_status),
+                acct.Country,
+                acct.identify,
+                acct.language,
+                ",".join(acct.topics),
+                ",".join(acct.workstate),
+                acct.isSocial,
+                acct.questions,
+                acct.application_state,
+                acct.notes
+            ]
+        )
+    columns = [
+        " Full Name",
+        "email",
+        "age",
+        "immigrant status",
+        "Country",
+        "identify",
+        "language",
+        "Topics",
+        "work state",
+        "is social ",
+        "questions",
+        "application state",
+        "notes"
+    ]
+    return generate_sheet("accounts", accts, columns)
+
+
 
 
 def download_mentor_accounts(accounts):
@@ -300,6 +425,6 @@ def generate_sheet(sheet_name, row_data, columns):
             as_attachment=True,
         )
     except FileNotFoundError:
-        msg = "Download failed"
+        msg = "Downloads failed"
         logger.info(msg)
         return create_response(status=422, message=msg)

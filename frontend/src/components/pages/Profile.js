@@ -4,7 +4,7 @@ import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "features/userSlice";
-import { getMentorID, getMenteeID } from "utils/auth.service";
+import { getMentorID, getMenteeID, getPartnerID } from "utils/auth.service";
 import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -16,6 +16,7 @@ import {
 	editMentorProfile,
 	fetchMenteeByID,
 	editMenteeProfile,
+	editPartnerProfile,
 } from "utils/api";
 
 function Profile() {
@@ -27,7 +28,8 @@ function Profile() {
 
 	const [form] = Form.useForm();
 
-	const { onAuthStateChanged, isMentor, profileId, isMentee, role } = useAuth();
+	const { onAuthStateChanged, isMentor, profileId, isMentee, role, isPartner } =
+		useAuth();
 
 	const handleSaveEdits = () => {
 		dispatch(fetchUser({ id: profileId, role }));
@@ -54,7 +56,7 @@ function Profile() {
 						<br />
 					</div>
 				)}
-				{user.phone_number && (
+				{user.phone_number && !isPartner && (
 					<div>
 						<PhoneOutlined className="mentor-profile-contact-icon" />
 						{user.phone_number}
@@ -85,8 +87,10 @@ function Profile() {
 			const new_values = { ...values, phone_number: values.phone };
 			if (isMentor) {
 				await editMentorProfile(new_values, await getMentorID());
-			} else {
+			} else if (isMentee) {
 				await editMenteeProfile(new_values, await getMenteeID());
+			} else if (isPartner) {
+				await editPartnerProfile(new_values, await getPartnerID());
 			}
 			handleSaveEdits();
 		}
@@ -123,19 +127,22 @@ function Profile() {
 						<Input />
 					</Form.Item>
 				</div>
-				<div className="mentor-profile-input">
-					<PhoneOutlined className="mentor-profile-contact-icon" />
-					<Form.Item
-						name="phone"
-						rules={[
-							{
-								min: 10,
-							},
-						]}
-					>
-						<Input />
-					</Form.Item>
-				</div>
+				{!isPartner && (
+					<div className="mentor-profile-input">
+						<PhoneOutlined className="mentor-profile-contact-icon" />
+						<Form.Item
+							name="phone"
+							rules={[
+								{
+									min: 10,
+								},
+							]}
+						>
+							<Input />
+						</Form.Item>
+					</div>
+				)}
+
 				<div className="mentor-profile-editing-footer">
 					<div className="mentor-profile-notifications-container">
 						<div className="modal-mentee-availability-switch">
@@ -190,6 +197,7 @@ function Profile() {
 									mentor={user}
 									isMentor={isMentor}
 									accountType={role}
+									account={user}
 									handleSaveEdits={handleSaveEdits}
 									showEditBtn={
 										user &&

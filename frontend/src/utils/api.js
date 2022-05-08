@@ -191,28 +191,64 @@ export const deleteTrainbyId = (id, accountType) => {
 export const getTrainById = async (id) => {
 	const requestExtension = `/training/train/${id}`;
 	let response = await authGet(requestExtension);
-	const Train = response.data.result.train;
-	console.log(Train);
-	return Train;
+	const train = response.data.result.train;
+	console.log(train);
+	return train;
 };
-export const EditTrainById = async (id, name, url, description, role) => {
+export const getTrainVideo = async (id) => {
+	const requestExtension = `/training/trainVideo/${id}`;
+	let response = await authGet(requestExtension, { responseType: "blob" });
+	console.log(response);
+	//const train = response.data.result.train;
+	//console.log(train);
+	return response;
+};
+export const EditTrainById = async (
+	id,
+	name,
+	url,
+	description,
+	role,
+	isVideo,
+	filee
+) => {
 	const requestExtension = `/training/${id}`;
-	let response = await authPut(requestExtension, {
-		name: name,
-		url: url,
-		description: description,
-		role: role,
-	});
+	const formData = new FormData();
+	formData.append("name", name);
+	formData.append("url", url);
+	formData.append("description", description);
+	formData.append("role", role);
+	formData.append("isVideo", isVideo);
+	if (!isVideo) {
+		formData.append("filee", filee);
+	}
+	let response = await authPut(requestExtension, formData);
 	let Train = response.data.result.train;
 	return Train;
 };
-export const newTrainCreate = async (name, url, description, role) => {
+export const newTrainCreate = async (
+	name,
+	url,
+	description,
+	role,
+	isVideo,
+	filee
+) => {
 	const requestExtension = `/training/${role}`;
-	let response = await authPost(requestExtension, {
-		name: name,
-		url: url,
-		description: description,
-	});
+	const formData = new FormData();
+	formData.append("name", name);
+	formData.append("url", url);
+
+	formData.append("description", description);
+
+	formData.append("role", role);
+
+	formData.append("isVideo", isVideo);
+	if (!isVideo) {
+		formData.append("filee", filee);
+	}
+
+	let response = await authPost(requestExtension, formData);
 
 	let Train = response.data.result.train;
 	return Train;
@@ -331,7 +367,7 @@ export const fetchAllAppointments = () => {
 	);
 };
 
-const downloadBlob = (response, filename) => {
+export const downloadBlob = (response, filename) => {
 	const url = window.URL.createObjectURL(new Blob([response.data]));
 	const link = document.createElement("a");
 	link.href = url;
@@ -351,6 +387,28 @@ export const downloadMentorsData = async () => {
 	});
 
 	downloadBlob(response, "mentee_data.xlsx");
+};
+export const downloadMentorsApps = async () => {
+	const requestExtension = "/download/apps/all";
+	let response = await authGet(requestExtension, {
+		responseType: "blob",
+		params: {
+			account_type: ACCOUNT_TYPE.MENTOR,
+		},
+	});
+
+	downloadBlob(response, "mentor_applications.xlsx");
+};
+export const downloadMenteeApps = async () => {
+	const requestExtension = "/download/apps/all";
+	let response = await authGet(requestExtension, {
+		responseType: "blob",
+		params: {
+			account_type: ACCOUNT_TYPE.MENTEE,
+		},
+	});
+
+	downloadBlob(response, "mentee_applications.xlsx");
 };
 
 export const downloadMenteesData = async () => {
@@ -594,6 +652,9 @@ export const editMentorProfile = async (data, id) => {
 export const editMenteeProfile = async (data, id) => {
 	return await editAccountProfile(data, id, ACCOUNT_TYPE.MENTEE);
 };
+export const editPartnerProfile = async (data, id) => {
+	return await editAccountProfile(data, id, ACCOUNT_TYPE.PARTNER);
+};
 
 export const uploadMentorImage = async (data, id) => {
 	return await uploadAccountImage(data, id, ACCOUNT_TYPE.MENTOR);
@@ -601,6 +662,9 @@ export const uploadMentorImage = async (data, id) => {
 
 export const uploadMenteeImage = async (data, id) => {
 	return await uploadAccountImage(data, id, ACCOUNT_TYPE.MENTEE);
+};
+export const uploadPartnerImage = async (data, id) => {
+	return await uploadAccountImage(data, id, ACCOUNT_TYPE.PARTNER);
 };
 
 export const fetchMentorByID = async (id) => {
@@ -613,6 +677,9 @@ export const fetchMenteeByID = async (id) => {
 
 export const fetchMentors = async () => {
 	return await fetchAccounts(ACCOUNT_TYPE.MENTOR);
+};
+export const fetchPartners = async () => {
+	return await fetchAccounts(ACCOUNT_TYPE.PARTNER);
 };
 
 export const fetchMentees = async () => {

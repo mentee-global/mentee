@@ -1,6 +1,6 @@
 from os import  path
 from flask import Blueprint, request, jsonify
-from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage
+from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage,PartnerProfile
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
 from api.core import create_response, serialize_list, logger
@@ -176,7 +176,11 @@ def get_sidebar(user_id):
                 try:
                     otherUser = MentorProfile.objects.get(id=otherId)
                 except:
-                    pass
+                    try:
+                        otherUser = PartnerProfile.objects.get(id=otherId)
+                        user_type=Account.PARTNER.value
+                    except:
+                        pass
                 if not otherUser:
                     user_type = Account.MENTEE.value
                     try:
@@ -187,10 +191,18 @@ def get_sidebar(user_id):
                         logger.info(msg)
                         continue
                 otherUser = json.loads(otherUser.to_json())
-                otherUserObj = {
+                if user_type==Account.PARTNER.value:
+
+                    otherUserObj = {
+                    "name": otherUser["organization"],
+                    "user_type": user_type,
+                    }
+                else:
+
+                    otherUserObj = {
                     "name": otherUser["name"],
                     "user_type": user_type,
-                }
+                    }
 
                 if "image" in otherUser:
                     otherUserObj["image"] = otherUser["image"]["url"]

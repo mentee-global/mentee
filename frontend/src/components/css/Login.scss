@@ -1,12 +1,11 @@
 @import "_app";
 .containerr {
-	position: absolute;
 	min-height: 936px;
 	width: 100%;
-	left: 0px;
-	top: 64px;
 	background: #ffdb6f;
 	overflow: auto;
+	position: relative;
+	margin-bottom: 50px;
 }
 .home-header3 {
 	font-family: "Abel";

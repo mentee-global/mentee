@@ -10,35 +10,17 @@ import NewMentorAppInfo from "./NewMentorAppInfo";
 import MenteeAppInfo from "./MenteeAppInfo";
 const { Text } = Typography;
 
-function MentorApplicationView({ data, handleApp, isMentor, isNew }) {
-	const [note, setNote] = useState(null);
-	const [appInfo, setAppInfo] = useState({});
-	const [visible, setVisible] = useState(false);
-	const [appstate, setAppstate] = useState(null);
-
-	useEffect(() => {
-		async function fetchAppInfo() {
-			const info = await getApplicationById(data.id, isMentor);
-			if (info) {
-				setAppInfo(info);
-				setNote(info.notes);
-				setAppstate(info.application_state);
-			}
-		}
-		fetchAppInfo();
-	}, [visible]);
+function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
+	const [appstate, setAppstate] = useState(appInfo.application_state);
+	const [note, setNote] = useState(appInfo.notes);
 
 	/**
 	 * Once modal closes we update our database with the updated note!
 	 */
-	const handleModalClose = async () => {
-		setVisible(false);
-		const noteUpdate = {
-			notes: note,
-		};
-		await updateApplicationById(noteUpdate, data.id, isMentor);
-	};
-
+	useEffect(() => {
+		setAppstate(appInfo.application_state);
+		setNote(appInfo.notes);
+	}, [appInfo]);
 	const NotesContainer = () => {
 		return (
 			<div className="notes-container">
@@ -51,9 +33,8 @@ function MentorApplicationView({ data, handleApp, isMentor, isNew }) {
 						const dataa = {
 							application_state: e,
 						};
-						await updateApplicationById(dataa, data.id, isMentor);
+						await updateApplicationById(dataa, id, isMentor);
 						setAppstate(e);
-						handleApp();
 					}}
 					options={[
 						NEW_APPLICATION_STATUS.PENDING,
@@ -70,7 +51,13 @@ function MentorApplicationView({ data, handleApp, isMentor, isNew }) {
 					<Text
 						style={{ fontWeight: "bold" }}
 						editable={{
-							onChange: setNote,
+							onChange: async (value) => {
+								const noteUpdate = {
+									notes: value,
+								};
+								setNote(value);
+								await updateApplicationById(noteUpdate, id, isMentor);
+							},
 							tooltip: "Click to edit note",
 						}}
 					>
@@ -83,37 +70,15 @@ function MentorApplicationView({ data, handleApp, isMentor, isNew }) {
 
 	return (
 		<div>
-			<div
-				onClick={() => setVisible(true)}
-				style={{
-					userSelect: "none",
-					padding: 16,
-					margin: "0 0 8px 0",
-					minHeight: "50px",
-					backgroundColor: "white",
-					color: "black",
-				}}
-			>
-				{data.content.name}
-				<br></br>
-				{data.content.email}
-			</div>
-			<Modal
-				visible={visible}
-				footer={null}
-				className="app-modal"
-				onCancel={() => handleModalClose()}
-			>
-				<div className="view-container">
-					{!isMentor && <MenteeAppInfo info={appInfo} />}
-					{isNew && isMentor && <NewMentorAppInfo info={appInfo} />}
-					{!isNew && isMentor && <MentorAppInfo info={appInfo} />}
+			<div className="view-container">
+				{!isMentor && <MenteeAppInfo info={appInfo} />}
+				{isNew && isMentor && <NewMentorAppInfo info={appInfo} />}
+				{!isNew && isMentor && <MentorAppInfo info={appInfo} />}
 
-					<div className="status-container">
-						<NotesContainer />
-					</div>
+				<div className="status-container">
+					<NotesContainer />
 				</div>
-			</Modal>
+			</div>
 		</div>
 	);
 }

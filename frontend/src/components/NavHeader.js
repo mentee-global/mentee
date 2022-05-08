@@ -136,7 +136,7 @@ function NavHeader({ history }) {
 							</span>
 						)}
 
-						{isLoggedIn() && (
+						{!isPartner && isLoggedIn() && (
 							<span className="navigation-header-button">
 								<LoginVerificationModal
 									content={<b>Find a Mentee</b>}
@@ -151,7 +151,22 @@ function NavHeader({ history }) {
 								/>
 							</span>
 						)}
-						{isLoggedIn() ? (
+						{isPartner && (
+							<span className="navigation-header-button">
+								<LoginVerificationModal
+									content={<b>Find a Partner</b>}
+									theme="light"
+									width="9em"
+									onVerified={() => {
+										history.push({
+											pathname: "/partner-gallery",
+											state: { verified: true },
+										});
+									}}
+								/>
+							</span>
+						)}
+						{!isPartner && isLoggedIn() ? (
 							<span className="navigation-header-button">
 								<MenteeButton
 									loginButton
@@ -167,7 +182,7 @@ function NavHeader({ history }) {
 										} else if (isAdmin) {
 											redirect = "/account-data";
 										} else if (isPartner) {
-											redirect = "/partner-page";
+											redirect = "/profile";
 										}
 										history.push({
 											pathname: redirect,
@@ -187,7 +202,7 @@ function NavHeader({ history }) {
 									width="9em"
 									onClick={() => {
 										history.push({
-											pathname: "/messages/1",
+											pathname: `/messages/${role}`,
 										});
 									}}
 								/>
@@ -280,7 +295,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
 						}}
 					/>
 				)}
-				{isLoggedIn() && (
+				{!isPartner && isLoggedIn && (
 					<LoginVerificationModal
 						className="mobile-nav-btn-login-modal"
 						content={<b>Find a Mentee</b>}
@@ -294,26 +309,28 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
 						}}
 					/>
 				)}
-				<MenteeButton
-					className="mobile-nav-btn"
-					content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
-					width="9em"
-					onClick={async () => {
-						let redirect = "/login";
-						if (isMentor) {
-							redirect = "/appointments";
-						} else if (isMentee) {
-							redirect = "/mentee-appointments";
-						} else if (isAdmin) {
-							redirect = "/account-data";
-						} else if (isPartner) {
-							redirect = "/partner-page";
-						}
-						history.push({
-							pathname: isLoggedIn() ? redirect : "/login",
-						});
-					}}
-				/>
+				{!isPartner && isLoggedIn && (
+					<MenteeButton
+						className="mobile-nav-btn"
+						content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
+						width="9em"
+						onClick={async () => {
+							let redirect = "/login";
+							if (isMentor) {
+								redirect = "/appointments";
+							} else if (isMentee) {
+								redirect = "/mentee-appointments";
+							} else if (isAdmin) {
+								redirect = "/account-data";
+							} else if (isPartner) {
+								redirect = "/profile";
+							}
+							history.push({
+								pathname: isLoggedIn() ? redirect : "/login",
+							});
+						}}
+					/>
+				)}
 			</Drawer>
 		</div>
 	);

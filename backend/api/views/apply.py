@@ -25,13 +25,8 @@ apply = Blueprint("apply", __name__)
 @apply.route("/", methods=["GET"])
 @admin_only
 def get_applications():
-    new_application = NewMentorApplication.objects.only(
-        "name","id", "application_state","email","identify"
-    )
-
-    old_application=MentorApplication.objects.only( 
-        "name","id", "application_state","email"
-    )
+    new_application = NewMentorApplication.objects
+    old_application=MentorApplication.objects
 
 
     application = [y for x in [new_application, old_application] for y in x]
@@ -40,9 +35,7 @@ def get_applications():
 @apply.route("/menteeApps", methods=["GET"])
 @admin_only
 def get_mentee_applications():
-    application = MenteeApplication.objects.only(
-        "name","id", "application_state","email"
-    )
+    application = MenteeApplication.objects
     return create_response(data={"mentor_applications": application})
 
 
@@ -354,6 +347,8 @@ def create_application():
             identify=data.get("identify"),
             pastLiveLocation=data.get("pastLiveLocation"),
             date_submitted=data.get("date_submitted"),
+            companyTime=data.get('companyTime'),
+            specialistTime=data.get('specialistTime'),
             application_state="PENDING",
         )
     

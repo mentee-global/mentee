@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
 	deleteTrainbyId,
+	downloadBlob,
 	EditTrainById,
 	getTrainById,
 	getTrainings,
+	getTrainVideo,
 	newTrainCreate,
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -30,6 +32,9 @@ export const Trainings = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isModalVisible2, setIsModalVisible2] = useState(false);
 	const [errMessage, setErrorMessage] = useState(null);
+	const [isVideo, setIsVideo] = useState("Yes");
+	const [filee, setFilee] = useState(null);
+	const [file_name, setFileName] = useState(null);
 	const { Option } = Select;
 
 	const showModal = async (id, isNew) => {
@@ -39,22 +44,52 @@ export const Trainings = () => {
 			console.log(train);
 			if (train) {
 				setName(train.name);
-				setUrl(train.url);
 				setDesc(train.description);
 				setTrainRole(train.role);
+				setIsVideo(train.isVideo ? "Yes" : "No");
+				if (train.isVideo) {
+					setUrl(train.url);
+				} else {
+					let response = await getTrainVideo(id);
+
+					setFilee(response);
+					setFileName(train.file_name);
+				}
 			}
 		} else {
 			setName("");
 			setUrl("");
 			setDesc("");
+			setFilee(null);
 			setTrainRole(null);
 			setIsModalVisible2(true);
 		}
 	};
 
 	const handleOk = async (id, isNew) => {
+		if (
+			!name ||
+			!desc ||
+			!trainrole ||
+			(isVideo == "Yes" && !url) ||
+			(isVideo == "No" && !filee)
+		) {
+			setErr(true);
+			setErrorMessage("Please Fill Input Cell");
+			return;
+		} else {
+			setErr(false);
+		}
+		let isVideoo = isVideo == "Yes" ? true : false;
 		if (isNew == true) {
-			let train = await newTrainCreate(name, url, desc, trainrole);
+			let train = await newTrainCreate(
+				name,
+				url,
+				desc,
+				trainrole,
+				isVideoo,
+				filee
+			);
 			if (train) {
 				setErr(false);
 				setIsModalVisible2(false);
@@ -64,7 +99,15 @@ export const Trainings = () => {
 				setErrorMessage("Couldn' save changes");
 			}
 		} else {
-			let train = await EditTrainById(id, name, url, desc, trainrole);
+			let train = await EditTrainById(
+				id,
+				name,
+				url,
+				desc,
+				trainrole,
+				isVideoo,
+				filee
+			);
 			if (train) {
 				setErr(false);
 				setIsModalVisible(false);
@@ -91,13 +134,50 @@ export const Trainings = () => {
 				value={name}
 				onChange={(e) => setName(e.target.value)}
 			/>
-			<p>Url *</p>
-			<Input
-				placeholder="Url *"
-				type="text"
-				value={url}
-				onChange={(e) => setUrl(e.target.value)}
-			/>
+			<p>Training Type *</p>
+			<Radio.Group
+				onChange={(e) => setIsVideo(e.target.value)}
+				value={isVideo}
+				className="isVideo"
+			>
+				<Radio value={"Yes"}>Video</Radio>
+				<Radio value={"No"}>Document</Radio>
+			</Radio.Group>
+			{isVideo == "Yes" ? (
+				<>
+					<p>Url *</p>
+					<Input
+						placeholder="Url *"
+						type="text"
+						value={url}
+						onChange={(e) => setUrl(e.target.value)}
+					/>
+				</>
+			) : (
+				<>
+					{" "}
+					{filee && (
+						<p>
+							<Button
+								onClick={() => {
+									downloadBlob(filee, file_name);
+								}}
+							>
+								{file_name}
+							</Button>
+						</p>
+					)}
+					<p>File*</p>
+					<Input
+						type="file"
+						onChange={(e) => {
+							setFilee(e.target.files[0]);
+							setFileName(e.target.files[0].filename);
+						}}
+					></Input>
+				</>
+			)}
+
 			<p>Description *</p>
 			<Input
 				placeholder="Description *"
@@ -127,10 +207,25 @@ export const Trainings = () => {
 			render: (name) => <a>{name}</a>,
 		},
 		{
-			title: "Url",
+			title: "Video or Document",
 			dataIndex: "url",
 			key: "url",
-			render: (url) => <a>{url}</a>,
+			render: (url, record) => {
+				if (url) {
+					return <a>{url}</a>;
+				} else {
+					return (
+						<Button
+							onClick={async () => {
+								let response = await getTrainVideo(record.id);
+								downloadBlob(response, record.file_name);
+							}}
+						>
+							{record.file_name}
+						</Button>
+					);
+				}
+			},
 		},
 		{
 			title: "Description",

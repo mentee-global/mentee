@@ -9,6 +9,7 @@ class MenteeApplication(Document, Mixin):
     email = StringField(required=True)
     name = StringField(required=True)
     age = StringField(required=True)
+    organization=StringField()
     immigrant_status = ListField(StringField(), required=True)
     Country = StringField()
     identify = StringField(required=True)

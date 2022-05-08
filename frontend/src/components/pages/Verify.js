@@ -53,11 +53,11 @@ function Verify({ history, sent }) {
 								const success = await isUserVerified();
 								if (success) {
 									if (await isUserMentor()) {
-										history.push(`/create-profile/${ACCOUNT_TYPE.MENTOR}`);
+										history.push(`/appointments`);
 									} else if (await isUserMentee()) {
-										history.push(`/create-profile/${ACCOUNT_TYPE.MENTEE}`);
+										history.push(`/mentee-appointment`);
 									} else if (await isUserPartner()) {
-										history.push(`/create-profile/${ACCOUNT_TYPE.PARTNER}`);
+										history.push(`/profile`);
 									} else if (await isUserAdmin()) {
 										await refreshToken();
 										history.push("/account-data");

@@ -4,7 +4,8 @@ from api.models import Training
 from datetime import datetime
 from api.utils.require_auth import admin_only
 from datetime import datetime
-
+from flask import send_file
+from io import BytesIO 
 
 training = Blueprint("training", __name__)  # initialize blueprint
 
@@ -35,7 +36,7 @@ def delete_train(id):
         return create_response(status=422, message="training not found")
 
     return create_response(status=200, message="Successful deletion")
-#############################################################################333
+################################################################################
 @training.route("/train/<string:id>", methods=["GET"])
 @admin_only
 def get_train(id):
@@ -44,21 +45,50 @@ def get_train(id):
         train=Training.objects.get(id=id)
     except:    
         return create_response(status=422, message="training not found")
+        
 
     return create_response(status=200, data={'train':train})
 ##################################################################################    
+@training.route("/trainVideo/<string:id>", methods=["GET"])
+@admin_only
+def get_train_file(id):
+
+    try:
+        train=Training.objects.get(id=id)
+    except:
+        return create_response(status=422, message="training not found")
+    file=train.filee.read()   
+    content_type=train.filee.content_type
+   
+    return send_file(BytesIO(file),attachment_filename=train.filee.file_name,mimetype=content_type)
+#############################################################################
 @training.route("/<string:id>", methods=["PUT"])
 @admin_only
 def get_train_id_edit(id):
-    data = request.get_json()
+    isVideoo=request.form['isVideo']
+    if isVideoo == 'true':
+        isVideoo=True
+    if isVideoo == 'false': 
+        isVideoo  =False 
+        logger.info(isVideoo)
+        
 
     #try:
     train=Training.objects.get(id=id)
-    train.name=data.get('name',train.name)
-    train.url=data.get('url',train.url)
-    train.description=data.get('description',train.description)
-    train.role=str(data.get('role',train.role))
+    train.name=request.form['name']
+    train.description=request.form['description']
+    train.role=str(request.form['role'])
+    train.isVideo=isVideoo
+    if not isVideoo:     
+        filee=request.files['filee']  
+        train.filee.replace(filee)
+        train.file_name=filee.filename
+    else:
+        train.url=request.form['url']
+        
+
     train.save()
+
     #except:    
      #   return create_response(status=422, message="training not found")
 
@@ -70,16 +100,30 @@ def get_train_id_edit(id):
 def new_train(role):
 
     #try:
-        name=request.get_json().get('name')
-        url=request.get_json().get('url')
-        description=request.get_json().get('description')
+        name=request.form['name']
+        url=request.form['url']
+        description=request.form['description']
+        isVideoo=request.form['isVideo']
+        if isVideoo == 'true':
+                isVideoo=True
+        if isVideoo == 'false': 
+                isVideoo  =False 
+       
         train=Training(
             name=name,
-            url=url,
-            description=description,
+            description=description,    
             role=str(role),
+            isVideo=isVideoo,
             date_submitted=datetime.now()
         )
+        if not isVideoo:
+            filee=request.files['filee']
+            train.filee.put(filee,file_name=filee.filename)
+            train.file_name=filee.filename
+        else:
+            train.url=request.form['url']
+
+
         train.save()
     #except:    
     #    return create_response(status=401, message="missing parameters")

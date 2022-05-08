@@ -19,10 +19,11 @@ import { getMenteeID } from "utils/auth.service";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
 import { Rate, Tooltip } from "antd";
 import MentorContactModal from "./MentorContactModal";
+import PartnerProfileModal from "./PartnerProfileModal";
 
 function ProfileContent(props) {
 	const { accountType, account } = props;
-	const { isMentor, isMentee, profileId } = useAuth();
+	const { isMentor, isMentee, isPartner, profileId } = useAuth();
 	const [mentee, setMentee] = useState();
 	const [favorite, setFavorite] = useState(false);
 	const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
@@ -208,6 +209,16 @@ function ProfileContent(props) {
 							/>
 						</div>
 					)
+				)}
+				{isPartner && props.showEditBtn ? (
+					<div className="mentor-profile-button">
+						<PartnerProfileModal
+							mentor={account}
+							onSave={props.handleSaveEdits}
+						/>
+					</div>
+				) : (
+					""
 				)}
 			</div>
 			<br />

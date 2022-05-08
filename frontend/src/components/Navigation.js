@@ -6,6 +6,8 @@ import { ACCOUNT_TYPE } from "utils/consts";
 
 import MentorSidebar from "./MentorSidebar";
 import AdminSidebar from "./AdminSidebar";
+import PartnerSidebar from "./PartnerSidebar";
+
 import MenteeSideBar from "./MenteeSidebar";
 import useAuth from "utils/hooks/useAuth";
 
@@ -43,13 +45,10 @@ function Navigation(props) {
 			<Layout className="navigation-layout">
 				{props.needsAuth && !props.ignoreSidebar ? (
 					<Layout>
-						{isAdmin ? (
-							<AdminSidebar selectedPage={props.page} />
-						) : isMentor ? (
-							<MentorSidebar selectedPage={props.page} />
-						) : (
-							<MenteeSideBar selectedPage={props.page} />
-						)}
+						{isAdmin && <AdminSidebar selectedPage={props.page} />}{" "}
+						{isMentor && <MentorSidebar selectedPage={props.page} />}
+						{isMentee && <MenteeSideBar selectedPage={props.page} />}
+						{isPartner && <PartnerSidebar selectedPage={props.page} />}
 						<Content className="navigation-content">{props.content}</Content>
 					</Layout>
 				) : (

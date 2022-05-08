@@ -129,6 +129,40 @@ def edit_profile(data: dict = {}, profile: object = None):
     """
     if not data or not profile:
         return False
+    if isinstance(profile, PartnerProfile):
+        # Edit fields or keep original data if no added data
+        profile.organization = data.get(
+            "organization", profile.organization
+        )
+        profile.location = data.get("location", profile.location)
+        profile.email = data.get(
+            "email", profile.email
+        )
+        profile.regions = data.get(
+            "regions", profile.regions
+        )
+        profile.open_grants = data.get(
+        "open_grants", profile.open_grants
+        )
+        profile.open_projects = data.get(
+        "open_projects", profile.open_projects
+        )
+        profile.linkedin = data.get("linkedin", profile.linkedin)
+        profile.topics = data.get("topics", profile.topics)
+        profile.sdgs = data.get("sdgs", profile.sdgs)
+        profile.intro = data.get("intro", profile.intro)
+        profile.person_name = data.get("person_name", profile.person_name)
+
+        profile.website = data.get("website", profile.website)
+        profile.text_notifications = data.get(
+        "text_notifications", profile.text_notifications
+        )
+        profile.email_notifications = data.get(
+        "email_notifications", profile.email_notifications
+        )
+        return True
+
+
 
     if isinstance(profile, MentorProfile):
         # Edit fields or keep original data if no added data

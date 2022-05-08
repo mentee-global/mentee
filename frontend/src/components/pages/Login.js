@@ -25,7 +25,7 @@ const Logins = Object.freeze({
 	partner: {
 		title: "Partner",
 		type: ACCOUNT_TYPE.PARTNER,
-		redirect: "/partner-page",
+		redirect: "/profile",
 	},
 });
 const getRoleObject = (key) => {
@@ -70,6 +70,8 @@ function Login() {
 					setErrorMessage("wrong Role please choose account right Role");
 					setError(true);
 					setLoading(false);
+					setLoggingIn(false);
+
 					return;
 					//return wrong Role
 				}
@@ -86,6 +88,8 @@ function Login() {
 				} else if (isHaveProfile == false && isHave == false) {
 					setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
 					setError(true);
+					setLoggingIn(false);
+
 					return;
 				} else if (isHaveProfile == true) {
 					setError(false);

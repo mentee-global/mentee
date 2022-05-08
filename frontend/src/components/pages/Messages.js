@@ -13,138 +13,138 @@ import { setActiveMessageId } from "features/messagesSlice";
 import { updateNotificationsCount } from "features/notificationsSlice";
 
 function Messages(props) {
-  const { history } = props;
-  const dispatch = useDispatch();
-  const [latestConvos, setLatestConvos] = useState([]);
-  const activeMessageId = useSelector(
-    (state) => state.messages.activeMessageId
-  );
-  const [userType, setUserType] = useState();
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isBookingVisible, setBookingVisible] = useState(false);
-  const [inviteeId, setinviteeId] = useState();
-  const profileId = useSelector((state) => state.user.user?._id?.$oid);
+	const { history } = props;
+	const dispatch = useDispatch();
+	const [latestConvos, setLatestConvos] = useState([]);
+	const activeMessageId = useSelector(
+		(state) => state.messages.activeMessageId
+	);
+	const [userType, setUserType] = useState();
+	const [messages, setMessages] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [isBookingVisible, setBookingVisible] = useState(false);
+	const [inviteeId, setinviteeId] = useState();
+	const profileId = useSelector((state) => state.user.user?._id?.$oid);
 
-  const messageListener = (data) => {
-    if (data.allowBooking === "true") {
-      setBookingVisible(true);
-      setinviteeId(data.inviteeId);
-    } else {
-      if (data?.sender_id?.$oid == activeMessageId) {
-        setMessages((prevMessages) => [...prevMessages, data]);
-        dispatch(
-          updateNotificationsCount({
-            recipient: profileId,
-            sender: data.sender_id.$oid,
-          })
-        );
-      } else {
-        async function fetchLatest() {
-          const data = await getLatestMessages(profileId);
-          setLatestConvos(data);
-        }
-        fetchLatest();
-      }
-    }
-  };
+	const messageListener = (data) => {
+		if (data.allowBooking === "true") {
+			setBookingVisible(true);
+			setinviteeId(data.inviteeId);
+		} else {
+			if (data?.sender_id?.$oid == activeMessageId) {
+				setMessages((prevMessages) => [...prevMessages, data]);
+				dispatch(
+					updateNotificationsCount({
+						recipient: profileId,
+						sender: data.sender_id.$oid,
+					})
+				);
+			} else {
+				async function fetchLatest() {
+					const data = await getLatestMessages(profileId);
+					setLatestConvos(data);
+				}
+				fetchLatest();
+			}
+		}
+	};
 
-  useEffect(() => {
-    if (socket && profileId) {
-      socket.on(profileId, messageListener);
-      return () => {
-        socket.off(profileId, messageListener);
-      };
-    }
-  }, [socket, profileId]);
+	useEffect(() => {
+		if (socket && profileId) {
+			socket.on(profileId, messageListener);
+			return () => {
+				socket.off(profileId, messageListener);
+			};
+		}
+	}, [socket, profileId]);
 
-  useEffect(() => {
-    async function getData() {
-      const data = await getLatestMessages(profileId);
-      setLatestConvos(data);
-      if (data?.length) {
-        dispatch(
-          updateNotificationsCount({
-            recipient: profileId,
-            sender: data[0].otherId,
-          })
-        );
-        history.push(
-          `/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`
-        );
-      } else {
-        history.push("/messages/1");
-      }
-    }
+	useEffect(() => {
+		async function getData() {
+			const data = await getLatestMessages(profileId);
+			setLatestConvos(data);
+			if (data?.length) {
+				dispatch(
+					updateNotificationsCount({
+						recipient: profileId,
+						sender: data[0].otherId,
+					})
+				);
+				history.push(
+					`/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`
+				);
+			} else {
+				history.push("/messages/3");
+			}
+		}
 
-    if (profileId) {
-      getData();
-    }
-  }, [profileId]);
+		if (profileId) {
+			getData();
+		}
+	}, [profileId]);
 
-  useEffect(() => {
-    var user_type = new URLSearchParams(props.location.search).get("user_type");
-    dispatch(
-      setActiveMessageId(props.match ? props.match.params.receiverId : null)
-    );
-    setUserType(user_type);
-  });
+	useEffect(() => {
+		var user_type = new URLSearchParams(props.location.search).get("user_type");
+		dispatch(
+			setActiveMessageId(props.match ? props.match.params.receiverId : null)
+		);
+		setUserType(user_type);
+	});
 
-  useEffect(() => {
-    async function getData() {
-      var user_type = new URLSearchParams(props.location.search).get(
-        "user_type"
-      );
-      dispatch(
-        setActiveMessageId(props.match ? props.match.params.receiverId : null)
-      );
-      setUserType(user_type);
+	useEffect(() => {
+		async function getData() {
+			var user_type = new URLSearchParams(props.location.search).get(
+				"user_type"
+			);
+			dispatch(
+				setActiveMessageId(props.match ? props.match.params.receiverId : null)
+			);
+			setUserType(user_type);
 
-      if (activeMessageId && profileId) {
-        setLoading(true);
-        setMessages(await getMessageData(profileId, activeMessageId));
-        setLoading(false);
-      }
-    }
-    getData();
-  }, [activeMessageId]);
+			if (activeMessageId && profileId) {
+				setLoading(true);
+				setMessages(await getMessageData(profileId, activeMessageId));
+				setLoading(false);
+			}
+		}
+		getData();
+	}, [activeMessageId]);
 
-  // useEffect(() => {
-  //   async function getData() {
-  //     const data = await getMessageData(profileId, activeMessageId);
-  //     setMessages(data);
-  //   }
+	// useEffect(() => {
+	//   async function getData() {
+	//     const data = await getMessageData(profileId, activeMessageId);
+	//     setMessages(data);
+	//   }
 
-  //   if (profileId && activeMessageId) {
-  //     getData();
-  //   }
-  // }, [profileId, activeMessageId]);
+	//   if (profileId && activeMessageId) {
+	//     getData();
+	//   }
+	// }, [profileId, activeMessageId]);
 
-  const addMyMessage = (msg) => {
-    setMessages((prevMessages) => [...prevMessages, msg]);
-  };
+	const addMyMessage = (msg) => {
+		setMessages((prevMessages) => [...prevMessages, msg]);
+	};
 
-  return (
-    <Layout className="messages-container" style={{ backgroundColor: "white" }}>
-      <MessagesSidebar
-        latestConvos={latestConvos}
-        activeMessageId={activeMessageId}
-      />
-      <Layout style={{ backgroundColor: "white" }}>
-        <MessagesChatArea
-          messages={messages}
-          activeMessageId={activeMessageId}
-          socket={socket}
-          addMyMessage={addMyMessage}
-          otherId={activeMessageId}
-          userType={userType}
-          loading={loading}
-          isBookingVisible={isBookingVisible}
-          inviteeId={inviteeId}
-        />
-      </Layout>
-    </Layout>
-  );
+	return (
+		<Layout className="messages-container" style={{ backgroundColor: "white" }}>
+			<MessagesSidebar
+				latestConvos={latestConvos}
+				activeMessageId={activeMessageId}
+			/>
+			<Layout style={{ backgroundColor: "white" }}>
+				<MessagesChatArea
+					messages={messages}
+					activeMessageId={activeMessageId}
+					socket={socket}
+					addMyMessage={addMyMessage}
+					otherId={activeMessageId}
+					userType={userType}
+					loading={loading}
+					isBookingVisible={isBookingVisible}
+					inviteeId={inviteeId}
+				/>
+			</Layout>
+		</Layout>
+	);
 }
 
 export default withRouter(Messages);

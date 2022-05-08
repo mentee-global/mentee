@@ -31,6 +31,7 @@ import "components/css/Navigation.scss";
 import SocketComponent from "components/SocketComponent";
 import MentorProfileForm from "components/pages/MentorProfileForm";
 import { Trainings } from "components/Trainings";
+import PartnerGallery from "components/pages/PartnerGallery";
 
 function App() {
 	return (
@@ -84,6 +85,13 @@ function App() {
 				path="/gallery"
 				exact
 				component={() => <Navigation content={<Gallery />} needsAuth={false} />}
+			/>
+			<Route
+				path="/partner-gallery"
+				exact
+				component={() => (
+					<Navigation content={<PartnerGallery />} needsAuth={false} />
+				)}
 			/>
 
 			<Route

@@ -583,6 +583,7 @@ function MenteeApplication(props) {
 				email: props.headEmail,
 				name: firstName + " " + lastName,
 				age: age,
+				organization: organization,
 				immigrant_status: imms,
 				Country: Country,
 				identify: identify,

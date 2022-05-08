@@ -273,6 +273,9 @@ function MentorApplication(props) {
 						<Radio.Group onChange={onChange4} value={specialistTime}>
 							<Radio value={"One year with us"}>One year with us</Radio>
 							<Radio value={"Two years with us"}>Two years with us</Radio>
+							<Radio value={"For as long as you'll have me!"}>
+								For as long as you'll have me!
+							</Radio>
 						</Radio.Group>
 					</div>
 					<div>

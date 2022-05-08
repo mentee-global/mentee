@@ -42,9 +42,7 @@ def get_accounts(account_type):
             "video", "phone_number", "email"
         )
     elif account_type == Account.PARTNER:
-        accounts = PartnerProfile.objects().only(
-            "organization", "location", "email","person_name","website","id"
-        )    
+        accounts = PartnerProfile.objects()
     else:
         msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)

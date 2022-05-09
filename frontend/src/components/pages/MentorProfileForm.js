@@ -534,18 +534,7 @@ function RegisterForm(props) {
 						Error or missing fields, try again.
 					</div>
 				)}
-				<div>
-					{validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
-					<Button
-						type="default"
-						shape="round"
-						className="regular-button"
-						onClick={handleSaveEdits}
-						loading={saving}
-					>
-						Save
-					</Button>
-				</div>
+
 				{err && <p>Please complete apply and training steps first</p>}
 			</div>
 			<div className="modal-inner-container">
@@ -764,6 +753,18 @@ function RegisterForm(props) {
 						value={video}
 					/>
 				</div>
+			</div>
+			<div className="btn-r2">
+				{validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
+				<Button
+					type="default"
+					shape="round"
+					className="regular-button"
+					onClick={handleSaveEdits}
+					loading={saving}
+				>
+					Save
+				</Button>
 			</div>
 		</div>
 	);

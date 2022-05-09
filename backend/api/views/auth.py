@@ -320,11 +320,10 @@ def refresh_token():
 
     claims = firebase_admin_auth.verify_id_token(token)
     firebase_uid = claims.get("uid")
-    role = claims.get("role")
+    role = int(claims.get("role"))
 
     profile_model = get_profile_model(role)
     profile_id = None
-    ps=profile_model.objects
     try:
         
         profile = profile_model.objects.get(firebase_uid=firebase_uid)
@@ -338,7 +337,7 @@ def refresh_token():
         status=200,
         data={
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": role, "profileId": profile_id,'profile':ps}
+                firebase_uid, {"role": role, "profileId": profile_id}
             ).decode("utf-8"),
         },
     )

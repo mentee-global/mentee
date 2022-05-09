@@ -119,7 +119,8 @@ export const getCurrentUser = () => {
 export const isUserAdmin = async () => {
 	if (isLoggedIn()) {
 		return await getIdTokenResult().then(
-			(idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.ADMIN
+			(idTokenResult) =>
+				parseInt(idTokenResult.claims.role) === ACCOUNT_TYPE.ADMIN
 		);
 	} else return false;
 };
@@ -127,7 +128,8 @@ export const isUserAdmin = async () => {
 export const isUserMentor = async () => {
 	if (isLoggedIn()) {
 		return await getIdTokenResult().then(
-			(idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.MENTOR
+			(idTokenResult) =>
+				parseInt(idTokenResult.claims.role) === ACCOUNT_TYPE.MENTOR
 		);
 	} else return false;
 };
@@ -135,14 +137,16 @@ export const isUserMentor = async () => {
 export const isUserMentee = async () => {
 	if (isLoggedIn()) {
 		return await getIdTokenResult().then(
-			(idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.MENTEE
+			(idTokenResult) =>
+				parseInt(idTokenResult.claims.role) === ACCOUNT_TYPE.MENTEE
 		);
 	} else return false;
 };
 export const isUserPartner = async () => {
 	if (isLoggedIn()) {
 		return await getIdTokenResult().then(
-			(idTokenResult) => idTokenResult.claims.role === ACCOUNT_TYPE.PARTNER
+			(idTokenResult) =>
+				parseInt(idTokenResult.claims.role) === ACCOUNT_TYPE.PARTNER
 		);
 	} else return false;
 };
@@ -202,6 +206,7 @@ export const isLoggedIn = () => {
 export const isUserVerified = async () => {
 	if (isLoggedIn()) {
 		return await getIdTokenResult().then((idTokenResult) => {
+			console.log(idTokenResult.claims);
 			return idTokenResult.claims.email_verified;
 		});
 	}

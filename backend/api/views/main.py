@@ -13,6 +13,8 @@ from api.models import (
     PartnerProfile
 
 )
+from api.utils.constants import (PROFILE_COMPLETED)
+from api.utils.request_utils import send_email
 from api.core import create_response, logger
 from api.utils.request_utils import (
     MentorForm,
@@ -189,6 +191,15 @@ def create_mentor_profile():
             exist_application.save()
         except:
             pass
+    ########  
+    success, msg = send_email(
+            recipient=email,
+            subject="Your account have been successfully Created " + email,
+            template_id=PROFILE_COMPLETED,
+
+        )    
+    if not success:
+            logger.info(msg)  
     return create_response(
         message=f"Successfully created {account_type} Profile account {new_account.email}",
         data={"mentorId": str(new_account.id),

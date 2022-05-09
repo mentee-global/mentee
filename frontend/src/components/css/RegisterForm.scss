@@ -14,9 +14,9 @@
 	max-height: 100px;
 	border: 1px solid #eee;
 }
-.sdgs{
-	display:flex;
-	flex-direction:column;
+.sdgs {
+	display: flex;
+	flex-direction: column;
 }
 
 .register-header {
@@ -54,4 +54,9 @@
 	.modal-education-delete-container {
 		flex-direction: row;
 	}
+}
+.btn-r2 {
+	display: flex;
+	justify-content: flex-end;
+	margin: 0px 40px;
 }

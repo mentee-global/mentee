@@ -50,7 +50,9 @@ function Verify({ history, sent }) {
 							loading={verifying}
 							onClick={async () => {
 								setVerifying(true);
+								await refreshToken();
 								const success = await isUserVerified();
+								console.log(success);
 								if (success) {
 									if (await isUserMentor()) {
 										history.push(`/appointments`);
@@ -59,7 +61,6 @@ function Verify({ history, sent }) {
 									} else if (await isUserPartner()) {
 										history.push(`/profile`);
 									} else if (await isUserAdmin()) {
-										await refreshToken();
 										history.push("/account-data");
 									}
 								} else {

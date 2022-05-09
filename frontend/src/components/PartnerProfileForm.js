@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
-import { Checkbox, Button } from "antd";
+import { Checkbox, Button, message } from "antd";
 import ModalInput from "./ModalInput";
-import {
-	getRegistrationStage,
-	isLoggedIn,
-	refreshToken,
-	getCurrentUser,
-	getUserEmail,
-} from "../utils/auth.service";
 import { createPartnerProfile, getAppState, isHaveAccount } from "../utils/api";
-import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import {
 	LANGUAGES,
 	REGIONS,
@@ -20,6 +12,7 @@ import {
 	SDGS,
 	ACCOUNT_TYPE,
 } from "../utils/consts";
+import { sendVerificationEmail } from "utils/auth.service";
 
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
@@ -56,55 +49,9 @@ function RegisterForm(props) {
 	const [sdgErr, setSdgErr] = useState(false);
 	const [localProfile, setLocalProfile] = useState({});
 
-	useEffect(() => {
-		/*const partner = JSON.parse(localStorage.getItem("partner"));
-		if (partner) {
-			let newValid = [...isValid];
-			setLocalProfile(partner);
-			setOrganizaton(partner.organization);
-			if (partner.organization && partner.organization.length > 50) {
-				newValid[0] = false;
-			}
-			setLocation(partner.location);
-			setrPersonName(partner.person_name);
-			if (partner.person_name && partner.person_name.length > 80) {
-				newValid[1] = false;
-			}
-			setRegions(partner.regions);
-			if (partner.regions && partner.regions.length <= 0) {
-				newValid[9] = false;
-			}
-			setIntro(partner.intro);
-			if (partner.intro && partner.intro.length > 255) {
-				newValid[8] = false;
-			}
-			setTopics(partner.topics);
-			if (partner.topics && partner.topics.length > 255) {
-				newValid[88] = false;
-			}
-
-			if (partner.website) {
-				setWebsite(partner.website);
-				if (!validateUrl(partner.website)) {
-					newValid[3] = false;
-				}
-			}
-			if (partner.linkedin) {
-				setLinkedin(partner.linkedin);
-				if (!validateUrl(partner.linkedin)) {
-					newValid[2] = false;
-				}
-			}
-
-			setSdgs(partner.sdgs);
-			if (partner.sdgs && partner.sdgs.length <= 0) {
-				newValid[7] = false;
-			}
-
-			setOpenGrants(partner.open_grants);
-			setOpenProjects(partner.open_projects);
-		}*/
-	}, []);
+	const info = (msg) => {
+		message.success(msg);
+	};
 
 	function handleClick(index) {
 		// Sets only the clicked input box to true to change color, else false
@@ -319,7 +266,9 @@ function RegisterForm(props) {
 			if (mentorId) {
 				setError(false);
 				setIsValid([...isValid].fill(true));
-				history.push("/");
+				info("Your account has been created now you can login to Mentee");
+				await sendVerificationEmail(props.headEmail);
+				history.push("/login");
 			} else {
 				setError(true);
 			}
@@ -366,18 +315,7 @@ function RegisterForm(props) {
 						Error or missing fields, try again.
 					</div>
 				)}
-				<div>
-					{validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
-					<Button
-						type="default"
-						shape="round"
-						className="regular-button"
-						onClick={handleSaveEdits}
-						loading={saving}
-					>
-						Save
-					</Button>
-				</div>
+
 				{err && <p>Please complete apply and training steps first</p>}
 			</div>
 			<div className="modal-inner-container">
@@ -533,7 +471,9 @@ function RegisterForm(props) {
 					/>
 				</div>
 				<div className="modal-input-container sdgs">
-					<p className="sdgtext">Sustainable Development Goals Your Work Supports *</p>
+					<p className="sdgtext">
+						Sustainable Development Goals Your Work Supports *
+					</p>
 
 					{sdgErr && <p>Please input cell</p>}
 					<Checkbox.Group
@@ -592,6 +532,18 @@ function RegisterForm(props) {
 				>
 					Open to Collaboration on Projects
 				</Checkbox>
+			</div>
+			<div className="btn-r2">
+				{validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
+				<Button
+					type="default"
+					shape="round"
+					className="regular-button"
+					onClick={handleSaveEdits}
+					loading={saving}
+				>
+					Save
+				</Button>
 			</div>
 		</div>
 	);

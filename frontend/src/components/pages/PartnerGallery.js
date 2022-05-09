@@ -9,7 +9,7 @@ import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import useAuth from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
-import { REGIONS } from "utils/consts";
+import { REGIONS, SDGS } from "utils/consts";
 
 function PartnerGallery() {
 	const { isAdmin, isPartner, profileId } = useAuth();
@@ -19,6 +19,8 @@ function PartnerGallery() {
 	const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
 	const location = useLocation();
 	const [pageLoaded, setPageLoaded] = useState(false);
+	const [query2, setQuery2] = useState();
+	const [sdgs, setSdgs] = useState([]);
 
 	useEffect(() => {
 		async function getPartners() {
@@ -43,11 +45,17 @@ function PartnerGallery() {
 			const matchesSpecializations =
 				regions.length === 0 ||
 				regions.some((s) => partner.regions.indexOf(s) >= 0);
+			const matchSdgs =
+				sdgs.length === 0 || sdgs.some((s) => partner.sdgs.indexOf(s) >= 0);
+			const matchestopics =
+				!query2 || partner.topics.toUpperCase().includes(query2.toUpperCase());
 			const matchesName =
 				!query ||
 				partner.organization.toUpperCase().includes(query.toUpperCase());
 
-			return matchesSpecializations && matchesName;
+			return (
+				matchesSpecializations && matchesName && matchestopics && matchSdgs
+			);
 		});
 
 	// Add some kind of error 403 code
@@ -89,19 +97,36 @@ function PartnerGallery() {
 			>
 				<div className="no-margin gallery-filter-container">
 					<div className="gallery-filter-header">Filter By:</div>
+					<div className="gallery-filter-section-title">Organization </div>
 					<Input
-						placeholder="Search by name"
+						placeholder="Search by Organization Name"
 						prefix={<SearchOutlined />}
 						style={styles.searchInput}
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
 					/>
-					<div className="gallery-filter-section-title">regions</div>
+
+					<div className="gallery-filter-section-title">REGIONS</div>
 					<Checkbox.Group
 						defaultValue={regions}
 						options={REGIONS}
 						onChange={(checked) => setRegions(checked)}
 						value={regions}
+					/>
+					<div className="gallery-filter-section-title">Project Topics</div>
+					<Input
+						placeholder="Search by project Topics "
+						prefix={<SearchOutlined />}
+						style={styles.searchInput}
+						value={query2}
+						onChange={(e) => setQuery2(e.target.value)}
+					/>
+					<div className="gallery-filter-section-title">SDGS</div>
+					<Checkbox.Group
+						defaultValue={sdgs}
+						options={SDGS}
+						onChange={(checked) => setSdgs(checked)}
+						value={sdgs}
 					/>
 				</div>
 			</Modal>
@@ -109,17 +134,34 @@ function PartnerGallery() {
 			<div className="gallery-container">
 				<div className="gallery-filter-container mobile-invisible">
 					<div className="gallery-filter-header">Filter By:</div>
+					<div className="gallery-filter-section-title">Organization</div>
 					<Input
-						placeholder="Search by name"
+						placeholder="Search by organization "
 						prefix={<SearchOutlined />}
 						style={styles.searchInput}
 						onChange={(e) => setQuery(e.target.value)}
 					/>
-					<div className="gallery-filter-section-title">regions</div>
+
+					<div className="gallery-filter-section-title">REGIONS</div>
 					<Checkbox.Group
 						defaultValue={regions}
 						options={REGIONS}
 						onChange={(checked) => setRegions(checked)}
+					/>
+					<div className="gallery-filter-section-title">Project Topics</div>
+					<Input
+						placeholder="Search by project Topics "
+						prefix={<SearchOutlined />}
+						style={styles.searchInput}
+						value={query2}
+						onChange={(e) => setQuery2(e.target.value)}
+					/>
+					<div className="gallery-filter-section-title">SDGS</div>
+					<Checkbox.Group
+						defaultValue={sdgs}
+						options={SDGS}
+						onChange={(checked) => setSdgs(checked)}
+						value={sdgs}
 					/>
 				</div>
 

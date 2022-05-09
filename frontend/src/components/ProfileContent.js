@@ -339,6 +339,11 @@ function ProfileContent(props) {
 					<div className="mentor-profile-about">{account.topics}</div>
 					<br /> <br />
 					<div className="mentor-profile-heading">
+						<b>Sustainable Development Goals Your Work Supports </b>
+					</div>
+					<div className="mentor-profile-about">{account.sdgs}</div>
+					<br /> <br />
+					<div className="mentor-profile-heading">
 						<b>Open to Collaboration on Grants</b>
 					</div>
 					<div className="mentor-profile-about">

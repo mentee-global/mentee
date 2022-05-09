@@ -102,7 +102,6 @@ def download_accounts_info():
         return download_mentee_accounts(accounts)
     elif account_type == Account.PARTNER:
         return download_partner_accounts(accounts)    
-<<<<<<< HEAD
 
     msg = "Invalid input"
     logger.info(msg)
@@ -134,8 +133,6 @@ def download_apps_info():
     elif account_type == Account.MENTEE:
         return download_mentee_apps(apps)
    
-=======
->>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
 
     msg = "Invalid input"
     logger.info(msg)

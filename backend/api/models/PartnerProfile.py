@@ -8,10 +8,6 @@ class PartnerProfile(Document, Mixin):
     """Model for mentor application."""
     firebase_uid = StringField()
     email = StringField(required=True)
-<<<<<<< HEAD
-=======
-    image = EmbeddedDocumentField(Image)
->>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)
     organization = StringField(required=True)
@@ -25,11 +21,8 @@ class PartnerProfile(Document, Mixin):
     topics=StringField()
     open_grants=BooleanField(required=True)
     open_projects=BooleanField(required=True)
-<<<<<<< HEAD
     image = EmbeddedDocumentField(Image)
 
-=======
->>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
     
 
 

@@ -44,13 +44,7 @@ def get_accounts(account_type):
             "video", "phone_number", "email"
         )
     elif account_type == Account.PARTNER:
-<<<<<<< HEAD
         accounts = PartnerProfile.objects()
-=======
-        accounts = PartnerProfile.objects().only(
-            "organization", "location", "email","person_name","website","id"
-        )    
->>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
     else:
         msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)
@@ -197,7 +191,6 @@ def create_mentor_profile():
             exist_application.save()
         except:
             pass
-<<<<<<< HEAD
     ########  
     success, msg = send_email(
             recipient=email,
@@ -207,8 +200,6 @@ def create_mentor_profile():
         )    
     if not success:
             logger.info(msg)  
-=======
->>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
     return create_response(
         message=f"Successfully created {account_type} Profile account {new_account.email}",
         data={"mentorId": str(new_account.id),

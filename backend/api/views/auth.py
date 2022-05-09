@@ -337,7 +337,7 @@ def refresh_token():
         status=200,
         data={
             "token": firebase_admin_auth.create_custom_token(
-                firebase_uid, {"role": role, "profileId": profile_id}
+                firebase_uid, {"role": role, "profileId": profile_id,'profile':ps}
             ).decode("utf-8"),
         },
     )

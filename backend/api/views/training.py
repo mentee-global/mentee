@@ -4,8 +4,12 @@ from api.models import Training
 from datetime import datetime
 from api.utils.require_auth import admin_only
 from datetime import datetime
+<<<<<<< HEAD
 from flask import send_file
 from io import BytesIO 
+=======
+
+>>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
 
 training = Blueprint("training", __name__)  # initialize blueprint
 
@@ -36,7 +40,11 @@ def delete_train(id):
         return create_response(status=422, message="training not found")
 
     return create_response(status=200, message="Successful deletion")
+<<<<<<< HEAD
 ################################################################################
+=======
+#############################################################################333
+>>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
 @training.route("/train/<string:id>", methods=["GET"])
 @admin_only
 def get_train(id):
@@ -45,6 +53,7 @@ def get_train(id):
         train=Training.objects.get(id=id)
     except:    
         return create_response(status=422, message="training not found")
+<<<<<<< HEAD
         
 
     return create_response(status=200, data={'train':train})
@@ -89,6 +98,23 @@ def get_train_id_edit(id):
 
     train.save()
 
+=======
+
+    return create_response(status=200, data={'train':train})
+##################################################################################    
+@training.route("/<string:id>", methods=["PUT"])
+@admin_only
+def get_train_id_edit(id):
+    data = request.get_json()
+
+    #try:
+    train=Training.objects.get(id=id)
+    train.name=data.get('name',train.name)
+    train.url=data.get('url',train.url)
+    train.description=data.get('description',train.description)
+    train.role=str(data.get('role',train.role))
+    train.save()
+>>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
     #except:    
      #   return create_response(status=422, message="training not found")
 
@@ -100,6 +126,7 @@ def get_train_id_edit(id):
 def new_train(role):
 
     #try:
+<<<<<<< HEAD
         name=request.form['name']
         url=request.form['url']
         description=request.form['description']
@@ -124,6 +151,18 @@ def new_train(role):
             train.url=request.form['url']
 
 
+=======
+        name=request.get_json().get('name')
+        url=request.get_json().get('url')
+        description=request.get_json().get('description')
+        train=Training(
+            name=name,
+            url=url,
+            description=description,
+            role=str(role),
+            date_submitted=datetime.now()
+        )
+>>>>>>> 8801e225af5664508c6b57f8b15e0265d73df029
         train.save()
     #except:    
     #    return create_response(status=401, message="missing parameters")

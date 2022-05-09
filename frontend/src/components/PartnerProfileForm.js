@@ -315,7 +315,6 @@ function RegisterForm(props) {
 						Error or missing fields, try again.
 					</div>
 				)}
-
 				{err && <p>Please complete apply and training steps first</p>}
 			</div>
 			<div className="modal-inner-container">

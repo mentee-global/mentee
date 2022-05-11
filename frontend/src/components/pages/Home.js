@@ -13,7 +13,7 @@ import { resetUser } from "features/userSlice";
 import { useDispatch } from "react-redux";
 
 function Home({ history }) {
-	const { isMentor, isMentee, isPartner, resetRoleState } = useAuth();
+	const { isMentor, isMentee, isPartner, resetRoleState, isAdmin } = useAuth();
 	const dispatch = useDispatch();
 
 	const logoutUser = () => {
@@ -59,7 +59,7 @@ function Home({ history }) {
 					/>
 				</div>
 				<div className="buttons-container">
-					{isMentee || isMentor || isPartner ? (
+					{isMentee || isMentor || isPartner || isAdmin ? (
 						<></>
 					) : (
 						<div

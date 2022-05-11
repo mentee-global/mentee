@@ -54,6 +54,11 @@ export const APPOINTMENT_STATUS = {
 	DENIED: "denied",
 	ACCEPTED: "accepted",
 };
+export const TRAINING_TYPE = {
+	LINK: "LINK",
+	VIDEO: "VIDEO",
+	DOCUMENT: "DOCUMENT",
+};
 export const REGIONS = [
 	"N. America",
 	"Central America",

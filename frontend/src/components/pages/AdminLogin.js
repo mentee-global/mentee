@@ -5,7 +5,7 @@ import firebase from "firebase";
 import { useDispatch } from "react-redux";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
-import { login, sendVerificationEmail } from "utils/auth.service";
+import { isLoggedIn, login, sendVerificationEmail } from "utils/auth.service";
 import { fetchUser } from "features/userSlice";
 import usePersistedState from "utils/hooks/usePersistedState";
 import SelectLogin from "./SelectLogin";
@@ -159,12 +159,16 @@ function AdminLogin() {
 			</div>
 			{error && <h1 className="login-error">{errorMessage}</h1>}
 			{loading ? <h1 className="loadingg">Loading ..</h1> : ""}
-			<SelectLogin
-				displaySelect={displaySelect}
-				handleDisplayImages={handleDisplayImages}
-				handleSelect={handleSelect}
-				isAdmin={true}
-			></SelectLogin>
+
+			{!isLoggedIn() && (
+				<SelectLogin
+					displaySelect={displaySelect}
+					handleDisplayImages={handleDisplayImages}
+					handleSelect={handleSelect}
+					isAdmin={true}
+				></SelectLogin>
+			)}
+			{isLoggedIn() && <h1>Logout First </h1>}
 		</div>
 	);
 }

@@ -66,7 +66,6 @@ function ProfileContent(props) {
 	}
 
 	const getTitle = (name, age) => {
-		console.log(accountType, "d");
 		if (accountType == ACCOUNT_TYPE.MENTOR && name) {
 			return name;
 		} else if (name && age) {

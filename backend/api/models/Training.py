@@ -14,6 +14,7 @@ class Training(Document, Mixin):
     role=StringField(required=True)
     filee=FileField()
     isVideo=BooleanField(required=True)
+    typee=StringField(required=True)
     file_name=StringField()
 
     def __repr__(self):

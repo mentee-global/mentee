@@ -71,6 +71,7 @@ function Login() {
 					setError(true);
 					setLoading(false);
 					setLoggingIn(false);
+					setLoggingIn(false);
 
 					return;
 					//return wrong Role
@@ -89,6 +90,7 @@ function Login() {
 					setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
 					setError(true);
 					setLoggingIn(false);
+					setLoading(false);
 
 					return;
 				} else if (isHaveProfile == true) {
@@ -100,18 +102,22 @@ function Login() {
 					if (!res || !res.success) {
 						if (res?.data?.result?.existingEmail) {
 							setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+							setLoading(false);
 						} else {
 							setErrorMessage(
 								LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
 							);
+							setLoading(false);
 						}
 						setError(true);
 					} else if (res.result.passwordReset) {
 						setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
 						setError(true);
+						setLoading(false);
 					} else if (res.result.recreateAccount) {
 						setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
 						setError(true);
+						setLoading(false);
 					}
 					setPermissions(RoleObj.type);
 					const unsubscribe = firebase
@@ -187,25 +193,15 @@ function Login() {
 							placeholder="Password"
 						/>
 					</div>
-					{/*
-							<div className="account-help-container">
-								<div className="account-link">
-									Don't Have an account?{" "}
-									<NavLink to={`/register`} className="login-register-link">
-										Register
-									</NavLink>
-								</div>
-								<div className="account-link">
-									<div>Forgot password?</div>
-									<NavLink
-										to="/forgot-password"
-										className="login-register-link"
-									>
-										Reset it
-									</NavLink>
-								</div>
-							</div>
-						*/}
+
+					<div className="account-help-container">
+						<div className="account-link">
+							<div>Forgot password?</div>
+							<NavLink to="/forgot-password" className="login-register-link">
+								Reset it
+							</NavLink>
+						</div>
+					</div>
 				</div>
 			</div>
 			{error && <h1 className="login-error">{errorMessage}</h1>}

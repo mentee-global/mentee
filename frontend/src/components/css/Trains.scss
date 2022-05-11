@@ -16,7 +16,8 @@
 	margin: 50px;
 }
 .trainTable {
-	width: 80%;
+	width: 90%;
+	overflow: auto;
 }
 .trainForm {
 	margin: 30px;
@@ -38,4 +39,7 @@
 }
 .isVideo {
 	margin-bottom: 25px;
+}
+.trainTable .ant-table-tbody > tr > td {
+	max-width: 100px !important;
 }

@@ -1,8 +1,6 @@
 .home-background {
-	position: absolute;
 	min-height: 936px;
 	height: 100%;
-	top: 87px;
 	background: #ffdb6f;
 	width: 100%;
 }
@@ -81,12 +79,11 @@
 }
 
 .loginText {
-	position: absolute;
 	left: 30.67%;
 	right: 30.93%;
 	top: 83.73%;
 	bottom: 2.93%;
-
+	position: absolute;
 	font-family: "Abel";
 	font-style: normal;
 	font-weight: 400;

@@ -210,7 +210,8 @@ export const EditTrainById = async (
 	description,
 	role,
 	isVideo,
-	filee
+	filee,
+	typee
 ) => {
 	const requestExtension = `/training/${id}`;
 	const formData = new FormData();
@@ -218,6 +219,8 @@ export const EditTrainById = async (
 	formData.append("url", url);
 	formData.append("description", description);
 	formData.append("role", role);
+	formData.append("typee", typee);
+
 	formData.append("isVideo", isVideo);
 	if (!isVideo) {
 		formData.append("filee", filee);
@@ -232,12 +235,14 @@ export const newTrainCreate = async (
 	description,
 	role,
 	isVideo,
-	filee
+	filee,
+	typee
 ) => {
 	const requestExtension = `/training/${role}`;
 	const formData = new FormData();
 	formData.append("name", name);
 	formData.append("url", url);
+	formData.append("typee", typee);
 
 	formData.append("description", description);
 

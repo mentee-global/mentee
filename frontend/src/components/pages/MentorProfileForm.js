@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
-import { Checkbox, Button } from "antd";
+import { Checkbox, Button, message } from "antd";
 import ModalInput from "../ModalInput";
 import {
 	getRegistrationStage,
@@ -10,6 +10,8 @@ import {
 	getCurrentUser,
 	getUserEmail,
 } from "utils/auth.service";
+import { sendVerificationEmail } from "utils/auth.service";
+
 import { createMentorProfile, getAppState, isHaveAccount } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import {
@@ -114,7 +116,9 @@ function RegisterForm(props) {
 			}
 		}*/
 	}, []);
-
+	const info = (msg) => {
+		message.success(msg);
+	};
 	function renderEducationInputs() {
 		return (
 			educations &&
@@ -486,6 +490,8 @@ function RegisterForm(props) {
 			if (mentorId) {
 				setError(false);
 				setIsValid([...isValid].fill(true));
+				info("Your account has been created now you can login to Mentee");
+				await sendVerificationEmail(props.headEmail);
 				history.push("/");
 			} else {
 				setError(true);

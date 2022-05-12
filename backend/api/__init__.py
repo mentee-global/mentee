@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 import certifi
 
 load_dotenv()
-#ca = certifi.where()
+ca = certifi.where()
 socketio = SocketIO(cors_allowed_origins="*")
 
 

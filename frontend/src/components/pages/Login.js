@@ -196,6 +196,12 @@ function Login() {
 
 					<div className="account-help-container">
 						<div className="account-link">
+							Don't Have an account?{" "}
+							<NavLink to={`/application-page`} className="login-register-link">
+								Apply
+							</NavLink>
+						</div>
+						<div className="account-link">
 							<div>Forgot password?</div>
 							<NavLink to="/forgot-password" className="login-register-link">
 								Reset it

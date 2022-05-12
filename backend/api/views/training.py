@@ -50,9 +50,7 @@ def get_train(id):
     return create_response(status=200, data={'train':train})
 ##################################################################################    
 @training.route("/trainVideo/<string:id>", methods=["GET"])
-@admin_only
 def get_train_file(id):
-
     try:
         train=Training.objects.get(id=id)
     except:
@@ -78,6 +76,7 @@ def get_train_id_edit(id):
     train.name=request.form['name']
     train.description=request.form['description']
     train.role=str(request.form['role'])
+    train.typee=request.form['typee']
     train.isVideo=isVideoo
     if not isVideoo:     
         filee=request.files['filee']  
@@ -103,6 +102,7 @@ def new_train(role):
         name=request.form['name']
         url=request.form['url']
         description=request.form['description']
+        typee=request.form['typee']
         isVideoo=request.form['isVideo']
         if isVideoo == 'true':
                 isVideoo=True
@@ -113,6 +113,7 @@ def new_train(role):
             name=name,
             description=description,    
             role=str(role),
+            typee=typee,
             isVideo=isVideoo,
             date_submitted=datetime.now()
         )

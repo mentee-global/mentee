@@ -120,7 +120,7 @@ function NavHeader({ history }) {
 							</>
 						)}
 						{/* TODO: Update this since verification modal will not longer be needed anymore! */}
-						{(isMentee || isAdmin) && (
+						{(isMentee || isAdmin) && isLoggedIn() && (
 							<span className="navigation-header-button">
 								<LoginVerificationModal
 									content={<b>Find a Mentor</b>}
@@ -151,7 +151,7 @@ function NavHeader({ history }) {
 								/>
 							</span>
 						)}
-						{isPartner && (
+						{(isPartner || isAdmin) && isLoggedIn() && (
 							<span className="navigation-header-button">
 								<LoginVerificationModal
 									content={<b>Find a Partner</b>}
@@ -265,7 +265,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
 				visible={drawerVisible}
 			>
 				<div className="drawer-btn-container">
-					{isMentee || isMentor ? (
+					{isMentee || isMentor || isPartner ? (
 						<></>
 					) : (
 						<MenteeButton
@@ -281,7 +281,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
 						/>
 					)}
 				</div>
-				{(isMentee || isAdmin) && (
+				{(isMentee || isAdmin) && isLoggedIn() && (
 					<LoginVerificationModal
 						className="mobile-nav-btn-login-modal"
 						content={<b>Find a Mentor</b>}
@@ -295,7 +295,7 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
 						}}
 					/>
 				)}
-				{!isPartner && isLoggedIn && (
+				{!isPartner && isLoggedIn() && (
 					<LoginVerificationModal
 						className="mobile-nav-btn-login-modal"
 						content={<b>Find a Mentee</b>}
@@ -309,7 +309,22 @@ function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
 						}}
 					/>
 				)}
-				{!isPartner && isLoggedIn && (
+				{(isPartner || isAdmin) && isLoggedIn() && (
+					<span className="navigation-header-button">
+						<LoginVerificationModal
+							content={<b>Find a Partner</b>}
+							theme="light"
+							width="9em"
+							onVerified={() => {
+								history.push({
+									pathname: "/partner-gallery",
+									state: { verified: true },
+								});
+							}}
+						/>
+					</span>
+				)}
+				{!isPartner && isLoggedIn() && (
 					<MenteeButton
 						className="mobile-nav-btn"
 						content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}

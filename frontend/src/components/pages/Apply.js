@@ -156,7 +156,6 @@ const Apply = () => {
 					onChange={(e) => {
 						setEmail(e.target.value);
 						seterr(false);
-						setRole(null);
 					}}
 				/>
 			</div>
@@ -239,7 +238,7 @@ const Apply = () => {
 						: "formsPart"
 				}
 			>
-				{isapply ? (
+				{isapply && role ? (
 					<div className="applypart">
 						{!approveApply && confirmApply ? (
 							<h1 className="applymessage">

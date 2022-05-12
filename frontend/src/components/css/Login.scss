@@ -1,6 +1,6 @@
 @import "_app";
 .containerr {
-	min-height: 936px;
+	min-height: 92vh;
 	width: 100%;
 	background: #ffdb6f;
 	overflow: auto;
@@ -88,9 +88,9 @@
 }
 .login-input_pass {
 	position: absolute;
-	width: 450px;
+	width: 487px;
 	height: 40px;
-	left: 41px;
+	left: 29px;
 	top: 162px;
 }
 
@@ -116,16 +116,41 @@
 
 .account-help-container {
 	text-align: center;
-	margin-top: 10px;
-	padding-bottom: 10px;
+	position: absolute;
+	bottom: 5px;
 	opacity: 70%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
 }
 
 .account-link {
 	display: flex;
 	justify-content: center;
 }
+.forgot_email {
+	margin: 5px;
+}
+.login-register-container {
+	margin: 8px;
+}
 
+.login-register-link,
+.login-register-link:focus {
+	background: none;
+	border: none;
+	color: $mentee-button-regular;
+	text-decoration: underline;
+	margin-left: 5px;
+	transition-duration: 0.4s;
+}
+
+.login-register-link:hover {
+	color: $register-link-hover;
+	text-decoration: underline;
+}
 @media (max-width: 600px) {
 	.login-content {
 		width: 90%;
@@ -136,6 +161,5 @@
 		width: 80%;
 	}
 	.containerr {
-		height: 1365px;
 	}
 }

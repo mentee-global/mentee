@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
-import { Checkbox, Button } from "antd";
+import { Checkbox, Button, message } from "antd";
 import ModalInput from "../ModalInput";
 import { refreshToken, getCurrentUser, getUserEmail } from "utils/auth.service";
 import { createMenteeProfile, getAppState, isHaveAccount } from "utils/api";
@@ -18,6 +18,7 @@ import "../css/AntDesign.scss";
 import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
+import { sendVerificationEmail } from "utils/auth.service";
 
 function MenteeRegisterForm(props) {
 	const history = useHistory();
@@ -93,7 +94,9 @@ function MenteeRegisterForm(props) {
 			setIsValid(newValid);
 		}*/
 	}, []);
-
+	const info = (msg) => {
+		message.success(msg);
+	};
 	function renderEducationInputs() {
 		return (
 			educations &&
@@ -440,6 +443,8 @@ function MenteeRegisterForm(props) {
 			if (menteeId) {
 				setError(false);
 				setIsValid([...isValid].fill(true));
+				info("Your account has been created now you can login to Mentee");
+				await sendVerificationEmail(props.headEmail);
 				history.push("/");
 			} else {
 				setError(true);

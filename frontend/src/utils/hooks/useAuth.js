@@ -50,13 +50,14 @@ const useAuth = () => {
 			await getIdTokenResult(true)
 				.then((idTokenResult) => {
 					const { role, profileId } = idTokenResult.claims;
+					console.log(`${role}` === `${ACCOUNT_TYPE.PARTNER}`);
 					setProfileId(profileId);
 					setRoleState({
 						role: role,
-						isAdmin: role === `${ACCOUNT_TYPE.ADMIN}`,
-						isMentor: role === `${ACCOUNT_TYPE.MENTOR}`,
-						isMentee: role === `${ACCOUNT_TYPE.MENTEE}`,
-						isPartner: role === `${ACCOUNT_TYPE.PARTNER}`,
+						isAdmin: `${role}` === `${ACCOUNT_TYPE.ADMIN}`,
+						isMentor: `${role}` === `${ACCOUNT_TYPE.MENTOR}`,
+						isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
+						isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
 					});
 
 					Promise.resolve(idTokenResult).then(onAuthUpdate);

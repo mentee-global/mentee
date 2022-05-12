@@ -4,6 +4,7 @@ import MenteeLogin from "resources/mentee-login-logo.png";
 import AdminImage from "resources/admin-login-logo.png";
 import PartnerImage from "resources/partner.png";
 import "components/css/SelectLogin.scss";
+import { isLoggedIn } from "utils/auth.service";
 
 function SelectLogin({
 	displaySelect,
@@ -11,6 +12,7 @@ function SelectLogin({
 	handleDisplayImages,
 	isAdmin,
 }) {
+	console.log("l", isLoggedIn());
 	return (
 		<div className="select-login-page">
 			<div

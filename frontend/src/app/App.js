@@ -55,10 +55,7 @@ function App() {
 					/>
 				)}
 			/>
-			<Route
-				path="/partner-page"
-				component={() => <div>Hello partner page</div>}
-			/>
+
 			<Route
 				path="/mentee-appointments"
 				component={() => (

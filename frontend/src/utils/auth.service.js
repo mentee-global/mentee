@@ -234,7 +234,6 @@ export const getRegistrationStage = async () => {
 			const claims = idTokenResult.claims;
 
 			if (!claims.email_verified) return REGISTRATION_STAGE.VERIFY_EMAIL;
-			if (!claims.profileId) return REGISTRATION_STAGE.PROFILE_CREATION;
 			return null;
 		});
 	}

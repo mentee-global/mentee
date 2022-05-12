@@ -59,7 +59,7 @@ function PartnerGallery() {
 		});
 
 	// Add some kind of error 403 code
-	return !isLoggedIn() ? (
+	return !isPartner && !isAdmin ? (
 		<Result
 			status="403"
 			title="403"

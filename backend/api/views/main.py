@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from sqlalchemy import true
 from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
 from bson import ObjectId
@@ -97,7 +98,9 @@ def create_mentor_profile():
         logger.info(msg)
         return create_response(status=422, message=msg)
     data['firebase_uid']='temp'
-
+    if account_type == Account.MENTOR:
+        data['taking_appointments']=True
+       
     
     validate_data = None
     if account_type == Account.MENTOR:

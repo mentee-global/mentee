@@ -8,7 +8,7 @@ import {
 	getTrainVideo,
 	newTrainCreate,
 } from "utils/api";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, TRAINING_TYPE } from "utils/consts";
 import { Input, Radio, Form, Button } from "antd";
 import { Table, Popconfirm, message, Modal, Select } from "antd";
 import {
@@ -32,6 +32,8 @@ export const Trainings = () => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isModalVisible2, setIsModalVisible2] = useState(false);
 	const [errMessage, setErrorMessage] = useState(null);
+	const [typee, setTypee] = useState(null);
+
 	const [isVideo, setIsVideo] = useState("Yes");
 	const [filee, setFilee] = useState(null);
 	const [file_name, setFileName] = useState(null);
@@ -46,6 +48,7 @@ export const Trainings = () => {
 				setName(train.name);
 				setDesc(train.description);
 				setTrainRole(train.role);
+				setTypee(train.typee);
 				setIsVideo(train.isVideo ? "Yes" : "No");
 				if (train.isVideo) {
 					setUrl(train.url);
@@ -62,6 +65,7 @@ export const Trainings = () => {
 			setDesc("");
 			setFilee(null);
 			setTrainRole(null);
+			setTypee(null);
 			setIsModalVisible2(true);
 		}
 	};
@@ -71,8 +75,8 @@ export const Trainings = () => {
 			!name ||
 			!desc ||
 			!trainrole ||
-			(isVideo == "Yes" && !url) ||
-			(isVideo == "No" && !filee)
+			(typee != TRAINING_TYPE.DOCUMENT && !url) ||
+			(typee === !TRAINING_TYPE.DOCUMENT && !filee)
 		) {
 			setErr(true);
 			setErrorMessage("Please Fill Input Cell");
@@ -80,7 +84,7 @@ export const Trainings = () => {
 		} else {
 			setErr(false);
 		}
-		let isVideoo = isVideo == "Yes" ? true : false;
+		let isVideoo = typee != TRAINING_TYPE.DOCUMENT;
 		if (isNew == true) {
 			let train = await newTrainCreate(
 				name,
@@ -88,7 +92,8 @@ export const Trainings = () => {
 				desc,
 				trainrole,
 				isVideoo,
-				filee
+				filee,
+				typee
 			);
 			if (train) {
 				setErr(false);
@@ -106,7 +111,8 @@ export const Trainings = () => {
 				desc,
 				trainrole,
 				isVideoo,
-				filee
+				filee,
+				typee
 			);
 			if (train) {
 				setErr(false);
@@ -136,14 +142,15 @@ export const Trainings = () => {
 			/>
 			<p>Training Type *</p>
 			<Radio.Group
-				onChange={(e) => setIsVideo(e.target.value)}
-				value={isVideo}
+				onChange={(e) => setTypee(e.target.value)}
+				value={typee}
 				className="isVideo"
 			>
-				<Radio value={"Yes"}>Video</Radio>
-				<Radio value={"No"}>Document</Radio>
+				<Radio value={TRAINING_TYPE.VIDEO}>Video</Radio>
+				<Radio value={TRAINING_TYPE.DOCUMENT}>Document</Radio>
+				<Radio value={TRAINING_TYPE.LINK}>External Link</Radio>
 			</Radio.Group>
-			{isVideo == "Yes" ? (
+			{typee != TRAINING_TYPE.DOCUMENT ? (
 				<>
 					<p>Url *</p>
 					<Input
@@ -207,7 +214,7 @@ export const Trainings = () => {
 			render: (name) => <a>{name}</a>,
 		},
 		{
-			title: "Video or Document",
+			title: "URL",
 			dataIndex: "url",
 			key: "url",
 			render: (url, record) => {
@@ -232,6 +239,12 @@ export const Trainings = () => {
 			dataIndex: "description",
 			key: "description",
 			render: (description) => <a>{description}</a>,
+		},
+		{
+			title: "TYPE",
+			dataIndex: "typee",
+			key: "typee",
+			render: (typee) => <a>{typee}</a>,
 		},
 		{
 			title: "Delete",

@@ -54,8 +54,8 @@ function Appointments() {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		getIdTokenResult();
 		async function getAppointments() {
+			await getIdTokenResult();
 			const mentorID = await getMentorID();
 			const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
 

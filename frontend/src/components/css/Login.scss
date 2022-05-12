@@ -137,6 +137,20 @@
 	margin: 8px;
 }
 
+.login-register-link,
+.login-register-link:focus {
+	background: none;
+	border: none;
+	color: $mentee-button-regular;
+	text-decoration: underline;
+	margin-left: 5px;
+	transition-duration: 0.4s;
+}
+
+.login-register-link:hover {
+	color: $register-link-hover;
+	text-decoration: underline;
+}
 @media (max-width: 600px) {
 	.login-content {
 		width: 90%;

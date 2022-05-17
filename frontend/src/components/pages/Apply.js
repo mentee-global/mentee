@@ -221,9 +221,8 @@ const Apply = () => {
 			{err ? <p className="error">Email Required</p> : ""}
 			{role == ACCOUNT_TYPE.PARTNER && !isVerify ? (
 				<h1 className="applymessage">
-					Email is not pre-registered as a Partner by an Admin. So please
-					contact administrator to create your user in the system before being
-					able to Build profile
+					Your email is not pre-registered as a Partner. Please contact an
+					administrator admin@menteeglobal.org
 				</h1>
 			) : (
 				""

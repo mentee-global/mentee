@@ -263,7 +263,7 @@ function MentorApplication(props) {
 						</div>
 					</div>
 					<div>
-						If you are accepted as a Specialist, would you like to commit to...
+						If you are accepted as a global mentor, would you like to commit to...
 						*
 					</div>
 					<div className="input-form">
@@ -365,7 +365,7 @@ function MentorApplication(props) {
 					</div>
 					<div>
 						{
-							"Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level(conversational, fluent, native)."
+							"Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)."
 						}
 					</div>
 
@@ -391,7 +391,7 @@ function MentorApplication(props) {
 					</Form.Item>
 					<div>
 						{
-							"If you know someone who would be a great MENTEE Specialist, please share their name, email, and we'll contact them! *"
+							"If you know someone who would be a great global mentor, please share their name, email, and we'll contact them! *"
 						}
 					</div>
 
@@ -512,12 +512,11 @@ function MentorApplication(props) {
 				<h1 className="welcome-page">Welcome to MENTEE!</h1>
 				<p className="para-1">
 					We appreciate your interest in becoming a volunteer Global Mentor for
-					MENTEE, a global nonprofit accelerating personal and Professional
+					MENTEE, a global nonprofit accelerating personal and professional
 					growth to make the world a better, healthier place.
 					<br></br>
 					<br></br>
-					Fill out the application below to join our Specialist team for
-					2021-2022 year.
+					Please fll out the application below.
 				</p>
 			</div>
 

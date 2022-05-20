@@ -65,7 +65,7 @@ function NewMentorAppInfo({ info }) {
 			<div className="single-info-section info2">
 				<div className="question">
 					{
-						"If you are accepted as a Specialist, would you like to commit to..."
+						"If you are accepted as a global mentor, would you like to commit to..."
 					}
 				</div>
 				<div className="answer">{info.specialistTime}</div>
@@ -115,7 +115,7 @@ function NewMentorAppInfo({ info }) {
 			<div className="single-info-section info2">
 				<div className="question">
 					{
-						"Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level(conversational, fluent, native)."
+						"Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)."
 					}
 				</div>
 				<div className="answer">{info.languages}</div>
@@ -123,7 +123,7 @@ function NewMentorAppInfo({ info }) {
 			<div className="single-info-section info2">
 				<div className="question">
 					{
-						"If you know someone who would be a great MENTEE Specialist, please share their name, email, and we'll contact them!"
+						"If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!"
 					}
 				</div>
 				<div className="answer">{info.referral}</div>

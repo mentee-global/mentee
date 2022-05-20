@@ -309,7 +309,7 @@ function RegisterForm(props) {
 	return (
 		<div className="register-content">
 			<div className="register-header">
-				<h2>Welcome. Tell us intro yourself.</h2>
+				<h2>Welcome. Tell us about yourself.</h2>
 				{error && (
 					<div className="register-error">
 						Error or missing fields, try again.

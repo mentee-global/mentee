@@ -383,7 +383,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"-What special topics would you be interested in? If one is not on the list please add it in other: *"
+							"What special topics would you be interested in? If one is not on the list please add it in other: *"
 						}
 					</div>
 					<Form.Item className="input-form">
@@ -619,7 +619,7 @@ function MenteeApplication(props) {
 					You will gain access to our global mentors and supportive programs. We
 					can't wait to see all you will achieve. Remember, as a mentee you can
 					stay here and actively seek mentorship, learning, and development for
-					life if you'd like to stay with us that long :)
+					life, if you'd like to stay with us that long. :)
 				</p>
 				<br></br>
 			</div>

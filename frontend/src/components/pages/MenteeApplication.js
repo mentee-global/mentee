@@ -383,7 +383,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"-What special topics would you be interested in? If one is not on the list please add it in other: *"
+							"What special topics would you be interested in? If one is not on the list please add it in other: *"
 						}
 					</div>
 					<Form.Item className="input-form">

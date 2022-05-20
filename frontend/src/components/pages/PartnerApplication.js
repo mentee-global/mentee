@@ -285,7 +285,7 @@ function PartnerApplication(props) {
 				<h1 className="welcome-page">Welcome to MENTEE!</h1>
 				<p className="para-1">
 					We appreciate your interest in becoming a volunteer Global Partner for
-					MENTEE, a global nonprofit accelerating personal and Professional
+					MENTEE, a global nonprofit accelerating personal and professional
 					growth to make the world a better, healthier place.
 					<br></br>
 				</p>

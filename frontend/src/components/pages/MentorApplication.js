@@ -263,8 +263,8 @@ function MentorApplication(props) {
 						</div>
 					</div>
 					<div>
-						If you are accepted as a global mentor, would you like to commit to...
-						*
+						If you are accepted as a global mentor, would you like to commit
+						to... *
 					</div>
 					<div className="input-form">
 						{isMissingError(specialistTime) && (
@@ -365,11 +365,7 @@ function MentorApplication(props) {
 					</div>
 					<div>
 						{
-<<<<<<< HEAD
 							"Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)."
-=======
-							"Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level(conversational, fluent, native)."
->>>>>>> 7de80fb333fde8333ab5a2c0b6fb2182d0ae72ca
 						}
 					</div>
 

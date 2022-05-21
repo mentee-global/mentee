@@ -67,7 +67,11 @@ function NewMentorAppInfo({ info }) {
 			<div className="single-info-section info2">
 				<div className="question">
 					{
+<<<<<<< HEAD
 						"What special topics would you be interested in? If one is not on the list please add it in other:"
+=======
+						"-What special topics would you be interested in? If one is not on the list please add it in other:"
+>>>>>>> 7de80fb333fde8333ab5a2c0b6fb2182d0ae72ca
 					}
 				</div>
 				<div className="answer">

@@ -80,7 +80,7 @@ function NewMentorAppInfo({ info }) {
 			<div className="single-info-section info2">
 				<div className="question">
 					{
-						"What do you currently do? Please check ALL the options that apply to you. If you select Other, please be specific"
+						"What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific"
 					}
 				</div>
 				<div className="answer">

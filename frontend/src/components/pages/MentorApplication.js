@@ -263,8 +263,8 @@ function MentorApplication(props) {
 						</div>
 					</div>
 					<div>
-						If you are accepted as a global mentor, would you like to commit to...
-						*
+						If you are accepted as a global mentor, would you like to commit
+						to... *
 					</div>
 					<div className="input-form">
 						{isMissingError(specialistTime) && (

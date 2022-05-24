@@ -17,7 +17,7 @@ const immigrantOptions = [
 ];
 const topicOptions = [
 	"Advocacy and Activism",
-	",Architecture",
+	"Architecture",
 	"Arts:Dance/Design/Music and More",
 	"Citizenship",
 	"Computer Science",
@@ -48,7 +48,7 @@ const topicOptions = [
 	"Technology Training",
 	"Tourism: Field of",
 	"Writing: Improving writing skills, writing books/articles, scholarly writing",
-	"other",
+	"Other",
 ];
 const workOptions = [
 	"I work part-time.",
@@ -56,7 +56,7 @@ const workOptions = [
 	"I attend technical school.",
 	"I am a college/university student attaining my first degree.",
 	"I am a college/university students attaining my second or third degree.",
-	"other",
+	"Other",
 ];
 const { TextArea } = Input;
 function MenteeApplication(props) {
@@ -420,7 +420,7 @@ function MenteeApplication(props) {
 					)}
 					<div>
 						{
-							"What do you currently do? Please check ALL the options that apply to you. If you select Other, please be specific *"
+							"What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific *"
 						}
 					</div>
 					<Form.Item className="input-form">

@@ -509,7 +509,7 @@ function MenteeRegisterForm(props) {
 				)}
 				<div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
 			</div>
-			<div className="modal-profile-container">
+			<div className="modal-profile-container2">
 				<Avatar
 					size={120}
 					icon={<UserOutlined />}

@@ -556,7 +556,7 @@ function RegisterForm(props) {
 				)}
 				{err && <p>Please complete apply and training steps first</p>}
 			</div>
-			<div className="modal-profile-container">
+			<div className="modal-profile-container2">
 				<Avatar
 					size={120}
 					icon={<UserOutlined />}

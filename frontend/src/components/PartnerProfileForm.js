@@ -49,7 +49,6 @@ function RegisterForm(props) {
 	const [open_projects, setOpenProjects] = useState(false);
 	const [image, setImage] = useState(null);
 	const [changedImage, setChangedImage] = useState(false);
-
 	const [saving, setSaving] = useState(false);
 	const [password, setPassword] = useState(null);
 	const [confirmPassword, setConfirmPassword] = useState(null);
@@ -329,7 +328,7 @@ function RegisterForm(props) {
 				)}
 				{err && <p>Please complete apply and training steps first</p>}
 			</div>
-			<div className="modal-profile-container">
+			<div className="modal-profile-container2">
 				<Avatar
 					size={120}
 					icon={<UserOutlined />}

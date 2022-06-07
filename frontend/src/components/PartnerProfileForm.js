@@ -49,6 +49,10 @@ function RegisterForm(props) {
 	const [open_projects, setOpenProjects] = useState(false);
 	const [image, setImage] = useState(null);
 	const [changedImage, setChangedImage] = useState(false);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 817e5288ab791f4bc72054c55c3f9e70b4b33423
 	const [saving, setSaving] = useState(false);
 	const [password, setPassword] = useState(null);
 	const [confirmPassword, setConfirmPassword] = useState(null);
@@ -336,7 +340,7 @@ function RegisterForm(props) {
 					src={
 						changedImage
 							? image && URL.createObjectURL(image)
-							: image && image.url
+							: image && image.urls
 					}
 				/>
 				<ImgCrop rotate>

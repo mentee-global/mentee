@@ -42,18 +42,21 @@
 .gallery-mentor-container {
 	flex: 5;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(22%, 1fr));
 	grid-gap: 1rem;
 	height: 100%;
 	overflow: hidden;
 	margin-bottom: 75px;
 
 	@media only screen and (max-width: 1200px) {
-		grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
 	}
 
-	@media only screen and (max-width: 768px) {
-		grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+	@media only screen and (max-width: 800px) {
+		grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
+	}
+	@media only screen and (max-width: 600px) {
+		grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
 	}
 }
 
@@ -62,7 +65,16 @@
 	border: 2px solid $theme-orange;
 	border-radius: 8px;
 	position: relative;
-	height: 33em;
+	height: 24em;
+	padding: 20px;
+	padding-top: 0px;
+}
+.gallery-partner-card {
+	background-color: white;
+	border: 2px solid $theme-orange;
+	border-radius: 8px;
+	position: relative;
+	height: 29em;
 	padding: 20px;
 	padding-top: 0px;
 }

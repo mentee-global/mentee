@@ -59,7 +59,7 @@ function PartnerCard(props) {
 	}
 
 	return (
-		<div className="gallery-mentor-card">
+		<div className="gallery-partner-card">
 			<div className="gallery-card-body">
 				<div className="gallery-card-header">
 					<Avatar size={90} icon={getImage(props.image && props.image.url)} />

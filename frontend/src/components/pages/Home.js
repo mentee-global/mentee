@@ -71,7 +71,8 @@ function Home({ history }) {
 							}}
 						>
 							<img className="applyImage" src={Applyimg} alt="apply" />
-							<div className="loginText">APPLY</div>
+
+							<div className="loginText">APPLY - TRAIN - BUILD</div>
 						</div>
 					)}
 					{!isLoggedIn() ? (
@@ -85,7 +86,7 @@ function Home({ history }) {
 							}}
 						>
 							<img className="applyImage" src={loginimg} alt="login" />
-							<div className="loginText">LOGIN</div>
+							<div className="loginText">PLATFORM LOGIN</div>
 						</div>
 					) : (
 						<div className="loginCon" onClick={logoutUser}>

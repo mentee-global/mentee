@@ -383,7 +383,7 @@ function MentorApplication(props) {
 						<Input
 							type="text"
 							placeholder="Do you speak a language(s) other than English? If yes, please
-                  write the language(s) below and include your fluency level
+                  write the language(s) below and include your fluency level 
                   (conversational, fluent, native)."
 							value={languages}
 							onChange={(e) => setLanguages(e.target.value)}
@@ -408,8 +408,8 @@ function MentorApplication(props) {
 						)}
 						<Input
 							type="text"
-							placeholder="If you know someone who would be a great MENTEE 
-                  Specialist, please share their name, email, and we'll contact
+							placeholder="If you know someone who would be a great global  
+                  mentor, please share their name, email, and we'll contact
                   them!"
 							value={referral}
 							onChange={(e) => setReferral(e.target.value)}

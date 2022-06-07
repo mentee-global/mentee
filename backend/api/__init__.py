@@ -13,10 +13,7 @@ from dotenv import load_dotenv
 #import certifi
 
 load_dotenv()
-
 socketio = SocketIO(cors_allowed_origins="*")
-
-
 class RequestFormatter(logging.Formatter):
     def format(self, record):
         record.url = request.url

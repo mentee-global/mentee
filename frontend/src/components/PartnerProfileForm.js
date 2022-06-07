@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
-import { Checkbox, Button, message } from "antd";
+import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "./ModalInput";
-import { createPartnerProfile, getAppState, isHaveAccount } from "../utils/api";
+import {
+	createPartnerProfile,
+	getAppState,
+	isHaveAccount,
+	uploadPartnerImage,
+} from "../utils/api";
 import {
 	LANGUAGES,
 	REGIONS,
@@ -20,7 +25,8 @@ import "./css/RegisterForm.scss";
 import "./css/MenteeButton.scss";
 import { validateUrl } from "../utils/misc";
 import moment from "moment";
-
+import ImgCrop from "antd-img-crop";
+import { UserOutlined, EditFilled } from "@ant-design/icons";
 function RegisterForm(props) {
 	const history = useHistory();
 	const numInputs = 14;
@@ -41,6 +47,8 @@ function RegisterForm(props) {
 	const [topics, setTopics] = useState(null);
 	const [open_grants, setOpenGrants] = useState(false);
 	const [open_projects, setOpenProjects] = useState(false);
+	const [image, setImage] = useState(null);
+	const [changedImage, setChangedImage] = useState(false);
 
 	const [saving, setSaving] = useState(false);
 	const [password, setPassword] = useState(null);
@@ -264,6 +272,10 @@ function RegisterForm(props) {
 			setSaving(false);
 			setValidate(false);
 			if (mentorId) {
+				if (changedImage) {
+					await uploadPartnerImage(image, mentorId);
+				}
+
 				setError(false);
 				setIsValid([...isValid].fill(true));
 				info("Your account has been created now you can login to Mentee");
@@ -316,6 +328,34 @@ function RegisterForm(props) {
 					</div>
 				)}
 				{err && <p>Please complete apply and training steps first</p>}
+			</div>
+			<div className="modal-profile-container">
+				<Avatar
+					size={120}
+					icon={<UserOutlined />}
+					className="modal-profile-icon"
+					src={
+						changedImage
+							? image && URL.createObjectURL(image)
+							: image && image.url
+					}
+				/>
+				<ImgCrop rotate>
+					<Upload
+						onChange={async (file) => {
+							setImage(file.file.originFileObj);
+							setChangedImage(true);
+						}}
+						accept=".png,.jpg,.jpeg"
+						showUploadList={false}
+					>
+						<Button
+							shape="circle"
+							icon={<EditFilled />}
+							className="modal-profile-icon-edit"
+						/>
+					</Upload>
+				</ImgCrop>
 			</div>
 			<div className="modal-inner-container">
 				<div className="modal-input-container">

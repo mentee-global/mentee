@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
-import { Checkbox, Button, message } from "antd";
+import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "../ModalInput";
 import {
 	getRegistrationStage,
@@ -12,7 +12,13 @@ import {
 } from "utils/auth.service";
 import { sendVerificationEmail } from "utils/auth.service";
 
-import { createMentorProfile, getAppState, isHaveAccount } from "utils/api";
+import {
+	createMentorProfile,
+	getAppState,
+	isHaveAccount,
+	uploadMenteeImage,
+	uploadMentorImage,
+} from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import {
 	LANGUAGES,
@@ -27,6 +33,8 @@ import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
 import { validateUrl } from "utils/misc";
 import moment from "moment";
+import ImgCrop from "antd-img-crop";
+import { UserOutlined, EditFilled } from "@ant-design/icons";
 
 function RegisterForm(props) {
 	const history = useHistory();
@@ -54,6 +62,8 @@ function RegisterForm(props) {
 	const [video, setVideo] = useState(null);
 	const [err, setErr] = useState(false);
 	const [localProfile, setLocalProfile] = useState({});
+	const [image, setImage] = useState(null);
+	const [changedImage, setChangedImage] = useState(false);
 
 	useEffect(() => {
 		const mentor = JSON.parse(localStorage.getItem("mentor"));
@@ -487,12 +497,16 @@ function RegisterForm(props) {
 
 			setSaving(false);
 			setValidate(false);
+
+			setError(false);
+			setIsValid([...isValid].fill(true));
+			info("Your account has been created now you can login to Mentee");
+			await sendVerificationEmail(props.headEmail);
 			if (mentorId) {
-				setError(false);
-				setIsValid([...isValid].fill(true));
-				info("Your account has been created now you can login to Mentee");
-				await sendVerificationEmail(props.headEmail);
-				history.push("/");
+				if (changedImage) {
+					await uploadMentorImage(image, mentorId);
+				}
+				history.push("/login");
 			} else {
 				setError(true);
 			}
@@ -541,6 +555,34 @@ function RegisterForm(props) {
 					</div>
 				)}
 				{err && <p>Please complete apply and training steps first</p>}
+			</div>
+			<div className="modal-profile-container">
+				<Avatar
+					size={120}
+					icon={<UserOutlined />}
+					className="modal-profile-icon"
+					src={
+						changedImage
+							? image && URL.createObjectURL(image)
+							: image && image.url
+					}
+				/>
+				<ImgCrop rotate>
+					<Upload
+						onChange={async (file) => {
+							setImage(file.file.originFileObj);
+							setChangedImage(true);
+						}}
+						accept=".png,.jpg,.jpeg"
+						showUploadList={false}
+					>
+						<Button
+							shape="circle"
+							icon={<EditFilled />}
+							className="modal-profile-icon-edit"
+						/>
+					</Upload>
+				</ImgCrop>
 			</div>
 			<div className="modal-inner-container">
 				<div className="modal-input-container">

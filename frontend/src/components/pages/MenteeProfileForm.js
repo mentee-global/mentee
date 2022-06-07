@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import firebase from "firebase";
-import { Checkbox, Button, message } from "antd";
+import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "../ModalInput";
 import { refreshToken, getCurrentUser, getUserEmail } from "utils/auth.service";
-import { createMenteeProfile, getAppState, isHaveAccount } from "utils/api";
+import {
+	createMenteeProfile,
+	getAppState,
+	isHaveAccount,
+	uploadMenteeImage,
+} from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import {
 	LANGUAGES,
@@ -19,7 +24,8 @@ import "../css/Modal.scss";
 import "../css/RegisterForm.scss";
 import "../css/MenteeButton.scss";
 import { sendVerificationEmail } from "utils/auth.service";
-
+import ImgCrop from "antd-img-crop";
+import { UserOutlined, EditFilled } from "@ant-design/icons";
 function MenteeRegisterForm(props) {
 	const history = useHistory();
 	const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
@@ -47,6 +53,8 @@ function MenteeRegisterForm(props) {
 	const [localProfile, setLocalProfile] = useState({});
 	const [specializations, setSpecializations] = useState([]);
 	const [err, setErr] = useState(false);
+	const [image, setImage] = useState(null);
+	const [changedImage, setChangedImage] = useState(false);
 
 	useEffect(() => {
 		const mentee = JSON.parse(localStorage.getItem("mentee"));
@@ -445,7 +453,11 @@ function MenteeRegisterForm(props) {
 				setIsValid([...isValid].fill(true));
 				info("Your account has been created now you can login to Mentee");
 				await sendVerificationEmail(props.headEmail);
-				history.push("/");
+				if (changedImage) {
+					await uploadMenteeImage(image, menteeId);
+				}
+
+				history.push("/login");
 			} else {
 				setError(true);
 			}
@@ -496,6 +508,34 @@ function MenteeRegisterForm(props) {
 					</div>
 				)}
 				<div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
+			</div>
+			<div className="modal-profile-container">
+				<Avatar
+					size={120}
+					icon={<UserOutlined />}
+					className="modal-profile-icon"
+					src={
+						changedImage
+							? image && URL.createObjectURL(image)
+							: image && image.url
+					}
+				/>
+				<ImgCrop rotate>
+					<Upload
+						onChange={async (file) => {
+							setImage(file.file.originFileObj);
+							setChangedImage(true);
+						}}
+						accept=".png,.jpg,.jpeg"
+						showUploadList={false}
+					>
+						<Button
+							shape="circle"
+							icon={<EditFilled />}
+							className="modal-profile-icon-edit"
+						/>
+					</Upload>
+				</ImgCrop>
 			</div>
 			<div className="modal-inner-container">
 				<div className="modal-input-container">

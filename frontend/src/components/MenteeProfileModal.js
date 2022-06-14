@@ -20,6 +20,7 @@ import moment from "moment";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateEmail } from "utils/misc";
+import ImgCrop from "antd-img-crop";
 
 const INITIAL_NUM_INPUTS = 14;
 
@@ -499,20 +500,22 @@ function MenteeProfileModal(props) {
 									: image && image.url
 							}
 						/>
-						<Upload
-							action={(file) => {
-								setImage(file);
-								setChangedImage(true);
-							}}
-							accept=".png,.jpg,.jpeg"
-							showUploadList={false}
-						>
-							<Button
-								shape="circle"
-								icon={<EditFilled />}
-								className="modal-profile-icon-edit"
-							/>
-						</Upload>
+						<ImgCrop rotate aspect={5 / 3}>
+							<Upload
+								onChange={async (file) => {
+									setImage(file.file.originFileObj);
+									setChangedImage(true);
+								}}
+								accept=".png,.jpg,.jpeg"
+								showUploadList={false}
+							>
+								<Button
+									shape="circle"
+									icon={<EditFilled />}
+									className="modal-profile-icon-edit"
+								/>
+							</Upload>
+						</ImgCrop>
 					</div>
 					<div className="modal-inner-container">
 						<div className="modal-input-container">

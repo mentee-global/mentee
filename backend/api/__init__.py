@@ -10,7 +10,8 @@ from flask_socketio import SocketIO
 
 from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
-#import certifi
+import certifi
+#ca=certifi.where()
 load_dotenv()
 socketio = SocketIO(cors_allowed_origins="*")
 class RequestFormatter(logging.Formatter):

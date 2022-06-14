@@ -567,7 +567,7 @@ function RegisterForm(props) {
 							: image && image.url
 					}
 				/>
-				<ImgCrop rotate>
+				<ImgCrop rotate aspect={5 / 3}>
 					<Upload
 						onChange={async (file) => {
 							setImage(file.file.originFileObj);

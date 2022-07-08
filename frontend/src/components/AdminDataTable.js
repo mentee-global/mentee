@@ -26,7 +26,6 @@ const getTableCompliant = (account) => {
 };
 
 function AdminDataTable({ data, deleteAccount, isMentee, isPartner }) {
-	console.log(data);
 	if (isPartner && !data[0]?.id) {
 		let newData = data.map((item) => {
 			return {

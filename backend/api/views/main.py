@@ -3,6 +3,8 @@ from sqlalchemy import true
 from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
 from bson import ObjectId
+from datetime import datetime
+
 from api.models import (
     db,
     MentorProfile,
@@ -11,7 +13,8 @@ from api.models import (
     Users,
     Image,
     Video,
-    PartnerProfile
+    PartnerProfile,
+    Notifications
 
 )
 from api.utils.constants import (PROFILE_COMPLETED)
@@ -200,7 +203,14 @@ def create_mentor_profile():
             subject="Your account have been successfully Created " + email,
             template_id=PROFILE_COMPLETED,
 
-        )    
+        )  
+    notify =Notifications(
+        message="New Mentor with name("+new_account.name+") has created profile",
+        mentorId=str(new_account.id),
+        readed=False,
+        date_submitted=datetime.now()
+    ) 
+    notify.save()    
     if not success:
             logger.info(msg)  
     return create_response(

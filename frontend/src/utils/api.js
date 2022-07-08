@@ -178,6 +178,29 @@ export const getTrainings = async (role) => {
 	console.log(newTrain);
 	return newTrain;
 };
+export const getNotifys = async () => {
+	const requestExtension = `/notifys`;
+	const res = await instance.get(requestExtension);
+	const notifys = res.data.result.notifys;
+	return notifys;
+};
+export const markNotifyReaded = async (id) => {
+	const requestExtension = `/notifys/${id}`;
+	let response = await authGet(requestExtension);
+	const notify = response.data.result.notify;
+	console.log(notify);
+	return notify;
+};
+export const newNotify = async (message, mentorId, readed) => {
+	const requestExtension = `/notifys/newNotify`;
+	const formData = new FormData();
+	formData.append("message", message);
+	formData.append("mentorId", mentorId);
+	formData.append("readed", readed);
+	let response = await authPost(requestExtension, formData);
+	let notify = response.data.result.notify;
+	return notify;
+};
 export const deleteTrainbyId = (id, accountType) => {
 	const requestExtension = `/training/${id}`;
 	return authDelete(requestExtension).then(

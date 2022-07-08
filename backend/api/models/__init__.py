@@ -21,6 +21,7 @@ from .DirectMessage import DirectMessage
 from .Training import Training
 from .PartnerProfile import PartnerProfile
 from .MentorApplication import MentorApplication
+from .Notifications import Notifications
 
 __all__ = [
     "db",
@@ -42,7 +43,8 @@ __all__ = [
     "PartnerApplication",
     "Training",
     "PartnerProfile",
-    "MentorApplication"
+    "MentorApplication",
+    "Notifications"
 ]
 
 # You must import all of the new Models you create to this page

@@ -64,7 +64,7 @@ def create_app(test_config=None):
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-    #,'tlsCAFile':ca
+    #
     #app.config["MONGODB_SETTINGS"]={  'db': 'mentee',
     #'host': 'localhost',
     #'port': 27017}
@@ -93,6 +93,7 @@ def create_app(test_config=None):
         messages,
         notifications,
         training,
+        adminNotifications
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -104,6 +105,7 @@ def create_app(test_config=None):
     app.register_blueprint(verify.verify, url_prefix="/api")
     app.register_blueprint(apply.apply, url_prefix="/api/application")
     app.register_blueprint(training.training, url_prefix="/api/training")
+    app.register_blueprint(adminNotifications.Notificationss, url_prefix="/api/notifys")
     app.register_blueprint(admin.admin, url_prefix="/api")
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")

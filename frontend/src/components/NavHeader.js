@@ -1,14 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { Avatar, Layout, Drawer, Button, Menu, Dropdown } from "antd";
+import {
+	Avatar,
+	Layout,
+	Drawer,
+	Button,
+	Menu,
+	Dropdown,
+	Badge,
+	Space,
+} from "antd";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { resetUser, fetchUser } from "features/userSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
-import { fetchAccountById, getAdmin } from "utils/api";
+import {
+	fetchAccountById,
+	getAdmin,
+	getNotifys,
+	markNotifyReaded,
+	newNotify,
+} from "utils/api";
 import useAuth from "../utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";
@@ -22,6 +37,7 @@ import Icon, {
 } from "@ant-design/icons";
 import NotificationBell from "./NotificationBell";
 import { logout } from "utils/auth.service";
+import { BellOutlined } from "@ant-design/icons";
 
 const { Header } = Layout;
 
@@ -38,7 +54,9 @@ function NavHeader({ history }) {
 		role,
 	} = useAuth();
 	const [drawerVisible, setDrawerVisible] = useState(false);
-
+	const [notifys, setNotifys] = useState([]);
+	const [count, setCount] = useState(0);
+	const [notifysViewed, setNoitfyViewed] = useState(false);
 	const user = useSelector((state) => state.user.user);
 	const dispatch = useDispatch();
 	const logoutUser = () => {
@@ -68,7 +86,13 @@ function NavHeader({ history }) {
 			return "Partner";
 		}
 	};
-
+	useEffect(() => {
+		getNotifys().then((notifys) => {
+			setNotifys(notifys);
+			let unReadnotifys = notifys.filter((notify) => notify.readed === false);
+			setCount(unReadnotifys.length);
+		});
+	}, []);
 	const dropdownMenu = (
 		<Menu className="dropdown-menu">
 			<Menu.Item key="edit-profile">
@@ -84,7 +108,36 @@ function NavHeader({ history }) {
 			}
 		</Menu>
 	);
-
+	const lastNotifys = notifys.slice(0, 5);
+	const menu = (
+		<Menu style={{ borderRedius: "15px" }}>
+			{lastNotifys.map((notify) => {
+				return (
+					<Menu.Item key={notify._id["$oid"]}>
+						<a
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={(e) => {
+								e.preventDefault();
+								history.push(`/gallery/1/${notify.mentorId}`);
+							}}
+						>
+							<p
+								style={{
+									width: "250px",
+									backgroundColor: "#a58123",
+									color: "white",
+									padding: "5px",
+								}}
+							>
+								{notify.message}
+							</p>
+						</a>
+					</Menu.Item>
+				);
+			})}
+		</Menu>
+	);
 	return (
 		<Header className="navigation-header">
 			<div className="navigation-mentee-flexbox">
@@ -99,26 +152,7 @@ function NavHeader({ history }) {
 				</div>
 				{!isMobile ? (
 					<div style={{ display: "flex" }}>
-						{!isMobile && (
-							<>
-								{/*isMentee || isMentor ? (
-									<></>
-								) : (
-									<span className="navigation-header-button">
-										<MenteeButton
-											width="9em"
-											theme="light"
-											content={<b>{"Apply"}</b>}
-											onClick={() => {
-												history.push({
-													pathname: "/application-page",
-												});
-											}}
-										/>
-									</span>
-                    )*/}
-							</>
-						)}
+						{!isMobile && <></>}
 						{/* TODO: Update this since verification modal will not longer be needed anymore! */}
 						{(isMentee || isAdmin) && isLoggedIn() && (
 							<span className="navigation-header-button">
@@ -211,6 +245,39 @@ function NavHeader({ history }) {
 
 						{user ? (
 							<>
+								{isAdmin && (
+									<Dropdown
+										overlay={menu}
+										className="profile-name margin-bell"
+										trigger={["click"]}
+									>
+										<a
+											onClick={(e) => {
+												e.preventDefault();
+												if (!notifysViewed) {
+													setNoitfyViewed(true);
+													setCount(0);
+													Promise.all(
+														notifys.map(async (notify) => {
+															if (notify.readed == false) {
+																await markNotifyReaded(notify._id["$oid"]);
+															}
+														})
+													);
+												}
+											}}
+										>
+											<Space>
+												<Badge count={count}>
+													<BellOutlined
+														style={{ fontSize: "150%" }}
+													></BellOutlined>
+												</Badge>
+											</Space>
+										</a>
+									</Dropdown>
+								)}
+
 								<NotificationBell />
 								<div className="profile-name">
 									<b>
@@ -226,7 +293,7 @@ function NavHeader({ history }) {
 										icon={<UserOutlined />}
 									/>
 								</div>
-								<div className="profile-caret">
+								<div className="profile-caret ">
 									<Dropdown overlay={dropdownMenu} trigger={["click"]}>
 										<CaretDownOutlined />
 									</Dropdown>

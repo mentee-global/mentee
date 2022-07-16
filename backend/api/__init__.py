@@ -63,8 +63,8 @@ def create_app(test_config=None):
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-    #
+    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db),'tlsCAFile':ca}
+    #tlsCAFile
     #app.config["MONGODB_SETTINGS"]={  'db': 'mentee',
     #'host': 'localhost',
     #'port': 27017}

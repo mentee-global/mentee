@@ -6,11 +6,11 @@ export const BASE_URL =
 		: "http://localhost:5000/";
 
 export const FRONT_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.VERCEL_ENV === "master" // Temporarily while we migrate from vercel
-      ? "https://mentee-global.vercel.app/"
-      : BASE_URL
-    : `http://localhost:3000/`;
+	process.env.NODE_ENV === "production"
+		? process.env.VERCEL_ENV === "master" // Temporarily while we migrate from vercel
+			? "https://mentee-global.vercel.app/"
+			: BASE_URL
+		: `http://localhost:3000/`;
 
 export const API_URL = BASE_URL + "api/";
 
@@ -114,7 +114,7 @@ export const AGE_RANGES = [
 export const SPECIALIZATIONS = [
 	"Advocacy and Activism",
 	"Architecture",
-	"Arts: Design/Music/Dance and More",
+	"Arts:Dance/Design/Music and More",
 	"Citizenship",
 	"Computer Science",
 	"Education, Personal Guidance On Next Steps",
@@ -122,13 +122,12 @@ export const SPECIALIZATIONS = [
 	"Entrepreneurship",
 	"Finance, Business",
 	"Finance, Personal",
-	"Health, Community and Environment",
+	"Health, Community, and Enviornment",
 	"Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
 	"Interview Skills & Practice",
 	"Journalism",
 	"Language Lessons",
 	"Law",
-	"Letter Writing and Other Communications",
 	"Legal Issues, Business",
 	"Legal Issues, Related to Personal Issues (Excluding Citizenship)",
 	"Media/Public Relations",
@@ -137,12 +136,14 @@ export const SPECIALIZATIONS = [
 	"Political Science",
 	"Professional Speaking",
 	"Psychology: The Study of Clinical Practice (Not Personal Issues)",
-	"Resume Writing",
+	"Research",
+	"Resume/CV Writing",
 	"Self Confidence",
-	"Small Businesses",
+	"Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
 	"Teaching: Skills & Methods",
 	"Technology Training",
-	"Tourism",
+	"Tourism: Field of",
+	"Writing: Improving writing skills, writing books/articles, scholarly writing",
 	"Other",
 ];
 

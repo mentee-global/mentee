@@ -58,49 +58,6 @@ function MenteeRegisterForm(props) {
 
 	useEffect(() => {
 		const mentee = JSON.parse(localStorage.getItem("mentee"));
-		/*
-		if (mentee) {
-			
-			let newValid = [...isValid];
-			setLocalProfile(mentee);
-
-			setName(mentee.name);
-			if (mentee.name && mentee.name.length > 50) {
-				newValid[0] = false;
-			}
-			setSpecializations(mentee.specializations);
-			setVideo(mentee.video);
-			setPrivacy(mentee.is_private);
-
-			setBiography(mentee.biography);
-			if (mentee.biography && mentee.biography.length > 255) {
-				newValid[8] = false;
-			}
-			setLocation(mentee.location);
-			if (mentee.location && mentee.location.length >= 70) {
-				newValid[9] = false;
-			}
-			setGender(mentee.gender);
-			setAge(mentee.age);
-			setLanguages(mentee.languages);
-			if (mentee.languages && mentee.languages.length <= 0) {
-				newValid[5] = false;
-			}
-			setPhone(mentee.phone_number);
-			setOrganization(mentee.organization);
-			const newEducation = mentee.education
-				? JSON.parse(JSON.stringify(mentee.education))
-				: [];
-			setEducations(newEducation);
-			newEducation.forEach((education, index) => {
-				newValid = [...newValid, true, true, true, true];
-				newValid[10 + index * 4] = !!education.school;
-				newValid[10 + index * 4 + 1] = !!education.graduation_year;
-				newValid[10 + index * 4 + 2] = !!education.majors.length;
-				newValid[10 + index * 4 + 3] = !!education.education_level;
-			});
-			setIsValid(newValid);
-		}*/
 	}, []);
 	const info = (msg) => {
 		message.success(msg);

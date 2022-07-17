@@ -122,7 +122,7 @@ export const SPECIALIZATIONS = [
 	"Entrepreneurship",
 	"Finance, Business",
 	"Finance, Personal",
-	"Health, Community, and Enviornment",
+	"Health, Community, and Enviroment",
 	"Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
 	"Interview Skills & Practice",
 	"Journalism",

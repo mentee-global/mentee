@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Badge } from "antd";
-import { MessageOutlined } from "@ant-design/icons";
+import { MessageOutlined, BellOutlined } from "@ant-design/icons";
 import {
 	fetchNotificationsCount,
 	notificationIncrement,
@@ -21,7 +21,7 @@ function NotificationBell() {
 	return (
 		<div className="notifications-section">
 			<Badge count={count ?? 0} size="small">
-				<MessageOutlined className="notifications-icon" />
+				<BellOutlined className="notifications-icon" />
 			</Badge>
 		</div>
 	);

@@ -34,6 +34,7 @@ import Icon, {
 	UserOutlined,
 	MenuOutlined,
 	CaretDownOutlined,
+	MessageOutlined,
 } from "@ant-design/icons";
 import NotificationBell from "./NotificationBell";
 import { logout } from "utils/auth.service";
@@ -269,9 +270,9 @@ function NavHeader({ history }) {
 										>
 											<Space>
 												<Badge count={count}>
-													<BellOutlined
+													<MessageOutlined
 														style={{ fontSize: "150%" }}
-													></BellOutlined>
+													></MessageOutlined>
 												</Badge>
 											</Space>
 										</a>

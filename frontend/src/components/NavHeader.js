@@ -54,7 +54,6 @@ function NavHeader({ history }) {
     profileId,
     role,
   } = useAuth();
-  console.log("isAdmin", isAdmin);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [notifys, setNotifys] = useState([]);
   const [count, setCount] = useState(0);

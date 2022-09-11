@@ -1,472 +1,497 @@
 @import "_app";
-
+.t-a-c-b {
+  margin: 15px 0;
+}
 .pending-dot {
-	position: relative;
-	height: 10px;
-	width: 10px;
-	background-color: #f8d15b;
-	border-radius: 50%;
-	display: inline-block;
-	margin-left: 5px;
+  position: relative;
+  height: 10px;
+  width: 10px;
+  background-color: #f8d15b;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
 }
 
 .upcoming-dot {
-	position: relative;
-	height: 10px;
-	width: 10px;
-	background-color: #2f80ed;
-	border-radius: 50%;
-	display: inline-block;
-	margin-left: 5px;
+  position: relative;
+  height: 10px;
+  width: 10px;
+  background-color: #2f80ed;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
 }
 
 .vl {
-	position: relative;
-	border-left: 3px solid #a58123;
-	height: 31px;
-	left: 42.91px;
+  position: relative;
+  border-left: 3px solid #a58123;
+  height: 31px;
+  left: 42.91px;
 }
 
 .hl {
-	position: relative;
-	border-left: 1px solid #a58123;
-	height: 355px;
-	bottom: -125px;
-	left: 10px;
-	transform: rotate(90deg);
+  position: relative;
+  border-left: 1px solid #a58123;
+  height: 355px;
+  bottom: -125px;
+  left: 10px;
+  transform: rotate(90deg);
 }
 
 .ar-modal-container {
-	//min-height: 450px;
-	overflow-y: auto;
-	overflow-x: hidden;
+  //min-height: 450px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .ar-footer {
-	height: 50px;
+  height: 50px;
 }
 
 .ar-status {
-	position: relative;
-	width: 80px;
-	height: 37.8px;
-	left: 335.14px;
-	top: 20px;
+  position: relative;
+  width: 80px;
+  height: 37.8px;
+  left: 335.14px;
+  top: 20px;
 
-	font-family: Helvetica;
-	font-style: italic;
-	font-weight: bold;
-	font-size: 12px;
-	line-height: 14px;
-	text-align: right;
+  font-family: Helvetica;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: right;
 
-	color: #828282;
+  color: #828282;
 }
 
 .ar-modal-title {
-	position: relative;
-	width: 201px;
-	min-height: 24px;
-	left: 42.91px;
+  position: relative;
+  width: 201px;
+  min-height: 24px;
+  left: 42.91px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 24px;
-	line-height: 28px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 28px;
 
-	color: #000000;
+  color: #000000;
 }
 
 .ar-phone,
 .ar-contact,
 .ar-email,
 .ar-email-only {
-	position: relative;
-	width: 189px;
-	height: 14px;
-	left: 208.91px;
-	margin-bottom: 5px;
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 12px;
-	line-height: 14px;
+  position: relative;
+  width: 189px;
+  height: 14px;
+  left: 208.91px;
+  margin-bottom: 5px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
 
-	text-align: right;
-	text-decoration-line: underline;
+  text-align: right;
+  text-decoration-line: underline;
 
-	color: #000000;
+  color: #000000;
 }
 
 .ar-phone,
 .ar-email {
-	top: 45px;
+  top: 45px;
 }
 
 .ar-email-only {
-	top: 16px;
+  top: 16px;
 }
 
 .personal-info {
-	position: relative;
-	top: 20px;
-	height: 200px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+  position: relative;
+  top: 20px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .ar-title-subtext {
-	position: relative;
-	width: 250px;
-	height: 14px;
-	left: 43.55px;
+  position: relative;
+  width: 250px;
+  height: 14px;
+  left: 43.55px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 12px;
-	line-height: 14px;
-	/* identical to box height */
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
+  /* identical to box height */
 
-	color: #7a7a7a;
+  color: #7a7a7a;
 }
 
 .ar-languages {
-	position: relative;
-	width: 250px;
-	height: 16.05px;
-	left: 43.55px;
-	top: 10px;
+  position: relative;
+  width: 250px;
+  height: 16.05px;
+  left: 43.55px;
+  top: 10px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 12px;
-	line-height: 14px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
 
-	color: #7a7a7a;
+  color: #7a7a7a;
 }
 
 .ar-icon {
-	margin-right: 5px;
+  margin-right: 5px;
 }
 
 .ar-location {
-	position: relative;
-	width: 250px;
-	height: 16.05px;
-	left: 43.55px;
-	top: 16px;
+  position: relative;
+  width: 250px;
+  height: 16.05px;
+  left: 43.55px;
+  top: 16px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 12px;
-	line-height: 14px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 14px;
 
-	color: #7a7a7a;
+  color: #7a7a7a;
 }
 
 .ar-apt-date {
-	position: relative;
-	width: 318px;
-	height: 35px;
-	left: 55.91px;
-	top: 67px;
+  position: relative;
+  width: 318px;
+  height: 35px;
+  left: 55.91px;
+  top: 67px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 16px;
-	line-height: 18px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 18px;
 
-	color: #a58123;
+  color: #a58123;
 }
 
 .ar-apt-time {
-	position: relative;
-	width: 318px;
-	height: 35px;
-	left: 55.91px;
-	top: 50px;
+  position: relative;
+  width: 318px;
+  height: 35px;
+  left: 55.91px;
+  top: 50px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 16px;
-	line-height: 18px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 18px;
 
-	color: #a58123;
+  color: #a58123;
 }
 
 .ar-categories-title {
-	position: relative;
-	width: 318px;
-	height: 35px;
-	left: 43.91px;
-	top: 50px;
+  position: relative;
+  width: 318px;
+  height: 35px;
+  left: 43.91px;
+  top: 50px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 14px;
-	line-height: 16px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
 
-	color: #a58123;
+  color: #a58123;
 }
 
 .ar-categories {
-	position: relative;
-	width: 318px;
-	height: 35px;
-	left: 43.91px;
-	top: 40px;
+  position: relative;
+  width: 318px;
+  height: 35px;
+  left: 43.91px;
+  top: 40px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 16px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
 
-	color: #000000;
+  color: #000000;
 }
 
 .ar-goals-title {
-	position: relative;
-	width: 62px;
-	height: 21px;
-	left: 43.91px;
-	top: 60px;
+  position: relative;
+  width: 62px;
+  height: 21px;
+  left: 43.91px;
+  top: 60px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 14px;
-	line-height: 16px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
 
-	color: #a58123;
+  color: #a58123;
 }
 
 .ar-goals {
-	position: relative;
-	width: 350px;
-	left: 43.91px;
-	top: 60px;
-	padding-bottom: 20px;
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 14px;
-	line-height: 16px;
+  position: relative;
+  width: 350px;
+  left: 43.91px;
+  top: 60px;
+  padding-bottom: 20px;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
 
-	color: #000000;
+  color: #000000;
 
-	overflow: visible;
+  overflow: visible;
 }
 
 .accept-apt {
-	position: relative;
-	width: 118.93px;
-	height: 32px;
-	left: 94.55px;
-	bottom: 25px;
+  position: relative;
+  width: 118.93px;
+  height: 32px;
+  left: 94.55px;
+  bottom: 25px;
 
-	background: #e4bb4f;
-	border: 3px solid #6fcf97;
-	border-radius: 13px;
+  background: #e4bb4f;
+  border: 3px solid #6fcf97;
+  border-radius: 13px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 18px;
-	line-height: 21px;
-	text-align: center;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 21px;
+  text-align: center;
 
-	color: #fcf6e8;
+  color: #fcf6e8;
 }
 
 .reject-apt {
-	position: relative;
-	width: 118.93px;
-	height: 32px;
-	left: 232.64px;
-	bottom: 25px;
+  position: relative;
+  width: 118.93px;
+  height: 32px;
+  left: 232.64px;
+  bottom: 25px;
 
-	background: #e4bb4f;
-	border: 3px solid #a62b31;
-	border-radius: 13px;
+  background: #e4bb4f;
+  border: 3px solid #a62b31;
+  border-radius: 13px;
 
-	font-family: Helvetica;
-	font-style: normal;
-	font-weight: bold;
-	font-size: 18px;
-	line-height: 21px;
-	text-align: center;
+  font-family: Helvetica;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 21px;
+  text-align: center;
 
-	color: #fcf6e8;
+  color: #fcf6e8;
 }
 
 .appointments-welcome-text {
-	margin: 1% 1%;
-	font-size: 30px;
-	font-weight: bold;
+  margin: 1% 1%;
+  font-size: 30px;
+  font-weight: bold;
 }
 
 .appointments-tabs {
-	display: flex;
-	flex-direction: row;
-	margin-bottom: 5%;
-	margin-left: 1%;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5%;
+  margin-left: 1%;
 }
 
 .appointment-card {
-	background-color: $appointment-card-background-color;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	border-radius: 13px;
-	padding: 15px;
-	margin-bottom: 18px;
-	margin-left: 25px;
-	height: 84px;
+  background-color: $appointment-card-background-color;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 13px;
+  padding: 15px;
+  margin-bottom: 18px;
+  margin-left: 25px;
+  height: 84px;
 }
 
 .appointments-background {
-	background: $appointment-background-color;
-	padding: 46px 13px 48px 20px;
-	border-radius: 8px;
-	width: auto;
-	margin: 5px 3% 2% 3%;
-	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
+  background: $appointment-background-color;
+  padding: 46px 13px 48px 20px;
+  border-radius: 8px;
+  width: auto;
+  margin: 5px 3% 2% 3%;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
 }
 
 .appointments-date-block {
-	display: flex;
-	margin-bottom: 40px;
+  display: flex;
+  margin-bottom: 40px;
 }
 
 .appointments-date-text-block {
-	font-size: 13px;
-	color: $appointments-date-text-block-color;
-	display: block;
-	font-weight: bold;
-	line-height: 1;
-	text-align: center;
-	padding-right: 20px;
-	width: 100px;
+  font-size: 13px;
+  color: $appointments-date-text-block-color;
+  display: block;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  padding-right: 20px;
+  width: 100px;
 }
 
 .appointments-date-number {
-	font-size: 24px;
-	color: inherit;
-	font-weight: bold;
-	margin: 0;
+  font-size: 24px;
+  color: inherit;
+  font-weight: bold;
+  margin: 0;
 }
 
 .appointments-row {
-	border-left: solid;
-	border-color: $appointments-row-border-color;
-	border-width: 2px;
-	width: 100%;
+  border-left: solid;
+  border-color: $appointments-row-border-color;
+  border-width: 2px;
+  width: 100%;
 }
 
 .appointments-column {
-	padding: 5% 3%;
-	height: 100vh;
+  padding: 5% 3%;
+  height: 100vh;
 }
 
 .appointments-welcome-box {
-	margin: 0% 2%;
+  margin: 0% 2%;
 }
 
 .appointment-description {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 400px;
 }
 .appointment-time,
 .appointment-description {
-	color: $appointments-description;
-	line-height: 15px;
+  color: $appointments-description;
+  line-height: 15px;
 }
 
 .appointment-time,
 .appointment-description {
-	font-size: 13px;
+  font-size: 13px;
 }
 
 .appointment-mentee-name {
-	font-size: 13px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 400px;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 400px;
 }
 
 .appointment-tabs-title {
-	font-size: 18px;
-	margin: 0% 3%;
+  font-size: 18px;
+  margin: 0% 3%;
 }
 
 .appointment-pending-buttons {
-	display: flex;
-	background-color: white;
-	border-radius: 13px;
-	padding: 0.5%;
+  display: flex;
+  background-color: white;
+  border-radius: 13px;
+  padding: 0.5%;
 }
 
 .appointment-accept,
 .appointment-decline {
-	padding: 0px;
-	margin: 0px;
+  padding: 0px;
+  margin: 0px;
 }
 
 .appointment-pending-buttons,
 .appointment-more-details {
-	margin-right: 1%;
-	padding-bottom: 1px;
+  margin-right: 1%;
+  padding-bottom: 1px;
 }
 
 .appointments-tab-item {
-	background-color: $appointments-tab-background-color;
-	color: $appointments-tab-color;
-	border-radius: 13px;
-	margin-right: 1%;
+  background-color: $appointments-tab-background-color;
+  color: $appointments-tab-color;
+  border-radius: 13px;
+  margin-right: 1%;
 }
 
 .appointments-tab-item-selected {
-	background-color: $appointments-tab-item-selected-background-color;
-	color: $appointments-tab-item-selected-color;
-	border-radius: 13px;
-	margin-right: 1%;
+  background-color: $appointments-tab-item-selected-background-color;
+  color: $appointments-tab-item-selected-color;
+  border-radius: 13px;
+  margin-right: 1%;
 }
 
 .availability-container {
-	border-top-left-radius: 7px;
-	border-top-right-radius: 7px;
-	overflow: hidden;
-	margin: 5px 3% 2% 3%;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  overflow: hidden;
+  margin: 5px 3% 2% 3%;
 }
 
 .calendar-header {
-	display: flex;
-	align-items: center;
-	background-color: $appointment-card-background-color;
-	font-weight: bold;
-	padding-left: 1%;
-	height: 50px;
-	width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: $appointment-card-background-color;
+  font-weight: bold;
+  padding-left: 1%;
+  height: 50px;
+  width: 100%;
 }
 
 .calendar-container {
-	height: 400px;
-	overflow-y: scroll;
-	margin-bottom: 15px;
+  height: 400px;
+  overflow-y: scroll;
+  margin-bottom: 15px;
 }
 
 .empty-appointments-list {
-	font-weight: bold;
+  font-weight: bold;
+}
+.message-area {
+  flex-direction: column;
+}
+.message-area span {
+  opacity: 40%;
+  margin-bottom: 5px;
+}
+.flex {
+  display: flex;
+}
+.flex-end {
+  align-items: flex-end !important;
+}
+.flex-start {
+  align-items: flex-start !important;
+}
+.flex-center {
+  align-items: center !important;
+}
+.modal-profile-icon2 {
+  margin-top: 15px;
+  margin-right: 10px;
 }

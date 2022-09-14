@@ -262,7 +262,7 @@ function MessagesChatArea(props) {
                     </div>
                   </div>
 
-                  <span>
+                  <span style={{ opacity: "40%" }}>
                     {block.time
                       ? block.time
                       : new Date(block.created_at.$date).toLocaleString()}

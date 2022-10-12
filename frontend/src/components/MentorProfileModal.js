@@ -201,8 +201,7 @@ function MentorProfileModal(props) {
 
   function handleAboutChange(e) {
     const about = e.target.value;
-
-    if (about.length <= 255) {
+    if (about.length <= 1002) {
       setEdited(true);
       let newValid = [...isValid];
 
@@ -568,7 +567,7 @@ function MentorProfileModal(props) {
                 value={about}
                 valid={isValid[7]}
                 validate={validate}
-                errorPresent={about && about.length > 255}
+                errorPresent={about && about.length > 1002}
                 errorMessage="About field is too long."
               />
             </div>

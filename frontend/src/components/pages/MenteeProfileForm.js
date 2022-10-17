@@ -315,7 +315,7 @@ function MenteeRegisterForm(props) {
   function handleBiographyChange(e) {
     const biography = e.target.value;
 
-    if (biography.length < 255) {
+    if (biography.length < 1002) {
       let newValid = [...isValid];
 
       newValid[8] = true;
@@ -559,7 +559,7 @@ function MenteeRegisterForm(props) {
             value={biography}
             valid={isValid[8]}
             validate={validate}
-            errorPresent={biography && biography.length > 255}
+            errorPresent={biography && biography.length > 1002}
             errorMessage="Biography field is too long."
           />
         </div>

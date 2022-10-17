@@ -13,92 +13,102 @@ import { resetUser } from "features/userSlice";
 import { useDispatch } from "react-redux";
 
 function Home({ history }) {
-	const { isMentor, isMentee, isPartner, resetRoleState, isAdmin } = useAuth();
-	const dispatch = useDispatch();
+  const { isMentor, isMentee, isPartner, resetRoleState, isAdmin } = useAuth();
+  const dispatch = useDispatch();
 
-	const logoutUser = () => {
-		logout().then(() => {
-			resetRoleState();
-			dispatch(resetUser());
-			history.push("/");
-		});
-	};
-	return (
-		<div className="home-background">
-			<div className="home-content">
-				<div className="home-text-container">
-					<h1 className="home-header2">
-						Welcome to <span>MENTEE!</span>
-					</h1>
-					{isLoggedIn() ? (
-						""
-					) : (
-						<p className="home-text2">
-							{/** Homepage Tagline placeholder */}
-							Are you a new or existing user?
-						</p>
-					)}
+  const logoutUser = () => {
+    logout().then(() => {
+      resetRoleState();
+      dispatch(resetUser());
+      history.push("/");
+    });
+  };
+  return (
+    <div className="home-background">
+      <div className="home-content">
+        <div className="home-text-container">
+          <h1 className="home-header2">
+            Welcome to <span>MENTEE!</span>
+          </h1>
+          {isLoggedIn() ? (
+            ""
+          ) : (
+            <p className="home-text2">
+              {/** Homepage Tagline placeholder */}
+              Are you a new or existing user?
+            </p>
+          )}
 
-					<br />
-					<LoginVerificationModal
-						content={
-							(isMentor && <b>Find a Mentee</b>) ||
-							(isMentee && <b>Find a Mentor</b>)
-						}
-						theme="dark"
-						onVerified={() => {
-							let redirect = MENTOR_GALLERY_PAGE;
-							if (isMentor) {
-								redirect = MENTEE_GALLERY_PAGE;
-							}
-							history.push({
-								pathname: redirect,
-								state: { verified: true },
-							});
-						}}
-					/>
-				</div>
-				<div className="buttons-container">
-					{isMentee || isMentor || isPartner || isAdmin ? (
-						<></>
-					) : (
-						<div
-							className="applyCon"
-							onClick={() => {
-								history.push({
-									pathname: "/application-page",
-								});
-							}}
-						>
-							<img className="applyImage" src={Applyimg} alt="apply" />
+          <br />
+          <LoginVerificationModal
+            content={
+              (isMentor && <b>Find a Mentee</b>) ||
+              (isMentee && <b>Find a Mentor</b>)
+            }
+            theme="dark"
+            onVerified={() => {
+              let redirect = MENTOR_GALLERY_PAGE;
+              if (isMentor) {
+                redirect = MENTEE_GALLERY_PAGE;
+              }
+              history.push({
+                pathname: redirect,
+                state: { verified: true },
+              });
+            }}
+          />
+        </div>
+        <div className="buttons-container">
+          {isMentee || isMentor || isPartner || isAdmin ? (
+            <></>
+          ) : (
+            <div>
+              <h1 className="home-header2" style={{ textAlign: "center" }}>
+                <span>NEW</span>
+                <div
+                  className="applyCon"
+                  onClick={() => {
+                    history.push({
+                      pathname: "/application-page",
+                    });
+                  }}
+                >
+                  <img className="applyImage" src={Applyimg} alt="apply" />
 
-							<div className="loginText">APPLY - TRAIN - BUILD</div>
-						</div>
-					)}
-					{!isLoggedIn() ? (
-						<div
-							className="loginCon"
-							onClick={() => {
-								let redirect = "/login";
-								history.push({
-									pathname: redirect,
-								});
-							}}
-						>
-							<img className="applyImage" src={loginimg} alt="login" />
-							<div className="loginText">PLATFORM LOGIN</div>
-						</div>
-					) : (
-						<div className="loginCon" onClick={logoutUser}>
-							<img className="applyImage" src={loginimg} alt="login" />
+                  <div className="loginText">APPLY - TRAIN - BUILD</div>
+                </div>
+              </h1>
+            </div>
+          )}
+          {!isLoggedIn() ? (
+            <>
+              <h1 className="home-header2" style={{ textAlign: "center" }}>
+                <span>EXISTING</span>
+                <div
+                  className="loginCon"
+                  onClick={() => {
+                    let redirect = "/login";
+                    history.push({
+                      pathname: redirect,
+                    });
+                  }}
+                >
+                  <img className="applyImage" src={loginimg} alt="login" />
+                  <div className="loginText">PLATFORM LOGIN</div>
+                </div>
+              </h1>
+            </>
+          ) : (
+            <div className="loginCon" onClick={logoutUser}>
+              <img className="applyImage" src={loginimg} alt="login" />
 
-							<div className="loginText">LOGOUT</div>
-						</div>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+              <div className="loginText">LOGOUT</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default withRouter(Home);

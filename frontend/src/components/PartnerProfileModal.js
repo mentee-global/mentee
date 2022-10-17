@@ -6,10 +6,10 @@ import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 import { REGIONS, regions, SDGS } from "../utils/consts";
 import {
-	editMentorProfile,
-	editPartnerProfile,
-	uploadMentorImage,
-	uploadPartnerImage,
+  editMentorProfile,
+  editPartnerProfile,
+  uploadMentorImage,
+  uploadPartnerImage,
 } from "../utils/api";
 import { getPartnerID } from "../utils/auth.service";
 import "./css/AntDesign.scss";
@@ -19,535 +19,535 @@ import { validateUrl } from "utils/misc";
 const INITIAL_NUM_INPUTS = 30;
 
 function PartnerProfileModal(props) {
-	const [modalVisible, setModalVisible] = useState(false);
-	const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
-	const [inputClicked, setInputClicked] = useState(
-		new Array(numInputs).fill(false)
-	); // each index represents an input box, respectively
-	const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
-	const [validate, setValidate] = useState(false);
-	const [topics, setTopics] = useState(null);
-	const [person_name, setPersonName] = useState(null);
-	const [organization, setOrganization] = useState(null);
-	const [intro, setIntro] = useState(null);
-	const [open_grants, setOpenGrants] = useState(false);
-	const [open_projects, setOpenProjects] = useState(false);
-	const [location, setLocation] = useState(null);
-	const [website, setWebsite] = useState(null);
-	const [linkedin, setLinkedin] = useState(null);
-	const [sdgs, setSdgs] = useState([]);
-	const [regions, setRegions] = useState([]);
-	const [image, setImage] = useState(null);
-	const [changedImage, setChangedImage] = useState(false);
-	const [edited, setEdited] = useState(false);
-	const [saving, setSaving] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
+  const [inputClicked, setInputClicked] = useState(
+    new Array(numInputs).fill(false)
+  ); // each index represents an input box, respectively
+  const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
+  const [validate, setValidate] = useState(false);
+  const [topics, setTopics] = useState(null);
+  const [person_name, setPersonName] = useState(null);
+  const [organization, setOrganization] = useState(null);
+  const [intro, setIntro] = useState(null);
+  const [open_grants, setOpenGrants] = useState(false);
+  const [open_projects, setOpenProjects] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [website, setWebsite] = useState(null);
+  const [linkedin, setLinkedin] = useState(null);
+  const [sdgs, setSdgs] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [image, setImage] = useState(null);
+  const [changedImage, setChangedImage] = useState(false);
+  const [edited, setEdited] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-	useEffect(() => {
-		if (props.mentor) {
-			setOrganization(props.mentor.organization);
-			setPersonName(props.mentor.person_name);
-			setTopics(props.mentor.topics);
-			setIntro(props.mentor.biography);
-			setOpenGrants(props.mentor.open_grants);
-			setOpenProjects(props.mentor.open_projects);
-			setLocation(props.mentor.location);
-			setWebsite(props.mentor.website);
-			setLinkedin(props.mentor.linkedin);
-			setImage(props.mentor.image);
-			setSdgs(props.mentor.sdgs);
-			setRegions(props.mentor.regions);
-			// Deep copy of array of objects
+  useEffect(() => {
+    if (props.mentor) {
+      setOrganization(props.mentor.organization);
+      setPersonName(props.mentor.person_name);
+      setTopics(props.mentor.topics);
+      setIntro(props.mentor.biography);
+      setOpenGrants(props.mentor.open_grants);
+      setOpenProjects(props.mentor.open_projects);
+      setLocation(props.mentor.location);
+      setWebsite(props.mentor.website);
+      setLinkedin(props.mentor.linkedin);
+      setImage(props.mentor.image);
+      setSdgs(props.mentor.sdgs);
+      setRegions(props.mentor.regions);
+      // Deep copy of array of objects
 
-			let newValid = [...isValid];
-			for (let i = 0; i < numInputs; i++) {
-				newValid.push(true);
-			}
-			setIsValid(newValid);
-		}
-	}, [props.mentor, modalVisible]);
+      let newValid = [...isValid];
+      for (let i = 0; i < numInputs; i++) {
+        newValid.push(true);
+      }
+      setIsValid(newValid);
+    }
+  }, [props.mentor, modalVisible]);
 
-	function handleClick(index) {
-		// Sets only the clicked input box to true to change color, else false
-		let newClickedInput = new Array(numInputs).fill(false);
-		newClickedInput[index] = true;
-		setInputClicked(newClickedInput);
-	}
+  function handleClick(index) {
+    // Sets only the clicked input box to true to change color, else false
+    let newClickedInput = new Array(numInputs).fill(false);
+    newClickedInput[index] = true;
+    setInputClicked(newClickedInput);
+  }
 
-	function handleNameChange(e) {
-		const organization = e.target.value;
+  function handleNameChange(e) {
+    const organization = e.target.value;
 
-		if (organization.length <= 50) {
-			setEdited(true);
-			let newValid = [...isValid];
+    if (organization.length <= 50) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-			newValid[0] = true;
+      newValid[0] = true;
 
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[0] = false;
-			setIsValid(newValid);
-		}
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[0] = false;
+      setIsValid(newValid);
+    }
 
-		setOrganization(organization);
-	}
-	function handleTopicsChange(e) {
-		const topics = e.target.value;
+    setOrganization(organization);
+  }
+  function handleTopicsChange(e) {
+    const topics = e.target.value;
 
-		if (topics.length <= 250) {
-			setEdited(true);
-			let newValid = [...isValid];
+    if (topics.length <= 250) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-			newValid[22] = true;
+      newValid[22] = true;
 
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[23] = false;
-			setIsValid(newValid);
-		}
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[23] = false;
+      setIsValid(newValid);
+    }
 
-		setTopics(topics);
-	}
-	function handlePersonNameChange(e) {
-		const person_name = e.target.value;
+    setTopics(topics);
+  }
+  function handlePersonNameChange(e) {
+    const person_name = e.target.value;
 
-		if (person_name.length <= 50) {
-			setEdited(true);
-			let newValid = [...isValid];
+    if (person_name.length <= 50) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-			newValid[23] = true;
+      newValid[23] = true;
 
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[23] = false;
-			setIsValid(newValid);
-		}
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[23] = false;
+      setIsValid(newValid);
+    }
 
-		setPersonName(person_name);
-	}
+    setPersonName(person_name);
+  }
 
-	function handleAboutChange(e) {
-		const intro = e.target.value;
+  function handleAboutChange(e) {
+    const intro = e.target.value;
 
-		if (intro.length <= 255) {
-			setEdited(true);
-			let newValid = [...isValid];
+    if (intro.length <= 1002) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-			newValid[7] = true;
+      newValid[7] = true;
 
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[7] = false;
-			setIsValid(newValid);
-		}
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[7] = false;
+      setIsValid(newValid);
+    }
 
-		setIntro(intro);
-	}
+    setIntro(intro);
+  }
 
-	function handleOpenGrants(e) {
-		setOpenGrants(e.target.checked);
-		setEdited(true);
-	}
+  function handleOpenGrants(e) {
+    setOpenGrants(e.target.checked);
+    setEdited(true);
+  }
 
-	function handleopenprojects(e) {
-		setOpenProjects(e.target.checked);
-		setEdited(true);
-	}
+  function handleopenprojects(e) {
+    setOpenProjects(e.target.checked);
+    setEdited(true);
+  }
 
-	function handleLocationChange(e) {
-		const location = e.target.value;
+  function handleLocationChange(e) {
+    const location = e.target.value;
 
-		if (location.length <= 70) {
-			setEdited(true);
-			let newValid = [...isValid];
+    if (location.length <= 70) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-			newValid[10] = true;
+      newValid[10] = true;
 
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[10] = false;
-			setIsValid(newValid);
-		}
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[10] = false;
+      setIsValid(newValid);
+    }
 
-		setLocation(location);
-	}
+    setLocation(location);
+  }
 
-	function handleWebsiteChange(e) {
-		const website = e.target.value;
+  function handleWebsiteChange(e) {
+    const website = e.target.value;
 
-		if (validateUrl(website)) {
-			setEdited(true);
-			let newValid = [...isValid];
+    if (validateUrl(website)) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-			newValid[3] = true;
+      newValid[3] = true;
 
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[3] = false;
-			setIsValid(newValid);
-		}
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[3] = false;
+      setIsValid(newValid);
+    }
 
-		setWebsite(website);
-	}
+    setWebsite(website);
+  }
 
-	function handleRegions(e) {
-		let regionsSelected = [];
-		e.forEach((value) => {
-			regionsSelected.push(value);
-		});
-		setRegions(regionsSelected);
-		setEdited(true);
+  function handleRegions(e) {
+    let regionsSelected = [];
+    e.forEach((value) => {
+      regionsSelected.push(value);
+    });
+    setRegions(regionsSelected);
+    setEdited(true);
 
-		let newValid = [...isValid];
-		newValid[7] = !!regionsSelected.length;
-		setIsValid(newValid);
-	}
+    let newValid = [...isValid];
+    newValid[7] = !!regionsSelected.length;
+    setIsValid(newValid);
+  }
 
-	function handleLinkedinChange(e) {
-		const linkedin = e.target.value;
+  function handleLinkedinChange(e) {
+    const linkedin = e.target.value;
 
-		if (validateUrl(linkedin)) {
-			setEdited(true);
-			let newValid = [...isValid];
+    if (validateUrl(linkedin)) {
+      setEdited(true);
+      let newValid = [...isValid];
 
-			newValid[2] = true;
+      newValid[2] = true;
 
-			setIsValid(newValid);
-		} else {
-			let newValid = [...isValid];
-			newValid[2] = false;
-			setIsValid(newValid);
-		}
+      setIsValid(newValid);
+    } else {
+      let newValid = [...isValid];
+      newValid[2] = false;
+      setIsValid(newValid);
+    }
 
-		setLinkedin(linkedin);
-	}
+    setLinkedin(linkedin);
+  }
 
-	function handleSdgs(e) {
-		let SdgSelected = [];
-		e.forEach((value) => SdgSelected.push(value));
-		setSdgs(SdgSelected);
-		setEdited(true);
+  function handleSdgs(e) {
+    let SdgSelected = [];
+    e.forEach((value) => SdgSelected.push(value));
+    setSdgs(SdgSelected);
+    setEdited(true);
 
-		let newValid = [...isValid];
-		newValid[9] = !!SdgSelected.length;
-		setIsValid(newValid);
-	}
+    let newValid = [...isValid];
+    newValid[9] = !!SdgSelected.length;
+    setIsValid(newValid);
+  }
 
-	const handleSaveEdits = () => {
-		async function saveEdits(data) {
-			const partnerID = await getPartnerID();
-			await editPartnerProfile(data, partnerID);
+  const handleSaveEdits = () => {
+    async function saveEdits(data) {
+      const partnerID = await getPartnerID();
+      await editPartnerProfile(data, partnerID);
 
-			if (changedImage) {
-				await uploadPartnerImage(image, await getPartnerID());
-			}
+      if (changedImage) {
+        await uploadPartnerImage(image, await getPartnerID());
+      }
 
-			setSaving(false);
-			setChangedImage(false);
-			props.onSave();
-			setModalVisible(false);
-			setIsValid([...isValid].fill(true));
-			setValidate(false);
-		}
-		if (!edited && !changedImage) {
-			setModalVisible(false);
-			setIsValid([...isValid].fill(true));
-			setValidate(false);
-			return;
-		}
+      setSaving(false);
+      setChangedImage(false);
+      props.onSave();
+      setModalVisible(false);
+      setIsValid([...isValid].fill(true));
+      setValidate(false);
+    }
+    if (!edited && !changedImage) {
+      setModalVisible(false);
+      setIsValid([...isValid].fill(true));
+      setValidate(false);
+      return;
+    }
 
-		if (isValid.includes(false)) {
-			setValidate(true);
-			return;
-		}
+    if (isValid.includes(false)) {
+      setValidate(true);
+      return;
+    }
 
-		const updatedProfile = {
-			organization: organization,
-			person_name: person_name,
-			topics: topics,
-			linkedin: linkedin,
-			website: website,
-			regions: regions,
-			sdgs: sdgs,
-			intro: intro,
-			open_grants: open_grants,
-			open_projects: open_projects,
-			location: location,
-		};
+    const updatedProfile = {
+      organization: organization,
+      person_name: person_name,
+      topics: topics,
+      linkedin: linkedin,
+      website: website,
+      regions: regions,
+      sdgs: sdgs,
+      intro: intro,
+      open_grants: open_grants,
+      open_projects: open_projects,
+      location: location,
+    };
 
-		if (!isValid.includes(false)) {
-			setSaving(true);
-			saveEdits(updatedProfile);
-		}
-	};
+    if (!isValid.includes(false)) {
+      setSaving(true);
+      saveEdits(updatedProfile);
+    }
+  };
 
-	return (
-		<span>
-			<span className="mentor-profile-button">
-				<MenteeButton
-					content={<b>Edit Profile</b>}
-					onClick={() => setModalVisible(true)}
-				/>
-			</span>
-			<Modal
-				title="Edit Profile"
-				visible={modalVisible}
-				onCancel={() => {
-					setModalVisible(false);
-					setValidate(false);
-					setChangedImage(false);
-					setIsValid([...isValid].fill(true));
-				}}
-				style={{ overflow: "hidden" }}
-				footer={
-					<div>
-						{validate && (
-							<b style={styles.alertToast}>Missing or Error Fields</b>
-						)}
-						<Button
-							type="default"
-							shape="round"
-							style={styles.footer}
-							onClick={handleSaveEdits}
-							loading={saving}
-						>
-							Save
-						</Button>
-					</div>
-				}
-				className="modal-window"
-			>
-				<div className="modal-container">
-					<div className="modal-profile-container">
-						<Avatar
-							size={120}
-							icon={<UserOutlined />}
-							className="modal-profile-icon"
-							src={
-								changedImage
-									? image && URL.createObjectURL(image)
-									: image && image.url
-							}
-						/>
-						<ImgCrop rotate aspect={5 / 3}>
-							<Upload
-								onChange={async (file) => {
-									setImage(file.file.originFileObj);
-									setChangedImage(true);
-								}}
-								accept=".png,.jpg,.jpeg"
-								showUploadList={false}
-							>
-								<Button
-									shape="circle"
-									icon={<EditFilled />}
-									className="modal-profile-icon-edit"
-								/>
-							</Upload>
-						</ImgCrop>
-					</div>
-					<div className="modal-inner-container">
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.modalInput}
-								type="text"
-								title="Organization/Institution/Corporation Full Name*"
-								clicked={inputClicked[0]}
-								index={0}
-								handleClick={handleClick}
-								onChange={handleNameChange}
-								value={organization}
-								valid={isValid[0]}
-								validate={validate}
-								errorPresent={organization && organization.length > 50}
-								errorMessage="organization field is too long."
-							/>
-						</div>
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.modalInput}
-								type="text"
-								title="Current & Upcoming Project Topics *"
-								clicked={inputClicked[22]}
-								index={22}
-								handleClick={handleClick}
-								onChange={handleTopicsChange}
-								value={topics}
-								valid={isValid[22]}
-								validate={validate}
-								errorPresent={topics && topics.length > 50}
-								errorMessage="organization field is too long."
-							/>
-						</div>
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.modalInput}
-								type="text"
-								title="Contact Person's Full Name *"
-								clicked={inputClicked[23]}
-								index={1}
-								handleClick={handleClick}
-								onChange={handlePersonNameChange}
-								value={person_name}
-								valid={isValid[23]}
-								validate={validate}
-							/>
-						</div>
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.textAreaInput}
-								type="textarea"
-								maxRows={3}
-								hasBorder={false}
-								title="Brief Introduction to Your Org/Inst/Corp *"
-								clicked={inputClicked[2]}
-								index={2}
-								handleClick={handleClick}
-								onChange={handleAboutChange}
-								value={intro}
-								valid={isValid[7]}
-								validate={validate}
-								errorPresent={intro && intro.length > 255}
-								errorMessage="intro field is too long."
-							/>
-						</div>
-						<div className="divider" />
-						<div className="modal-availability-checkbox">
-							<Checkbox
-								className="modal-availability-checkbox-text"
-								clicked={inputClicked[3]}
-								index={3}
-								handleClick={handleClick}
-								onChange={handleOpenGrants}
-								checked={open_grants}
-							>
-								Open to Collaboration on Grants
-							</Checkbox>
-							<div></div>
-							<Checkbox
-								className="modal-availability-checkbox-text"
-								clicked={inputClicked[4]}
-								index={4}
-								handleClick={handleClick}
-								onChange={handleopenprojects}
-								checked={open_projects}
-							>
-								Open to Collaboration on Projects
-							</Checkbox>
-						</div>
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.modalInput}
-								type="text"
-								title="Headquarters Location (City, Country)"
-								clicked={inputClicked[5]}
-								index={5}
-								handleClick={handleClick}
-								onChange={handleLocationChange}
-								value={location}
-								valid={isValid[10]}
-								validate={validate}
-								errorPresent={location && location.length > 70}
-								errorMessage="Location field is too long."
-							/>
-						</div>
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.modalInput}
-								type="dropdown-multiple"
-								title="regions"
-								clicked={inputClicked[7]}
-								index={7}
-								handleClick={handleClick}
-								onChange={handleRegions}
-								placeholder=""
-								options={REGIONS}
-								value={regions}
-								valid={isValid[7]}
-								validate={validate}
-							/>
-						</div>
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.modalInput}
-								type="text"
-								title="Website"
-								clicked={inputClicked[6]}
-								index={6}
-								handleClick={handleClick}
-								onChange={handleWebsiteChange}
-								value={website}
-								valid={isValid[3]}
-								validate={validate}
-								errorPresent={website && !validateUrl(website)}
-								errorMessage="Invalid URL."
-							/>
-							<ModalInput
-								style={styles.modalInput}
-								type="text"
-								title="LinkedIn"
-								clicked={inputClicked[8]}
-								index={8}
-								handleClick={handleClick}
-								onChange={handleLinkedinChange}
-								value={linkedin}
-								valid={isValid[2]}
-								validate={validate}
-								errorPresent={linkedin && !validateUrl(linkedin)}
-								errorMessage="Invalid URL."
-							/>
-						</div>
-						<div className="modal-input-container">
-							<ModalInput
-								style={styles.modalInput}
-								type="dropdown-multiple"
-								title="sdgs"
-								clicked={inputClicked[9]}
-								index={9}
-								handleClick={handleClick}
-								onChange={handleSdgs}
-								options={SDGS}
-								value={sdgs}
-								valid={isValid[9]}
-								validate={validate}
-							/>
-						</div>
-					</div>
-				</div>
-			</Modal>
-		</span>
-	);
+  return (
+    <span>
+      <span className="mentor-profile-button">
+        <MenteeButton
+          content={<b>Edit Profile</b>}
+          onClick={() => setModalVisible(true)}
+        />
+      </span>
+      <Modal
+        title="Edit Profile"
+        visible={modalVisible}
+        onCancel={() => {
+          setModalVisible(false);
+          setValidate(false);
+          setChangedImage(false);
+          setIsValid([...isValid].fill(true));
+        }}
+        style={{ overflow: "hidden" }}
+        footer={
+          <div>
+            {validate && (
+              <b style={styles.alertToast}>Missing or Error Fields</b>
+            )}
+            <Button
+              type="default"
+              shape="round"
+              style={styles.footer}
+              onClick={handleSaveEdits}
+              loading={saving}
+            >
+              Save
+            </Button>
+          </div>
+        }
+        className="modal-window"
+      >
+        <div className="modal-container">
+          <div className="modal-profile-container">
+            <Avatar
+              size={120}
+              icon={<UserOutlined />}
+              className="modal-profile-icon"
+              src={
+                changedImage
+                  ? image && URL.createObjectURL(image)
+                  : image && image.url
+              }
+            />
+            <ImgCrop rotate aspect={5 / 3}>
+              <Upload
+                onChange={async (file) => {
+                  setImage(file.file.originFileObj);
+                  setChangedImage(true);
+                }}
+                accept=".png,.jpg,.jpeg"
+                showUploadList={false}
+              >
+                <Button
+                  shape="circle"
+                  icon={<EditFilled />}
+                  className="modal-profile-icon-edit"
+                />
+              </Upload>
+            </ImgCrop>
+          </div>
+          <div className="modal-inner-container">
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="Organization/Institution/Corporation Full Name*"
+                clicked={inputClicked[0]}
+                index={0}
+                handleClick={handleClick}
+                onChange={handleNameChange}
+                value={organization}
+                valid={isValid[0]}
+                validate={validate}
+                errorPresent={organization && organization.length > 50}
+                errorMessage="organization field is too long."
+              />
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="Current & Upcoming Project Topics *"
+                clicked={inputClicked[22]}
+                index={22}
+                handleClick={handleClick}
+                onChange={handleTopicsChange}
+                value={topics}
+                valid={isValid[22]}
+                validate={validate}
+                errorPresent={topics && topics.length > 50}
+                errorMessage="organization field is too long."
+              />
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="Contact Person's Full Name *"
+                clicked={inputClicked[23]}
+                index={1}
+                handleClick={handleClick}
+                onChange={handlePersonNameChange}
+                value={person_name}
+                valid={isValid[23]}
+                validate={validate}
+              />
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.textAreaInput}
+                type="textarea"
+                maxRows={3}
+                hasBorder={false}
+                title="Brief Introduction to Your Org/Inst/Corp *"
+                clicked={inputClicked[2]}
+                index={2}
+                handleClick={handleClick}
+                onChange={handleAboutChange}
+                value={intro}
+                valid={isValid[7]}
+                validate={validate}
+                errorPresent={intro && intro.length > 1002}
+                errorMessage="intro field is too long."
+              />
+            </div>
+            <div className="divider" />
+            <div className="modal-availability-checkbox">
+              <Checkbox
+                className="modal-availability-checkbox-text"
+                clicked={inputClicked[3]}
+                index={3}
+                handleClick={handleClick}
+                onChange={handleOpenGrants}
+                checked={open_grants}
+              >
+                Open to Collaboration on Grants
+              </Checkbox>
+              <div></div>
+              <Checkbox
+                className="modal-availability-checkbox-text"
+                clicked={inputClicked[4]}
+                index={4}
+                handleClick={handleClick}
+                onChange={handleopenprojects}
+                checked={open_projects}
+              >
+                Open to Collaboration on Projects
+              </Checkbox>
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="Headquarters Location (City, Country)"
+                clicked={inputClicked[5]}
+                index={5}
+                handleClick={handleClick}
+                onChange={handleLocationChange}
+                value={location}
+                valid={isValid[10]}
+                validate={validate}
+                errorPresent={location && location.length > 70}
+                errorMessage="Location field is too long."
+              />
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="dropdown-multiple"
+                title="regions"
+                clicked={inputClicked[7]}
+                index={7}
+                handleClick={handleClick}
+                onChange={handleRegions}
+                placeholder=""
+                options={REGIONS}
+                value={regions}
+                valid={isValid[7]}
+                validate={validate}
+              />
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="Website"
+                clicked={inputClicked[6]}
+                index={6}
+                handleClick={handleClick}
+                onChange={handleWebsiteChange}
+                value={website}
+                valid={isValid[3]}
+                validate={validate}
+                errorPresent={website && !validateUrl(website)}
+                errorMessage="Invalid URL."
+              />
+              <ModalInput
+                style={styles.modalInput}
+                type="text"
+                title="LinkedIn"
+                clicked={inputClicked[8]}
+                index={8}
+                handleClick={handleClick}
+                onChange={handleLinkedinChange}
+                value={linkedin}
+                valid={isValid[2]}
+                validate={validate}
+                errorPresent={linkedin && !validateUrl(linkedin)}
+                errorMessage="Invalid URL."
+              />
+            </div>
+            <div className="modal-input-container">
+              <ModalInput
+                style={styles.modalInput}
+                type="dropdown-multiple"
+                title="sdgs"
+                clicked={inputClicked[9]}
+                index={9}
+                handleClick={handleClick}
+                onChange={handleSdgs}
+                options={SDGS}
+                value={sdgs}
+                valid={isValid[9]}
+                validate={validate}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </span>
+  );
 }
 
 const styles = {
-	modalInput: {
-		height: 65,
-		margin: 18,
-		padding: 4,
-		paddingTop: 6,
-	},
-	textAreaInput: {
-		height: 65,
-		margin: 18,
-		padding: 4,
-		paddingTop: 6,
-		marginBottom: "40px",
-	},
-	footer: {
-		borderRadius: 13,
-		marginRight: 15,
-		backgroundColor: "#E4BB4F",
-	},
-	alertToast: {
-		color: "#FF0000",
-		display: "inline-block",
-		marginRight: 10,
-	},
+  modalInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6,
+  },
+  textAreaInput: {
+    height: 65,
+    margin: 18,
+    padding: 4,
+    paddingTop: 6,
+    marginBottom: "40px",
+  },
+  footer: {
+    borderRadius: 13,
+    marginRight: 15,
+    backgroundColor: "#E4BB4F",
+  },
+  alertToast: {
+    color: "#FF0000",
+    display: "inline-block",
+    marginRight: 10,
+  },
 };
 
 export default PartnerProfileModal;

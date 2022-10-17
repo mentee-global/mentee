@@ -71,13 +71,13 @@ function MentorCard(props) {
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
-              {truncate(props.name, 15)}
+              {truncate(props.name, 12)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
               {truncate(props.professional_title, 35)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
-              Speaks: {truncate(props.languages.join(", "), 30)}
+              Speaks: {truncate(props.languages.join(", "), 20)}
             </Title>
           </div>
           {isMentee && (
@@ -102,7 +102,7 @@ function MentorCard(props) {
               Location:
             </h3>
             <Text className="gallery-list-items">
-              {truncate(props.location, 45)}
+              {truncate(props.location, 30)}
             </Text>
           </div>
         )}

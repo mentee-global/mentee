@@ -8,6 +8,7 @@ from api.utils.constants import (
     MENTOR_APP_STATES,
     MENTOR_APP_OFFER,
     MENTOR_APP_SUBMITTED,
+    MENTEE_APP_SUBMITTED,
     MENTOR_APP_REJECTED,
     NEW_APPLICATION_STATUS,
     APP_APROVED,
@@ -257,13 +258,20 @@ def edit_application(id,role):
 
     # Send a notification email
     if application.application_state == NEW_APPLICATION_STATUS['PENDING']:
-        mentor_email = application.email
-        success, msg = send_email(
-            recipient=mentor_email,
-            subject="MENTEE Application has been approved",
-            template_id=MENTOR_APP_SUBMITTED,
-
-        )
+        if role ==Account.MENTOR:
+            mentor_email = application.email
+            success, msg = send_email(
+                recipient=mentor_email,
+                subject="MENTEE Application has been approved",
+                template_id=MENTOR_APP_SUBMITTED,
+            )  
+        if role ==Account.MENTEE:  
+            mentor_email = application.email
+            success, msg = send_email(
+                recipient=mentor_email,
+                subject="MENTEE Application has been approved",
+                template_id=MENTEE_APP_SUBMITTED,
+            )     
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS['APPROVED']:

@@ -3,6 +3,7 @@ import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import isURL from "validator/lib/isURL";
 import {
   UserOutlined,
   EditFilled,
@@ -17,7 +18,6 @@ import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
 import { MENTEE_DEFAULT_VIDEO_NAME } from "utils/consts";
 import moment from "moment";
-import ReactPlayer from "react-player";
 
 const INITIAL_NUM_INPUTS = 14;
 
@@ -265,7 +265,7 @@ function MentorProfileModal(props) {
     setWebsite(website);
   }
   function handleVideoChange(e) {
-    if (ReactPlayer.canPlay(e.target.value)) {
+    if (isURL(e.target.value)) {
       setVideoUrl(e.target.value);
       setEdited(true);
       setIsVideoValid(true);

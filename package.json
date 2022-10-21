@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "debounce": "^1.2.1",
-        "sass": "^1.50.0"
+        "sass": "^1.50.0",
+        "validator": "^13.7.0"
     }
 }

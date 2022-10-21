@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import ReactPlayer from "react-player";
+import isURL from "validator/lib/isURL";
 import {
   UserOutlined,
   EditFilled,
@@ -296,7 +296,7 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
-    if (ReactPlayer.canPlay(e.target.value)) {
+    if (isURL(e.target.value)) {
       setVideoUrl(e.target.value);
       setEdited(true);
       setIsVideoValid(true);

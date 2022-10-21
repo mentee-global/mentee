@@ -379,13 +379,20 @@ def create_application():
     new_application.save()
 
     mentor_email = new_application.email
-    success, msg = send_email(
-        recipient=mentor_email,
-        subject="MENTEE Application Recieved!",
-        template_id= MENTOR_APP_SUBMITTED ,
-    )
+    if role==Account.MENTOR:
+        success, msg = send_email(
+            recipient=mentor_email,
+            subject="MENTEE Application Recieved!",
+            template_id= MENTOR_APP_SUBMITTED ,
+        )
+    if role==Account.MENTEE:
+        success, msg = send_email(
+            recipient=mentor_email,
+            subject="MENTEE Application Recieved!",
+            template_id= MENTEE_APP_SUBMITTED ,
+        )
     if not success:
-        logger.info(msg)
+            logger.info(msg)
 
     return create_response(
         message=f"Successfully created application with name {new_application.email}"

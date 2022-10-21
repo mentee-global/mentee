@@ -3,6 +3,7 @@ import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import isURL from "validator/lib/isURL";
 import {
   UserOutlined,
   EditFilled,

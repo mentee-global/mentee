@@ -47,6 +47,12 @@ function MentorProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [videoUrl, setVideoUrl] = useState();
   const [isVideoValid, setIsVideoValid] = useState(true);
+  const isURL = (url) => {
+    const urlPattern =
+      /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
+
+    return url.match(urlPattern);
+  };
 
   useEffect(() => {
     if (props.mentor) {

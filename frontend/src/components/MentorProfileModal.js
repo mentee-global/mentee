@@ -17,7 +17,6 @@ import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
 import { MENTEE_DEFAULT_VIDEO_NAME } from "utils/consts";
 import moment from "moment";
-import ReactPlayer from "react-player";
 
 const INITIAL_NUM_INPUTS = 14;
 
@@ -47,6 +46,12 @@ function MentorProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [videoUrl, setVideoUrl] = useState();
   const [isVideoValid, setIsVideoValid] = useState(true);
+  const isURL = (url) => {
+    const urlPattern =
+      /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
+
+    return url.match(urlPattern);
+  };
 
   useEffect(() => {
     if (props.mentor) {
@@ -265,7 +270,7 @@ function MentorProfileModal(props) {
     setWebsite(website);
   }
   function handleVideoChange(e) {
-    if (ReactPlayer.canPlay(e.target.value)) {
+    if (isURL(e.target.value)) {
       setVideoUrl(e.target.value);
       setEdited(true);
       setIsVideoValid(true);

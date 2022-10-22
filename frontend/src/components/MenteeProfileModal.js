@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import ReactPlayer from "react-player";
 import {
   UserOutlined,
   EditFilled,
@@ -50,7 +49,12 @@ function MenteeProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [privacy, setPrivacy] = useState(true);
   const [isVideoValid, setIsVideoValid] = useState(true);
+  const isURL = (url) => {
+    const urlPattern =
+      /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
 
+    return url.match(urlPattern);
+  };
   useEffect(() => {
     if (props.mentee) {
       setName(props.mentee.name);
@@ -296,7 +300,7 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
-    if (ReactPlayer.canPlay(e.target.value)) {
+    if (isURL(e.target.value)) {
       setVideoUrl(e.target.value);
       setEdited(true);
       setIsVideoValid(true);

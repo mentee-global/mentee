@@ -27,12 +27,12 @@ class Imgur(object):
     API_URL = "https://api.imgur.com/3/image"
 
     def __init__(self, app=None, client_id=None, **kwargs):
-
+        
         if not client_id and not app.config.get("IMGUR_ID", None):
-            raise Exception("Missing client id")
+                raise Exception("Missing client id")
         self.client_id = client_id or app.config.get("IMGUR_ID")
         if "api" in kwargs:
-            self.API_URL = kwargs["api"]
+                self.API_URL = kwargs["api"]
 
     def _get_api(self):
         return self.API_URL

@@ -65,9 +65,7 @@ def create_app(test_config=None):
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
     #tlsCAFile
-    #app.config["MONGODB_SETTINGS"]={  'db': 'mentee',
-    #'host': 'localhost',
-    #'port': 27017}
+    #app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017,'tlsCAFile':ca}
 
     # firebase
     firebase_admin.initialize_app()

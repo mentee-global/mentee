@@ -10,6 +10,7 @@ from datetime import datetime
 from api import socketio
 from mongoengine.queryset.visitor import Q
 from flask_socketio import join_room, leave_room
+from urllib.parse import unquote
 
 
 messages = Blueprint("messages", __name__)
@@ -209,6 +210,10 @@ def get_sidebar(user_id):
 
                 sidebarObject = {
                     "otherId": str(otherId),
+                    "numberOfMessages": len(
+                        [messagee for messagee in sentMessages if  (messagee['recipient_id']==otherId or messagee['sender_id']==otherId) ]
+                    ),
+
                     "otherUser": otherUserObj,
                     "latestMessage": json.loads(message.to_json()),
                 }
@@ -222,6 +227,80 @@ def get_sidebar(user_id):
         return create_response(status=422, message=str(e))
 
 
+
+@messages.route("/contacts/mentors/<int:pageNumber>", methods=["GET"])
+def get_sidebar_mentors(pageNumber):
+    searchTerm=request.args.get('searchTerm')
+    searchTerm=unquote(searchTerm)
+    startDate=request.args.get('startDate')
+    endDate=request.args.get('endDate')
+    pageSize= int(request.args.get('pageSize')) 
+
+    mentors =MentorProfile.objects().filter(name__icontains=searchTerm)
+    detailMessages=[]
+    for mentor in list(mentors):
+        user_id=mentor.id
+        try:
+            sentMessages = DirectMessage.objects.filter(
+                Q(sender_id=user_id) | Q(recipient_id=user_id)
+            ).filter(created_at__gte=datetime.fromisoformat(startDate),created_at__lte=datetime.fromisoformat(endDate)).order_by("-created_at")
+            if len(sentMessages)==0:
+                continue
+
+            contacts = []
+            sidebarContacts = set()
+            for message in sentMessages:
+                otherId = message["recipient_id"]
+
+                if str(otherId) == user_id:
+                    otherId = message["sender_id"]
+
+                if otherId not in sidebarContacts:
+                    otherUser = None
+                    user_type = Account.MENTEE.value
+                    try:
+                       
+                            otherUser = MenteeProfile.objects.get(id=otherId)
+                    except Exception as e:
+                            logger.info(e)
+                            msg = "Could not find mentor or mentee for given ids"
+                            logger.info(msg)
+                            continue
+                    otherUser = json.loads(otherUser.to_json())
+                    otherUserObj = {
+                        "name": otherUser["name"],
+                        "user_type": user_type,
+                        }
+
+                    if "image" in otherUser:
+                        otherUserObj["image"] = otherUser["image"]["url"]
+
+                    sidebarObject = {
+                        "otherId": str(otherId),
+                        "numberOfMessages": len(
+                            [messagee for messagee in sentMessages if  (messagee['recipient_id']==otherId or messagee['sender_id']==otherId) ]
+                        ),
+
+                        "otherUser": otherUserObj,
+                        "latestMessage": json.loads(message.to_json()),
+                        "user":json.loads(mentor.to_json())
+                    }
+
+                    contacts.append(sidebarObject)
+                    sidebarContacts.add(otherId)
+
+            detailMessages.append(contacts)
+        except Exception as e:
+            logger.info(e)
+            return create_response(status=422, message=str(e))
+    FormattedData=[]
+    for itemMentor in detailMessages:
+        for subitem in itemMentor:
+            FormattedData.append(subitem)
+    startRecord=pageSize * (pageNumber-1)
+    endRecord=pageSize * pageNumber
+    return create_response(data={"data": FormattedData[startRecord:endRecord],'total_length':len(FormattedData)}, status=200, message="res")
+        
 @messages.route("/direct/", methods=["GET"])
 def get_direct_messages():
     try:

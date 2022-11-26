@@ -24,10 +24,11 @@ export const AdminMessages = () => {
   const [endDate, setEndDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const pageSize = 3;
+  const pageSize = 10;
   const columns = [
     {
       title: "Mentor",
+      sorter: (a, b) => (a.name < b.name ? -1 : 1),
       dataIndex: "user",
       key: "user",
       render: (value) => (
@@ -44,6 +45,7 @@ export const AdminMessages = () => {
     },
     {
       title: "Mentee",
+      sorter: (a, b) => (a.name < b.name ? -1 : 1),
       dataIndex: "otherUser",
       key: "otherUser",
       render: (value) => (
@@ -60,6 +62,7 @@ export const AdminMessages = () => {
     },
     {
       title: "Messages Number",
+      sorter: (a, b) => (a < b ? -1 : 1),
       dataIndex: "numberOfMessages",
       key: "numberOfMessages",
       render: (value) => <a>{value}</a>,
@@ -72,6 +75,7 @@ export const AdminMessages = () => {
     },
     {
       title: "Latest Message Date",
+      sorter: (a, b) => (a.created_at?.$date < b.created_at?.$date ? -1 : 1),
       dataIndex: "latestMessage",
       key: "date",
       render: (value) => (
@@ -230,7 +234,7 @@ export const AdminMessages = () => {
                 rel="noopener noreferrer"
                 href={`http://localhost:3000/gallery/2/${selectedRow?.otherId}`}
               >
-                {selectedRow?.user.name}
+                {selectedRow?.otherUser.name}
               </a>
             </div>
           </div>

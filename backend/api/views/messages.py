@@ -236,7 +236,7 @@ def get_sidebar_mentors(pageNumber):
     endDate=request.args.get('endDate')
     pageSize= int(request.args.get('pageSize')) 
 
-    mentors =MentorProfile.objects().filter(name__icontains=searchTerm)
+    mentors =MentorProfile.objects().filter()
     detailMessages=[]
     for mentor in list(mentors):
         user_id=mentor.id
@@ -296,7 +296,11 @@ def get_sidebar_mentors(pageNumber):
     FormattedData=[]
     for itemMentor in detailMessages:
         for subitem in itemMentor:
-            FormattedData.append(subitem)
+            menteeName=subitem['otherUser']['name'].lower()
+            mentorName=subitem['user']['name'].lower()
+            print(menteeName,mentorName,searchTerm)
+            if searchTerm.lower() in mentorName or searchTerm.lower() in menteeName:
+                FormattedData.append(subitem)
     startRecord=pageSize * (pageNumber-1)
     endRecord=pageSize * pageNumber
     return create_response(data={"data": FormattedData[startRecord:endRecord],'total_length':len(FormattedData)}, status=200, message="res")

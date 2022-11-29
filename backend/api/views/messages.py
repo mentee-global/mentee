@@ -1,5 +1,7 @@
+from functools import total_ordering
 from os import  path
 from flask import Blueprint, request, jsonify
+from numpy import sort
 from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage,PartnerProfile
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
@@ -235,75 +237,65 @@ def get_sidebar_mentors(pageNumber):
     startDate=request.args.get('startDate')
     endDate=request.args.get('endDate')
     pageSize= int(request.args.get('pageSize')) 
-
-    mentors =MentorProfile.objects().filter()
+    startRecord=pageSize * (pageNumber-1)
+    endRecord=pageSize * pageNumber
+    mentors =MentorProfile.objects()
     detailMessages=[]
+    
     for mentor in list(mentors):
         user_id=mentor.id
-        try:
-            sentMessages = DirectMessage.objects.filter(
+        mentor_user=json.loads(mentor.to_json())
+        sentMessages = DirectMessage.objects.filter(
                 Q(sender_id=user_id) | Q(recipient_id=user_id)
             ).filter(created_at__gte=datetime.fromisoformat(startDate),created_at__lte=datetime.fromisoformat(endDate)).order_by("-created_at")
-            if len(sentMessages)==0:
+        if len(sentMessages)==0:
                 continue
-
-            contacts = []
-            sidebarContacts = set()
-            for message in sentMessages:
-                otherId = message["recipient_id"]
-
-                if str(otherId) == user_id:
-                    otherId = message["sender_id"]
-
-                if otherId not in sidebarContacts:
-                    otherUser = None
-                    user_type = Account.MENTEE.value
-                    try:
-                       
-                            otherUser = MenteeProfile.objects.get(id=otherId)
-                    except Exception as e:
-                            logger.info(e)
-                            msg = "Could not find mentor or mentee for given ids"
-                            logger.info(msg)
-                            continue
-                    otherUser = json.loads(otherUser.to_json())
-                    otherUserObj = {
+        contacts=[]
+        for message in sentMessages:
+                if str(user_id) == message['recipient_id']:
+                    contacts.append(message['sender_id'])
+                else:
+                    contacts.append(message['recipient_id'])
+        contacts=list(dict.fromkeys(contacts))     
+        for contactId in contacts:
+                try:
+                    otherUser = MenteeProfile.objects.get(id=contactId)
+                except:
+                    continue    
+                print(otherUser)
+                    
+                otherUserObj = {
                         "name": otherUser["name"],
-                        "user_type": user_type,
+                        "user_type": Account.MENTEE.value,
                         }
-
-                    if "image" in otherUser:
-                        otherUserObj["image"] = otherUser["image"]["url"]
-
-                    sidebarObject = {
-                        "otherId": str(otherId),
+                        
+                otherUserObj["image"] = otherUser["image"]["url"]
+                print(otherUserObj)
+                latestMessage= [messagee for messagee in sentMessages if  (messagee['recipient_id']==contactId or messagee['sender_id']==contactId) ][0]
+                print(latestMessage)
+                sidebarObject = {
+                        "otherId": str(contactId),
                         "numberOfMessages": len(
-                            [messagee for messagee in sentMessages if  (messagee['recipient_id']==otherId or messagee['sender_id']==otherId) ]
+                            [messagee for messagee in sentMessages if  (messagee['recipient_id']==contactId or messagee['sender_id']==contactId) ]
                         ),
 
                         "otherUser": otherUserObj,
-                        "latestMessage": json.loads(message.to_json()),
-                        "user":json.loads(mentor.to_json())
+                        "latestMessage": json.loads(latestMessage.to_json()),
+                        "user":mentor_user
                     }
-
-                    contacts.append(sidebarObject)
-                    sidebarContacts.add(otherId)
-
-            detailMessages.append(contacts)
-        except Exception as e:
-            logger.info(e)
-            return create_response(status=422, message=str(e))
+                detailMessages.append(sidebarObject)
+                
     FormattedData=[]
-    for itemMentor in detailMessages:
-        for subitem in itemMentor:
+    for subitem in detailMessages:
             menteeName=subitem['otherUser']['name'].lower()
             mentorName=subitem['user']['name'].lower()
-            print(menteeName,mentorName,searchTerm)
             if searchTerm.lower() in mentorName or searchTerm.lower() in menteeName:
                 FormattedData.append(subitem)
-    startRecord=pageSize * (pageNumber-1)
-    endRecord=pageSize * pageNumber
-    return create_response(data={"data": FormattedData[startRecord:endRecord],'total_length':len(FormattedData)}, status=200, message="res")
+    
+    sortedData=sorted(FormattedData,key=lambda x:x['latestMessage']['created_at']['$date'],reverse=True)
+    sortedData=sortedData[startRecord:endRecord]
+    total_length=len(FormattedData)
+    return create_response(data={"data": sortedData,'total_length':total_length}, status=200, message="res")
         
 @messages.route("/direct/", methods=["GET"])
 def get_direct_messages():

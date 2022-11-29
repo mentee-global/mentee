@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from flask import Blueprint, request, jsonify
 from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
 from api.core import create_response, serialize_list, logger
@@ -294,12 +295,12 @@ def get_appointments():
         mentor_by_id[mentor["id"]] = mentor.name
 
     res_appts = []
-    for index in range(len(appointments) - 1):
-        current_id = appointments[index].mentor_id
+    for item in appointments:
+        current_id = item.mentor_id
         res_appts.append(
             {
                 "mentor": mentor_by_id.get(current_id, "Deleted Account"),
-                "appointment": appointments[index],
+                "appointment": item,
             }
         )
 

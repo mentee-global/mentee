@@ -245,9 +245,12 @@ def get_sidebar_mentors(pageNumber):
     for mentor in list(mentors):
         user_id=mentor.id
         mentor_user=json.loads(mentor.to_json())
-        sentMessages = DirectMessage.objects.filter(
-                Q(sender_id=user_id) | Q(recipient_id=user_id)
-            ).filter(created_at__gte=datetime.fromisoformat(startDate),created_at__lte=datetime.fromisoformat(endDate)).order_by("-created_at")
+        try:
+            sentMessages = DirectMessage.objects.filter(
+                    Q(sender_id=user_id) | Q(recipient_id=user_id)
+                ).filter(created_at__gte=datetime.fromisoformat(startDate),created_at__lte=datetime.fromisoformat(endDate)).order_by("-created_at")
+        except:
+            continue        
         if len(sentMessages)==0:
                 continue
         contacts=[]
@@ -261,9 +264,7 @@ def get_sidebar_mentors(pageNumber):
                 try:
                     otherUser = MenteeProfile.objects.get(id=contactId)
                 except:
-                    continue    
-                print(otherUser)
-                    
+                    continue                        
                 otherUserObj = {
                         "name": otherUser["name"],
                         "user_type": Account.MENTEE.value,
@@ -271,7 +272,10 @@ def get_sidebar_mentors(pageNumber):
                         
                 otherUserObj["image"] = otherUser["image"]["url"]
                 print(otherUserObj)
-                latestMessage= [messagee for messagee in sentMessages if  (messagee['recipient_id']==contactId or messagee['sender_id']==contactId) ][0]
+                try:
+                    latestMessage= [messagee for messagee in sentMessages if  (messagee['recipient_id']==contactId or messagee['sender_id']==contactId) ][0]
+                except:
+                    continue
                 print(latestMessage)
                 sidebarObject = {
                         "otherId": str(contactId),

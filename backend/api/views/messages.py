@@ -271,6 +271,10 @@ def get_sidebar_mentors(pageNumber):
                         }
                 if "image" in otherUser:        
                     otherUserObj["image"] = otherUser["image"]["url"]
+                else:
+                    otherUserObj["image"] = ""
+
+
                 print(otherUserObj)
                 try:
                     latestMessage= [messagee for messagee in sentMessages if  (messagee['recipient_id']==contactId or messagee['sender_id']==contactId) ][0]

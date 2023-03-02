@@ -48,7 +48,9 @@ jinja2==2.11.3; python_version >= "3.6" and python_full_version < "3.0.0" or pyt
 jwcrypto==0.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
 mako==1.1.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
 markupsafe==1.1.1; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6"
-mongoengine==0.23.0; python_version >= "3.6"
+# upgrade MongoDB 6.0
+# mongoengine==0.23.0; python_version >= "3.6"
+mongoengine==0.26.0; python_version >= "3.6"
 msgpack==1.0.2; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.5"
 numpy==1.20.1; python_version >= "3.7" and python_full_version >= "3.7.1"
 oauth2client==4.1.3

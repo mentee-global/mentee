@@ -27,7 +27,7 @@ jobs:
       - name: run yarn build
         uses: actions/setup-node@v2
         with:
-          node-version: "12"
+          node-version: "16"
           check-latest: true
 
       - name: Install and Build

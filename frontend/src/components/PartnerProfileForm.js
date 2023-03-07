@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
-import firebase from "firebase";
 import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "./ModalInput";
 import {

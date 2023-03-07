@@ -1,7 +1,7 @@
 import os
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
-from wtforms.fields.core import DateField, DateTimeField
+# from wtforms.fields.core import DateField, DateTimeField
 from wtforms.validators import InputRequired
 from wtforms import validators
 import wtforms_json
@@ -29,7 +29,7 @@ twilio_client = TwilioClient(twilio_sid, twilio_token)
 
 class EducationForm(Form):
     education_level = StringField(validators=[InputRequired()])
-    majors = FieldList(StringField(), validators=[validators.required()])
+    majors = FieldList(StringField(), validators=[validators.DataRequired()])
     school = StringField(validators=[InputRequired()])
     graduation_year = IntegerField(validators=[InputRequired()])
 
@@ -46,8 +46,8 @@ class MentorForm(Form):
     email = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     professional_title = StringField(validators=[InputRequired()])
-    languages = FieldList(StringField(), validators=[validators.required()])
-    specializations = FieldList(StringField(), validators=[validators.required()])
+    languages = FieldList(StringField(), validators=[validators.DataRequired()])
+    specializations = FieldList(StringField(), validators=[validators.DataRequired()])
 
 
 class MenteeForm(Form):
@@ -56,7 +56,7 @@ class MenteeForm(Form):
     name = StringField(validators=[InputRequired()])
     age = StringField(validators=[InputRequired()])
     gender = StringField(validators=[InputRequired()])
-    languages = FieldList(StringField(), validators=[validators.required()])
+    languages = FieldList(StringField(), validators=[validators.DataRequired()])
     organization = StringField(validators=[InputRequired()])
 
 class PartnerForm(Form):
@@ -65,8 +65,8 @@ class PartnerForm(Form):
     organization = StringField(validators=[InputRequired()])
     location = StringField(validators=[InputRequired()])
     intro = StringField(validators=[InputRequired()])
-    regions = FieldList(StringField(), validators=[validators.required()])
-    sdgs = FieldList(StringField(), validators=[validators.required()])
+    regions = FieldList(StringField(), validators=[validators.DataRequired()])
+    sdgs = FieldList(StringField(), validators=[validators.DataRequired()])
 
 class AvailabilityForm(Form):
     start_time = StringField(validators=[InputRequired()])
@@ -119,11 +119,11 @@ class MenteeApplicationForm(Form):
     email = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
     age = StringField(validators=[InputRequired()])
-    immigrant_status = FieldList(StringField(), validators=[validators.required()])
+    immigrant_status = FieldList(StringField(), validators=[validators.DataRequired()])
     identify = StringField(validators=[InputRequired()])
     language = StringField(validators=[InputRequired()])
-    topics = FieldList(StringField(), validators=[validators.required()])
-    workstate =FieldList(StringField(), validators=[validators.required()])
+    topics = FieldList(StringField(), validators=[validators.DataRequired()])
+    workstate =FieldList(StringField(), validators=[validators.DataRequired()])
     isSocial = StringField(validators=[InputRequired()])
     role=StringField(validators=[InputRequired()])
 
@@ -133,8 +133,8 @@ class PartnerApplicationForm(Form):
     organization = StringField(validators=[InputRequired()])
     contanctPerson = StringField(validators=[InputRequired()])
     personEmail = StringField(validators=[InputRequired()])
-    relationShip = FieldList(StringField(), validators=[validators.required()])
-    SDGS = FieldList(StringField(), validators=[validators.required()])
+    relationShip = FieldList(StringField(), validators=[validators.DataRequired()])
+    SDGS = FieldList(StringField(), validators=[validators.DataRequired()])
     howBuild = StringField(validators=[InputRequired()])
     role=StringField(validators=[InputRequired()])
 

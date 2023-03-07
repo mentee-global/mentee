@@ -6,7 +6,7 @@ orbs:
 jobs:
   backend-format:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.9
     steps:
       - checkout
       - run:
@@ -16,7 +16,7 @@ jobs:
             /home/circleci/.local/bin/black . --check 
   frontend-format:
     docker:
-      - image: cimg/node:14.17.0
+      - image: cimg/node:16.19.0
     steps:
       - checkout
       - run:

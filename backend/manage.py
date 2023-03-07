@@ -30,7 +30,6 @@ manager.add_command(run_command, "runprod")
 
 @manager.command
 def runserver():
-    print('11111')
     socketio.run(app, debug=True, host="0.0.0.0", port=5000)
 
 

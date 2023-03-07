@@ -64,11 +64,13 @@ def create_app(test_config=None):
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    # app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017}
     #tlsCAFile
     #app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017,'tlsCAFile':ca}
 
     # firebase
-    firebase_admin.initialize_app()
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app()
 
     # register mongoengine to this app
     from api.models import db

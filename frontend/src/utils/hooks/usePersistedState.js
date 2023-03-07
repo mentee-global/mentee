@@ -10,18 +10,18 @@ import React, { useEffect } from "react";
 // Source:
 // https://dev.to/selbekk/persisting-your-react-state-in-9-lines-of-code-9go
 export default function usePersistedState(key, defaultValue) {
-	const [state, setState] = React.useState(() => {
-		let value = localStorage.getItem(key);
-		if (typeof value === String) {
-			console.log(value);
-			const persisted = JSON.parse(value);
-			return persisted;
-		} else {
-			return defaultValue;
-		}
-	});
-	useEffect(() => {
-		localStorage.setItem(key, JSON.stringify(state));
-	}, [key, state]);
-	return [state, setState];
+  const [state, setState] = React.useState(() => {
+    let value = localStorage.getItem(key);
+    if (typeof value === String) {
+      console.log(value);
+      const persisted = JSON.parse(value);
+      return persisted;
+    } else {
+      return defaultValue;
+    }
+  });
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(state));
+  }, [key, state]);
+  return [state, setState];
 }

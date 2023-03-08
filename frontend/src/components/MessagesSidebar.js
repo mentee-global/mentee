@@ -19,7 +19,11 @@ function MessagesSidebar(props) {
   const { latestConvos, activeMessageId } = props;
 
   return (
-    <Sider style={{background:'white'}} width={400} className="messages-sidebar-background">
+    <Sider
+      style={{ background: "white" }}
+      width={400}
+      className="messages-sidebar-background"
+    >
       <div className="messages-sidebar-header">
         <h1>My Messages</h1>
       </div>

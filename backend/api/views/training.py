@@ -58,7 +58,7 @@ def get_train_file(id):
     file=train.filee.read()   
     content_type=train.filee.content_type
    
-    return send_file(BytesIO(file),attachment_filename=train.filee.file_name,mimetype=content_type)
+    return send_file(BytesIO(file),download_name=train.filee.file_name,mimetype=content_type)
 #############################################################################
 @training.route("/<string:id>", methods=["PUT"])
 @admin_only

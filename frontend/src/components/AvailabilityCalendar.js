@@ -166,7 +166,6 @@ function AvailabilityCalendar(props) {
 
   async function handleOk() {
     let toSend = [];
-
     // Fills toSend with current timeSlots
     timeSlots.map((timeSlot) =>
       toSend.push({
@@ -248,6 +247,24 @@ function AvailabilityCalendar(props) {
     );
   };
 
+  // const disabledHours = (prev_time = null) => {
+    // const hours = [];
+    // if (prev_time != null){
+    //   console.log('prve', prev_time, moment(prev_time).hours());
+    //   for(var i = 0;i<moment(prev_time).hours();i++){
+    //     hours.push(i);
+    //   }
+    // }
+    // var booked_times = getBookedTimeSlots(date.format("YYYY-MM-DD"));
+    // var time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
+    // console.log('bbbb', booked_times, time_slots);
+    // return hours;
+  // }
+  // const disabledMinutes = (selectedHour) => {
+  //   console.log('selectedHour', selectedHour)
+  //   const minutes = [];
+  //   return minutes;
+  // }
   return (
     <>
       <Calendar
@@ -290,13 +307,13 @@ function AvailabilityCalendar(props) {
                 <div className="timeslot-wrapper">
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][0], "HH:mm")}
+                    value={moment.utc(bookedTimeSlot[0][0], "HH:mm")}
                     disabled={true}
                   />
                   <h1 className="timeslot"> - </h1>
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][1])}
+                    value={moment.utc(bookedTimeSlot[0][1])}
                     disabled={true}
                   />
                 </div>
@@ -307,17 +324,21 @@ function AvailabilityCalendar(props) {
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">
                 <TimePicker
-                  use12Hours
+                  use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][0], "HH:mm")}
+                  value={moment.utc(timeSlot[0][0], "HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
+                  // disabledHours={disabledHours()}
+                  // disabledMinutes={disabledMinutes}
                 />
                 <h1 className="timeslot"> - </h1>
                 <TimePicker
-                  use12Hours
+                  use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][1])}
+                  value={moment.utc(timeSlot[0][1])}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
+                  // disabledHours={disabledHours(timeSlot[0][0])}
+                  // disabledMinutes={disabledMinutes}
                 />
                 <CloseOutlined
                   className="close-icon"

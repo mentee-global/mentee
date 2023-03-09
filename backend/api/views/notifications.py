@@ -31,22 +31,26 @@ def send_unread_alert(id):
         notifications_count = DirectMessage.objects(
             Q(recipient_id=id) & Q(message_read=False)
         ).count()
+        email = None
+        phone_number = None
         if notifications_count > 0:
             user_record = MenteeProfile.objects(Q(id=id)).first()
             if user_record is not None:
                 email = user_record.email
-                phone_number = user_record.phone_number
+                if 'phone_number' in user_record:
+                    phone_number = user_record.phone_number
             else:
                 user_record = MentorProfile.objects(Q(id=id)).first()
                 if user_record is not None:
                     email = user_record.email
-                    phone_number = user_record.phone_number
+                    if 'phone_number' in user_record:
+                        phone_number = user_record.phone_number
                 else:
                     user_record = PartnerProfile.objects(Q(id=id)).first()
                     if user_record is not None:
                         email = user_record.email
-                        phone_number = user_record.phone_number
-
+                        if 'phone_number' in user_record:
+                            phone_number = user_record.phone_number
             if user_record is not None:
                 if email is not None and user_record.email_notifications:
                     res, res_msg = send_email(

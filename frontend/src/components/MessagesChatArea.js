@@ -5,7 +5,7 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import Meta from "antd/lib/card/Meta";
 import { SendOutlined } from "@ant-design/icons";
 import useAuth from "utils/hooks/useAuth";
-import { fetchAccountById, sendNotifyUnreadMessage} from "utils/api";
+import { fetchAccountById, sendNotifyUnreadMessage } from "utils/api";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import socketInvite from "utils/socket";
 function MessagesChatArea(props) {
@@ -158,7 +158,7 @@ function MessagesChatArea(props) {
     };
     socket.emit("send", msg);
     setTimeout(() => {
-      sendNotifyUnreadMessage(activeMessageId);  
+      sendNotifyUnreadMessage(activeMessageId);
     }, 1000);
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };

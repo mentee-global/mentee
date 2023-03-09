@@ -350,7 +350,7 @@ export const sendNotifyUnreadMessage = (recipient_id) => {
       console.error(err);
     }
   );
-}
+};
 
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;

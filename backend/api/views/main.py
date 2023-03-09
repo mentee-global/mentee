@@ -103,8 +103,7 @@ def create_mentor_profile():
     data['firebase_uid']='temp'
     if account_type == Account.MENTOR:
         data['taking_appointments']=True
-       
-    
+
     validate_data = None
     if account_type == Account.MENTOR:
         validate_data = MentorForm.from_json(data)
@@ -174,13 +173,12 @@ def create_mentor_profile():
         msg = "Could not parse Account Data"
         logger.info(msg)
         create_response(status=400, message=msg)
-        
     firebase_user, error_http_response = create_firebase_user(email, password)
     if error_http_response:
                     return error_http_response
  
     firebase_uid = firebase_user.uid
-    data['firebase_uid']=firebase_uid   
+    data['firebase_uid']=firebase_uid
     new_account.save()
     user=Users(
         firebase_uid=firebase_uid,
@@ -203,14 +201,14 @@ def create_mentor_profile():
             subject="Your account have been successfully Created " + email,
             template_id=PROFILE_COMPLETED,
 
-        )  
+        )
     notify =Notifications(
-        message="New Mentor with name("+new_account.name+") has created profile",
+        message="New Mentor with name("+new_account.name+") has created profile" if account_type != Account.PARTNER else "New Partner with name("+new_account.person_name+") has created profile",
         mentorId=str(new_account.id),
         readed=False,
         date_submitted=datetime.now()
     ) 
-    notify.save()    
+    notify.save()
     if not success:
             logger.info(msg)  
     return create_response(

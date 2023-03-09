@@ -126,10 +126,27 @@ function AvailabilityCalendar(props) {
 
   const addTimeSlots = () => {
     let times = [...timeSlots];
-    times.push([
-      moment(date.format("YYYY-MM-DD")),
-      moment(date.format("YYYY-MM-DD")),
-    ]);
+    var today_booked_slots = getBookedTimeSlots(date.format("YYYY-MM-DD"));
+    var today_time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
+    if (today_time_slots.length === 0){
+      if (today_booked_slots.length === 0){
+        times.push([
+          moment(date.format("YYYY-MM-DD")),
+          moment(date.format("YYYY-MM-DD")),
+        ]);
+      } else {
+        times.push([
+          moment(today_booked_slots[today_booked_slots.length - 1][0][1]).local(),
+          moment(today_booked_slots[today_booked_slots.length - 1][0][1]).local(),
+        ]);
+      }
+    } else {
+      times.push([
+        moment(today_time_slots[today_time_slots.length - 1][0][1]).local(),
+        moment(today_time_slots[today_time_slots.length - 1][0][1]).local(),
+      ]);
+    }
+    
     setTimeSlots(times);
   };
 
@@ -164,9 +181,54 @@ function AvailabilityCalendar(props) {
     });
   };
 
-  async function handleOk() {
-    let toSend = [];
+  const validation = () => {
+    var res = true;
 
+    var booked_times = getBookedTimeSlots(date.format("YYYY-MM-DD"));
+    var time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
+    
+    time_slots.map((time_slot, index) => {
+      if (moment(time_slot[0][0]) > moment(time_slot[0][1])){
+        res = false;
+        return false;
+      }
+      booked_times.map((book_time_slot) => {
+        if (moment(time_slot[0][0]) >= moment(book_time_slot[0][0]) && moment(time_slot[0][0]) < moment(book_time_slot[0][1])){
+          res = false;
+          return false;
+        }
+        if (moment(time_slot[0][1]) > moment(book_time_slot[0][0]) && moment(time_slot[0][1]) <= moment(book_time_slot[0][1])){
+          res = false;
+          return false;
+        }
+        return false;
+      })
+      if (res === false) return true;
+      time_slots.map((sub_ime_slot, sub_index) => {
+        if (index !== sub_index){
+          if (moment(time_slot[0][0]) >= moment(sub_ime_slot[0][0]) && moment(time_slot[0][0]) < moment(sub_ime_slot[0][1])){
+            res = false;
+            return false;
+          }
+          if (moment(time_slot[0][1]) > moment(sub_ime_slot[0][0]) && moment(time_slot[0][1]) <= moment(sub_ime_slot[0][1])){
+            res = false;
+            return false;
+          }
+        }
+        return false;
+      })
+      return true;
+    })
+    return res;
+  }
+
+  async function handleOk() {
+    document.getElementById('error').style.display="none";
+    if (validation() === false) {
+      document.getElementById('error').style.display="block";
+      return;
+    }
+    let toSend = [];
     // Fills toSend with current timeSlots
     timeSlots.map((timeSlot) =>
       toSend.push({
@@ -248,6 +310,44 @@ function AvailabilityCalendar(props) {
     );
   };
 
+  // const disabledHours = (prev_time = null, after_time = null, cur_index) => {
+  //   const hours = [];
+  //   if (prev_time != null){
+  //     for(var i = 0;i < moment(prev_time).local().hours();i++){
+  //       hours.push(i);
+  //     }
+  //   }
+  //   if (after_time != null){
+  //     for (i = moment(after_time).local().hours() + 1; i<=23;i++){
+  //       hours.push(i);
+  //     }
+  //   }
+  //   var booked_times = getBookedTimeSlots(date.format("YYYY-MM-DD"));
+  //   var time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
+  //   booked_times.map((time_slot) => {
+  //     var start_hour = moment(time_slot[0][0]).local().hours();
+  //     var end_hour = moment(time_slot[0][1]).local().hours();
+  //     for (var i = start_hour + 1; i < end_hour; i++){
+  //       hours.push(i);
+  //     }
+  //     return true;
+  //   })
+  //   time_slots.map((time_slot, index) => {
+  //     if (cur_index !== index){
+  //       var start_hour = moment(time_slot[0][0]).local().hours();
+  //       var end_hour = moment(time_slot[0][1]).local().hours();
+  //       for (var i = start_hour + 1; i < end_hour; i++){
+  //         hours.push(i);
+  //       }
+  //     }
+  //     return true;
+  //   })
+  //   return hours;
+  // }
+  // const disabledMinutes = (selectedHour) => {
+  //   const minutes = [];
+  //   return minutes;
+  // }
   return (
     <>
       <Calendar
@@ -290,13 +390,13 @@ function AvailabilityCalendar(props) {
                 <div className="timeslot-wrapper">
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][0], "HH:mm")}
+                    value={moment(bookedTimeSlot[0][0], "HH:mm").local()}
                     disabled={true}
                   />
                   <h1 className="timeslot"> - </h1>
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][1])}
+                    value={moment(bookedTimeSlot[0][1]).local()}
                     disabled={true}
                   />
                 </div>
@@ -307,17 +407,21 @@ function AvailabilityCalendar(props) {
             <Fragment key={`${index}`}>
               <div className="timeslot-wrapper">
                 <TimePicker
-                  use12Hours
+                  use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][0], "HH:mm")}
+                  value={moment(timeSlot[0][0], "HH:mm").local()}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
+                  // disabledHours={() => disabledHours(null, timeSlot[0][1], index)}
+                  // disabledMinutes={() => disabledMinutes()}
                 />
                 <h1 className="timeslot"> - </h1>
                 <TimePicker
-                  use12Hours
+                  use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][1])}
+                  value={moment(timeSlot[0][1]).local()}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
+                  // disabledHours={() => disabledHours(timeSlot[0][0], null, index)}
+                  // disabledMinutes={() => disabledMinutes()}
                 />
                 <CloseOutlined
                   className="close-icon"
@@ -328,6 +432,7 @@ function AvailabilityCalendar(props) {
           ))}
         </div>
         <div className="add-times">
+          <p id = "error" className="error">Invalid Times.Please select times correctly</p>
           <MenteeButton onClick={addTimeSlots} content="Add hours" />
         </div>
       </Modal>

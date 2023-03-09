@@ -342,6 +342,16 @@ export const fetchAvailability = (id) => {
   );
 };
 
+export const sendNotifyUnreadMessage = (recipient_id) => {
+  const requestExtension = `/notifications/unread_alert/${recipient_id}`;
+  return instance.get(requestExtension).then(
+    (response) => response.message,
+    (err) => {
+      console.error(err);
+    }
+  );
+}
+
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;
   return instance.get(requestExtension).then(

@@ -63,9 +63,17 @@ function RegisterForm(props) {
   const [localProfile, setLocalProfile] = useState({});
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
+  const [langMasters, setLangMasters] = useState([]);
+  const [specMasters, setSpecMasters] = useState([]);
 
   useEffect(() => {
     const mentor = JSON.parse(localStorage.getItem("mentor"));
+
+    async function getMasters() {
+      setLangMasters(await LANGUAGES());
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
     /*
 		if (mentor) {
 			let newValid = [...isValid];
@@ -733,7 +741,7 @@ function RegisterForm(props) {
               updateLocalStorage(newLocalProfile);
             }}
             placeholder="Ex. English, Spanish"
-            options={LANGUAGES}
+            options={langMasters}
             value={languages}
             valid={isValid[7]}
             validate={validate}
@@ -768,7 +776,7 @@ function RegisterForm(props) {
               let newLocalProfile = { ...localProfile, specializations: e };
               updateLocalStorage(newLocalProfile);
             }}
-            options={SPECIALIZATIONS}
+            options={specMasters}
             value={specializations}
             valid={isValid[9]}
             validate={validate}

@@ -5,13 +5,13 @@ import {
   EnvironmentOutlined,
   UserOutlined,
   MessageOutlined,
+  YoutubeOutlined,
 } from "@ant-design/icons";
-import useAuth from "../utils/hooks/useAuth";
 
 import MenteeButton from "./MenteeButton";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Gallery.scss";
-
+import { formatLinkForHref } from "utils/misc";
 const { Title, Text } = Typography;
 
 const styles = {
@@ -82,6 +82,19 @@ function MenteeCard(props) {
         <Text className="gallery-list-items">
           {truncate(props.languages.join(", "), 30)}
         </Text>
+        {props.video && props.video.url && (
+          <h4 className="gallery-info-section">
+            <YoutubeOutlined style={styles.icon} />
+            <a
+              className="gallery-links"
+              href={formatLinkForHref(props.video.url)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {props.video.title}
+            </a>
+          </h4>
+        )}
       </div>
       <div className="gallery-card-footer">
         <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>

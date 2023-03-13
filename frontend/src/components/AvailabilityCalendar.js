@@ -128,16 +128,20 @@ function AvailabilityCalendar(props) {
     let times = [...timeSlots];
     var today_booked_slots = getBookedTimeSlots(date.format("YYYY-MM-DD"));
     var today_time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
-    if (today_time_slots.length === 0){
-      if (today_booked_slots.length === 0){
+    if (today_time_slots.length === 0) {
+      if (today_booked_slots.length === 0) {
         times.push([
           moment(date.format("YYYY-MM-DD")),
           moment(date.format("YYYY-MM-DD")),
         ]);
       } else {
         times.push([
-          moment(today_booked_slots[today_booked_slots.length - 1][0][1]).local(),
-          moment(today_booked_slots[today_booked_slots.length - 1][0][1]).local(),
+          moment(
+            today_booked_slots[today_booked_slots.length - 1][0][1]
+          ).local(),
+          moment(
+            today_booked_slots[today_booked_slots.length - 1][0][1]
+          ).local(),
         ]);
       }
     } else {
@@ -186,46 +190,57 @@ function AvailabilityCalendar(props) {
 
     var booked_times = getBookedTimeSlots(date.format("YYYY-MM-DD"));
     var time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
-    
     time_slots.map((time_slot, index) => {
-      if (moment(time_slot[0][0]) > moment(time_slot[0][1])){
+      if (moment(time_slot[0][0]) > moment(time_slot[0][1])) {
         res = false;
         return false;
       }
       booked_times.map((book_time_slot) => {
-        if (moment(time_slot[0][0]) >= moment(book_time_slot[0][0]) && moment(time_slot[0][0]) < moment(book_time_slot[0][1])){
+        if (
+          moment(time_slot[0][0]) >= moment(book_time_slot[0][0]) &&
+          moment(time_slot[0][0]) < moment(book_time_slot[0][1])
+        ) {
           res = false;
           return false;
         }
-        if (moment(time_slot[0][1]) > moment(book_time_slot[0][0]) && moment(time_slot[0][1]) <= moment(book_time_slot[0][1])){
+        if (
+          moment(time_slot[0][1]) > moment(book_time_slot[0][0]) &&
+          moment(time_slot[0][1]) <= moment(book_time_slot[0][1])
+        ) {
           res = false;
           return false;
         }
         return false;
-      })
+      });
       if (res === false) return true;
       time_slots.map((sub_ime_slot, sub_index) => {
-        if (index !== sub_index){
-          if (moment(time_slot[0][0]) >= moment(sub_ime_slot[0][0]) && moment(time_slot[0][0]) < moment(sub_ime_slot[0][1])){
+        if (index !== sub_index) {
+          if (
+            moment(time_slot[0][0]) >= moment(sub_ime_slot[0][0]) &&
+            moment(time_slot[0][0]) < moment(sub_ime_slot[0][1])
+          ) {
             res = false;
             return false;
           }
-          if (moment(time_slot[0][1]) > moment(sub_ime_slot[0][0]) && moment(time_slot[0][1]) <= moment(sub_ime_slot[0][1])){
+          if (
+            moment(time_slot[0][1]) > moment(sub_ime_slot[0][0]) &&
+            moment(time_slot[0][1]) <= moment(sub_ime_slot[0][1])
+          ) {
             res = false;
             return false;
           }
         }
         return false;
-      })
+      });
       return true;
-    })
+    });
     return res;
-  }
+  };
 
   async function handleOk() {
-    document.getElementById('error').style.display="none";
+    document.getElementById("error").style.display = "none";
     if (validation() === false) {
-      document.getElementById('error').style.display="block";
+      document.getElementById("error").style.display = "block";
       return;
     }
     let toSend = [];
@@ -432,7 +447,9 @@ function AvailabilityCalendar(props) {
           ))}
         </div>
         <div className="add-times">
-          <p id = "error" className="error">Invalid Times.Please select times correctly</p>
+          <p id="error" className="error">
+            Invalid Times.Please select times correctly
+          </p>
           <MenteeButton onClick={addTimeSlots} content="Add hours" />
         </div>
       </Modal>

@@ -14,7 +14,7 @@ import { Table, Popconfirm, message, Modal, Select } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
-  DownloadOutlined,
+  PlusCircleOutlined,
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
@@ -37,13 +37,14 @@ export const Trainings = () => {
   const [isVideo, setIsVideo] = useState("Yes");
   const [filee, setFilee] = useState(null);
   const [file_name, setFileName] = useState(null);
+  const [selectedID, setSelectedID] = useState("");
   const { Option } = Select;
 
   const showModal = async (id, isNew) => {
-    if (isNew == false) {
+    if (isNew === false) {
       setIsModalVisible(true);
+      setSelectedID(id);
       let train = await getTrainById(id);
-      console.log(train);
       if (train) {
         setName(train.name);
         setDesc(train.description);
@@ -60,6 +61,7 @@ export const Trainings = () => {
         }
       }
     } else {
+      setSelectedID("");
       setName("");
       setUrl("");
       setDesc("");
@@ -70,7 +72,7 @@ export const Trainings = () => {
     }
   };
 
-  const handleOk = async (id, isNew) => {
+  const handleOk = async (isNew) => {
     if (
       !name ||
       !desc ||
@@ -84,8 +86,8 @@ export const Trainings = () => {
     } else {
       setErr(false);
     }
-    let isVideoo = typee != TRAINING_TYPE.DOCUMENT;
-    if (isNew == true) {
+    let isVideoo = typee !== TRAINING_TYPE.DOCUMENT;
+    if (isNew === true) {
       let train = await newTrainCreate(
         name,
         url,
@@ -105,7 +107,7 @@ export const Trainings = () => {
       }
     } else {
       let train = await EditTrainById(
-        id,
+        selectedID,
         name,
         url,
         desc,
@@ -274,7 +276,7 @@ export const Trainings = () => {
           <Modal
             title=""
             visible={isModalVisible}
-            onOk={() => handleOk(id, false)}
+            onOk={() => handleOk(false)}
             onCancel={handleCancel}
             okText="save"
             closable={false}
@@ -336,7 +338,7 @@ export const Trainings = () => {
         <div className="table-button-group">
           <Button
             className="table-button"
-            icon={<DownloadOutlined />}
+            icon={<PlusCircleOutlined />}
             onClick={() => {
               setIsnew(true);
               showModal("", true);
@@ -352,7 +354,7 @@ export const Trainings = () => {
       <Modal
         title=""
         visible={isModalVisible2}
-        onOk={() => handleOk("", true)}
+        onOk={() => handleOk(true)}
         onCancel={handleCancel}
         okText="save"
         closable={false}

@@ -57,6 +57,7 @@ function MenteeAppointmentModal(props) {
   const [message, setMessage] = useState();
   const [validate, setValidate] = useState(false);
   const [isAvailable, setIsAvailable] = useState(false);
+  const [specMasters, setSpecMasters] = useState([]);
   const mentorID = props.mentor_id;
   const menteeID = props.mentee_id;
 
@@ -67,6 +68,12 @@ function MenteeAppointmentModal(props) {
   // useState values
   const values = [mentorID, menteeID, topic, message, canCall, canText];
 
+  useEffect(() => {
+    async function getMasters() {
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
+  }, []);
   // Updates availability
   useEffect(() => {
     if (props.availability) {
@@ -362,7 +369,7 @@ function MenteeAppointmentModal(props) {
                       style={styles.modalInput}
                       value={topic}
                       type="dropdown-single"
-                      options={SPECIALIZATIONS}
+                      options={specMasters}
                       clicked={inputClicked[0]}
                       index={0}
                       handleClick={handleClick}

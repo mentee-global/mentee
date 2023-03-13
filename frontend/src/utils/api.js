@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
+import { lang } from "moment";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -215,7 +216,6 @@ export const getTrainById = async (id) => {
   const requestExtension = `/training/train/${id}`;
   let response = await authGet(requestExtension);
   const train = response.data.result.train;
-  console.log(train);
   return train;
 };
 export const getTrainVideo = async (id) => {
@@ -275,9 +275,7 @@ export const newTrainCreate = async (
   if (!isVideo) {
     formData.append("filee", filee);
   }
-
   let response = await authPost(requestExtension, formData);
-
   let Train = response.data.result.train;
   return Train;
 };
@@ -350,7 +348,7 @@ export const sendNotifyUnreadMessage = (recipient_id) => {
       console.error(err);
     }
   );
-}
+};
 
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;
@@ -683,6 +681,107 @@ export const sendMenteeMentorEmail = (
     (response) => response,
     (err) => console.error(err)
   );
+};
+
+export const deleteLanguageByID = (id) => {
+  const requestExtension = `/masters/languages/${id}`;
+  return authDelete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
+    }
+  );
+};
+export const EditLanguageById = async (id, name) => {
+  const requestExtension = `/masters/languages/${id}`;
+  const formData = new FormData();
+  formData.append("name", name);
+  let response = await authPut(requestExtension, formData);
+  let record = response.data.result.result;
+  return record;
+};
+export const newLanguageCreate = async (name) => {
+  const requestExtension = `/masters/languages`;
+  const formData = new FormData();
+  formData.append("name", name);
+  let response = await authPost(requestExtension, formData);
+
+  let record = response.data.result.result;
+  return record;
+};
+
+export const fetchLanguages = async () => {
+  const requestExtension = `/masters/languages`;
+  var records = await instance.get(requestExtension);
+  var res = [];
+  var languages = records.data.result.result;
+  var index = 0;
+  for (let language of languages) {
+    index++;
+    language.id = language._id["$oid"];
+    language.custom_index = index;
+    res.push(language);
+  }
+  return res;
+};
+
+export const getLanguageById = async (id) => {
+  const requestExtension = `/masters/languages/${id}`;
+  let response = await authGet(requestExtension);
+  const record = response.data.result.result;
+  return record;
+};
+
+export const deleteSpecializationByID = (id) => {
+  const requestExtension = `/masters/specializations/${id}`;
+  return authDelete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
+    }
+  );
+};
+
+export const fetchSpecializations = async () => {
+  const requestExtension = `/masters/specializations`;
+  var records = await instance.get(requestExtension);
+  var res = [];
+  var specializations = records.data.result.result;
+  var index = 0;
+  for (let specialization of specializations) {
+    index++;
+    specialization.id = specialization._id["$oid"];
+    specialization.custom_index = index;
+    res.push(specialization);
+  }
+  return res;
+};
+
+export const getSpecializationById = async (id) => {
+  const requestExtension = `/masters/specializations/${id}`;
+  let response = await authGet(requestExtension);
+  const record = response.data.result.result;
+  return record;
+};
+
+export const EditSpecializationById = async (id, name) => {
+  const requestExtension = `/masters/specializations/${id}`;
+  const formData = new FormData();
+  formData.append("name", name);
+  let response = await authPut(requestExtension, formData);
+  let record = response.data.result.result;
+  return record;
+};
+export const newSpecializationCreate = async (name) => {
+  const requestExtension = `/masters/specializations`;
+  const formData = new FormData();
+  formData.append("name", name);
+  let response = await authPost(requestExtension, formData);
+
+  let record = response.data.result.result;
+  return record;
 };
 
 /**

@@ -9,8 +9,6 @@ authors = ["kenetec <klhester3@gmail.com>"]
 
 [tool.poetry.scripts]
 start = "scripts:runserver"
-start-prod = "scripts:runprod"
-startworker = "scripts:runworker"
 format = "scripts:format"
 
 [tool.poetry.dependencies]

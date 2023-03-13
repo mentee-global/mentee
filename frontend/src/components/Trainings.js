@@ -61,7 +61,7 @@ export const Trainings = () => {
         }
       }
     } else {
-      setSelectedID('');
+      setSelectedID("");
       setName("");
       setUrl("");
       setDesc("");

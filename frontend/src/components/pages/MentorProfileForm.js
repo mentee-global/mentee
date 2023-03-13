@@ -69,7 +69,7 @@ function RegisterForm(props) {
   useEffect(() => {
     const mentor = JSON.parse(localStorage.getItem("mentor"));
 
-    async function getMasters(){
+    async function getMasters() {
       setLangMasters(await LANGUAGES());
       setSpecMasters(await SPECIALIZATIONS());
     }

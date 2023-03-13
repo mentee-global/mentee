@@ -56,7 +56,7 @@ function MentorProfileModal(props) {
   };
 
   useEffect(() => {
-    async function getMasters(){
+    async function getMasters() {
       setLangMasters(await LANGUAGES());
       setSpecMasters(await SPECIALIZATIONS());
     }

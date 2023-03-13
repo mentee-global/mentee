@@ -69,7 +69,7 @@ function MenteeAppointmentModal(props) {
   const values = [mentorID, menteeID, topic, message, canCall, canText];
 
   useEffect(() => {
-    async function getMasters(){
+    async function getMasters() {
       setSpecMasters(await SPECIALIZATIONS());
     }
     getMasters();

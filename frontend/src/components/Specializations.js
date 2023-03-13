@@ -11,7 +11,7 @@ import { Table, Popconfirm, message, Modal } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
-  PlusCircleOutlined
+  PlusCircleOutlined,
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
@@ -42,20 +42,16 @@ export const Specializations = () => {
   };
 
   const handleOk = async (isNew) => {
-    if (
-      !name
-    ) {
+    if (!name) {
       setErr(true);
       setErrorMessage("Please Fill Input Cell");
       return;
     } else {
       setErr(false);
     }
-    
+
     if (isNew === true) {
-      let record = await newSpecializationCreate(
-        name,
-      );
+      let record = await newSpecializationCreate(name);
       if (record) {
         setErr(false);
         setIsModalVisible2(false);
@@ -64,10 +60,7 @@ export const Specializations = () => {
         setErrorMessage("Couldn' save changes");
       }
     } else {
-      let record = await EditSpecializationById(
-        selectedID,
-        name,
-      );
+      let record = await EditSpecializationById(selectedID, name);
       if (record) {
         setErr(false);
         setIsModalVisible(false);
@@ -102,7 +95,7 @@ export const Specializations = () => {
       title: "No",
       dataIndex: "custom_index",
       key: "custom_index",
-      width:'5%',
+      width: "5%",
       render: (custom_index) => custom_index,
     },
     {
@@ -129,7 +122,7 @@ export const Specializations = () => {
         </Popconfirm>
       ),
       align: "center",
-      width:'10%'
+      width: "10%",
     },
     {
       title: "Edit",
@@ -145,7 +138,7 @@ export const Specializations = () => {
             okText="save"
             closable={false}
             width={"600px"}
-            className = {id}
+            className={id}
           >
             {" "}
             {SpecForm()}
@@ -159,7 +152,7 @@ export const Specializations = () => {
       ),
 
       align: "center",
-      width:'10%'
+      width: "10%",
     },
   ];
   const deleteData = async (id) => {

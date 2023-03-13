@@ -5,7 +5,7 @@ import {
   SearchOutlined,
   LineHeightOutlined,
   MessageOutlined,
-  ContainerOutlined
+  ContainerOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import { ListItemIcon } from "@material-ui/core";
@@ -39,11 +39,11 @@ const pages = {
     icon: <LineHeightOutlined />,
     isSubMenu: false,
   },
-  Resources:{
+  Resources: {
     name: "Resources",
     isSubMenu: true,
     icon: <ContainerOutlined />,
-    items:{
+    items: {
       languages: {
         name: "Languages",
         path: "/languages",
@@ -52,7 +52,7 @@ const pages = {
         name: "Specializations",
         path: "/specializations",
       },
-    }
+    },
   },
   reports: {
     name: "Reports",

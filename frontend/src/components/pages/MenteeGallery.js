@@ -34,7 +34,7 @@ function Gallery() {
     setPageLoaded(true);
     getMentees();
 
-    async function getMasters(){
+    async function getMasters() {
       setLangMasters(await LANGUAGES());
       setSpecMasters(await SPECIALIZATIONS());
     }

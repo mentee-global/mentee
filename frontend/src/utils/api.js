@@ -695,10 +695,7 @@ export const deleteLanguageByID = (id) => {
     }
   );
 };
-export const EditLanguageById = async (
-  id,
-  name,
-) => {
+export const EditLanguageById = async (id, name) => {
   const requestExtension = `/masters/languages/${id}`;
   const formData = new FormData();
   formData.append("name", name);
@@ -706,9 +703,7 @@ export const EditLanguageById = async (
   let record = response.data.result.result;
   return record;
 };
-export const newLanguageCreate = async (
-  name,
-) => {
+export const newLanguageCreate = async (name) => {
   const requestExtension = `/masters/languages`;
   const formData = new FormData();
   formData.append("name", name);
@@ -731,7 +726,6 @@ export const fetchLanguages = async () => {
     res.push(language);
   }
   return res;
-
 };
 
 export const getLanguageById = async (id) => {
@@ -774,10 +768,7 @@ export const getSpecializationById = async (id) => {
   return record;
 };
 
-export const EditSpecializationById = async (
-  id,
-  name,
-) => {
+export const EditSpecializationById = async (id, name) => {
   const requestExtension = `/masters/specializations/${id}`;
   const formData = new FormData();
   formData.append("name", name);
@@ -785,9 +776,7 @@ export const EditSpecializationById = async (
   let record = response.data.result.result;
   return record;
 };
-export const newSpecializationCreate = async (
-  name,
-) => {
+export const newSpecializationCreate = async (name) => {
   const requestExtension = `/masters/specializations`;
   const formData = new FormData();
   formData.append("name", name);

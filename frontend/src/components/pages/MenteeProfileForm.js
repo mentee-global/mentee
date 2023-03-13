@@ -60,7 +60,7 @@ function MenteeRegisterForm(props) {
   useEffect(() => {
     const mentee = JSON.parse(localStorage.getItem("mentee"));
 
-    async function getMasters(){
+    async function getMasters() {
       setLangMasters(await LANGUAGES());
       setSpecMasters(await SPECIALIZATIONS());
     }

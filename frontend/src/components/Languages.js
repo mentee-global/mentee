@@ -11,7 +11,7 @@ import { Table, Popconfirm, message, Modal } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
-  PlusCircleOutlined
+  PlusCircleOutlined,
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
@@ -43,20 +43,16 @@ export const Languages = () => {
   };
 
   const handleOk = async (isNew) => {
-    if (
-      !name
-    ) {
+    if (!name) {
       setErr(true);
       setErrorMessage("Please Fill Input Cell");
       return;
     } else {
       setErr(false);
     }
-    
+
     if (isNew === true) {
-      let record = await newLanguageCreate(
-        name,
-      );
+      let record = await newLanguageCreate(name);
       if (record) {
         setErr(false);
         setIsModalVisible2(false);
@@ -65,10 +61,7 @@ export const Languages = () => {
         setErrorMessage("Couldn' save changes");
       }
     } else {
-      let record = await EditLanguageById(
-        selectedID,
-        name,
-      );
+      let record = await EditLanguageById(selectedID, name);
       if (record) {
         setErr(false);
         setIsModalVisible(false);
@@ -103,7 +96,7 @@ export const Languages = () => {
       title: "No",
       dataIndex: "custom_index",
       key: "custom_index",
-      width:'5%',
+      width: "5%",
       render: (custom_index) => custom_index,
     },
     {
@@ -130,7 +123,7 @@ export const Languages = () => {
         </Popconfirm>
       ),
       align: "center",
-      width:'10%'
+      width: "10%",
     },
     {
       title: "Edit",
@@ -146,7 +139,7 @@ export const Languages = () => {
             okText="save"
             closable={false}
             width={"600px"}
-            className = {id}
+            className={id}
           >
             {" "}
             {LanguageForm()}
@@ -160,7 +153,7 @@ export const Languages = () => {
       ),
 
       align: "center",
-      width:'10%'
+      width: "10%",
     },
   ];
   const deleteData = async (id) => {

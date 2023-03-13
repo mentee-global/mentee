@@ -117,7 +117,7 @@ export const REGIONS = [
 //   return res;
 // }
 
-export const LANGUAGES = async() =>{
+export const LANGUAGES = async () => {
   const requestExtension = `/masters/languages`;
   var records = await instance.get(requestExtension);
   var res = [];

@@ -49,6 +49,8 @@ function MenteeProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [privacy, setPrivacy] = useState(true);
   const [isVideoValid, setIsVideoValid] = useState(true);
+  const [langMasters, setLangMasters] = useState([]);
+  const [specMasters, setSpecMasters] = useState([]);
   const isURL = (url) => {
     const urlPattern =
       /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
@@ -56,6 +58,11 @@ function MenteeProfileModal(props) {
     return url.match(urlPattern);
   };
   useEffect(() => {
+    async function getMasters(){
+      setLangMasters(await LANGUAGES());
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
     if (props.mentee) {
       setName(props.mentee.name);
       setAbout(props.mentee.biography);
@@ -604,7 +611,7 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLanguageChange}
                 placeholder="Ex. English, Spanish"
-                options={LANGUAGES}
+                options={langMasters}
                 value={languages}
                 valid={isValid[7]}
                 validate={validate}
@@ -619,7 +626,7 @@ function MenteeProfileModal(props) {
                 index={99}
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
-                options={SPECIALIZATIONS}
+                options={specMasters}
                 value={specializations}
                 valid={isValid[99]}
                 validate={validate}

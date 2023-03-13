@@ -54,9 +54,17 @@ function MenteeRegisterForm(props) {
   const [err, setErr] = useState(false);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
+  const [langMasters, setLangMasters] = useState([]);
+  const [specMasters, setSpecMasters] = useState([]);
 
   useEffect(() => {
     const mentee = JSON.parse(localStorage.getItem("mentee"));
+
+    async function getMasters(){
+      setLangMasters(await LANGUAGES());
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
   }, []);
   const info = (msg) => {
     message.success(msg);
@@ -609,7 +617,7 @@ function MenteeRegisterForm(props) {
             placeholder="Ex. English, Spanish"
             clicked={inputClicked[5]}
             index={5}
-            options={LANGUAGES}
+            options={langMasters}
             handleClick={handleClick}
             onChange={handleLanguageChange}
             validate={validate}
@@ -653,7 +661,7 @@ function MenteeRegisterForm(props) {
             let newLocalProfile = { ...localProfile, specializations: e };
             updateLocalStorage(newLocalProfile);
           }}
-          options={SPECIALIZATIONS}
+          options={specMasters}
           value={specializations}
           valid={isValid[99]}
           validate={validate}

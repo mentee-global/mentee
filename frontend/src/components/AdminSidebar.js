@@ -5,6 +5,7 @@ import {
   SearchOutlined,
   LineHeightOutlined,
   MessageOutlined,
+  ContainerOutlined
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import { ListItemIcon } from "@material-ui/core";
@@ -37,6 +38,21 @@ const pages = {
     path: "/trainings",
     icon: <LineHeightOutlined />,
     isSubMenu: false,
+  },
+  Resources:{
+    name: "Resources",
+    isSubMenu: true,
+    icon: <ContainerOutlined />,
+    items:{
+      languages: {
+        name: "Languages",
+        path: "/languages",
+      },
+      allAppointments: {
+        name: "Specializations",
+        path: "/specializations",
+      },
+    }
   },
   reports: {
     name: "Reports",

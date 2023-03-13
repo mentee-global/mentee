@@ -275,9 +275,7 @@ export const newTrainCreate = async (
   if (!isVideo) {
     formData.append("filee", filee);
   }
-
   let response = await authPost(requestExtension, formData);
-
   let Train = response.data.result.train;
   return Train;
 };

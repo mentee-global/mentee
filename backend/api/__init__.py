@@ -10,7 +10,8 @@ from flask_socketio import SocketIO
 
 from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
-
+#import certifi
+#ca=certifi.where()
 load_dotenv()
 socketio = SocketIO(cors_allowed_origins="*")
 class RequestFormatter(logging.Formatter):
@@ -21,7 +22,7 @@ class RequestFormatter(logging.Formatter):
 
 
 # why we use application factories http://flask.pocoo.org/docs/1.0/patterns/appfactories/#app-factories
-def create_app():
+def create_app(test_config=None):
     """
     The flask application factory. To run the app somewhere else you can:
     ```
@@ -63,6 +64,9 @@ def create_app():
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    # app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017}
+    #tlsCAFile
+    #app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017,'tlsCAFile':ca}
 
     # firebase
     if not firebase_admin._apps:
@@ -120,5 +124,4 @@ def create_app():
         return app.send_static_file("index.html")
 
     socketio.init_app(app)
-
     return app

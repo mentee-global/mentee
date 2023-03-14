@@ -30,6 +30,7 @@ function AdminAppointmentData() {
   const [downloadFile, setDownloadFile] = useState(null);
   const [visible, setVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [specMasters, setSpecMasters] = useState([]);
 
   const { onAuthStateChanged } = useAuth();
 
@@ -47,6 +48,11 @@ function AdminAppointmentData() {
     }
 
     onAuthStateChanged(getAppointments);
+
+    async function getMasters() {
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
   }, []);
 
   const handleSearchAppointment = (searchValue) => {
@@ -79,7 +85,7 @@ function AdminAppointmentData() {
   const handleSpecializationsDisplay = (index) => {
     const newFiltered = filterData.filter((appt) => {
       return appt.appointment.specialist_categories.includes(
-        SPECIALIZATIONS[index]
+        specMasters[index]
       );
     });
     setFilterData(newFiltered);

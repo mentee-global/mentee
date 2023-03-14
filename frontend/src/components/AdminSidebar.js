@@ -5,9 +5,9 @@ import {
   SearchOutlined,
   LineHeightOutlined,
   MessageOutlined,
+  ContainerOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
-import { ListItemIcon } from "@material-ui/core";
 
 const pages = {
   applications: {
@@ -38,6 +38,21 @@ const pages = {
     icon: <LineHeightOutlined />,
     isSubMenu: false,
   },
+  Resources: {
+    name: "Resources",
+    isSubMenu: true,
+    icon: <ContainerOutlined />,
+    items: {
+      languages: {
+        name: "Languages",
+        path: "/languages",
+      },
+      specializations: {
+        name: "Specializations",
+        path: "/specializations",
+      },
+    },
+  },
   reports: {
     name: "Reports",
     isSubMenu: true,
@@ -61,7 +76,7 @@ const pages = {
   },
 };
 
-const subMenus = ["reports"];
+const subMenus = ["applications", "Resources", "reports"];
 
 function AdminSidebar(props) {
   return (

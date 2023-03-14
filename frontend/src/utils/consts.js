@@ -1,3 +1,5 @@
+// import {fetchLanguages, fetchSpecializations} from "./api";
+import axios from "axios";
 export const BASE_URL =
   process.env.NODE_ENV === "production"
     ? process.env.REACT_APP_ENV === "development"
@@ -9,6 +11,10 @@ export const FRONT_BASE_URL =
   process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
 
 export const API_URL = BASE_URL + "api/";
+
+const instance = axios.create({
+  baseURL: API_URL,
+});
 
 export const AUTH_URL = BASE_URL + "auth/";
 
@@ -73,27 +79,50 @@ export const REGIONS = [
   "South/SE Asia",
   "Oceana",
 ];
-export const LANGUAGES = [
-  "Arabic",
-  "Bengali",
-  "Burmese",
-  "Cantonese",
-  "English",
-  "French",
-  "German",
-  "Hebrew",
-  "Hindi",
-  "Italian",
-  "Japanese",
-  "Karen",
-  "Mandarin",
-  "Portuguese",
-  "Russian",
-  "Spanish",
-  "Swahili",
-  "Urdu",
-  "Other",
-];
+// export const LANGUAGES = [
+//   "Arabic",
+//   "Bengali",
+//   "Burmese",
+//   "Cantonese",
+//   "English",
+//   "French",
+//   "German",
+//   "Hebrew",
+//   "Hindi",
+//   "Italian",
+//   "Japanese",
+//   "Karen",
+//   "Mandarin",
+//   "Portuguese",
+//   "Russian",
+//   "Spanish",
+//   "Swahili",
+//   "Urdu",
+//   "Other",
+// ];
+
+// const getAllLangs = async() =>{
+//   const requestExtension = `/masters/languages`;
+//   var records = await instance.get(requestExtension);
+//   var res = [];
+//   var languages = records.data.result.result;
+//   for (let language of languages) {
+//     language.id = language._id["$oid"];
+//     res.push(language);
+//   }
+//   return res;
+// }
+
+export const LANGUAGES = async () => {
+  const requestExtension = `/masters/languages`;
+  var records = await instance.get(requestExtension);
+  var res = [];
+  var languages = records.data.result.result;
+  for (let language of languages) {
+    res.push(language.name);
+  }
+  return res;
+};
 
 export const AGE_RANGES = [
   "16-18",
@@ -107,42 +136,52 @@ export const AGE_RANGES = [
   "70s+",
 ];
 
-export const SPECIALIZATIONS = [
-  "Advocacy and Activism",
-  "Architecture",
-  "Arts:Dance/Design/Music and More",
-  "Citizenship",
-  "Computer Science",
-  "Education, Personal Guidance On Next Steps",
-  "Engineering",
-  "Entrepreneurship",
-  "Finance, Business",
-  "Finance, Personal",
-  "Health, Community, and Environment",
-  "Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
-  "Interview Skills & Practice",
-  "Journalism",
-  "Language Lessons",
-  "Law",
-  "Legal Issues, Business",
-  "Legal Issues, Related to Personal Issues (Excluding Citizenship)",
-  "Media/Public Relations",
-  "Medicine",
-  "Nonprofits/NGOs",
-  "Political Science",
-  "Professional Speaking",
-  "Psychology: The Study of Clinical Practice (Not Personal Issues)",
-  "Research",
-  "Resume/CV Writing",
-  "Self Confidence",
-  "Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
-  "Teaching: Skills & Methods",
-  "Technology Training",
-  "Tourism: Field of",
-  "Writing: Improving writing skills, writing books/articles, scholarly writing",
-  "Other",
-];
+// export const SPECIALIZATIONS = [
+//   "Advocacy and Activism",
+//   "Architecture",
+//   "Arts:Dance/Design/Music and More",
+//   "Citizenship",
+//   "Computer Science",
+//   "Education, Personal Guidance On Next Steps",
+//   "Engineering",
+//   "Entrepreneurship",
+//   "Finance, Business",
+//   "Finance, Personal",
+//   "Health, Community, and Environment",
+//   "Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
+//   "Interview Skills & Practice",
+//   "Journalism",
+//   "Language Lessons",
+//   "Law",
+//   "Legal Issues, Business",
+//   "Legal Issues, Related to Personal Issues (Excluding Citizenship)",
+//   "Media/Public Relations",
+//   "Medicine",
+//   "Nonprofits/NGOs",
+//   "Political Science",
+//   "Professional Speaking",
+//   "Psychology: The Study of Clinical Practice (Not Personal Issues)",
+//   "Research",
+//   "Resume/CV Writing",
+//   "Self Confidence",
+//   "Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
+//   "Teaching: Skills & Methods",
+//   "Technology Training",
+//   "Tourism: Field of",
+//   "Writing: Improving writing skills, writing books/articles, scholarly writing",
+//   "Other",
+// ];
 
+export const SPECIALIZATIONS = async () => {
+  const requestExtension = `/masters/specializations`;
+  var records = await instance.get(requestExtension);
+  var res = [];
+  var specializations = records.data.result.result;
+  for (let specialization of specializations) {
+    res.push(specialization.name);
+  }
+  return res;
+};
 export const GENDERS = ["Male", "Female", "Non-Binary", "Other"];
 
 export const AGES = [

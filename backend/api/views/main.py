@@ -408,7 +408,8 @@ def uploadImage(id):
     )
 
     account.image = new_image
-
+    if account_type == Account.MENTOR and "taking_appointments" not in account:
+        account.taking_appointments = False
     account.save()
     return create_response(status=200, message=f"Success")
 

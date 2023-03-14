@@ -50,7 +50,7 @@ function MentorProfileModal(props) {
   const [specMasters, setSpecMasters] = useState([]);
   const isValidVideoUrl = (url) => {
     const videoUrlRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|vimeo\.com\/)([a-zA-Z0-9_-]{11}|[0-9]+)(\S+)?$/;
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/|vimeo\.com\/)([a-zA-Z0-9_-]{11}|[0-9]+)(\S+)?$/;
     return videoUrlRegex.test(url);
   };
 

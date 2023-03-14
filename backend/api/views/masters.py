@@ -3,10 +3,10 @@ from datetime import datetime
 from flask.globals import request
 from api.core import create_response, logger
 from flask import Blueprint
-
 from api.models import Languages, Specializations, MentorProfile, MenteeProfile, MentorApplication, MenteeApplication, NewMentorApplication
 from api.utils.require_auth import admin_only
 from pymongo import collation
+
 masters = Blueprint("masters", __name__)
 
 @masters.route("/languages", methods=["GET"])
@@ -78,7 +78,6 @@ def edit_language_by_id(id):
     MentorApplication.objects(languages=lang_name).update(set__languages=request.form['name'])
     MenteeApplication.objects(language=lang_name).update(set__language=request.form['name'])
     NewMentorApplication.objects(languages=lang_name).update(set__languages=request.form['name'])
-
     record.name=request.form['name']
     record.updated_at = datetime.now()
     record.save()

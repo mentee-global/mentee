@@ -48,11 +48,10 @@ function MentorProfileModal(props) {
   const [isVideoValid, setIsVideoValid] = useState(true);
   const [langMasters, setLangMasters] = useState([]);
   const [specMasters, setSpecMasters] = useState([]);
-  const isURL = (url) => {
-    const urlPattern =
-      /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
-
-    return url.match(urlPattern);
+  const isValidVideoUrl = (url) => {
+    const videoUrlRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|vimeo\.com\/)([a-zA-Z0-9_-]{11}|[0-9]+)(\S+)?$/;
+    return videoUrlRegex.test(url);
   };
 
   useEffect(() => {
@@ -277,8 +276,8 @@ function MentorProfileModal(props) {
     setWebsite(website);
   }
   function handleVideoChange(e) {
-    if (isURL(e.target.value)) {
-      setVideoUrl(e.target.value);
+    setVideoUrl(e.target.value);
+    if (isValidVideoUrl(e.target.value)) {
       setEdited(true);
       setIsVideoValid(true);
     } else {
@@ -439,7 +438,7 @@ function MentorProfileModal(props) {
       return;
     }
 
-    if (isValid.includes(false)) {
+    if (isValid.includes(false) || isVideoValid === false) {
       setValidate(true);
       return;
     }
@@ -715,6 +714,7 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleVideoChange}
                 placeholder="Paste Link"
+                value={videoUrl}
               />
             </div>
             <div className="no-favorites-text">

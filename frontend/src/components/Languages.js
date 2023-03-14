@@ -110,7 +110,7 @@ export const Languages = () => {
       key: "id",
       render: (id) => (
         <Popconfirm
-          title={`This data already saved in profile will be deleted. Are you sure you want to delete?`}
+          title={`Are you sure you want to delete this value? Please note that there could be users already using this value.`}
           onConfirm={() => {
             deleteData(id);
           }}

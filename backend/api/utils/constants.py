@@ -23,6 +23,7 @@ APP_APROVED="d-0948fea82e3c4f9981ded9a27103fb62"
 TRAINING_COMPLETED="d-acf4c50c1e454fb0adc33b5c41800650"
 PROFILE_COMPLETED="d-45980b6e8f3441d29c71a5b2e6d67fe6"
 UNREAD_MESSAGE_TEMPLATE="d-7c75b1b696bb49a7850430d6a1b81ad4"
+NEW_TRAINING_TEMPLATE="0716a65e079843b59eef281809e07f5b"
 # This lacks timezone so you'll need to add that according to whatever code you're working with
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
 

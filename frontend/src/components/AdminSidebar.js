@@ -47,7 +47,7 @@ const pages = {
         name: "Languages",
         path: "/languages",
       },
-      allAppointments: {
+      specializations: {
         name: "Specializations",
         path: "/specializations",
       },

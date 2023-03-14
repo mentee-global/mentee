@@ -1,4 +1,4 @@
-import React, { useState, useEffect }  from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
@@ -12,7 +12,7 @@ const VideoSubmit = (props) => {
       setSpecMasters(await SPECIALIZATIONS());
     }
     getMasters();
-  }, [])
+  }, []);
   return (
     <div className="video-submit-card">
       <div className="video-submit-title">Add Video</div>

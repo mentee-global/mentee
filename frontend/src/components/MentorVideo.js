@@ -1,4 +1,4 @@
-import React, { useState, useEffect }  from "react";
+import React, { useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -23,7 +23,7 @@ const MentorVideo = ({
       setSpecMasters(await SPECIALIZATIONS());
     }
     getMasters();
-  }, [])
+  }, []);
   return (
     <div className="video-row">
       <div className="video-block">

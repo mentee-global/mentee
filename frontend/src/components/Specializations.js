@@ -110,7 +110,7 @@ export const Specializations = () => {
       key: "id",
       render: (id) => (
         <Popconfirm
-          title={`Are you sure you want to delete ?`}
+          title={`This data already saved in profile will be deleted. Are you sure you want to delete?`}
           onConfirm={() => {
             deleteData(id);
           }}

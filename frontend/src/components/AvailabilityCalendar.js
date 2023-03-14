@@ -150,7 +150,7 @@ function AvailabilityCalendar(props) {
         moment(today_time_slots[today_time_slots.length - 1][0][1]).local(),
       ]);
     }
-    
+
     setTimeSlots(times);
   };
 

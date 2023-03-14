@@ -8,7 +8,6 @@ import {
   ContainerOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
-import { ListItemIcon } from "@material-ui/core";
 
 const pages = {
   applications: {
@@ -77,7 +76,7 @@ const pages = {
   },
 };
 
-const subMenus = ["reports"];
+const subMenus = ["applications", "Resources", "reports"];
 
 function AdminSidebar(props) {
   return (

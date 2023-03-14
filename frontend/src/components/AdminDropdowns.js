@@ -105,10 +105,18 @@ export function MenteeMentorDropdown(props) {
 export function SpecializationsDropdown(props) {
   const [option, setOption] = useState("Filter by");
   const [selected, setSelected] = useState([]);
+  const [specMasters, setSpecMasters] = useState([]);
 
   useEffect(() => {
     setOption("Filter by");
   }, [props.onReset]);
+
+  useEffect(() => {
+    async function getMasters() {
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
+  }, []);
 
   const handleClick = (newOption, text) => {
     setOption(text);
@@ -120,7 +128,7 @@ export function SpecializationsDropdown(props) {
 
   const overlay = (
     <Menu>
-      {SPECIALIZATIONS.map((element, i) => {
+      {specMasters.map((element, i) => {
         return (
           <Menu.Item>
             <a

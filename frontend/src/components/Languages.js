@@ -15,7 +15,6 @@ import {
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
-import { current } from "@reduxjs/toolkit";
 
 export const Languages = () => {
   const [data, setData] = useState([]);
@@ -111,7 +110,7 @@ export const Languages = () => {
       key: "id",
       render: (id) => (
         <Popconfirm
-          title={`Are you sure you want to delete ?`}
+          title={`This data already saved in profile will be deleted. Are you sure you want to delete?`}
           onConfirm={() => {
             deleteData(id);
           }}

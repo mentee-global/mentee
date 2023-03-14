@@ -13,7 +13,6 @@ from api.models import (
 from api.utils.request_utils import MessageForm, is_invalid_form, send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
 from api.core import create_response, logger
-from api.models import db
 import json
 from datetime import datetime
 from api import socketio
@@ -371,12 +370,10 @@ def chat(msg, methods=["POST"]):
             recipient_id=msg["recipient_id"],
             created_at=msg["time"],
         )
-        # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
 
     except Exception as e:
-        # msg="Invalid parameter provided"
         logger.info(e)
         return create_response(status=500, message="Failed to send message")
     try:

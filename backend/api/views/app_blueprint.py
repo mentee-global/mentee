@@ -1,6 +1,4 @@
-from os import path
 from flask import Blueprint, current_app, send_from_directory
-from api.core import create_response, serialize_list, logger
 
 app_blueprint = Blueprint("app_blueprint", __name__)  # initialize blueprint
 

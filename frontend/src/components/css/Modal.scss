@@ -1,50 +1,50 @@
 .modal-window {
-	width: 40% !important;
+  width: 40% !important;
 }
 
 .modal-window-large {
-	width: 80% !important;
+  width: 80% !important;
 }
 
 @media only screen and (max-width: 1400px) {
-	.modal-window {
-		width: 75% !important;
-	}
-	.modal-window-large {
-		width: 85% !important;
-	}
+  .modal-window {
+    width: 75% !important;
+  }
+  .modal-window-large {
+    width: 85% !important;
+  }
 }
 
 @media only screen and (max-width: 720px) {
-	.modal-window {
-		width: 100% !important;
-	}
-	.modal-window-large {
-		width: 100% !important;
-	}
+  .modal-window {
+    width: 100% !important;
+  }
+  .modal-window-large {
+    width: 100% !important;
+  }
 }
 
 .modal-container {
-	display: flex;
-	flex-direction: column;
-	height: 600px;
-	width: 100%;
-	overflow-y: scroll;
-	overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .modal-profile-container {
-	display: flex;
-	background-color: #fff7e2;
-	min-height: 120px;
-	width: 100%;
-	margin-bottom: 50px;
+  display: flex;
+  background-color: #fff7e2;
+  min-height: 120px;
+  width: 100%;
+  margin-bottom: 50px;
 }
 .modal-profile-container2 {
-	display: flex;
-	min-height: 120px;
-	width: 100%;
-	margin-bottom: 50px;
+  display: flex;
+  min-height: 120px;
+  width: 100%;
+  margin-bottom: 50px;
 }
 .modal-profile-container2 {
   display: flex;
@@ -60,163 +60,163 @@
 }
 
 .modal-profile-icon {
-	margin-top: 60px;
-	margin-left: 44px;
+  margin-top: 60px;
+  margin-left: 44px;
 }
 
 .modal-profile-icon-edit {
-	margin-top: 140px;
-	margin-left: -30px;
+  margin-top: 140px;
+  margin-left: -30px;
 }
 
 .modal-inner-container {
-	display: flex;
-	flex-direction: column;
-	margin: 24px;
+  display: flex;
+  flex-direction: column;
+  margin: 24px;
 }
 
 .modal-input-container {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 .modal-availability-checkbox {
-	display: flex;
-	flex-direction: column;
-	margin: 5px;
-	margin-left: 18px;
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  margin-left: 18px;
 }
 
 .modal-availability-checkbox-text {
-	font-size: 14px;
-	font-weight: 700;
-	color: "#7A7A7A";
+  font-size: 14px;
+  font-weight: 700;
+  color: "#7A7A7A";
 }
 
 .modal-education-container {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 .modal-education-header {
-	display: flex;
-	font-size: 18px;
-	font-weight: bold;
-	margin: 5px;
-	margin-left: 16px;
+  display: flex;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 5px;
+  margin-left: 16px;
 }
 
 .modal-education-body {
-	margin-left: 16px;
+  margin-left: 16px;
 }
 
 .modal-education-sidebar {
-	display: flex;
-	margin: 5px;
-	margin-left: 16px;
-	height: 93%;
-	width: 14px;
-	border-left: 3px solid #a58123;
+  display: flex;
+  margin: 5px;
+  margin-left: 16px;
+  height: 93%;
+  width: 14px;
+  border-left: 3px solid #a58123;
 }
 
 .modal-inner-education-container {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .modal-education-add-container {
-	margin-top: 5px;
-	margin-left: 20px;
+  margin-top: 5px;
+  margin-left: 20px;
 }
 
 .modal-education-delete-container {
-	margin-left: 90%;
+  margin-left: 90%;
 }
 
 .modal-education-add-icon {
-	margin-right: 10px;
-	font-size: 25px;
-	color: #a58123;
+  margin-right: 10px;
+  font-size: 25px;
+  color: #a58123;
 }
 
 .modal-education-delete-icon {
-	margin-left: 3px;
-	margin-top: 3px;
-	font-size: 10px;
-	color: #a62b31;
+  margin-left: 3px;
+  margin-top: 3px;
+  font-size: 10px;
+  color: #a62b31;
 }
 
 .modal-education-add-text {
-	font-size: 16px;
-	text-decoration-line: underline;
-	color: #a58123;
+  font-size: 16px;
+  text-decoration-line: underline;
+  color: #a58123;
 }
 
 .modal-education-delete-text {
-	font-size: 10px;
-	text-decoration-line: underline;
-	color: #a62b31;
-	font-weight: 700;
+  font-size: 10px;
+  text-decoration-line: underline;
+  color: #a62b31;
+  font-weight: 700;
 }
 
 .input-text {
-	font-size: 18px;
-	font-weight: 500;
-	overflow-y: scroll;
-	max-height: 30px;
+  font-size: 18px;
+  font-weight: 500;
+  overflow-y: scroll;
+  max-height: 30px;
 }
 
 .input-textarea {
-	font-size: 18px;
-	font-weight: 500;
-	overflow-y: scroll;
-	background-color: "#FFFDF5";
-	margin-bottom: 5px;
-	height: 15em !important;
+  font-size: 18px;
+  font-weight: 500;
+  overflow-y: scroll;
+  background-color: "#FFFDF5";
+  margin-bottom: 5px;
+  height: 15em !important;
 }
 
 .large-textarea {
-	height: 30em !important;
-	max-height: none !important;
+  height: 30em !important;
+  max-height: none !important;
 }
 
 .divider {
-	margin-top: 50px;
+  margin-top: 50px;
 }
 
 .modal-mentee-appointment-contact-container {
-	display: inline;
+  display: inline;
 }
 
 // This is probably bad coding practice so probably want to replace
 .ant-form-item-has-error {
-	background-color: inherit !important;
-	border-color: inherit !important;
+  background-color: inherit !important;
+  border-color: inherit !important;
 }
 
 .ant-form-item {
-	margin: 0;
+  margin: 0;
 }
 .ant-input {
-	background-color: #fffdf5 !important;
+  background-color: #fffdf5 !important;
 }
 
 ant-form-item-has-error,
 .ant-input:focus {
-	box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 @media only screen and (max-width: 1100px) {
-	.large-textarea {
-		height: 24em !important;
-	}
+  .large-textarea {
+    height: 24em !important;
+  }
 }
 
 @media only screen and (max-width: 760px) {
-	.large-textarea {
-		height: 18em !important;
-	}
+  .large-textarea {
+    height: 18em !important;
+  }
 }

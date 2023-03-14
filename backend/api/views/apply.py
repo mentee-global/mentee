@@ -53,16 +53,6 @@ def get_mentee_applications():
     application = MenteeApplication.objects
     return create_response(data={"mentor_applications": application})
 
-@apply.route("/menteeApps", methods=["GET"])
-@admin_only
-def get_mentee_applications():
-    application = MenteeApplication.objects
-    return create_response(data={"mentor_applications": application})
-
-
-
-
-
 
 # GET request for mentor applications for by id
 @apply.route("/<id>", methods=["GET"])
@@ -91,62 +81,12 @@ def get_application_mentee_by_id(id):
     try:
         application = MenteeApplication.objects.get(id=id)
     except:
-        try:
-
-            application=MentorApplication.objects.get(id=id)
-            return create_response(data={"mentor_application": application,'type':'old'})
-        except:
-            msg = "No application currently exist with this id " + id
-            logger.info(msg)
-            return create_response(status=200, message=msg)
-
-    return create_response(data={"mentor_application": application,'type':'new'})
-
-# GET request for mentee applications for by id
-@apply.route("/mentee/<id>", methods=["GET"])
-@admin_only
-def get_application_mentee_by_id(id):
-    try:
-        application = MenteeApplication.objects.get(id=id)
-    except:
-            msg = "No application currently exist with this id " + id
-            logger.info(msg)
-            return create_response(status=200, message=msg)
-
-    return create_response(data={"mentor_application": application})    
-####################################################################################
-@apply.route('/checkHaveAccount/<email>/<role>',methods=['GET'])
-def get_is_has_Account(email,role):
-    role=int(role)
-    application=null
-    isVerified=null
-    try:
-        email2=VerifiedEmail.objects.get(email=email,role=str(role))
-        isVerified=True
-    except:
-        isVerified=False
-    try:
-        user = firebase_admin_auth.get_user_by_email(email.replace(" ",""))
-    except:
-        return create_response(data={'isHave':False,'isVerified':isVerified})
-
-    try:
-        if role==Account.MENTOR:
-             application = MentorProfile.objects.get(email=email)
-        if role==Account.MENTEE:
-             application = MenteeProfile.objects.get(email=email)
-        if role==Account.PARTNER:
-             application = PartnerProfile.objects.get(email=email)  
-
-                
-    except:
-        msg = "No application currently exist with this email " + email
+        msg = "No application currently exist with this id " + id
         logger.info(msg)
         return create_response(status=200, message=msg)
 
-    return create_response(data={'isHave':True,'isHaveProfile':True,'isVerified':isVerified})    
+    return create_response(data={"mentor_application": application})
 
-############################################################################################
 
 ####################################################################################
 @apply.route("/checkHaveAccount/<email>/<role>", methods=["GET"])
@@ -383,7 +323,6 @@ def edit_application(id, role):
         if not success:
             logger.info(msg)
 
-
         # Add to verified emails
 
     # send out rejection emails when put in rejected column
@@ -412,16 +351,15 @@ def edit_application(id, role):
         )
         if not success:
             logger.info(msg)
-    if application.application_state == NEW_APPLICATION_STATUS['BUILDPROFILE']:
+    if application.application_state == NEW_APPLICATION_STATUS["BUILDPROFILE"]:
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
             subject="Congratulation for completing training",
             template_id=TRAINING_COMPLETED,
-
-        )    
+        )
         if not success:
-            logger.info(msg)        
+            logger.info(msg)
 
     return create_response(status=200, message=f"Success")
 
@@ -498,7 +436,7 @@ def create_application():
             template_id=MENTEE_APP_SUBMITTED,
         )
     if not success:
-            logger.info(msg)
+        logger.info(msg)
 
     return create_response(
         message=f"Successfully created application with name {new_application.email}"

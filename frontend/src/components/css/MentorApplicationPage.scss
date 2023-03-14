@@ -90,22 +90,22 @@ textarea {
 }
 
 .ant-steps-item-wait
-	.ant-steps-item-icon
-	> .ant-steps-icon
-	.ant-steps-icon-dot {
-	background: #ffecbd;
+  .ant-steps-item-icon
+  > .ant-steps-icon
+  .ant-steps-icon-dot {
+  background: #ffecbd;
 }
 
 .ant-steps-item-finish
-	.ant-steps-item-icon
-	> .ant-steps-icon
-	.ant-steps-icon-dot {
-	background-color: #ffecbd;
+  .ant-steps-item-icon
+  > .ant-steps-icon
+  .ant-steps-icon-dot {
+  background-color: #ffecbd;
 }
 
 .ant-steps ant-steps-horizontal ant-steps-label-vertical ant-steps-dot {
-	display: flex;
-	justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 .submit-button {
   position: absolute;

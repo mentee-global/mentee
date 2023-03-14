@@ -318,8 +318,6 @@ def create_profile_existing_account():
     )
 
 
-
-
 # PUT requests for /account
 @main.route("/account/<id>", methods=["PUT"])
 def edit_mentor(id):

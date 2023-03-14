@@ -1,6 +1,7 @@
 import os
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
+
 # from wtforms.fields.core import DateField, DateTimeField
 from wtforms.validators import InputRequired
 from wtforms import validators
@@ -67,6 +68,7 @@ class MenteeForm(Form):
     languages = FieldList(StringField(), validators=[validators.DataRequired()])
     organization = StringField(validators=[InputRequired()])
 
+
 class PartnerForm(Form):
     firebase_uid = StringField(validators=[InputRequired()])
     email = StringField(validators=[InputRequired()])
@@ -75,6 +77,7 @@ class PartnerForm(Form):
     intro = StringField(validators=[InputRequired()])
     regions = FieldList(StringField(), validators=[validators.DataRequired()])
     sdgs = FieldList(StringField(), validators=[validators.DataRequired()])
+
 
 class PartnerForm(Form):
     firebase_uid = StringField(validators=[InputRequired()])
@@ -218,7 +221,10 @@ def send_email(
 
     return True, ""
 
-def send_email_html(recipient: str = "", subject: str = "", html_content: str = "") -> Tuple[bool, str]:
+
+def send_email_html(
+    recipient: str = "", subject: str = "", html_content: str = ""
+) -> Tuple[bool, str]:
     if not recipient:
         return False, "Missing recipient email"
 
@@ -226,7 +232,7 @@ def send_email_html(recipient: str = "", subject: str = "", html_content: str = 
         from_email=sender_email,
         to_emails=recipient,
         subject=subject,
-        html_content=html_content
+        html_content=html_content,
     )
     try:
         sg = SendGridAPIClient(sendgrid_key)
@@ -235,7 +241,6 @@ def send_email_html(recipient: str = "", subject: str = "", html_content: str = 
         return False, str(e)
 
     return True, ""
-
 
 
 def send_email_html(

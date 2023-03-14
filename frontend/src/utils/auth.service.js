@@ -187,15 +187,7 @@ export const getAdminID = async () => {
     });
   } else return false;
 };
-export const getPartnerID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role === ACCOUNT_TYPE.PARTNER) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  } else return false;
-};
+
 export const getPartnerID = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {

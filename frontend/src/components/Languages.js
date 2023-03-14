@@ -15,7 +15,6 @@ import {
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
-import { current } from "@reduxjs/toolkit";
 
 export const Languages = () => {
   const [data, setData] = useState([]);

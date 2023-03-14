@@ -5,13 +5,14 @@ from api.core import create_response, logger
 from flask import Blueprint
 from api.models import Languages, Specializations
 from api.utils.require_auth import admin_only
+from pymongo import collation
 
 masters = Blueprint("masters", __name__)
 
 @masters.route("/languages", methods=["GET"])
 def getLanguages():
     try:
-        languages = Languages.objects.all().order_by('name')
+        languages = Languages.objects.order_by('name').collation(collation.Collation('en', strength=2))
     except Exception as e:
         msg = "Get Languages error"
         logger.info(e)
@@ -20,7 +21,7 @@ def getLanguages():
     return create_response(data={"result": languages})
 
 @masters.route("/languages/<string:id>", methods=["GET"])
-# @admin_only
+@admin_only
 def get_language(id):
 
     try:
@@ -31,7 +32,7 @@ def get_language(id):
     return create_response(status=200, data={'result':record})
 
 @masters.route("/languages/<string:id>", methods=["DELETE"])
-# @admin_only
+@admin_only
 def delete_language(id):
 
     try:
@@ -43,7 +44,7 @@ def delete_language(id):
     return create_response(status=200, message="Successful deletion")
 
 @masters.route("/languages/<string:id>", methods=["PUT"])
-# @admin_only
+@admin_only
 def edit_language_by_id(id):
     #try:
     record=Languages.objects.get(id=id)
@@ -57,12 +58,11 @@ def edit_language_by_id(id):
 
 ######################################################################
 @masters.route("/languages", methods=["POST"])
-# @admin_only
+@admin_only
 def new_language():
 
     #try:
         name=request.form['name']
-       
         record=Languages(
             name=name,
             updated_at=datetime.now()
@@ -77,7 +77,7 @@ def new_language():
 @masters.route("/specializations", methods=["GET"])
 def getSpecializations():
     try:
-        specializations = Specializations.objects.all().order_by('name')
+        specializations = Specializations.objects.order_by('name').collation(collation.Collation('en', strength=2))
     except Exception as e:
         msg = "Get Specializations error"
         logger.info(e)
@@ -86,7 +86,7 @@ def getSpecializations():
     return create_response(data={"result": specializations})
 
 @masters.route("/specializations/<string:id>", methods=["GET"])
-# @admin_only
+@admin_only
 def get_specialization(id):
 
     try:
@@ -97,7 +97,7 @@ def get_specialization(id):
     return create_response(status=200, data={'result':record})
 
 @masters.route("specializations/<string:id>", methods=["DELETE"])
-# @admin_only
+@admin_only
 def delete_specializations(id):
 
     try:
@@ -109,7 +109,7 @@ def delete_specializations(id):
     return create_response(status=200, message="Successful deletion")
 
 @masters.route("/specializations/<string:id>", methods=["PUT"])
-# @admin_only
+@admin_only
 def edit_specialization_by_id(id):
     #try:
     record=Specializations.objects.get(id=id)
@@ -124,7 +124,7 @@ def edit_specialization_by_id(id):
 
 ######################################################################
 @masters.route("/specializations", methods=["POST"])
-# @admin_only
+@admin_only
 def new_specailization():
 
     #try:

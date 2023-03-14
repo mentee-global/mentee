@@ -18,8 +18,16 @@ function Videos() {
   const [filtered, setFiltered] = useState([]);
   const [selectFilter, setSelectFilter] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
+  const [specMasters, setSpecMasters] = useState([]);
   const [form] = Form.useForm();
   const { profileId } = useAuth();
+
+  useEffect(() => {
+    async function getMasters() {
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -90,7 +98,7 @@ function Videos() {
   const filterSpecialization = (value) => {
     const filteredVideos = videos.filter((video, index, arr) => {
       // eslint-disable-next-line eqeqeq
-      return SPECIALIZATIONS.indexOf(video.tag) == value;
+      return specMasters.indexOf(video.tag) == value;
     });
     setFiltered(filteredVideos);
     setSelectFilter(value);
@@ -111,7 +119,7 @@ function Videos() {
     video = {
       ...video,
       date_uploaded: moment().format(),
-      tag: SPECIALIZATIONS[video.tag],
+      tag: specMasters[video.tag],
     };
     newVideos.push(video);
 
@@ -166,7 +174,7 @@ function Videos() {
             onChange={(value) => filterSpecialization(value)}
             value={selectFilter}
           >
-            {formatDropdownItems(SPECIALIZATIONS)}
+            {formatDropdownItems(specMasters)}
           </Select>
           <Button onClick={handleClearFilters}>Clear</Button>
         </div>

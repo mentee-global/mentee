@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect }  from "react";
 import { Button, Form, Input, Select } from "antd";
 import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
@@ -6,6 +6,13 @@ import "../components/css/Videos.scss";
 import ReactPlayer from "react-player";
 
 const VideoSubmit = (props) => {
+  const [specMasters, setSpecMasters] = useState([]);
+  useEffect(() => {
+    async function getMasters() {
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
+  }, [])
   return (
     <div className="video-submit-card">
       <div className="video-submit-title">Add Video</div>
@@ -70,7 +77,7 @@ const VideoSubmit = (props) => {
               placeholder="Specializations"
               className="video-submit-input"
             >
-              {formatDropdownItems(SPECIALIZATIONS)}
+              {formatDropdownItems(specMasters)}
             </Select>
           </Form.Item>
           <Form.Item className="video-submit-input">

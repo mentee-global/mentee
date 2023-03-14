@@ -1,6 +1,5 @@
-from email.mime import application
-from flask import Blueprint, request, jsonify
-from sqlalchemy import false, null
+from flask import Blueprint, request
+from sqlalchemy import null
 from api.models import (
     NewMentorApplication,
     VerifiedEmail,
@@ -12,11 +11,9 @@ from api.models import (
     PartnerProfile,
     MentorApplication,
 )
-from api.core import create_response, serialize_list, logger
+from api.core import create_response, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import (
-    MENTOR_APP_STATES,
-    MENTOR_APP_OFFER,
     MENTOR_APP_SUBMITTED,
     MENTEE_APP_SUBMITTED,
     MENTOR_APP_REJECTED,
@@ -28,7 +25,6 @@ from api.utils.constants import (
 from api.utils.request_utils import (
     send_email,
     is_invalid_form,
-    send_email_html,
     MentorApplicationForm,
     MenteeApplicationForm,
     PartnerApplicationForm,

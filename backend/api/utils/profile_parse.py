@@ -1,8 +1,5 @@
 from api.models.PartnerProfile import PartnerProfile
-from bson import ObjectId
-from api.core import logger
-from api.models import db, Education, Video, MentorProfile, MenteeProfile, Image
-from api.utils.request_utils import imgur_client
+from api.models import Education, Video, MentorProfile, MenteeProfile
 from api.utils.constants import Account
 
 

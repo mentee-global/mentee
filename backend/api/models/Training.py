@@ -11,11 +11,11 @@ class Training(Document, Mixin):
     url = StringField()
     description = StringField(required=True)
     date_submitted = DateTimeField(required=True)
-    role=StringField(required=True)
-    filee=FileField()
-    isVideo=BooleanField(required=True)
-    typee=StringField(required=True)
-    file_name=StringField()
+    role = StringField(required=True)
+    filee = FileField()
+    isVideo = BooleanField(required=True)
+    typee = StringField(required=True)
+    file_name = StringField()
 
     def __repr__(self):
         return f"""<Training  : {self.name}

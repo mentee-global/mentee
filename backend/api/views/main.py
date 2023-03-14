@@ -14,10 +14,9 @@ from api.models import (
     Image,
     Video,
     PartnerProfile,
-    Notifications
-
+    Notifications,
 )
-from api.utils.constants import (PROFILE_COMPLETED)
+from api.utils.constants import PROFILE_COMPLETED
 from api.utils.request_utils import send_email
 from api.core import create_response, logger
 from api.utils.request_utils import (
@@ -27,7 +26,7 @@ from api.utils.request_utils import (
     VideoForm,
     is_invalid_form,
     imgur_client,
-    application_model
+    application_model,
 )
 from api.utils.constants import NEW_APPLICATION_STATUS
 from api.utils.profile_parse import new_profile, edit_profile
@@ -36,6 +35,7 @@ from firebase_admin import auth as firebase_admin_auth
 
 
 main = Blueprint("main", __name__)  # initialize blueprint
+
 
 # GET request for /accounts/<type>
 @main.route("/accounts/<int:account_type>", methods=["GET"])
@@ -72,7 +72,7 @@ def get_account(id):
         elif account_type == Account.MENTOR:
             account = MentorProfile.objects.get(id=id)
         elif account_type == Account.PARTNER:
-            account = PartnerProfile.objects.get(id=id)    
+            account = PartnerProfile.objects.get(id=id)
         else:
             msg = "Level param doesn't match existing account types"
             return create_response(status=422, message=msg)
@@ -100,9 +100,9 @@ def create_mentor_profile():
         msg = "Missing account_type param or account_type param is not an int"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    data['firebase_uid']='temp'
+    data["firebase_uid"] = "temp"
     if account_type == Account.MENTOR:
-        data['taking_appointments']=True
+        data["taking_appointments"] = True
 
     validate_data = None
     if account_type == Account.MENTOR:
@@ -110,7 +110,7 @@ def create_mentor_profile():
     elif account_type == Account.MENTEE:
         validate_data = MenteeForm.from_json(data)
     elif account_type == Account.PARTNER:
-        validate_data = PartnerForm.from_json(data)    
+        validate_data = PartnerForm.from_json(data)
     else:
         msg = "Level param does not match existing account types"
         logger.info(msg)
@@ -129,7 +129,7 @@ def create_mentor_profile():
             if is_invalid:
                 logger.info(msg)
                 return create_response(status=422, message=msg)
-                
+
     elif "video" in data and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
@@ -138,26 +138,26 @@ def create_mentor_profile():
             logger.info(msg)
             return create_response(status=422, message=msg)
         video_data = data.get("video")
-        data['video'] = Video(
-                title=video_data.get("title"),
-                url=video_data.get("url"),
-                tag=video_data.get("tag"),
-                date_uploaded=video_data.get("date_uploaded"),
-            )       
+        data["video"] = Video(
+            title=video_data.get("title"),
+            url=video_data.get("url"),
+            tag=video_data.get("tag"),
+            date_uploaded=video_data.get("date_uploaded"),
+        )
     if "video" in data and account_type == Account.MENTOR:
         validate_video = VideoForm.from_json(data["video"])
-    
+
         msg, is_invalid = is_invalid_form(validate_video)
         if is_invalid:
             logger.info(msg)
             return create_response(status=422, message=msg)
         video_data = data.get("video")
-        data['video'] = Video(
-                title=video_data.get("title"),
-                url=video_data.get("url"),
-                tag=video_data.get("tag"),
-                date_uploaded=video_data.get("date_uploaded"),
-            )    
+        data["video"] = Video(
+            title=video_data.get("title"),
+            url=video_data.get("url"),
+            tag=video_data.get("tag"),
+            date_uploaded=video_data.get("date_uploaded"),
+        )
     if "education" in data:
         for education in data["education"]:
             validate_education = EducationForm.from_json(education)
@@ -175,12 +175,12 @@ def create_mentor_profile():
         create_response(status=400, message=msg)
     firebase_user, error_http_response = create_firebase_user(email, password)
     if error_http_response:
-                    return error_http_response
- 
+        return error_http_response
+
     firebase_uid = firebase_user.uid
-    data['firebase_uid']=firebase_uid
+    data["firebase_uid"] = firebase_uid
     new_account.save()
-    user=Users(
+    user = Users(
         firebase_uid=firebase_uid,
         email=email,
         role="{}".format(account_type),
@@ -189,41 +189,48 @@ def create_mentor_profile():
     user.save()
     if account_type != Account.PARTNER:
         try:
-            application=application_model(account_type)
-            exist_application=application.objects.get(email=email)
-            exist_application['application_state']=NEW_APPLICATION_STATUS.COMPLETED
+            application = application_model(account_type)
+            exist_application = application.objects.get(email=email)
+            exist_application["application_state"] = NEW_APPLICATION_STATUS.COMPLETED
             exist_application.save()
         except:
             pass
-    ########  
+    ########
     success, msg = send_email(
-            recipient=email,
-            subject="Your account have been successfully Created " + email,
-            template_id=PROFILE_COMPLETED,
-
-        )
-    notify =Notifications(
-        message="New Mentor with name("+new_account.name+") has created profile" if account_type != Account.PARTNER else "New Partner with name("+new_account.person_name+") has created profile",
+        recipient=email,
+        subject="Your account have been successfully Created " + email,
+        template_id=PROFILE_COMPLETED,
+    )
+    notify = Notifications(
+        message="New Mentor with name(" + new_account.name + ") has created profile"
+        if account_type != Account.PARTNER
+        else "New Partner with name("
+        + new_account.person_name
+        + ") has created profile",
         mentorId=str(new_account.id),
         readed=False,
-        date_submitted=datetime.now()
-    ) 
+        date_submitted=datetime.now(),
+    )
     notify.save()
     if not success:
-            logger.info(msg)  
+        logger.info(msg)
     return create_response(
         message=f"Successfully created {account_type} Profile account {new_account.email}",
-        data={"mentorId": str(new_account.id),
-        "token": firebase_admin_auth.create_custom_token(
+        data={
+            "mentorId": str(new_account.id),
+            "token": firebase_admin_auth.create_custom_token(
                 firebase_uid, {"role": account_type}
-            ).decode("utf-8"),},
+            ).decode("utf-8"),
+        },
     )
+
+
 @main.route("/accountProfile", methods=["POST"])
 def create_profile_existing_account():
     data = request.json
     email = data.get("email")
     user = firebase_admin_auth.get_user_by_email(email)
-    data['firebase_uid']=user.uid
+    data["firebase_uid"] = user.uid
     try:
         account_type = int(data["account_type"])
     except:
@@ -237,7 +244,7 @@ def create_profile_existing_account():
     elif account_type == Account.MENTEE:
         validate_data = MenteeForm.from_json(data)
     elif account_type == Account.PARTNER:
-        validate_data = PartnerForm.from_json(data)        
+        validate_data = PartnerForm.from_json(data)
     else:
         msg = "Level param does not match existing account types"
         logger.info(msg)
@@ -256,7 +263,7 @@ def create_profile_existing_account():
             if is_invalid:
                 logger.info(msg)
                 return create_response(status=422, message=msg)
-                
+
     elif "video" in data and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
@@ -265,13 +272,13 @@ def create_profile_existing_account():
             logger.info(msg)
             return create_response(status=422, message=msg)
         video_data = data.get("video")
-        data['video'] = Video(
-                title=video_data.get("title"),
-                url=video_data.get("url"),
-                tag=video_data.get("tag"),
-                date_uploaded=video_data.get("date_uploaded"),
-            )       
-             
+        data["video"] = Video(
+            title=video_data.get("title"),
+            url=video_data.get("url"),
+            tag=video_data.get("tag"),
+            date_uploaded=video_data.get("date_uploaded"),
+        )
+
     if "video" in data and account_type == Account.MENTOR:
         validate_video = VideoForm.from_json(data["video"])
 
@@ -280,12 +287,12 @@ def create_profile_existing_account():
             logger.info(msg)
             return create_response(status=422, message=msg)
         video_data = data.get("video")
-        data['video'] = Video(
-                title=video_data.get("title"),
-                url=video_data.get("url"),
-                tag=video_data.get("tag"),
-                date_uploaded=video_data.get("date_uploaded"),
-            )     
+        data["video"] = Video(
+            title=video_data.get("title"),
+            url=video_data.get("url"),
+            tag=video_data.get("tag"),
+            date_uploaded=video_data.get("date_uploaded"),
+        )
     if "education" in data:
         for education in data["education"]:
             validate_education = EducationForm.from_json(education)
@@ -305,13 +312,13 @@ def create_profile_existing_account():
     new_account.save()
     return create_response(
         message=f"Successfully created {account_type} Profile for existing account {new_account.email}",
-        data={"mentorId": str(new_account.id),
-        "token": firebase_admin_auth.create_custom_token(
+        data={
+            "mentorId": str(new_account.id),
+            "token": firebase_admin_auth.create_custom_token(
                 new_account.firebase_uid, {"role": account_type}
-            ).decode("utf-8"),},
+            ).decode("utf-8"),
+        },
     )
-
-
 
 
 # PUT requests for /account
@@ -333,7 +340,7 @@ def edit_mentor(id):
         elif account_type == Account.MENTOR:
             account = MentorProfile.objects.get(id=id)
         elif account_type == Account.PARTNER:
-            account = PartnerProfile.objects.get(id=id)    
+            account = PartnerProfile.objects.get(id=id)
         else:
             msg = "Level param doesn't match existing account types"
             return create_response(status=422, message=msg)

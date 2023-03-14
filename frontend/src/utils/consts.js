@@ -5,7 +5,8 @@ export const BASE_URL =
       : "https://app.menteeglobal.org/"
     : "http://localhost:8000/";
 
-export const FRONT_BASE_URL = process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
+export const FRONT_BASE_URL =
+  process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
 
 export const API_URL = BASE_URL + "api/";
 

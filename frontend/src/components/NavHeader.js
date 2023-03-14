@@ -209,7 +209,6 @@ function NavHeader({ history }) {
                   width="9em"
                   onClick={async () => {
                     let redirect = "/login";
-                    console.log("ismentor", isMentor);
                     if (isMentor) {
                       redirect = "/appointments";
                     } else if (isMentee) {

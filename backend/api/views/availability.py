@@ -4,10 +4,10 @@ from api.core import create_response, serialize_list, logger
 
 availability = Blueprint("availability", __name__)
 
+
 # Get request for avalability for a specific mentor
 @availability.route("/<id>", methods=["GET"])
 def get_availability(id):
-
     try:
         availability = MentorProfile.objects.get(id=id).availability
     except:

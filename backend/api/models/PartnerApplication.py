@@ -6,6 +6,7 @@ from mongoengine import *
 
 class PartnerApplication(Document, Mixin):
     """Model for mentor application."""
+
     email = StringField(required=True)
     organization = StringField(required=True)
     contanctPerson = StringField(required=True)

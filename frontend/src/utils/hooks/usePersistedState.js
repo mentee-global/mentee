@@ -13,7 +13,6 @@ export default function usePersistedState(key, defaultValue) {
   const [state, setState] = React.useState(() => {
     let value = localStorage.getItem(key);
     if (typeof value === String) {
-      console.log(value);
       const persisted = JSON.parse(value);
       return persisted;
     } else {

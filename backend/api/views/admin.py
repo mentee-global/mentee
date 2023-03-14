@@ -107,24 +107,23 @@ def upload_account_emailText():
         HTTP Response
     """
 
-    role = request.form["role"] 
+    role = request.form["role"]
     messageText = request.form["messageText"]
 
     for email in messageText.split(";"):
         email = email.replace(" ", "")
         duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
         if not duplicates:
-            email = VerifiedEmail(email=email,role=str(role), password="")
+            email = VerifiedEmail(email=email, role=str(role), password="")
             email.save()
-    
+
     return create_response(status=200, message="success")
 
 
 @admin.route("/admin/<id>", methods=["GET"])
 @admin_only
 def get_admin(id):
-    #return create_response(data={"admin": {"_id":{"$oid":"60765e9289899aeee51a8b27"},"email":"klhester3@gmail.com","firebase_uid":"xsW41z9Hc6Y9r6Te0JAcXhlYneA2","name":"candle"}})
-
+    # return create_response(data={"admin": {"_id":{"$oid":"60765e9289899aeee51a8b27"},"email":"klhester3@gmail.com","firebase_uid":"xsW41z9Hc6Y9r6Te0JAcXhlYneA2","name":"candle"}})
 
     """Get admin account info
 
@@ -142,4 +141,3 @@ def get_admin(id):
         msg = "Admin does not exist"
         logger.info(msg)
         return create_response(status=422, message=msg)
- 

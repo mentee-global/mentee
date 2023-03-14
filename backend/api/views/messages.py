@@ -1,17 +1,19 @@
-from functools import total_ordering
-from os import  path
-from flask import Blueprint, request, jsonify
-from numpy import sort
-from api.models import MentorProfile, MenteeProfile, Users, Message, DirectMessage,PartnerProfile
-from api.utils.request_utils import MessageForm, is_invalid_form, send_email
+from flask import Blueprint, request
+from api.models import (
+    MentorProfile,
+    MenteeProfile,
+    Message,
+    DirectMessage,
+    PartnerProfile,
+)
+from api.utils.request_utils import send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
-from api.core import create_response, serialize_list, logger
+from api.core import create_response, logger
 from api.models import db
 import json
 from datetime import datetime
 from api import socketio
 from mongoengine.queryset.visitor import Q
-from flask_socketio import join_room, leave_room
 from urllib.parse import unquote
 
 
@@ -181,7 +183,7 @@ def get_sidebar(user_id):
                 except:
                     try:
                         otherUser = PartnerProfile.objects.get(id=otherId)
-                        user_type=Account.PARTNER.value
+                        user_type = Account.PARTNER.value
                     except:
                         pass
                 if not otherUser:
@@ -194,17 +196,15 @@ def get_sidebar(user_id):
                         logger.info(msg)
                         continue
                 otherUser = json.loads(otherUser.to_json())
-                if user_type==Account.PARTNER.value:
-
+                if user_type == Account.PARTNER.value:
                     otherUserObj = {
-                    "name": otherUser["organization"],
-                    "user_type": user_type,
+                        "name": otherUser["organization"],
+                        "user_type": user_type,
                     }
                 else:
-
                     otherUserObj = {
-                    "name": otherUser["name"],
-                    "user_type": user_type,
+                        "name": otherUser["name"],
+                        "user_type": user_type,
                     }
 
                 if "image" in otherUser:
@@ -213,9 +213,15 @@ def get_sidebar(user_id):
                 sidebarObject = {
                     "otherId": str(otherId),
                     "numberOfMessages": len(
-                        [messagee for messagee in sentMessages if  (messagee['recipient_id']==otherId or messagee['sender_id']==otherId) ]
+                        [
+                            messagee
+                            for messagee in sentMessages
+                            if (
+                                messagee["recipient_id"] == otherId
+                                or messagee["sender_id"] == otherId
+                            )
+                        ]
                     ),
-
                     "otherUser": otherUserObj,
                     "latestMessage": json.loads(message.to_json()),
                 }
@@ -229,82 +235,107 @@ def get_sidebar(user_id):
         return create_response(status=422, message=str(e))
 
 
-
 @messages.route("/contacts/mentors/<int:pageNumber>", methods=["GET"])
 def get_sidebar_mentors(pageNumber):
-    searchTerm=request.args.get('searchTerm')
-    searchTerm=unquote(searchTerm)
-    startDate=request.args.get('startDate')
-    endDate=request.args.get('endDate')
-    pageSize= int(request.args.get('pageSize')) 
-    startRecord=pageSize * (pageNumber-1)
-    endRecord=pageSize * pageNumber
-    mentors =MentorProfile.objects()
-    detailMessages=[]
-    
+    searchTerm = request.args.get("searchTerm")
+    searchTerm = unquote(searchTerm)
+    startDate = request.args.get("startDate")
+    endDate = request.args.get("endDate")
+    pageSize = int(request.args.get("pageSize"))
+    startRecord = pageSize * (pageNumber - 1)
+    endRecord = pageSize * pageNumber
+    mentors = MentorProfile.objects()
+    detailMessages = []
+
     for mentor in list(mentors):
-        user_id=mentor.id
-        mentor_user=json.loads(mentor.to_json())
+        user_id = mentor.id
+        mentor_user = json.loads(mentor.to_json())
         try:
-            sentMessages = DirectMessage.objects.filter(
+            sentMessages = (
+                DirectMessage.objects.filter(
                     Q(sender_id=user_id) | Q(recipient_id=user_id)
-                ).filter(created_at__gte=datetime.fromisoformat(startDate),created_at__lte=datetime.fromisoformat(endDate)).order_by("-created_at")
+                )
+                .filter(
+                    created_at__gte=datetime.fromisoformat(startDate),
+                    created_at__lte=datetime.fromisoformat(endDate),
+                )
+                .order_by("-created_at")
+            )
         except:
-            continue        
-        if len(sentMessages)==0:
-                continue
-        contacts=[]
+            continue
+        if len(sentMessages) == 0:
+            continue
+        contacts = []
         for message in sentMessages:
-                if str(user_id) == message['recipient_id']:
-                    contacts.append(message['sender_id'])
-                else:
-                    contacts.append(message['recipient_id'])
-        contacts=list(dict.fromkeys(contacts))     
+            if str(user_id) == message["recipient_id"]:
+                contacts.append(message["sender_id"])
+            else:
+                contacts.append(message["recipient_id"])
+        contacts = list(dict.fromkeys(contacts))
         for contactId in contacts:
-                try:
-                    otherUser = MenteeProfile.objects.get(id=contactId)
-                except:
-                    continue                        
-                otherUserObj = {
-                        "name": otherUser["name"],
-                        "user_type": Account.MENTEE.value,
-                        }
-                if "image" in otherUser:        
-                    otherUserObj["image"] = otherUser["image"]["url"]
-                else:
-                    otherUserObj["image"] = ""
+            try:
+                otherUser = MenteeProfile.objects.get(id=contactId)
+            except:
+                continue
+            otherUserObj = {
+                "name": otherUser["name"],
+                "user_type": Account.MENTEE.value,
+            }
+            if "image" in otherUser:
+                otherUserObj["image"] = otherUser["image"]["url"]
+            else:
+                otherUserObj["image"] = ""
 
+            try:
+                latestMessage = [
+                    messagee
+                    for messagee in sentMessages
+                    if (
+                        messagee["recipient_id"] == contactId
+                        or messagee["sender_id"] == contactId
+                    )
+                ][0]
+            except:
+                continue
+            sidebarObject = {
+                "otherId": str(contactId),
+                "numberOfMessages": len(
+                    [
+                        messagee
+                        for messagee in sentMessages
+                        if (
+                            messagee["recipient_id"] == contactId
+                            or messagee["sender_id"] == contactId
+                        )
+                    ]
+                ),
+                "otherUser": otherUserObj,
+                "latestMessage": json.loads(latestMessage.to_json()),
+                "user": mentor_user,
+            }
+            detailMessages.append(sidebarObject)
 
-                print(otherUserObj)
-                try:
-                    latestMessage= [messagee for messagee in sentMessages if  (messagee['recipient_id']==contactId or messagee['sender_id']==contactId) ][0]
-                except:
-                    continue
-                print(latestMessage)
-                sidebarObject = {
-                        "otherId": str(contactId),
-                        "numberOfMessages": len(
-                            [messagee for messagee in sentMessages if  (messagee['recipient_id']==contactId or messagee['sender_id']==contactId) ]
-                        ),
-
-                        "otherUser": otherUserObj,
-                        "latestMessage": json.loads(latestMessage.to_json()),
-                        "user":mentor_user
-                    }
-                detailMessages.append(sidebarObject)
-                
-    FormattedData=[]
+    FormattedData = []
     for subitem in detailMessages:
-            menteeName=subitem['otherUser']['name'].lower()
-            mentorName=subitem['user']['name'].lower()
-            if searchTerm.lower() in mentorName or searchTerm.lower() in menteeName:
-                FormattedData.append(subitem)
-    
-    sortedData=sorted(FormattedData,key=lambda x:x['latestMessage']['created_at']['$date'],reverse=True)
-    sortedData=sortedData[startRecord:endRecord]
-    total_length=len(FormattedData)
-    return create_response(data={"data": sortedData,'total_length':total_length}, status=200, message="res")
-        
+        menteeName = subitem["otherUser"]["name"].lower()
+        mentorName = subitem["user"]["name"].lower()
+        if searchTerm.lower() in mentorName or searchTerm.lower() in menteeName:
+            FormattedData.append(subitem)
+
+    sortedData = sorted(
+        FormattedData,
+        key=lambda x: x["latestMessage"]["created_at"]["$date"],
+        reverse=True,
+    )
+    sortedData = sortedData[startRecord:endRecord]
+    total_length = len(FormattedData)
+    return create_response(
+        data={"data": sortedData, "total_length": total_length},
+        status=200,
+        message="res",
+    )
+
+
 @messages.route("/direct/", methods=["GET"])
 def get_direct_messages():
     try:
@@ -326,7 +357,6 @@ def get_direct_messages():
 
 @socketio.on("send")
 def chat(msg, methods=["POST"]):
-    # print("here")
     try:
         message = DirectMessage(
             body=msg["body"],
@@ -355,9 +385,7 @@ def chat(msg, methods=["POST"]):
 
 @socketio.on("invite")
 def invite(msg, methods=["POST"]):
-    print("inisdede new created inivte cintrlloererer")
     try:
-        # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         inviteObject = {
             "inviteeId": msg["sender_id"],
@@ -366,7 +394,6 @@ def invite(msg, methods=["POST"]):
         socketio.emit(msg["recipient_id"], inviteObject)
 
     except Exception as e:
-        # msg="Invalid parameter provided"
         logger.info(e)
         return create_response(status=500, message="Failed to send invite")
     try:

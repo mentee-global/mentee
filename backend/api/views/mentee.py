@@ -20,7 +20,6 @@ def edit_fav_mentor():
         msg = "invalid parameters provided"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    print()
     try:
         mentee = MenteeProfile.objects.get(id=mentee_id)
         if not favorite and mentor_id in mentee.favorite_mentors_ids:

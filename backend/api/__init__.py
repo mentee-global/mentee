@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 socketio = SocketIO(cors_allowed_origins="*")
+
+
 class RequestFormatter(logging.Formatter):
     def format(self, record):
         record.url = request.url
@@ -89,7 +91,7 @@ def create_app():
         messages,
         notifications,
         training,
-        adminNotifications
+        admin_notifications,
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -101,7 +103,9 @@ def create_app():
     app.register_blueprint(verify.verify, url_prefix="/api")
     app.register_blueprint(apply.apply, url_prefix="/api/application")
     app.register_blueprint(training.training, url_prefix="/api/training")
-    app.register_blueprint(adminNotifications.Notificationss, url_prefix="/api/notifys")
+    app.register_blueprint(
+        admin_notifications.admin_notifications, url_prefix="/api/notifys"
+    )
     app.register_blueprint(admin.admin, url_prefix="/api")
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")

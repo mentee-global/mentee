@@ -43,7 +43,6 @@ export const Trainings = () => {
     if (isNew == false) {
       setIsModalVisible(true);
       let train = await getTrainById(id);
-      console.log(train);
       if (train) {
         setName(train.name);
         setDesc(train.description);
@@ -305,10 +304,9 @@ export const Trainings = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let dataa = await getTrainings(role);
-      if (dataa) {
-        console.log(data);
-        setData(dataa);
+      let newData = await getTrainings(role);
+      if (newData) {
+        setData(newData);
       } else {
         setErr(true);
       }

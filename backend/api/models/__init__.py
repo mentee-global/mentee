@@ -44,7 +44,7 @@ __all__ = [
     "Training",
     "PartnerProfile",
     "MentorApplication",
-    "Notifications"
+    "Notifications",
 ]
 
 # You must import all of the new Models you create to this page

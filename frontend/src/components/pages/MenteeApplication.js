@@ -58,7 +58,6 @@ const workOptions = [
   "I am a college/university students attaining my second or third degree.",
   "Other",
 ];
-const { TextArea } = Input;
 function MenteeApplication(props) {
   const [submitError, setSubmitError] = useState();
   const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
@@ -97,7 +96,6 @@ function MenteeApplication(props) {
     setImmigrantStatus(optionsSelected);
   }
   function onChangeCheck7(checkedValues) {
-    console.log(checkedValues);
     let optionsSelected = [];
     checkedValues.forEach((value) => {
       optionsSelected.push(value);
@@ -303,7 +301,7 @@ function MenteeApplication(props) {
               </Radio.Group>
             </div>
           </div>
-          {identify == "other" ? (
+          {identify === "other" ? (
             <Form.Item
               className="input-form"
               rules={[
@@ -358,7 +356,7 @@ function MenteeApplication(props) {
               </Radio.Group>
             </div>
           </div>
-          {language == "other" ? (
+          {language === "other" ? (
             <Form.Item
               className="input-form"
               rules={[
@@ -475,7 +473,7 @@ function MenteeApplication(props) {
               </Radio.Group>
             </div>
           </div>
-          {isSocial == "other" ? (
+          {isSocial === "other" ? (
             <Form.Item
               className="input-form"
               rules={[
@@ -518,7 +516,6 @@ function MenteeApplication(props) {
     );
   }
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
   function handleSubmit(event) {
     event.preventDefault();
     let imms = immigrantStatus;
@@ -528,7 +525,7 @@ function MenteeApplication(props) {
       if (otherImmigrantStatus) {
         setShowMissingFieldErrors(false);
         imms = imms.filter(function (value, index, arr) {
-          return value != "other";
+          return value !== "other";
         });
         imms.push("Other: " + otherImmigrantStatus);
       } else {
@@ -536,17 +533,17 @@ function MenteeApplication(props) {
         return false;
       }
     }
-    if (identify == "other") {
+    if (identify === "other") {
       setidentify(otherIdentify);
     }
-    if (language == "other") {
+    if (language === "other") {
       setLanguage(otherLanguage);
     }
     if (topics.includes("Other")) {
       if (otherTopics) {
         setShowMissingFieldErrors(false);
         topicss = topicss.filter(function (value, index, arr) {
-          return value != "Other";
+          return value !== "Other";
         });
         topicss.push("Other: " + otherTopics);
       } else {
@@ -558,7 +555,7 @@ function MenteeApplication(props) {
       if (otherWorkState) {
         setShowMissingFieldErrors(false);
         states = states.filter(function (value, index, arr) {
-          return value != "Other";
+          return value !== "Other";
         });
         states.push("Other: " + otherWorkState);
       } else {
@@ -566,7 +563,7 @@ function MenteeApplication(props) {
         return false;
       }
     }
-    if (isSocial == "other") {
+    if (isSocial === "other") {
       setIsSocial(otherIsSocial);
     }
 
@@ -598,8 +595,6 @@ function MenteeApplication(props) {
       const res = await createApplication(data);
 
       if (res) {
-        setIsSubmitted(true);
-        console.log(res);
         props.submitHandler();
       } else {
         setSubmitError(true);

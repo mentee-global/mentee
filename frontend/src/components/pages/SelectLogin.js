@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MentorImage from "resources/mentor-login-logo.png";
 import MenteeLogin from "resources/mentee-login-logo.png";
 import AdminImage from "resources/admin-login-logo.png";
 import PartnerImage from "resources/partner.png";
 import "components/css/SelectLogin.scss";
-import { isLoggedIn } from "utils/auth.service";
 
 function SelectLogin({
   displaySelect,
@@ -12,7 +11,6 @@ function SelectLogin({
   handleDisplayImages,
   isAdmin,
 }) {
-  console.log("l", isLoggedIn());
   return (
     <div className="select-login-page">
       <div
@@ -35,7 +33,7 @@ function SelectLogin({
           >
             <img
               src={MenteeLogin}
-              alt="Mentee Image"
+              alt="Mentee"
               className="select-image mentee-image"
             />
             <div className="select-text">Mentee</div>
@@ -48,7 +46,7 @@ function SelectLogin({
           >
             <img
               src={MentorImage}
-              alt="Mentor Image"
+              alt="Mentor"
               className="mentor-image"
             />
             <div className="select-text">Mentor</div>
@@ -61,7 +59,7 @@ function SelectLogin({
           >
             <img
               src={PartnerImage}
-              alt="Partner Image"
+              alt="Partner"
               className="select-image partner-image"
               onLoad={handleDisplayImages}
             />
@@ -81,7 +79,7 @@ function SelectLogin({
           >
             <img
               src={AdminImage}
-              alt="Admin Image"
+              alt="Admin"
               className="select-image partner-image"
               onLoad={handleDisplayImages}
             />

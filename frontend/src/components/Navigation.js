@@ -33,7 +33,6 @@ function Navigation(props) {
   } = useAuth();
 
   useEffect(() => {
-    console.log("ipartner", isPartner);
     onAuthStateChanged((user) => {
       if (!user && props.needsAuth) {
         history.push("/login");

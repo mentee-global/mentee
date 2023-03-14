@@ -2,15 +2,10 @@ export const BASE_URL =
   process.env.NODE_ENV === "production"
     ? process.env.REACT_APP_ENV === "development"
       ? "https://mentee-dev.herokuapp.com/"
-      : "https://mentee-h4i.herokuapp.com/"
+      : "https://app.menteeglobal.org/"
     : "http://localhost:8000/";
 
-export const FRONT_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.VERCEL_ENV === "master" // Temporarily while we migrate from vercel
-      ? "https://mentee-global.vercel.app/"
-      : BASE_URL
-    : `http://localhost:3000/`;
+export const FRONT_BASE_URL = process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
 
 export const API_URL = BASE_URL + "api/";
 

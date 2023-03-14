@@ -149,7 +149,7 @@ def create_appointment():
 
     if mentor.text_notifications:
         res, res_msg = send_sms(
-            text="You received a new appointment request!\nCheckout https://mentee-global.vercel.app.com/",
+            text="You received a new appointment request!\nCheckout https://app.menteeglobal.org/",
             recipient=mentor.phone_number,
         )
 

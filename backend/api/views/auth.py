@@ -72,7 +72,7 @@ def create_firebase_user(email, password):
     error_http_response = None
 
     try:
-        firebase_user = firebase_admin_auth.create_user(
+         firebase_user = firebase_admin_auth.create_user(
             email=email,
             email_verified=False,
             password=password,
@@ -87,6 +87,10 @@ def create_firebase_user(email, password):
         error_http_response = create_response(status=500, message=msg)
 
     return firebase_user, error_http_response
+@auth.route('/hat',methods=["GET"])
+def hat():
+    ps= MentorProfile.objects
+    return create_response(message='does',data={'ps':ps})
 
 
 @auth.route("/hat", methods=["GET"])
@@ -123,6 +127,49 @@ def register():
         admin_user.firebase_uid = firebase_uid
         admin_user.save()
 
+    return create_response(
+        message="Created account",
+        data={
+            "token": firebase_admin_auth.create_custom_token(
+                firebase_uid, {"role": role}
+            ).decode("utf-8"),
+        },
+    )
+
+@auth.route("/newRegister", methods=["POST"])
+def newregister():
+    data = request.json
+    name=data.get('name')
+    email = data.get("email")
+    password = data.get("password")
+    role = data.get("role")
+    video_url=data.get('video_url')
+    phone_number=data.get('phone_number')
+    date_submitted=data.get('date_submitted')
+    
+    firebase_user, error_http_response = create_firebase_user(email, password)
+    #if error_http_response:
+    #    return error_http_response
+
+    # account created
+    firebase_uid = firebase_user.uid
+    profile=PartnerProfile(
+        name=name,
+        email=email,
+        password=password,
+        video_url=video_url,
+        role=role,
+        phone_number=phone_number,
+        date_submitted=date_submitted
+    )
+    profile.save()
+    user=Users(
+        firebase_uid=firebase_uid,
+        email=email,
+        role=role,
+        verified=False,
+    )
+    user.save()
     return create_response(
         message="Created account",
         data={
@@ -185,7 +232,6 @@ def login():
     role = data.get("role")
     firebase_user = None
     profile_model = get_profile_model(int(role))
-
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
@@ -250,13 +296,14 @@ def login():
                     "role": role,
                     "firebase_user": firebase_user,
                 },
+                
             )
             # pass
 
         msg = "Couldn't find profile with these credentials"
         logger.info(msg)
         return create_response(status=422, message=msg)
-
+    
     return create_response(
         message="Logged in",
         data={
@@ -320,6 +367,7 @@ def refresh_token():
     profile_model = get_profile_model(role)
     profile_id = None
     try:
+        
         profile = profile_model.objects.get(firebase_uid=firebase_uid)
         profile_id = str(profile.id)
     except:

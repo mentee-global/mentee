@@ -51,6 +51,7 @@ function Verify({ history, sent }) {
                 setVerifying(true);
                 await refreshToken();
                 const success = await isUserVerified();
+                console.log(success);
                 if (success) {
                   if (await isUserMentor()) {
                     history.push(`/appointments`);

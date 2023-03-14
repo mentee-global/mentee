@@ -1,17 +1,17 @@
 @import "_app";
 
 .register-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  width: 40%;
-  background-color: white;
-  padding: 2.5%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+	width: 40%;
+	background-color: white;
+	padding: 2.5%;
 }
 
 .register-error {
-  color: red;
+	color: red;
 }
 
 .verify-container {
@@ -35,15 +35,15 @@
 }
 
 .verify-header-text {
-  width: 70%;
+	width: 70%;
 }
 
 .verify-header-text-description {
-  color: gray;
+	color: gray;
 }
 
 .verify-header-image {
-  width: 30%;
+	width: 30%;
 }
 
 .verify-resend-link,
@@ -55,17 +55,17 @@
 }
 
 .verify-resend-link:hover {
-  color: $register-link-hover;
+	color: $register-link-hover;
 }
 
 @media (max-width: 768px) {
-  .register-container {
-    height: 60vh;
-    width: 100%;
-  }
+	.register-container {
+		height: 60vh;
+		width: 100%;
+	}
 
-  .verify-container {
-    height: 40vh;
-    width: 100%;
-  }
+	.verify-container {
+		height: 40vh;
+		width: 100%;
+	}
 }

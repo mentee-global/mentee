@@ -455,6 +455,7 @@ function MentorApplication(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
+    console.log("dd");
 
     if (!verifyRequiredFieldsAreFilled()) return;
     if (props.headEmail === "") {

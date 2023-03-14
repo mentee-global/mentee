@@ -128,7 +128,6 @@ def create_mentor_profile():
             if is_invalid:
                 logger.info(msg)
                 return create_response(status=422, message=msg)
-
     elif "video" in data and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
@@ -262,7 +261,6 @@ def create_profile_existing_account():
             if is_invalid:
                 logger.info(msg)
                 return create_response(status=422, message=msg)
-
     elif "video" in data and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
@@ -318,6 +316,8 @@ def create_profile_existing_account():
             ).decode("utf-8"),
         },
     )
+
+
 
 
 # PUT requests for /account

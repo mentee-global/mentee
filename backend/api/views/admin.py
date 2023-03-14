@@ -116,7 +116,7 @@ def upload_account_emailText():
         if not duplicates:
             email = VerifiedEmail(email=email, role=str(role), password="")
             email.save()
-
+    
     return create_response(status=200, message="success")
 
 

@@ -14,7 +14,7 @@ from flask import send_file, Blueprint, request
 from api.utils.require_auth import admin_only
 from api.utils.constants import Account
 
-download = Blueprint("download", __name__)
+download= Blueprint("download", __name__)
 
 
 @download.route("/appointments/all", methods=["GET"])
@@ -137,7 +137,6 @@ def download_apps_info():
     msg = "Invalid input"
     logger.info(msg)
     return create_response(status=422, message=msg)
-
 
 def download_mentor_apps(apps):
     accts = []
@@ -334,7 +333,6 @@ def download_partner_accounts(accounts):
     ]
     return generate_sheet("accounts", accts, columns)
 
-
 def download_mentee_accounts(accounts):
     accts = []
 
@@ -396,6 +394,7 @@ def download_mentee_accounts(accounts):
         "private account",
         "video url",
         "favorite_mentor_ids",
+        
     ]
     return generate_sheet("accounts", accts, columns)
 

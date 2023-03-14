@@ -196,6 +196,15 @@ export const getPartnerID = async () => {
     });
   } else return false;
 };
+export const getPartnerID = async () => {
+  if (isLoggedIn()) {
+    return await getIdTokenResult().then((idTokenResult) => {
+      if (idTokenResult.claims.role == ACCOUNT_TYPE.PARTNER) {
+        return idTokenResult.claims.profileId;
+      }
+    });
+  } else return false;
+};
 
 export const isLoggedIn = () => {
   return Boolean(getCurrentUser());
@@ -204,6 +213,7 @@ export const isLoggedIn = () => {
 export const isUserVerified = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
+      console.log(idTokenResult.claims);
       return idTokenResult.claims.email_verified;
     });
   }

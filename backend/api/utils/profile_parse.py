@@ -49,6 +49,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
             taking_appointments=data.get("taking_appointments", False),
+            
         )
 
         new_profile.website = data.get("website")

@@ -126,8 +126,14 @@
 }
 
 .account-link {
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
+}
+.forgot_email {
+	margin: 5px;
+}
+.login-register-container {
+	margin: 8px;
 }
 .forgot_email {
   margin: 5px;
@@ -138,17 +144,17 @@
 
 .login-register-link,
 .login-register-link:focus {
-  background: none;
-  border: none;
-  color: $mentee-button-regular;
-  text-decoration: underline;
-  margin-left: 5px;
-  transition-duration: 0.4s;
+	background: none;
+	border: none;
+	color: $mentee-button-regular;
+	text-decoration: underline;
+	margin-left: 5px;
+	transition-duration: 0.4s;
 }
 
 .login-register-link:hover {
-  color: $register-link-hover;
-  text-decoration: underline;
+	color: $register-link-hover;
+	text-decoration: underline;
 }
 @media (max-width: 600px) {
   .login-content {

@@ -48,6 +48,7 @@ const useAuth = () => {
       await getIdTokenResult(true)
         .then((idTokenResult) => {
           const { role, profileId } = idTokenResult.claims;
+          console.log(role);
           setProfileId(profileId);
           setRoleState({
             role: role,

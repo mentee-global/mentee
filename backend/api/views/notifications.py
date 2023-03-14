@@ -23,6 +23,58 @@ def get_unread_dm_count(id):
 
     return create_response(data={"notifications": notifications})
 
+@notifications.route("/unread_alert/<id>", methods=["GET"])
+def send_unread_alert(id):
+    try:
+        notifications_count = DirectMessage.objects(
+            Q(recipient_id=id) & Q(message_read=False)
+        ).count()
+        email = None
+        phone_number = None
+        if notifications_count > 0:
+            user_record = MenteeProfile.objects(Q(id=id)).first()
+            if user_record is not None:
+                email = user_record.email
+                if 'phone_number' in user_record:
+                    phone_number = user_record.phone_number
+            else:
+                user_record = MentorProfile.objects(Q(id=id)).first()
+                if user_record is not None:
+                    email = user_record.email
+                    if 'phone_number' in user_record:
+                        phone_number = user_record.phone_number
+                else:
+                    user_record = PartnerProfile.objects(Q(id=id)).first()
+                    if user_record is not None:
+                        email = user_record.email
+                        if 'phone_number' in user_record:
+                            phone_number = user_record.phone_number                        
+            if user_record is not None:
+                if email is not None and user_record.email_notifications:
+                    res, res_msg = send_email(
+                        recipient=email,
+                        data={"number_unread": str(notifications_count)},
+                        template_id=UNREAD_MESSAGE_TEMPLATE,
+                    )
+                    if not res:
+                        msg = "Failed to send unread message alert email " + res_msg
+                        logger.info(msg)
+                
+                if phone_number is not None and user_record.text_notifications:
+                    res, res_msg = send_sms(
+                        text="You have received a new message on your Mentee Portal!\nYou have " + str(notifications_count) + " messages on your Mentee! messages inbox",
+                        recipient=phone_number,
+                    )
+                    if not res:
+                        msg = "Failed to send unread message alert email " + res_msg
+                        logger.info(msg)
+
+    except Exception as e:
+        msg = "No mentee with that id"
+        logger.info(e)
+        return create_response(status=422, message=msg)
+
+    return create_response(status=200, message="Success")
 
 @notifications.route("/unread_alert/<id>", methods=["GET"])
 def send_unread_alert(id):

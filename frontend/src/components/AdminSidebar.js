@@ -8,6 +8,7 @@ import {
   ContainerOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
+import { ListItemIcon } from "@material-ui/core";
 
 const pages = {
   applications: {

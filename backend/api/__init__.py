@@ -9,11 +9,10 @@ from flask_socketio import SocketIO
 
 from api.core import all_exception_handler
 from dotenv import load_dotenv
-
+#import certifi
+#ca=certifi.where()
 load_dotenv()
 socketio = SocketIO(cors_allowed_origins="*")
-
-
 class RequestFormatter(logging.Formatter):
     def format(self, record):
         record.url = request.url
@@ -64,6 +63,9 @@ def create_app():
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    # app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017}
+    #tlsCAFile
+    #app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017,'tlsCAFile':ca}
 
     # firebase
     if not firebase_admin._apps:

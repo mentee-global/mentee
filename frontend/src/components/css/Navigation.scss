@@ -1,13 +1,13 @@
 @import "_app";
 
 .navigation-layout {
-  height: 100vh;
+	height: 100vh;
 }
 
 .navigation-content {
-  margin-left: 0px;
-  background-color: white;
-  overflow: auto;
+	margin-left: 0px;
+	background-color: white;
+	overflow: auto;
 
   > div {
     padding-bottom: 2em;
@@ -21,32 +21,32 @@
 }
 
 .navigation-sidebar {
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
+	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
 }
 
 .navigation-menu-item {
-  background-color: $nav-menu-item-color;
+	background-color: $nav-menu-item-color;
 }
 
 .navigation-menu-item:hover {
-  background-color: $nav-menu-item-hover-background-color;
-  color: $nav-menu-item-hover-color;
+	background-color: $nav-menu-item-hover-background-color;
+	color: $nav-menu-item-hover-color;
 }
 
 .ant-tooltip-inner {
-  color: white;
+	color: white;
 }
 .ant-collapse-content > .ant-collapse-content-box {
-  padding: 0;
+	padding: 0;
 }
 
 .ant-list-split .ant-list-item {
-  border-bottom: 0.25px solid #e4bb4f;
+	border-bottom: 0.25px solid #e4bb4f;
 }
 
 .navigation-menu-item-selected {
-  background-color: $nav-menu-item-selected-color;
-  pointer-events: none;
+	background-color: $nav-menu-item-selected-color;
+	pointer-events: none;
 }
 
 .navigation-submenu {
@@ -55,114 +55,114 @@
 }
 
 .navigation-messages {
-  bottom: 0px;
-  width: 30%;
-  position: fixed;
-  right: 20%;
-  box-shadow: 0 6px 5px 0 rgba(0, 0, 0, 0.19);
+	bottom: 0px;
+	width: 30%;
+	position: fixed;
+	right: 20%;
+	box-shadow: 0 6px 5px 0 rgba(0, 0, 0, 0.19);
 }
 
 .message-box {
-  height: 60vh;
-  width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+	height: 60vh;
+	width: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .message-box .ant-list-item:hover {
-  box-shadow: 0 0 4px #eee;
-  cursor: pointer;
+	box-shadow: 0 0 4px #eee;
+	cursor: pointer;
 }
 
 @media (max-width: 1050px) {
-  // For tablet screens
-  .navigation-messages {
-    width: 45%;
-  }
+	// For tablet screens
+	.navigation-messages {
+		width: 45%;
+	}
 }
 
 @media (max-width: 768px) {
-  // For mobile screens
-  .navigation-messages {
-    width: 75%;
-    right: 0;
-  }
+	// For mobile screens
+	.navigation-messages {
+		width: 75%;
+		right: 0;
+	}
 }
 
 .ant-drawer-header {
-  border-bottom: 0.25px solid #e4bb4f;
+	border-bottom: 0.25px solid #e4bb4f;
 }
 
 .ant-drawer-body {
-  padding-top: 10px;
+	padding-top: 10px;
 }
 
 .ant-drawer-footer {
-  text-align: center;
-  border-top: 0.25px solid #e4bb4f;
+	text-align: center;
+	border-top: 0.25px solid #e4bb4f;
 }
 
 .ant-collapse-content {
-  border-top: 0.25px solid #e4bb4f;
+	border-top: 0.25px solid #e4bb4f;
 }
 
 .drawerHeader {
-  display: flex;
-  position: relative;
+	display: flex;
+	position: relative;
 }
 
 .drawerHeader span {
-  color: #7a7a7a;
-  font-size: 11px;
+	color: #7a7a7a;
+	font-size: 11px;
 }
 
 .profile-picture {
-  float: right;
-  font-size: 30px;
+	float: right;
+	font-size: 30px;
 }
 
 .profile-name {
-  float: right;
-  margin-top: 15px;
-  margin-left: 1%;
-  margin-right: 12px;
-  font-size: 15px;
-  line-height: 15px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+	float: right;
+	margin-top: 15px;
+	margin-left: 1%;
+	margin-right: 12px;
+	font-size: 15px;
+	line-height: 15px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .profile-caret {
-  float: right;
-  margin-left: 1%;
-  margin-right: 1%;
-  color: $profile-caret-color;
-  min-width: 40px;
+	float: right;
+	margin-left: 1%;
+	margin-right: 1%;
+	color: $profile-caret-color;
+	min-width: 40px;
 }
 
 .dropdown-menu {
-  border-radius: 5px;
-  width: 300px;
+	border-radius: 5px;
+	width: 300px;
 }
 
 // For mobile screens
 .mentee-logo {
-  background-color: $mentee-logo-color;
-  float: left;
-  height: 50px;
-  width: 50px;
-  margin: 7px 7px;
+	background-color: $mentee-logo-color;
+	float: left;
+	height: 50px;
+	width: 50px;
+	margin: 7px 7px;
 }
 
 @media (min-width: 501px) {
-  // For desktop screens
-  .mentee-logo {
-    background-color: $mentee-logo-color;
-    float: left;
-    height: 80px;
-    width: 200px;
-    padding: 8px;
-  }
+	// For desktop screens
+	.mentee-logo {
+		background-color: $mentee-logo-color;
+		float: left;
+		height: 80px;
+		width: 200px;
+		padding: 8px;
+	}
 }
 
 .navigation-mentee-flexbox {
@@ -172,45 +172,45 @@
 }
 
 .navigation-header-button {
-  margin-right: 10px;
+	margin-right: 10px;
 }
 
 .loadingIcon {
-  margin: 30px 0;
-  margin-bottom: 20px;
-  padding-top: 10%;
-  padding-left: 40%;
-  text-align: center;
-  border-radius: 4px;
+	margin: 30px 0;
+	margin-bottom: 20px;
+	padding-top: 10%;
+	padding-left: 40%;
+	text-align: center;
+	border-radius: 4px;
 }
 
 .navigation-hamburger-btn {
-  border: none;
-  background-color: #fbecc1;
-  width: 64px;
-  height: 100%;
+	border: none;
+	background-color: #fbecc1;
+	width: 64px;
+	height: 100%;
 }
 
 .mobile-nav-btn,
 .mobile-nav-btn-login-modal button {
-  width: 100% !important;
-  border: none;
-  box-shadow: none;
-  border-radius: 2px !important;
-  margin-bottom: 1.5em;
+	width: 100% !important;
+	border: none;
+	box-shadow: none;
+	border-radius: 2px !important;
+	margin-bottom: 1.5em;
 }
 
 .drawer-btn-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  margin-top: 3em;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	margin-top: 3em;
 }
 
 .notifications-icon {
-  font-size: 1.5em;
+	font-size: 1.5em;
 }
 
 .notifications-section {
-  margin-right: 6px;
+	margin-right: 6px;
 }

@@ -80,6 +80,8 @@ def edit_language_by_id(id):
             map(lambda x: x.replace(lang_name, request.form["name"]), new_langs)
         )
         mentor.languages = new_langs
+        if "taking_appointments" not in mentor:
+            mentor.taking_appointments = False
         mentor.save()
     mentees = MenteeProfile.objects(languages__in=[lang_name])
     for mentee in mentees:
@@ -187,6 +189,8 @@ def edit_specialization_by_id(id):
             map(lambda x: x.replace(prev_name, request.form["name"]), new_specs)
         )
         mentor.specializations = new_specs
+        if "taking_appointments" not in mentor:
+            mentor.taking_appointments = False
         mentor.save()
     mentees = MenteeProfile.objects(specializations__in=[prev_name])
     for mentee in mentees:

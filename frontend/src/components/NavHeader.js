@@ -38,14 +38,12 @@ import Icon, {
 } from "@ant-design/icons";
 import NotificationBell from "./NotificationBell";
 import { logout } from "utils/auth.service";
-import { BellOutlined } from "@ant-design/icons";
 
 const { Header } = Layout;
 
 function NavHeader({ history }) {
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const {
-    onAuthStateChanged,
     resetRoleState,
     isAdmin,
     isMentor,
@@ -139,6 +137,9 @@ function NavHeader({ history }) {
       })}
     </Menu>
   );
+  var cur_url = window.location.href;
+  var cur_url_arr = cur_url.split("/");
+  cur_url = cur_url_arr[cur_url_arr.length - 1];
   return (
     <Header className="navigation-header">
       <div className="navigation-mentee-flexbox">
@@ -161,6 +162,9 @@ function NavHeader({ history }) {
                   content={<b>Find a Mentor</b>}
                   theme="light"
                   width="9em"
+                  border={
+                    cur_url === "gallery" ? "1px solid lightseagreen" : "none"
+                  }
                   onVerified={() => {
                     history.push({
                       pathname: "/gallery",
@@ -177,6 +181,11 @@ function NavHeader({ history }) {
                   content={<b>Find a Mentee</b>}
                   theme="light"
                   width="9em"
+                  border={
+                    cur_url === "mentee-gallery"
+                      ? "1px solid lightseagreen"
+                      : "none"
+                  }
                   onVerified={() => {
                     history.push({
                       pathname: "/mentee-gallery",
@@ -192,6 +201,11 @@ function NavHeader({ history }) {
                   content={<b>Find a Partner</b>}
                   theme="light"
                   width="9em"
+                  border={
+                    cur_url === "partner-gallery"
+                      ? "1px solid lightseagreen"
+                      : "none"
+                  }
                   onVerified={() => {
                     history.push({
                       pathname: "/partner-gallery",
@@ -209,7 +223,6 @@ function NavHeader({ history }) {
                   width="9em"
                   onClick={async () => {
                     let redirect = "/login";
-                    console.log("ismentor", isMentor);
                     if (isMentor) {
                       redirect = "/appointments";
                     } else if (isMentee) {

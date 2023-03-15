@@ -89,7 +89,8 @@ def create_app():
         messages,
         notifications,
         training,
-        adminNotifications
+        adminNotifications,
+        masters
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -107,6 +108,7 @@ def create_app():
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")
     app.register_blueprint(messages.messages, url_prefix="/api/messages")
     app.register_blueprint(notifications.notifications, url_prefix="/api/notifications")
+    app.register_blueprint(masters.masters, url_prefix="/api/masters")
 
     app.register_error_handler(Exception, all_exception_handler)
 

@@ -190,7 +190,6 @@ function AvailabilityCalendar(props) {
 
     var booked_times = getBookedTimeSlots(date.format("YYYY-MM-DD"));
     var time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
-
     time_slots.map((time_slot, index) => {
       if (moment(time_slot[0][0]) > moment(time_slot[0][1])) {
         res = false;

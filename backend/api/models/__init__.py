@@ -17,11 +17,12 @@ from .MenteeProfile import MenteeProfile
 from .Message import Message
 from .DirectMessage import DirectMessage
 from .Admin import Admin
-from .DirectMessage import DirectMessage
 from .Training import Training
 from .PartnerProfile import PartnerProfile
 from .MentorApplication import MentorApplication
 from .Notifications import Notifications
+from .Languages import Languages
+from .Specializations import Specializations
 
 __all__ = [
     "db",
@@ -38,13 +39,14 @@ __all__ = [
     "Message",
     "DirectMessage",
     "Admin",
-    "DirectMessage",
     "MenteeApplication",
     "PartnerApplication",
     "Training",
     "PartnerProfile",
     "MentorApplication",
-    "Notifications"
+    "Notifications",
+    "Languages",
+    "Specializations",
 ]
 
 # You must import all of the new Models you create to this page

@@ -49,13 +49,19 @@ function MenteeProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [privacy, setPrivacy] = useState(true);
   const [isVideoValid, setIsVideoValid] = useState(true);
-  const isURL = (url) => {
-    const urlPattern =
-      /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
-
-    return url.match(urlPattern);
+  const [langMasters, setLangMasters] = useState([]);
+  const [specMasters, setSpecMasters] = useState([]);
+  const isValidVideoUrl = (url) => {
+    const videoUrlRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/|vimeo\.com\/)([a-zA-Z0-9_-]{11}|[0-9]+)(\S+)?$/;
+    return videoUrlRegex.test(url);
   };
   useEffect(() => {
+    async function getMasters() {
+      setLangMasters(await LANGUAGES());
+      setSpecMasters(await SPECIALIZATIONS());
+    }
+    getMasters();
     if (props.mentee) {
       setName(props.mentee.name);
       setAbout(props.mentee.biography);
@@ -300,8 +306,8 @@ function MenteeProfileModal(props) {
   }
 
   function handleVideoChange(e) {
-    if (isURL(e.target.value)) {
-      setVideoUrl(e.target.value);
+    setVideoUrl(e.target.value);
+    if (isValidVideoUrl(e.target.value)) {
       setEdited(true);
       setIsVideoValid(true);
     } else {
@@ -424,7 +430,7 @@ function MenteeProfileModal(props) {
       return;
     }
 
-    if (isValid.includes(false)) {
+    if (isValid.includes(false) || isVideoValid === false) {
       setValidate(true);
       return;
     }
@@ -604,7 +610,7 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLanguageChange}
                 placeholder="Ex. English, Spanish"
-                options={LANGUAGES}
+                options={langMasters}
                 value={languages}
                 valid={isValid[7]}
                 validate={validate}
@@ -619,7 +625,7 @@ function MenteeProfileModal(props) {
                 index={99}
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
-                options={SPECIALIZATIONS}
+                options={specMasters}
                 value={specializations}
                 valid={isValid[99]}
                 validate={validate}
@@ -683,6 +689,7 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleVideoChange}
                 placeholder="Paste Link"
+                value={videoUrl}
               />
             </div>
             <div className="no-favorites-text">

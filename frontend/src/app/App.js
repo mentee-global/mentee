@@ -31,6 +31,8 @@ import "components/css/Navigation.scss";
 import SocketComponent from "components/SocketComponent";
 import MentorProfileForm from "components/pages/MentorProfileForm";
 import { Trainings } from "components/Trainings";
+import { Languages } from "components/Languages";
+import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
 import PartnerGallery from "components/pages/PartnerGallery";
 
@@ -195,6 +197,26 @@ function App() {
             content={<Trainings />}
             needsAuth={true}
             page="trainings"
+          />
+        )}
+      />
+      <Route
+        path="/languages"
+        component={() => (
+          <Navigation
+            content={<Languages />}
+            needsAuth={true}
+            page="languages"
+          />
+        )}
+      />
+      <Route
+        path="/specializations"
+        component={() => (
+          <Navigation
+            content={<Specializations />}
+            needsAuth={true}
+            page="specializations"
           />
         )}
       />

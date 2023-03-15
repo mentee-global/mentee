@@ -1,16 +1,12 @@
-from functools import total_ordering
-from os import path
-from flask import Blueprint, request, jsonify
-from numpy import sort
+from flask import Blueprint, request
 from api.models import (
     MentorProfile,
     MenteeProfile,
-    Users,
     Message,
     DirectMessage,
     PartnerProfile,
 )
-from api.utils.request_utils import MessageForm, is_invalid_form, send_email
+from api.utils.request_utils import send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
 from api.core import create_response, logger
 import json

@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from api.core import create_response, logger
 from api.models import Training
 from datetime import datetime

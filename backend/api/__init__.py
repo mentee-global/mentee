@@ -5,9 +5,10 @@ import firebase_admin
 from flask import Flask, request
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_mongoengine import MongoEngine
 from flask_socketio import SocketIO
 
-from api.core import all_exception_handler
+from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
 
 load_dotenv()

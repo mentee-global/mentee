@@ -15,6 +15,8 @@ function MentorApplication(props) {
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
   const [cell, setCell] = useState(null);
+  const [numErr, setNumbErr] = useState(false);
+  const [email, setEmail] = useState(null);
   const [hearAbout, setHearAbout] = useState(null);
   const [pastLiveLocation, setpastLiveLocation] = useState(null);
   const [title, setTitle] = useState(null);
@@ -453,8 +455,10 @@ function MentorApplication(props) {
     );
   }
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
   function handleSubmit(event) {
     event.preventDefault();
+    console.log("dd");
 
     if (!verifyRequiredFieldsAreFilled()) return;
     if (props.headEmail === "") {
@@ -473,15 +477,15 @@ function MentorApplication(props) {
         employer_name: employer,
         companyTime: companyTime,
         role_description: title,
-        immigrant_status: immigrantStatus === "Yes" ? true : false,
+        immigrant_status: immigrantStatus == "Yes" ? true : false,
         languages: languages,
         specialistTime: specialistTime,
         referral: referral,
         knowledge_location: knowledgeLocation,
-        isColorPerson: isColorPerson === "Yes" ? true : false,
-        isMarginalized: isMarginalized === "Yes" ? true : false,
-        isFamilyNative: isFamilyNative === "Yes" ? true : false,
-        isEconomically: isEconomically === "Yes" ? true : false,
+        isColorPerson: isColorPerson == "Yes" ? true : false,
+        isMarginalized: isMarginalized == "Yes" ? true : false,
+        isFamilyNative: isFamilyNative == "Yes" ? true : false,
+        isEconomically: isEconomically == "Yes" ? true : false,
         identify: identify,
         pastLiveLocation: pastLiveLocation,
         date_submitted: new Date(),
@@ -491,6 +495,8 @@ function MentorApplication(props) {
       const res = await createApplication(data);
 
       if (res) {
+        setIsSubmitted(true);
+        console.log(res);
         props.submitHandler();
       } else {
         setSubmitError(true);

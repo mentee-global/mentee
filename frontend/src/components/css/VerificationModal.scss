@@ -1,42 +1,42 @@
 .verification-body {
-  height: 30%;
-  width: 55%;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-  margin: 24px 0px 24px 24px;
+    height: 30%;
+    width: 55%;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    margin: 24px 0px 24px 24px
 }
 
 @media only screen and (max-width: 600px) {
-  .verification-body {
-    width: 90%;
-    margin: 16px;
-  }
+    .verification-body {
+        width: 90%;
+        margin: 16px;
+    }
 }
 
 .verification-header {
-  margin-bottom: 16px;
+    margin-bottom: 16px;
 }
 
 .verification-input-container {
-  display: grid;
-  grid-auto-flow: row;
-  grid-row-gap: 8px;
+    display: grid;
+    grid-auto-flow: row;
+    grid-row-gap: 8px
 }
 
 .feedback-icon {
-  font-size: 24px;
-  margin-left: 8px;
-  fill: white;
+    font-size: 24px;
+    margin-left: 8px;
+    fill: white;
 }
 
 .verified-feedback {
-  display: flex;
-  font-weight: bold;
-  margin-left: 8px;
+    display: flex;
+    font-weight: bold;
+    margin-left: 8px;
 }
 
 .footer-container {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }

@@ -268,6 +268,13 @@ function AdminDataTable({ data, deleteAccount, isMentee, isPartner, mentors }) {
               <ImgCrop rotate aspect={5 / 3}>
                 <Upload
                   onChange={async (file) => {
+                    console.log(
+                      mentors[0]._id.$oid,
+                      mentors[0]._id.$oid == id,
+                      id,
+                      mentors[0].image.url,
+                      mentors.find((m) => m._id.$oid == id)?.image?.url
+                    );
                     setLoading(true);
                     if (isPartner) {
                       await uploadAccountImage(

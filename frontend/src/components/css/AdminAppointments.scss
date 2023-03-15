@@ -1,117 +1,117 @@
 @import "_app";
 
 .appointments-body {
-  padding: 22px;
-  background-color: $admin-appointment-body;
-  height: auto;
-  min-height: 100%;
-  font-family: Helvetica;
-  margin-bottom: 100px;
+	padding: 22px;
+	background-color: $admin-appointment-body;
+	height: auto;
+	min-height: 100%;
+	font-family: Helvetica;
+	margin-bottom: 100px;
 }
 
 .appointment-search {
-  width: 18em;
+	width: 18em;
 }
 
 .table-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 3em;
-  margin-top: 4em;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 3em;
+	margin-top: 4em;
 }
 
 .table-button-group > .table-button {
-  margin: 0px 1em;
-  color: black;
+	margin: 0px 1em;
+	color: black;
 }
 
 .card-container {
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 15px;
-  padding: 1em;
-  padding-left: 1em;
-  background-color: white;
-  height: 100%;
-  max-height: 300px;
-  cursor: grab;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 15px;
+	padding: 1em;
+	padding-left: 1em;
+	background-color: white;
+	height: 100%;
+	max-height: 300px;
+	cursor: grab;
 }
 
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  padding-left: 1em;
-  border-left: 1px solid #a58123;
+	display: flex;
+	justify-content: space-between;
+	padding-left: 1em;
+	border-left: 1px solid #a58123;
 }
 
 .card-date {
-  font-weight: bold;
-  color: #a58123;
+	font-weight: bold;
+	color: #a58123;
 }
 
 .card-status {
-  padding-left: 1em;
-  font-style: italic;
-  font-size: 0.8em;
+	padding-left: 1em;
+	font-style: italic;
+	font-size: 0.8em;
 }
 
 .card-mentor,
 .card-mentee,
 .card-topic {
-  padding-left: 1em;
-  margin: 5% 0em;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+	padding-left: 1em;
+	margin: 5% 0em;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .card-topic {
-  color: #a58123;
-  font-size: 0.9em;
+	color: #a58123;
+	font-size: 0.9em;
 }
 
 .modal-body {
-  padding: 1em 2em 2em 3em;
+	padding: 1em 2em 2em 3em;
 }
 
 .modal-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2em;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 2em;
 }
 
 .modal-date {
-  margin-top: 2em;
-  padding-left: 1em;
-  border-left: 1px solid #a58123;
-  height: fit-content;
-  font-weight: bold;
-  color: #a58123;
-  font-size: 1.3em;
+	margin-top: 2em;
+	padding-left: 1em;
+	border-left: 1px solid #a58123;
+	height: fit-content;
+	font-weight: bold;
+	color: #a58123;
+	font-size: 1.3em;
 }
 
 .modal-status {
-  font-style: italic;
-  font-size: 0.8em;
-  text-align: end;
-  margin-bottom: 0.6em;
+	font-style: italic;
+	font-size: 0.8em;
+	text-align: end;
+	margin-bottom: 0.6em;
 }
 
 .modal-info-body {
-  display: flex;
-  justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 
 .modal-info-header,
 .modal-info-text {
-  color: #7a7a7a;
+	color: #7a7a7a;
 }
 
 .modal-topic {
-  color: #a58123;
-  margin-top: 1em;
+	color: #a58123;
+	margin-top: 1em;
 }
 
 .modal-note {
-  margin-top: 3em;
-  width: 50%;
+	margin-top: 3em;
+	width: 50%;
 }

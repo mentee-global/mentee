@@ -57,6 +57,7 @@ function ApplicationOrganizer({ isMentor }) {
             type="dropdown-single"
             title={""}
             onChange={async (e) => {
+              console.log(record, id);
               const dataa = {
                 application_state: e,
               };

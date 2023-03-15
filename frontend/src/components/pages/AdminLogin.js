@@ -60,12 +60,15 @@ function AdminLogin() {
     setDisplaySelect(true);
   };
   const handleSelect = async (key) => {
+    console.log(key);
     let RoleObj = getRoleObject(key);
     if (RoleObj) {
+      console.log(RoleObj);
       setLoggingIn(true);
       setLoading(true);
       setError(false);
       const res = await login(email, password, RoleObj.type);
+      console.log(res?.result);
       setLoading(false);
 
       if (!res || !res.success) {

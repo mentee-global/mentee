@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
 from api.models import Users, VerifiedEmail, Admin

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.models import Availability, MentorProfile
-from api.core import create_response, logger
+from api.core import create_response, serialize_list, logger
 
 availability = Blueprint("availability", __name__)
 

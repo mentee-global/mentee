@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from sqlalchemy import true
 from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
+from bson import ObjectId
 from datetime import datetime
 
 from api.models import (

@@ -1,18 +1,24 @@
-from flask import Blueprint, request
+from functools import total_ordering
+from os import path
+from flask import Blueprint, request, jsonify
+from numpy import sort
 from api.models import (
     MentorProfile,
     MenteeProfile,
+    Users,
     Message,
     DirectMessage,
     PartnerProfile,
 )
-from api.utils.request_utils import send_email
+from api.utils.request_utils import MessageForm, is_invalid_form, send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
-from api.core import create_response, logger
+from api.core import create_response, serialize_list, logger
+from api.models import db
 import json
 from datetime import datetime
 from api import socketio
 from mongoengine.queryset.visitor import Q
+from flask_socketio import join_room, leave_room
 from urllib.parse import unquote
 
 
@@ -358,6 +364,7 @@ def get_direct_messages():
 
 @socketio.on("send")
 def chat(msg, methods=["POST"]):
+    # print("here")
     try:
         message = DirectMessage(
             body=msg["body"],
@@ -366,10 +373,12 @@ def chat(msg, methods=["POST"]):
             recipient_id=msg["recipient_id"],
             created_at=msg["time"],
         )
+        # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
 
     except Exception as e:
+        # msg="Invalid parameter provided"
         logger.info(e)
         return create_response(status=500, message="Failed to send message")
     try:
@@ -384,7 +393,9 @@ def chat(msg, methods=["POST"]):
 
 @socketio.on("invite")
 def invite(msg, methods=["POST"]):
+    print("inisdede new created inivte cintrlloererer")
     try:
+        # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         inviteObject = {
             "inviteeId": msg["sender_id"],
@@ -393,6 +404,7 @@ def invite(msg, methods=["POST"]):
         socketio.emit(msg["recipient_id"], inviteObject)
 
     except Exception as e:
+        # msg="Invalid parameter provided"
         logger.info(e)
         return create_response(status=500, message="Failed to send invite")
     try:

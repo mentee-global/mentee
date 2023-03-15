@@ -1,205 +1,217 @@
 @import "_app";
 
 .mentee-appointments-page {
-	display: flex;
+  display: flex;
 }
 
 .mentee-appts-section {
-	width: 70%;
-	padding-left: 2em;
-	margin-bottom: 2em;
+  width: 70%;
+  padding-left: 2em;
+  margin-bottom: 2em;
 }
 
 .mentee-appts-header {
-	margin-top: 4em;
-	font-size: large;
-	font-weight: bold;
+  margin-top: 4em;
+  font-size: large;
+  font-weight: bold;
 }
 
 .mentee-appts-container {
-	margin-top: 2em;
-	width: auto;
+  margin-top: 2em;
+  width: auto;
 }
 
 .mentee-appts-overlay-style {
-	color: black;
+  color: black;
 }
 
 .mentee-appt-card {
-	background: #ffecbd;
-	border-radius: 13px;
-	margin: 1.5em 10% 0 0;
-	padding: 1.7em 2.25em;
-	color: $appointments-date-text-block-color;
+  background: #ffecbd;
+  border-radius: 13px;
+  margin: 1.5em 10% 0 0;
+  padding: 1.7em 2.25em;
+  color: $appointments-date-text-block-color;
 }
 
 .mentee-appt-card-header {
-	font-size: 1.2em;
-	padding-left: 1em;
-	font-weight: bold;
-	color: black;
+  font-size: 1.2em;
+  padding-left: 1em;
+  font-weight: bold;
+  color: black;
 }
 
 .mentee-appt-card-header a {
-	color: black;
-	text-decoration: underline;
+  color: black;
+  text-decoration: underline;
 }
 
 .mentee-appt-card-time {
-	margin: 0.25em 0 1em 0;
-	padding-left: 1.25em;
-	line-height: normal;
+  margin: 0.25em 0 1em 0;
+  padding-left: 1.25em;
+  line-height: normal;
 }
 
 .mentee-appt-card-topic {
-	text-overflow: ellipsis;
+  text-overflow: ellipsis;
 }
 
 .status-section {
-	float: right;
-	display: flex;
-	margin-top: -10px;
+  float: right;
+  display: flex;
+  margin-top: -10px;
 }
 
 .status-denied,
 .status-accepted,
 .status-pending {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	align-self: center;
-	margin-left: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+  margin-left: 5px;
 }
 
 .status-denied {
-	background: #ff4d4f;
+  background: #ff4d4f;
 }
 
 .status-accepted {
-	background: #6fcf97;
+  background: #6fcf97;
 }
 
 .status-pending {
-	background: #ffdb6f;
+  background: #ffdb6f;
 }
 
 .mentee-bookmark-section {
-	width: 30%;
-	max-width: 400px;
-	height: fit-content;
-	background-color: #fff7e2;
-	border-radius: 7px;
-	margin: 2.5em 2em 4em 0;
+  width: 30%;
+  max-width: 400px;
+  height: fit-content;
+  background-color: #fff7e2;
+  border-radius: 7px;
+  margin: 2.5em 2em 4em 0;
 }
 
 .mentee-bookmark-add {
-	display: flex;
-	flex-direction: column;
-	padding: 10% 27.5%;
-	border-bottom: 0.5px solid $yellow-dot-color;
+  display: flex;
+  flex-direction: column;
+  padding: 10% 27.5%;
+  border-bottom: 0.5px solid $yellow-dot-color;
 }
 
 .mentee-bookmark-add img {
-	margin: 0em 0 1em 0;
+  margin: 0em 0 1em 0;
 }
 
 .mentee-bookmark-add Button {
-	height: 3em;
+  height: 3em;
 }
 
 .mentee-bookmark-header {
-	margin: 1em 1.5em;
-	font-size: 1.25em;
-	font-weight: bold;
+  margin: 1em 1.5em;
+  font-size: 1.25em;
+  font-weight: bold;
 }
 
 .mentee-bookmark-header span,
 .bookmark-heart {
-	color: $yellow-dot-color;
+  color: $yellow-dot-color;
 }
 
 .mentee-bookmark-display {
-	margin: 0 1.5em 3em 1.5em;
-	padding-top: 4px;
-	background: #ffffff;
-	border: 0.5px solid #e4bb4f;
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-	border-radius: 8px;
-	min-height: 4em;
+  margin: 0 1.5em 3em 1.5em;
+  padding-top: 4px;
+  background: #ffffff;
+  border: 0.5px solid #e4bb4f;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  min-height: 4em;
 }
 
 .mentee-bookmark-card {
-	display: flex;
-	align-items: center;
-	box-shadow: 14px 24px 3px -24px #e4bb4f;
-	padding: 10px 5px 10px 5px;
+  display: flex;
+  align-items: center;
+  box-shadow: 14px 24px 3px -24px #e4bb4f;
+  padding: 10px 5px 10px 5px;
 }
 
 .mentee-bookmark-mentor-info {
-	width: 100%;
-	margin-left: 5px;
-	line-height: 1em;
+  width: 100%;
+  margin-left: 5px;
+  line-height: 1em;
 }
 
 .mentee-bookmark-mentor-name {
-	font-weight: bold;
-	cursor: pointer;
-	width: fit-content;
+  font-weight: bold;
+  cursor: pointer;
+  width: fit-content;
 }
 
 .mentee-bookmark-mentor-title {
-	font-size: 0.75em;
-	color: #727272;
-	width: fit-content;
+  font-size: 0.75em;
+  color: #727272;
+  width: fit-content;
 }
 
 .bookmark-heart {
-	float: right;
-	margin: 0.5em 0.5em 0 0;
+  float: right;
+  margin: 0.5em 0.5em 0 0;
 }
 
 .bookmark-spin {
-	margin-top: 1.5em;
+  margin-top: 1.5em;
 }
 
 .no-favorites-text {
-	text-align: center;
+  text-align: center;
 }
 
 @media only screen and (max-width: 768px) {
-	.mentee-appointments-page {
-		flex-direction: column;
-	}
+  .mentee-appointments-page {
+    flex-direction: column;
+  }
 
-	.mentee-appts-section {
-		width: 100%;
-	}
-	.mentee-bookmark-section {
-		width: 100%;
-		margin: 0;
-		max-width: none;
-	}
-	.mentee-appt-card {
-		margin-right: 2em;
-		padding: 1em 1.5em;
-	}
-	.status-section {
-		float: none;
-	}
-	.mentee-appt-card-time,
-	.mentee-appt-card-header {
-		padding-left: 0;
-	}
+  .mentee-appts-section {
+    width: 100%;
+  }
+  .mentee-bookmark-section {
+    width: 100%;
+    margin: 0;
+    max-width: none;
+  }
+  .mentee-appt-card {
+    margin-right: 2em;
+    padding: 1em 1.5em;
+  }
+  .status-section {
+    float: none;
+  }
+  .mentee-appt-card-time,
+  .mentee-appt-card-header {
+    padding-left: 0;
+  }
 }
 
 @media only screen and (min-width: 1600px) {
-	.mentee-bookmark-section {
-		margin-left: auto;
-	}
+  .mentee-bookmark-section {
+    margin-left: auto;
+  }
 }
 .interest-modal {
-	height: 45vh !important;
+  height: 45vh !important;
 }
 .interest-modal .ant-modal-body {
-	height: 30vh !important;
+  height: 30vh !important;
+}
+.interest-modal {
+  height: 45vh !important;
+}
+.interest-modal .ant-modal-body {
+  height: 30vh !important;
+}
+.interest-modal {
+  height: 45vh !important;
+}
+.interest-modal .ant-modal-body {
+  height: 30vh !important;
 }

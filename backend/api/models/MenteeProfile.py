@@ -27,7 +27,6 @@ class MenteeProfile(Document, Mixin):
     favorite_mentors_ids = ListField(StringField())
     specializations = ListField(StringField())
 
-
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.firebase_uid} \n name: {self.name}
                 \n age: {self.age} gender: {self.gender}

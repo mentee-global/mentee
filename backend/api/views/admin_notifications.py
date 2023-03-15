@@ -1,30 +1,22 @@
-from flask import Blueprint, request, jsonify
-from api.core import create_response, logger
+from flask import Blueprint, request
+from api.core import create_response
 from api.models import Notifications
 from datetime import datetime
 from api.utils.require_auth import admin_only
 from datetime import datetime
-from flask import send_file
-from io import BytesIO
 
-Notificationss = Blueprint("Notificationss", __name__)  # initialize blueprint
+admin_notifications = Blueprint("admin_notifications", __name__)  # initialize blueprint
 
 
-@Notificationss.route("/", methods=["GET"])
+@admin_notifications.route("/", methods=["GET"])
 def get_notifys():
-    # try:
     notifys = Notifications.objects.order_by("-date_submitted")
-
-    # except:
-    #    msg = "notifys does not exist"
-    #    logger.info(msg)
-    #    return create_response(status=422, message=msg)
 
     return create_response(data={"notifys": notifys})
 
 
 #############################################################################
-@Notificationss.route("/<id>", methods=["GET"])
+@admin_notifications.route("/<id>", methods=["GET"])
 @admin_only
 def read_notify(id):
     try:
@@ -38,7 +30,7 @@ def read_notify(id):
 
 
 ################################################################################
-@Notificationss.route("/newNotify", methods=["POST"])
+@admin_notifications.route("/newNotify", methods=["POST"])
 @admin_only
 def new_notify():
     try:

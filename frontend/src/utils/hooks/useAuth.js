@@ -1,8 +1,7 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import firebase from "firebase";
 import { getIdTokenResult, logout } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
-import { useHistory } from "react-router-dom";
 
 const onAuthStateChanged = (f) => {
   const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -18,7 +17,6 @@ const onAuthStateChanged = (f) => {
 };
 
 const useAuth = () => {
-  const history = useHistory();
   const [roleState, setRoleState] = useState({
     role: ACCOUNT_TYPE.GUEST,
     isAdmin: false,

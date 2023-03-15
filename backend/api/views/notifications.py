@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask.globals import request
 from api.core import create_response, logger
 from flask import Blueprint
@@ -25,6 +23,7 @@ def get_unread_dm_count(id):
 
     return create_response(data={"notifications": notifications})
 
+
 @notifications.route("/unread_alert/<id>", methods=["GET"])
 def send_unread_alert(id):
     try:
@@ -37,20 +36,20 @@ def send_unread_alert(id):
             user_record = MenteeProfile.objects(Q(id=id)).first()
             if user_record is not None:
                 email = user_record.email
-                if 'phone_number' in user_record:
+                if "phone_number" in user_record:
                     phone_number = user_record.phone_number
             else:
                 user_record = MentorProfile.objects(Q(id=id)).first()
                 if user_record is not None:
                     email = user_record.email
-                    if 'phone_number' in user_record:
+                    if "phone_number" in user_record:
                         phone_number = user_record.phone_number
                 else:
                     user_record = PartnerProfile.objects(Q(id=id)).first()
                     if user_record is not None:
                         email = user_record.email
-                        if 'phone_number' in user_record:
-                            phone_number = user_record.phone_number                        
+                        if "phone_number" in user_record:
+                            phone_number = user_record.phone_number
             if user_record is not None:
                 if email is not None and user_record.email_notifications:
                     res, res_msg = send_email(
@@ -61,10 +60,12 @@ def send_unread_alert(id):
                     if not res:
                         msg = "Failed to send unread message alert email " + res_msg
                         logger.info(msg)
-                
+
                 if phone_number is not None and user_record.text_notifications:
                     res, res_msg = send_sms(
-                        text="You have received a new message on your Mentee Portal!\nYou have " + str(notifications_count) + " messages on your Mentee! messages inbox",
+                        text="You have received a new message on your Mentee Portal!\nYou have "
+                        + str(notifications_count)
+                        + " messages on your Mentee! messages inbox",
                         recipient=phone_number,
                     )
                     if not res:
@@ -77,6 +78,7 @@ def send_unread_alert(id):
         return create_response(status=422, message=msg)
 
     return create_response(status=200, message="Success")
+
 
 @notifications.route("/update", methods=["PUT"])
 def update_unread_count():
@@ -130,7 +132,6 @@ def send_weekly_emails():
                 logger.info(msg)
 
     for user in mentor_users:
-
         try:
             notifications_count = DirectMessage.objects(
                 Q(recipient_id=user.id) & Q(message_read=False)

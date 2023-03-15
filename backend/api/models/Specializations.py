@@ -9,6 +9,7 @@ class Specializations(Document, Mixin):
 
     name = StringField(required=True)
     updated_at = DateTimeField(required=True)
+
     def __repr__(self):
         return f"""<Specializations  : {self.name}
                 >"""

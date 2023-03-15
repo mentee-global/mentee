@@ -1,8 +1,7 @@
 from datetime import datetime
-import json
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
-from api.core import create_response, serialize_list, logger
+from api.core import create_response, logger
 from api.utils.request_utils import (
     ApppointmentForm,
     is_invalid_form,
@@ -149,7 +148,7 @@ def create_appointment():
 
     if mentor.text_notifications:
         res, res_msg = send_sms(
-            text="You received a new appointment request!\nCheckout https://mentee-global.vercel.app.com/",
+            text="You received a new appointment request!\nCheckout https://app.menteeglobal.org/",
             recipient=mentor.phone_number,
         )
 

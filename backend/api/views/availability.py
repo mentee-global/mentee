@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 from api.models import Availability, MentorProfile
-from api.core import create_response, serialize_list, logger
+from api.core import create_response, logger
 
 availability = Blueprint("availability", __name__)
+
 
 # Get request for avalability for a specific mentor
 @availability.route("/<id>", methods=["GET"])
 def get_availability(id):
-
     try:
         availability = MentorProfile.objects.get(id=id).availability
     except:

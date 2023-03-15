@@ -9,6 +9,7 @@ class Languages(Document, Mixin):
 
     name = StringField(required=True)
     updated_at = DateTimeField(required=True)
+
     def __repr__(self):
         return f"""<Languages  : {self.name}
                 >"""

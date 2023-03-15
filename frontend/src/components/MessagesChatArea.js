@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import Meta from "antd/lib/card/Meta";
 import { SendOutlined } from "@ant-design/icons";
-import useAuth from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 import { fetchAccountById, sendNotifyUnreadMessage } from "utils/api";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import socketInvite from "utils/socket";

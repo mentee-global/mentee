@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory, useLocation, NavLink } from "react-router-dom";
 import { Input } from "antd";
-import firebase from "firebase";
+import fireauth from "utils/fireauth";
 import { useDispatch } from "react-redux";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
@@ -116,7 +116,7 @@ function Login() {
             setLoading(false);
           }
           setPermissions(RoleObj.type);
-          const unsubscribe = firebase
+          const unsubscribe = fireauth
             .auth()
             .onAuthStateChanged(async (user) => {
               unsubscribe();

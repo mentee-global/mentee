@@ -9,7 +9,7 @@ import "../css/Gallery.scss";
 import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { editFavMentorById } from "../../utils/api";
-import useAuth from "../../utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 
 function Gallery() {
   const { isAdmin, isMentor, isMentee, profileId } = useAuth();
@@ -50,13 +50,13 @@ function Gallery() {
 
   useEffect(() => {
     async function getMentee() {
-      const mentee_id = await getMenteeID();
+      const mentee_id = profileId;
       const mentee_data = await fetchMenteeByID(mentee_id);
       if (mentee_data) {
         setMentee(mentee_data);
       }
     }
-    if (isMentee) {
+    if (isMentee && !mentee) {
       getMentee();
     }
   }, [isMentee]);
@@ -70,7 +70,7 @@ function Gallery() {
       setFavoriteMentorIds(fav_set);
       setPageLoaded(true);
     }
-    if (isMentee) {
+    if (isMentee && mentee) {
       initializeFavorites();
     }
   }, [mentee]);

@@ -1,5 +1,5 @@
 import axios from "axios";
-import firebase from "firebase";
+import fireauth from "./fireauth";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
 
 const instance = axios.create({
@@ -34,7 +34,7 @@ export const register = async (email, password, role) =>
   }).then(async (data) => {
     if (data && data.success) {
       const result = data.result;
-      await firebase
+      await fireauth
         .auth()
         .signInWithCustomToken(result.token)
         .then((userCredential) => {})
@@ -47,7 +47,7 @@ export const newRegister = async (data) =>
   await post("/newRegister", data).then(async (data) => {
     if (data && data.success) {
       const result = data.result;
-      await firebase
+      await fireauth
         .auth()
         .signInWithCustomToken(result.token)
         .then((userCredential) => {})
@@ -73,7 +73,7 @@ export const login = async (email, password, role) =>
     role: String(role) && String(role).trim(),
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
-      await firebase
+      await fireauth
         .auth()
         .signInWithCustomToken(data.result.token)
         .catch((error) => {});
@@ -83,7 +83,7 @@ export const login = async (email, password, role) =>
   });
 
 export const logout = async () =>
-  await firebase
+  await fireauth
     .auth()
     .signOut()
     .catch((error) => {
@@ -104,7 +104,7 @@ export const refreshToken = async () => {
           role: await getRole(),
         }).then((data) => data && data.result.token);
 
-        await firebase.auth().signInWithCustomToken(token);
+        await fireauth.auth().signInWithCustomToken(token);
 
         return token;
       });
@@ -112,7 +112,7 @@ export const refreshToken = async () => {
 };
 
 export const getCurrentUser = () => {
-  return firebase.auth().currentUser;
+  return fireauth.auth().currentUser;
 };
 
 export const isUserAdmin = async () => {

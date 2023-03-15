@@ -1,10 +1,21 @@
-import { useState, useEffect } from "react";
-import firebase from "firebase";
+import React, { useState, useEffect, useContext, createContext } from "react";
+import fireauth from "utils/fireauth";
 import { getIdTokenResult, logout } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
 
+const authContext = createContext();
+
+export function ProvideAuth({ children }) {
+  const auth = useProvideAuth();
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+}
+
+export const useAuth = () => {
+  return useContext(authContext);
+};
+
 const onAuthStateChanged = (f) => {
-  const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+  const unsubscribe = fireauth.auth().onAuthStateChanged((user) => {
     if (user === null) {
       logout();
       unsubscribe();
@@ -16,7 +27,8 @@ const onAuthStateChanged = (f) => {
   });
 };
 
-const useAuth = () => {
+// Provider hook that creates auth object and handles state
+function useProvideAuth() {
   const [roleState, setRoleState] = useState({
     role: ACCOUNT_TYPE.GUEST,
     isAdmin: false,
@@ -40,10 +52,13 @@ const useAuth = () => {
     });
   };
 
-  // setup listener
+  // Subscribe to user on mount
+  // Because this sets state in the callback it will cause any ...
+  // ... component that utilizes this hook to re-render with the ...
+  // ... latest auth object.
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user) return;
+    const unsubscribe = fireauth.auth().onAuthStateChanged(async (user) => {
+      if (!user);
 
       await getIdTokenResult(true)
         .then((idTokenResult) => {
@@ -61,8 +76,10 @@ const useAuth = () => {
         })
         .catch(() => Promise.resolve(null).then(onAuthUpdate));
     });
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
-
+  // Return the user object and auth methods
   return {
     role: roleState.role,
     isAdmin: roleState.isAdmin,
@@ -74,6 +91,4 @@ const useAuth = () => {
     onAuthUpdate,
     onAuthStateChanged,
   };
-};
-
-export default useAuth;
+}

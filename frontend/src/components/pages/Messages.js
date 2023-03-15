@@ -27,25 +27,23 @@ function Messages(props) {
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
 
   const messageListener = (data) => {
+    async function fetchLatest() {
+      const data = await getLatestMessages(profileId);
+      setLatestConvos(data);
+    }
+    fetchLatest();
     if (data.allowBooking === "true") {
       setBookingVisible(true);
       setinviteeId(data.inviteeId);
-    } else {
-      if (data?.sender_id?.$oid == activeMessageId) {
-        setMessages((prevMessages) => [...prevMessages, data]);
-        dispatch(
-          updateNotificationsCount({
-            recipient: profileId,
-            sender: data.sender_id.$oid,
-          })
-        );
-      } else {
-        async function fetchLatest() {
-          const data = await getLatestMessages(profileId);
-          setLatestConvos(data);
-        }
-        fetchLatest();
-      }
+    }
+    if (data?.sender_id?.$oid === activeMessageId) {
+      setMessages((prevMessages) => [...prevMessages, data]);
+      dispatch(
+        updateNotificationsCount({
+          recipient: profileId,
+          sender: data.sender_id.$oid,
+        })
+      );
     }
   };
 
@@ -56,7 +54,7 @@ function Messages(props) {
         socket.off(profileId, messageListener);
       };
     }
-  }, [socket, profileId]);
+  }, [socket, profileId, activeMessageId]);
 
   useEffect(() => {
     async function getData() {

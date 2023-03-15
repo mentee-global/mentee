@@ -43,7 +43,7 @@ function MessagesSidebar(props) {
             if (
               chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())
             ) {
-              if (chat.otherId == activeMessageId) {
+              if (chat.otherId === activeMessageId) {
                 return (
                   <MessageCard key={chat.otherId} chat={chat} active={true} />
                 );

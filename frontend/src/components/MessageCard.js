@@ -3,6 +3,7 @@ import { Avatar, Card } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import Meta from "antd/lib/card/Meta";
 import { updateNotificationsCount } from "features/notificationsSlice";
+import { setActiveMessageId } from "features/messagesSlice";
 import { useHistory } from "react-router";
 import { fetchAccountById } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -19,6 +20,7 @@ function MessageCard(props) {
     dispatch(
       updateNotificationsCount({ recipient: thisUserId, sender: otherId })
     );
+    dispatch(setActiveMessageId({ activeMessageId: thisUserId }));
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);
   };
 

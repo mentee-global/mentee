@@ -1,7 +1,7 @@
 @import "_app";
 
 .navigation-layout {
-  height: 100vh;
+  height: calc(100vh - 88px);
 }
 
 .navigation-content {

@@ -10,10 +10,11 @@ from flask_socketio import SocketIO
 
 from api.core import all_exception_handler, logger
 from dotenv import load_dotenv
-#import certifi
-#ca=certifi.where()
+
 load_dotenv()
 socketio = SocketIO(cors_allowed_origins="*")
+
+
 class RequestFormatter(logging.Formatter):
     def format(self, record):
         record.url = request.url
@@ -22,7 +23,7 @@ class RequestFormatter(logging.Formatter):
 
 
 # why we use application factories http://flask.pocoo.org/docs/1.0/patterns/appfactories/#app-factories
-def create_app(test_config=None):
+def create_app():
     """
     The flask application factory. To run the app somewhere else you can:
     ```
@@ -64,9 +65,6 @@ def create_app(test_config=None):
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-    # app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017}
-    #tlsCAFile
-    #app.config["MONGODB_SETTINGS"]={  'db': 'mentee','host': 'localhost','port': 27017,'tlsCAFile':ca}
 
     # firebase
     if not firebase_admin._apps:
@@ -106,7 +104,9 @@ def create_app(test_config=None):
     app.register_blueprint(verify.verify, url_prefix="/api")
     app.register_blueprint(apply.apply, url_prefix="/api/application")
     app.register_blueprint(training.training, url_prefix="/api/training")
-    app.register_blueprint(adminNotifications.Notificationss, url_prefix="/api/notifys")
+    app.register_blueprint(
+        admin_notifications.admin_notifications, url_prefix="/api/notifys"
+    )
     app.register_blueprint(admin.admin, url_prefix="/api")
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")
@@ -126,4 +126,5 @@ def create_app(test_config=None):
         return app.send_static_file("index.html")
 
     socketio.init_app(app)
+
     return app

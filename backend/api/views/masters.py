@@ -3,7 +3,15 @@ from datetime import datetime
 from flask.globals import request
 from api.core import create_response, logger
 from flask import Blueprint
-from api.models import Languages, Specializations, MentorProfile, MenteeProfile, MentorApplication, MenteeApplication, NewMentorApplication
+from api.models import (
+    Languages,
+    Specializations,
+    MentorProfile,
+    MenteeProfile,
+    MentorApplication,
+    MenteeApplication,
+    NewMentorApplication,
+)
 from api.utils.require_auth import admin_only
 from pymongo import collation
 
@@ -12,7 +20,9 @@ masters = Blueprint("masters", __name__)
 @masters.route("/languages", methods=["GET"])
 def getLanguages():
     try:
-        languages = Languages.objects.order_by('name').collation(collation.Collation('en', strength=2))
+        languages = Languages.objects.order_by("name").collation(
+            collation.Collation("en", strength=2)
+        )
     except Exception as e:
         msg = "Get Languages error"
         logger.info(e)
@@ -65,26 +75,36 @@ def edit_language_by_id(id):
     mentors = MentorProfile.objects(languages__in=[lang_name])
     for mentor in mentors:
         new_langs = mentor.languages
-        new_langs = list(map(lambda x: x.replace(lang_name, request.form['name']), new_langs))
+        new_langs = list(
+            map(lambda x: x.replace(lang_name, request.form["name"]), new_langs)
+        )
         mentor.languages = new_langs
         mentor.save()
     mentees = MenteeProfile.objects(languages__in=[lang_name])
     for mentee in mentees:
         new_langs = mentee.languages
-        new_langs = list(map(lambda x: x.replace(lang_name, request.form['name']), new_langs))
+        new_langs = list(
+            map(lambda x: x.replace(lang_name, request.form["name"]), new_langs)
+        )
         mentee.languages = new_langs
         mentee.save()
-    
-    MentorApplication.objects(languages=lang_name).update(set__languages=request.form['name'])
-    MenteeApplication.objects(language=lang_name).update(set__language=request.form['name'])
-    NewMentorApplication.objects(languages=lang_name).update(set__languages=request.form['name'])
-    record.name=request.form['name']
+
+    MentorApplication.objects(languages=lang_name).update(
+        set__languages=request.form["name"]
+    )
+    MenteeApplication.objects(language=lang_name).update(
+        set__language=request.form["name"]
+    )
+    NewMentorApplication.objects(languages=lang_name).update(
+        set__languages=request.form["name"]
+    )
+    record.name = request.form["name"]
     record.updated_at = datetime.now()
     record.save()
-    #except:    
+    # except:
     #   return create_response(status=422, message="training not found")
 
-    return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={"result": record})
 
 ######################################################################
 @masters.route("/languages", methods=["POST"])
@@ -107,7 +127,9 @@ def new_language():
 @masters.route("/specializations", methods=["GET"])
 def getSpecializations():
     try:
-        specializations = Specializations.objects.order_by('name').collation(collation.Collation('en', strength=2))
+        specializations = Specializations.objects.order_by("name").collation(
+            collation.Collation("en", strength=2)
+        )
     except Exception as e:
         msg = "Get Specializations error"
         logger.info(e)
@@ -167,36 +189,41 @@ def edit_specialization_by_id(id):
     mentors = MentorProfile.objects(specializations__in=[prev_name])
     for mentor in mentors:
         new_specs = mentor.specializations
-        new_specs = list(map(lambda x: x.replace(prev_name, request.form['name']), new_specs))
+        new_specs = list(
+            map(lambda x: x.replace(prev_name, request.form["name"]), new_specs)
+        )
         mentor.specializations = new_specs
         mentor.save()
     mentees = MenteeProfile.objects(specializations__in=[prev_name])
     for mentee in mentees:
         new_specs = mentee.specializations
-        new_specs = list(map(lambda x: x.replace(prev_name, request.form['name']), new_specs))
+        new_specs = list(
+            map(lambda x: x.replace(prev_name, request.form["name"]), new_specs)
+        )
         mentee.specializations = new_specs
         mentee.save()
     mentor_apps = MentorApplication.objects(specializations__in=[prev_name])
     for mentor_app in mentor_apps:
         new_specs = mentor_app.specializations
-        new_specs = list(map(lambda x: x.replace(prev_name, request.form['name']), new_specs))
+        new_specs = list(
+            map(lambda x: x.replace(prev_name, request.form["name"]), new_specs)
+        )
         mentor_app.specializations = new_specs
         mentor_app.save()
 
-    record.name=request.form['name']
+    record.name = request.form["name"]
     record.updated_at = datetime.now()
 
     record.save()
-    #except:    
+    # except:
     #   return create_response(status=422, message="training not found")
 
-    return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={"result": record})
 
 ######################################################################
 @masters.route("/specializations", methods=["POST"])
 @admin_only
-def new_specailization():
-
+def new_specailization():  
     #try:
         name=request.form['name']
         record=Specializations(

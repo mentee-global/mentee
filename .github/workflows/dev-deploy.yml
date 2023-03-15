@@ -21,11 +21,11 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.3.0
 
       # Run yarn build
       - name: run yarn build
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: "16"
           check-latest: true
@@ -40,7 +40,7 @@ jobs:
         run: yarn install && yarn run build
 
       - name: save build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: frontend-build
           path: ${{ github.workspace }}/frontend/build
@@ -51,17 +51,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.3.0
 
       - name: Downloading build artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: frontend-build
           # Use the path artifacts because frontend/build is in gitignore
           path: ${{ github.workspace }}/frontend/artifacts
 
       - name: Deploy to Heroku
-        uses: AkhileshNS/heroku-deploy@v3.8.8
+        uses: AkhileshNS/heroku-deploy@v3.12.13
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "mentee-dev"

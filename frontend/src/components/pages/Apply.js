@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../../components/css/Apply.scss";
-import { Steps, Form, Input, Radio, Checkbox, LeftOutlined } from "antd";
+import { Input, Radio } from "antd";
 import { ACCOUNT_TYPE } from "utils/consts";
 import ApplyStep from "../../resources/applystep.png";
 import ApplyStep2 from "../../resources/applystep2.png";
 import {
   getAppState,
-  fetchApplications,
   isHaveAccount,
   changeStateBuildProfile,
-  isHaveProfilee,
 } from "../../utils/api";
 import ProfileStep from "../../resources/profilestep.png";
 import ProfileStep2 from "../../resources/profilestep2.png";
@@ -17,13 +15,11 @@ import TrianStep from "../../resources/trainstep.png";
 import TrianStep2 from "../../resources/trainstep2.png";
 import MentorApplication from "./MentorApplication";
 import MenteeApplication from "./MenteeApplication";
-import PartnerApplication from "./PartnerApplication";
 import TrainingList from "components/TrainingList";
 import MentorProfileForm from "./MentorProfileForm";
 import MenteeProfileForm from "./MenteeProfileForm";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
-import { AccountBookFilled } from "@ant-design/icons";
 import PartnerProfileForm from "components/PartnerProfileForm";
 import { validate } from "email-validator";
 
@@ -68,14 +64,14 @@ const Apply = () => {
           );
           setIsVerify(isVerified);
           setishavee(isHave);
-          if (isHave == true && isHaveProfile == true) {
+          if (isHave === true && isHaveProfile === true) {
             setIsprofile(true);
             setishavee(true);
             setTimeout(() => {
               history.push("/login");
             }, 2000);
             return;
-          } else if (isHave == true && isHaveProfile == false) {
+          } else if (isHave === true && isHaveProfile === false) {
             if (location.state) {
               setIsprofile(false);
               setishavee(true);
@@ -86,42 +82,38 @@ const Apply = () => {
               return;
             }
           }
-          if (role == ACCOUNT_TYPE.PARTNER && isVerified) {
+          if (role === ACCOUNT_TYPE.PARTNER && isVerified) {
             setIsApply(false);
             setIstrain(false);
             setIsBuild(true);
             setApproveTrainning(true);
             return;
-          } else if (role == ACCOUNT_TYPE.PARTNER && !isVerified) {
+          } else if (role === ACCOUNT_TYPE.PARTNER && !isVerified) {
             setIsApply(false);
             setIstrain(false);
             setIsBuild(false);
             return;
-          } else if (role != ACCOUNT_TYPE.PARTNER && isVerified) {
+          } else if (role !== ACCOUNT_TYPE.PARTNER && isVerified) {
             setIsApply(false);
             setIstrain(false);
             setIsBuild(true);
             return;
           } else {
             const state = await getAppState(email, role);
-            console.log(state, "here");
-            console.log(state === "APPROVED");
             if (state === "PENDING") {
               setConfirmApply(true);
               setApproveApply(false);
-            } else if (state == "APPROVED") {
-              console.log("wal3");
+            } else if (state === "APPROVED") {
               setApproveApply(true);
               setConfirmApply(false);
               setIsApply(false);
               setIstrain(true);
-            } else if (state == "BuildProfile") {
+            } else if (state === "BuildProfile") {
               setIsApply(false);
               setIstrain(false);
               setIsBuild(true);
               setApproveTrainning(true);
             } else {
-              console.log("here");
               setConfirmApply(false);
               setApproveApply(false);
               setIsApply(true);
@@ -159,7 +151,7 @@ const Apply = () => {
           }}
         />
       </div>
-      {ishavee && isProfile == true && (
+      {ishavee && isProfile === true && (
         <p className="error">
           You Already have account you will be redirect to login page
         </p>
@@ -219,7 +211,7 @@ const Apply = () => {
         />
       </div>
       {err ? <p className="error">Email Required</p> : ""}
-      {role == ACCOUNT_TYPE.PARTNER && !isVerify ? (
+      {role === ACCOUNT_TYPE.PARTNER && !isVerify ? (
         <h1 className="applymessage">
           Your email is not pre-registered as a Partner. Please contact an
           administrator admin@menteeglobal.org
@@ -232,7 +224,7 @@ const Apply = () => {
         className={
           (isapply && (confirmApply || approveApply)) ||
           !role ||
-          (role == ACCOUNT_TYPE.PARTNER && !isVerify)
+          (role === ACCOUNT_TYPE.PARTNER && !isVerify)
             ? ""
             : "formsPart"
         }
@@ -324,7 +316,7 @@ const Apply = () => {
             className={`applySubmit2 ${istrain ? "" : " hide"}`}
             onClick={async () => {
               let state = await changeStateBuildProfile(email, role);
-              if (state == "BuildProfile") {
+              if (state === "BuildProfile") {
                 setIsApply(false);
                 setIsBuild(true);
                 setIstrain(false);

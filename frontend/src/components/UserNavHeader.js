@@ -20,7 +20,6 @@ function UserNavHeader() {
   const history = useHistory();
   const { onAuthStateChanged, resetRoleState, profileId, role } = useAuth();
   const [user, setUser] = useState();
-  console.log(role);
 
   useEffect(() => {
     async function getUser() {
@@ -29,7 +28,6 @@ function UserNavHeader() {
         setUser(userData);
       }
     }
-    console.log(role);
 
     // Don't fetch if guest
     if (role == ACCOUNT_TYPE.GUEST || user) return;

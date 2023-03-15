@@ -307,10 +307,9 @@ export const Trainings = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let dataa = await getTrainings(role);
-      if (dataa) {
-        console.log(data);
-        setData(dataa);
+      let newData = await getTrainings(role);
+      if (newData) {
+        setData(newData);
       } else {
         setErr(true);
       }

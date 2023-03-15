@@ -1,5 +1,5 @@
 from api.core import create_response, logger
-from api.models import MentorProfile,MenteeProfile
+from api.models import MentorProfile, MenteeProfile
 from flask import Blueprint, request
 from api.utils.constants import Account
 

@@ -9,7 +9,7 @@ import "../css/Gallery.scss";
 import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { editFavMentorById } from "../../utils/api";
-import {useAuth} from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 
 function Gallery() {
   const { isAdmin, isMentor, isMentee, profileId } = useAuth();

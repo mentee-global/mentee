@@ -44,11 +44,7 @@ function SelectLogin({
               handleSelect("mentor");
             }}
           >
-            <img
-              src={MentorImage}
-              alt="Mentor"
-              className="mentor-image"
-            />
+            <img src={MentorImage} alt="Mentor" className="mentor-image" />
             <div className="select-text">Mentor</div>
           </div>
           <div

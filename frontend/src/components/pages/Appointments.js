@@ -21,7 +21,7 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import { getIdTokenResult, getMenteeID, getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
-import {useAuth} from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 import { fetchUser } from "features/userSlice";
 
 const Tabs = Object.freeze({

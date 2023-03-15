@@ -11,7 +11,7 @@ import {
 import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, MENTOR_PROFILE } from "utils/consts";
 import OverlaySelect from "components/OverlaySelect";
-import {useAuth} from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 import BookmarkSidebar from "components/BookmarkSidebar";
 import MenteeInterestModal from "components/MenteeInterestModal";
 import "components/css/MenteeAppointments.scss";

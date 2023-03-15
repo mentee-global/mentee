@@ -6,7 +6,7 @@ import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
-import {useAuth} from "../../utils/hooks/useAuth";
+import { useAuth } from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
 import { REGIONS, SDGS } from "utils/consts";
 

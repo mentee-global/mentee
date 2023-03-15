@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext, createContext } from "react";
 import fireauth from "utils/fireauth";
 import { getIdTokenResult, logout } from "utils/auth.service";

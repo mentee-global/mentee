@@ -12,7 +12,7 @@ import AdminAppointmentCard from "../AdminAppointmentCard";
 import AdminAppointmentModal from "components/AdminAppointmentModal";
 import "../css/AdminAppointments.scss";
 import { SPECIALIZATIONS } from "utils/consts";
-import {useAuth} from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 
 const keys = {
   ASCENDING: 0,

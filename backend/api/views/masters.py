@@ -17,6 +17,7 @@ from pymongo import collation
 
 masters = Blueprint("masters", __name__)
 
+
 @masters.route("/languages", methods=["GET"])
 def getLanguages():
     try:
@@ -30,23 +31,23 @@ def getLanguages():
 
     return create_response(data={"result": languages})
 
+
 @masters.route("/languages/<string:id>", methods=["GET"])
 @admin_only
 def get_language(id):
-
     try:
-        record=Languages.objects.get(id=id)
-    except:    
+        record = Languages.objects.get(id=id)
+    except:
         return create_response(status=422, message="Languages not found")
 
-    return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={"result": record})
+
 
 @masters.route("/languages/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_language(id):
-
     try:
-        language=Languages.objects.get(id=id)
+        language = Languages.objects.get(id=id)
         # lang_name = language.name
         # mentors = MentorProfile.objects(languages__in=[lang_name])
         # for mentor in mentors:
@@ -61,15 +62,16 @@ def delete_language(id):
         #     mentee.languages = new_langs
         #     mentee.save()
         language.delete()
-    except:    
+    except:
         return create_response(status=422, message="language not found")
 
     return create_response(status=200, message="Successful deletion")
 
+
 @masters.route("/languages/<string:id>", methods=["PUT"])
 @admin_only
 def edit_language_by_id(id):
-    record=Languages.objects.get(id=id)
+    record = Languages.objects.get(id=id)
     lang_name = record.name
     mentors = MentorProfile.objects(languages__in=[lang_name])
     for mentor in mentors:
@@ -103,20 +105,18 @@ def edit_language_by_id(id):
 
     return create_response(status=200, data={"result": record})
 
+
 ######################################################################
 @masters.route("/languages", methods=["POST"])
 @admin_only
 def new_language():
-    
-    name=request.form['name']
-    record=Languages(
-        name=name,
-        updated_at=datetime.now()
-    )
+    name = request.form["name"]
+    record = Languages(name=name, updated_at=datetime.now())
 
     record.save()
 
-    return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={"result": record})
+
 
 @masters.route("/specializations", methods=["GET"])
 def getSpecializations():
@@ -131,23 +131,23 @@ def getSpecializations():
 
     return create_response(data={"result": specializations})
 
+
 @masters.route("/specializations/<string:id>", methods=["GET"])
 @admin_only
 def get_specialization(id):
-
     try:
-        record=Specializations.objects.get(id=id)
-    except:    
+        record = Specializations.objects.get(id=id)
+    except:
         return create_response(status=422, message="Specializations not found")
 
-    return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={"result": record})
+
 
 @masters.route("specializations/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_specializations(id):
-
     try:
-        specializations=Specializations.objects.get(id=id)
+        specializations = Specializations.objects.get(id=id)
         # prev_name = specializations.name
         # mentors = MentorProfile.objects(specializations__in=[prev_name])
         # for mentor in mentors:
@@ -174,10 +174,11 @@ def delete_specializations(id):
 
     return create_response(status=200, message="Successful deletion")
 
+
 @masters.route("/specializations/<string:id>", methods=["PUT"])
 @admin_only
 def edit_specialization_by_id(id):
-    record=Specializations.objects.get(id=id)
+    record = Specializations.objects.get(id=id)
     prev_name = record.name
     mentors = MentorProfile.objects(specializations__in=[prev_name])
     for mentor in mentors:
@@ -211,17 +212,14 @@ def edit_specialization_by_id(id):
 
     return create_response(status=200, data={"result": record})
 
+
 ######################################################################
 @masters.route("/specializations", methods=["POST"])
 @admin_only
-def new_specailization():  
-    
-    name=request.form['name']
-    record=Specializations(
-        name=name,
-        updated_at=datetime.now()
-    )
+def new_specailization():
+    name = request.form["name"]
+    record = Specializations(name=name, updated_at=datetime.now())
 
     record.save()
 
-    return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={"result": record})

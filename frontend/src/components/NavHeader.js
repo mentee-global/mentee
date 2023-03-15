@@ -24,7 +24,7 @@ import {
   markNotifyReaded,
   newNotify,
 } from "utils/api";
-import useAuth from "../utils/hooks/useAuth";
+import { useAuth } from "../utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";
 import { getAdminID } from "utils/auth.service";

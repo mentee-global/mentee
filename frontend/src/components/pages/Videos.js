@@ -8,7 +8,7 @@ import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import { updateAndFetchUser } from "features/userSlice";
 import { ACCOUNT_TYPE } from "utils/consts.js";
-import useAuth from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 import "../css/Videos.scss";
 
 function Videos() {

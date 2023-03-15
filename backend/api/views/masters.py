@@ -71,7 +71,6 @@ def delete_language(id):
 @masters.route("/languages/<string:id>", methods=["PUT"])
 @admin_only
 def edit_language_by_id(id):
-    # try:
     record = Languages.objects.get(id=id)
     lang_name = record.name
     mentors = MentorProfile.objects(languages__in=[lang_name])
@@ -81,6 +80,8 @@ def edit_language_by_id(id):
             map(lambda x: x.replace(lang_name, request.form["name"]), new_langs)
         )
         mentor.languages = new_langs
+        if "taking_appointments" not in mentor:
+            mentor.taking_appointments = False
         mentor.save()
     mentees = MenteeProfile.objects(languages__in=[lang_name])
     for mentee in mentees:
@@ -103,8 +104,6 @@ def edit_language_by_id(id):
     record.name = request.form["name"]
     record.updated_at = datetime.now()
     record.save()
-    # except:
-    #   return create_response(status=422, message="training not found")
 
     return create_response(status=200, data={"result": record})
 
@@ -113,13 +112,10 @@ def edit_language_by_id(id):
 @masters.route("/languages", methods=["POST"])
 @admin_only
 def new_language():
-    # try:
     name = request.form["name"]
     record = Languages(name=name, updated_at=datetime.now())
 
     record.save()
-    # except:
-    #    return create_response(status=401, message="missing parameters")
 
     return create_response(status=200, data={"result": record})
 
@@ -184,7 +180,6 @@ def delete_specializations(id):
 @masters.route("/specializations/<string:id>", methods=["PUT"])
 @admin_only
 def edit_specialization_by_id(id):
-    # try:
     record = Specializations.objects.get(id=id)
     prev_name = record.name
     mentors = MentorProfile.objects(specializations__in=[prev_name])
@@ -194,6 +189,8 @@ def edit_specialization_by_id(id):
             map(lambda x: x.replace(prev_name, request.form["name"]), new_specs)
         )
         mentor.specializations = new_specs
+        if "taking_appointments" not in mentor:
+            mentor.taking_appointments = False
         mentor.save()
     mentees = MenteeProfile.objects(specializations__in=[prev_name])
     for mentee in mentees:
@@ -216,8 +213,6 @@ def edit_specialization_by_id(id):
     record.updated_at = datetime.now()
 
     record.save()
-    # except:
-    #   return create_response(status=422, message="training not found")
 
     return create_response(status=200, data={"result": record})
 
@@ -226,12 +221,9 @@ def edit_specialization_by_id(id):
 @masters.route("/specializations", methods=["POST"])
 @admin_only
 def new_specailization():
-    # try:
     name = request.form["name"]
     record = Specializations(name=name, updated_at=datetime.now())
 
     record.save()
-    # except:
-    #    return create_response(status=401, message="missing parameters")
 
     return create_response(status=200, data={"result": record})

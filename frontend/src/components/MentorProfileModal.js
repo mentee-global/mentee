@@ -11,16 +11,17 @@ import {
 } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
 import { editMentorProfile, uploadMentorImage } from "../utils/api";
-import { getMentorID } from "../utils/auth.service";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
+import { useAuth } from "utils/hooks/useAuth";
 import { MENTEE_DEFAULT_VIDEO_NAME } from "utils/consts";
 import moment from "moment";
 
 const INITIAL_NUM_INPUTS = 14;
 
 function MentorProfileModal(props) {
+  const { profileId } = useAuth()
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(
@@ -417,11 +418,11 @@ function MentorProfileModal(props) {
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      const mentorID = await getMentorID();
+      const mentorID = profileId;
       await editMentorProfile(data, mentorID);
 
       if (changedImage) {
-        await uploadMentorImage(image, await getMentorID());
+        await uploadMentorImage(image, mentorID);
       }
 
       setSaving(false);

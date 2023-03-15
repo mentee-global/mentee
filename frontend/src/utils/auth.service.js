@@ -158,44 +158,44 @@ export const getRole = async () => {
   }
 };
 
-export const getMentorID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role === ACCOUNT_TYPE.MENTOR) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  }
-};
+// export const getMentorID = async () => {
+//   if (isLoggedIn()) {
+//     return await getIdTokenResult().then((idTokenResult) => {
+//       if (idTokenResult.claims.role === ACCOUNT_TYPE.MENTOR) {
+//         return idTokenResult.claims.profileId;
+//       }
+//     });
+//   }
+// };
 
-export const getMenteeID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role === ACCOUNT_TYPE.MENTEE) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  }
-};
+// export const getMenteeID = async () => {
+//   if (isLoggedIn()) {
+//     return await getIdTokenResult().then((idTokenResult) => {
+//       if (idTokenResult.claims.role === ACCOUNT_TYPE.MENTEE) {
+//         return idTokenResult.claims.profileId;
+//       }
+//     });
+//   }
+// };
 
-export const getAdminID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role === ACCOUNT_TYPE.ADMIN) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  } else return false;
-};
-export const getPartnerID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role === ACCOUNT_TYPE.PARTNER) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  } else return false;
-};
+// export const getAdminID = async () => {
+//   if (isLoggedIn()) {
+//     return await getIdTokenResult().then((idTokenResult) => {
+//       if (idTokenResult.claims.role === ACCOUNT_TYPE.ADMIN) {
+//         return idTokenResult.claims.profileId;
+//       }
+//     });
+//   } else return false;
+// };
+// export const getPartnerID = async () => {
+//   if (isLoggedIn()) {
+//     return await getIdTokenResult().then((idTokenResult) => {
+//       if (idTokenResult.claims.role === ACCOUNT_TYPE.PARTNER) {
+//         return idTokenResult.claims.profileId;
+//       }
+//     });
+//   } else return false;
+// };
 
 export const isLoggedIn = () => {
   return Boolean(getCurrentUser());

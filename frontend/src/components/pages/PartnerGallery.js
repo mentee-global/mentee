@@ -1,22 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchPartners } from "../../utils/api";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { useAuth } from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
 import { REGIONS, SDGS } from "utils/consts";
 
 function PartnerGallery() {
-  const { isAdmin, isPartner, profileId } = useAuth();
+  const { isAdmin, isPartner } = useAuth();
   const [partners, setPartners] = useState([]);
   const [regions, setRegions] = useState([]);
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
-  const location = useLocation();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [query2, setQuery2] = useState();
   const [sdgs, setSdgs] = useState([]);

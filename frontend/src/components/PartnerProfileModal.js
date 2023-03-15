@@ -4,14 +4,12 @@ import ImgCrop from "antd-img-crop";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
-import { REGIONS, regions, SDGS } from "../utils/consts";
+import { REGIONS, SDGS } from "../utils/consts";
 import {
-  editMentorProfile,
   editPartnerProfile,
-  uploadMentorImage,
   uploadPartnerImage,
 } from "../utils/api";
-import { getPartnerID } from "../utils/auth.service";
+import { useAuth } from "utils/hooks/useAuth"
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
@@ -41,6 +39,7 @@ function PartnerProfileModal(props) {
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
+  const { profileId } = useAuth()
 
   useEffect(() => {
     if (props.mentor) {
@@ -240,11 +239,11 @@ function PartnerProfileModal(props) {
 
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      const partnerID = await getPartnerID();
+      const partnerID = profileId;
       await editPartnerProfile(data, partnerID);
 
       if (changedImage) {
-        await uploadPartnerImage(image, await getPartnerID());
+        await uploadPartnerImage(image, partnerID);
       }
 
       setSaving(false);

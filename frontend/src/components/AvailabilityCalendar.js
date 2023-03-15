@@ -6,14 +6,16 @@ import TextField from "@material-ui/core/TextField";
 import { Input } from "antd";
 
 import MenteeButton from "./MenteeButton.js";
-import "./css/AvailabilityCalendar.scss";
-import { getMentorID } from "utils/auth.service";
+import { useAuth } from "utils/hooks/useAuth"
 import { fetchAvailability, editAvailability } from "../utils/api";
+
+import "./css/AvailabilityCalendar.scss";
 
 /**
  * Moment.js documentation: {@link https://momentjs.com/docs/}
  */
 function AvailabilityCalendar(props) {
+  const { profileId } = useAuth()
   const [saved, setSaved] = useState({}); //  Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());
@@ -32,7 +34,7 @@ function AvailabilityCalendar(props) {
    */
   useEffect(() => {
     async function getSetDays() {
-      const mentorID = await getMentorID();
+      const mentorID = profileId;
       const availability_data = await fetchAvailability(mentorID);
       const set = [];
 
@@ -79,7 +81,7 @@ function AvailabilityCalendar(props) {
    * Gets availability from backend and changes clientside timeslots
    */
   async function getAvailability() {
-    const mentorID = await getMentorID();
+    const mentorID = profileId;
     const availability_data = await fetchAvailability(mentorID);
 
     if (availability_data) {
@@ -253,7 +255,7 @@ function AvailabilityCalendar(props) {
     );
 
     // Sends toSend to backend to update availability
-    const mentorID = await getMentorID();
+    const mentorID = profileId;
     await editAvailability(toSend, mentorID);
 
     // Change trigger to update green dots on calendar

@@ -4,7 +4,6 @@ import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "features/userSlice";
-import { getMentorID, getMenteeID, getPartnerID } from "utils/auth.service";
 import { useAuth } from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
 
@@ -81,13 +80,13 @@ function Profile() {
 
   const onFinish = (values) => {
     async function saveEdits() {
-      const new_values = { ...values, phone_number: values.phone };
+      const newValues = { ...values, phone_number: values.phone };
       if (isMentor) {
-        await editMentorProfile(new_values, await getMentorID());
+        await editMentorProfile(newValues, profileId);
       } else if (isMentee) {
-        await editMenteeProfile(new_values, await getMenteeID());
+        await editMenteeProfile(newValues, profileId);
       } else if (isPartner) {
-        await editPartnerProfile(new_values, await getPartnerID());
+        await editPartnerProfile(newValues, profileId);
       }
       handleSaveEdits();
     }

@@ -10,16 +10,15 @@ import {
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeProfileModal from "./MenteeProfileModal";
-import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import PublicMessageModal from "./PublicMessageModal";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
-import "./css/Profile.scss";
-import { getMenteeID } from "utils/auth.service";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
 import { Rate, Tooltip } from "antd";
 import MentorContactModal from "./MentorContactModal";
 import PartnerProfileModal from "./PartnerProfileModal";
+
+import "./css/Profile.scss";
 
 function ProfileContent(props) {
   const { accountType, account } = props;
@@ -30,10 +29,10 @@ function ProfileContent(props) {
 
   useEffect(() => {
     async function getMentee() {
-      const mentee_id = await getMenteeID();
-      const mentee_data = await fetchMenteeByID(mentee_id);
-      if (mentee_data) {
-        setMentee(mentee_data);
+      const menteeId = profileId;
+      const menteeData = await fetchMenteeByID(menteeId);
+      if (menteeData) {
+        setMentee(menteeData);
       }
     }
     if (isMentee) {

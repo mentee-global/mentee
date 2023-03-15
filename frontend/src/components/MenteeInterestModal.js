@@ -3,13 +3,14 @@ import { Button, Modal } from "antd";
 import ModalInput from "./ModalInput";
 import { SPECIALIZATIONS } from "../utils/consts";
 import { editMenteeProfile } from "../utils/api";
-import { getMenteeID } from "../utils/auth.service";
+import { useAuth } from "utils/hooks/useAuth";
 import { useHistory } from "react-router";
 import "./css/MenteeAppointments.scss";
 import { useEffect } from "react";
 
 function MenteeProfileModal(props) {
   const history = useHistory();
+  const { profileId } = useAuth()
   const [modalVisible, setModalVisible] = useState(true);
   const [error, setError] = useState(false);
   const [specializations, setSpecializations] = useState([]);
@@ -29,7 +30,7 @@ function MenteeProfileModal(props) {
   }
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      const menteeID = await getMenteeID();
+      const menteeID = profileId;
       await editMenteeProfile(data, menteeID);
       setModalVisible(false);
     }

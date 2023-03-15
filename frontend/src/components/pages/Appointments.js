@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { Button, Col, Row, Result, Switch, Badge, Checkbox } from "antd";
+import { Button, Col, Row, Result, Badge, Checkbox } from "antd";
 import {
   ClockCircleOutlined,
   InfoCircleFilled,
@@ -14,11 +13,9 @@ import {
   acceptAppointment,
   fetchAppointmentsByMentorId,
   deleteAppointment,
-  fetchMenteeByID,
   editMentorProfile,
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
-import { getIdTokenResult, getMenteeID, getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 import { useAuth } from "utils/hooks/useAuth";
@@ -58,8 +55,7 @@ function Appointments() {
 
   useEffect(() => {
     async function getAppointments() {
-      await getIdTokenResult();
-      const mentorID = await getMentorID();
+      const mentorID = profileId;
       const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
 
       const formattedAppointments = formatAppointments(

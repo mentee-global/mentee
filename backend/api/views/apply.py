@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request
 from sqlalchemy import null
 from api.models import (
@@ -12,7 +11,6 @@ from api.models import (
     PartnerProfile,
     MentorApplication,
 )
-
 from api.core import create_response, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import (

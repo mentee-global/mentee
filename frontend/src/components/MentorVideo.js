@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import ReactPlayer from "react-player";
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons";
 import moment from "moment";
@@ -17,13 +17,6 @@ const MentorVideo = ({
   date,
   video,
 }) => {
-  const [specMasters, setSpecMasters] = useState([]);
-  useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
-    }
-    getMasters();
-  }, []);
   return (
     <div className="video-row">
       <div className="video-block">
@@ -54,9 +47,9 @@ const MentorVideo = ({
         <Select
           style={{ ...styles.interactionVideo, left: "14%", width: 230 }}
           defaultValue={tag}
-          onChange={(option) => onChangeTag(id, specMasters[option])}
+          onChange={(option) => onChangeTag(id, SPECIALIZATIONS[option])}
         >
-          {formatDropdownItems(specMasters)}
+          {formatDropdownItems(SPECIALIZATIONS)}
         </Select>
         <Button
           icon={

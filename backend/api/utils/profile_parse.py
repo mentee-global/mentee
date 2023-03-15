@@ -1,5 +1,8 @@
 from api.models.PartnerProfile import PartnerProfile
-from api.models import Education, Video, MentorProfile, MenteeProfile
+from bson import ObjectId
+from api.core import logger
+from api.models import db, Education, Video, MentorProfile, MenteeProfile, Image
+from api.utils.request_utils import imgur_client
 from api.utils.constants import Account
 
 
@@ -17,7 +20,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
         return None
 
     new_profile = None
-    if profile_type == Account.PARTNER:
+    if profile_type==Account.PARTNER:
         new_profile = PartnerProfile(
             firebase_uid=data["firebase_uid"],
             email=data["email"],
@@ -25,16 +28,17 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             location=data["location"],
             regions=data["regions"],
             intro=data["intro"],
-            open_grants=data.get("open_grants"),
-            open_projects=data.get("open_projects"),
-            topics=data.get("topics"),
-            sdgs=data.get("sdgs"),
+            open_grants=data.get('open_grants'),
+            open_projects=data.get('open_projects'),
+            topics=data.get('topics'),
+            sdgs=data.get('sdgs'),
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
+            
         )
         new_profile.website = data.get("website")
         new_profile.linkedin = data.get("linkedin")
-        new_profile.person_name = data.get("person_name")
+        new_profile.person_name=data.get('person_name')
         return new_profile
 
     elif profile_type == Account.MENTOR:
@@ -49,11 +53,12 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
             taking_appointments=data.get("taking_appointments", False),
+            
         )
 
         new_profile.website = data.get("website")
         new_profile.linkedin = data.get("linkedin")
-        new_profile.video = data.get("video")
+        new_profile.video=data.get('video')
 
         if "videos" in data:
             video_data = data.get("videos")
@@ -127,12 +132,22 @@ def edit_profile(data: dict = {}, profile: object = None):
         return False
     if isinstance(profile, PartnerProfile):
         # Edit fields or keep original data if no added data
-        profile.organization = data.get("organization", profile.organization)
+        profile.organization = data.get(
+            "organization", profile.organization
+        )
         profile.location = data.get("location", profile.location)
-        profile.email = data.get("email", profile.email)
-        profile.regions = data.get("regions", profile.regions)
-        profile.open_grants = data.get("open_grants", profile.open_grants)
-        profile.open_projects = data.get("open_projects", profile.open_projects)
+        profile.email = data.get(
+            "email", profile.email
+        )
+        profile.regions = data.get(
+            "regions", profile.regions
+        )
+        profile.open_grants = data.get(
+        "open_grants", profile.open_grants
+        )
+        profile.open_projects = data.get(
+        "open_projects", profile.open_projects
+        )
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.topics = data.get("topics", profile.topics)
         profile.sdgs = data.get("sdgs", profile.sdgs)
@@ -141,12 +156,14 @@ def edit_profile(data: dict = {}, profile: object = None):
 
         profile.website = data.get("website", profile.website)
         profile.text_notifications = data.get(
-            "text_notifications", profile.text_notifications
+        "text_notifications", profile.text_notifications
         )
         profile.email_notifications = data.get(
-            "email_notifications", profile.email_notifications
+        "email_notifications", profile.email_notifications
         )
         return True
+
+
 
     if isinstance(profile, MentorProfile):
         # Edit fields or keep original data if no added data
@@ -161,7 +178,7 @@ def edit_profile(data: dict = {}, profile: object = None):
             "offers_in_person", profile.offers_in_person
         )
         profile.taking_appointments = data.get(
-            "taking_appointments", profile.taking_appointments
+        "taking_appointments", profile.taking_appointments
         )
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.website = data.get("website", profile.website)
@@ -191,6 +208,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.organization = data.get("organization", profile.organization)
         profile.is_private = data.get("is_private", profile.is_private)
         profile.specializations = data.get("specializations", profile.specializations)
+
 
         if "video" in data:
             video_data = data.get("video")

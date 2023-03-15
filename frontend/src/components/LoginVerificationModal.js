@@ -59,7 +59,6 @@ function LoginVerificationModal(props) {
         height={props.height}
         style={props.style}
         loading={props.loading}
-        border={props.border}
       />
       <Modal
         title="Access Denied"

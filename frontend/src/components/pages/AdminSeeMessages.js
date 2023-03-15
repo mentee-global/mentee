@@ -111,16 +111,17 @@ export const AdminMessages = () => {
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
-      let { data: newData, total_length } = await getDetailMessages(
+      let { data: dataa, total_length } = await getDetailMessages(
         pageNumber,
         pageSize,
         searchTerm,
         startDate,
         endDate
       );
-      if (newData) {
+      if (dataa) {
+        console.log(total_length);
         setTotalLength(total_length);
-        setData(newData);
+        setData(dataa);
         setLoading(false);
       } else {
         setErr(true);
@@ -144,6 +145,7 @@ export const AdminMessages = () => {
         />
         <RangePicker
           onChange={(date, dateString) => {
+            console.log(date, dateString);
             if (dateString[0] === "" && dateString[1] === "") {
               setEndDate(new Date().toISOString().split("T")[0]);
               setStartDate("2010-01-01");
@@ -185,6 +187,7 @@ export const AdminMessages = () => {
               total: totalLength,
               onChange: (page, pageSize) => {
                 setpageNumber(page);
+                console.log(page, pageSize);
               },
             }}
           />

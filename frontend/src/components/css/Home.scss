@@ -1,126 +1,126 @@
 .home-background {
-  min-height: 936px;
-  height: 100%;
-  background: #ffdb6f;
-  width: 100%;
+	min-height: 936px;
+	height: 100%;
+	background: #ffdb6f;
+	width: 100%;
 }
 .home-content {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: flex-start;
-  position: relative;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: flex-start;
+	position: relative;
 }
 
 .home-text-container {
-  position: absolute;
-  height: 73px;
-  top: 0px;
-  text-align: center;
-  margin: auto;
-  margin-top: 10px;
+	position: absolute;
+	height: 73px;
+	top: 0px;
+	text-align: center;
+	margin: auto;
+	margin-top: 10px;
 }
 
 .home-header2 {
-  font-family: "Abel";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 48px;
-  line-height: 61px;
-  color: #ffffff;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
 }
 
 .home-header2 span {
-  color: #644a0a;
+	color: #644a0a;
 }
 .home-text2 {
-  font-family: "Abel";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 48px;
-  line-height: 61px;
-  color: #ffffff;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	color: #ffffff;
 }
 .buttons-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  position: absolute;
-  top: 35vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	position: absolute;
+	top: 35vh;
 }
 .applyCon {
-  background-color: white;
-  text-align: center;
-  color: #a58123;
-  cursor: pointer;
-  border-radius: 10px;
-  width: 262px;
-  height: 262px;
-  position: relative;
-  margin-right: 40px;
+	background-color: white;
+	text-align: center;
+	color: #a58123;
+	cursor: pointer;
+	border-radius: 10px;
+	width: 262px;
+	height: 262px;
+	position: relative;
+	margin-right: 40px;
 }
 .loginCon {
-  background-color: white;
-  text-align: center;
-  color: #a58123;
-  cursor: pointer;
-  border-radius: 10px;
-  width: 262px;
-  height: 262px;
-  position: relative;
+	background-color: white;
+	text-align: center;
+	color: #a58123;
+	cursor: pointer;
+	border-radius: 10px;
+	width: 262px;
+	height: 262px;
+	position: relative;
 }
 .applyImage {
-  position: absolute;
-  left: 25.87%;
-  right: 26.13%;
-  top: 16%;
-  bottom: 36%;
+	position: absolute;
+	left: 25.87%;
+	right: 26.13%;
+	top: 16%;
+	bottom: 36%;
 }
 
 .loginText {
-  left: 0%;
-  right: 0%;
-  top: 83.73%;
-  bottom: 2.93%;
-  position: absolute;
-  font-family: "Abel";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 30px;
-  line-height: 38px;
-  text-align: center;
+	left: 0%;
+	right: 0%;
+	top: 83.73%;
+	bottom: 2.93%;
+	position: absolute;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 30px;
+	line-height: 38px;
+	text-align: center;
 
-  color: #a58123;
+	color: #a58123;
 }
 
 @media (max-width: 600px) {
-  .buttons-container {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+	.buttons-container {
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
 
-  .applyCon {
-    position: relative;
-    left: 0;
-    margin-bottom: 20px;
-    margin-right: 0px;
-  }
-  .loginCon {
-    position: relative;
-    left: 0;
-  }
-  .home-background {
-    height: 1090px;
-  }
+	.applyCon {
+		position: relative;
+		left: 0;
+		margin-bottom: 20px;
+		margin-right: 0px;
+	}
+	.loginCon {
+		position: relative;
+		left: 0;
+	}
+	.home-background {
+		height: 1090px;
+	}
 }
 .btn-d {
-  width: 300px;
-  margin: 10px;
+	width: 300px;
+	margin: 10px;
 }
 .btn-dc {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
 }

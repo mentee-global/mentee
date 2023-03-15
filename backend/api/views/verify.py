@@ -1,8 +1,11 @@
+from os import path
 from flask import Blueprint, request, jsonify
 from api.models import (
+    db,
+    MentorProfile,
     VerifiedEmail,
 )
-from api.core import create_response
+from api.core import create_response, serialize_list, logger
 
 verify = Blueprint("verify", __name__)  # initialize blueprint
 

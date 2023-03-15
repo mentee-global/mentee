@@ -1,170 +1,164 @@
 @import "_app";
 .containerr {
-  min-height: 92vh;
-  width: 100%;
-  background: #ffdb6f;
-  overflow: auto;
-  position: relative;
-  margin-bottom: 75px;
+	min-height: 92vh;
+	width: 100%;
+	background: #ffdb6f;
+	overflow: auto;
+	position: relative;
+	margin-bottom: 75px;
 }
 .home-header3 {
-  font-family: "Abel";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 48px;
-  line-height: 61px;
-  text-align: center;
-  color: #ffffff;
-  position: absolute;
-  top: 61px;
-  left: 0;
-  right: 0;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 48px;
+	line-height: 61px;
+	text-align: center;
+	color: #ffffff;
+	position: absolute;
+	top: 61px;
+	left: 0;
+	right: 0;
 }
 
 .home-header3 span {
-  color: #644a0a;
+	color: #644a0a;
 }
 .page-background {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .login-content {
-  border-radius: 10px;
-  position: absolute;
-  width: 546px;
-  height: 257px;
-  top: 176px;
-  margin: auto;
-  background: #ffffff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  position: relative;
+	border-radius: 10px;
+	position: absolute;
+	width: 546px;
+	height: 257px;
+	top: 176px;
+	margin: auto;
+	background: #ffffff;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	position: relative;
 }
 
 .login-content2 {
-  border-radius: 10px;
-  position: absolute;
-  width: 600px;
-  height: 400px;
-  top: 176px;
-  margin: auto;
-  background: #ffffff;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  position: relative;
+	border-radius: 10px;
+	position: absolute;
+	width: 600px;
+	height: 400px;
+	top: 176px;
+	margin: auto;
+	background: #ffffff;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	position: relative;
 }
 .login-text {
-  position: absolute;
-  height: 31px;
-  left: 37px;
-  top: 14px;
-  font-family: "Abel";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 31px;
-  /* identical to box height */
+	position: absolute;
+	height: 31px;
+	left: 37px;
+	top: 14px;
+	font-family: "Abel";
+	font-style: normal;
+	font-weight: 400;
+	font-size: 24px;
+	line-height: 31px;
+	/* identical to box height */
 
-  color: #a58123;
+	color: #a58123;
 }
 
 .login-input-container {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .login-input-container__clicked {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .login-input {
-  position: absolute;
-  width: 450px;
-  height: 40px;
-  left: 41px;
-  top: 76px;
+	position: absolute;
+	width: 450px;
+	height: 40px;
+	left: 41px;
+	top: 76px;
 }
 .login-input_pass {
-  position: absolute;
-  width: 487px;
-  height: 40px;
-  left: 29px;
-  top: 162px;
+	position: absolute;
+	width: 487px;
+	height: 40px;
+	left: 29px;
+	top: 162px;
 }
 
 .login-input-container {
-  position: relative;
+	position: relative;
 }
 
 .login-error {
-  color: red;
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 4px;
+	color: red;
+	text-align: center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 4px;
 }
 .loadingg {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 5px;
+	text-align: center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 5px;
 }
 
 .account-help-container {
-  text-align: center;
-  position: absolute;
-  bottom: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+	text-align: center;
+	position: absolute;
+	bottom: 5px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
 }
 
 .account-link {
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 .forgot_email {
-  margin: 5px;
+	margin: 5px;
 }
 .login-register-container {
-  margin: 8px;
-}
-.forgot_email {
-  margin: 5px;
-}
-.login-register-container {
-  margin: 8px;
+	margin: 8px;
 }
 
 .login-register-link,
 .login-register-link:focus {
-  background: none;
-  border: none;
-  color: $mentee-button-regular;
-  text-decoration: underline;
-  margin-left: 5px;
-  transition-duration: 0.4s;
+	background: none;
+	border: none;
+	color: $mentee-button-regular;
+	text-decoration: underline;
+	margin-left: 5px;
+	transition-duration: 0.4s;
 }
 
 .login-register-link:hover {
-  color: $register-link-hover;
-  text-decoration: underline;
+	color: $register-link-hover;
+	text-decoration: underline;
 }
 @media (max-width: 600px) {
-  .login-content {
-    width: 90%;
-    margin-top: 90px;
-  }
-  .login-input_pass,
-  .login-input {
-    width: 80%;
-  }
-  .containerr {
-  }
+	.login-content {
+		width: 90%;
+		margin-top: 90px;
+	}
+	.login-input_pass,
+	.login-input {
+		width: 80%;
+	}
+	.containerr {
+	}
 }

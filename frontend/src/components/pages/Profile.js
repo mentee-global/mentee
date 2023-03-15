@@ -7,11 +7,14 @@ import { fetchUser } from "features/userSlice";
 import { getMentorID, getMenteeID, getPartnerID } from "utils/auth.service";
 import useAuth from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 import "../css/MenteeButton.scss";
 import "../css/Profile.scss";
 import {
+  fetchMentorByID,
   editMentorProfile,
+  fetchMenteeByID,
   editMenteeProfile,
   editPartnerProfile,
 } from "utils/api";

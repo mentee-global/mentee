@@ -14,7 +14,7 @@ import { Table, Popconfirm, message, Modal, Select } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
-  PlusCircleOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
@@ -37,14 +37,13 @@ export const Trainings = () => {
   const [isVideo, setIsVideo] = useState("Yes");
   const [filee, setFilee] = useState(null);
   const [file_name, setFileName] = useState(null);
-  const [selectedID, setSelectedID] = useState("");
   const { Option } = Select;
 
   const showModal = async (id, isNew) => {
-    if (isNew === false) {
+    if (isNew == false) {
       setIsModalVisible(true);
-      setSelectedID(id);
       let train = await getTrainById(id);
+      console.log(train);
       if (train) {
         setName(train.name);
         setDesc(train.description);
@@ -61,7 +60,6 @@ export const Trainings = () => {
         }
       }
     } else {
-      setSelectedID("");
       setName("");
       setUrl("");
       setDesc("");
@@ -72,7 +70,7 @@ export const Trainings = () => {
     }
   };
 
-  const handleOk = async (isNew) => {
+  const handleOk = async (id, isNew) => {
     if (
       !name ||
       !desc ||
@@ -86,8 +84,8 @@ export const Trainings = () => {
     } else {
       setErr(false);
     }
-    let isVideoo = typee !== TRAINING_TYPE.DOCUMENT;
-    if (isNew === true) {
+    let isVideoo = typee != TRAINING_TYPE.DOCUMENT;
+    if (isNew == true) {
       let train = await newTrainCreate(
         name,
         url,
@@ -107,7 +105,7 @@ export const Trainings = () => {
       }
     } else {
       let train = await EditTrainById(
-        selectedID,
+        id,
         name,
         url,
         desc,
@@ -276,7 +274,7 @@ export const Trainings = () => {
           <Modal
             title=""
             visible={isModalVisible}
-            onOk={() => handleOk(false)}
+            onOk={() => handleOk(id, false)}
             onCancel={handleCancel}
             okText="save"
             closable={false}
@@ -307,9 +305,10 @@ export const Trainings = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let newData = await getTrainings(role);
-      if (newData) {
-        setData(newData);
+      let dataa = await getTrainings(role);
+      if (dataa) {
+        console.log(data);
+        setData(dataa);
       } else {
         setErr(true);
       }
@@ -337,7 +336,7 @@ export const Trainings = () => {
         <div className="table-button-group">
           <Button
             className="table-button"
-            icon={<PlusCircleOutlined />}
+            icon={<DownloadOutlined />}
             onClick={() => {
               setIsnew(true);
               showModal("", true);
@@ -353,7 +352,7 @@ export const Trainings = () => {
       <Modal
         title=""
         visible={isModalVisible2}
-        onOk={() => handleOk(true)}
+        onOk={() => handleOk("", true)}
         onCancel={handleCancel}
         okText="save"
         closable={false}

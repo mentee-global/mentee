@@ -1,83 +1,77 @@
 .app-modal {
-  width: 60vw !important;
+	width: 60vw !important;
 }
 
 .view-container {
-  padding: 3em;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-family: Helvetica;
+	padding: 3em;
+	overflow-y: hidden;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	font-family: Helvetica;
 }
 
 .info-container {
-  width: 60%;
+	width: 60%;
 }
 
 .double-info-section {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin: 2.5em 0em;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin: 2.5em 0em;
 }
 
 .single-info-section {
-  margin: 2.5em 0em;
-  width: 50%;
+	margin: 2.5em 0em;
+	width: 50%;
 }
 .info2 {
-  width: 100% !important;
-}
-.info2 {
-  width: 100% !important;
-}
-.info2 {
-  width: 100% !important;
+	width: 100% !important;
 }
 
 .question {
-  color: gray;
+	color: gray;
 }
 
 .status-container {
-  width: 40%;
+	width: 40%;
 }
 
 .notes-container {
-  border: 1px solid #e5e5e5;
-  box-sizing: border-box;
-  border-radius: 7px;
-  padding: 26px;
-  margin-top: 5em;
+	border: 1px solid #e5e5e5;
+	box-sizing: border-box;
+	border-radius: 7px;
+	padding: 26px;
+	margin-top: 5em;
 }
 
 .notes-title {
-  color: #828282;
-  font-weight: bold;
-  margin-bottom: 1.5em;
+	color: #828282;
+	font-weight: bold;
+	margin-bottom: 1.5em;
 }
 
 .note-wrap {
-  background: #ffecbd;
-  border-radius: 7px;
-  padding: 1em;
-  width: 100%;
-  text-align: left;
+	background: #ffecbd;
+	border-radius: 7px;
+	padding: 1em;
+	width: 100%;
+	text-align: left;
 }
 
 .progress-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 100%;
-  margin-bottom: 1em;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	width: 100%;
+	margin-bottom: 1em;
 }
 
 .progress-section {
-  color: white;
-  font-weight: bold;
-  padding: 0px 1.2em;
-  border-radius: 12px;
-  height: 1.7em;
+	color: white;
+	font-weight: bold;
+	padding: 0px 1.2em;
+	border-radius: 12px;
+	height: 1.7em;
 }

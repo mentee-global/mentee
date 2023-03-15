@@ -1,38 +1,38 @@
 @import "_app";
 
 .account-data-body {
-  padding: 22px;
-  margin-bottom: 50px;
+	padding: 22px;
+	margin-bottom: 50px;
 }
 
 .table-search {
-  width: 18em;
-  margin-top: 66px;
-  margin-bottom: 36px;
+	width: 18em;
+	margin-top: 66px;
+	margin-bottom: 36px;
 }
 
 .table-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 24px;
 }
 
 .table-title {
-  font-size: 18px;
-  font-weight: bold;
+	font-size: 18px;
+	font-weight: bold;
 }
 
 .table-button-group > .table-button {
-  margin: 0px 4px;
-  color: black;
+	margin: 0px 4px;
+	color: black;
 }
 
 .table-appt-view {
-  color: $theme-orange;
-  text-decoration: underline;
+	color: $theme-orange;
+	text-decoration: underline;
 }
 
 .delete-user-btn {
-  color: $theme-orange;
-  font-size: 20px;
+	color: $theme-orange;
+	font-size: 20px;
 }

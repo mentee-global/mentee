@@ -20,8 +20,6 @@ function Gallery() {
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
   const [pageLoaded, setPageLoaded] = useState(false);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
   const verified = location.state && location.state.verified;
 
   useEffect(() => {
@@ -33,12 +31,6 @@ function Gallery() {
     }
     setPageLoaded(true);
     getMentees();
-
-    async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
-    }
-    getMasters();
   }, []);
 
   const getFilteredMentees = () => {
@@ -108,7 +100,7 @@ function Gallery() {
           <div className="gallery-filter-section-title">Languages</div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={LANGUAGES}
             onChange={(checked) => setLanguages(checked)}
             value={languages}
           />
@@ -128,14 +120,14 @@ function Gallery() {
           <div className="gallery-filter-section-title">Languages</div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={LANGUAGES}
             onChange={(checked) => setLanguages(checked)}
           />
 
           <div className="gallery-filter-section-title">Mentee Interests</div>
           <Checkbox.Group
             defaultValue={interestRange}
-            options={specMasters}
+            options={SPECIALIZATIONS}
             onChange={(checked) => setInteresRange(checked)}
             value={interestRange}
           />
@@ -158,7 +150,6 @@ function Gallery() {
                   gender={mentee.gender}
                   organization={mentee.organization}
                   image={mentee.image}
-                  video={mentee.video}
                   age={mentee.age}
                   id={mentee._id["$oid"]}
                 />

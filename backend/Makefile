@@ -44,4 +44,5 @@ format:
 		black api/; \
 		black tests/; \
 		black manage.py; \
+		black index.py; \
 	)

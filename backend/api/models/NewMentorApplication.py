@@ -17,8 +17,8 @@ class NewMentorApplication(Document, Mixin):
     immigrant_status = BooleanField(required=True)
     languages = StringField(required=True)
     referral = StringField()
-    companyTime = StringField()
-    specialistTime = StringField()
+    companyTime=StringField()
+    specialistTime=StringField()
     knowledge_location = StringField(required=True)
     isColorPerson = BooleanField(required=True)
     isMarginalized = BooleanField(required=True)
@@ -29,6 +29,7 @@ class NewMentorApplication(Document, Mixin):
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
     notes = StringField()
+
 
     def __repr__(self):
         return f"""<Mentor Application email: {self.email}

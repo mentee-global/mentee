@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MentorImage from "resources/mentor-login-logo.png";
 import MenteeLogin from "resources/mentee-login-logo.png";
 import AdminImage from "resources/admin-login-logo.png";
@@ -12,6 +12,7 @@ function SelectLogin({
   handleDisplayImages,
   isAdmin,
 }) {
+  console.log("l", isLoggedIn());
   return (
     <div className="select-login-page">
       <div
@@ -34,7 +35,7 @@ function SelectLogin({
           >
             <img
               src={MenteeLogin}
-              alt="Mentee"
+              alt="Mentee Image"
               className="select-image mentee-image"
             />
             <div className="select-text">Mentee</div>
@@ -47,7 +48,7 @@ function SelectLogin({
           >
             <img
               src={MentorImage}
-              alt="Mentor"
+              alt="Mentor Image"
               className="mentor-image"
             />
             <div className="select-text">Mentor</div>
@@ -60,7 +61,7 @@ function SelectLogin({
           >
             <img
               src={PartnerImage}
-              alt="Partner"
+              alt="Partner Image"
               className="select-image partner-image"
               onLoad={handleDisplayImages}
             />
@@ -80,7 +81,7 @@ function SelectLogin({
           >
             <img
               src={AdminImage}
-              alt="Admin"
+              alt="Admin Image"
               className="select-image partner-image"
               onLoad={handleDisplayImages}
             />

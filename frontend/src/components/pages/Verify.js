@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
-import { Button } from "antd";
+import { Input, Button } from "antd";
 import {
   sendVerificationEmail,
   getUserEmail,
@@ -12,6 +12,7 @@ import {
   isUserPartner,
 } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
@@ -77,7 +78,7 @@ function Verify({ history, sent }) {
               className="verify-resend-link"
               onClick={async () => {
                 // TODO: error handling for resend?
-                await sendVerificationEmail(await getUserEmail());
+                const res = await sendVerificationEmail(await getUserEmail());
                 setResent(true);
               }}
             >

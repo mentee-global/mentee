@@ -200,6 +200,7 @@ function BuildProfile(props) {
 
       if (res) {
         setIsSubmitted(true);
+        console.log(res);
         history.push("/");
       } else {
         setSubmitError(true);

@@ -8,7 +8,6 @@ import {
   EnvironmentOutlined,
   UserOutlined,
   StarFilled,
-  YoutubeOutlined,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import useAuth from "../utils/hooks/useAuth";
@@ -137,19 +136,6 @@ function MentorCard(props) {
               rel="noopener noreferrer"
             >
               linkedin
-            </a>
-          </h4>
-        )}
-        {props.video && props.video.url && (
-          <h4 className="gallery-info-section">
-            <YoutubeOutlined style={styles.icon} />
-            <a
-              className="gallery-links"
-              href={formatLinkForHref(props.video.url)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {props.video.title}
             </a>
           </h4>
         )}

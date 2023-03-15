@@ -1,7 +1,6 @@
 import axios from "axios";
 import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
-import { lang } from "moment";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -95,7 +94,7 @@ export const uploadAccountImage = (data, id, type) => {
 export const createAccountProfile = async (profile, type, isHave) => {
   profile["account_type"] = type;
   let requestExtension = `/account`;
-  if (isHave === true) {
+  if (isHave == true) {
     requestExtension = `/accountProfile`;
   }
 
@@ -109,7 +108,7 @@ export const createAccountProfile = async (profile, type, isHave) => {
 
 export const fetchApplications = async (isMentor) => {
   let requestExtension = "/application/";
-  if (isMentor === false) {
+  if (isMentor == false) {
     requestExtension = "/application/menteeApps";
   }
   return await authGet(requestExtension).then(
@@ -134,6 +133,7 @@ export const getAppState = async (email, role) => {
   const requestExtension = `/application/checkConfirm/${email}/${role}`;
   const res = await instance.get(requestExtension);
   state = res.data.result.state;
+  console.log(state);
   return state;
 };
 let isHaveProfile = false;
@@ -145,12 +145,14 @@ export const isHaveProfilee = async (email, role) => {
   if (res.data.result.rightRole) {
     rightRole = res.data.result.rightRole;
   }
+  console.log(isHaveProfile);
   return { isHaveProfile, rightRole };
 };
 export const changeStateBuildProfile = async (email, role) => {
   const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
   const res = await instance.get(requestExtension);
   state = res.data.result.state;
+  console.log(state);
   return state;
 };
 
@@ -160,6 +162,7 @@ export const isHaveAccount = async (email, role) => {
   let isHave = res.data.result.isHave;
   let isHaveProfile = res.data.result.isHaveProfile;
   let isVerified = res.data.result.isVerified;
+  console.log(isHave, isHaveProfile, isVerified);
   return { isHave, isHaveProfile, isVerified };
 };
 
@@ -172,6 +175,7 @@ export const getTrainings = async (role) => {
     train.id = train._id["$oid"];
     newTrain.push(train);
   }
+  console.log(newTrain);
   return newTrain;
 };
 export const getNotifys = async () => {
@@ -184,6 +188,7 @@ export const markNotifyReaded = async (id) => {
   const requestExtension = `/notifys/${id}`;
   let response = await authGet(requestExtension);
   const notify = response.data.result.notify;
+  console.log(notify);
   return notify;
 };
 export const newNotify = async (message, mentorId, readed) => {
@@ -210,11 +215,15 @@ export const getTrainById = async (id) => {
   const requestExtension = `/training/train/${id}`;
   let response = await authGet(requestExtension);
   const train = response.data.result.train;
+  console.log(train);
   return train;
 };
 export const getTrainVideo = async (id) => {
   const requestExtension = `/training/trainVideo/${id}`;
   let response = await authGet(requestExtension, { responseType: "blob" });
+  console.log(response);
+  //const train = response.data.result.train;
+  //console.log(train);
   return response;
 };
 export const EditTrainById = async (
@@ -266,7 +275,9 @@ export const newTrainCreate = async (
   if (!isVideo) {
     formData.append("filee", filee);
   }
+
   let response = await authPost(requestExtension, formData);
+
   let Train = response.data.result.train;
   return Train;
 };
@@ -520,7 +531,7 @@ export const sendMessage = (data) => {
 
 export const updateApplicationById = async (data, id, isMentor) => {
   let requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTOR}`;
-  if (isMentor === false) {
+  if (isMentor == false) {
     requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
   }
   return await authPut(requestExtension, data).then(
@@ -533,7 +544,7 @@ export const updateApplicationById = async (data, id, isMentor) => {
 
 export const getApplicationById = async (id, isMentor) => {
   let requestExtension = `/application/${id}`;
-  if (isMentor === false) {
+  if (isMentor == false) {
     requestExtension = `/application/mentee/${id}`;
   }
   return authGet(requestExtension).then(
@@ -672,107 +683,6 @@ export const sendMenteeMentorEmail = (
     (response) => response,
     (err) => console.error(err)
   );
-};
-
-export const deleteLanguageByID = (id) => {
-  const requestExtension = `/masters/languages/${id}`;
-  return authDelete(requestExtension).then(
-    (response) => response,
-    (err) => {
-      console.error(err);
-      return false;
-    }
-  );
-};
-export const EditLanguageById = async (id, name) => {
-  const requestExtension = `/masters/languages/${id}`;
-  const formData = new FormData();
-  formData.append("name", name);
-  let response = await authPut(requestExtension, formData);
-  let record = response.data.result.result;
-  return record;
-};
-export const newLanguageCreate = async (name) => {
-  const requestExtension = `/masters/languages`;
-  const formData = new FormData();
-  formData.append("name", name);
-  let response = await authPost(requestExtension, formData);
-
-  let record = response.data.result.result;
-  return record;
-};
-
-export const fetchLanguages = async () => {
-  const requestExtension = `/masters/languages`;
-  var records = await instance.get(requestExtension);
-  var res = [];
-  var languages = records.data.result.result;
-  var index = 0;
-  for (let language of languages) {
-    index++;
-    language.id = language._id["$oid"];
-    language.custom_index = index;
-    res.push(language);
-  }
-  return res;
-};
-
-export const getLanguageById = async (id) => {
-  const requestExtension = `/masters/languages/${id}`;
-  let response = await authGet(requestExtension);
-  const record = response.data.result.result;
-  return record;
-};
-
-export const deleteSpecializationByID = (id) => {
-  const requestExtension = `/masters/specializations/${id}`;
-  return authDelete(requestExtension).then(
-    (response) => response,
-    (err) => {
-      console.error(err);
-      return false;
-    }
-  );
-};
-
-export const fetchSpecializations = async () => {
-  const requestExtension = `/masters/specializations`;
-  var records = await instance.get(requestExtension);
-  var res = [];
-  var specializations = records.data.result.result;
-  var index = 0;
-  for (let specialization of specializations) {
-    index++;
-    specialization.id = specialization._id["$oid"];
-    specialization.custom_index = index;
-    res.push(specialization);
-  }
-  return res;
-};
-
-export const getSpecializationById = async (id) => {
-  const requestExtension = `/masters/specializations/${id}`;
-  let response = await authGet(requestExtension);
-  const record = response.data.result.result;
-  return record;
-};
-
-export const EditSpecializationById = async (id, name) => {
-  const requestExtension = `/masters/specializations/${id}`;
-  const formData = new FormData();
-  formData.append("name", name);
-  let response = await authPut(requestExtension, formData);
-  let record = response.data.result.result;
-  return record;
-};
-export const newSpecializationCreate = async (name) => {
-  const requestExtension = `/masters/specializations`;
-  const formData = new FormData();
-  formData.append("name", name);
-  let response = await authPost(requestExtension, formData);
-
-  let record = response.data.result.result;
-  return record;
 };
 
 /**

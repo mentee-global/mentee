@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Checkbox } from "antd";
+import { Form, Input, Radio, Checkbox } from "antd";
 import MenteeButton from "../MenteeButton";
 import { createApplication } from "../../utils/api";
 import "../../components/css/MentorApplicationPage.scss";
@@ -152,6 +152,7 @@ function PartnerApplication(props) {
               value={personEmail}
               onChange={(e) => setpersonEmail(e.target.value)}
             />
+            <h1></h1>
             <div>{"*What is our partnership relationship?"}</div>
             <Form.Item className="input-form">
               {isMissingError(relationShip) && (
@@ -228,6 +229,7 @@ function PartnerApplication(props) {
     );
   }
 
+  const [isSubmitted, setIsSubmitted] = useState(false);
   function handleSubmit(event) {
     let relations = relationShip;
     event.preventDefault();
@@ -235,7 +237,7 @@ function PartnerApplication(props) {
       if (otherRelation) {
         setShowMissingFieldErrors(false);
         relations = relations.filter(function (value, index, arr) {
-          return value !== "other";
+          return value != "other";
         });
         relations.push("Other: " + otherRelation);
       } else {
@@ -266,6 +268,8 @@ function PartnerApplication(props) {
       const res = await createApplication(data);
 
       if (res) {
+        setIsSubmitted(true);
+        console.log(res);
         props.submitHandler();
       } else {
         setSubmitError(true);

@@ -46,20 +46,14 @@ function MentorProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [videoUrl, setVideoUrl] = useState();
   const [isVideoValid, setIsVideoValid] = useState(true);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
-  const isValidVideoUrl = (url) => {
-    const videoUrlRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/|vimeo\.com\/)([a-zA-Z0-9_-]{11}|[0-9]+)(\S+)?$/;
-    return videoUrlRegex.test(url);
+  const isURL = (url) => {
+    const urlPattern =
+      /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
+
+    return url.match(urlPattern);
   };
 
   useEffect(() => {
-    async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
-    }
-    getMasters();
     if (props.mentor) {
       setName(props.mentor.name);
       setTitle(props.mentor.professional_title);
@@ -276,8 +270,8 @@ function MentorProfileModal(props) {
     setWebsite(website);
   }
   function handleVideoChange(e) {
-    setVideoUrl(e.target.value);
-    if (isValidVideoUrl(e.target.value)) {
+    if (isURL(e.target.value)) {
+      setVideoUrl(e.target.value);
       setEdited(true);
       setIsVideoValid(true);
     } else {
@@ -438,7 +432,7 @@ function MentorProfileModal(props) {
       return;
     }
 
-    if (isValid.includes(false) || isVideoValid === false) {
+    if (isValid.includes(false)) {
       setValidate(true);
       return;
     }
@@ -660,7 +654,7 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLanguageChange}
                 placeholder="Ex. English, Spanish"
-                options={langMasters}
+                options={LANGUAGES}
                 value={languages}
                 valid={isValid[7]}
                 validate={validate}
@@ -689,7 +683,7 @@ function MentorProfileModal(props) {
                 index={9}
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
-                options={specMasters}
+                options={SPECIALIZATIONS}
                 value={specializations}
                 valid={isValid[9]}
                 validate={validate}
@@ -714,7 +708,6 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleVideoChange}
                 placeholder="Paste Link"
-                value={videoUrl}
               />
             </div>
             <div className="no-favorites-text">

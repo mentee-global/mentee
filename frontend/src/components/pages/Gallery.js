@@ -22,8 +22,6 @@ function Gallery() {
   const location = useLocation();
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
   const [pageLoaded, setPageLoaded] = useState(false);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
 
   useEffect(() => {
     async function getMentors() {
@@ -34,12 +32,6 @@ function Gallery() {
     }
 
     getMentors();
-
-    async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
-    }
-    getMasters();
   }, []);
 
   useEffect(() => {
@@ -155,14 +147,14 @@ function Gallery() {
           <div className="gallery-filter-section-title">Specializations</div>
           <Checkbox.Group
             defaultValue={specializations}
-            options={specMasters}
+            options={SPECIALIZATIONS}
             onChange={(checked) => setSpecializations(checked)}
             value={specializations}
           />
           <div className="gallery-filter-section-title">Languages</div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={LANGUAGES}
             onChange={(checked) => setLanguages(checked)}
             value={languages}
           />
@@ -181,13 +173,13 @@ function Gallery() {
           <div className="gallery-filter-section-title">Specializations</div>
           <Checkbox.Group
             defaultValue={specializations}
-            options={specMasters}
+            options={SPECIALIZATIONS}
             onChange={(checked) => setSpecializations(checked)}
           />
           <div className="gallery-filter-section-title">Languages</div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={LANGUAGES}
             onChange={(checked) => setLanguages(checked)}
           />
         </div>
@@ -209,7 +201,6 @@ function Gallery() {
                 specializations={mentor.specializations}
                 website={mentor.website}
                 linkedin={mentor.linkedin}
-                video={mentor.video}
                 id={mentor._id["$oid"]}
                 firebase_uid={mentor.firebase_uid}
                 lesson_types={getLessonTypes(

@@ -1,26 +1,19 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import ModalInput from "./ModalInput";
+import MenteeButton from "./MenteeButton";
 import { SPECIALIZATIONS } from "../utils/consts";
 import { editMenteeProfile } from "../utils/api";
 import { getMenteeID } from "../utils/auth.service";
+import { fetchUser } from "features/userSlice";
 import { useHistory } from "react-router";
 import "./css/MenteeAppointments.scss";
-import { useEffect } from "react";
 
 function MenteeProfileModal(props) {
   const history = useHistory();
   const [modalVisible, setModalVisible] = useState(true);
   const [error, setError] = useState(false);
   const [specializations, setSpecializations] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
-
-  useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
-    }
-    getMasters();
-  }, []);
 
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
@@ -82,7 +75,7 @@ function MenteeProfileModal(props) {
                 title="Areas of interest"
                 index={99}
                 onChange={handleSpecializationsChange}
-                options={specMasters}
+                options={SPECIALIZATIONS}
                 value={specializations}
                 handleClick={() => {}}
               />

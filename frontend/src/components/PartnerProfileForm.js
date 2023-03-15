@@ -9,6 +9,7 @@ import {
   uploadPartnerImage,
 } from "../utils/api";
 import {
+  LANGUAGES,
   REGIONS,
   REGISTRATION_STAGE,
   MENTEE_DEFAULT_VIDEO_NAME,

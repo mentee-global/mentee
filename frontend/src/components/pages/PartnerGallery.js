@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { fetchPartners } from "../../utils/api";
+import MentorCard from "../MentorCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
@@ -180,7 +181,6 @@ function PartnerGallery() {
                 regions={partner.regions}
                 website={partner.website}
                 linkedin={partner.linkedin}
-                video={partner.video}
                 id={partner._id["$oid"]}
                 firebase_uid={partner.firebase_uid}
                 image={partner.image}

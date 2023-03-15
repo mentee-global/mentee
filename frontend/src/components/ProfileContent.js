@@ -50,7 +50,7 @@ function ProfileContent(props) {
       setFavoriteMentorIds(fav_set);
       setFavorite(fav_set.has(props.id));
     }
-    if (isMentee) {
+    if (isMentee && mentee) {
       initializeFavorites();
     }
   }, [mentee]);

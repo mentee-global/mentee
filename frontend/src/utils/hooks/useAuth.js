@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import firebase from "firebase";
+import fireauth from "utils/fireauth";
 import { getIdTokenResult, logout } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 const onAuthStateChanged = (f) => {
-  const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+  const unsubscribe = fireauth.auth().onAuthStateChanged((user) => {
     if (user === null) {
       logout();
       unsubscribe();
@@ -42,7 +42,7 @@ const useAuth = () => {
 
   // setup listener
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(async (user) => {
+    fireauth.auth().onAuthStateChanged(async (user) => {
       if (!user) return;
 
       await getIdTokenResult(true)

@@ -91,7 +91,7 @@ def create_app():
         messages,
         notifications,
         training,
-        adminNotifications,
+        admin_notifications,
         masters,
     )
 

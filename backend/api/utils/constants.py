@@ -1,4 +1,3 @@
-import os
 from enum import Enum
 
 # Template ID that can be created through sendgrid's UI

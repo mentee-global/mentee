@@ -1,8 +1,7 @@
 from datetime import datetime
-import json
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
-from api.core import create_response, serialize_list, logger
+from api.core import create_response, logger
 from api.utils.request_utils import (
     ApppointmentForm,
     is_invalid_form,

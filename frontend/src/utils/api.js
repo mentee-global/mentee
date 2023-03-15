@@ -95,7 +95,7 @@ export const uploadAccountImage = (data, id, type) => {
 export const createAccountProfile = async (profile, type, isHave) => {
   profile["account_type"] = type;
   let requestExtension = `/account`;
-  if (isHave == true) {
+  if (isHave === true) {
     requestExtension = `/accountProfile`;
   }
 
@@ -109,7 +109,7 @@ export const createAccountProfile = async (profile, type, isHave) => {
 
 export const fetchApplications = async (isMentor) => {
   let requestExtension = "/application/";
-  if (isMentor == false) {
+  if (isMentor === false) {
     requestExtension = "/application/menteeApps";
   }
   return await authGet(requestExtension).then(
@@ -134,7 +134,6 @@ export const getAppState = async (email, role) => {
   const requestExtension = `/application/checkConfirm/${email}/${role}`;
   const res = await instance.get(requestExtension);
   state = res.data.result.state;
-  console.log(state);
   return state;
 };
 let isHaveProfile = false;
@@ -146,14 +145,12 @@ export const isHaveProfilee = async (email, role) => {
   if (res.data.result.rightRole) {
     rightRole = res.data.result.rightRole;
   }
-  console.log(isHaveProfile);
   return { isHaveProfile, rightRole };
 };
 export const changeStateBuildProfile = async (email, role) => {
   const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
   const res = await instance.get(requestExtension);
   state = res.data.result.state;
-  console.log(state);
   return state;
 };
 
@@ -163,7 +160,6 @@ export const isHaveAccount = async (email, role) => {
   let isHave = res.data.result.isHave;
   let isHaveProfile = res.data.result.isHaveProfile;
   let isVerified = res.data.result.isVerified;
-  console.log(isHave, isHaveProfile, isVerified);
   return { isHave, isHaveProfile, isVerified };
 };
 
@@ -176,7 +172,6 @@ export const getTrainings = async (role) => {
     train.id = train._id["$oid"];
     newTrain.push(train);
   }
-  console.log(newTrain);
   return newTrain;
 };
 export const getNotifys = async () => {
@@ -189,7 +184,6 @@ export const markNotifyReaded = async (id) => {
   const requestExtension = `/notifys/${id}`;
   let response = await authGet(requestExtension);
   const notify = response.data.result.notify;
-  console.log(notify);
   return notify;
 };
 export const newNotify = async (message, mentorId, readed) => {
@@ -221,9 +215,6 @@ export const getTrainById = async (id) => {
 export const getTrainVideo = async (id) => {
   const requestExtension = `/training/trainVideo/${id}`;
   let response = await authGet(requestExtension, { responseType: "blob" });
-  console.log(response);
-  //const train = response.data.result.train;
-  //console.log(train);
   return response;
 };
 export const EditTrainById = async (
@@ -529,7 +520,7 @@ export const sendMessage = (data) => {
 
 export const updateApplicationById = async (data, id, isMentor) => {
   let requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTOR}`;
-  if (isMentor == false) {
+  if (isMentor === false) {
     requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
   }
   return await authPut(requestExtension, data).then(
@@ -542,7 +533,7 @@ export const updateApplicationById = async (data, id, isMentor) => {
 
 export const getApplicationById = async (id, isMentor) => {
   let requestExtension = `/application/${id}`;
-  if (isMentor == false) {
+  if (isMentor === false) {
     requestExtension = `/application/mentee/${id}`;
   }
   return authGet(requestExtension).then(

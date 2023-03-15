@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask.globals import request
 from api.core import create_response, logger
 from flask import Blueprint

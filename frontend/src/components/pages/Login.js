@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useHistory, useLocation, NavLink } from "react-router-dom";
 import { Input } from "antd";
 import firebase from "firebase";
@@ -33,7 +33,6 @@ const getRoleObject = (key) => {
 };
 function Login() {
   const history = useHistory();
-  const location = useLocation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState();
@@ -55,10 +54,8 @@ function Login() {
     setDisplaySelect(true);
   };
   const handleSelect = async (key) => {
-    console.log(key);
     let RoleObj = getRoleObject(key);
     if (RoleObj) {
-      console.log(RoleObj);
       setLoggingIn(true);
       setLoading(true);
       const { isHaveProfile, rightRole } = await isHaveProfilee(
@@ -79,24 +76,23 @@ function Login() {
       } else {
         setError(false);
         const { isHave } = await isHaveAccount(email, RoleObj.type);
-        if (isHaveProfile == false && isHave == true) {
+        if (isHaveProfile === false && isHave === true) {
           //redirect to apply with role and email passed
           history.push({
             pathname: "/application-page",
             state: { email: email, role: RoleObj.type },
           });
           return;
-        } else if (isHaveProfile == false && isHave == false) {
+        } else if (isHaveProfile === false && isHave === false) {
           setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
           setError(true);
           setLoggingIn(false);
           setLoading(false);
 
           return;
-        } else if (isHaveProfile == true) {
+        } else if (isHaveProfile === true) {
           setError(false);
           const res = await login(email, password, RoleObj.type);
-          console.log(res?.result);
           setLoading(false);
 
           if (!res || !res.success) {

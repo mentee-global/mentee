@@ -29,7 +29,6 @@ function ProfileContent(props) {
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
 
   useEffect(() => {
-    console.log(accountType);
     async function getMentee() {
       const mentee_id = await getMenteeID();
       const mentee_data = await fetchMenteeByID(mentee_id);

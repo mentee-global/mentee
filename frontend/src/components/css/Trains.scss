@@ -1,48 +1,48 @@
 .trains {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 .rolesContainer {
-	width: 100%;
+  width: 100%;
 }
 .roles {
-	width: 60%;
-	height: 37.76px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
-	margin: 50px;
+  width: 60%;
+  height: 37.76px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 50px;
 }
 .trainTable {
-	width: 90%;
-	overflow: auto;
+  width: 90%;
+  overflow: auto;
 }
 .trainForm {
-	margin: 30px;
+  margin: 30px;
 }
 .trainForm input {
-	height: 45px;
-	padding-bottom: 5px;
-	margin-bottom: 20px;
+  height: 45px;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
 }
 .table-button-group > .table-button {
-	margin: 0px 4px;
-	color: black;
+  margin: 0px 4px;
+  color: black;
 }
 .table-button-group {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-	margin: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin: 10px;
 }
 .isVideo {
-	margin-bottom: 25px;
+  margin-bottom: 25px;
 }
 .trainTable .ant-table-tbody > tr > td {
-	max-width: 100px !important;
+  max-width: 100px !important;
 }
 .margin-bell {
-	margin: 20px !important;
+  margin: 20px !important;
 }

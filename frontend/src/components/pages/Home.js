@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import LoginVerificationModal from "../LoginVerificationModal";
 import "../css/Home.scss";
-import loginimg from "../../resources/login.png";
-import { isLoggedIn } from "../../utils/auth.service";
+import loginimg from "resources/login.png";
+import { isLoggedIn } from "utils/auth.service";
 
-import Applyimg from "../../resources/apply.png";
-import useAuth from "../../utils/hooks/useAuth";
-import { MENTEE_GALLERY_PAGE, MENTOR_GALLERY_PAGE } from "../../utils/consts";
+import Applyimg from "resources/apply.png";
+import {useAuth} from "utils/hooks/useAuth";
+import { MENTEE_GALLERY_PAGE, MENTOR_GALLERY_PAGE } from "utils/consts";
 import { logout } from "utils/auth.service";
 import { resetUser } from "features/userSlice";
 import { useDispatch } from "react-redux";

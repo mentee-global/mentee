@@ -4,7 +4,7 @@ import MenteeButton from "./MenteeButton";
 import { verify } from "../utils/verifyMentee";
 import { isLoggedIn, getRegistrationStage } from "utils/auth.service";
 import { REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
-import useAuth from "../utils/hooks/useAuth";
+import { useAuth } from "../utils/hooks/useAuth";
 import usePersistedState from "utils/hooks/usePersistedState";
 
 import "./css/VerificationModal.scss";

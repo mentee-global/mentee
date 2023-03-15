@@ -5,7 +5,7 @@ import { Form, Input, Avatar, Switch, Button, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "features/userSlice";
 import { getMentorID, getMenteeID, getPartnerID } from "utils/auth.service";
-import useAuth from "utils/hooks/useAuth";
+import {useAuth} from "utils/hooks/useAuth";
 import ProfileContent from "../ProfileContent";
 
 import "../css/MenteeButton.scss";

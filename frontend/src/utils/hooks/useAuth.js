@@ -1,7 +1,19 @@
-import { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useContext, createContext } from "react";
 import fireauth from "utils/fireauth";
 import { getIdTokenResult, logout } from "utils/auth.service";
 import { ACCOUNT_TYPE } from "utils/consts";
+
+const authContext = createContext();
+
+export function ProvideAuth({ children }) {
+  const auth = useProvideAuth();
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+}
+
+export const useAuth = () => {
+  return useContext(authContext);
+};
 
 const onAuthStateChanged = (f) => {
   const unsubscribe = fireauth.auth().onAuthStateChanged((user) => {
@@ -16,7 +28,8 @@ const onAuthStateChanged = (f) => {
   });
 };
 
-const useAuth = () => {
+// Provider hook that creates auth object and handles state
+function useProvideAuth() {
   const [roleState, setRoleState] = useState({
     role: ACCOUNT_TYPE.GUEST,
     isAdmin: false,
@@ -40,10 +53,13 @@ const useAuth = () => {
     });
   };
 
-  // setup listener
+  // Subscribe to user on mount
+  // Because this sets state in the callback it will cause any ...
+  // ... component that utilizes this hook to re-render with the ...
+  // ... latest auth object.
   useEffect(() => {
-    fireauth.auth().onAuthStateChanged(async (user) => {
-      if (!user) return;
+    const unsubscribe = fireauth.auth().onAuthStateChanged(async (user) => {
+      if (!user);
 
       await getIdTokenResult(true)
         .then((idTokenResult) => {
@@ -61,8 +77,10 @@ const useAuth = () => {
         })
         .catch(() => Promise.resolve(null).then(onAuthUpdate));
     });
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
-
+  // Return the user object and auth methods
   return {
     role: roleState.role,
     isAdmin: roleState.isAdmin,
@@ -74,6 +92,66 @@ const useAuth = () => {
     onAuthUpdate,
     onAuthStateChanged,
   };
-};
+}
 
-export default useAuth;
+// const useAuth = () => {
+//   const [roleState, setRoleState] = useState({
+//     role: ACCOUNT_TYPE.GUEST,
+//     isAdmin: false,
+//     isMentor: false,
+//     isMentee: false,
+//     isPartner: false,
+//   });
+
+//   const [profileId, setProfileId] = useState();
+//   const [onAuthUpdate, setOnAuthUpdate] = useState(
+//     new Promise((resolve) => resolve)
+//   );
+
+//   const resetRoleState = () => {
+//     setRoleState({
+//       role: ACCOUNT_TYPE.GUEST,
+//       isAdmin: false,
+//       isMentor: false,
+//       isMentee: false,
+//       isPartner: false,
+//     });
+//   };
+
+//   // setup listener
+//   useEffect(() => {
+//     fireauth.auth().onAuthStateChanged(async (user) => {
+//       if (!user) return;
+
+//       await getIdTokenResult(true)
+//         .then((idTokenResult) => {
+//           const { role, profileId } = idTokenResult.claims;
+//           setProfileId(profileId);
+//           setRoleState({
+//             role: role,
+//             isAdmin: `${role}` === `${ACCOUNT_TYPE.ADMIN}`,
+//             isMentor: `${role}` === `${ACCOUNT_TYPE.MENTOR}`,
+//             isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
+//             isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
+//           });
+
+//           Promise.resolve(idTokenResult).then(onAuthUpdate);
+//         })
+//         .catch(() => Promise.resolve(null).then(onAuthUpdate));
+//     });
+//   }, []);
+
+//   return {
+//     role: roleState.role,
+//     isAdmin: roleState.isAdmin,
+//     isMentor: roleState.isMentor,
+//     isMentee: roleState.isMentee,
+//     isPartner: roleState.isPartner,
+//     profileId: profileId,
+//     resetRoleState,
+//     onAuthUpdate,
+//     onAuthStateChanged,
+//   };
+// };
+
+// export default useAuth;

@@ -19,7 +19,7 @@ import {
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import UploadEmails from "../UploadEmails";
 import AdminDataTable from "../AdminDataTable";
-import useAuth from "utils/hooks/useAuth";
+import {useAuth} from "utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 const keys = {

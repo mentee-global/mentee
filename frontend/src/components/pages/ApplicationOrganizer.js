@@ -11,7 +11,7 @@ import {
 } from "../../utils/api";
 import MentorApplicationView from "../MentorApplicationView";
 import { APP_STATUS, NEW_APPLICATION_STATUS } from "../../utils/consts";
-import useAuth from "utils/hooks/useAuth";
+import {useAuth} from "utils/hooks/useAuth";
 import ModalInput from "../ModalInput";
 
 import { EditOutlined } from "@ant-design/icons";

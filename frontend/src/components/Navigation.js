@@ -9,7 +9,7 @@ import AdminSidebar from "./AdminSidebar";
 import PartnerSidebar from "./PartnerSidebar";
 
 import MenteeSideBar from "./MenteeSidebar";
-import useAuth from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
 import MenteeMessageTab from "./MenteeMessageTab";

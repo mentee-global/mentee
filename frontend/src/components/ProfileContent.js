@@ -13,7 +13,7 @@ import MenteeProfileModal from "./MenteeProfileModal";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import PublicMessageModal from "./PublicMessageModal";
 import { ACCOUNT_TYPE } from "utils/consts";
-import useAuth from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 import "./css/Profile.scss";
 import { getMenteeID } from "utils/auth.service";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";

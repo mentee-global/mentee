@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import false
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile, Admin, MenteeProfile,PartnerProfile
+from api.models import db, Users, MentorProfile, Admin, MenteeProfile, PartnerProfile
 from api.core import create_response, serialize_list, logger
 from api.utils.constants import (
     USER_VERIFICATION_TEMPLATE,
@@ -78,7 +78,7 @@ def create_firebase_user(email, password):
     error_http_response = None
 
     try:
-         firebase_user = firebase_admin_auth.create_user(
+        firebase_user = firebase_admin_auth.create_user(
             email=email,
             email_verified=False,
             password=password,
@@ -93,10 +93,12 @@ def create_firebase_user(email, password):
         error_http_response = create_response(status=500, message=msg)
 
     return firebase_user, error_http_response
-@auth.route('/hat',methods=["GET"])
+
+
+@auth.route("/hat", methods=["GET"])
 def hat():
-    ps= MentorProfile.objects
-    return create_response(message='does',data={'ps':ps})
+    ps = MentorProfile.objects
+    return create_response(message="does", data={"ps": ps})
 
 
 @auth.route("/register", methods=["POST"])
@@ -136,34 +138,35 @@ def register():
         },
     )
 
+
 @auth.route("/newRegister", methods=["POST"])
 def newregister():
     data = request.json
-    name=data.get('name')
+    name = data.get("name")
     email = data.get("email")
     password = data.get("password")
     role = data.get("role")
-    video_url=data.get('video_url')
-    phone_number=data.get('phone_number')
-    date_submitted=data.get('date_submitted')
-    
+    video_url = data.get("video_url")
+    phone_number = data.get("phone_number")
+    date_submitted = data.get("date_submitted")
+
     firebase_user, error_http_response = create_firebase_user(email, password)
-    #if error_http_response:
+    # if error_http_response:
     #    return error_http_response
 
     # account created
     firebase_uid = firebase_user.uid
-    profile=PartnerProfile(
+    profile = PartnerProfile(
         name=name,
         email=email,
         password=password,
         video_url=video_url,
         role=role,
         phone_number=phone_number,
-        date_submitted=date_submitted
+        date_submitted=date_submitted,
     )
     profile.save()
-    user=Users(
+    user = Users(
         firebase_uid=firebase_uid,
         email=email,
         role=role,
@@ -188,27 +191,25 @@ def login():
     role = data.get("role")
     firebase_user = None
     profile_model = get_profile_model(int(role))
-    
+
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
         )
         firebase_uid = firebase_user["localId"]
-       
-         
 
     except Exception as e:
         try:
-          user = firebase_admin_auth.get_user_by_email(email)
-          msg = "Could not login"
-          logger.info(msg)
-          return create_response(status=422, message=msg)
-            
+            user = firebase_admin_auth.get_user_by_email(email)
+            msg = "Could not login"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+
         except:
-            if Users.objects(email=email) or profile_model.objects(email=email):                 
-            # old account, need to create a firebase account
-            # no password -> no sign-in methods -> forced to reset password
-             firebase_user, error_http_response = create_firebase_user(email, None)
+            if Users.objects(email=email) or profile_model.objects(email=email):
+                # old account, need to create a firebase account
+                # no password -> no sign-in methods -> forced to reset password
+                firebase_user, error_http_response = create_firebase_user(email, None)
 
             # user.delete()
             # send password reset email
@@ -216,19 +217,20 @@ def login():
 
             msg = "Created new Firebase account for existing user"
             logger.info(msg)
-            return create_response(message="couldn't create firebase account ",status=422)
-            
+            return create_response(
+                message="couldn't create firebase account ", status=422
+            )
 
     firebase_admin_user = firebase_admin_auth.get_user(firebase_uid)
     profile_id = None
     if not Users.objects(email=email):
-          user=Users(
-          firebase_uid=firebase_uid,
-          email=email,
-          role="{}".format(role),
-          verified=firebase_admin_user.email_verified,   
-         )
-          user.save()
+        user = Users(
+            firebase_uid=firebase_uid,
+            email=email,
+            role="{}".format(role),
+            verified=firebase_admin_user.email_verified,
+        )
+        user.save()
 
     try:
         profile = profile_model.objects.get(email=email)
@@ -252,19 +254,19 @@ def login():
                     ).decode("utf-8"),
                     "profileId": profile_id,
                     "role": role,
-                    "firebase_user":firebase_user
+                    "firebase_user": firebase_user,
                 },
-                
             )
             # pass
 
         msg = "Couldn't find profile with these credentials"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    
+
     return create_response(
         message="Logged in",
-        data={"redirectToVerify": not firebase_admin_user.email_verified,
+        data={
+            "redirectToVerify": not firebase_admin_user.email_verified,
             "token": firebase_admin_auth.create_custom_token(
                 firebase_uid, {"role": role, "profileId": profile_id}
             ).decode("utf-8"),
@@ -324,7 +326,6 @@ def refresh_token():
     profile_model = get_profile_model(role)
     profile_id = None
     try:
-        
         profile = profile_model.objects.get(firebase_uid=firebase_uid)
         profile_id = str(profile.id)
     except:

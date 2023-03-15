@@ -1,6 +1,7 @@
 import os
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
+
 # from wtforms.fields.core import DateField, DateTimeField
 from wtforms.validators import InputRequired
 from wtforms import validators
@@ -10,7 +11,15 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
-from api.models import MentorProfile, MenteeProfile, Admin,PartnerProfile,MenteeApplication,NewMentorApplication,PartnerApplication
+from api.models import (
+    MentorProfile,
+    MenteeProfile,
+    Admin,
+    PartnerProfile,
+    MenteeApplication,
+    NewMentorApplication,
+    PartnerApplication,
+)
 from api.utils.constants import Account
 
 wtforms_json.init()
@@ -59,6 +68,7 @@ class MenteeForm(Form):
     languages = FieldList(StringField(), validators=[validators.DataRequired()])
     organization = StringField(validators=[InputRequired()])
 
+
 class PartnerForm(Form):
     firebase_uid = StringField(validators=[InputRequired()])
     email = StringField(validators=[InputRequired()])
@@ -67,6 +77,7 @@ class PartnerForm(Form):
     intro = StringField(validators=[InputRequired()])
     regions = FieldList(StringField(), validators=[validators.DataRequired()])
     sdgs = FieldList(StringField(), validators=[validators.DataRequired()])
+
 
 class AvailabilityForm(Form):
     start_time = StringField(validators=[InputRequired()])
@@ -113,7 +124,8 @@ class MentorApplicationForm(Form):
     knowledge_location = StringField(validators=[InputRequired()])
     identify = StringField(validators=[InputRequired()])
     pastLiveLocation = StringField(validators=[InputRequired()])
-    role=StringField(validators=[InputRequired()])
+    role = StringField(validators=[InputRequired()])
+
 
 class MenteeApplicationForm(Form):
     email = StringField(validators=[InputRequired()])
@@ -123,9 +135,9 @@ class MenteeApplicationForm(Form):
     identify = StringField(validators=[InputRequired()])
     language = StringField(validators=[InputRequired()])
     topics = FieldList(StringField(), validators=[validators.DataRequired()])
-    workstate =FieldList(StringField(), validators=[validators.DataRequired()])
+    workstate = FieldList(StringField(), validators=[validators.DataRequired()])
     isSocial = StringField(validators=[InputRequired()])
-    role=StringField(validators=[InputRequired()])
+    role = StringField(validators=[InputRequired()])
 
 
 class PartnerApplicationForm(Form):
@@ -136,10 +148,7 @@ class PartnerApplicationForm(Form):
     relationShip = FieldList(StringField(), validators=[validators.DataRequired()])
     SDGS = FieldList(StringField(), validators=[validators.DataRequired()])
     howBuild = StringField(validators=[InputRequired()])
-    role=StringField(validators=[InputRequired()])
-
-
-
+    role = StringField(validators=[InputRequired()])
 
 
 def is_invalid_form(form_data) -> Tuple[str, bool]:
@@ -202,7 +211,10 @@ def send_email(
 
     return True, ""
 
-def send_email_html(recipient: str = "", subject: str = "", html_content: str = "") -> Tuple[bool, str]:
+
+def send_email_html(
+    recipient: str = "", subject: str = "", html_content: str = ""
+) -> Tuple[bool, str]:
     if not recipient:
         return False, "Missing recipient email"
 
@@ -210,7 +222,7 @@ def send_email_html(recipient: str = "", subject: str = "", html_content: str = 
         from_email=sender_email,
         to_emails=recipient,
         subject=subject,
-        html_content=html_content
+        html_content=html_content,
     )
     try:
         sg = SendGridAPIClient(sendgrid_key)
@@ -219,7 +231,6 @@ def send_email_html(recipient: str = "", subject: str = "", html_content: str = 
         return False, str(e)
 
     return True, ""
-
 
 
 def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
@@ -248,8 +259,10 @@ def get_profile_model(role):
         return MenteeProfile
     elif role == Account.ADMIN:
         return Admin
-    elif role==Account.PARTNER:
-        return PartnerProfile     
+    elif role == Account.PARTNER:
+        return PartnerProfile
+
+
 def application_model(role):
     if role == Account.MENTOR:
         return NewMentorApplication
@@ -257,5 +270,5 @@ def application_model(role):
         return MenteeApplication
     elif role == Account.ADMIN:
         return Admin
-    elif role==Account.PARTNER:
-        return PartnerApplication   
+    elif role == Account.PARTNER:
+        return PartnerApplication

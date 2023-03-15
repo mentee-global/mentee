@@ -8,6 +8,5 @@ client = pyrebase.initialize_app(
         "databaseURL": "",
         "storageBucket": "mentee-d0304.appspot.com",
         "serviceAccount": os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"),
-        
     }
 )

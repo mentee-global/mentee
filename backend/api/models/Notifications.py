@@ -10,7 +10,7 @@ class Notifications(Document, Mixin):
     message = StringField(required=True)
     mentorId = StringField(required=True)
     date_submitted = DateTimeField(required=True)
-    readed=BooleanField(required=True)
+    readed = BooleanField(required=True)
 
     def __repr__(self):
         return f"""<Notification  : {self.message}

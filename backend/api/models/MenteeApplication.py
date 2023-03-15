@@ -6,21 +6,22 @@ from mongoengine import *
 
 class MenteeApplication(Document, Mixin):
     """Model for Mentee application."""
+
     email = StringField(required=True)
     name = StringField(required=True)
     age = StringField(required=True)
-    organization=StringField()
+    organization = StringField()
     immigrant_status = ListField(StringField(), required=True)
     Country = StringField()
     identify = StringField(required=True)
     language = StringField(required=True)
-    topics =ListField(StringField(), required=True)
-    workstate =ListField(StringField(), required=True)
+    topics = ListField(StringField(), required=True)
+    workstate = ListField(StringField(), required=True)
     isSocial = StringField(required=True)
     questions = StringField()
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
-    notes=StringField()
+    notes = StringField()
 
     def __repr__(self):
         return f"""Mentee Application email: {self.email}

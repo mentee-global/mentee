@@ -5,11 +5,8 @@ import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 import { REGIONS, SDGS } from "../utils/consts";
-import {
-  editPartnerProfile,
-  uploadPartnerImage,
-} from "../utils/api";
-import { useAuth } from "utils/hooks/useAuth"
+import { editPartnerProfile, uploadPartnerImage } from "../utils/api";
+import { useAuth } from "utils/hooks/useAuth";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
@@ -39,7 +36,7 @@ function PartnerProfileModal(props) {
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
-  const { profileId } = useAuth()
+  const { profileId } = useAuth();
 
   useEffect(() => {
     if (props.mentor) {

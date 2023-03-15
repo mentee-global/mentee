@@ -21,7 +21,7 @@ import moment from "moment";
 const INITIAL_NUM_INPUTS = 14;
 
 function MentorProfileModal(props) {
-  const { profileId } = useAuth()
+  const { profileId } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(

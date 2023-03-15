@@ -14,7 +14,7 @@ import {
   SPECIALIZATIONS,
 } from "../utils/consts";
 import { editMenteeProfile, uploadMenteeImage } from "../utils/api";
-import { useAuth } from "utils/hooks/useAuth"
+import { useAuth } from "utils/hooks/useAuth";
 import moment from "moment";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
@@ -24,7 +24,7 @@ import ImgCrop from "antd-img-crop";
 const INITIAL_NUM_INPUTS = 14;
 
 function MenteeProfileModal(props) {
-  const { profileId } = useAuth()
+  const { profileId } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(

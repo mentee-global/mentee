@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import { Input } from "antd";
 
 import MenteeButton from "./MenteeButton.js";
-import { useAuth } from "utils/hooks/useAuth"
+import { useAuth } from "utils/hooks/useAuth";
 import { fetchAvailability, editAvailability } from "../utils/api";
 
 import "./css/AvailabilityCalendar.scss";
@@ -15,7 +15,7 @@ import "./css/AvailabilityCalendar.scss";
  * Moment.js documentation: {@link https://momentjs.com/docs/}
  */
 function AvailabilityCalendar(props) {
-  const { profileId } = useAuth()
+  const { profileId } = useAuth();
   const [saved, setSaved] = useState({}); //  Days with set appointments
   const [value, setValue] = useState(moment());
   const [date, setDate] = useState(moment());

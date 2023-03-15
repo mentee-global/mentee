@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 function MenteeProfileModal(props) {
   const history = useHistory();
-  const { profileId } = useAuth()
+  const { profileId } = useAuth();
   const [modalVisible, setModalVisible] = useState(true);
   const [error, setError] = useState(false);
   const [specializations, setSpecializations] = useState([]);

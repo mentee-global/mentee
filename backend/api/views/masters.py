@@ -69,7 +69,6 @@ def delete_language(id):
 @masters.route("/languages/<string:id>", methods=["PUT"])
 @admin_only
 def edit_language_by_id(id):
-    #try:
     record=Languages.objects.get(id=id)
     lang_name = record.name
     mentors = MentorProfile.objects(languages__in=[lang_name])
@@ -101,8 +100,6 @@ def edit_language_by_id(id):
     record.name = request.form["name"]
     record.updated_at = datetime.now()
     record.save()
-    # except:
-    #   return create_response(status=422, message="training not found")
 
     return create_response(status=200, data={"result": record})
 
@@ -110,19 +107,16 @@ def edit_language_by_id(id):
 @masters.route("/languages", methods=["POST"])
 @admin_only
 def new_language():
+    
+    name=request.form['name']
+    record=Languages(
+        name=name,
+        updated_at=datetime.now()
+    )
 
-    #try:
-        name=request.form['name']
-        record=Languages(
-            name=name,
-            updated_at=datetime.now()
-        )
+    record.save()
 
-        record.save()
-    #except:    
-    #    return create_response(status=401, message="missing parameters")
-
-        return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={'result':record})
 
 @masters.route("/specializations", methods=["GET"])
 def getSpecializations():
@@ -183,7 +177,6 @@ def delete_specializations(id):
 @masters.route("/specializations/<string:id>", methods=["PUT"])
 @admin_only
 def edit_specialization_by_id(id):
-    #try:
     record=Specializations.objects.get(id=id)
     prev_name = record.name
     mentors = MentorProfile.objects(specializations__in=[prev_name])
@@ -215,8 +208,6 @@ def edit_specialization_by_id(id):
     record.updated_at = datetime.now()
 
     record.save()
-    # except:
-    #   return create_response(status=422, message="training not found")
 
     return create_response(status=200, data={"result": record})
 
@@ -224,15 +215,13 @@ def edit_specialization_by_id(id):
 @masters.route("/specializations", methods=["POST"])
 @admin_only
 def new_specailization():  
-    #try:
-        name=request.form['name']
-        record=Specializations(
-            name=name,
-            updated_at=datetime.now()
-        )
+    
+    name=request.form['name']
+    record=Specializations(
+        name=name,
+        updated_at=datetime.now()
+    )
 
-        record.save()
-    #except:    
-    #    return create_response(status=401, message="missing parameters")
+    record.save()
 
-        return create_response(status=200, data={'result':record})
+    return create_response(status=200, data={'result':record})

@@ -42,7 +42,7 @@ def delete_train(id):
 
 ################################################################################
 @training.route("/train/<string:id>", methods=["GET"])
-@admin_only
+# @admin_only
 def get_train(id):
     try:
         train = Training.objects.get(id=id)

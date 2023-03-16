@@ -8,6 +8,7 @@ AUTHORIZED = True
 UNAUTHORIZED = False
 ALL_USERS = True
 
+
 def verify_user(required_role):
     headers = request.headers
     role = None
@@ -28,6 +29,7 @@ def verify_user(required_role):
         logger.info(msg)
         return UNAUTHORIZED, create_response(status=401, message=msg)
 
+
 def admin_only(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -39,6 +41,7 @@ def admin_only(fn):
             return response
 
     return wrapper
+
 
 def mentee_only(fn):
     @wraps(fn)
@@ -52,6 +55,7 @@ def mentee_only(fn):
 
     return wrapper
 
+
 def mentor_only(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -63,6 +67,7 @@ def mentor_only(fn):
             return response
 
     return wrapper
+
 
 def partner_only(fn):
     @wraps(fn)
@@ -76,6 +81,7 @@ def partner_only(fn):
 
     return wrapper
 
+
 def all_users(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -87,4 +93,3 @@ def all_users(fn):
             return response
 
     return wrapper
-

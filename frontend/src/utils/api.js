@@ -40,16 +40,15 @@ export const fetchAccountById = (id, type) => {
   if (!id) return;
   const requestExtension = `/account/${id}`;
   return authGet(requestExtension, {
-      params: {
-        account_type: type,
-      },
-    })
-    .then(
-      (response) => response.data.result.account,
-      (err) => {
-        console.error(err);
-      }
-    );
+    params: {
+      account_type: type,
+    },
+  }).then(
+    (response) => response.data.result.account,
+    (err) => {
+      console.error(err);
+    }
+  );
 };
 
 export const fetchAccounts = (type) => {
@@ -65,16 +64,15 @@ export const fetchAccounts = (type) => {
 export const editAccountProfile = (profile, id, type) => {
   const requestExtension = `/account/${id}`;
   return authPut(requestExtension, profile, {
-      params: {
-        account_type: type,
-      },
-    })
-    .then(
-      (response) => response,
-      (err) => {
-        console.error(err);
-      }
-    );
+    params: {
+      account_type: type,
+    },
+  }).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
 };
 
 export const uploadAccountImage = (data, id, type) => {

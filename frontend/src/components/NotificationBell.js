@@ -3,9 +3,7 @@ import { useHistory } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { Badge } from "antd";
 import { BellOutlined } from "@ant-design/icons";
-import {
-  fetchNotificationsCount,
-} from "features/notificationsSlice";
+import { fetchNotificationsCount } from "features/notificationsSlice";
 import { useAuth } from "utils/hooks/useAuth";
 import "./css/Navigation.scss";
 
@@ -23,7 +21,10 @@ function NotificationBell() {
   return (
     <div className="notifications-section">
       <Badge count={count ?? 0} size="small">
-        <BellOutlined onClick={() => history.push({pathname: `/messages/${role}`})} className="notifications-icon" />
+        <BellOutlined
+          onClick={() => history.push({ pathname: `/messages/${role}` })}
+          className="notifications-icon"
+        />
       </Badge>
     </div>
   );

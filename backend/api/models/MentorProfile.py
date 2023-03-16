@@ -27,7 +27,7 @@ class MentorProfile(Document, Mixin):
     videos = ListField(EmbeddedDocumentField(Video))
     video = EmbeddedDocumentField(Video)
     availability = ListField(EmbeddedDocumentField(Availability))
-    taking_appointments = BooleanField(required=True)
+    taking_appointments = BooleanField(required=False)
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)
 

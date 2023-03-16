@@ -1,11 +1,13 @@
 from flask import Blueprint, request
 from api.core import create_response, logger
-from api.models import Training
+from api.models import Training, MentorProfile, MenteeProfile, PartnerProfile
 from datetime import datetime
 from api.utils.require_auth import admin_only
 from datetime import datetime
 from flask import send_file
 from io import BytesIO
+from api.utils.constants import Account, NEW_TRAINING_TEMPLATE
+from api.utils.request_utils import send_email
 
 training = Blueprint("training", __name__)  # initialize blueprint
 
@@ -102,34 +104,54 @@ def get_train_id_edit(id):
 @training.route("/<role>", methods=["POST"])
 @admin_only
 def new_train(role):
-    # try:
-    name = request.form["name"]
-    url = request.form["url"]
-    description = request.form["description"]
-    typee = request.form["typee"]
-    isVideoo = request.form["isVideo"]
-    if isVideoo == "true":
-        isVideoo = True
-    if isVideoo == "false":
-        isVideoo = False
+    try:
+        name = request.form["name"]
+        description = request.form["description"]
+        typee = request.form["typee"]
+        isVideoo = request.form["isVideo"]
+        if isVideoo == "true":
+            isVideoo = True
+        if isVideoo == "false":
+            isVideoo = False
 
-    train = Training(
-        name=name,
-        description=description,
-        role=str(role),
-        typee=typee,
-        isVideo=isVideoo,
-        date_submitted=datetime.now(),
-    )
-    if not isVideoo:
-        filee = request.files["filee"]
-        train.filee.put(filee, file_name=filee.filename)
-        train.file_name = filee.filename
-    else:
-        train.url = request.form["url"]
+        train = Training(
+            name=name,
+            description=description,
+            role=str(role),
+            typee=typee,
+            isVideo=isVideoo,
+            date_submitted=datetime.now(),
+        )
+        if not isVideoo:
+            filee = request.files["filee"]
+            train.filee.put(filee, file_name=filee.filename)
+            train.file_name = filee.filename
+        else:
+            train.url = request.form["url"]
 
-    train.save()
-    # except:
-    #    return create_response(status=401, message="missing parameters")
+        train.save()
+        new_train_id = train.id
+        if int(role) == Account.MENTOR:
+            receivers = MentorProfile.objects.all()
+        elif int(role) == Account.MENTEE:
+            receivers = MenteeProfile.objects.all()
+        else:
+            receivers = PartnerProfile.objects.all()
+
+        front_url = request.form["front_url"]
+        target_url = front_url + "new_training/" + role + "/" + str(new_train_id)
+        for receiver in receivers:
+            res, res_msg = send_email(
+                recipient=receiver.email,
+                subject="New Training Data",
+                data={"link": target_url},
+                template_id=NEW_TRAINING_TEMPLATE,
+            )
+            if not res:
+                msg = "Failed to send new traing data alert email " + res_msg
+                logger.info(msg)
+
+    except:
+        return create_response(status=400, message="missing parameters")
 
     return create_response(status=200, data={"train": train})

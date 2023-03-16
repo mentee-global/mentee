@@ -39,8 +39,7 @@ const authDelete = async (url, config) =>
 export const fetchAccountById = (id, type) => {
   if (!id) return;
   const requestExtension = `/account/${id}`;
-  return instance
-    .get(requestExtension, {
+  return authGet(requestExtension, {
       params: {
         account_type: type,
       },
@@ -55,7 +54,7 @@ export const fetchAccountById = (id, type) => {
 
 export const fetchAccounts = (type) => {
   const requestExtension = `/accounts/${type}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.accounts,
     (err) => {
       console.error(err);
@@ -65,8 +64,7 @@ export const fetchAccounts = (type) => {
 
 export const editAccountProfile = (profile, id, type) => {
   const requestExtension = `/account/${id}`;
-  return instance
-    .put(requestExtension, profile, {
+  return authPut(requestExtension, profile, {
       params: {
         account_type: type,
       },
@@ -84,7 +82,7 @@ export const uploadAccountImage = (data, id, type) => {
   formData.append("image", data);
   formData.append("account_type", type);
   const requestExtension = `/account/${id}/image`;
-  return instance.put(requestExtension, formData).then(
+  return authPut(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -99,7 +97,7 @@ export const createAccountProfile = async (profile, type, isHave) => {
     requestExtension = `/accountProfile`;
   }
 
-  return await instance.post(requestExtension, profile).then(
+  return authPost(requestExtension, profile).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -112,7 +110,7 @@ export const fetchApplications = async (isMentor) => {
   if (isMentor === false) {
     requestExtension = "/application/menteeApps";
   }
-  return await authGet(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response && response.data.result,
     (err) => {
       console.error(err);
@@ -122,7 +120,7 @@ export const fetchApplications = async (isMentor) => {
 
 export const createApplication = (application) => {
   const requestExtension = `/application/new`;
-  return instance.post(requestExtension, application).then(
+  return authPost(requestExtension, application).then(
     (response) => response,
     (err) => {
       console.error(err);

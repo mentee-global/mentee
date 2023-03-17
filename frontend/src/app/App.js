@@ -1,6 +1,5 @@
 import React from "react";
-import { Route, BrowserRouter as Router, Redirect } from "react-router-dom";
-import { Layout } from "antd";
+import { Route, BrowserRouter as Router } from "react-router-dom";
 import Appointments from "components/pages/Appointments";
 import MenteeAppointments from "components/pages/MenteeAppointments";
 import Home from "components/pages/Home";
@@ -9,27 +8,23 @@ import Profile from "components/pages/Profile";
 import Navigation from "components/Navigation";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
-import SelectLogin from "components/pages/SelectLogin";
+import NewTrainingConfirm from "components/pages/NewTrainingConfirm";
 import Login from "components/pages/Login";
 import AdminLogin from "components/pages/AdminLogin";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
-import RegisterForm from "components/pages/MentorProfileForm";
 import ForgotPassword from "components/pages/ForgotPassword";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
-import MentorApplication from "components/pages/MentorApplication";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminVerifiedEmails from "components/pages/AdminVerifiedEmails";
 import MenteeGallery from "components/pages/MenteeGallery";
 import NotFound from "components/pages/NotFound";
 import NavHeader from "components/NavHeader";
-import { ACCOUNT_TYPE } from "utils/consts";
 import Messages from "components/pages/Messages";
 import Apply from "../components/pages/Apply";
 import "components/css/Navigation.scss";
 import SocketComponent from "components/SocketComponent";
-import MentorProfileForm from "components/pages/MentorProfileForm";
 import { Trainings } from "components/Trainings";
 import { Languages } from "components/Languages";
 import { Specializations } from "components/Specializations";
@@ -119,6 +114,20 @@ function App() {
             <Navigation
               content={
                 <PublicProfile
+                  id={props.match.params.id}
+                  accountType={props.match.params.type}
+                />
+              }
+              needsAuth={false}
+            />
+          )}
+        />
+        <Route
+          path="/new_training/:type/:id"
+          component={(props) => (
+            <Navigation
+              content={
+                <NewTrainingConfirm
                   id={props.match.params.id}
                   accountType={props.match.params.type}
                 />

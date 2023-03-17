@@ -1,7 +1,11 @@
 import axios from "axios";
-import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
+import {
+  API_URL,
+  ACCOUNT_TYPE,
+  PLURAL_TYPE,
+  FRONT_BASE_URL,
+} from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
-import { lang } from "moment";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -250,6 +254,7 @@ export const newTrainCreate = async (
 ) => {
   const requestExtension = `/training/${role}`;
   const formData = new FormData();
+  formData.append("front_url", FRONT_BASE_URL);
   formData.append("name", name);
   formData.append("url", url);
   formData.append("typee", typee);

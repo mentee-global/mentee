@@ -62,7 +62,7 @@ function NewTrainingConfirm({ accountType, id }) {
             )}
           </List>
         </div>
-        <div className="btnContainer">
+        <div className="btnContainer" style={{ justifyContent: "center" }}>
           <div
             className={`applySubmit2`}
             onClick={async () => {

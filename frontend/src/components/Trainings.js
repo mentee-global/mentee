@@ -28,16 +28,14 @@ export const Trainings = () => {
   const [url, setUrl] = useState(null);
   const [desc, setDesc] = useState(null);
   const [trainrole, setTrainRole] = useState(null);
-  const [isnew, setIsnew] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisible2, setIsModalVisible2] = useState(false);
   const [errMessage, setErrorMessage] = useState(null);
   const [typee, setTypee] = useState(null);
-
-  const [isVideo, setIsVideo] = useState("Yes");
   const [filee, setFilee] = useState(null);
   const [file_name, setFileName] = useState(null);
   const [selectedID, setSelectedID] = useState("");
+  const [loading, setLoading] = useState(false);
   const { Option } = Select;
 
   const showModal = async (id, isNew) => {
@@ -50,7 +48,6 @@ export const Trainings = () => {
         setDesc(train.description);
         setTrainRole(train.role);
         setTypee(train.typee);
-        setIsVideo(train.isVideo ? "Yes" : "No");
         if (train.isVideo) {
           setUrl(train.url);
         } else {
@@ -77,7 +74,7 @@ export const Trainings = () => {
       !name ||
       !desc ||
       !trainrole ||
-      (typee != TRAINING_TYPE.DOCUMENT && !url) ||
+      (typee !== TRAINING_TYPE.DOCUMENT && !url) ||
       (typee === !TRAINING_TYPE.DOCUMENT && !filee)
     ) {
       setErr(true);
@@ -86,6 +83,7 @@ export const Trainings = () => {
     } else {
       setErr(false);
     }
+    setLoading(true);
     let isVideoo = typee !== TRAINING_TYPE.DOCUMENT;
     if (isNew === true) {
       let train = await newTrainCreate(
@@ -100,7 +98,6 @@ export const Trainings = () => {
       if (train) {
         setErr(false);
         setIsModalVisible2(false);
-        setIsnew(false);
       } else {
         setErr(true);
         setErrorMessage("Couldn' save changes");
@@ -126,6 +123,7 @@ export const Trainings = () => {
     }
 
     setReload(!reload);
+    setLoading(false);
   };
 
   const handleCancel = () => {
@@ -135,76 +133,80 @@ export const Trainings = () => {
 
   const TrainForm = () => (
     <Form className="trainForm">
-      <p>Name *</p>
-      <Input
-        placeholder="Name *"
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <p>Training Type *</p>
-      <Radio.Group
-        onChange={(e) => setTypee(e.target.value)}
-        value={typee}
-        className="isVideo"
-      >
-        <Radio value={TRAINING_TYPE.VIDEO}>Video</Radio>
-        <Radio value={TRAINING_TYPE.DOCUMENT}>Document</Radio>
-        <Radio value={TRAINING_TYPE.LINK}>External Link</Radio>
-      </Radio.Group>
-      {typee != TRAINING_TYPE.DOCUMENT ? (
+      {loading ? <h1>Loading ...</h1> : (
         <>
-          <p>Url *</p>
-          <Input
-            placeholder="Url *"
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-        </>
-      ) : (
-        <>
-          {" "}
-          {filee && (
-            <p>
-              <Button
-                onClick={() => {
-                  downloadBlob(filee, file_name);
-                }}
-              >
-                {file_name}
-              </Button>
-            </p>
-          )}
-          <p>File*</p>
-          <Input
-            type="file"
-            onChange={(e) => {
-              setFilee(e.target.files[0]);
-              setFileName(e.target.files[0].filename);
-            }}
-          ></Input>
+        <p>Name *</p>
+        <Input
+          placeholder="Name *"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <p>Training Type *</p>
+        <Radio.Group
+          onChange={(e) => setTypee(e.target.value)}
+          value={typee}
+          className="isVideo"
+        >
+          <Radio value={TRAINING_TYPE.VIDEO}>Video</Radio>
+          <Radio value={TRAINING_TYPE.DOCUMENT}>Document</Radio>
+          <Radio value={TRAINING_TYPE.LINK}>External Link</Radio>
+        </Radio.Group>
+        {typee !== TRAINING_TYPE.DOCUMENT ? (
+          <>
+            <p>Url *</p>
+            <Input
+              placeholder="Url *"
+              type="text"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+          </>
+        ) : (
+          <>
+            {" "}
+            {filee && (
+              <p>
+                <Button
+                  onClick={() => {
+                    downloadBlob(filee, file_name);
+                  }}
+                >
+                  {file_name}
+                </Button>
+              </p>
+            )}
+            <p>File*</p>
+            <Input
+              type="file"
+              onChange={(e) => {
+                setFilee(e.target.files[0]);
+                setFileName(e.target.files[0].filename);
+              }}
+            ></Input>
+          </>
+        )}
+
+        <p>Description *</p>
+        <Input
+          placeholder="Description *"
+          type="text"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
+        <p>Role *</p>
+        <Select
+          style={{ width: 120 }}
+          onChange={(value) => setTrainRole(value)}
+          placeholder="Role"
+          value={trainrole}
+        >
+          <Option value={ACCOUNT_TYPE.MENTOR}>Mentor</Option>
+          <Option value={ACCOUNT_TYPE.MENTEE}>Mentee</Option>
+          <Option value={ACCOUNT_TYPE.PARTNER}>Partner</Option>
+        </Select>
         </>
       )}
-
-      <p>Description *</p>
-      <Input
-        placeholder="Description *"
-        type="text"
-        value={desc}
-        onChange={(e) => setDesc(e.target.value)}
-      />
-      <p>Role *</p>
-      <Select
-        style={{ width: 120 }}
-        onChange={(value) => setTrainRole(value)}
-        placeholder="Role"
-        value={trainrole}
-      >
-        <Option value={ACCOUNT_TYPE.MENTOR}>Mentor</Option>
-        <Option value={ACCOUNT_TYPE.MENTEE}>Mentee</Option>
-        <Option value={ACCOUNT_TYPE.PARTNER}>Partner</Option>
-      </Select>
     </Form>
   );
 
@@ -281,6 +283,7 @@ export const Trainings = () => {
             okText="save"
             closable={false}
             width={"600px"}
+            okButtonProps={{ disabled:  loading ? true : false }}
           >
             {" "}
             {TrainForm()}
@@ -339,7 +342,6 @@ export const Trainings = () => {
             className="table-button"
             icon={<PlusCircleOutlined />}
             onClick={() => {
-              setIsnew(true);
               showModal("", true);
             }}
           >
@@ -358,6 +360,7 @@ export const Trainings = () => {
         okText="save"
         closable={false}
         width={"600px"}
+        okButtonProps={{ disabled:  loading ? true : false }}
       >
         {TrainForm()}
         {err ? <p className="error">{errMessage}</p> : ""}

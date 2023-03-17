@@ -69,7 +69,7 @@ function NewTrainingConfirm({ accountType, id }) {
               window.location.href = "/";
             }}
           >
-            confirm
+            I confirm I have completed the training.
           </div>
         </div>
       </div>

@@ -45,28 +45,6 @@ def verify_email():
     return create_response(message="Sent verification link to email")
 
 
-def check_email_in_use(email, model_to_remove):
-    profile_models = [
-        get_profile_model(Account.MENTEE),
-        get_profile_model(Account.MENTOR),
-        get_profile_model(Account.ADMIN),
-    ]
-    profile_models.remove(model_to_remove)
-    for profile_model in profile_models:
-        profile = None
-        try:
-            profile = profile_model.objects.get(email=email)
-        except:
-            # Could not find email in current profile model
-            continue
-
-        if profile:
-            logger.info("email found!")
-            return True
-    logger.info("email not found!")
-    return False
-
-
 def create_firebase_user(email, password):
     firebase_user = None
     error_http_response = None
@@ -87,12 +65,6 @@ def create_firebase_user(email, password):
         error_http_response = create_response(status=500, message=msg)
 
     return firebase_user, error_http_response
-
-
-@auth.route("/hat", methods=["GET"])
-def hat():
-    ps = MentorProfile.objects
-    return create_response(message="does", data={"ps": ps})
 
 
 @auth.route("/register", methods=["POST"])

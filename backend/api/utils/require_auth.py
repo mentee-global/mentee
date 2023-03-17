@@ -17,9 +17,10 @@ def verify_user(required_role):
         token = headers.get("Authorization")
         claims = firebase_admin_auth.verify_id_token(token)
         role = claims.get("role")
-    except:
+    except Exception as e:
         msg = "Error parsing JWT token -- not included in header or invalid token"
         logger.info(msg)
+        logger.info(e)
         return UNAUTHORIZED, create_response(status=500, message=msg)
 
     if required_role == ALL_USERS or int(role) == required_role:

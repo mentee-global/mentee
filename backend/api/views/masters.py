@@ -12,13 +12,14 @@ from api.models import (
     MenteeApplication,
     NewMentorApplication,
 )
-from api.utils.require_auth import admin_only
+from api.utils.require_auth import admin_only, all_users
 from pymongo import collation
 
 masters = Blueprint("masters", __name__)
 
 
 @masters.route("/languages", methods=["GET"])
+@all_users
 def getLanguages():
     try:
         languages = Languages.objects.order_by("name").collation(

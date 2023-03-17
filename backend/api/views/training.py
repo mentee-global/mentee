@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from api.core import create_response, logger
 from api.models import Training
 from datetime import datetime
-from api.utils.require_auth import admin_only
+from api.utils.require_auth import admin_only, all_users
 from datetime import datetime
 from flask import send_file
 from io import BytesIO
@@ -11,6 +11,7 @@ training = Blueprint("training", __name__)  # initialize blueprint
 
 
 @training.route("/<role>", methods=["GET"])
+@all_users
 def get_trainings(role):
     # try:
     trainings = Training.objects(role=str(role))
@@ -52,6 +53,7 @@ def get_train(id):
 
 ##################################################################################
 @training.route("/trainVideo/<string:id>", methods=["GET"])
+@all_users
 def get_train_file(id):
     try:
         train = Training.objects.get(id=id)

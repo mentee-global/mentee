@@ -86,11 +86,15 @@ function NavHeader({ history }) {
     }
   };
   useEffect(() => {
-    getNotifys().then((notifys) => {
-      setNotifys(notifys);
-      let unReadnotifys = notifys.filter((notify) => notify.readed === false);
+    const getAdminNotifications = async () => {
+      const newNotifys = await getNotifys();
+      setNotifys(newNotifys);
+      let unReadnotifys = newNotifys.filter(
+        (notify) => notify.readed === false
+      );
       setCount(unReadnotifys.length);
-    });
+    };
+    if (role === ACCOUNT_TYPE.ADMIN) getAdminNotifications();
   }, []);
   const dropdownMenu = (
     <Menu className="dropdown-menu">

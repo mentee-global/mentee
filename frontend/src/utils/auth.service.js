@@ -220,8 +220,11 @@ export const getUserEmail = async () => {
 export const getUserIdToken = async () => {
   if (isLoggedIn()) {
     return await getIdToken().then((idToken) => {
+      localStorage.setItem("userIdToken", idToken);
       return idToken;
     });
+  } else {
+    return localStorage.getItem("userIdToken")
   }
 };
 

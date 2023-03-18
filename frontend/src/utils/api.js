@@ -176,7 +176,7 @@ export const getTrainings = async (role) => {
   return newTrain;
 };
 export const getNotifys = async () => {
-  const requestExtension = `/notifys`;
+  const requestExtension = `/notifys/`;
   const res = await authGet(requestExtension);
   const notifys = res.data.result.notifys;
   return notifys;

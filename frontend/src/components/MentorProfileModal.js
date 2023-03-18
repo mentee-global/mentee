@@ -9,7 +9,12 @@ import {
   PlusCircleFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { editMentorProfile, getDisplayLanguages, getDisplaySpecializations, uploadMentorImage } from "utils/api";
+import {
+  editMentorProfile,
+  getDisplayLanguages,
+  getDisplaySpecializations,
+  uploadMentorImage,
+} from "utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";

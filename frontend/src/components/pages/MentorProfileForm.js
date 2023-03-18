@@ -2,27 +2,18 @@ import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "../ModalInput";
-import {
-  getRegistrationStage,
-  isLoggedIn,
-  refreshToken,
-  getCurrentUser,
-  getUserEmail,
-} from "utils/auth.service";
 import { sendVerificationEmail } from "utils/auth.service";
 
 import {
   createMentorProfile,
   getAppState,
   isHaveAccount,
-  uploadMenteeImage,
   uploadMentorImage,
+  getDisplaySpecializations,
+  getDisplayLanguages,
 } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import {
-  LANGUAGES,
-  SPECIALIZATIONS,
-  REGISTRATION_STAGE,
   MENTEE_DEFAULT_VIDEO_NAME,
 } from "utils/consts";
 
@@ -70,68 +61,10 @@ function RegisterForm(props) {
     const mentor = JSON.parse(localStorage.getItem("mentor"));
 
     async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
+      setLangMasters(await getDisplayLanguages());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
-    /*
-		if (mentor) {
-			let newValid = [...isValid];
-			setLocalProfile(mentor);
-			setVideo(mentor.video);
-			setName(mentor.name);
-			if (mentor.name && mentor.name.length > 50) {
-				newValid[0] = false;
-			}
-			setAbout(mentor.biography);
-			if (mentor.biography && mentor.biography.length > 1002) {
-				newValid[8] = false;
-			}
-			setLocation(mentor.location);
-			setTitle(mentor.professional_title);
-			if (mentor.professional_title && mentor.professional_title.length > 80) {
-				newValid[1] = false;
-			}
-			if (mentor.website) {
-				setWebsite(mentor.website);
-				if (!validateUrl(mentor.website)) {
-					newValid[3] = false;
-				}
-			}
-			if (mentor.linkedin) {
-				setLinkedin(mentor.linkedin);
-				if (!validateUrl(mentor.linkedin)) {
-					newValid[2] = false;
-				}
-			}
-
-			setInPersonAvailable(mentor.offers_in_person);
-			setGroupAvailable(mentor.offers_group_appointments);
-
-			setSpecializations(mentor.specializations);
-			if (mentor.specializations && mentor.specializations.length <= 0) {
-				newValid[9] = false;
-			}
-
-			setLanguages(mentor.languages);
-			if (mentor.languages && mentor.languages.length <= 0) {
-				newValid[7] = false;
-			}
-			if (mentor.education) {
-				const newEducation = mentor.education
-					? JSON.parse(JSON.stringify(mentor.education))
-					: [];
-				setEducations(newEducation);
-				newEducation.forEach((education, index) => {
-					newValid = [...newValid, true, true, true, true];
-					newValid[10 + index * 4] = !!education.school;
-					newValid[10 + index * 4 + 1] = !!education.graduation_year;
-					newValid[10 + index * 4 + 2] = !!education.majors.length;
-					newValid[10 + index * 4 + 3] = !!education.education_level;
-				});
-				setIsValid(newValid);
-			}
-		}*/
   }, []);
   const info = (msg) => {
     message.success(msg);

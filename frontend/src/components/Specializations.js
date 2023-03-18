@@ -3,7 +3,7 @@ import {
   deleteSpecializationByID,
   EditSpecializationById,
   getSpecializationById,
-  fetchSpecializations,
+  fetchAdminSpecializations,
   newSpecializationCreate,
 } from "utils/api";
 import { Input, Form, Button } from "antd";
@@ -166,7 +166,7 @@ export const Specializations = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let dataa = await fetchSpecializations();
+      let dataa = await fetchAdminSpecializations();
       if (dataa) {
         setData(dataa);
       } else {

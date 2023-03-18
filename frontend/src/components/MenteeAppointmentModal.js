@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import {
-  Form,
-  Modal,
-  Calendar,
-  Avatar,
-  Switch,
-  Space,
-  notification,
-} from "antd";
+import { Form, Modal, Calendar, Avatar, Switch, notification } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -17,7 +9,11 @@ import {
   APPOINTMENT_FORM_KEYS,
   APPOINTMENT_STATUS,
 } from "../utils/consts";
-import { createAppointment, editAvailability } from "../utils/api";
+import {
+  createAppointment,
+  editAvailability,
+  getDisplaySpecializations,
+} from "utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -70,7 +66,7 @@ function MenteeAppointmentModal(props) {
 
   useEffect(() => {
     async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import ModalInput from "./ModalInput";
-import { SPECIALIZATIONS } from "../utils/consts";
-import { editMenteeProfile } from "../utils/api";
+import { editMenteeProfile, getDisplaySpecializations } from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import { useHistory } from "react-router";
 import "./css/MenteeAppointments.scss";
@@ -18,7 +17,7 @@ function MenteeProfileModal(props) {
 
   useEffect(() => {
     async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

@@ -3,7 +3,7 @@ import {
   deleteLanguageByID,
   EditLanguageById,
   getLanguageById,
-  fetchLanguages,
+  fetchAdminLanguages,
   newLanguageCreate,
 } from "utils/api";
 import { Input, Form, Button } from "antd";
@@ -166,7 +166,7 @@ export const Languages = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let dataa = await fetchLanguages();
+      let dataa = await fetchAdminLanguages();
       if (dataa) {
         setData(dataa);
       } else {

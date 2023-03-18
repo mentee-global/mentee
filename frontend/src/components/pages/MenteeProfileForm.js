@@ -8,13 +8,13 @@ import {
   getAppState,
   isHaveAccount,
   uploadMenteeImage,
+  getDisplaySpecializations,
+  getDisplayLanguages,
 } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import {
-  LANGUAGES,
   MENTEE_DEFAULT_VIDEO_NAME,
   AGE_RANGES,
-  SPECIALIZATIONS,
 } from "utils/consts";
 import { useMediaQuery } from "react-responsive";
 import moment from "moment";
@@ -61,8 +61,8 @@ function MenteeRegisterForm(props) {
     const mentee = JSON.parse(localStorage.getItem("mentee"));
 
     async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
+      setLangMasters(await getDisplayLanguages());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

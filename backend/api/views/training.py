@@ -15,16 +15,10 @@ training = Blueprint("training", __name__)  # initialize blueprint
 @training.route("/<role>", methods=["GET"])
 @all_users
 def get_trainings(role):
-    # try:
     trainings = Training.objects(role=str(role))
     trainings = list(trainings)
     for train in trainings:
         train.id = train.id
-
-    # except:
-    #    msg = "trainings does not exist"
-    #    logger.info(msg)
-    #    return create_response(status=422, message=msg)
 
     return create_response(data={"trainings": trainings})
 

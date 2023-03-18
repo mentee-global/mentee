@@ -122,35 +122,36 @@ export const fetchApplications = async (isMentor) => {
 
 export const createApplication = (application) => {
   const requestExtension = `/application/new`;
-  return authPost(requestExtension, application).then(
+  return instance.post(requestExtension, application).then(
     (response) => response,
     (err) => {
       console.error(err);
     }
   );
 };
-let state = "";
+
 export const getAppState = async (email, role) => {
   const requestExtension = `/application/checkConfirm/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  state = res.data.result.state;
+  let state = res.data.result.state;
   return state;
 };
-let isHaveProfile = false;
-export const isHaveProfilee = async (email, role) => {
+
+export const getExistingProfile = async (email, role) => {
   const requestExtension = `/application/isHaveProfile/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  isHaveProfile = res.data.result.isHaveProfile;
+  let isHaveProfile = res.data.result.isHaveProfile || false;
   let rightRole = null;
   if (res.data.result.rightRole) {
     rightRole = res.data.result.rightRole;
   }
   return { isHaveProfile, rightRole };
 };
+
 export const changeStateBuildProfile = async (email, role) => {
   const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  state = res.data.result.state;
+  let state = res.data.result.state;
   return state;
 };
 
@@ -165,7 +166,7 @@ export const isHaveAccount = async (email, role) => {
 
 export const getTrainings = async (role) => {
   const requestExtension = `/training/${role}`;
-  const res = await instance.get(requestExtension);
+  const res = await authGet(requestExtension);
   const trains = res.data.result.trainings;
   let newTrain = [];
   for (let train of trains) {
@@ -176,7 +177,7 @@ export const getTrainings = async (role) => {
 };
 export const getNotifys = async () => {
   const requestExtension = `/notifys`;
-  const res = await instance.get(requestExtension);
+  const res = await authGet(requestExtension);
   const notifys = res.data.result.notifys;
   return notifys;
 };
@@ -273,7 +274,7 @@ export const newTrainCreate = async (
 };
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
-  return instance.post(requestExtension, appointment).then(
+  return authPost(requestExtension, appointment).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -283,7 +284,7 @@ export const createAppointment = (appointment) => {
 
 export const acceptAppointment = (id) => {
   const requestExtension = `/appointment/accept/${id}`;
-  return instance.put(requestExtension, {}).then(
+  return authPut(requestExtension, {}).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -293,7 +294,7 @@ export const acceptAppointment = (id) => {
 
 export const deleteAppointment = (id) => {
   const requestExtension = `/appointment/${id}`;
-  return instance.delete(requestExtension).then(
+  return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -303,7 +304,7 @@ export const deleteAppointment = (id) => {
 
 export const fetchAppointmentsById = (id, accountType) => {
   const requestExtension = `/appointment/${accountType}/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -313,7 +314,7 @@ export const fetchAppointmentsById = (id, accountType) => {
 
 export const getIsEmailVerified = (email, password) => {
   const requestExtension = `/verifyEmail?email=${email}&password=${password}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -324,7 +325,7 @@ export const getIsEmailVerified = (email, password) => {
 
 export const fetchAvailability = (id) => {
   const requestExtension = `/availability/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -334,7 +335,7 @@ export const fetchAvailability = (id) => {
 
 export const sendNotifyUnreadMessage = (recipient_id) => {
   const requestExtension = `/notifications/unread_alert/${recipient_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.message,
     (err) => {
       console.error(err);
@@ -344,7 +345,7 @@ export const sendNotifyUnreadMessage = (recipient_id) => {
 
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -358,7 +359,7 @@ export const updateUnreadDMCount = (recipient, sender) => {
     sender,
   };
   const requestExtension = `/notifications/update`;
-  return instance.put(requestExtension, data).then(
+  return authPut(requestExtension, data).then(
     (response) => response,
     (err) => err
   );
@@ -367,7 +368,7 @@ export const updateUnreadDMCount = (recipient, sender) => {
 export const editAvailability = (timeslots, id) => {
   const requestExtension = `/availability/${id}`;
   let availability = { Availability: timeslots };
-  return instance.put(requestExtension, availability).then(
+  return authPut(requestExtension, availability).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -493,7 +494,7 @@ export const editFavMentorById = (mentee_id, mentor_id, favorite) => {
     mentor_id,
     favorite,
   };
-  return instance.put(requestExtension, data).then(
+  return authPut(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -503,7 +504,7 @@ export const editFavMentorById = (mentee_id, mentor_id, favorite) => {
 
 export const getFavMentorsById = (mentee_id) => {
   const requestExtension = `/mentee/favorites/${mentee_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.favorites,
     (err) => console.error(err)
   );
@@ -511,7 +512,7 @@ export const getFavMentorsById = (mentee_id) => {
 
 export const sendMessage = (data) => {
   const requestExtension = `/messages/`;
-  return instance.post(requestExtension, data).then(
+  return authPost(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -586,7 +587,7 @@ export const getAdmin = (id) => {
 
 export const getMessages = (user_id) => {
   const requestExtension = `/messages/?recipient_id=${user_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {
       console.error(err);
@@ -596,7 +597,7 @@ export const getMessages = (user_id) => {
 
 export const getDirectMessages = (user_id) => {
   const requestExtension = `/direct/messages/?recipient_id=${user_id}&sender_id=${user_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {
       console.error(err);
@@ -606,7 +607,7 @@ export const getDirectMessages = (user_id) => {
 
 export const getLatestMessages = (user_id) => {
   const requestExtension = `/messages/contacts/${user_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.data,
     (err) => {
       console.error(err);
@@ -621,7 +622,7 @@ export const getDetailMessages = (
   endDate
 ) => {
   const requestExtension = `/messages/contacts/mentors/${pageNumber}?searchTerm=${searchTerm}&startDate=${startDate}&endDate=${endDate}&pageSize=${pageSize}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => {
       return {
         data: response.data.result.data,
@@ -635,7 +636,7 @@ export const getDetailMessages = (
 };
 export const getMessageData = (sender_id, recipient_id) => {
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {
       console.error(err);
@@ -645,7 +646,7 @@ export const getMessageData = (sender_id, recipient_id) => {
 
 export const getMenteePrivateStatus = (profileId) => {
   const requestExtension = `/account/${profileId}/private`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data && response.data.result,
     (err) => {
       console.error(err);
@@ -669,7 +670,7 @@ export const sendMenteeMentorEmail = (
     communication_method: communicationMethod,
     message: message,
   };
-  return instance.post(requestExtension, data).then(
+  return authPost(requestExtension, data).then(
     (response) => response,
     (err) => console.error(err)
   );
@@ -703,9 +704,9 @@ export const newLanguageCreate = async (name) => {
   return record;
 };
 
-export const fetchLanguages = async () => {
+export const fetchAdminLanguages = async () => {
   const requestExtension = `/masters/languages`;
-  var records = await instance.get(requestExtension);
+  var records = await authGet(requestExtension);
   var res = [];
   var languages = records.data.result.result;
   var index = 0;
@@ -736,9 +737,9 @@ export const deleteSpecializationByID = (id) => {
   );
 };
 
-export const fetchSpecializations = async () => {
+export const fetchAdminSpecializations = async () => {
   const requestExtension = `/masters/specializations`;
-  var records = await instance.get(requestExtension);
+  var records = await authGet(requestExtension);
   var res = [];
   var specializations = records.data.result.result;
   var index = 0;
@@ -766,6 +767,7 @@ export const EditSpecializationById = async (id, name) => {
   let record = response.data.result.result;
   return record;
 };
+
 export const newSpecializationCreate = async (name) => {
   const requestExtension = `/masters/specializations`;
   const formData = new FormData();
@@ -774,6 +776,28 @@ export const newSpecializationCreate = async (name) => {
 
   let record = response.data.result.result;
   return record;
+};
+
+export const getDisplayLanguages = async () => {
+  const requestExtension = `/masters/languages`;
+  var records = await authGet(requestExtension);
+  var res = [];
+  var languages = records.data.result.result;
+  for (let language of languages) {
+    res.push(language.name);
+  }
+  return res;
+};
+
+export const getDisplaySpecializations = async () => {
+  const requestExtension = `/masters/specializations`;
+  var records = await authGet(requestExtension);
+  var res = [];
+  var specializations = records.data.result.result;
+  for (let specialization of specializations) {
+    res.push(specialization.name);
+  }
+  return res;
 };
 
 /**

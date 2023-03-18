@@ -10,7 +10,7 @@ import { fetchUser } from "features/userSlice";
 import usePersistedState from "utils/hooks/usePersistedState";
 import SelectLogin from "./SelectLogin";
 import "../css/Login.scss";
-import { isHaveProfilee, isHaveAccount } from "../../utils/api";
+import { getExistingProfile, isHaveAccount } from "../../utils/api";
 const Logins = Object.freeze({
   mentee: {
     title: "Mentee",
@@ -58,7 +58,7 @@ function Login() {
     if (RoleObj) {
       setLoggingIn(true);
       setLoading(true);
-      const { isHaveProfile, rightRole } = await isHaveProfilee(
+      const { isHaveProfile, rightRole } = await getExistingProfile(
         email,
         RoleObj.type
       );

@@ -224,7 +224,7 @@ export const getUserIdToken = async () => {
       return idToken;
     });
   } else {
-    return localStorage.getItem("userIdToken")
+    return localStorage.getItem("userIdToken");
   }
 };
 

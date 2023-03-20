@@ -12,33 +12,28 @@ const instance = axios.create({
 });
 
 const authGet = async (url, config) =>
-  instance
-    .get(url, { ...config, headers: { Authorization: await getUserIdToken() } })
-    .catch(console.error);
+  instance.get(url, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
 const authPost = async (url, data, config) =>
-  instance
-    .post(url, data, {
-      ...config,
-      headers: { Authorization: await getUserIdToken() },
-    })
-    .catch(console.error);
+  instance.post(url, data, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
 const authPut = async (url, data, config) =>
-  instance
-    .put(url, data, {
-      ...config,
-      headers: { Authorization: await getUserIdToken() },
-    })
-    .catch(console.error);
+  instance.put(url, data, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
 const authDelete = async (url, config) =>
-  instance
-    .delete(url, {
-      ...config,
-      headers: { Authorization: await getUserIdToken() },
-    })
-    .catch(console.error);
+  instance.delete(url, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
 export const fetchAccountById = (id, type) => {
   if (!id) return;
@@ -193,7 +188,9 @@ export const newNotify = async (message, mentorId, readed) => {
   formData.append("message", message);
   formData.append("mentorId", mentorId);
   formData.append("readed", readed);
-  let response = await authPost(requestExtension, formData);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
   let notify = response.data.result.notify;
   return notify;
 };
@@ -209,13 +206,15 @@ export const deleteTrainbyId = (id, accountType) => {
 };
 export const getTrainById = async (id) => {
   const requestExtension = `/training/train/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension).catch(console.error);
   const train = response.data.result.train;
   return train;
 };
 export const getTrainVideo = async (id) => {
   const requestExtension = `/training/trainVideo/${id}`;
-  let response = await authGet(requestExtension, { responseType: "blob" });
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+  }).catch(console.error);
   return response;
 };
 export const EditTrainById = async (
@@ -240,7 +239,7 @@ export const EditTrainById = async (
   if (!isVideo) {
     formData.append("filee", filee);
   }
-  let response = await authPut(requestExtension, formData);
+  let response = await authPut(requestExtension, formData).catch(console.error);
   let Train = response.data.result.train;
   return Train;
 };
@@ -268,7 +267,9 @@ export const newTrainCreate = async (
   if (!isVideo) {
     formData.append("filee", filee);
   }
-  let response = await authPost(requestExtension, formData);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
   let Train = response.data.result.train;
   return Train;
 };
@@ -317,6 +318,7 @@ export const getIsEmailVerified = (email, password) => {
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
+      console.log("error loading");
       console.error(err);
       return err.response.data.result;
     }
@@ -413,7 +415,7 @@ export const downloadMentorsData = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTOR,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_data.xlsx");
 };
@@ -424,7 +426,7 @@ export const downloadMentorsApps = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTOR,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentor_applications.xlsx");
 };
@@ -435,7 +437,7 @@ export const downloadMenteeApps = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTEE,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_applications.xlsx");
 };
@@ -447,7 +449,7 @@ export const downloadMenteesData = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTEE,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_data.xlsx");
 };
@@ -458,7 +460,7 @@ export const downloadPartnersData = async () => {
     params: {
       account_type: ACCOUNT_TYPE.PARTNER,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_data.xlsx");
 };
@@ -690,7 +692,7 @@ export const EditLanguageById = async (id, name) => {
   const requestExtension = `/masters/languages/${id}`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPut(requestExtension, formData);
+  let response = await authPut(requestExtension, formData).catch(console.error);
   let record = response.data.result.result;
   return record;
 };
@@ -698,7 +700,9 @@ export const newLanguageCreate = async (name) => {
   const requestExtension = `/masters/languages`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPost(requestExtension, formData);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
 
   let record = response.data.result.result;
   return record;
@@ -706,7 +710,7 @@ export const newLanguageCreate = async (name) => {
 
 export const fetchAdminLanguages = async () => {
   const requestExtension = `/masters/languages`;
-  var records = await authGet(requestExtension);
+  var records = await authGet(requestExtension).catch(console.error);
   var res = [];
   var languages = records.data.result.result;
   var index = 0;
@@ -721,7 +725,7 @@ export const fetchAdminLanguages = async () => {
 
 export const getLanguageById = async (id) => {
   const requestExtension = `/masters/languages/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension).catch(console.error);
   const record = response.data.result.result;
   return record;
 };
@@ -739,7 +743,7 @@ export const deleteSpecializationByID = (id) => {
 
 export const fetchAdminSpecializations = async () => {
   const requestExtension = `/masters/specializations`;
-  var records = await authGet(requestExtension);
+  var records = await authGet(requestExtension).catch(console.error);
   var res = [];
   var specializations = records.data.result.result;
   var index = 0;
@@ -754,7 +758,7 @@ export const fetchAdminSpecializations = async () => {
 
 export const getSpecializationById = async (id) => {
   const requestExtension = `/masters/specializations/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension).catch(console.error);
   const record = response.data.result.result;
   return record;
 };
@@ -763,7 +767,7 @@ export const EditSpecializationById = async (id, name) => {
   const requestExtension = `/masters/specializations/${id}`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPut(requestExtension, formData);
+  let response = await authPut(requestExtension, formData).catch(console.error);
   let record = response.data.result.result;
   return record;
 };
@@ -772,7 +776,9 @@ export const newSpecializationCreate = async (name) => {
   const requestExtension = `/masters/specializations`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPost(requestExtension, formData);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
 
   let record = response.data.result.result;
   return record;
@@ -780,7 +786,7 @@ export const newSpecializationCreate = async (name) => {
 
 export const getDisplayLanguages = async () => {
   const requestExtension = `/masters/languages`;
-  var records = await authGet(requestExtension);
+  var records = await authGet(requestExtension).catch(console.error);
   var res = [];
   var languages = records.data.result.result;
   for (let language of languages) {
@@ -791,7 +797,7 @@ export const getDisplayLanguages = async () => {
 
 export const getDisplaySpecializations = async () => {
   const requestExtension = `/masters/specializations`;
-  var records = await authGet(requestExtension);
+  var records = await authGet(requestExtension).catch(console.error);
   var res = [];
   var specializations = records.data.result.result;
   for (let specialization of specializations) {

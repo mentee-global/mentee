@@ -13,9 +13,7 @@ import {
   getDisplayLanguages,
 } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
-import {
-  MENTEE_DEFAULT_VIDEO_NAME,
-} from "utils/consts";
+import { MENTEE_DEFAULT_VIDEO_NAME } from "utils/consts";
 
 import "../css/AntDesign.scss";
 import "../css/Modal.scss";

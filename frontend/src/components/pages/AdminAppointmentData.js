@@ -6,7 +6,7 @@ import { UserOutlined } from "@ant-design/icons";
 import {
   fetchAllAppointments,
   downloadAllApplicationData,
-  getDisplaySpecializations
+  getDisplaySpecializations,
 } from "utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";

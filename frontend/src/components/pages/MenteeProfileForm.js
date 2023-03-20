@@ -12,10 +12,7 @@ import {
   getDisplayLanguages,
 } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
-import {
-  MENTEE_DEFAULT_VIDEO_NAME,
-  AGE_RANGES,
-} from "utils/consts";
+import { MENTEE_DEFAULT_VIDEO_NAME, AGE_RANGES } from "utils/consts";
 import { useMediaQuery } from "react-responsive";
 import moment from "moment";
 import "../css/AntDesign.scss";

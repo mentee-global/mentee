@@ -6,7 +6,13 @@ import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn } from "utils/auth.service";
 import { useLocation } from "react-router";
-import { editFavMentorById, fetchMenteeByID, fetchMentors, getDisplaySpecializations, getDisplayLanguages } from "utils/api";
+import {
+  editFavMentorById,
+  fetchMenteeByID,
+  fetchMentors,
+  getDisplaySpecializations,
+  getDisplayLanguages,
+} from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 
 function Gallery() {

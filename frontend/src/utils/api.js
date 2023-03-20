@@ -161,7 +161,7 @@ export const isHaveAccount = async (email, role) => {
 
 export const getTrainings = async (role) => {
   const requestExtension = `/training/${role}`;
-  const res = await authGet(requestExtension);
+  const res = await authGet(requestExtension).catch(console.error);
   const trains = res.data.result.trainings;
   let newTrain = [];
   for (let train of trains) {
@@ -172,13 +172,13 @@ export const getTrainings = async (role) => {
 };
 export const getNotifys = async () => {
   const requestExtension = `/notifys/`;
-  const res = await authGet(requestExtension);
+  const res = await authGet(requestExtension).catch(console.error);
   const notifys = res.data.result.notifys;
   return notifys;
 };
 export const markNotifyReaded = async (id) => {
   const requestExtension = `/notifys/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension).catch(console.error);
   const notify = response.data.result.notify;
   return notify;
 };

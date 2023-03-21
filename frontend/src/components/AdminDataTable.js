@@ -244,6 +244,7 @@ function AdminDataTable({
     var selected_partner = selectedPartner;
     selected_partner.restricted = value;
     setSelectedPartner(selected_partner);
+    setIschanged(!isChanged);
   }
   async function saveData() {
     var edited_data = {
@@ -296,6 +297,7 @@ function AdminDataTable({
                   options={mentorArr}
                   value={selectedMentors}
                   valid={true}
+                  style={{width:'calc(100% - 120px)'}}
                 />
                 <Button
                   disabled={selectedMentors.length > 0 ? false : true}
@@ -340,6 +342,7 @@ function AdminDataTable({
                   options={menteeArr}
                   value={selectedMentees}
                   valid={true}
+                  style={{width:'calc(100% - 120px)'}}
                 />
                 <Button
                   disabled={selectedMentees.length > 0 ? false : true}

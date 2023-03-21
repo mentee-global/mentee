@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Select } from "antd";
-import { SPECIALIZATIONS } from "utils/consts.js";
+import { getDisplaySpecializations } from "utils/api";
 import { formatDropdownItems } from "utils/inputs";
 import "../components/css/Videos.scss";
 import ReactPlayer from "react-player";
@@ -9,7 +9,7 @@ const VideoSubmit = (props) => {
   const [specMasters, setSpecMasters] = useState([]);
   useEffect(() => {
     async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

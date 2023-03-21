@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Menu, Dropdown } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { SPECIALIZATIONS } from "../utils/consts";
+import { getDisplaySpecializations } from "utils/api";
 
 export function SortByApptDropdown(props) {
   const options = {
@@ -113,7 +113,7 @@ export function SpecializationsDropdown(props) {
 
   useEffect(() => {
     async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

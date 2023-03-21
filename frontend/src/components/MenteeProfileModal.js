@@ -8,12 +8,13 @@ import {
   PlusCircleFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
+import { MENTEE_DEFAULT_VIDEO_NAME } from "../utils/consts";
 import {
-  LANGUAGES,
-  MENTEE_DEFAULT_VIDEO_NAME,
-  SPECIALIZATIONS,
-} from "../utils/consts";
-import { editMenteeProfile, uploadMenteeImage } from "../utils/api";
+  editMenteeProfile,
+  getDisplayLanguages,
+  getDisplaySpecializations,
+  uploadMenteeImage,
+} from "../utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import moment from "moment";
 import "./css/AntDesign.scss";
@@ -59,8 +60,8 @@ function MenteeProfileModal(props) {
   };
   useEffect(() => {
     async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
+      setLangMasters(await getDisplayLanguages());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
     if (props.mentee) {

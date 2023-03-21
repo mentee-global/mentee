@@ -15,7 +15,7 @@ from api.utils.constants import (
     Account,
     APPT_STATUS,
 )
-from api.utils.require_auth import admin_only
+from api.utils.require_auth import admin_only, all_users, mentor_only
 
 appointment = Blueprint("appointment", __name__)
 
@@ -23,6 +23,7 @@ appointment = Blueprint("appointment", __name__)
 
 
 @appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
+@all_users
 def get_requests_by_id(account_type, id):
     account = None
     try:
@@ -85,6 +86,7 @@ def get_requests_by_id(account_type, id):
 
 # POST request for Mentee Appointment
 @appointment.route("/", methods=["POST"])
+@all_users
 def create_appointment():
     data = request.get_json()
     validate_data = ApppointmentForm.from_json(data)
@@ -164,6 +166,7 @@ def create_appointment():
 
 
 @appointment.route("/accept/<id>", methods=["PUT"])
+@mentor_only
 def put_appointment(id):
     try:
         appointment = AppointmentRequest.objects.get(id=id)
@@ -200,6 +203,7 @@ def put_appointment(id):
 
 # DELETE request for appointment by appointment id
 @appointment.route("/<string:appointment_id>", methods=["DELETE"])
+@mentor_only
 def delete_request(appointment_id):
     try:
         request = AppointmentRequest.objects.get(id=appointment_id)

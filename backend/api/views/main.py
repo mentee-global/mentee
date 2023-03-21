@@ -30,6 +30,7 @@ from api.utils.request_utils import (
 from api.utils.constants import NEW_APPLICATION_STATUS
 from api.utils.profile_parse import new_profile, edit_profile
 from api.utils.constants import Account
+from api.utils.require_auth import all_users, mentee_only
 from firebase_admin import auth as firebase_admin_auth
 
 
@@ -38,6 +39,7 @@ main = Blueprint("main", __name__)  # initialize blueprint
 
 # GET request for /accounts/<type>
 @main.route("/accounts/<int:account_type>", methods=["GET"])
+@all_users
 def get_accounts(account_type):
     accounts = None
     if account_type == Account.MENTOR:
@@ -57,6 +59,7 @@ def get_accounts(account_type):
 
 # GET request for specific account based on id
 @main.route("/account/<string:id>", methods=["GET"])
+@all_users
 def get_account(id):
     try:
         account_type = int(request.args["account_type"])
@@ -107,6 +110,7 @@ def get_account(id):
 
 # POST request for a new account profile
 @main.route("/account", methods=["POST"])
+@all_users
 def create_mentor_profile():
     data = request.json
     email = data.get("email")
@@ -243,6 +247,7 @@ def create_mentor_profile():
 
 
 @main.route("/accountProfile", methods=["POST"])
+@all_users
 def create_profile_existing_account():
     data = request.json
     email = data.get("email")
@@ -340,6 +345,7 @@ def create_profile_existing_account():
 
 # PUT requests for /account
 @main.route("/account/<id>", methods=["PUT"])
+@all_users
 def edit_mentor(id):
     data = request.get_json()
 
@@ -380,6 +386,7 @@ def edit_mentor(id):
 
 
 @main.route("/account/<id>/image", methods=["PUT"])
+@all_users
 def uploadImage(id):
     image = request.files["image"]
     try:
@@ -434,6 +441,7 @@ def uploadImage(id):
 
 # GET request for /account/<id>/private
 @main.route("/account/<id>/private", methods=["GET"])
+@mentee_only
 def is_mentee_account_private(id):
     try:
         mentee = MenteeProfile.objects.get(id=id)

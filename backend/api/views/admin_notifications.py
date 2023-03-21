@@ -9,6 +9,7 @@ admin_notifications = Blueprint("admin_notifications", __name__)  # initialize b
 
 
 @admin_notifications.route("/", methods=["GET"])
+@admin_only
 def get_notifys():
     notifys = Notifications.objects.order_by("-date_submitted")
 

@@ -3,12 +3,15 @@ import { fetchMenteeByID, fetchMentors, fetchMentees } from "../../utils/api";
 import MenteeCard from "../MenteeCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn, getMenteeID } from "utils/auth.service";
 import { useLocation } from "react-router";
-import { editFavMentorById } from "../../utils/api";
+import {
+  editFavMentorById,
+  getDisplayLanguages,
+  getDisplaySpecializations,
+} from "utils/api";
 import { useAuth } from "../../utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 
@@ -52,8 +55,8 @@ function Gallery() {
     getMentees();
 
     async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
+      setLangMasters(await getDisplayLanguages());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

@@ -9,8 +9,12 @@ import {
   PlusCircleFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS } from "../utils/consts";
-import { editMentorProfile, uploadMentorImage } from "../utils/api";
+import {
+  editMentorProfile,
+  getDisplayLanguages,
+  getDisplaySpecializations,
+  uploadMentorImage,
+} from "utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
@@ -57,8 +61,8 @@ function MentorProfileModal(props) {
 
   useEffect(() => {
     async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
+      setLangMasters(await getDisplayLanguages());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
     if (props.mentor) {

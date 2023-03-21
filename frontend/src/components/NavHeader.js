@@ -1,33 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import {
-  Avatar,
-  Layout,
-  Drawer,
-  Button,
-  Menu,
-  Dropdown,
-  Badge,
-  Space,
-} from "antd";
+import { Avatar, Layout, Drawer, Menu, Dropdown, Badge, Space } from "antd";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { resetUser, fetchUser } from "features/userSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
-import {
-  fetchAccountById,
-  getAdmin,
-  getNotifys,
-  markNotifyReaded,
-  newNotify,
-} from "utils/api";
+import { getNotifys, markNotifyReaded } from "utils/api";
 import { useAuth } from "../utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";
-import { getAdminID } from "utils/auth.service";
 import MenteeLogo from "../resources/mentee.png";
 import MenteeLogoSmall from "../resources/menteeSmall.png";
 import Icon, {
@@ -86,12 +70,16 @@ function NavHeader({ history }) {
     }
   };
   useEffect(() => {
-    getNotifys().then((notifys) => {
-      setNotifys(notifys);
-      let unReadnotifys = notifys.filter((notify) => notify.readed === false);
+    const getAdminNotifications = async () => {
+      const newNotifys = await getNotifys();
+      setNotifys(newNotifys);
+      let unReadnotifys = newNotifys.filter(
+        (notify) => notify.readed === false
+      );
       setCount(unReadnotifys.length);
-    });
-  }, []);
+    };
+    if (role === ACCOUNT_TYPE.ADMIN) getAdminNotifications();
+  }, [role]);
   const dropdownMenu = (
     <Menu className="dropdown-menu">
       <Menu.Item key="edit-profile">

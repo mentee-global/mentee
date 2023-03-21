@@ -37,73 +37,73 @@
   color: $theme-orange;
   font-size: 20px;
 }
-.ant-table-cell{
-  padding: 8px 8px!important;
+.ant-table-cell {
+  padding: 8px 8px !important;
 }
-.link-td{
-    max-width: 150px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+.link-td {
+  max-width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.link-span{
+.link-span {
   cursor: pointer;
   color: #1890ff;
 }
-.assign-user-modal{
+.assign-user-modal {
   padding: 30px;
   overflow-y: auto;
   min-height: 200px;
   max-height: 600px;
-  .assign-header-modal{
+  .assign-header-modal {
     display: flex;
-    .org-area{
+    .org-area {
       text-align: center;
     }
-    .restricted-area{
+    .restricted-area {
       font-size: 20px;
       padding-top: 20px;
       padding-left: 30%;
-      label{
+      label {
         margin-right: 10px;
       }
     }
   }
-  .main-body{
+  .main-body {
     display: flex;
     width: 100%;
-    .ant-select-multiple{
-      max-height: none!important;
+    .ant-select-multiple {
+      max-height: none !important;
     }
-    .w-50{
+    .w-50 {
       width: 50%;
-      padding:20px;
+      padding: 20px;
     }
-    .sub-title{
+    .sub-title {
       font-weight: bold;
       font-size: 18px;
     }
-    .add-btn{
+    .add-btn {
       height: 38px;
       color: white;
       background-color: #e4bb4f;
     }
-    .mentors-area{
+    .mentors-area {
       border-right: 1px solid lightgray;
     }
     .list {
-      margin-top:45px;
+      margin-top: 45px;
       background-color: white;
     }
-    .record{
+    .record {
       display: flex;
       justify-content: space-between;
       padding: 8px 10px;
     }
-    .record:hover{
+    .record:hover {
       background-color: rgb(242, 242, 242);
     }
-    .odd{
+    .odd {
       background-color: #fafafa;
     }
   }

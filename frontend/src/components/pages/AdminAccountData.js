@@ -58,13 +58,13 @@ function AdminAccountData() {
       const menteeRes = await fetchMenteesAppointments();
       const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
       var partners_data = [];
-      Partners.map(item => {
+      Partners.map((item) => {
         item.restricted_show = item.restricted ? "Yes" : "No";
         item.mentor_nums = item.assign_mentors ? item.assign_mentors.length : 0;
         item.mentee_nums = item.assign_mentees ? item.assign_mentees.length : 0;
         partners_data.push(item);
         return true;
-      })
+      });
       if (mentorRes && menteeRes) {
         const newMenteeData = menteeRes.menteeData.map((elem) => ({
           ...elem,
@@ -76,11 +76,11 @@ function AdminAccountData() {
         setPartnerData(partners_data);
         setDisplayData(mentorRes.mentorData);
         setFilterData(mentorRes.mentorData);
-        if (displayOption === keys.MENTEES){
+        if (displayOption === keys.MENTEES) {
           setDisplayData(newMenteeData);
           setFilterData(newMenteeData);
         }
-        if (displayOption === keys.PARTNER){
+        if (displayOption === keys.PARTNER) {
           setDisplayData(partners_data);
           setFilterData(partners_data);
         }
@@ -274,7 +274,7 @@ function AdminAccountData() {
         <AdminDataTable
           data={filterData}
           deleteAccount={handleDeleteAccount}
-          refresh = {() => setReload(!reload)}
+          refresh={() => setReload(!reload)}
           isMentee={displayOption === keys.MENTEES}
           isPartner={displayOption === keys.PARTNER}
           mentors={mentors}

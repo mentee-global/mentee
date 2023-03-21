@@ -89,15 +89,18 @@ function ModalInput(props) {
     return style;
   }
 
-  const returnDropdownItems = (items, type=null) => {
+  const returnDropdownItems = (items, type = null) => {
     let options = [];
     for (let i = 0; i < items.length; i++) {
-      if (type === 'object'){
-        options.push(<Option key={items[i].id} value={items[i].id}>{items[i].name}</Option>);
+      if (type === "object") {
+        options.push(
+          <Option key={items[i].id} value={items[i].id}>
+            {items[i].name}
+          </Option>
+        );
       } else {
         options.push(<Option key={items[i]}>{items[i]}</Option>);
       }
-      
     }
     return options;
   };
@@ -191,7 +194,7 @@ function ModalInput(props) {
               tokenSeparators={[","]}
               defaultValue={defaultValue}
             >
-              {returnDropdownItems(options, 'object')}
+              {returnDropdownItems(options, "object")}
             </Select>
             {errorPresent && <p className="input-error">{errorMessage}</p>}
           </div>

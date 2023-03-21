@@ -10,7 +10,7 @@ import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { editFavMentorById } from "../../utils/api";
 import { useAuth } from "utils/hooks/useAuth";
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 function Gallery() {
   const { isAdmin, isMentor, isMentee, profileId } = useAuth();
@@ -30,12 +30,14 @@ function Gallery() {
     async function getMentors() {
       const mentor_data = await fetchMentors();
       if (mentor_data) {
-        if (user.pair_partner && user.pair_partner.restricted){
-          if (user.pair_partner.assign_mentors){
+        if (user.pair_partner && user.pair_partner.restricted) {
+          if (user.pair_partner.assign_mentors) {
             var temp = [];
-            mentor_data.map(mentor_item => {
-              var check_exist = user.pair_partner.assign_mentors.find(x => x.id === mentor_item._id.$oid);
-              if (check_exist){
+            mentor_data.map((mentor_item) => {
+              var check_exist = user.pair_partner.assign_mentors.find(
+                (x) => x.id === mentor_item._id.$oid
+              );
+              if (check_exist) {
                 temp.push(mentor_item);
               }
               return false;
@@ -45,7 +47,6 @@ function Gallery() {
         } else {
           setMentors(mentor_data);
         }
-        
       }
     }
 

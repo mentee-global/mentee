@@ -10,7 +10,7 @@ import { isLoggedIn, getMenteeID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { editFavMentorById } from "../../utils/api";
 import { useAuth } from "../../utils/hooks/useAuth";
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 function Gallery() {
   const { isAdmin, isMentor, isMentee } = useAuth();
@@ -29,12 +29,14 @@ function Gallery() {
     async function getMentees() {
       const mentee_data = await fetchMentees();
       if (mentee_data) {
-        if (user.pair_partner && user.pair_partner.restricted){
-          if (user.pair_partner.assign_mentees){
+        if (user.pair_partner && user.pair_partner.restricted) {
+          if (user.pair_partner.assign_mentees) {
             var temp = [];
-            mentee_data.map(mentee_item => {
-              var check_exist = user.pair_partner.assign_mentees.find(x => x.id === mentee_item._id.$oid);
-              if (check_exist){
+            mentee_data.map((mentee_item) => {
+              var check_exist = user.pair_partner.assign_mentees.find(
+                (x) => x.id === mentee_item._id.$oid
+              );
+              if (check_exist) {
                 temp.push(mentee_item);
               }
               return false;
@@ -44,7 +46,6 @@ function Gallery() {
         } else {
           setMentees(mentee_data);
         }
-        
       }
     }
     setPageLoaded(true);

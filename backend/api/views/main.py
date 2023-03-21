@@ -85,21 +85,21 @@ def get_account(id):
         return create_response(status=422, message=msg)
     pair_partner = None
     if account_type == Account.MENTEE:
-        target = {"id":id, "name":account.name}
+        target = {"id": id, "name": account.name}
         pair_partner = PartnerProfile.objects(assign_mentees__in=[target]).first()
     if account_type == Account.MENTOR:
-        target = {"id":id, "name":account.name}
+        target = {"id": id, "name": account.name}
         pair_partner = PartnerProfile.objects(assign_mentors__in=[target]).first()
     if pair_partner is not None:
         partner_data = {
-            'email':pair_partner.email,
-            'organization':pair_partner.organization,
-            'person_name':pair_partner.person_name,
-            'website':pair_partner.website,
-            'image':pair_partner.image,
-            'restricted':pair_partner.restricted,
-            'assign_mentors':pair_partner.assign_mentors,
-            'assign_mentees':pair_partner.assign_mentees,
+            "email": pair_partner.email,
+            "organization": pair_partner.organization,
+            "person_name": pair_partner.person_name,
+            "website": pair_partner.website,
+            "image": pair_partner.image,
+            "restricted": pair_partner.restricted,
+            "assign_mentors": pair_partner.assign_mentors,
+            "assign_mentees": pair_partner.assign_mentees,
         }
         account.pair_partner = partner_data
     return create_response(data={"account": account})

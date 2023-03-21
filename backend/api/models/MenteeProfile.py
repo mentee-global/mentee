@@ -26,6 +26,7 @@ class MenteeProfile(Document, Mixin):
     video = EmbeddedDocumentField(Video)
     favorite_mentors_ids = ListField(StringField())
     specializations = ListField(StringField())
+    pair_partner = DictField(required=False)
 
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.firebase_uid} \n name: {self.name}

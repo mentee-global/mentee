@@ -89,10 +89,15 @@ function ModalInput(props) {
     return style;
   }
 
-  const returnDropdownItems = (items) => {
+  const returnDropdownItems = (items, type=null) => {
     let options = [];
     for (let i = 0; i < items.length; i++) {
-      options.push(<Option key={items[i]}>{items[i]}</Option>);
+      if (type === 'object'){
+        options.push(<Option key={items[i].id} value={items[i].id}>{items[i].name}</Option>);
+      } else {
+        options.push(<Option key={items[i]}>{items[i]}</Option>);
+      }
+      
     }
     return options;
   };
@@ -166,6 +171,27 @@ function ModalInput(props) {
               defaultValue={defaultValue}
             >
               {returnDropdownItems(options)}
+            </Select>
+            {errorPresent && <p className="input-error">{errorMessage}</p>}
+          </div>
+        );
+      case "dropdown-multiple-object":
+        return (
+          <div>
+            <Select
+              className="input-text"
+              onClick={() => handleClick(index)}
+              mode={onEducationChange ? "tags" : "multiple"}
+              allowClear
+              bordered={false}
+              style={{ width: "100%" }}
+              placeholder={placeholder || "Please select"}
+              onChange={handleOnChange}
+              value={props.value}
+              tokenSeparators={[","]}
+              defaultValue={defaultValue}
+            >
+              {returnDropdownItems(options, 'object')}
             </Select>
             {errorPresent && <p className="input-error">{errorMessage}</p>}
           </div>

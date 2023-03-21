@@ -3,6 +3,7 @@
 .account-data-body {
   padding: 22px;
   margin-bottom: 50px;
+  overflow-x: auto;
 }
 
 .table-search {
@@ -35,4 +36,75 @@
 .delete-user-btn {
   color: $theme-orange;
   font-size: 20px;
+}
+.ant-table-cell{
+  padding: 8px 8px!important;
+}
+.link-td{
+    max-width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.link-span{
+  cursor: pointer;
+  color: #1890ff;
+}
+.assign-user-modal{
+  padding: 30px;
+  overflow-y: auto;
+  min-height: 200px;
+  max-height: 600px;
+  .assign-header-modal{
+    display: flex;
+    .org-area{
+      text-align: center;
+    }
+    .restricted-area{
+      font-size: 20px;
+      padding-top: 20px;
+      padding-left: 30%;
+      label{
+        margin-right: 10px;
+      }
+    }
+  }
+  .main-body{
+    display: flex;
+    width: 100%;
+    .ant-select-multiple{
+      max-height: none!important;
+    }
+    .w-50{
+      width: 50%;
+      padding:20px;
+    }
+    .sub-title{
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .add-btn{
+      height: 38px;
+      color: white;
+      background-color: #e4bb4f;
+    }
+    .mentors-area{
+      border-right: 1px solid lightgray;
+    }
+    .list {
+      margin-top:45px;
+      background-color: white;
+    }
+    .record{
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 10px;
+    }
+    .record:hover{
+      background-color: rgb(242, 242, 242);
+    }
+    .odd{
+      background-color: #fafafa;
+    }
+  }
 }

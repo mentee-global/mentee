@@ -10,6 +10,7 @@ import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { editFavMentorById } from "../../utils/api";
 import { useAuth } from "utils/hooks/useAuth";
+import { useSelector} from "react-redux";
 
 function Gallery() {
   const { isAdmin, isMentor, isMentee, profileId } = useAuth();
@@ -24,12 +25,27 @@ function Gallery() {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [langMasters, setLangMasters] = useState([]);
   const [specMasters, setSpecMasters] = useState([]);
-
+  const user = useSelector((state) => state.user.user);
   useEffect(() => {
     async function getMentors() {
       const mentor_data = await fetchMentors();
       if (mentor_data) {
-        setMentors(mentor_data);
+        if (user.pair_partner && user.pair_partner.restricted){
+          if (user.pair_partner.assign_mentors){
+            var temp = [];
+            mentor_data.map(mentor_item => {
+              var check_exist = user.pair_partner.assign_mentors.find(x => x.id === mentor_item._id.$oid);
+              if (check_exist){
+                temp.push(mentor_item);
+              }
+              return false;
+            });
+            setMentors(temp);
+          }
+        } else {
+          setMentors(mentor_data);
+        }
+        
       }
     }
 

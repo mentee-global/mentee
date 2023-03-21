@@ -146,6 +146,9 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.email_notifications = data.get(
             "email_notifications", profile.email_notifications
         )
+        profile.restricted = data.get("restricted", profile.restricted)
+        profile.assign_mentors = data.get("assign_mentors", profile.assign_mentors)
+        profile.assign_mentees = data.get("assign_mentees", profile.assign_mentees)
         return True
 
     if isinstance(profile, MentorProfile):

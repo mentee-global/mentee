@@ -30,6 +30,7 @@ class MentorProfile(Document, Mixin):
     taking_appointments = BooleanField(required=False)
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)
+    pair_partner = DictField(required=False)
 
     def __repr__(self):
         return f"""<MentorProfile firebase_id: {self.firebase_uid} 

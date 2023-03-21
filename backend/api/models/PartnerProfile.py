@@ -24,6 +24,9 @@ class PartnerProfile(Document, Mixin):
     open_grants = BooleanField(required=True)
     open_projects = BooleanField(required=True)
     image = EmbeddedDocumentField(Image)
+    restricted = BooleanField(default=False)
+    assign_mentors = ListField(DictField(), required=False)
+    assign_mentees = ListField(DictField(), required=False)
 
     def __repr__(self):
         return f"""<Partner email: {self.email}

@@ -4,7 +4,7 @@ import {
   fetchMentees,
   getDisplaySpecializations,
   getDisplayLanguages,
-} from "../../utils/api";
+} from "utils/api";
 import MenteeCard from "../MenteeCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";

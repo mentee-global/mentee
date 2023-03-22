@@ -13,7 +13,7 @@ import {
   getDisplaySpecializations,
   getDisplayLanguages,
   fetchPartners,
-} from "../../utils/api";
+} from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 import ModalInput from "../ModalInput";

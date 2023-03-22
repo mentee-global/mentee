@@ -53,7 +53,7 @@ export const fetchAccountById = (id, type) => {
 export const fetchAccounts = (type, restricted = null) => {
   const requestExtension =
     `/accounts/${type}` + (restricted === null ? "" : "?restricted=True");
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.accounts,
     (err) => {
       console.error(err);

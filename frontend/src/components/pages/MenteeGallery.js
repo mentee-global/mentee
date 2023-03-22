@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { fetchPartners, fetchMentees } from "../../utils/api";
+import {
+  fetchPartners,
+  fetchMentees,
+  getDisplaySpecializations,
+  getDisplayLanguages,
+} from "../../utils/api";
 import MenteeCard from "../MenteeCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";

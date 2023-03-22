@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 
 import { Divider, Input, Layout } from "antd";
 import MessageCard from "./MessageCard";
-import { useSelector } from "react-redux";
 
 function MessagesSidebar(props) {
   const { Sider } = Layout;
@@ -16,8 +15,8 @@ function MessagesSidebar(props) {
       backgroundColor: "white",
     },
   };
-  const { latestConvos, activeMessageId } = props;
-  const user = useSelector((state) => state.user.user);
+  const { latestConvos, activeMessageId, restrictedPartners, user } = props;
+
   var side_data = [];
   if (user && user.pair_partner && user.pair_partner.restricted) {
     if (latestConvos && latestConvos.length > 0) {
@@ -47,7 +46,32 @@ function MessagesSidebar(props) {
       }
     }
   } else {
-    side_data = latestConvos;
+    if (restrictedPartners && restrictedPartners.length > 0) {
+      var restricted_user_ids = [];
+      restrictedPartners.map((partner_item) => {
+        if (partner_item.assign_mentors) {
+          partner_item.assign_mentors.map((assign_item) => {
+            restricted_user_ids.push(assign_item.id);
+            return false;
+          });
+        }
+        if (partner_item.assign_mentees) {
+          partner_item.assign_mentees.map((assign_item) => {
+            restricted_user_ids.push(assign_item.id);
+            return false;
+          });
+        }
+        return false;
+      });
+      latestConvos.map((item) => {
+        if (!restricted_user_ids.includes(item.otherId)) {
+          side_data.push(item);
+        }
+        return false;
+      });
+    } else {
+      side_data = latestConvos;
+    }
   }
   return (
     <Sider

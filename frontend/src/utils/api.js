@@ -57,8 +57,9 @@ export const fetchAccountById = (id, type) => {
     );
 };
 
-export const fetchAccounts = (type) => {
-  const requestExtension = `/accounts/${type}`;
+export const fetchAccounts = (type, restricted = null) => {
+  const requestExtension =
+    `/accounts/${type}` + (restricted === null ? "" : "?restricted=True");
   return instance.get(requestExtension).then(
     (response) => response.data.result.accounts,
     (err) => {
@@ -830,8 +831,8 @@ export const fetchMenteeByID = async (id) => {
 export const fetchMentors = async () => {
   return await fetchAccounts(ACCOUNT_TYPE.MENTOR);
 };
-export const fetchPartners = async () => {
-  return await fetchAccounts(ACCOUNT_TYPE.PARTNER);
+export const fetchPartners = async (restricted = null) => {
+  return await fetchAccounts(ACCOUNT_TYPE.PARTNER, restricted);
 };
 
 export const fetchMentees = async () => {

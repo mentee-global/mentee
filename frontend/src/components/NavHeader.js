@@ -151,7 +151,7 @@ function NavHeader({ history }) {
               className="mentee-logo"
             />
           </NavLink>
-          {user && user.pair_partner && (
+          {user && user.pair_partner && user.pair_partner.email && (
             <Avatar
               size={45}
               src={user.pair_partner.image && user.pair_partner.image.url}

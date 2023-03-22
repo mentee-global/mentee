@@ -14,7 +14,7 @@ function MessagesChatArea(props) {
   const { TextArea } = Input;
   const { profileId, isMentee, isMentor, isPartner } = useAuth();
   const [messageText, setMessageText] = useState("");
-  const [accountData, setAccountData] = useState({});
+  const [accountData, setAccountData] = useState(null);
   const [isAlreadyInvited, setIsAlreadyInvited] = useState(false);
   const [isAlreadyInvitedByMentor, setIsAlreadyInvitedByMentor] =
     useState(false);
@@ -29,6 +29,8 @@ function MessagesChatArea(props) {
     loading,
     isBookingVisible,
     inviteeId,
+    restrictedPartners,
+    user,
   } = props;
   const messagesEndRef = useRef(null);
   const buttonRef = useRef(null);
@@ -42,10 +44,58 @@ function MessagesChatArea(props) {
   };
   useEffect(() => {
     async function fetchAccount() {
-      var account = await fetchAccountById(otherId, userType);
+      var account = null;
+      if (user && user.pair_partner && user.pair_partner.restricted) {
+        var same_kind_user_ids = [];
+        if (
+          user.pair_partner.assign_mentees &&
+          user.pair_partner.assign_mentees.length > 0
+        ) {
+          user.pair_partner.assign_mentees.map((item) => {
+            same_kind_user_ids.push(item.id);
+            return false;
+          });
+        }
+        if (
+          user.pair_partner.assign_mentors &&
+          user.pair_partner.assign_mentors.length > 0
+        ) {
+          user.pair_partner.assign_mentors.map((item) => {
+            same_kind_user_ids.push(item.id);
+            return false;
+          });
+        }
+        if (same_kind_user_ids.includes(otherId)) {
+          account = await fetchAccountById(otherId, userType);
+        }
+      } else {
+        if (restrictedPartners && restrictedPartners.length > 0) {
+          var restricted_user_ids = [];
+          restrictedPartners.map((partner_item) => {
+            if (partner_item.assign_mentors) {
+              partner_item.assign_mentors.map((assign_item) => {
+                restricted_user_ids.push(assign_item.id);
+                return false;
+              });
+            }
+            if (partner_item.assign_mentees) {
+              partner_item.assign_mentees.map((assign_item) => {
+                restricted_user_ids.push(assign_item.id);
+                return false;
+              });
+            }
+            return false;
+          });
+          if (!restricted_user_ids.includes(otherId)) {
+            account = await fetchAccountById(otherId, userType);
+          }
+        } else {
+          account = await fetchAccountById(otherId, userType);
+        }
+      }
       if (account) {
         setAccountData(account);
-        if (parseInt(userType, 10) == ACCOUNT_TYPE.MENTEE) {
+        if (parseInt(userType, 10) === ACCOUNT_TYPE.MENTEE) {
           setIsAlreadyInvitedByMentor(
             account.favorite_mentors_ids.indexOf(otherId) >= 0
           );
@@ -185,7 +235,7 @@ function MessagesChatArea(props) {
       />
     </Header>
   );
-
+  console.log("accountData", accountData);
   return (
     <div className="conversation-container">
       {accountData ? (
@@ -231,70 +281,75 @@ function MessagesChatArea(props) {
       )}
       <div className="conversation-content">
         <Spin spinning={loading}>
-          {messages.map((block) => {
-            return (
-              <div
-                className={`chatRight__items you-${
-                  block.sender_id.$oid == profileId ? "sent" : "received"
-                }`}
-              >
+          {accountData &&
+            messages.map((block) => {
+              return (
                 <div
-                  className={`chatRight__inner  message-area ${
-                    block.sender_id.$oid != profileId
-                      ? "flex-start"
-                      : "flex-end"
+                  className={`chatRight__items you-${
+                    block.sender_id.$oid == profileId ? "sent" : "received"
                   }`}
-                  data-chat="person1"
                 >
-                  <div className="flex">
-                    {block.sender_id.$oid != profileId && (
-                      <span>
-                        <Avatar src={accountData.image?.url} />{" "}
-                      </span>
-                    )}
-                    <div className="convo">
-                      <div
-                        className={`bubble-${
-                          block.sender_id.$oid == profileId
-                            ? "sent"
-                            : "received"
-                        }`}
-                      >
-                        {block.body}
+                  <div
+                    className={`chatRight__inner  message-area ${
+                      block.sender_id.$oid != profileId
+                        ? "flex-start"
+                        : "flex-end"
+                    }`}
+                    data-chat="person1"
+                  >
+                    <div className="flex">
+                      {block.sender_id.$oid != profileId && (
+                        <span>
+                          <Avatar src={accountData.image?.url} />{" "}
+                        </span>
+                      )}
+                      <div className="convo">
+                        <div
+                          className={`bubble-${
+                            block.sender_id.$oid == profileId
+                              ? "sent"
+                              : "received"
+                          }`}
+                        >
+                          {block.body}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <span style={{ opacity: "40%" }}>
-                    {block.time
-                      ? block.time
-                      : new Date(block.created_at.$date).toLocaleString()}
-                  </span>
+                    <span style={{ opacity: "40%" }}>
+                      {block.time
+                        ? block.time
+                        : new Date(block.created_at.$date).toLocaleString()}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </Spin>
         <div ref={messagesEndRef} />
       </div>
       <div className="conversation-footer">
-        <TextArea
-          className="message-input"
-          placeholder="Send a message..."
-          value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
-          autoSize={{ minRows: 1, maxRows: 3 }}
-        />
-        <Button
-          id="sendMessagebtn"
-          onClick={sendMessage}
-          className="send-message-button"
-          shape="circle"
-          type="primary"
-          ref={buttonRef}
-          icon={<SendOutlined rotate={315} />}
-          size={48}
-        />
+        {accountData && (
+          <>
+            <TextArea
+              className="message-input"
+              placeholder="Send a message..."
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              autoSize={{ minRows: 1, maxRows: 3 }}
+            />
+            <Button
+              id="sendMessagebtn"
+              onClick={sendMessage}
+              className="send-message-button"
+              shape="circle"
+              type="primary"
+              ref={buttonRef}
+              icon={<SendOutlined rotate={315} />}
+              size={48}
+            />
+          </>
+        )}
       </div>
     </div>
   );

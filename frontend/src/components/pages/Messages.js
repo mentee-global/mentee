@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import MessagesSidebar from "components/MessagesSidebar";
 import { Layout, message } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
-import { getLatestMessages, getMessageData } from "utils/api";
+import { getLatestMessages, getMessageData, fetchPartners } from "utils/api";
 import socket from "utils/socket";
 
 import "../css/Messages.scss";
@@ -24,7 +24,9 @@ function Messages(props) {
   const [loading, setLoading] = useState(false);
   const [isBookingVisible, setBookingVisible] = useState(false);
   const [inviteeId, setinviteeId] = useState();
+  const [restrictedPartners, setRestrictedPartners] = useState([]);
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
+  const user = useSelector((state) => state.user.user);
 
   const messageListener = (data) => {
     async function fetchLatest() {
@@ -59,7 +61,9 @@ function Messages(props) {
   useEffect(() => {
     async function getData() {
       const data = await getLatestMessages(profileId);
+      const restricted_partners = await fetchPartners(true);
       setLatestConvos(data);
+      setRestrictedPartners(restricted_partners);
       if (data?.length) {
         dispatch(
           updateNotificationsCount({
@@ -127,6 +131,8 @@ function Messages(props) {
       <MessagesSidebar
         latestConvos={latestConvos}
         activeMessageId={activeMessageId}
+        restrictedPartners={restrictedPartners}
+        user={user}
       />
       <Layout style={{ backgroundColor: "white" }}>
         <MessagesChatArea
@@ -139,6 +145,8 @@ function Messages(props) {
           loading={loading}
           isBookingVisible={isBookingVisible}
           inviteeId={inviteeId}
+          restrictedPartners={restrictedPartners}
+          user={user}
         />
       </Layout>
     </Layout>

@@ -41,13 +41,57 @@ main = Blueprint("main", __name__)  # initialize blueprint
 def get_accounts(account_type):
     accounts = None
     if account_type == Account.MENTOR:
-        accounts = MentorProfile.objects().exclude("availability", "videos")
+        mentors_data = MentorProfile.objects().exclude("availability", "videos")
+        for account in mentors_data:
+            target = {"id": str(account.id), "name": account.name}
+            pair_partner = PartnerProfile.objects(assign_mentors__in=[target]).first()
+            if pair_partner is not None:
+                partner_data = {
+                    "id": str(pair_partner.id),
+                    "email": pair_partner.email,
+                    "organization": pair_partner.organization,
+                    "person_name": pair_partner.person_name,
+                    "website": pair_partner.website,
+                    "image": pair_partner.image,
+                    "restricted": pair_partner.restricted,
+                    "assign_mentors": pair_partner.assign_mentors,
+                    "assign_mentees": pair_partner.assign_mentees,
+                }
+                account.pair_partner = partner_data
+            if accounts is None:
+                accounts = []
+            accounts.append(account)
     elif account_type == Account.MENTEE:
-        accounts = MenteeProfile.objects(is_private=False).exclude(
+        mentees_data = MenteeProfile.objects(is_private=False).exclude(
             "video", "phone_number", "email"
         )
+        for account in mentees_data:
+            target = {"id": str(account.id), "name": account.name}
+            pair_partner = PartnerProfile.objects(assign_mentees__in=[target]).first()
+            if pair_partner is not None:
+                partner_data = {
+                    "id": str(pair_partner.id),
+                    "email": pair_partner.email,
+                    "organization": pair_partner.organization,
+                    "person_name": pair_partner.person_name,
+                    "website": pair_partner.website,
+                    "image": pair_partner.image,
+                    "restricted": pair_partner.restricted,
+                    "assign_mentors": pair_partner.assign_mentors,
+                    "assign_mentees": pair_partner.assign_mentees,
+                }
+                account.pair_partner = partner_data
+            if accounts is None:
+                accounts = []
+            accounts.append(account)
     elif account_type == Account.PARTNER:
-        accounts = PartnerProfile.objects()
+        if "restricted" in request.args:
+            if request.args["restricted"] == "True":
+                accounts = PartnerProfile.objects(restricted=True)
+            else:
+                accounts = PartnerProfile.objects(restricted=False)
+        else:
+            accounts = PartnerProfile.objects()
     else:
         msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)
@@ -92,6 +136,7 @@ def get_account(id):
         pair_partner = PartnerProfile.objects(assign_mentors__in=[target]).first()
     if pair_partner is not None:
         partner_data = {
+            "id": str(pair_partner.id),
             "email": pair_partner.email,
             "organization": pair_partner.organization,
             "person_name": pair_partner.person_name,

@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { fetchMenteeByID, fetchMentors } from "../../utils/api";
+import { fetchMenteeByID, fetchMentors, fetchPartners } from "../../utils/api";
 import MentorCard from "../MentorCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
+import { isLoggedIn } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { editFavMentorById } from "../../utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import { useSelector } from "react-redux";
+import ModalInput from "../ModalInput";
 
 function Gallery() {
   const { isAdmin, isMentor, isMentee, profileId } = useAuth();
@@ -25,12 +26,14 @@ function Gallery() {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [langMasters, setLangMasters] = useState([]);
   const [specMasters, setSpecMasters] = useState([]);
+  const [allPartners, setAllPartners] = useState([]);
+  const [selectedPartnerID, setSelectedPartnerID] = useState(undefined);
   const user = useSelector((state) => state.user.user);
   useEffect(() => {
     async function getMentors() {
       const mentor_data = await fetchMentors();
       if (mentor_data) {
-        if (user.pair_partner && user.pair_partner.restricted) {
+        if (user && user.pair_partner && user.pair_partner.restricted) {
           if (user.pair_partner.assign_mentors) {
             var temp = [];
             mentor_data.map((mentor_item) => {
@@ -45,7 +48,33 @@ function Gallery() {
             setMentors(temp);
           }
         } else {
-          setMentors(mentor_data);
+          var restricted_partners = await fetchPartners(true);
+          if (
+            !isAdmin &&
+            restricted_partners &&
+            restricted_partners.length > 0
+          ) {
+            var assigned_mentor_ids = [];
+            restricted_partners.map((partner_item) => {
+              if (partner_item.assign_mentors) {
+                partner_item.assign_mentors.map((assign_item) => {
+                  assigned_mentor_ids.push(assign_item.id);
+                  return false;
+                });
+              }
+              return false;
+            });
+            temp = [];
+            mentor_data.map((mentor_item) => {
+              if (!assigned_mentor_ids.includes(mentor_item._id.$oid)) {
+                temp.push(mentor_item);
+              }
+              return false;
+            });
+            setMentors(temp);
+          } else {
+            setMentors(mentor_data);
+          }
         }
       }
     }
@@ -57,6 +86,17 @@ function Gallery() {
       setSpecMasters(await SPECIALIZATIONS());
     }
     getMasters();
+
+    async function getAllPartners() {
+      var all_data = await fetchPartners();
+      var temp = [];
+      all_data.map((item) => {
+        temp.push({ id: item._id["$oid"], name: item.organization });
+        return false;
+      });
+      setAllPartners(temp);
+    }
+    getAllPartners();
   }, []);
 
   useEffect(() => {
@@ -118,11 +158,18 @@ function Gallery() {
         languages.some((l) => mentor.languages.indexOf(l) >= 0);
       const matchesName =
         !query || mentor.name.toUpperCase().includes(query.toUpperCase());
+      const matchPartner =
+        !selectedPartnerID ||
+        (mentor.pair_partner && mentor.pair_partner.id === selectedPartnerID);
 
-      return matchesSpecializations && matchesLanguages && matchesName;
+      return (
+        matchesSpecializations &&
+        matchesLanguages &&
+        matchesName &&
+        matchPartner
+      );
     });
 
-  // Add some kind of error 403 code
   return !isLoggedIn() ? (
     <Result
       status="403"
@@ -169,6 +216,19 @@ function Gallery() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          <div className="gallery-filter-section-title">Partner</div>
+          <ModalInput
+            type="dropdown-single-object"
+            title=""
+            handleClick={() => {}}
+            onChange={(value) => {
+              setSelectedPartnerID(value);
+            }}
+            options={allPartners}
+            value={selectedPartnerID}
+            style={styles.searchInput}
+            prefix={<SearchOutlined />}
+          />
           <div className="gallery-filter-section-title">Specializations</div>
           <Checkbox.Group
             defaultValue={specializations}
@@ -194,6 +254,19 @@ function Gallery() {
             prefix={<SearchOutlined />}
             style={styles.searchInput}
             onChange={(e) => setQuery(e.target.value)}
+          />
+          <div className="gallery-filter-section-title">Partner</div>
+          <ModalInput
+            type="dropdown-single-object"
+            title=""
+            handleClick={() => {}}
+            onChange={(value) => {
+              setSelectedPartnerID(value);
+            }}
+            options={allPartners}
+            value={selectedPartnerID}
+            style={styles.searchInput}
+            prefix={<SearchOutlined />}
           />
           <div className="gallery-filter-section-title">Specializations</div>
           <Checkbox.Group
@@ -236,6 +309,7 @@ function Gallery() {
                 favorite={favoriteMentorIds.has(mentor._id["$oid"])}
                 onEditFav={onEditFav}
                 image={mentor.image}
+                pair_partner={mentor.pair_partner}
               />
             ))
           )}

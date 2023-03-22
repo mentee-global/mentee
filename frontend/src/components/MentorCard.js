@@ -153,6 +153,19 @@ function MentorCard(props) {
             </a>
           </h4>
         )}
+        {props.pair_partner && props.pair_partner.email && (
+          <>
+            <h3 className="gallery-headers">Partner:</h3>
+            <Avatar
+              size={45}
+              src={props.pair_partner.image && props.pair_partner.image.url}
+              icon={<UserOutlined />}
+            />
+            <label style={{ marginLeft: "10px" }}>
+              {props.pair_partner.organization}
+            </label>
+          </>
+        )}
       </div>
       <div className="gallery-card-footer">
         <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>

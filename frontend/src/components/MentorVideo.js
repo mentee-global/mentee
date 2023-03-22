@@ -3,9 +3,9 @@ import ReactPlayer from "react-player";
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { Button, Select } from "antd";
-import { SPECIALIZATIONS } from "utils/consts.js";
 import { formatDropdownItems } from "utils/inputs";
 import "components/css/MentorVideo.scss";
+import { getDisplaySpecializations } from "utils/api";
 
 const MentorVideo = ({
   onPin,
@@ -20,7 +20,7 @@ const MentorVideo = ({
   const [specMasters, setSpecMasters] = useState([]);
   useEffect(() => {
     async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

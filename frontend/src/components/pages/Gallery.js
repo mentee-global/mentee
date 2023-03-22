@@ -3,12 +3,17 @@ import { fetchMenteeByID, fetchMentors, fetchPartners } from "../../utils/api";
 import MentorCard from "../MentorCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { LANGUAGES, SPECIALIZATIONS } from "../../utils/consts";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn } from "utils/auth.service";
 import { useLocation } from "react-router";
-import { editFavMentorById } from "../../utils/api";
+import {
+  editFavMentorById,
+  fetchMenteeByID,
+  fetchMentors,
+  getDisplaySpecializations,
+  getDisplayLanguages,
+} from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 import ModalInput from "../ModalInput";
@@ -82,8 +87,8 @@ function Gallery() {
     getMentors();
 
     async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
+      setLangMasters(await getDisplayLanguages());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
 

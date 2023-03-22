@@ -6,11 +6,13 @@ from mongoengine.queryset.visitor import Q
 from api.models import DirectMessage, PartnerProfile
 from api.utils.request_utils import send_email, send_sms
 from api.utils.constants import WEEKLY_NOTIF_REMINDER, UNREAD_MESSAGE_TEMPLATE
+from api.utils.require_auth import all_users
 
 notifications = Blueprint("notifications", __name__)
 
 
 @notifications.route("/<id>", methods=["GET"])
+@all_users
 def get_unread_dm_count(id):
     try:
         notifications = DirectMessage.objects(
@@ -25,6 +27,7 @@ def get_unread_dm_count(id):
 
 
 @notifications.route("/unread_alert/<id>", methods=["GET"])
+@all_users
 def send_unread_alert(id):
     try:
         notifications_count = DirectMessage.objects(
@@ -81,6 +84,7 @@ def send_unread_alert(id):
 
 
 @notifications.route("/update", methods=["PUT"])
+@all_users
 def update_unread_count():
     data = request.get_json()
     if not data:
@@ -104,6 +108,7 @@ def update_unread_count():
 
 
 @notifications.route("/weeklyemails", methods=["GET"])
+@all_users
 def send_weekly_emails():
     try:
         mentee_users = MenteeProfile.objects()

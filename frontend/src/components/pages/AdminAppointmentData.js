@@ -6,12 +6,12 @@ import { UserOutlined } from "@ant-design/icons";
 import {
   fetchAllAppointments,
   downloadAllApplicationData,
-} from "../../utils/api";
+  getDisplaySpecializations,
+} from "utils/api";
 import { SortByDateDropdown, SpecializationsDropdown } from "../AdminDropdowns";
 import AdminAppointmentCard from "../AdminAppointmentCard";
 import AdminAppointmentModal from "components/AdminAppointmentModal";
 import "../css/AdminAppointments.scss";
-import { SPECIALIZATIONS } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
 
 const keys = {
@@ -50,7 +50,7 @@ function AdminAppointmentData() {
     onAuthStateChanged(getAppointments);
 
     async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);

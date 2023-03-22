@@ -16,7 +16,6 @@ function MessagesSidebar(props) {
     },
   };
   const { latestConvos, activeMessageId, restrictedPartners, user } = props;
-
   var side_data = [];
   if (user && user.pair_partner && user.pair_partner.restricted) {
     if (latestConvos && latestConvos.length > 0) {

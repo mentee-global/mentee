@@ -1,12 +1,14 @@
 from flask import Blueprint, request, jsonify
 from api.models import Availability, MentorProfile
 from api.core import create_response, logger
+from api.utils.require_auth import all_users
 
 availability = Blueprint("availability", __name__)
 
 
 # Get request for avalability for a specific mentor
 @availability.route("/<id>", methods=["GET"])
+@all_users
 def get_availability(id):
     try:
         availability = MentorProfile.objects.get(id=id).availability
@@ -20,6 +22,7 @@ def get_availability(id):
 
 # Put request to edit availability for a specific mentor
 @availability.route("/<id>", methods=["PUT"])
+@all_users
 def edit_availability(id):
     data = request.get_json().get("Availability")
     try:

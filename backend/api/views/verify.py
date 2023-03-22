@@ -3,11 +3,13 @@ from api.models import (
     VerifiedEmail,
 )
 from api.core import create_response
+from api.utils.require_auth import admin_only
 
 verify = Blueprint("verify", __name__)  # initialize blueprint
 
 
 @verify.route("/verifyEmail", methods=["GET"])
+@admin_only
 def verify_email():
     email = request.args.get("email", default="")
 

@@ -65,7 +65,7 @@ function useProvideAuth() {
           const { role, profileId } = idTokenResult.claims;
           setProfileId(profileId);
           setRoleState({
-            role: role,
+            role: Number(role),
             isAdmin: `${role}` === `${ACCOUNT_TYPE.ADMIN}`,
             isMentor: `${role}` === `${ACCOUNT_TYPE.MENTOR}`,
             isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,

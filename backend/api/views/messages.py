@@ -8,6 +8,7 @@ from api.models import (
 )
 from api.utils.request_utils import send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
+from api.utils.require_auth import all_users
 from api.core import create_response, logger
 import json
 from datetime import datetime
@@ -20,6 +21,7 @@ messages = Blueprint("messages", __name__)
 
 
 @messages.route("/", methods=["GET"])
+@all_users
 def get_messages():
     try:
         messages = Message.objects.filter(**request.args)
@@ -34,6 +36,7 @@ def get_messages():
 
 
 @messages.route("/<string:message_id>", methods=["DELETE"])
+@all_users
 def delete_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -53,6 +56,7 @@ def delete_message(message_id):
 
 
 @messages.route("/<string:message_id>", methods=["PUT"])
+@all_users
 def update_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -76,6 +80,7 @@ def update_message(message_id):
 
 
 @messages.route("/", methods=["POST"])
+@all_users
 def create_message():
     data = request.get_json()
 
@@ -106,6 +111,7 @@ def create_message():
 
 
 @messages.route("/mentor/<string:mentor_id>", methods=["POST"])
+@all_users
 def contact_mentor(mentor_id):
     data = request.get_json()
     if "mentee_id" not in data:
@@ -160,6 +166,7 @@ def contact_mentor(mentor_id):
 
 
 @messages.route("/contacts/<string:user_id>", methods=["GET"])
+@all_users
 def get_sidebar(user_id):
     try:
         sentMessages = DirectMessage.objects.filter(
@@ -235,6 +242,7 @@ def get_sidebar(user_id):
 
 
 @messages.route("/contacts/mentors/<int:pageNumber>", methods=["GET"])
+@all_users
 def get_sidebar_mentors(pageNumber):
     searchTerm = request.args.get("searchTerm")
     searchTerm = unquote(searchTerm)
@@ -338,6 +346,7 @@ def get_sidebar_mentors(pageNumber):
 
 
 @messages.route("/direct/", methods=["GET"])
+@all_users
 def get_direct_messages():
     try:
         messages = DirectMessage.objects(

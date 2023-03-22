@@ -51,10 +51,10 @@ export const fetchAccountById = (id, type) => {
 };
 
 export const fetchAccounts = (type, restricted = undefined) => {
-  const requestExtension =`/accounts/${type}`;
+  const requestExtension = `/accounts/${type}`;
   return authGet(requestExtension, {
-    params:{
-      restricted:restricted
+    params: {
+      restricted: restricted,
     },
   }).then(
     (response) => response.data.result.accounts,

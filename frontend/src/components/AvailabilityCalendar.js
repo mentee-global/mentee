@@ -97,7 +97,7 @@ function AvailabilityCalendar(props) {
       });
       return false;
     });
-    
+
     setBookedTimeSlots(bookedTimes);
   }
 

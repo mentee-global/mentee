@@ -87,17 +87,17 @@ function AvailabilityCalendar(props) {
     if (!appointmentdata) return;
 
     const bookedTimes = [];
-    {
-      appointmentdata.map((appointmentsObject, index) => {
-        const appointments = appointmentsObject.appointments;
-        appointments.forEach((element) => {
-          bookedTimes.push([
-            moment.parseZone(element.timeslot.start_time.$date),
-            moment.parseZone(element.timeslot.end_time.$date),
-          ]);
-        });
+    appointmentdata.map((appointmentsObject) => {
+      const appointments = appointmentsObject.appointments;
+      appointments.forEach((element) => {
+        bookedTimes.push([
+          moment.parseZone(element.timeslot.start_time.$date).local(),
+          moment.parseZone(element.timeslot.end_time.$date).local(),
+        ]);
       });
-    }
+      return false;
+    });
+    
     setBookedTimeSlots(bookedTimes);
   }
 
@@ -119,21 +119,8 @@ function AvailabilityCalendar(props) {
       });
       setTimeSlots(times);
     }
-    if (appointmentdata) {
-      const bookedTimes = [];
-      appointmentdata.map((appointmentsObject, index) => {
-        const appointments = appointmentsObject.appointments;
-        appointments.forEach((element) => {
-          bookedTimes.push([
-            moment.parseZone(element.timeslot.start_time.$date).local(),
-            moment.parseZone(element.timeslot.end_time.$date).local(),
-          ]);
-        });
-        return false;
-      });
 
-      setBookedTimeSlots(bookedTimes);
-    }
+    getBookedAppointments();
   }
 
   /**

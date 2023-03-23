@@ -73,7 +73,7 @@ function Appointments() {
     }
 
     onAuthStateChanged(getAppointments);
-  }, [appointmentClick]);
+  }, [appointmentClick, profileId, onAuthStateChanged]);
 
   useEffect(() => {
     async function addTakingAppointments() {
@@ -84,7 +84,7 @@ function Appointments() {
       }
     }
     addTakingAppointments();
-  }, [user]);
+  }, [user, dispatch, profileId, role]);
 
   async function handleTakeAppointments(e) {
     const new_user = { taking_appointments: e };
@@ -120,7 +120,7 @@ function Appointments() {
     };
   };
   const Tab = (props) => {
-    if (props.text == "All Pending") {
+    if (props.text === "All Pending") {
       return (
         <Button
           type="default"
@@ -267,7 +267,7 @@ function Appointments() {
       <AppointmentInfo
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
-        needButtons={currentTab == Tabs.pending}
+        needButtons={currentTab === Tabs.pending}
         handleAppointmentClick={handleAppointmentClick}
         modalAppointment={modalAppointment}
       />

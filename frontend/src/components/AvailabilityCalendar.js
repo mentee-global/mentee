@@ -80,7 +80,26 @@ function AvailabilityCalendar(props) {
       setSaved(set);
     }
     getSetDays();
-  }, [trigger]);
+    getAvailability();
+  }, [trigger, profileId]);
+
+  function getBookedAppointments() {
+    if (!appointmentdata) return;
+
+    const bookedTimes = [];
+    {
+      appointmentdata.map((appointmentsObject, index) => {
+        const appointments = appointmentsObject.appointments;
+        appointments.forEach((element) => {
+          bookedTimes.push([
+            moment.parseZone(element.timeslot.start_time.$date),
+            moment.parseZone(element.timeslot.end_time.$date),
+          ]);
+        });
+      });
+    }
+    setBookedTimeSlots(bookedTimes);
+  }
 
   /**
    * Gets availability from backend and changes clientside timeslots

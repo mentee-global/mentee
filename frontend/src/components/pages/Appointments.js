@@ -13,13 +13,12 @@ import {
   acceptAppointment,
   fetchAppointmentsByMentorId,
   deleteAppointment,
-  editMentorProfile,
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 import { useAuth } from "utils/hooks/useAuth";
-import { fetchUser } from "features/userSlice";
+import { updateAndFetchUser } from "features/userSlice";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -76,20 +75,13 @@ function Appointments() {
   }, [appointmentClick, profileId, onAuthStateChanged]);
 
   useEffect(() => {
-    async function addTakingAppointments() {
-      if (user && user.taking_appointments === undefined) {
-        const new_user = { ...user, taking_appointments: false };
-        await editMentorProfile(new_user, profileId);
-        dispatch(fetchUser({ id: profileId, role }));
-      }
-    }
-    addTakingAppointments();
-  }, [user, dispatch, profileId, role]);
+    if (!user) return;
+    setTakeappoinment(user.taking_appointments);
+  }, [user]);
 
   async function handleTakeAppointments(e) {
-    const new_user = { taking_appointments: e };
-    await editMentorProfile(new_user, profileId);
-    dispatch(fetchUser({ id: profileId, role }));
+    const data = { taking_appointments: e };
+    dispatch(updateAndFetchUser({ data, id: profileId, role }));
   }
 
   async function handleAppointmentClick(id, didAccept) {
@@ -286,7 +278,7 @@ function Appointments() {
               }}
               checked={takeAppoinment}
             >
-              taking appointments
+              Taking appointments
             </Checkbox>
             <div className="appointments-tabs">
               {Object.values(Tabs).map((tab, index) => (

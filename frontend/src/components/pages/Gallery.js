@@ -93,12 +93,26 @@ function Gallery() {
     getMasters();
 
     async function getAllPartners() {
-      var all_data = await fetchPartners();
+      var all_data = [];
+      if (isAdmin) {
+        all_data = await fetchPartners();
+      } else {
+        if (user && user.pair_partner && user.pair_partner.restricted) {
+          all_data = [user.pair_partner];
+        } else {
+          all_data = await fetchPartners(false);
+        }
+      }
       var temp = [];
-      all_data.map((item) => {
-        temp.push({ id: item._id["$oid"], name: item.organization });
-        return false;
-      });
+      if (all_data) {
+        all_data.map((item) => {
+          temp.push({
+            id: item.id ? item.id : item._id["$oid"],
+            name: item.organization,
+          });
+          return false;
+        });
+      }
       setAllPartners(temp);
     }
     getAllPartners();

@@ -235,7 +235,6 @@ function MessagesChatArea(props) {
       />
     </Header>
   );
-  console.log("accountData", accountData);
   return (
     <div className="conversation-container">
       {accountData ? (

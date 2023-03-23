@@ -58,13 +58,19 @@ function AdminAccountData() {
       const menteeRes = await fetchMenteesAppointments();
       const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
       var partners_data = [];
-      Partners.map((item) => {
-        item.restricted_show = item.restricted ? "Yes" : "No";
-        item.mentor_nums = item.assign_mentors ? item.assign_mentors.length : 0;
-        item.mentee_nums = item.assign_mentees ? item.assign_mentees.length : 0;
-        partners_data.push(item);
-        return true;
-      });
+      if (Partners) {
+        Partners.map((item) => {
+          item.restricted_show = item.restricted ? "Yes" : "No";
+          item.mentor_nums = item.assign_mentors
+            ? item.assign_mentors.length
+            : 0;
+          item.mentee_nums = item.assign_mentees
+            ? item.assign_mentees.length
+            : 0;
+          partners_data.push(item);
+          return true;
+        });
+      }
       if (mentorRes && menteeRes) {
         const newMenteeData = menteeRes.menteeData.map((elem) => ({
           ...elem,

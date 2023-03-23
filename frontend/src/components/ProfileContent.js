@@ -6,6 +6,7 @@ import {
   LinkedinOutlined,
   LockFilled,
   StarFilled,
+  UserOutlined,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
@@ -14,7 +15,7 @@ import PublicMessageModal from "./PublicMessageModal";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
-import { Rate, Tooltip } from "antd";
+import { Rate, Tooltip, Avatar } from "antd";
 import MentorContactModal from "./MentorContactModal";
 import PartnerProfileModal from "./PartnerProfileModal";
 
@@ -383,6 +384,24 @@ function ProfileContent(props) {
             </a>
           </Tooltip>
         </div>
+      )}
+      {props.mentor.pair_partner && props.mentor.pair_partner.email && (
+        <>
+          <div style={{ marginTop: "10px" }} className="mentor-profile-heading">
+            <b>Partner</b>
+          </div>
+          <Avatar
+            size={45}
+            src={
+              props.mentor.pair_partner.image &&
+              props.mentor.pair_partner.image.url
+            }
+            icon={<UserOutlined />}
+          />
+          <label style={{ marginLeft: "10px" }}>
+            {props.mentor.pair_partner.organization}
+          </label>
+        </>
       )}
     </div>
   );

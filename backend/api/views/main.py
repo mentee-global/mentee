@@ -91,7 +91,7 @@ def get_accounts(account_type):
             if request.args["restricted"] == "true":
                 accounts = PartnerProfile.objects(restricted=True)
             else:
-                accounts = PartnerProfile.objects(restricted=False)
+                accounts = PartnerProfile.objects(restricted__ne=True)
         else:
             accounts = PartnerProfile.objects()
     else:

@@ -2,8 +2,6 @@ import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
 import { Calendar, Modal, Badge, TimePicker } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import TextField from "@material-ui/core/TextField";
-import { Input } from "antd";
 
 import MenteeButton from "./MenteeButton.js";
 import { useAuth } from "utils/hooks/useAuth";
@@ -39,21 +37,23 @@ function AvailabilityCalendar(props) {
       const set = [];
 
       if (appointmentdata) {
-        {
-          appointmentdata.map((appointmentsObject, index) => {
-            if (
-              !saved.hasOwnProperty(
-                moment.parseZone(appointmentsObject.date)
-              ) &&
-              !set.hasOwnProperty(appointmentsObject.date)
-            ) {
-              // .format strips data to find just year, month, and day
-              set[
-                moment.parseZone(appointmentsObject.date).format("YYYY-MM-DD")
-              ] = true;
-            }
-          });
-        }
+        appointmentdata.map((appointmentsObject, index) => {
+          if (
+            !saved.hasOwnProperty(
+              moment.parseZone(appointmentsObject.date).local()
+            ) &&
+            !set.hasOwnProperty(appointmentsObject.date)
+          ) {
+            // .format strips data to find just year, month, and day
+            set[
+              moment
+                .parseZone(appointmentsObject.date)
+                .local()
+                .format("YYYY-MM-DD")
+            ] = true;
+          }
+          return false;
+        });
       }
       setSaved(set);
 
@@ -62,12 +62,17 @@ function AvailabilityCalendar(props) {
         availability.forEach((time) => {
           // Checking if saved or set have date already
           if (
-            !saved.hasOwnProperty(moment.parseZone(time.start_time.$date)) &&
+            !saved.hasOwnProperty(
+              moment.parseZone(time.start_time.$date).local()
+            ) &&
             !set.hasOwnProperty(time.start_time.$date)
           ) {
             // .format strips data to find just year, month, and day
             set[
-              moment.parseZone(time.start_time.$date).format("YYYY-MM-DD")
+              moment
+                .parseZone(time.start_time.$date)
+                .local()
+                .format("YYYY-MM-DD")
             ] = true;
           }
         });
@@ -89,25 +94,25 @@ function AvailabilityCalendar(props) {
       const availability = availability_data.availability;
       availability.forEach((element) => {
         times.push([
-          moment.parseZone(element.start_time.$date),
-          moment.parseZone(element.end_time.$date),
+          moment.parseZone(element.start_time.$date).local(),
+          moment.parseZone(element.end_time.$date).local(),
         ]);
       });
       setTimeSlots(times);
     }
     if (appointmentdata) {
       const bookedTimes = [];
-      {
-        appointmentdata.map((appointmentsObject, index) => {
-          const appointments = appointmentsObject.appointments;
-          appointments.forEach((element) => {
-            bookedTimes.push([
-              moment.parseZone(element.timeslot.start_time.$date),
-              moment.parseZone(element.timeslot.end_time.$date),
-            ]);
-          });
+      appointmentdata.map((appointmentsObject, index) => {
+        const appointments = appointmentsObject.appointments;
+        appointments.forEach((element) => {
+          bookedTimes.push([
+            moment.parseZone(element.timeslot.start_time.$date).local(),
+            moment.parseZone(element.timeslot.end_time.$date).local(),
+          ]);
         });
-      }
+        return false;
+      });
+
       setBookedTimeSlots(bookedTimes);
     }
   }
@@ -327,44 +332,6 @@ function AvailabilityCalendar(props) {
     );
   };
 
-  // const disabledHours = (prev_time = null, after_time = null, cur_index) => {
-  //   const hours = [];
-  //   if (prev_time != null){
-  //     for(var i = 0;i < moment(prev_time).local().hours();i++){
-  //       hours.push(i);
-  //     }
-  //   }
-  //   if (after_time != null){
-  //     for (i = moment(after_time).local().hours() + 1; i<=23;i++){
-  //       hours.push(i);
-  //     }
-  //   }
-  //   var booked_times = getBookedTimeSlots(date.format("YYYY-MM-DD"));
-  //   var time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
-  //   booked_times.map((time_slot) => {
-  //     var start_hour = moment(time_slot[0][0]).local().hours();
-  //     var end_hour = moment(time_slot[0][1]).local().hours();
-  //     for (var i = start_hour + 1; i < end_hour; i++){
-  //       hours.push(i);
-  //     }
-  //     return true;
-  //   })
-  //   time_slots.map((time_slot, index) => {
-  //     if (cur_index !== index){
-  //       var start_hour = moment(time_slot[0][0]).local().hours();
-  //       var end_hour = moment(time_slot[0][1]).local().hours();
-  //       for (var i = start_hour + 1; i < end_hour; i++){
-  //         hours.push(i);
-  //       }
-  //     }
-  //     return true;
-  //   })
-  //   return hours;
-  // }
-  // const disabledMinutes = (selectedHour) => {
-  //   const minutes = [];
-  //   return minutes;
-  // }
   return (
     <>
       <Calendar
@@ -407,13 +374,13 @@ function AvailabilityCalendar(props) {
                 <div className="timeslot-wrapper">
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][0], "HH:mm").local()}
+                    value={moment(bookedTimeSlot[0][0], "HH:mm")}
                     disabled={true}
                   />
                   <h1 className="timeslot"> - </h1>
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][1]).local()}
+                    value={moment(bookedTimeSlot[0][1])}
                     disabled={true}
                   />
                 </div>
@@ -426,7 +393,7 @@ function AvailabilityCalendar(props) {
                 <TimePicker
                   use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][0], "HH:mm").local()}
+                  value={moment(timeSlot[0][0], "HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
                   // disabledHours={() => disabledHours(null, timeSlot[0][1], index)}
                   // disabledMinutes={() => disabledMinutes()}
@@ -435,7 +402,7 @@ function AvailabilityCalendar(props) {
                 <TimePicker
                   use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][1]).local()}
+                  value={moment(timeSlot[0][1])}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
                   // disabledHours={() => disabledHours(timeSlot[0][0], null, index)}
                   // disabledMinutes={() => disabledMinutes()}

@@ -13,7 +13,6 @@ training = Blueprint("training", __name__)  # initialize blueprint
 
 
 @training.route("/<role>", methods=["GET"])
-@all_users
 def get_trainings(role):
     trainings = Training.objects(role=str(role))
     trainings = list(trainings)

@@ -19,7 +19,7 @@ masters = Blueprint("masters", __name__)
 
 
 @masters.route("/languages", methods=["GET"])
-@all_users
+# @all_users
 def getLanguages():
     try:
         languages = Languages.objects.order_by("name").collation(

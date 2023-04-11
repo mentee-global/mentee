@@ -27,7 +27,7 @@ def get_unread_dm_count(id):
 
 
 @notifications.route("/unread_alert/<id>", methods=["GET"])
-@all_users
+# @all_users
 def send_unread_alert(id):
     try:
         notifications_count = DirectMessage.objects(

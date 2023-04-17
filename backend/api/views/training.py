@@ -48,7 +48,7 @@ def get_train(id):
 
 ##################################################################################
 @training.route("/trainVideo/<string:id>", methods=["GET"])
-@all_users
+# @all_users
 def get_train_file(id):
     try:
         train = Training.objects.get(id=id)

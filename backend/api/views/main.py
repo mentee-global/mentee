@@ -155,7 +155,7 @@ def get_account(id):
 
 # POST request for a new account profile
 @main.route("/account", methods=["POST"])
-@all_users
+# @all_users
 def create_mentor_profile():
     data = request.json
     email = data.get("email")

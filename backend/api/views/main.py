@@ -292,7 +292,7 @@ def create_mentor_profile():
 
 
 @main.route("/accountProfile", methods=["POST"])
-@all_users
+# @all_users
 def create_profile_existing_account():
     data = request.json
     email = data.get("email")

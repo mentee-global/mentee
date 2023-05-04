@@ -39,7 +39,7 @@ main = Blueprint("main", __name__)  # initialize blueprint
 
 # GET request for /accounts/<type>
 @main.route("/accounts/<int:account_type>", methods=["GET"])
-@all_users
+# @all_users
 def get_accounts(account_type):
     accounts = None
     if account_type == Account.MENTOR:
@@ -103,7 +103,7 @@ def get_accounts(account_type):
 
 # GET request for specific account based on id
 @main.route("/account/<string:id>", methods=["GET"])
-@all_users
+# @all_users
 def get_account(id):
     try:
         account_type = int(request.args["account_type"])
@@ -390,7 +390,7 @@ def create_profile_existing_account():
 
 # PUT requests for /account
 @main.route("/account/<id>", methods=["PUT"])
-@all_users
+# @all_users
 def edit_mentor(id):
     data = request.get_json()
 
@@ -431,7 +431,7 @@ def edit_mentor(id):
 
 
 @main.route("/account/<id>/image", methods=["PUT"])
-@all_users
+# @all_users
 def uploadImage(id):
     image = request.files["image"]
     try:

@@ -232,9 +232,14 @@ def changestatetobuildprofile(email, role):
     if application["application_state"] == NEW_APPLICATION_STATUS["APPROVED"]:
         application["application_state"] = NEW_APPLICATION_STATUS["BUILDPROFILE"]
         application.save()
+        target_url = ''
+        if "front_url" in request.args:
+            front_url = request.args["front_url"]
+            target_url = front_url + "application-page?role=" + str(role) + "&email=" + application["email"]
         success, msg = send_email(
             recipient=application["email"],
             subject="Congratulation for completing training",
+            data={"link": target_url},
             template_id=TRAINING_COMPLETED,
         )
         if not success:
@@ -314,10 +319,13 @@ def edit_application(id, role):
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["APPROVED"]:
+        front_url = data.get('front_url', '')
+        target_url = front_url + "application-page?role=" + str(role) + "&email=" + application.email
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
             subject="MENTEE Application has been approved",
+            data={"link": target_url},
             template_id=APP_APROVED,
         )
         if not success:
@@ -343,10 +351,13 @@ def edit_application(id, role):
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["BUILDPROFILE"]:
+        front_url = data.get('front_url', '')
+        target_url = front_url + "application-page?role=" + str(role) + "&email=" + application.email
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
             subject="Congratulation for completing training",
+            data={"link": target_url},
             template_id=TRAINING_COMPLETED,
         )
         if not success:

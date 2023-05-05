@@ -44,6 +44,15 @@ const Apply = () => {
     setConfirmApply(true);
   };
   useEffect(() => {
+    var searchParams = new URLSearchParams(location.search);
+    var email = searchParams.get("email");
+    var role = searchParams.get("role");
+    if (email !== undefined && email !== null && email !== "") {
+      setEmail(email);
+      if (role > 0) {
+        setRole(parseInt(role));
+      }
+    }
     if (location.state) {
       if (location.state.email) {
         setEmail(location.state.email);

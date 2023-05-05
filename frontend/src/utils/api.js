@@ -149,7 +149,11 @@ export const getExistingProfile = async (email, role) => {
 
 export const changeStateBuildProfile = async (email, role) => {
   const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
-  const res = await instance.get(requestExtension);
+  const res = await authGet(requestExtension, {
+    params: {
+      front_url: FRONT_BASE_URL,
+    },
+  });
   let state = res.data.result.state;
   return state;
 };
@@ -531,6 +535,7 @@ export const updateApplicationById = async (data, id, isMentor) => {
   if (isMentor === false) {
     requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
   }
+  data.front_url = FRONT_BASE_URL;
   return await authPut(requestExtension, data).then(
     (response) => response,
     (err) => {

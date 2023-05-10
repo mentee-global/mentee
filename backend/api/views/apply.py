@@ -382,46 +382,54 @@ def create_application():
     if is_invalid:
         return create_response(status=422, message=msg)
     if role == Account.MENTOR:
-        new_application = NewMentorApplication(
-            name=data.get("name"),
-            email=data.get("email"),
-            cell_number=data.get("cell_number"),
-            hear_about_us=data.get("hear_about_us"),
-            offer_donation=data.get("offer_donation"),
-            employer_name=data.get("employer_name"),
-            role_description=data.get("role_description"),
-            immigrant_status=data.get("immigrant_status"),
-            languages=data.get("languages"),
-            referral=data.get("referral"),
-            knowledge_location=data.get("knowledge_location"),
-            isColorPerson=data.get("isColorPerson"),
-            isMarginalized=data.get("isMarginalized"),
-            isFamilyNative=data.get("isFamilyNative"),
-            isEconomically=data.get("isEconomically"),
-            identify=data.get("identify"),
-            pastLiveLocation=data.get("pastLiveLocation"),
-            date_submitted=data.get("date_submitted"),
-            companyTime=data.get("companyTime"),
-            specialistTime=data.get("specialistTime"),
-            application_state="PENDING",
-        )
+        applications = NewMentorApplication.objects(email=data.get("email"))
+        if len(applications) > 0 is not None:
+                return create_response(status=422, message="This user is already registered")
+        else:
+            new_application = NewMentorApplication(
+                name=data.get("name"),
+                email=data.get("email"),
+                cell_number=data.get("cell_number"),
+                hear_about_us=data.get("hear_about_us"),
+                offer_donation=data.get("offer_donation"),
+                employer_name=data.get("employer_name"),
+                role_description=data.get("role_description"),
+                immigrant_status=data.get("immigrant_status"),
+                languages=data.get("languages"),
+                referral=data.get("referral"),
+                knowledge_location=data.get("knowledge_location"),
+                isColorPerson=data.get("isColorPerson"),
+                isMarginalized=data.get("isMarginalized"),
+                isFamilyNative=data.get("isFamilyNative"),
+                isEconomically=data.get("isEconomically"),
+                identify=data.get("identify"),
+                pastLiveLocation=data.get("pastLiveLocation"),
+                date_submitted=data.get("date_submitted"),
+                companyTime=data.get("companyTime"),
+                specialistTime=data.get("specialistTime"),
+                application_state="PENDING",
+            )
 
-    if role == Account.MENTEE:
-        new_application = MenteeApplication(
-            email=data.get("email"),
-            name=data.get("name"),
-            age=data.get("age"),
-            immigrant_status=data.get("immigrant_status"),
-            Country=data.get("Country", ""),
-            identify=data.get("identify"),
-            language=data.get("language"),
-            topics=data.get("topics"),
-            workstate=data.get("workstate"),
-            isSocial=data.get("isSocial"),
-            questions=data.get("questions", ""),
-            application_state="PENDING",
-            date_submitted=data.get("date_submitted"),
-        )
+    if role == Account.MENTEE:        
+        applications = MenteeApplication.objects(email=data.get("email"))
+        if len(applications) > 0 is not None:
+            return create_response(status=422, message="This user is already registered")
+        else:
+            new_application = MenteeApplication(
+                email=data.get("email"),
+                name=data.get("name"),
+                age=data.get("age"),
+                immigrant_status=data.get("immigrant_status"),
+                Country=data.get("Country", ""),
+                identify=data.get("identify"),
+                language=data.get("language"),
+                topics=data.get("topics"),
+                workstate=data.get("workstate"),
+                isSocial=data.get("isSocial"),
+                questions=data.get("questions", ""),
+                application_state="PENDING",
+                date_submitted=data.get("date_submitted"),
+            )
     new_application.save()
 
     mentor_email = new_application.email

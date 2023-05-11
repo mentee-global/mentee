@@ -1,22 +1,24 @@
 @import "_app";
 .containerr {
-  min-height: 92vh;
+  // min-height: 92vh;
+  height: 100%;
   width: 100%;
   background: #ffdb6f;
   overflow: auto;
   position: relative;
-  margin-bottom: 75px;
+  padding-bottom: 0px !important;
+  // margin-bottom: 75px;
 }
 .home-header3 {
   font-family: "Abel";
   font-style: normal;
   font-weight: 400;
   font-size: 48px;
-  line-height: 61px;
+  line-height: 30px;
   text-align: center;
   color: #ffffff;
   position: absolute;
-  top: 61px;
+  top: 30px;
   left: 0;
   right: 0;
 }
@@ -35,8 +37,8 @@
   border-radius: 10px;
   position: absolute;
   width: 546px;
-  height: 257px;
-  top: 176px;
+  height: 197px;
+  top: 100px;
   margin: auto;
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -84,14 +86,14 @@
   width: 450px;
   height: 40px;
   left: 41px;
-  top: 76px;
+  top: 55px;
 }
 .login-input_pass {
   position: absolute;
   width: 487px;
   height: 40px;
   left: 29px;
-  top: 162px;
+  top: 105px;
 }
 
 .login-input-container {

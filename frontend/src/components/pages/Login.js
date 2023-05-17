@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useHistory, useLocation, NavLink } from "react-router-dom";
-import { Input } from "antd";
+import { useHistory, NavLink } from "react-router-dom";
+import { Input, message } from "antd";
 import fireauth from "utils/fireauth";
 import { useDispatch } from "react-redux";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
@@ -38,17 +38,21 @@ function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
-  const [error, setError] = useState(false);
   const [displaySelect, setDisplaySelect] = useState(false);
   const [roleObject, setroleObject] = useState({});
-  const [errorMessage, setErrorMessage] = useState(
-    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
-  );
   const [loggingIn, setLoggingIn] = useState(false);
   const [permissions, setPermissions] = usePersistedState(
     "permissions",
     ACCOUNT_TYPE.MENTEE
   );
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const displayError = (errorMessage) => {
+    messageApi.open({
+      type: "error",
+      content: `${errorMessage}`,
+    });
+  };
 
   const handleDisplayImages = () => {
     setDisplaySelect(true);
@@ -64,8 +68,7 @@ function Login() {
       );
       if (rightRole) {
         if (rightRole !== RoleObj.type) {
-          setErrorMessage("wrong Role please choose account right Role");
-          setError(true);
+          displayError("wrong Role please choose account right Role");
           setLoading(false);
           setLoggingIn(false);
           setLoggingIn(false);
@@ -74,7 +77,6 @@ function Login() {
           //return wrong Role
         }
       } else {
-        setError(false);
         const { isHave } = await isHaveAccount(email, RoleObj.type);
         if (isHaveProfile === false && isHave === true) {
           //redirect to apply with role and email passed
@@ -84,35 +86,28 @@ function Login() {
           });
           return;
         } else if (isHaveProfile === false && isHave === false) {
-          setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
-          setError(true);
+          displayError(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
           setLoggingIn(false);
           setLoading(false);
 
           return;
         } else if (isHaveProfile === true) {
-          setError(false);
           const res = await login(email, password, RoleObj.type);
           setLoading(false);
 
           if (!res || !res.success) {
             if (res?.data?.result?.existingEmail) {
-              setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+              displayError(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
               setLoading(false);
             } else {
-              setErrorMessage(
-                LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
-              );
+              displayError(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
               setLoading(false);
             }
-            setError(true);
           } else if (res.result.passwordReset) {
-            setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
-            setError(true);
+            displayError(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
             setLoading(false);
           } else if (res.result.recreateAccount) {
-            setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
-            setError(true);
+            displayError(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
             setLoading(false);
           }
           setPermissions(RoleObj.type);
@@ -149,6 +144,7 @@ function Login() {
   }
   return (
     <div className="containerr">
+      {contextHolder}
       <h1 className="home-header3">
         Welcome to <span>MENTEE!</span>
       </h1>
@@ -206,7 +202,6 @@ function Login() {
           </div>
         </div>
       </div>
-      {error && <h1 className="login-error">{errorMessage}</h1>}
       {loading ? <h1 className="loadingg">Loading ..</h1> : ""}
       <SelectLogin
         displaySelect={displaySelect}

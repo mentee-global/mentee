@@ -41,7 +41,7 @@ def create_app():
     formatter = RequestFormatter(
         "%(asctime)s %(remote_addr)s: requested %(url)s: %(levelname)s in [%(module)s: %(lineno)d]: %(message)s"
     )
-    app.config['LOG_FILE'] = "app.log"
+    app.config["LOG_FILE"] = "app.log"
     if app.config.get("LOG_FILE"):
         fh = logging.FileHandler(app.config.get("LOG_FILE"))
         fh.setLevel(logging.DEBUG)

@@ -232,10 +232,16 @@ def changestatetobuildprofile(email, role):
     if application["application_state"] == NEW_APPLICATION_STATUS["APPROVED"]:
         application["application_state"] = NEW_APPLICATION_STATUS["BUILDPROFILE"]
         application.save()
-        target_url = ''
+        target_url = ""
         if "front_url" in request.args:
             front_url = request.args["front_url"]
-            target_url = front_url + "application-page?role=" + str(role) + "&email=" + application["email"]
+            target_url = (
+                front_url
+                + "application-page?role="
+                + str(role)
+                + "&email="
+                + application["email"]
+            )
         success, msg = send_email(
             recipient=application["email"],
             subject="Congratulation for completing training",
@@ -319,8 +325,14 @@ def edit_application(id, role):
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["APPROVED"]:
-        front_url = data.get('front_url', '')
-        target_url = front_url + "application-page?role=" + str(role) + "&email=" + application.email
+        front_url = data.get("front_url", "")
+        target_url = (
+            front_url
+            + "application-page?role="
+            + str(role)
+            + "&email="
+            + application.email
+        )
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
@@ -351,8 +363,14 @@ def edit_application(id, role):
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["BUILDPROFILE"]:
-        front_url = data.get('front_url', '')
-        target_url = front_url + "application-page?role=" + str(role) + "&email=" + application.email
+        front_url = data.get("front_url", "")
+        target_url = (
+            front_url
+            + "application-page?role="
+            + str(role)
+            + "&email="
+            + application.email
+        )
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
@@ -384,7 +402,9 @@ def create_application():
     if role == Account.MENTOR:
         applications = NewMentorApplication.objects(email=data.get("email"))
         if len(applications) > 0 is not None:
-                return create_response(status=422, message="This user is already registered")
+            return create_response(
+                status=422, message="This user is already registered"
+            )
         else:
             new_application = NewMentorApplication(
                 name=data.get("name"),
@@ -410,10 +430,12 @@ def create_application():
                 application_state="PENDING",
             )
 
-    if role == Account.MENTEE:        
+    if role == Account.MENTEE:
         applications = MenteeApplication.objects(email=data.get("email"))
         if len(applications) > 0 is not None:
-            return create_response(status=422, message="This user is already registered")
+            return create_response(
+                status=422, message="This user is already registered"
+            )
         else:
             new_application = MenteeApplication(
                 email=data.get("email"),

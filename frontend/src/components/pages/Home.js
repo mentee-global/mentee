@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { withRouter } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import LoginVerificationModal from "../LoginVerificationModal";
 import "../css/Home.scss";
 import loginimg from "resources/login.png";
@@ -15,6 +16,7 @@ import { useDispatch } from "react-redux";
 function Home({ history }) {
   const { isMentor, isMentee, isPartner, resetRoleState, isAdmin } = useAuth();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const logoutUser = () => {
     logout().then(() => {
@@ -28,14 +30,16 @@ function Home({ history }) {
       <div className="home-content">
         <div className="home-text-container">
           <h1 className="home-header2">
-            <span>Welcome to MENTEE!</span>
+            <Trans i18nKey={"homepage.welcome"}>
+              Welcome to <span>MENTEE</span>!
+            </Trans>
           </h1>
           {isLoggedIn() ? (
             ""
           ) : (
             <p className="home-text2">
               {/** Homepage Tagline placeholder */}
-              Are you a new or existing user?
+              {t("homepage.isExistingUser")}
             </p>
           )}
 
@@ -64,7 +68,7 @@ function Home({ history }) {
           ) : (
             <div>
               <h1 className="home-header2" style={{ textAlign: "center" }}>
-                <span>NEW</span>
+                <span>{t("homepage.newAccountTitle")}</span>
                 <div
                   className="applyCon"
                   onClick={() => {
@@ -75,7 +79,9 @@ function Home({ history }) {
                 >
                   <img className="applyImage" src={Applyimg} alt="apply" />
 
-                  <div className="loginText">APPLY - TRAIN - BUILD</div>
+                  <div className="loginText">
+                    {t("homepage.newAccountDesc")}
+                  </div>
                 </div>
               </h1>
             </div>
@@ -83,7 +89,7 @@ function Home({ history }) {
           {!isLoggedIn() ? (
             <>
               <h1 className="home-header2" style={{ textAlign: "center" }}>
-                <span>EXISTING</span>
+                <span>{t("homepage.existingAccountTitle")}</span>
                 <div
                   className="loginCon"
                   onClick={() => {
@@ -94,7 +100,9 @@ function Home({ history }) {
                   }}
                 >
                   <img className="applyImage" src={loginimg} alt="login" />
-                  <div className="loginText">PLATFORM LOGIN</div>
+                  <div className="loginText">
+                    {t("homepage.existingAccountDesc")}
+                  </div>
                 </div>
               </h1>
             </>
@@ -102,7 +110,7 @@ function Home({ history }) {
             <div className="loginCon" onClick={logoutUser}>
               <img className="applyImage" src={loginimg} alt="login" />
 
-              <div className="loginText">LOGOUT</div>
+              <div className="loginText">{t("common.logout")}</div>
             </div>
           )}
         </div>

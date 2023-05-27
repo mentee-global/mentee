@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
 import "./index.scss";
@@ -7,10 +7,14 @@ import * as serviceWorker from "utils/serviceWorker";
 import { Provider } from "react-redux";
 import store from "./app/store";
 
+import "utils/i18n";
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <Suspense>
+        <App />
+      </Suspense>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

@@ -1,0 +1,13 @@
+{
+  "homepage": {
+    "welcome": "Welcome to <1>MENTEE!</1>",
+    "isExistingUser": "Are you a new or existing user?",
+    "newAccountTitle": "NEW",
+    "newAccountDesc": "APPLY - TRAIN - BUILD",
+    "existingAccountTitle": "EXISTING",
+    "existingAccountDesc": "PLATFORM LOGIN"
+  },
+  "common": {
+    "logout": "logout"
+  }
+}

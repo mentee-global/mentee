@@ -7,9 +7,6 @@
     "existingAccountDesc": "PLATFORM LOGIN"
   },
   "login": {
-    "prompt": "Login",
-    "email": "Email",
-    "password": "Password",
     "noAccount": "Don't have an account?",
     "apply": "Apply",
     "forgotPassword": "Forgot password?",
@@ -23,12 +20,53 @@
     "reregisterAccount": "Please re-register your account.",
     "existingEmail": "This email is already in use in another role"
   },
+  "apply": {
+    "emailPrompt": "Please enter your email to start the application process",
+    "existingAccount": "You Already have account you will be redirect to login page",
+    "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org",
+    "confirmation": "Thank you for applying! Your application will be reviewed and you will be contacted shortly.",
+    "approved": "Your application has been approved continue to training",
+    "completeTrainings": "I confirm I have completed all trainings",
+    "errorConnection": "Something went wrong check your internet connection"
+  },
+  "mentorApplication": {
+    "introduction": "We appreciate your interest in becoming a volunteer Global Mentor for MENTEE, a global nonprofit accelerating personal and professional growth to make the world a better, healthier place.",
+    "filloutPrompt": "Please fill out the application below",
+    "submitError": "Something went wrong -- check your email at the top",
+    "hearAboutUs": "From whom or where did you hear about us?",
+    "knowledgeLocation": "Please share which region(s), country(s), state(s), cities your knowledge is based in",
+    "previousLocations": "Where have you lived in your life besides where you live now?",
+    "employerName": "Full name of your company/employer",
+    "jobDescription": "Your full title and a brief description of your role",
+    "jobDuration": "How long have you been with this company?",
+    "commitDuration": "If you are accepted as a global mentor, would you like to commit to...",
+    "immigrationStatus": "Are you an immigrant or refugee or do you come from an immigrant family or refugee family?",
+    "communityStatus": "Are you or your family from a native or aboriginal community?",
+    "economicBackground": "Did you grow up economically challenged?",
+    "isPersonOfColor": "Would you consider yourself of person of color",
+    "genderIdentification": "How do you identify?",
+    "isMarginalized": "Would you define yourself as having been or currently marginalized",
+    "languageBackground": "Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)",
+    "referral": "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!",
+    "canDonate": "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
+  },
+  "menteeApplication": {},
+  "partnerApplication": {},
   "common": {
-    "logout": "logout",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "logout": "Logout",
+    "submit": "Submit",
     "welcome": "Welcome to <1>MENTEE!</1>",
     "mentee": "Mentee",
     "mentor": "Mentor",
     "partner": "Partner",
-    "admin": "Admin"
+    "admin": "Admin",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "selectPrompt": "Please select an option",
+    "inputPrompt": "Please add input"
   }
 }

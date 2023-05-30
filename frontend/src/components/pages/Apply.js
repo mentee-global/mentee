@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../../components/css/Apply.scss";
 import { Input, Radio } from "antd";
+import { useHistory } from "react-router";
+import { useLocation } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import { ACCOUNT_TYPE } from "utils/consts";
 import ApplyStep from "../../resources/applystep.png";
 import ApplyStep2 from "../../resources/applystep2.png";
@@ -18,8 +21,6 @@ import MenteeApplication from "./MenteeApplication";
 import TrainingList from "components/TrainingList";
 import MentorProfileForm from "./MentorProfileForm";
 import MenteeProfileForm from "./MenteeProfileForm";
-import { useHistory } from "react-router";
-import { useLocation } from "react-router-dom";
 import PartnerProfileForm from "components/PartnerProfileForm";
 import { validate } from "email-validator";
 
@@ -32,13 +33,13 @@ const Apply = () => {
   const [approveTrainning, setApproveTrainning] = useState(false);
   const [istrain, setIstrain] = useState(false);
   const [isbuild, setIsBuild] = useState(false);
-  const [err, seterr] = useState(false);
   const [err2, seterr2] = useState(false);
   const [ishavee, setishavee] = useState(false);
   const [isProfile, setIsprofile] = useState(false);
   const [isVerify, setIsVerify] = useState(null);
   const history = useHistory();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const submitHandler = () => {
     setConfirmApply(true);
@@ -142,28 +143,24 @@ const Apply = () => {
   return (
     <div className="container2">
       <h1 className="home-header">
-        Welcome to <span>MENTEE!</span>
+        <Trans i18nKey={"common.welcome"}>
+          Welcome to <span>MENTEE!</span>
+        </Trans>
       </h1>
-      <p className="home-text">
-        Please enter your email to start the application process.
-      </p>
+      <p className="home-text">{t("apply.emailPrompt")}</p>
       <div className="emailPart">
-        <p>Email:</p>
         <Input
           type="email"
           className="emailIn"
-          placeholder="Email"
+          placeholder={t("common.email")}
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
-            seterr(false);
           }}
         />
       </div>
       {ishavee && isProfile === true && (
-        <p className="error">
-          You Already have account you will be redirect to login page
-        </p>
+        <p className="error">{t("apply.existingAccount")}</p>
       )}
       <Radio.Group
         className="roleGroup"
@@ -172,13 +169,13 @@ const Apply = () => {
         disabled={!validate(email)}
       >
         <Radio className="role" value={ACCOUNT_TYPE.MENTEE}>
-          Mentee
+          {t("common.mentee")}
         </Radio>
         <Radio className="role" value={ACCOUNT_TYPE.MENTOR}>
-          Mentor
+          {t("common.mentor")}
         </Radio>
         <Radio className="role" value={ACCOUNT_TYPE.PARTNER}>
-          Partner
+          {t("common.partner")}
         </Radio>
       </Radio.Group>
       <div className="steps">
@@ -197,7 +194,7 @@ const Apply = () => {
         <img
           src={istrain ? TrianStep2 : TrianStep}
           className="step1"
-          alt="trainning"
+          alt="training"
           onClick={() => {
             if (approveApply) {
               setIsApply(false);
@@ -219,12 +216,8 @@ const Apply = () => {
           }}
         />
       </div>
-      {err ? <p className="error">Email Required</p> : ""}
       {role === ACCOUNT_TYPE.PARTNER && !isVerify ? (
-        <h1 className="applymessage">
-          Your email is not pre-registered as a Partner. Please contact an
-          administrator admin@menteeglobal.org
-        </h1>
+        <h1 className="applymessage">{t("apply.partnerVerify")}</h1>
       ) : (
         ""
       )}
@@ -241,16 +234,11 @@ const Apply = () => {
         {isapply && role ? (
           <div className="applypart">
             {!approveApply && confirmApply ? (
-              <h1 className="applymessage">
-                Thank you for applying! Your application will be reviewed and
-                you will be contacted shortly.
-              </h1>
+              <h1 className="applymessage">{t("apply.confirmation")}</h1>
             ) : (
               <>
                 {approveApply ? (
-                  <h1 className="applymessage">
-                    Your application has been approved continue to training
-                  </h1>
+                  <h1 className="applymessage">{t("apply.approved")}</h1>
                 ) : (
                   ""
                 )}
@@ -334,9 +322,9 @@ const Apply = () => {
               }
             }}
           >
-            I confirm I have completed all trainings
+            {t("apply.completeTrainings")}
           </div>
-          {err2 && <p>Something went wrong check your internet connection</p>}
+          {err2 && <p>{t("apply.errorConnection")}</p>}
         </div>
       </div>
     </div>

@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Form, Input, Radio } from "antd";
+import { useTranslation, Trans } from "react-i18next";
 import MenteeButton from "../MenteeButton";
 import { createApplication } from "../../utils/api";
 import "../../components/css/MentorApplicationPage.scss";
+
 // constant declarations
 const { TextArea } = Input;
 function MentorApplication(props) {
+  const { t } = useTranslation();
   const [submitError, setSubmitError] = useState();
   // on change for radiio buttons
   const [offerDonation, setOfferDonation] = useState();
@@ -81,7 +84,7 @@ function MentorApplication(props) {
     return (
       <div className="page-one-column-container">
         <Form>
-          <div> {"First Name *"}</div>
+          <div> {t("common.firstName")} *</div>
           <Form.Item
             className="input-form"
             rules={[
@@ -91,34 +94,34 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(firstName) && (
-              <p style={{ color: "red" }}>Please input first name.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="First Name"
+              placeholder={t("common.firstName")}
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
           </Form.Item>
-          <div> {"Last Name *"}</div>
+          <div>{t("common.lastName")} *</div>
           <Form.Item
             className="input-form"
             rules={[
               {
-                required: true,
+                requird: true,
               },
             ]}
           >
             {isMissingError(lastName) && (
-              <p style={{ color: "red" }}>Please input last name.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
-              placeholder="Last Name"
+              placeholder={t("common.lastName")}
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
           </Form.Item>
-          <div> {"Cell Phone Number *"}</div>
+          <div>{t("common.phoneNumber")} *</div>
           <Form.Item
             className="input-form"
             rules={[
@@ -128,17 +131,17 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(cell) && (
-              <p style={{ color: "red" }}>Please input cell.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
 
             <Input
               type="number"
-              placeholder="Cell Phone Number"
+              placeholder={t("common.phoneNumber")}
               value={cell}
               onChange={(e) => setCell(e.target.value)}
             />
           </Form.Item>
-          <div>{"From whom or where did you hear about us? *"}</div>
+          <div>{t("mentorApplication.hearAboutUs")} *</div>
 
           <Form.Item
             className="input-form"
@@ -149,20 +152,16 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(hearAbout) && (
-              <p style={{ color: "red" }}>Please add input.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="From whom or where did you hear about us?"
+              placeholder={t("mentorApplication.hearAboutUs")}
               value={hearAbout}
               onChange={(e) => setHearAbout(e.target.value)}
             />
           </Form.Item>
-          <div>
-            {
-              "Please share which region(s), country(s), state(s), cities your knowledge is based in *"
-            }
-          </div>
+          <div>{t("mentorApplication.knowledgeLocation")} *</div>
           <Form.Item
             className="input-form"
             rules={[
@@ -172,19 +171,16 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(knowledgeLocation) && (
-              <p style={{ color: "red" }}>Please add input.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="Please share which region(s), country(s), state(s), cities your 
-                  knowledge is based in"
+              placeholder={t("mentorApplication.knowledgeLocation")}
               value={knowledgeLocation}
               onChange={(e) => setknowledgeLocation(e.target.value)}
             />
           </Form.Item>
-          <div>
-            {"Where have you lived in your life besides where you live now? *"}
-          </div>
+          <div>{t("mentorApplication.previousLocations")} *</div>
 
           <Form.Item
             className="input-form"
@@ -195,17 +191,17 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(pastLiveLocation) && (
-              <p style={{ color: "red" }}>Please add input.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <TextArea
               autoSize
-              placeholder="Where have you lived in your life besides where you live now?"
+              placeholder={t("mentorApplication.previousLocations")}
               style={{ overflow: "hidden" }}
               value={pastLiveLocation}
               onChange={(e) => setpastLiveLocation(e.target.value)}
             />
           </Form.Item>
-          <div>{"Full name of your company/employer *"}</div>
+          <div>{t("mentorApplication.employerName")} *</div>
 
           <Form.Item
             className="input-form"
@@ -216,16 +212,16 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(employer) && (
-              <p style={{ color: "red" }}>Please add input.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="Full name of your company/employer *"
+              placeholder={t("mentorApplication.employerName")}
               value={employer}
               onChange={(e) => setEmployer(e.target.value)}
             />
           </Form.Item>
-          <div>{"Your full title and a brief description of your role. *"}</div>
+          <div>{t("mentorApplication.jobDescription")} *</div>
 
           <Form.Item
             className="input-form"
@@ -236,20 +232,20 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(title) && (
-              <p style={{ color: "red" }}>Please add title.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="Your full title and a brief description of your role. *"
+              placeholder={t("mentorApplication.jobDescription")}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </Form.Item>
-          <div> How long have you been with this company? *</div>
+          <div>{t("mentorApplication.jobDuration")} *</div>
           <div className="input-form">
             <div className="time-options-answers">
               {isMissingError(companyTime) && (
-                <p style={{ color: "red" }}>Please select an option.</p>
+                <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
               )}
               <Radio.Group onChange={onChange5} value={companyTime}>
                 <Radio value={"Less than one year."}>Less than one year.</Radio>
@@ -260,13 +256,10 @@ function MentorApplication(props) {
               </Radio.Group>
             </div>
           </div>
-          <div>
-            If you are accepted as a global mentor, would you like to commit
-            to... *
-          </div>
+          <div>{t("mentorApplication.commitDuration")} *</div>
           <div className="input-form">
             {isMissingError(specialistTime) && (
-              <p style={{ color: "red" }}>Please select an option.</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group onChange={onChange4} value={specialistTime}>
               <Radio value={"One year with us"}>One year with us</Radio>
@@ -276,26 +269,21 @@ function MentorApplication(props) {
               </Radio>
             </Radio.Group>
           </div>
-          <div>
-            Are you an immigrant or refugee or do you come from an immigrant
-            family or refugee family? *
-          </div>
+          <div>{t("mentorApplication.immigrationStatus")} *</div>
 
           <div className="input-form">
             {isMissingError(immigrantStatus) && (
-              <p style={{ color: "red" }}>Please select an option. *</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group onChange={onChange3} value={immigrantStatus}>
               <Radio value={"Yes"}>Yes</Radio>
               <Radio value={"No"}>No</Radio>
             </Radio.Group>
           </div>
-          <div>
-            Are you or your family from a native or aboriginal community? *
-          </div>
+          <div>{t("mentorApplication.communityStatus")} *</div>
           <div className="input-form">
             {isMissingError(isFamilyNative) && (
-              <p style={{ color: "red" }}>Please select an option. *</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group
               onChange={(e) => setisFamilyNative(e.target.value)}
@@ -305,10 +293,10 @@ function MentorApplication(props) {
               <Radio value={"No"}>No</Radio>
             </Radio.Group>
           </div>
-          <div>Did you grow up economically challenged? *</div>
+          <div> {t("mentorApplication.economicBackground")} *</div>
           <div className="input-form">
             {isMissingError(isEconomically) && (
-              <p style={{ color: "red" }}>Please select an option. *</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group
               onChange={(e) => setisEconomically(e.target.value)}
@@ -318,10 +306,10 @@ function MentorApplication(props) {
               <Radio value={"No"}>No</Radio>
             </Radio.Group>
           </div>
-          <div>Would you consider yourself of person of color *</div>
+          <div> {t("mentorApplication.isPersonOfColor")} *</div>
           <div className="input-form">
             {isMissingError(isColorPerson) && (
-              <p style={{ color: "red" }}>Please select an option. *</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group
               onChange={(e) => setisColorPerson(e.target.value)}
@@ -331,10 +319,10 @@ function MentorApplication(props) {
               <Radio value={"No"}>No</Radio>
             </Radio.Group>
           </div>
-          <div>How do you identify?</div>
+          <div> {t("mentorApplication.genderIdentification")} *</div>
           <div className="input-form">
             {isMissingError(identify) && (
-              <p style={{ color: "red" }}>Please select an option. *</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group
               onChange={(e) => setidentify(e.target.value)}
@@ -346,12 +334,10 @@ function MentorApplication(props) {
               <Radio value={"other"}>other</Radio>
             </Radio.Group>
           </div>
-          <div>
-            Would you define yourself as having been or currently marginalized *
-          </div>
+          <div>{t("mentorApplication.isMarginalized")} *</div>
           <div className="input-form">
             {isMissingError(isMarginalized) && (
-              <p style={{ color: "red" }}>Please select an option.</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group
               onChange={(e) => setisMarginalized(e.target.value)}
@@ -361,11 +347,7 @@ function MentorApplication(props) {
               <Radio value={"No"}>No</Radio>
             </Radio.Group>
           </div>
-          <div>
-            {
-              "Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)."
-            }
-          </div>
+          <div>{t("mentorApplication.languageBackground")} *</div>
 
           <Form.Item
             className="input-form"
@@ -376,22 +358,16 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(languages) && (
-              <p style={{ color: "red" }}>Please add input. *</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="Do you speak a language(s) other than English? If yes, please
-                  write the language(s) below and include your fluency level 
-                  (conversational, fluent, native)."
+              placeholder={t("mentorApplication.languageBackground")}
               value={languages}
               onChange={(e) => setLanguages(e.target.value)}
             />
           </Form.Item>
-          <div>
-            {
-              "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them! *"
-            }
-          </div>
+          <div>{t("mentorApplication.referral")} *</div>
 
           <Form.Item
             className="input-form"
@@ -402,25 +378,19 @@ function MentorApplication(props) {
             ]}
           >
             {isMissingError(referral) && (
-              <p style={{ color: "red" }}>Please add input.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="If you know someone who would be a great global  
-                  mentor, please share their name, email, and we'll contact
-                  them!"
+              placeholder={t("mentorApplication.referral")}
               value={referral}
               onChange={(e) => setReferral(e.target.value)}
             />
           </Form.Item>
-          <div>
-            {
-              "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year? *"
-            }
-          </div>
+          <div>{t("mentorApplication.canDonate")} *</div>
           <Form.Item className="input-form">
             {isMissingError(offerDonation) && (
-              <p style={{ color: "red" }}>Please select an option.</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group
               className="donation"
@@ -503,14 +473,16 @@ function MentorApplication(props) {
   return (
     <div className="background">
       <div className="instructions">
-        <h1 className="welcome-page">Welcome to MENTEE!</h1>
+        <h1 className="welcome-page">
+          <Trans i18nKey={"common.welcome"}>
+            Welcome to <strong>MENTEE!</strong>
+          </Trans>
+        </h1>
         <p className="para-1">
-          We appreciate your interest in becoming a volunteer Global Mentor for
-          MENTEE, a global nonprofit accelerating personal and professional
-          growth to make the world a better, healthier place.
+          {t("mentorApplication.introduction")}
           <br></br>
           <br></br>
-          Please fll out the application below.
+          {t("mentorApplication.filloutPrompt")}
         </p>
       </div>
 
@@ -519,14 +491,12 @@ function MentorApplication(props) {
         <div className="submit-button sub2">
           <MenteeButton
             width="205px"
-            content={<b> Submit</b>}
+            content={<b>{t("common.submit")}</b>}
             onClick={handleSubmit}
           />
         </div>
         {submitError ? (
-          <h1 className="error">
-            Some thing went wrong check you add your Email at Top
-          </h1>
+          <h1 className="error">{t("mentorApplication.submitError")}</h1>
         ) : (
           ""
         )}

@@ -11,7 +11,7 @@ import usePersistedState from "utils/hooks/usePersistedState";
 import SelectLogin from "./SelectLogin";
 import "../css/Login.scss";
 import { isHaveProfilee, isHaveAccount } from "../../utils/api";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 const Logins = Object.freeze({
   mentee: {
     title: "Mentee",
@@ -115,13 +115,13 @@ function AdminLogin() {
   return (
     <div className="containerr">
       <h1 className="home-header3">
-        Welcome to <span>MENTEE!</span>
+        <Trans i18nKey={"common.welcome"}>
+          Welcome to <span>MENTEE!</span>
+        </Trans>
       </h1>
       <div className="page-background">
         <div className="login-content">
-          <h1 className="login-text">
-            Please Login {roleObject && roleObject.title}
-          </h1>
+          <h1 className="login-text">{t("common.login")}</h1>
 
           <div
             className={`login-input-container${
@@ -134,7 +134,7 @@ function AdminLogin() {
               disabled={loggingIn}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
-              placeholder="Email"
+              placeholder={t("common.email")}
             />
           </div>
           <div
@@ -151,7 +151,7 @@ function AdminLogin() {
               onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
-              placeholder="Password"
+              placeholder={t("common.password")}
             />
           </div>
         </div>
@@ -167,6 +167,7 @@ function AdminLogin() {
           isAdmin={true}
         ></SelectLogin>
       )}
+      {/* TODO: Translate this and loading */}
       {isLoggedIn() && <h1>Logout First </h1>}
     </div>
   );

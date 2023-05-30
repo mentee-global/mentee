@@ -154,7 +154,7 @@ function Login() {
       </h1>
       <div className="page-background">
         <div className="login-content">
-          <h1 className="login-text">{t("login.prompt")}</h1>
+          <h1 className="login-text">{t("common.login")}</h1>
 
           <div
             className={`login-input-container${
@@ -167,7 +167,7 @@ function Login() {
               disabled={loggingIn}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
-              placeholder={t("login.email")}
+              placeholder={t("common.email")}
             />
           </div>
           <div
@@ -184,7 +184,7 @@ function Login() {
               onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
-              placeholder={t("login.password")}
+              placeholder={t("common.password")}
             />
           </div>
 

@@ -50,7 +50,23 @@
     "referral": "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!",
     "canDonate": "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
   },
-  "menteeApplication": {},
+  "menteeApplication": {
+    "introduction": "We appreciate your interest in becoming part of the MENTEE community! You will gain access to our global mentors and supportive programs. We can't wait to see all you will achieve. Remember, as a mentee you can stay here and actively seek mentorship, learning, and development for life, if you'd like to stay with us that long. :)",
+    "submitError": "Something went wrong -- check your email at the top",
+    "orgAffiliation": "What organization is supporting you locally or what organization are you affiliated with?",
+    "agePrompt": "Let us know more about you",
+    "immigrationStatus": "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific.",
+    "otherPlaceholder": "Other",
+    "countryPlaceholder": "Country",
+    "countryOrigin": "What country are you or your family originally from, if you are a refugee or immigrant?",
+    "genderIdentification": "How do you identify?",
+    "languageBackground": "What is your native language?",
+    "topicInterests": "What special topics would you be interested in? If one is not on the list please add it in other:",
+    "workOptions": "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific:",
+    "socialMedia": "Would you be interested in being highlighted as one of our mentees on social media?",
+    "otherQuestions": "Do you have any questions?",
+    "questionsPlaceholder": "Questions"
+  },
   "partnerApplication": {},
   "common": {
     "login": "Login",

@@ -1837,3 +1837,9 @@
 2023-05-29 21:18:26,677 127.0.0.1: requested http://localhost:8000/api/application/checkHaveAccount/leo%40gmail.com/1: DEBUG in [manage: 23]: GET /api/application/checkHaveAccount/leo@gmail.com/1 200 OK
 2023-05-29 21:18:26,826 127.0.0.1: requested http://localhost:8000/api/application/checkConfirm/leo%40gmail.com/1: INFO in [apply: 161]: No application currently exist with this email leo@gmail.com
 2023-05-29 21:18:26,829 127.0.0.1: requested http://localhost:8000/api/application/checkConfirm/leo%40gmail.com/1: DEBUG in [manage: 23]: GET /api/application/checkConfirm/leo@gmail.com/1 200 OK
+2023-05-29 21:55:21,590 127.0.0.1: requested http://localhost:8000/api/application/checkHaveAccount/leo%40gmail.com/2: DEBUG in [manage: 23]: GET /api/application/checkHaveAccount/leo@gmail.com/2 200 OK
+2023-05-29 21:55:21,703 127.0.0.1: requested http://localhost:8000/api/application/checkConfirm/leo%40gmail.com/2: INFO in [apply: 161]: No application currently exist with this email leo@gmail.com
+2023-05-29 21:55:21,705 127.0.0.1: requested http://localhost:8000/api/application/checkConfirm/leo%40gmail.com/2: DEBUG in [manage: 23]: GET /api/application/checkConfirm/leo@gmail.com/2 200 OK
+2023-05-29 21:55:41,383 127.0.0.1: requested http://localhost:8000/api/application/checkHaveAccount/leo%40gmail.com/2: DEBUG in [manage: 23]: GET /api/application/checkHaveAccount/leo@gmail.com/2 200 OK
+2023-05-29 21:55:41,483 127.0.0.1: requested http://localhost:8000/api/application/checkConfirm/leo%40gmail.com/2: INFO in [apply: 161]: No application currently exist with this email leo@gmail.com
+2023-05-29 21:55:41,484 127.0.0.1: requested http://localhost:8000/api/application/checkConfirm/leo%40gmail.com/2: DEBUG in [manage: 23]: GET /api/application/checkConfirm/leo@gmail.com/2 200 OK

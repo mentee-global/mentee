@@ -215,14 +215,3 @@ export const NEW_APPLICATION_STATUS = {
   COMPLETED: "COMPLETED",
   REJECTED: "REJECTED",
 };
-
-// Error messages for login
-export const LOGIN_ERROR_MSGS = {
-  INCORRECT_NAME_PASSWORD_ERROR_MSG:
-    "Incorrect username and/or password. Please try again.",
-  RESET_PASSWORD_ERROR_MSG:
-    "Please reset password. A link to reset your password has been sent to your email.",
-  SERVER_ERROR_MSG: "Something went wrong.",
-  RECREATE_ACCOUNT_ERROR_MSG: "Please re-register your account.",
-  EXISTING_EMAIL: "This email is already in use in another role",
-};

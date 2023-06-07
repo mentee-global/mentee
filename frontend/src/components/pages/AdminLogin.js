@@ -4,13 +4,14 @@ import { Input } from "antd";
 import fireauth from "utils/fireauth";
 import { useDispatch } from "react-redux";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { isLoggedIn, login, sendVerificationEmail } from "utils/auth.service";
 import { fetchUser } from "features/userSlice";
 import usePersistedState from "utils/hooks/usePersistedState";
 import SelectLogin from "./SelectLogin";
 import "../css/Login.scss";
 import { isHaveProfilee, isHaveAccount } from "../../utils/api";
+import { useTranslation } from "react-i18next";
 const Logins = Object.freeze({
   mentee: {
     title: "Mentee",
@@ -40,6 +41,7 @@ function AdminLogin() {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -48,7 +50,7 @@ function AdminLogin() {
   const [displaySelect, setDisplaySelect] = useState(false);
   const [roleObject, setroleObject] = useState({});
   const [errorMessage, setErrorMessage] = useState(
-    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
+    t("loginErrors.incorrectCredentials")
   );
   const [loggingIn, setLoggingIn] = useState(false);
   const [permissions, setPermissions] = usePersistedState(
@@ -70,16 +72,16 @@ function AdminLogin() {
 
       if (!res || !res.success) {
         if (res?.data?.result?.existingEmail) {
-          setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+          setErrorMessage(t("loginErrors.existingEmail"));
         } else {
-          setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
+          setErrorMessage(t("loginErrors.incorrectCredentials"));
         }
         setError(true);
       } else if (res.result.passwordReset) {
-        setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
+        setErrorMessage(t("loginErrors.resetPassword"));
         setError(true);
       } else if (res.result.recreateAccount) {
-        setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
+        setErrorMessage(t("loginErrors.reregisterAccount"));
         setError(true);
       }
       setPermissions(RoleObj.type);

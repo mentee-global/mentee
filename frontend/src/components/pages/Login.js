@@ -4,13 +4,14 @@ import { Input, message } from "antd";
 import fireauth from "utils/fireauth";
 import { useDispatch } from "react-redux";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { login, sendVerificationEmail } from "utils/auth.service";
 import { fetchUser } from "features/userSlice";
 import usePersistedState from "utils/hooks/usePersistedState";
 import SelectLogin from "./SelectLogin";
 import "../css/Login.scss";
 import { getExistingProfile, isHaveAccount } from "../../utils/api";
+import { Trans, useTranslation } from "react-i18next";
 const Logins = Object.freeze({
   mentee: {
     title: "Mentee",
@@ -34,13 +35,14 @@ const getRoleObject = (key) => {
 function Login() {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [inputFocus, setInputFocus] = useState([false, false]);
   const [displaySelect, setDisplaySelect] = useState(false);
-  const [roleObject, setroleObject] = useState({});
   const [loggingIn, setLoggingIn] = useState(false);
+  const [roleObject, setRoleObject] = useState({});
   const [permissions, setPermissions] = usePersistedState(
     "permissions",
     ACCOUNT_TYPE.MENTEE
@@ -86,7 +88,7 @@ function Login() {
           });
           return;
         } else if (isHaveProfile === false && isHave === false) {
-          displayError(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
+          displayError(t("loginErrors.incorrectCredentials"));
           setLoggingIn(false);
           setLoading(false);
 
@@ -97,17 +99,17 @@ function Login() {
 
           if (!res || !res.success) {
             if (res?.data?.result?.existingEmail) {
-              displayError(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
+              displayError(t("loginErrors.existingEmail"));
               setLoading(false);
             } else {
-              displayError(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
+              displayError(t("loginErrors.incorrectCredentials"));
               setLoading(false);
             }
           } else if (res.result.passwordReset) {
-            displayError(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
+            displayError(t("loginErrors.resetPassword"));
             setLoading(false);
           } else if (res.result.recreateAccount) {
-            displayError(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
+            displayError(t("loginErrors.reregisterAccount"));
             setLoading(false);
           }
           setPermissions(RoleObj.type);
@@ -132,7 +134,7 @@ function Login() {
             });
 
           setLoggingIn(false);
-          setroleObject(RoleObj);
+          setRoleObject(RoleObj);
         }
       }
     }
@@ -146,13 +148,13 @@ function Login() {
     <div className="containerr">
       {contextHolder}
       <h1 className="home-header3">
-        Welcome to <span>MENTEE!</span>
+        <Trans i18nKey={"common.welcome"}>
+          Welcome to <span>MENTEE!</span>
+        </Trans>
       </h1>
       <div className="page-background">
         <div className="login-content">
-          <h1 className="login-text">
-            Please Login {roleObject && roleObject.title}
-          </h1>
+          <h1 className="login-text">{t("login.prompt")}</h1>
 
           <div
             className={`login-input-container${
@@ -165,7 +167,7 @@ function Login() {
               disabled={loggingIn}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
-              placeholder="Email"
+              placeholder={t("login.email")}
             />
           </div>
           <div
@@ -182,21 +184,21 @@ function Login() {
               onFocus={() => handleInputFocus(1)}
               onChange={(e) => setPassword(e.target.value)}
               bordered={false}
-              placeholder="Password"
+              placeholder={t("login.password")}
             />
           </div>
 
           <div className="account-help-container">
             <div className="account-link">
-              Don't Have an account?{" "}
+              {t("login.noAccount")}{" "}
               <NavLink to={`/application-page`} className="login-register-link">
-                Apply
+                {t("login.apply")}
               </NavLink>
             </div>
             <div className="account-link">
-              <div>Forgot password?</div>
+              <div>{t("login.forgotPassword")}</div>
               <NavLink to="/forgot-password" className="login-register-link">
-                Reset it
+                {t("login.resetPassword")}
               </NavLink>
             </div>
           </div>

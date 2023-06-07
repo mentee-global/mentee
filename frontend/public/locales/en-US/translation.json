@@ -1,0 +1,34 @@
+{
+  "homepage": {
+    "isExistingUser": "Are you a new or existing user?",
+    "newAccountTitle": "NEW",
+    "newAccountDesc": "APPLY - TRAIN - BUILD",
+    "existingAccountTitle": "EXISTING",
+    "existingAccountDesc": "PLATFORM LOGIN"
+  },
+  "login": {
+    "prompt": "Login",
+    "email": "Email",
+    "password": "Password",
+    "noAccount": "Don't have an account?",
+    "apply": "Apply",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset it",
+    "clickLoginPrompt": "Please click on your role to continue on"
+  },
+  "loginErrors": {
+    "incorrectCredentials": "Incorrect username and/or password. Please try again.",
+    "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
+    "serverError": "Something went wrong.",
+    "reregisterAccount": "Please re-register your account.",
+    "existingEmail": "This email is already in use in another role"
+  },
+  "common": {
+    "logout": "logout",
+    "welcome": "Welcome to <1>MENTEE!</1>",
+    "mentee": "Mentee",
+    "mentor": "Mentor",
+    "partner": "Partner",
+    "admin": "Admin"
+  }
+}

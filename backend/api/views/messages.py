@@ -5,6 +5,7 @@ from api.models import (
     Message,
     DirectMessage,
     PartnerProfile,
+    Availability
 )
 from api.utils.request_utils import send_email
 from api.utils.constants import Account, MENTOR_CONTACT_ME
@@ -83,7 +84,9 @@ def update_message(message_id):
 @all_users
 def create_message():
     data = request.get_json()
-
+    availabes_in_future = None
+    if ('availabes_in_future' in data):
+        availabes_in_future = data.get('availabes_in_future')
     try:
         message = DirectMessage(
             body=data["message"],
@@ -91,6 +94,7 @@ def create_message():
             sender_id=data["user_id"],
             recipient_id=data["recipient_id"],
             created_at=data.get("time"),
+            availabes_in_future=availabes_in_future
         )
     except Exception as e:
         msg = "Invalid parameter provided"
@@ -368,12 +372,23 @@ def get_direct_messages():
 @socketio.on("send")
 def chat(msg, methods=["POST"]):
     try:
+        availabes_in_future = None
+        if ('availabes_in_future' in msg):
+            availabes_in_future = [
+                Availability(
+                    start_time=availability.get("start_time").get("$date"),
+                    end_time=availability.get("end_time").get("$date"),
+                )
+                for availability in msg['availabes_in_future']
+            ]
+        
         message = DirectMessage(
             body=msg["body"],
             message_read=msg["message_read"],
             sender_id=msg["sender_id"],
             recipient_id=msg["recipient_id"],
             created_at=msg["time"],
+            availabes_in_future=availabes_in_future
         )
         logger.info(msg["recipient_id"])
         socketio.emit(msg["recipient_id"], json.loads(message.to_json()))

@@ -75,6 +75,15 @@ function MenteeAppointmentModal(props) {
     if (props.availability) {
       setTimeSlots(props.availability);
     }
+    if (props.btn_title) {
+      setDate(
+        moment(props.availability[0].start_time.$date).format("YYYY-MM-DD")
+      );
+      setNotifDate(
+        moment(props.availability[0].start_time.$date).format("MM-DD")
+      );
+      setDateHeading(moment(props.availability[0].start_time.$date));
+    }
   }, [props]);
 
   // Resets form fields on close
@@ -230,9 +239,12 @@ function MenteeAppointmentModal(props) {
   return (
     <span>
       <MenteeVerificationModal
-        content={<b>Book Appointment</b>}
+        content={
+          <b>{props.btn_title ? props.btn_title : "Book Appointment"}</b>
+        }
         style={{ width: "180px" }}
         onVerified={() => setCalendarModalVisible(true)}
+        btn_title={props.btn_title}
       />
       <Modal
         forceRender
@@ -321,12 +333,17 @@ function MenteeAppointmentModal(props) {
           <MenteeButton
             content="Book Appointment"
             htmlType="submit"
-            form="appointment-form"
+            form={
+              "appointment-form" +
+              (props.index > 0 ? props.index.toString() : "")
+            }
           />
         }
       >
         <Form
-          id="appointment-form"
+          id={
+            "appointment-form" + (props.index > 0 ? props.index.toString() : "")
+          }
           form={form}
           onFinish={handleBookAppointment}
           validateMessages={validationMessage}
@@ -393,7 +410,6 @@ function MenteeAppointmentModal(props) {
                         handleClick={handleClick}
                         onChange={(e) => setMessage(e.target.value)}
                         value={message}
-                        large
                       />
                     </Form.Item>
                   </div>

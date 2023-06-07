@@ -1,13 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Avatar, Col, Divider, Layout, Row, Input, Button, Spin } from "antd";
+import { Avatar, Layout, Input, Button, Spin, Modal, TimePicker } from "antd";
 import { withRouter } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
-import Meta from "antd/lib/card/Meta";
+import moment from "moment";
 import { SendOutlined } from "@ant-design/icons";
 import { useAuth } from "utils/hooks/useAuth";
-import { fetchAccountById, sendNotifyUnreadMessage } from "utils/api";
+import {
+  fetchAccountById,
+  sendNotifyUnreadMessage,
+  fetchAppointmentsByMentorId,
+  fetchAppointmentsByMenteeId,
+  fetchAvailability,
+} from "utils/api";
+import { formatAppointments } from "utils/dateFormatting";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import socketInvite from "utils/socket";
+import MenteeButton from "./MenteeButton.js";
+import AvailabilityCalendar from "components/AvailabilityCalendar";
+
 function MessagesChatArea(props) {
   const { Content, Header } = Layout;
   const { socket } = props;
@@ -20,7 +30,11 @@ function MessagesChatArea(props) {
     useState(false);
   const [updateContent, setUpdateContent] = useState(false);
   const [isInviteSent, setIsInviteSent] = useState(false);
-  const [currentMentor, setCurrentMentor] = useState("");
+  const [isOpenCalendarModal, setIsOpenCalendarModal] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [availabeInFuture, setAvailabeInFuture] = useState([]);
+  const [bookedData, setBookedData] = useState({});
+  var total_index = 0;
   const {
     messages,
     activeMessageId,
@@ -119,6 +133,92 @@ function MessagesChatArea(props) {
     scrollToBottom();
   }, [loading, messages]);
 
+  async function getAppointments() {
+    const mentorID = profileId;
+    var formattedAppointments = {};
+    if (isMentor) {
+      const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
+
+      formattedAppointments = formatAppointments(
+        appointmentsResponse,
+        ACCOUNT_TYPE.MENTOR
+      );
+    } else if (isMentee) {
+      const appointmentsResponse = await fetchAppointmentsByMenteeId(mentorID);
+
+      formattedAppointments = formatAppointments(
+        appointmentsResponse,
+        ACCOUNT_TYPE.MENTOR
+      );
+    }
+    const booked_data = {};
+    var tmp_avails = [];
+    if (formattedAppointments) {
+      if (isMentor) {
+        tmp_avails = formattedAppointments["upcoming"];
+      }
+      if (isMentee) {
+        formattedAppointments["pending"].map((item) => {
+          tmp_avails.push(item);
+          return true;
+        });
+
+        formattedAppointments["upcoming"].map((item) => {
+          tmp_avails.push(item);
+          return true;
+        });
+      }
+      setAppointments(tmp_avails);
+      if (tmp_avails) {
+        tmp_avails.map((item) => {
+          item.appointments.map((appoint_item) => {
+            booked_data[
+              moment
+                .parseZone(appoint_item.timeslot.start_time.$date)
+                .local()
+                .format("YY-MM-DD H:mm")
+            ] = true;
+            return true;
+          });
+          return true;
+        });
+        setBookedData(booked_data);
+      }
+    }
+  }
+  async function getAvailableInFuture() {
+    const availability_data = await fetchAvailability(profileId);
+    const now = moment();
+
+    const future_availables = [];
+    if (availability_data) {
+      const availability = availability_data.availability;
+      availability.forEach((time) => {
+        // Checking if saved or set have date already
+        var starttime = moment(time.start_time.$date);
+        if (
+          !bookedData.hasOwnProperty(
+            moment
+              .parseZone(time.start_time.$date)
+              .local()
+              .format("YY-MM-DD H:mm")
+          ) &&
+          starttime.isSameOrAfter(now)
+        ) {
+          future_availables.push(time);
+        }
+      });
+    }
+    setAvailabeInFuture(future_availables);
+  }
+
+  useEffect(() => {
+    if (isOpenCalendarModal === false) {
+      getAppointments();
+      getAvailableInFuture();
+    }
+  }, [isOpenCalendarModal]);
+
   const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
   };
@@ -145,6 +245,8 @@ function MessagesChatArea(props) {
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
     props.addMyMessage(msg);
     setMessageText("");
+    getAppointments();
+    getAvailableInFuture();
     return;
   };
   /*
@@ -168,14 +270,20 @@ function MessagesChatArea(props) {
     let time =
       today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     let dateTime = date + " " + time;
+    var availabes_in_future = [];
+    availabeInFuture.map((avail_item, index) => {
+      if (index < 5) {
+        availabes_in_future.push(avail_item);
+      }
+      return true;
+    });
     const msg = {
-      body:
-        //        "Pls check my calender under Booking Appointment to schdule a session.",
-        "Thank you for reaching out for a session! Please look at my availability by clicking on the Book Appointment button under my name here in Messages and select an option that works for you.",
+      body: "Thank you for reaching out for a session! You can select option that works for you below. And you can also book by clicking the Book Appointment button under my name here in Messages.",
       message_read: false,
       sender_id: profileId,
       recipient_id: activeMessageId,
       time: dateTime,
+      availabes_in_future: availabes_in_future,
     };
     socket.emit("send", msg);
     msg["sender_id"] = { $oid: msg["sender_id"] };
@@ -223,18 +331,7 @@ function MessagesChatArea(props) {
       </div>
     );
   }
-  const OldHeader = () => (
-    <Header className="chat-area-header">
-      <Meta
-        className=""
-        avatar={<Avatar src={accountData.image?.url} />}
-        title={isPartner ? accountData.organization : accountData.name}
-        description={
-          isPartner ? accountData.intro : accountData.professional_title
-        }
-      />
-    </Header>
-  );
+
   return (
     <div className="conversation-container">
       {accountData ? (
@@ -260,19 +357,38 @@ function MessagesChatArea(props) {
                 />
               </div>
             )}
-            {isMentor && !isAlreadyInvitedByMentor && !isPartner && (
-              <div>
-                <Button
-                  disabled={isInviteSent}
-                  onClick={sendInvite}
-                  type="default"
-                  shape="round"
-                  className="regular-button"
-                >
-                  Send invite
-                </Button>
-              </div>
-            )}
+            <div style={{ display: "flex", marginTop: "5px" }}>
+              {isMentor && (
+                <div style={{ marginRight: "10px" }}>
+                  <Button
+                    onClick={() => {
+                      setIsOpenCalendarModal(true);
+                    }}
+                    type="default"
+                    shape="round"
+                    className="regular-button"
+                  >
+                    Availability
+                  </Button>
+                </div>
+              )}
+              {isMentor &&
+                !isAlreadyInvitedByMentor &&
+                !isPartner &&
+                availabeInFuture.length > 0 && (
+                  <div>
+                    <Button
+                      disabled={isInviteSent}
+                      onClick={sendInvite}
+                      type="default"
+                      shape="round"
+                      className="regular-button"
+                    >
+                      Send invite
+                    </Button>
+                  </div>
+                )}
+            </div>
           </div>
         </div>
       ) : (
@@ -285,19 +401,19 @@ function MessagesChatArea(props) {
               return (
                 <div
                   className={`chatRight__items you-${
-                    block.sender_id.$oid == profileId ? "sent" : "received"
+                    block.sender_id.$oid === profileId ? "sent" : "received"
                   }`}
                 >
                   <div
                     className={`chatRight__inner  message-area ${
-                      block.sender_id.$oid != profileId
+                      block.sender_id.$oid !== profileId
                         ? "flex-start"
                         : "flex-end"
                     }`}
                     data-chat="person1"
                   >
                     <div className="flex">
-                      {block.sender_id.$oid != profileId && (
+                      {block.sender_id.$oid !== profileId && (
                         <span>
                           <Avatar src={accountData.image?.url} />{" "}
                         </span>
@@ -305,12 +421,74 @@ function MessagesChatArea(props) {
                       <div className="convo">
                         <div
                           className={`bubble-${
-                            block.sender_id.$oid == profileId
+                            block.sender_id.$oid === profileId
                               ? "sent"
                               : "received"
                           }`}
                         >
                           {block.body}
+                          {block.availabes_in_future !== undefined &&
+                            block.availabes_in_future !== null &&
+                            block.availabes_in_future.length > 0 &&
+                            block.availabes_in_future.map((available_item) => {
+                              total_index++;
+                              return (
+                                <>
+                                  {block.sender_id.$oid === profileId ||
+                                  bookedData.hasOwnProperty(
+                                    moment
+                                      .parseZone(
+                                        available_item.start_time.$date
+                                      )
+                                      .local()
+                                      .format("YY-MM-DD H:mm")
+                                  ) ? (
+                                    <div>
+                                      {moment
+                                        .parseZone(
+                                          available_item.start_time.$date
+                                        )
+                                        .local()
+                                        .format("MM/DD/YY h:mm a")}{" "}
+                                      ~{" "}
+                                      {moment
+                                        .parseZone(
+                                          available_item.end_time.$date
+                                        )
+                                        .local()
+                                        .format("MM/DD/YY h:mm a")}
+                                    </div>
+                                  ) : (
+                                    <MenteeAppointmentModal
+                                      mentor_name={accountData.name}
+                                      availability={[available_item]}
+                                      mentor_id={otherId}
+                                      mentee_id={profileId}
+                                      handleUpdateMentor={handleUpdateAccount}
+                                      handleSuccessBooking={
+                                        handleSuccessBooking
+                                      }
+                                      btn_title={
+                                        moment
+                                          .parseZone(
+                                            available_item.start_time.$date
+                                          )
+                                          .local()
+                                          .format("MM/DD/YY h:mm a") +
+                                        " ~ " +
+                                        moment
+                                          .parseZone(
+                                            available_item.end_time.$date
+                                          )
+                                          .local()
+                                          .format("MM/DD/YY h:mm a")
+                                      }
+                                      index={total_index}
+                                    />
+                                  )}
+                                </>
+                              );
+                            })}
                         </div>
                       </div>
                     </div>
@@ -350,6 +528,25 @@ function MessagesChatArea(props) {
           </>
         )}
       </div>
+
+      <Modal
+        className="calendar-modal"
+        title="Select available hours by specific date"
+        visible={isOpenCalendarModal}
+        onCancel={() => setIsOpenCalendarModal(false)}
+        footer={[
+          <MenteeButton
+            key="clear"
+            type="back"
+            onClick={() => {
+              setIsOpenCalendarModal(false);
+            }}
+            content="Close"
+          />,
+        ]}
+      >
+        <AvailabilityCalendar appointmentdata={appointments} />
+      </Modal>
     </div>
   );
 }

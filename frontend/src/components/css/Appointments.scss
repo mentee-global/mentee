@@ -376,7 +376,7 @@
 
 .appointments-column {
   padding: 5% 3%;
-  height: 100vh;
+  height: calc(100vh - 120px);
 }
 
 .appointments-welcome-box {

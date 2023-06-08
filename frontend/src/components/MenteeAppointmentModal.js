@@ -77,7 +77,6 @@ function MenteeAppointmentModal(props) {
       props.selected_availability &&
       calendarModalVisible === true
     ) {
-      console.log("aaa", props.selected_availability);
       setTime(props.selected_availability);
       setSelectedDate(moment(props.selected_availability.start_time.$date));
       setDate(
@@ -243,7 +242,6 @@ function MenteeAppointmentModal(props) {
       });
     }
   }
-  console.log("timer", time);
   return (
     <span>
       <MenteeVerificationModal

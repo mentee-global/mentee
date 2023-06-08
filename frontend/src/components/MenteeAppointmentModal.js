@@ -4,10 +4,7 @@ import { Form, Modal, Calendar, Avatar, Switch, notification } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
-import {
-  APPOINTMENT_FORM_KEYS,
-  APPOINTMENT_STATUS,
-} from "../utils/consts";
+import { APPOINTMENT_FORM_KEYS, APPOINTMENT_STATUS } from "../utils/consts";
 import {
   createAppointment,
   editAvailability,
@@ -75,12 +72,18 @@ function MenteeAppointmentModal(props) {
     if (props.availability) {
       setTimeSlots(props.availability);
     }
-    if (props.btn_title && props.selected_availability && calendarModalVisible === true) {
-      console.log('aaa', props.selected_availability);
+    if (
+      props.btn_title &&
+      props.selected_availability &&
+      calendarModalVisible === true
+    ) {
+      console.log("aaa", props.selected_availability);
       setTime(props.selected_availability);
       setSelectedDate(moment(props.selected_availability.start_time.$date));
       setDate(
-        moment(props.selected_availability.start_time.$date).format("YYYY-MM-DD")
+        moment(props.selected_availability.start_time.$date).format(
+          "YYYY-MM-DD"
+        )
       );
       setNotifDate(
         moment(props.selected_availability.start_time.$date).format("MM-DD")
@@ -240,7 +243,7 @@ function MenteeAppointmentModal(props) {
       });
     }
   }
-console.log('timer', time);
+  console.log("timer", time);
   return (
     <span>
       <MenteeVerificationModal
@@ -293,7 +296,10 @@ console.log('timer', time);
                   dayTimeSlots.map((timeSlot, index) => (
                     <div
                       key={index}
-                      className={"modal-mentee-appointment-timeslot " + (timeSlot === time ? 'selected-slot' : '')}
+                      className={
+                        "modal-mentee-appointment-timeslot " +
+                        (timeSlot === time ? "selected-slot" : "")
+                      }
                     >
                       <MenteeButton
                         key={index}

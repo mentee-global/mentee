@@ -462,7 +462,7 @@ function MessagesChatArea(props) {
                                     <MenteeAppointmentModal
                                       mentor_name={accountData.name}
                                       availability={block.availabes_in_future}
-                                      selected_availability = {available_item}
+                                      selected_availability={available_item}
                                       mentor_id={otherId}
                                       mentee_id={profileId}
                                       handleUpdateMentor={handleUpdateAccount}

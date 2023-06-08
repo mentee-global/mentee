@@ -11,7 +11,7 @@ import {
   Modal,
   TimePicker,
   DatePicker,
-  notification
+  notification,
 } from "antd";
 import {
   ClockCircleOutlined,
@@ -29,9 +29,9 @@ import {
   getDisplaySpecializations,
   fetchMentees,
   fetchPartners,
-  createAppointment
+  createAppointment,
 } from "utils/api";
-import { ACCOUNT_TYPE, APPOINTMENT_STATUS} from "utils/consts";
+import { ACCOUNT_TYPE, APPOINTMENT_STATUS } from "utils/consts";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 import { useAuth } from "utils/hooks/useAuth";
@@ -69,7 +69,7 @@ function Appointments() {
   const [modalVisible, setModalVisible] = useState(false);
   const user = useSelector((state) => state.user.user);
   const [modalAppointment, setModalAppointment] = useState({});
-  const {isAdmin, onAuthStateChanged, role, profileId } = useAuth();
+  const { isAdmin, onAuthStateChanged, role, profileId } = useAuth();
   const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
   const [takeAppoinment, setTakeappoinment] = useState(
     user?.taking_appointments
@@ -108,11 +108,7 @@ function Appointments() {
         }
       } else {
         var restricted_partners = await fetchPartners(true);
-        if (
-          !isAdmin &&
-          restricted_partners &&
-          restricted_partners.length > 0
-        ) {
+        if (!isAdmin && restricted_partners && restricted_partners.length > 0) {
           var assigned_mentee_ids = [];
           restricted_partners.map((partner_item) => {
             if (partner_item.assign_mentees) {
@@ -138,10 +134,10 @@ function Appointments() {
       }
     }
     var res = [];
-      for (let mentee_item of temp) {
-        res.push({id:mentee_item._id.$oid, name:mentee_item.name});
-      }
-      setMenteeArr(res);
+    for (let mentee_item of temp) {
+      res.push({ id: mentee_item._id.$oid, name: mentee_item.name });
+    }
+    setMenteeArr(res);
   }
   useEffect(() => {
     async function getAppointments() {
@@ -194,30 +190,40 @@ function Appointments() {
     document.getElementById("date_error").style.display = "none";
     document.getElementById("time_error").style.display = "none";
     var now = moment();
-    if (selectedDate.isAfter(now)){
+    if (selectedDate.isAfter(now)) {
       document.getElementById("date_error").style.display = "block";
       return;
     }
-    if (selectedEndtime < selectedStarttime){
+    if (selectedEndtime < selectedStarttime) {
       document.getElementById("time_error").style.display = "block";
       return;
     }
     setManualModalvisible(false);
     const appointment = {};
-    appointment['mentor_id'] = profileId;
-    appointment['mentee_id'] = selectedMenteeID;
-    appointment['topic'] = topic;
-    appointment['message'] = message;
+    appointment["mentor_id"] = profileId;
+    appointment["mentee_id"] = selectedMenteeID;
+    appointment["topic"] = topic;
+    appointment["message"] = message;
     appointment["status"] = APPOINTMENT_STATUS.ACCEPTED;
     appointment["timeslot"] = {
-      start_time: moment(selectedDate.format('YYYY-MM-DD') + ' ' + selectedStarttime.format('HH:mm:ss')).format(),
-      end_time: moment(selectedDate.format('YYYY-MM-DD') + ' ' + selectedEndtime.format('HH:mm:ss')).format()
+      start_time: moment(
+        selectedDate.format("YYYY-MM-DD") +
+          " " +
+          selectedStarttime.format("HH:mm:ss")
+      ).format(),
+      end_time: moment(
+        selectedDate.format("YYYY-MM-DD") +
+          " " +
+          selectedEndtime.format("HH:mm:ss")
+      ).format(),
     };
     var res = await createAppointment(appointment);
-    if (res){
-      notification['success']({message: "You Have Successfully Booked an Appointment!"})
-    } else{
-      notification['error']({message: "Error in booking appointment!"})
+    if (res) {
+      notification["success"]({
+        message: "You Have Successfully Booked an Appointment!",
+      });
+    } else {
+      notification["error"]({ message: "Error in booking appointment!" });
     }
     setAppointmentClick(!appointmentClick);
     //reset value---------
@@ -455,18 +461,21 @@ function Appointments() {
             key="save"
             type="primary"
             htmlType="submit"
-            form={'manual-form'}
+            form={"manual-form"}
             content="Save"
           />,
         ]}
       >
-        <Form 
+        <Form
           form={form}
-          id = 'manual-form' 
+          id="manual-form"
           onFinish={() => handleManualSave()}
           validateMessages={validationMessage}
+        >
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
           >
-          <div className="modal-mentee-appointment-header-text" style={{marginTop:'10px'}}>
             Mentee*
           </div>
           <Form.Item
@@ -481,7 +490,7 @@ function Appointments() {
               value={selectedMenteeID}
               type="dropdown-single-object"
               options={menteeArr}
-              placeholder = "Please select Mentee"
+              placeholder="Please select Mentee"
               // clicked={inputClicked[0]}
               index={0}
               handleClick={() => {}}
@@ -490,42 +499,51 @@ function Appointments() {
               }}
             />
           </Form.Item>
-          <div className="modal-mentee-appointment-header-text"  style={{marginTop:'10px'}}>
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
+          >
             Meeting Date*
           </div>
-          <div className="timeslot-wrapper" style={{display:'flex'}}>
-          <Form.Item
-            name="Date"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <DatePicker 
-              style={{marginRight:'10px'}}
-              value = {selectedDate}
-              onChange={(e) => setSelectedDate(e)}
-            />
-          </Form.Item>
-          <Form.Item
-            name="Start Time"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <TimePicker
-              placeholder="Start time"
-              use12Hours={false} 
-              format="h:mm A" 
-              value={selectedStarttime} 
-              onChange={(e) => setSelectedStarttime(e)}
-            />
-          </Form.Item>
-            
-            <span className="timeslot" style={{fontSize:'16px', marginTop:'4px'}}> ～ </span>
+          <div className="timeslot-wrapper" style={{ display: "flex" }}>
+            <Form.Item
+              name="Date"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <DatePicker
+                style={{ marginRight: "10px" }}
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="Start Time"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <TimePicker
+                placeholder="Start time"
+                use12Hours={false}
+                format="h:mm A"
+                value={selectedStarttime}
+                onChange={(e) => setSelectedStarttime(e)}
+              />
+            </Form.Item>
+
+            <span
+              className="timeslot"
+              style={{ fontSize: "16px", marginTop: "4px" }}
+            >
+              {" "}
+              ～{" "}
+            </span>
             <Form.Item
               name="End Time"
               rules={[
@@ -536,9 +554,9 @@ function Appointments() {
             >
               <TimePicker
                 placeholder="End time"
-                use12Hours={false} 
-                format="h:mm A" 
-                value={selectedEndtime} 
+                use12Hours={false}
+                format="h:mm A"
+                value={selectedEndtime}
                 onChange={(e) => setSelectedEndtime(e)}
               />
             </Form.Item>
@@ -549,7 +567,10 @@ function Appointments() {
           <p id="time_error" className="error">
             Invalid Times.Please select times correctly
           </p>
-          <div className="modal-mentee-appointment-header-text"  style={{marginTop:'10px'}}>
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
+          >
             Meeting Topic*
           </div>
           <Form.Item
@@ -571,7 +592,10 @@ function Appointments() {
               onChange={(e) => setTopic(e)}
             />
           </Form.Item>
-          <div className="modal-mentee-appointment-header-text"  style={{marginTop:'10px'}}>
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
+          >
             Meeting Summary*
           </div>
           <Form.Item

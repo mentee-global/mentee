@@ -278,7 +278,7 @@ function MessagesChatArea(props) {
       return true;
     });
     const msg = {
-      body: "Thank you for reaching out for a session! You can select option that works for you below. And you can also book by clicking the Book Appointment button under my name here in Messages.",
+      body: "Thank you for reaching out for a session! You can select any option that works for you in the below links and book an appointment.",
       message_read: false,
       sender_id: profileId,
       recipient_id: activeMessageId,
@@ -456,12 +456,13 @@ function MessagesChatArea(props) {
                                           available_item.end_time.$date
                                         )
                                         .local()
-                                        .format("MM/DD/YY h:mm a")}
+                                        .format("h:mm a")}
                                     </div>
                                   ) : (
                                     <MenteeAppointmentModal
                                       mentor_name={accountData.name}
-                                      availability={[available_item]}
+                                      availability={block.availabes_in_future}
+                                      selected_availability = {available_item}
                                       mentor_id={otherId}
                                       mentee_id={profileId}
                                       handleUpdateMentor={handleUpdateAccount}
@@ -481,7 +482,7 @@ function MessagesChatArea(props) {
                                             available_item.end_time.$date
                                           )
                                           .local()
-                                          .format("MM/DD/YY h:mm a")
+                                          .format("h:mm a")
                                       }
                                       index={total_index}
                                     />

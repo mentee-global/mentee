@@ -147,7 +147,7 @@ function ModalInput(props) {
               allowClear
               bordered={false}
               style={{ width: "100%" }}
-              placeholder="Please select"
+              placeholder={props.placeholder ? props.placeholder : "Please select"}
               onChange={handleOnChange}
               value={props.value}
               defaultValue={defaultValue}
@@ -166,7 +166,7 @@ function ModalInput(props) {
               allowClear
               bordered={false}
               style={{ width: "100%" }}
-              placeholder="Please select"
+              placeholder={props.placeholder ? props.placeholder : "Please select"}
               onChange={handleOnChange}
               value={props.value}
               defaultValue={defaultValue}

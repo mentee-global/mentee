@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Row, Result, Badge, Checkbox } from "antd";
+import moment from "moment";
+import {
+  Form,
+  Button,
+  Col,
+  Row,
+  Result,
+  Badge,
+  Checkbox,
+  Modal,
+  TimePicker,
+  DatePicker,
+  notification
+} from "antd";
 import {
   ClockCircleOutlined,
   InfoCircleFilled,
@@ -13,12 +26,17 @@ import {
   acceptAppointment,
   fetchAppointmentsByMentorId,
   deleteAppointment,
+  getDisplaySpecializations,
+  fetchMentees,
+  fetchPartners,
+  createAppointment
 } from "utils/api";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, APPOINTMENT_STATUS} from "utils/consts";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
 import { useAuth } from "utils/hooks/useAuth";
 import { updateAndFetchUser } from "features/userSlice";
+import ModalInput from "components/ModalInput";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -38,6 +56,12 @@ const Tabs = Object.freeze({
     key: "availability",
   },
 });
+const validationMessage = {
+  required: "Please enter ${name}",
+  types: {
+    email: "Not a valid email",
+  },
+};
 function Appointments() {
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const [appointments, setAppointments] = useState({});
@@ -45,13 +69,80 @@ function Appointments() {
   const [modalVisible, setModalVisible] = useState(false);
   const user = useSelector((state) => state.user.user);
   const [modalAppointment, setModalAppointment] = useState({});
-  const { onAuthStateChanged, role, profileId } = useAuth();
+  const {isAdmin, onAuthStateChanged, role, profileId } = useAuth();
   const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
   const [takeAppoinment, setTakeappoinment] = useState(
     user?.taking_appointments
   );
+
+  const [manualModalvisible, setManualModalvisible] = useState(false);
+  const [specMasters, setSpecMasters] = useState([]);
+  const [mentees, setMentees] = useState([]);
+  const [menteeArr, setMenteeArr] = useState([]);
+  const [topic, setTopic] = useState();
+  const [message, setMessage] = useState();
+  const [selectedMenteeID, setSelectedMenteeID] = useState(undefined);
+  const [selectedDate, setSelectedDate] = useState();
+  const [selectedStarttime, setSelectedStarttime] = useState();
+  const [selectedEndtime, setSelectedEndtime] = useState();
+  const [form] = Form.useForm();
+
   const dispatch = useDispatch();
 
+  async function getMentees() {
+    const mentee_data = await fetchMentees();
+    if (mentee_data) {
+      if (user && user.pair_partner && user.pair_partner.restricted) {
+        if (user.pair_partner.assign_mentees) {
+          var temp = [];
+          mentee_data.map((mentee_item) => {
+            var check_exist = user.pair_partner.assign_mentees.find(
+              (x) => x.id === mentee_item._id.$oid
+            );
+            if (check_exist) {
+              temp.push(mentee_item);
+            }
+            return false;
+          });
+          setMentees(temp);
+        }
+      } else {
+        var restricted_partners = await fetchPartners(true);
+        if (
+          !isAdmin &&
+          restricted_partners &&
+          restricted_partners.length > 0
+        ) {
+          var assigned_mentee_ids = [];
+          restricted_partners.map((partner_item) => {
+            if (partner_item.assign_mentees) {
+              partner_item.assign_mentees.map((assign_item) => {
+                assigned_mentee_ids.push(assign_item.id);
+                return false;
+              });
+            }
+            return false;
+          });
+          temp = [];
+          mentee_data.map((mentee_item) => {
+            if (!assigned_mentee_ids.includes(mentee_item._id.$oid)) {
+              temp.push(mentee_item);
+            }
+            return false;
+          });
+          setMentees(temp);
+        } else {
+          temp = mentee_data;
+          setMentees(mentee_data);
+        }
+      }
+    }
+    var res = [];
+      for (let mentee_item of temp) {
+        res.push({id:mentee_item._id.$oid, name:mentee_item.name});
+      }
+      setMenteeArr(res);
+  }
   useEffect(() => {
     async function getAppointments() {
       const mentorID = profileId;
@@ -75,13 +166,68 @@ function Appointments() {
   }, [appointmentClick, profileId, onAuthStateChanged]);
 
   useEffect(() => {
+    async function getMasters() {
+      setSpecMasters(await getDisplaySpecializations());
+    }
+    getMasters();
+    getMentees();
+  }, []);
+
+  useEffect(() => {
     if (!user) return;
     setTakeappoinment(user.taking_appointments);
   }, [user]);
 
+  // Resets form fields on close
+  useEffect(() => {
+    if (manualModalvisible) {
+      form.resetFields();
+    }
+  }, [manualModalvisible, form]);
+
   async function handleTakeAppointments(e) {
     const data = { taking_appointments: e };
     dispatch(updateAndFetchUser({ data, id: profileId, role }));
+  }
+
+  async function handleManualSave() {
+    document.getElementById("date_error").style.display = "none";
+    document.getElementById("time_error").style.display = "none";
+    var now = moment();
+    if (selectedDate.isAfter(now)){
+      document.getElementById("date_error").style.display = "block";
+      return;
+    }
+    if (selectedEndtime < selectedStarttime){
+      document.getElementById("time_error").style.display = "block";
+      return;
+    }
+    setManualModalvisible(false);
+    const appointment = {};
+    appointment['mentor_id'] = profileId;
+    appointment['mentee_id'] = selectedMenteeID;
+    appointment['topic'] = topic;
+    appointment['message'] = message;
+    appointment["status"] = APPOINTMENT_STATUS.ACCEPTED;
+    appointment["timeslot"] = {
+      start_time: moment(selectedDate.format('YYYY-MM-DD') + ' ' + selectedStarttime.format('HH:mm:ss')).format(),
+      end_time: moment(selectedDate.format('YYYY-MM-DD') + ' ' + selectedEndtime.format('HH:mm:ss')).format()
+    };
+    var res = await createAppointment(appointment);
+    if (res){
+      notification['success']({message: "You Have Successfully Booked an Appointment!"})
+    } else{
+      notification['error']({message: "Error in booking appointment!"})
+    }
+    setAppointmentClick(!appointmentClick);
+    //reset value---------
+    setSelectedMenteeID();
+    setTopic();
+    setMessage();
+    setSelectedDate();
+    setSelectedEndtime();
+    setSelectedStarttime();
+    //---------
   }
 
   async function handleAppointmentClick(id, didAccept) {
@@ -220,6 +366,17 @@ function Appointments() {
     return (
       <div>
         <b className="appointment-tabs-title">{currentTab.title}</b>
+        {currentTab.title === "All Past" && (
+          <>
+            <MenteeButton
+              style={{ float: "right" }}
+              content={<b>Manual Add</b>}
+              onClick={() => {
+                setManualModalvisible(true);
+              }}
+            ></MenteeButton>
+          </>
+        )}
         <div className="appointments-background">
           {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
@@ -253,13 +410,12 @@ function Appointments() {
         return <div />;
     }
   }
-
   return (
     <div>
       <AppointmentInfo
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
-        needButtons={currentTab === Tabs.pending}
+        current_tab={currentTab}
         handleAppointmentClick={handleAppointmentClick}
         modalAppointment={modalAppointment}
       />
@@ -289,6 +445,155 @@ function Appointments() {
           {renderTab(currentTab)}
         </Col>
       </Row>
+      <Modal
+        className="manual-add-modal"
+        title="Add Session Manually"
+        visible={manualModalvisible}
+        onCancel={() => setManualModalvisible(false)}
+        footer={[
+          <MenteeButton
+            key="save"
+            type="primary"
+            htmlType="submit"
+            form={'manual-form'}
+            content="Save"
+          />,
+        ]}
+      >
+        <Form 
+          form={form}
+          id = 'manual-form' 
+          onFinish={() => handleManualSave()}
+          validateMessages={validationMessage}
+          >
+          <div className="modal-mentee-appointment-header-text" style={{marginTop:'10px'}}>
+            Mentee*
+          </div>
+          <Form.Item
+            name="Mentee"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <ModalInput
+              value={selectedMenteeID}
+              type="dropdown-single-object"
+              options={menteeArr}
+              placeholder = "Please select Mentee"
+              // clicked={inputClicked[0]}
+              index={0}
+              handleClick={() => {}}
+              onChange={(value) => {
+                setSelectedMenteeID(value);
+              }}
+            />
+          </Form.Item>
+          <div className="modal-mentee-appointment-header-text"  style={{marginTop:'10px'}}>
+            Meeting Date*
+          </div>
+          <div className="timeslot-wrapper" style={{display:'flex'}}>
+          <Form.Item
+            name="Date"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <DatePicker 
+              style={{marginRight:'10px'}}
+              value = {selectedDate}
+              onChange={(e) => setSelectedDate(e)}
+            />
+          </Form.Item>
+          <Form.Item
+            name="Start Time"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <TimePicker
+              placeholder="Start time"
+              use12Hours={false} 
+              format="h:mm A" 
+              value={selectedStarttime} 
+              onChange={(e) => setSelectedStarttime(e)}
+            />
+          </Form.Item>
+            
+            <span className="timeslot" style={{fontSize:'16px', marginTop:'4px'}}> ～ </span>
+            <Form.Item
+              name="End Time"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <TimePicker
+                placeholder="End time"
+                use12Hours={false} 
+                format="h:mm A" 
+                value={selectedEndtime} 
+                onChange={(e) => setSelectedEndtime(e)}
+              />
+            </Form.Item>
+          </div>
+          <p id="date_error" className="error">
+            Select date in the past
+          </p>
+          <p id="time_error" className="error">
+            Invalid Times.Please select times correctly
+          </p>
+          <div className="modal-mentee-appointment-header-text"  style={{marginTop:'10px'}}>
+            Meeting Topic*
+          </div>
+          <Form.Item
+            name="Topic"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <ModalInput
+              value={topic}
+              type="dropdown-single"
+              options={specMasters}
+              placeholder="Please select Topic"
+              // clicked={inputClicked[0]}
+              index={1}
+              handleClick={() => {}}
+              onChange={(e) => setTopic(e)}
+            />
+          </Form.Item>
+          <div className="modal-mentee-appointment-header-text"  style={{marginTop:'10px'}}>
+            Meeting Summary*
+          </div>
+          <Form.Item
+            name="Summary"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <ModalInput
+              type="textarea"
+              maxRows={11}
+              // clicked={inputClicked[1]}
+              index={2}
+              handleClick={() => {}}
+              onChange={(e) => setMessage(e.target.value)}
+              value={message}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

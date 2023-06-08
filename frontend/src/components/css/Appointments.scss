@@ -494,3 +494,11 @@
   margin-top: 15px;
   margin-right: 10px;
 }
+.manual-add-modal{
+  .ant-modal-body{
+    padding:15px!important;
+  }
+}
+.error{
+  display: none;
+}

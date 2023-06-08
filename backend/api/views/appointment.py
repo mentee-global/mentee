@@ -208,14 +208,14 @@ def delete_request(appointment_id):
     try:
         request = AppointmentRequest.objects.get(id=appointment_id)
         mentor = MentorProfile.objects.get(id=request.mentor_id)
-        mentee = MenteeProfile.objects.get(id=appointment.mentee_id)
+        mentee = MenteeProfile.objects.get(id=request.mentee_id)
     except:
         msg = "No appointment or account found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
     if mentee.email_notifications:
-        start_time = appointment.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
+        start_time = request.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
         res_email = send_email(
             recipient=mentee.email,
             subject="Mentee Appointment Notification",

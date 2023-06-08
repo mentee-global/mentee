@@ -469,7 +469,7 @@ function Appointments() {
       </Row>
       <Modal
         className="manual-add-modal"
-        title="Add Appointment"        
+        title="Add Appointment"
         visible={manualModalvisible}
         onCancel={() => setManualModalvisible(false)}
         footer={[

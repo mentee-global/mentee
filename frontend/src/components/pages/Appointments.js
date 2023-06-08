@@ -187,13 +187,13 @@ function Appointments() {
   }
 
   async function handleManualSave() {
-    document.getElementById("date_error").style.display = "none";
+    // document.getElementById("date_error").style.display = "none";
     document.getElementById("time_error").style.display = "none";
-    var now = moment();
-    if (selectedDate.isAfter(now)) {
-      document.getElementById("date_error").style.display = "block";
-      return;
-    }
+    // var now = moment();
+    // if (selectedDate.isAfter(now)) {
+    //   document.getElementById("date_error").style.display = "block";
+    //   return;
+    // }
     if (selectedEndtime < selectedStarttime) {
       document.getElementById("time_error").style.display = "block";
       return;
@@ -372,17 +372,6 @@ function Appointments() {
     return (
       <div>
         <b className="appointment-tabs-title">{currentTab.title}</b>
-        {currentTab.title === "All Past" && (
-          <>
-            <MenteeButton
-              style={{ float: "right" }}
-              content={<b>Manual Add</b>}
-              onClick={() => {
-                setManualModalvisible(true);
-              }}
-            ></MenteeButton>
-          </>
-        )}
         <div className="appointments-background">
           {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
@@ -439,9 +428,25 @@ function Appointments() {
                 handleTakeAppointments(e.target.checked);
               }}
               checked={takeAppoinment}
+              style={{ marginLeft: "1%" }}
             >
               Taking appointments
             </Checkbox>
+            <div
+              style={{
+                marginLeft: "1%",
+                marginTop: "12px",
+                marginBottom: "15px",
+              }}
+            >
+              <MenteeButton
+                style={{ marginBottom: "10px" }}
+                content={<b>Add Appointment</b>}
+                onClick={() => {
+                  setManualModalvisible(true);
+                }}
+              ></MenteeButton>
+            </div>
             <div className="appointments-tabs">
               {Object.values(Tabs).map((tab, index) => (
                 <Tab tab={tab} text={tab.title} key={index} />
@@ -453,7 +458,7 @@ function Appointments() {
       </Row>
       <Modal
         className="manual-add-modal"
-        title="Add Session Manually"
+        title="Add Appointment"
         visible={manualModalvisible}
         onCancel={() => setManualModalvisible(false)}
         footer={[
@@ -561,9 +566,9 @@ function Appointments() {
               />
             </Form.Item>
           </div>
-          <p id="date_error" className="error">
+          {/* <p id="date_error" className="error">
             Select date in the past
-          </p>
+          </p> */}
           <p id="time_error" className="error">
             Invalid Times.Please select times correctly
           </p>

@@ -372,6 +372,17 @@ function Appointments() {
     return (
       <div>
         <b className="appointment-tabs-title">{currentTab.title}</b>
+        {currentTab.title === "All Past" && (
+          <>
+            <MenteeButton
+              style={{ float: "right" }}
+              content={<b>Manual Add</b>}
+              onClick={() => {
+                setManualModalvisible(true);
+              }}
+            ></MenteeButton>
+          </>
+        )}
         <div className="appointments-background">
           {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
@@ -458,7 +469,7 @@ function Appointments() {
       </Row>
       <Modal
         className="manual-add-modal"
-        title="Add Appointment"
+        title="Add Appointment"        
         visible={manualModalvisible}
         onCancel={() => setManualModalvisible(false)}
         footer={[

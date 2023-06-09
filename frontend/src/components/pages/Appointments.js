@@ -43,10 +43,10 @@ const Tabs = Object.freeze({
     title: "All Upcoming",
     key: "upcoming",
   },
-  pending: {
-    title: "All Pending",
-    key: "pending",
-  },
+  // pending: {
+  //   title: "All Pending",
+  //   key: "pending",
+  // },
   past: {
     title: "All Past",
     key: "past",

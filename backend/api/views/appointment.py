@@ -141,7 +141,7 @@ def create_appointment():
 
     if mentor.email_notifications:
         res, res_msg = send_email(
-            recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
+            recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE, data={"name":mentee.name, "date":start_time}
         )
 
         if not res:

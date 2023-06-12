@@ -8,6 +8,7 @@ import { useAuth } from "utils/hooks/useAuth";
 import {
   fetchAccountById,
   sendNotifyUnreadMessage,
+  sendInviteMail,
   fetchAppointmentsByMentorId,
   fetchAppointmentsByMenteeId,
   fetchAvailability,
@@ -286,6 +287,9 @@ function MessagesChatArea(props) {
       availabes_in_future: availabes_in_future,
     };
     socket.emit("send", msg);
+    setTimeout(() => {
+      sendInviteMail(activeMessageId,profileId,availabes_in_future);
+    }, 1000);
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
     props.addMyMessage(msg);

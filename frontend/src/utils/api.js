@@ -353,15 +353,23 @@ export const sendNotifyUnreadMessage = (recipient_id) => {
   );
 };
 
-export const sendInviteMail = (recipient_id,sender_id, availabes_in_future) => {
+export const sendInviteMail = (
+  recipient_id,
+  sender_id,
+  availabes_in_future
+) => {
   const requestExtension = `/appointment/send_invite_email`;
-  return authPost(requestExtension, {recipient_id : recipient_id, sener_id:sender_id, availabes_in_future:availabes_in_future}).then(
+  return authPost(requestExtension, {
+    recipient_id: recipient_id,
+    sener_id: sender_id,
+    availabes_in_future: availabes_in_future,
+  }).then(
     (response) => response,
     (err) => {
       console.error(err);
     }
   );
-}
+};
 
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { UserOutlined, MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Form, Input, Avatar, Switch, Button, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,11 +16,10 @@ import {
 } from "utils/api";
 
 function Profile() {
-  const history = useHistory();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const [onEdit, setEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState(false);
 
   const [form] = Form.useForm();
 
@@ -65,7 +64,7 @@ function Profile() {
           onClick={() => setEditing(true)}
           className="mentor-profile-contact-edit"
         >
-          Edit
+          {t("profile.edit")}
         </a>
       </div>
     );
@@ -73,8 +72,8 @@ function Profile() {
 
   const validateMessages = {
     types: {
-      email: "Please input a valid email!",
-      number: "Please input a valid phone number!",
+      email: t("profile.validateEmail"),
+      number: t("profile.validatePhone"),
     },
   };
 
@@ -143,7 +142,7 @@ function Profile() {
           <div className="mentor-profile-notifications-container">
             <div className="modal-mentee-availability-switch">
               <div className="modal-mentee-availability-switch-text">
-                Email notifications
+                {t("profile.emailNotifications")}
               </div>
               <Form.Item name="email_notifications">
                 <Switch
@@ -154,7 +153,7 @@ function Profile() {
             </div>
             <div className="modal-mentee-availability-switch">
               <div className="modal-mentee-availability-switch-text">
-                Text notifications
+                {t("profile.textNotifications")}
               </div>
               <Form.Item name="text_notifications">
                 <Switch size="small" defaultChecked={user.text_notifications} />
@@ -164,7 +163,7 @@ function Profile() {
           <div className="mentor-profile-save-container">
             <Form.Item>
               <Button className="regular-button" htmlType="submit">
-                Save
+                {t("common.save")}
               </Button>
             </Form.Item>
           </div>
@@ -205,7 +204,7 @@ function Profile() {
               </div>
               <fieldset className="mentor-profile-contact">
                 <legend className="mentor-profile-contact-header">
-                  Contact Info
+                  {t("profile.contactInfo")}
                 </legend>
                 {onEdit ? renderEditInfo() : renderContactInfo()}
               </fieldset>

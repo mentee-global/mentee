@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import { Input, Button } from "antd";
+import { useTranslation } from "react-i18next";
 import { sendPasswordResetEmail } from "utils/auth.service";
 import MenteeButton from "../MenteeButton";
-import { REGISTRATION_STAGE } from "utils/consts";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
 import "../css/Register.scss";
 
-function ForgotPassword({ history }) {
+function ForgotPassword() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState();
   const [error, setError] = useState(false);
   const [resent, setResent] = useState(false);
@@ -37,14 +38,16 @@ function ForgotPassword({ history }) {
         <div className="verify-container">
           <div className="verify-header-container">
             <div className="verify-header-text">
-              <h1 className="login-text">Forgot Password</h1>
+              <h1 className="login-text">{t("forgotPassword.title")}</h1>
               {error && (
-                <div className="register-error">Error, please try again!</div>
+                <div className="register-error">
+                  {t("forgotPassword.error")}
+                </div>
               )}
-              {resent && <div> Email resent! </div>}
+              {resent && <div>{t("forgotPassword.emailResent")}</div>}
               <br />
               <t className="verify-header-text-description">
-                Please enter email for the password reset link to be sent to.
+                {t("forgotPassword.promptEmail")}
               </t>
             </div>
           </div>
@@ -57,12 +60,18 @@ function ForgotPassword({ history }) {
               onBlur={() => handleInputBlur()}
               onChange={(e) => setEmail(e.target.value)}
               bordered={false}
-              placeholder="Email"
+              placeholder={t("common.email")}
             />
           </div>
           <div className="login-button">
             <MenteeButton
-              content={<b>{sentLink ? "Sent!" : "Send Link"}</b>}
+              content={
+                <b>
+                  {sentLink
+                    ? t("forgotPassword.sent")
+                    : t("forgotPassword.sendLink")}
+                </b>
+              }
               loading={sendingLink}
               disabled={sentLink}
               width={"50%"}
@@ -75,7 +84,7 @@ function ForgotPassword({ history }) {
             />
           </div>
           <div className="login-register-container">
-            Didn&#39;t receive an email?
+            {t("forgotPassword.notReceiveEmail")}
             <Button
               type="link"
               className="verify-resend-link"
@@ -84,7 +93,7 @@ function ForgotPassword({ history }) {
                 sendEmail(() => setResent(true));
               }}
             >
-              <u>Resend</u>
+              <u>{t("forgotPassword.resend")}</u>
             </Button>
           </div>
         </div>

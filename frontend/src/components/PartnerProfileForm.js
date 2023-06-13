@@ -1,20 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import { Checkbox, Button, message, Upload, Avatar } from "antd";
+import { useTranslation } from "react-i18next";
 import ModalInput from "./ModalInput";
-import {
-  createPartnerProfile,
-  getAppState,
-  isHaveAccount,
-  uploadPartnerImage,
-} from "../utils/api";
-import {
-  REGIONS,
-  REGISTRATION_STAGE,
-  MENTEE_DEFAULT_VIDEO_NAME,
-  SDGS,
-  ACCOUNT_TYPE,
-} from "../utils/consts";
+import { createPartnerProfile, uploadPartnerImage } from "../utils/api";
+import { REGIONS, SDGS } from "../utils/consts";
 import { sendVerificationEmail } from "utils/auth.service";
 
 import "./css/AntDesign.scss";
@@ -22,11 +12,12 @@ import "./css/Modal.scss";
 import "./css/RegisterForm.scss";
 import "./css/MenteeButton.scss";
 import { validateUrl } from "../utils/misc";
-import moment from "moment";
 import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
+
 function RegisterForm(props) {
   const history = useHistory();
+  const { t } = useTranslation();
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
@@ -50,7 +41,6 @@ function RegisterForm(props) {
   const [saving, setSaving] = useState(false);
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
-  const [err, setErr] = useState(false);
   const [sdgErr, setSdgErr] = useState(false);
   const [localProfile, setLocalProfile] = useState({});
 
@@ -275,7 +265,7 @@ function RegisterForm(props) {
 
         setError(false);
         setIsValid([...isValid].fill(true));
-        info("Your account has been created now you can login to Mentee");
+        info(t("commonProfile.accountCreated"));
         await sendVerificationEmail(props.headEmail);
         history.push("/login");
       } else {
@@ -318,13 +308,12 @@ function RegisterForm(props) {
   return (
     <div className="register-content">
       <div className="register-header">
-        <h2>Welcome. Tell us about yourself.</h2>
+        <h2>{t("commonProfile.welcome")}</h2>
         {error && (
           <div className="register-error">
-            Error or missing fields, try again.
+            {t("commonProfile.missingFields")}
           </div>
         )}
-        {err && <p>Please complete apply and training steps first</p>}
       </div>
       <div className="modal-profile-container2">
         <Avatar
@@ -359,7 +348,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Organization/Institution/Corporation Full Name *"
+            title={t("partnerProfile.organizationName")}
             clicked={inputClicked[0]}
             index={0}
             handleClick={handleClick}
@@ -368,7 +357,7 @@ function RegisterForm(props) {
             valid={isValid[0]}
             validate={validate}
             errorPresent={organization && organization.length > 50}
-            errorMessage="organization field is too long."
+            errorMessage={t("commonProlfile.fieldTooLong")}
           />
         </div>
 
@@ -377,7 +366,7 @@ function RegisterForm(props) {
             <ModalInput
               style={styles.modalInput}
               type="password"
-              title="Password *"
+              title={t("common.password")}
               clicked={inputClicked[30]}
               index={30}
               handleClick={handleClick}
@@ -386,12 +375,12 @@ function RegisterForm(props) {
               valid={isValid[30]}
               validate={validate}
               errorPresent={password && password.length > 50}
-              errorMessage="password field is too long."
+              errorMessage={t("commonProfile.fieldTooLong")}
             />
             <ModalInput
               style={styles.modalInput}
               type="password"
-              title="Confirm Password *"
+              title={t("commonProfile.confirmPassword")}
               clicked={inputClicked[31]}
               index={31}
               handleClick={handleClick}
@@ -400,7 +389,7 @@ function RegisterForm(props) {
               valid={isValid[31]}
               validate={validate}
               errorPresent={password != confirmPassword}
-              errorMessage="password not match."
+              errorMessage={t("commonProfile.passwordMismatch")}
             />
           </div>
         ) : (
@@ -410,7 +399,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Headquarters Location (City, Country) *"
+            title={t("partnerProfile.location")}
             clicked={inputClicked[5]}
             index={5}
             handleClick={handleClick}
@@ -422,13 +411,13 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Contact Person's Full Name (First Last)"
+            title={t("partnerProfile.contactFullName")}
             clicked={inputClicked[1]}
             index={1}
             handleClick={handleClick}
             onChange={handlepersonNameChange}
             errorPresent={person_name && person_name.length > 80}
-            errorMessage="person name field is too long."
+            errorMessage={t("commonProfile.fieldTooLong")}
             value={person_name}
             valid={isValid[1]}
             validate={validate}
@@ -439,7 +428,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Regions Work In *"
+            title={t("partnerProfile.regionsWork")}
             clicked={inputClicked[9]}
             index={9}
             handleClick={handleClick}
@@ -463,7 +452,7 @@ function RegisterForm(props) {
             type="textarea"
             maxRows={3}
             hasBorder={false}
-            title="Brief Introduction to Your Org/Inst/Corp *"
+            title={t("partnerProfile.briefIntro")}
             clicked={inputClicked[2]}
             index={2}
             handleClick={handleClick}
@@ -472,21 +461,21 @@ function RegisterForm(props) {
             valid={isValid[8]}
             validate={validate}
             errorPresent={intro && intro.length > 1002}
-            errorMessage="inro field is too long."
+            errorMessage={t("commonProfile.fieldTooLong")}
           />
         </div>
         <div className="modal-input-container">
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Website"
+            title={t("commonProfile.website")}
             clicked={inputClicked[6]}
             index={6}
             handleClick={handleClick}
             onChange={handleWebsiteChange}
             value={website}
             errorPresent={website && !validateUrl(website)}
-            errorMessage="Invalid URL."
+            errorMessage={t("common.invalidURL")}
             valid={isValid[3]}
             validate={validate}
           />
@@ -494,24 +483,21 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="LinkedIn"
+            title={t("commonProfile.linkedin")}
             clicked={inputClicked[8]}
             index={8}
             handleClick={handleClick}
             onChange={handleLinkedinChange}
             value={linkedin}
             errorPresent={linkedin && !validateUrl(linkedin)}
-            errorMessage="Invalid URL."
+            errorMessage={t("common.invalidUrl")}
             valid={isValid[2]}
             validate={validate}
           />
         </div>
         <div className="modal-input-container sdgs">
-          <p className="sdgtext">
-            Sustainable Development Goals Your Work Supports *
-          </p>
-
-          {sdgErr && <p>Please input cell</p>}
+          <p className="sdgtext">{t("partnerProfile.developmentGoals")}</p>
+          {sdgErr && <p>{t("common.inputPrompt")}</p>}
           <Checkbox.Group
             options={SDGS}
             value={sdgs}
@@ -533,7 +519,7 @@ function RegisterForm(props) {
           type="textarea"
           maxRows={3}
           hasBorder={false}
-          title="Current & Upcoming Project Topics *"
+          title={t("partnerProfile.projectNames")}
           clicked={inputClicked[88]}
           index={88}
           handleClick={handleClick}
@@ -542,7 +528,7 @@ function RegisterForm(props) {
           valid={isValid[88]}
           validate={validate}
           errorPresent={topics && topics.length > 1002}
-          errorMessage="inro field is too long."
+          errorMessage={t("commonProfile.fieldTooLong")}
         />
       </div>
       <div className="divider" />
@@ -555,9 +541,8 @@ function RegisterForm(props) {
           onChange={handleOpenGrants}
           checked={open_grants}
         >
-          Open to Collaboration on Grants
+          {t("partnerProfile.collaborationGrants")}
         </Checkbox>
-        <div></div>
         <Checkbox
           className="modal-availability-checkbox-text"
           clicked={inputClicked[4]}
@@ -566,11 +551,13 @@ function RegisterForm(props) {
           onChange={handleOpenProjects}
           checked={open_projects}
         >
-          Open to Collaboration on Projects
+          {t("partnerProfile.collaborationProjects")}
         </Checkbox>
       </div>
       <div className="btn-r2">
-        {validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
+        {validate && (
+          <b style={styles.alertToast}>{t("commonProfile.missingFields")}</b>
+        )}
         <Button
           type="default"
           shape="round"
@@ -578,7 +565,7 @@ function RegisterForm(props) {
           onClick={handleSaveEdits}
           loading={saving}
         >
-          Save
+          {t("common.save")}
         </Button>
       </div>
     </div>

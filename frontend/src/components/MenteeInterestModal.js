@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
+import { useTranslation } from "react-i18next";
 import ModalInput from "./ModalInput";
 import { editMenteeProfile, getDisplaySpecializations } from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
@@ -10,6 +11,7 @@ import { useEffect } from "react";
 function MenteeProfileModal(props) {
   const history = useHistory();
   const { profileId } = useAuth();
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(true);
   const [error, setError] = useState(false);
   const [specializations, setSpecializations] = useState([]);
@@ -48,7 +50,7 @@ function MenteeProfileModal(props) {
   return (
     <span>
       <Modal
-        title="Please Update your interests"
+        title={t("menteeInterestsModal.title")}
         visible={modalVisible}
         onCancel={() => {}}
         style={{ overflow: "hidden" }}
@@ -57,9 +59,7 @@ function MenteeProfileModal(props) {
         footer={
           <div>
             {error && (
-              <b style={styles.alertToast}>
-                Please Choose one interest at least
-              </b>
+              <b style={styles.alertToast}>{t("menteeInterestsModal.error")}</b>
             )}
             <Button
               type="default"
@@ -67,7 +67,7 @@ function MenteeProfileModal(props) {
               style={styles.footer}
               onClick={handleSaveEdits}
             >
-              Save
+              {t("common.save")}
             </Button>
           </div>
         }
@@ -79,7 +79,7 @@ function MenteeProfileModal(props) {
               <ModalInput
                 style={styles.modalInput}
                 type="dropdown-multiple"
-                title="Areas of interest"
+                title={t("menteeInterestsModal.interestsTitle")}
                 index={99}
                 onChange={handleSpecializationsChange}
                 options={specMasters}

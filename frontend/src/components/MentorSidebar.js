@@ -5,26 +5,29 @@ import {
   CalendarOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
-
-const pages = {
-  appointments: {
-    name: "Appointments",
-    path: "/appointments",
-    icon: <CalendarOutlined />,
-  },
-  videos: {
-    name: "Your Videos",
-    path: "/videos",
-    icon: <VideoCameraOutlined />,
-  },
-  profile: {
-    name: "Profile",
-    path: "/profile",
-    icon: <UserOutlined />,
-  },
-};
+import { useTranslation } from "react-i18next";
 
 function MentorSidebar(props) {
+  const { t } = useTranslation();
+
+  const pages = {
+    appointments: {
+      name: t("sidebars.appointments"),
+      path: "/appointments",
+      icon: <CalendarOutlined />,
+    },
+    videos: {
+      name: t("sidebars.videos"),
+      path: "/videos",
+      icon: <VideoCameraOutlined />,
+    },
+    profile: {
+      name: t("sidebars.profile"),
+      path: "/profile",
+      icon: <UserOutlined />,
+    },
+  };
+
   return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
 }
 

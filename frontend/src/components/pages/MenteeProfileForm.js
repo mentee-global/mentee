@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "../ModalInput";
-import { refreshToken, getCurrentUser, getUserEmail } from "utils/auth.service";
 import {
   createMenteeProfile,
   getAppState,
@@ -24,6 +24,7 @@ import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 function MenteeRegisterForm(props) {
   const history = useHistory();
+  const { t } = useTranslation();
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
@@ -78,7 +79,7 @@ function MenteeRegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="School *"
+                title={t("commonProfile.school")}
                 clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
                 index={10 + i * 4}
                 handleClick={handleClick}
@@ -92,7 +93,7 @@ function MenteeRegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="End Year/Expected *"
+                title={t("commonProfile.graduationYear")}
                 clicked={inputClicked[10 + i * 4 + 1]}
                 index={10 + i * 4 + 1}
                 handleClick={handleClick}
@@ -108,14 +109,14 @@ function MenteeRegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="dropdown-multiple"
-                title="Major(s) *"
+                title={t("commonProfile.majors")}
                 clicked={inputClicked[10 + i * 4 + 2]}
                 index={10 + i * 4 + 2}
                 handleClick={handleClick}
                 onEducationChange={handleMajorsChange}
                 educationIndex={i}
                 options={[]}
-                placeholder="Ex. Computer Science, Biology"
+                placeholder={t("commonProfile.majorsExamples")}
                 value={education.majors}
                 valid={isValid[10 + i * 4 + 2]}
                 validate={validate}
@@ -124,13 +125,13 @@ function MenteeRegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="Degree *"
+                title={t("commonProfile.degree")}
                 clicked={inputClicked[10 + i * 4 + 3]}
                 index={10 + i * 4 + 3}
                 handleClick={handleClick}
                 educationIndex={i}
                 onEducationChange={handleDegreeChange}
-                placeholder="Ex. Bachelor's"
+                placeholder={t("commonProfile.degreeExample")}
                 value={education.education_level}
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
@@ -140,7 +141,9 @@ function MenteeRegisterForm(props) {
               className="modal-input-container modal-education-delete-container"
               onClick={() => handleDeleteEducation(i)}
             >
-              <div className="modal-education-delete-text">delete</div>
+              <div className="modal-education-delete-text">
+                {t("commonProfile.delete")}
+              </div>
               <DeleteOutlined className="modal-education-delete-icon" />
             </div>
           </div>
@@ -412,7 +415,7 @@ function MenteeRegisterForm(props) {
       if (menteeId) {
         setError(false);
         setIsValid([...isValid].fill(true));
-        info("Your account has been created now you can login to Mentee");
+        info(t("commonProfile.accountCreated"));
         await sendVerificationEmail(props.headEmail);
         if (changedImage) {
           await uploadMenteeImage(image, menteeId);
@@ -462,13 +465,17 @@ function MenteeRegisterForm(props) {
   return (
     <div className="register-content">
       <div className="register-header">
-        <h2>Welcome. Tell us about yourself.</h2>
+        <h2>{t("commonProfile.welcome")}</h2>
         {error && (
           <div className="register-error">
-            Error or missing fields, try again.
+            {t("commonProfile.missingFields")}
           </div>
         )}
-        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
+        <div>
+          {validate && (
+            <b style={styles.alertToast}>{t("menteeProfile.missingFields")}</b>
+          )}
+        </div>
       </div>
       <div className="modal-profile-container2">
         <Avatar
@@ -520,7 +527,7 @@ function MenteeRegisterForm(props) {
             <ModalInput
               style={styles.modalInput}
               type="password"
-              title="Password *"
+              title={t("common.password")}
               clicked={inputClicked[30]}
               index={30}
               handleClick={handleClick}
@@ -529,12 +536,12 @@ function MenteeRegisterForm(props) {
               valid={isValid[30]}
               validate={validate}
               errorPresent={password && password.length > 50}
-              errorMessage="password field is too long."
+              errorMessage={t("common.fieldTooLong")}
             />
             <ModalInput
               style={styles.modalInput}
               type="password"
-              title="Confirm Password *"
+              title={t("commonProfile.confirmPassword")}
               clicked={inputClicked[31]}
               index={31}
               handleClick={handleClick}
@@ -543,7 +550,7 @@ function MenteeRegisterForm(props) {
               valid={isValid[31]}
               validate={validate}
               errorPresent={password != confirmPassword}
-              errorMessage="password not match."
+              errorMessage={t("commonProfile.passwordMismatch")}
             />
           </div>
         ) : (
@@ -555,7 +562,7 @@ function MenteeRegisterForm(props) {
             type="textarea"
             maxRows={3}
             hasBorder={false}
-            title="Biography *"
+            title={t("commonProfile.biography")}
             clicked={inputClicked[1]}
             index={1}
             handleClick={handleClick}
@@ -564,14 +571,14 @@ function MenteeRegisterForm(props) {
             valid={isValid[8]}
             validate={validate}
             errorPresent={biography && biography.length > 1002}
-            errorMessage="Biography field is too long."
+            errorMessage={"commonProfile.fieldTooLong"}
           />
         </div>
         <div className="modal-input-container">
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Location"
+            title={t("commonProfile.location")}
             clicked={inputClicked[2]}
             index={2}
             handleClick={handleClick}
@@ -580,12 +587,12 @@ function MenteeRegisterForm(props) {
             valid={isValid[9]}
             validate={validate}
             errorPresent={location && location.length > 70}
-            errorMessage="Location field is too long."
+            errorMessage={"commonProfile.fieldTooLong"}
           />
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Gender *"
+            title={t("menteeProfile.gender")}
             clicked={inputClicked[3]}
             index={3}
             handleClick={handleClick}
@@ -597,7 +604,7 @@ function MenteeRegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="dropdown-single"
-            title="Age *"
+            title={t("menteeProfile.age")}
             clicked={inputClicked[4]}
             index={4}
             handleClick={handleClick}
@@ -610,8 +617,8 @@ function MenteeRegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Language(s)*"
-            placeholder="Ex. English, Spanish"
+            title={t("commonProfile.languages")}
+            placeholder={t("commonProfile.languagesExample")}
             clicked={inputClicked[5]}
             index={5}
             options={langMasters}
@@ -626,7 +633,7 @@ function MenteeRegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Phone"
+            title={t("commonProfile.phone")}
             clicked={inputClicked[7]}
             index={7}
             handleClick={handleClick}
@@ -636,7 +643,7 @@ function MenteeRegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Organization Affliation *"
+            title={t("menteeProfile.organizationAffiliation")}
             clicked={inputClicked[8]}
             index={8}
             handleClick={handleClick}
@@ -649,7 +656,7 @@ function MenteeRegisterForm(props) {
         <ModalInput
           style={styles.modalInput}
           type="dropdown-multiple"
-          title="Areas of interest "
+          title={t("menteeProfile.areasOfInterest")}
           clicked={inputClicked[99]}
           index={99}
           handleClick={handleClick}
@@ -663,18 +670,24 @@ function MenteeRegisterForm(props) {
           valid={isValid[99]}
           validate={validate}
         />
-        <div className="modal-education-header">Education</div>
+        <div className="modal-education-header">
+          {t("commonProfile.education")}
+        </div>
         {renderEducationInputs()}
         <div
           className="modal-input-container modal-education-add-container"
           onClick={handleAddEducation}
         >
           <PlusCircleFilled className="modal-education-add-icon" />
-          <div className="modal-education-add-text">Add more</div>
+          <div className="modal-education-add-text">
+            {t("commonProfile.addMoreEducation")}
+          </div>
         </div>
-        <div className="modal-education-header">Add Videos</div>
+        <div className="modal-education-header">
+          {t("commonProfile.addVideos")}
+        </div>
         <div className="modal-education-body">
-          <div>Introduce yourself via YouTube video!</div>
+          <div>{t("commonProfile.introductionVideo")}</div>
         </div>
         <div className="modal-input-container">
           <ModalInput
@@ -684,24 +697,23 @@ function MenteeRegisterForm(props) {
             index={6}
             handleClick={handleClick}
             onChange={handleVideoChange}
-            placeholder="Paste Link"
+            placeholder={t("commonProfile.pasteLink")}
             value={video}
           />
         </div>
-        <div className="modal-education-header">Account Privacy</div>
+        <div className="modal-education-header">
+          {t("menteeProfile.accountPrivacy")}
+        </div>
         <div className="modal-education-body">
           <Checkbox
             onChange={handlePrivacyChange}
             value={privacy}
             checked={privacy}
           >
-            Private Account
+            {t("menteeProfile.privateAccount")}
           </Checkbox>
-          <div>
-            You'll be able to see your information, but your account will not
-            show up when people are browsing accounts.
-          </div>
-          {err && <p>Please complete apply and training steps first</p>}
+          <div>{t("menteeProfile.privateAccountInfo")}</div>
+          {err && <p>{t("commonProfile.errorTrainingSteps")}</p>}
           <Button
             type="default"
             shape="round"
@@ -710,7 +722,7 @@ function MenteeRegisterForm(props) {
             onClick={handleSaveEdits}
             loading={saving}
           >
-            Save
+            {t("common.save")}
           </Button>
         </div>
       </div>

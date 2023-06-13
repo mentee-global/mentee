@@ -3,12 +3,15 @@ import React from "react";
 import "components/css/MenteeVideo.scss";
 import { Col, Row } from "antd";
 import ReactPlayer from "react-player";
+import { useTranslation } from "react-i18next";
 
 function MenteeVideo({ video }) {
+  const { t } = useTranslation();
+
   return (
     <div className="mentee-video-container">
       <h1>
-        <b>Introduction</b>
+        <b>{t("commonProfile.videoIntroduction")}</b>
       </h1>
       <hr className="mentee-profile-video-divider" />
       <Row>

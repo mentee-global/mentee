@@ -215,3 +215,9 @@ export const NEW_APPLICATION_STATUS = {
   COMPLETED: "COMPLETED",
   REJECTED: "REJECTED",
 };
+
+export const I18N_LANGUAGES = {
+  en: "English",
+  es: "Spanish",
+  pt: "Portuguese",
+};

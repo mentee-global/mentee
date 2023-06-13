@@ -2,6 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { Avatar, Spin } from "antd";
 import { UserOutlined, StarFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import MenteeButton from "./MenteeButton";
 import BookmarkImage from "resources/AddBookmarkMentor.svg";
@@ -9,6 +10,7 @@ import "components/css/MenteeAppointments.scss";
 
 function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
   const history = useHistory();
+  const { t } = useTranslation();
 
   const redirectToProfile = (mentorId) => {
     history.push(`/gallery/1/${mentorId}`);
@@ -19,19 +21,19 @@ function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
       <div className="mentee-bookmark-add">
         <img src={BookmarkImage} />
         <MenteeButton
-          content="Add Mentors +"
+          content={t("bookmarkSidebar.addMentors")}
           radius="6px"
           onClick={() => history.push("/gallery")}
         />
       </div>
       <div className="mentee-bookmark-header">
-        <StarFilled /> Favorite Contacts
+        <StarFilled /> {t("bookmarkSidebar.favoriteContacts")}
       </div>
       <div className="mentee-bookmark-display">
         <Spin spinning={isLoading} className="bookmark-spin">
           <div className="no-favorites-text">
             {!isLoading && bookmarks && !bookmarks.length ? (
-              <>No favorited Mentors</>
+              <>{t("bookmarkSidebar.noFavorites")}</>
             ) : null}
           </div>
           {bookmarks.map((mentor) => (

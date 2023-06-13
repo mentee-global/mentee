@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "../ModalInput";
 import { sendVerificationEmail } from "utils/auth.service";
@@ -26,6 +27,7 @@ import { UserOutlined, EditFilled } from "@ant-design/icons";
 
 function RegisterForm(props) {
   const history = useHistory();
+  const { t } = useTranslation();
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
@@ -79,7 +81,7 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="School *"
+                title={t("commonProfile.school")}
                 clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
                 index={10 + i * 4}
                 handleClick={handleClick}
@@ -93,7 +95,7 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="End Year/Expected *"
+                title={t("commonProfile.graduationYear")}
                 clicked={inputClicked[10 + i * 4 + 1]}
                 index={10 + i * 4 + 1}
                 handleClick={handleClick}
@@ -109,14 +111,14 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="dropdown-multiple"
-                title="Major(s) *"
+                title={t("commonProfile.majors")}
                 clicked={inputClicked[10 + i * 4 + 2]}
                 index={10 + i * 4 + 2}
                 handleClick={handleClick}
                 onEducationChange={handleMajorsChange}
                 educationIndex={i}
                 options={[]}
-                placeholder="Ex. Computer Science, Biology"
+                placeholder={t("commonProfile.majorsExamples")}
                 value={education.majors}
                 valid={isValid[10 + i * 4 + 2]}
                 validate={validate}
@@ -125,13 +127,13 @@ function RegisterForm(props) {
                 style={styles.modalInput}
                 height={65}
                 type="text"
-                title="Degree *"
+                title={t("commonProfile.degree")}
                 clicked={inputClicked[10 + i * 4 + 3]}
                 index={10 + i * 4 + 3}
                 handleClick={handleClick}
                 educationIndex={i}
                 onEducationChange={handleDegreeChange}
-                placeholder="Ex. Bachelor's"
+                placeholder={t("commonProfile.degreeExample")}
                 value={education.education_level}
                 valid={isValid[10 + i * 4 + 3]}
                 validate={validate}
@@ -141,7 +143,9 @@ function RegisterForm(props) {
               className="modal-input-container modal-education-delete-container"
               onClick={() => handleDeleteEducation(i)}
             >
-              <div className="modal-education-delete-text">delete</div>
+              <div className="modal-education-delete-text">
+                {t("commonProfile.delete")}
+              </div>
               <DeleteOutlined className="modal-education-delete-icon" />
             </div>
           </div>
@@ -486,13 +490,13 @@ function RegisterForm(props) {
   return (
     <div className="register-content">
       <div className="register-header">
-        <h2>Welcome. Tell us about yourself.</h2>
+        <h2>{t("commonProfile.welcome")}</h2>
         {error && (
           <div className="register-error">
-            Error or missing fields, try again.
+            {t("commonProfile.missingFields")}
           </div>
         )}
-        {err && <p>Please complete apply and training steps first</p>}
+        {err && <p>{t("commonProfile.errorTrainingSteps")}</p>}
       </div>
       <div className="modal-profile-container2">
         <Avatar
@@ -527,7 +531,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Full Name *"
+            title={t("commonProfile.fullName")}
             clicked={inputClicked[0]}
             index={0}
             handleClick={handleClick}
@@ -536,19 +540,19 @@ function RegisterForm(props) {
             valid={isValid[0]}
             validate={validate}
             errorPresent={name && name.length > 50}
-            errorMessage="Name field is too long."
+            errorMessage={t("commonProfile.fieldTooLong")}
           />
 
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Professional Title *"
+            title={t("mentorProfile.professionalTitle")}
             clicked={inputClicked[1]}
             index={1}
             handleClick={handleClick}
             onChange={handleTitleChange}
             errorPresent={title && title.length > 80}
-            errorMessage="Title field is too long."
+            errorMessage={t("commonProfile.fieldTooLong")}
             value={title}
             valid={isValid[1]}
             validate={validate}
@@ -559,7 +563,7 @@ function RegisterForm(props) {
             <ModalInput
               style={styles.modalInput}
               type="password"
-              title="Password *"
+              title={t("common.password")}
               clicked={inputClicked[30]}
               index={30}
               handleClick={handleClick}
@@ -568,12 +572,12 @@ function RegisterForm(props) {
               valid={isValid[30]}
               validate={validate}
               errorPresent={password && password.length > 50}
-              errorMessage="password field is too long."
+              errorMessage={t("commonProfile.fieldTooLong")}
             />
             <ModalInput
               style={styles.modalInput}
               type="password"
-              title="Confirm Password *"
+              title={t("commonProfile.confirmPassword")}
               clicked={inputClicked[31]}
               index={31}
               handleClick={handleClick}
@@ -582,7 +586,7 @@ function RegisterForm(props) {
               valid={isValid[31]}
               validate={validate}
               errorPresent={password != confirmPassword}
-              errorMessage="password not match."
+              errorMessage={t("commonProfile.passwordMismatch")}
             />
           </div>
         ) : (
@@ -595,7 +599,7 @@ function RegisterForm(props) {
             type="textarea"
             maxRows={3}
             hasBorder={false}
-            title="Bio *"
+            title={t("commonProfile.biography")}
             clicked={inputClicked[2]}
             index={2}
             handleClick={handleClick}
@@ -604,7 +608,7 @@ function RegisterForm(props) {
             valid={isValid[8]}
             validate={validate}
             errorPresent={about && about.length > 1002}
-            errorMessage="About field is too long."
+            errorMessage={t("commonProfile.fieldTooLong")}
           />
         </div>
         <div className="divider" />
@@ -617,7 +621,7 @@ function RegisterForm(props) {
             onChange={handleInPersonChange}
             checked={inPersonAvailable}
           >
-            Available in-person?
+            {t("mentorProfile.availableInPerson")}
           </Checkbox>
           <div></div>
           <Checkbox
@@ -628,14 +632,14 @@ function RegisterForm(props) {
             onChange={handleGroupAvailChange}
             checked={groupAvailable}
           >
-            Available for group appointments?
+            {t("mentorProfile.availableGroupAppointments")}
           </Checkbox>
         </div>
         <div className="modal-input-container">
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Location"
+            title={t("commonProfile.location")}
             clicked={inputClicked[5]}
             index={5}
             handleClick={handleClick}
@@ -645,14 +649,14 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="Website"
+            title={t("commonProfile.website")}
             clicked={inputClicked[6]}
             index={6}
             handleClick={handleClick}
             onChange={handleWebsiteChange}
             value={website}
             errorPresent={website && !validateUrl(website)}
-            errorMessage="Invalid URL."
+            errorMessage={t("commonProfile.invalidUrl")}
             valid={isValid[3]}
             validate={validate}
           />
@@ -661,7 +665,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Languages *"
+            title={t("commonProfile.languages")}
             clicked={inputClicked[7]}
             index={7}
             handleClick={handleClick}
@@ -671,7 +675,7 @@ function RegisterForm(props) {
               let newLocalProfile = { ...localProfile, languages: e };
               updateLocalStorage(newLocalProfile);
             }}
-            placeholder="Ex. English, Spanish"
+            placeholder={t("commonProfile.languagesExample")}
             options={langMasters}
             value={languages}
             valid={isValid[7]}
@@ -680,14 +684,14 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="text"
-            title="LinkedIn"
+            title={t("commonProfile.linkedin")}
             clicked={inputClicked[8]}
             index={8}
             handleClick={handleClick}
             onChange={handleLinkedinChange}
             value={linkedin}
             errorPresent={linkedin && !validateUrl(linkedin)}
-            errorMessage="Invalid URL."
+            errorMessage={t("commonProfile.invalidUrl")}
             valid={isValid[2]}
             validate={validate}
           />
@@ -696,7 +700,7 @@ function RegisterForm(props) {
           <ModalInput
             style={styles.modalInput}
             type="dropdown-multiple"
-            title="Specializations *"
+            title={t("mentorProfile.specializations")}
             clicked={inputClicked[9]}
             index={9}
             handleClick={handleClick}
@@ -713,18 +717,24 @@ function RegisterForm(props) {
             validate={validate}
           />
         </div>
-        <div className="modal-education-header">Education</div>
+        <div className="modal-education-header">
+          {t("commonProfile.education")}
+        </div>
         {renderEducationInputs()}
         <div
           className="modal-input-container modal-education-add-container"
           onClick={handleAddEducation}
         >
           <PlusCircleFilled className="modal-education-add-icon" />
-          <div className="modal-education-add-text">Add more</div>
+          <div className="modal-education-add-text">
+            {t("commonProfile.addMoreEducation")}
+          </div>
         </div>
-        <div className="modal-education-header">Add Videos</div>
+        <div className="modal-education-header">
+          {t("commonProfile.addVideos")}
+        </div>
         <div className="modal-education-body">
-          <div>Introduce yourself via YouTube video!</div>
+          <div>{t("commonProfile.introductionVideo")}</div>
         </div>
         <div className="modal-input-container">
           <ModalInput
@@ -734,13 +744,15 @@ function RegisterForm(props) {
             index={6}
             handleClick={handleClick}
             onChange={handleVideoChange}
-            placeholder="Paste Link"
+            placeholder={t("commonProfile.pasteLink")}
             value={video}
           />
         </div>
       </div>
       <div className="btn-r2">
-        {validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
+        {validate && (
+          <b style={styles.alertToast}>{t("commonProfile.missingFields")}</b>
+        )}
         <Button
           type="default"
           shape="round"
@@ -748,7 +760,7 @@ function RegisterForm(props) {
           onClick={handleSaveEdits}
           loading={saving}
         >
-          Save
+          {t("common.save")}
         </Button>
       </div>
     </div>

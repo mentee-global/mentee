@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import { Avatar, Layout, Drawer, Menu, Dropdown, Badge, Space } from "antd";
+import {
+  Avatar,
+  Layout,
+  Drawer,
+  Menu,
+  Dropdown,
+  Badge,
+  Space,
+  Select,
+} from "antd";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { resetUser, fetchUser } from "features/userSlice";
@@ -22,10 +31,13 @@ import Icon, {
 } from "@ant-design/icons";
 import NotificationBell from "./NotificationBell";
 import { logout } from "utils/auth.service";
+import { useTranslation } from "react-i18next";
+import moment from "moment";
 
 const { Header } = Layout;
 
 function NavHeader({ history }) {
+  const { t, i18n } = useTranslation();
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const {
     resetRoleState,
@@ -42,6 +54,57 @@ function NavHeader({ history }) {
   const [notifysViewed, setNoitfyViewed] = useState(false);
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
+
+  const [openDropdown, setOpenDropdown] = useState(false);
+
+  const handleDropdownClick = (e) => {
+    if (e.key !== "language-change") {
+      setOpenDropdown(false);
+    }
+  };
+
+  const handleOpenChange = (flag) => {
+    setOpenDropdown(flag);
+  };
+
+  const languageOptions = [
+    {
+      value: "en-US",
+      label: t("languages.en"),
+    },
+    {
+      value: "es-US",
+      label: t("languages.es"),
+    },
+    {
+      value: "pt-BR",
+      label: t("languages.pt"),
+    },
+  ];
+
+  const handleLanguageChange = (language) => {
+    i18n.changeLanguage(language);
+    console.log(moment.locale(language));
+    if (user) setOpenDropdown(false);
+  };
+
+  const LanguageSelect = () => {
+    return (
+      <div>
+        🌎
+        <Select
+          defaultValue={i18n.language}
+          bordered={false}
+          size="middle"
+          className="language-select-style"
+          options={languageOptions}
+          dropdownMatchSelectWidth={110}
+          onChange={handleLanguageChange}
+        />
+      </div>
+    );
+  };
+
   const logoutUser = () => {
     logout().then(() => {
       resetRoleState();
@@ -49,6 +112,7 @@ function NavHeader({ history }) {
       history.push("/");
     });
   };
+
   useEffect(() => {
     if (profileId) {
       dispatch(fetchUser({ id: profileId, role }));
@@ -57,18 +121,19 @@ function NavHeader({ history }) {
 
   const getUserType = () => {
     if (role === ACCOUNT_TYPE.MENTOR) {
-      return user ? user.professional_title : "Mentor";
+      return user ? user.professional_title : t("common.mentor");
     }
     if (role === ACCOUNT_TYPE.MENTEE) {
-      return "Mentee";
+      return t("common.mentee");
     }
     if (role === ACCOUNT_TYPE.ADMIN) {
-      return "Admin";
+      return t("common.admin");
     }
     if (role === ACCOUNT_TYPE.PARTNER) {
-      return "Partner";
+      return t("common.partner");
     }
   };
+
   useEffect(() => {
     const getAdminNotifications = async () => {
       const newNotifys = await getNotifys();
@@ -80,19 +145,22 @@ function NavHeader({ history }) {
     };
     if (role === ACCOUNT_TYPE.ADMIN) getAdminNotifications();
   }, [role]);
+
   const dropdownMenu = (
-    <Menu className="dropdown-menu">
+    <Menu className="dropdown-menu" onClick={handleDropdownClick}>
       <Menu.Item key="edit-profile">
         <NavLink to="/profile">
-          <b>Edit Profile</b>
+          <b>{t("navHeader.editProfile")}</b>
         </NavLink>
       </Menu.Item>
       <Menu.Divider />
-      {
-        <Menu.Item key="sign-out" onClick={logoutUser}>
-          <b>Sign Out</b>
-        </Menu.Item>
-      }
+      <Menu.Item key="sign-out" onClick={logoutUser}>
+        <b>{t("common.logout")}</b>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="language-change">
+        <LanguageSelect />
+      </Menu.Item>
     </Menu>
   );
   const lastNotifys = notifys.slice(0, 5);
@@ -125,6 +193,114 @@ function NavHeader({ history }) {
       })}
     </Menu>
   );
+
+  function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
+    const { isAdmin, isMentor, isMentee, isPartner } = useAuth();
+    return (
+      <div>
+        <button
+          className="navigation-hamburger-btn"
+          onClick={() => setDrawerVisible(true)}
+        >
+          <Icon component={MenuOutlined} style={{ fontSize: "30px" }} />
+        </button>
+        <Drawer
+          placement="right"
+          closable={true}
+          onClose={() => setDrawerVisible(false)}
+          visible={drawerVisible}
+        >
+          <div className="drawer-btn-container">
+            {isMentee || isMentor || isPartner ? (
+              <></>
+            ) : (
+              <MenteeButton
+                className="mobile-nav-btn"
+                width="9em"
+                theme="light"
+                content={<b>{t("common.apply")}</b>}
+                onClick={() => {
+                  history.push({
+                    pathname: "/application-page",
+                  });
+                }}
+              />
+            )}
+          </div>
+          {(isMentee || isAdmin) && isLoggedIn() && (
+            <LoginVerificationModal
+              className="mobile-nav-btn-login-modal"
+              content={<b>{t("navHeader.findMentor")}</b>}
+              theme="light"
+              width="9em"
+              onVerified={() => {
+                history.push({
+                  pathname: "/gallery",
+                  state: { verified: true },
+                });
+              }}
+            />
+          )}
+          {!isPartner && isLoggedIn() && (
+            <LoginVerificationModal
+              className="mobile-nav-btn-login-modal"
+              content={<b>{t("navHeader.findMentee")}</b>}
+              theme="light"
+              width="9em"
+              onVerified={() => {
+                history.push({
+                  pathname: "/mentee-gallery",
+                  state: { verified: true },
+                });
+              }}
+            />
+          )}
+          {(isPartner || isAdmin) && isLoggedIn() && (
+            <span className="navigation-header-button">
+              <LoginVerificationModal
+                content={<b>{t("navHeader.findPartner")}</b>}
+                theme="light"
+                width="9em"
+                onVerified={() => {
+                  history.push({
+                    pathname: "/partner-gallery",
+                    state: { verified: true },
+                  });
+                }}
+              />
+            </span>
+          )}
+          {!isPartner && isLoggedIn() && (
+            <MenteeButton
+              className="mobile-nav-btn"
+              content={
+                <b>
+                  {isLoggedIn() ? t("navHeader.yourPortal") : t("common.login")}
+                </b>
+              }
+              width="9em"
+              onClick={async () => {
+                let redirect = "/login";
+                if (isMentor) {
+                  redirect = "/appointments";
+                } else if (isMentee) {
+                  redirect = "/mentee-appointments";
+                } else if (isAdmin) {
+                  redirect = "/account-data";
+                } else if (isPartner) {
+                  redirect = "/profile";
+                }
+                history.push({
+                  pathname: isLoggedIn() ? redirect : "/login",
+                });
+              }}
+            />
+          )}
+        </Drawer>
+      </div>
+    );
+  }
+
   var cur_url = window.location.href;
   var cur_url_arr = cur_url.split("/");
   cur_url = cur_url_arr[cur_url_arr.length - 1];
@@ -154,7 +330,7 @@ function NavHeader({ history }) {
             {(isMentee || isAdmin) && isLoggedIn() && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
-                  content={<b>Find a Mentor</b>}
+                  content={<b>{t("navHeader.findMentor")}</b>}
                   theme="light"
                   width="9em"
                   border={
@@ -173,7 +349,7 @@ function NavHeader({ history }) {
             {!isPartner && isLoggedIn() && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
-                  content={<b>Find a Mentee</b>}
+                  content={<b>{t("navHeader.findMentee")}</b>}
                   theme="light"
                   width="9em"
                   border={
@@ -193,7 +369,7 @@ function NavHeader({ history }) {
             {(isPartner || isAdmin) && isLoggedIn() && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
-                  content={<b>Find a Partner</b>}
+                  content={<b>{t("navHeader.findPartner")}</b>}
                   theme="light"
                   width="9em"
                   border={
@@ -214,7 +390,7 @@ function NavHeader({ history }) {
               <span className="navigation-header-button">
                 <MenteeButton
                   loginButton
-                  content={<b>{"Your Portal"}</b>}
+                  content={<b>{t("navHeader.yourPortal")}</b>}
                   width="9em"
                   onClick={async () => {
                     let redirect = "/login";
@@ -241,7 +417,7 @@ function NavHeader({ history }) {
               <span className="navigation-header-button">
                 <MenteeButton
                   loginButton
-                  content={<b>{"Messages"}</b>}
+                  content={<b>{t("common.messages")}</b>}
                   width="9em"
                   onClick={() => {
                     history.push({
@@ -303,13 +479,17 @@ function NavHeader({ history }) {
                   />
                 </div>
                 <div className="profile-caret ">
-                  <Dropdown overlay={dropdownMenu} trigger={["click"]}>
+                  <Dropdown
+                    overlay={dropdownMenu}
+                    onVisibleChange={handleOpenChange}
+                    visible={openDropdown}
+                  >
                     <CaretDownOutlined />
                   </Dropdown>
                 </div>
               </>
             ) : (
-              <></>
+              <LanguageSelect />
             )}
           </div>
         ) : (
@@ -321,109 +501,6 @@ function NavHeader({ history }) {
         )}
       </div>
     </Header>
-  );
-}
-
-function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
-  const { isAdmin, isMentor, isMentee, isPartner } = useAuth();
-  return (
-    <div>
-      <button
-        className="navigation-hamburger-btn"
-        onClick={() => setDrawerVisible(true)}
-      >
-        <Icon component={MenuOutlined} style={{ fontSize: "30px" }} />
-      </button>
-      <Drawer
-        placement="right"
-        closable={true}
-        onClose={() => setDrawerVisible(false)}
-        visible={drawerVisible}
-      >
-        <div className="drawer-btn-container">
-          {isMentee || isMentor || isPartner ? (
-            <></>
-          ) : (
-            <MenteeButton
-              className="mobile-nav-btn"
-              width="9em"
-              theme="light"
-              content={<b>{"Apply"}</b>}
-              onClick={() => {
-                history.push({
-                  pathname: "/application-page",
-                });
-              }}
-            />
-          )}
-        </div>
-        {(isMentee || isAdmin) && isLoggedIn() && (
-          <LoginVerificationModal
-            className="mobile-nav-btn-login-modal"
-            content={<b>Find a Mentor</b>}
-            theme="light"
-            width="9em"
-            onVerified={() => {
-              history.push({
-                pathname: "/gallery",
-                state: { verified: true },
-              });
-            }}
-          />
-        )}
-        {!isPartner && isLoggedIn() && (
-          <LoginVerificationModal
-            className="mobile-nav-btn-login-modal"
-            content={<b>Find a Mentee</b>}
-            theme="light"
-            width="9em"
-            onVerified={() => {
-              history.push({
-                pathname: "/mentee-gallery",
-                state: { verified: true },
-              });
-            }}
-          />
-        )}
-        {(isPartner || isAdmin) && isLoggedIn() && (
-          <span className="navigation-header-button">
-            <LoginVerificationModal
-              content={<b>Find a Partner</b>}
-              theme="light"
-              width="9em"
-              onVerified={() => {
-                history.push({
-                  pathname: "/partner-gallery",
-                  state: { verified: true },
-                });
-              }}
-            />
-          </span>
-        )}
-        {!isPartner && isLoggedIn() && (
-          <MenteeButton
-            className="mobile-nav-btn"
-            content={<b>{isLoggedIn() ? "Your Portal" : "Log In"}</b>}
-            width="9em"
-            onClick={async () => {
-              let redirect = "/login";
-              if (isMentor) {
-                redirect = "/appointments";
-              } else if (isMentee) {
-                redirect = "/mentee-appointments";
-              } else if (isAdmin) {
-                redirect = "/account-data";
-              } else if (isPartner) {
-                redirect = "/profile";
-              }
-              history.push({
-                pathname: isLoggedIn() ? redirect : "/login",
-              });
-            }}
-          />
-        )}
-      </Drawer>
-    </div>
   );
 }
 

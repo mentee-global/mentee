@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Modal, Form, Input, Button, message, Radio } from "antd";
-import { useDropzone } from "react-dropzone";
-import { adminUploadEmails, adminUploadEmailsText } from "utils/api";
-import MenteeButton from "./MenteeButton";
+import { adminUploadEmailsText } from "utils/api";
+import { validateEmail } from "utils/misc";
 
 import "./css/UploadEmails.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -24,11 +23,7 @@ function UploadEmails(props) {
     setIsMissing(false);
 
     for (var i = 0; i < emails.length; i++) {
-      if (
-        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
-          emails[i].replace(/\s/g, "")
-        )
-      ) {
+      if (!validateEmail(emails[i].replace(/\s/g, ""))) {
         alert("Invalid email: " + emails[i]);
         return;
       }

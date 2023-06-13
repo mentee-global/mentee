@@ -30,7 +30,6 @@ import { Languages } from "components/Languages";
 import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
 import PartnerGallery from "components/pages/PartnerGallery";
-
 import { ProvideAuth } from "utils/hooks/useAuth";
 
 function App() {

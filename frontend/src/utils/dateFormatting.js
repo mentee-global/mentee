@@ -50,7 +50,6 @@ export const formatAppointments = (data, type) => {
   let appointment;
   for (appointment of appointments) {
     const timeslot = appointment.timeslot;
-
     const startTime = moment(timeslot.start_time.$date);
     const endTime = moment(timeslot.end_time.$date);
 
@@ -65,7 +64,6 @@ export const formatAppointments = (data, type) => {
       currentKey = "past";
     }
     let keyInfo = appointmentType[currentKey];
-
     const formattedAppointment = {
       message: appointment.message,
       id: appointment._id.$oid,
@@ -73,8 +71,8 @@ export const formatAppointments = (data, type) => {
       menteeID: appointment.mentee_id && appointment.mentee_id.$oid,
       name: appointment.name,
       mentorName: appointment.mentor_name,
-      date: startTime.format("dddd MMMM Do, YYYY"),
-      time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
+      date: startTime.format("LL"),
+      time: startTime.format("LT") + " - " + endTime.format("LT"),
       isoTime: startTime.format(),
       topic: appointment.topic,
       allowTexts: appointment.allow_texts,

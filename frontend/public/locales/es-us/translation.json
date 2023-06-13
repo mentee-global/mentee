@@ -1,0 +1,199 @@
+{
+  "homepage": {
+    "isExistingUser": "¿Es usted un usuario nuevo o existente?",
+    "newAccountTitle": "NUEVO",
+    "newAccountDesc": "APLICAR - ENTRENAR - CONSTRUIR",
+    "existingAccountTitle": "EXISTENTE",
+    "existingAccountDesc": "INICIO DE SESIÓN EN LA PLATAFORMA"
+  },
+  "login": {
+    "noAccount": "¿No tienes una cuenta?",
+    "apply": "Aplicar",
+    "forgotPassword": "¿Has olvidado tu contraseña?",
+    "resetPassword": "Reinicialo",
+    "clickLoginPrompt": "Haga clic en su función para continuar"
+  },
+  "loginErrors": {
+    "incorrectCredentials": "Nombre de usuario y / o contraseña incorrectos. ",
+    "resetPassword": "Por favor, restablezca la contraseña. ",
+    "serverError": "Algo salió mal.",
+    "reregisterAccount": "Vuelva a registrar su cuenta.",
+    "existingEmail": "Este correo electrónico ya está en uso en otro rol"
+  },
+  "apply": {
+    "emailPrompt": "Por favor ingrese su correo electrónico para iniciar el proceso de solicitud",
+    "existingAccount": "Ya tiene una cuenta, será redirigido a la página de inicio de sesión",
+    "partnerVerify": "Su correo electrónico no está pre-registrado como Socio. Favor de contactar admin@menteeglobal.org",
+    "confirmation": "¡Gracias por aplicar! ",
+    "approved": "Tu solicitud ha sido aprobada continúa entrenando",
+    "completeTrainings": "Confirmo que he completado todos los entrenamientos",
+    "errorConnection": "Algo salió mal revisa tu conexión a internet"
+  },
+  "mentorApplication": {
+    "introduction": "Agradecemos su interés en convertirse en mentor global voluntario para MENTEE, una organización global sin fines de lucro que acelera el crecimiento personal y profesional para hacer del mundo un lugar mejor y más saludable.",
+    "filloutPrompt": "Por favor complete la solicitud a continuación",
+    "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior",
+    "hearAboutUs": "¿De quién o dónde supiste de nosotros?",
+    "knowledgeLocation": "Comparta en qué región(es), país(es), estado(s), ciudades se basa su conocimiento",
+    "previousLocations": "¿Dónde has vivido en tu vida además de donde vives ahora?",
+    "employerName": "Nombre completo de su empresa/empleador",
+    "jobDescription": "Su título completo y una breve descripción de su función.",
+    "jobDuration": "¿Cuánto tiempo llevas con esta empresa?",
+    "commitDuration": "Si es aceptado como mentor global, ¿le gustaría comprometerse a...",
+    "immigrationStatus": "¿Eres inmigrante o refugiado o vienes de una familia inmigrante o refugiada?",
+    "communityStatus": "¿Es usted o su familia de una comunidad nativa o aborigen?",
+    "economicBackground": "¿Creciste con desafíos económicos?",
+    "isPersonOfColor": "¿Te considerarías una persona de color?",
+    "genderIdentification": "¿Cómo te identificas?",
+    "isMarginalized": "¿Se definiría a sí mismo como marginado o actualmente marginado?",
+    "languageBackground": "¿Habla otro idioma además del inglés? ",
+    "referral": "Si conoce a alguien que sería un gran mentor global, comparta su nombre, correo electrónico y nos pondremos en contacto con ellos.",
+    "canDonate": "MENTEE es una organización de voluntarios y nos sustentan las donaciones. "
+  },
+  "menteeApplication": {
+    "introduction": "¡Agradecemos su interés en formar parte de la comunidad MENTEE! ",
+    "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior",
+    "orgAffiliation": "¿Qué organización lo está apoyando localmente o a qué organización está afiliado?",
+    "agePrompt": "Háganos saber más sobre usted",
+    "immigrationStatus": "Háganos saber más sobre usted. ",
+    "otherPlaceholder": "Otro",
+    "countryPlaceholder": "País",
+    "countryOrigin": "¿De qué país es originario usted o su familia, si es refugiado o inmigrante?",
+    "genderIdentification": "¿Cómo te identificas?",
+    "languageBackground": "Cuál es tu idioma nativo?",
+    "topicInterests": "¿Qué temas especiales le interesarían? ",
+    "workOptions": "¿Qué haces actualmente? ",
+    "socialMedia": "¿Le interesaría ser destacado como uno de nuestros aprendices en las redes sociales?",
+    "otherQuestions": "¿Tiene usted alguna pregunta?",
+    "questionsPlaceholder": "Preguntas"
+  },
+  "partnerApplication": {
+    "introduction": "Agradecemos su interés en convertirse en un socio global voluntario de MENTEE, una organización global sin fines de lucro que acelera el crecimiento personal y profesional para hacer del mundo un lugar mejor y más saludable.",
+    "partnerName": "¿Cuál es el nombre de su organización/institución/empresa?",
+    "pointOfContact": "¿Quién es la mejor persona de contacto?",
+    "contactEmail": "¿Cuál es su correo electrónico?",
+    "partnershipRelation": "¿Cuál es nuestra relación de asociación?",
+    "otherPlaceholder": "Otro",
+    "partnersConcerns": "¿Qué ODS le importan a su organización/institución/empresa?",
+    "buildTogether": "¿De qué otra manera crees que podríamos construir juntos en el futuro?",
+    "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior"
+  },
+  "menteeProfile": {
+    "missingFields": "Campos faltantes",
+    "gender": "Género",
+    "age": "Edad",
+    "organizationAffiliation": "Organización Afiliación",
+    "areasOfInterest": "Áreas de interés",
+    "accountPrivacy": "Privacidad de la cuenta",
+    "privateAccount": "Cuenta privada",
+    "privateAccountInfo": "Podrá ver su información, pero su cuenta no aparecerá cuando las personas estén buscando cuentas."
+  },
+  "mentorProfile": {
+    "professionalTitle": "Título profesional",
+    "availableInPerson": "¿Disponible en persona?",
+    "availableGroupAppointments": "¿Disponible para citas de grupo?",
+    "specializations": "Especializaciones"
+  },
+  "partnerProfile": {
+    "organizationName": "Organización/Institución/Corporación Nombre Completo",
+    "location": "Ubicación de la sede (ciudad, país)",
+    "contactFullName": "Nombre completo de la persona de contacto (nombre y apellido)",
+    "regionsWork": "Regiones Trabajar en",
+    "briefIntro": "Breve introducción a su organización/institución/corporación",
+    "developmentGoals": "Objetivos de desarrollo sostenible que apoya su trabajo",
+    "projectNames": "Actual",
+    "collaborationGrants": "Abierto a la colaboración en subvenciones",
+    "collaborationProjects": "Abierto a la colaboración en proyectos"
+  },
+  "commonProfile": {
+    "welcome": "Bienvenido. ",
+    "missingFields": "Error o faltan campos, inténtalo de nuevo.",
+    "fieldTooLong": "El campo es demasiado largo",
+    "confirmPassword": "confirmar Contraseña",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "website": "Sitio web",
+    "linkedin": "LinkedIn",
+    "school": "Escuela",
+    "graduationYear": "Fin de año/esperado",
+    "majors": "Grandes Ligas)",
+    "majorsExamples": "Ex. ",
+    "degree": "Grado",
+    "degreeExample": "Ex. ",
+    "delete": "Borrar",
+    "accountCreated": "Su cuenta ha sido creada ahora puede iniciar sesión en Mentee",
+    "fullName": "Nombre completo",
+    "biography": "Biografía",
+    "location": "Ubicación",
+    "languages": "Idiomas",
+    "languagesExample": "Ex. ",
+    "phone": "Teléfono",
+    "education": "Educación",
+    "addMoreEducation": "Añadir más",
+    "addVideos": "Agregar videos",
+    "introductionVideo": "¡Preséntate a través de un video de YouTube!",
+    "pasteLink": "Pegue el enlace",
+    "errorTrainingSteps": "Complete los pasos de solicitud y capacitación primero"
+  },
+  "forgotPassword": {
+    "title": "Has olvidado tu contraseña",
+    "error": "¡Error, inténtalo de nuevo!",
+    "emailResent": "¡Reenvío de correo electrónico!",
+    "promptEmail": "Ingrese el correo electrónico para enviar el enlace de restablecimiento de contraseña.",
+    "sent": "¡Enviado!",
+    "sendLink": "Enviar enlace",
+    "resend": "reenviar",
+    "notReceiveEmail": "¿No recibiste un correo electrónico?"
+  },
+  "menteeAppointments": {
+    "allUpcomingTab": "Todo lo que viene",
+    "allPastTab": "todo pasado",
+    "pending": "pendiente",
+    "meetingWith": "Reunirse con",
+    "noMentorFound": "Mentor no encontrado",
+    "welcome": "Bienvenido {{name}}!",
+    "noAppointments": "Actualmente no hay citas"
+  },
+  "menteeInterestsModal": {
+    "title": "Actualiza tus intereses",
+    "error": "Por favor, elija al menos un interés",
+    "interestsTitle": "Áreas de interés"
+  },
+  "bookmarkSidebar": {
+    "addMentors": "Agregar mentores",
+    "favoriteContacts": "Contactos favoritos",
+    "noFavorites": "No hay mentores favoritos"
+  },
+  "languages": {
+    "en": "Inglés",
+    "es": "Español",
+    "pt": "portugués"
+  },
+  "navHeader": {
+    "editProfile": "Editar perfil",
+    "findPartner": "Socios",
+    "findMentor": "Mentores",
+    "findMentee": "Aprendices",
+    "yourPortal": "Tu Portal"
+  },
+  "common": {
+    "login": "Acceso",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "logout": "Cerrar sesión",
+    "submit": "Entregar",
+    "save": "Ahorrar",
+    "welcome": "Bienvenido a <1>MENTEE!</1>",
+    "mentee": "Aprendiz",
+    "mentor": "Mentor",
+    "partner": "Socio",
+    "admin": "Administración",
+    "firstName": "Nombre de pila",
+    "lastName": "Apellido",
+    "phoneNumber": "Número de teléfono",
+    "selectPrompt": "Por favor seleccione una opción",
+    "inputPrompt": "Por favor agregue entrada",
+    "invalidUrl": "URL invalida",
+    "messages": "Mensajes",
+    "apply": "Aplicar"
+  }
+}

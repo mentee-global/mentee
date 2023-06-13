@@ -67,13 +67,153 @@
     "otherQuestions": "Do you have any questions?",
     "questionsPlaceholder": "Questions"
   },
-  "partnerApplication": {},
+  "partnerApplication": {
+    "introduction": "We appreciate your interest in becoming a volunteer Global Partner for MENTEE, a global nonprofit accelerating personal and professional growth to make the world a better, healthier place.",
+    "partnerName": "What is your organization/institutions/company's name?",
+    "pointOfContact": "Who is the best contact person?",
+    "contactEmail": "What is their email?",
+    "partnershipRelation": "What is our partnership relationship?",
+    "otherPlaceholder": "Other",
+    "partnersConcerns": "What SDGs does your organization/institution/company care about?",
+    "buildTogether": "How else do you think we could build together going forward?",
+    "submitError": "Something went wrong -- check your email at the top"
+  },
+  "menteeProfile": {
+    "missingFields": "Missing Fields",
+    "gender": "Gender",
+    "age": "Age",
+    "organizationAffiliation": "Organization Affliation",
+    "areasOfInterest": "Areas of interest",
+    "accountPrivacy": "Account Privacy",
+    "privateAccount": "Private Account",
+    "privateAccountInfo": "You'll be able to see your information, but your account will not show up when people are browsing accounts."
+  },
+  "mentorProfile": {
+    "professionalTitle": "Professional Title",
+    "availableInPerson": "Available in-person?",
+    "availableGroupAppointments": "Available for group appointments?",
+    "specializations": "Specializations",
+    "takingAppointments": "Taking Appointments?"
+  },
+  "partnerProfile": {
+    "organizationName": "Organization/Institution/Corporation Full Name",
+    "location": "Headquarters Location (City, Country)",
+    "contactFullName": "Contact Person's Full Name (First Last)",
+    "regionsWork": "Regions Work In",
+    "briefIntro": "Brief Introduction to Your Org/Inst/Corp",
+    "developmentGoals": "Sustainable Development Goals Your Work Supports",
+    "projectNames": "Current & Upcoming Project Topics",
+    "collaborationGrants": "Open to Collaboration on Grants",
+    "collaborationProjects": "Open to Collaboration on Projects"
+  },
+  "commonProfile": {
+    "editProfile": "Edit Profile",
+    "welcome": "Welcome. Tell us about yourself.",
+    "missingFields": "Error or missing fields, try again.",
+    "fieldTooLong": "Field is too long",
+    "confirmPassword": "Confirm Password",
+    "passwordMismatch": "Passwords do NOT match",
+    "website": "Website",
+    "linkedin": "LinkedIn",
+    "school": "School",
+    "graduationYear": "End Year/Expected",
+    "majors": "Major(s)",
+    "majorsExamples": "Ex. Computer Science, Biology",
+    "degree": "Degree",
+    "degreeExample": "Ex. Bachelor's",
+    "delete": "Delete",
+    "accountCreated": "Your account has been created now you can login to Mentee",
+    "fullName": "Full Name",
+    "biography": "Biography",
+    "location": "Location",
+    "languages": "Languages(s)",
+    "languagesExample": "Ex. English, Spanish",
+    "phone": "Phone",
+    "education": "Education",
+    "addMoreEducation": "Add more",
+    "addVideos": "Add Videos",
+    "video": "Video",
+    "videos": "Videos",
+    "introductionVideo": "Introduce yourself via YouTube video!",
+    "pasteLink": "Paste Link",
+    "errorTrainingSteps": "Please complete apply and training steps first",
+    "videoIntroduction": "Introduction",
+    "sendMessage": "Send Message"
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "error": "Error, please try again!",
+    "emailResent": "Email resent!",
+    "promptEmail": "Please enter email for the password reset link to be sent to.",
+    "sent": "Sent!",
+    "sendLink": "Send Link",
+    "resend": "Resend",
+    "notReceiveEmail": "Didn't receive an email?"
+  },
+  "menteeAppointments": {
+    "allUpcomingTab": "All Upcoming",
+    "allPastTab": "All Past",
+    "pending": "pending",
+    "meetingWith": "Meeting with",
+    "noMentorFound": "Mentor Not Found",
+    "welcome": "Welcome {{name}}!",
+    "noAppointments": "There are currently no appointments"
+  },
+  "menteeInterestsModal": {
+    "title": "Please Update your interests",
+    "error": "Please choose atleast one interest",
+    "interestsTitle": "Areas of interests"
+  },
+  "bookmarkSidebar": {
+    "addMentors": "Add Mentors +",
+    "favoriteContacts": "Favorite Contacts",
+    "noFavorites": "No favorited Mentors"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "pt": "Portuguese"
+  },
+  "navHeader": {
+    "editProfile": "Edit Profile",
+    "findPartner": "Find a Partner",
+    "findMentor": "Find a Mentor",
+    "findMentee": "Find a Mentee",
+    "yourPortal": "Your Portal"
+  },
+  "sidebars": {
+    "appointments": "Appointments",
+    "profile": "Profile",
+    "videos": "Your Videos"
+  },
+  "profile": {
+    "contactInfo": "Contact Info",
+    "edit": "Edit",
+    "validateEmail": "Please input a valid email!",
+    "validatePhone": "Please input a valid phone number!",
+    "emailNotifications": "Email notifications",
+    "textNotifications": "Text notifications"
+  },
+  "mentorContactModal": {
+    "reachOutTo": "Reach out to {{mentorName}}",
+    "basicInfoNotice": "Your name and email will be sent to this mentor",
+    "areaInterest": "Choose Interest Areas",
+    "areaInterstValidate": "Please select an interest area!",
+    "communicationMethod": "What is your preferred communication method?",
+    "communicationMethodValidate": "Please select communication method!",
+    "introPrompt": "Briefly introduce yourself and what you are looking to gain from a Mentor.",
+    "introPromptValidate": "Please write an introduction!",
+    "introExample": "Hi Jim! I’m a junior at Oxford University studying Economics. I saw that you’re knowledgeable in Personal Finance, which is something I’m interested in, and I’d love to learn more about your experiences. Thank you for your time!",
+    "thankYou": "Thank you!",
+    "confirmationText": "Your mentor will be getting back to you soon! Feel free to browse the mentor page and reach out to other mentors."
+  },
   "common": {
     "login": "Login",
     "email": "Email",
     "password": "Password",
     "logout": "Logout",
     "submit": "Submit",
+    "save": "Save",
     "welcome": "Welcome to <1>MENTEE!</1>",
     "mentee": "Mentee",
     "mentor": "Mentor",
@@ -83,6 +223,14 @@
     "lastName": "Last Name",
     "phoneNumber": "Phone Number",
     "selectPrompt": "Please select an option",
-    "inputPrompt": "Please add input"
+    "inputPrompt": "Please add input",
+    "invalidUrl": "Invalid URL",
+    "messages": "Messages",
+    "message": "Message",
+    "apply": "Apply",
+    "contactMe": "Contact Me",
+    "other": "Other",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp"
   }
 }

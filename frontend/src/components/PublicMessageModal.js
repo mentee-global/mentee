@@ -9,10 +9,12 @@ import { sendMessage } from "../utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
+import { useTranslation } from "react-i18next";
 
 const antdMessage = message;
 
 function PublicMessageModal(props) {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formModalVisible, setFormModalVisible] = useState(false);
   const numInputs = 4;
@@ -76,14 +78,14 @@ function PublicMessageModal(props) {
     <span>
       <MenteeButton
         style={{ fontWeight: "bold" }}
-        content="Send Message"
+        content={t("commonProfile.sendMessage")}
         onClick={() => {
           setFormModalVisible(true);
         }}
       />
       <Modal
         forceRender
-        title="Message"
+        title={t("common.message")}
         visible={formModalVisible}
         onCancel={closeModals}
         className="appointment-info-modal"
@@ -91,7 +93,7 @@ function PublicMessageModal(props) {
         footer={
           <MenteeButton
             width="8em"
-            content="Send"
+            content={t("common.submit")}
             htmlType="submit"
             form="message-form"
             style={{ justifySelf: "flex-end" }}

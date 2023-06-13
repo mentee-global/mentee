@@ -8,6 +8,7 @@ import {
   StarFilled,
   UserOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { formatLinkForHref } from "utils/misc";
 import MentorProfileModal from "./MentorProfileModal";
 import MenteeProfileModal from "./MenteeProfileModal";
@@ -22,6 +23,7 @@ import PartnerProfileModal from "./PartnerProfileModal";
 import "./css/Profile.scss";
 
 function ProfileContent(props) {
+  const { t } = useTranslation();
   const { accountType, account } = props;
   const { isMentor, isMentee, isPartner, profileId } = useAuth();
   const [mentee, setMentee] = useState();
@@ -94,7 +96,7 @@ function ProfileContent(props) {
       return (
         <div>
           <div className="mentor-profile-heading">
-            <b>Specializations</b>
+            <b>{t("mentorProfile.specializations")}</b>
           </div>
           <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
         </div>
@@ -103,7 +105,7 @@ function ProfileContent(props) {
       return (
         <div>
           <div className="mentor-profile-heading">
-            <b>Areas of interest</b>
+            <b>{t("menteeProfile.areasOfInterest")}</b>
           </div>
           <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
         </div>
@@ -112,7 +114,7 @@ function ProfileContent(props) {
       return (
         <div>
           <div className="mentor-profile-heading">
-            <b>Regions Work In</b>
+            <b>{t("partnerProfile.regionsWork")}</b>
           </div>
           <div>{getSpecializationTags(account?.regions || [])}</div>
         </div>
@@ -299,14 +301,14 @@ function ProfileContent(props) {
         <>
           {" "}
           <div className="mentor-profile-heading">
-            <b>Brief Introduction to Your Org/Inst/Corp</b>
+            <b>{t("partnerProfile.briefIntro")}</b>
           </div>
           <div className="mentor-profile-about">{account.intro}</div>
         </>
       ) : (
         <>
           <div className="mentor-profile-heading">
-            <b>Bio</b>
+            <b>{t("commonProfile.biography")}</b>
           </div>
           <div className="mentor-profile-about">{props.mentor.biography}</div>
         </>
@@ -318,7 +320,7 @@ function ProfileContent(props) {
       {accountType != ACCOUNT_TYPE.PARTNER && (
         <>
           <div className="mentor-profile-heading">
-            <b>Education</b>
+            <b>{t("commonProfile.education")}</b>
           </div>
           <div>{getEducations(props.mentor.education)}</div>
         </>
@@ -327,29 +329,29 @@ function ProfileContent(props) {
       {accountType == ACCOUNT_TYPE.PARTNER && (
         <>
           <div className="mentor-profile-heading">
-            <b>Contact Person's Full Name</b>
+            <b>{t("partnerProfile.contactFullName")}</b>
           </div>
           <div className="mentor-profile-about">{account.person_name}</div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>Current & Upcoming Project Topics </b>
+            <b>{t("partnerProfile.projectNames")} </b>
           </div>
           <div className="mentor-profile-about">{account.topics}</div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>Sustainable Development Goals Your Work Supports </b>
+            <b>{t("partnerProfile.developmentGoals")} </b>
           </div>
           <div className="mentor-profile-about">{account.sdgs}</div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>Open to Collaboration on Grants</b>
+            <b>{t("partnerProfile.collaborationGrants")}</b>
           </div>
           <div className="mentor-profile-about">
             {account.open_grants ? "Yes" : "No"}
           </div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>Open to Collaboration on Projects</b>
+            <b>{t("partnerProfile.collaborationProjects")}</b>
           </div>
           <div className="mentor-profile-about">
             {account.open_projects ? "Yes" : "No"}
@@ -360,7 +362,7 @@ function ProfileContent(props) {
       {props.mentor.video && (
         <div className="mentor-profile-heading">
           <div className="mentor-profile-heading">
-            <b>Video</b>
+            <b>{t("commonProfile.video")}</b>
           </div>
           <LinkOutlined className="mentor-profile-tag-icon" />
           <Tooltip
@@ -388,7 +390,7 @@ function ProfileContent(props) {
       {props.mentor.pair_partner && props.mentor.pair_partner.email && (
         <>
           <div style={{ marginTop: "10px" }} className="mentor-profile-heading">
-            <b>Partner</b>
+            <b>{t("common.partner")}</b>
           </div>
           <Avatar
             size={45}

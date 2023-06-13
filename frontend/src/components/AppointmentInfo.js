@@ -6,6 +6,25 @@ import { EnvironmentOutlined, CommentOutlined } from "@ant-design/icons";
 
 import "./css/Appointments.scss";
 
+const Tabs = Object.freeze({
+  upcoming: {
+    title: "All Upcoming",
+    key: "upcoming",
+  },
+  pending: {
+    title: "All Pending",
+    key: "pending",
+  },
+  past: {
+    title: "All Past",
+    key: "past",
+  },
+  availability: {
+    title: "Availability",
+    key: "availability",
+  },
+});
+
 function AppointmentInfo(props) {
   const [mentee, setMentee] = useState({});
 
@@ -33,7 +52,7 @@ function AppointmentInfo(props) {
   };
 
   const displayButtons = () => {
-    if (props.needButtons) {
+    if (props.current_tab.key === Tabs.pending.key) {
       return (
         <div style={{ textAlign: "center" }}>
           <MenteeButton
@@ -53,12 +72,22 @@ function AppointmentInfo(props) {
         </div>
       );
     } else {
-      return null;
+      return (
+        <div style={{ textAlign: "center" }}>
+          <MenteeButton
+            content={"Deny"}
+            border={"1px solid red"}
+            onClick={() =>
+              props.handleAppointmentClick(props.modalAppointment.id, false)
+            }
+          />
+        </div>
+      );
     }
   };
 
   const pendingOrUpcoming = () => {
-    if (props.needButtons) {
+    if (props.current_tab === Tabs.pending) {
       return (
         <div className="ar-status">
           pending<span className="pending-dot"></span>

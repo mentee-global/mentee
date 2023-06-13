@@ -38,7 +38,7 @@ function AdminAppointmentCard({ data, render, onClick }) {
         text: "past",
         icon: <ClockCircleTwoTone />,
       });
-    } else if (data.accepted) {
+    } else if (data.appointment.status === "accepted") {
       setStatus({
         text: "upcoming",
         icon: <CheckCircleTwoTone twoToneColor="green" />,

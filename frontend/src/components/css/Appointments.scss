@@ -376,7 +376,7 @@
 
 .appointments-column {
   padding: 5% 3%;
-  height: 100vh;
+  height: calc(100vh - 120px);
 }
 
 .appointments-welcome-box {
@@ -493,4 +493,12 @@
 .modal-profile-icon2 {
   margin-top: 15px;
   margin-right: 10px;
+}
+.manual-add-modal {
+  .ant-modal-body {
+    padding: 15px !important;
+  }
+}
+.error {
+  display: none;
 }

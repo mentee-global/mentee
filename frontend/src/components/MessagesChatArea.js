@@ -289,6 +289,7 @@ function MessagesChatArea(props) {
     socket.emit("send", msg);
     setTimeout(() => {
       sendInviteMail(activeMessageId, profileId, availabes_in_future);
+
     }, 1000);
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };

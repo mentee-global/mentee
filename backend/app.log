@@ -15735,3 +15735,16 @@
 2023-06-15 16:44:57,806 127.0.0.1: requested http://localhost:8000/api/masters/specializations: DEBUG in [manage: 23]: OPTIONS /api/masters/specializations 200 OK
 2023-06-15 16:44:57,808 127.0.0.1: requested http://localhost:8000/api/accounts/2: DEBUG in [manage: 23]: OPTIONS /api/accounts/2 200 OK
 2023-06-15 16:44:58,260 127.0.0.1: requested http://localhost:8000/api/masters/specializations: DEBUG in [manage: 23]: GET /api/masters/specializations 200 OK
+2023-06-15 16:44:59,803 127.0.0.1: requested http://localhost:8000/api/accounts/2: DEBUG in [manage: 23]: GET /api/accounts/2 200 OK
+2023-06-15 16:44:59,804 127.0.0.1: requested http://localhost:8000/api/appointment/1/undefined: DEBUG in [manage: 23]: OPTIONS /api/appointment/1/undefined 200 OK
+2023-06-15 16:44:59,805 127.0.0.1: requested http://localhost:8000/api/appointment/1/626bb8c6a4d6b218a3e62222: DEBUG in [manage: 23]: OPTIONS /api/appointment/1/626bb8c6a4d6b218a3e62222 200 OK
+2023-06-15 16:44:59,806 127.0.0.1: requested http://localhost:8000/api/account/626bb8c6a4d6b218a3e62222?account_type=1: DEBUG in [manage: 23]: OPTIONS /api/account/626bb8c6a4d6b218a3e62222 200 OK
+2023-06-15 16:45:00,236 127.0.0.1: requested http://localhost:8000/api/appointment/1/undefined: INFO in [appointment: 37]: No account found with that id
+2023-06-15 16:45:00,236 127.0.0.1: requested http://localhost:8000/api/appointment/1/undefined: DEBUG in [manage: 15]: GET /api/appointment/1/undefined 422 b'{\n  "message": "No account found with that id",\n  "result": null,\n  "success": false\n}\n'
+2023-06-15 16:45:00,452 127.0.0.1: requested http://localhost:8000/api/appointment/1/626bb8c6a4d6b218a3e62222: INFO in [appointment: 57]: Could not find Mentee with that email
+2023-06-15 16:45:00,519 127.0.0.1: requested http://localhost:8000/api/appointment/1/626bb8c6a4d6b218a3e62222: DEBUG in [manage: 23]: GET /api/appointment/1/626bb8c6a4d6b218a3e62222 200 OK
+2023-06-15 16:45:00,650 127.0.0.1: requested http://localhost:8000/api/account/626bb8c6a4d6b218a3e62222?account_type=1: DEBUG in [manage: 23]: GET /api/account/626bb8c6a4d6b218a3e62222 200 OK
+2023-06-15 16:45:00,652 127.0.0.1: requested http://localhost:8000/api/accounts/3?restricted=true: DEBUG in [manage: 23]: OPTIONS /api/accounts/3 200 OK
+2023-06-15 16:45:00,724 127.0.0.1: requested http://localhost:8000/api/accounts/3?restricted=true: DEBUG in [manage: 23]: GET /api/accounts/3 200 OK
+2023-06-15 16:45:00,725 127.0.0.1: requested http://localhost:8000/api/notifications/626bb8c6a4d6b218a3e62222: DEBUG in [manage: 23]: OPTIONS /api/notifications/626bb8c6a4d6b218a3e62222 200 OK
+2023-06-15 16:45:00,799 127.0.0.1: requested http://localhost:8000/api/notifications/626bb8c6a4d6b218a3e62222: DEBUG in [manage: 23]: GET /api/notifications/626bb8c6a4d6b218a3e62222 200 OK

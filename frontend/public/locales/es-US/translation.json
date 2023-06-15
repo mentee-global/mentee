@@ -286,7 +286,8 @@
     "meetingTopic": "Tema de la reunión",
     "messageToMentor": "Mensaje al mentor",
     "allowCall": "Permitir llamadas",
-    "allowText": "Permitir textos"
+    "allowText": "Permitir textos",
+    "selectTopic": "Por favor seleccione un tema"
   },
   "mentorVideoPage": {
     "specializationTag": "Etiqueta de especializaciones",
@@ -332,6 +333,7 @@
     "clear": "Claro",
     "continue": "Continuar",
     "deny": "Denegar",
-    "delete": "Borrar"
+    "delete": "Borrar",
+    "pleaseSelect": "Porfavor seleccione"
   }
 }

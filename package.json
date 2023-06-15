@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "debounce": "^1.2.1",
-    "i18next-locize-backend": "^6.2.2",
     "moment-timezone": "^0.5.43",
     "sass": "^1.50.0"
   }

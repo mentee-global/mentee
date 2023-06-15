@@ -410,6 +410,7 @@ function MenteeAppointmentModal(props) {
                     <ModalInput
                       style={styles.modalInput}
                       value={topic}
+                      placeholder={t("menteeAppointmentModal.selectTopic")}
                       type="dropdown-single"
                       options={specMasters}
                       clicked={inputClicked[0]}

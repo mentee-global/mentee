@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Select, Input, InputNumber } from "antd";
 import "./css/Modal.scss";
 import { NodeExpandOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 
@@ -26,6 +27,7 @@ function ModalInput(props) {
     errorPresent,
     errorMessage,
   } = props;
+  const { t } = useTranslation();
   const [isClicked, setIsClicked] = useState(clicked);
 
   useEffect(() => {
@@ -148,7 +150,7 @@ function ModalInput(props) {
               bordered={false}
               style={{ width: "100%" }}
               placeholder={
-                props.placeholder ? props.placeholder : "Please select"
+                props.placeholder ? props.placeholder : t("common.pleaseSelect")
               }
               onChange={handleOnChange}
               value={props.value}
@@ -169,7 +171,7 @@ function ModalInput(props) {
               bordered={false}
               style={{ width: "100%" }}
               placeholder={
-                props.placeholder ? props.placeholder : "Please select"
+                props.placeholder ? props.placeholder : t("common.pleaseSelect")
               }
               onChange={handleOnChange}
               value={props.value}
@@ -190,7 +192,7 @@ function ModalInput(props) {
               allowClear
               bordered={false}
               style={{ width: "100%" }}
-              placeholder={placeholder || "Please select"}
+              placeholder={placeholder || t("common.pleaseSelect")}
               onChange={handleOnChange}
               value={props.value}
               tokenSeparators={[","]}
@@ -211,7 +213,7 @@ function ModalInput(props) {
               allowClear
               bordered={false}
               style={{ width: "100%" }}
-              placeholder={placeholder || "Please select"}
+              placeholder={placeholder || t("common.pleaseSelect")}
               onChange={handleOnChange}
               value={props.value}
               tokenSeparators={[","]}

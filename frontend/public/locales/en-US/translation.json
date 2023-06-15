@@ -286,7 +286,8 @@
     "meetingTopic": "Meeting Topic",
     "messageToMentor": "Message to Mentor",
     "allowCall": "Allow Calls",
-    "allowText": "Allow Texts"
+    "allowText": "Allow Texts",
+    "selectTopic": "Please select a topic"
   },
   "mentorVideoPage": {
     "specializationTag": "Specializations Tag",
@@ -332,6 +333,7 @@
     "clear": "Clear",
     "continue": "Continue",
     "deny": "Deny",
-    "delete": "Delete"
+    "delete": "Delete",
+    "pleaseSelect": "Please Select"
   }
 }

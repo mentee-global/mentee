@@ -386,7 +386,7 @@ function NavHeader({ history }) {
                 />
               </span>
             )}
-            {!isPartner && isLoggedIn() ? (
+            {isLoggedIn() ? (
               <span className="navigation-header-button">
                 <MenteeButton
                   loginButton
@@ -466,7 +466,7 @@ function NavHeader({ history }) {
                 <NotificationBell />
                 <div className="profile-name">
                   <b>
-                    {user.name}
+                    {isPartner ? user.organization : user.name}
                     <br />
                     {getUserType()}
                   </b>

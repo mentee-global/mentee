@@ -37,33 +37,24 @@ import MenteeButton from "../MenteeButton.js";
 import { useAuth } from "utils/hooks/useAuth";
 import { updateAndFetchUser } from "features/userSlice";
 import ModalInput from "components/ModalInput";
+import { useTranslation } from "react-i18next";
+
+//TODO: Fix this tabs rendering translation
 
 const Tabs = Object.freeze({
-  upcoming: {
-    title: "All Upcoming",
-    key: "upcoming",
-  },
-  // pending: {
-  //   title: "All Pending",
-  //   key: "pending",
-  // },
-  past: {
-    title: "All Past",
-    key: "past",
-  },
-  availability: {
-    title: "Availability",
-    key: "availability",
-  },
+  upcoming: "upcoming",
+  past: "past",
+  availability: "availability",
 });
-const validationMessage = {
-  required: "Please enter ${name}",
-  types: {
-    email: "Not a valid email",
-  },
-};
+
 function Appointments() {
+  const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
+  const tabTitles = {
+    upcoming: t("mentorAppointmentPage.upcoming"),
+    past: t("mentorAppointmentPage.past"),
+    availability: t("mentorAppointmentPage.availability"),
+  };
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -88,6 +79,13 @@ function Appointments() {
   const [form] = Form.useForm();
 
   const dispatch = useDispatch();
+
+  const validationMessage = {
+    required: t("mentorAppointmentPage.validName"),
+    types: {
+      email: t("mentorAppointmentPage.validEmail"),
+    },
+  };
 
   async function getMentees() {
     const mentee_data = await fetchMentees();
@@ -220,10 +218,12 @@ function Appointments() {
     var res = await createAppointment(appointment);
     if (res) {
       notification["success"]({
-        message: "You Have Successfully Booked an Appointment!",
+        message: t("mentorAppointmentPage.successBooking"),
       });
     } else {
-      notification["error"]({ message: "Error in booking appointment!" });
+      notification["error"]({
+        message: t("mentorAppointmentPage.errorBooking"),
+      });
     }
     setAppointmentClick(!appointmentClick);
     //reset value---------
@@ -348,9 +348,7 @@ function Appointments() {
             pointerEvents: user?.taking_appointments ? "initial" : "none",
           }}
         >
-          <div className="calendar-header">
-            Set available hours by specific date
-          </div>
+          <div className="calendar-header">{t("availability.title")}</div>
           <div className="calendar-container">
             <AvailabilityCalendar appointmentdata={data} />
           </div>
@@ -364,14 +362,14 @@ function Appointments() {
         <div className="empty-appointments-list appointments-background">
           <Result
             icon={<SmileOutlined style={{ color: "#A58123" }} />}
-            title="There are currently no appointments"
+            title={t("mentorAppointmentPage.noAppointments")}
           />
         </div>
       );
     }
     return (
       <div>
-        <b className="appointment-tabs-title">{currentTab.title}</b>
+        <b className="appointment-tabs-title">{tabTitles[currentTab.key]}</b>
         <div className="appointments-background">
           {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
@@ -398,9 +396,9 @@ function Appointments() {
       case Tabs.upcoming: // Fall through
       case Tabs.pending: // Fall through
       case Tabs.past:
-        return <Appointments data={appointments[currentTab.key]} />;
+        return <Appointments data={appointments[currentTab]} />;
       case Tabs.availability:
-        return <AvailabilityTab data={appointments["upcoming"]} />;
+        return <AvailabilityTab data={appointments[Tabs.upcoming]} />;
       default:
         return <div />;
     }
@@ -419,7 +417,7 @@ function Appointments() {
         <Col span={18} className="appointments-column">
           <div className="appointments-welcome-box">
             <div className="appointments-welcome-text">
-              Welcome, {user?.name}
+              {t("mentorAppointmentPage.welcome", { name: user?.name })}
             </div>
             <Checkbox
               className="modal-availability-checkbox-text t-a-c-b"
@@ -430,7 +428,7 @@ function Appointments() {
               checked={takeAppoinment}
               style={{ marginLeft: "1%" }}
             >
-              Taking appointments
+              {t("mentorAppointmentPage.takingAppointments")}
             </Checkbox>
             <div
               style={{
@@ -441,15 +439,16 @@ function Appointments() {
             >
               <MenteeButton
                 style={{ marginBottom: "10px" }}
-                content={<b>Add Appointment</b>}
+                theme="dark"
+                content={<b>{t("mentorAppointmentPage.addAppointment")}</b>}
                 onClick={() => {
                   setManualModalvisible(true);
                 }}
               ></MenteeButton>
             </div>
             <div className="appointments-tabs">
-              {Object.values(Tabs).map((tab, index) => (
-                <Tab tab={tab} text={tab.title} key={index} />
+              {Object.keys(tabTitles).map((tab, index) => (
+                <Tab tab={tab} text={tabTitles[tab]} key={index} />
               ))}
             </div>
           </div>
@@ -467,7 +466,7 @@ function Appointments() {
             type="primary"
             htmlType="submit"
             form={"manual-form"}
-            content="Save"
+            content={t("common.save")}
           />,
         ]}
       >
@@ -481,7 +480,7 @@ function Appointments() {
             className="modal-mentee-appointment-header-text"
             style={{ marginTop: "10px" }}
           >
-            Mentee*
+            {t("common.mentee")}*
           </div>
           <Form.Item
             name="Mentee"
@@ -495,7 +494,7 @@ function Appointments() {
               value={selectedMenteeID}
               type="dropdown-single-object"
               options={menteeArr}
-              placeholder="Please select Mentee"
+              placeholder={t("mentorAppointmentPage.selectMentee")}
               // clicked={inputClicked[0]}
               index={0}
               handleClick={() => {}}
@@ -508,7 +507,7 @@ function Appointments() {
             className="modal-mentee-appointment-header-text"
             style={{ marginTop: "10px" }}
           >
-            Meeting Date*
+            {t("mentorAppointmentPage.meetingDate")}*
           </div>
           <div className="timeslot-wrapper" style={{ display: "flex" }}>
             <Form.Item
@@ -522,6 +521,7 @@ function Appointments() {
               <DatePicker
                 style={{ marginRight: "10px" }}
                 value={selectedDate}
+                placeholder={t("mentorAppointmentPage.selectDate")}
                 onChange={(e) => setSelectedDate(e)}
               />
             </Form.Item>
@@ -534,7 +534,7 @@ function Appointments() {
               ]}
             >
               <TimePicker
-                placeholder="Start time"
+                placeholder={t("mentorAppointmentPage.startTime")}
                 use12Hours={false}
                 format="h:mm A"
                 value={selectedStarttime}
@@ -558,7 +558,7 @@ function Appointments() {
               ]}
             >
               <TimePicker
-                placeholder="End time"
+                placeholder={t("mentorAppointmentPage.endTime")}
                 use12Hours={false}
                 format="h:mm A"
                 value={selectedEndtime}
@@ -570,7 +570,7 @@ function Appointments() {
             Select date in the past
           </p> */}
           <p id="time_error" className="error">
-            Invalid Times.Please select times correctly
+            {t("mentorAppointmentPage.invalidTimeslot")}
           </p>
           <div
             className="modal-mentee-appointment-header-text"
@@ -590,7 +590,7 @@ function Appointments() {
               value={topic}
               type="dropdown-single"
               options={specMasters}
-              placeholder="Please select Topic"
+              placeholder={t("mentorAppointmentPage.selectTopic")}
               // clicked={inputClicked[0]}
               index={1}
               handleClick={() => {}}
@@ -601,7 +601,7 @@ function Appointments() {
             className="modal-mentee-appointment-header-text"
             style={{ marginTop: "10px" }}
           >
-            Meeting Summary*
+            {t("mentorAppointmentPage.meetingSummary")}*
           </div>
           <Form.Item
             name="Summary"

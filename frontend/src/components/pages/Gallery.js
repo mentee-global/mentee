@@ -17,8 +17,10 @@ import {
 import { useAuth } from "utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 import ModalInput from "../ModalInput";
+import { useTranslation } from "react-i18next";
 
 function Gallery() {
+  const { t } = useTranslation();
   const { isAdmin, isMentor, isMentee, profileId } = useAuth();
   const [mentors, setMentors] = useState([]);
   const [mentee, setMentee] = useState();
@@ -156,12 +158,14 @@ function Gallery() {
   }
 
   function getLessonTypes(offers_group_appointments, offers_in_person) {
-    let output = "1-on-1 | virtual";
+    let output = `${t("mentorProfile.oneOnOne")} | ${t(
+      "mentorProfile.virtual"
+    )}`;
     if (offers_group_appointments) {
-      output += " | group";
+      output += ` | ${t("mentorProfile.group")}`;
     }
     if (offers_in_person) {
-      output += " | in person";
+      output += ` | ${t("mentorProfile.inPerson")}`;
     }
     return output;
   }
@@ -193,14 +197,13 @@ function Gallery() {
     <Result
       status="403"
       title="403"
-      subTitle="Sorry, you are not authorized to access this page."
+      subTitle={t("gallery.unauthorizedAccess")}
     />
   ) : (
     <>
       <MenteeButton
         onClick={() => setMobileFilterVisible(true)}
-        content="Filter"
-        theme="back"
+        content={t("gallery.filter")}
         id="filter-button"
       />
       <Modal
@@ -210,12 +213,12 @@ function Gallery() {
         visible={mobileFilterVisible}
         footer={[
           <MenteeButton
-            content="Apply"
+            content={t("common.apply")}
             key="apply"
             onClick={() => setMobileFilterVisible(false)}
           />,
           <MenteeButton
-            content="Cancel"
+            content={t("common.cancel")}
             key="cancel"
             onClick={() => {
               setMobileFilterVisible(false);
@@ -227,15 +230,17 @@ function Gallery() {
         ]}
       >
         <div className="no-margin gallery-filter-container">
-          <div className="gallery-filter-header">Filter By:</div>
+          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
           <Input
-            placeholder="Search by name"
+            placeholder={t("gallery.searchByName")}
             prefix={<SearchOutlined />}
             style={styles.searchInput}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <div className="gallery-filter-section-title">Partner</div>
+          <div className="gallery-filter-section-title">
+            {t("common.partner")}
+          </div>
           <ModalInput
             type="dropdown-single-object"
             title=""
@@ -248,14 +253,18 @@ function Gallery() {
             style={styles.searchInput}
             prefix={<SearchOutlined />}
           />
-          <div className="gallery-filter-section-title">Specializations</div>
+          <div className="gallery-filter-section-title">
+            {t("common.specializations")}
+          </div>
           <Checkbox.Group
             defaultValue={specializations}
             options={specMasters}
             onChange={(checked) => setSpecializations(checked)}
             value={specializations}
           />
-          <div className="gallery-filter-section-title">Languages</div>
+          <div className="gallery-filter-section-title">
+            {t("common.languages")}
+          </div>
           <Checkbox.Group
             defaultValue={languages}
             options={langMasters}
@@ -267,14 +276,16 @@ function Gallery() {
 
       <div className="gallery-container">
         <div className="gallery-filter-container mobile-invisible">
-          <div className="gallery-filter-header">Filter By:</div>
+          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
           <Input
-            placeholder="Search by name"
+            placeholder={t("gallery.searchByName")}
             prefix={<SearchOutlined />}
             style={styles.searchInput}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <div className="gallery-filter-section-title">Partner</div>
+          <div className="gallery-filter-section-title">
+            {t("common.partner")}
+          </div>
           <ModalInput
             type="dropdown-single-object"
             title=""
@@ -287,13 +298,17 @@ function Gallery() {
             style={styles.searchInput}
             prefix={<SearchOutlined />}
           />
-          <div className="gallery-filter-section-title">Specializations</div>
+          <div className="gallery-filter-section-title">
+            {t("common.specializations")}
+          </div>
           <Checkbox.Group
             defaultValue={specializations}
             options={specMasters}
             onChange={(checked) => setSpecializations(checked)}
           />
-          <div className="gallery-filter-section-title">Languages</div>
+          <div className="gallery-filter-section-title">
+            {t("common.languages")}
+          </div>
           <Checkbox.Group
             defaultValue={languages}
             options={langMasters}

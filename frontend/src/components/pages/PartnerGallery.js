@@ -8,8 +8,10 @@ import { useLocation } from "react-router";
 import { useAuth } from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
 import { REGIONS, SDGS } from "utils/consts";
+import { useTranslation } from "react-i18next";
 
 function PartnerGallery() {
+  const { t } = useTranslation();
   const { isAdmin, isPartner } = useAuth();
   const [partners, setPartners] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -60,14 +62,13 @@ function PartnerGallery() {
     <Result
       status="403"
       title="403"
-      subTitle="Sorry, you are not authorized to access this page."
+      subTitle={t("gallery.unauthorizedAccess")}
     />
   ) : (
     <>
       <MenteeButton
         onClick={() => setMobileFilterVisible(true)}
-        content="Filter"
-        theme="back"
+        content={t("gallery.filter")}
         id="filter-button"
       />
       <Modal
@@ -77,12 +78,12 @@ function PartnerGallery() {
         visible={mobileFilterVisible}
         footer={[
           <MenteeButton
-            content="Apply"
+            content={t("common.apply")}
             key="apply"
             onClick={() => setMobileFilterVisible(false)}
           />,
           <MenteeButton
-            content="Cancel"
+            content={t("common.cancel")}
             key="cancel"
             onClick={() => {
               setMobileFilterVisible(false);
@@ -93,32 +94,40 @@ function PartnerGallery() {
         ]}
       >
         <div className="no-margin gallery-filter-container">
-          <div className="gallery-filter-header">Filter By:</div>
-          <div className="gallery-filter-section-title">Organization </div>
+          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.organization")}{" "}
+          </div>
           <Input
-            placeholder="Search by Organization Name"
+            placeholder={t("gallery.organizationPlaceholder")}
             prefix={<SearchOutlined />}
             style={styles.searchInput}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
 
-          <div className="gallery-filter-section-title">REGIONS</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.regions")}
+          </div>
           <Checkbox.Group
             defaultValue={regions}
             options={REGIONS}
             onChange={(checked) => setRegions(checked)}
             value={regions}
           />
-          <div className="gallery-filter-section-title">Project Topics</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.projectTopics")}
+          </div>
           <Input
-            placeholder="Search by project Topics "
+            placeholder={t("gallery.projectTopicsPlaceholder")}
             prefix={<SearchOutlined />}
             style={styles.searchInput}
             value={query2}
             onChange={(e) => setQuery2(e.target.value)}
           />
-          <div className="gallery-filter-section-title">SDGS</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.sdgs")}
+          </div>
           <Checkbox.Group
             defaultValue={sdgs}
             options={SDGS}
@@ -130,30 +139,38 @@ function PartnerGallery() {
 
       <div className="gallery-container">
         <div className="gallery-filter-container mobile-invisible">
-          <div className="gallery-filter-header">Filter By:</div>
-          <div className="gallery-filter-section-title">Organization</div>
+          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.organization")}
+          </div>
           <Input
-            placeholder="Search by organization "
+            placeholder={t("gallery.organizationPlaceholder")}
             prefix={<SearchOutlined />}
             style={styles.searchInput}
             onChange={(e) => setQuery(e.target.value)}
           />
 
-          <div className="gallery-filter-section-title">REGIONS</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.regions")}
+          </div>
           <Checkbox.Group
             defaultValue={regions}
             options={REGIONS}
             onChange={(checked) => setRegions(checked)}
           />
-          <div className="gallery-filter-section-title">Project Topics</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.projectTopics")}
+          </div>
           <Input
-            placeholder="Search by project Topics "
+            placeholder={t("gallery.projectTopicsPlaceholder")}
             prefix={<SearchOutlined />}
             style={styles.searchInput}
             value={query2}
             onChange={(e) => setQuery2(e.target.value)}
           />
-          <div className="gallery-filter-section-title">SDGS</div>
+          <div className="gallery-filter-section-title">
+            {t("gallery.sdgs")}
+          </div>
           <Checkbox.Group
             defaultValue={sdgs}
             options={SDGS}

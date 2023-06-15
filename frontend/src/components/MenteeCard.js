@@ -12,6 +12,7 @@ import MenteeButton from "./MenteeButton";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Gallery.scss";
 import { formatLinkForHref } from "utils/misc";
+import { useTranslation } from "react-i18next";
 const { Title, Text } = Typography;
 
 const styles = {
@@ -36,6 +37,8 @@ const styles = {
 };
 
 function MenteeCard(props) {
+  const { t } = useTranslation();
+
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;
@@ -70,14 +73,14 @@ function MenteeCard(props) {
           <div className="gallery-info-section">
             <h3 className="mentee-gallery-headers">
               <EnvironmentOutlined style={styles.icon} />
-              Location:
+              {t("commonProfile.location")}:
             </h3>
             <Text className="gallery-list-items">{props.location}</Text>
           </div>
         )}
         <h3 className="mentee-gallery-headers">
           <MessageOutlined style={styles.icon} />
-          Languages:
+          {t("common.languages")}:
         </h3>
         <Text className="gallery-list-items">
           {truncate(props.languages.join(", "), 30)}
@@ -97,7 +100,7 @@ function MenteeCard(props) {
         )}
         {props.pair_partner && props.pair_partner.email && (
           <>
-            <h3 className="gallery-headers">Partner:</h3>
+            <h3 className="gallery-headers">{t("common.partner")}:</h3>
             <Avatar
               size={45}
               src={props.pair_partner.image && props.pair_partner.image.url}
@@ -112,7 +115,7 @@ function MenteeCard(props) {
       <div className="gallery-card-footer">
         <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>
           <div className="gallery-button">
-            <MenteeButton content="View Profile" />
+            <MenteeButton content={t("gallery.viewProfile")} />
           </div>
         </NavLink>
       </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Avatar, Layout, Input, Button, Spin, Modal, TimePicker } from "antd";
 import { withRouter } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
-import moment from "moment";
+import moment from "moment-timezone";
 import { SendOutlined } from "@ant-design/icons";
 import { useAuth } from "utils/hooks/useAuth";
 import {
@@ -18,8 +18,10 @@ import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import socketInvite from "utils/socket";
 import MenteeButton from "./MenteeButton.js";
 import AvailabilityCalendar from "components/AvailabilityCalendar";
+import { useTranslation } from "react-i18next";
 
 function MessagesChatArea(props) {
+  const { t } = useTranslation();
   const { Content, Header } = Layout;
   const { socket } = props;
   const { TextArea } = Input;
@@ -224,16 +226,7 @@ function MessagesChatArea(props) {
     setUpdateContent(!updateContent);
   };
   const handleSuccessBooking = (chatMsg) => {
-    let today = new Date();
-    let date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-    let time =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    let dateTime = date + " " + time;
+    let dateTime = moment().utc();
     const msg = {
       body: chatMsg,
       message_read: false,
@@ -244,6 +237,7 @@ function MessagesChatArea(props) {
     socket.emit("send", msg);
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
+    msg.time = moment().local().format("LLL");
     props.addMyMessage(msg);
     setMessageText("");
     getAppointments();
@@ -261,16 +255,7 @@ function MessagesChatArea(props) {
     };
     setIsInviteSent(true);
     socketInvite.emit("invite", inviteMsg);
-    let today = new Date();
-    let date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-    let time =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    let dateTime = date + " " + time;
+    let dateTime = moment().utc();
     var availabes_in_future = [];
     availabeInFuture.map((avail_item, index) => {
       if (index < 5) {
@@ -279,7 +264,7 @@ function MessagesChatArea(props) {
       return true;
     });
     const msg = {
-      body: "Thank you for reaching out for a session! You can select any option that works for you in the below links and book an appointment.",
+      body: t("messages.sendInviteBody"),
       message_read: false,
       sender_id: profileId,
       recipient_id: activeMessageId,
@@ -292,6 +277,7 @@ function MessagesChatArea(props) {
     }, 1000);
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
+    msg.time = moment().local().format("LLL");
     props.addMyMessage(msg);
     setMessageText("");
     return;
@@ -301,16 +287,7 @@ function MessagesChatArea(props) {
     if (!messageText.replace(/\s/g, "").length) {
       return;
     }
-    let today = new Date();
-    let date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-    let time =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    let dateTime = date + " " + time;
+    let dateTime = moment().utc();
     const msg = {
       body: messageText,
       message_read: false,
@@ -324,6 +301,7 @@ function MessagesChatArea(props) {
     }, 1000);
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["recipient_id"] = { $oid: msg["recipient_id"] };
+    msg.time = moment().local().format("LLL");
     props.addMyMessage(msg);
     setMessageText("");
     return;
@@ -331,7 +309,7 @@ function MessagesChatArea(props) {
   if (!activeMessageId || !messages || !messages.length) {
     return (
       <div className="no-messages">
-        <div className="start-convo">Start a conversation today!</div>
+        <div className="start-convo">{t("messages.startConversation")}</div>
       </div>
     );
   }
@@ -372,7 +350,7 @@ function MessagesChatArea(props) {
                     shape="round"
                     className="regular-button"
                   >
-                    Availability
+                    {t("messages.availability")}
                   </Button>
                 </div>
               )}
@@ -388,7 +366,7 @@ function MessagesChatArea(props) {
                       shape="round"
                       className="regular-button"
                     >
-                      Send invite
+                      {t("messages.sendInvite")}
                     </Button>
                   </div>
                 )}
@@ -453,14 +431,14 @@ function MessagesChatArea(props) {
                                           available_item.start_time.$date
                                         )
                                         .local()
-                                        .format("MM/DD/YY h:mm a")}{" "}
+                                        .format("LLL")}{" "}
                                       ~{" "}
                                       {moment
                                         .parseZone(
                                           available_item.end_time.$date
                                         )
                                         .local()
-                                        .format("h:mm a")}
+                                        .format("LT")}
                                     </div>
                                   ) : (
                                     <MenteeAppointmentModal
@@ -479,14 +457,14 @@ function MessagesChatArea(props) {
                                             available_item.start_time.$date
                                           )
                                           .local()
-                                          .format("MM/DD/YY h:mm a") +
+                                          .format("LLL") +
                                         " ~ " +
                                         moment
                                           .parseZone(
                                             available_item.end_time.$date
                                           )
                                           .local()
-                                          .format("h:mm a")
+                                          .format("LTS")
                                       }
                                       index={total_index}
                                     />
@@ -501,7 +479,10 @@ function MessagesChatArea(props) {
                     <span style={{ opacity: "40%" }}>
                       {block.time
                         ? block.time
-                        : new Date(block.created_at.$date).toLocaleString()}
+                        : moment
+                            .utc(block.created_at.$date)
+                            .local()
+                            .format("LLL")}
                     </span>
                   </div>
                 </div>
@@ -515,7 +496,7 @@ function MessagesChatArea(props) {
           <>
             <TextArea
               className="message-input"
-              placeholder="Send a message..."
+              placeholder={t("messages.sendMessagePlaceholder")}
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               autoSize={{ minRows: 1, maxRows: 3 }}
@@ -536,7 +517,7 @@ function MessagesChatArea(props) {
 
       <Modal
         className="calendar-modal"
-        title="Select available hours by specific date"
+        title={t("messages.availabilityTitle")}
         visible={isOpenCalendarModal}
         onCancel={() => setIsOpenCalendarModal(false)}
         footer={[
@@ -546,7 +527,7 @@ function MessagesChatArea(props) {
             onClick={() => {
               setIsOpenCalendarModal(false);
             }}
-            content="Close"
+            content={t("common.cancel")}
           />,
         ]}
       >

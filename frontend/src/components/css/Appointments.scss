@@ -39,7 +39,7 @@
 }
 
 .ar-modal-container {
-  //min-height: 450px;
+  min-height: 450px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -113,7 +113,6 @@
 .personal-info {
   position: relative;
   top: 20px;
-  height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

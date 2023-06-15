@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 import { Calendar, Modal, Badge, TimePicker } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
@@ -13,6 +14,7 @@ import "./css/AvailabilityCalendar.scss";
  * Moment.js documentation: {@link https://momentjs.com/docs/}
  */
 function AvailabilityCalendar(props) {
+  const { t } = useTranslation();
   const { profileId } = useAuth();
   const [saved, setSaved] = useState({}); //  Days with set appointments
   const [value, setValue] = useState(moment());
@@ -132,8 +134,6 @@ function AvailabilityCalendar(props) {
   const handleTimeChange = (index, value, timeslot) => {
     let times = [...timeSlots];
     times[index][timeslot] = moment(value);
-
-    //date.format("YYYY-MM-DD") + " " + value
     setTimeSlots(times);
   };
 
@@ -347,7 +347,7 @@ function AvailabilityCalendar(props) {
         dateCellRender={dateCellRender}
       />
       <Modal
-        title="Select times for each available session per day"
+        title={t("availability.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={[
@@ -355,18 +355,18 @@ function AvailabilityCalendar(props) {
             key="clear"
             type="back"
             onClick={handleClear}
-            content="Clear all"
+            content={t("common.clearAll")}
           />,
           <MenteeButton
             key="save"
             type="primary"
             onClick={handleOk}
-            content="Save"
+            content={t("common.save")}
           />,
         ]}
       >
         <h3 className="hours">
-          <b>Hours </b> | <i>{tz.replace("_", " ")}</i>
+          <b>{t("availability.hours")} </b> | <i>{tz.replace("_", " ")}</i>
         </h3>
         <br></br>
         <div className="date-header">
@@ -423,9 +423,12 @@ function AvailabilityCalendar(props) {
         </div>
         <div className="add-times">
           <p id="error" className="error">
-            Invalid Times.Please select times correctly
+            {t("availability.errorInvalid")}
           </p>
-          <MenteeButton onClick={addTimeSlots} content="Add hours" />
+          <MenteeButton
+            onClick={addTimeSlots}
+            content={t("availability.addHours")}
+          />
         </div>
       </Modal>
     </>

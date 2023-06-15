@@ -151,7 +151,7 @@ def contact_mentor(mentor_id):
             message_read=False,
             sender_id=mentee_id,
             recipient_id=mentor_id,
-            created_at=datetime.today().isoformat(),
+            created_at=datetime.utcnow().isoformat(),
         )
 
         socketio.emit(mentor_id, json.loads(message.to_json()))

@@ -10,8 +10,10 @@ import { updateAndFetchUser } from "features/userSlice";
 import { ACCOUNT_TYPE } from "utils/consts.js";
 import { useAuth } from "utils/hooks/useAuth";
 import "../css/Videos.scss";
+import { useTranslation } from "react-i18next";
 
 function Videos() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [videos, setVideos] = useState([]);
   const user = useSelector((state) => state.user.user);
@@ -134,8 +136,8 @@ function Videos() {
     return (
       <div className="videos-container">
         <div className="videos-table-title">
-          <h1>Specializations Tag</h1>
-          <h1>Delete</h1>
+          <h1>{t("mentorVideoPage.specializationTag")}</h1>
+          <h1>{t("common.delete")}</h1>
         </div>
         {filtered &&
           filtered.map((video, index) => (
@@ -157,17 +159,21 @@ function Videos() {
   return (
     <div style={{ height: "100%" }}>
       <div className="videos-header">
-        <div className="videos-header-title">Welcome, {user?.name}</div>
+        <div className="videos-header-title">
+          {t("mentorVideoPage.welcome", { name: user?.name })}
+        </div>
       </div>
       <div className="filter-card">
-        <h1 className="videos-upload-title">Your Uploads</h1>
+        <h1 className="videos-upload-title">
+          {t("mentorVideoPage.yourUploads")}
+        </h1>
         <div className="filters">
           <Input.Search
             style={{ width: 300 }}
             value={titleFilter}
             onChange={handleSearchChange}
             onSearch={(value) => handleSearchVideo(value)}
-            placeholder="Title"
+            placeholder={t("mentorVideoPage.videoTitle")}
           />
           <Select
             style={{ width: 200 }}
@@ -176,7 +182,7 @@ function Videos() {
           >
             {formatDropdownItems(specMasters)}
           </Select>
-          <Button onClick={handleClearFilters}>Clear</Button>
+          <Button onClick={handleClearFilters}>{t("common.clear")}</Button>
         </div>
       </div>
       <Row>

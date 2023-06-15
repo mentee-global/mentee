@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import { Avatar, Typography, Tooltip } from "antd";
 import {
@@ -10,12 +10,12 @@ import {
   YoutubeOutlined,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
-import { useAuth } from "../utils/hooks/useAuth";
 
 import MenteeButton from "./MenteeButton";
 
 import "./css/Gallery.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
@@ -41,7 +41,7 @@ const styles = {
 };
 
 function PartnerCard(props) {
-  const { isAdmin, isPartner } = useAuth();
+  const { t } = useTranslation();
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;
@@ -76,7 +76,7 @@ function PartnerCard(props) {
           <div className="gallery-info-section">
             <h3 className="gallery-headers">
               <EnvironmentOutlined style={styles.icon} />
-              Location:
+              {t("commonProfile.location")}:
             </h3>
             <Text className="gallery-list-items">
               {truncate(props.location, 45)}
@@ -85,7 +85,7 @@ function PartnerCard(props) {
         )}
         <h3 className="gallery-headers">
           <StarOutlined style={styles.icon} />
-          regions:
+          {t("gallery.regions")}:
         </h3>
         <Text className="gallery-list-items">
           {truncate(props.regions.join(", "), 87)}
@@ -133,7 +133,7 @@ function PartnerCard(props) {
       <div className="gallery-card-footer">
         <NavLink to={`/gallery/${ACCOUNT_TYPE.PARTNER}/${props.id}`}>
           <div className="gallery-button">
-            <MenteeButton content="View Profile" />
+            <MenteeButton content={t("gallery.viewProfile")} />
           </div>
         </NavLink>
       </div>

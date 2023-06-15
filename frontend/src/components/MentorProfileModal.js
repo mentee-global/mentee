@@ -483,7 +483,7 @@ function MentorProfileModal(props) {
     <span>
       <span className="mentor-profile-button">
         <MenteeButton
-          content={<b>Edit Profile</b>}
+          content={<b>{t("commonProfile.editProfile")}</b>}
           onClick={() => setModalVisible(true)}
         />
       </span>
@@ -565,7 +565,7 @@ function MentorProfileModal(props) {
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title={t("commonProfile.professionalTitle")}
+                title={t("mentorProfile.professionalTitle")}
                 clicked={inputClicked[1]}
                 index={1}
                 handleClick={handleClick}

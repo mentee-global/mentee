@@ -18,12 +18,13 @@
     "resetPassword": "Por favor, restablezca la contraseña. ",
     "serverError": "Algo salió mal.",
     "reregisterAccount": "Vuelva a registrar su cuenta.",
-    "existingEmail": "Este correo electrónico ya está en uso en otro rol"
+    "existingEmail": "Este correo electrónico ya está en uso en otro rol",
+    "wrongRole": "Rol incorrecto, elija el rol correcto de la cuenta"
   },
   "apply": {
     "emailPrompt": "Por favor ingrese su correo electrónico para iniciar el proceso de solicitud",
     "existingAccount": "Ya tiene una cuenta, será redirigido a la página de inicio de sesión",
-    "partnerVerify": "Su correo electrónico no está pre-registrado como Socio. Favor de contactar admin@menteeglobal.org",
+    "partnerVerify": "Su correo electrónico no está pre-registrado como Socio. ",
     "confirmation": "¡Gracias por aplicar! ",
     "approved": "Tu solicitud ha sido aprobada continúa entrenando",
     "completeTrainings": "Confirmo que he completado todos los entrenamientos",
@@ -92,7 +93,12 @@
     "professionalTitle": "Título profesional",
     "availableInPerson": "¿Disponible en persona?",
     "availableGroupAppointments": "¿Disponible para citas de grupo?",
-    "specializations": "Especializaciones"
+    "specializations": "Especializaciones",
+    "takingAppointments": "Tomando citas?",
+    "oneOnOne": "1 en 1",
+    "virtual": "virtual",
+    "group": "grupo",
+    "inPerson": "en persona"
   },
   "partnerProfile": {
     "organizationName": "Organización/Institución/Corporación Nombre Completo",
@@ -106,6 +112,7 @@
     "collaborationProjects": "Abierto a la colaboración en proyectos"
   },
   "commonProfile": {
+    "editProfile": "Editar perfil",
     "welcome": "Bienvenido. ",
     "missingFields": "Error o faltan campos, inténtalo de nuevo.",
     "fieldTooLong": "El campo es demasiado largo",
@@ -130,9 +137,13 @@
     "education": "Educación",
     "addMoreEducation": "Añadir más",
     "addVideos": "Agregar videos",
+    "video": "Video",
+    "videos": "Vídeos",
     "introductionVideo": "¡Preséntate a través de un video de YouTube!",
     "pasteLink": "Pegue el enlace",
-    "errorTrainingSteps": "Complete los pasos de solicitud y capacitación primero"
+    "errorTrainingSteps": "Complete los pasos de solicitud y capacitación primero",
+    "videoIntroduction": "Introducción",
+    "sendMessage": "Enviar mensaje"
   },
   "forgotPassword": {
     "title": "Has olvidado tu contraseña",
@@ -170,10 +181,123 @@
   },
   "navHeader": {
     "editProfile": "Editar perfil",
-    "findPartner": "Socios",
-    "findMentor": "Mentores",
-    "findMentee": "Aprendices",
+    "findPartner": "Encuentra un compañero",
+    "findMentor": "Encuentre un mentor",
+    "findMentee": "Encuentre un aprendiz",
     "yourPortal": "Tu Portal"
+  },
+  "sidebars": {
+    "appointments": "Equipo",
+    "profile": "Perfil",
+    "videos": "Tus vídeos"
+  },
+  "profile": {
+    "contactInfo": "Datos de contacto",
+    "edit": "Editar",
+    "validateEmail": "¡Por favor ingrese un correo electrónico válido!",
+    "validatePhone": "¡Ingrese un número de teléfono válido!",
+    "emailNotifications": "Notificaciónes de Correo Electrónico",
+    "textNotifications": "notificaciones de texto"
+  },
+  "mentorContactModal": {
+    "reachOutTo": "Llegar a {{mentorName}}",
+    "basicInfoNotice": "Su nombre y correo electrónico serán enviados a este mentor",
+    "areaInterest": "Elija áreas de interés",
+    "areaInterstValidate": "¡Seleccione un área de interés!",
+    "communicationMethod": "¿Cuál es su método de comunicación preferido?",
+    "communicationMethodValidate": "¡Seleccione el método de comunicación!",
+    "introPrompt": "Preséntese brevemente y lo que busca obtener de un Mentor.",
+    "introPromptValidate": "¡Por favor escribe una introducción!",
+    "introExample": "¡Hola Jim! ",
+    "thankYou": "¡Gracias!",
+    "confirmationText": "¡Tu mentor se pondrá en contacto contigo pronto! "
+  },
+  "gallery": {
+    "unauthorizedAccess": "Lo sentimos, no está autorizado para acceder a esta página.",
+    "searchByName": "Buscar por nombre",
+    "filterBy": "Filtrado por:",
+    "filter": "Filtrar",
+    "speaks": "Habla:",
+    "viewProfile": "Ver perfil",
+    "menteeInterests": "Intereses de los aprendices",
+    "organization": "Organización",
+    "organizationPlaceholder": "Buscar por organización",
+    "regions": "Regiones",
+    "projectTopics": "Temas del proyecto",
+    "projectTopicsPlaceholder": "Buscar por tema de proyecto",
+    "sdgs": "ODS"
+  },
+  "messages": {
+    "sidebarTitle": "Mis mensajes",
+    "startConversation": "¡Comienza una conversación hoy!",
+    "availability": "Disponibilidad",
+    "sendInvite": "Enviar invitación",
+    "sendMessagePlaceholder": "Enviar un mensaje",
+    "availabilityTitle": "Seleccione las horas disponibles por fecha específica",
+    "sendInviteBody": "¡Gracias por contactarnos para una sesión! "
+  },
+  "availability": {
+    "title": "Seleccionar horarios para cada sesión disponible por día",
+    "hours": "Horas",
+    "errorInvalid": "Tiempos inválidos. ",
+    "addHours": "Agregar horas"
+  },
+  "mentorAppointmentPage": {
+    "successBooking": "¡Ha reservado una cita con éxito!",
+    "errorBooking": "¡Error, inténtalo de nuevo!",
+    "noAppointments": "Actualmente no hay citas",
+    "upcoming": "Todo lo que viene",
+    "past": "todo pasado",
+    "availability": "Disponibilidad",
+    "validName": "Por favor ingrese el nombre",
+    "validEmail": "No es un correo electrónico válido",
+    "welcome": "Bienvenido, {{name}}!",
+    "takingAppointments": "Tomando citas?",
+    "addAppointment": "Agregar cita",
+    "selectMentee": "Por favor, seleccione un aprendiz",
+    "meetingDate": "Fecha de la reunión",
+    "selectDate": "Seleccione fecha",
+    "startTime": "Hora de inicio",
+    "endTime": "Hora de finalización",
+    "invalidTimeslot": "Tiempos inválidos. ",
+    "meetingTopic": "Tema de la reunión",
+    "selectTopic": "Por favor seleccione un tema",
+    "meetingSummary": "Resumen de la reunión",
+    "noPhone": "Sin número de teléfono",
+    "allowCall": "Permitir llamadas",
+    "allowText": "Permitir textos",
+    "allowCallText": "Permitir llamadas",
+    "seekingHelpIn": "Buscando ayuda en",
+    "note": "Nota"
+  },
+  "menteeAppointmentModal": {
+    "successBooking": "¡Ha reservado una cita con éxito!",
+    "successBookingDescription": "Cita con {{mentorName}} en {{notifDate}} de {{timeInterval}}",
+    "errorBooking": "¡Error, inténtalo de nuevo!",
+    "bookingButton": "Reservar una cita",
+    "sessionTitle": "Sesión de Mentoría con {{mentorName}}",
+    "selectDateTime": "Seleccione una fecha",
+    "selectTime": "Seleccione una hora",
+    "noAvailability": "No disponible",
+    "noChosenAppointment": "Hora de la cita no elegida",
+    "meetingInfoTitle": "Información de la reunión",
+    "bookAppointment": "Reservar una cita",
+    "sessionWith": "Sesión de Mentoría con {{mentorName}}",
+    "meetingTopic": "Tema de la reunión",
+    "messageToMentor": "Mensaje al mentor",
+    "allowCall": "Permitir llamadas",
+    "allowText": "Permitir textos"
+  },
+  "mentorVideoPage": {
+    "specializationTag": "Etiqueta de especializaciones",
+    "welcome": "Bienvenido, {{name}}!",
+    "yourUploads": "Tus cargas",
+    "videoTitle": "Título",
+    "addVideo": "Añadir video",
+    "videoTitleValidate": "Por favor ingrese un título",
+    "videoTitlePlaceholder": "Introduce un título",
+    "videoLink": "Enlace de video",
+    "videoTagValidate": "Seleccione una etiqueta"
   },
   "common": {
     "login": "Acceso",
@@ -182,10 +306,10 @@
     "logout": "Cerrar sesión",
     "submit": "Entregar",
     "save": "Ahorrar",
-    "welcome": "Bienvenido a <1>MENTEE!</1>",
-    "mentee": "Aprendiz",
+    "welcome": "Bienvenido a <1>APRENDIZADO!</1>",
+    "mentee": "aprendiz",
     "mentor": "Mentor",
-    "partner": "Socio",
+    "partner": "Pareja",
     "admin": "Administración",
     "firstName": "Nombre de pila",
     "lastName": "Apellido",
@@ -194,6 +318,20 @@
     "inputPrompt": "Por favor agregue entrada",
     "invalidUrl": "URL invalida",
     "messages": "Mensajes",
-    "apply": "Aplicar"
+    "message": "Mensaje",
+    "apply": "Aplicar",
+    "contactMe": "Contáctame",
+    "other": "Otro",
+    "phone": "Teléfono",
+    "whatsapp": "WhatsApp",
+    "cancel": "Cancelar",
+    "specializations": "Especializaciones",
+    "languages": "Idiomas",
+    "back": "Atrás",
+    "clearAll": "Limpiar todo",
+    "clear": "Claro",
+    "continue": "Continuar",
+    "deny": "Denegar",
+    "delete": "Borrar"
   }
 }

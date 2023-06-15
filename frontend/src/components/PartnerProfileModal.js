@@ -10,10 +10,12 @@ import { useAuth } from "utils/hooks/useAuth";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
+import { useTranslation } from "react-i18next";
 
 const INITIAL_NUM_INPUTS = 30;
 
 function PartnerProfileModal(props) {
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(
@@ -286,12 +288,12 @@ function PartnerProfileModal(props) {
     <span>
       <span className="mentor-profile-button">
         <MenteeButton
-          content={<b>Edit Profile</b>}
+          content={<b>{t("commonProfile.editProfile")}</b>}
           onClick={() => setModalVisible(true)}
         />
       </span>
       <Modal
-        title="Edit Profile"
+        title={t("commonProfile.editProfile")}
         visible={modalVisible}
         onCancel={() => {
           setModalVisible(false);
@@ -303,7 +305,9 @@ function PartnerProfileModal(props) {
         footer={
           <div>
             {validate && (
-              <b style={styles.alertToast}>Missing or Error Fields</b>
+              <b style={styles.alertToast}>
+                {t("commonProfile.missingFields")}
+              </b>
             )}
             <Button
               type="default"
@@ -312,7 +316,7 @@ function PartnerProfileModal(props) {
               onClick={handleSaveEdits}
               loading={saving}
             >
-              Save
+              {t("common.save")}
             </Button>
           </div>
         }
@@ -352,7 +356,7 @@ function PartnerProfileModal(props) {
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="Organization/Institution/Corporation Full Name*"
+                title={t("partnerProfile.organizationName")}
                 clicked={inputClicked[0]}
                 index={0}
                 handleClick={handleClick}
@@ -361,14 +365,14 @@ function PartnerProfileModal(props) {
                 valid={isValid[0]}
                 validate={validate}
                 errorPresent={organization && organization.length > 50}
-                errorMessage="organization field is too long."
+                errorMessage={t("commonProfile.fieldTooLong")}
               />
             </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="Current & Upcoming Project Topics *"
+                title={t("partnerProfile.projectNames")}
                 clicked={inputClicked[22]}
                 index={22}
                 handleClick={handleClick}
@@ -377,14 +381,14 @@ function PartnerProfileModal(props) {
                 valid={isValid[22]}
                 validate={validate}
                 errorPresent={topics && topics.length > 50}
-                errorMessage="organization field is too long."
+                errorMessage={t("commonProfile.fieldTooLong")}
               />
             </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="Contact Person's Full Name *"
+                title={t("partnerProfile.contactFullName")}
                 clicked={inputClicked[23]}
                 index={1}
                 handleClick={handleClick}
@@ -400,7 +404,7 @@ function PartnerProfileModal(props) {
                 type="textarea"
                 maxRows={3}
                 hasBorder={false}
-                title="Brief Introduction to Your Org/Inst/Corp *"
+                title={t("partnerProfile.briefIntro")}
                 clicked={inputClicked[2]}
                 index={2}
                 handleClick={handleClick}
@@ -409,7 +413,7 @@ function PartnerProfileModal(props) {
                 valid={isValid[7]}
                 validate={validate}
                 errorPresent={intro && intro.length > 1002}
-                errorMessage="intro field is too long."
+                errorMessage={t("commonProfile.fieldTooLong")}
               />
             </div>
             <div className="divider" />
@@ -422,7 +426,7 @@ function PartnerProfileModal(props) {
                 onChange={handleOpenGrants}
                 checked={open_grants}
               >
-                Open to Collaboration on Grants
+                {t("partnerProfile.collaborationGrants")}
               </Checkbox>
               <div></div>
               <Checkbox
@@ -433,14 +437,14 @@ function PartnerProfileModal(props) {
                 onChange={handleopenprojects}
                 checked={open_projects}
               >
-                Open to Collaboration on Projects
+                {t("partnerProfile.collaborationProjects")}
               </Checkbox>
             </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="Headquarters Location (City, Country)"
+                title={t("partnerProfile.location")}
                 clicked={inputClicked[5]}
                 index={5}
                 handleClick={handleClick}
@@ -449,14 +453,14 @@ function PartnerProfileModal(props) {
                 valid={isValid[10]}
                 validate={validate}
                 errorPresent={location && location.length > 70}
-                errorMessage="Location field is too long."
+                errorMessage={t("commonProfile.fieldTooLong")}
               />
             </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
                 type="dropdown-multiple"
-                title="regions"
+                title={t("partnerProfile.regionsWork")}
                 clicked={inputClicked[7]}
                 index={7}
                 handleClick={handleClick}
@@ -472,7 +476,7 @@ function PartnerProfileModal(props) {
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="Website"
+                title={t("commonProfile.website")}
                 clicked={inputClicked[6]}
                 index={6}
                 handleClick={handleClick}
@@ -481,12 +485,12 @@ function PartnerProfileModal(props) {
                 valid={isValid[3]}
                 validate={validate}
                 errorPresent={website && !validateUrl(website)}
-                errorMessage="Invalid URL."
+                errorMessage={t("common.invalidUrl")}
               />
               <ModalInput
                 style={styles.modalInput}
                 type="text"
-                title="LinkedIn"
+                title={t("commonProfile.linkedin")}
                 clicked={inputClicked[8]}
                 index={8}
                 handleClick={handleClick}
@@ -495,14 +499,14 @@ function PartnerProfileModal(props) {
                 valid={isValid[2]}
                 validate={validate}
                 errorPresent={linkedin && !validateUrl(linkedin)}
-                errorMessage="Invalid URL."
+                errorMessage={t("common.invalidUrl")}
               />
             </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
                 type="dropdown-multiple"
-                title="sdgs"
+                title={t("partnerProfile.developmentGoals")}
                 clicked={inputClicked[9]}
                 index={9}
                 handleClick={handleClick}

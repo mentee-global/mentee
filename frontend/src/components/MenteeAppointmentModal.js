@@ -14,6 +14,7 @@ import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
 import MenteeVerificationModal from "./MenteeVerificationModal";
+import { useTranslation } from "react-i18next";
 
 const DAY = 24 * 60 * 60 * 1000;
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -29,8 +30,8 @@ const validationMessage = {
 };
 
 function MenteeAppointmentModal(props) {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
-  const [content, setContent] = useState("");
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
   const [daySlots, setDaySlots] = useState([]);
@@ -232,13 +233,17 @@ function MenteeAppointmentModal(props) {
           timeInterval
       );
       notification[type]({
-        message: "You Have Successfully Booked an Appointment!",
-        description: `Appointment with ${mentorName} on ${notifDate} from ${timeInterval}`,
+        message: t("menteeAppointmentModal.successBooking"),
+        description: t("menteeAppointmentModal.successBookingDescription", {
+          mentorName,
+          notifDate,
+          timeInterval,
+        }),
       });
     } else if (type === ERROR) {
       props.handleSuccessBooking("Error in booking appointment!");
       notification[type]({
-        message: "Error in booking appointment!",
+        message: t("menteeAppointmentModal.errorBooking"),
       });
     }
   }
@@ -246,7 +251,11 @@ function MenteeAppointmentModal(props) {
     <span>
       <MenteeVerificationModal
         content={
-          <b>{props.btn_title ? props.btn_title : "Book Appointment"}</b>
+          <b>
+            {props.btn_title
+              ? props.btn_title
+              : t("menteeAppointmentModal.bookingButton")}
+          </b>
         }
         style={{ width: "180px" }}
         onVerified={() => setCalendarModalVisible(true)}
@@ -268,8 +277,14 @@ function MenteeAppointmentModal(props) {
               size={80}
               icon={<UserOutlined />}
             />
-            <h3 className="bold">Mentoring Session with {props.mentor_name}</h3>
-            <h2 className="bold">Select a Date & Time</h2>
+            <h3 className="bold">
+              {t("menteeAppointmentModal.sessionTitle", {
+                mentorName: props.mentor_name,
+              })}
+            </h3>
+            <h2 className="bold">
+              {t("menteeAppointmentModal.selectDateTime")}
+            </h2>
           </div>
           <div className="modal-mentee-appointment-datetime-container">
             <div className="modal-mentee-appointment-datetime-container-header">
@@ -281,7 +296,7 @@ function MenteeAppointmentModal(props) {
               />
               <div className="modal-mentee-appointment-datetime-header">
                 <div className="modal-mentee-appointment-datetime-text">
-                  Select Time
+                  {t("menteeAppointmentModal.selectTime")}
                 </div>
                 <div className="modal-mentee-appointment-datetime-timezone">
                   {tz}
@@ -289,7 +304,7 @@ function MenteeAppointmentModal(props) {
               </div>
               <div className="modal-mentee-appointment-timeslots-container">
                 {!isAvailable ? (
-                  <h1>There are no appointments available</h1>
+                  <h1>{t("menteeAppointmentModal.noAvailability")}</h1>
                 ) : (
                   dayTimeSlots.map((timeSlot, index) => (
                     <div
@@ -318,12 +333,14 @@ function MenteeAppointmentModal(props) {
             </div>
             <div className="modal-mentee-appointment-datetime-container-footer">
               {validate && (
-                <b style={styles.alertToast}>Appointment Time Not Chosen</b>
+                <b style={styles.alertToast}>
+                  {t("menteeAppointmentModal.noChosenAppointment")}
+                </b>
               )}
 
               <MenteeButton
                 width={120}
-                content={"continue"}
+                content={t("common.continue")}
                 onClick={() => {
                   updateModal();
                 }}
@@ -334,14 +351,14 @@ function MenteeAppointmentModal(props) {
       </Modal>
       <Modal
         forceRender
-        title="Meeting Information"
+        title={t("menteeAppointmentModal.meetingInfoTitle")}
         visible={formModalVisible}
         onCancel={closeModals}
         className="appointment-info-modal"
         style={{ overflow: "hidden" }}
         footer={
           <MenteeButton
-            content="Book Appointment"
+            content={t("menteeAppointmentModal.bookAppointment")}
             htmlType="submit"
             form={
               "appointment-form" +
@@ -362,7 +379,9 @@ function MenteeAppointmentModal(props) {
           <div className="modal-container">
             <div className="modal-mentee-appointment-heading-container">
               <div className="modal-mentee-appointment-heading-text">
-                Mentoring Session with {props.mentor_name}
+                {t("menteeAppointmentModal.sessionWith", {
+                  mentorName: props.mentor_name,
+                })}
               </div>
               <div className="modal-mentee-appointment-heading-divider" />
               <div className="modal-mentee-appointment-heading-date-container">
@@ -378,7 +397,7 @@ function MenteeAppointmentModal(props) {
               <div className="flex flex-row">
                 <div className="modal-mentee-appointment-col-container">
                   <div className="modal-mentee-appointment-header-text">
-                    Meeting Topic*
+                    {t("menteeAppointmentModal.meetingTopic")}
                   </div>
                   <Form.Item
                     name="topic"
@@ -401,7 +420,7 @@ function MenteeAppointmentModal(props) {
                   </Form.Item>
                   <div className="modal-mentee-appointment-message-container">
                     <div className="modal-mentee-appointment-header-text">
-                      Message to Mentor*
+                      {t("menteeAppointmentModal.messageToMentor")}
                     </div>
                     <Form.Item
                       name="message"
@@ -426,7 +445,7 @@ function MenteeAppointmentModal(props) {
                   <div className="modal-mentee-availability-switches">
                     <div className="modal-mentee-availability-switch">
                       <div className="modal-mentee-availability-switch-text">
-                        Allow calls
+                        {t("menteeAppointmentModal.allowCall")}
                       </div>
                       <Switch
                         size="small"
@@ -437,7 +456,7 @@ function MenteeAppointmentModal(props) {
                     </div>
                     <div className="modal-mentee-availability-switch">
                       <div className="modal-mentee-availability-switch-text">
-                        Allow texting
+                        {t("menteeAppointmentModal.allowText")}
                       </div>
                       <Switch
                         size="small"

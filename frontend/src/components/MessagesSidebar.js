@@ -3,8 +3,10 @@ import { withRouter } from "react-router-dom";
 
 import { Divider, Input, Layout } from "antd";
 import MessageCard from "./MessageCard";
+import { useTranslation } from "react-i18next";
 
 function MessagesSidebar(props) {
+  const { t } = useTranslation();
   const { Sider } = Layout;
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -79,7 +81,7 @@ function MessagesSidebar(props) {
       className="messages-sidebar-background"
     >
       <div className="messages-sidebar-header">
-        <h1>My Messages</h1>
+        <h1>{t("messages.sidebarTitle")}</h1>
       </div>
       <Divider className="header-divider" orientation="left"></Divider>
       <div className="messages-search-input">

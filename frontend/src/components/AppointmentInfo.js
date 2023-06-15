@@ -5,6 +5,7 @@ import MenteeButton from "./MenteeButton";
 import { EnvironmentOutlined, CommentOutlined } from "@ant-design/icons";
 
 import "./css/Appointments.scss";
+import { useTranslation } from "react-i18next";
 
 const Tabs = Object.freeze({
   upcoming: {
@@ -26,6 +27,7 @@ const Tabs = Object.freeze({
 });
 
 function AppointmentInfo(props) {
+  const { t } = useTranslation();
   const [mentee, setMentee] = useState({});
 
   useEffect(() => {
@@ -75,7 +77,7 @@ function AppointmentInfo(props) {
       return (
         <div style={{ textAlign: "center" }}>
           <MenteeButton
-            content={"Deny"}
+            content={t("common.deny")}
             border={"1px solid red"}
             onClick={() =>
               props.handleAppointmentClick(props.modalAppointment.id, false)
@@ -106,7 +108,7 @@ function AppointmentInfo(props) {
     if (!phone_number) {
       return (
         <div>
-          <div className="ar-phone">No Phone Number</div>
+          <div className="ar-phone">{t("mentorAppointmentPage.noPhone")}</div>
           <div className="ar-email">{mentee.email}</div>
         </div>
       );
@@ -114,24 +116,26 @@ function AppointmentInfo(props) {
     if (allow_calls && allow_texts) {
       return (
         <div>
-          <div className="ar-phone">Allows calls/texts</div>
-          <div className="ar-phone">Call/text: {phone_number}</div>
+          <div className="ar-phone">
+            {t("mentorAppointmentPage.allowCallText")}
+          </div>
+          <div className="ar-phone">{phone_number}</div>
           <div className="ar-email">{mentee.email}</div>
         </div>
       );
     } else if (allow_calls) {
       return (
         <div>
-          <div className="ar-phone">Allows calls</div>
-          <div className="ar-phone">Call: {phone_number}</div>
+          <div className="ar-phone">{t("mentorAppointmentPage.allowCall")}</div>
+          <div className="ar-phone">{phone_number}</div>
           <div className="ar-email">{mentee.email}</div>
         </div>
       );
-    } else if (allow_texts === true) {
+    } else if (allow_texts) {
       return (
         <div>
-          <div className="ar-phone">Allows texts</div>
-          <div className="ar-phone">Text: {phone_number}</div>
+          <div className="ar-phone">{t("mentorAppointmentPage.allowText")}</div>
+          <div className="ar-phone">{phone_number}</div>
           <div className="ar-email">{mentee.email}</div>
         </div>
       );
@@ -177,9 +181,11 @@ function AppointmentInfo(props) {
         <div className="ar-apt-date">{props.modalAppointment.date}</div>
         <div className="ar-apt-time">{props.modalAppointment.time}</div>
         <div className="vl"></div>
-        <div className="ar-categories-title">Seeking help in:</div>
+        <div className="ar-categories-title">
+          {t("mentorAppointmentPage.seekingHelpIn")}:
+        </div>
         <div className="ar-categories">{props.modalAppointment.topic}</div>
-        <div className="ar-goals-title">Note:</div>
+        <div className="ar-goals-title">{t("mentorAppointmentPage.note")}:</div>
         <div className="ar-goals">{props.modalAppointment.message}</div>
       </div>
     </Modal>

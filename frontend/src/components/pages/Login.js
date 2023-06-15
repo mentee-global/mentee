@@ -70,7 +70,7 @@ function Login() {
       );
       if (rightRole) {
         if (rightRole !== RoleObj.type) {
-          displayError("wrong Role please choose account right Role");
+          displayError(t("loginErrors.wrongRole"));
           setLoading(false);
           setLoggingIn(false);
           setLoggingIn(false);

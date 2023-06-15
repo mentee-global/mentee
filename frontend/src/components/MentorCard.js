@@ -17,6 +17,7 @@ import MenteeButton from "./MenteeButton";
 
 import "./css/Gallery.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
@@ -42,6 +43,7 @@ const styles = {
 };
 
 function MentorCard(props) {
+  const { t } = useTranslation();
   const { isAdmin, isMentor, isMentee } = useAuth();
   const [favorite, setFavorite] = useState(props.favorite);
   function getImage(image) {
@@ -78,7 +80,7 @@ function MentorCard(props) {
               {truncate(props.professional_title, 35)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
-              Speaks: {truncate(props.languages.join(", "), 20)}
+              {t("gallery.speaks")} {truncate(props.languages.join(", "), 20)}
             </Title>
           </div>
           {isMentee && (
@@ -100,7 +102,7 @@ function MentorCard(props) {
           <div className="gallery-info-section">
             <h3 className="gallery-headers">
               <EnvironmentOutlined style={styles.icon} />
-              Location:
+              {t("commonProfile.location")}
             </h3>
             <Text className="gallery-list-items">
               {truncate(props.location, 30)}
@@ -109,7 +111,7 @@ function MentorCard(props) {
         )}
         <h3 className="gallery-headers">
           <StarOutlined style={styles.icon} />
-          Specializations:
+          {t("common.specializations")}:
         </h3>
         <Text className="gallery-list-items">
           {truncate(props.specializations.join(", "), 60)}
@@ -155,7 +157,7 @@ function MentorCard(props) {
         )}
         {props.pair_partner && props.pair_partner.email && (
           <>
-            <h3 className="gallery-headers">Partner:</h3>
+            <h3 className="gallery-headers">{t("common.partner")}:</h3>
             <Avatar
               size={45}
               src={props.pair_partner.image && props.pair_partner.image.url}
@@ -170,7 +172,7 @@ function MentorCard(props) {
       <div className="gallery-card-footer">
         <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
           <div className="gallery-button">
-            <MenteeButton content="View Profile" />
+            <MenteeButton content={t("gallery.viewProfile")} />
           </div>
         </NavLink>
       </div>

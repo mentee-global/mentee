@@ -4,8 +4,10 @@ import { getDisplaySpecializations } from "utils/api";
 import { formatDropdownItems } from "utils/inputs";
 import "../components/css/Videos.scss";
 import ReactPlayer from "react-player";
+import { useTranslation } from "react-i18next";
 
 const VideoSubmit = (props) => {
+  const { t } = useTranslation();
   const [specMasters, setSpecMasters] = useState([]);
   useEffect(() => {
     async function getMasters() {
@@ -15,7 +17,7 @@ const VideoSubmit = (props) => {
   }, []);
   return (
     <div className="video-submit-card">
-      <div className="video-submit-title">Add Video</div>
+      <div className="video-submit-title">{t("mentorVideoPage.addVideo")}</div>
       <div
         style={{
           padding: "16px",
@@ -35,11 +37,11 @@ const VideoSubmit = (props) => {
             rules={[
               {
                 required: true,
-                message: "Please input a video title",
+                message: t("mentorVideoPage.videoTitleValidate"),
               },
             ]}
           >
-            <Input placeholder="Video Title (e.g. 'Welcome!', 'How to do taxes')" />
+            <Input placeholder={t("mentorVideoPage.videoTitle")} />
           </Form.Item>
           <Form.Item
             name="url"
@@ -47,7 +49,7 @@ const VideoSubmit = (props) => {
             rules={[
               {
                 required: true,
-                message: "Please input a valid video link",
+                message: t("mentorVideoPage.videoLinkValidate"),
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
@@ -55,13 +57,13 @@ const VideoSubmit = (props) => {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error("Please input a valid video link")
+                    new Error(t("mentorVideoPage.videoLinkValidate"))
                   );
                 },
               }),
             ]}
           >
-            <Input placeholder="Video Link" />
+            <Input placeholder={t("mentorVideoPage.videoLink")} />
           </Form.Item>
           <Form.Item
             name="tag"
@@ -69,12 +71,12 @@ const VideoSubmit = (props) => {
             rules={[
               {
                 required: true,
-                message: "Please select a tag",
+                message: t("mentorVideoPage.videoTagValidate"),
               },
             ]}
           >
             <Select
-              placeholder="Specializations"
+              placeholder={t("common.specializations")}
               className="video-submit-input"
             >
               {formatDropdownItems(specMasters)}
@@ -82,7 +84,7 @@ const VideoSubmit = (props) => {
           </Form.Item>
           <Form.Item className="video-submit-input">
             <Button type="primary" htmlType="submit">
-              Submit
+              {t("common.submit")}
             </Button>
           </Form.Item>
         </Form>

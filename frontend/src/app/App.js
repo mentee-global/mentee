@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, BrowserRouter as Router } from "react-router-dom";
 import Appointments from "components/pages/Appointments";
 import MenteeAppointments from "components/pages/MenteeAppointments";
@@ -31,254 +31,277 @@ import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
 import PartnerGallery from "components/pages/PartnerGallery";
 import { ProvideAuth } from "utils/hooks/useAuth";
+import { ConfigProvider } from "antd";
+import { useTranslation } from "react-i18next";
+import { getAntdLocale } from "utils/misc";
 
 function App() {
+  const { i18n } = useTranslation();
+  const [antdLocale, setAntdLocale] = React.useState(
+    getAntdLocale(i18n.language)
+  );
+  console.log("App.JS AntdLocale", antdLocale);
+
+  useEffect(() => {
+    setAntdLocale(getAntdLocale(i18n.language));
+  }, [i18n.language]);
+
   return (
     <ProvideAuth>
-      <Router>
-        <NavHeader />
-        <SocketComponent />
-        <Route
-          path="/"
-          exact
-          component={() => (
-            <Navigation content={<Home />} page="home" needsAuth={false} />
-          )}
-        />
-        <Route
-          path="/appointments"
-          component={() => (
-            <Navigation
-              content={<Appointments />}
-              page="appointments"
-              needsAuth={true}
-            />
-          )}
-        />
+      <ConfigProvider locale={antdLocale}>
+        <Router>
+          <NavHeader />
+          <SocketComponent />
+          <Route
+            path="/"
+            exact
+            component={() => (
+              <Navigation content={<Home />} page="home" needsAuth={false} />
+            )}
+          />
+          <Route
+            path="/appointments"
+            component={() => (
+              <Navigation
+                content={<Appointments />}
+                page="appointments"
+                needsAuth={true}
+              />
+            )}
+          />
 
-        <Route
-          path="/mentee-appointments"
-          component={() => (
-            <Navigation
-              content={<MenteeAppointments />}
-              page="mentee-appointments"
-              needsAuth={true}
-            />
-          )}
-        />
-        <Route
-          path="/videos"
-          component={() => (
-            <Navigation content={<Videos />} page="videos" needsAuth={true} />
-          )}
-        />
-        <Route
-          path="/profile"
-          component={() => (
-            <Navigation content={<Profile />} page="profile" needsAuth={true} />
-          )}
-        />
-        <Route
-          path="/gallery"
-          exact
-          component={() => (
-            <Navigation content={<Gallery />} needsAuth={false} />
-          )}
-        />
-        <Route
-          path="/partner-gallery"
-          exact
-          component={() => (
-            <Navigation content={<PartnerGallery />} needsAuth={false} />
-          )}
-        />
+          <Route
+            path="/mentee-appointments"
+            component={() => (
+              <Navigation
+                content={<MenteeAppointments />}
+                page="mentee-appointments"
+                needsAuth={true}
+              />
+            )}
+          />
+          <Route
+            path="/videos"
+            component={() => (
+              <Navigation content={<Videos />} page="videos" needsAuth={true} />
+            )}
+          />
+          <Route
+            path="/profile"
+            component={() => (
+              <Navigation
+                content={<Profile />}
+                page="profile"
+                needsAuth={true}
+              />
+            )}
+          />
+          <Route
+            path="/gallery"
+            exact
+            component={() => (
+              <Navigation content={<Gallery />} needsAuth={false} />
+            )}
+          />
+          <Route
+            path="/partner-gallery"
+            exact
+            component={() => (
+              <Navigation content={<PartnerGallery />} needsAuth={false} />
+            )}
+          />
 
-        <Route
-          path="/application-page"
-          exact
-          component={() => <Navigation content={<Apply />} needsAuth={false} />}
-        />
+          <Route
+            path="/application-page"
+            exact
+            component={() => (
+              <Navigation content={<Apply />} needsAuth={false} />
+            )}
+          />
 
-        <Route
-          path="/mentee-gallery"
-          exact
-          component={() => (
-            <Navigation content={<MenteeGallery />} needsAuth={false} />
-          )}
-        />
+          <Route
+            path="/mentee-gallery"
+            exact
+            component={() => (
+              <Navigation content={<MenteeGallery />} needsAuth={false} />
+            )}
+          />
 
-        <Route
-          path="/gallery/:type/:id"
-          component={(props) => (
-            <Navigation
-              content={
-                <PublicProfile
-                  id={props.match.params.id}
-                  accountType={props.match.params.type}
-                />
-              }
-              needsAuth={false}
-            />
-          )}
-        />
-        <Route
-          path="/new_training/:type/:id"
-          component={(props) => (
-            <Navigation
-              content={
-                <NewTrainingConfirm
-                  id={props.match.params.id}
-                  accountType={props.match.params.type}
-                />
-              }
-              needsAuth={false}
-            />
-          )}
-        />
+          <Route
+            path="/gallery/:type/:id"
+            component={(props) => (
+              <Navigation
+                content={
+                  <PublicProfile
+                    id={props.match.params.id}
+                    accountType={props.match.params.type}
+                  />
+                }
+                needsAuth={false}
+              />
+            )}
+          />
+          <Route
+            path="/new_training/:type/:id"
+            component={(props) => (
+              <Navigation
+                content={
+                  <NewTrainingConfirm
+                    id={props.match.params.id}
+                    accountType={props.match.params.type}
+                  />
+                }
+                needsAuth={false}
+              />
+            )}
+          />
 
-        <Route
-          path="/login"
-          component={() => <Navigation content={<Login />} needsAuth={false} />}
-        />
-        <Route
-          path="/admin"
-          component={() => (
-            <Navigation content={<AdminLogin />} needsAuth={false} />
-          )}
-        />
-        <Route
-          path="/register"
-          component={() => (
-            <Navigation content={<Register />} needsAuth={false} />
-          )}
-        />
-        <Route
-          path="/verify"
-          component={() => (
-            <Navigation content={<Verify />} needsAuth={false} />
-          )}
-        />
-        <Route
-          path="/forgot-password"
-          component={() => (
-            <Navigation content={<ForgotPassword />} needsAuth={false} />
-          )}
-        />
+          <Route
+            path="/login"
+            component={() => (
+              <Navigation content={<Login />} needsAuth={false} />
+            )}
+          />
+          <Route
+            path="/admin"
+            component={() => (
+              <Navigation content={<AdminLogin />} needsAuth={false} />
+            )}
+          />
+          <Route
+            path="/register"
+            component={() => (
+              <Navigation content={<Register />} needsAuth={false} />
+            )}
+          />
+          <Route
+            path="/verify"
+            component={() => (
+              <Navigation content={<Verify />} needsAuth={false} />
+            )}
+          />
+          <Route
+            path="/forgot-password"
+            component={() => (
+              <Navigation content={<ForgotPassword />} needsAuth={false} />
+            )}
+          />
 
-        <Route
-          path="/organizer"
-          component={() => (
-            <Navigation
-              content={<ApplicationOrganizer isMentor={true} />}
-              needsAuth={true}
-              page="applications"
-            />
-          )}
-        />
-        <Route
-          path="/menteeOrganizer"
-          component={() => (
-            <Navigation
-              content={<ApplicationOrganizer isMentor={false} />}
-              needsAuth={true}
-              page="applications"
-            />
-          )}
-        />
-        <Route
-          path="/account-data"
-          component={() => (
-            <Navigation
-              content={<AdminAccountData />}
-              needsAuth={true}
-              page="accountData"
-            />
-          )}
-        />
-        <Route
-          path="/all-appointments"
-          component={() => (
-            <Navigation
-              content={<AdminAppointmentData />}
-              needsAuth={true}
-              page="allAppointments"
-            />
-          )}
-        />
-        <Route
-          path="/trainings"
-          component={() => (
-            <Navigation
-              content={<Trainings />}
-              needsAuth={true}
-              page="trainings"
-            />
-          )}
-        />
-        <Route
-          path="/languages"
-          component={() => (
-            <Navigation
-              content={<Languages />}
-              needsAuth={true}
-              page="languages"
-            />
-          )}
-        />
-        <Route
-          path="/specializations"
-          component={() => (
-            <Navigation
-              content={<Specializations />}
-              needsAuth={true}
-              page="specializations"
-            />
-          )}
-        />
-        <Route
-          path="/messages-details"
-          component={() => (
-            <Navigation
-              content={<AdminMessages />}
-              needsAuth={true}
-              page="messages"
-            />
-          )}
-        />
-        <Route
-          path="/verified-emails"
-          component={() => (
-            <Navigation
-              content={<AdminVerifiedEmails />}
-              needsAuth={true}
-              page="verifiedEmails"
-            />
-          )}
-        />
-        <Route
-          path="/not-found"
-          component={() => (
-            <Navigation content={<NotFound />} needsAuth={false} />
-          )}
-        />
-        {/* <Route
+          <Route
+            path="/organizer"
+            component={() => (
+              <Navigation
+                content={<ApplicationOrganizer isMentor={true} />}
+                needsAuth={true}
+                page="applications"
+              />
+            )}
+          />
+          <Route
+            path="/menteeOrganizer"
+            component={() => (
+              <Navigation
+                content={<ApplicationOrganizer isMentor={false} />}
+                needsAuth={true}
+                page="applications"
+              />
+            )}
+          />
+          <Route
+            path="/account-data"
+            component={() => (
+              <Navigation
+                content={<AdminAccountData />}
+                needsAuth={true}
+                page="accountData"
+              />
+            )}
+          />
+          <Route
+            path="/all-appointments"
+            component={() => (
+              <Navigation
+                content={<AdminAppointmentData />}
+                needsAuth={true}
+                page="allAppointments"
+              />
+            )}
+          />
+          <Route
+            path="/trainings"
+            component={() => (
+              <Navigation
+                content={<Trainings />}
+                needsAuth={true}
+                page="trainings"
+              />
+            )}
+          />
+          <Route
+            path="/languages"
+            component={() => (
+              <Navigation
+                content={<Languages />}
+                needsAuth={true}
+                page="languages"
+              />
+            )}
+          />
+          <Route
+            path="/specializations"
+            component={() => (
+              <Navigation
+                content={<Specializations />}
+                needsAuth={true}
+                page="specializations"
+              />
+            )}
+          />
+          <Route
+            path="/messages-details"
+            component={() => (
+              <Navigation
+                content={<AdminMessages />}
+                needsAuth={true}
+                page="messages"
+              />
+            )}
+          />
+          <Route
+            path="/verified-emails"
+            component={() => (
+              <Navigation
+                content={<AdminVerifiedEmails />}
+                needsAuth={true}
+                page="verifiedEmails"
+              />
+            )}
+          />
+          <Route
+            path="/not-found"
+            component={() => (
+              <Navigation content={<NotFound />} needsAuth={false} />
+            )}
+          />
+          {/* <Route
         path="/messages"
         component={() => (
           <Navigation content={<Messages />} page="messages" needsAuth={true} ignoreSidebar={true} />
         )}
       /> */}
-        <Route
-          path="/messages/:receiverId"
-          component={() => (
-            <Navigation
-              content={<Messages />}
-              page="messages"
-              needsAuth={true}
-              ignoreSidebar={true}
-            />
-          )}
-        />
-      </Router>
+          <Route
+            path="/messages/:receiverId"
+            component={() => (
+              <Navigation
+                content={<Messages />}
+                page="messages"
+                needsAuth={true}
+                ignoreSidebar={true}
+              />
+            )}
+          />
+        </Router>
+      </ConfigProvider>
     </ProvideAuth>
   );
 }

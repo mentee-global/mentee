@@ -146,7 +146,7 @@ function AppointmentInfo(props) {
   return (
     <Modal
       visible={props.modalVisible}
-      title="Appointment Details"
+      title={t("sidebars.appointments")}
       width="449.91px"
       onCancel={() => props.setModalVisible(false)}
       footer={displayButtons()}

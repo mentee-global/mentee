@@ -225,12 +225,11 @@ function MenteeAppointmentModal(props) {
   function openNotificationWithIcon(type, timeInterval) {
     if (type === SUCCESS) {
       props.handleSuccessBooking(
-        "You Have Successfully Booked an Appointment with " +
-          mentorName +
-          " on " +
-          notifDate +
-          " from " +
-          timeInterval
+        t("menteeAppointmentModal.successBookingMessage", {
+          mentorName,
+          notifDate,
+          timeInterval,
+        })
       );
       notification[type]({
         message: t("menteeAppointmentModal.successBooking"),

@@ -308,7 +308,8 @@
     "messageToMentor": "پیام به منتور",
     "allowCall": "اجازه تماس ها",
     "allowText": "متن‌ها را مجاز کنید",
-    "selectTopic": "لطفا موضوعی را انتخاب کنید"
+    "selectTopic": "لطفا موضوعی را انتخاب کنید",
+    "successBookingMessage": "شما با موفقیت یک قرار ملاقات با {{mentorName}} در {{notifDate}} از بازه زمانی {{timeInterval}} رزرو کرده اید"
   },
   "mentorVideoPage": {
     "specializationTag": "تگ تخصص ها",

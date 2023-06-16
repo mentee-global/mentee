@@ -189,7 +189,7 @@
     "yourPortal": "Tu Portal"
   },
   "sidebars": {
-    "appointments": "Equipo",
+    "appointments": "Citas",
     "profile": "Perfil",
     "videos": "Tus vídeos"
   },
@@ -289,7 +289,8 @@
     "messageToMentor": "Mensaje al mentor",
     "allowCall": "Permitir llamadas",
     "allowText": "Permitir textos",
-    "selectTopic": "Por favor seleccione un tema"
+    "selectTopic": "Por favor seleccione un tema",
+    "successBookingMessage": "Has reservado exitosamente una cita con {{mentorName}} el {{notifDate}} en el intervalo de tiempo {{timeInterval}}"
   },
   "mentorVideoPage": {
     "specializationTag": "Etiqueta de especializaciones",

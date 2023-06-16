@@ -22,6 +22,8 @@ i18n
       escapeValue: false, // not needed for react as it escapes by default
     },
     initImmediate: false,
+    caches: ["localStorage", "cookie"],
   });
+  
 
 export default i18n;

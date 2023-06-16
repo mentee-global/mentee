@@ -18,8 +18,8 @@ function Videos() {
   const [videos, setVideos] = useState([]);
   const user = useSelector((state) => state.user.user);
   const [filtered, setFiltered] = useState([]);
-  const [selectFilter, setSelectFilter] = useState("");
-  const [titleFilter, setTitleFilter] = useState("");
+  const [selectFilter, setSelectFilter] = useState();
+  const [titleFilter, setTitleFilter] = useState();
   const [specMasters, setSpecMasters] = useState([]);
   const [form] = Form.useForm();
   const { profileId } = useAuth();
@@ -176,6 +176,7 @@ function Videos() {
             placeholder={t("mentorVideoPage.videoTitle")}
           />
           <Select
+            placeholder={t("common.specializations")}
             style={{ width: 200 }}
             onChange={(value) => filterSpecialization(value)}
             value={selectFilter}

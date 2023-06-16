@@ -289,7 +289,8 @@
     "messageToMentor": "Mensagem ao Mentor",
     "allowCall": "Permitir chamadas",
     "allowText": "Permitir Textos",
-    "selectTopic": "Selecione um tópico"
+    "selectTopic": "Selecione um tópico",
+    "successBookingMessage": "Você reservou com sucesso um compromisso com {{mentorName}} em {{notifDate}} no intervalo de tempo {{timeInterval}}"
   },
   "mentorVideoPage": {
     "specializationTag": "Etiqueta de Especializações",

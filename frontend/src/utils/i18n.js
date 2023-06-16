@@ -24,6 +24,5 @@ i18n
     initImmediate: false,
     caches: ["localStorage", "cookie"],
   });
-  
 
 export default i18n;

@@ -29,7 +29,6 @@ export const validateUrl = (value) => {
 };
 
 export const getAntdLocale = (currentLanguage) => {
-  console.log("getAntdLocale", currentLanguage);
   switch (currentLanguage) {
     case "es-US":
       return esEs;

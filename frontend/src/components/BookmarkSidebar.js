@@ -23,6 +23,7 @@ function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
         <MenteeButton
           content={t("bookmarkSidebar.addMentors")}
           radius="6px"
+          style={{ minWidth: "fit-content" }}
           onClick={() => history.push("/gallery")}
         />
       </div>

@@ -340,7 +340,6 @@ function NavHeader({ history }) {
                 <LoginVerificationModal
                   content={<b>{t("navHeader.findMentor")}</b>}
                   theme="light"
-                  width="9em"
                   border={
                     cur_url === "gallery" ? "1px solid lightseagreen" : "none"
                   }
@@ -359,7 +358,6 @@ function NavHeader({ history }) {
                 <LoginVerificationModal
                   content={<b>{t("navHeader.findMentee")}</b>}
                   theme="light"
-                  width="9em"
                   border={
                     cur_url === "mentee-gallery"
                       ? "1px solid lightseagreen"

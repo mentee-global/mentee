@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
+import { Button, Modal, Checkbox, Avatar, Upload, Space, Divider } from "antd";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import {
@@ -694,7 +694,9 @@ function MenteeProfileModal(props) {
             <div className="modal-education-header">
               {t("commonProfile.addVideos")}
             </div>
-            <div>{t("commonProfile.introductionVideo")}</div>
+            <div className="modal-subtitle">
+              {t("commonProfile.introductionVideo")}
+            </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}
@@ -713,14 +715,18 @@ function MenteeProfileModal(props) {
             <div className="modal-education-header">
               {t("menteeProfile.accountPrivacy")}
             </div>
-            <Checkbox
-              onChange={handlePrivacyChange}
-              value={privacy}
-              checked={privacy}
-            >
-              {t("menteeProfile.privateAccount")}
-            </Checkbox>
-            <div>{t("menteeProfile.privateAccountInfo")}</div>
+
+            <div className="modal-subtitle">
+              <Checkbox
+                onChange={handlePrivacyChange}
+                value={privacy}
+                checked={privacy}
+              >
+                {t("menteeProfile.privateAccount")}
+              </Checkbox>
+              <br />
+              {t("menteeProfile.privateAccountInfo")}
+            </div>
           </div>
         </div>
       </Modal>

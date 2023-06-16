@@ -315,7 +315,6 @@ function MenteeAppointmentModal(props) {
                     >
                       <MenteeButton
                         key={index}
-                        width={170}
                         content={
                           moment(timeSlot.start_time.$date).format("hh:mm A") +
                           "-" +

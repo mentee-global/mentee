@@ -2,9 +2,9 @@
   "homepage": {
     "isExistingUser": "¿Es usted un usuario nuevo o existente?",
     "newAccountTitle": "NUEVO",
-    "newAccountDesc": "APLICAR - ENTRENAR - CONSTRUIR",
+    "newAccountDesc": "APLICAR",
     "existingAccountTitle": "EXISTENTE",
-    "existingAccountDesc": "INICIO DE SESIÓN EN LA PLATAFORMA"
+    "existingAccountDesc": "INICIO DE SESIÓN"
   },
   "login": {
     "noAccount": "¿No tienes una cuenta?",
@@ -183,9 +183,9 @@
   },
   "navHeader": {
     "editProfile": "Editar perfil",
-    "findPartner": "Encuentra un compañero",
-    "findMentor": "Encuentre un mentor",
-    "findMentee": "Encuentre un aprendiz",
+    "findPartner": "Buscar socio",
+    "findMentor": "Buscar mentores",
+    "findMentee": "Buscar mentees",
     "yourPortal": "Tu Portal"
   },
   "sidebars": {
@@ -256,7 +256,7 @@
     "welcome": "Bienvenido, {{name}}!",
     "takingAppointments": "Tomando citas?",
     "addAppointment": "Agregar cita",
-    "selectMentee": "Por favor, seleccione un aprendiz",
+    "selectMentee": "Por favor, seleccione un mentee",
     "meetingDate": "Fecha de la reunión",
     "selectDate": "Seleccione fecha",
     "startTime": "Hora de inicio",
@@ -330,9 +330,9 @@
     "submit": "Enviar",
     "save": "Guardar",
     "welcome": "¡Bienvenido a <1>MENTEE!</1>",
-    "mentee": "Aprendiz",
+    "mentee": "Mentee",
     "mentor": "Mentor",
-    "partner": "Compañero",
+    "partner": "Socio",
     "admin": "Administrador",
     "firstName": "Nombre",
     "lastName": "Apellido",

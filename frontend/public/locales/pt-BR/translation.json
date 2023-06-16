@@ -2,9 +2,9 @@
   "homepage": {
     "isExistingUser": "Você é um usuário novo ou existente?",
     "newAccountTitle": "NOVO",
-    "newAccountDesc": "APLICAR - TREINAR - CONSTRUIR",
+    "newAccountDesc": "APLICAR",
     "existingAccountTitle": "EXISTIR",
-    "existingAccountDesc": "LOGIN DA PLATAFORMA"
+    "existingAccountDesc": "LOGIN"
   },
   "login": {
     "noAccount": "Não tem uma conta?",

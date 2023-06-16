@@ -2,7 +2,7 @@
   "homepage": {
     "isExistingUser": "آیا شما یک کاربر جدید هستید یا موجود؟",
     "newAccountTitle": "جدید",
-    "newAccountDesc": "درخواست - قطار - ساخت",
+    "newAccountDesc": "درخواست",
     "existingAccountTitle": "موجود",
     "existingAccountDesc": "ورود به پلت فرم"
   },

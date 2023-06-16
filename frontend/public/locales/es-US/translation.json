@@ -177,7 +177,9 @@
   "languages": {
     "en": "Inglés",
     "es": "Español",
-    "pt": "portugués"
+    "pt": "Portugués",
+    "fa": "Persa",
+    "ar": "Arábica"
   },
   "navHeader": {
     "editProfile": "Editar perfil",
@@ -299,6 +301,25 @@
     "videoTitlePlaceholder": "Introduce un título",
     "videoLink": "Enlace de video",
     "videoTagValidate": "Seleccione una etiqueta"
+  },
+  "SDGS": {
+    "SDG1": "ODS 1: Fin de la pobreza",
+    "SDG2": "ODS 2: Hambre cero",
+    "SDG3": "ODS 3: Salud y bienestar",
+    "SDG4": "ODS 4: Educación de calidad",
+    "SDG5": "ODS 5: Igualdad de género",
+    "SDG6": "ODS 6: Agua limpia y saneamiento",
+    "SDG7": "ODS 7: Energía asequible y no contaminante",
+    "SDG8": "ODS 8: Trabajo decente y crecimiento económico",
+    "SDG9": "ODS 9: Industria, innovación e infraestructura",
+    "SDG10": "ODS 10: Reducción de las desigualdades",
+    "SDG11": "ODS 11: Ciudades y comunidades sostenibles",
+    "SDG12": "ODS 12: Producción y consumo responsables",
+    "SDG13": "ODS 13: Acción por el clima",
+    "SDG14": "ODS 14: Vida submarina",
+    "SDG15": "ODS 15: Vida de ecosistemas terrestres",
+    "SDG16": "ODS 16: Paz, justicia e instituciones sólidas",
+    "SDG17": "ODS 17: Alianzas para lograr los objetivos"
   },
   "common": {
     "login": "Acceso",

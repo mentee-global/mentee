@@ -11,7 +11,6 @@ import {
 } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
 import { ACCOUNT_TYPE, MENTOR_PROFILE } from "utils/consts";
-import OverlaySelect from "components/OverlaySelect";
 import { useAuth } from "utils/hooks/useAuth";
 import BookmarkSidebar from "components/BookmarkSidebar";
 import MenteeInterestModal from "components/MenteeInterestModal";
@@ -31,14 +30,17 @@ function MenteeAppointments() {
   // });
 
   const appointmentTabs = [
-    { label: t("menteeAppointments.allUpcomingTab"), value: "upcoming" },
+    {
+      label: t("menteeAppointments.allUpcomingTab"),
+      value: "upcoming",
+    },
     { label: t("menteeAppointments.allPastTab"), value: "past" },
   ];
 
   const [appointments, setAppointments] = useState({});
   const [visibleAppts, setVisibleAppts] = useState([]);
   const [favMentors, setFavMentors] = useState([]);
-  const [currentTab, setCurrentTab] = useState("upcoming");
+  const [currentTab, setCurrentTab] = useState(appointmentTabs[0]);
   const { profileId } = useAuth();
   const [isLoading, setisLoading] = useState(true);
   const user = useSelector((state) => state.user.user);
@@ -82,7 +84,7 @@ function MenteeAppointments() {
 
       if (formattedAppointments && favMentors) {
         setAppointments(formattedAppointments);
-        setVisibleAppts(formattedAppointments[currentTab.key]);
+        setVisibleAppts(formattedAppointments[currentTab.value]);
 
         resFavMentors.map((elem) => (elem.id = elem._id.$oid));
         setFavMentors(resFavMentors);
@@ -92,11 +94,15 @@ function MenteeAppointments() {
       }
     }
     getData();
+    console.log(i18n.language);
   }, [profileId, i18n.language]);
 
   const handleOverlayChange = (newSelect) => {
-    setCurrentTab(appointmentTabs[newSelect]);
-    setVisibleAppts(appointments[newSelect]);
+    const newTabObject = appointmentTabs.find(
+      (elem) => elem.value === newSelect
+    );
+    setCurrentTab(newTabObject);
+    setVisibleAppts(appointments[newTabObject.value]);
   };
 
   const handleUnfavorite = async (mentorId, name) => {
@@ -125,14 +131,8 @@ function MenteeAppointments() {
           {t("menteeAppointments.welcome", { name: user?.name })}
         </div>
         <div className="mentee-appts-container">
-          {/* <OverlaySelect
-            options={appointmentTabs}
-            defaultValue={currentTab}
-            className="mentee-appts-overlay-style"
-            onChange={handleOverlayChange}
-          /> */}
           <Select
-            defaultValue={currentTab}
+            defaultValue={currentTab.value}
             className="mentee-appts-overlay-style"
             bordered={false}
             options={appointmentTabs}

@@ -112,7 +112,7 @@ function PartnerCard(props) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              linkedin
+              {t("commonProfile.linkedin")}
             </a>
           </h4>
         )}

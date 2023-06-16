@@ -80,11 +80,19 @@ function NavHeader({ history }) {
       value: "pt-BR",
       label: t("languages.pt"),
     },
+    {
+      value: "ar",
+      label: t("languages.ar"),
+    },
+    {
+      value: "fa-AF",
+      label: t("languages.fa"),
+    },
   ];
 
   const handleLanguageChange = (language) => {
     i18n.changeLanguage(language);
-    console.log(moment.locale(language));
+    moment.locale(language);
     if (user) setOpenDropdown(false);
   };
 

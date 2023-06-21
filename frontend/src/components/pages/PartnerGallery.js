@@ -4,10 +4,9 @@ import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { useLocation } from "react-router";
 import { useAuth } from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
-import { REGIONS, SDGS } from "utils/consts";
+import { getRegions, getSDGs } from "utils/consts";
 import { useTranslation } from "react-i18next";
 
 function PartnerGallery() {
@@ -111,7 +110,7 @@ function PartnerGallery() {
           </div>
           <Checkbox.Group
             defaultValue={regions}
-            options={REGIONS}
+            options={getRegions(t)}
             onChange={(checked) => setRegions(checked)}
             value={regions}
           />
@@ -130,7 +129,7 @@ function PartnerGallery() {
           </div>
           <Checkbox.Group
             defaultValue={sdgs}
-            options={SDGS}
+            options={getSDGs(t)}
             onChange={(checked) => setSdgs(checked)}
             value={sdgs}
           />
@@ -155,7 +154,7 @@ function PartnerGallery() {
           </div>
           <Checkbox.Group
             defaultValue={regions}
-            options={REGIONS}
+            options={getRegions(t)}
             onChange={(checked) => setRegions(checked)}
           />
           <div className="gallery-filter-section-title">
@@ -173,7 +172,7 @@ function PartnerGallery() {
           </div>
           <Checkbox.Group
             defaultValue={sdgs}
-            options={SDGS}
+            options={getSDGs(t)}
             onChange={(checked) => setSdgs(checked)}
             value={sdgs}
           />

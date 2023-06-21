@@ -352,6 +352,15 @@
     "60s": "60s",
     "70s+": "70s+"
   },
+  "verifyEmail": {
+    "header": "Account Verification",
+    "error": "Error, please try again!",
+    "emailResent": "Email resent!",
+    "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",
+    "refresh": "(Refresh this page if you verified your email)",
+    "noEmail": "Didn't receive an email?",
+    "resend": "Resend"
+  },
   "common": {
     "login": "Login",
     "email": "Email",
@@ -386,6 +395,7 @@
     "continue": "Continue",
     "deny": "Deny",
     "delete": "Delete",
-    "pleaseSelect": "Please Select"
+    "pleaseSelect": "Please Select",
+    "confirm": "Confirm"
   }
 }

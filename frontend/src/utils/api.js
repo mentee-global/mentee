@@ -326,7 +326,6 @@ export const getIsEmailVerified = (email, password) => {
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
-      console.log("error loading");
       console.error(err);
       return err.response.data.result;
     }
@@ -813,22 +812,24 @@ export const newSpecializationCreate = async (name) => {
 
 export const getDisplayLanguages = async () => {
   const requestExtension = `/masters/languages`;
-  var records = await authGet(requestExtension).catch(console.error);
-  var res = [];
-  var languages = records.data.result.result;
+  let records = await authGet(requestExtension).catch(console.error);
+  let res = [];
+  let languages = records.data.result.result;
   for (let language of languages) {
-    res.push(language.name);
+    const value = language.name;
+    res.push({ value, label: value });
   }
   return res;
 };
 
 export const getDisplaySpecializations = async () => {
   const requestExtension = `/masters/specializations`;
-  var records = await authGet(requestExtension).catch(console.error);
-  var res = [];
-  var specializations = records.data.result.result;
+  const records = await authGet(requestExtension).catch(console.error);
+  let res = [];
+  const specializations = records.data.result.result;
   for (let specialization of specializations) {
-    res.push(specialization.name);
+    const value = specialization.name;
+    res.push({ value, label: value });
   }
   return res;
 };

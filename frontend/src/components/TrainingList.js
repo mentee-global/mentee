@@ -15,7 +15,7 @@ const TrainingList = (props) => {
         setTrainings(trains);
         setLoading(false);
       })
-      .catch((e) => console.log(e));
+      .catch((e) => console.error(e));
   }, []);
   return (
     <div className="train_list">

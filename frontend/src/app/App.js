@@ -40,7 +40,6 @@ function App() {
   const [antdLocale, setAntdLocale] = React.useState(
     getAntdLocale(i18n.language)
   );
-  console.log("App.JS AntdLocale", antdLocale);
 
   useEffect(() => {
     setAntdLocale(getAntdLocale(i18n.language));

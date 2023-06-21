@@ -95,7 +95,6 @@ function MenteeAppointments() {
       }
     }
     getData();
-    console.log(i18n.language);
   }, [profileId, i18n.language]);
 
   const handleOverlayChange = (newSelect) => {

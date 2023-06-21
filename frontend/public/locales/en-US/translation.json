@@ -322,6 +322,36 @@
     "SDG16": "SDG 16: Peace and Justice Strong Institutions",
     "SDG17": "SDG 17: Partnership to Achieve the Goals"
   },
+  "regions": {
+    "N. America": "N. America",
+    "Central America": "Central America",
+    "S. America": "S. America",
+    "Caribbean": "Caribbean",
+    "Europe": "Europe",
+    "Middle East": "Middle East",
+    "N. Africa": "N. Africa",
+    "Sub-Sahara Africa": "Sub-Sahara Africa",
+    "Central Asia": "Central Asia",
+    "East Asia": "East Asia",
+    "South/SE Asia": "South/SE Asia",
+    "Oceana": "Oceana"
+  },
+  "appointmentStatus": {
+    "pending": "pending",
+    "accepted": "accepted",
+    "denied": "denied"
+  },
+  "ageRanges": {
+    "16-18": "16-18",
+    "19-22": "19-22",
+    "23-25": "23-25",
+    "26-30": "26-30",
+    "30s": "30s",
+    "40s": "40s",
+    "50s": "50s",
+    "60s": "60s",
+    "70s+": "70s+"
+  },
   "common": {
     "login": "Login",
     "email": "Email",

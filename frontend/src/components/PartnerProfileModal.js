@@ -4,7 +4,7 @@ import ImgCrop from "antd-img-crop";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
-import { REGIONS, SDGS } from "../utils/consts";
+import { REGIONS, SDGS, getRegions } from "../utils/consts";
 import { editPartnerProfile, uploadPartnerImage } from "../utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import "./css/AntDesign.scss";
@@ -466,7 +466,7 @@ function PartnerProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleRegions}
                 placeholder=""
-                options={REGIONS}
+                options={getRegions()}
                 value={regions}
                 valid={isValid[7]}
                 validate={validate}

@@ -73,6 +73,10 @@ export const REGIONS = [
   "South/SE Asia",
   "Oceana",
 ];
+
+export function getRegions(t) {
+  return REGIONS.map((region) => t(`regions.${region}`));
+}
 // export const LANGUAGES = [
 //   "Arabic",
 //   "Bengali",

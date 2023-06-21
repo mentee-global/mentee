@@ -17,6 +17,7 @@ function Home({ history }) {
   const { isMentor, isMentee, isPartner, resetRoleState, isAdmin } = useAuth();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  console.log(t("common.Please Cars"));
 
   const logoutUser = () => {
     logout().then(() => {

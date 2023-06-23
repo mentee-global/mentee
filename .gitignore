@@ -9,3 +9,4 @@ yarn.lock
 # macos
 .DS_Store
 app.log
+backend/app.log

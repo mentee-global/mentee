@@ -200,9 +200,31 @@
 }
 @media (max-width: 600px) {
   .formsPart {
-    min-width: 950px;
-    left: 10px;
-    right: 10px;
+    min-width: auto;
+    left: 1%;
+    top:1200px;
+    width: 98%;
+  }
+  .home-text {
+    top:150px;
+  }
+  .emailPart {
+    top:350px;
+  }
+  .emailIn{
+    min-width:100%;
+  }
+  .roleGroup{
+    top:420px;
+  }
+  .steps{
+    display: block;
+    text-align: center;
+    top:460px;
+  }
+  .applymessage{
+    top: 1200px;
+    width: 100%;
   }
 }
 @media (min-width: 600px) {

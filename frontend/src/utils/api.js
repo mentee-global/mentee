@@ -6,6 +6,7 @@ import {
   FRONT_BASE_URL,
 } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
+import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -812,12 +813,13 @@ export const newSpecializationCreate = async (name) => {
 
 export const getDisplayLanguages = async () => {
   const requestExtension = `/masters/languages`;
-  let records = await authGet(requestExtension).catch(console.error);
+  const records = await authGet(requestExtension).catch(console.error);
+  const currentLang = i18n.language;
   let res = [];
-  let languages = records.data.result.result;
+  const languages = records.data?.result?.result ?? [];
   for (let language of languages) {
     const value = language.name;
-    res.push({ value, label: value });
+    res.push({ value, label: language?.translations[currentLang] ?? value });
   }
   return res;
 };
@@ -825,11 +827,15 @@ export const getDisplayLanguages = async () => {
 export const getDisplaySpecializations = async () => {
   const requestExtension = `/masters/specializations`;
   const records = await authGet(requestExtension).catch(console.error);
+  const currentLang = i18n.language;
   let res = [];
-  const specializations = records.data.result.result;
+  const specializations = records.data?.result?.result ?? [];
   for (let specialization of specializations) {
     const value = specialization.name;
-    res.push({ value, label: value });
+    res.push({
+      value,
+      label: specialization?.translations[currentLang] ?? value,
+    });
   }
   return res;
 };

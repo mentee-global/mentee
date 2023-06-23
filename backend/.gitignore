@@ -13,3 +13,4 @@ creds.ini
 .env
 firebase_service_key.json
 app.log
+translate-dev.json

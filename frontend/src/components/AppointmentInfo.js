@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "antd";
+import { useSelector } from "react-redux";
 import { fetchMenteeByID } from "utils/api";
 import MenteeButton from "./MenteeButton";
 import { EnvironmentOutlined, CommentOutlined } from "@ant-design/icons";
+import { getTranslatedOptions } from "utils/translations";
 
 import "./css/Appointments.scss";
 import { useTranslation } from "react-i18next";
@@ -29,11 +31,11 @@ const Tabs = Object.freeze({
 function AppointmentInfo(props) {
   const { t } = useTranslation();
   const [mentee, setMentee] = useState({});
+  const options = useSelector((state) => state.options);
 
   useEffect(() => {
     async function getMentee() {
       const menteeInfo = await fetchMenteeByID(props.modalAppointment.menteeID);
-
       if (menteeInfo) {
         setMentee(menteeInfo);
       }
@@ -42,7 +44,7 @@ function AppointmentInfo(props) {
   }, [props.modalAppointment]);
 
   const getLanguages = (languages) => {
-    return languages.join(" • ");
+    return getTranslatedOptions(languages, options.languages).join(" • ");
   };
 
   const getSubtext = (gender, organization) => {
@@ -98,7 +100,8 @@ function AppointmentInfo(props) {
     } else {
       return (
         <div className="ar-status">
-          upcoming<span className="upcoming-dot"></span>
+          {t("appointmentStatus.accepted")}
+          <span className="upcoming-dot"></span>
         </div>
       );
     }
@@ -184,7 +187,12 @@ function AppointmentInfo(props) {
         <div className="ar-categories-title">
           {t("mentorAppointmentPage.seekingHelpIn")}:
         </div>
-        <div className="ar-categories">{props.modalAppointment.topic}</div>
+        <div className="ar-categories">
+          {getTranslatedOptions(
+            props.modalAppointment.topic,
+            options.specializations
+          )}
+        </div>
         <div className="ar-goals-title">{t("mentorAppointmentPage.note")}:</div>
         <div className="ar-goals">{props.modalAppointment.message}</div>
       </div>

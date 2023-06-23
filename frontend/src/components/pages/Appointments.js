@@ -26,7 +26,6 @@ import {
   acceptAppointment,
   fetchAppointmentsByMentorId,
   deleteAppointment,
-  getDisplaySpecializations,
   fetchMentees,
   fetchPartners,
   createAppointment,
@@ -38,6 +37,7 @@ import { useAuth } from "utils/hooks/useAuth";
 import { updateAndFetchUser } from "features/userSlice";
 import ModalInput from "components/ModalInput";
 import { useTranslation } from "react-i18next";
+import { getTranslatedOptions } from "utils/translations";
 
 //TODO: Fix this tabs rendering translation
 
@@ -59,6 +59,7 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const user = useSelector((state) => state.user.user);
+  const options = useSelector((state) => state.options);
   const [modalAppointment, setModalAppointment] = useState({});
   const { isAdmin, onAuthStateChanged, role, profileId } = useAuth();
   const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
@@ -67,7 +68,6 @@ function Appointments() {
   );
 
   const [manualModalvisible, setManualModalvisible] = useState(false);
-  const [specMasters, setSpecMasters] = useState([]);
   const [mentees, setMentees] = useState([]);
   const [menteeArr, setMenteeArr] = useState([]);
   const [topic, setTopic] = useState();
@@ -160,10 +160,6 @@ function Appointments() {
   }, [appointmentClick, profileId, onAuthStateChanged]);
 
   useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
     getMentees();
   }, []);
 
@@ -323,7 +319,9 @@ function Appointments() {
           <div className="appointment-time">
             <ClockCircleOutlined /> {info.time}
           </div>
-          <div className="appointment-description">{info.topic}</div>
+          <div className="appointment-description">
+            {getTranslatedOptions(info.topic, options.specializations)}
+          </div>
         </div>
         {getAppointmentButton(currentTab, info)}
       </div>
@@ -589,7 +587,7 @@ function Appointments() {
             <ModalInput
               value={topic}
               type="dropdown-single"
-              options={specMasters}
+              options={options.specializations}
               placeholder={t("mentorAppointmentPage.selectTopic")}
               // clicked={inputClicked[0]}
               index={1}

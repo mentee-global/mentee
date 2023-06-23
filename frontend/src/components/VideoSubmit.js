@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button, Form, Input, Select } from "antd";
-import { getDisplaySpecializations } from "utils/api";
-import { formatDropdownItems } from "utils/inputs";
+import { useSelector } from "react-redux";
+
 import "../components/css/Videos.scss";
 import ReactPlayer from "react-player";
 import { useTranslation } from "react-i18next";
 
 const VideoSubmit = (props) => {
   const { t } = useTranslation();
-  const [specMasters, setSpecMasters] = useState([]);
-  useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
-  }, []);
+  const options = useSelector((state) => state.options);
   return (
     <div className="video-submit-card">
       <div className="video-submit-title">{t("mentorVideoPage.addVideo")}</div>
@@ -78,9 +72,8 @@ const VideoSubmit = (props) => {
             <Select
               placeholder={t("common.specializations")}
               className="video-submit-input"
-            >
-              {formatDropdownItems(specMasters)}
-            </Select>
+              options={options.specializations}
+            />
           </Form.Item>
           <Form.Item className="video-submit-input">
             <Button type="primary" htmlType="submit">

@@ -1,0 +1,564 @@
+{
+  "languages": [
+    {
+      "name": "Arabic",
+      "translations": {
+        "es-US": "Arábica",
+        "pt-BR": "Árabe",
+        "ar": "عربي",
+        "fa-AF": "عربی"
+      }
+    },
+    {
+      "name": "Bengali",
+      "translations": {
+        "es-US": "Bengalí",
+        "pt-BR": "Bengali",
+        "ar": "البنغالية",
+        "fa-AF": "بنگالی"
+      }
+    },
+    {
+      "name": "Burmese",
+      "translations": {
+        "es-US": "Birmano",
+        "pt-BR": "Birmanês",
+        "ar": "البورمية",
+        "fa-AF": "برمه‌ای"
+      }
+    },
+    {
+      "name": "Cantonese",
+      "translations": {
+        "es-US": "Cantonés",
+        "pt-BR": "Cantonês",
+        "ar": "الكانتونية",
+        "fa-AF": "کانتونی"
+      }
+    },
+    {
+      "name": "Dagbani",
+      "translations": {
+        "es-US": "Dagbani",
+        "pt-BR": "Dagbani",
+        "ar": "الداغباني",
+        "fa-AF": "داگبانی"
+      }
+    },
+    {
+      "name": "Dari",
+      "translations": {
+        "es-US": "Dari",
+        "pt-BR": "Dari",
+        "ar": "دري",
+        "fa-AF": "دری"
+      }
+    },
+    {
+      "name": "English",
+      "translations": {
+        "es-US": "Inglés",
+        "pt-BR": "Inglês",
+        "ar": "الإنجليزية",
+        "fa-AF": "انگلیسی"
+      }
+    },
+    {
+      "name": "Farsi",
+      "translations": {
+        "es-US": "Persa",
+        "pt-BR": "Persa",
+        "ar": "فارسى",
+        "fa-AF": "فارسی"
+      }
+    },
+    {
+      "name": "French",
+      "translations": {
+        "es-US": "Francés",
+        "pt-BR": "Francês",
+        "ar": "الفرنسية",
+        "fa-AF": "فرانسوی"
+      }
+    },
+    {
+      "name": "German",
+      "translations": {
+        "es-US": "Alemán",
+        "pt-BR": "Alemão",
+        "ar": "ألماني",
+        "fa-AF": "آلمانی"
+      }
+    },
+    {
+      "name": "Hebrew",
+      "translations": {
+        "es-US": "Hebreo",
+        "pt-BR": "Hebraico",
+        "ar": "العبرية",
+        "fa-AF": "عبری"
+      }
+    },
+    {
+      "name": "Hindi",
+      "translations": {
+        "es-US": "Hindi",
+        "pt-BR": "Hindi",
+        "ar": "الهندية",
+        "fa-AF": "هندی"
+      }
+    },
+    {
+      "name": "Italian",
+      "translations": {
+        "es-US": "Italiano",
+        "pt-BR": "Italiano",
+        "ar": "الإيطالية",
+        "fa-AF": "ایتالیایی"
+      }
+    },
+    {
+      "name": "Japanese",
+      "translations": {
+        "es-US": "Japonés",
+        "pt-BR": "Japonês",
+        "ar": "اليابانية",
+        "fa-AF": "ژاپنی"
+      }
+    },
+    {
+      "name": "Karen",
+      "translations": {
+        "es-US": "Karen",
+        "pt-BR": "Karen",
+        "ar": "الكارينية",
+        "fa-AF": "کارنی"
+      }
+    },
+    {
+      "name": "Konkomba",
+      "translations": {
+        "es-US": "Konkomba",
+        "pt-BR": "Konkomba",
+        "ar": "الكونكومبا",
+        "fa-AF": "کونکومبا"
+      }
+    },
+    {
+      "name": "Mandarin",
+      "translations": {
+        "es-US": "Mandarín",
+        "pt-BR": "Mandarim",
+        "ar": "الصينية",
+        "fa-AF": "ماندارین"
+      }
+    },
+    {
+      "name": "Pashto",
+      "translations": {
+        "es-US": "Pastún",
+        "pt-BR": "Pachto",
+        "ar": "البشتونية",
+        "fa-AF": "پشتو"
+      }
+    },
+    {
+      "name": "Portuguese",
+      "translations": {
+        "es-US": "Portugués",
+        "pt-BR": "Português",
+        "ar": "البرتغالية",
+        "fa-AF": "پرتغالی"
+      }
+    },
+    {
+      "name": "Russian",
+      "translations": {
+        "es-US": "Ruso",
+        "pt-BR": "Russo",
+        "ar": "الروسية",
+        "fa-AF": "روسی"
+      }
+    },
+    {
+      "name": "Spanish",
+      "translations": {
+        "es-US": "Español",
+        "pt-BR": "Espanhol",
+        "ar": "الإسبانية",
+        "fa-AF": "اسپانیایی"
+      }
+    },
+    {
+      "name": "Swahili",
+      "translations": {
+        "es-US": "Suajili",
+        "pt-BR": "Suaíli",
+        "ar": "السواحلية",
+        "fa-AF": "سواحیلی"
+      }
+    },
+    {
+      "name": "Twi",
+      "translations": {
+        "es-US": "Twi",
+        "pt-BR": "Twi",
+        "ar": "التوي",
+        "fa-AF": "تویی"
+      }
+    },
+    {
+      "name": "Urdu",
+      "translations": {
+        "es-US": "Urdu",
+        "pt-BR": "Urdu",
+        "ar": "الأردية",
+        "fa-AF": "اردو"
+      }
+    }
+  ],
+  "specializations": [
+    {
+      "name": "Advocacy and Activism",
+      "translations": {
+        "es-US": "Advocacy and Activism",
+        "pt-BR": "Advocacia e Ativismo",
+        "ar": "الدعوة والنشاط",
+        "fa-AF": "فعالیت ها و فعالیت گری"
+      }
+    },
+    {
+      "name": "Architecture",
+      "translations": {
+        "es-US": "Arquitectura",
+        "pt-BR": "Arquitetura",
+        "ar": "الهندسة المعمارية",
+        "fa-AF": "معماری"
+      }
+    },
+    {
+      "name": "Arts: Dance/Design/Music and More",
+      "translations": {
+        "es-US": "Artes: Danza/Diseño/Música y Más",
+        "pt-BR": "Artes: Dança/Design/Música e Mais",
+        "ar": "الفنون: الرقص / التصميم / الموسيقى وأكثر",
+        "fa-AF": "هنر: رقص / طراحی / موسیقی و بیشتر"
+      }
+    },
+    {
+      "name": "Citizenship",
+      "translations": {
+        "es-US": "Ciudadanía",
+        "pt-BR": "Cidadania",
+        "ar": "المواطنة",
+        "fa-AF": "شهروندی"
+      }
+    },
+    {
+      "name": "Computer Science",
+      "translations": {
+        "es-US": "Ciencias de la Computación",
+        "pt-BR": "Ciência da Computação",
+        "ar": "علوم الكمبيوتر",
+        "fa-AF": "علوم کامپیوتر"
+      }
+    },
+    {
+      "name": "Conflict Studies",
+      "translations": {
+        "es-US": "Estudios de Conflictos",
+        "pt-BR": "Estudos de Conflito",
+        "ar": "دراسات الصراع",
+        "fa-AF": "مطالعات تضاد"
+      }
+    },
+    {
+      "name": "Education: Personal Guidance On Next Steps",
+      "translations": {
+        "es-US": "Educación: Orientación Personal Sobre los Próximos Pasos",
+        "pt-BR": "Educação: Orientação Pessoal sobre os Próximos Passos",
+        "ar": "التعليم: الإرشاد الشخصي حول الخطوات التالية",
+        "fa-AF": "آموزش: راهنمایی شخصی در مورد مراحل بعدی"
+      }
+    },
+    {
+      "name": "Engineering",
+      "translations": {
+        "es-US": "Ingeniería",
+        "pt-BR": "Engenharia",
+        "ar": "الهندسة",
+        "fa-AF": "مهندسی"
+      }
+    },
+    {
+      "name": "Entrepreneurship",
+      "translations": {
+        "es-US": "Emprendimiento",
+        "pt-BR": "Empreendedorismo",
+        "ar": "ريادة الأعمال",
+        "fa-AF": "کارآفرینی"
+      }
+    },
+    {
+      "name": "Environmental Studies & Activism",
+      "translations": {
+        "es-US": "Estudios Ambientales y Activismo",
+        "pt-BR": "Estudos Ambientais e Ativismo",
+        "ar": "الدراسات البيئية والنشاط",
+        "fa-AF": "مطالعات محیط زیست و فعالیت گری"
+      }
+    },
+    {
+      "name": "Filmmaking",
+      "translations": {
+        "es-US": "Realización de Películas",
+        "pt-BR": "Produção Cinematográfica",
+        "ar": "صناعة الأفلام",
+        "fa-AF": "ساخت فیلم"
+      }
+    },
+    {
+      "name": "Finance, Business",
+      "translations": {
+        "es-US": "Finanzas, Negocios",
+        "pt-BR": "Finanças, Negócios",
+        "ar": "التمويل، الأعمال",
+        "fa-AF": "امور مالی، کسب و کار"
+      }
+    },
+    {
+      "name": "Finance, Personal",
+      "translations": {
+        "es-US": "Finanzas, Personal",
+        "pt-BR": "Finanças, Pessoal",
+        "ar": "التمويل، الشخصي",
+        "fa-AF": "امور مالی، شخصی"
+      }
+    },
+    {
+      "name": "Goal setting",
+      "translations": {
+        "es-US": "Establecimiento de Metas",
+        "pt-BR": "Definição de Metas",
+        "ar": "تحديد الأهداف",
+        "fa-AF": "تنظیم اهداف"
+      }
+    },
+    {
+      "name": "Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
+      "translations": {
+        "es-US": "Salud, Personal: Nutrición, Entrenador Personal de Vida, Yoga y Meditación",
+        "pt-BR": "Saúde, Pessoal: Nutrição, Coach de Vida Pessoal, Yoga e Meditação",
+        "ar": "الصحة، الشخصية: التغذية، مدرب حياة شخصي، اليوغا والتأمل",
+        "fa-AF": "سلامتی، شخصی: تغذیه، مربی زندگی شخصی، یوگا و مدیتیشن"
+      }
+    },
+    {
+      "name": "Human Rights Studies & Activism",
+      "translations": {
+        "es-US": "Estudios de Derechos Humanos y Activismo",
+        "pt-BR": "Estudos de Direitos Humanos e Ativismo",
+        "ar": "دراسات حقوق الإنسان والنشاط",
+        "fa-AF": "مطالعات حقوق بشر و فعالیت گری"
+      }
+    },
+    {
+      "name": "International Relations/Foreign Affairs",
+      "translations": {
+        "es-US": "Relaciones Internacionales/Asuntos Exteriores",
+        "pt-BR": "Relações Internacionais/Assuntos Externos",
+        "ar": "العلاقات الدولية/الشؤون الخارجية",
+        "fa-AF": "روابط بین الملل / امور خارجه"
+      }
+    },
+    {
+      "name": "Interview Skills & Practice",
+      "translations": {
+        "es-US": "Habilidades de Entrevista y Práctica",
+        "pt-BR": "Habilidades de Entrevista e Prática",
+        "ar": "مهارات المقابلة والممارسة",
+        "fa-AF": "مهارت های مصاحبه و تمرین"
+      }
+    },
+    {
+      "name": "Journalism",
+      "translations": {
+        "es-US": "Periodismo",
+        "pt-BR": "Jornalismo",
+        "ar": "الصحافة",
+        "fa-AF": "روزنامه نگاری"
+      }
+    },
+    {
+      "name": "Language Lessons",
+      "translations": {
+        "es-US": "Lecciones de Idiomas",
+        "pt-BR": "Aulas de Idiomas",
+        "ar": "دروس اللغة",
+        "fa-AF": "دروس زبان"
+      }
+    },
+    {
+      "name": "Law",
+      "translations": {
+        "es-US": "Derecho",
+        "pt-BR": "Direito",
+        "ar": "قانون",
+        "fa-AF": "حقوق"
+      }
+    },
+    {
+      "name": "Legal Issues, Business",
+      "translations": {
+        "es-US": "Asuntos Legales, Negocios",
+        "pt-BR": "Questões Legais, Negócios",
+        "ar": "قضايا قانونية، أعمال",
+        "fa-AF": "مسائل حقوقی، کسب و کار"
+      }
+    },
+    {
+      "name": "Legal Issues: Related to Personal Issues (Excluding Citizenship)",
+      "translations": {
+        "es-US": "Asuntos Legales: Relacionados con Problemas Personales (Excluyendo la Ciudadanía)",
+        "pt-BR": "Questões Legais: Relacionadas a Problemas Pessoais (Excluindo a Cidadania)",
+        "ar": "قضايا قانونية: ذات صلة بالمشاكل الشخصية (باستثناء الجنسية)",
+        "fa-AF": "مسائل حقوقی: مربوط به مسائل شخصی (به استثنای شهروندی)"
+      }
+    },
+    {
+      "name": "Media/Public Relations",
+      "translations": {
+        "es-US": "Medios/Relaciones Públicas",
+        "pt-BR": "Mídia/Relações Públicas",
+        "ar": "وسائل الإعلام/العلاقات العامة",
+        "fa-AF": "رسانه ها/ روابط عمومی"
+      }
+    },
+    {
+      "name": "Medicine",
+      "translations": {
+        "es-US": "Medicina",
+        "pt-BR": "Medicina",
+        "ar": "الطب",
+        "fa-AF": "پزشکی"
+      }
+    },
+    {
+      "name": "Nonprofits/NGOs",
+      "translations": {
+        "es-US": "Organizaciones sin Fines de Lucro/ONGs",
+        "pt-BR": "Organizações sem Fins Lucrativos/ONGs",
+        "ar": "المنظمات غير الربحية/منظمات غير حكومية",
+        "fa-AF": "سازمان های غیرانتفاعی / سازمان های غیردولتی"
+      }
+    },
+    {
+      "name": "Political Science",
+      "translations": {
+        "es-US": "Ciencia Política",
+        "pt-BR": "Ciência Política",
+        "ar": "علم السياسة",
+        "fa-AF": "علم سیاسی"
+      }
+    },
+    {
+      "name": "Professional Speaking",
+      "translations": {
+        "es-US": "Oratoria Profesional",
+        "pt-BR": "Oratória Profissional",
+        "ar": "التحدث المهني",
+        "fa-AF": "صحبت های حرفه ای"
+      }
+    },
+    {
+      "name": "Psychology: The Study of Clinical Practice (Not Personal Issues)",
+      "translations": {
+        "es-US": "Psicología: El Estudio de la Práctica Clínica (No Problemas Personales)",
+        "pt-BR": "Psicologia: O Estudo da Prática Clínica (Não Problemas Pessoais)",
+        "ar": "علم النفس: دراسة الممارسة السريرية (ليس المشاكل الشخصية)",
+        "fa-AF": "روانشناسی: مطالعه عملیات بالینی (مسائل شخصی نه)"
+      }
+    },
+    {
+      "name": "Research",
+      "translations": {
+        "es-US": "Investigación",
+        "pt-BR": "Pesquisa",
+        "ar": "بحث",
+        "fa-AF": "پژوهش"
+      }
+    },
+    {
+      "name": "Resume/CV Writing",
+      "translations": {
+        "es-US": "Redacción de Currículum/CV",
+        "pt-BR": "Redação de Currículo/CV",
+        "ar": "كتابة السيرة الذاتية/السيرة الذاتية",
+        "fa-AF": "نوشتن رزومه / رزومه"
+      }
+    },
+    {
+      "name": "Self Confidence",
+      "translations": {
+        "es-US": "Confianza en uno mismo",
+        "pt-BR": "Autoconfiança",
+        "ar": "ثقة بالنفس",
+        "fa-AF": "اعتماد به نفس"
+      }
+    },
+    {
+      "name": "Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
+      "translations": {
+        "es-US": "Pequeñas Empresas: Ayuda con la Configuración, Consultoría sobre la Visión, Orientación General y Más",
+        "pt-BR": "Pequenos Negócios: Ajuda na Configuração, Consultoria de Visão, Orientação Geral e Mais",
+        "ar": "الأعمال الصغيرة: المساعدة في الإعداد، استشارات حول الرؤية، الإرشاد العام والمزيد",
+        "fa-AF": "کسب و کارهای کوچک: کمک در راه اندازی، مشاوره درباره چشم انداز، راهنمایی کلی و بیشتر"
+      }
+    },
+    {
+      "name": "Strategic thinking",
+      "translations": {
+        "es-US": "Pensamiento Estratégico",
+        "pt-BR": "Pensamento Estratégico",
+        "ar": "التفكير الاستراتيجي",
+        "fa-AF": "تفکر استراتژیک"
+      }
+    },
+    {
+      "name": "Teaching: Skills & Methods",
+      "translations": {
+        "es-US": "Enseñanza: Habilidades y Métodos",
+        "pt-BR": "Ensino: Habilidades e Métodos",
+        "ar": "التعليم: المهارات والأساليب",
+        "fa-AF": "تدریس: مهارت ها و روش ها"
+      }
+    },
+    {
+      "name": "Technology Training",
+      "translations": {
+        "es-US": "Capacitación Tecnológica",
+        "pt-BR": "Treinamento em Tecnologia",
+        "ar": "تدريب التكنولوجيا",
+        "fa-AF": "آموزش فناوری"
+      }
+    },
+    {
+      "name": "Tourism: Field of",
+      "translations": {
+        "es-US": "Turismo: Campo de",
+        "pt-BR": "Turismo: Área de",
+        "ar": "السياحة: مجال",
+        "fa-AF": "گردشگری: زمینه"
+      }
+    },
+    {
+      "name": "Writing: Improving writing skills, writing books/articles, scholarly writing",
+      "translations": {
+        "es-US": "Escritura: Mejorando las habilidades de escritura, escribir libros/artículos, escritura académica",
+        "pt-BR": "Escrita: Melhorando as habilidades de escrita, escrever livros/artigos, escrita acadêmica",
+        "ar": "الكتابة: تحسين مهارات الكتابة، كتابة الكتب/المقالات، الكتابة العلمية",
+        "fa-AF": "نوشتن: بهبود مهارت های نوشتن، نوشتن کتاب/مقاله، نوشتن علمی"
+      }
+    }
+  ]
+}

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import ReactPlayer from "react-player";
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { Button, Select } from "antd";
-import { formatDropdownItems } from "utils/inputs";
 import "components/css/MentorVideo.scss";
-import { getDisplaySpecializations } from "utils/api";
+import { useSelector } from "react-redux";
 
 const MentorVideo = ({
   onPin,
@@ -17,13 +16,8 @@ const MentorVideo = ({
   date,
   video,
 }) => {
-  const [specMasters, setSpecMasters] = useState([]);
-  useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
-  }, []);
+  const options = useSelector((state) => state.options);
+
   return (
     <div className="video-row">
       <div className="video-block">
@@ -53,11 +47,11 @@ const MentorVideo = ({
       <div className="video-interactions">
         <Select
           style={{ ...styles.interactionVideo, left: "14%", width: 230 }}
-          defaultValue={tag}
-          onChange={(option) => onChangeTag(id, specMasters[option])}
-        >
-          {formatDropdownItems(specMasters)}
-        </Select>
+          value={tag}
+          onChange={(option) => onChangeTag(id, option)}
+          options={options.specializations}
+        />
+
         <Button
           icon={
             <DeleteOutlined style={{ fontSize: "24px", color: "#957520" }} />

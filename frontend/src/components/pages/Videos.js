@@ -4,8 +4,6 @@ import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
 import MentorVideo from "../MentorVideo";
 import VideoSubmit from "../VideoSubmit";
-import { getDisplaySpecializations } from "utils/api.js";
-import { formatDropdownItems } from "utils/inputs";
 import { updateAndFetchUser } from "features/userSlice";
 import { ACCOUNT_TYPE } from "utils/consts.js";
 import { useAuth } from "utils/hooks/useAuth";
@@ -17,19 +15,12 @@ function Videos() {
   const dispatch = useDispatch();
   const [videos, setVideos] = useState([]);
   const user = useSelector((state) => state.user.user);
+  const options = useSelector((state) => state.options);
   const [filtered, setFiltered] = useState([]);
   const [selectFilter, setSelectFilter] = useState();
   const [titleFilter, setTitleFilter] = useState();
-  const [specMasters, setSpecMasters] = useState([]);
   const [form] = Form.useForm();
   const { profileId } = useAuth();
-
-  useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -100,7 +91,7 @@ function Videos() {
   const filterSpecialization = (value) => {
     const filteredVideos = videos.filter((video, index, arr) => {
       // eslint-disable-next-line eqeqeq
-      return specMasters.indexOf(video.tag) == value;
+      return video.tag == value;
     });
     setFiltered(filteredVideos);
     setSelectFilter(value);
@@ -108,8 +99,8 @@ function Videos() {
 
   const handleClearFilters = () => {
     setFiltered(videos);
-    setTitleFilter("");
-    setSelectFilter("");
+    setTitleFilter();
+    setSelectFilter();
   };
 
   const handleSearchChange = (event) => {
@@ -121,7 +112,7 @@ function Videos() {
     video = {
       ...video,
       date_uploaded: moment().format(),
-      tag: specMasters[video.tag],
+      tag: video.tag,
     };
     newVideos.push(video);
 
@@ -180,9 +171,9 @@ function Videos() {
             style={{ width: 200 }}
             onChange={(value) => filterSpecialization(value)}
             value={selectFilter}
-          >
-            {formatDropdownItems(specMasters)}
-          </Select>
+            options={options.specializations}
+          />
+
           <Button onClick={handleClearFilters}>{t("common.clear")}</Button>
         </div>
       </div>

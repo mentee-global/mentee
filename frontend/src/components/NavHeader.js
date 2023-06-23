@@ -304,6 +304,19 @@ function NavHeader({ history }) {
               }}
             />
           )}
+          {isLoggedIn() && !isAdmin && (
+              <MenteeButton
+                className="mobile-nav-btn"
+                loginButton
+                content={<b>{t("common.messages")}</b>}
+                width="9em"
+                onClick={() => {
+                  history.push({
+                    pathname: `/messages/${role}`,
+                  });
+                }}
+              />
+            )}
         </Drawer>
       </div>
     );

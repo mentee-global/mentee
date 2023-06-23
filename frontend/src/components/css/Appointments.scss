@@ -370,7 +370,7 @@
   border-left: solid;
   border-color: $appointments-row-border-color;
   border-width: 2px;
-  width: 100%;
+  width: calc(100% - 100px);
 }
 
 .appointments-column {
@@ -385,8 +385,8 @@
 .appointment-description {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 400px;
+  // white-space: nowrap;
+  // width: 400px;
 }
 .appointment-time,
 .appointment-description {
@@ -404,7 +404,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 400px;
+  // width: 400px;
 }
 
 .appointment-tabs-title {
@@ -500,4 +500,22 @@
 }
 .error {
   display: none;
+}
+@media (max-width: 650px) {
+  .appointments-tabs{
+    display: block;
+    button{
+      margin-bottom: 10px;
+    }
+  }
+  .appointments-column{
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+  .appointments-date-text-block {
+    width:60px;
+  }
+  .appointments-row{
+    width: calc(100% - 60px);
+  }
 }

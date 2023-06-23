@@ -24,9 +24,9 @@ function MessageCard(props) {
     );
     dispatch(setActiveMessageId({ activeMessageId: thisUserId }));
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);
-    if(isMobile){
-      var sidebar =  document.getElementsByClassName('ant-layout-sider');
-      if (sidebar.length > 0){
+    if (isMobile) {
+      var sidebar = document.getElementsByClassName("ant-layout-sider");
+      if (sidebar.length > 0) {
         sidebar[0].style.display = "none";
       }
     }

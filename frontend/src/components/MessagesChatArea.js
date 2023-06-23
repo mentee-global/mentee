@@ -286,13 +286,13 @@ function MessagesChatArea(props) {
   };
 
   const showSideBar = () => {
-    if(isMobile){
-      var sidebar =  document.getElementsByClassName('ant-layout-sider');
-      if (sidebar.length > 0){
+    if (isMobile) {
+      var sidebar = document.getElementsByClassName("ant-layout-sider");
+      if (sidebar.length > 0) {
         sidebar[0].style.display = "block";
       }
     }
-  }
+  };
 
   const sendMessage = (e) => {
     if (!messageText.replace(/\s/g, "").length) {
@@ -321,7 +321,12 @@ function MessagesChatArea(props) {
     return (
       <div className="no-messages">
         {isMobile && (
-            <div onClick={showSideBar} style={{cursor:'pointer', width:'20px', fontSize:'16px'}}><ArrowLeftOutlined /></div>
+          <div
+            onClick={showSideBar}
+            style={{ cursor: "pointer", width: "20px", fontSize: "16px" }}
+          >
+            <ArrowLeftOutlined />
+          </div>
         )}
         <div className="start-convo">{t("messages.startConversation")}</div>
       </div>
@@ -333,7 +338,12 @@ function MessagesChatArea(props) {
       {accountData ? (
         <div className="messages-chat-area-header">
           {isMobile && (
-            <div onClick={showSideBar} style={{cursor:'pointer', width:'20px', fontSize:'16px'}}><ArrowLeftOutlined /></div>
+            <div
+              onClick={showSideBar}
+              style={{ cursor: "pointer", width: "20px", fontSize: "16px" }}
+            >
+              <ArrowLeftOutlined />
+            </div>
           )}
           <Avatar size={60} src={accountData.image?.url} />
           <div className="messages-chat-area-header-info">

@@ -11,8 +11,6 @@ import "moment/locale/es";
 import "moment/locale/ar";
 import "moment/locale/fa";
 import "moment/locale/pt";
-
-import "utils/i18n";
 import i18n from "utils/i18n";
 
 moment.locale(i18n.language);

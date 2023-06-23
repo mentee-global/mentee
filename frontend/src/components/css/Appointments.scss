@@ -502,20 +502,20 @@
   display: none;
 }
 @media (max-width: 650px) {
-  .appointments-tabs{
+  .appointments-tabs {
     display: block;
-    button{
+    button {
       margin-bottom: 10px;
     }
   }
-  .appointments-column{
+  .appointments-column {
     max-width: 100%;
     flex-basis: 100%;
   }
   .appointments-date-text-block {
-    width:60px;
+    width: 60px;
   }
-  .appointments-row{
+  .appointments-row {
     width: calc(100% - 60px);
   }
 }

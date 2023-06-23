@@ -58,6 +58,7 @@ masters = Blueprint("masters", __name__)
 
 #     return create_response(data={"result": "success", "record": record})
 
+
 @masters.route("/languages", methods=["GET"])
 # @all_users
 def getLanguages():

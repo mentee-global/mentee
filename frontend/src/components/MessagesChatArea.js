@@ -3,7 +3,7 @@ import { Avatar, Layout, Input, Button, Spin, Modal, TimePicker } from "antd";
 import { withRouter } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import moment from "moment-timezone";
-import { SendOutlined } from "@ant-design/icons";
+import { SendOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useAuth } from "utils/hooks/useAuth";
 import {
   fetchAccountById,
@@ -19,6 +19,7 @@ import socketInvite from "utils/socket";
 import MenteeButton from "./MenteeButton.js";
 import AvailabilityCalendar from "components/AvailabilityCalendar";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "react-responsive";
 
 function MessagesChatArea(props) {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ function MessagesChatArea(props) {
   const [appointments, setAppointments] = useState([]);
   const [availabeInFuture, setAvailabeInFuture] = useState([]);
   const [bookedData, setBookedData] = useState({});
+  const isMobile = useMediaQuery({ query: `(max-width: 600px)` });
   var total_index = 0;
   const {
     messages,
@@ -283,6 +285,15 @@ function MessagesChatArea(props) {
     return;
   };
 
+  const showSideBar = () => {
+    if(isMobile){
+      var sidebar =  document.getElementsByClassName('ant-layout-sider');
+      if (sidebar.length > 0){
+        sidebar[0].style.display = "block";
+      }
+    }
+  }
+
   const sendMessage = (e) => {
     if (!messageText.replace(/\s/g, "").length) {
       return;
@@ -309,6 +320,9 @@ function MessagesChatArea(props) {
   if (!activeMessageId || !messages || !messages.length) {
     return (
       <div className="no-messages">
+        {isMobile && (
+            <div onClick={showSideBar} style={{cursor:'pointer', width:'20px', fontSize:'16px'}}><ArrowLeftOutlined /></div>
+        )}
         <div className="start-convo">{t("messages.startConversation")}</div>
       </div>
     );
@@ -318,6 +332,9 @@ function MessagesChatArea(props) {
     <div className="conversation-container">
       {accountData ? (
         <div className="messages-chat-area-header">
+          {isMobile && (
+            <div onClick={showSideBar} style={{cursor:'pointer', width:'20px', fontSize:'16px'}}><ArrowLeftOutlined /></div>
+          )}
           <Avatar size={60} src={accountData.image?.url} />
           <div className="messages-chat-area-header-info">
             <div className="messages-chat-area-header-name">

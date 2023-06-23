@@ -7,6 +7,7 @@ import { setActiveMessageId } from "features/messagesSlice";
 import { useHistory } from "react-router";
 import { fetchAccountById } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { useMediaQuery } from "react-responsive";
 
 function MessageCard(props) {
   const history = useHistory();
@@ -15,6 +16,7 @@ function MessageCard(props) {
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
   const name = `message-${props.active ? "active-" : ""}card`;
+  const isMobile = useMediaQuery({ query: `(max-width: 600px)` });
 
   const openMessage = () => {
     dispatch(
@@ -22,6 +24,12 @@ function MessageCard(props) {
     );
     dispatch(setActiveMessageId({ activeMessageId: thisUserId }));
     history.push(`/messages/${otherId}?user_type=${otherUser.user_type}`);
+    if(isMobile){
+      var sidebar =  document.getElementsByClassName('ant-layout-sider');
+      if (sidebar.length > 0){
+        sidebar[0].style.display = "none";
+      }
+    }
   };
 
   useEffect(() => {

@@ -64,8 +64,8 @@ APPT_STATUS = {
 }
 
 I18N_LANGUAGES = {
-      "es-US",
-      "pt-BR",
-      "ar",
-      "fa-AF",
-    }
+    "es-US",
+    "pt-BR",
+    "ar",
+    "fa-AF",
+}

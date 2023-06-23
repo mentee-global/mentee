@@ -208,3 +208,8 @@ export const NEW_APPLICATION_STATUS = {
   COMPLETED: "COMPLETED",
   REJECTED: "REJECTED",
 };
+
+export const OPTION_TYPE = {
+  LANGUAGE: "language",
+  SPECIALIZATION: "specialization",
+};

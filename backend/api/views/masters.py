@@ -42,6 +42,21 @@ masters = Blueprint("masters", __name__)
 
 #     return create_response(data={"result": "success"})
 
+# @masters.route("/translate", methods=["PUT"])
+# @admin_only
+# def translate():
+#     mapping = {"languages": Languages, "specializations": Specializations}
+#     optionType = request.form["optionType"]
+#     selectId = request.form["selectId"]
+
+#     try:
+#         record = mapping[optionType].objects.get(id=selectId)
+#     except:
+#         return create_response(status=422, message="Record not found")
+#     record.translations = get_all_translations(record.name)
+#     record.save()
+
+#     return create_response(data={"result": "success", "record": record})
 
 @masters.route("/languages", methods=["GET"])
 # @all_users

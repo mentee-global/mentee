@@ -840,6 +840,15 @@ export const getDisplaySpecializations = async () => {
   return res;
 };
 
+export const translateOption = async (optionType, selectId) => {
+  const requestExtension = `/masters/translate`;
+  const formData = new FormData();
+  formData.append("optionType", optionType);
+  formData.append("selectId", selectId);
+  const result = await authPut(requestExtension, formData).catch(console.error);
+  return result.data?.result;
+};
+
 /**
  * Wrapper function calls to general account endpoints
  * This helps with avoiding the need to change multiple files

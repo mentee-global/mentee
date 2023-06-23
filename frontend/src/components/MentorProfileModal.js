@@ -3,18 +3,14 @@ import { Button, Modal, Checkbox, Avatar, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
+import { useSelector } from "react-redux";
 import {
   UserOutlined,
   EditFilled,
   PlusCircleFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
-import {
-  editMentorProfile,
-  getDisplayLanguages,
-  getDisplaySpecializations,
-  uploadMentorImage,
-} from "utils/api";
+import { editMentorProfile, uploadMentorImage } from "utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import { validateUrl } from "utils/misc";
@@ -28,6 +24,7 @@ const INITIAL_NUM_INPUTS = 14;
 function MentorProfileModal(props) {
   const { profileId } = useAuth();
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(
@@ -53,8 +50,6 @@ function MentorProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [videoUrl, setVideoUrl] = useState();
   const [isVideoValid, setIsVideoValid] = useState(true);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
   const isValidVideoUrl = (url) => {
     const videoUrlRegex =
       /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/|vimeo\.com\/)([a-zA-Z0-9_-]{11}|[0-9]+)(\S+)?$/;
@@ -62,11 +57,6 @@ function MentorProfileModal(props) {
   };
 
   useEffect(() => {
-    async function getMasters() {
-      setLangMasters(await getDisplayLanguages());
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
     if (props.mentor) {
       setName(props.mentor.name);
       setTitle(props.mentor.professional_title);
@@ -671,7 +661,7 @@ function MentorProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLanguageChange}
                 placeholder={t("commonProfile.languagesExample")}
-                options={langMasters}
+                options={options.languages}
                 value={languages}
                 valid={isValid[7]}
                 validate={validate}
@@ -700,7 +690,7 @@ function MentorProfileModal(props) {
                 index={9}
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
-                options={specMasters}
+                options={options.specializations}
                 value={specializations}
                 valid={isValid[9]}
                 validate={validate}

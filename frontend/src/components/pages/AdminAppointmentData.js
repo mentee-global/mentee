@@ -82,6 +82,7 @@ function AdminAppointmentData() {
     setFilterData(newSorted);
     setRender(!render);
   };
+  // TODO: This is probably a broken function
   const handleSpecializationsDisplay = (index) => {
     const newFiltered = filterData.filter((appt) => {
       return appt.appointment.specialist_categories.includes(

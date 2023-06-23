@@ -8,13 +8,9 @@ import {
   PlusCircleFilled,
   DeleteOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 import { MENTEE_DEFAULT_VIDEO_NAME } from "../utils/consts";
-import {
-  editMenteeProfile,
-  getDisplayLanguages,
-  getDisplaySpecializations,
-  uploadMenteeImage,
-} from "../utils/api";
+import { editMenteeProfile, uploadMenteeImage } from "../utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import moment from "moment";
 import "./css/AntDesign.scss";
@@ -28,6 +24,7 @@ const INITIAL_NUM_INPUTS = 14;
 function MenteeProfileModal(props) {
   const { profileId } = useAuth();
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const [modalVisible, setModalVisible] = useState(false);
   const [numInputs, setNumInputs] = useState(INITIAL_NUM_INPUTS);
   const [inputClicked, setInputClicked] = useState(
@@ -53,19 +50,12 @@ function MenteeProfileModal(props) {
   const [saving, setSaving] = useState(false);
   const [privacy, setPrivacy] = useState(true);
   const [isVideoValid, setIsVideoValid] = useState(true);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
   const isValidVideoUrl = (url) => {
     const videoUrlRegex =
       /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtube\.com\/shorts\/|youtu\.be\/|vimeo\.com\/)([a-zA-Z0-9_-]{11}|[0-9]+)(\S+)?$/;
     return videoUrlRegex.test(url);
   };
   useEffect(() => {
-    async function getMasters() {
-      setLangMasters(await getDisplayLanguages());
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
     if (props.mentee) {
       setName(props.mentee.name);
       setAbout(props.mentee.biography);
@@ -618,7 +608,7 @@ function MenteeProfileModal(props) {
                 handleClick={handleClick}
                 onChange={handleLanguageChange}
                 placeholder={t("commonProfile.languagesExample")}
-                options={langMasters}
+                options={options.languages}
                 value={languages}
                 valid={isValid[7]}
                 validate={validate}
@@ -633,7 +623,7 @@ function MenteeProfileModal(props) {
                 index={99}
                 handleClick={handleClick}
                 onChange={handleSpecializationsChange}
-                options={specMasters}
+                options={options.specializations}
                 value={specializations}
                 valid={isValid[99]}
                 validate={validate}

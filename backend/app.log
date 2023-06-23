@@ -7959,3 +7959,15 @@
 2023-06-21 16:05:52,211 127.0.0.1: requested http://localhost:8000/api/account/6493438fd6695a19f73b292e?account_type=3: DEBUG in [manage: 23]: GET /api/account/6493438fd6695a19f73b292e 200 OK
 2023-06-21 16:05:52,234 127.0.0.1: requested http://localhost:8000/api/notifications/6493438fd6695a19f73b292e: DEBUG in [manage: 23]: OPTIONS /api/notifications/6493438fd6695a19f73b292e 200 OK
 2023-06-21 16:05:52,743 127.0.0.1: requested http://localhost:8000/api/notifications/6493438fd6695a19f73b292e: DEBUG in [manage: 23]: GET /api/notifications/6493438fd6695a19f73b292e 200 OK
+2023-06-22 19:54:37,873 127.0.0.1: requested http://localhost:8000/api/masters/specializations: DEBUG in [manage: 23]: OPTIONS /api/masters/specializations 200 OK
+2023-06-22 19:54:37,875 127.0.0.1: requested http://localhost:8000/api/accounts/3: DEBUG in [manage: 23]: OPTIONS /api/accounts/3 200 OK
+2023-06-22 19:54:38,317 127.0.0.1: requested http://localhost:8000/api/masters/specializations: DEBUG in [manage: 23]: GET /api/masters/specializations 200 OK
+2023-06-22 19:54:38,388 127.0.0.1: requested http://localhost:8000/api/accounts/3: DEBUG in [manage: 23]: GET /api/accounts/3 200 OK
+2023-06-22 19:54:38,389 127.0.0.1: requested http://localhost:8000/api/masters/languages: DEBUG in [manage: 23]: OPTIONS /api/masters/languages 200 OK
+2023-06-22 19:54:38,390 127.0.0.1: requested http://localhost:8000/api/admin/60765e9289899aeee51a8b27: DEBUG in [manage: 23]: OPTIONS /api/admin/60765e9289899aeee51a8b27 200 OK
+2023-06-22 19:54:38,391 127.0.0.1: requested http://localhost:8000/api/notifys/: DEBUG in [manage: 23]: OPTIONS /api/notifys/ 200 OK
+2023-06-22 19:54:38,459 127.0.0.1: requested http://localhost:8000/api/masters/languages: DEBUG in [manage: 23]: GET /api/masters/languages 200 OK
+2023-06-22 19:54:38,975 127.0.0.1: requested http://localhost:8000/api/admin/60765e9289899aeee51a8b27: DEBUG in [manage: 23]: GET /api/admin/60765e9289899aeee51a8b27 200 OK
+2023-06-22 19:54:39,138 127.0.0.1: requested http://localhost:8000/api/notifys/: DEBUG in [manage: 23]: GET /api/notifys/ 200 OK
+2023-06-22 19:54:39,140 127.0.0.1: requested http://localhost:8000/api/notifications/60765e9289899aeee51a8b27: DEBUG in [manage: 23]: OPTIONS /api/notifications/60765e9289899aeee51a8b27 200 OK
+2023-06-22 19:54:39,215 127.0.0.1: requested http://localhost:8000/api/notifications/60765e9289899aeee51a8b27: DEBUG in [manage: 23]: GET /api/notifications/60765e9289899aeee51a8b27 200 OK

@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Button, message, Upload, Avatar } from "antd";
+import { useSelector } from "react-redux";
 import ModalInput from "../ModalInput";
 import {
   createMenteeProfile,
   getAppState,
   isHaveAccount,
   uploadMenteeImage,
-  getDisplaySpecializations,
-  getDisplayLanguages,
 } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { MENTEE_DEFAULT_VIDEO_NAME, AGE_RANGES } from "utils/consts";
@@ -25,6 +24,7 @@ import { UserOutlined, EditFilled } from "@ant-design/icons";
 function MenteeRegisterForm(props) {
   const history = useHistory();
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
@@ -52,18 +52,7 @@ function MenteeRegisterForm(props) {
   const [err, setErr] = useState(false);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
 
-  useEffect(() => {
-    const mentee = JSON.parse(localStorage.getItem("mentee"));
-
-    async function getMasters() {
-      setLangMasters(await getDisplayLanguages());
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
-  }, []);
   const info = (msg) => {
     message.success(msg);
   };
@@ -621,7 +610,7 @@ function MenteeRegisterForm(props) {
             placeholder={t("commonProfile.languagesExample")}
             clicked={inputClicked[5]}
             index={5}
-            options={langMasters}
+            options={options.languages}
             handleClick={handleClick}
             onChange={handleLanguageChange}
             validate={validate}
@@ -665,7 +654,7 @@ function MenteeRegisterForm(props) {
             let newLocalProfile = { ...localProfile, specializations: e };
             updateLocalStorage(newLocalProfile);
           }}
-          options={specMasters}
+          options={options.specializations}
           value={specializations}
           valid={isValid[99]}
           validate={validate}

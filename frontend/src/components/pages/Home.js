@@ -46,8 +46,8 @@ function Home({ history }) {
           <br />
           <LoginVerificationModal
             content={
-              (isMentor && <b>Find a Mentee</b>) ||
-              (isMentee && <b>Find a Mentor</b>)
+              (isMentor && <b>{t("navHeader.findMentee")}</b>) ||
+              (isMentee && <b>{t("navHeader.findMentor")}</b>)
             }
             theme="dark"
             onVerified={() => {

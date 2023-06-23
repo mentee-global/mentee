@@ -5,6 +5,8 @@ import { createApplication } from "../../utils/api";
 import "../../components/css/MentorApplicationPage.scss";
 import { useTranslation, Trans } from "react-i18next";
 
+// TODO: Remove this dead code
+
 const relationOptions = [
   "MENTEE serves those you support as mentees",
   "You help bring on global mentors",

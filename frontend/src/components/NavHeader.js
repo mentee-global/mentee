@@ -14,6 +14,7 @@ import {
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { resetUser, fetchUser } from "features/userSlice";
+import { fetchOptions } from "features/optionsSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
@@ -126,6 +127,10 @@ function NavHeader({ history }) {
       dispatch(fetchUser({ id: profileId, role }));
     }
   }, [role]);
+
+  useEffect(() => {
+    dispatch(fetchOptions());
+  }, [i18n.language]);
 
   const getUserType = () => {
     if (role === ACCOUNT_TYPE.MENTOR) {

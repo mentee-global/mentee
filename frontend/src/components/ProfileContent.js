@@ -17,13 +17,16 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
 import { fetchMenteeByID, editFavMentorById } from "../utils/api";
 import { Rate, Tooltip, Avatar } from "antd";
+import { useSelector } from "react-redux";
 import MentorContactModal from "./MentorContactModal";
 import PartnerProfileModal from "./PartnerProfileModal";
 
 import "./css/Profile.scss";
+import { getTranslatedOptions } from "utils/translations";
 
 function ProfileContent(props) {
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const { accountType, account } = props;
   const { isMentor, isMentee, isPartner, profileId } = useAuth();
   const [mentee, setMentee] = useState();
@@ -82,12 +85,18 @@ function ProfileContent(props) {
     }
   };
   const getLanguages = (languages) => {
-    return languages.join(" • ");
+    return getTranslatedOptions(languages, options.languages).join(" • ");
   };
 
   const getSpecializationTags = (specializations) => {
+    specializations = getTranslatedOptions(
+      specializations,
+      options.specializations
+    );
     return specializations.map((specialization, idx) => (
-      <div className="mentor-specialization-tag">{specialization}</div>
+      <div className="mentor-specialization-tag" key={idx}>
+        {specialization}
+      </div>
     ));
   };
 
@@ -116,7 +125,13 @@ function ProfileContent(props) {
           <div className="mentor-profile-heading">
             <b>{t("partnerProfile.regionsWork")}</b>
           </div>
-          <div>{getSpecializationTags(account?.regions || [])}</div>
+          <div>
+            {account?.regions.map((regions, idx) => (
+              <div className="mentor-specialization-tag" key={idx}>
+                {regions}
+              </div>
+            )) ?? []}
+          </div>
         </div>
       );
     }
@@ -170,7 +185,10 @@ function ProfileContent(props) {
                     mentorName={props.mentor?.name}
                     mentorId={props.mentor?._id?.$oid}
                     menteeId={profileId}
-                    mentorSpecializations={props.mentor?.specializations}
+                    mentorSpecializations={getTranslatedOptions(
+                      props.mentor?.specializations,
+                      options.specializations
+                    )}
                   />
                 </>
               )}

@@ -1,66 +1,14 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Form, Input, Radio, Checkbox } from "antd";
 import { useTranslation, Trans } from "react-i18next";
 import MenteeButton from "../MenteeButton";
-import { createApplication } from "../../utils/api";
-import "../../components/css/MentorApplicationPage.scss";
-// constant declarations
-const immigrantOptions = [
-  "I am a refugee",
-  "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
-  "I am black.",
-  "I am Hispanic/Latino.",
-  "I am of native/ aboriginal/indigenous origins.",
-  "I identify as LGTBQ.",
-  "I have economic hardship.",
-  "I come from a country at war.",
-  "other",
-];
-const topicOptions = [
-  "Advocacy and Activism",
-  "Architecture",
-  "Arts:Dance/Design/Music and More",
-  "Citizenship",
-  "Computer Science",
-  "Education, Personal Guidance On Next Steps",
-  "Engineering",
-  "Entrepreneurship",
-  "Finance, Business",
-  "Finance, Personal",
-  "Health, Community, and Enviornment",
-  "Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
-  "Interview Skills & Practice",
-  "Journalism",
-  "Language Lessons",
-  "Law",
-  "Legal Issues, Business",
-  "Legal Issues, Related to Personal Issues (Excluding Citizenship)",
-  "Media/Public Relations",
-  "Medicine",
-  "Nonprofits/NGOs",
-  "Political Science",
-  "Professional Speaking",
-  "Psychology: The Study of Clinical Practice (Not Personal Issues)",
-  "Research",
-  "Resume/CV Writing",
-  "Self Confidence",
-  "Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
-  "Teaching: Skills & Methods",
-  "Technology Training",
-  "Tourism: Field of",
-  "Writing: Improving writing skills, writing books/articles, scholarly writing",
-  "Other",
-];
-const workOptions = [
-  "I work part-time.",
-  "I work full-time.",
-  "I attend technical school.",
-  "I am a college/university student attaining my first degree.",
-  "I am a college/university students attaining my second or third degree.",
-  "Other",
-];
+import { createApplication } from "utils/api";
+import "components/css/MentorApplicationPage.scss";
+
 function MenteeApplication(props) {
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const [submitError, setSubmitError] = useState();
   const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
 
@@ -83,6 +31,77 @@ function MenteeApplication(props) {
   const [isSocial, setIsSocial] = useState(null);
   const [otherIsSocial, setOtherIsSocial] = useState("");
   const [questions, setQuestions] = useState(null);
+
+  // TODO: Clean this and MentorApplication.js up with the constants
+  // constant declarations
+  const immigrantOptions = [
+    {
+      value: "I am a refugee",
+      label: t("menteeApplication.immigrantOption1"),
+    },
+    {
+      value:
+        "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
+      label: t("menteeApplication.immigrantOption2"),
+    },
+    {
+      value: "I am black.",
+      label: t("menteeApplication.immigrantOption3"),
+    },
+    {
+      value: "I am Hispanic/Latino.",
+      label: t("menteeApplication.immigrantOption4"),
+    },
+    {
+      value: "I am of native/ aboriginal/indigenous origins.",
+      label: t("menteeApplication.immigrantOption5"),
+    },
+    {
+      value: "I identify as LGTBQ.",
+      label: t("menteeApplication.immigrantOption6"),
+    },
+    {
+      value: "I have economic hardship.",
+      label: t("menteeApplication.immigrantOption7"),
+    },
+    {
+      value: "I come from a country at war.",
+      label: t("menteeApplication.immigrantOption8"),
+    },
+    {
+      value: "other",
+      label: t("common.other"),
+    },
+  ];
+
+  const workOptions = [
+    {
+      value: "I work part-time.",
+      label: t("menteeApplication.workOption1"),
+    },
+    {
+      value: "I work full-time.",
+      label: t("menteeApplication.workOption2"),
+    },
+    {
+      value: "I attend technical school.",
+      label: t("menteeApplication.workOption3"),
+    },
+    {
+      value: "I am a college/university student attaining my first degree.",
+      label: t("menteeApplication.workOption4"),
+    },
+    {
+      value:
+        "I am a college/university students attaining my second or third degree.",
+      label: t("menteeApplication.workOption5"),
+    },
+    {
+      value: "Other",
+      label: t("common.other"),
+    },
+  ];
+
   function onChangeCheck5(checkedValues) {
     let optionsSelected = [];
     checkedValues.forEach((value) => {
@@ -208,17 +227,29 @@ function MenteeApplication(props) {
               )}
               <Radio.Group onChange={(e) => setAge(e.target.value)} value={age}>
                 <Radio value={"I am 18-22 years old."}>
-                  I am 18-22 years old.
+                  {t("menteeApplication.ageAnswer1")}
                 </Radio>
-                <Radio value={"I am 24- 26 years old"}>
-                  I am 24- 26 years old
+                <Radio value={"I am 23- 26 years old"}>
+                  {t("menteeApplication.ageAnswer2")}
                 </Radio>
-                <Radio value={"I am 27-30"}>I am 27-30</Radio>
-                <Radio value={"I am 30-35"}>I am 30-35</Radio>
-                <Radio value={"I am 36-40"}>I am 36-40</Radio>
-                <Radio value={"I am 41-50"}>I am 41-50</Radio>
-                <Radio value={"I am 51-60"}>I am 51-60</Radio>
-                <Radio value={"I am 61 or older"}>I am 61 or older</Radio>
+                <Radio value={"I am 27-30"}>
+                  {t("menteeApplication.ageAnswer3")}
+                </Radio>
+                <Radio value={"I am 30-35"}>
+                  {t("menteeApplication.ageAnswer4")}
+                </Radio>
+                <Radio value={"I am 36-40"}>
+                  {t("menteeApplication.ageAnswer5")}
+                </Radio>
+                <Radio value={"I am 41-50"}>
+                  {t("menteeApplication.ageAnswer6")}
+                </Radio>
+                <Radio value={"I am 51-60"}>
+                  {t("menteeApplication.ageAnswer7")}
+                </Radio>
+                <Radio value={"I am 61 or older"}>
+                  {t("menteeApplication.ageAnswer8")}
+                </Radio>
               </Radio.Group>
             </div>
           </div>
@@ -272,7 +303,7 @@ function MenteeApplication(props) {
               onChange={(e) => setCountry(e.target.value)}
             />
           </Form.Item>
-          <div>{t("menteeApplication.genderIdentification")} *</div>
+          <div>{t("commonApplication.genderIdentification")} *</div>
 
           <div className="input-form">
             <div className="time-options-answers">
@@ -321,28 +352,11 @@ function MenteeApplication(props) {
               <Radio.Group
                 onChange={(e) => setLanguage(e.target.value)}
                 value={language}
-              >
-                <Radio value={"Arabic"}>Arabic</Radio>
-                <Radio value={"Bengali"}>Bengali</Radio>
-                <Radio value={"Burmese"}>Burmese</Radio>
-                <Radio value={"Cantonese"}>Cantonese</Radio>
-                <Radio value={"Dari"}>Dari</Radio>
-                <Radio value={"English"}>English</Radio>
-                <Radio value={"French"}>French</Radio>
-                <Radio value={"German"}>German</Radio>
-                <Radio value={"Hebrew"}>Hebrew</Radio>
-                <Radio value={"Hindu"}>Hindu</Radio>
-                <Radio value={"italian"}>italian</Radio>
-                <Radio value={"japanese"}>japanese</Radio>
-                <Radio value={"Karen"}>Karen</Radio>
-                <Radio value={"Mandarin"}>Mandarin</Radio>
-                <Radio value={"Portuguese"}>Portuguese</Radio>
-                <Radio value={"Russian"}>Russian</Radio>
-                <Radio value={"Spanish"}>Spanish</Radio>
-                <Radio value={"Swahili"}>Swahili</Radio>
-                <Radio value={"Urdu"}>Urdu</Radio>
-                <Radio value={"other"}>Other</Radio>
-              </Radio.Group>
+                options={[
+                  ...options.languages,
+                  { label: t("common.other"), value: "other" },
+                ]}
+              />
             </div>
           </div>
           {language === "other" ? (
@@ -373,7 +387,10 @@ function MenteeApplication(props) {
               <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Checkbox.Group
-              options={topicOptions}
+              options={[
+                ...options.specializations,
+                { label: t("common.other"), value: "Other" },
+              ]}
               value={topics}
               onChange={onChangeCheck5}
             />
@@ -444,9 +461,13 @@ function MenteeApplication(props) {
                 onChange={(e) => setIsSocial(e.target.value)}
                 value={isSocial}
               >
-                <Radio value={"yes"}>Yes!</Radio>
-                <Radio value={"No"}>No, thank you.</Radio>
-                <Radio value={"other"}>Other</Radio>
+                <Radio value={"yes"}>
+                  {t("menteeApplication.socialMediaOption1")}
+                </Radio>
+                <Radio value={"No"}>
+                  {t("menteeApplication.socialMediaOption2")}
+                </Radio>
+                <Radio value={"other"}>{t("common.other")}</Radio>
               </Radio.Group>
             </div>
           </div>

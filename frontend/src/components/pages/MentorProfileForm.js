@@ -4,14 +4,12 @@ import { useTranslation } from "react-i18next";
 import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import ModalInput from "../ModalInput";
 import { sendVerificationEmail } from "utils/auth.service";
-
+import { useSelector } from "react-redux";
 import {
   createMentorProfile,
   getAppState,
   isHaveAccount,
   uploadMentorImage,
-  getDisplaySpecializations,
-  getDisplayLanguages,
 } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { MENTEE_DEFAULT_VIDEO_NAME } from "utils/consts";
@@ -28,6 +26,7 @@ import { UserOutlined, EditFilled } from "@ant-design/icons";
 function RegisterForm(props) {
   const history = useHistory();
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
     new Array(numInputs).fill(false)
@@ -54,18 +53,6 @@ function RegisterForm(props) {
   const [localProfile, setLocalProfile] = useState({});
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
-
-  useEffect(() => {
-    const mentor = JSON.parse(localStorage.getItem("mentor"));
-
-    async function getMasters() {
-      setLangMasters(await getDisplayLanguages());
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
-  }, []);
   const info = (msg) => {
     message.success(msg);
   };
@@ -676,7 +663,7 @@ function RegisterForm(props) {
               updateLocalStorage(newLocalProfile);
             }}
             placeholder={t("commonProfile.languagesExample")}
-            options={langMasters}
+            options={options.languages}
             value={languages}
             valid={isValid[7]}
             validate={validate}
@@ -711,7 +698,7 @@ function RegisterForm(props) {
               let newLocalProfile = { ...localProfile, specializations: e };
               updateLocalStorage(newLocalProfile);
             }}
-            options={specMasters}
+            options={options.specializations}
             value={specializations}
             valid={isValid[9]}
             validate={validate}

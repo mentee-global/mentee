@@ -38,6 +38,36 @@
     "favoriteContacts": "Contactos favoritos",
     "noFavorites": "No hay mentores favoritos"
   },
+  "regions": {
+    "N. America": "Norteamérica",
+    "Central America": "América Central",
+    "S. America": "Sudamérica",
+    "Caribbean": "Caribe",
+    "Europe": "Europa",
+    "Middle East": "Medio Oriente",
+    "N. Africa": "Norte de África",
+    "Sub-Sahara Africa": "África subsahariana",
+    "Central Asia": "Asia Central",
+    "East Asia": "Asia Oriental",
+    "South/SE Asia": "Asia del Sur/Sureste",
+    "Oceana": "Oceanía"
+  },
+  "appointmentStatus": {
+    "pending": "pendiente",
+    "accepted": "aceptado",
+    "denied": "denegado"
+  },
+  "ageRanges": {
+    "16-18": "16-18",
+    "19-22": "19-22",
+    "23-25": "23-25",
+    "26-30": "26-30",
+    "30s": "30s",
+    "40s": "40s",
+    "50s": "50s",
+    "60s": "60s",
+    "70s+": "70s+"
+  },
   "common": {
     "admin": "Administrador",
     "apply": "Aplicar",

@@ -5,11 +5,8 @@ import { UserOutlined } from "@ant-design/icons";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
 import { APPOINTMENT_FORM_KEYS, APPOINTMENT_STATUS } from "../utils/consts";
-import {
-  createAppointment,
-  editAvailability,
-  getDisplaySpecializations,
-} from "utils/api";
+import { useSelector } from "react-redux";
+import { createAppointment, editAvailability } from "utils/api";
 import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
@@ -31,6 +28,7 @@ const validationMessage = {
 
 function MenteeAppointmentModal(props) {
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const [form] = Form.useForm();
   const [timeSlots, setTimeSlots] = useState([]);
   const [dayTimeSlots, setDayTimeSlots] = useState([]);
@@ -51,7 +49,7 @@ function MenteeAppointmentModal(props) {
   const [message, setMessage] = useState();
   const [validate, setValidate] = useState(false);
   const [isAvailable, setIsAvailable] = useState(false);
-  const [specMasters, setSpecMasters] = useState([]);
+
   const mentorID = props.mentor_id;
   const menteeID = props.mentee_id;
 
@@ -62,12 +60,6 @@ function MenteeAppointmentModal(props) {
   // useState values
   const values = [mentorID, menteeID, topic, message, canCall, canText];
 
-  useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
-  }, []);
   // Updates availability
   useEffect(() => {
     if (props.availability) {
@@ -410,7 +402,7 @@ function MenteeAppointmentModal(props) {
                       value={topic}
                       placeholder={t("menteeAppointmentModal.selectTopic")}
                       type="dropdown-single"
-                      options={specMasters}
+                      options={options.specializations}
                       clicked={inputClicked[0]}
                       index={0}
                       handleClick={handleClick}

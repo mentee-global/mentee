@@ -73,6 +73,12 @@ export const REGIONS = [
   "South/SE Asia",
   "Oceana",
 ];
+
+export function getRegions(t) {
+  return REGIONS.map((region) =>
+    Object({ label: t(`regions.${region}`), value: region })
+  );
+}
 // export const LANGUAGES = [
 //   "Arabic",
 //   "Bengali",
@@ -167,28 +173,43 @@ export const MESSAGE_FORM_KEYS = [
   "time",
 ];
 export const SDGS = [
-  "SDG 1: No poverty",
-  "SDG 2: Zero Hunger",
-  "SDG 3: Good Health & Well-being",
-  "SDG 4: Quality Education",
-  "SDG 5: Gender Equality",
-  "SDG 6: Clean Water and Sanitation",
-  "SDG 7: Affordable and Clean Energy",
-  "SDG 8: Decent Work and Economic Growth",
-  "SDG 9: Industry, Innovation and Infrastructures",
-  "SDG 10: Reduced Inequality",
-  "SDG 11: Sustainable Cities and Communities",
-  "SDG 12: Responsible Consumption and Production",
-  "SDG 13: Climate Action",
-  "SDG 14: Life Below Water",
-  "SDG 15: Life on Land",
-  "SDG 16: Peace and Justice Strong Institutions",
-  "SDG 17: Partnership to Achieve the Goals",
+  "SDG1",
+  "SDG2",
+  "SDG3",
+  "SDG4",
+  "SDG5",
+  "SDG6",
+  "SDG7",
+  "SDG8",
+  "SDG9",
+  "SDG10",
+  "SDG11",
+  "SDG12",
+  "SDG13",
+  "SDG14",
+  "SDG15",
+  "SDG16",
+  "SDG17",
 ];
+
+export function getSDGs(t) {
+  return SDGS.map((sdg) =>
+    Object({
+      label: t(`SDGS.${sdg}`),
+      value: t(`SDGS.${sdg}`, { lng: "en" }),
+    })
+  );
+}
+
 export const NEW_APPLICATION_STATUS = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
   BUILDPROFILE: "BuildProfile",
   COMPLETED: "COMPLETED",
   REJECTED: "REJECTED",
+};
+
+export const OPTION_TYPE = {
+  LANGUAGE: "language",
+  SPECIALIZATION: "specialization",
 };

@@ -1,12 +1,16 @@
 import React from "react";
-import { UserOutlined, CalendarOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  CalendarOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "utils/hooks/useAuth";
 
 function MenteeSidebar(props) {
   const { t } = useTranslation();
-  const {role} = useAuth();
+  const { role } = useAuth();
 
   const pages = {
     appointments: {
@@ -19,11 +23,11 @@ function MenteeSidebar(props) {
       path: "/profile",
       icon: <UserOutlined />,
     },
-    message:{
+    message: {
       name: t("common.messages"),
-      path: '/messages/' + role,
+      path: "/messages/" + role,
       icon: <MailOutlined />,
-    }
+    },
   };
 
   return <Sidebar pages={pages} selectedPage={props.selectedPage} />;

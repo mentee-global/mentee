@@ -62,3 +62,10 @@ APPT_STATUS = {
     "ACCEPTED": "accepted",
     "REJECTED": "Rejected",
 }
+
+I18N_LANGUAGES = {
+    "es-US",
+    "pt-BR",
+    "ar",
+    "fa-AF",
+}

@@ -155,9 +155,8 @@ function ModalInput(props) {
               onChange={handleOnChange}
               value={props.value}
               defaultValue={defaultValue}
-            >
-              {returnDropdownItems(options)}
-            </Select>
+              options={options}
+            />
             {errorPresent && <p className="input-error">{errorMessage}</p>}
           </div>
         );
@@ -197,9 +196,8 @@ function ModalInput(props) {
               value={props.value}
               tokenSeparators={[","]}
               defaultValue={defaultValue}
-            >
-              {returnDropdownItems(options)}
-            </Select>
+              options={options}
+            />
             {errorPresent && <p className="input-error">{errorMessage}</p>}
           </div>
         );

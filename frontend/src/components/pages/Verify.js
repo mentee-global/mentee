@@ -11,6 +11,7 @@ import {
   refreshToken,
   isUserPartner,
 } from "utils/auth.service";
+import { useTranslation } from "react-i18next";
 import MenteeButton from "../MenteeButton";
 
 import "../css/Home.scss";
@@ -18,6 +19,7 @@ import "../css/Login.scss";
 import "../css/Register.scss";
 
 function Verify({ history, sent }) {
+  const { t } = useTranslation();
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState(false);
   const [resent, setResent] = useState(false);
@@ -28,22 +30,22 @@ function Verify({ history, sent }) {
         <div className="verify-container">
           <div className="verify-header-container">
             <div className="verify-header-text">
-              <h1 className="login-text">Account Verification</h1>
+              <h1 className="login-text">{t("verifyEmail.header")}</h1>
               {error && (
-                <div className="register-error">Error, please try again!</div>
+                <div className="register-error">{t("verifyEmail.error")}</div>
               )}
-              {resent && <div> Email resent! </div>}
+              {resent && <div> {t("verifyEmail.emailResent")} </div>}
               <br />
               <t className="verify-header-text-description">
-                A verification email has been sent to your email. Please click
-                the link contained inside to verify your account. <br />
-                (Refresh this page if you verified your email)
+                {t("verifyEmail.body")}
+                <br />
+                {t("verifyEmail.refresh")}
               </t>
             </div>
           </div>
           <div className="verify-login-button">
             <MenteeButton
-              content={<b>Confirm</b>}
+              content={<b>{t("common.confirm")}</b>}
               width={"50%"}
               height={"125%"}
               loading={verifying}
@@ -70,7 +72,7 @@ function Verify({ history, sent }) {
             />
           </div>
           <div className="login-register-container">
-            Didn&#39;t receive an email?
+            {t("verifyEmail.noEmail")}
             <Button
               type="link"
               className="verify-resend-link"
@@ -80,7 +82,7 @@ function Verify({ history, sent }) {
                 setResent(true);
               }}
             >
-              <u>Resend</u>
+              <u>{t("verifyEmail.resend")}</u>
             </Button>
           </div>
         </div>

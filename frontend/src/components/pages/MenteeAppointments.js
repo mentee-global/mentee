@@ -50,7 +50,8 @@ function MenteeAppointments() {
     return (
       <div className="mentee-appt-card">
         <div className="status-section">
-          {info.status ?? t("menteeAppointments.pending")}{" "}
+          {t(`menteeAppointments.${info.status}`) ??
+            t("menteeAppointments.pending")}{" "}
           <div className={`status-${info.status ?? "pending"}`} />
         </div>
         <div className="mentee-appt-card-header">
@@ -94,7 +95,6 @@ function MenteeAppointments() {
       }
     }
     getData();
-    console.log(i18n.language);
   }, [profileId, i18n.language]);
 
   const handleOverlayChange = (newSelect) => {

@@ -4,7 +4,7 @@ import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import { useTranslation } from "react-i18next";
 import ModalInput from "./ModalInput";
 import { createPartnerProfile, uploadPartnerImage } from "../utils/api";
-import { REGIONS, SDGS } from "../utils/consts";
+import { getRegions, getSDGs } from "../utils/consts";
 import { sendVerificationEmail } from "utils/auth.service";
 
 import "./css/AntDesign.scss";
@@ -439,7 +439,7 @@ function RegisterForm(props) {
               let newLocalProfile = { ...localProfile, regions: e };
               updateLocalStorage(newLocalProfile);
             }}
-            options={REGIONS}
+            options={getRegions(t)}
             value={regions}
             valid={isValid[9]}
             validate={validate}
@@ -475,7 +475,7 @@ function RegisterForm(props) {
             onChange={handleWebsiteChange}
             value={website}
             errorPresent={website && !validateUrl(website)}
-            errorMessage={t("common.invalidURL")}
+            errorMessage={t("common.invalidUrl")}
             valid={isValid[3]}
             validate={validate}
           />
@@ -499,7 +499,7 @@ function RegisterForm(props) {
           <p className="sdgtext">{t("partnerProfile.developmentGoals")}</p>
           {sdgErr && <p>{t("common.inputPrompt")}</p>}
           <Checkbox.Group
-            options={SDGS}
+            options={getSDGs(t)}
             value={sdgs}
             onChange={(checkedValues) => {
               let optionsSelected = [];

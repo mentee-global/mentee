@@ -6,6 +6,7 @@ import {
   FRONT_BASE_URL,
 } from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
+import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -326,7 +327,6 @@ export const getIsEmailVerified = (email, password) => {
   return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
-      console.log("error loading");
       console.error(err);
       return err.response.data.result;
     }
@@ -813,24 +813,40 @@ export const newSpecializationCreate = async (name) => {
 
 export const getDisplayLanguages = async () => {
   const requestExtension = `/masters/languages`;
-  var records = await authGet(requestExtension).catch(console.error);
-  var res = [];
-  var languages = records.data.result.result;
+  const records = await authGet(requestExtension).catch(console.error);
+  const currentLang = i18n.language;
+  let res = [];
+  const languages = records.data?.result?.result ?? [];
   for (let language of languages) {
-    res.push(language.name);
+    const value = language.name;
+    res.push({ value, label: language?.translations[currentLang] ?? value });
   }
   return res;
 };
 
 export const getDisplaySpecializations = async () => {
   const requestExtension = `/masters/specializations`;
-  var records = await authGet(requestExtension).catch(console.error);
-  var res = [];
-  var specializations = records.data.result.result;
+  const records = await authGet(requestExtension).catch(console.error);
+  const currentLang = i18n.language;
+  let res = [];
+  const specializations = records.data?.result?.result ?? [];
   for (let specialization of specializations) {
-    res.push(specialization.name);
+    const value = specialization.name;
+    res.push({
+      value,
+      label: specialization?.translations[currentLang] ?? value,
+    });
   }
   return res;
+};
+
+export const translateOption = async (optionType, selectId) => {
+  const requestExtension = `/masters/translate`;
+  const formData = new FormData();
+  formData.append("optionType", optionType);
+  formData.append("selectId", selectId);
+  const result = await authPut(requestExtension, formData).catch(console.error);
+  return result.data?.result;
 };
 
 /**

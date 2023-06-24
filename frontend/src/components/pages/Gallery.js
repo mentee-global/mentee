@@ -5,22 +5,21 @@ import { SearchOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { isLoggedIn } from "utils/auth.service";
-import { useLocation } from "react-router";
 import {
   editFavMentorById,
   fetchMenteeByID,
   fetchMentors,
-  getDisplaySpecializations,
-  getDisplayLanguages,
   fetchPartners,
 } from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 import ModalInput from "../ModalInput";
 import { useTranslation } from "react-i18next";
+import { getTranslatedOptions } from "utils/translations";
 
 function Gallery() {
   const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const { isAdmin, isMentor, isMentee, profileId } = useAuth();
   const [mentors, setMentors] = useState([]);
   const [mentee, setMentee] = useState();
@@ -28,11 +27,8 @@ function Gallery() {
   const [languages, setLanguages] = useState([]);
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
-  const location = useLocation();
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
   const [pageLoaded, setPageLoaded] = useState(false);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
   const [allPartners, setAllPartners] = useState([]);
   const [selectedPartnerID, setSelectedPartnerID] = useState(undefined);
   const user = useSelector((state) => state.user.user);
@@ -87,12 +83,6 @@ function Gallery() {
     }
 
     getMentors();
-
-    async function getMasters() {
-      setLangMasters(await getDisplayLanguages());
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
 
     async function getAllPartners() {
       var all_data = [];
@@ -258,7 +248,7 @@ function Gallery() {
           </div>
           <Checkbox.Group
             defaultValue={specializations}
-            options={specMasters}
+            options={options.specializations}
             onChange={(checked) => setSpecializations(checked)}
             value={specializations}
           />
@@ -267,7 +257,7 @@ function Gallery() {
           </div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={options.languages}
             onChange={(checked) => setLanguages(checked)}
             value={languages}
           />
@@ -303,7 +293,7 @@ function Gallery() {
           </div>
           <Checkbox.Group
             defaultValue={specializations}
-            options={specMasters}
+            options={options.specializations}
             onChange={(checked) => setSpecializations(checked)}
           />
           <div className="gallery-filter-section-title">
@@ -311,7 +301,7 @@ function Gallery() {
           </div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={options.languages}
             onChange={(checked) => setLanguages(checked)}
           />
         </div>
@@ -327,10 +317,16 @@ function Gallery() {
               <MentorCard
                 key={key}
                 name={mentor.name}
-                languages={mentor.languages}
+                languages={getTranslatedOptions(
+                  mentor.languages,
+                  options.languages
+                )}
                 professional_title={mentor.professional_title}
                 location={mentor.location}
-                specializations={mentor.specializations}
+                specializations={getTranslatedOptions(
+                  mentor.specializations,
+                  options.specializations
+                )}
                 website={mentor.website}
                 linkedin={mentor.linkedin}
                 video={mentor.video}

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Form, Input, Radio } from "antd";
 import { useTranslation, Trans } from "react-i18next";
 import MenteeButton from "../MenteeButton";
-import { createApplication } from "../../utils/api";
-import "../../components/css/MentorApplicationPage.scss";
+import { createApplication } from "utils/api";
+import "components/css/MentorApplicationPage.scss";
 
 // constant declarations
 const { TextArea } = Input;
@@ -248,11 +248,21 @@ function MentorApplication(props) {
                 <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
               )}
               <Radio.Group onChange={onChange5} value={companyTime}>
-                <Radio value={"Less than one year."}>Less than one year.</Radio>
-                <Radio value={"1-4 years"}>1-4 years</Radio>
-                <Radio value={"5-10 years"}>5-10 years</Radio>
-                <Radio value={"10-20 years"}>10-20 years</Radio>
-                <Radio value={"21+ Years"}>21+ Years</Radio>
+                <Radio value={"Less than one year"}>
+                  {t("mentorApplication.duration1")}
+                </Radio>
+                <Radio value={"1-4 years"}>
+                  {t("mentorApplication.duration2")}
+                </Radio>
+                <Radio value={"5-10 years"}>
+                  {t("mentorApplication.duration3")}
+                </Radio>
+                <Radio value={"10-20 years"}>
+                  {t("mentorApplication.duration4")}
+                </Radio>
+                <Radio value={"21+ Years"}>
+                  {t("mentorApplication.duration5")}
+                </Radio>
               </Radio.Group>
             </div>
           </div>
@@ -262,10 +272,14 @@ function MentorApplication(props) {
               <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group onChange={onChange4} value={specialistTime}>
-              <Radio value={"One year with us"}>One year with us</Radio>
-              <Radio value={"Two years with us"}>Two years with us</Radio>
+              <Radio value={"One year with us"}>
+                {t("mentorApplication.commitDuration1")}
+              </Radio>
+              <Radio value={"Two years with us"}>
+                {t("mentorApplication.commitDuration2")}
+              </Radio>
               <Radio value={"For as long as you'll have me!"}>
-                For as long as you'll have me!
+                {t("mentorApplication.commitDuration3")}
               </Radio>
             </Radio.Group>
           </div>
@@ -276,8 +290,8 @@ function MentorApplication(props) {
               <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Radio.Group onChange={onChange3} value={immigrantStatus}>
-              <Radio value={"Yes"}>Yes</Radio>
-              <Radio value={"No"}>No</Radio>
+              <Radio value={"Yes"}>{t("common.yes")}</Radio>
+              <Radio value={"No"}>{t("common.no")}</Radio>
             </Radio.Group>
           </div>
           <div>{t("mentorApplication.communityStatus")} *</div>
@@ -289,8 +303,8 @@ function MentorApplication(props) {
               onChange={(e) => setisFamilyNative(e.target.value)}
               value={isFamilyNative}
             >
-              <Radio value={"Yes"}>Yes</Radio>
-              <Radio value={"No"}>No</Radio>
+              <Radio value={"Yes"}>{t("common.yes")}</Radio>
+              <Radio value={"No"}>{t("common.no")}</Radio>
             </Radio.Group>
           </div>
           <div> {t("mentorApplication.economicBackground")} *</div>
@@ -302,8 +316,8 @@ function MentorApplication(props) {
               onChange={(e) => setisEconomically(e.target.value)}
               value={isEconomically}
             >
-              <Radio value={"Yes"}>Yes</Radio>
-              <Radio value={"No"}>No</Radio>
+              <Radio value={"Yes"}>{t("common.yes")}</Radio>
+              <Radio value={"No"}>{t("common.no")}</Radio>
             </Radio.Group>
           </div>
           <div> {t("mentorApplication.isPersonOfColor")} *</div>
@@ -315,11 +329,11 @@ function MentorApplication(props) {
               onChange={(e) => setisColorPerson(e.target.value)}
               value={isColorPerson}
             >
-              <Radio value={"Yes"}>Yes</Radio>
-              <Radio value={"No"}>No</Radio>
+              <Radio value={"Yes"}>{t("common.yes")}</Radio>
+              <Radio value={"No"}>{t("common.no")}</Radio>
             </Radio.Group>
           </div>
-          <div> {t("mentorApplication.genderIdentification")} *</div>
+          <div> {t("commonApplication.genderIdentification")} *</div>
           <div className="input-form">
             {isMissingError(identify) && (
               <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
@@ -328,10 +342,10 @@ function MentorApplication(props) {
               onChange={(e) => setidentify(e.target.value)}
               value={identify}
             >
-              <Radio value={"man"}>as a man</Radio>
-              <Radio value={"woman"}>as a woman</Radio>
-              <Radio value={"LGTBQ+"}>as LGTBQ+</Radio>
-              <Radio value={"other"}>other</Radio>
+              <Radio value={"man"}>{t("commonApplication.man")}</Radio>
+              <Radio value={"woman"}>{t("commonApplication.woman")}</Radio>
+              <Radio value={"LGTBQ+"}>{t("commonApplication.lgbtq")}</Radio>
+              <Radio value={"other"}>{t("commonApplication.other")}</Radio>
             </Radio.Group>
           </div>
           <div>{t("mentorApplication.isMarginalized")} *</div>
@@ -343,8 +357,8 @@ function MentorApplication(props) {
               onChange={(e) => setisMarginalized(e.target.value)}
               value={isMarginalized}
             >
-              <Radio value={"Yes"}>Yes</Radio>
-              <Radio value={"No"}>No</Radio>
+              <Radio value={"Yes"}>{t("common.yes")}</Radio>
+              <Radio value={"No"}>{t("common.no")}</Radio>
             </Radio.Group>
           </div>
           <div>{t("mentorApplication.languageBackground")} *</div>
@@ -402,7 +416,8 @@ function MentorApplication(props) {
                   "Yes, I can offer a donation now to help suppourt this work!"
                 }
               >
-                Yes, I can offer a donation now to help support this work!{" "}
+                {" "}
+                {t("mentorApplication.yesDonate")}
                 <br></br>(https://www.menteteglobal.org/donate)
               </Radio>
               <Radio
@@ -410,11 +425,10 @@ function MentorApplication(props) {
                   "No, unfortunately I cannot offer a donation now but please ask me again."
                 }
               >
-                No, unfortunately I cannot offer a donation now but please ask
-                me again.
+                {t("mentorApplication.laterDonate")}
               </Radio>
               <Radio value={"I'm unable to offer a donation."}>
-                I'm unable to offer a donation.
+                {t("mentorApplication.noDonate")}
               </Radio>
             </Radio.Group>
           </Form.Item>

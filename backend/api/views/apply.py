@@ -357,7 +357,7 @@ def edit_application(id, role):
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
-            subject="Your account have been successfully Created " + application.name,
+            subject="Your account has been successfully created " + application.name,
             template_id=PROFILE_COMPLETED,
         )
         if not success:
@@ -374,7 +374,7 @@ def edit_application(id, role):
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
-            subject="Congratulation for completing training",
+            subject="Congratulations for completing the training",
             data={"link": target_url},
             template_id=TRAINING_COMPLETED,
         )

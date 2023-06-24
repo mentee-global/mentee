@@ -14,8 +14,49 @@ from api.models import (
 )
 from api.utils.require_auth import admin_only, all_users
 from pymongo import collation
+from api.utils.google_translate import get_all_translations, get_translation
 
 masters = Blueprint("masters", __name__)
+
+# IGNORE is found in backend/user_options.json
+# This function is used to populate the Languages and Specializations collections
+# with the data from user_options.json
+# It is only used once, when the database is first created
+# @masters.route("/google-translate", methods=["GET"])
+# def google_translate():
+#     mapping = {"languages": Languages, "specializations": Specializations}
+
+#     for database in IGNORE:
+#         for item in IGNORE[database]:
+#             try:
+#                 record = mapping[database].objects.get(name=item["name"])
+#             except:
+#                 logger.info(f"Could not find {item['name']}")
+#                 record = mapping[database](
+#                     name=item["name"],
+#                     updated_at=datetime.now()
+#                 )
+#                 logger.info("Creating new record")
+#             record.translations = item["translations"]
+#             record.save()
+
+#     return create_response(data={"result": "success"})
+
+# @masters.route("/translate", methods=["PUT"])
+# @admin_only
+# def translate():
+#     mapping = {"languages": Languages, "specializations": Specializations}
+#     optionType = request.form["optionType"]
+#     selectId = request.form["selectId"]
+
+#     try:
+#         record = mapping[optionType].objects.get(id=selectId)
+#     except:
+#         return create_response(status=422, message="Record not found")
+#     record.translations = get_all_translations(record.name)
+#     record.save()
+
+#     return create_response(data={"result": "success", "record": record})
 
 
 @masters.route("/languages", methods=["GET"])
@@ -69,6 +110,7 @@ def delete_language(id):
     return create_response(status=200, message="Successful deletion")
 
 
+# TODO: Add translations to this as well in case of typos
 @masters.route("/languages/<string:id>", methods=["PUT"])
 @admin_only
 def edit_language_by_id(id):
@@ -115,6 +157,7 @@ def edit_language_by_id(id):
 def new_language():
     name = request.form["name"]
     record = Languages(name=name, updated_at=datetime.now())
+    record.translations = get_all_translations(name)
 
     record.save()
 
@@ -178,6 +221,7 @@ def delete_specializations(id):
     return create_response(status=200, message="Successful deletion")
 
 
+# TODO: Add translations to this as well in case of typos
 @masters.route("/specializations/<string:id>", methods=["PUT"])
 @admin_only
 def edit_specialization_by_id(id):
@@ -224,6 +268,7 @@ def edit_specialization_by_id(id):
 def new_specailization():
     name = request.form["name"]
     record = Specializations(name=name, updated_at=datetime.now())
+    record.translations = get_all_translations(name)
 
     record.save()
 

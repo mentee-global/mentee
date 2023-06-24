@@ -5,7 +5,10 @@ import {
   getSpecializationById,
   fetchAdminSpecializations,
   newSpecializationCreate,
+  translateOption,
 } from "utils/api";
+import { useDispatch } from "react-redux";
+import { fetchOptions } from "features/optionsSlice";
 import { Input, Form, Button } from "antd";
 import { Table, Popconfirm, message, Modal } from "antd";
 import {
@@ -15,8 +18,10 @@ import {
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
+import { OPTION_TYPE } from "utils/consts";
 
 export const Specializations = () => {
+  const dispatch = useDispatch();
   const [data, setData] = useState([]);
   const [err, setErr] = useState(false);
   const [reload, setReload] = useState(true);
@@ -70,6 +75,7 @@ export const Specializations = () => {
       }
     }
 
+    dispatch(fetchOptions());
     setReload(!reload);
   };
 
@@ -87,6 +93,11 @@ export const Specializations = () => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      {/* <Button
+        onClick={() => translateOption(OPTION_TYPE.SPECIALIZATION, selectedID)}
+      >
+        Translate
+      </Button> */}
     </Form>
   );
 
@@ -139,6 +150,7 @@ export const Specializations = () => {
             closable={false}
             width={"600px"}
             className={id}
+            mask={false}
           >
             {" "}
             {SpecForm()}

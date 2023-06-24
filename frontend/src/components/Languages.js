@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { fetchOptions } from "features/optionsSlice";
 import {
   deleteLanguageByID,
   EditLanguageById,
   getLanguageById,
   fetchAdminLanguages,
   newLanguageCreate,
+  translateOption,
 } from "utils/api";
 import { Input, Form, Button } from "antd";
 import { Table, Popconfirm, message, Modal } from "antd";
@@ -15,6 +18,7 @@ import {
 } from "@ant-design/icons";
 
 import "./css/Trains.scss";
+import { OPTION_TYPE } from "utils/consts";
 
 export const Languages = () => {
   const [data, setData] = useState([]);
@@ -25,6 +29,7 @@ export const Languages = () => {
   const [isModalVisible2, setIsModalVisible2] = useState(false);
   const [errMessage, setErrorMessage] = useState(null);
   const [selectedID, setSelectedID] = useState("");
+  const dispatch = useDispatch();
 
   const showModal = async (id, isNew) => {
     if (isNew === false) {
@@ -70,6 +75,7 @@ export const Languages = () => {
       }
     }
 
+    dispatch(fetchOptions());
     setReload(!reload);
   };
 
@@ -77,6 +83,16 @@ export const Languages = () => {
     setIsModalVisible(false);
     setIsModalVisible2(false);
   };
+
+  // const handleTranslate = () => {
+  //   console.log(selectedID);
+  //   const result = translateOption(OPTION_TYPE.LANGUAGE, selectedID);
+  //   if (result) {
+  //     message.success("Translation has been done successfully");
+  //   } else {
+  //     message.error("Translation has failed");
+  //   }
+  // };
 
   const LanguageForm = () => (
     <Form className="trainForm">
@@ -87,6 +103,7 @@ export const Languages = () => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      {/* <Button onClick={() => handleTranslate()}>Translate</Button> */}
     </Form>
   );
 
@@ -139,6 +156,7 @@ export const Languages = () => {
             closable={false}
             width={"600px"}
             className={id}
+            mask={false}
           >
             {" "}
             {LanguageForm()}

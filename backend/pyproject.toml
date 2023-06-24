@@ -116,9 +116,9 @@ wtforms = "3.0.1"
 zipp = "3.15.0"
 zope-event = "4.6"
 zope-interface = "5.5.2"
+google-cloud-translate = "^3.11.1"
 
 [tool.poetry.dev-dependencies]
-black = "^20.8b1"
 mypy = "^0.812"
 pytest = "^6.2.2"
 pylint = "^2.7.1"

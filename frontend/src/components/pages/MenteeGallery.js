@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  fetchPartners,
-  fetchMentees,
-  getDisplaySpecializations,
-  getDisplayLanguages,
-} from "utils/api";
+import { fetchPartners, fetchMentees } from "utils/api";
 import MenteeCard from "../MenteeCard";
 import { Input, Checkbox, Modal, Result, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -16,10 +11,12 @@ import { useAuth } from "../../utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 import ModalInput from "../ModalInput";
 import { useTranslation } from "react-i18next";
+import { getTranslatedOptions } from "utils/translations";
 
 function Gallery() {
   const { t } = useTranslation();
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const options = useSelector((state) => state.options);
+  const { isAdmin } = useAuth();
   const [mentees, setMentees] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [interestRange, setInteresRange] = useState([]);
@@ -27,8 +24,6 @@ function Gallery() {
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
   const [pageLoaded, setPageLoaded] = useState(false);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
   const [allPartners, setAllPartners] = useState([]);
   const [selectedPartnerID, setSelectedPartnerID] = useState(undefined);
   const verified = location.state && location.state.verified;
@@ -84,12 +79,6 @@ function Gallery() {
     }
     setPageLoaded(true);
     getMentees();
-
-    async function getMasters() {
-      setLangMasters(await getDisplayLanguages());
-      setSpecMasters(await getDisplaySpecializations());
-    }
-    getMasters();
 
     async function getAllPartners() {
       var all_data = [];
@@ -199,7 +188,7 @@ function Gallery() {
           </div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={options.languages}
             onChange={(checked) => setLanguages(checked)}
             value={languages}
           />
@@ -235,7 +224,7 @@ function Gallery() {
           </div>
           <Checkbox.Group
             defaultValue={languages}
-            options={langMasters}
+            options={options.languages}
             onChange={(checked) => setLanguages(checked)}
           />
 
@@ -244,7 +233,7 @@ function Gallery() {
           </div>
           <Checkbox.Group
             defaultValue={interestRange}
-            options={specMasters}
+            options={options.specializations}
             onChange={(checked) => setInteresRange(checked)}
             value={interestRange}
           />
@@ -262,7 +251,10 @@ function Gallery() {
                 <MenteeCard
                   key={key}
                   name={mentee.name}
-                  languages={mentee.languages}
+                  languages={getTranslatedOptions(
+                    mentee.languages,
+                    options.languages
+                  )}
                   location={mentee.location}
                   gender={mentee.gender}
                   organization={mentee.organization}

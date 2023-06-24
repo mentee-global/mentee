@@ -33,14 +33,13 @@ import PartnerGallery from "components/pages/PartnerGallery";
 import { ProvideAuth } from "utils/hooks/useAuth";
 import { ConfigProvider } from "antd";
 import { useTranslation } from "react-i18next";
-import { getAntdLocale } from "utils/misc";
+import { getAntdLocale } from "utils/translations";
 
 function App() {
   const { i18n } = useTranslation();
   const [antdLocale, setAntdLocale] = React.useState(
     getAntdLocale(i18n.language)
   );
-  console.log("App.JS AntdLocale", antdLocale);
 
   useEffect(() => {
     setAntdLocale(getAntdLocale(i18n.language));

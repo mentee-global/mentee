@@ -31,7 +31,7 @@ function Home({ history }) {
         <div className="home-text-container">
           <h1 className="home-header2">
             <Trans i18nKey={"common.welcome"}>
-              Welcome to <span>MENTEE</span>!
+              Welcome to <span style={{marginLeft:0}}>MENTEE</span>!
             </Trans>
           </h1>
           {isLoggedIn() ? (

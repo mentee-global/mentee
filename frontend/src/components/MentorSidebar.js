@@ -3,13 +3,15 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   CalendarOutlined,
+  MailOutlined
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "utils/hooks/useAuth";
 
 function MentorSidebar(props) {
   const { t } = useTranslation();
-
+  const { role } = useAuth();
   const pages = {
     appointments: {
       name: t("sidebars.appointments"),
@@ -25,6 +27,11 @@ function MentorSidebar(props) {
       name: t("sidebars.profile"),
       path: "/profile",
       icon: <UserOutlined />,
+    },
+    message: {
+      name: t("common.messages"),
+      path: "/messages/" + role,
+      icon: <MailOutlined />,
     },
   };
 

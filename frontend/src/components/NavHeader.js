@@ -269,6 +269,7 @@ function NavHeader({ history }) {
             />
           )}
           {(isPartner || isAdmin) && isLoggedIn() && (
+            <>
             <span className="navigation-header-button">
               <LoginVerificationModal
                 content={<b>{t("navHeader.findPartner")}</b>}
@@ -282,6 +283,32 @@ function NavHeader({ history }) {
                 }}
               />
             </span>
+            <div style={{marginTop:'20px'}}/>
+            <MenteeButton
+              className="mobile-nav-btn"
+              content={
+                <b>
+                  {isLoggedIn() ? t("navHeader.yourPortal") : t("common.login")}
+                </b>
+              }
+              width="9em"
+              onClick={async () => {
+                let redirect = "/login";
+                if (isMentor) {
+                  redirect = "/appointments";
+                } else if (isMentee) {
+                  redirect = "/mentee-appointments";
+                } else if (isAdmin) {
+                  redirect = "/account-data";
+                } else if (isPartner) {
+                  redirect = "/profile";
+                }
+                history.push({
+                  pathname: isLoggedIn() ? redirect : "/login",
+                });
+              }}
+            />
+            </>
           )}
           {!isPartner && isLoggedIn() && (
             <MenteeButton

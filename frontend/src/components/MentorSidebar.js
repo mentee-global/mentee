@@ -3,7 +3,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   CalendarOutlined,
-  MailOutlined
+  MailOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import { useTranslation } from "react-i18next";

@@ -270,44 +270,46 @@ function NavHeader({ history }) {
           )}
           {(isPartner || isAdmin) && isLoggedIn() && (
             <>
-            <span className="navigation-header-button">
-              <LoginVerificationModal
-                content={<b>{t("navHeader.findPartner")}</b>}
-                theme="light"
+              <span className="navigation-header-button">
+                <LoginVerificationModal
+                  content={<b>{t("navHeader.findPartner")}</b>}
+                  theme="light"
+                  width="9em"
+                  onVerified={() => {
+                    history.push({
+                      pathname: "/partner-gallery",
+                      state: { verified: true },
+                    });
+                  }}
+                />
+              </span>
+              <div style={{ marginTop: "20px" }} />
+              <MenteeButton
+                className="mobile-nav-btn"
+                content={
+                  <b>
+                    {isLoggedIn()
+                      ? t("navHeader.yourPortal")
+                      : t("common.login")}
+                  </b>
+                }
                 width="9em"
-                onVerified={() => {
+                onClick={async () => {
+                  let redirect = "/login";
+                  if (isMentor) {
+                    redirect = "/appointments";
+                  } else if (isMentee) {
+                    redirect = "/mentee-appointments";
+                  } else if (isAdmin) {
+                    redirect = "/account-data";
+                  } else if (isPartner) {
+                    redirect = "/profile";
+                  }
                   history.push({
-                    pathname: "/partner-gallery",
-                    state: { verified: true },
+                    pathname: isLoggedIn() ? redirect : "/login",
                   });
                 }}
               />
-            </span>
-            <div style={{marginTop:'20px'}}/>
-            <MenteeButton
-              className="mobile-nav-btn"
-              content={
-                <b>
-                  {isLoggedIn() ? t("navHeader.yourPortal") : t("common.login")}
-                </b>
-              }
-              width="9em"
-              onClick={async () => {
-                let redirect = "/login";
-                if (isMentor) {
-                  redirect = "/appointments";
-                } else if (isMentee) {
-                  redirect = "/mentee-appointments";
-                } else if (isAdmin) {
-                  redirect = "/account-data";
-                } else if (isPartner) {
-                  redirect = "/profile";
-                }
-                history.push({
-                  pathname: isLoggedIn() ? redirect : "/login",
-                });
-              }}
-            />
             </>
           )}
           {!isPartner && isLoggedIn() && (

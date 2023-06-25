@@ -1,5 +1,9 @@
 import React from "react";
-import { UserOutlined, CalendarOutlined, MailOutlined} from "@ant-design/icons";
+import {
+  UserOutlined,
+  CalendarOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "utils/hooks/useAuth";

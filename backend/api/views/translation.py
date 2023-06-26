@@ -9,6 +9,7 @@ from api.utils.constants import Account
 
 translation = Blueprint("translation", __name__)  # initialize blueprint
 
+
 @translation.route("/", methods=["GET"])
 def setup_language():
     all_users_types = [MentorProfile, MenteeProfile, PartnerProfile]
@@ -18,5 +19,5 @@ def setup_language():
             if user.preferred_language == None:
                 user.preferred_language = "en-US"
                 user.save()
-    
+
     return create_response(message="Language setup complete")

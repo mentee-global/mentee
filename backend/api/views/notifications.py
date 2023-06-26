@@ -57,7 +57,7 @@ def send_unread_alert(id):
                 if email is not None and user_record.email_notifications:
                     res, res_msg = send_email(
                         recipient=email,
-                        data={"number_unread": str(notifications_count)},
+                        data={"number_unread": str(notifications_count), user_record.preferred_language: True},
                         template_id=UNREAD_MESSAGE_TEMPLATE,
                     )
                     if not res:
@@ -129,7 +129,7 @@ def send_weekly_emails():
         if notifications_count > 0:
             res, res_msg = send_email(
                 recipient=user.email,
-                data={"number_unread": str(notifications_count)},
+                data={"number_unread": str(notifications_count), user.preferred_language: True},
                 template_id=WEEKLY_NOTIF_REMINDER,
             )
             if not res:
@@ -149,7 +149,7 @@ def send_weekly_emails():
             res, res_msg = send_email(
                 recipient=user.email,
                 template_id=WEEKLY_NOTIF_REMINDER,
-                data={"number_unread": str(notifications_count)},
+                data={"number_unread": str(notifications_count), user.preferred_language: True},
             )
             if not res:
                 msg = "Failed to send mentee email " + res_msg

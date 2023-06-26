@@ -265,6 +265,7 @@ def create_mentor_profile():
     success, msg = send_email(
         recipient=email,
         subject="Your account have been successfully Created " + email,
+        data={new_account.preferred_language: True},
         template_id=PROFILE_COMPLETED,
     )
     notify = Notifications(

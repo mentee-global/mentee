@@ -20,7 +20,7 @@ from api.models import (
     NewMentorApplication,
     PartnerApplication,
 )
-from api.utils.constants import Account
+from api.utils.constants import Account, I18N_LANGUAGES
 
 wtforms_json.init()
 

@@ -137,6 +137,7 @@ def contact_mentor(mentor_id):
             "communication_method": data.get("communication_method", ""),
             "message": data.get("message", ""),
             "name": mentee.name,
+            mentor.preferred_language: True
         },
         template_id=MENTOR_CONTACT_ME,
     )

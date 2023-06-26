@@ -116,8 +116,7 @@ def send_invite_email():
         res, res_msg = send_email(
             recipient=mentee.email,
             template_id=SEND_INVITE_TEMPLATE,
-            data={"future_availability": avail_htmls, "name": mentor.name},
-        )
+            data={"future_availability": avail_htmls, "name": mentor.name, mentee.preferred_language: True}),
         if not res:
             msg = "Failed to send mentee email " + res_msg
             logger.info(msg)
@@ -174,7 +173,7 @@ def create_appointment():
         res, res_msg = send_email(
             recipient=mentee.email,
             template_id=MENTEE_APPT_TEMPLATE,
-            data={"confirmation": True, "name": mentor.name, "date": start_time},
+            data={"confirmation": True, "name": mentor.name, "date": start_time, mentee.preferred_language: True},
         )
         if not res:
             msg = "Failed to send mentee email " + res_msg
@@ -184,7 +183,7 @@ def create_appointment():
         res, res_msg = send_email(
             recipient=mentor.email,
             template_id=MENTOR_APPT_TEMPLATE,
-            data={"name": mentee.name, "date": start_time},
+            data={"name": mentee.name, "date": start_time, mentor.preferred_language: True},
         )
 
         if not res:
@@ -232,7 +231,7 @@ def put_appointment(id):
         res_email = send_email(
             recipient=mentee.email,
             subject="Mentee Appointment Notification",
-            data={"name": mentor.name, "date": start_time, "approved": True},
+            data={"name": mentor.name, "date": start_time, "approved": True, mentee.preferred_language: True},
             template_id=MENTEE_APPT_TEMPLATE,
         )
         if not res_email:
@@ -262,7 +261,7 @@ def delete_request(appointment_id):
         res_email = send_email(
             recipient=mentee.email,
             subject="Mentee Appointment Notification",
-            data={"name": mentor.name, "date": start_time, "approved": False},
+            data={"name": mentor.name, "date": start_time, "approved": False, mentee.preferred_language: True},
             template_id=MENTEE_APPT_TEMPLATE,
         )
         if not res_email:

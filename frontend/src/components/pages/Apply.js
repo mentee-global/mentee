@@ -39,7 +39,7 @@ const Apply = () => {
   const [isVerify, setIsVerify] = useState(null);
   const history = useHistory();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const submitHandler = () => {
     setConfirmApply(true);
@@ -312,7 +312,11 @@ const Apply = () => {
           <div
             className={`applySubmit2 ${istrain ? "" : " hide"}`}
             onClick={async () => {
-              let state = await changeStateBuildProfile(email, role);
+              let state = await changeStateBuildProfile({
+                email,
+                role,
+                preferred_language: i18n.language,
+              });
               if (state === "BuildProfile") {
                 setIsApply(false);
                 setIsBuild(true);

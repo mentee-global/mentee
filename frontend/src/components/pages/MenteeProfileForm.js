@@ -23,7 +23,7 @@ import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 function MenteeRegisterForm(props) {
   const history = useHistory();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const options = useSelector((state) => state.options);
   const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
   const numInputs = 14;
@@ -394,6 +394,8 @@ function MenteeRegisterForm(props) {
           return;
         }
       }
+
+      data["preferred_language"] = i18n.language;
       const res = await createMenteeProfile(data, props.isHave);
       const menteeId =
         res && res.data && res.data.result ? res.data.result.mentorId : false;

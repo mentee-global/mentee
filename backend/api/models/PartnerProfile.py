@@ -27,7 +27,7 @@ class PartnerProfile(Document, Mixin):
     restricted = BooleanField(default=False)
     assign_mentors = ListField(DictField(), required=False)
     assign_mentees = ListField(DictField(), required=False)
-    preferred_language = StringField(required=False)
+    preferred_language = StringField(required=False, default="en-US")
 
     def __repr__(self):
         return f"""<Partner email: {self.email}

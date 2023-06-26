@@ -27,7 +27,7 @@ class MenteeProfile(Document, Mixin):
     favorite_mentors_ids = ListField(StringField())
     specializations = ListField(StringField())
     pair_partner = DictField(required=False)
-    preferred_language = StringField(required=False)
+    preferred_language = StringField(required=False, default="en-US")
 
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.firebase_uid} \n name: {self.name}

@@ -1,6 +1,7 @@
 import axios from "axios";
 import fireauth from "./fireauth";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
+import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -59,11 +60,12 @@ export const newRegister = async (data) =>
 export const sendVerificationEmail = (email) => {
   return post("/verifyEmail", {
     email,
+    preferred_language: i18n.language,
   });
 };
 
 export const sendPasswordResetEmail = (email) => {
-  return post("/forgotPassword", { email });
+  return post("/forgotPassword", { email, preferred_language: i18n.language });
 };
 
 export const login = async (email, password, role) =>

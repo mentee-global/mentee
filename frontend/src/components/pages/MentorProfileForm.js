@@ -25,7 +25,7 @@ import { UserOutlined, EditFilled } from "@ant-design/icons";
 
 function RegisterForm(props) {
   const history = useHistory();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const options = useSelector((state) => state.options);
   const numInputs = 14;
   const [inputClicked, setInputClicked] = useState(
@@ -420,6 +420,7 @@ function RegisterForm(props) {
         }
       }
 
+      data["preferred_language"] = i18n.language;
       const res = await createMentorProfile(data, isHave);
       const mentorId =
         res && res.data && res.data.result ? res.data.result.mentorId : false;

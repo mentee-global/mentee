@@ -122,6 +122,7 @@ export const fetchApplications = async (isMentor) => {
 
 export const createApplication = (application) => {
   const requestExtension = `/application/new`;
+  application.preferred_language = i18n.language;
   return instance.post(requestExtension, application).then(
     (response) => response,
     (err) => {
@@ -148,11 +149,12 @@ export const getExistingProfile = async (email, role) => {
   return { isHaveProfile, rightRole };
 };
 
-export const changeStateBuildProfile = async (email, role) => {
+export const changeStateBuildProfile = async ({ email, role }) => {
   const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
   const res = await authGet(requestExtension, {
     params: {
       front_url: FRONT_BASE_URL,
+      preferred_language: i18n.language,
     },
   });
   let state = res.data.result.state;
@@ -554,6 +556,7 @@ export const updateApplicationById = async (data, id, isMentor) => {
     requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
   }
   data.front_url = FRONT_BASE_URL;
+  data.preferred_language = i18n.language;
   return await authPut(requestExtension, data).then(
     (response) => response,
     (err) => {

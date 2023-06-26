@@ -18,6 +18,7 @@ auth = Blueprint("auth", __name__)  # initialize blueprint
 def verify_email():
     data = request.json
     email = data.get("email")
+    preferred_language = data.get("preferred_language", "en-US")
     verification_link = None
 
     try:
@@ -35,7 +36,7 @@ def verify_email():
     if not send_email(
         recipient=email,
         subject="Mentee Email Verification",
-        data={"link": verification_link},
+        data={"link": verification_link, preferred_language: True},
         template_id=USER_VERIFICATION_TEMPLATE,
     ):
         msg = "Could not send email"
@@ -242,7 +243,7 @@ def login():
     )
 
 
-def send_forgot_password_email(email):
+def send_forgot_password_email(email, preferred_language="en-US"):
     reset_link = None
 
     try:
@@ -260,7 +261,7 @@ def send_forgot_password_email(email):
     if not send_email(
         recipient=email,
         subject="Mentee Password Reset",
-        data={"link": reset_link},
+        data={"link": reset_link, preferred_language: True},
         template_id=USER_FORGOT_PASSWORD_TEMPLATE,
     ):
         msg = "Cannot send email"
@@ -272,8 +273,9 @@ def send_forgot_password_email(email):
 def forgot_password():
     data = request.json
     email = data.get("email", "")
+    preferred_language = data.get("preferred_language", "en-US")
 
-    error = send_forgot_password_email(email)
+    error = send_forgot_password_email(email, preferred_language)
 
     return (
         error and error or create_response(message="Sent password reset link to email")

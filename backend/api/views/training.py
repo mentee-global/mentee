@@ -138,8 +138,8 @@ def new_train(role):
         for receiver in receivers:
             res, res_msg = send_email(
                 recipient=receiver.email,
-                subject="New Training Data",
-                data={"link": target_url},
+                subject="New Training Available",
+                data={"link": target_url, receiver.preferred_language: True},
                 template_id=NEW_TRAINING_TEMPLATE,
             )
             if not res:

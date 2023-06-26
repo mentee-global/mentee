@@ -357,5 +357,22 @@
     "appointments": "Compromissos",
     "profile": "Perfil",
     "videos": "Seus vídeos"
+  },
+  "emailSubjects": {
+    "unread_message": "MENTEE: Você recebeu uma nova mensagem!",
+    "weekly_notif": "MENTEE: Você tem mensagens não lidas",
+    "new_training": "MENTEE! Novos materiais de treinamento disponíveis",
+    "mentor_contact_me": "Mentor: Um Mentee solicitou entrar em contato com você",
+    "verify_email": "Verificação de e-mail do Mentee",
+    "forgot_password": "Redefinição de senha do Mentee",
+    "send_invite": "Convite para agendamento do Mentee",
+    "mentee_appt": "Solicitação de agendamento do Mentor",
+    "mentor_appt": "Solicitação de agendamento do Mentee",
+    "mentor_app_submit": "Status da solicitação de MENTEE",
+    "mentee_app_submit": "Status da solicitação de MENTEE",
+    "app_approved": "Status da solicitação de MENTEE - Aprovado",
+    "training_complete": "Parabéns por concluir o treinamento",
+    "app_rejected": "Obrigado pelo seu interesse em MENTEE",
+    "profile_complete": "Perfil de MENTEE completo - Faça login, por favor"
   }
 }

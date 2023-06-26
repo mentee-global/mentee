@@ -387,5 +387,22 @@
     "appointments": "Citas",
     "profile": "Perfil",
     "videos": "Tus vídeos"
+  },
+  "emailSubjects": {
+    "unread_message": "MENTEE: ¡Has recibido un nuevo mensaje!",
+    "weekly_notif": "MENTEE: Tienes mensajes sin leer",
+    "new_training": "¡MENTEE! Nuevos materiales de capacitación disponibles",
+    "mentor_contact_me": "Mentor: Un mentee ha solicitado ponerse en contacto contigo",
+    "verify_email": "Verificación de correo electrónico de mentee",
+    "forgot_password": "Restablecimiento de contraseña de mentee",
+    "send_invite": "Invitación a cita de mentee",
+    "mentee_appt": "Solicitud de cita de mentor",
+    "mentor_appt": "Solicitud de cita de mentee",
+    "mentor_app_submit": "Estado de la solicitud de MENTEE",
+    "mentee_app_submit": "Estado de la solicitud de MENTEE",
+    "app_approved": "Estado de la solicitud de MENTEE - Aprobada",
+    "training_complete": "Felicitaciones por completar la capacitación",
+    "app_rejected": "Gracias por tu interés en MENTEE",
+    "profile_complete": "Perfil de MENTEE completado: por favor, inicia sesión"
   }
 }

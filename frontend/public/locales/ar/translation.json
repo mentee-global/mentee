@@ -357,5 +357,22 @@
     "appointments": "تعيينات",
     "profile": "حساب تعريفي",
     "videos": "مقاطع الفيديو الخاصة بك"
+  },
+  "emailSubjects": {
+    "unread_message": "متدرب: لديك رسالة جديدة!",
+    "weekly_notif": "متدرب: لديك رسائل غير مقروءة",
+    "new_training": "MENTEE! مواد تدريبية جديدة متاحة",
+    "mentor_contact_me": "مرشد: طلب أحد المتدربين الاتصال بك",
+    "verify_email": "تحقق من بريد المتدرب الإلكتروني",
+    "forgot_password": "إعادة تعيين كلمة مرور المتدرب",
+    "send_invite": "دعوة موعد المتدرب",
+    "mentee_appt": "طلب موعد مع المرشد",
+    "mentor_appt": "طلب موعد مع المتدرب",
+    "mentor_app_submit": "حالة طلب MENTEE",
+    "mentee_app_submit": "حالة طلب MENTEE",
+    "app_approved": "حالة طلب MENTEE - تمت الموافقة",
+    "training_complete": "تهانينا على إتمام التدريب",
+    "app_rejected": "شكرًا لاهتمامك في MENTEE",
+    "profile_complete": "الملف الشخصي لـ MENTEE مكتمل - يرجى تسجيل الدخول"
   }
 }

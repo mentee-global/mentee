@@ -79,27 +79,6 @@ export function getRegions(t) {
     Object({ label: t(`regions.${region}`), value: region })
   );
 }
-// export const LANGUAGES = [
-//   "Arabic",
-//   "Bengali",
-//   "Burmese",
-//   "Cantonese",
-//   "English",
-//   "French",
-//   "German",
-//   "Hebrew",
-//   "Hindi",
-//   "Italian",
-//   "Japanese",
-//   "Karen",
-//   "Mandarin",
-//   "Portuguese",
-//   "Russian",
-//   "Spanish",
-//   "Swahili",
-//   "Urdu",
-//   "Other",
-// ];
 
 export const AGE_RANGES = [
   "16-18",
@@ -112,42 +91,6 @@ export const AGE_RANGES = [
   "60s",
   "70s+",
 ];
-
-// export const SPECIALIZATIONS = [
-//   "Advocacy and Activism",
-//   "Architecture",
-//   "Arts:Dance/Design/Music and More",
-//   "Citizenship",
-//   "Computer Science",
-//   "Education, Personal Guidance On Next Steps",
-//   "Engineering",
-//   "Entrepreneurship",
-//   "Finance, Business",
-//   "Finance, Personal",
-//   "Health, Community, and Environment",
-//   "Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
-//   "Interview Skills & Practice",
-//   "Journalism",
-//   "Language Lessons",
-//   "Law",
-//   "Legal Issues, Business",
-//   "Legal Issues, Related to Personal Issues (Excluding Citizenship)",
-//   "Media/Public Relations",
-//   "Medicine",
-//   "Nonprofits/NGOs",
-//   "Political Science",
-//   "Professional Speaking",
-//   "Psychology: The Study of Clinical Practice (Not Personal Issues)",
-//   "Research",
-//   "Resume/CV Writing",
-//   "Self Confidence",
-//   "Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
-//   "Teaching: Skills & Methods",
-//   "Technology Training",
-//   "Tourism: Field of",
-//   "Writing: Improving writing skills, writing books/articles, scholarly writing",
-//   "Other",
-// ];
 
 export const GENDERS = ["Male", "Female", "Non-Binary", "Other"];
 

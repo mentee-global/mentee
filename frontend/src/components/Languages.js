@@ -103,6 +103,10 @@ export const Languages = () => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      <i>
+        New selections will automatically translate into the languages we
+        support. <b>However new edits will not auto translate</b>
+      </i>
       {/* <Button onClick={() => handleTranslate()}>Translate</Button> */}
     </Form>
   );

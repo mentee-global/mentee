@@ -216,6 +216,7 @@ def edit_profile(data: dict = {}, profile: object = None):
     profile.email_notifications = data.get(
         "email_notifications", profile.email_notifications
     )
+    profile.preferred_language = data.get("preferred_language", profile.preferred_language)
 
     # Create education object
     if "education" in data:

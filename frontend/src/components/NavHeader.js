@@ -13,12 +13,12 @@ import {
 } from "antd";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { resetUser, fetchUser } from "features/userSlice";
+import { resetUser, fetchUser, updateAndFetchUser } from "features/userSlice";
 import { fetchOptions } from "features/optionsSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
-import { getNotifys, markNotifyReaded } from "utils/api";
+import { editAccountProfile, getNotifys, markNotifyReaded } from "utils/api";
 import { useAuth } from "../utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";
@@ -94,7 +94,16 @@ function NavHeader({ history }) {
   const handleLanguageChange = (language) => {
     i18n.changeLanguage(language);
     moment.locale(language);
-    if (user) setOpenDropdown(false);
+    if (user) {
+      setOpenDropdown(false);
+      dispatch(
+        updateAndFetchUser({
+          data: { preferred_language: language },
+          id: profileId,
+          role,
+        })
+      );
+    }
   };
 
   const LanguageSelect = () => {
@@ -102,7 +111,7 @@ function NavHeader({ history }) {
       <div>
         🌎
         <Select
-          defaultValue={i18n.language}
+          defaultValue={user ? user.preferred_language : i18n.language}
           bordered={false}
           size="middle"
           className="language-select-style"
@@ -127,6 +136,10 @@ function NavHeader({ history }) {
       dispatch(fetchUser({ id: profileId, role }));
     }
   }, [role]);
+
+  useEffect(() => {
+    if (user) i18n.changeLanguage(user.preferred_language);
+  }, [user]);
 
   useEffect(() => {
     dispatch(fetchOptions());

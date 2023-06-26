@@ -7,6 +7,7 @@ from api.utils.constants import (
     USER_VERIFICATION_TEMPLATE,
     USER_FORGOT_PASSWORD_TEMPLATE,
     Account,
+    TRANSLATIONS,
 )
 from api.utils.request_utils import send_email, get_profile_model
 from api.utils.firebase import client as firebase_client
@@ -35,8 +36,11 @@ def verify_email():
 
     if not send_email(
         recipient=email,
-        subject="Mentee Email Verification",
-        data={"link": verification_link, preferred_language: True},
+        data={
+            "link": verification_link,
+            preferred_language: True,
+            "subject": TRANSLATIONS[preferred_language]["verify_email"],
+        },
         template_id=USER_VERIFICATION_TEMPLATE,
     ):
         msg = "Could not send email"
@@ -261,7 +265,11 @@ def send_forgot_password_email(email, preferred_language="en-US"):
     if not send_email(
         recipient=email,
         subject="Mentee Password Reset",
-        data={"link": reset_link, preferred_language: True},
+        data={
+            "link": reset_link,
+            preferred_language: True,
+            "subject": TRANSLATIONS[preferred_language]["forgot_password"],
+        },
         template_id=USER_FORGOT_PASSWORD_TEMPLATE,
     ):
         msg = "Cannot send email"

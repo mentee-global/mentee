@@ -6,7 +6,7 @@ from api.utils.require_auth import admin_only, all_users
 from datetime import datetime
 from flask import send_file
 from io import BytesIO
-from api.utils.constants import Account, NEW_TRAINING_TEMPLATE
+from api.utils.constants import Account, NEW_TRAINING_TEMPLATE, TRANSLATIONS
 from api.utils.request_utils import send_email
 
 training = Blueprint("training", __name__)  # initialize blueprint
@@ -138,8 +138,13 @@ def new_train(role):
         for receiver in receivers:
             res, res_msg = send_email(
                 recipient=receiver.email,
-                subject="New Training Available",
-                data={"link": target_url, receiver.preferred_language: True},
+                data={
+                    "link": target_url,
+                    receiver.preferred_language: True,
+                    "subject": TRANSLATIONS[receiver.preferred_language][
+                        "new_training"
+                    ],
+                },
                 template_id=NEW_TRAINING_TEMPLATE,
             )
             if not res:

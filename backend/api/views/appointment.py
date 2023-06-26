@@ -15,6 +15,7 @@ from api.utils.constants import (
     APPT_TIME_FORMAT,
     Account,
     APPT_STATUS,
+    TRANSLATIONS,
 )
 from api.utils.require_auth import admin_only, all_users, mentor_only
 
@@ -121,6 +122,7 @@ def send_invite_email():
                     "future_availability": avail_htmls,
                     "name": mentor.name,
                     mentee.preferred_language: True,
+                    "subject": TRANSLATIONS[mentee.preferred_language]["send_invite"],
                 },
             ),
         )
@@ -185,6 +187,7 @@ def create_appointment():
                 "name": mentor.name,
                 "date": start_time,
                 mentee.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
             },
         )
         if not res:
@@ -199,6 +202,7 @@ def create_appointment():
                 "name": mentee.name,
                 "date": start_time,
                 mentor.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentor_appt"],
             },
         )
 
@@ -246,12 +250,12 @@ def put_appointment(id):
         start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
         res_email = send_email(
             recipient=mentee.email,
-            subject="Mentee Appointment Notification",
             data={
                 "name": mentor.name,
                 "date": start_time,
                 "approved": True,
                 mentee.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
             },
             template_id=MENTEE_APPT_TEMPLATE,
         )
@@ -281,12 +285,12 @@ def delete_request(appointment_id):
         start_time = request.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
         res_email = send_email(
             recipient=mentee.email,
-            subject="Mentee Appointment Notification",
             data={
                 "name": mentor.name,
                 "date": start_time,
                 "approved": False,
                 mentee.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
             },
             template_id=MENTEE_APPT_TEMPLATE,
         )

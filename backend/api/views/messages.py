@@ -8,7 +8,7 @@ from api.models import (
     Availability,
 )
 from api.utils.request_utils import send_email
-from api.utils.constants import Account, MENTOR_CONTACT_ME
+from api.utils.constants import Account, MENTOR_CONTACT_ME, TRANSLATIONS
 from api.utils.require_auth import all_users
 from api.core import create_response, logger
 import json
@@ -138,6 +138,7 @@ def contact_mentor(mentor_id):
             "message": data.get("message", ""),
             "name": mentee.name,
             mentor.preferred_language: True,
+            "subject": TRANSLATIONS[mentor.preferred_language]["mentor_contact_me"],
         },
         template_id=MENTOR_CONTACT_ME,
     )

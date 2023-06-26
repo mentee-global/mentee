@@ -5,7 +5,11 @@ from api.models.MenteeProfile import MenteeProfile, MentorProfile
 from mongoengine.queryset.visitor import Q
 from api.models import DirectMessage, PartnerProfile
 from api.utils.request_utils import send_email, send_sms
-from api.utils.constants import WEEKLY_NOTIF_REMINDER, UNREAD_MESSAGE_TEMPLATE
+from api.utils.constants import (
+    WEEKLY_NOTIF_REMINDER,
+    UNREAD_MESSAGE_TEMPLATE,
+    TRANSLATIONS,
+)
 from api.utils.require_auth import all_users
 
 notifications = Blueprint("notifications", __name__)
@@ -60,6 +64,9 @@ def send_unread_alert(id):
                         data={
                             "number_unread": str(notifications_count),
                             user_record.preferred_language: True,
+                            "subject": TRANSLATIONS[user_record.preferred_language][
+                                "unread_message"
+                            ],
                         },
                         template_id=UNREAD_MESSAGE_TEMPLATE,
                     )
@@ -135,6 +142,7 @@ def send_weekly_emails():
                 data={
                     "number_unread": str(notifications_count),
                     user.preferred_language: True,
+                    "subject": TRANSLATIONS[user.preferred_language]["weekly_notif"],
                 },
                 template_id=WEEKLY_NOTIF_REMINDER,
             )
@@ -158,6 +166,7 @@ def send_weekly_emails():
                 data={
                     "number_unread": str(notifications_count),
                     user.preferred_language: True,
+                    "subject": TRANSLATIONS[user.preferred_language]["weekly_notif"],
                 },
             )
             if not res:

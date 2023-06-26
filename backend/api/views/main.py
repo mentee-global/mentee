@@ -15,7 +15,7 @@ from api.models import (
     PartnerProfile,
     Notifications,
 )
-from api.utils.constants import PROFILE_COMPLETED
+from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS
 from api.utils.request_utils import send_email
 from api.core import create_response, logger
 from api.utils.request_utils import (
@@ -264,8 +264,10 @@ def create_mentor_profile():
     ########
     success, msg = send_email(
         recipient=email,
-        subject="Your account have been successfully Created " + email,
-        data={new_account.preferred_language: True},
+        data={
+            new_account.preferred_language: True,
+            "subject": TRANSLATIONS[new_account.preferred_language]["profile_complete"],
+        },
         template_id=PROFILE_COMPLETED,
     )
     notify = Notifications(

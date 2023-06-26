@@ -18,7 +18,7 @@ import { fetchOptions } from "features/optionsSlice";
 import { isLoggedIn } from "utils/auth.service";
 import MenteeButton from "./MenteeButton";
 import LoginVerificationModal from "./LoginVerificationModal";
-import { editAccountProfile, getNotifys, markNotifyReaded } from "utils/api";
+import { getNotifys, markNotifyReaded } from "utils/api";
 import { useAuth } from "../utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Navigation.scss";

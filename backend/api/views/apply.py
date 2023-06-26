@@ -242,7 +242,7 @@ def changestatetobuildprofile(email, role):
                 + "&email="
                 + application["email"]
             )
-        
+
         preferred_language = request.args.get("preferred_language", "en-US")
         success, msg = send_email(
             recipient=application["email"],
@@ -317,7 +317,7 @@ def edit_application(id, role):
                 recipient=mentor_email,
                 subject="MENTEE Application has been approved",
                 template_id=MENTOR_APP_SUBMITTED,
-                data={preferred_language: True}
+                data={preferred_language: True},
             )
         if role == Account.MENTEE:
             mentor_email = application.email
@@ -325,7 +325,7 @@ def edit_application(id, role):
                 recipient=mentor_email,
                 subject="MENTEE Application has been approved",
                 template_id=MENTEE_APP_SUBMITTED,
-                data={preferred_language: True}
+                data={preferred_language: True},
             )
         if not success:
             logger.info(msg)
@@ -357,7 +357,7 @@ def edit_application(id, role):
             recipient=mentor_email,
             subject="Thank you for your interest in Mentee, " + application.name,
             template_id=MENTOR_APP_REJECTED,
-            data={preferred_language: True}
+            data={preferred_language: True},
         )
     if application.application_state == NEW_APPLICATION_STATUS["COMPLETED"]:
         mentor_email = application.email
@@ -365,7 +365,7 @@ def edit_application(id, role):
             recipient=mentor_email,
             subject="Your account has been successfully created " + application.name,
             template_id=PROFILE_COMPLETED,
-            data={preferred_language: True}
+            data={preferred_language: True},
         )
         if not success:
             logger.info(msg)

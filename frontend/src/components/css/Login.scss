@@ -35,9 +35,8 @@
 
 .login-content {
   border-radius: 10px;
-  position: absolute;
   width: 546px;
-  height: 197px;
+  height: 225px;
   top: 100px;
   margin: auto;
   background: #ffffff;
@@ -155,12 +154,10 @@
 @media (max-width: 600px) {
   .login-content {
     width: 90%;
-    margin-top: 90px;
+    top: 125px;
   }
   .login-input_pass,
   .login-input {
     width: 80%;
-  }
-  .containerr {
   }
 }

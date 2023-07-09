@@ -17,6 +17,9 @@
   align-items: center;
   justify-content: center;
 }
+.mentor-profile-about {
+  word-wrap: break-word;
+}
 
 @media (min-width: 768px) {
   //For desktop
@@ -99,7 +102,6 @@
 
   .mentor-profile-about {
     width: 90%;
-    word-wrap: break-word;
   }
 
   .mentor-specialization-tag {

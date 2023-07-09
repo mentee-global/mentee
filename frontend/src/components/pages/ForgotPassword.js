@@ -45,7 +45,6 @@ function ForgotPassword() {
                 </div>
               )}
               {resent && <div>{t("forgotPassword.emailResent")}</div>}
-              <br />
               <t className="verify-header-text-description">
                 {t("forgotPassword.promptEmail")}
               </t>

@@ -160,15 +160,15 @@ function Videos() {
         </h1>
         <div className="filters">
           <Input.Search
-            style={{ width: 300 }}
             value={titleFilter}
+            className="inputbox-title"
             onChange={handleSearchChange}
             onSearch={(value) => handleSearchVideo(value)}
             placeholder={t("mentorVideoPage.videoTitle")}
           />
           <Select
             placeholder={t("common.specializations")}
-            style={{ width: 200 }}
+            className="select-box-specializations"
             onChange={(value) => filterSpecialization(value)}
             value={selectFilter}
             options={options.specializations}

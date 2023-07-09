@@ -285,6 +285,7 @@ function NavHeader({ history }) {
             <>
               <span className="navigation-header-button">
                 <LoginVerificationModal
+                  className="mobile-nav-btn-login-modal"
                   content={<b>{t("navHeader.findPartner")}</b>}
                   theme="light"
                   width="9em"

@@ -827,7 +827,7 @@ export const getDisplayLanguages = async () => {
   const languages = records.data?.result?.result ?? [];
   for (let language of languages) {
     const value = language.name;
-    res.push({ value, label: language?.translations[currentLang] ?? value });
+    res.push({ value, label: language?.translations?.[currentLang] ?? value });
   }
   return res;
 };
@@ -842,7 +842,7 @@ export const getDisplaySpecializations = async () => {
     const value = specialization.name;
     res.push({
       value,
-      label: specialization?.translations[currentLang] ?? value,
+      label: specialization?.translations?.[currentLang] ?? value,
     });
   }
   return res;

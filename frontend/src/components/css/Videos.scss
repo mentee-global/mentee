@@ -87,81 +87,79 @@
   font-size: 20px;
   margin-bottom: 0px;
 }
-.select-box-specializations{
-  width:200px;
+.select-box-specializations {
+  width: 200px;
 }
 @media (max-width: 600px) {
-  .filter-card{
-    width:100%;
+  .filter-card {
+    width: 100%;
     margin-left: 0px;
     padding-left: 20px;
-    padding-right:10px;
+    padding-right: 10px;
   }
-  .filters{
+  .filters {
     display: block;
   }
-  .select-box-specializations{
-    margin-top:10px;
-    width: calc(100% - 65px)!important;;
+  .select-box-specializations {
+    margin-top: 10px;
+    width: calc(100% - 65px) !important;
   }
-  .ant-row{
+  .ant-row {
     display: block;
-    div{
+    div {
       width: 98%;
       max-width: 100%;
     }
-    .videos-container{
+    .videos-container {
       margin: 0px;
       margin-bottom: 20px;
     }
-    .videos-table-title{
-      margin-left:0px;
+    .videos-table-title {
+      margin-left: 0px;
     }
   }
-  .videos-table-title{
+  .videos-table-title {
     display: none;
   }
-  .video-row{
+  .video-row {
     display: block;
     height: auto;
     position: relative;
     margin-bottom: 10px;
-    .video-block{
+    .video-block {
       display: block;
     }
-    .video{
+    .video {
       width: 100%;
-      padding:10px;
+      padding: 10px;
     }
-    .video-description{
+    .video-description {
       white-space: normal;
-      padding:10px;
+      padding: 10px;
     }
-    .pin-container{
-      width:50px;
-      padding:10px;
+    .pin-container {
+      width: 50px;
+      padding: 10px;
     }
-    .video-interactions{
+    .video-interactions {
       position: absolute;
       bottom: 10px;
       left: 40px;
       height: auto;
-      .ant-select{
-        position: relative!important;
-        width:calc(100% - 70px)!important;
-        top: 0%!important;
-        left: 0%!important;
-        margin:0px!important;
-        margin-left: 10px!important;
+      .ant-select {
+        position: relative !important;
+        width: calc(100% - 70px) !important;
+        top: 0% !important;
+        left: 0% !important;
+        margin: 0px !important;
+        margin-left: 10px !important;
       }
     }
-    .ant-btn-icon-only{
-      position: relative!important;
-      top: 0%!important;
-      left: 0%!important;
-      margin:0px!important;
+    .ant-btn-icon-only {
+      position: relative !important;
+      top: 0% !important;
+      left: 0% !important;
+      margin: 0px !important;
     }
-
   }
-  
 }

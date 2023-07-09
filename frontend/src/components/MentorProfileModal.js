@@ -709,7 +709,9 @@ function MentorProfileModal(props) {
                 {t("commonProfile.addMoreEducation")}
               </div>
             </div>
-            <div className="modal-subtitle">{t("commonProfile.introductionVideo")}</div>
+            <div className="modal-subtitle">
+              {t("commonProfile.introductionVideo")}
+            </div>
             <div className="modal-input-container">
               <ModalInput
                 style={styles.modalInput}

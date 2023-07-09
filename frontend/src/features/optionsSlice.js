@@ -4,13 +4,11 @@ import { getDisplayLanguages, getDisplaySpecializations } from "utils/api";
 export const fetchOptions = createAsyncThunk(
   "options/fetchOptions",
   async () => {
-    try{
+    try {
       const specializations = await getDisplaySpecializations();
       const languages = await getDisplayLanguages();
       return { specializations, languages };
-    } catch(error){
-    }
-    
+    } catch (error) {}
   }
 );
 

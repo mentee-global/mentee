@@ -56,7 +56,7 @@ function MessageCard(props) {
           if (message_container.length > 0) {
             message_container[0].style.display = "none";
           }
-        }, 500);
+        }, 1000);
       }
     }
     fetchAccount();

@@ -104,6 +104,9 @@ function NavHeader({ history }) {
         })
       );
     }
+    if (isMobile) {
+      setDrawerVisible(false);
+    }
   };
 
   const LanguageSelect = () => {

@@ -153,7 +153,7 @@ export const Languages = () => {
         <>
           <Modal
             title="Language"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={() => handleOk(false)}
             onCancel={handleCancel}
             okText="save"
@@ -217,7 +217,7 @@ export const Languages = () => {
       </div>
       <Modal
         title="Language"
-        visible={isModalVisible2}
+        open={isModalVisible2}
         onOk={() => handleOk(true)}
         onCancel={handleCancel}
         okText="save"

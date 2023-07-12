@@ -545,7 +545,7 @@ function MessagesChatArea(props) {
       <Modal
         className="calendar-modal"
         title={t("messages.availabilityTitle")}
-        visible={isOpenCalendarModal}
+        open={isOpenCalendarModal}
         onCancel={() => setIsOpenCalendarModal(false)}
         footer={[
           <MenteeButton

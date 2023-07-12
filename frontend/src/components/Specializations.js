@@ -147,7 +147,7 @@ export const Specializations = () => {
         <>
           <Modal
             title="Specialization"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={() => handleOk(false)}
             onCancel={handleCancel}
             okText="save"
@@ -211,7 +211,7 @@ export const Specializations = () => {
       </div>
       <Modal
         title="Specialization"
-        visible={isModalVisible2}
+        open={isModalVisible2}
         onOk={() => handleOk(true)}
         onCancel={handleCancel}
         okText="save"

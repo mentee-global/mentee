@@ -141,7 +141,7 @@ function Gallery() {
         onCancel={() => {
           setMobileFilterVisible(false);
         }}
-        visible={mobileFilterVisible}
+        open={mobileFilterVisible}
         footer={[
           <MenteeButton
             content={t("common.apply")}

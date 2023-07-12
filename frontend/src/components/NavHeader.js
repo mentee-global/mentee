@@ -29,6 +29,7 @@ import Icon, {
   MenuOutlined,
   CaretDownOutlined,
   MessageOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
 import NotificationBell from "./NotificationBell";
 import { logout } from "utils/auth.service";
@@ -112,7 +113,7 @@ function NavHeader({ history }) {
   const LanguageSelect = () => {
     return (
       <div>
-        🌎
+        <GlobalOutlined />
         <Select
           defaultValue={user ? user.preferred_language : i18n.language}
           bordered={false}
@@ -237,7 +238,7 @@ function NavHeader({ history }) {
           placement="right"
           closable={true}
           onClose={() => setDrawerVisible(false)}
-          visible={drawerVisible}
+          open={drawerVisible}
         >
           <div className="drawer-btn-container">
             {isMentee || isMentor || isPartner ? (
@@ -560,7 +561,7 @@ function NavHeader({ history }) {
                   <Dropdown
                     overlay={dropdownMenu}
                     onVisibleChange={handleOpenChange}
-                    visible={openDropdown}
+                    open={openDropdown}
                   >
                     <CaretDownOutlined />
                   </Dropdown>

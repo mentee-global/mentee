@@ -193,7 +193,7 @@ export const AdminMessages = () => {
       )}
       <Modal
         title=""
-        visible={showModal}
+        open={showModal}
         onCancel={() => {
           setShowModal(false);
         }}

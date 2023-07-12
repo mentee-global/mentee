@@ -86,7 +86,7 @@ function PublicMessageModal(props) {
       <Modal
         forceRender
         title={t("common.message")}
-        visible={formModalVisible}
+        open={formModalVisible}
         onCancel={closeModals}
         className="appointment-info-modal"
         style={{ overflow: "hidden" }}

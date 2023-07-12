@@ -63,7 +63,7 @@ function LoginVerificationModal(props) {
       />
       <Modal
         title="Access Denied"
-        visible={isVisible}
+        open={isVisible}
         className="verification-modal"
         onCancel={() => {
           setIsVisible(false);

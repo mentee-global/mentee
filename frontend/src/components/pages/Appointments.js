@@ -456,7 +456,7 @@ function Appointments() {
       <Modal
         className="manual-add-modal"
         title={t("mentorAppointmentPage.addAppointment")}
-        visible={manualModalvisible}
+        open={manualModalvisible}
         onCancel={() => setManualModalvisible(false)}
         footer={[
           <MenteeButton

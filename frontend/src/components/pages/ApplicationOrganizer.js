@@ -210,7 +210,7 @@ function ApplicationOrganizer({ isMentor }) {
       </div>
       {selectedID && (
         <Modal
-          visible={visible}
+          open={visible}
           footer={null}
           className="app-modal"
           onCancel={() => handleModalClose()}
@@ -221,7 +221,7 @@ function ApplicationOrganizer({ isMentor }) {
             isNew={applicationData
               .filter((item) => item.id == selectedID)
               .hasOwnProperty("identify")}
-            visible={visible}
+            open={visible}
             appInfo={appInfo}
           />
         </Modal>

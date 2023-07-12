@@ -112,7 +112,7 @@ function AdminAppointmentData() {
     <div className="appointments-body">
       {selectedAppointment && (
         <AdminAppointmentModal
-          visible={visible}
+          open={visible}
           data={selectedAppointment.data}
           dateFormat={selectedAppointment.dateFormat}
           status={selectedAppointment.status}

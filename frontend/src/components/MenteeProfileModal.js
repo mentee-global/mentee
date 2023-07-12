@@ -468,7 +468,7 @@ function MenteeProfileModal(props) {
       </span>
       <Modal
         title={t("commonProfile.editProfile")}
-        visible={modalVisible}
+        open={modalVisible}
         onCancel={() => {
           setModalVisible(false);
           setValidate(false);

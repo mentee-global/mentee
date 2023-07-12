@@ -348,7 +348,7 @@ function AvailabilityCalendar(props) {
       />
       <Modal
         title={t("availability.title")}
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         footer={[
           <MenteeButton

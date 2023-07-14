@@ -26,94 +26,71 @@ function Home({ history }) {
     });
   };
   return (
-    <div className="home-background">
-      <div className="home-content">
-        <div className="home-text-container">
-          <h1 className="home-header2">
-            <Trans i18nKey={"common.welcome"}>
-              Welcome to <span style={{ marginLeft: 0 }}>MENTEE</span>!
-            </Trans>
-          </h1>
-          {isLoggedIn() ? (
-            ""
-          ) : (
-            <p className="home-text2">
-              {/** Homepage Tagline placeholder */}
-              {t("homepage.isExistingUser")}
-            </p>
-          )}
+    <div className="home-content">
+      <div className="home-text-container">
+        <h1 className="home-header2">
+          <Trans i18nKey={"common.welcome"}>
+            Welcome to <span style={{ marginLeft: 0 }}>MENTEE</span>!
+          </Trans>
+        </h1>
+        {isLoggedIn() ? (
+          ""
+        ) : (
+          <p className="home-text2">
+            {/** Homepage Tagline placeholder */}
+            {t("homepage.isExistingUser")}
+          </p>
+        )}
+      </div>
+      <div className="buttons-container">
+        {isMentee || isMentor || isPartner || isAdmin ? (
+          <></>
+        ) : (
+          <div>
+            <h1 className="home-header2" style={{ textAlign: "center" }}>
+              <span>{t("homepage.newAccountTitle")}</span>
+              <div
+                className="applyCon"
+                onClick={() => {
+                  history.push({
+                    pathname: "/application-page",
+                  });
+                }}
+              >
+                <img className="applyImage" src={Applyimg} alt="apply" />
 
-          <br />
-          <LoginVerificationModal
-            content={
-              (isMentor && <b>{t("navHeader.findMentee")}</b>) ||
-              (isMentee && <b>{t("navHeader.findMentor")}</b>)
-            }
-            theme="dark"
-            onVerified={() => {
-              let redirect = MENTOR_GALLERY_PAGE;
-              if (isMentor) {
-                redirect = MENTEE_GALLERY_PAGE;
-              }
-              history.push({
-                pathname: redirect,
-                state: { verified: true },
-              });
-            }}
-          />
-        </div>
-        <div className="buttons-container">
-          {isMentee || isMentor || isPartner || isAdmin ? (
-            <></>
-          ) : (
-            <div>
-              <h1 className="home-header2" style={{ textAlign: "center" }}>
-                <span>{t("homepage.newAccountTitle")}</span>
-                <div
-                  className="applyCon"
-                  onClick={() => {
-                    history.push({
-                      pathname: "/application-page",
-                    });
-                  }}
-                >
-                  <img className="applyImage" src={Applyimg} alt="apply" />
-
-                  <div className="loginText">
-                    {t("homepage.newAccountDesc")}
-                  </div>
+                <div className="loginText">{t("homepage.newAccountDesc")}</div>
+              </div>
+            </h1>
+          </div>
+        )}
+        {!isLoggedIn() ? (
+          <>
+            <h1 className="home-header2" style={{ textAlign: "center" }}>
+              <span>{t("homepage.existingAccountTitle")}</span>
+              <div
+                className="loginCon"
+                onClick={() => {
+                  let redirect = "/login";
+                  history.push({
+                    pathname: redirect,
+                  });
+                }}
+              >
+                <img className="applyImage" src={loginimg} alt="login" />
+                <div className="loginText">
+                  {t("homepage.existingAccountDesc")}
                 </div>
-              </h1>
-            </div>
-          )}
-          {!isLoggedIn() ? (
-            <>
-              <h1 className="home-header2" style={{ textAlign: "center" }}>
-                <span>{t("homepage.existingAccountTitle")}</span>
-                <div
-                  className="loginCon"
-                  onClick={() => {
-                    let redirect = "/login";
-                    history.push({
-                      pathname: redirect,
-                    });
-                  }}
-                >
-                  <img className="applyImage" src={loginimg} alt="login" />
-                  <div className="loginText">
-                    {t("homepage.existingAccountDesc")}
-                  </div>
-                </div>
-              </h1>
-            </>
-          ) : (
-            <div className="loginCon" onClick={logoutUser}>
-              <img className="applyImage" src={loginimg} alt="login" />
+              </div>
+            </h1>
+          </>
+        ) : (
+          <div className="loginCon" onClick={logoutUser}>
+            <img className="applyImage" src={loginimg} alt="login" />
 
-              <div className="loginText">{t("common.logout")}</div>
-            </div>
-          )}
-        </div>
+            <div className="loginText">{t("common.logout")}</div>
+          </div>
+        )}
       </div>
     </div>
   );

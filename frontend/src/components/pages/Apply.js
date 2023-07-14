@@ -22,7 +22,7 @@ import TrainingList from "components/TrainingList";
 import MentorProfileForm from "./MentorProfileForm";
 import MenteeProfileForm from "./MenteeProfileForm";
 import PartnerProfileForm from "components/PartnerProfileForm";
-import { validate } from "email-validator";
+import { validateEmail } from "utils/misc";
 
 const Apply = () => {
   const [email, setEmail] = useState("");
@@ -66,7 +66,7 @@ const Apply = () => {
 
   useEffect(() => {
     async function checkConfirmation() {
-      if (validate(email)) {
+      if (validateEmail(email)) {
         if (role) {
           const { isHave, isHaveProfile, isVerified } = await isHaveAccount(
             email,
@@ -166,7 +166,7 @@ const Apply = () => {
         className="roleGroup"
         onChange={(e) => setRole(e.target.value)}
         value={role}
-        disabled={!validate(email)}
+        disabled={!validateEmail(email)}
       >
         <Radio className="role" value={ACCOUNT_TYPE.MENTEE}>
           {t("common.mentee")}
@@ -268,7 +268,6 @@ const Apply = () => {
         )}
         {istrain ? (
           <div className="trainpart">
-            {" "}
             <TrainingList role={role} />
           </div>
         ) : (

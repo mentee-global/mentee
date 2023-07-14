@@ -5,9 +5,11 @@ import { ACCOUNT_TYPE } from "utils/consts";
 export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async ({ id, role }) => {
-    const isAdmin = Number(role) === ACCOUNT_TYPE.ADMIN;
+    const isAdmin = parseInt(role) === ACCOUNT_TYPE.ADMIN;
     const res = isAdmin ? await getAdmin(id) : await fetchAccountById(id, role);
-    return res;
+
+    if (!res) return;
+    return { user: res, role: parseInt(role) };
   }
 );
 
@@ -16,7 +18,8 @@ export const updateAndFetchUser = createAsyncThunk(
   async ({ data, id, role }, thunkAPI) => {
     const res = await editAccountProfile(data, id, role);
     thunkAPI.dispatch(fetchUser({ id, role }));
-    return res;
+    // This does not get consumed since we call fetchUser
+    return { user: res, role: parseInt(role) };
   }
 );
 
@@ -24,11 +27,13 @@ export const userSlice = createSlice({
   name: "user",
   initialState: {
     user: null,
+    role: null,
     status: "idle",
   },
   reducers: {
     resetUser(state, action) {
       state.user = null;
+      state.role = null;
     },
   },
   extraReducers(builder) {
@@ -38,8 +43,10 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
       })
+      // fetchUser handles this hence we don't need to do anything
       .addCase(updateAndFetchUser.fulfilled, (state, action) => {});
   },
 });

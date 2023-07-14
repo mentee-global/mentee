@@ -437,7 +437,8 @@
   "sidebars": {
     "appointments": "Appointments",
     "profile": "Profile",
-    "videos": "Your Videos"
+    "videos": "Your Videos",
+    "explore": "Explore"
   },
   "emailSubjects": {
     "unread_message": "MENTEE: You have received a new Message!",

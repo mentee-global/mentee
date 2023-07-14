@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { useHistory, NavLink } from "react-router-dom";
-import { Input, message } from "antd";
+import { Breadcrumb, Input, Space, message } from "antd";
 import fireauth from "utils/fireauth";
 import { useDispatch } from "react-redux";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import {
+  EyeInvisibleOutlined,
+  EyeTwoTone,
+  HomeOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { login, sendVerificationEmail } from "utils/auth.service";
 import { fetchUser } from "features/userSlice";
@@ -146,6 +151,28 @@ function Login() {
   }
   return (
     <div className="containerr">
+      <Breadcrumb
+        items={[
+          {
+            key: "home",
+            title: (
+              <NavLink to="/">
+                <HomeOutlined />
+              </NavLink>
+            ),
+          },
+          {
+            title: (
+              <NavLink to="/login">
+                <Space>
+                  <UserOutlined />
+                  <span>Login</span>
+                </Space>
+              </NavLink>
+            ),
+          },
+        ]}
+      />
       {contextHolder}
       <h1 className="home-header3">
         <Trans i18nKey={"common.welcome"}>

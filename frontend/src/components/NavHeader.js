@@ -1,40 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
-import {
-  Avatar,
-  Layout,
-  Drawer,
-  Menu,
-  Dropdown,
-  Badge,
-  Space,
-  Select,
-} from "antd";
-import { withRouter } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { resetUser, fetchUser, updateAndFetchUser } from "features/userSlice";
-import { fetchOptions } from "features/optionsSlice";
-import { isLoggedIn } from "utils/auth.service";
-import MenteeButton from "./MenteeButton";
-import LoginVerificationModal from "./LoginVerificationModal";
-import { getNotifys, markNotifyReaded } from "utils/api";
-import { useAuth } from "../utils/hooks/useAuth";
-import { ACCOUNT_TYPE } from "utils/consts";
-import "./css/Navigation.scss";
-import MenteeLogo from "../resources/mentee.png";
-import MenteeLogoSmall from "../resources/menteeSmall.png";
+import { Avatar, Layout, Drawer, Menu, Dropdown, Badge, Space } from "antd";
 import Icon, {
   UserOutlined,
   MenuOutlined,
   CaretDownOutlined,
   MessageOutlined,
-  GlobalOutlined,
 } from "@ant-design/icons";
-import NotificationBell from "./NotificationBell";
-import { logout } from "utils/auth.service";
 import { useTranslation } from "react-i18next";
-import moment from "moment";
+import { useSelector, useDispatch } from "react-redux";
+import { resetUser, fetchUser } from "features/userSlice";
+import { fetchOptions } from "features/optionsSlice";
+import { isLoggedIn } from "utils/auth.service";
+import MenteeButton from "components/MenteeButton";
+import LoginVerificationModal from "components/LoginVerificationModal";
+import { getNotifys, markNotifyReaded } from "utils/api";
+import { useAuth } from "utils/hooks/useAuth";
+import { ACCOUNT_TYPE } from "utils/consts";
+import "components/css/Navigation.scss";
+import MenteeLogo from "resources/mentee.png";
+import MenteeLogoSmall from "resources/menteeSmall.png";
+import NotificationBell from "components/NotificationBell";
+import { logout } from "utils/auth.service";
+import LanguageDropdown from "components/LanguageDropdown";
 
 const { Header } = Layout;
 
@@ -56,75 +45,10 @@ function NavHeader({ history }) {
   const [notifysViewed, setNoitfyViewed] = useState(false);
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
-
   const [openDropdown, setOpenDropdown] = useState(false);
-
-  const handleDropdownClick = (e) => {
-    if (e.key !== "language-change") {
-      setOpenDropdown(false);
-    }
-  };
 
   const handleOpenChange = (flag) => {
     setOpenDropdown(flag);
-  };
-
-  const languageOptions = [
-    {
-      value: "en-US",
-      label: t("languages.en"),
-    },
-    {
-      value: "es-US",
-      label: t("languages.es"),
-    },
-    {
-      value: "pt-BR",
-      label: t("languages.pt"),
-    },
-    {
-      value: "ar",
-      label: t("languages.ar"),
-    },
-    {
-      value: "fa-AF",
-      label: t("languages.fa"),
-    },
-  ];
-
-  const handleLanguageChange = (language) => {
-    i18n.changeLanguage(language);
-    moment.locale(language);
-    if (user) {
-      setOpenDropdown(false);
-      dispatch(
-        updateAndFetchUser({
-          data: { preferred_language: language },
-          id: profileId,
-          role,
-        })
-      );
-    }
-    if (isMobile) {
-      setDrawerVisible(false);
-    }
-  };
-
-  const LanguageSelect = () => {
-    return (
-      <div>
-        <GlobalOutlined />
-        <Select
-          defaultValue={user ? user.preferred_language : i18n.language}
-          bordered={false}
-          size="middle"
-          className="language-select-style"
-          options={languageOptions}
-          dropdownMatchSelectWidth={110}
-          onChange={handleLanguageChange}
-        />
-      </div>
-    );
   };
 
   const logoutUser = () => {
@@ -140,10 +64,6 @@ function NavHeader({ history }) {
       dispatch(fetchUser({ id: profileId, role }));
     }
   }, [role]);
-
-  useEffect(() => {
-    if (user) i18n.changeLanguage(user.preferred_language);
-  }, [user]);
 
   useEffect(() => {
     dispatch(fetchOptions());
@@ -177,7 +97,7 @@ function NavHeader({ history }) {
   }, [role]);
 
   const dropdownMenu = (
-    <Menu className="dropdown-menu" onClick={handleDropdownClick}>
+    <Menu className="dropdown-menu">
       <Menu.Item key="edit-profile">
         <NavLink to="/profile">
           <b>{t("navHeader.editProfile")}</b>
@@ -189,7 +109,7 @@ function NavHeader({ history }) {
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="language-change">
-        <LanguageSelect />
+        <LanguageDropdown />
       </Menu.Item>
     </Menu>
   );
@@ -376,7 +296,7 @@ function NavHeader({ history }) {
               }}
             />
           )}
-          <LanguageSelect />
+          <LanguageDropdown />
         </Drawer>
       </div>
     );
@@ -560,7 +480,7 @@ function NavHeader({ history }) {
                 <div className="profile-caret ">
                   <Dropdown
                     overlay={dropdownMenu}
-                    onVisibleChange={handleOpenChange}
+                    onOpenChange={handleOpenChange}
                     open={openDropdown}
                   >
                     <CaretDownOutlined />
@@ -568,7 +488,7 @@ function NavHeader({ history }) {
                 </div>
               </>
             ) : (
-              <LanguageSelect />
+              <LanguageDropdown />
             )}
           </div>
         ) : (

@@ -6,13 +6,13 @@ import { useTranslation } from "react-i18next";
 import { getAntdLocale } from "utils/translations";
 import Appointments from "components/pages/Appointments";
 import MenteeAppointments from "components/pages/MenteeAppointments";
-import Home from "components/pages/Home";
+import HomeRemove from "components/pages/HomeRemove";
 import Videos from "components/pages/Videos";
 import Profile from "components/pages/Profile";
 import Gallery from "components/pages/Gallery";
 import PublicProfile from "components/pages/PublicProfile";
 import NewTrainingConfirm from "components/pages/NewTrainingConfirm";
-import Login from "components/pages/Login";
+import Home from "components/pages/Home";
 import AdminLogin from "components/pages/AdminLogin";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
@@ -56,7 +56,7 @@ function App() {
         locale={antdLocale}
         theme={{
           token: {
-            colorPrimary: "#b5941d",
+            colorPrimary: "#f57600",
           },
         }}
       >
@@ -68,7 +68,6 @@ function App() {
             <Content>
               {user && <NavigationHeader />}
               <Route exact path="/" component={() => <Home />} />
-              <Route path="/login" component={() => <Login />} />
               <Route path="/admin" component={() => <AdminLogin />} />
               <Route path="/register" component={() => <Register />} />
               <Route path="/verify" component={() => <Verify />} />

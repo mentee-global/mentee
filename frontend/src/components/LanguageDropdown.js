@@ -6,8 +6,14 @@ import { GlobalOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import { ACCOUNT_TYPE, I18N_LANGUAGES } from "utils/consts";
+import { css } from "@emotion/css";
 
-function LanguageDropdown() {
+function LanguageDropdown({
+  size = "1em",
+  className,
+  style,
+  placement = "bottomRight",
+}) {
   const { t, i18n } = useTranslation();
   const { user, role } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -35,8 +41,8 @@ function LanguageDropdown() {
       dispatch(
         updateAndFetchUser({
           data: { preferred_language: language },
-          id: user.id,
-          role: user.role,
+          id: user?._id?.$oid,
+          role,
         })
       );
     }
@@ -47,10 +53,17 @@ function LanguageDropdown() {
       menu={{
         items: languageOptions,
         selectable: true,
-        defaultSelectedKeys: [user.preferred_language ?? i18n.language],
+        defaultSelectedKeys: [user?.preferred_language ?? i18n.language],
       }}
+      className={className}
+      placement={placement}
     >
-      <GlobalOutlined />
+      <GlobalOutlined
+        className={css`
+          font-size: ${size};
+        `}
+        style={style}
+      />
     </Dropdown>
   );
 }

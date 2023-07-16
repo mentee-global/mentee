@@ -25,7 +25,10 @@
     "emailPrompt": "Please enter your email to start the application process",
     "errorConnection": "Something went wrong check your internet connection",
     "existingAccount": "You Already have account you will be redirect to login page",
-    "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org"
+    "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org",
+    "message": {
+      "haveAccount": "You already have an account... redirecting to login"
+    }
   },
   "availability": {
     "addHours": "Add hours",
@@ -176,11 +179,11 @@
     "viewProfile": "View Profile"
   },
   "homepage": {
-    "existingAccountDesc": "PLATFORM LOGIN",
-    "existingAccountTitle": "EXISTING",
+    "existingAccountDesc": "Platform Login",
+    "existingAccountTitle": "Existing",
     "isExistingUser": "Are you a new or existing user?",
-    "newAccountDesc": "APPLY - TRAIN - BUILD",
-    "newAccountTitle": "NEW"
+    "newAccountDesc": "Apply - Train - Build",
+    "newAccountTitle": "New"
   },
   "languages": {
     "ar": "العربية",
@@ -194,7 +197,9 @@
     "clickLoginPrompt": "Please click on your role to continue on",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
-    "resetPassword": "Reset it"
+    "resetPassword": "Reset it",
+    "passwordPlaceholder": "Enter your password",
+    "emailPlaceholder": "Enter your email"
   },
   "loginErrors": {
     "existingEmail": "This email is already in use in another role",
@@ -202,7 +207,8 @@
     "reregisterAccount": "Please re-register your account.",
     "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
     "serverError": "Something went wrong.",
-    "wrongRole": "Wrong role please choose account right role"
+    "wrongRole": "Wrong role please choose account right role",
+    "noRole": "Please choose a role"
   },
   "menteeApplication": {
     "agePrompt": "Let us know more about you",

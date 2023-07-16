@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../components/css/Apply.scss";
-import { Input, Radio } from "antd";
+import { Input, Radio, message } from "antd";
 import { useHistory } from "react-router";
 import { useLocation } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
@@ -40,6 +40,7 @@ const Apply = () => {
   const history = useHistory();
   const location = useLocation();
   const { t, i18n } = useTranslation();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const submitHandler = () => {
     setConfirmApply(true);
@@ -75,10 +76,9 @@ const Apply = () => {
           setIsVerify(isVerified);
           setishavee(isHave);
           if (isHave === true && isHaveProfile === true) {
-            setIsprofile(true);
-            setishavee(true);
+            messageApi.info(t("apply.message.haveAccount"));
             setTimeout(() => {
-              history.push("/login");
+              history.push(`/?step=2&role=${role}`);
             }, 2000);
             return;
           } else if (isHave === true && isHaveProfile === false) {
@@ -142,6 +142,7 @@ const Apply = () => {
 
   return (
     <div className="container2">
+      {contextHolder}
       <h1 className="home-header">
         <Trans i18nKey={"common.welcome"}>
           Welcome to <span>MENTEE!</span>

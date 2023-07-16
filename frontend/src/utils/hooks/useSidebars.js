@@ -2,6 +2,7 @@ import {
   ClockCircleOutlined,
   ContainerOutlined,
   DatabaseOutlined,
+  MessageOutlined,
   SearchOutlined,
   UserOutlined,
   UsergroupAddOutlined,
@@ -16,6 +17,11 @@ import { ACCOUNT_TYPE } from "utils/consts";
  */
 export default function useSidebars(userType, t) {
   const mentorSidebar = [
+    {
+      label: t("common.messages"),
+      key: `messages/${ACCOUNT_TYPE.MENTOR}`,
+      icon: <MessageOutlined />,
+    },
     {
       label: t("sidebars.explore"),
       key: "galleries",
@@ -46,6 +52,11 @@ export default function useSidebars(userType, t) {
 
   const menteeSidebar = [
     {
+      label: t("common.messages"),
+      key: `messages/${ACCOUNT_TYPE.MENTEE}`,
+      icon: <MessageOutlined />,
+    },
+    {
       label: t("sidebars.explore"),
       key: "galleries",
       icon: <SearchOutlined />,
@@ -73,6 +84,11 @@ export default function useSidebars(userType, t) {
   ];
 
   const partnerSidebar = [
+    {
+      label: t("common.messages"),
+      key: `messages/${ACCOUNT_TYPE.PARTNER}`,
+      icon: <MessageOutlined />,
+    },
     {
       label: t("sidebars.explore"),
       key: "galleries",

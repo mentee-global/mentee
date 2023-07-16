@@ -11,8 +11,11 @@
     "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\""
   },
   "dependencies": {
+    "@emotion/css": "^11.11.2",
+    "@react-spring/web": "^9.7.3",
     "concurrently": "^8.2.0",
     "debounce": "^1.2.1",
+    "leva": "^0.9.35",
     "moment-timezone": "^0.5.43",
     "sass": "^1.50.0"
   }

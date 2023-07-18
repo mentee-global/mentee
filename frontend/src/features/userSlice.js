@@ -43,8 +43,8 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload.user;
-        state.role = action.payload.role;
+        state.user = action.payload?.user;
+        state.role = action.payload?.role;
       })
       // fetchUser handles this hence we don't need to do anything
       .addCase(updateAndFetchUser.fulfilled, (state, action) => {});

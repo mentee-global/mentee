@@ -50,6 +50,7 @@ function useProvideAuth() {
       isMentee: false,
       isPartner: false,
     });
+    setProfileId(null);
   };
 
   // Subscribe to user on mount
@@ -58,12 +59,13 @@ function useProvideAuth() {
   // ... latest auth object.
   useEffect(() => {
     const unsubscribe = fireauth.auth().onAuthStateChanged(async (user) => {
-      if (!user);
+      if (!user) return;
 
       await getIdTokenResult(true)
         .then((idTokenResult) => {
           const { role, profileId } = idTokenResult.claims;
           setProfileId(profileId);
+          localStorage.setItem("profileId", profileId);
           setRoleState({
             role: Number(role),
             isAdmin: `${role}` === `${ACCOUNT_TYPE.ADMIN}`,

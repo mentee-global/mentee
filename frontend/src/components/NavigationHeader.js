@@ -103,12 +103,8 @@ function NavigationHeader() {
           placement="bottom"
         >
           <Space>
-            <Avatar
-              size={24}
-              src={user.image && user.image.url}
-              icon={<UserOutlined />}
-            />
-            {user.name}
+            <Avatar size={24} src={user?.image?.url} icon={<UserOutlined />} />
+            {user?.name}
           </Space>
         </Dropdown>
         {role !== ACCOUNT_TYPE.ADMIN && <LanguageDropdown />}

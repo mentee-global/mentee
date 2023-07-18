@@ -56,9 +56,9 @@ function NavigationSider() {
       breakpoint="lg"
       collapsedWidth={isMobile ? "0" : "48"}
       collapsible
-      onBreakpoint={(broken) => {
-        console.log(broken);
-      }}
+      // onBreakpoint={(broken) => {
+      //   console.log(broken);
+      // }}
       onCollapse={() => setCollapsed(!collapsed)}
     >
       <NavLink to={defaultRoute()}>

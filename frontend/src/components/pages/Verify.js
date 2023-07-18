@@ -36,11 +36,11 @@ function Verify({ history, sent }) {
               )}
               {resent && <div> {t("verifyEmail.emailResent")} </div>}
               <br />
-              <t className="verify-header-text-description">
+              <div className="verify-header-text-description">
                 {t("verifyEmail.body")}
                 <br />
                 {t("verifyEmail.refresh")}
-              </t>
+              </div>
             </div>
           </div>
           <div className="verify-login-button">

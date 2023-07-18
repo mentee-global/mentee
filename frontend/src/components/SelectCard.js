@@ -1,12 +1,25 @@
 import { Card, theme } from "antd";
 import React from "react";
 import { css } from "@emotion/css";
+import { RightCircleOutlined } from "@ant-design/icons";
 
 const { Meta } = Card;
 const { useToken } = theme;
 
-function SelectCard({ title, description, avatar, onClick, style }) {
+function SelectCard({ title, description, avatar, onClick, style, rightIcon }) {
   const { token } = useToken();
+
+  const selectCardTitle = () => (
+    <div
+      className={css`
+        display: flex;
+        justify-content: space-between;
+      `}
+    >
+      <div>{title}</div>
+      {rightIcon ?? <RightCircleOutlined />}
+    </div>
+  );
 
   return (
     <Card
@@ -51,7 +64,11 @@ function SelectCard({ title, description, avatar, onClick, style }) {
       `}
       onClick={() => setTimeout(onClick, 400)}
     >
-      <Meta avatar={avatar} title={title} description={description} />
+      <Meta
+        avatar={avatar}
+        title={selectCardTitle()}
+        description={description}
+      />
     </Card>
   );
 }

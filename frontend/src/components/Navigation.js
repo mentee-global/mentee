@@ -6,7 +6,7 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
 
 import "./css/Navigation.scss";
-import NotFound from "./pages/NotFound";
+import NotFound from "./pages/LoggedInRedirect";
 
 const { Content } = Layout;
 

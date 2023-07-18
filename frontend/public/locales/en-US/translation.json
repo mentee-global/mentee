@@ -116,7 +116,8 @@
     "welcome": "Welcome to <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "role": "Role"
   },
   "commonProfile": {
     "accountCreated": "Your account has been created now you can login to Mentee",
@@ -208,7 +209,9 @@
     "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
     "serverError": "Something went wrong.",
     "wrongRole": "Wrong role please choose account right role",
-    "noRole": "Please choose a role"
+    "noRole": "Please choose a role",
+    "emailError": "Please enter email",
+    "passwordError": "Please enter password"
   },
   "menteeApplication": {
     "agePrompt": "Let us know more about you",

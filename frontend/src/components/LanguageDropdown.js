@@ -22,7 +22,7 @@ function LanguageDropdown({
     return {
       key: value,
       label: (
-        <span onClick={() => handleLanguageChange(value)}>
+        <span key={value} onClick={() => handleLanguageChange(value)}>
           {t(`languages.${value.split("-")[0]}`)}
         </span>
       ),

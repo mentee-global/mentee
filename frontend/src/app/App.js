@@ -71,7 +71,7 @@ function App() {
           {userIdToken && <NavigationSider />}
           <Content>
             {userIdToken && <NavigationHeader />}
-            <HomeLayout ignoreLayout={userIdToken}>
+            <HomeLayout ignoreHomeLayout={userIdToken}>
               <PublicRoute exact path="/">
                 <Home />
               </PublicRoute>
@@ -93,7 +93,7 @@ function App() {
               <PublicRoute path="/forgot-password">
                 <ForgotPassword />
               </PublicRoute>
-              <PublicRoute path="/application-form" exact>
+              <PublicRoute path="/application-form">
                 <ApplicationForm />
               </PublicRoute>
             </HomeLayout>

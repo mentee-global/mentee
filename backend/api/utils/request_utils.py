@@ -270,6 +270,8 @@ def get_profile_model(role):
         return Admin
     elif role == Account.PARTNER:
         return PartnerProfile
+    else:
+        raise ValueError("Invalid role")
 
 
 def application_model(role):

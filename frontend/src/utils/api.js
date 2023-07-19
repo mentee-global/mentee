@@ -131,22 +131,19 @@ export const createApplication = (application) => {
   );
 };
 
-export const getAppState = async (email, role) => {
-  const requestExtension = `/application/checkConfirm/${email}/${role}`;
+export const getApplicationStatus = async (email, role) => {
+  const requestExtension = `/application/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  let state = res.data.result.state;
+  let state = res.data?.result?.state;
   return state;
 };
 
-export const getExistingProfile = async (email, role) => {
-  const requestExtension = `/application/isHaveProfile/${email}/${role}`;
+export const checkProfileExists = async (email, role) => {
+  const requestExtension = `/application/profile/exists/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  let isHaveProfile = res.data.result.isHaveProfile || false;
-  let rightRole = null;
-  if (res.data.result.rightRole) {
-    rightRole = res.data.result.rightRole;
-  }
-  return { isHaveProfile, rightRole };
+  let profileExists = res.data?.result?.profileExists;
+  let rightRole = res.data?.result?.rightRole;
+  return { profileExists, rightRole };
 };
 
 export const changeStateBuildProfile = async ({ email, role }) => {
@@ -161,13 +158,13 @@ export const changeStateBuildProfile = async ({ email, role }) => {
   return state;
 };
 
-export const isHaveAccount = async (email, role) => {
-  const requestExtension = `/application/checkHaveAccount/${email}/${role}`;
+export const checkStatusByEmail = async (email, role) => {
+  const requestExtension = `/application/email/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  let isHave = res.data.result.isHave;
-  let isHaveProfile = res.data.result.isHaveProfile;
-  let isVerified = res.data.result.isVerified;
-  return { isHave, isHaveProfile, isVerified };
+  let inFirebase = res.data?.result?.inFirebase;
+  let profileExists = res.data?.result?.profileExists;
+  let isVerified = res.data?.result?.isVerified;
+  return { inFirebase, profileExists, isVerified };
 };
 
 export const getTrainings = async (role, lang = i18n.language) => {

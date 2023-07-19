@@ -32,7 +32,8 @@ function ForgotPassword({ location, history }) {
   };
 
   const onFinishFailed = (errorInfo) => {
-    messageApi.error(`${t("forgotPassword.error")}: ${errorInfo}`);
+    console.error("Failed:", errorInfo);
+    messageApi.error(`${t("forgotPassword.error")}`);
   };
 
   return (

@@ -5,9 +5,9 @@ import { Checkbox, Button, message, Upload, Avatar } from "antd";
 import { useSelector } from "react-redux";
 import ModalInput from "../ModalInput";
 import {
+  checkStatusByEmail,
   createMenteeProfile,
-  getAppState,
-  isHaveAccount,
+  getApplicationStatus,
   uploadMenteeImage,
 } from "utils/api";
 import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
@@ -383,12 +383,12 @@ function MenteeRegisterForm(props) {
 
   const handleSaveEdits = async () => {
     async function saveEdits(data) {
-      const { isHave, isHaveProfile, isVerified } = await isHaveAccount(
+      const { inFirebase, isVerified } = await checkStatusByEmail(
         props.headEmail,
         props.role
       );
-      if (isHave == false) {
-        const state = await getAppState(props.headEmail, props.role);
+      if (inFirebase == false) {
+        const state = await getApplicationStatus(props.headEmail, props.role);
         if (state != "BuildProfile" && !isVerified) {
           setErr(true);
           return;
@@ -396,7 +396,7 @@ function MenteeRegisterForm(props) {
       }
 
       data["preferred_language"] = i18n.language;
-      const res = await createMenteeProfile(data, props.isHave);
+      const res = await createMenteeProfile(data, props.inFirebase);
       const menteeId =
         res && res.data && res.data.result ? res.data.result.mentorId : false;
 
@@ -513,7 +513,7 @@ function MenteeRegisterForm(props) {
             errorMessage="Name field is too long."
           />
         </div>
-        {!props.isHave ? (
+        {!props.inFirebase ? (
           <div className="modal-input-container">
             <ModalInput
               style={styles.modalInput}

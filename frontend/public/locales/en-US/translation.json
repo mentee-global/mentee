@@ -26,8 +26,13 @@
     "errorConnection": "Something went wrong check your internet connection",
     "existingAccount": "You Already have account you will be redirect to login page",
     "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org",
+    "buildProfile": "Build Profile",
+    "training": "Training",
     "message": {
       "haveAccount": "You already have an account... redirecting to login"
+    },
+    "error": {
+      "role": "Please select a role"
     }
   },
   "availability": {

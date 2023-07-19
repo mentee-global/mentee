@@ -20,6 +20,7 @@ const StepNumeration = {
 function Login({ location }) {
   const { t } = useTranslation();
   const [role, setRole] = useState(location?.state?.role);
+  const email = location?.state?.email;
   const [current, setCurrent] = useState(
     role ? StepNumeration.login : StepNumeration.role
   );
@@ -77,7 +78,7 @@ function Login({ location }) {
     {
       title: "Login",
       key: "login",
-      content: <LoginForm role={role} />,
+      content: <LoginForm role={role} defaultEmail={email} />,
     },
   ];
 

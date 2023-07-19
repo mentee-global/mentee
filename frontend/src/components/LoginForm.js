@@ -5,13 +5,17 @@ import { css } from "@emotion/css";
 import { useTranslation } from "react-i18next";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
-import { getExistingProfile, isHaveAccount } from "utils/api";
+import {
+  checkProfileExists,
+  checkStatusByEmail,
+  isHaveAccount,
+} from "utils/api";
 import { login, sendVerificationEmail } from "utils/auth.service";
 import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS, REDIRECTS } from "utils/consts";
 import fireauth from "utils/fireauth";
 import { fetchUser } from "features/userSlice";
 
-function LoginForm({ role }) {
+function LoginForm({ role, defaultEmail }) {
   const history = useHistory();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -25,7 +29,7 @@ function LoginForm({ role }) {
 
     // Non-admin checking for status of account
     if (role !== ACCOUNT_TYPE.ADMIN) {
-      const { isHaveProfile, rightRole } = await getExistingProfile(
+      const { profileExists, rightRole } = await checkProfileExists(
         email,
         role
       );
@@ -35,14 +39,14 @@ function LoginForm({ role }) {
         return;
       }
 
-      const { isHave } = await isHaveAccount(email, role);
-      if (isHaveProfile === false && isHave === true) {
+      const { inFirebase } = await checkStatusByEmail(email, role);
+      if (profileExists === false && inFirebase === true) {
         //redirect to apply with role and email passed
         history.push({
           pathname: "/application-page",
           state: { email, role },
         });
-      } else if (isHaveProfile === false && isHave === false) {
+      } else if (profileExists === false && inFirebase === false) {
         messageApi.error(t("loginErrors.incorrectCredentials"));
         setLoading(false);
         return;
@@ -123,6 +127,7 @@ function LoginForm({ role }) {
         <Form.Item
           name="email"
           label={t("common.email")}
+          initialValue={defaultEmail}
           rules={[
             {
               required: true,

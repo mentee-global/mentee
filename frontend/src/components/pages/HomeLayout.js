@@ -7,11 +7,16 @@ import { ReactComponent as Logo } from "resources/mentee.svg";
 import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
 import { useMediaQuery } from "react-responsive";
 
-function HomeLayout({ children, ignoreLayout, location }) {
+function HomeLayout({ children, ignoreHomeLayout, location }) {
   const isTablet = useMediaQuery({ query: `(max-width: 991px)` });
   const history = useHistory();
 
-  if (ignoreLayout || location.state?.ignoreHomeLayout) {
+  const ignoreLayoutPaths = [
+    "/application-form",
+    "/training",
+    "/build-profile",
+  ];
+  if (ignoreHomeLayout || ignoreLayoutPaths.includes(location.pathname)) {
     return children;
   }
 

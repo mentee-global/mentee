@@ -46,6 +46,7 @@ function NavHeader({ history }) {
     isMentor,
     isMentee,
     isPartner,
+    isGuest,
     profileId,
     role,
   } = useAuth();
@@ -161,6 +162,9 @@ function NavHeader({ history }) {
     if (role === ACCOUNT_TYPE.PARTNER) {
       return t("common.partner");
     }
+    if (role === ACCOUNT_TYPE.GUEST) {
+      return "Guest";
+    }
   };
 
   useEffect(() => {
@@ -224,7 +228,7 @@ function NavHeader({ history }) {
   );
 
   function MobileGuestNavHeader({ setDrawerVisible, drawerVisible, history }) {
-    const { isAdmin, isMentor, isMentee, isPartner } = useAuth();
+    const { isAdmin, isMentor, isMentee, isPartner, isGuest } = useAuth();
     return (
       <div>
         <button
@@ -240,7 +244,7 @@ function NavHeader({ history }) {
           visible={drawerVisible}
         >
           <div className="drawer-btn-container">
-            {isMentee || isMentor || isPartner ? (
+            {isMentee || isMentor || isPartner || isAdmin || isGuest ? (
               <></>
             ) : (
               <MenteeButton
@@ -257,7 +261,7 @@ function NavHeader({ history }) {
               />
             )}
           </div>
-          {(isMentee || isAdmin) && isLoggedIn() && (
+          {(isMentee || isAdmin || isGuest) && isLoggedIn() && (
             <LoginVerificationModal
               className="mobile-nav-btn-login-modal"
               content={<b>{t("navHeader.findMentor")}</b>}
@@ -287,7 +291,7 @@ function NavHeader({ history }) {
               }}
             />
           )}
-          {(isPartner || isAdmin) && isLoggedIn() && (
+          {(isPartner || isAdmin || isGuest) && isLoggedIn() && (
             <>
               <span className="navigation-header-button">
                 <LoginVerificationModal
@@ -304,37 +308,9 @@ function NavHeader({ history }) {
                   }}
                 />
               </span>
-              <div style={{ marginTop: "20px" }} />
-              <MenteeButton
-                className="mobile-nav-btn"
-                content={
-                  <b>
-                    {isLoggedIn()
-                      ? t("navHeader.yourPortal")
-                      : t("common.login")}
-                  </b>
-                }
-                width="9em"
-                onClick={async () => {
-                  let redirect = "/login";
-                  if (isMentor) {
-                    redirect = "/appointments";
-                  } else if (isMentee) {
-                    redirect = "/mentee-appointments";
-                  } else if (isAdmin) {
-                    redirect = "/account-data";
-                  } else if (isPartner) {
-                    redirect = "/profile";
-                  }
-                  setDrawerVisible(false);
-                  history.push({
-                    pathname: isLoggedIn() ? redirect : "/login",
-                  });
-                }}
-              />
             </>
           )}
-          {!isPartner && isLoggedIn() && (
+          {!isGuest && !isPartner && isLoggedIn() && (
             <MenteeButton
               className="mobile-nav-btn"
               content={
@@ -361,7 +337,7 @@ function NavHeader({ history }) {
               }}
             />
           )}
-          {isLoggedIn() && !isAdmin && (
+          {isLoggedIn() && !isAdmin && !isGuest && (
             <MenteeButton
               className="mobile-nav-btn"
               loginButton
@@ -407,7 +383,7 @@ function NavHeader({ history }) {
           <div style={{ display: "flex" }}>
             {!isMobile && <></>}
             {/* TODO: Update this since verification modal will not longer be needed anymore! */}
-            {(isMentee || isAdmin) && isLoggedIn() && (
+            {(isMentee || isAdmin || isGuest) && isLoggedIn() && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>{t("navHeader.findMentor")}</b>}
@@ -444,7 +420,7 @@ function NavHeader({ history }) {
                 />
               </span>
             )}
-            {(isPartner || isAdmin) && isLoggedIn() && (
+            {(isPartner || isAdmin || isGuest) && isLoggedIn() && (
               <span className="navigation-header-button">
                 <LoginVerificationModal
                   content={<b>{t("navHeader.findPartner")}</b>}
@@ -464,7 +440,7 @@ function NavHeader({ history }) {
                 />
               </span>
             )}
-            {isLoggedIn() ? (
+            {!isGuest && isLoggedIn() ? (
               <span className="navigation-header-button">
                 <MenteeButton
                   loginButton
@@ -491,7 +467,7 @@ function NavHeader({ history }) {
               ""
             )}
 
-            {isLoggedIn() && !isAdmin && (
+            {isLoggedIn() && !isAdmin && !isGuest && (
               <span className="navigation-header-button">
                 <MenteeButton
                   loginButton
@@ -541,7 +517,7 @@ function NavHeader({ history }) {
                   </Dropdown>
                 )}
 
-                <NotificationBell />
+                {!isGuest && <NotificationBell />}
                 <div className="profile-name">
                   <b>
                     {isPartner ? user.organization : user.name}

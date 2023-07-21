@@ -20,7 +20,7 @@ import { getTranslatedOptions } from "utils/translations";
 function Gallery() {
   const { t } = useTranslation();
   const options = useSelector((state) => state.options);
-  const { isAdmin, isMentor, isMentee, profileId } = useAuth();
+  const { isAdmin, isMentor, isMentee, profileId, isGuest } = useAuth();
   const [mentors, setMentors] = useState([]);
   const [mentee, setMentee] = useState();
   const [specializations, setSpecializations] = useState([]);
@@ -54,6 +54,7 @@ function Gallery() {
           var restricted_partners = await fetchPartners(true);
           if (
             !isAdmin &&
+            !isGuest &&
             restricted_partners &&
             restricted_partners.length > 0
           ) {
@@ -86,7 +87,7 @@ function Gallery() {
 
     async function getAllPartners() {
       var all_data = [];
-      if (isAdmin) {
+      if (isAdmin || isGuest) {
         all_data = await fetchPartners();
       } else {
         if (user && user.pair_partner && user.pair_partner.restricted) {
@@ -111,10 +112,10 @@ function Gallery() {
   }, []);
 
   useEffect(() => {
-    if (isMentor || isAdmin) {
+    if (isMentor || isAdmin || isGuest) {
       setPageLoaded(true);
     }
-  }, [isMentor, isAdmin]);
+  }, [isMentor, isAdmin, isGuest]);
 
   useEffect(() => {
     async function getMentee() {

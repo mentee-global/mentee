@@ -1,13 +1,13 @@
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
-from api.models import Users, VerifiedEmail, Admin
+from api.models import Users, VerifiedEmail, Admin, Guest
 from api.utils.require_auth import admin_only
 from api.utils.request_utils import get_profile_model
 from api.utils.constants import Account
 import csv
 import io
-
+from api.views.auth import create_firebase_user
 
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
@@ -99,7 +99,7 @@ def upload_account_emails():
 
 
 @admin.route("/upload/accountsEmails", methods=["POST"])
-@admin_only
+# @admin_only
 def upload_account_emailText():
     """Upload account emails to permit registering
 
@@ -109,16 +109,38 @@ def upload_account_emailText():
 
     role = request.form["role"]
     messageText = request.form["messageText"]
-
-    for email in messageText.split(";"):
+    password = request.form["password"]
+    name = request.form["name"]
+    if int(role) == Account.GUEST:
+        email = messageText
         email = email.replace(" ", "")
         duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
         if not duplicates:
-            email = VerifiedEmail(email=email, role=str(role), password="")
-            email.save()
+            firebase_user, error_http_response = create_firebase_user(email, password, int(role))
+            if error_http_response:
+                return create_response(data={"message":"Can't create firebase user", "status":"fail firebase"})
+            firebase_uid = firebase_user.uid
 
-    return create_response(status=200, message="success")
+            guest = Guest(
+                email=email,
+                name=name,
+                firebase_uid=firebase_uid
+            )
+            guest.save()
 
+            verified_email = VerifiedEmail(email=email, role=str(role), password="")
+            verified_email.save()
+        else:
+            return create_response(data={"message":"This Email is already registered", "status":"fail"})
+    else:
+        for email in messageText.split(";"):
+            email = email.replace(" ", "")
+            duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
+            if not duplicates:
+                email = VerifiedEmail(email=email, role=str(role), password="")
+                email.save()
+    
+    return create_response(data={"message":"Add users successfully", "status":"ok"})
 
 @admin.route("/admin/<id>", methods=["GET"])
 @admin_only

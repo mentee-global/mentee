@@ -24,7 +24,7 @@ from .MentorApplication import MentorApplication
 from .Notifications import Notifications
 from .Languages import Languages
 from .Specializations import Specializations
-
+from .Guest import Guest
 __all__ = [
     "db",
     "Users",
@@ -49,6 +49,7 @@ __all__ = [
     "Notifications",
     "Languages",
     "Specializations",
+    "Guest"
 ]
 
 # You must import all of the new Models you create to this page

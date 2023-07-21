@@ -40,12 +40,17 @@ const Logins = Object.freeze({
     type: ACCOUNT_TYPE.ADMIN,
     redirect: "/account-data",
   },
+  guest: {
+    title: "Guest",
+    type: ACCOUNT_TYPE.GUEST,
+    redirect: "/gallery",
+  },
 });
 const getRoleObject = (key) => {
   return { ...Logins[key] };
 };
 
-function AdminLogin() {
+function GuestLogin() {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -71,7 +76,7 @@ function AdminLogin() {
     logout().then(() => {
       resetRoleState();
       dispatch(resetUser());
-      history.push("/admin");
+      history.push("/readonly");
     });
   };
 
@@ -185,7 +190,7 @@ function AdminLogin() {
           displaySelect={displaySelect}
           handleDisplayImages={handleDisplayImages}
           handleSelect={handleSelect}
-          isAdmin={true}
+          isGhost={true}
         ></SelectLogin>
       )}
       {/* TODO: Translate this and loading */}
@@ -204,4 +209,4 @@ function AdminLogin() {
   );
 }
 
-export default AdminLogin;
+export default GuestLogin;

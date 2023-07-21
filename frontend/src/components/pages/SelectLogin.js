@@ -2,6 +2,7 @@ import React from "react";
 import MentorImage from "resources/mentor-login-logo.png";
 import MenteeLogin from "resources/mentee-login-logo.png";
 import AdminImage from "resources/admin-login-logo.png";
+import loginimg from "resources/login.png";
 import PartnerImage from "resources/partner.png";
 import "components/css/SelectLogin.scss";
 import { useTranslation } from "react-i18next";
@@ -11,6 +12,7 @@ function SelectLogin({
   handleSelect,
   handleDisplayImages,
   isAdmin,
+  isGhost,
 }) {
   const { t } = useTranslation();
 
@@ -23,7 +25,7 @@ function SelectLogin({
         {t("login.clickLoginPrompt")}
       </div>
 
-      {!isAdmin ? (
+      {!isAdmin && !isGhost ? (
         <div
           className="select-login-container"
           style={{ visibility: displaySelect ? "visible" : "hidden" }}
@@ -77,16 +79,17 @@ function SelectLogin({
           <div
             className="select-login-elem"
             onClick={() => {
-              handleSelect("admin");
+              isAdmin ? handleSelect("admin") : handleSelect("guest");
             }}
           >
             <img
-              src={AdminImage}
+              src={isAdmin ? AdminImage : loginimg}
               alt={t("common.admin")}
               className="select-image partner-image"
               onLoad={handleDisplayImages}
+              style={{ left: "21.53%" }}
             />
-            <div className="select-text">Admin</div>
+            <div className="select-text"> {isAdmin ? "Admin" : "Login"}</div>
           </div>
         </div>
       )}

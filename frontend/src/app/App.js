@@ -11,6 +11,7 @@ import PublicProfile from "components/pages/PublicProfile";
 import NewTrainingConfirm from "components/pages/NewTrainingConfirm";
 import Login from "components/pages/Login";
 import AdminLogin from "components/pages/AdminLogin";
+import GuestLogin from "components/pages/GuestLogin";
 import Register from "components/pages/Register";
 import Verify from "components/pages/Verify";
 import ForgotPassword from "components/pages/ForgotPassword";
@@ -165,6 +166,12 @@ function App() {
             path="/admin"
             component={() => (
               <Navigation content={<AdminLogin />} needsAuth={false} />
+            )}
+          />
+          <Route
+            path="/readonly"
+            component={() => (
+              <Navigation content={<GuestLogin />} needsAuth={false} />
             )}
           />
           <Route

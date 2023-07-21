@@ -9,7 +9,7 @@ export const fetchOptions = createAsyncThunk(
       const languages = await getDisplayLanguages();
       return { specializations, languages };
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 );

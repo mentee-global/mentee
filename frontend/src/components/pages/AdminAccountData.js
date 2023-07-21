@@ -18,6 +18,7 @@ import {
 } from "../../utils/api";
 import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
 import UploadEmails from "../UploadEmails";
+import AddGuestModal from "../AddGuestModal";
 import AdminDataTable from "../AdminDataTable";
 import { useAuth } from "utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -45,6 +46,7 @@ function AdminAccountData() {
   const [filterData, setFilterData] = useState([]);
   const [downloadFile, setDownloadFile] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [guestModalVisible, setGuestModalVisible] = useState(false);
   const [partnerData, setPartnerData] = useState([]);
   const [mentors, setMentors] = useState([]);
 
@@ -113,6 +115,10 @@ function AdminAccountData() {
 
   const handleAddAccount = () => {
     setUploadModalVisible(true);
+  };
+
+  const handleAddGuest = () => {
+    setGuestModalVisible(true);
   };
 
   const handleMentorsDownload = async () => {
@@ -228,6 +234,17 @@ function AdminAccountData() {
             onChange={(key) => handleSortData(key)}
             onReset={resetFilters}
             onChangeData={displayData}
+          />
+          <Button
+            className="table-button"
+            icon={<PlusOutlined />}
+            onClick={() => handleAddGuest()}
+          >
+            Add New Guest
+          </Button>
+          <AddGuestModal
+            setGuestModalVisible={setGuestModalVisible}
+            guestModalVisible={guestModalVisible}
           />
           <Button
             className="table-button"

@@ -14,6 +14,7 @@ from api.models import (
     Video,
     PartnerProfile,
     Notifications,
+    Guest
 )
 from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS
 from api.utils.request_utils import send_email
@@ -119,6 +120,8 @@ def get_account(id):
             account = MentorProfile.objects.get(id=id)
         elif account_type == Account.PARTNER:
             account = PartnerProfile.objects.get(id=id)
+        elif account_type == Account.GUEST:
+            account = Guest.objects.get(id=id)
         else:
             msg = "Level param doesn't match existing account types"
             return create_response(status=422, message=msg)

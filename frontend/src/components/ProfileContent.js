@@ -28,7 +28,7 @@ function ProfileContent(props) {
   const { t } = useTranslation();
   const options = useSelector((state) => state.options);
   const { accountType, account } = props;
-  const { isMentor, isMentee, isPartner, profileId } = useAuth();
+  const { isMentor, isMentee, isPartner, profileId, isGuest } = useAuth();
   const [mentee, setMentee] = useState();
   const [favorite, setFavorite] = useState(false);
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
@@ -70,11 +70,11 @@ function ProfileContent(props) {
   }
 
   const getTitle = (name, age) => {
-    if (accountType == ACCOUNT_TYPE.MENTOR && name) {
+    if (accountType === ACCOUNT_TYPE.MENTOR && name) {
       return name;
     } else if (name && age) {
       return name + ", " + age;
-    } else if (accountType == ACCOUNT_TYPE.PARTNER) {
+    } else if (accountType === ACCOUNT_TYPE.PARTNER) {
       return account.organization;
     }
   };
@@ -91,7 +91,7 @@ function ProfileContent(props) {
   const getTags = (tags) => {
     tags = getTranslatedOptions(
       tags,
-      accountType == ACCOUNT_TYPE.PARTNER
+      accountType === ACCOUNT_TYPE.PARTNER
         ? getRegions(t)
         : options.specializations
     );
@@ -108,9 +108,9 @@ function ProfileContent(props) {
       <div>
         <div className="mentor-profile-heading">
           <b>
-            {ACCOUNT_TYPE.MENTOR == accountType
+            {ACCOUNT_TYPE.MENTOR === accountType
               ? t("mentorProfile.specializations")
-              : ACCOUNT_TYPE.MENTEE == accountType
+              : ACCOUNT_TYPE.MENTEE === accountType
               ? t("menteeProfile.areasOfInterest")
               : t("partnerProfile.regionsWork")}
           </b>
@@ -147,7 +147,7 @@ function ProfileContent(props) {
         <div className="mentor-profile-decorations">
           {getTitle(props.mentor.name, props.mentor.age)}
           <div>{getPrivacy(props.mentor.is_private)}</div>
-          {isMentee && favoriteMentorIds.size && accountType == 1 ? (
+          {isMentee && favoriteMentorIds.size && accountType === 1 ? (
             <div className="favorite-button-profile">
               <Rate
                 character={<StarFilled />}
@@ -178,6 +178,7 @@ function ProfileContent(props) {
           </div>
           <div className="mentor-profile-send-msg-btn">
             {!props.isMentor &&
+              !isGuest &&
               parseInt(accountType, 10) !== ACCOUNT_TYPE.MENTOR &&
               props.mentor &&
               props.mentor._id &&
@@ -298,7 +299,7 @@ function ProfileContent(props) {
         )}
       </div>
       <br />
-      {accountType == ACCOUNT_TYPE.PARTNER ? (
+      {accountType === ACCOUNT_TYPE.PARTNER ? (
         <>
           {" "}
           <div className="mentor-profile-heading">
@@ -318,7 +319,7 @@ function ProfileContent(props) {
       <br />
       {displayTags()}
       <br />
-      {accountType != ACCOUNT_TYPE.PARTNER && (
+      {accountType !== ACCOUNT_TYPE.PARTNER && (
         <>
           <div className="mentor-profile-heading">
             <b>{t("commonProfile.education")}</b>
@@ -327,7 +328,7 @@ function ProfileContent(props) {
         </>
       )}
       <br />
-      {accountType == ACCOUNT_TYPE.PARTNER && (
+      {accountType === ACCOUNT_TYPE.PARTNER && (
         <>
           <div className="mentor-profile-heading">
             <b>{t("partnerProfile.contactFullName")}</b>

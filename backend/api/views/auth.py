@@ -50,14 +50,14 @@ def verify_email():
     return create_response(message="Sent verification link to email")
 
 
-def create_firebase_user(email, password):
+def create_firebase_user(email, password, role = 0):
     firebase_user = None
     error_http_response = None
 
     try:
         firebase_user = firebase_admin_auth.create_user(
             email=email,
-            email_verified=False,
+            email_verified= True if int(role) == Account.GUEST else False,
             password=password,
         )
     except ValueError:
@@ -211,7 +211,7 @@ def login():
             profile.firebase_uid = firebase_uid
             profile.save()
     except:
-        if role != Account.ADMIN:
+        if int(role) != Account.ADMIN and int(role) != Account.GUEST:
             # user failed to create profile during registration phase
             # prompt frontend to return user to appropriate phase
 

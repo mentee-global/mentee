@@ -1,63 +1,78 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../../components/css/Apply.scss";
-import { Input, Radio, Result, Typography, message, theme } from "antd";
-import { useLocation, useHistory, withRouter } from "react-router-dom";
+import { Button, Result, Space, Typography, message, theme } from "antd";
+import { withRouter, Link } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { ACCOUNT_TYPE } from "utils/consts";
-import ApplyStep from "../../resources/applystep.png";
-import ApplyStep2 from "../../resources/applystep2.png";
-import {
-  getApplicationStatus,
-  checkStatusByEmail,
-  changeStateBuildProfile,
-} from "../../utils/api";
-import ProfileStep from "../../resources/profilestep.png";
-import ProfileStep2 from "../../resources/profilestep2.png";
-import TrianStep from "../../resources/trainstep.png";
-import TrianStep2 from "../../resources/trainstep2.png";
 import MentorApplication from "./MentorApplication";
 import MenteeApplication from "./MenteeApplication";
-import TrainingList from "components/TrainingList";
-import MentorProfileForm from "./MentorProfileForm";
-import MenteeProfileForm from "./MenteeProfileForm";
-import PartnerProfileForm from "components/PartnerProfileForm";
-import { validateEmail } from "utils/misc";
 import { css } from "@emotion/css";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import LanguageDropdown from "components/LanguageDropdown";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
-const getApplicationForm = (role) => {
-  switch (role) {
-    case ACCOUNT_TYPE.MENTOR:
-      return <MentorApplication />;
-    case ACCOUNT_TYPE.MENTEE:
-      return <MenteeApplication />;
-    case ACCOUNT_TYPE.PARTNER:
-      return <PartnerProfileForm />;
-    default:
+const ApplicationForm = ({ location, history }) => {
+  const {
+    token: { colorPrimary },
+  } = theme.useToken();
+  const { t } = useTranslation();
+  const [messageApi, contextHolder] = message.useMessage();
+  const [successfulSubmit, setSuccessfulSubmit] = useState(undefined);
+  const role = location.state?.role;
+  const email = location.state?.email;
+
+  const onSubmitSuccess = () => {
+    setSuccessfulSubmit(true);
+  };
+
+  const onSubmitFailure = () => {
+    messageApi.error(t("apply.errorConnection"));
+  };
+
+  const getApplicationForm = () => {
+    if (!role || !email)
       return (
         <Result
           status="error"
           title="Could not get this role's application form"
         />
       );
-  }
-};
 
-const ApplicationForm = ({ location, history }) => {
-  const {
-    token: { colorPrimary },
-  } = theme.useToken();
-  const { t, i18n } = useTranslation();
-  const [messageApi, contextHolder] = message.useMessage();
-
-  console.log(location.state);
+    switch (role) {
+      case ACCOUNT_TYPE.MENTOR:
+        return (
+          <MentorApplication
+            email={email}
+            role={role}
+            onSubmitFailure={onSubmitFailure}
+            onSubmitSuccess={onSubmitSuccess}
+          />
+        );
+      case ACCOUNT_TYPE.MENTEE:
+        return (
+          <MenteeApplication
+            email={email}
+            role={role}
+            onSubmitFailure={onSubmitFailure}
+            onSubmitSuccess={onSubmitSuccess}
+          />
+        );
+      default:
+        return (
+          <Result
+            status="error"
+            title="Could not get this role's application form"
+          />
+        );
+    }
+  };
 
   return (
     <div
       className={css`
         width: 100%;
-        height: 100%;
+        height: ${successfulSubmit ? "100vh" : "100%"};
         overflow: auto;
         display: flex;
         flex-direction: column;
@@ -73,10 +88,36 @@ const ApplicationForm = ({ location, history }) => {
           background: #fff;
           border-radius: 2em;
           padding: 2em;
-          margin: 2em 0;
+          margin: 4em 0;
           box-shadow: 0 1px 4px rgba(5, 145, 255, 0.1);
+
+          @media (max-width: 991px) {
+            width: 90%;
+            margin: 2em 0;
+          }
+
+          @media (max-width: 575px) {
+            width: 100%;
+            margin: 0;
+            border-radius: 0;
+          }
         `}
       >
+        <div
+          className={css`
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+          `}
+        >
+          <Link to={"/"}>
+            <Space>
+              <ArrowLeftOutlined />
+              {t("common.back")}
+            </Space>
+          </Link>
+          <LanguageDropdown size="large" />
+        </div>
         <Typography>
           <Title
             level={2}
@@ -92,7 +133,23 @@ const ApplicationForm = ({ location, history }) => {
             </Trans>
           </Title>
         </Typography>
-        {getApplicationForm(location.state.role)}
+        {successfulSubmit === undefined ? (
+          getApplicationForm()
+        ) : (
+          <Result
+            status="success"
+            title={t("apply.confirmation")}
+            extra={[
+              <Button
+                type="primary"
+                key="back"
+                onClick={() => history.push("/")}
+              >
+                {t("common.back")}
+              </Button>,
+            ]}
+          />
+        )}
       </div>
     </div>
   );

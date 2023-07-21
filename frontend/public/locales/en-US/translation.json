@@ -78,7 +78,7 @@
   },
   "verifyEmail": {
     "header": "Account Verification",
-    "error": "Error, please try again!",
+    "error": "Error verifying email, please try again!",
     "emailResent": "Email resent!",
     "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",
     "refresh": "(Refresh this page if you verified your email)",
@@ -157,7 +157,11 @@
     "videoIntroduction": "Introduction",
     "videos": "Videos",
     "website": "Website",
-    "welcome": "Welcome. Tell us about yourself."
+    "welcome": "Welcome. Tell us about yourself.",
+    "error": {
+      "save": "Failed to save profile",
+      "uploadImage": "Failed to upload image"
+    }
   },
   "forgotPassword": {
     "emailResent": "Email resent!",

@@ -13,7 +13,7 @@ function HomeLayout({ children, ignoreHomeLayout, location }) {
 
   const ignoreLayoutPaths = [
     "/application-form",
-    "/training",
+    "/application-training",
     "/build-profile",
   ];
   if (ignoreHomeLayout || ignoreLayoutPaths.includes(location.pathname)) {

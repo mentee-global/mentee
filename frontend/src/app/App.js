@@ -23,7 +23,7 @@ import MenteeGallery from "components/pages/MenteeGallery";
 import Messages from "components/pages/Messages";
 import ApplicationForm from "components/pages/ApplicationForm";
 import SocketComponent from "components/SocketComponent";
-import { Trainings } from "components/Trainings";
+import AdminTraining from "components/pages/AdminTraining";
 import { Languages } from "components/Languages";
 import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
@@ -38,6 +38,8 @@ import Apply from "components/pages/Apply";
 import { getUserIdToken } from "utils/auth.service";
 import { useAuth } from "utils/hooks/useAuth";
 import PublicRoute from "components/PublicRoute";
+import Training from "components/pages/Training";
+import BuildProfile from "components/pages/BuildProfile";
 
 const { Content } = Layout;
 
@@ -87,14 +89,20 @@ function App() {
               <PublicRoute path="/apply">
                 <Apply />
               </PublicRoute>
+              <PublicRoute path="/application-form">
+                <ApplicationForm />
+              </PublicRoute>
+              <PublicRoute path="/application-training">
+                <Training />
+              </PublicRoute>
+              <PublicRoute path="/build-profile">
+                <BuildProfile />
+              </PublicRoute>
               <PublicRoute path="/verify">
                 <Verify />
               </PublicRoute>
               <PublicRoute path="/forgot-password">
                 <ForgotPassword />
-              </PublicRoute>
-              <PublicRoute path="/application-form">
-                <ApplicationForm />
               </PublicRoute>
             </HomeLayout>
             <PrivateRoute path="/appointments">
@@ -136,8 +144,8 @@ function App() {
             <PrivateRoute path="/all-appointments">
               <AdminAppointmentData />
             </PrivateRoute>
-            <PrivateRoute path="/trainings">
-              <Trainings />
+            <PrivateRoute path="/admin-training">
+              <AdminTraining />
             </PrivateRoute>
             <PrivateRoute path="/languages">
               <Languages />

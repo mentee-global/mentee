@@ -36,7 +36,7 @@ function Apply({ history }) {
     {
       title: t("apply.training"),
       key: "training",
-      redirect: "/training",
+      redirect: "/application-training",
     },
     {
       title: t("apply.buildProfile"),
@@ -52,6 +52,7 @@ function Apply({ history }) {
   };
 
   const onFinish = async ({ email, role }) => {
+    // if currentState set then this is a confirm to redirect
     if (currentState !== undefined) {
       history.push({
         pathname: stateItems[currentState].redirect,
@@ -148,7 +149,7 @@ function Apply({ history }) {
         }}
         initialValues={{
           email: query.get("email"),
-          role: parseInt(query.get("role")),
+          role: query.get("role") && parseInt(query.get("role")),
         }}
       >
         <Form.Item

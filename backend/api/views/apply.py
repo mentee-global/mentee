@@ -236,7 +236,7 @@ def change_state_to_build_profile(email, role):
             front_url = request.args["front_url"]
             target_url = (
                 front_url
-                + "application-page?role="
+                + "apply?role="
                 + str(role)
                 + "&email="
                 + application["email"]

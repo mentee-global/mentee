@@ -92,10 +92,10 @@ export const uploadAccountImage = (data, id, type) => {
   );
 };
 
-export const createAccountProfile = async (profile, type, isHave) => {
+export const createAccountProfile = async (profile, type, inFirebase) => {
   profile["account_type"] = type;
   let requestExtension = `/account`;
-  if (isHave === true) {
+  if (inFirebase) {
     requestExtension = `/accountProfile`;
   }
 
@@ -154,7 +154,7 @@ export const changeStateBuildProfile = async ({ email, role }) => {
       preferred_language: i18n.language,
     },
   });
-  let state = res.data.result.state;
+  let state = res.data?.result?.state;
   return state;
 };
 
@@ -860,15 +860,15 @@ export const translateOption = async (optionType, selectId) => {
  * should there be a need to change the value for ACCOUNT_TYPE
  */
 
-export const createMentorProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, isHave);
+export const createMentorProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, inFirebase);
 };
 
-export const createMenteeProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE, isHave);
+export const createMenteeProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE, inFirebase);
 };
-export const createPartnerProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER, isHave);
+export const createPartnerProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER, inFirebase);
 };
 
 export const editMentorProfile = async (data, id) => {

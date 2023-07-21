@@ -1,750 +1,392 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { withRouter, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Checkbox, Button, message, Upload, Avatar } from "antd";
+import {
+  Checkbox,
+  Button,
+  message,
+  Upload,
+  Avatar,
+  Typography,
+  Form,
+  Input,
+  Select,
+  Divider,
+} from "antd";
 import { useSelector } from "react-redux";
-import ModalInput from "../ModalInput";
 import {
   checkStatusByEmail,
   createMenteeProfile,
   getApplicationStatus,
   uploadMenteeImage,
 } from "utils/api";
-import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
-import { MENTEE_DEFAULT_VIDEO_NAME, getAgeRanges } from "utils/consts";
-import { useMediaQuery } from "react-responsive";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  MENTEE_DEFAULT_VIDEO_NAME,
+  NEW_APPLICATION_STATUS,
+  getAgeRanges,
+} from "utils/consts";
 import moment from "moment";
-import "../css/AntDesign.scss";
-import "../css/Modal.scss";
-import "../css/RegisterForm.scss";
-import "../css/MenteeButton.scss";
 import { sendVerificationEmail } from "utils/auth.service";
 import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
-function MenteeRegisterForm(props) {
+import { css } from "@emotion/css";
+import { phoneRegex, urlRegex } from "utils/misc";
+
+const styles = {
+  formGroup: css`
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    width: 100%;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0;
+    }
+  `,
+  formGroupItem: css`
+    flex: 1;
+  `,
+};
+
+function MenteeProfileForm({ email, role, newProfile }) {
   const history = useHistory();
   const { t, i18n } = useTranslation();
   const options = useSelector((state) => state.options);
-  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
-  const numInputs = 14;
-  const [inputClicked, setInputClicked] = useState(
-    new Array(numInputs).fill(false)
-  ); // each index represents an input box, respectively
-  const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
-  const [validate, setValidate] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(false);
-  const [name, setName] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [languages, setLanguages] = useState([]);
-  const [educations, setEducations] = useState([]);
-  const [biography, setBiography] = useState();
-  const [gender, setGender] = useState();
-  const [age, setAge] = useState();
-  const [phone, setPhone] = useState();
-  const [organization, setOrganization] = useState();
-  const [privacy, setPrivacy] = useState(false);
-  const [video, setVideo] = useState();
-  const [password, setPassword] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState(null);
-  const [localProfile, setLocalProfile] = useState({});
-  const [specializations, setSpecializations] = useState([]);
-  const [err, setErr] = useState(false);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const info = (msg) => {
-    message.success(msg);
-  };
-  function renderEducationInputs() {
-    return (
-      educations &&
-      educations.map((education, i) => (
-        <div className="modal-education-container">
-          <div className="modal-education-sidebar"></div>
-          <div className="modal-inner-education-container">
-            <div className="modal-input-container">
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="text"
-                title={t("commonProfile.school")}
-                clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
-                index={10 + i * 4}
-                handleClick={handleClick}
-                onEducationChange={handleSchoolChange}
-                educationIndex={i}
-                value={education.school}
-                valid={isValid[10 + i * 4]}
-                validate={validate}
-              />
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="text"
-                title={t("commonProfile.graduationYear")}
-                clicked={inputClicked[10 + i * 4 + 1]}
-                index={10 + i * 4 + 1}
-                handleClick={handleClick}
-                onEducationChange={handleGraduationDateChange}
-                educationIndex={i}
-                value={education.graduation_year}
-                valid={isValid[10 + i * 4 + 1]}
-                validate={validate}
-              />
-            </div>
-            <div className="modal-input-container">
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="dropdown-multiple"
-                title={t("commonProfile.majors")}
-                clicked={inputClicked[10 + i * 4 + 2]}
-                index={10 + i * 4 + 2}
-                handleClick={handleClick}
-                onEducationChange={handleMajorsChange}
-                educationIndex={i}
-                options={[]}
-                placeholder={t("commonProfile.majorsExamples")}
-                value={education.majors}
-                valid={isValid[10 + i * 4 + 2]}
-                validate={validate}
-              />
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="text"
-                title={t("commonProfile.degree")}
-                clicked={inputClicked[10 + i * 4 + 3]}
-                index={10 + i * 4 + 3}
-                handleClick={handleClick}
-                educationIndex={i}
-                onEducationChange={handleDegreeChange}
-                placeholder={t("commonProfile.degreeExample")}
-                value={education.education_level}
-                valid={isValid[10 + i * 4 + 3]}
-                validate={validate}
-              />
-            </div>
+  const educationSubForm = () => (
+    <Form.List name="education">
+      {(fields, { add, remove }) => (
+        <>
+          {fields.map(({ key, name, ...restField }) => (
             <div
-              className="modal-input-container modal-education-delete-container"
-              onClick={() => handleDeleteEducation(i)}
+              key={key}
+              className={css`
+                margin-bottom: 2em;
+              `}
             >
-              <div className="modal-education-delete-text">
-                {t("commonProfile.delete")}
+              <div className={styles.formGroup}>
+                <Form.Item
+                  className={styles.formGroupItem}
+                  {...restField}
+                  label={t("commonProfile.school")}
+                  name={[name, "school"]}
+                  required
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  className={styles.formGroupItem}
+                  {...restField}
+                  name={[name, "graduation_year"]}
+                  label={t("commonProfile.graduationYear")}
+                  required
+                >
+                  <Input type="number" />
+                </Form.Item>
               </div>
-              <DeleteOutlined className="modal-education-delete-icon" />
+              <div className={styles.formGroup}>
+                <Form.Item
+                  {...restField}
+                  className={styles.formGroupItem}
+                  name={[name, "majors"]}
+                  label={t("commonProfile.majors")}
+                  required
+                >
+                  <Select
+                    placeholder={t("commonProfile.majorsExamples")}
+                    mode="tags"
+                    allowClear
+                    tokenSeparators={[","]}
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[name, "education_level"]}
+                  className={styles.formGroupItem}
+                  label={t("commonProfile.degree")}
+                  required
+                >
+                  <Input placeholder={t("commonProfile.degreeExample")} />
+                </Form.Item>
+              </div>
+              <DeleteOutlined
+                onClick={() => remove(name)}
+                className={css`
+                  float: right;
+                  color: #ff4d4f;
+                `}
+              />
+              <Divider />
             </div>
-          </div>
-        </div>
-      ))
-    );
-  }
+          ))}
+          <Form.Item>
+            <Button
+              type="dashed"
+              onClick={() => add()}
+              block
+              icon={<PlusOutlined />}
+            >
+              {t("commonProfile.addMoreEducation")}
+            </Button>
+          </Form.Item>
+        </>
+      )}
+    </Form.List>
+  );
 
-  function handleClick(index) {
-    // Sets only the clicked input box to true to change color, else false
-    let newClickedInput = new Array(numInputs).fill(false);
-    newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
-  }
+  const onFinish = async (values) => {
+    setSaving(true);
 
-  function validateNotEmpty(arr, index) {
-    let tempValid = isValid;
-    tempValid[index] = arr.length > 0;
-    setIsValid(tempValid);
-  }
-
-  function updateLocalStorage(newLocalProfile) {
-    setLocalProfile(newLocalProfile);
-    localStorage.setItem("mentee", JSON.stringify(newLocalProfile));
-  }
-
-  function handleSchoolChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    education.school = e.target.value;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4] = !!education.school;
-    setIsValid(newValid);
-  }
-
-  function handleGraduationDateChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    education.graduation_year = e.target.value;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4 + 1] = !!education.graduation_year;
-    setIsValid(newValid);
-  }
-
-  function handleMajorsChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    const majors = [];
-    e.forEach((value) => majors.push(value));
-    education.majors = majors;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4 + 2] = !!education.majors.length;
-    setIsValid(newValid);
-  }
-
-  function handleDegreeChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    education.education_level = e.target.value;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4 + 3] = !!education.education_level;
-    setIsValid(newValid);
-  }
-
-  const handleAddEducation = () => {
-    const newEducations = [...educations];
-    newEducations.push({
-      education_level: "",
-      majors: [],
-      school: "",
-      graduation_year: "",
-    });
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    setIsValid([...isValid, true, true, true, true]);
-  };
-
-  const handleDeleteEducation = (educationIndex) => {
-    const newEducations = [...educations];
-    newEducations.splice(educationIndex, 1);
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    const newValidArray = [...isValid];
-    newValidArray.splice(10 + educationIndex * 4, 4);
-    setIsValid(newValidArray);
-  };
-
-  function handleVideoChange(e) {
-    setVideo(e.target.value);
-    let newLocalProfile = { ...localProfile, video: e.target.value };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handlePrivacyChange(e) {
-    setPrivacy(e.target.checked);
-    let newLocalProfile = { ...localProfile, is_private: e.target.checked };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleNameChange(e) {
-    const name = e.target.value;
-
-    if (name.length < 50) {
-      let newValid = [...isValid];
-
-      newValid[0] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[0] = false;
-      setIsValid(newValid);
-    }
-    setName(name);
-    let newLocalProfile = { ...localProfile, name: name };
-    updateLocalStorage(newLocalProfile);
-  }
-  function handlePassChange(e) {
-    const pass = e.target.value;
-
-    if (pass.length >= 8) {
-      let newValid = [...isValid];
-
-      newValid[30] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[30] = false;
-      setIsValid(newValid);
-    }
-    setPassword(pass);
-  }
-  function handlePassConfirmChange(e) {
-    const pass = e.target.value;
-
-    if (pass === password) {
-      let newValid = [...isValid];
-
-      newValid[31] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[31] = false;
-      setIsValid(newValid);
-    }
-    setConfirmPassword(pass);
-    let newLocalProfile = { ...localProfile, password: pass };
-    updateLocalStorage(newLocalProfile);
-  }
-  function handleBiographyChange(e) {
-    const biography = e.target.value;
-
-    if (biography.length < 1002) {
-      let newValid = [...isValid];
-
-      newValid[8] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[8] = false;
-      setIsValid(newValid);
-    }
-
-    setBiography(biography);
-    let newLocalProfile = { ...localProfile, biography: biography };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleLocationChange(e) {
-    const location = e.target.value;
-
-    if (location.length < 70) {
-      let newValid = [...isValid];
-
-      newValid[9] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[9] = false;
-      setIsValid(newValid);
-    }
-
-    setLocation(location);
-    let newLocalProfile = { ...localProfile, location: location };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleGenderChange(e) {
-    const gender = e.target.value;
-    setGender(gender);
-    let newLocalProfile = { ...localProfile, gender: gender };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleAgeChange(e) {
-    setAge(e);
-    let newLocalProfile = { ...localProfile, age: e };
-    updateLocalStorage(newLocalProfile);
-    validateNotEmpty(e, 4);
-  }
-
-  function handleLanguageChange(e) {
-    setLanguages(e);
-    validateNotEmpty(e, 5);
-    let newLocalProfile = { ...localProfile, languages: e };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handlePhoneChange(e) {
-    setPhone(e.target.value);
-    let newLocalProfile = { ...localProfile, phone_number: e.target.value };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleOrganizationChange(e) {
-    setOrganization(e.target.value);
-    let newLocalProfile = { ...localProfile, organization: e.target.value };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  const handleSaveEdits = async () => {
-    async function saveEdits(data) {
-      const { inFirebase, isVerified } = await checkStatusByEmail(
-        props.headEmail,
-        props.role
-      );
-      if (inFirebase == false) {
-        const state = await getApplicationStatus(props.headEmail, props.role);
-        if (state != "BuildProfile" && !isVerified) {
-          setErr(true);
-          return;
-        }
-      }
-
-      data["preferred_language"] = i18n.language;
-      const res = await createMenteeProfile(data, props.inFirebase);
-      const menteeId =
-        res && res.data && res.data.result ? res.data.result.mentorId : false;
-
-      setSaving(false);
-      setValidate(false);
-
-      if (menteeId) {
-        setError(false);
-        setIsValid([...isValid].fill(true));
-        info(t("commonProfile.accountCreated"));
-        await sendVerificationEmail(props.headEmail);
-        if (changedImage) {
-          await uploadMenteeImage(image, menteeId);
-        }
-
-        history.push("/login");
-      } else {
-        setError(true);
-      }
-    }
-
-    if (isValid.includes(false)) {
-      setValidate(true);
-      return;
-    }
-
-    const newProfile = {
-      name,
-      password: password,
-      gender,
-      location,
-      age,
-      email: props.headEmail,
-      phone_number: phone,
-      education: educations,
-      languages: languages,
-      biography,
-      organization,
-      specializations: specializations,
-      video: video
+    let newProfile = values;
+    newProfile.email = email;
+    newProfile.role = role;
+    newProfile.video =
+      values.video !== undefined
         ? {
             title: MENTEE_DEFAULT_VIDEO_NAME,
-            url: video,
+            url: values.video,
             tag: MENTEE_DEFAULT_VIDEO_NAME,
             date_uploaded: moment().format(),
           }
-        : undefined,
-      is_private: privacy,
-    };
+        : null;
+    console.log(values);
 
-    if (!isValid.includes(false)) {
-      setSaving(true);
-      await saveEdits(newProfile);
+    const { inFirebase, isVerified } = await checkStatusByEmail(email, role);
+    if (!inFirebase) {
+      const state = await getApplicationStatus(email, role);
+      if (state !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {
+        messageApi.error(t("commonProfile.errorTrainingSteps"));
+        return;
+      }
+    }
+
+    newProfile.preferred_language = i18n.language;
+    const res = await createMenteeProfile(newProfile, inFirebase);
+    const menteeId = res?.data?.result?.mentorId;
+
+    if (menteeId) {
+      const verificationRes = await sendVerificationEmail(email);
+      if (!verificationRes) {
+        messageApi.error(t("verifyEmail.error"));
+      }
+
+      if (changedImage) {
+        const uploadImageRes = await uploadMenteeImage(image, menteeId);
+
+        if (!uploadImageRes) {
+          messageApi.error(t("commonProfile.error.uploadImage"));
+        }
+      }
+      setSaving(false);
+
+      messageApi.info(t("commonProfile.accountCreated"));
+      history.push({ pathname: "/login", state: { email, role } });
+    } else {
+      messageApi.error(t("commonProfile.error.save"));
+      setSaving(false);
     }
   };
 
   return (
-    <div className="register-content">
-      <div className="register-header">
-        <h2>{t("commonProfile.welcome")}</h2>
-        {error && (
-          <div className="register-error">
-            {t("commonProfile.missingFields")}
+    <div>
+      {contextHolder}
+      <Typography.Title level={3}>
+        {t("commonProfile.welcome")}
+      </Typography.Title>
+      <Form
+        onFinish={onFinish}
+        layout="vertical"
+        style={{ width: "100%", marginTop: "1em" }}
+      >
+        <Form.Item>
+          <ImgCrop rotate aspect={5 / 3}>
+            <Upload
+              onChange={async (file) => {
+                setImage(file.file.originFileObj);
+                setChangedImage(true);
+              }}
+              accept=".png,.jpg,.jpeg"
+              showUploadList={false}
+            >
+              <Avatar
+                size={120}
+                icon={<UserOutlined />}
+                src={
+                  changedImage
+                    ? image && URL.createObjectURL(image)
+                    : image && image.url
+                }
+              />
+              <Button
+                shape="circle"
+                icon={<EditFilled />}
+                className={css`
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                `}
+              />
+            </Upload>
+          </ImgCrop>
+        </Form.Item>
+        <Form.Item label={t("commonProfile.fullName")} name="name" required>
+          <Input />
+        </Form.Item>
+        {newProfile ? (
+          <div className={styles.formGroup}>
+            <Form.Item
+              label={t("common.password")}
+              name="password"
+              hasFeedback
+              required
+              className={styles.formGroupItem}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              label={t("commonProfile.confirmPassword")}
+              name="confirmPassword"
+              dependencies={["password"]}
+              hasFeedback
+              required
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(t("commonProfile.passwordMismatch"))
+                    );
+                  },
+                }),
+              ]}
+              className={styles.formGroupItem}
+            >
+              <Input.Password />
+            </Form.Item>
           </div>
-        )}
-        <div>
-          {validate && (
-            <b style={styles.alertToast}>{t("menteeProfile.missingFields")}</b>
-          )}
-        </div>
-      </div>
-      <div className="modal-profile-container2">
-        <Avatar
-          size={120}
-          icon={<UserOutlined />}
-          className="modal-profile-icon"
-          src={
-            changedImage
-              ? image && URL.createObjectURL(image)
-              : image && image.url
-          }
-        />
-        <ImgCrop rotate aspect={5 / 3}>
-          <Upload
-            onChange={async (file) => {
-              setImage(file.file.originFileObj);
-              setChangedImage(true);
-            }}
-            accept=".png,.jpg,.jpeg"
-            showUploadList={false}
+        ) : null}
+        <Form.Item label={t("commonProfile.biography")} name="biography">
+          <Input.TextArea rows={3} />
+        </Form.Item>
+        <div className={styles.formGroup}>
+          <Form.Item
+            label={t("commonProfile.location")}
+            name="location"
+            className={styles.formGroupItem}
           >
-            <Button
-              shape="circle"
-              icon={<EditFilled />}
-              className="modal-profile-icon-edit"
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={t("menteeProfile.gender")}
+            name="gender"
+            required
+            className={styles.formGroupItem}
+          >
+            <Input />
+          </Form.Item>
+        </div>
+        <div className={styles.formGroup}>
+          <Form.Item
+            label={t("menteeProfile.age")}
+            name="age"
+            required
+            className={styles.formGroupItem}
+          >
+            <Select options={getAgeRanges(t)} />
+          </Form.Item>
+          <Form.Item
+            label={t("commonProfile.languages")}
+            name="languages"
+            required
+            className={styles.formGroupItem}
+          >
+            <Select
+              options={options.languages}
+              mode="multiple"
+              placeholder={t("commonProfile.languagesExample")}
             />
-          </Upload>
-        </ImgCrop>
-      </div>
-      <div className="modal-inner-container">
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Full Name *"
-            clicked={inputClicked[0]}
-            index={0}
-            handleClick={handleClick}
-            onChange={handleNameChange}
-            value={name}
-            valid={isValid[0]}
-            validate={validate}
-            errorPresent={name && name.length > 50}
-            errorMessage="Name field is too long."
-          />
+          </Form.Item>
         </div>
-        {!props.inFirebase ? (
-          <div className="modal-input-container">
-            <ModalInput
-              style={styles.modalInput}
-              type="password"
-              title={t("common.password")}
-              clicked={inputClicked[30]}
-              index={30}
-              handleClick={handleClick}
-              onChange={handlePassChange}
-              value={password}
-              valid={isValid[30]}
-              validate={validate}
-              errorPresent={password && password.length > 50}
-              errorMessage={t("common.fieldTooLong")}
-            />
-            <ModalInput
-              style={styles.modalInput}
-              type="password"
-              title={t("commonProfile.confirmPassword")}
-              clicked={inputClicked[31]}
-              index={31}
-              handleClick={handleClick}
-              onChange={handlePassConfirmChange}
-              value={confirmPassword}
-              valid={isValid[31]}
-              validate={validate}
-              errorPresent={password != confirmPassword}
-              errorMessage={t("commonProfile.passwordMismatch")}
-            />
-          </div>
-        ) : (
-          ""
-        )}
-        <div className="modal-input-container Bio">
-          <ModalInput
-            style={styles.textareaInput}
-            type="textarea"
-            maxRows={3}
-            hasBorder={false}
-            title={t("commonProfile.biography")}
-            clicked={inputClicked[1]}
-            index={1}
-            handleClick={handleClick}
-            onChange={handleBiographyChange}
-            value={biography}
-            valid={isValid[8]}
-            validate={validate}
-            errorPresent={biography && biography.length > 1002}
-            errorMessage={"commonProfile.fieldTooLong"}
-          />
+        <div className={styles.formGroup}>
+          <Form.Item
+            label={t("commonProfile.phone")}
+            name="phone_number"
+            rules={[
+              {
+                pattern: new RegExp(phoneRegex),
+                message: t("profile.validatePhone"),
+              },
+            ]}
+            className={styles.formGroupItem}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={t("menteeProfile.organizationAffiliation")}
+            name="organization"
+            required
+            className={styles.formGroupItem}
+          >
+            <Input />
+          </Form.Item>
         </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title={t("commonProfile.location")}
-            clicked={inputClicked[2]}
-            index={2}
-            handleClick={handleClick}
-            onChange={handleLocationChange}
-            value={location}
-            valid={isValid[9]}
-            validate={validate}
-            errorPresent={location && location.length > 70}
-            errorMessage={"commonProfile.fieldTooLong"}
-          />
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title={t("menteeProfile.gender")}
-            clicked={inputClicked[3]}
-            index={3}
-            handleClick={handleClick}
-            onChange={handleGenderChange}
-            value={gender}
-          />
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="dropdown-single"
-            title={t("menteeProfile.age")}
-            clicked={inputClicked[4]}
-            index={4}
-            handleClick={handleClick}
-            onChange={handleAgeChange}
-            options={getAgeRanges(t)}
-            value={age}
-            valid={isValid[4]}
-            validate={validate}
-          />
-          <ModalInput
-            style={styles.modalInput}
-            type="dropdown-multiple"
-            title={t("commonProfile.languages")}
-            placeholder={t("commonProfile.languagesExample")}
-            clicked={inputClicked[5]}
-            index={5}
-            options={options.languages}
-            handleClick={handleClick}
-            onChange={handleLanguageChange}
-            validate={validate}
-            valid={isValid[5]}
-            value={languages}
-          />
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title={t("commonProfile.phone")}
-            clicked={inputClicked[7]}
-            index={7}
-            handleClick={handleClick}
-            onChange={handlePhoneChange}
-            value={phone}
-          />
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title={t("menteeProfile.organizationAffiliation")}
-            clicked={inputClicked[8]}
-            index={8}
-            handleClick={handleClick}
-            onChange={handleOrganizationChange}
-            value={organization}
-            valid={isValid[8]}
-            validate={validate}
-          />
-        </div>
-        <ModalInput
-          style={styles.modalInput}
-          type="dropdown-multiple"
-          title={t("menteeProfile.areasOfInterest")}
-          clicked={inputClicked[99]}
-          index={99}
-          handleClick={handleClick}
-          onChange={(e) => {
-            setSpecializations(e);
-            let newLocalProfile = { ...localProfile, specializations: e };
-            updateLocalStorage(newLocalProfile);
-          }}
-          options={options.specializations}
-          value={specializations}
-          valid={isValid[99]}
-          validate={validate}
-        />
-        <div className="modal-education-header">
-          {t("commonProfile.education")}
-        </div>
-        {renderEducationInputs()}
-        <div
-          className="modal-input-container modal-education-add-container"
-          onClick={handleAddEducation}
+        <Form.Item
+          label={t("menteeProfile.areasOfInterest")}
+          name="specializations"
         >
-          <PlusCircleFilled className="modal-education-add-icon" />
-          <div className="modal-education-add-text">
-            {t("commonProfile.addMoreEducation")}
-          </div>
-        </div>
-        <div className="modal-education-header">
-          {t("commonProfile.addVideos")}
-        </div>
-        <div className="modal-education-body">
-          <div>{t("commonProfile.introductionVideo")}</div>
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            clicked={inputClicked[6]}
-            index={6}
-            handleClick={handleClick}
-            onChange={handleVideoChange}
-            placeholder={t("commonProfile.pasteLink")}
-            value={video}
+          <Select
+            options={options.specializations}
+            mode="multiple"
+            placeholder={t("common.pleaseSelect")}
           />
-        </div>
-        <div className="modal-education-header">
+        </Form.Item>
+        <Typography.Title level={4}>
+          {t("commonProfile.education")}
+        </Typography.Title>
+        {educationSubForm()}
+        <Typography.Title level={4}>
+          {t("commonProfile.addVideos")}
+        </Typography.Title>
+        <Typography.Paragraph>
+          {t("commonProfile.introductionVideo")}
+        </Typography.Paragraph>
+        <Form.Item
+          label={t("commonProfile.pasteLink")}
+          name="video"
+          rules={[
+            {
+              pattern: new RegExp(urlRegex),
+              message: t("common.invalidUrl"),
+            },
+          ]}
+        >
+          <Input addonBefore="URL" />
+        </Form.Item>
+        <Typography.Title level={4}>
           {t("menteeProfile.accountPrivacy")}
-        </div>
-        <div className="modal-education-body">
-          <Checkbox
-            onChange={handlePrivacyChange}
-            value={privacy}
-            checked={privacy}
-          >
-            {t("menteeProfile.privateAccount")}
-          </Checkbox>
-          <div>{t("menteeProfile.privateAccountInfo")}</div>
-          {err && <p>{t("commonProfile.errorTrainingSteps")}</p>}
-          <Button
-            type="default"
-            shape="round"
-            className="regular-button"
-            style={styles.saveButton}
-            onClick={handleSaveEdits}
-            loading={saving}
-          >
+        </Typography.Title>
+        <Typography.Paragraph>
+          {t("menteeProfile.privateAccountInfo")}
+        </Typography.Paragraph>
+        <Form.Item name="is_private" valuePropName="checked">
+          <Checkbox>{t("menteeProfile.privateAccount")}</Checkbox>
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block loading={saving}>
             {t("common.save")}
           </Button>
-        </div>
-      </div>
+        </Form.Item>
+      </Form>
     </div>
   );
 }
 
-const styles = {
-  modalInput: {
-    height: 65,
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
-  },
-  textareaInput: {
-    height: 65,
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
-    marginBottom: "80px",
-  },
-  alertToast: {
-    color: "#FF0000",
-    display: "inline-block",
-    marginRight: 10,
-  },
-
-  saveButton: {
-    position: "relative",
-    top: "2em",
-  },
-};
-
-export default withRouter(MenteeRegisterForm);
+export default withRouter(MenteeProfileForm);

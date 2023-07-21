@@ -99,7 +99,7 @@ def upload_account_emails():
 
 
 @admin.route("/upload/accountsEmails", methods=["POST"])
-# @admin_only
+@admin_only
 def upload_account_emailText():
     """Upload account emails to permit registering
 

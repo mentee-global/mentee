@@ -155,7 +155,7 @@ def get_application_status(email, role):
                     "type": role == Account.MENTOR,
                     "role": role,
                     "role2": Account.MENTOR,
-                }
+                },
             )
     except:
         msg = "No application currently exist with this email " + email
@@ -181,7 +181,7 @@ def check_profile_exists(email, role):
             rightRole = Account.MENTOR
             return create_response(
                 message=msg,
-                data={"profileExists": profile_exists, "rightRole": rightRole.value}
+                data={"profileExists": profile_exists, "rightRole": rightRole.value},
             )
         except:
             try:
@@ -189,7 +189,10 @@ def check_profile_exists(email, role):
                 rightRole = Account.MENTEE
                 return create_response(
                     message=msg,
-                    data={"profileExists": profile_exists, "rightRole": rightRole.value}
+                    data={
+                        "profileExists": profile_exists,
+                        "rightRole": rightRole.value,
+                    },
                 )
             except:
                 try:
@@ -197,14 +200,19 @@ def check_profile_exists(email, role):
                     rightRole = Account.PARTNER
                     return create_response(
                         message=msg,
-                        data={"profileExists": profile_exists, "rightRole": rightRole.value}
+                        data={
+                            "profileExists": profile_exists,
+                            "rightRole": rightRole.value,
+                        },
                     )
                 except:
                     msg = "No application currently exist with this email " + email
                     logger.info(msg)
                     return create_response(
                         message=msg,
-                        data={"profileExists": profile_exists,}
+                        data={
+                            "profileExists": profile_exists,
+                        },
                     )
 
     return create_response(data={"profileExists": profile_exists})
@@ -235,11 +243,7 @@ def change_state_to_build_profile(email, role):
         if "front_url" in request.args:
             front_url = request.args["front_url"]
             target_url = (
-                front_url
-                + "apply?role="
-                + str(role)
-                + "&email="
-                + application["email"]
+                front_url + "apply?role=" + str(role) + "&email=" + application["email"]
             )
 
         preferred_language = request.args.get("preferred_language", "en-US")

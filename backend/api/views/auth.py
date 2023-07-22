@@ -57,7 +57,7 @@ def create_firebase_user(email, password):
     try:
         firebase_user = firebase_admin_auth.create_user(
             email=email,
-            email_verified= False,
+            email_verified=False,
             password=password,
         )
     except ValueError:

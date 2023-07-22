@@ -14,7 +14,7 @@ from api.models import (
     Video,
     PartnerProfile,
     Notifications,
-    Guest
+    Guest,
 )
 from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS
 from api.utils.request_utils import send_email

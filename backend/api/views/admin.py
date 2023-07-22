@@ -122,17 +122,15 @@ def upload_account_emailText():
                 return create_response(status=422, message="Can't create firebase user")
             firebase_uid = firebase_user.uid
 
-            guest = Guest(
-                email=email,
-                name=name,
-                firebase_uid=firebase_uid
-            )
+            guest = Guest(email=email, name=name, firebase_uid=firebase_uid)
             guest.save()
 
             verified_email = VerifiedEmail(email=email, role=str(role), password="")
             verified_email.save()
         else:
-            return create_response(status=500, message="This Email is already registered")
+            return create_response(
+                status=500, message="This Email is already registered"
+            )
     else:
         for email in messageText.split(";"):
             email = email.replace(" ", "")
@@ -140,8 +138,9 @@ def upload_account_emailText():
             if not duplicates:
                 email = VerifiedEmail(email=email, role=str(role), password="")
                 email.save()
-    
+
     return create_response(status=200, message="Add users successfully")
+
 
 @admin.route("/admin/<id>", methods=["GET"])
 @admin_only

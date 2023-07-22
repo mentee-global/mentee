@@ -274,6 +274,7 @@ def get_profile_model(role):
     elif role == Account.GUEST:
         return Guest
 
+
 def application_model(role):
     if role == Account.MENTOR:
         return NewMentorApplication

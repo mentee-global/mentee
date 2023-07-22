@@ -16,7 +16,6 @@ function AddGuestModal(props) {
     form.resetFields();
     setValuesChanged(false);
   }, [props.guestModalVisible]);
-  
 
   const onFinish = useCallback((valuesChanged) => {
     async function addGuestUser(name, email, password) {
@@ -25,33 +24,25 @@ function AddGuestModal(props) {
         ACCOUNT_TYPE.GUEST,
         password,
         name
-      ).then(
-        (res) => {
-          if (res.status === 200) {
-            success();
+      ).then((res) => {
+        if (res.status === 200) {
+          success();
+        } else {
+          if (res.response && res.response.status === 422) {
+            alert("Failed create firebase account");
           } else {
-            if (
-              res.response &&
-              res.response.status === 422
-            ) {
-              alert("Failed create firebase account");
-            } else {
-              alert("Already registered Email: " + email);
-            }
+            alert("Already registered Email: " + email);
           }
         }
-      )
+      });
     }
     if (valuesChanged) {
-      form
-        .validateFields()
-        .then(values => {
-          addGuestUser(values.name, values.email, values.password);
-        })
+      form.validateFields().then((values) => {
+        addGuestUser(values.name, values.email, values.password);
+      });
     } else {
-      props.setGuestModalVisible(false)
+      props.setGuestModalVisible(false);
     }
-    
   }, []);
 
   const success = () => {
@@ -64,9 +55,9 @@ function AddGuestModal(props) {
   };
 
   const validatePassword = (_, value) => {
-    const passwordFieldValue = form.getFieldValue('password');
+    const passwordFieldValue = form.getFieldValue("password");
     if (value && passwordFieldValue !== value) {
-      return Promise.reject(new Error('The passwords do not match'));
+      return Promise.reject(new Error("The passwords do not match"));
     }
 
     return Promise.resolve();
@@ -90,7 +81,7 @@ function AddGuestModal(props) {
               rules={[
                 {
                   required: true,
-                  message : "Please input Name."
+                  message: "Please input Name.",
                 },
               ]}
             >
@@ -106,25 +97,22 @@ function AddGuestModal(props) {
               rules={[
                 {
                   required: true,
-                  message : "Please input Email."
+                  message: "Please input Email.",
                 },
                 {
-                  type: 'email',
-                  message: 'The input is not valid E-mail!',
+                  type: "email",
+                  message: "The input is not valid E-mail!",
                 },
               ]}
             >
-              <Input
-                bordered={true}
-                placeholder={t("common.email")}
-              />
+              <Input bordered={true} placeholder={t("common.email")} />
             </Form.Item>
             <Form.Item
               name="password"
               rules={[
                 {
                   required: true,
-                  message : "Please input Password."
+                  message: "Please input Password.",
                 },
               ]}
             >
@@ -141,10 +129,9 @@ function AddGuestModal(props) {
               rules={[
                 {
                   required: true,
-                  message: 'Please confirm password!',
+                  message: "Please confirm password!",
                 },
-                { validator: validatePassword }
-                ,
+                { validator: validatePassword },
               ]}
             >
               <Input.Password

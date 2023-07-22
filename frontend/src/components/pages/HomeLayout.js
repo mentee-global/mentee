@@ -16,6 +16,7 @@ function HomeLayout({ children, ignoreHomeLayout, location }) {
     "/application-training",
     "/build-profile",
   ];
+
   if (ignoreHomeLayout || ignoreLayoutPaths.includes(location.pathname)) {
     return children;
   }

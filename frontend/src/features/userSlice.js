@@ -8,7 +8,6 @@ export const fetchUser = createAsyncThunk(
     const isAdmin = parseInt(role) === ACCOUNT_TYPE.ADMIN;
     const res = isAdmin ? await getAdmin(id) : await fetchAccountById(id, role);
 
-    if (!res) return;
     return { user: res, role: parseInt(role) };
   }
 );
@@ -16,10 +15,8 @@ export const fetchUser = createAsyncThunk(
 export const updateAndFetchUser = createAsyncThunk(
   "user/updateUser",
   async ({ data, id, role }, thunkAPI) => {
-    const res = await editAccountProfile(data, id, role);
+    await editAccountProfile(data, id, role);
     thunkAPI.dispatch(fetchUser({ id, role }));
-    // This does not get consumed since we call fetchUser
-    return { user: res, role: parseInt(role) };
   }
 );
 
@@ -28,12 +25,16 @@ export const userSlice = createSlice({
   initialState: {
     user: null,
     role: null,
+    collapsed: false,
     status: "idle",
   },
   reducers: {
     resetUser(state, action) {
       state.user = null;
       state.role = null;
+    },
+    collapse(state, action) {
+      state.collapsed = !state.collapsed;
     },
   },
   extraReducers(builder) {
@@ -51,6 +52,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { resetUser } = userSlice.actions;
+export const { resetUser, collapse } = userSlice.actions;
 
 export default userSlice.reducer;

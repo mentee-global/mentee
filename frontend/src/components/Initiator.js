@@ -4,12 +4,10 @@ import { useDispatch } from "react-redux";
 import { useAuth } from "utils/hooks/useAuth";
 import { fetchUser } from "features/userSlice";
 import { fetchOptions } from "features/optionsSlice";
-import { getProfileId, getRole } from "utils/auth.service";
 
 function Initiator() {
   const { i18n } = useTranslation();
-  const profileId = getProfileId();
-  const role = getRole();
+  const { profileId, role } = useAuth();
   const dispatch = useDispatch();
 
   useEffect(() => {

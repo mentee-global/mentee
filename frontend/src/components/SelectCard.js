@@ -25,7 +25,7 @@ function SelectCard({ title, description, avatar, onClick, style, rightIcon }) {
     <Card
       style={{ ...style, width: "100%" }}
       className={css`
-        box-shadow: 0 1px 0 rgba(5, 145, 255, 0.1);
+        box-shadow: 1px 1px 4px rgba(5, 145, 255, 0.15);
         cursor: pointer;
         user-select: none;
         transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);

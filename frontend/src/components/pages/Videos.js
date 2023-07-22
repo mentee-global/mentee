@@ -148,43 +148,45 @@ function Videos() {
   };
 
   return (
-    <div style={{ height: "100%" }}>
-      <div className="videos-header">
-        <div className="videos-header-title">
-          {t("mentorVideoPage.welcome", { name: user?.name })}
+    <div>
+      <div style={{ height: "100%" }}>
+        <div className="videos-header">
+          <div className="videos-header-title">
+            {t("mentorVideoPage.welcome", { name: user?.name })}
+          </div>
         </div>
-      </div>
-      <div className="filter-card">
-        <h1 className="videos-upload-title">
-          {t("mentorVideoPage.yourUploads")}
-        </h1>
-        <div className="filters">
-          <Input.Search
-            value={titleFilter}
-            className="inputbox-title"
-            onChange={handleSearchChange}
-            onSearch={(value) => handleSearchVideo(value)}
-            placeholder={t("mentorVideoPage.videoTitle")}
-          />
-          <Select
-            placeholder={t("common.specializations")}
-            className="select-box-specializations"
-            onChange={(value) => filterSpecialization(value)}
-            value={selectFilter}
-            options={options.specializations}
-          />
+        <div className="filter-card">
+          <h1 className="videos-upload-title">
+            {t("mentorVideoPage.yourUploads")}
+          </h1>
+          <div className="filters">
+            <Input.Search
+              value={titleFilter}
+              className="inputbox-title"
+              onChange={handleSearchChange}
+              onSearch={(value) => handleSearchVideo(value)}
+              placeholder={t("mentorVideoPage.videoTitle")}
+            />
+            <Select
+              placeholder={t("common.specializations")}
+              className="select-box-specializations"
+              onChange={(value) => filterSpecialization(value)}
+              value={selectFilter}
+              options={options.specializations}
+            />
 
-          <Button onClick={handleClearFilters}>{t("common.clear")}</Button>
+            <Button onClick={handleClearFilters}>{t("common.clear")}</Button>
+          </div>
         </div>
+        <Row>
+          <Col span={16}>
+            <VideosContainer />
+          </Col>
+          <Col span={8}>
+            <VideoSubmit handleSubmitVideo={handleSubmitVideo} form={form} />
+          </Col>
+        </Row>
       </div>
-      <Row>
-        <Col span={16}>
-          <VideosContainer />
-        </Col>
-        <Col span={8}>
-          <VideoSubmit handleSubmitVideo={handleSubmitVideo} form={form} />
-        </Col>
-      </Row>
     </div>
   );
 }

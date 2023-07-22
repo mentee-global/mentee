@@ -51,6 +51,7 @@ function useProvideAuth() {
       isPartner: false,
     });
     setProfileId(null);
+    localStorage.removeItem("profileId");
   };
 
   // Subscribe to user on mount

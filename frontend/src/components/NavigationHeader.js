@@ -8,11 +8,10 @@ import NotificationBell from "components/NotificationBell";
 import LanguageDropdown from "components/LanguageDropdown";
 import { logout } from "utils/auth.service";
 import { useAuth } from "utils/hooks/useAuth";
-import { resetUser } from "features/userSlice";
+import { collapse, resetUser } from "features/userSlice";
 import "components/css/Navigation.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { MenuFoldOutlined, UserOutlined } from "@ant-design/icons";
-import usePersistedState from "utils/hooks/usePersistedState";
 
 const { Header } = Layout;
 
@@ -25,9 +24,8 @@ function NavigationHeader() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { user, role } = useSelector((state) => state.user);
-  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   const [openDropdown, setOpenDropdown] = useState(false);
-  const [collapsed, setCollapsed] = usePersistedState("collapsed", false);
 
   const logoutUser = () => {
     logout().then(() => {
@@ -36,33 +34,6 @@ function NavigationHeader() {
       history.push("/");
     });
   };
-
-  // const getUserType = () => {
-  //   switch (role) {
-  //     case ACCOUNT_TYPE.MENTOR:
-  //       return user ? user.professional_title : t("common.mentor");
-  //     case ACCOUNT_TYPE.MENTEE:
-  //       return t("common.mentee");
-  //     case ACCOUNT_TYPE.ADMIN:
-  //       return t("common.admin");
-  //     case ACCOUNT_TYPE.PARTNER:
-  //       return t("common.partner");
-  //     default:
-  //       return "";
-  //   }
-  // };
-
-  // const dropdownMenu = (
-  //   <Menu>
-  //     <Menu.Item key="edit-profile">
-  //       <NavLink to="/profile">{t("navHeader.editProfile")}</NavLink>
-  //     </Menu.Item>
-  //     <Menu.Divider />
-  //     <Menu.Item key="sign-out" onClick={logoutUser}>
-  //       {t("common.logout")}
-  //     </Menu.Item>
-  //   </Menu>
-  // );
 
   const dropdownMenu = [
     {
@@ -88,9 +59,7 @@ function NavigationHeader() {
       style={{ background: colorBgContainer, display: "flex" }}
       theme="light"
     >
-      {isMobile && (
-        <MenuFoldOutlined onClick={() => setCollapsed(!collapsed)} />
-      )}
+      {isMobile && <MenuFoldOutlined onClick={() => dispatch(collapse())} />}
       <div style={{ flex: "1 1 0%" }} />
       <Space size="middle" style={{ lineHeight: "100%" }}>
         <NotificationBell />

@@ -18,8 +18,6 @@ function PublicProfile({ match }) {
   const [updateContent, setUpdateContent] = useState(false);
   const [isMentor, setIsMentor] = useState(accountType == ACCOUNT_TYPE.MENTOR);
 
-  console.log(match);
-
   useEffect(() => {
     async function getAccount() {
       const accountData = await fetchAccountById(id, accountType);

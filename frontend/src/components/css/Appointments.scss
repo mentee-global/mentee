@@ -374,8 +374,10 @@
 }
 
 .appointments-column {
+  overflow: hidden;
   padding: 5% 3%;
-  height: calc(100vh - 120px);
+  height: 100%;
+  width: 80%;
 }
 
 .appointments-welcome-box {
@@ -501,7 +503,7 @@
 .error {
   display: none;
 }
-@media (max-width: 650px) {
+@media (max-width: 667px) {
   .appointments-tabs {
     display: block;
     button {
@@ -509,7 +511,7 @@
     }
   }
   .appointments-column {
-    max-width: 100%;
+    width: 100%;
     flex-basis: 100%;
   }
   .appointments-date-text-block {

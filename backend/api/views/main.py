@@ -196,7 +196,7 @@ def create_mentor_profile():
                 logger.info(msg)
                 return create_response(status=422, message=msg)
 
-    elif "video" in data and account_type == Account.MENTEE:
+    elif data.get("videos", False) and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
         msg, is_invalid = is_invalid_form(validate_video)
@@ -210,7 +210,7 @@ def create_mentor_profile():
             tag=video_data.get("tag"),
             date_uploaded=video_data.get("date_uploaded"),
         )
-    if "video" in data and account_type == Account.MENTOR:
+    if data.get("videos", False) and account_type == Account.MENTOR:
         validate_video = VideoForm.from_json(data["video"])
 
         msg, is_invalid = is_invalid_form(validate_video)
@@ -325,7 +325,7 @@ def create_profile_existing_account():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    if "videos" in data and account_type == Account.MENTOR:
+    if data.get("videos", False) and account_type == Account.MENTOR:
         for video in data["videos"]:
             validate_video = VideoForm.from_json(video)
 
@@ -334,7 +334,7 @@ def create_profile_existing_account():
                 logger.info(msg)
                 return create_response(status=422, message=msg)
 
-    elif "video" in data and account_type == Account.MENTEE:
+    elif data.get("videos", False) and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
         msg, is_invalid = is_invalid_form(validate_video)

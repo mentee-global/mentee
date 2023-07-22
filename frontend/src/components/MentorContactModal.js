@@ -41,15 +41,15 @@ function MentorContactModal({
 
   return (
     <span>
-      <MenteeButton
-        content={<b>{t("common.contactMe")}</b>}
-        borderOnClick
+      <Button
+        type="primary"
         onClick={() => {
           setOpenModal(true);
         }}
-        width="120px"
-        style={{ marginRight: "6px" }}
-      />
+        style={{ width: "120px" }}
+      >
+        {t("common.contactMe")}
+      </Button>
       <Modal
         forceRender
         open={openModal}

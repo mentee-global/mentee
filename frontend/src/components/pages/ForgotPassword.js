@@ -17,7 +17,6 @@ function ForgotPassword({ location, history }) {
     setLoading(true);
     setEmail(email);
     const res = await sendPasswordResetEmail(email);
-    console.log(res);
     if (res && res?.success) {
       if (emailSent) {
         messageApi.success(t("forgotPassword.emailResent"));

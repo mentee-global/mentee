@@ -49,7 +49,7 @@ function MessagesSidebar(props) {
   } else {
     if (restrictedPartners && restrictedPartners.length > 0) {
       var restricted_user_ids = [];
-      restrictedPartners.map((partner_item) => {
+      restrictedPartners?.map((partner_item) => {
         if (partner_item.assign_mentors) {
           partner_item.assign_mentors.map((assign_item) => {
             restricted_user_ids.push(assign_item.id);
@@ -64,7 +64,7 @@ function MessagesSidebar(props) {
         }
         return false;
       });
-      latestConvos.map((item) => {
+      latestConvos?.map((item) => {
         if (!restricted_user_ids.includes(item.otherId)) {
           side_data.push(item);
         }

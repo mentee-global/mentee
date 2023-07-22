@@ -4,7 +4,8 @@ import { getTrainings, downloadBlob, getTrainVideo } from "utils/api";
 import ReactPlayer from "react-player/youtube";
 
 import "./css/TrainingList.scss";
-import { TRAINING_TYPE } from "utils/consts";
+import { I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
+import { useTranslation } from "react-i18next";
 
 const placeholder = Array(5).fill({
   _id: {
@@ -52,6 +53,7 @@ const getTrainingComponent = (training) => {
 };
 
 const TrainingList = (props) => {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [trainingData, setTrainingData] = useState();
 
@@ -63,8 +65,7 @@ const TrainingList = (props) => {
         setLoading(false);
       })
       .catch((e) => console.error(e));
-  }, []);
-
+  }, [i18n.language]);
   return (
     <List
       itemLayout="vertical"

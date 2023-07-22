@@ -75,7 +75,7 @@ function LoginForm({ role, defaultEmail }) {
       if (!user) return;
       if (res.result.redirectToVerify) {
         await sendVerificationEmail(email);
-        history.push("/verify");
+        messageApi.success(t("verifyEmail.body"));
       } else {
         dispatch(
           fetchUser({
@@ -94,7 +94,7 @@ function LoginForm({ role, defaultEmail }) {
   }, [user]);
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    // console.log("Failed:", errorInfo);
   };
 
   return (

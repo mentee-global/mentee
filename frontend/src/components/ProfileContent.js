@@ -10,8 +10,6 @@ import {
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { formatLinkForHref } from "utils/misc";
-import MentorProfileModal from "./MentorProfileModal";
-import MenteeProfileModal from "./MenteeProfileModal";
 import PublicMessageModal from "./PublicMessageModal";
 import { ACCOUNT_TYPE, getRegions } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
@@ -23,12 +21,16 @@ import PartnerProfileModal from "./PartnerProfileModal";
 
 import "./css/Profile.scss";
 import { getTranslatedOptions } from "utils/translations";
+import EditProfileModal from "components/EditProfileModal";
+import { getProfileId, getRole } from "utils/auth.service";
 
 function ProfileContent(props) {
   const { t } = useTranslation();
   const options = useSelector((state) => state.options);
   const { accountType, account } = props;
-  const { isMentor, isMentee, isPartner, profileId } = useAuth();
+  const profileId = getProfileId();
+  const role = getRole();
+  const isMentee = role == ACCOUNT_TYPE.MENTEE;
   const [mentee, setMentee] = useState();
   const [favorite, setFavorite] = useState(false);
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
@@ -132,9 +134,9 @@ function ProfileContent(props) {
             <br />
             {education.education_level}, {major}
             <br />
-            <t className="mentor-profile-heading">
+            <p className="mentor-profile-heading">
               {education.graduation_year}
-            </t>
+            </p>
           </div>
         ))}
       </>
@@ -193,34 +195,15 @@ function ProfileContent(props) {
               )}
           </div>
         </div>
-        {isMentor && props.showEditBtn ? (
+        {props.showEditBtn ? (
           <div className="mentor-profile-button">
-            <MentorProfileModal
-              mentor={props.mentor}
+            <EditProfileModal
+              profileData={props.mentor}
               onSave={props.handleSaveEdits}
+              role={accountType}
             />
           </div>
-        ) : (
-          isMentee &&
-          props.showEditBtn && (
-            <div className="mentor-profile-button">
-              <MenteeProfileModal
-                mentee={props.mentor}
-                onSave={props.handleSaveEdits}
-              />
-            </div>
-          )
-        )}
-        {isPartner && props.showEditBtn ? (
-          <div className="mentor-profile-button">
-            <PartnerProfileModal
-              mentor={account}
-              onSave={props.handleSaveEdits}
-            />
-          </div>
-        ) : (
-          ""
-        )}
+        ) : null}
       </div>
       <br />
 

@@ -16,7 +16,7 @@ function NotificationBell() {
 
   useEffect(() => {
     dispatch(fetchNotificationsCount({ id: profileID }));
-  }, []);
+  }, [profileID]);
 
   return (
     <div className="notifications-section">

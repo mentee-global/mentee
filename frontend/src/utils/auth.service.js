@@ -79,19 +79,15 @@ export const login = async (email, password, role) =>
       await fireauth
         .auth()
         .signInWithCustomToken(data.result.token)
-        .catch((error) => {});
-
-      await getIdToken().then((idToken) => {
-        localStorage.setItem("userIdToken", idToken);
-        return idToken;
-      });
+        .catch((error) => {
+          console.error(error);
+        });
     }
 
     return data;
   });
 
 export const logout = async () => {
-  localStorage.removeItem("userIdToken");
   localStorage.removeItem("role");
   localStorage.removeItem("profileId");
   await fireauth
@@ -182,16 +178,22 @@ export const isUserVerified = async () => {
   }
 };
 
-export const getUserEmail = async () => {
+export const getUserEmail = () => {
   if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
+    return getIdTokenResult().then((idTokenResult) => {
       return idTokenResult.claims.email;
     });
   }
 };
 
-export const getUserIdToken = () => {
-  return localStorage.getItem("userIdToken");
+export const getUserIdToken = async () => {
+  if (isLoggedIn()) {
+    return await getIdToken().then((idToken) => {
+      return idToken;
+    });
+  } else {
+    return null;
+  }
 };
 
 export const getRegistrationStage = async () => {

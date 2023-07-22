@@ -16,7 +16,7 @@ function MessageCard(props) {
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
   const name = `message-${props.active ? "active-" : ""}card`;
-  const isMobile = useMediaQuery({ query: `(max-width: 600px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
 
   const openMessage = () => {
     dispatch(

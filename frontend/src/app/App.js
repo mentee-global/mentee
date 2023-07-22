@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import { Layout, ConfigProvider } from "antd";
+import { Layout, ConfigProvider, FloatButton } from "antd";
 import { useTranslation } from "react-i18next";
 import { getAntdLocale } from "utils/translations";
 import Appointments from "components/pages/Appointments";
@@ -35,34 +35,30 @@ import PrivateRoute from "components/PrivateRoute";
 import HomeLayout from "components/pages/HomeLayout";
 import Home from "components/pages/Home";
 import Apply from "components/pages/Apply";
-import { getUserIdToken } from "utils/auth.service";
+import { getRole, getUserIdToken } from "utils/auth.service";
 import { useAuth } from "utils/hooks/useAuth";
 import PublicRoute from "components/PublicRoute";
 import Training from "components/pages/Training";
 import BuildProfile from "components/pages/BuildProfile";
+import { useSelector } from "react-redux";
 
 const { Content } = Layout;
 
 function App() {
   const { i18n } = useTranslation();
-  const [userIdToken, setUserIdToken] = useState(getUserIdToken());
-  const { profileId } = useAuth();
   const [antdLocale, setAntdLocale] = useState(getAntdLocale(i18n.language));
+  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
     setAntdLocale(getAntdLocale(i18n.language));
   }, [i18n.language]);
-
-  useEffect(() => {
-    setUserIdToken(getUserIdToken());
-  }, [profileId]);
 
   return (
     <ConfigProvider
       locale={antdLocale}
       theme={{
         token: {
-          colorPrimary: "#f57600",
+          colorPrimary: "#e4bb4f",
         },
       }}
     >
@@ -70,10 +66,10 @@ function App() {
         <SocketComponent />
         <Initiator />
         <Layout hasSider>
-          {userIdToken && <NavigationSider />}
-          <Content>
-            {userIdToken && <NavigationHeader />}
-            <HomeLayout ignoreHomeLayout={userIdToken}>
+          {user && <NavigationSider />}
+          <Content style={{ backgroundColor: "white" }}>
+            {user && <NavigationHeader />}
+            <HomeLayout ignoreHomeLayout={user}>
               <PublicRoute exact path="/">
                 <Home />
               </PublicRoute>
@@ -83,9 +79,6 @@ function App() {
               <PublicRoute path="/admin">
                 <AdminLogin />
               </PublicRoute>
-              {/* <PublicRoute path="/register">
-                <Register />
-              </PublicRoute> */}
               <PublicRoute path="/apply">
                 <Apply />
               </PublicRoute>
@@ -97,9 +90,6 @@ function App() {
               </PublicRoute>
               <PublicRoute path="/build-profile">
                 <BuildProfile />
-              </PublicRoute>
-              <PublicRoute path="/verify">
-                <Verify />
               </PublicRoute>
               <PublicRoute path="/forgot-password">
                 <ForgotPassword />
@@ -159,12 +149,12 @@ function App() {
             <PrivateRoute path="/verified-emails">
               <AdminVerifiedEmails />
             </PrivateRoute>
-            {/* <PrivateRoute path="/messages" component={() => <Messages />} /> */}
             <PrivateRoute path="/messages/:receiverId">
               <Messages />
             </PrivateRoute>
           </Content>
         </Layout>
+        <FloatButton.BackTop />
       </Router>
     </ConfigProvider>
   );

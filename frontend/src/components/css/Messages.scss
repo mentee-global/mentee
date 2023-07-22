@@ -52,8 +52,8 @@
   background-color: white;
   overflow-y: auto;
   padding-left: 10%;
-  padding-top: 5%;
   font-size: 3ch;
+  height: 89px;
 }
 
 .message-card {
@@ -96,8 +96,8 @@
 }
 
 .header-divider {
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .chat-area-header {
@@ -136,13 +136,17 @@
   padding: 12px;
   position: fixed;
   bottom: 0;
-  width: calc(100vw - var(--messages-sidebar));
+  width: calc(80% - var(--messages-sidebar));
+
+  @media (max-width: 991px) {
+    width: calc(95% - var(--messages-sidebar));
+  }
 }
 
 .conversation-container {
   display: flex;
   flex-direction: column;
-  padding-bottom: 60px; // synced with --chat-footer-height, for some reason var() doesn't work
+  // padding-bottom: 60px; // synced with --chat-footer-height, for some reason var() doesn't work
   height: calc(100vh - #{$nav-header-height});
 }
 
@@ -272,10 +276,10 @@
   text-decoration: underline;
   color: blue;
 }
-@media (max-width: 650px) {
+@media (max-width: 761px) {
   .messages-sidebar-background {
     width: 100% !important;
-    max-width: 600px !important;
+    max-width: 761px !important;
     min-width: auto !important;
     flex-basis: auto !important;
   }

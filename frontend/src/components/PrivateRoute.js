@@ -1,13 +1,13 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { getUserIdToken } from "utils/auth.service";
+import { getRole } from "utils/auth.service";
 
 function PrivateRoute({ children, ...rest }) {
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        getUserIdToken() ? (
+        getRole() ? (
           children
         ) : (
           <Redirect

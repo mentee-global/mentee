@@ -15,25 +15,25 @@ const instance = axios.create({
 const authGet = async (url, config) =>
   instance.get(url, {
     ...config,
-    headers: { Authorization: getUserIdToken() },
+    headers: { Authorization: await getUserIdToken() },
   });
 
 const authPost = async (url, data, config) =>
   instance.post(url, data, {
     ...config,
-    headers: { Authorization: getUserIdToken() },
+    headers: { Authorization: await getUserIdToken() },
   });
 
 const authPut = async (url, data, config) =>
   instance.put(url, data, {
     ...config,
-    headers: { Authorization: getUserIdToken() },
+    headers: { Authorization: await getUserIdToken() },
   });
 
 const authDelete = async (url, config) =>
   instance.delete(url, {
     ...config,
-    headers: { Authorization: getUserIdToken() },
+    headers: { Authorization: await getUserIdToken() },
   });
 
 export const fetchAccountById = (id, type) => {

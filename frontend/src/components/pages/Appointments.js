@@ -12,6 +12,7 @@ import {
   TimePicker,
   DatePicker,
   notification,
+  Spin,
 } from "antd";
 import {
   ClockCircleOutlined,
@@ -49,6 +50,7 @@ const Tabs = Object.freeze({
 
 function Appointments() {
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
   const tabTitles = {
     upcoming: t("mentorAppointmentPage.upcoming"),
@@ -139,6 +141,10 @@ function Appointments() {
   }
   useEffect(() => {
     async function getAppointments() {
+      if (!profileId) return;
+
+      setIsLoading(true);
+
       const mentorID = profileId;
       const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
 
@@ -154,6 +160,7 @@ function Appointments() {
           );
         }
       }
+      setIsLoading(false);
     }
 
     onAuthStateChanged(getAppointments);
@@ -411,48 +418,46 @@ function Appointments() {
         modalAppointment={modalAppointment}
       />
 
-      <Row>
-        <Col span={18} className="appointments-column">
-          <div className="appointments-welcome-box">
-            <div className="appointments-welcome-text">
-              {t("mentorAppointmentPage.welcome", { name: user?.name })}
-            </div>
-            <Checkbox
-              className="modal-availability-checkbox-text t-a-c-b"
-              onChange={(e) => {
-                setTakeappoinment(e.target.checked);
-                handleTakeAppointments(e.target.checked);
-              }}
-              checked={takeAppoinment}
-              style={{ marginLeft: "1%" }}
-            >
-              {t("mentorAppointmentPage.takingAppointments")}
-            </Checkbox>
-            <div
-              style={{
-                marginLeft: "1%",
-                marginTop: "12px",
-                marginBottom: "15px",
-              }}
-            >
-              <MenteeButton
-                style={{ marginBottom: "10px" }}
-                theme="dark"
-                content={<b>{t("mentorAppointmentPage.addAppointment")}</b>}
-                onClick={() => {
-                  setManualModalvisible(true);
-                }}
-              ></MenteeButton>
-            </div>
-            <div className="appointments-tabs">
-              {Object.keys(tabTitles).map((tab, index) => (
-                <Tab tab={tab} text={tabTitles[tab]} key={index} />
-              ))}
-            </div>
+      <div className="appointments-column">
+        <div className="appointments-welcome-box">
+          <div className="appointments-welcome-text">
+            {t("mentorAppointmentPage.welcome", { name: user?.name })}
           </div>
-          {renderTab(currentTab)}
-        </Col>
-      </Row>
+          <Checkbox
+            className="modal-availability-checkbox-text t-a-c-b"
+            onChange={(e) => {
+              setTakeappoinment(e.target.checked);
+              handleTakeAppointments(e.target.checked);
+            }}
+            checked={takeAppoinment}
+            style={{ marginLeft: "1%" }}
+          >
+            {t("mentorAppointmentPage.takingAppointments")}
+          </Checkbox>
+          <div
+            style={{
+              marginLeft: "1%",
+              marginTop: "12px",
+              marginBottom: "15px",
+            }}
+          >
+            <MenteeButton
+              style={{ marginBottom: "10px" }}
+              theme="dark"
+              content={<b>{t("mentorAppointmentPage.addAppointment")}</b>}
+              onClick={() => {
+                setManualModalvisible(true);
+              }}
+            ></MenteeButton>
+          </div>
+          <div className="appointments-tabs">
+            {Object.keys(tabTitles).map((tab, index) => (
+              <Tab tab={tab} text={tabTitles[tab]} key={index} />
+            ))}
+          </div>
+        </div>
+        <Spin spinning={isLoading}>{renderTab(currentTab)}</Spin>
+      </div>
       <Modal
         className="manual-add-modal"
         title={t("mentorAppointmentPage.addAppointment")}

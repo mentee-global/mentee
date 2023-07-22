@@ -617,6 +617,7 @@ export const adminUploadEmailsText = (
     (response) => response,
     (err) => {
       console.error(err);
+      return err;
     }
   );
 };

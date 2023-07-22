@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { Modal, Form, Input, Button, message, Typography } from "antd";
 import { adminUploadEmailsText } from "utils/api";
 import { validateEmail } from "utils/misc";
@@ -8,58 +8,50 @@ import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 function AddGuestModal(props) {
+  const [form] = Form.useForm();
   const { t } = useTranslation();
-  const [password, setPassword] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [name, setName] = useState(null);
-  const [confirmPassword, setconfirmPassword] = useState(null);
-  const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
+  const [valuesChanged, setValuesChanged] = useState(false);
 
-  const shouldShowErrors = () => (v) =>
-    (!v || (typeof v === "object" && v.length === 0)) && showMissingFieldErrors;
+  useEffect(() => {
+    form.resetFields();
+    setValuesChanged(false);
+  }, [props.guestModalVisible]);
+  
 
-  const onFinish = useCallback((name, email, password, confirmPassword) => {
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !confirmPassword ||
-      password !== confirmPassword
-    ) {
-      setShowMissingFieldErrors(true);
-      return;
-    }
-
-    if (!validateEmail(email.replace(/\s/g, ""))) {
-      alert("Invalid email: " + email);
-      return;
-    }
-
+  const onFinish = useCallback((valuesChanged) => {
     async function addGuestUser(name, email, password) {
       await adminUploadEmailsText(
         email,
         ACCOUNT_TYPE.GUEST,
         password,
         name
-      ).then((res) => {
-        if (res.data && res.data.result && res.data.result.status === "ok") {
-          success();
-        } else {
-          if (
-            res.data &&
-            res.data.result &&
-            res.data.result.status === "fail firebase"
-          ) {
-            alert("Failed create firebase account");
+      ).then(
+        (res) => {
+          if (res.status === 200) {
+            success();
           } else {
-            alert("Already registered Email: " + email);
+            if (
+              res.response &&
+              res.response.status === 422
+            ) {
+              alert("Failed create firebase account");
+            } else {
+              alert("Already registered Email: " + email);
+            }
           }
         }
-      });
+      )
     }
-    addGuestUser(name, email, password, confirmPassword);
-
-    if (showMissingFieldErrors) setShowMissingFieldErrors(false);
+    if (valuesChanged) {
+      form
+        .validateFields()
+        .then(values => {
+          addGuestUser(values.name, values.email, values.password);
+        })
+    } else {
+      props.setGuestModalVisible(false)
+    }
+    
   }, []);
 
   const success = () => {
@@ -67,7 +59,18 @@ function AddGuestModal(props) {
     props.setGuestModalVisible(false);
   };
 
-  const isMissingError = shouldShowErrors();
+  const handleValuesChange = () => {
+    setValuesChanged(true);
+  };
+
+  const validatePassword = (_, value) => {
+    const passwordFieldValue = form.getFieldValue('password');
+    if (value && passwordFieldValue !== value) {
+      return Promise.reject(new Error('The passwords do not match'));
+    }
+
+    return Promise.resolve();
+  };
   return (
     <Modal
       open={props.guestModalVisible}
@@ -78,88 +81,76 @@ function AddGuestModal(props) {
         <Title>Add Guest User</Title>
         <div>
           <Form
-            onFinish={() => onFinish(name, email, password, confirmPassword)}
+            form={form}
+            onValuesChange={handleValuesChange}
+            onFinish={() => onFinish(valuesChanged)}
           >
             <Form.Item
-              className=""
+              name="name"
               rules={[
                 {
                   required: true,
+                  message : "Please input Name."
                 },
               ]}
             >
-              {isMissingError(name) && (
-                <p style={{ color: "red" }}>Please input Name.</p>
-              )}
               <Input
                 type="text"
                 className=""
-                onChange={(e) => setName(e.target.value)}
                 bordered={true}
                 placeholder={t("common.name")}
               />
             </Form.Item>
             <Form.Item
-              className=""
+              name="email"
               rules={[
                 {
                   required: true,
+                  message : "Please input Email."
+                },
+                {
+                  type: 'email',
+                  message: 'The input is not valid E-mail!',
                 },
               ]}
             >
-              {isMissingError(email) && (
-                <p style={{ color: "red" }}>Please input Email.</p>
-              )}
               <Input
-                type="text"
-                className=""
-                onChange={(e) => setEmail(e.target.value)}
                 bordered={true}
                 placeholder={t("common.email")}
               />
             </Form.Item>
             <Form.Item
-              className=""
+              name="password"
               rules={[
                 {
                   required: true,
+                  message : "Please input Password."
                 },
               ]}
             >
-              {isMissingError(password) && (
-                <p style={{ color: "red" }}>Please input Password.</p>
-              )}
               <Input.Password
-                className=""
                 iconRender={(visible) =>
                   visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                 }
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 bordered={true}
                 placeholder={t("common.password")}
               />
             </Form.Item>
             <Form.Item
-              className=""
+              name="confirm"
               rules={[
                 {
                   required: true,
+                  message: 'Please confirm password!',
                 },
+                { validator: validatePassword }
+                ,
               ]}
             >
-              {isMissingError(confirmPassword) && (
-                <p style={{ color: "red" }}>Please Confirm Password.</p>
-              )}
-              {confirmPassword && password && confirmPassword !== password && (
-                <p style={{ color: "red" }}>Please Input Password Correctly.</p>
-              )}
               <Input.Password
-                className=""
                 iconRender={(visible) =>
                   visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                 }
-                onChange={(e) => setconfirmPassword(e.target.value)}
                 bordered={true}
                 placeholder={t("commonProfile.confirmPassword")}
               />

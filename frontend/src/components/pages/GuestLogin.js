@@ -190,7 +190,7 @@ function GuestLogin() {
           displaySelect={displaySelect}
           handleDisplayImages={handleDisplayImages}
           handleSelect={handleSelect}
-          isGhost={true}
+          isGuest={true}
         ></SelectLogin>
       )}
       {/* TODO: Translate this and loading */}

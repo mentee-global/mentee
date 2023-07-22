@@ -283,3 +283,5 @@ def application_model(role):
         return Admin
     elif role == Account.PARTNER:
         return PartnerApplication
+    elif role == Account.GUEST:
+        return Guest

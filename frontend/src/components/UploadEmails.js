@@ -47,11 +47,9 @@ function UploadEmails(props) {
   return (
     <Modal
       open={props.uploadModalVisible}
-      setUploadModalVisible={props.setUploadModalVisible}
       footer={<div></div>}
       onCancel={() => props.setUploadModalVisible(false)}
     >
-      {" "}
       <div className="dragdrops">
         <h1>Add Bulk Users</h1>
         <h2>

@@ -115,7 +115,8 @@
     "welcome": "Welcome to <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "confirm": "Confirm"
   },
   "commonProfile": {
     "accountCreated": "Your account has been created now you can login to Mentee",

@@ -12,7 +12,7 @@ function SelectLogin({
   handleSelect,
   handleDisplayImages,
   isAdmin,
-  isGhost,
+  isGuest,
 }) {
   const { t } = useTranslation();
 
@@ -25,7 +25,7 @@ function SelectLogin({
         {t("login.clickLoginPrompt")}
       </div>
 
-      {!isAdmin && !isGhost ? (
+      {!isAdmin && !isGuest ? (
         <div
           className="select-login-container"
           style={{ visibility: displaySelect ? "visible" : "hidden" }}

@@ -108,15 +108,16 @@ def upload_account_emailText():
     """
 
     role = request.form["role"]
+    role = int(role)
     messageText = request.form["messageText"]
     password = request.form["password"]
     name = request.form["name"]
-    if int(role) == Account.GUEST:
+    if role == Account.GUEST:
         email = messageText
         email = email.replace(" ", "")
         duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
         if not duplicates:
-            firebase_user, error_http_response = create_firebase_user(email, password, int(role))
+            firebase_user, error_http_response = create_firebase_user(email, password)
             if error_http_response:
                 return create_response(data={"message":"Can't create firebase user", "status":"fail firebase"})
             firebase_uid = firebase_user.uid

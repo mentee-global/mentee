@@ -163,7 +163,7 @@ function NavHeader({ history }) {
       return t("common.partner");
     }
     if (role === ACCOUNT_TYPE.GUEST) {
-      return "Guest";
+      return t("common.guest");
     }
   };
 

@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Modal, Form, Input, Button, message } from "antd";
+import React, { useCallback, useState } from "react";
+import { Modal, Form, Input, Button, message, Typography } from "antd";
 import { adminUploadEmailsText } from "utils/api";
 import { validateEmail } from "utils/misc";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
 
+const { Title } = Typography;
 function AddGuestModal(props) {
   const { t } = useTranslation();
   const [password, setPassword] = useState(null);
@@ -13,10 +14,6 @@ function AddGuestModal(props) {
   const [name, setName] = useState(null);
   const [confirmPassword, setconfirmPassword] = useState(null);
   const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
-
-  useEffect(() => {
-    setShowMissingFieldErrors(false);
-  }, []);
 
   const shouldShowErrors = () => (v) =>
     (!v || (typeof v === "object" && v.length === 0)) && showMissingFieldErrors;
@@ -74,13 +71,11 @@ function AddGuestModal(props) {
   return (
     <Modal
       open={props.guestModalVisible}
-      setGuestModalVisible={props.setGuestModalVisible}
       footer={<div></div>}
       onCancel={() => props.setGuestModalVisible(false)}
     >
-      {" "}
       <div className="dragdrops">
-        <h1>Add Guest User</h1>
+        <Title>Add Guest User</Title>
         <div>
           <Form
             onFinish={() => onFinish(name, email, password, confirmPassword)}

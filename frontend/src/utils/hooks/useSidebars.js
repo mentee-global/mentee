@@ -1,9 +1,12 @@
 import {
   ClockCircleOutlined,
+  CompassOutlined,
   ContainerOutlined,
   DatabaseOutlined,
   MessageOutlined,
+  PartitionOutlined,
   SearchOutlined,
+  ToolOutlined,
   UserOutlined,
   UsergroupAddOutlined,
   VideoCameraOutlined,
@@ -107,6 +110,24 @@ export default function useSidebars(userType, t) {
     },
   ];
 
+  const guestSidebar = [
+    {
+      label: t("navHeader.findMentor"),
+      key: "gallery",
+      icon: <ToolOutlined />,
+    },
+    {
+      label: t("navHeader.findMentee"),
+      key: "mentee-gallery",
+      icon: <CompassOutlined />,
+    },
+    {
+      label: t("navHeader.findPartner"),
+      key: "partner-gallery",
+      icon: <PartitionOutlined />,
+    },
+  ];
+
   const adminSidebar = [
     {
       label: t("sidebars.explore"),
@@ -190,6 +211,8 @@ export default function useSidebars(userType, t) {
       return menteeSidebar;
     case ACCOUNT_TYPE.PARTNER:
       return partnerSidebar;
+    case ACCOUNT_TYPE.GUEST:
+      return guestSidebar;
     case ACCOUNT_TYPE.ADMIN:
       return adminSidebar;
     default:

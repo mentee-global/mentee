@@ -8,7 +8,9 @@ export const fetchOptions = createAsyncThunk(
       const specializations = await getDisplaySpecializations();
       const languages = await getDisplayLanguages();
       return { specializations, languages };
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   }
 );
 

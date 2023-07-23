@@ -52,6 +52,7 @@ export const REDIRECTS = {
   [ACCOUNT_TYPE.MENTEE]: "/mentee-appointments",
   [ACCOUNT_TYPE.PARTNER]: "/partner-gallery",
   [ACCOUNT_TYPE.ADMIN]: "/account-data",
+  [ACCOUNT_TYPE.GUEST]: "/gallery",
 };
 
 export const PLURAL_TYPE = {

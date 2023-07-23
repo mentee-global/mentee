@@ -12,8 +12,6 @@ import PublicProfile from "components/pages/PublicProfile";
 import NewTrainingConfirm from "components/pages/NewTrainingConfirm";
 import Login from "components/pages/Login";
 import AdminLogin from "components/pages/AdminLogin";
-// import Register from "components/pages/Register";
-import Verify from "components/pages/Verify";
 import ForgotPassword from "components/pages/ForgotPassword";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
@@ -35,8 +33,7 @@ import PrivateRoute from "components/PrivateRoute";
 import HomeLayout from "components/pages/HomeLayout";
 import Home from "components/pages/Home";
 import Apply from "components/pages/Apply";
-import { getRole, getUserIdToken } from "utils/auth.service";
-import { useAuth } from "utils/hooks/useAuth";
+import { getRole } from "utils/auth.service";
 import PublicRoute from "components/PublicRoute";
 import Training from "components/pages/Training";
 import BuildProfile from "components/pages/BuildProfile";
@@ -48,6 +45,13 @@ function App() {
   const { i18n } = useTranslation();
   const [antdLocale, setAntdLocale] = useState(getAntdLocale(i18n.language));
   const { user } = useSelector((state) => state.user);
+  const [role, setRole] = useState(getRole());
+
+  // TODO: Remove this when we have a proper solution for this
+  // some kind of cached method of updating on login status change
+  useEffect(() => {
+    setRole(getRole());
+  }, [user]);
 
   useEffect(() => {
     setAntdLocale(getAntdLocale(i18n.language));
@@ -59,6 +63,7 @@ function App() {
       theme={{
         token: {
           colorPrimary: "#e4bb4f",
+          colorBgLayout: "#ffffff",
         },
       }}
     >
@@ -66,10 +71,10 @@ function App() {
         <SocketComponent />
         <Initiator />
         <Layout hasSider>
-          {user && <NavigationSider />}
-          <Content style={{ backgroundColor: "white" }}>
-            {user && <NavigationHeader />}
-            <HomeLayout ignoreHomeLayout={user}>
+          {role && <NavigationSider />}
+          <Content>
+            {role && <NavigationHeader />}
+            <HomeLayout ignoreHomeLayout={role}>
               <PublicRoute exact path="/">
                 <Home />
               </PublicRoute>

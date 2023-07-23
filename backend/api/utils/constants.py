@@ -42,6 +42,7 @@ class Account(Enum):
     MENTOR = 1
     MENTEE = 2
     PARTNER = 3
+    GUEST = 4
 
     def __eq__(self, other):
         return self.value == other

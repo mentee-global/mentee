@@ -5,6 +5,7 @@ import {
   CompassOutlined,
   PartitionOutlined,
   ToolOutlined,
+  UnlockOutlined,
 } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
@@ -71,6 +72,11 @@ function Login({ location }) {
             avatar={<PartitionOutlined />}
             title={t("common.partner")}
             onClick={() => onClickRole(ACCOUNT_TYPE.PARTNER)}
+          />
+          <SelectCard
+            avatar={<UnlockOutlined />}
+            title={t("common.guest")}
+            onClick={() => onClickRole(ACCOUNT_TYPE.GUEST)}
           />
         </Space>
       ),

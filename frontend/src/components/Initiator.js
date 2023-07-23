@@ -18,7 +18,7 @@ function Initiator() {
     if (profileId) {
       dispatch(fetchUser({ id: profileId, role }));
     }
-  }, [role]);
+  }, [role, profileId]);
   return <></>;
 }
 

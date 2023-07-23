@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 
 function PartnerGallery() {
   const { t } = useTranslation();
-  const { isAdmin, isPartner } = useAuth();
+  const { isAdmin, isPartner, isGuest } = useAuth();
   const [partners, setPartners] = useState([]);
   const [regions, setRegions] = useState([]);
   const [query, setQuery] = useState();
@@ -32,10 +32,10 @@ function PartnerGallery() {
   }, []);
 
   useEffect(() => {
-    if (isPartner || isAdmin) {
+    if (isPartner || isAdmin || isGuest) {
       setPageLoaded(true);
     }
-  }, [isPartner, isAdmin]);
+  }, [isPartner, isAdmin, isGuest]);
 
   const getFilterdPartners = () =>
     partners.filter((partner) => {
@@ -57,7 +57,7 @@ function PartnerGallery() {
     });
 
   // Add some kind of error 403 code
-  return !isPartner && !isAdmin ? (
+  return !isPartner && !isAdmin && !isGuest ? (
     <Result
       status="403"
       title="403"

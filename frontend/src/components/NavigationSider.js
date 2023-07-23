@@ -11,6 +11,7 @@ import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
 import "components/css/Navigation.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { css } from "@emotion/css";
+import { getRole } from "utils/auth.service";
 
 const { Sider } = Layout;
 
@@ -19,7 +20,7 @@ function NavigationSider() {
   const history = useHistory();
   const collapsed = useSelector((state) => state.user.collapsed);
   const dispatch = useDispatch();
-  const { role } = useSelector((state) => state.user);
+  const role = getRole();
   const sidebarItems = useSidebars(role, t);
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   const currentPage = [history.location.pathname.split("/")[1]];
@@ -39,6 +40,8 @@ function NavigationSider() {
         return "/mentee-appointments";
       case ACCOUNT_TYPE.PARTNER:
         return "/partner-gallery";
+      case ACCOUNT_TYPE.GUEST:
+        return "/gallery";
       default:
         return "/";
     }

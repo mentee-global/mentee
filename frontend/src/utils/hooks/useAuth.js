@@ -35,6 +35,7 @@ function useProvideAuth() {
     isMentor: false,
     isMentee: false,
     isPartner: false,
+    isGuest: false,
   });
 
   const [profileId, setProfileId] = useState();
@@ -49,6 +50,7 @@ function useProvideAuth() {
       isMentor: false,
       isMentee: false,
       isPartner: false,
+      isGuest: false,
     });
     setProfileId(null);
     localStorage.removeItem("profileId");
@@ -73,6 +75,7 @@ function useProvideAuth() {
             isMentor: `${role}` === `${ACCOUNT_TYPE.MENTOR}`,
             isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
             isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
+            isGuest: `${role}` === `${ACCOUNT_TYPE.GUEST}`,
           });
 
           Promise.resolve(idTokenResult).then(onAuthUpdate);
@@ -89,6 +92,7 @@ function useProvideAuth() {
     isMentor: roleState.isMentor,
     isMentee: roleState.isMentee,
     isPartner: roleState.isPartner,
+    isGuest: roleState.isGuest,
     profileId: profileId,
     resetRoleState,
     onAuthUpdate,

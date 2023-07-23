@@ -51,7 +51,7 @@ function PublicProfile({ match }) {
             mentor={account}
             id={id}
             handleUpdateAccount={handleUpdateAccount}
-            accountType={accountType}
+            accountType={parseInt(accountType)}
           />
         </div>
         {accountType != ACCOUNT_TYPE.PARTNER && (

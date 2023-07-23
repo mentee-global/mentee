@@ -597,16 +597,24 @@ export const adminUploadEmails = (file, password, isMentor) => {
   );
 };
 
-export const adminUploadEmailsText = (messageText, role) => {
+export const adminUploadEmailsText = (
+  messageText,
+  role,
+  password = null,
+  name = null
+) => {
   const requestExtension = "/upload/accountsEmails";
   let formData = new FormData();
   formData.append("messageText", messageText);
   formData.append("role", role);
+  formData.append("password", password);
+  formData.append("name", name);
 
   return authPost(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);
+      return err;
     }
   );
 };

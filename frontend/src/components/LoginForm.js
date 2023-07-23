@@ -5,11 +5,7 @@ import { css } from "@emotion/css";
 import { useTranslation } from "react-i18next";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
-import {
-  checkProfileExists,
-  checkStatusByEmail,
-  isHaveAccount,
-} from "utils/api";
+import { checkProfileExists, checkStatusByEmail } from "utils/api";
 import { login, sendVerificationEmail } from "utils/auth.service";
 import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS, REDIRECTS } from "utils/consts";
 import fireauth from "utils/fireauth";
@@ -74,16 +70,15 @@ function LoginForm({ role, defaultEmail }) {
       unsubscribe();
       if (!user) return;
       if (res.result.redirectToVerify) {
+        message.info(t("verifyEmail.body"));
         await sendVerificationEmail(email);
-        messageApi.success(t("verifyEmail.body"));
-      } else {
-        dispatch(
-          fetchUser({
-            id: res.result.profileId,
-            role,
-          })
-        );
       }
+      dispatch(
+        fetchUser({
+          id: res.result.profileId,
+          role,
+        })
+      );
     });
   };
 

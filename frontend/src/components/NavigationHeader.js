@@ -35,23 +35,29 @@ function NavigationHeader() {
     });
   };
 
-  const dropdownMenu = [
-    {
-      key: "edit-profile",
-      label: (
-        <span onClick={() => history.push("/profile")}>
-          {t("navHeader.editProfile")}
-        </span>
-      ),
-    },
-    {
-      type: "divider",
-    },
-    {
+  const getDropdownMenuItems = () => {
+    const renderEdit =
+      role !== ACCOUNT_TYPE.ADMIN && role !== ACCOUNT_TYPE.GUEST;
+    const items = [];
+    if (renderEdit) {
+      items.push({
+        key: "edit-profile",
+        label: (
+          <span onClick={() => history.push("/profile")}>
+            {t("navHeader.editProfile")}
+          </span>
+        ),
+      });
+      items.push({
+        type: "divider",
+      });
+    }
+    items.push({
       key: "sign-out",
       label: <span onClick={() => logoutUser()}>{t("common.logout")}</span>,
-    },
-  ];
+    });
+    return items;
+  };
 
   // TODO: Add a proper admin notifications dropdown
   return (
@@ -66,7 +72,7 @@ function NavigationHeader() {
         {role !== ACCOUNT_TYPE.GUEST && <NotificationBell />}
         <Dropdown
           menu={{
-            items: dropdownMenu,
+            items: getDropdownMenuItems(),
           }}
           onOpenChange={() => setOpenDropdown(!openDropdown)}
           open={openDropdown}

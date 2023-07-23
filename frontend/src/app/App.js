@@ -159,7 +159,6 @@ function App() {
             </PrivateRoute>
           </Content>
         </Layout>
-        <FloatButton.BackTop />
       </Router>
     </ConfigProvider>
   );

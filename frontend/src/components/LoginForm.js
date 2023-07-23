@@ -79,14 +79,9 @@ function LoginForm({ role, defaultEmail }) {
           role,
         })
       );
+      history.push(REDIRECTS[role]);
     });
   };
-
-  useEffect(() => {
-    if (user) {
-      history.push(REDIRECTS[role]);
-    }
-  }, [user]);
 
   const onFinishFailed = (errorInfo) => {
     // console.log("Failed:", errorInfo);

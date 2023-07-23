@@ -53,6 +53,7 @@ function NavigationHeader() {
     },
   ];
 
+  // TODO: Add a proper admin notifications dropdown
   return (
     <Header
       className="navigation-header"
@@ -62,7 +63,7 @@ function NavigationHeader() {
       {isMobile && <MenuFoldOutlined onClick={() => dispatch(collapse())} />}
       <div style={{ flex: "1 1 0%" }} />
       <Space size="middle" style={{ lineHeight: "100%" }}>
-        <NotificationBell />
+        {role !== ACCOUNT_TYPE.GUEST && <NotificationBell />}
         <Dropdown
           menu={{
             items: dropdownMenu,

@@ -184,7 +184,7 @@ export default function useSidebars(userType, t) {
     },
     {
       label: "Trainings",
-      key: "trainings",
+      key: "admin-training",
       icon: <VideoCameraOutlined />,
     },
     {

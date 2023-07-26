@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Card } from "antd";
+import { Avatar, Card, theme } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import Meta from "antd/lib/card/Meta";
 import { updateNotificationsCount } from "features/notificationsSlice";
@@ -8,14 +8,23 @@ import { useHistory } from "react-router";
 import { fetchAccountById } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useMediaQuery } from "react-responsive";
+import { css } from "@emotion/css";
 
 function MessageCard(props) {
+  const { active } = props;
+  const {
+    token: {
+      colorPrimaryBg,
+      colorPrimaryBorder,
+      colorBorderSecondary,
+      colorPrimary,
+    },
+  } = theme.useToken();
   const history = useHistory();
   const dispatch = useDispatch();
   const thisUserId = useSelector((state) => state.user.user?._id?.$oid);
   const { latestMessage, otherName, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
-  const name = `message-${props.active ? "active-" : ""}card`;
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
 
   const openMessage = () => {
@@ -72,19 +81,51 @@ function MessageCard(props) {
     }
   }, []);
 
+  const activeCardStyle = css`
+    background: ${colorPrimaryBg};
+    border: 1px solid ${colorPrimaryBorder};
+
+    :hover {
+      background: ${colorPrimaryBg};
+    }
+  `;
   return (
-    <Card onClick={openMessage} className={name}>
+    <Card
+      onClick={openMessage}
+      className={css`
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 3%;
+        border: 1px solid "#e8e8e8";
+        box-sizing: border-box;
+        border-radius: 7px;
+
+        :hover {
+          background-color: ${colorBorderSecondary};
+          border-color: ${colorPrimaryBorder};
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        ${active && activeCardStyle}
+      `}
+    >
       {accountData ? (
-        <div>
+        <div
+          className={
+            active &&
+            css`
+              div {
+                color: ${colorPrimary} !important;
+              }
+            `
+          }
+        >
           <Meta
             avatar={<Avatar src={accountData.image?.url} />}
-            title={<div className="message-card-title">{accountData.name}</div>}
-            description={
-              <div className="message-card-description">
-                {latestMessage.body}
-              </div>
-            }
-            style={{ color: "white" }}
+            title={accountData.name}
+            description={latestMessage.body}
           />
         </div>
       ) : null}

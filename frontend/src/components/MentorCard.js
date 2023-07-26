@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Button, Rate, Tooltip } from "antd";
+import { Avatar, Typography, Button, Rate, Tooltip, theme } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -18,8 +18,9 @@ import MenteeButton from "./MenteeButton";
 import "./css/Gallery.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
+import { css } from "@emotion/css";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const styles = {
   title: {
@@ -43,8 +44,11 @@ const styles = {
 };
 
 function MentorCard(props) {
+  const {
+    token: { colorPrimary, colorPrimaryBg },
+  } = theme.useToken();
   const { t } = useTranslation();
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const { isMentee } = useAuth();
   const [favorite, setFavorite] = useState(props.favorite);
   function getImage(image) {
     if (!image) {
@@ -68,7 +72,17 @@ function MentorCard(props) {
   }
 
   return (
-    <div className="gallery-partner-card">
+    <div
+      className={css`
+        background-color: white;
+        border: 2px solid ${colorPrimaryBg};
+        border-radius: 8px;
+        position: relative;
+        height: 35em;
+        padding: 20px;
+        padding-top: 0px;
+      `}
+    >
       <div className="gallery-card-body">
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
@@ -99,24 +113,34 @@ function MentorCard(props) {
           {props.lesson_types}
         </h3>
         {props.location && (
-          <div className="gallery-info-section">
-            <h3 className="gallery-headers">
-              <EnvironmentOutlined style={styles.icon} />
-              {t("commonProfile.location")}
-            </h3>
-            <Text className="gallery-list-items">
-              {truncate(props.location, 30)}
-            </Text>
-          </div>
+          <Typography>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
+            >
+              {t("commonProfile.location")} <EnvironmentOutlined />
+            </Title>
+            <Paragraph>{props.location}</Paragraph>
+          </Typography>
         )}
-        <h3 className="gallery-headers">
-          <StarOutlined style={styles.icon} />
-          {t("common.specializations")}:
-        </h3>
-        <Text className="gallery-list-items">
-          {truncate(props.specializations.join(", "), 60)}
-        </Text>
-        {props.website && (
+        <Typography>
+          <Title
+            level={5}
+            className={css`
+              margin-top: 0;
+              color: ${colorPrimary} !important;
+            `}
+          >
+            {t("common.specializations")} <StarOutlined />
+          </Title>
+          <Paragraph>
+            {truncate(props.specializations.join(", "), 60)}
+          </Paragraph>
+        </Typography>
+        {/* {props.website && (
           <h4 className="gallery-info-section">
             <LinkOutlined style={styles.icon} />
             <a
@@ -141,7 +165,7 @@ function MentorCard(props) {
               {t("commonProfile.linkedin")}
             </a>
           </h4>
-        )}
+        )} */}
         {props.video && props.video.url && (
           <h4 className="gallery-info-section">
             <YoutubeOutlined style={styles.icon} />
@@ -156,17 +180,24 @@ function MentorCard(props) {
           </h4>
         )}
         {props.pair_partner && props.pair_partner.email && (
-          <>
-            <h3 className="gallery-headers">{t("common.partner")}:</h3>
-            <Avatar
-              size={45}
-              src={props.pair_partner.image && props.pair_partner.image.url}
-              icon={<UserOutlined />}
-            />
-            <label style={{ marginLeft: "10px" }}>
+          <Typography>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
+            >
+              {t("common.partner")}
+            </Title>
+            <Paragraph>
+              <Avatar
+                src={props.pair_partner.image && props.pair_partner.image.url}
+                icon={<UserOutlined />}
+              />{" "}
               {props.pair_partner.organization}
-            </label>
-          </>
+            </Paragraph>
+          </Typography>
         )}
       </div>
       <div className="gallery-card-footer">

@@ -6,15 +6,20 @@ import * as serviceWorker from "utils/serviceWorker";
 import { Provider } from "react-redux";
 import store from "./app/store";
 import moment from "moment";
+import dayjs from "dayjs";
 import "moment/locale/es";
 import "moment/locale/ar";
 import "moment/locale/fa";
 import "moment/locale/pt";
+import "dayjs/locale/es";
+import "dayjs/locale/ar";
+import "dayjs/locale/fa";
+import "dayjs/locale/pt";
 import i18n from "utils/i18n";
 import { ProvideAuth } from "utils/hooks/useAuth";
-import { ConfigProvider } from "antd";
 
 moment.locale(i18n.language);
+dayjs.locale(i18n.language);
 
 ReactDOM.render(
   <React.StrictMode>

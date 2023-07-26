@@ -39,7 +39,7 @@ function HomeLayout({ children, ignoreHomeLayout, location }) {
               126deg,
               rgba(247, 121, 125, 0.3),
               rgba(251, 216, 134, 0.3),
-              rgba(198, 255, 221, 0.3)
+              rgba(246, 79, 89, 0.3)
             );
             background-size: 400% 400%;
             -webkit-animation: Gradient 7s ease infinite;
@@ -117,10 +117,10 @@ function HomeLayout({ children, ignoreHomeLayout, location }) {
               width: 100%;
               height: 100%;
               background: #c6ffdd;
-              background: linear-gradient(126deg, #f7797d, #fbd786, #c6ffdd);
+              background: linear-gradient(126deg, #f7797d, #fbd786, #f64f59);
               background-size: 400% 400%;
-              -webkit-animation: Gradient 7s ease infinite;
-              animation: Gradient 7s ease infinite;
+              -webkit-animation: Gradient 15s ease infinite;
+              animation: Gradient 15s ease infinite;
 
               @keyframes Gradient {
                 0% {

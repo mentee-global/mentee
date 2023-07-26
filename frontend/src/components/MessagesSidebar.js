@@ -9,14 +9,6 @@ function MessagesSidebar(props) {
   const { t } = useTranslation();
   const { Sider } = Layout;
   const [searchQuery, setSearchQuery] = useState("");
-
-  const styles = {
-    searchInput: {
-      borderRadius: 10,
-      marginBottom: 5,
-      backgroundColor: "white",
-    },
-  };
   const { latestConvos, activeMessageId, restrictedPartners, user } = props;
   var side_data = [];
   if (user && user.pair_partner && user.pair_partner.restricted) {

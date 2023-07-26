@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { fetchPartners } from "../../utils/api";
-import { Input, Checkbox, Modal, Result, Spin } from "antd";
+import {
+  Input,
+  Checkbox,
+  Modal,
+  Result,
+  Spin,
+  FloatButton,
+  Affix,
+  Select,
+  Typography,
+  theme,
+  Button,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
@@ -8,8 +20,14 @@ import { useAuth } from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
 import { getRegions, getSDGs } from "utils/consts";
 import { useTranslation } from "react-i18next";
+import { css } from "@emotion/css";
+
+const { Title } = Typography;
 
 function PartnerGallery() {
+  const {
+    token: { colorPrimaryBg },
+  } = theme.useToken();
   const { t } = useTranslation();
   const { isAdmin, isPartner, isGuest } = useAuth();
   const [partners, setPartners] = useState([]);
@@ -56,6 +74,60 @@ function PartnerGallery() {
       );
     });
 
+  const getFilterForm = () => (
+    <>
+      <Title
+        level={4}
+        className={css`
+          margin-top: 0;
+        `}
+      >
+        {t("gallery.organization")}
+      </Title>
+      <Input
+        placeholder={t("gallery.organizationPlaceholder")}
+        prefix={<SearchOutlined />}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <Title level={4}>{t("gallery.regions")}</Title>
+      <Select
+        placeholder={t("gallery.regions")}
+        onChange={(value) => {
+          setRegions(value);
+        }}
+        options={getRegions(t)}
+        className={css`
+          width: 100%;
+        `}
+        allowClear
+        mode="multiple"
+        maxTagCount="responsive"
+      />
+      <Title level={4}>{t("gallery.projectTopics")}</Title>
+      <Input
+        className={css`
+          width: 100%;
+        `}
+        placeholder={t("gallery.projectTopicsPlaceholder")}
+        allowClear
+        onChange={(e) => setQuery2(e.target.value)}
+        prefix={<SearchOutlined />}
+      />
+      <Title level={4}>{t("gallery.sdgs")}</Title>
+      <Select
+        className={css`
+          width: 100%;
+        `}
+        placeholder={t("gallery.sdgs")}
+        allowClear
+        mode="multiple"
+        options={getSDGs(t)}
+        onChange={(selected) => setSdgs(selected)}
+        maxTagCount="responsive"
+      />
+    </>
+  );
+
   // Add some kind of error 403 code
   return !isPartner && !isAdmin && !isGuest ? (
     <Result
@@ -65,127 +137,79 @@ function PartnerGallery() {
     />
   ) : (
     <>
-      <MenteeButton
-        onClick={() => setMobileFilterVisible(true)}
-        content={t("gallery.filter")}
-        id="filter-button"
-      />
+      <Affix offsetTop={10}>
+        <Button
+          onClick={() => setMobileFilterVisible(true)}
+          className={css`
+            display: none;
+            @media only screen and (max-width: 640px) {
+              margin-top: 2%;
+              margin-left: 2%;
+              display: grid;
+            }
+          `}
+          type="primary"
+        >
+          {t("gallery.filter")}
+        </Button>
+      </Affix>
       <Modal
         onCancel={() => {
           setMobileFilterVisible(false);
         }}
         open={mobileFilterVisible}
         footer={[
-          <MenteeButton
-            content={t("common.apply")}
-            key="apply"
-            onClick={() => setMobileFilterVisible(false)}
-          />,
-          <MenteeButton
-            content={t("common.cancel")}
-            key="cancel"
+          <Button type="primary" onClick={() => setMobileFilterVisible(false)}>
+            {t("common.apply")}
+          </Button>,
+          <Button
             onClick={() => {
               setMobileFilterVisible(false);
               setRegions([]);
               setQuery("");
             }}
-          />,
+          >
+            {t("common.cancel")}
+          </Button>,
         ]}
       >
-        <div className="no-margin gallery-filter-container">
-          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
-          <div className="gallery-filter-section-title">
-            {t("gallery.organization")}{" "}
-          </div>
-          <Input
-            placeholder={t("gallery.organizationPlaceholder")}
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-
-          <div className="gallery-filter-section-title">
-            {t("gallery.regions")}
-          </div>
-          <Checkbox.Group
-            defaultValue={regions}
-            options={getRegions(t)}
-            onChange={(checked) => setRegions(checked)}
-            value={regions}
-          />
-          <div className="gallery-filter-section-title">
-            {t("gallery.projectTopics")}
-          </div>
-          <Input
-            placeholder={t("gallery.projectTopicsPlaceholder")}
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            value={query2}
-            onChange={(e) => setQuery2(e.target.value)}
-          />
-          <div className="gallery-filter-section-title">
-            {t("gallery.sdgs")}
-          </div>
-          <Checkbox.Group
-            defaultValue={sdgs}
-            options={getSDGs(t)}
-            onChange={(checked) => setSdgs(checked)}
-            value={sdgs}
-          />
-        </div>
+        {getFilterForm()}
       </Modal>
 
       <div className="gallery-container">
-        <div className="gallery-filter-container mobile-invisible">
-          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
-          <div className="gallery-filter-section-title">
-            {t("gallery.organization")}
+        <FloatButton.BackTop />
+        <Affix offsetTop={10}>
+          <div
+            className={css`
+              margin-right: 1em;
+              padding: 1em;
+              border-radius: 8px;
+              height: fit-content;
+              border: 2px solid ${colorPrimaryBg};
+              @media only screen and (max-width: 640px) {
+                display: none;
+              }
+            `}
+          >
+            {getFilterForm()}
           </div>
-          <Input
-            placeholder={t("gallery.organizationPlaceholder")}
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+        </Affix>
 
-          <div className="gallery-filter-section-title">
-            {t("gallery.regions")}
+        {!pageLoaded ? (
+          <div
+            className={css`
+              display: flex;
+              flex: 1;
+              justify-content: center;
+              align-items: center;
+              height: 80vh;
+            `}
+          >
+            <Spin size="large" loading />
           </div>
-          <Checkbox.Group
-            defaultValue={regions}
-            options={getRegions(t)}
-            onChange={(checked) => setRegions(checked)}
-          />
-          <div className="gallery-filter-section-title">
-            {t("gallery.projectTopics")}
-          </div>
-          <Input
-            placeholder={t("gallery.projectTopicsPlaceholder")}
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            value={query2}
-            onChange={(e) => setQuery2(e.target.value)}
-          />
-          <div className="gallery-filter-section-title">
-            {t("gallery.sdgs")}
-          </div>
-          <Checkbox.Group
-            defaultValue={sdgs}
-            options={getSDGs(t)}
-            onChange={(checked) => setSdgs(checked)}
-            value={sdgs}
-          />
-        </div>
-
-        <div className="gallery-mentor-container">
-          {!pageLoaded ? (
-            <div className="loadingIcon">
-              {" "}
-              <Spin />{" "}
-            </div>
-          ) : (
-            getFilterdPartners().map((partner, key) => (
+        ) : (
+          <div className="gallery-mentor-container">
+            {getFilterdPartners().map((partner, key) => (
               <PartnerCard
                 key={key}
                 organization={partner.organization}
@@ -199,9 +223,9 @@ function PartnerGallery() {
                 firebase_uid={partner.firebase_uid}
                 image={partner.image}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

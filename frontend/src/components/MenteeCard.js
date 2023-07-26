@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Button, Rate, Tooltip } from "antd";
+import { Avatar, Typography, Button, Rate, Tooltip, theme } from "antd";
 import {
   EnvironmentOutlined,
   UserOutlined,
   MessageOutlined,
   YoutubeOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
 
 import MenteeButton from "./MenteeButton";
@@ -13,7 +14,8 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import "./css/Gallery.scss";
 import { formatLinkForHref } from "utils/misc";
 import { useTranslation } from "react-i18next";
-const { Title, Text } = Typography;
+import { css } from "@emotion/css";
+const { Title, Text, Paragraph } = Typography;
 
 const styles = {
   title: {
@@ -37,6 +39,9 @@ const styles = {
 };
 
 function MenteeCard(props) {
+  const {
+    token: { colorPrimary, colorPrimaryBg },
+  } = theme.useToken();
   const { t } = useTranslation();
 
   function getImage(image) {
@@ -56,7 +61,20 @@ function MenteeCard(props) {
   }
 
   return (
-    <div className="gallery-mentor-card">
+    <div
+      className={css`
+        background-color: white;
+        border: 2px solid ${colorPrimaryBg};
+        border-radius: 8px;
+        position: relative;
+        height: 27em;
+        padding: 20px;
+        padding-top: 0px;
+        :hover {
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        }
+      `}
+    >
       <div className="gallery-card-body">
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
@@ -71,21 +89,34 @@ function MenteeCard(props) {
         </div>
         {props.location && (
           <div className="gallery-info-section">
-            <h3 className="mentee-gallery-headers">
-              <EnvironmentOutlined style={styles.icon} />
-              {t("commonProfile.location")}:
-            </h3>
-            <Text className="gallery-list-items">{props.location}</Text>
+            <Typography>
+              <Title
+                level={5}
+                className={css`
+                  margin-top: 0;
+                  color: ${colorPrimary} !important;
+                `}
+              >
+                {t("commonProfile.location")} <EnvironmentOutlined />
+              </Title>
+              <Paragraph>{props.location}</Paragraph>
+            </Typography>
           </div>
         )}
-        <h3 className="mentee-gallery-headers">
-          <MessageOutlined style={styles.icon} />
-          {t("common.languages")}:
-        </h3>
-        <Text className="gallery-list-items">
-          {truncate(props.languages.join(", "), 30)}
-        </Text>
-        {props.video && props.video.url && (
+        <Typography>
+          <Title
+            level={5}
+            className={css`
+              margin-top: 0;
+              color: ${colorPrimary} !important;
+            `}
+          >
+            {t("common.languages")} <GlobalOutlined />
+          </Title>
+          <Paragraph> {truncate(props.languages.join(", "), 30)}</Paragraph>
+        </Typography>
+        {/* TODO: Potentionally remove this for Mentees? */}
+        {/* {props.video && props.video.url && (
           <h4 className="gallery-info-section">
             <YoutubeOutlined style={styles.icon} />
             <a
@@ -97,25 +128,39 @@ function MenteeCard(props) {
               {props.video.title}
             </a>
           </h4>
-        )}
+        )} */}
         {props.pair_partner && props.pair_partner.email && (
-          <>
-            <h3 className="gallery-headers">{t("common.partner")}:</h3>
-            <Avatar
-              size={45}
-              src={props.pair_partner.image && props.pair_partner.image.url}
-              icon={<UserOutlined />}
-            />
-            <label style={{ marginLeft: "10px" }}>
+          <Typography>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
+            >
+              {t("common.partner")}
+            </Title>
+            <Paragraph>
+              <Avatar
+                src={props.pair_partner.image && props.pair_partner.image.url}
+                icon={<UserOutlined />}
+              />{" "}
               {props.pair_partner.organization}
-            </label>
-          </>
+            </Paragraph>
+          </Typography>
         )}
       </div>
-      <div className="gallery-card-footer">
+      <div
+        className={css`
+          border-top: 3px solid ${colorPrimary};
+          position: absolute;
+          bottom: -5px;
+          width: 90%;
+        `}
+      >
         <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>
           <div className="gallery-button">
-            <MenteeButton content={t("gallery.viewProfile")} />
+            <Button type="primary">{t("gallery.viewProfile")}</Button>
           </div>
         </NavLink>
       </div>

@@ -60,9 +60,10 @@ function App() {
   return (
     <ConfigProvider
       locale={antdLocale}
+      // TODO: Move this to a theme file
       theme={{
         token: {
-          colorPrimary: "#e4bb4f",
+          colorPrimary: "#800020",
           colorBgLayout: "#ffffff",
         },
       }}

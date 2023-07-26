@@ -56,36 +56,6 @@
   height: 89px;
 }
 
-.message-card {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 3%;
-  border: 1px solid #e8e8e8;
-  box-sizing: border-box;
-  border-radius: 7px;
-}
-
-.message-card:hover {
-  background-color: #e8e8e8;
-  cursor: pointer;
-}
-
-.message-active-card {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 3%;
-  background: rgba(249, 220, 132, 0.3);
-  border: 1px solid #f9dc84;
-  box-sizing: border-box;
-  border-radius: 7px;
-}
-
-.message-card-description {
-  color: #707c97;
-}
-
 .messages-search-input {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -170,16 +140,17 @@
 }
 
 .bubble-received {
-  background-color: #f4f5f9;
+  
   color: #323e4a;
   padding: 5px 15px;
   border-radius: 5px;
   max-width: 300px;
   margin-left: 8px;
   width: fit-content;
+  overflow-wrap: break-word;
   float: left;
   clear: left;
-  overflow-wrap: break-word;
+  background-color: #f4f5f9;
 }
 
 .convo {
@@ -188,15 +159,16 @@
 }
 
 .bubble-sent {
-  background-color: rgba(228, 187, 79, 0.4);
+  
   color: #323e4a;
   padding: 5px 15px;
   border-radius: 5px;
   max-width: 300px;
-  float: right;
   width: fit-content;
-  clear: right;
   overflow-wrap: break-word;
+  float: right;
+  clear: right;
+  background-color: rgba(228, 187, 79, 0.4);
 }
 
 .chatRight__items > .chatRight__inner {
@@ -230,25 +202,6 @@
   padding-left: 10px;
 }
 
-.send-message-button,
-.send-message-button:focus,
-.send-message-button-focus {
-  background: $mentee-button-regular;
-  border-color: $mentee-button-regular;
-  color: white;
-  margin-left: 12px;
-}
-
-.send-message-button:hover,
-.send-message-button:active,
-.send-message-button-focus:focus,
-.send-message-button-focus:hover,
-.send-message-button-focus:active {
-  background: $mentee-button-regular;
-  border-color: white;
-  color: white;
-  margin-left: 12px;
-}
 .search-mentor-input {
   width: 300px;
   border-radius: 5px;

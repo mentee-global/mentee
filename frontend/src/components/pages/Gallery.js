@@ -131,12 +131,6 @@ function Gallery() {
   }, []);
 
   useEffect(() => {
-    if (isMentor || isAdmin || isGuest) {
-      setPageLoaded(true);
-    }
-  }, [isMentor, isAdmin, isGuest]);
-
-  useEffect(() => {
     async function getMentee() {
       const mentee_id = profileId;
       const mentee_data = await fetchMenteeByID(mentee_id);
@@ -156,7 +150,6 @@ function Gallery() {
         fav_set.add(id);
       });
       setFavoriteMentorIds(fav_set);
-      setPageLoaded(true);
     }
     if (isMentee && mentee) {
       initializeFavorites();

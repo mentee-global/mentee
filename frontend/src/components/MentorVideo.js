@@ -38,7 +38,7 @@ const MentorVideo = ({
             className="pin-button"
             disabled={id === 0}
             onClick={() => onPin(id)}
-            style={id === 0 ? { background: "#F2C94C" } : {}}
+            style={id === 0 ? { background: "#800020", color: "white" } : {}}
           >
             <PushpinOutlined />
           </button>
@@ -53,9 +53,7 @@ const MentorVideo = ({
         />
 
         <Button
-          icon={
-            <DeleteOutlined style={{ fontSize: "24px", color: "#957520" }} />
-          }
+          icon={<DeleteOutlined style={{ fontSize: "24px" }} />}
           style={{ ...styles.interactionVideo, left: "78%" }}
           type="text"
           onClick={() => onDelete(video)}

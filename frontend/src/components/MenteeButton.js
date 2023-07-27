@@ -15,16 +15,15 @@ function MenteeButton(props) {
 
   return (
     <Button
-      className={`${getButtonClass(props.theme, props.borderOnClick)} ${
-        props.className
-      }`}
+      className={`${props.className}`}
+      type="primary"
       disabled={props.disabled ?? false}
       loading={props.loading ?? false}
       style={{
         ...props.style,
         width: props.width,
         height: props.height,
-        borderRadius: props.radius ?? "13px",
+        borderRadius: props.radius,
         border: props.border,
       }}
       onClick={props.onClick}

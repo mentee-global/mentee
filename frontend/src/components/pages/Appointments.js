@@ -13,6 +13,7 @@ import {
   DatePicker,
   notification,
   Spin,
+  theme,
 } from "antd";
 import {
   ClockCircleOutlined,
@@ -49,6 +50,14 @@ const Tabs = Object.freeze({
 });
 
 function Appointments() {
+  const {
+    token: {
+      colorPrimaryBg,
+      colorPrimaryBorder,
+      colorBorderSecondary,
+      colorPrimary,
+    },
+  } = theme.useToken();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
@@ -248,19 +257,19 @@ function Appointments() {
     setAppointmentClick(!appointmentClick);
     setModalVisible(false);
   }
+  // TODO: Swap this to emotion styled components
   const getButtonStyle = (tab) => {
-    const active = "#E4BB4F";
-    const inactive = "#FFECBD";
+    const active = colorPrimary;
+    const inactive = "white";
     return {
       borderRadius: 13,
       marginRight: 15,
-      borderWidth: 0,
       backgroundColor: currentTab === tab ? active : inactive,
     };
   };
   const getButtonTextStyle = (tab) => {
-    const active = "#FFF7E2";
-    const inactive = "#A58123";
+    const active = "white";
+    const inactive = colorPrimary;
     return {
       fontWeight: 700,
       color: currentTab === tab ? active : inactive,
@@ -270,7 +279,7 @@ function Appointments() {
     if (props.text === "All Pending") {
       return (
         <Button
-          type="default"
+          type="primary"
           shape="round"
           style={getButtonStyle(props.tab)}
           onClick={() => setCurrentTab(props.tab)}
@@ -300,7 +309,7 @@ function Appointments() {
           className="appointment-more-details"
           icon={
             <InfoCircleFilled
-              style={{ ...styles.appointment_buttons, color: "#A58123" }}
+              style={{ ...styles.appointment_buttons, color: colorPrimary }}
             />
           }
           type="text"
@@ -366,7 +375,7 @@ function Appointments() {
       return (
         <div className="empty-appointments-list appointments-background">
           <Result
-            icon={<SmileOutlined style={{ color: "#A58123" }} />}
+            icon={<SmileOutlined />}
             title={t("mentorAppointmentPage.noAppointments")}
           />
         </div>
@@ -448,7 +457,7 @@ function Appointments() {
               onClick={() => {
                 setManualModalvisible(true);
               }}
-            ></MenteeButton>
+            />
           </div>
           <div className="appointments-tabs">
             {Object.keys(tabTitles).map((tab, index) => (

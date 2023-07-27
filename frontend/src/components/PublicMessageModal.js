@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Modal, message } from "antd";
+import { Button, Form, Modal, message } from "antd";
 import moment from "moment";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -76,13 +76,14 @@ function PublicMessageModal(props) {
 
   return (
     <span>
-      <MenteeButton
-        style={{ fontWeight: "bold" }}
-        content={t("commonProfile.sendMessage")}
+      <Button
+        type="primary"
         onClick={() => {
           setFormModalVisible(true);
         }}
-      />
+      >
+        {t("commonProfile.sendMessage")}
+      </Button>
       <Modal
         forceRender
         title={t("common.message")}
@@ -91,13 +92,9 @@ function PublicMessageModal(props) {
         className="appointment-info-modal"
         style={{ overflow: "hidden" }}
         footer={
-          <MenteeButton
-            width="8em"
-            content={t("common.submit")}
-            htmlType="submit"
-            form="message-form"
-            style={{ justifySelf: "flex-end" }}
-          />
+          <Button type="primary" htmlType="submit" form="message-form">
+            {t("common.submit")}
+          </Button>
         }
       >
         <Form

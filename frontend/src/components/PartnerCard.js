@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Tooltip } from "antd";
+import { Avatar, Typography, Tooltip, theme, Button } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
@@ -17,8 +17,7 @@ import "./css/Gallery.scss";
 import { ACCOUNT_TYPE, getRegions } from "utils/consts";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
-
-const { Title, Text } = Typography;
+import { css } from "@emotion/css";
 
 const styles = {
   title: {
@@ -41,7 +40,12 @@ const styles = {
   },
 };
 
+const { Title, Text, Paragraph } = Typography;
+
 function PartnerCard(props) {
+  const {
+    token: { colorPrimary, colorPrimaryBg },
+  } = theme.useToken();
   const { t } = useTranslation();
   function getImage(image) {
     if (!image) {
@@ -60,13 +64,26 @@ function PartnerCard(props) {
   }
 
   return (
-    <div className="gallery-partner-card">
+    <div
+      className={css`
+        background-color: white;
+        border: 2px solid ${colorPrimaryBg};
+        border-radius: 8px;
+        position: relative;
+        height: 32em;
+        padding: 20px;
+        padding-top: 0px;
+        :hover {
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        }
+      `}
+    >
       <div className="gallery-card-body">
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
-              {truncate(props.organization, 15)}
+              {truncate(props.organization, 14)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
               {truncate(props.email, 35)}
@@ -75,27 +92,40 @@ function PartnerCard(props) {
         </div>
         {props.location && (
           <div className="gallery-info-section">
-            <h3 className="gallery-headers">
-              <EnvironmentOutlined style={styles.icon} />
-              {t("commonProfile.location")}:
-            </h3>
-            <Text className="gallery-list-items">
-              {truncate(props.location, 45)}
-            </Text>
+            <Typography>
+              <Title
+                level={5}
+                className={css`
+                  margin-top: 0;
+                  color: ${colorPrimary} !important;
+                `}
+              >
+                {truncate(t("commonProfile.location"), 37)}{" "}
+                <EnvironmentOutlined />
+              </Title>
+              <Paragraph>{props.location}</Paragraph>
+            </Typography>
           </div>
         )}
-        <h3 className="gallery-headers">
-          <StarOutlined style={styles.icon} />
-          {t("gallery.regions")}:
-        </h3>
-        <Text className="gallery-list-items">
-          {truncate(
-            getTranslatedOptions(props.regions, getRegions(t)).join(", "),
-            87
-          )}
-        </Text>
+        <Typography>
+          <Title
+            level={5}
+            className={css`
+              margin-top: 0;
+              color: ${colorPrimary} !important;
+            `}
+          >
+            {t("gallery.regions")} <EnvironmentOutlined />
+          </Title>
+          <Paragraph>
+            {truncate(
+              getTranslatedOptions(props.regions, getRegions(t)).join(", "),
+              37
+            )}
+          </Paragraph>
+        </Typography>
         {props.website && (
-          <h4 className="gallery-info-section">
+          <Paragraph>
             <LinkOutlined style={styles.icon} />
             <a
               className="gallery-links"
@@ -103,12 +133,12 @@ function PartnerCard(props) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {props.website}
+              {truncate(props.website, 37)}
             </a>
-          </h4>
+          </Paragraph>
         )}
         {props.linkedin && (
-          <h4 className="gallery-info-section">
+          <Paragraph>
             <LinkedinOutlined style={styles.icon} />
             <a
               className="gallery-links"
@@ -118,10 +148,10 @@ function PartnerCard(props) {
             >
               {t("commonProfile.linkedin")}
             </a>
-          </h4>
+          </Paragraph>
         )}
         {props.video && props.video.url && (
-          <h4 className="gallery-info-section">
+          <Paragraph>
             <YoutubeOutlined style={styles.icon} />
             <a
               className="gallery-links"
@@ -131,13 +161,20 @@ function PartnerCard(props) {
             >
               {props.video.title}
             </a>
-          </h4>
+          </Paragraph>
         )}
       </div>
-      <div className="gallery-card-footer">
+      <div
+        className={css`
+          border-top: 3px solid ${colorPrimary};
+          position: absolute;
+          bottom: -5px;
+          width: 90%;
+        `}
+      >
         <NavLink to={`/gallery/${ACCOUNT_TYPE.PARTNER}/${props.id}`}>
           <div className="gallery-button">
-            <MenteeButton content={t("gallery.viewProfile")} />
+            <Button type="primary">{t("gallery.viewProfile")}</Button>
           </div>
         </NavLink>
       </div>

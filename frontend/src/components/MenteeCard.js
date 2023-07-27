@@ -15,7 +15,7 @@ import "./css/Gallery.scss";
 import { formatLinkForHref } from "utils/misc";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const styles = {
   title: {

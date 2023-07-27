@@ -323,7 +323,7 @@
 }
 
 .appointment-card {
-  background-color: $appointment-card-background-color;
+  background-color: #bfacae;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -335,7 +335,7 @@
 }
 
 .appointments-background {
-  background: $appointment-background-color;
+  border: 0.5px solid black;
   padding: 46px 13px 48px 20px;
   border-radius: 8px;
   width: auto;
@@ -350,7 +350,6 @@
 
 .appointments-date-text-block {
   font-size: 13px;
-  color: $appointments-date-text-block-color;
   display: block;
   font-weight: bold;
   line-height: 1;
@@ -368,7 +367,6 @@
 
 .appointments-row {
   border-left: solid;
-  border-color: $appointments-row-border-color;
   border-width: 2px;
   width: calc(100% - 100px);
 }
@@ -392,7 +390,6 @@
 }
 .appointment-time,
 .appointment-description {
-  color: $appointments-description;
   line-height: 15px;
 }
 
@@ -457,7 +454,7 @@
 .calendar-header {
   display: flex;
   align-items: center;
-  background-color: $appointment-card-background-color;
+  background-color: #bfacae;
   font-weight: bold;
   padding-left: 1%;
   height: 50px;

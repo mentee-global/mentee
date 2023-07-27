@@ -44,16 +44,11 @@ function PartnerGallery() {
       if (Partner_data) {
         setPartners(Partner_data);
       }
+      setPageLoaded(true);
     }
 
     getPartners();
   }, []);
-
-  useEffect(() => {
-    if (isPartner || isAdmin || isGuest) {
-      setPageLoaded(true);
-    }
-  }, [isPartner, isAdmin, isGuest]);
 
   const getFilterdPartners = () =>
     partners.filter((partner) => {

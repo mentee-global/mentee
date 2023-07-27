@@ -1,6 +1,6 @@
 .video-row {
   display: flex;
-  border-top: solid #ffecbd 1px;
+  border-top: solid black 1px;
   height: 125px;
 }
 
@@ -10,7 +10,6 @@
 }
 
 .video {
-  background: #e5e5e5;
   overflow: hidden;
   border-radius: 8px;
   margin-top: 13px;
@@ -19,7 +18,7 @@
 
 .video-interactions {
   width: 60%;
-  border-left: solid #ffecbd 1px;
+  border-left: solid black 1px;
   position: relative;
 }
 

@@ -81,6 +81,9 @@ function MentorCard(props) {
         height: 35em;
         padding: 20px;
         padding-top: 0px;
+        :hover {
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        }
       `}
     >
       <div className="gallery-card-body">
@@ -108,10 +111,7 @@ function MentorCard(props) {
             </div>
           )}
         </div>
-        <h3 className="gallery-lesson-types">
-          <span className="gallery-dot" />
-          {props.lesson_types}
-        </h3>
+        <h3 className="gallery-lesson-types">{props.lesson_types}</h3>
         {props.location && (
           <Typography>
             <Title
@@ -200,10 +200,17 @@ function MentorCard(props) {
           </Typography>
         )}
       </div>
-      <div className="gallery-card-footer">
+      <div
+        className={css`
+          border-top: 3px solid ${colorPrimary};
+          position: absolute;
+          bottom: -5px;
+          width: 90%;
+        `}
+      >
         <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
           <div className="gallery-button">
-            <MenteeButton content={t("gallery.viewProfile")} />
+            <Button type="primary">{t("gallery.viewProfile")}</Button>
           </div>
         </NavLink>
       </div>

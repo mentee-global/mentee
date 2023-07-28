@@ -189,6 +189,7 @@ function Gallery() {
         placeholder={t("common.languages")}
         options={options.languages}
         onChange={(selected) => setLanguages(selected)}
+        maxTagCount="responsive"
       />
       <Title level={4}>{t("gallery.menteeInterests")}</Title>
       <Select
@@ -201,6 +202,7 @@ function Gallery() {
         placeholder={t("gallery.menteeInterests")}
         options={options.specializations}
         onChange={(selected) => setInterests(selected)}
+        maxTagCount="responsive"
       />
     </>
   );

@@ -243,6 +243,7 @@ function Gallery() {
         placeholder={t("common.languages")}
         options={options.languages}
         onChange={(selected) => setLanguages(selected)}
+        maxTagCount="responsive"
       />
 
       <Title level={4}>{t("common.specializations")}</Title>
@@ -256,6 +257,7 @@ function Gallery() {
         placeholder={t("common.specializations")}
         options={options.specializations}
         onChange={(selected) => setSpecializations(selected)}
+        maxTagCount="responsive"
       />
     </>
   );

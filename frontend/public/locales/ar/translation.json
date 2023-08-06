@@ -452,22 +452,18 @@
     "validatePhone": "الرجاء إدخال رقم هاتف صحيح!"
   },
   "regions": {
-    "Caribbean": "الكاريبي",
-    "Central America": "أمريكا الوسطى",
-    "Central Asia": "آسيا الوسطى",
-    "East Asia": "شرق آسيا",
-    "Europe": "أوروبا",
-    "Middle East": "الشرق الأوسط",
-    "N": {
-      " Africa": "شمال أفريقيا",
-      " America": "أمريكا الشمالية"
-    },
-    "Oceana": "أوقيانوسيا",
-    "S": {
-      " America": "أمريكا الجنوبية"
-    },
-    "South/SE Asia": "جنوب / جنوب شرق آسيا",
-    "Sub-Sahara Africa": "أفريقيا جنوب الصحراء الكبرى"
+    "northAmerica": "أمريكا الشمالية",
+    "caribbean": "جزر الكاريبي",
+    "centralAmerica": "أمريكا الوسطى",
+    "centralAsia": "آسيا الوسطى",
+    "eastAsia": "شرق آسيا",
+    "europe": "أوروبا",
+    "middleEast": "الشرق الأوسط",
+    "northAfrica": "شمال أفريقيا",
+    "oceana": "أوقيانوسيا",
+    "southAmerica": "أمريكا الجنوبية",
+    "southAsia": "جنوب آسيا",
+    "subSaharaAfrica": "أفريقيا جنوب الصحراء الكبرى"
   },
   "sidebars": {
     "appointments": "تعيينات",

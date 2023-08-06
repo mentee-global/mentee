@@ -452,22 +452,18 @@
     "validatePhone": "Por favor, insira um número de telefone válido!"
   },
   "regions": {
-    "Caribbean": "Caribe",
-    "Central America": "América Central",
-    "Central Asia": "Ásia Central",
-    "East Asia": "Ásia Oriental",
-    "Europe": "Europa",
-    "Middle East": "Oriente Médio",
-    "N": {
-      " Africa": "Norte da África",
-      " America": "América do Norte"
-    },
-    "Oceana": "Oceania",
-    "S": {
-      " America": "América do Sul"
-    },
-    "South/SE Asia": "Sul e Sudeste Asiático",
-    "Sub-Sahara Africa": "África Subsaariana"
+    "northAmerica": "América do Norte",
+    "caribbean": "Caribe",
+    "centralAmerica": "América Central",
+    "centralAsia": "Ásia Central",
+    "eastAsia": "Ásia Oriental",
+    "europe": "Europa",
+    "middleEast": "Oriente Médio",
+    "northAfrica": "Norte da África",
+    "oceana": "Oceania",
+    "southAmerica": "América do Sul",
+    "southAsia": "Ásia do Sul",
+    "subSaharaAfrica": "África Subsaariana"
   },
   "sidebars": {
     "appointments": "Compromissos",

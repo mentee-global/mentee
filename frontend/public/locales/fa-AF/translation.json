@@ -452,22 +452,18 @@
     "validatePhone": "لطفا یک شماره تلفن معتبر وارد کنید!"
   },
   "regions": {
-    "Caribbean": "",
-    "Central America": "",
-    "Central Asia": "",
-    "East Asia": "",
-    "Europe": "",
-    "Middle East": "",
-    "N": {
-      " Africa": "",
-      " America": ""
-    },
-    "Oceana": "",
-    "S": {
-      " America": ""
-    },
-    "South/SE Asia": "",
-    "Sub-Sahara Africa": ""
+    "northAmerica": "آمریکای شمالی",
+    "caribbean": "کارائیب",
+    "centralAmerica": "آمریکای مرکزی",
+    "centralAsia": "آسیای مرکزی",
+    "eastAsia": "آسیای شرقی",
+    "europe": "اروپا",
+    "middleEast": "خاورمیانه",
+    "northAfrica": "شمال آفریقا",
+    "oceana": "اقیانوسیه",
+    "southAmerica": "آمریکای جنوبی",
+    "southAsia": "آسیای جنوبی",
+    "subSaharaAfrica": "زیر صحرای آفریقا"
   },
   "sidebars": {
     "appointments": "قرار ملاقات ها",

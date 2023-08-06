@@ -18,14 +18,38 @@
     "SDG8": "SDG 8: Decent Work and Economic Growth",
     "SDG9": "SDG 9: Industry, Innovation and Infrastructures"
   },
+  "ageRanges": {
+    "16-18": "16-18",
+    "19-22": "19-22",
+    "23-25": "23-25",
+    "26-30": "26-30",
+    "30s": "30s",
+    "40s": "40s",
+    "50s": "50s",
+    "60s": "60s",
+    "70s+": "70s+"
+  },
   "apply": {
     "approved": "Your application has been approved continue to training",
+    "buildProfile": "Build Profile",
     "completeTrainings": "I confirm I have completed all trainings",
     "confirmation": "Thank you for applying! Your application will be reviewed and you will be contacted shortly.",
     "emailPrompt": "Please enter your email to start the application process",
+    "error": {
+      "role": "Please select a role"
+    },
     "errorConnection": "Something went wrong check your internet connection",
     "existingAccount": "You Already have account you will be redirect to login page",
-    "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org"
+    "message": {
+      "haveAccount": "You already have an account... redirecting to login"
+    },
+    "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org",
+    "training": "Training"
+  },
+  "appointmentStatus": {
+    "accepted": "accepted",
+    "denied": "denied",
+    "pending": "pending"
   },
   "availability": {
     "addHours": "Add hours",
@@ -38,49 +62,11 @@
     "favoriteContacts": "Favorite Contacts",
     "noFavorites": "No favorited Mentors"
   },
-  "regions": {
-    "N. America": "N. America",
-    "Central America": "Central America",
-    "S. America": "S. America",
-    "Caribbean": "Caribbean",
-    "Europe": "Europe",
-    "Middle East": "Middle East",
-    "N. Africa": "N. Africa",
-    "Sub-Sahara Africa": "Sub-Sahara Africa",
-    "Central Asia": "Central Asia",
-    "East Asia": "East Asia",
-    "South/SE Asia": "South/SE Asia",
-    "Oceana": "Oceana"
-  },
-  "appointmentStatus": {
-    "pending": "pending",
-    "accepted": "accepted",
-    "denied": "denied"
-  },
-  "ageRanges": {
-    "16-18": "16-18",
-    "19-22": "19-22",
-    "23-25": "23-25",
-    "26-30": "26-30",
-    "30s": "30s",
-    "40s": "40s",
-    "50s": "50s",
-    "60s": "60s",
-    "70s+": "70s+"
-  },
-  "verifyEmail": {
-    "header": "Account Verification",
-    "error": "Error, please try again!",
-    "emailResent": "Email resent!",
-    "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",
-    "refresh": "(Refresh this page if you verified your email)",
-    "noEmail": "Didn't receive an email?",
-    "resend": "Resend"
-  },
   "common": {
     "admin": "Admin",
     "apply": "Apply",
     "back": "Back",
+    "bug": "Report a Bug",
     "cancel": "Cancel",
     "clear": "Clear",
     "clearAll": "Clear All",
@@ -90,6 +76,7 @@
     "deny": "Deny",
     "email": "Email",
     "firstName": "First Name",
+    "guest": "Guest",
     "inputPrompt": "Please add input",
     "invalidUrl": "Invalid URL",
     "languages": "Languages",
@@ -98,38 +85,48 @@
     "logout": "Logout",
     "mentee": "Mentee",
     "mentor": "Mentor",
-    "guest": "Guest",
-    "name" : "Name",
     "message": "Message",
     "messages": "Messages",
+    "name": "Name",
+    "no": "No",
     "other": "Other",
     "partner": "Partner",
     "password": "Password",
     "phone": "Phone",
     "phoneNumber": "Phone Number",
     "pleaseSelect": "Please Select",
+    "role": "Role",
     "save": "Save",
     "selectPrompt": "Please select an option",
     "specializations": "Specializations",
     "submit": "Submit",
     "welcome": "Welcome to <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
-    "yes": "Yes",
-    "no": "No",
-    "confirm": "Confirm"
+    "yes": "Yes"
+  },
+  "commonApplication": {
+    "genderIdentification": "What do you identify as?",
+    "lgbtq": "as LGBTQ+",
+    "man": "as a man",
+    "other": "as other",
+    "woman": "as a woman"
   },
   "commonProfile": {
     "accountCreated": "Your account has been created now you can login to Mentee",
     "addMoreEducation": "Add more",
     "addVideos": "Add Videos",
     "biography": "Biography",
+    "confirm": "Confirm",
     "confirmPassword": "Confirm Password",
     "degree": "Degree",
     "degreeExample": "Ex. Bachelor's",
     "delete": "Delete",
-    "confirm": "Confirm",
     "editProfile": "Edit Profile",
     "education": "Education",
+    "error": {
+      "save": "Failed to save profile",
+      "uploadImage": "Failed to upload image"
+    },
     "errorTrainingSteps": "Please complete apply and training steps first",
     "fieldTooLong": "Field is too long",
     "fullName": "Full Name",
@@ -152,6 +149,23 @@
     "videos": "Videos",
     "website": "Website",
     "welcome": "Welcome. Tell us about yourself."
+  },
+  "emailSubjects": {
+    "app_approved": "MENTEE Application Status - Approved",
+    "app_rejected": "Thank you for your interest in MENTEE",
+    "forgot_password": "MENTEE Password Reset",
+    "mentee_app_submit": "MENTEE Application Status",
+    "mentee_appt": "Mentor Appointment Request",
+    "mentor_app_submit": "MENTEE Application Status",
+    "mentor_appt": "Mentee Appointment Request",
+    "mentor_contact_me": "Mentor: A Mentee has requested to contact you",
+    "new_training": "MENTEE! New training materials available",
+    "profile_complete": "MENTEE Profile Completed - Please login",
+    "send_invite": "Mentee Appointment Appointment Invite",
+    "training_complete": "Congratulations for completing the training",
+    "unread_message": "MENTEE: You have received a new Message!",
+    "verify_email": "MENTEE Email Verification",
+    "weekly_notif": "MENTEE: You Have Unread Messages"
   },
   "forgotPassword": {
     "emailResent": "Email resent!",
@@ -179,11 +193,11 @@
     "viewProfile": "View Profile"
   },
   "homepage": {
-    "existingAccountDesc": "PLATFORM LOGIN",
-    "existingAccountTitle": "EXISTING",
+    "existingAccountDesc": "Platform Login",
+    "existingAccountTitle": "Existing",
     "isExistingUser": "Are you a new or existing user?",
-    "newAccountDesc": "APPLY - TRAIN - BUILD",
-    "newAccountTitle": "NEW"
+    "newAccountDesc": "Apply - Train - Build",
+    "newAccountTitle": "New"
   },
   "languages": {
     "ar": "العربية",
@@ -195,20 +209,24 @@
   "login": {
     "apply": "Apply",
     "clickLoginPrompt": "Please click on your role to continue on",
+    "emailPlaceholder": "Enter your email",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
+    "passwordPlaceholder": "Enter your password",
     "resetPassword": "Reset it"
   },
   "loginErrors": {
+    "emailError": "Please enter email",
     "existingEmail": "This email is already in use in another role",
     "incorrectCredentials": "Incorrect username and/or password. Please try again.",
+    "noRole": "Please choose a role",
+    "passwordError": "Please enter password",
     "reregisterAccount": "Please re-register your account.",
     "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
     "serverError": "Something went wrong.",
     "wrongRole": "Wrong role please choose account right role"
   },
   "menteeApplication": {
-    "agePrompt": "Let us know more about you",
     "ageAnswer1": "I am 18-22",
     "ageAnswer2": "I am 23-26",
     "ageAnswer3": "I am 27-30",
@@ -217,9 +235,10 @@
     "ageAnswer6": "I am 41-50",
     "ageAnswer7": "I am 51-60",
     "ageAnswer8": "I am 61 or older",
+    "agePrompt": "Let us know more about you",
     "countryOrigin": "What country are you or your family originally from, if you are a refugee or immigrant?",
     "countryPlaceholder": "Country",
-    "immigrationStatus": "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific.",
+    "genderIdentification": "",
     "immigrantOption1": "I am a refugee",
     "immigrantOption2": "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
     "immigrantOption3": "I am black.",
@@ -228,6 +247,7 @@
     "immigrantOption6": "I identify as LGTBQ.",
     "immigrantOption7": "I have economic hardship.",
     "immigrantOption8": "I come from a country at war.",
+    "immigrationStatus": "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific.",
     "introduction": "We appreciate your interest in becoming part of the MENTEE community! You will gain access to our global mentors and supportive programs. We can't wait to see all you will achieve. Remember, as a mentee you can stay here and actively seek mentorship, learning, and development for life, if you'd like to stay with us that long. :)",
     "languageBackground": "What is your native language?",
     "orgAffiliation": "What organization is supporting you locally or what organization are you affiliated with?",
@@ -239,19 +259,12 @@
     "socialMediaOption2": "No, thank you",
     "submitError": "Something went wrong -- check your email at the top",
     "topicInterests": "What special topics would you be interested in? If one is not on the list please add it in other:",
-    "workOptions": "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific:",
     "workOption1": "I work part-time.",
     "workOption2": "I work full-time.",
     "workOption3": "I attend technical school.",
     "workOption4": "I am a college/university student attaining my first degree.",
-    "workOption5": "I am a college/university students attaining my second or third degree."
-  },
-  "commonApplication": {
-    "genderIdentification": "What do you identify as?",
-    "man": "as a man",
-    "woman": "as a woman",
-    "lgbtq": "as LGBTQ+",
-    "other": "as other"
+    "workOption5": "I am a college/university students attaining my second or third degree.",
+    "workOptions": "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific:"
   },
   "menteeAppointmentModal": {
     "allowCall": "Allow Calls",
@@ -299,17 +312,20 @@
   },
   "mentorApplication": {
     "canDonate": "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?",
-    "yesDonate": "Yes, I can offer a donation now to help support this work!",
-    "laterDonate": "No, unfortunately I cannot offer a donation now but please ask me again.",
-    "noDonate": "I'm unable to offer a donation.",
     "commitDuration": "If you are accepted as a global mentor, would you like to commit to...",
     "commitDuration1": "One years with us",
     "commitDuration2": "Two years with us",
     "commitDuration3": "For as long as you'll have me!",
     "communityStatus": "Are you or your family from a native or aboriginal community?",
+    "duration1": "Less than one year",
+    "duration2": "1-4 years",
+    "duration3": "5-10 years",
+    "duration4": "10-20 years",
+    "duration5": "21+ years",
     "economicBackground": "Did you grow up economically challenged?",
     "employerName": "Full name of your company/employer",
     "filloutPrompt": "Please fill out the application below",
+    "genderIdentification": "",
     "hearAboutUs": "From whom or where did you hear about us?",
     "immigrationStatus": "Are you an immigrant or refugee or do you come from an immigrant family or refugee family?",
     "introduction": "We appreciate your interest in becoming a volunteer Global Mentor for MENTEE, a global nonprofit accelerating personal and professional growth to make the world a better, healthier place.",
@@ -317,16 +333,14 @@
     "isPersonOfColor": "Would you consider yourself of person of color",
     "jobDescription": "Your full title and a brief description of your role",
     "jobDuration": "How long have you been with this company?",
-    "duration1": "Less than one year",
-    "duration2": "1-4 years",
-    "duration3": "5-10 years",
-    "duration4": "10-20 years",
-    "duration5": "21+ years",
     "knowledgeLocation": "Please share which region(s), country(s), state(s), cities your knowledge is based in",
     "languageBackground": "Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)",
+    "laterDonate": "No, unfortunately I cannot offer a donation now but please ask me again.",
+    "noDonate": "I'm unable to offer a donation.",
     "previousLocations": "Where have you lived in your life besides where you live now?",
     "referral": "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!",
-    "submitError": "Something went wrong -- check your email at the top"
+    "submitError": "Something went wrong -- check your email at the top",
+    "yesDonate": "Yes, I can offer a donation now to help support this work!"
   },
   "mentorAppointmentPage": {
     "addAppointment": "Add Appointment",
@@ -437,26 +451,37 @@
     "validateEmail": "Please input a valid email!",
     "validatePhone": "Please input a valid phone number!"
   },
+  "regions": {
+    "Caribbean": "Caribbean",
+    "Central America": "Central America",
+    "Central Asia": "Central Asia",
+    "East Asia": "East Asia",
+    "Europe": "Europe",
+    "Middle East": "Middle East",
+    "N": {
+      " Africa": "",
+      " America": ""
+    },
+    "Oceana": "Oceana",
+    "S": {
+      " America": ""
+    },
+    "South/SE Asia": "South/SE Asia",
+    "Sub-Sahara Africa": "Sub-Sahara Africa"
+  },
   "sidebars": {
     "appointments": "Appointments",
+    "explore": "Explore",
     "profile": "Profile",
     "videos": "Your Videos"
   },
-  "emailSubjects": {
-    "unread_message": "MENTEE: You have received a new Message!",
-    "weekly_notif": "MENTEE: You Have Unread Messages",
-    "new_training": "MENTEE! New training materials available",
-    "mentor_contact_me": "Mentor: A Mentee has requested to contact you",
-    "verify_email": "MENTEE Email Verification",
-    "forgot_password": "MENTEE Password Reset",
-    "send_invite": "Mentee Appointment Appointment Invite",
-    "mentee_appt": "Mentor Appointment Request",
-    "mentor_appt": "Mentee Appointment Request",
-    "mentor_app_submit": "MENTEE Application Status",
-    "mentee_app_submit": "MENTEE Application Status",
-    "app_approved": "MENTEE Application Status - Approved",
-    "training_complete": "Congratulations for completing the training",
-    "app_rejected": "Thank you for your interest in MENTEE",
-    "profile_complete": "MENTEE Profile Completed - Please login"
+  "verifyEmail": {
+    "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",
+    "emailResent": "Email resent!",
+    "error": "Error verifying email, please try again!",
+    "header": "Account Verification",
+    "noEmail": "Didn't receive an email?",
+    "refresh": "(Refresh this page if you verified your email)",
+    "resend": "Resend"
   }
 }

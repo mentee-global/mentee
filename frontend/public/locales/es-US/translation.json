@@ -18,14 +18,38 @@
     "SDG8": "ODS 8: Trabajo decente y crecimiento económico",
     "SDG9": "ODS 9: Industria, innovación e infraestructura"
   },
+  "ageRanges": {
+    "16-18": "16-18",
+    "19-22": "19-22",
+    "23-25": "23-25",
+    "26-30": "26-30",
+    "30s": "30s",
+    "40s": "40s",
+    "50s": "50s",
+    "60s": "60s",
+    "70s+": "70s+"
+  },
   "apply": {
     "approved": "Tu solicitud ha sido aprobada continúa entrenando",
+    "buildProfile": "",
     "completeTrainings": "Confirmo que he completado todos los entrenamientos",
     "confirmation": "¡Gracias por aplicar! ",
     "emailPrompt": "Por favor ingrese su correo electrónico para iniciar el proceso de solicitud",
+    "error": {
+      "role": ""
+    },
     "errorConnection": "Algo salió mal revisa tu conexión a internet",
     "existingAccount": "Ya tiene una cuenta, será redirigido a la página de inicio de sesión",
-    "partnerVerify": "Su correo electrónico no está pre-registrado como Partner. Por favor contacte un administrador al email admin@menteeglobal.org"
+    "message": {
+      "haveAccount": ""
+    },
+    "partnerVerify": "Su correo electrónico no está pre-registrado como Partner. Por favor contacte un administrador al email admin@menteeglobal.org",
+    "training": ""
+  },
+  "appointmentStatus": {
+    "accepted": "aceptado",
+    "denied": "denegado",
+    "pending": "pendiente"
   },
   "availability": {
     "addHours": "Agregar horas",
@@ -38,40 +62,11 @@
     "favoriteContacts": "Contactos favoritos",
     "noFavorites": "No hay mentores favoritos"
   },
-  "regions": {
-    "N. America": "Norteamérica",
-    "Central America": "América Central",
-    "S. America": "Sudamérica",
-    "Caribbean": "Caribe",
-    "Europe": "Europa",
-    "Middle East": "Medio Oriente",
-    "N. Africa": "Norte de África",
-    "Sub-Sahara Africa": "África subsahariana",
-    "Central Asia": "Asia Central",
-    "East Asia": "Asia Oriental",
-    "South/SE Asia": "Asia del Sur/Sureste",
-    "Oceana": "Oceanía"
-  },
-  "appointmentStatus": {
-    "pending": "pendiente",
-    "accepted": "aceptado",
-    "denied": "denegado"
-  },
-  "ageRanges": {
-    "16-18": "16-18",
-    "19-22": "19-22",
-    "23-25": "23-25",
-    "26-30": "26-30",
-    "30s": "30s",
-    "40s": "40s",
-    "50s": "50s",
-    "60s": "60s",
-    "70s+": "70s+"
-  },
   "common": {
     "admin": "Administrador",
     "apply": "Aplicar",
     "back": "Atrás",
+    "bug": "",
     "cancel": "Cancelar",
     "clear": "Borrar",
     "clearAll": "Limpiar todo",
@@ -81,6 +76,7 @@
     "deny": "Rechazar",
     "email": "Email",
     "firstName": "Nombre",
+    "guest": "",
     "inputPrompt": "Por favor ingrese",
     "invalidUrl": "URL inválida",
     "languages": "Idiomas",
@@ -91,30 +87,46 @@
     "mentor": "Mentor",
     "message": "Mensaje",
     "messages": "Mensajes",
+    "name": "",
+    "no": "",
     "other": "Otro",
     "partner": "Socio",
     "password": "Contraseña",
     "phone": "Teléfono",
     "phoneNumber": "Número de teléfono",
     "pleaseSelect": "Por favor seleccione",
+    "role": "",
     "save": "Guardar",
     "selectPrompt": "Por favor seleccione una opción",
     "specializations": "Especializaciones",
     "submit": "Enviar",
     "welcome": "¡Bienvenido a <1>MENTEE!</1>",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "yes": ""
+  },
+  "commonApplication": {
+    "genderIdentification": "",
+    "lgbtq": "",
+    "man": "",
+    "other": "",
+    "woman": ""
   },
   "commonProfile": {
     "accountCreated": "Su cuenta ha sido creada ahora puede iniciar sesión en Mentee",
     "addMoreEducation": "Añadir más",
     "addVideos": "Agregar videos",
     "biography": "Biografía",
+    "confirm": "",
     "confirmPassword": "confirmar Contraseña",
     "degree": "Grado",
     "degreeExample": "Ej. Universitario",
     "delete": "Borrar",
     "editProfile": "Editar perfil",
     "education": "Educación",
+    "error": {
+      "save": "",
+      "uploadImage": ""
+    },
     "errorTrainingSteps": "Complete los pasos de solicitud y capacitación primero",
     "fieldTooLong": "El campo es demasiado largo",
     "fullName": "Nombre completo",
@@ -137,6 +149,23 @@
     "videos": "Vídeos",
     "website": "Sitio web",
     "welcome": "Bienvenido. Cuentenos sobre usted."
+  },
+  "emailSubjects": {
+    "app_approved": "Estado de la solicitud de MENTEE - Aprobada",
+    "app_rejected": "Gracias por tu interés en MENTEE",
+    "forgot_password": "Restablecimiento de contraseña de mentee",
+    "mentee_app_submit": "Estado de la solicitud de MENTEE",
+    "mentee_appt": "Solicitud de cita de mentor",
+    "mentor_app_submit": "Estado de la solicitud de MENTEE",
+    "mentor_appt": "Solicitud de cita de mentee",
+    "mentor_contact_me": "Mentor: Un mentee ha solicitado ponerse en contacto contigo",
+    "new_training": "¡MENTEE! Nuevos materiales de capacitación disponibles",
+    "profile_complete": "Perfil de MENTEE completado: por favor, inicia sesión",
+    "send_invite": "Invitación a cita de mentee",
+    "training_complete": "Felicitaciones por completar la capacitación",
+    "unread_message": "MENTEE: ¡Has recibido un nuevo mensaje!",
+    "verify_email": "Verificación de correo electrónico de mentee",
+    "weekly_notif": "MENTEE: Tienes mensajes sin leer"
   },
   "forgotPassword": {
     "emailResent": "¡Reenvío de correo electrónico!",
@@ -180,23 +209,44 @@
   "login": {
     "apply": "Aplicar",
     "clickLoginPrompt": "Haga clic en su función para continuar",
+    "emailPlaceholder": "",
     "forgotPassword": "¿Has olvidado tu contraseña?",
     "noAccount": "¿No tienes una cuenta?",
+    "passwordPlaceholder": "",
     "resetPassword": "Reset password"
   },
   "loginErrors": {
+    "emailError": "",
     "existingEmail": "Este correo electrónico ya está en uso en otro rol",
     "incorrectCredentials": "Nombre de usuario y / o contraseña incorrectos. ",
+    "noRole": "",
+    "passwordError": "Por favor ingrese la contraseña",
     "reregisterAccount": "Vuelva a registrar su cuenta.",
     "resetPassword": "Por favor, restablezca la contraseña. ",
     "serverError": "Algo salió mal.",
     "wrongRole": "Rol incorrecto, elija el rol correcto de la cuenta"
   },
   "menteeApplication": {
+    "ageAnswer1": "",
+    "ageAnswer2": "",
+    "ageAnswer3": "",
+    "ageAnswer4": "",
+    "ageAnswer5": "",
+    "ageAnswer6": "",
+    "ageAnswer7": "",
+    "ageAnswer8": "",
     "agePrompt": "Háganos saber más sobre usted",
     "countryOrigin": "¿De qué país es originario usted o su familia, si es refugiado o inmigrante?",
     "countryPlaceholder": "País",
     "genderIdentification": "¿Cómo te identificas?",
+    "immigrantOption1": "",
+    "immigrantOption2": "",
+    "immigrantOption3": "",
+    "immigrantOption4": "",
+    "immigrantOption5": "",
+    "immigrantOption6": "",
+    "immigrantOption7": "",
+    "immigrantOption8": "",
     "immigrationStatus": "Háganos saber más sobre usted. ",
     "introduction": "¡Agradecemos su interés en formar parte de la comunidad MENTEE! ",
     "languageBackground": "Cuál es tu idioma nativo?",
@@ -205,8 +255,15 @@
     "otherQuestions": "¿Tiene usted alguna pregunta?",
     "questionsPlaceholder": "Preguntas",
     "socialMedia": "¿Le interesaría ser destacado como uno de nuestros aprendices en las redes sociales?",
+    "socialMediaOption1": "",
+    "socialMediaOption2": "",
     "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior",
     "topicInterests": "¿Qué temas especiales le interesarían? ",
+    "workOption1": "",
+    "workOption2": "",
+    "workOption3": "",
+    "workOption4": "",
+    "workOption5": "",
     "workOptions": "¿Qué haces actualmente? "
   },
   "menteeAppointmentModal": {
@@ -256,7 +313,15 @@
   "mentorApplication": {
     "canDonate": "MENTEE es una organización de voluntarios y nos sustentan las donaciones. ",
     "commitDuration": "Si es aceptado como mentor global, ¿le gustaría comprometerse a...",
+    "commitDuration1": "",
+    "commitDuration2": "",
+    "commitDuration3": "",
     "communityStatus": "¿Es usted o su familia de una comunidad nativa o aborigen?",
+    "duration1": "",
+    "duration2": "",
+    "duration3": "",
+    "duration4": "",
+    "duration5": "",
     "economicBackground": "¿Creciste con desafíos económicos?",
     "employerName": "Nombre completo de su empresa/empleador",
     "filloutPrompt": "Por favor complete la solicitud a continuación",
@@ -270,9 +335,12 @@
     "jobDuration": "¿Cuánto tiempo llevas con esta empresa?",
     "knowledgeLocation": "Comparta en qué región(es), país(es), estado(s), ciudades se basa su conocimiento",
     "languageBackground": "¿Habla otro idioma además del inglés? Si responde \"Si\", por favor indique los idiomas e incluya su nivel de conocimiento (conversacional, nativo, etc)",
+    "laterDonate": "",
+    "noDonate": "",
     "previousLocations": "¿Dónde has vivido en tu vida además de donde vives ahora?",
     "referral": "Si conoce a alguien que sería un gran mentor global, comparta su nombre, correo electrónico y nos pondremos en contacto con ellos.",
-    "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior"
+    "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior",
+    "yesDonate": ""
   },
   "mentorAppointmentPage": {
     "addAppointment": "Agregar cita",
@@ -383,26 +451,37 @@
     "validateEmail": "¡Por favor ingrese un correo electrónico válido!",
     "validatePhone": "¡Ingrese un número de teléfono válido!"
   },
+  "regions": {
+    "Caribbean": "Caribe",
+    "Central America": "América Central",
+    "Central Asia": "Asia Central",
+    "East Asia": "Asia Oriental",
+    "Europe": "Europa",
+    "Middle East": "Medio Oriente",
+    "N": {
+      " Africa": "",
+      " America": ""
+    },
+    "Oceana": "Oceanía",
+    "S": {
+      " America": ""
+    },
+    "South/SE Asia": "Asia del Sur/Sureste",
+    "Sub-Sahara Africa": "África subsahariana"
+  },
   "sidebars": {
     "appointments": "Citas",
+    "explore": "Explorar",
     "profile": "Perfil",
     "videos": "Tus vídeos"
   },
-  "emailSubjects": {
-    "unread_message": "MENTEE: ¡Has recibido un nuevo mensaje!",
-    "weekly_notif": "MENTEE: Tienes mensajes sin leer",
-    "new_training": "¡MENTEE! Nuevos materiales de capacitación disponibles",
-    "mentor_contact_me": "Mentor: Un mentee ha solicitado ponerse en contacto contigo",
-    "verify_email": "Verificación de correo electrónico de mentee",
-    "forgot_password": "Restablecimiento de contraseña de mentee",
-    "send_invite": "Invitación a cita de mentee",
-    "mentee_appt": "Solicitud de cita de mentor",
-    "mentor_appt": "Solicitud de cita de mentee",
-    "mentor_app_submit": "Estado de la solicitud de MENTEE",
-    "mentee_app_submit": "Estado de la solicitud de MENTEE",
-    "app_approved": "Estado de la solicitud de MENTEE - Aprobada",
-    "training_complete": "Felicitaciones por completar la capacitación",
-    "app_rejected": "Gracias por tu interés en MENTEE",
-    "profile_complete": "Perfil de MENTEE completado: por favor, inicia sesión"
+  "verifyEmail": {
+    "body": "",
+    "emailResent": "",
+    "error": "",
+    "header": "",
+    "noEmail": "",
+    "refresh": "",
+    "resend": ""
   }
 }

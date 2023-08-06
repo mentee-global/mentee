@@ -105,7 +105,7 @@
     "yes": ""
   },
   "commonApplication": {
-    "genderIdentification": "",
+    "genderIdentification": "¿Cómo te identificas?",
     "lgbtq": "",
     "man": "",
     "other": "",

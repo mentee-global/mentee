@@ -85,8 +85,6 @@
     "logout": "Logout",
     "mentee": "Mentee",
     "mentor": "Mentor",
-    "guest": "Guest",
-    "name": "Name",
     "message": "Message",
     "messages": "Messages",
     "name": "Name",
@@ -105,8 +103,7 @@
     "submit": "Submit",
     "welcome": "Welcome to <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
-    "yes": "Yes",
-    "bug": "Report a Bug"
+    "yes": "Yes"
   },
   "commonApplication": {
     "genderIdentification": "What do you identify as?",
@@ -152,11 +149,7 @@
     "videoIntroduction": "Introduction",
     "videos": "Videos",
     "website": "Website",
-    "welcome": "Welcome. Tell us about yourself.",
-    "error": {
-      "save": "Failed to save profile",
-      "uploadImage": "Failed to upload image"
-    }
+    "welcome": "Welcome. Tell us about yourself."
   },
   "emailSubjects": {
     "app_approved": "MENTEE Application Status - Approved",
@@ -232,10 +225,7 @@
     "reregisterAccount": "Please re-register your account.",
     "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
     "serverError": "Something went wrong.",
-    "wrongRole": "Wrong role please choose account right role",
-    "noRole": "Please choose a role",
-    "emailError": "Please enter email",
-    "passwordError": "Please enter password"
+    "wrongRole": "Wrong role please choose account right role"
   },
   "menteeApplication": {
     "ageAnswer1": "I am 18-22",
@@ -249,7 +239,7 @@
     "agePrompt": "Let us know more about you",
     "countryOrigin": "What country are you or your family originally from, if you are a refugee or immigrant?",
     "countryPlaceholder": "Country",
-    "genderIdentification": "",
+    "genderIdentification": "What do you identify as?",
     "immigrantOption1": "I am a refugee",
     "immigrantOption2": "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
     "immigrantOption3": "I am black.",
@@ -336,7 +326,7 @@
     "economicBackground": "Did you grow up economically challenged?",
     "employerName": "Full name of your company/employer",
     "filloutPrompt": "Please fill out the application below",
-    "genderIdentification": "",
+    "genderIdentification": "What do you identify as?",
     "hearAboutUs": "From whom or where did you hear about us?",
     "immigrationStatus": "Are you an immigrant or refugee or do you come from an immigrant family or refugee family?",
     "introduction": "We appreciate your interest in becoming a volunteer Global Mentor for MENTEE, a global nonprofit accelerating personal and professional growth to make the world a better, healthier place.",
@@ -480,8 +470,7 @@
     "appointments": "Appointments",
     "explore": "Explore",
     "profile": "Profile",
-    "videos": "Your Videos",
-    "explore": "Explore"
+    "videos": "Your Videos"
   },
   "verifyEmail": {
     "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",

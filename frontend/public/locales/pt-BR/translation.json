@@ -31,20 +31,20 @@
   },
   "apply": {
     "approved": "A sua aplicação foi aprovada! Prossiga para o treinamento",
-    "buildProfile": "",
+    "buildProfile": "Construa seu perfil",
     "completeTrainings": "Confirmo que concluí todos os treinamentos",
     "confirmation": "Obrigado por se inscrever! Seu cadastro será avaliado e você será contatado em breve!",
     "emailPrompt": "Por favor, insira o seu e-mail para iniciar o processo de aplicação.",
     "error": {
-      "role": ""
+      "role": "Por favor, selecione um papel"
     },
     "errorConnection": "Algo deu errado. Verifique sua conexão com a internet",
     "existingAccount": "Você já possui uma conta. Você será redirecionado para a página de login",
     "message": {
-      "haveAccount": ""
+      "haveAccount": "Já possui uma conta?"
     },
     "partnerVerify": "Seu e-mail não está pré-cadastrado como Parceiro. Por favor, contate um de nossos administradores pelo e-mail admin@menteeglobal.org",
-    "training": ""
+    "training": "Treinamento"
   },
   "appointmentStatus": {
     "accepted": "Aceito",
@@ -66,7 +66,7 @@
     "admin": "Administrador",
     "apply": "Aplicar",
     "back": "Voltar",
-    "bug": "",
+    "bug": "Reportar um bug",
     "cancel": "Cancelar",
     "clear": "Limpar ",
     "clearAll": "Limpar tudo",
@@ -76,7 +76,7 @@
     "deny": "Negar",
     "email": "E-mail",
     "firstName": "Primeiro nome",
-    "guest": "",
+    "guest": "Convidado",
     "inputPrompt": "Por favor, adicione as informações necessárias.",
     "invalidUrl": "URL inválida",
     "languages": "Idiomas",
@@ -87,7 +87,7 @@
     "mentor": "Mentor",
     "message": "Mensagem",
     "messages": "Mensagens",
-    "name": "",
+    "name": "Nome",
     "no": "Não",
     "other": "Outro(s)",
     "partner": "Parceiro",
@@ -95,7 +95,7 @@
     "phone": "Telefone",
     "phoneNumber": "Número de telefone",
     "pleaseSelect": "Por favor, selecione",
-    "role": "",
+    "role": "Papel",
     "save": "Salvar",
     "selectPrompt": "Por favor, selecione uma opção",
     "specializations": "Especializações",
@@ -124,8 +124,8 @@
     "editProfile": "Editar Perfil",
     "education": "Educação",
     "error": {
-      "save": "",
-      "uploadImage": ""
+      "save": "Erro ao salvar perfil. Por favor, tente novamente.",
+      "uploadImage": "Erro ao enviar imagem. Por favor, tente novamente."
     },
     "errorTrainingSteps": "Conclua as etapas de inscrição e treinamento primeiro",
     "fieldTooLong": "O campo é muito extenso",
@@ -209,17 +209,17 @@
   "login": {
     "apply": "Inscrever-se",
     "clickLoginPrompt": "Clique no seu tipo de conta para continuar",
-    "emailPlaceholder": "",
+    "emailPlaceholder": "E-mail",
     "forgotPassword": "Esqueceu sua senha?",
     "noAccount": "Não tem uma conta?",
-    "passwordPlaceholder": "",
+    "passwordPlaceholder": "Senha",
     "resetPassword": "Reiniciar"
   },
   "loginErrors": {
-    "emailError": "",
+    "emailError": "Por favor, digite o e-mail",
     "existingEmail": "Este e-mail já está em uso em um outro tipo de conta.",
     "incorrectCredentials": "Nome de usuário e/ou senha incorretos. Por favor, tente novamente",
-    "noRole": "",
+    "noRole": "Por favor, selecione um tipo de conta",
     "passwordError": "Por favor, digite a senha",
     "reregisterAccount": "Por favor, registre sua conta novamente.",
     "resetPassword": "Por favor, redefina a senha. Um link de redefinição de senha foi enviado para o seu e-mail.",

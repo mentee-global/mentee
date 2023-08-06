@@ -31,20 +31,20 @@
   },
   "apply": {
     "approved": "تمت الموافقة على طلبك استمر في التدريب",
-    "buildProfile": "",
+    "buildProfile": "بناء ملفك الشخصي",
     "completeTrainings": "أؤكد أنني أكملت جميع التدريبات",
     "confirmation": " شكرا للتقديم! سيتم مراجعة الطلب وسيتم الاتصال بك قريبا. ",
     "emailPrompt": "يرجى إدخال بريدك الإلكتروني لبدء عملية التقديم",
     "error": {
-      "role": ""
+      "role": "يرجى تحديد دورك"
     },
     "errorConnection": "حدث خطأ ما تحقق من اتصالك بالإنترنت",
     "existingAccount": "لديك حساب بالفعل ستتم إعادة توجيهك إلى صفحة تسجيل الدخول",
     "message": {
-      "haveAccount": ""
+      "haveAccount": "لديك حساب بالفعل؟"
     },
     "partnerVerify": "لم يتم تسجيل بريدك الإلكتروني مسبقًا كشريك.  الرجاء الاتصال بمسؤول admin@menteeglobal.org ",
-    "training": ""
+    "training": "تدريبات"
   },
   "appointmentStatus": {
     "accepted": "مقبول",
@@ -66,7 +66,7 @@
     "admin": "مسؤل",
     "apply": "تطبيق",
     "back": " الرجوع للخلف ",
-    "bug": "",
+    "bug": "تقرير خطأ",
     "cancel": "إلغاء ",
     "clear": "امسح",
     "clearAll": "امسح الكل",
@@ -76,7 +76,7 @@
     "deny": "رفض",
     "email": "بريد إلكتروني",
     "firstName": "الاسم الشخصي",
-    "guest": "",
+    "guest": "زائر",
     "inputPrompt": "الرجاء إضافة مدخلات",
     "invalidUrl": "عنوان URL غير صالح",
     "languages": "اللغات",
@@ -87,7 +87,7 @@
     "mentor": "مُرشِد",
     "message": "رسالة",
     "messages": "رسائل",
-    "name": "",
+    "name": "الاسم",
     "no": "لا",
     "other": "آخر",
     "partner": "شريك",
@@ -95,7 +95,7 @@
     "phone": "هاتف",
     "phoneNumber": "رقم التليفون",
     "pleaseSelect": "الرجاء التحديد",
-    "role": "",
+    "role": "الدور",
     "save": "حفظ",
     "selectPrompt": "الرجاء تحديد خيار",
     "specializations": "التخصصات",
@@ -124,8 +124,8 @@
     "editProfile": "تعديل الملف الشخصي",
     "education": " المستوى التعليمي ",
     "error": {
-      "save": "",
-      "uploadImage": ""
+      "save": "حدث خطأ ما أثناء حفظ الملف الشخصي",
+      "uploadImage": "حدث خطأ ما أثناء تحميل الصورة"
     },
     "errorTrainingSteps": "يرجى إكمال خطوات التقديم والتدريب أولاً",
     "fieldTooLong": "الحقل ـ الموقع المطلوب طويل جدًا",
@@ -209,17 +209,17 @@
   "login": {
     "apply": "تقدم ",
     "clickLoginPrompt": " يرجى اختيار دورك للمتابعة ",
-    "emailPlaceholder": "",
+    "emailPlaceholder": "البريد الإلكتروني",
     "forgotPassword": "هل نسيت كلمة السر؟",
     "noAccount": "ليس لديك حساب؟",
-    "passwordPlaceholder": "",
+    "passwordPlaceholder": "كلمة المرور",
     "resetPassword": " إعادة تعيين كلمة المرور "
   },
   "loginErrors": {
-    "emailError": "",
+    "emailError": "الرجاء إدخال البريد الإلكتروني",
     "existingEmail": "هذا البريد الإلكتروني قيد الاستخدام بالفعل في دور آخر",
     "incorrectCredentials": "اسم المستخدم و / أو كلمة المرور غير صحيح. ",
-    "noRole": "",
+    "noRole": "يرجى اختيار دورك للمتابعة",
     "passwordError": "الرجاء إدخال كلمة المرور",
     "reregisterAccount": "يرجى إعادة تسجيل حسابك.",
     "resetPassword": " يرجى إعادة تعيين كلمة المرور. تم إرسال رابط لإعادة تعيين كلمة المرور الخاصة بك إلى بريدك الإلكتروني. ",

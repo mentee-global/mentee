@@ -31,25 +31,25 @@
   },
   "apply": {
     "approved": "درخواست شما تایید شده است؛ ترینینگ را ادامه دهید",
-    "buildProfile": "",
+    "buildProfile": "پروفایل خود را بسازید",
     "completeTrainings": "من تمام ترینینگ ها را انجام داده ام.",
     "confirmation": "تشکر بابت ثبت نام کردن شما! درخواست شما بررسی خواهد شد و به زودی با شما تماس خواهیم گرفت.",
     "emailPrompt": "ایمیل خود را برای شروع ثبت نام وارد کنید",
     "error": {
-      "role": ""
+      "role": "لطفا نقش خود را انتخاب کنید"
     },
     "errorConnection": "شما با مشکل برخوردید، لطفا شبکه اینترنیتی خود را بررسی کنید",
     "existingAccount": "شما از قبل حساب دارید و به صفحه ورود هدایت می شوید",
     "message": {
-      "haveAccount": ""
+      "haveAccount": "حساب دارید؟"
     },
     "partnerVerify": "ایمیل شما از قبل به عنوان شریک ثبت نشده است. لطفا با یک نماینده تماس بگیرید: admin@menteeglobal.org",
-    "training": ""
+    "training": "من ترینینگ را انجام داده ام"
   },
   "appointmentStatus": {
-    "accepted": "",
-    "denied": "",
-    "pending": ""
+    "accepted": "تایید شده",
+    "denied": "رد شده",
+    "pending": "در انتظار"
   },
   "availability": {
     "addHours": "ساعات تانرا اضافه کنید",
@@ -66,7 +66,7 @@
     "admin": "مدیر",
     "apply": "ثبت نام کردن",
     "back": "بازگشت",
-    "bug": "",
+    "bug": "گزارش باگ",
     "cancel": "لغو",
     "clear": "پاک کردن",
     "clearAll": "همه را پاک کنید",
@@ -76,7 +76,7 @@
     "deny": "انکار",
     "email": "ایمیل",
     "firstName": "نام کوچک",
-    "guest": "",
+    "guest": "مهمان",
     "inputPrompt": "لطفا ورودی اضافه کنید",
     "invalidUrl": "URL نامعتبر",
     "languages": "زبان ها",
@@ -87,36 +87,36 @@
     "mentor": "مربی",
     "message": "پیام",
     "messages": "پیام ها",
-    "name": "",
-    "no": "",
+    "name": "نام",
+    "no": "نه",
     "other": "سایر",
     "partner": "شریک",
     "password": "کلمه عبور",
     "phone": "تلفن",
     "phoneNumber": "شماره تماس",
     "pleaseSelect": "لطفا انتخاب کنید",
-    "role": "",
+    "role": "نقش",
     "save": "صرفه جویی",
     "selectPrompt": "لطفا یک گزینه را انتخاب کنید",
     "specializations": "تخصصات",
     "submit": "ارسال",
     "welcome": "به <1>MENTEE!</1> خوش آمدید",
     "whatsapp": "واتساپ",
-    "yes": ""
+    "yes": "بله"
   },
   "commonApplication": {
-    "genderIdentification": "",
-    "lgbtq": "",
-    "man": "",
-    "other": "",
-    "woman": ""
+    "genderIdentification": "شناسایی جنسیت",
+    "lgbtq": "LGBTQ",
+    "man": "مرد",
+    "other": "سایر",
+    "woman": "زن"
   },
   "commonProfile": {
     "accountCreated": "حساب شما ایجاد شده است و می توانید به Mentee وارد شوید",
     "addMoreEducation": "بیشتر اضافه کنید",
     "addVideos": "افزودن ویدیوها",
     "biography": "زندگی نامه",
-    "confirm": "",
+    "confirm": "تایید",
     "confirmPassword": "رمز عبور را تایید کنید",
     "degree": "درجه",
     "degreeExample": "به عنوان مثال، درجه تحصیلی لیسانس",
@@ -124,8 +124,8 @@
     "editProfile": "ویرایش پروفایل",
     "education": "تحصیلات",
     "error": {
-      "save": "",
-      "uploadImage": ""
+      "save": "خطا در ذخیره سازی پروفایل",
+      "uploadImage": "خطا در بارگذاری تصویر"
     },
     "errorTrainingSteps": "لطفا ابتدا مراحل ثبت نام و ترینینگ را تمام کنید",
     "fieldTooLong": "زمینه خیلی طولانی است",
@@ -209,17 +209,17 @@
   "login": {
     "apply": "ثبت نام کردن",
     "clickLoginPrompt": "برای ادامه لطفا نقش خود انتخاب کنید",
-    "emailPlaceholder": "",
+    "emailPlaceholder": "ایمیل",
     "forgotPassword": "آیا رمز عبور را فراموش کرده اید؟",
     "noAccount": "حساب کاربری ندارید؟",
-    "passwordPlaceholder": "",
+    "passwordPlaceholder": "رمز عبور",
     "resetPassword": "تغییر رمز عبود"
   },
   "loginErrors": {
-    "emailError": "",
+    "emailError": "لطفاً ایمیل را وارد کنید",
     "existingEmail": "این ایمیل در حال حاضر در نقش دیگری استفاده می شود",
     "incorrectCredentials": "نام کاربری و/یا رمز عبور اشتباه است. لطفا دوباره تلاش کنید.",
-    "noRole": "",
+    "noRole": "لطفاً نقش خود را انتخاب کنید",
     "passwordError": "لطفاً رمز عبور را وارد کنید",
     "reregisterAccount": "لطفاً حساب خود را مجدداً ثبت کنید.",
     "resetPassword": "لطفا رمز عبور خود را تغییر دهید. لینک برای تغییر رمز عبور به ایمیل شما ارسال شده است.",
@@ -335,12 +335,12 @@
     "jobDuration": "چه مدت با این شرکت بودید؟",
     "knowledgeLocation": "لطفاً به اشتراک بگذارید که دانش شما در کدام منطقه(ها)، کشور(ها)، ایالت(ها)، شهرها قرار دارد",
     "languageBackground": "آیا به زبانی غیر از انگلیسی صحبت می کنید؟ ",
-    "laterDonate": "",
-    "noDonate": "",
+    "laterDonate": "من می خواهم بعداً کمک مالی کنم",
+    "noDonate": "من نمی خواهم کمک مالی کنم",
     "previousLocations": "به غیر از جایی که الان زندگی می کنید، در کجای زندگی خود زندگی کرده اید؟",
     "referral": "اگر کسی را می شناسید که می تواند یک مربی بزرگ جهانی باشد، لطفا نام، ایمیل او را به اشتراک بگذارید و ما با او تماس خواهیم گرفت!",
     "submitError": "مشکلی پیش آمد -- ایمیل خود را در بالا بررسی کنید",
-    "yesDonate": ""
+    "yesDonate": "من می خواهم کمک مالی کنم"
   },
   "mentorAppointmentPage": {
     "addAppointment": "قرار ملاقات را اضافه کنید",
@@ -472,12 +472,12 @@
     "videos": "ویدیوهای شما"
   },
   "verifyEmail": {
-    "body": "",
-    "emailResent": "",
-    "error": "",
-    "header": "",
-    "noEmail": "",
-    "refresh": "",
-    "resend": ""
+    "body": "لطفا ایمیل خود را برای تایید ایمیل خود بررسی کنید",
+    "emailResent": "ایمیل ارسال شد",
+    "error": "مشکلی پیش آمد",
+    "header": "تایید ایمیل",
+    "noEmail": "ایمیلی دریافت نشد؟",
+    "refresh": "صفحه را تازه کنید",
+    "resend": "ارسال مجدد ایمیل"
   }
 }

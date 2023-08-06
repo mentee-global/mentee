@@ -31,20 +31,20 @@
   },
   "apply": {
     "approved": "Tu solicitud ha sido aprobada continúa entrenando",
-    "buildProfile": "",
+    "buildProfile": "Construye tu perfil",
     "completeTrainings": "Confirmo que he completado todos los entrenamientos",
     "confirmation": "¡Gracias por aplicar! ",
     "emailPrompt": "Por favor ingrese su correo electrónico para iniciar el proceso de solicitud",
     "error": {
-      "role": ""
+      "role": "Por favor seleccione un rol"
     },
     "errorConnection": "Algo salió mal revisa tu conexión a internet",
     "existingAccount": "Ya tiene una cuenta, será redirigido a la página de inicio de sesión",
     "message": {
-      "haveAccount": ""
+      "haveAccount": "Ya tienes una cuenta..."
     },
     "partnerVerify": "Su correo electrónico no está pre-registrado como Partner. Por favor contacte un administrador al email admin@menteeglobal.org",
-    "training": ""
+    "training": "Entrenamiento"
   },
   "appointmentStatus": {
     "accepted": "aceptado",
@@ -66,7 +66,7 @@
     "admin": "Administrador",
     "apply": "Aplicar",
     "back": "Atrás",
-    "bug": "",
+    "bug": "Reportar un error",
     "cancel": "Cancelar",
     "clear": "Borrar",
     "clearAll": "Limpiar todo",
@@ -76,7 +76,7 @@
     "deny": "Rechazar",
     "email": "Email",
     "firstName": "Nombre",
-    "guest": "",
+    "guest": "Invitado",
     "inputPrompt": "Por favor ingrese",
     "invalidUrl": "URL inválida",
     "languages": "Idiomas",
@@ -87,36 +87,36 @@
     "mentor": "Mentor",
     "message": "Mensaje",
     "messages": "Mensajes",
-    "name": "",
-    "no": "",
+    "name": "Nombre",
+    "no": "No",
     "other": "Otro",
     "partner": "Socio",
     "password": "Contraseña",
     "phone": "Teléfono",
     "phoneNumber": "Número de teléfono",
     "pleaseSelect": "Por favor seleccione",
-    "role": "",
+    "role": "Rol",
     "save": "Guardar",
     "selectPrompt": "Por favor seleccione una opción",
     "specializations": "Especializaciones",
     "submit": "Enviar",
     "welcome": "¡Bienvenido a <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
-    "yes": ""
+    "yes": "Sí"
   },
   "commonApplication": {
     "genderIdentification": "¿Cómo te identificas?",
-    "lgbtq": "",
-    "man": "",
-    "other": "",
-    "woman": ""
+    "lgbtq": "LGBTQ",
+    "man": "Hombre",
+    "other": "Otro",
+    "woman": "Mujer"
   },
   "commonProfile": {
     "accountCreated": "Su cuenta ha sido creada ahora puede iniciar sesión en Mentee",
     "addMoreEducation": "Añadir más",
     "addVideos": "Agregar videos",
     "biography": "Biografía",
-    "confirm": "",
+    "confirm": "Confirmar",
     "confirmPassword": "confirmar Contraseña",
     "degree": "Grado",
     "degreeExample": "Ej. Universitario",
@@ -124,8 +124,8 @@
     "editProfile": "Editar perfil",
     "education": "Educación",
     "error": {
-      "save": "",
-      "uploadImage": ""
+      "save": "Error al guardar, inténtalo de nuevo",
+      "uploadImage": "Error al cargar la imagen, inténtalo de nuevo"
     },
     "errorTrainingSteps": "Complete los pasos de solicitud y capacitación primero",
     "fieldTooLong": "El campo es demasiado largo",
@@ -209,17 +209,17 @@
   "login": {
     "apply": "Aplicar",
     "clickLoginPrompt": "Haga clic en su función para continuar",
-    "emailPlaceholder": "",
+    "emailPlaceholder": "Correo electrónico",
     "forgotPassword": "¿Has olvidado tu contraseña?",
     "noAccount": "¿No tienes una cuenta?",
-    "passwordPlaceholder": "",
-    "resetPassword": "Reset password"
+    "passwordPlaceholder": "Contraseña",
+    "resetPassword": "Restablecer la contraseña"
   },
   "loginErrors": {
-    "emailError": "",
+    "emailError": "Por favor ingrese el correo electrónico",
     "existingEmail": "Este correo electrónico ya está en uso en otro rol",
     "incorrectCredentials": "Nombre de usuario y / o contraseña incorrectos. ",
-    "noRole": "",
+    "noRole": "Porfavor elija un rol",
     "passwordError": "Por favor ingrese la contraseña",
     "reregisterAccount": "Vuelva a registrar su cuenta.",
     "resetPassword": "Por favor, restablezca la contraseña. ",
@@ -335,12 +335,12 @@
     "jobDuration": "¿Cuánto tiempo llevas con esta empresa?",
     "knowledgeLocation": "Comparta en qué región(es), país(es), estado(s), ciudades se basa su conocimiento",
     "languageBackground": "¿Habla otro idioma además del inglés? Si responde \"Si\", por favor indique los idiomas e incluya su nivel de conocimiento (conversacional, nativo, etc)",
-    "laterDonate": "",
-    "noDonate": "",
+    "laterDonate": "Donar más tarde",
+    "noDonate": "No donar",
     "previousLocations": "¿Dónde has vivido en tu vida además de donde vives ahora?",
     "referral": "Si conoce a alguien que sería un gran mentor global, comparta su nombre, correo electrónico y nos pondremos en contacto con ellos.",
     "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior",
-    "yesDonate": ""
+    "yesDonate": "Sí, donar"
   },
   "mentorAppointmentPage": {
     "addAppointment": "Agregar cita",
@@ -472,12 +472,12 @@
     "videos": "Tus vídeos"
   },
   "verifyEmail": {
-    "body": "",
-    "emailResent": "",
-    "error": "",
-    "header": "",
-    "noEmail": "",
-    "refresh": "",
-    "resend": ""
+    "body": "¡Gracias por registrarte!  Por favor, compruebe su correo electrónico para verificar su cuenta.",
+    "emailResent": "¡Correo electrónico reenviado!",
+    "error": "Algo salió mal: revisa tu correo electrónico en la parte superior",
+    "header": "Verificar correo electrónico",
+    "noEmail": "No recibió un correo electrónico?",
+    "refresh": "Actualizar",
+    "resend": "Reenviar correo electrónico"
   }
 }

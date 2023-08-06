@@ -162,7 +162,11 @@ function Profile() {
           </div>
           <div className="mentor-profile-save-container">
             <Form.Item>
-              <Button className="regular-button" htmlType="submit">
+              <Button
+                className="regular-button"
+                type="primary"
+                htmlType="submit"
+              >
                 {t("common.save")}
               </Button>
             </Form.Item>
@@ -191,7 +195,7 @@ function Profile() {
                 <ProfileContent
                   mentor={user}
                   isMentor={isMentor}
-                  accountType={role}
+                  accountType={parseInt(role)}
                   account={user}
                   handleSaveEdits={handleSaveEdits}
                   showEditBtn={
@@ -202,12 +206,12 @@ function Profile() {
                   }
                 />
               </div>
-              <fieldset className="mentor-profile-contact">
-                <legend className="mentor-profile-contact-header">
+              <div className="mentor-profile-contact">
+                <div className="mentor-profile-contact-header">
                   {t("profile.contactInfo")}
-                </legend>
+                </div>
                 {onEdit ? renderEditInfo() : renderContactInfo()}
-              </fieldset>
+              </div>
             </div>
           </div>
         </div>

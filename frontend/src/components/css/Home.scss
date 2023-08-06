@@ -1,15 +1,11 @@
-.home-background {
-  // min-height: 936px;
-  height: 100%;
-  background: #ffdb6f;
-  width: 100%;
-}
 .home-content {
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
   position: relative;
+  height: 100vh;
+  background: #ffdb6f;
 }
 
 .home-text-container {

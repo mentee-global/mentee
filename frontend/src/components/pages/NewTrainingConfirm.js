@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { withRouter } from "react-router-dom";
 import { getTrainById, getTrainVideo, downloadBlob } from "../../utils/api";
 import { List, Button } from "antd";
 import ReactPlayer from "react-player/youtube";
@@ -7,10 +8,12 @@ import { TRAINING_TYPE } from "utils/consts";
 import "../css/TrainingList.scss";
 
 // TODO: Finish trasnlating this confirm
-function NewTrainingConfirm({ accountType, id }) {
+function NewTrainingConfirm({ match }) {
   const { t, i18n } = useTranslation();
   const [train, setTrain] = useState({});
   const [loading, setLoading] = useState(false);
+  const accountType = match.params.type;
+  const id = match.params.id;
   useEffect(() => {
     setLoading(true);
     async function getNewTraining() {
@@ -80,4 +83,4 @@ function NewTrainingConfirm({ accountType, id }) {
   );
 }
 
-export default NewTrainingConfirm;
+export default withRouter(NewTrainingConfirm);

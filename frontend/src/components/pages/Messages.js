@@ -111,21 +111,13 @@ function Messages(props) {
     getData();
   }, [activeMessageId]);
 
-  // useEffect(() => {
-  //   async function getData() {
-  //     const data = await getMessageData(profileId, activeMessageId);
-  //     setMessages(data);
-  //   }
-
-  //   if (profileId && activeMessageId) {
-  //     getData();
-  //   }
-  // }, [profileId, activeMessageId]);
-
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
   };
 
+  // BUG: If we swap between breakpoints of mobile/desktop, the sidebar will not update
+  // This is because the sidebar is not a child of the layout, so it does not get re-rendered
+  // when the layout changes
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
       <MessagesSidebar

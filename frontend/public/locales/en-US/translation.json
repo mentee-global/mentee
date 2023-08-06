@@ -85,6 +85,8 @@
     "logout": "Logout",
     "mentee": "Mentee",
     "mentor": "Mentor",
+    "guest": "Guest",
+    "name": "Name",
     "message": "Message",
     "messages": "Messages",
     "name": "Name",
@@ -103,7 +105,8 @@
     "submit": "Submit",
     "welcome": "Welcome to <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
-    "yes": "Yes"
+    "yes": "Yes",
+    "bug": "Report a Bug"
   },
   "commonApplication": {
     "genderIdentification": "What do you identify as?",
@@ -149,7 +152,11 @@
     "videoIntroduction": "Introduction",
     "videos": "Videos",
     "website": "Website",
-    "welcome": "Welcome. Tell us about yourself."
+    "welcome": "Welcome. Tell us about yourself.",
+    "error": {
+      "save": "Failed to save profile",
+      "uploadImage": "Failed to upload image"
+    }
   },
   "emailSubjects": {
     "app_approved": "MENTEE Application Status - Approved",
@@ -225,7 +232,10 @@
     "reregisterAccount": "Please re-register your account.",
     "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
     "serverError": "Something went wrong.",
-    "wrongRole": "Wrong role please choose account right role"
+    "wrongRole": "Wrong role please choose account right role",
+    "noRole": "Please choose a role",
+    "emailError": "Please enter email",
+    "passwordError": "Please enter password"
   },
   "menteeApplication": {
     "ageAnswer1": "I am 18-22",
@@ -470,7 +480,8 @@
     "appointments": "Appointments",
     "explore": "Explore",
     "profile": "Profile",
-    "videos": "Your Videos"
+    "videos": "Your Videos",
+    "explore": "Explore"
   },
   "verifyEmail": {
     "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",

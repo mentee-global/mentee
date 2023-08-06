@@ -26,14 +26,6 @@
   min-width: 110px;
 }
 
-.mentee-appt-card {
-  background: #ffecbd;
-  border-radius: 13px;
-  margin: 1.5em 10% 0 0;
-  padding: 1.7em 2.25em;
-  color: $appointments-date-text-block-color;
-}
-
 .mentee-appt-card-header {
   font-size: 1.2em;
   padding-left: 1em;
@@ -82,15 +74,6 @@
 
 .status-pending {
   background: #ffdb6f;
-}
-
-.mentee-bookmark-section {
-  width: 30%;
-  max-width: 400px;
-  height: fit-content;
-  background-color: #fff7e2;
-  border-radius: 7px;
-  margin: 2.5em 2em 4em 0;
 }
 
 .mentee-bookmark-add {
@@ -176,16 +159,7 @@
   .mentee-appts-section {
     width: 100%;
   }
-  .mentee-bookmark-section {
-    width: 98%;
-    margin: 0;
-    margin-left: 1%;
-    max-width: none;
-  }
-  .mentee-appt-card {
-    margin-right: 2em;
-    padding: 1em 1.5em;
-  }
+
   .status-section {
     float: none;
   }

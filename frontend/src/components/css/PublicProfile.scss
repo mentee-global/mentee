@@ -9,10 +9,8 @@
 @media (min-width: 1200px) {
   // For desktop screens
   .mentor-profile-content-public {
-    padding: 50px;
+    padding: 2em;
     width: 70%;
-    background: linear-gradient(180deg, #fcf6e8 20%, white 20%);
-    border: 1px solid #ebebeb;
     border-right: none;
   }
 
@@ -23,8 +21,6 @@
 
   .mentor-profile-flexbox {
     display: flex;
-    border-left: 15vh solid #fff7e2;
-    border-right: 15vh solid #fff7e2;
     flex-direction: row;
     padding: 0;
   }

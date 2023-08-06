@@ -19,6 +19,7 @@ import {
 
 import "./css/Training.scss";
 import { OPTION_TYPE } from "utils/consts";
+import { css } from "@emotion/css";
 
 export const Specializations = () => {
   const dispatch = useDispatch();
@@ -147,7 +148,7 @@ export const Specializations = () => {
         <>
           <Modal
             title="Specialization"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={() => handleOk(false)}
             onCancel={handleCancel}
             okText="save"
@@ -182,9 +183,9 @@ export const Specializations = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let dataa = await fetchAdminSpecializations();
-      if (dataa) {
-        setData(dataa);
+      let resSpecializations = await fetchAdminSpecializations();
+      if (resSpecializations) {
+        setData(resSpecializations);
       } else {
         setErr(true);
       }
@@ -194,9 +195,13 @@ export const Specializations = () => {
   return (
     <div className="trains">
       <div className="rolesContainer">
-        <div className="table-button-group">
+        <div
+          className={css`
+            margin-bottom: 1em;
+          `}
+        >
           <Button
-            className="table-button"
+            type="primary"
             icon={<PlusCircleOutlined />}
             onClick={() => {
               showModal("", true);
@@ -211,7 +216,7 @@ export const Specializations = () => {
       </div>
       <Modal
         title="Specialization"
-        visible={isModalVisible2}
+        open={isModalVisible2}
         onOk={() => handleOk(true)}
         onCancel={handleCancel}
         okText="save"

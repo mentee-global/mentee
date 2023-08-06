@@ -1,58 +1,85 @@
 import React, { useEffect, useState } from "react";
-import { List, Button } from "antd";
+import { List, Button, Typography, Skeleton } from "antd";
 import { getTrainings, downloadBlob, getTrainVideo } from "utils/api";
 import ReactPlayer from "react-player/youtube";
 
 import "./css/TrainingList.scss";
-import { TRAINING_TYPE } from "utils/consts";
+import { I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
+import { useTranslation } from "react-i18next";
+
+const placeholder = Array(5).fill({
+  _id: {
+    $oid: "Lorem ipsum dolor sit amet",
+  },
+  description: "Mentee Handbook first trainingg",
+  file_name: "Mentee_Handbook.pdf",
+  name: "Mentee Handbook",
+  role: "2",
+  typee: "LINK",
+  url: "https://4x.ant.design/components/form/#API",
+});
+
+const getTrainingComponent = (training) => {
+  switch (training.typee) {
+    case TRAINING_TYPE.VIDEO:
+      return (
+        <ReactPlayer
+          className="react-player"
+          width={400}
+          height={300}
+          url={training.url}
+        />
+      );
+    case TRAINING_TYPE.LINK:
+      return (
+        <a className="external-link" href={training.url} target="_blank">
+          {training.url}
+        </a>
+      );
+    case TRAINING_TYPE.DOCUMENT:
+      return (
+        <Button
+          onClick={async () => {
+            let response = await getTrainVideo(training.id);
+            downloadBlob(response, training.file_name);
+          }}
+        >
+          {training.file_name}
+        </Button>
+      );
+    default:
+      return null;
+  }
+};
+
 const TrainingList = (props) => {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [trainings, setTrainings] = useState(null);
+  const [trainingData, setTrainingData] = useState();
+
   useEffect(() => {
     setLoading(true);
     getTrainings(props.role)
       .then((trains) => {
-        setTrainings(trains);
+        setTrainingData(trains);
         setLoading(false);
       })
       .catch((e) => console.error(e));
-  }, []);
+  }, [i18n.language]);
   return (
-    <div className="train_list">
-      {loading ? <h1>Loading ...</h1> : ""}
-      <List>
-        {trainings?.map((train) => (
-          <List.Item key={train.id}>
-            <h1 className="chapter">{train.name}</h1>
-            <p className="trainingDesc">{train.description}</p>
-            {train.typee === TRAINING_TYPE.VIDEO && (
-              <ReactPlayer
-                className="react-player"
-                width={"100%"}
-                height={400}
-                o
-                url={train.url}
-              />
-            )}
-            {train.typee === TRAINING_TYPE.LINK && (
-              <a className="external-link" href={train.url} target="_blank">
-                {train.url}
-              </a>
-            )}
-            {train.typee === TRAINING_TYPE.DOCUMENT && (
-              <Button
-                onClick={async () => {
-                  let response = await getTrainVideo(train.id);
-                  downloadBlob(response, train.file_name);
-                }}
-              >
-                {train.file_name}
-              </Button>
-            )}
-          </List.Item>
-        ))}
-      </List>
-    </div>
+    <List
+      itemLayout="vertical"
+      size="large"
+      dataSource={trainingData ?? placeholder}
+      renderItem={(item) => (
+        <List.Item key={item._id.$oid}>
+          <Skeleton loading={loading} active>
+            <List.Item.Meta title={item.name} description={item.description} />
+            {getTrainingComponent(item)}
+          </Skeleton>
+        </List.Item>
+      )}
+    />
   );
 };
 

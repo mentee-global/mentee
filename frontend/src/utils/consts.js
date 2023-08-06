@@ -39,6 +39,22 @@ export const ACCOUNT_TYPE = {
   GUEST: 4,
 };
 
+export const ACCOUNT_TYPE_LABELS = {
+  [ACCOUNT_TYPE.ADMIN]: "admin",
+  [ACCOUNT_TYPE.MENTOR]: "mentor",
+  [ACCOUNT_TYPE.MENTEE]: "mentee",
+  [ACCOUNT_TYPE.PARTNER]: "partner",
+  [ACCOUNT_TYPE.GUEST]: "guest",
+};
+
+export const REDIRECTS = {
+  [ACCOUNT_TYPE.MENTOR]: "/appointments",
+  [ACCOUNT_TYPE.MENTEE]: "/mentee-appointments",
+  [ACCOUNT_TYPE.PARTNER]: "/partner-gallery",
+  [ACCOUNT_TYPE.ADMIN]: "/account-data",
+  [ACCOUNT_TYPE.GUEST]: "/gallery",
+};
+
 export const PLURAL_TYPE = {
   MENTORS: "mentors",
   MENTEES: "mentees",

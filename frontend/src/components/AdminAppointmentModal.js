@@ -38,7 +38,7 @@ function AdminAppointmentModal({ data, visible, dateFormat, status, onClose }) {
   return (
     <div>
       <Modal
-        visible={visible}
+        open={visible}
         title="Appointment Details"
         footer={null}
         width="40%"

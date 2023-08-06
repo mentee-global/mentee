@@ -41,15 +41,15 @@ function MentorContactModal({
 
   return (
     <span>
-      <MenteeButton
-        content={<b>{t("common.contactMe")}</b>}
-        borderOnClick
+      <Button
+        type="primary"
         onClick={() => {
           setOpenModal(true);
         }}
-        width="120px"
-        style={{ marginRight: "6px" }}
-      />
+        style={{ width: "120px" }}
+      >
+        {t("common.contactMe")}
+      </Button>
       <Modal
         forceRender
         open={openModal}
@@ -90,11 +90,11 @@ function MentorContactModal({
           </Form.Item>
           <Form.Item
             name="Choose Interest Areas"
-            label={t("mentorContactModal.communicationMethod")}
+            label={t("mentorContactModal.areaInterest")}
             rules={[
               {
                 required: true,
-                message: t("mentorContactModal.communicationMethodValidate"),
+                message: t("mentorContactModal.areaInterstValidate"),
               },
             ]}
           >

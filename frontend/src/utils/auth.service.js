@@ -75,17 +75,21 @@ export const login = async (email, password, role) =>
     role: String(role) && String(role).trim(),
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
+      localStorage.setItem("role", role);
       await fireauth
         .auth()
         .signInWithCustomToken(data.result.token)
-        .catch((error) => {});
+        .catch((error) => {
+          console.error(error);
+        });
     }
 
     return data;
   });
 
 export const logout = async () => {
-  localStorage.clear();
+  localStorage.removeItem("role");
+  localStorage.removeItem("profileId");
   await fireauth
     .auth()
     .signOut()
@@ -105,7 +109,7 @@ export const refreshToken = async () => {
       .then(async (idToken) => {
         const token = await post("/refreshToken", {
           token: idToken,
-          role: await getRole(),
+          role: getRole(),
         }).then((data) => data && data.result.token);
 
         await fireauth.auth().signInWithCustomToken(token);
@@ -154,12 +158,12 @@ export const isUserPartner = async () => {
   } else return false;
 };
 
-export const getRole = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then(
-      (idTokenResult) => idTokenResult.claims.role
-    );
-  }
+export const getRole = () => {
+  return localStorage.getItem("role");
+};
+
+export const getProfileId = () => {
+  return localStorage.getItem("profileId");
 };
 
 export const isLoggedIn = () => {
@@ -174,9 +178,9 @@ export const isUserVerified = async () => {
   }
 };
 
-export const getUserEmail = async () => {
+export const getUserEmail = () => {
   if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
+    return getIdTokenResult().then((idTokenResult) => {
       return idTokenResult.claims.email;
     });
   }
@@ -185,11 +189,10 @@ export const getUserEmail = async () => {
 export const getUserIdToken = async () => {
   if (isLoggedIn()) {
     return await getIdToken().then((idToken) => {
-      localStorage.setItem("userIdToken", idToken);
       return idToken;
     });
   } else {
-    return localStorage.getItem("userIdToken");
+    return null;
   }
 };
 

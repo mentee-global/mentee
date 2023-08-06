@@ -180,7 +180,7 @@ function MenteeMessageTab(props) {
             }
             placement="right"
             closable={false}
-            visible={visible}
+            open={visible}
             getContainer={false}
             style={{ position: "absolute" }}
             width={"100%"}

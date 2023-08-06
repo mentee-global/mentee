@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Modal, Select, Table, Button } from "antd";
-import { ExclamationCircleOutlined, DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 import {
   fetchApplications,
   updateApplicationById,
@@ -9,14 +8,12 @@ import {
   downloadMentorsApps,
   downloadMenteeApps,
 } from "../../utils/api";
-import MentorApplicationView from "../MentorApplicationView";
-import { APP_STATUS, getAppStatusOptions } from "../../utils/consts";
+import MentorApplicationView from "components/MentorApplicationView";
+import { getAppStatusOptions } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
-import ModalInput from "../ModalInput";
+import ModalInput from "components/ModalInput";
 
 import { EditOutlined } from "@ant-design/icons";
-const { confirm } = Modal;
-const { Option } = Select;
 
 function ApplicationOrganizer({ isMentor }) {
   const { onAuthStateChanged } = useAuth();
@@ -210,7 +207,7 @@ function ApplicationOrganizer({ isMentor }) {
       </div>
       {selectedID && (
         <Modal
-          visible={visible}
+          open={visible}
           footer={null}
           className="app-modal"
           onCancel={() => handleModalClose()}
@@ -221,7 +218,7 @@ function ApplicationOrganizer({ isMentor }) {
             isNew={applicationData
               .filter((item) => item.id == selectedID)
               .hasOwnProperty("identify")}
-            visible={visible}
+            open={visible}
             appInfo={appInfo}
           />
         </Modal>

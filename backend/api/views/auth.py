@@ -159,8 +159,7 @@ def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-    role = data.get("role")
-    role = int(role)
+    role = int(data.get("role"))
     firebase_user = None
     profile_model = get_profile_model(role)
 
@@ -206,6 +205,7 @@ def login():
 
     try:
         profile = profile_model.objects.get(email=email)
+        logger.info("Profile found")
         profile_id = str(profile.id)
 
         if not profile.firebase_uid or profile.firebase_uid != firebase_uid:

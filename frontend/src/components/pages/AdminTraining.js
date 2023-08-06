@@ -27,13 +27,14 @@ import {
   PlusCircleOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
+import { withRouter } from "react-router-dom";
 
-import "./css/Training.scss";
-import AdminDownloadDropdown from "./AdminDownloadDropdown";
-import TrainingTranslationModal from "./TrainingTranslationModal";
-import UpdateTrainingForm from "./UpdateTrainingModal";
+import "components/css/Training.scss";
+import AdminDownloadDropdown from "../AdminDownloadDropdown";
+import TrainingTranslationModal from "../TrainingTranslationModal";
+import UpdateTrainingForm from "../UpdateTrainingModal";
 
-export const Trainings = () => {
+const AdminTraining = () => {
   const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
   const [trainingData, setTrainingData] = useState([]);
   const [reload, setReload] = useState(true);
@@ -340,3 +341,5 @@ export const Trainings = () => {
     </div>
   );
 };
+
+export default withRouter(AdminTraining);

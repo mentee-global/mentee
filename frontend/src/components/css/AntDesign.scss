@@ -1,43 +1,43 @@
-@import "_app";
-// Overriding styles for antdesign to comply with Mentee Designs
-.ant-checkbox .ant-checkbox-inner {
-  border-color: $yellow-dot-color;
-}
-
-.ant-checkbox-checked .ant-checkbox-inner {
-  background-color: $yellow-dot-color;
-  border-color: $yellow-dot-color;
-}
-
-.ant-select-selection--multiple {
-  white-space: nowrap;
-  overflow: auto;
-  height: 30px;
-}
-
-// .ant-modal-header {
-//   background-color: $appointment-card-header-background;
+// @import "_app";
+// // Overriding styles for antdesign to comply with Mentee Designs
+// .ant-checkbox .ant-checkbox-inner {
+//   border-color: $yellow-dot-color;
 // }
 
-// .ant-modal-title {
-//   font-weight: bold;
-//   font-size: 24px;
+// .ant-checkbox-checked .ant-checkbox-inner {
+//   background-color: $yellow-dot-color;
+//   border-color: $yellow-dot-color;
 // }
 
-// .ant-modal-content {
-//   border-radius: 30px;
-//   overflow: hidden;
+// .ant-select-selection--multiple {
+//   white-space: nowrap;
+//   overflow: auto;
+//   height: 30px;
 // }
 
-.ant-modal-body {
-  padding: 0px;
-}
+// // .ant-modal-header {
+// //   background-color: $appointment-card-header-background;
+// // }
 
-.ant-checkbox-group {
-  display: flex;
-  flex-direction: column;
-}
+// // .ant-modal-title {
+// //   font-weight: bold;
+// //   font-size: 24px;
+// // }
 
-.ant-form-inline .ant-form-item-with-help {
-  margin-bottom: 0px;
-}
+// // .ant-modal-content {
+// //   border-radius: 30px;
+// //   overflow: hidden;
+// // }
+
+// .ant-modal-body {
+//   padding: 0px;
+// }
+
+// .ant-checkbox-group {
+//   display: flex;
+//   flex-direction: column;
+// }
+
+// .ant-form-inline .ant-form-item-with-help {
+//   margin-bottom: 0px;
+// }

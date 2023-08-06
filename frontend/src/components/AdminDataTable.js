@@ -708,7 +708,7 @@ function AdminDataTable({
       </Table>
       <Modal
         title="Assign Users"
-        visible={isModalVisible}
+        open={isModalVisible}
         // onOk={() => handleOk(false)}
         onCancel={handleCancel}
         okText={

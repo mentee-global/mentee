@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Avatar, Layout, Input, Button, Spin, Modal, TimePicker } from "antd";
+import {
+  Avatar,
+  Layout,
+  Input,
+  Button,
+  Spin,
+  Modal,
+  TimePicker,
+  theme,
+} from "antd";
 import { withRouter } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import moment from "moment-timezone";
@@ -16,14 +25,16 @@ import {
 import { formatAppointments } from "utils/dateFormatting";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
 import socketInvite from "utils/socket";
-import MenteeButton from "./MenteeButton.js";
 import AvailabilityCalendar from "components/AvailabilityCalendar";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "react-responsive";
+import { css } from "@emotion/css";
 
 function MessagesChatArea(props) {
+  const {
+    token: { colorPrimaryBg, colorPrimary },
+  } = theme.useToken();
   const { t } = useTranslation();
-  const { Content, Header } = Layout;
   const { socket } = props;
   const { TextArea } = Input;
   const { profileId, isMentee, isMentor, isPartner } = useAuth();
@@ -38,7 +49,7 @@ function MessagesChatArea(props) {
   const [appointments, setAppointments] = useState([]);
   const [availabeInFuture, setAvailabeInFuture] = useState([]);
   const [bookedData, setBookedData] = useState({});
-  const isMobile = useMediaQuery({ query: `(max-width: 600px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   var total_index = 0;
   const {
     messages,
@@ -333,6 +344,19 @@ function MessagesChatArea(props) {
     );
   }
 
+  const styles = {
+    bubbleSent: css`
+      float: right;
+      clear: right;
+      background-color: ${colorPrimaryBg};
+    `,
+    bubbleReceived: css`
+      float: left;
+      clear: left;
+      background-color: #f4f5f9;
+    `,
+  };
+
   return (
     <div className="conversation-container">
       {accountData ? (
@@ -373,9 +397,7 @@ function MessagesChatArea(props) {
                     onClick={() => {
                       setIsOpenCalendarModal(true);
                     }}
-                    type="default"
-                    shape="round"
-                    className="regular-button"
+                    type="primary"
                   >
                     {t("messages.availability")}
                   </Button>
@@ -389,9 +411,7 @@ function MessagesChatArea(props) {
                     <Button
                       disabled={isInviteSent}
                       onClick={sendInvite}
-                      type="default"
-                      shape="round"
-                      className="regular-button"
+                      type="primary"
                     >
                       {t("messages.sendInvite")}
                     </Button>
@@ -429,11 +449,16 @@ function MessagesChatArea(props) {
                       )}
                       <div className="convo">
                         <div
-                          className={`bubble-${
-                            block.sender_id.$oid === profileId
-                              ? "sent"
-                              : "received"
-                          }`}
+                          className={css`
+                            padding: 5px 15px;
+                            border-radius: 5px;
+                            max-width: 300px;
+                            margin-left: 8px;
+                            width: fit-content;
+                            ${block.sender_id.$oid === profileId
+                              ? styles.bubbleSent
+                              : styles.bubbleReceived}
+                          `}
                         >
                           {block.body}
                           {block.availabes_in_future !== undefined &&
@@ -531,7 +556,9 @@ function MessagesChatArea(props) {
             <Button
               id="sendMessagebtn"
               onClick={sendMessage}
-              className="send-message-button"
+              className={css`
+                margin-left: 0.5em;
+              `}
               shape="circle"
               type="primary"
               ref={buttonRef}
@@ -545,17 +572,17 @@ function MessagesChatArea(props) {
       <Modal
         className="calendar-modal"
         title={t("messages.availabilityTitle")}
-        visible={isOpenCalendarModal}
+        open={isOpenCalendarModal}
         onCancel={() => setIsOpenCalendarModal(false)}
         footer={[
-          <MenteeButton
-            key="clear"
-            type="back"
+          <Button
+            type="primary"
             onClick={() => {
               setIsOpenCalendarModal(false);
             }}
-            content={t("common.cancel")}
-          />,
+          >
+            {t("common.cancel")}
+          </Button>,
         ]}
       >
         <AvailabilityCalendar appointmentdata={appointments} />

@@ -94,7 +94,7 @@ function MenteeVerificationModal(props) {
 
       <Modal
         title="Verify your email"
-        visible={isVisible}
+        open={isVisible}
         className="verification-modal"
         onCancel={() => {
           setIsVisible(false);

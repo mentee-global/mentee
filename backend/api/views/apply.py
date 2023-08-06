@@ -29,6 +29,7 @@ from api.utils.request_utils import (
     MentorApplicationForm,
     MenteeApplicationForm,
     PartnerApplicationForm,
+    get_profile_model,
 )
 from api.utils.constants import Account
 from firebase_admin import auth as firebase_admin_auth
@@ -89,54 +90,53 @@ def get_application_mentee_by_id(id):
     return create_response(data={"mentor_application": application})
 
 
-####################################################################################
-@apply.route("/checkHaveAccount/<email>/<role>", methods=["GET"])
-def get_is_has_Account(email, role):
+@apply.route("/email/status/<email>/<role>", methods=["GET"])
+def get_email_status_by_role(email, role):
     role = int(role)
-    application = null
-    isVerified = null
+    response_data = {
+        "inFirebase": False,
+        "isVerified": False,
+        "profileExists": False,
+    }
+
     try:
-        email2 = VerifiedEmail.objects.get(email=email, role=str(role))
-        isVerified = True
-    except:
-        isVerified = False
+        VerifiedEmail.objects.get(email=email, role=str(role))
+        response_data["isVerified"] = True
+    except Exception as e:
+        logger.error(e)
+        logger.info(f"{email} is not verified in VerifiedEmail Model")
+
     try:
         user = firebase_admin_auth.get_user_by_email(email.replace(" ", ""))
-    except:
-        return create_response(data={"isHave": False, "isVerified": isVerified})
+        response_data["inFirebase"] = True
+    except Exception as e:
+        logger.error(e)
+        logger.warning(f"{email} is not verified in Firebase")
+        msg = "No firebase user currently exist with this email " + email
+        return create_response(message=msg, data=response_data)
 
     try:
-        if role == Account.MENTOR:
-            application = MentorProfile.objects.get(email=email)
-        if role == Account.MENTEE:
-            application = MenteeProfile.objects.get(email=email)
-        if role == Account.PARTNER:
-            application = PartnerProfile.objects.get(email=email)
-
-    except:
-        msg = "No application currently exist with this email " + email
+        get_profile_model(role).objects.only("email").get(email=email)
+        response_data["profileExists"] = True
+    except Exception as e:
+        logger.error(e)
+        msg = "No profile currently exist with this email " + email
         logger.info(msg)
         return create_response(
-            data={
-                "isHaveProfile": False,
-                "isHave": True,
-                "message": msg,
-                "isVerified": isVerified,
-            }
+            message=msg,
+            data=response_data,
         )
 
-    return create_response(
-        data={"isHave": True, "isHaveProfile": True, "isVerified": isVerified}
-    )
+    return create_response(data=response_data)
 
 
 ############################################################################################
 
 
-@apply.route("/checkConfirm/<email>/<role>", methods=["GET"])
-def get_application_by_email(email, role):
+@apply.route("/status/<email>/<role>", methods=["GET"])
+def get_application_status(email, role):
     role = int(role)
-    application = null
+    application = None
     try:
         if role == Account.MENTOR:
             try:
@@ -147,73 +147,79 @@ def get_application_by_email(email, role):
             application = MenteeApplication.objects.get(email=email)
         if role == Account.PARTNER:
             application = PartnerApplication.objects.get(email=email)
-        if application is null:
+        if application is None:
             return create_response(
+                message="No application currently exist with this email " + email,
                 data={
-                    "state": "",
-                    "message": "no application found",
+                    "state": None,
                     "type": role == Account.MENTOR,
                     "role": role,
                     "role2": Account.MENTOR,
-                }
+                },
             )
     except:
         msg = "No application currently exist with this email " + email
         logger.info(msg)
-        return create_response(data={"state": "", "message": msg})
+        return create_response(message=msg, data={"state": None})
 
     return create_response(data={"state": application.application_state})
 
 
-@apply.route("/isHaveProfile/<email>/<role>", methods=["GET"])
-def isHaveprofile_existing_account(email, role):
+@apply.route("/profile/exists/<email>/<role>", methods=["GET"])
+def check_profile_exists(email, role):
     role = int(role)
-    application = null
-
+    profile_exists = False
     try:
-        if role == Account.MENTOR:
-            application = MentorProfile.objects.get(email=email)
-        if role == Account.MENTEE:
-            application = MenteeProfile.objects.get(email=email)
-        if role == Account.PARTNER:
-            application = PartnerProfile.objects.get(email=email)
-
+        # test if the email is in mongodb
+        get_profile_model(role).objects.only("email").get(email=email)
+        profile_exists = True
     except:
+        # Get the correct role for the email
+        msg = "Email contains a different role: " + email
         try:
-            application = MentorProfile.objects.get(email=email)
+            MentorProfile.objects.get(email=email)
             rightRole = Account.MENTOR
             return create_response(
-                data={"isHaveProfile": False, "rightRole": rightRole.value}
+                message=msg,
+                data={"profileExists": profile_exists, "rightRole": rightRole.value},
             )
-
         except:
             try:
-                application = MenteeProfile.objects.get(email=email)
+                MenteeProfile.objects.get(email=email)
                 rightRole = Account.MENTEE
                 return create_response(
-                    data={"isHaveProfile": False, "rightRole": rightRole.value}
+                    message=msg,
+                    data={
+                        "profileExists": profile_exists,
+                        "rightRole": rightRole.value,
+                    },
                 )
-
             except:
                 try:
-                    application = PartnerProfile.objects.get(email=email)
+                    PartnerProfile.objects.get(email=email)
                     rightRole = Account.PARTNER
                     return create_response(
-                        data={"isHaveProfile": False, "rightRole": rightRole.value}
+                        message=msg,
+                        data={
+                            "profileExists": profile_exists,
+                            "rightRole": rightRole.value,
+                        },
                     )
-
                 except:
                     msg = "No application currently exist with this email " + email
                     logger.info(msg)
                     return create_response(
-                        data={"isHaveProfile": False, "message": msg}
+                        message=msg,
+                        data={
+                            "profileExists": profile_exists,
+                        },
                     )
 
-    return create_response(data={"isHaveProfile": True})
+    return create_response(data={"profileExists": profile_exists})
 
 
 @apply.route("/changeStateBuildProfile/<email>/<role>", methods=["GET"])
-def changestatetobuildprofile(email, role):
+def change_state_to_build_profile(email, role):
     application = null
     role = int(role)
     try:
@@ -237,11 +243,7 @@ def changestatetobuildprofile(email, role):
         if "front_url" in request.args:
             front_url = request.args["front_url"]
             target_url = (
-                front_url
-                + "application-page?role="
-                + str(role)
-                + "&email="
-                + application["email"]
+                front_url + "apply?role=" + str(role) + "&email=" + application["email"]
             )
 
         preferred_language = request.args.get("preferred_language", "en-US")

@@ -6,7 +6,6 @@ import {
   SearchOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Tab } from "@material-ui/core";
 
 export const AdminMessages = () => {
   const { RangePicker } = DatePicker;
@@ -193,7 +192,7 @@ export const AdminMessages = () => {
       )}
       <Modal
         title=""
-        visible={showModal}
+        open={showModal}
         onCancel={() => {
           setShowModal(false);
         }}

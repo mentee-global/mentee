@@ -19,6 +19,7 @@ import {
 
 import "./css/Training.scss";
 import { OPTION_TYPE } from "utils/consts";
+import { css } from "@emotion/css";
 
 export const Languages = () => {
   const [data, setData] = useState([]);
@@ -153,7 +154,7 @@ export const Languages = () => {
         <>
           <Modal
             title="Language"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={() => handleOk(false)}
             onCancel={handleCancel}
             okText="save"
@@ -200,9 +201,13 @@ export const Languages = () => {
   return (
     <div className="trains">
       <div className="rolesContainer">
-        <div className="table-button-group">
+        <div
+          className={css`
+            margin-bottom: 1em;
+          `}
+        >
           <Button
-            className="table-button"
+            type="primary"
             icon={<PlusCircleOutlined />}
             onClick={() => {
               showModal("", true);
@@ -217,7 +222,7 @@ export const Languages = () => {
       </div>
       <Modal
         title="Language"
-        visible={isModalVisible2}
+        open={isModalVisible2}
         onOk={() => handleOk(true)}
         onCancel={handleCancel}
         okText="save"

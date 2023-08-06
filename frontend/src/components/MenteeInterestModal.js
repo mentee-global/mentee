@@ -44,7 +44,7 @@ function MenteeProfileModal(props) {
     <span>
       <Modal
         title={t("menteeInterestsModal.title")}
-        visible={modalVisible}
+        open={modalVisible}
         onCancel={() => {}}
         style={{ overflow: "hidden" }}
         bodyStyle={{ height: "30vh !important" }}

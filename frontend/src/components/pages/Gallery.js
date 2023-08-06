@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
 import MentorCard from "../MentorCard";
-import { Input, Checkbox, Modal, Result, Spin } from "antd";
+import { css } from "@emotion/css";
+import {
+  Input,
+  Checkbox,
+  Modal,
+  Result,
+  Spin,
+  theme,
+  Button,
+  Affix,
+  Select,
+  Typography,
+  FloatButton,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
@@ -17,7 +30,12 @@ import ModalInput from "../ModalInput";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
 
+const { Title, Text, Paragraph } = Typography;
+
 function Gallery() {
+  const {
+    token: { colorPrimaryBg, colorPrimary },
+  } = theme.useToken();
   const { t } = useTranslation();
   const options = useSelector((state) => state.options);
   const { isAdmin, isMentor, isMentee, profileId, isGuest } = useAuth();
@@ -81,6 +99,7 @@ function Gallery() {
           }
         }
       }
+      setPageLoaded(true);
     }
 
     getMentors();
@@ -100,8 +119,8 @@ function Gallery() {
       if (all_data) {
         all_data.map((item) => {
           temp.push({
-            id: item.id ? item.id : item._id["$oid"],
-            name: item.organization,
+            value: item.id ? item.id : item._id["$oid"],
+            label: item.organization,
           });
           return false;
         });
@@ -110,12 +129,6 @@ function Gallery() {
     }
     getAllPartners();
   }, []);
-
-  useEffect(() => {
-    if (isMentor || isAdmin || isGuest) {
-      setPageLoaded(true);
-    }
-  }, [isMentor, isAdmin, isGuest]);
 
   useEffect(() => {
     async function getMentee() {
@@ -137,7 +150,6 @@ function Gallery() {
         fav_set.add(id);
       });
       setFavoriteMentorIds(fav_set);
-      setPageLoaded(true);
     }
     if (isMentee && mentee) {
       initializeFavorites();
@@ -184,7 +196,73 @@ function Gallery() {
       );
     });
 
-  return !isLoggedIn() ? (
+  const getFilterForm = () => (
+    <>
+      <Title
+        level={4}
+        className={css`
+          margin-top: 0;
+        `}
+      >
+        {t("gallery.filterBy")}
+      </Title>
+      <Input
+        placeholder={t("gallery.searchByName")}
+        prefix={<SearchOutlined />}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <Title
+        level={4}
+        className={css`
+          color: ${colorPrimary};
+        `}
+      >
+        {t("common.partner")}
+      </Title>
+      <Select
+        onChange={(value) => {
+          setSelectedPartnerID(value);
+        }}
+        placeholder={t("common.partner")}
+        options={allPartners}
+        suffixIcon={<SearchOutlined />}
+        className={css`
+          width: 100%;
+        `}
+        allowClear
+      />
+      <Title level={4}>{t("common.languages")}</Title>
+      <Select
+        className={css`
+          width: 100%;
+        `}
+        allowClear
+        defaultValue={languages}
+        mode="multiple"
+        placeholder={t("common.languages")}
+        options={options.languages}
+        onChange={(selected) => setLanguages(selected)}
+        maxTagCount="responsive"
+      />
+
+      <Title level={4}>{t("common.specializations")}</Title>
+      <Select
+        className={css`
+          width: 100%;
+        `}
+        allowClear
+        defaultValue={specializations}
+        mode="multiple"
+        placeholder={t("common.specializations")}
+        options={options.specializations}
+        onChange={(selected) => setSpecializations(selected)}
+        maxTagCount="responsive"
+      />
+    </>
+  );
+
+  return !(isAdmin || isMentee || isGuest) ? (
     <Result
       status="403"
       title="403"
@@ -192,129 +270,84 @@ function Gallery() {
     />
   ) : (
     <>
-      <MenteeButton
-        onClick={() => setMobileFilterVisible(true)}
-        content={t("gallery.filter")}
-        id="filter-button"
-      />
+      <Affix offsetTop={10}>
+        <Button
+          onClick={() => setMobileFilterVisible(true)}
+          className={css`
+            display: none;
+            @media only screen and (max-width: 640px) {
+              margin-top: 2%;
+              margin-left: 2%;
+              display: grid;
+            }
+          `}
+          type="primary"
+        >
+          {t("gallery.filter")}
+        </Button>
+      </Affix>
       <Modal
         onCancel={() => {
           setMobileFilterVisible(false);
         }}
-        visible={mobileFilterVisible}
+        open={mobileFilterVisible}
         footer={[
-          <MenteeButton
-            content={t("common.apply")}
-            key="apply"
-            onClick={() => setMobileFilterVisible(false)}
-          />,
-          <MenteeButton
-            content={t("common.cancel")}
-            key="cancel"
+          <Button onClick={() => setMobileFilterVisible(false)} type="primary">
+            {t("common.apply")}
+          </Button>,
+          <Button
             onClick={() => {
               setMobileFilterVisible(false);
               setSpecializations([]);
               setQuery("");
               setLanguages([]);
             }}
-          />,
+          >
+            {t("common.cancel")}
+          </Button>,
         ]}
+        bodyStyle={{
+          padding: "1rem",
+        }}
       >
-        <div className="no-margin gallery-filter-container">
-          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
-          <Input
-            placeholder={t("gallery.searchByName")}
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <div className="gallery-filter-section-title">
-            {t("common.partner")}
-          </div>
-          <ModalInput
-            type="dropdown-single-object"
-            title=""
-            handleClick={() => {}}
-            onChange={(value) => {
-              setSelectedPartnerID(value);
-            }}
-            options={allPartners}
-            value={selectedPartnerID}
-            style={styles.searchInput}
-            prefix={<SearchOutlined />}
-          />
-          <div className="gallery-filter-section-title">
-            {t("common.specializations")}
-          </div>
-          <Checkbox.Group
-            defaultValue={specializations}
-            options={options.specializations}
-            onChange={(checked) => setSpecializations(checked)}
-            value={specializations}
-          />
-          <div className="gallery-filter-section-title">
-            {t("common.languages")}
-          </div>
-          <Checkbox.Group
-            defaultValue={languages}
-            options={options.languages}
-            onChange={(checked) => setLanguages(checked)}
-            value={languages}
-          />
-        </div>
+        {getFilterForm()}
       </Modal>
 
       <div className="gallery-container">
-        <div className="gallery-filter-container mobile-invisible">
-          <div className="gallery-filter-header">{t("gallery.filterBy")}</div>
-          <Input
-            placeholder={t("gallery.searchByName")}
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <div className="gallery-filter-section-title">
-            {t("common.partner")}
-          </div>
-          <ModalInput
-            type="dropdown-single-object"
-            title=""
-            handleClick={() => {}}
-            onChange={(value) => {
-              setSelectedPartnerID(value);
-            }}
-            options={allPartners}
-            value={selectedPartnerID}
-            style={styles.searchInput}
-            prefix={<SearchOutlined />}
-          />
-          <div className="gallery-filter-section-title">
-            {t("common.specializations")}
-          </div>
-          <Checkbox.Group
-            defaultValue={specializations}
-            options={options.specializations}
-            onChange={(checked) => setSpecializations(checked)}
-          />
-          <div className="gallery-filter-section-title">
-            {t("common.languages")}
-          </div>
-          <Checkbox.Group
-            defaultValue={languages}
-            options={options.languages}
-            onChange={(checked) => setLanguages(checked)}
-          />
-        </div>
+        <FloatButton.BackTop />
+        <Affix offsetTop={10}>
+          <div
+            className={css`
+              margin-right: 1em;
+              padding: 1em;
+              border-radius: 8px;
+              height: fit-content;
+              border: 2px solid ${colorPrimaryBg};
 
-        <div className="gallery-mentor-container">
-          {!pageLoaded ? (
-            <div className="loadingIcon">
-              {" "}
-              <Spin />{" "}
-            </div>
-          ) : (
-            getFilteredMentors().map((mentor, key) => (
+              @media only screen and (max-width: 640px) {
+                display: none;
+              }
+            `}
+          >
+            {getFilterForm()}
+          </div>
+        </Affix>
+
+        {!pageLoaded ? (
+          <div
+            className={css`
+              display: flex;
+              flex: 1;
+              justify-content: center;
+              align-items: center;
+              height: 80vh;
+            `}
+          >
+            <Spin size="large" />
+          </div>
+        ) : (
+          <div className="gallery-mentor-container">
+            {getFilteredMentors().map((mentor, key) => (
               <MentorCard
                 key={key}
                 name={mentor.name}
@@ -342,19 +375,12 @@ function Gallery() {
                 image={mentor.image}
                 pair_partner={mentor.pair_partner}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
 }
-
-const styles = {
-  searchInput: {
-    borderRadius: 10,
-    marginBottom: 5,
-  },
-};
 
 export default Gallery;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
+import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { Calendar, Modal, Badge, TimePicker } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
@@ -17,7 +18,7 @@ function AvailabilityCalendar(props) {
   const { t } = useTranslation();
   const { profileId } = useAuth();
   const [saved, setSaved] = useState({}); //  Days with set appointments
-  const [value, setValue] = useState(moment());
+  const [value, setValue] = useState(dayjs());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
   const [lockmodal, setLockModal] = useState(false); // Locks modal when panel changes
@@ -115,8 +116,8 @@ function AvailabilityCalendar(props) {
       const availability = availability_data.availability;
       availability.forEach((element) => {
         times.push([
-          moment.parseZone(element.start_time.$date).local(),
-          moment.parseZone(element.end_time.$date).local(),
+          dayjs(element.start_time.$date),
+          dayjs(element.end_time.$date),
         ]);
       });
       setTimeSlots(times);
@@ -133,7 +134,7 @@ function AvailabilityCalendar(props) {
    */
   const handleTimeChange = (index, value, timeslot) => {
     let times = [...timeSlots];
-    times[index][timeslot] = moment(value);
+    times[index][timeslot] = dayjs(value);
     setTimeSlots(times);
   };
 
@@ -144,23 +145,19 @@ function AvailabilityCalendar(props) {
     if (today_time_slots.length === 0) {
       if (today_booked_slots.length === 0) {
         times.push([
-          moment(date.format("YYYY-MM-DD")),
-          moment(date.format("YYYY-MM-DD")),
+          dayjs(date.format("YYYY-MM-DD")),
+          dayjs(date.format("YYYY-MM-DD")),
         ]);
       } else {
         times.push([
-          moment(
-            today_booked_slots[today_booked_slots.length - 1][0][1]
-          ).local(),
-          moment(
-            today_booked_slots[today_booked_slots.length - 1][0][1]
-          ).local(),
+          dayjs(today_booked_slots[today_booked_slots.length - 1][0][1]),
+          dayjs(today_booked_slots[today_booked_slots.length - 1][0][1]),
         ]);
       }
     } else {
       times.push([
-        moment(today_time_slots[today_time_slots.length - 1][0][1]).local(),
-        moment(today_time_slots[today_time_slots.length - 1][0][1]).local(),
+        dayjs(today_time_slots[today_time_slots.length - 1][0][1]),
+        dayjs(today_time_slots[today_time_slots.length - 1][0][1]),
       ]);
     }
 
@@ -186,7 +183,7 @@ function AvailabilityCalendar(props) {
     // Workaround that prevents modal from popping up when
     // panels are changed by checking state value of lockmodal
     setLockModal((state) => {
-      setDate(value);
+      setDate(moment(value.format()));
       setValue(value);
       getAvailability();
       if (!state) {
@@ -325,17 +322,20 @@ function AvailabilityCalendar(props) {
    * @param {moment} value
    * @returns {*} Content of the cell
    */
-  const dateCellRender = (value) => {
-    const listData = getListData(value);
-    return (
-      <ul className="status">
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge status="success" />
-          </li>
-        ))}
-      </ul>
-    );
+  const cellRender = (current, info) => {
+    if (info.type === "date") {
+      const listData = getListData(current);
+      return (
+        <ul className="status">
+          {listData.map((item) => (
+            <li key={item.content}>
+              <Badge status="success" />
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    return info.originNode;
   };
 
   return (
@@ -344,11 +344,11 @@ function AvailabilityCalendar(props) {
         value={value}
         onPanelChange={onPanelChange}
         onSelect={onSelect}
-        dateCellRender={dateCellRender}
+        cellRender={cellRender}
       />
       <Modal
         title={t("availability.title")}
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         footer={[
           <MenteeButton
@@ -380,13 +380,13 @@ function AvailabilityCalendar(props) {
                 <div className="timeslot-wrapper">
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][0], "HH:mm")}
+                    value={dayjs(bookedTimeSlot[0][0], "HH:mm")}
                     disabled={true}
                   />
                   <h1 className="timeslot"> - </h1>
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][1])}
+                    value={dayjs(bookedTimeSlot[0][1])}
                     disabled={true}
                   />
                 </div>
@@ -399,7 +399,7 @@ function AvailabilityCalendar(props) {
                 <TimePicker
                   use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][0], "HH:mm")}
+                  value={dayjs(timeSlot[0][0], "HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
                   // disabledHours={() => disabledHours(null, timeSlot[0][1], index)}
                   // disabledMinutes={() => disabledMinutes()}
@@ -408,7 +408,7 @@ function AvailabilityCalendar(props) {
                 <TimePicker
                   use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][1])}
+                  value={dayjs(timeSlot[0][1])}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
                   // disabledHours={() => disabledHours(timeSlot[0][0], null, index)}
                   // disabledMinutes={() => disabledMinutes()}

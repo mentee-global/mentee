@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MenuOutlined, SmileOutlined } from "@ant-design/icons";
-import { Result, message, Select } from "antd";
+import { Result, message, Select, theme } from "antd";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -15,19 +15,13 @@ import { useAuth } from "utils/hooks/useAuth";
 import BookmarkSidebar from "components/BookmarkSidebar";
 import MenteeInterestModal from "components/MenteeInterestModal";
 import "components/css/MenteeAppointments.scss";
+import { css } from "@emotion/css";
 
 function MenteeAppointments() {
+  const {
+    token: { colorPrimaryBg },
+  } = theme.useToken();
   const { t, i18n } = useTranslation();
-  // const appointmentTabs = Object.freeze({
-  //   upcoming: {
-  //     text: t("menteeAppointments.allUpcomingTab"),
-  //     key: "upcoming",
-  //   },
-  //   past: {
-  //     text: t("menteeAppointments.allPastTab"),
-  //     key: "past",
-  //   },
-  // });
 
   const appointmentTabs = [
     {
@@ -48,7 +42,20 @@ function MenteeAppointments() {
 
   function AppointmentCard({ info }) {
     return (
-      <div className="mentee-appt-card">
+      <div
+        className={css`
+          border: 2px solid ${colorPrimaryBg};
+
+          border-radius: 13px;
+          margin: 1.5em 10% 0 0;
+          padding: 1.7em 2.25em;
+
+          @media only screen and (max-width: 768px) {
+            margin-right: 2em;
+            padding: 1em 1.5em;
+          }
+        `}
+      >
         <div className="status-section">
           {t(`appointmentStatus.${info.status}`) ??
             t("appointmentStatus.pending")}{" "}

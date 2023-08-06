@@ -1,338 +1,212 @@
-import React, { useEffect, useState } from "react";
-import "../../components/css/Apply.scss";
-import { Input, Radio } from "antd";
-import { useHistory } from "react-router";
-import { useLocation } from "react-router-dom";
-import { useTranslation, Trans } from "react-i18next";
-import { ACCOUNT_TYPE } from "utils/consts";
-import ApplyStep from "../../resources/applystep.png";
-import ApplyStep2 from "../../resources/applystep2.png";
+import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
 import {
-  getAppState,
-  isHaveAccount,
-  changeStateBuildProfile,
-} from "../../utils/api";
-import ProfileStep from "../../resources/profilestep.png";
-import ProfileStep2 from "../../resources/profilestep2.png";
-import TrianStep from "../../resources/trainstep.png";
-import TrianStep2 from "../../resources/trainstep2.png";
-import MentorApplication from "./MentorApplication";
-import MenteeApplication from "./MenteeApplication";
-import TrainingList from "components/TrainingList";
-import MentorProfileForm from "./MentorProfileForm";
-import MenteeProfileForm from "./MenteeProfileForm";
-import PartnerProfileForm from "components/PartnerProfileForm";
-import { validate } from "email-validator";
+  Button,
+  Form,
+  Input,
+  Select,
+  Space,
+  Steps,
+  Typography,
+  message,
+} from "antd";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, withRouter } from "react-router-dom";
+import { getApplicationStatus, checkStatusByEmail } from "utils/api";
+import { ACCOUNT_TYPE, NEW_APPLICATION_STATUS } from "utils/consts";
+import useQuery from "utils/hooks/useQuery";
 
-const Apply = () => {
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState(null);
-  const [isapply, setIsApply] = useState(true);
-  const [confirmApply, setConfirmApply] = useState(false);
-  const [approveApply, setApproveApply] = useState(false);
-  const [approveTrainning, setApproveTrainning] = useState(false);
-  const [istrain, setIstrain] = useState(false);
-  const [isbuild, setIsBuild] = useState(false);
-  const [err2, seterr2] = useState(false);
-  const [ishavee, setishavee] = useState(false);
-  const [isProfile, setIsprofile] = useState(false);
-  const [isVerify, setIsVerify] = useState(null);
-  const history = useHistory();
-  const location = useLocation();
-  const { t, i18n } = useTranslation();
+const { Option } = Select;
 
-  const submitHandler = () => {
-    setConfirmApply(true);
+function Apply({ history }) {
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [currentState, setCurrentState] = useState();
+  const [hasApplied, setHasApplied] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const query = useQuery();
+
+  const stateItems = [
+    {
+      title: t("common.apply"),
+      key: "apply",
+      redirect: "/application-form",
+    },
+    {
+      title: t("apply.training"),
+      key: "training",
+      redirect: "/application-training",
+    },
+    {
+      title: t("apply.buildProfile"),
+      key: "buildProfile",
+      redirect: "/build-profile",
+    },
+  ];
+
+  const stepNumeration = {
+    apply: 0,
+    training: 1,
+    buildProfile: 2,
   };
-  useEffect(() => {
-    var searchParams = new URLSearchParams(location.search);
-    var email = searchParams.get("email");
-    var role = searchParams.get("role");
-    if (email !== undefined && email !== null && email !== "") {
-      setEmail(email);
-      if (role > 0) {
-        setRole(parseInt(role));
-      }
-    }
-    if (location.state) {
-      if (location.state.email) {
-        setEmail(location.state.email);
-      }
-      if (location.state.role) {
-        setRole(location.state.role);
-      }
-    }
-  }, []);
 
-  useEffect(() => {
-    async function checkConfirmation() {
-      if (validate(email)) {
-        if (role) {
-          const { isHave, isHaveProfile, isVerified } = await isHaveAccount(
-            email,
-            role
-          );
-          setIsVerify(isVerified);
-          setishavee(isHave);
-          if (isHave === true && isHaveProfile === true) {
-            setIsprofile(true);
-            setishavee(true);
-            setTimeout(() => {
-              history.push("/login");
-            }, 2000);
-            return;
-          } else if (isHave === true && isHaveProfile === false) {
-            if (location.state) {
-              setIsprofile(false);
-              setishavee(true);
-              setIsApply(false);
-              setIstrain(false);
-              setIsBuild(true);
-              setApproveTrainning(true);
-              return;
-            }
-          }
-          if (role === ACCOUNT_TYPE.PARTNER && isVerified) {
-            setIsApply(false);
-            setIstrain(false);
-            setIsBuild(true);
-            setApproveTrainning(true);
-            return;
-          } else if (role === ACCOUNT_TYPE.PARTNER && !isVerified) {
-            setIsApply(false);
-            setIstrain(false);
-            setIsBuild(false);
-            return;
-          } else if (role !== ACCOUNT_TYPE.PARTNER && isVerified) {
-            setIsApply(false);
-            setIstrain(false);
-            setIsBuild(true);
-            return;
-          } else {
-            const state = await getAppState(email, role);
-            if (state === "PENDING") {
-              setConfirmApply(true);
-              setApproveApply(false);
-            } else if (state === "APPROVED") {
-              setApproveApply(true);
-              setConfirmApply(false);
-              setIsApply(false);
-              setIstrain(true);
-            } else if (state === "BuildProfile") {
-              setIsApply(false);
-              setIstrain(false);
-              setIsBuild(true);
-              setApproveTrainning(true);
-            } else {
-              setConfirmApply(false);
-              setApproveApply(false);
-              setIsApply(true);
-              setIsBuild(false);
-              setIstrain(false);
-            }
+  const onFinish = async ({ email, role }) => {
+    // if currentState set then this is a confirm to redirect
+    if (currentState !== undefined) {
+      history.push({
+        pathname: stateItems[currentState].redirect,
+        state: { email, role, ignoreHomeLayout: true },
+      });
+    }
 
-            return state;
-          }
-        }
+    setLoading(true);
+    const { inFirebase, profileExists, isVerified } = await checkStatusByEmail(
+      email,
+      role
+    ).catch((err) => {
+      setLoading(false);
+      messageApi.error(`${err}`);
+    });
+
+    if (inFirebase && profileExists) {
+      // Redirect to login page
+      messageApi.info(t("apply.message.haveAccount"));
+      setTimeout(() => {
+        history.push({
+          pathname: "/login",
+          state: { email, role },
+        });
+      }, 2000);
+    } else if (
+      (inFirebase && !profileExists) ||
+      (role === ACCOUNT_TYPE.PARTNER && isVerified) ||
+      (role !== ACCOUNT_TYPE.PARTNER && isVerified)
+    ) {
+      setCurrentState(stepNumeration.buildProfile);
+    } else if (role === ACCOUNT_TYPE.PARTNER && !isVerified) {
+      // Partner's email needs to be verified by admin first
+      messageApi.error(t("apply.partnerVerify"));
+    } else {
+      const state = await getApplicationStatus(email, role);
+      switch (state) {
+        case NEW_APPLICATION_STATUS.PENDING:
+          messageApi.info(t("apply.confirmation"));
+          setHasApplied(true);
+          setCurrentState(stepNumeration.apply);
+          break;
+        case NEW_APPLICATION_STATUS.APPROVED:
+          setCurrentState(stepNumeration.training);
+          break;
+        case NEW_APPLICATION_STATUS.BUILDPROFILE:
+          setCurrentState(stepNumeration.buildProfile);
+          break;
+        default:
+          setCurrentState(stepNumeration.apply);
+          break;
       }
     }
-    //check this email already send application and pending
-    checkConfirmation();
-  }, [role, email]);
+    setLoading(false);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.error("Failed:", errorInfo);
+    messageApi.error(`${t("forgotPassword.error")}`);
+  };
 
   return (
-    <div className="container2">
-      <h1 className="home-header">
-        <Trans i18nKey={"common.welcome"}>
-          Welcome to <span>MENTEE!</span>
-        </Trans>
-      </h1>
-      <p className="home-text">{t("apply.emailPrompt")}</p>
-      <div className="emailPart">
-        <Input
-          type="email"
-          className="emailIn"
-          placeholder={t("common.email")}
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        />
-      </div>
-      {ishavee && isProfile === true && (
-        <p className="error">{t("apply.existingAccount")}</p>
-      )}
-      <Radio.Group
-        className="roleGroup"
-        onChange={(e) => setRole(e.target.value)}
-        value={role}
-        disabled={!validate(email)}
-      >
-        <Radio className="role" value={ACCOUNT_TYPE.MENTEE}>
-          {t("common.mentee")}
-        </Radio>
-        <Radio className="role" value={ACCOUNT_TYPE.MENTOR}>
-          {t("common.mentor")}
-        </Radio>
-        <Radio className="role" value={ACCOUNT_TYPE.PARTNER}>
-          {t("common.partner")}
-        </Radio>
-      </Radio.Group>
-      <div className="steps">
-        <img
-          src={isapply ? ApplyStep : ApplyStep2}
-          className="step0"
-          alt="apply"
-          onClick={() => {
-            if (!isbuild && istrain) {
-              setIsApply(true);
-              setIsBuild(false);
-              setIstrain(false);
-            }
-          }}
-        />
-        <img
-          src={istrain ? TrianStep2 : TrianStep}
-          className="step1"
-          alt="training"
-          onClick={() => {
-            if (approveApply) {
-              setIsApply(false);
-              setIsBuild(false);
-              setIstrain(true);
-            }
-          }}
-        />
-        <img
-          src={isbuild ? ProfileStep2 : ProfileStep}
-          className="step2"
-          alt="profile"
-          onClick={() => {
-            if (approveTrainning) {
-              setIsApply(false);
-              setIsBuild(true);
-              setIstrain(false);
-            }
-          }}
-        />
-      </div>
-      {role === ACCOUNT_TYPE.PARTNER && !isVerify ? (
-        <h1 className="applymessage">{t("apply.partnerVerify")}</h1>
-      ) : (
-        ""
-      )}
+    <div
+      className={css`
+        display: flex;
+        width: 100%;
+        flex: 1;
+        justify-content: center;
+        flex-direction: column;
 
-      <div
-        className={
-          (isapply && (confirmApply || approveApply)) ||
-          !role ||
-          (role === ACCOUNT_TYPE.PARTNER && !isVerify)
-            ? ""
-            : "formsPart"
+        @media (max-width: 991px) {
+          flex: 0;
         }
+      `}
+    >
+      {contextHolder}
+      <Link to={"/"}>
+        <Space>
+          <ArrowLeftOutlined />
+          {t("common.back")}
+        </Space>
+      </Link>
+      <Typography.Title level={2}>{t("common.apply")}</Typography.Title>
+      <Form
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+        layout="vertical"
+        style={{ width: "100%" }}
+        size="large"
+        onValuesChange={() => {
+          setCurrentState(undefined);
+          setHasApplied(false);
+        }}
+        initialValues={{
+          email: query.get("email"),
+          role: query.get("role") && parseInt(query.get("role")),
+        }}
       >
-        {isapply && role ? (
-          <div className="applypart">
-            {!approveApply && confirmApply ? (
-              <h1 className="applymessage">{t("apply.confirmation")}</h1>
-            ) : (
-              <>
-                {approveApply ? (
-                  <h1 className="applymessage">{t("apply.approved")}</h1>
-                ) : (
-                  ""
-                )}
-                {!approveApply && role === ACCOUNT_TYPE.MENTOR ? (
-                  <MentorApplication
-                    submitHandler={submitHandler}
-                    role={ACCOUNT_TYPE.MENTOR}
-                    headEmail={email}
-                  ></MentorApplication>
-                ) : (
-                  ""
-                )}
-                {!approveApply && role === ACCOUNT_TYPE.MENTEE ? (
-                  <MenteeApplication
-                    submitHandler={submitHandler}
-                    role={ACCOUNT_TYPE.MENTEE}
-                    headEmail={email}
-                  ></MenteeApplication>
-                ) : (
-                  ""
-                )}
-              </>
-            )}
-          </div>
-        ) : (
-          ""
+        <Form.Item
+          name="email"
+          label={t("common.email")}
+          rules={[
+            {
+              required: true,
+              type: "email",
+              message: t("loginErrors.emailError"),
+            },
+          ]}
+        >
+          <Input prefix={<UserOutlined />} autoFocus />
+        </Form.Item>
+        <Form.Item
+          name="role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+              message: t("apply.error.role"),
+            },
+          ]}
+        >
+          <Select>
+            <Option value={ACCOUNT_TYPE.MENTOR}>{t("common.mentor")}</Option>
+            <Option value={ACCOUNT_TYPE.MENTEE}>{t("common.mentee")}</Option>
+            <Option value={ACCOUNT_TYPE.PARTNER}>{t("common.partner")}</Option>
+          </Select>
+        </Form.Item>
+        {currentState !== undefined && (
+          <Form.Item>
+            <Steps
+              current={currentState}
+              responsive
+              size="small"
+              items={stateItems}
+            />
+          </Form.Item>
         )}
-        {istrain ? (
-          <div className="trainpart">
-            {" "}
-            <TrainingList role={role} />
-          </div>
-        ) : (
-          ""
-        )}
-        {isbuild ? (
-          <div className="buildpart">
-            {role === ACCOUNT_TYPE.PARTNER && isVerify ? (
-              <PartnerProfileForm
-                role={role}
-                headEmail={email}
-                isHave={ishavee}
-              />
-            ) : (
-              ""
-            )}
-            {role === ACCOUNT_TYPE.MENTOR ? (
-              <MentorProfileForm
-                headEmail={email}
-                role={role}
-                isHave={ishavee}
-              ></MentorProfileForm>
-            ) : (
-              ""
-            )}
-            {role === ACCOUNT_TYPE.MENTEE ? (
-              <MenteeProfileForm
-                headEmail={email}
-                role={role}
-                isHave={ishavee}
-              ></MenteeProfileForm>
-            ) : (
-              ""
-            )}
-          </div>
-        ) : (
-          ""
-        )}
-
-        <div className="btnContainer">
-          <div
-            className={`applySubmit2 ${istrain ? "" : " hide"}`}
-            onClick={async () => {
-              let state = await changeStateBuildProfile({
-                email,
-                role,
-                preferred_language: i18n.language,
-              });
-              if (state === "BuildProfile") {
-                setIsApply(false);
-                setIsBuild(true);
-                setIstrain(false);
-              } else {
-                seterr2(true);
-              }
-            }}
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: "100%" }}
+            loading={loading}
+            disabled={hasApplied}
           >
-            {t("apply.completeTrainings")}
-          </div>
-          {err2 && <p>{t("apply.errorConnection")}</p>}
-        </div>
-      </div>
+            {currentState === undefined
+              ? t("common.submit")
+              : t("common.continue")}
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
-};
+}
 
-export default Apply;
+export default withRouter(Apply);

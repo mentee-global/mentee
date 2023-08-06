@@ -143,7 +143,6 @@ def upload_account_emailText():
 
 
 @admin.route("/admin/<id>", methods=["GET"])
-@admin_only
 def get_admin(id):
     # return create_response(data={"admin": {"_id":{"$oid":"60765e9289899aeee51a8b27"},"email":"klhester3@gmail.com","firebase_uid":"xsW41z9Hc6Y9r6Te0JAcXhlYneA2","name":"candle"}})
 

@@ -92,10 +92,10 @@ export const uploadAccountImage = (data, id, type) => {
   );
 };
 
-export const createAccountProfile = async (profile, type, isHave) => {
+export const createAccountProfile = async (profile, type, inFirebase) => {
   profile["account_type"] = type;
   let requestExtension = `/account`;
-  if (isHave === true) {
+  if (inFirebase) {
     requestExtension = `/accountProfile`;
   }
 
@@ -131,22 +131,19 @@ export const createApplication = (application) => {
   );
 };
 
-export const getAppState = async (email, role) => {
-  const requestExtension = `/application/checkConfirm/${email}/${role}`;
+export const getApplicationStatus = async (email, role) => {
+  const requestExtension = `/application/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  let state = res.data.result.state;
+  let state = res.data?.result?.state;
   return state;
 };
 
-export const getExistingProfile = async (email, role) => {
-  const requestExtension = `/application/isHaveProfile/${email}/${role}`;
+export const checkProfileExists = async (email, role) => {
+  const requestExtension = `/application/profile/exists/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  let isHaveProfile = res.data.result.isHaveProfile || false;
-  let rightRole = null;
-  if (res.data.result.rightRole) {
-    rightRole = res.data.result.rightRole;
-  }
-  return { isHaveProfile, rightRole };
+  let profileExists = res.data?.result?.profileExists;
+  let rightRole = res.data?.result?.rightRole;
+  return { profileExists, rightRole };
 };
 
 export const changeStateBuildProfile = async ({ email, role }) => {
@@ -157,17 +154,17 @@ export const changeStateBuildProfile = async ({ email, role }) => {
       preferred_language: i18n.language,
     },
   });
-  let state = res.data.result.state;
+  let state = res.data?.result?.state;
   return state;
 };
 
-export const isHaveAccount = async (email, role) => {
-  const requestExtension = `/application/checkHaveAccount/${email}/${role}`;
+export const checkStatusByEmail = async (email, role) => {
+  const requestExtension = `/application/email/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  let isHave = res.data.result.isHave;
-  let isHaveProfile = res.data.result.isHaveProfile;
-  let isVerified = res.data.result.isVerified;
-  return { isHave, isHaveProfile, isVerified };
+  let inFirebase = res.data?.result?.inFirebase;
+  let profileExists = res.data?.result?.profileExists;
+  let isVerified = res.data?.result?.isVerified;
+  return { inFirebase, profileExists, isVerified };
 };
 
 export const getTrainings = async (role, lang = i18n.language) => {
@@ -871,15 +868,15 @@ export const translateOption = async (optionType, selectId) => {
  * should there be a need to change the value for ACCOUNT_TYPE
  */
 
-export const createMentorProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, isHave);
+export const createMentorProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, inFirebase);
 };
 
-export const createMenteeProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE, isHave);
+export const createMenteeProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE, inFirebase);
 };
-export const createPartnerProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER, isHave);
+export const createPartnerProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER, inFirebase);
 };
 
 export const editMentorProfile = async (data, id) => {

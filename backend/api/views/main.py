@@ -6,6 +6,7 @@ from datetime import datetime
 
 from api.models import (
     db,
+    Admin,
     MentorProfile,
     MenteeProfile,
     AppointmentRequest,
@@ -16,7 +17,7 @@ from api.models import (
     Notifications,
     Guest,
 )
-from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS
+from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS, ALERT_TO_ADMINS
 from api.utils.request_utils import send_email
 from api.core import create_response, logger
 from api.utils.request_utils import (
@@ -95,6 +96,9 @@ def get_accounts(account_type):
                 accounts = PartnerProfile.objects(restricted__ne=True)
         else:
             accounts = PartnerProfile.objects()
+
+    elif account_type == Account.GUEST:
+        accounts = Guest.objects()
     else:
         msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)
@@ -273,6 +277,29 @@ def create_mentor_profile():
         },
         template_id=PROFILE_COMPLETED,
     )
+    admin_data = Admin.objects()
+    for admin in admin_data:
+        txt_role = "Mentor"
+        txt_name = ""
+        if account_type == Account.MENTEE:
+            txt_role = "Mentee"
+        if account_type == Account.PARTNER:
+            txt_role = "Partner"
+            txt_name = data["organization"]
+        else :
+            txt_name = data["name"]
+        success, msg = send_email(
+            recipient=admin.email,
+            template_id=ALERT_TO_ADMINS,
+            data={
+                'name': txt_name,
+                "email": email,
+                "role": txt_role,
+                "action": "completed profile",
+                new_account.preferred_language: True,
+            },
+        )
+
     notify = Notifications(
         message="New Mentor with name(" + new_account.name + ") has created profile"
         if account_type != Account.PARTNER
@@ -383,6 +410,29 @@ def create_profile_existing_account():
         create_response(status=400, message=msg)
 
     new_account.save()
+
+    admin_data = Admin.objects()
+    for admin in admin_data:
+        txt_role = "Mentor"
+        txt_name = ""
+        if account_type == Account.MENTEE:
+            txt_role = "Mentee"
+        if account_type == Account.PARTNER:
+            txt_role = "Partner"
+            txt_name = data["organization"]
+        else :
+            txt_name = data["name"]
+        success, msg = send_email(
+            recipient=admin.email,
+            template_id=ALERT_TO_ADMINS,
+            data={
+                'name': txt_name,
+                "email": email,
+                "role": txt_role,
+                "action": "completed profile",
+                new_account.preferred_language: True,
+            },
+        )
     return create_response(
         message=f"Successfully created {account_type} Profile for existing account {new_account.email}",
         data={

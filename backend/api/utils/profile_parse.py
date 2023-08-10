@@ -81,7 +81,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             is_private=data.get("is_private", True),
         )
 
-        if "video" in data:
+        if "video" in data and data.get('video') is not None:
             video_data = data.get("video")
             new_profile.video = Video(
                 title=video_data["title"],
@@ -100,15 +100,16 @@ def new_profile(data: dict = {}, profile_type: int = -1):
 
     if "education" in data:
         education_data = data.get("education")
-        new_profile.education = [
-            Education(
-                education_level=education.get("education_level"),
-                majors=education.get("majors"),
-                school=education.get("school"),
-                graduation_year=education.get("graduation_year"),
-            )
-            for education in education_data
-        ]
+        if education_data is not None:
+            new_profile.education = [
+                Education(
+                    education_level=education.get("education_level"),
+                    majors=education.get("majors"),
+                    school=education.get("school"),
+                    graduation_year=education.get("graduation_year"),
+                )
+                for education in education_data
+            ]
 
     return new_profile
 
@@ -171,7 +172,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         )
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.website = data.get("website", profile.website)
-        if "video" in data:
+        if "video" in data and data.get('video') is not None:
             video_data = data.get("video")
             if video_data:
                 profile.video = Video(
@@ -212,7 +213,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.is_private = data.get("is_private", profile.is_private)
         profile.specializations = data.get("specializations", profile.specializations)
 
-        if "video" in data:
+        if "video" in data and data.get('video') is not None:
             video_data = data.get("video")
 
             if video_data:
@@ -244,14 +245,15 @@ def edit_profile(data: dict = {}, profile: object = None):
     # Create education object
     if "education" in data:
         education_data = data.get("education")
-        profile.education = [
-            Education(
-                education_level=education.get("education_level"),
-                majors=education.get("majors"),
-                school=education.get("school"),
-                graduation_year=education.get("graduation_year"),
-            )
-            for education in education_data
-        ]
+        if education_data is not None:
+            profile.education = [
+                Education(
+                    education_level=education.get("education_level"),
+                    majors=education.get("majors"),
+                    school=education.get("school"),
+                    graduation_year=education.get("graduation_year"),
+                )
+                for education in education_data
+            ]
 
     return True

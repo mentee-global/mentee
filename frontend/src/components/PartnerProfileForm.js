@@ -195,7 +195,7 @@ function PartnerProfileForm({
       <Form.Item label={t("partnerProfile.developmentGoals")} name="sdgs">
         <Select mode="multiple" options={getSDGs(t)} />
       </Form.Item>
-      <Form.Item label={t("partnerProfile.projectNames")} name="intro">
+      <Form.Item label={t("partnerProfile.projectNames")} name="topics">
         <Input.TextArea rows={3} />
       </Form.Item>
       <div className={styles.formGroup}>

@@ -28,6 +28,7 @@ const keys = {
   MENTEES: 1,
   PARTNER: 2,
   ALL: 3,
+  GUEST: 4,
   ASCENDING: 0,
   DESCENDING: 1,
 };
@@ -48,6 +49,7 @@ function AdminAccountData() {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [guestModalVisible, setGuestModalVisible] = useState(false);
   const [partnerData, setPartnerData] = useState([]);
+  const [guestData, setGuestData] = useState([]);
   const [mentors, setMentors] = useState([]);
 
   const { onAuthStateChanged } = useAuth();
@@ -59,6 +61,7 @@ function AdminAccountData() {
       const mentors = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
       const menteeRes = await fetchMenteesAppointments();
       const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
+      const Guests = await fetchAccounts(ACCOUNT_TYPE.GUEST);
       var partners_data = [];
       if (Partners) {
         Partners.map((item) => {
@@ -82,6 +85,7 @@ function AdminAccountData() {
         setMentorData(mentorRes.mentorData);
         setMenteeData(newMenteeData);
         setPartnerData(partners_data);
+        setGuestData(Guests);
         setDisplayData(mentorRes.mentorData);
         setFilterData(mentorRes.mentorData);
         if (displayOption === keys.MENTEES) {
@@ -91,6 +95,10 @@ function AdminAccountData() {
         if (displayOption === keys.PARTNER) {
           setDisplayData(partners_data);
           setFilterData(partners_data);
+        }
+        if (displayOption === keys.GUEST) {
+          setDisplayData(Guests);
+          setFilterData(Guests);
         }
         // setResetFilters(!resetFilters);
         setMentors(mentors);
@@ -166,8 +174,10 @@ function AdminAccountData() {
       newData = menteeData;
     } else if (key === keys.ALL) {
       newData = mentorData.concat(menteeData);
-    } else if (key == keys.PARTNER) {
+    } else if (key === keys.PARTNER) {
       newData = partnerData;
+    } else if (key === keys.GUEST) {
+      newData = guestData;
     }
 
     setDisplayData(newData);
@@ -221,6 +231,8 @@ function AdminAccountData() {
             ? "Mentees"
             : displayOption === keys.PARTNER
             ? "Partners"
+            : displayOption === keys.GUEST
+            ? "Guests"
             : "All"}
         </div>
         <div className="table-button-group">
@@ -300,6 +312,7 @@ function AdminAccountData() {
           refresh={() => setReload(!reload)}
           isMentee={displayOption === keys.MENTEES}
           isPartner={displayOption === keys.PARTNER}
+          isGuest={displayOption === keys.GUEST}
           mentors={mentors}
           mentees={menteeData}
         />

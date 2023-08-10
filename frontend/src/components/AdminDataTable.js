@@ -48,6 +48,7 @@ function AdminDataTable({
   deleteAccount,
   isMentee,
   isPartner,
+  isGuest,
   mentors,
   mentees,
   refresh,
@@ -393,13 +394,23 @@ function AdminDataTable({
         {!isPartner && (
           <>
             <Column title="Name" dataIndex="name" key="name" />
-            <Column
-              title="No. of Appointments"
-              dataIndex="numOfAppointments"
-              key="numOfAppointments"
-              align="center"
-            />
-            {!isMentee && (
+            {!isGuest && (
+              <Column
+                title="No. of Appointments"
+                dataIndex="numOfAppointments"
+                key="numOfAppointments"
+                align="center"
+              />
+            )}
+            {isGuest && (
+              <Column
+                title="Email"
+                dataIndex="email"
+                key="email"
+                align="center"
+              />
+            )}
+            {!isMentee && !isGuest && (
               <>
                 <Column
                   title="Appointments Available?"
@@ -434,8 +445,12 @@ function AdminDataTable({
                   title={`Are you sure you want to delete ${data.name}?`}
                   onConfirm={() => {
                     deleteAccount(
-                      data.id,
-                      data.isMentee ? ACCOUNT_TYPE.MENTEE : ACCOUNT_TYPE.MENTOR,
+                      data.id ? data.id : data._id.$oid,
+                      isGuest
+                        ? ACCOUNT_TYPE.GUEST
+                        : data.isMentee
+                        ? ACCOUNT_TYPE.MENTEE
+                        : ACCOUNT_TYPE.MENTOR,
                       data.name
                     );
                   }}
@@ -450,30 +465,32 @@ function AdminDataTable({
               )}
               align="center"
             />
-            <Column
-              title="Link to Profile"
-              dataIndex="id"
-              key="id"
-              render={(id, data) => {
-                let profileURL = data.isMentee
-                  ? `${MENTEE_PROFILE}${id}`
-                  : `${MENTOR_PROFILE}${id}`;
+            {!isGuest && (
+              <Column
+                title="Link to Profile"
+                dataIndex="id"
+                key="id"
+                render={(id, data) => {
+                  let profileURL = data.isMentee
+                    ? `${MENTEE_PROFILE}${id}`
+                    : `${MENTOR_PROFILE}${id}`;
 
-                return (
-                  !data.is_private && (
-                    <a
-                      style={{ color: "black" }}
-                      href={formatLinkForHref(profileURL)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <LinkOutlined /> {profileURL}
-                    </a>
-                  )
-                );
-              }}
-              align="center"
-            />
+                  return (
+                    !data.is_private && (
+                      <a
+                        style={{ color: "black" }}
+                        href={formatLinkForHref(profileURL)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <LinkOutlined /> {profileURL}
+                      </a>
+                    )
+                  );
+                }}
+                align="center"
+              />
+            )}
           </>
         )}
         {isPartner && (
@@ -572,7 +589,7 @@ function AdminDataTable({
                   title={`Are you sure you want to delete ${data.organization}?`}
                   onConfirm={() => {
                     deleteAccount(
-                      data.id,
+                      data.id ? data.id : data._id.$oid,
                       ACCOUNT_TYPE.PARTNER,
                       data.organization
                     );
@@ -590,121 +607,132 @@ function AdminDataTable({
               )}
               align="center"
             />
+            {!isGuest && (
+              <Column
+                title="Link to Profile"
+                className="link-td"
+                dataIndex="id"
+                key="id"
+                render={(id, data) => {
+                  let profileURL = `${PARTNER_PROFILE}${id}`;
 
-            <Column
-              title="Link to Profile"
-              className="link-td"
-              dataIndex="id"
-              key="id"
-              render={(id, data) => {
-                let profileURL = `${PARTNER_PROFILE}${id}`;
-
-                return (
-                  !data.is_private && (
-                    <a
-                      style={{ color: "black" }}
-                      href={formatLinkForHref(profileURL)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <LinkOutlined /> {profileURL}
-                    </a>
-                  )
-                );
-              }}
-              align="center"
-            />
+                  return (
+                    !data.is_private && (
+                      <a
+                        style={{ color: "black" }}
+                        href={formatLinkForHref(profileURL)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <LinkOutlined /> {profileURL}
+                      </a>
+                    )
+                  );
+                }}
+                align="center"
+              />
+            )}
           </>
         )}
-        <Column
-          title="Profile Picture"
-          dataIndex="id"
-          key="profile-picture"
-          render={(id, data) => {
-            return (
-              <div className="flex flex-center">
-                {loading ? (
-                  <Avatar
-                    size={30}
-                    icon={<Spin />}
-                    className="modal-profile-icon2"
-                  />
-                ) : (
-                  <Avatar
-                    size={30}
-                    icon={<UserOutlined />}
-                    className="modal-profile-icon2"
-                    src={
-                      data.profilePicUp
-                        ? mentorAccounts.find((m) => m.id === id)?.image?.url
-                        : accounts.find((acc) => acc.id === id)?.image?.url
-                    }
-                  />
-                )}
+        {!isGuest && (
+          <Column
+            title="Profile Picture"
+            dataIndex="id"
+            key="profile-picture"
+            render={(id, data) => {
+              return (
+                <div className="flex flex-center">
+                  {loading ? (
+                    <Avatar
+                      size={30}
+                      icon={<Spin />}
+                      className="modal-profile-icon2"
+                    />
+                  ) : (
+                    <Avatar
+                      size={30}
+                      icon={<UserOutlined />}
+                      className="modal-profile-icon2"
+                      src={
+                        data.profilePicUp
+                          ? mentorAccounts.find((m) => m.id === id)?.image?.url
+                          : accounts.find((acc) => acc.id === id)?.image?.url
+                      }
+                    />
+                  )}
 
-                <ImgCrop rotate aspect={5 / 3}>
-                  <Upload
-                    onChange={async (file) => {
-                      setLoading(true);
-                      if (isPartner) {
-                        await uploadAccountImage(
-                          file.file.originFileObj,
-                          id,
-                          ACCOUNT_TYPE.PARTNER
-                        );
-                      }
-                      if (data.favorite_mentors_ids) {
-                        await uploadAccountImage(
-                          file.file.originFileObj,
-                          id,
-                          ACCOUNT_TYPE.MENTEE
-                        );
-                      } else {
-                        await uploadAccountImage(
-                          file.file.originFileObj,
-                          id,
-                          ACCOUNT_TYPE.MENTOR
-                        );
-                      }
-                      if (data.profilePicUp) {
-                        setMentorAccounts((prev) => {
-                          let newAccounts = [...prev];
-                          let index = accounts.findIndex((a) => a.id == id);
-                          newAccounts[index] = {
-                            id: id,
-                            image: {
-                              url: URL.createObjectURL(file.file.originFileObj),
-                            },
-                          };
-                          return newAccounts;
-                        });
-                      } else {
-                        setAccounts((prev) => {
-                          let newAccounts = [...prev];
-                          let index = accounts.findIndex((a) => a.id == id);
-                          newAccounts[index] = {
-                            id: id,
-                            image: {
-                              url: URL.createObjectURL(file.file.originFileObj),
-                            },
-                          };
-                          return newAccounts;
-                        });
-                      }
+                  <ImgCrop rotate aspect={5 / 3}>
+                    <Upload
+                      onChange={async (file) => {
+                        setLoading(true);
+                        if (isPartner) {
+                          await uploadAccountImage(
+                            file.file.originFileObj,
+                            id,
+                            ACCOUNT_TYPE.PARTNER
+                          );
+                        }
+                        if (data.favorite_mentors_ids) {
+                          await uploadAccountImage(
+                            file.file.originFileObj,
+                            id,
+                            ACCOUNT_TYPE.MENTEE
+                          );
+                        } else {
+                          await uploadAccountImage(
+                            file.file.originFileObj,
+                            id,
+                            ACCOUNT_TYPE.MENTOR
+                          );
+                        }
+                        if (data.profilePicUp) {
+                          setMentorAccounts((prev) => {
+                            let newAccounts = [...prev];
+                            let index = accounts.findIndex((a) => a.id == id);
+                            newAccounts[index] = {
+                              id: id,
+                              image: {
+                                url: URL.createObjectURL(
+                                  file.file.originFileObj
+                                ),
+                              },
+                            };
+                            return newAccounts;
+                          });
+                        } else {
+                          setAccounts((prev) => {
+                            let newAccounts = [...prev];
+                            let index = accounts.findIndex((a) => a.id == id);
+                            newAccounts[index] = {
+                              id: id,
+                              image: {
+                                url: URL.createObjectURL(
+                                  file.file.originFileObj
+                                ),
+                              },
+                            };
+                            return newAccounts;
+                          });
+                        }
 
-                      setLoading(false);
-                    }}
-                    accept=".png,.jpg,.jpeg"
-                    showUploadList={false}
-                  >
-                    <Button shape="circle" icon={<EditFilled />} className="" />
-                  </Upload>
-                </ImgCrop>
-              </div>
-            );
-          }}
-          align="center"
-        />
+                        setLoading(false);
+                      }}
+                      accept=".png,.jpg,.jpeg"
+                      showUploadList={false}
+                    >
+                      <Button
+                        shape="circle"
+                        icon={<EditFilled />}
+                        className=""
+                      />
+                    </Upload>
+                  </ImgCrop>
+                </div>
+              );
+            }}
+            align="center"
+          />
+        )}
       </Table>
       <Modal
         title="Assign Users"

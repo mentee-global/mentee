@@ -1,6 +1,8 @@
+from os import name
 from flask import Blueprint, request
 from sqlalchemy import null
 from api.models import (
+    Admin,
     NewMentorApplication,
     VerifiedEmail,
     Users,
@@ -22,6 +24,7 @@ from api.utils.constants import (
     TRAINING_COMPLETED,
     PROFILE_COMPLETED,
     TRANSLATIONS,
+    ALERT_TO_ADMINS
 )
 from api.utils.request_utils import (
     send_email,
@@ -220,6 +223,8 @@ def check_profile_exists(email, role):
 
 @apply.route("/changeStateBuildProfile/<email>/<role>", methods=["GET"])
 def change_state_to_build_profile(email, role):
+    admin_data = Admin.objects()
+
     application = null
     role = int(role)
     try:
@@ -256,6 +261,25 @@ def change_state_to_build_profile(email, role):
             },
             template_id=TRAINING_COMPLETED,
         )
+        for admin in admin_data:
+            txt_role = "Mentor"
+            txt_name = application.name
+            if role == Account.MENTEE:
+                txt_role = "Mentee"
+            if role == Account.PARTNER:
+                txt_role = "Partner"
+                txt_name = application.organization
+            success, msg = send_email(
+                recipient=admin.email,
+                template_id=ALERT_TO_ADMINS,
+                data={
+                    'name': txt_name,
+                    "email": application.email,
+                    "role": txt_role,
+                    "action": "completed training",
+                    preferred_language: True,
+                },
+            )
         if not success:
             logger.info(msg)
 
@@ -286,6 +310,8 @@ def delete_application(id):
 @apply.route("/<id>/<role>", methods=["PUT"])
 @admin_only
 def edit_application(id, role):
+    admin_data = Admin.objects()
+
     data = request.get_json()
     preferred_language = data.get("preferred_language", "en-US")
     role = int(role)
@@ -337,6 +363,7 @@ def edit_application(id, role):
                     "subject": TRANSLATIONS[preferred_language]["app_approved"],
                 },
             )
+        
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["APPROVED"]:
@@ -384,6 +411,21 @@ def edit_application(id, role):
                 "subject": TRANSLATIONS[preferred_language]["profile_completed"],
             },
         )
+        for admin in admin_data:
+            txt_role = "Mentor"
+            if role == Account.MENTEE:
+                txt_role = "Mentee"
+            success, msg = send_email(
+                recipient=admin.email,
+                template_id=ALERT_TO_ADMINS,
+                data={
+                    'name': application.name,
+                    "email": application.email,
+                    "role": txt_role,
+                    "action": "completed profile",
+                    preferred_language: True,
+                },
+            )
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["BUILDPROFILE"]:
@@ -405,6 +447,21 @@ def edit_application(id, role):
             },
             template_id=TRAINING_COMPLETED,
         )
+        for admin in admin_data:
+            txt_role = "Mentor"
+            if role == Account.MENTEE:
+                txt_role = "Mentee"
+            success, msg = send_email(
+                recipient=admin.email,
+                template_id=ALERT_TO_ADMINS,
+                data={
+                    'name': application.name,
+                    "email": application.email,
+                    "role": txt_role,
+                    "action": "completed training",
+                    preferred_language: True,
+                },
+            )
         if not success:
             logger.info(msg)
 
@@ -414,6 +471,8 @@ def edit_application(id, role):
 # POST request for Mentee Appointment
 @apply.route("/new", methods=["POST"])
 def create_application():
+    admin_data = Admin.objects()
+
     data = request.get_json()
     preferred_language = data.get("preferred_language", "en-US")
     role = data.get("role")
@@ -500,6 +559,27 @@ def create_application():
                 "subject": TRANSLATIONS[preferred_language]["mentee_app_submit"],
             },
             template_id=MENTEE_APP_SUBMITTED,
+        )
+    
+    admin_data = Admin.objects()
+    for admin in admin_data:
+        txt_role = "Mentor"
+        txt_name = new_application.name
+        if role == Account.MENTEE:
+            txt_role = "Mentee"
+        if role == Account.PARTNER:
+            txt_role = "Partner"
+            txt_name = new_application.organization
+        success, msg = send_email(
+            recipient=admin.email,
+            template_id=ALERT_TO_ADMINS,
+            data={
+                'name': txt_name,
+                "email": new_application.email,
+                "role": txt_role,
+                "action": "applied",
+                preferred_language: True,
+            },
         )
     if not success:
         logger.info(msg)

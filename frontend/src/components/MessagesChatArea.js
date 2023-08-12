@@ -571,6 +571,7 @@ function MessagesChatArea(props) {
       </div>
 
       {isMobile ? (
+        // TODO: Consolidate the modal and drawer into one component
         <Drawer
           width={"100%"}
           title={t("messages.availabilityTitle")}

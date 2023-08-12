@@ -286,13 +286,13 @@ def create_mentor_profile():
         if account_type == Account.PARTNER:
             txt_role = "Partner"
             txt_name = data["organization"]
-        else :
+        else:
             txt_name = data["name"]
         success, msg = send_email(
             recipient=admin.email,
             template_id=ALERT_TO_ADMINS,
             data={
-                'name': txt_name,
+                "name": txt_name,
                 "email": email,
                 "role": txt_role,
                 "action": "completed profile",
@@ -420,13 +420,13 @@ def create_profile_existing_account():
         if account_type == Account.PARTNER:
             txt_role = "Partner"
             txt_name = data["organization"]
-        else :
+        else:
             txt_name = data["name"]
         success, msg = send_email(
             recipient=admin.email,
             template_id=ALERT_TO_ADMINS,
             data={
-                'name': txt_name,
+                "name": txt_name,
                 "email": email,
                 "role": txt_role,
                 "action": "completed profile",

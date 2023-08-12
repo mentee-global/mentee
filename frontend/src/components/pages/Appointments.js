@@ -3,10 +3,7 @@ import moment from "moment";
 import {
   Form,
   Button,
-  Col,
-  Row,
   Result,
-  Badge,
   Checkbox,
   Modal,
   TimePicker,
@@ -14,6 +11,7 @@ import {
   notification,
   Spin,
   theme,
+  Tabs,
 } from "antd";
 import {
   ClockCircleOutlined,
@@ -40,28 +38,23 @@ import { updateAndFetchUser } from "features/userSlice";
 import ModalInput from "components/ModalInput";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
+import { useMediaQuery } from "react-responsive";
+import i18n from "utils/i18n";
 
-//TODO: Fix this tabs rendering translation
-
-const Tabs = Object.freeze({
+const TabKeys = Object.freeze({
   upcoming: "upcoming",
   past: "past",
   availability: "availability",
 });
 
 function Appointments() {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const {
-    token: {
-      colorPrimaryBg,
-      colorPrimaryBorder,
-      colorBorderSecondary,
-      colorPrimary,
-    },
+    token: { colorPrimary },
   } = theme.useToken();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
-  const tabTitles = {
+  const tabLabels = {
     upcoming: t("mentorAppointmentPage.upcoming"),
     past: t("mentorAppointmentPage.past"),
     availability: t("mentorAppointmentPage.availability"),
@@ -73,13 +66,11 @@ function Appointments() {
   const options = useSelector((state) => state.options);
   const [modalAppointment, setModalAppointment] = useState({});
   const { isAdmin, onAuthStateChanged, role, profileId } = useAuth();
-  const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
   const [takeAppoinment, setTakeappoinment] = useState(
     user?.taking_appointments
   );
 
   const [manualModalvisible, setManualModalvisible] = useState(false);
-  const [mentees, setMentees] = useState([]);
   const [menteeArr, setMenteeArr] = useState([]);
   const [topic, setTopic] = useState();
   const [message, setMessage] = useState();
@@ -87,6 +78,7 @@ function Appointments() {
   const [selectedDate, setSelectedDate] = useState();
   const [selectedStarttime, setSelectedStarttime] = useState();
   const [selectedEndtime, setSelectedEndtime] = useState();
+  const [currentTab, setCurrentTab] = useState("upcoming");
   const [form] = Form.useForm();
 
   const dispatch = useDispatch();
@@ -113,7 +105,6 @@ function Appointments() {
             }
             return false;
           });
-          setMentees(temp);
         }
       } else {
         var restricted_partners = await fetchPartners(true);
@@ -135,10 +126,8 @@ function Appointments() {
             }
             return false;
           });
-          setMentees(temp);
         } else {
           temp = mentee_data;
-          setMentees(mentee_data);
         }
       }
     }
@@ -164,16 +153,13 @@ function Appointments() {
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
         if (formattedAppointments["pending"][0]) {
-          setPendingAppointmentCount(
-            formattedAppointments["pending"][0]["appointments"].length
-          );
         }
       }
       setIsLoading(false);
     }
 
     onAuthStateChanged(getAppointments);
-  }, [appointmentClick, profileId, onAuthStateChanged]);
+  }, [appointmentClick, profileId, onAuthStateChanged, i18n.language]);
 
   useEffect(() => {
     getMentees();
@@ -257,66 +243,22 @@ function Appointments() {
     setAppointmentClick(!appointmentClick);
     setModalVisible(false);
   }
-  // TODO: Swap this to emotion styled components
-  const getButtonStyle = (tab) => {
-    const active = colorPrimary;
-    const inactive = "white";
-    return {
-      borderRadius: 13,
-      marginRight: 15,
-      backgroundColor: currentTab === tab ? active : inactive,
-    };
-  };
-  const getButtonTextStyle = (tab) => {
-    const active = "white";
-    const inactive = colorPrimary;
-    return {
-      fontWeight: 700,
-      color: currentTab === tab ? active : inactive,
-    };
-  };
-  const Tab = (props) => {
-    if (props.text === "All Pending") {
-      return (
-        <Button
-          type="primary"
-          shape="round"
-          style={getButtonStyle(props.tab)}
-          onClick={() => setCurrentTab(props.tab)}
-        >
-          <Badge count={pendingAppointmentCount ?? 0} size="small">
-            <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-          </Badge>
-        </Button>
-      );
-    } else {
-      return (
-        <Button
-          type="default"
-          shape="round"
-          style={getButtonStyle(props.tab)}
-          onClick={() => setCurrentTab(props.tab)}
-        >
-          <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-        </Button>
-      );
-    }
-  };
+
   const getAppointmentButton = (tab, info) => {
-    if (tab === Tabs.upcoming) {
+    if (tab === TabKeys.upcoming) {
       return (
         <Button
           className="appointment-more-details"
           icon={
             <InfoCircleFilled
-              style={{ ...styles.appointment_buttons, color: colorPrimary }}
+              style={{ ...styles.appointmentButtons, color: colorPrimary }}
             />
           }
           type="text"
           onClick={() => ViewAppointmentDetails(info)}
         ></Button>
       );
-    } else if (tab === Tabs.pending) {
+    } else if (tab === TabKeys.pending) {
       return (
         <MenteeButton
           content={<b>Review</b>}
@@ -375,7 +317,7 @@ function Appointments() {
       return (
         <div className="empty-appointments-list appointments-background">
           <Result
-            icon={<SmileOutlined />}
+            icon={<SmileOutlined style={{ color: colorPrimary }} />}
             title={t("mentorAppointmentPage.noAppointments")}
           />
         </div>
@@ -383,7 +325,7 @@ function Appointments() {
     }
     return (
       <div>
-        <b className="appointment-tabs-title">{tabTitles[currentTab.key]}</b>
+        <b className="appointment-tabs-title">{tabLabels[currentTab.key]}</b>
         <div className="appointments-background">
           {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
@@ -405,18 +347,25 @@ function Appointments() {
       </div>
     );
   };
-  function renderTab(tab) {
-    switch (tab) {
-      case Tabs.upcoming: // Fall through
-      case Tabs.pending: // Fall through
-      case Tabs.past:
-        return <Appointments data={appointments[currentTab]} />;
-      case Tabs.availability:
-        return <AvailabilityTab data={appointments[Tabs.upcoming]} />;
-      default:
-        return <div />;
-    }
-  }
+
+  const tabItems = [
+    {
+      key: TabKeys.upcoming,
+      label: tabLabels.upcoming,
+      children: <Appointments data={appointments[TabKeys.upcoming]} />,
+    },
+    {
+      key: TabKeys.past,
+      label: tabLabels.past,
+      children: <Appointments data={appointments[TabKeys.past]} />,
+    },
+    {
+      key: TabKeys.availability,
+      label: tabLabels.availability,
+      children: <AvailabilityTab data={appointments[TabKeys.upcoming]} />,
+    },
+  ];
+
   return (
     <div>
       <AppointmentInfo
@@ -447,7 +396,6 @@ function Appointments() {
             style={{
               marginLeft: "1%",
               marginTop: "12px",
-              marginBottom: "15px",
             }}
           >
             <MenteeButton
@@ -458,14 +406,15 @@ function Appointments() {
                 setManualModalvisible(true);
               }}
             />
-          </div>
-          <div className="appointments-tabs">
-            {Object.keys(tabTitles).map((tab, index) => (
-              <Tab tab={tab} text={tabTitles[tab]} key={index} />
-            ))}
+            <Spin spinning={isLoading}>
+              <Tabs
+                items={tabItems}
+                defaultActiveKey="upcoming"
+                onChange={(tab) => setCurrentTab(tab)}
+              />
+            </Spin>
           </div>
         </div>
-        <Spin spinning={isLoading}>{renderTab(currentTab)}</Spin>
       </div>
       <Modal
         className="manual-add-modal"
@@ -507,7 +456,6 @@ function Appointments() {
               type="dropdown-single-object"
               options={menteeArr}
               placeholder={t("mentorAppointmentPage.selectMentee")}
-              // clicked={inputClicked[0]}
               index={0}
               handleClick={() => {}}
               onChange={(value) => {
@@ -642,7 +590,7 @@ const styles = {
   calendar: {
     borderLeft: "3px solid #E5E5E5",
   },
-  appointment_buttons: {
+  appointmentButtons: {
     fontSize: "24px",
   },
 };

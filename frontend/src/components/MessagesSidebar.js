@@ -76,15 +76,7 @@ function MessagesSidebar(props) {
         <h1>{t("messages.sidebarTitle")}</h1>
       </div>
       <Divider className="header-divider" orientation="left"></Divider>
-      <div className="messages-search-input">
-        {/* <Input
-          placeholder="Search for a mentor..."
-          prefix={<SearchOutlined />}
-          style={styles.searchInput}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        /> */}
-      </div>
-      <div className="messages-sidebar">
+      <div className="messages-sidebar" style={{ paddingTop: "1em" }}>
         {side_data &&
           side_data.length > 0 &&
           side_data.map((chat) => {

@@ -40,6 +40,7 @@ import { updateAndFetchUser } from "features/userSlice";
 import ModalInput from "components/ModalInput";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
+import { css } from "@emotion/css";
 
 //TODO: Fix this tabs rendering translation
 
@@ -51,12 +52,7 @@ const Tabs = Object.freeze({
 
 function Appointments() {
   const {
-    token: {
-      colorPrimaryBg,
-      colorPrimaryBorder,
-      colorBorderSecondary,
-      colorPrimary,
-    },
+    token: { colorPrimary },
   } = theme.useToken();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
@@ -275,33 +271,16 @@ function Appointments() {
       color: currentTab === tab ? active : inactive,
     };
   };
-  const Tab = (props) => {
-    if (props.text === "All Pending") {
-      return (
-        <Button
-          type="primary"
-          shape="round"
-          style={getButtonStyle(props.tab)}
-          onClick={() => setCurrentTab(props.tab)}
-        >
-          <Badge count={pendingAppointmentCount ?? 0} size="small">
-            <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-          </Badge>
-        </Button>
-      );
-    } else {
-      return (
-        <Button
-          type="default"
-          shape="round"
-          style={getButtonStyle(props.tab)}
-          onClick={() => setCurrentTab(props.tab)}
-        >
-          <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-        </Button>
-      );
-    }
-  };
+  const Tab = (props) => (
+    <Button
+      type="default"
+      shape="round"
+      style={getButtonStyle(props.tab)}
+      onClick={() => setCurrentTab(props.tab)}
+    >
+      <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
+    </Button>
+  );
   const getAppointmentButton = (tab, info) => {
     if (tab === Tabs.upcoming) {
       return (
@@ -375,7 +354,7 @@ function Appointments() {
       return (
         <div className="empty-appointments-list appointments-background">
           <Result
-            icon={<SmileOutlined />}
+            icon={<SmileOutlined style={{ color: colorPrimary }} />}
             title={t("mentorAppointmentPage.noAppointments")}
           />
         </div>

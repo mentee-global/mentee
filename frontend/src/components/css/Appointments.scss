@@ -48,23 +48,6 @@
   height: 50px;
 }
 
-.ar-status {
-  position: relative;
-  width: 80px;
-  height: 37.8px;
-  left: 335.14px;
-  top: 20px;
-
-  font-family: Helvetica;
-  font-style: italic;
-  font-weight: bold;
-  font-size: 12px;
-  line-height: 14px;
-  text-align: right;
-
-  color: #828282;
-}
-
 .ar-modal-title {
   position: relative;
   width: 201px;
@@ -83,6 +66,7 @@
 .ar-phone,
 .ar-contact,
 .ar-email,
+.ar-status,
 .ar-email-only {
   position: relative;
   width: 189px;

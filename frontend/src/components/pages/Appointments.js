@@ -3,10 +3,7 @@ import moment from "moment";
 import {
   Form,
   Button,
-  Col,
-  Row,
   Result,
-  Badge,
   Checkbox,
   Modal,
   TimePicker,
@@ -40,7 +37,6 @@ import { updateAndFetchUser } from "features/userSlice";
 import ModalInput from "components/ModalInput";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
-import { css } from "@emotion/css";
 
 //TODO: Fix this tabs rendering translation
 
@@ -69,13 +65,11 @@ function Appointments() {
   const options = useSelector((state) => state.options);
   const [modalAppointment, setModalAppointment] = useState({});
   const { isAdmin, onAuthStateChanged, role, profileId } = useAuth();
-  const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
   const [takeAppoinment, setTakeappoinment] = useState(
     user?.taking_appointments
   );
 
   const [manualModalvisible, setManualModalvisible] = useState(false);
-  const [mentees, setMentees] = useState([]);
   const [menteeArr, setMenteeArr] = useState([]);
   const [topic, setTopic] = useState();
   const [message, setMessage] = useState();
@@ -109,7 +103,6 @@ function Appointments() {
             }
             return false;
           });
-          setMentees(temp);
         }
       } else {
         var restricted_partners = await fetchPartners(true);
@@ -131,10 +124,8 @@ function Appointments() {
             }
             return false;
           });
-          setMentees(temp);
         } else {
           temp = mentee_data;
-          setMentees(mentee_data);
         }
       }
     }
@@ -160,9 +151,6 @@ function Appointments() {
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
         if (formattedAppointments["pending"][0]) {
-          setPendingAppointmentCount(
-            formattedAppointments["pending"][0]["appointments"].length
-          );
         }
       }
       setIsLoading(false);
@@ -273,8 +261,8 @@ function Appointments() {
   };
   const Tab = (props) => (
     <Button
-      type="default"
       shape="round"
+      size="small"
       style={getButtonStyle(props.tab)}
       onClick={() => setCurrentTab(props.tab)}
     >

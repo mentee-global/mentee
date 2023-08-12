@@ -37,6 +37,7 @@ import { updateAndFetchUser } from "features/userSlice";
 import ModalInput from "components/ModalInput";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
+import { useMediaQuery } from "react-responsive";
 
 //TODO: Fix this tabs rendering translation
 
@@ -47,6 +48,7 @@ const Tabs = Object.freeze({
 });
 
 function Appointments() {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const {
     token: { colorPrimary },
   } = theme.useToken();
@@ -262,7 +264,7 @@ function Appointments() {
   const Tab = (props) => (
     <Button
       shape="round"
-      size="small"
+      size={isMobile ? "small" : "middle"}
       style={getButtonStyle(props.tab)}
       onClick={() => setCurrentTab(props.tab)}
     >

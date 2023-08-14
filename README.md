@@ -24,10 +24,9 @@
 
 Connecting immigrant and refugee youth with a network of mentors.
 
-<img width="1504" alt="Screen Shot 2023-08-12 at 1 31 53 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/116ee3ce-ea8e-4526-87b0-1cfecd1c0ef0">
-<img width="1506" alt="Screen Shot 2023-08-12 at 1 29 37 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/dd9325de-cad7-4dde-bbc6-1b9679c8a10e">
-<img width="1502" alt="Screen Shot 2023-08-12 at 1 31 20 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/b3e4a922-eff6-4a22-82ab-3b40355afaa8">
-
+![ezgif com-video-to-gif (1)](https://github.com/hack4impact-uiuc/mentee/assets/28935000/3d76d4a2-e14d-4e72-bfdf-a975894c05b1)
+<img width="600" alt="Screen Shot 2023-08-12 at 1 29 37 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/dd9325de-cad7-4dde-bbc6-1b9679c8a10e">
+<img width="600" alt="Screen Shot 2023-08-12 at 1 31 20 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/b3e4a922-eff6-4a22-82ab-3b40355afaa8">
 
 ## Usage
 

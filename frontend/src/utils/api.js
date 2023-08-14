@@ -579,6 +579,20 @@ export const getApplicationById = async (id, isMentor) => {
     }
   );
 };
+
+export const deleteApplication = async (id, isMentor) => {
+  let requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTOR}`;
+  if (isMentor === false) {
+    requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
+  }
+  return authDelete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
+    }
+  );
+};
 export const adminUploadEmails = (file, password, isMentor) => {
   const requestExtension = "/upload/accounts";
   let formData = new FormData();

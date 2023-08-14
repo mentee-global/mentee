@@ -8,13 +8,22 @@ import { changeStateBuildProfile } from "utils/api";
 import LanguageDropdown from "components/LanguageDropdown";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { NEW_APPLICATION_STATUS } from "utils/consts";
+import useQuery from "utils/hooks/useQuery";
 
 function Training({ location, history }) {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const { t, i18n } = useTranslation();
-  const { role } = location.state;
-  const { email } = location.state;
+  const query = useQuery();
+  var role = null;
+  var email = null;
+  if (location && location.state) {
+    role = location.state.role;
+    email = location.state.email;
+  } else {
+    email = query.get("email");
+    role = query.get("role") && parseInt(query.get("role"));
+  }
 
   const onCompleteTraining = async () => {
     if (!role || !email)

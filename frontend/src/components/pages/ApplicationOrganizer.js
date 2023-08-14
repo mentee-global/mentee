@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Select, Table, Button } from "antd";
+import { Modal, Select, Table, Button, Popconfirm } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import {
   fetchApplications,
@@ -7,13 +7,14 @@ import {
   getApplicationById,
   downloadMentorsApps,
   downloadMenteeApps,
+  deleteApplication,
 } from "../../utils/api";
 import MentorApplicationView from "components/MentorApplicationView";
 import { getAppStatusOptions } from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
 import ModalInput from "components/ModalInput";
 
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 function ApplicationOrganizer({ isMentor }) {
   const { onAuthStateChanged } = useAuth();
@@ -86,6 +87,21 @@ function ApplicationOrganizer({ isMentor }) {
               setVisible(true);
             }}
           />
+          <Popconfirm
+            title={`Are you sure you want to delete?`}
+            onConfirm={async () => {
+              await deleteApplication(id, isMentor);
+              await updateApps();
+            }}
+            onCancel={() => {}}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined
+              className="delete-user-btn"
+              style={{ marginLeft: "10px" }}
+            />
+          </Popconfirm>
         </>
       ),
 
@@ -126,7 +142,7 @@ function ApplicationOrganizer({ isMentor }) {
           };
         }
       );
-      if (appState != "all") {
+      if (appState !== "all") {
         setApplicationData(newApplications);
         setFilterdData(filterApplications(newApplications, appState));
       } else {
@@ -139,7 +155,7 @@ function ApplicationOrganizer({ isMentor }) {
    * Filters application by application state and items stored in the corresponding named columns
    */
   function filterApplications(data, appStatee) {
-    if (appStatee == "all") {
+    if (appStatee === "all") {
       return data;
     } else {
       return data

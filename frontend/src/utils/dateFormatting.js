@@ -21,7 +21,7 @@ export const formatAppointments = (data, type) => {
   let appointments = data.requests;
   if (type === ACCOUNT_TYPE.MENTOR) {
     appointments = data.requests.filter(
-      (elem) => !elem.status || elem.status !== APPOINTMENT_STATUS.REJECTED
+      (elem) => elem?.status !== APPOINTMENT_STATUS.DENIED
     );
   }
 

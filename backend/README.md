@@ -72,6 +72,43 @@ If you're annoyed by the **pycache** files
 find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 ```
 
+### Heroku CLI install and get logs from Heroku
+
+1. Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) on local</br>
+
+2. Add the Heroku CLI to your PATH
+- Open the Start menu and search for ``` Environment Variables``` .
+- Click on ``` Edit the system environment variables ```.
+- Click on the ``` Environment Variables ``` button.
+- In the ``` System variables ``` section, find the "Path" variable and click on "Edit".
+- Click on ``` New ``` and add the path to the Heroku CLI installation directory. By default, this is ``` C:\Program Files\Heroku\bin ```, but it may be different if you chose a custom installation directory.
+- Click ``` OK ``` to save your changes.
+
+3. Verify that the Heroku CLI is in your PATH
+- Restart your terminal or Command Prompt
+- Type ``` heroku version ```, If you see the version number of the Heroku CLI, then it has been successfully added to your PATH.
+
+4. Login using Heroku CLI. Type ``` heroku login ``` on your terminal or Command Prompt. 
+
+5. Set log retention on Heroku, please run the commands below on terminal or Command Prompt
+
+>>```
+>>heroku labs:enable log-runtime-metrics -a mentee-dev
+>>heroku config:set LOG_RETENTION_DAYS=90 -a mentee-dev
+>>```
+
+6. Get all log data and save on local
+>>```
+>>heroku logs --source app -a mentee-dev > heroku-logs.txt
+>>```
+
+#### Install ```papertrail``` add-on on Heroku
+
+You can use ```papertrail``` add-on for advanced search and check logs.<br>
+On the bottom of ```Resource ``` tab on Heroku dashboard, you can search ```papertrail``` and install easily.
+
+
+
 ### Additional Documentation
 
 - [Flask](http://flask.pocoo.org/) - Flask Documentation

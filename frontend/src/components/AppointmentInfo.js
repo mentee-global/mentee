@@ -56,57 +56,17 @@ function AppointmentInfo(props) {
     return subtextInfo.join(" • ");
   };
 
-  const displayButtons = () => {
-    if (props.current_tab.key === Tabs.pending.key) {
-      return (
-        <div style={{ textAlign: "center" }}>
-          <MenteeButton
-            content={"Accept"}
-            border={"1px solid green"}
-            onClick={() =>
-              props.handleAppointmentClick(props.modalAppointment.id, true)
-            }
-          />
-          <MenteeButton
-            content={"Deny"}
-            border={"1px solid red"}
-            onClick={() =>
-              props.handleAppointmentClick(props.modalAppointment.id, false)
-            }
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div style={{ textAlign: "center" }}>
-          <MenteeButton
-            content={t("common.deny")}
-            border={"1px solid red"}
-            onClick={() =>
-              props.handleAppointmentClick(props.modalAppointment.id, false)
-            }
-          />
-        </div>
-      );
-    }
-  };
-
-  const pendingOrUpcoming = () => {
-    if (props.current_tab === Tabs.pending) {
-      return (
-        <div className="ar-status">
-          pending<span className="pending-dot"></span>
-        </div>
-      );
-    } else {
-      return (
-        <div className="ar-status">
-          {t("appointmentStatus.accepted")}
-          <span className="upcoming-dot"></span>
-        </div>
-      );
-    }
-  };
+  const displayButtons = () => (
+    <div style={{ textAlign: "center" }}>
+      <MenteeButton
+        content={t("common.deny")}
+        border={"1px solid red"}
+        onClick={() =>
+          props.handleAppointmentClick(props.modalAppointment.id, false)
+        }
+      />
+    </div>
+  );
 
   const allowsContact = (allow_calls, allow_texts, phone_number) => {
     if (!phone_number) {
@@ -150,13 +110,11 @@ function AppointmentInfo(props) {
   return (
     <Modal
       open={props.modalVisible}
-      title={t("sidebars.appointments")}
       width="449.91px"
       onCancel={() => props.setModalVisible(false)}
       footer={displayButtons()}
     >
       <div className="ar-modal-container">
-        {pendingOrUpcoming()}
         <div>
           <div>
             {allowsContact(
@@ -167,6 +125,10 @@ function AppointmentInfo(props) {
           </div>
           <div className="ar-modal-title">
             {mentee.name}, {mentee.age}
+          </div>
+          <div className="ar-status">
+            <span className="upcoming-dot"></span>
+            {t("appointmentStatus.accepted")}
           </div>
         </div>
         <div className="personal-info">

@@ -24,7 +24,7 @@ from api.utils.constants import (
     TRAINING_COMPLETED,
     PROFILE_COMPLETED,
     TRANSLATIONS,
-    ALERT_TO_ADMINS
+    ALERT_TO_ADMINS,
 )
 from api.utils.request_utils import (
     send_email,
@@ -36,6 +36,7 @@ from api.utils.request_utils import (
 )
 from api.utils.constants import Account
 from firebase_admin import auth as firebase_admin_auth
+import urllib
 
 apply = Blueprint("apply", __name__)
 
@@ -252,7 +253,11 @@ def change_state_to_build_profile(email, role):
         if "front_url" in request.args:
             front_url = request.args["front_url"]
             target_url = (
-                front_url + "application-training?role=" + str(role) + "&email=" + application["email"]
+                front_url
+                + "application-training?role="
+                + str(role)
+                + "&email="
+                + urllib.parse.quote(application["email"])
             )
 
         preferred_language = request.args.get("preferred_language", "en-US")
@@ -277,7 +282,7 @@ def change_state_to_build_profile(email, role):
                 recipient=admin.email,
                 template_id=ALERT_TO_ADMINS,
                 data={
-                    'name': txt_name,
+                    "name": txt_name,
                     "email": application.email,
                     "role": txt_role,
                     "action": "completed training",
@@ -387,7 +392,7 @@ def edit_application(id, role):
             + "application-training?role="
             + str(role)
             + "&email="
-            + application.email
+            + urllib.parse.quote(application.email)
         )
         mentor_email = application.email
         success, msg = send_email(
@@ -433,7 +438,7 @@ def edit_application(id, role):
                 recipient=admin.email,
                 template_id=ALERT_TO_ADMINS,
                 data={
-                    'name': application.name,
+                    "name": application.name,
                     "email": application.email,
                     "role": txt_role,
                     "action": "completed profile",
@@ -449,7 +454,7 @@ def edit_application(id, role):
             + "application-training?role="
             + str(role)
             + "&email="
-            + application.email
+            + urllib.parse.quote(application.email)
         )
         mentor_email = application.email
         success, msg = send_email(
@@ -469,7 +474,7 @@ def edit_application(id, role):
                 recipient=admin.email,
                 template_id=ALERT_TO_ADMINS,
                 data={
-                    'name': application.name,
+                    "name": application.name,
                     "email": application.email,
                     "role": txt_role,
                     "action": "completed training",
@@ -574,7 +579,6 @@ def create_application():
             },
             template_id=MENTEE_APP_SUBMITTED,
         )
-    
     admin_data = Admin.objects()
     for admin in admin_data:
         txt_role = "Mentor"
@@ -588,7 +592,7 @@ def create_application():
             recipient=admin.email,
             template_id=ALERT_TO_ADMINS,
             data={
-                'name': txt_name,
+                "name": txt_name,
                 "email": new_application.email,
                 "role": txt_role,
                 "action": "applied",

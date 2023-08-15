@@ -16,13 +16,22 @@ import {
   uploadAccountImage,
 } from "utils/api";
 import { sendVerificationEmail } from "utils/auth.service";
+import useQuery from "utils/hooks/useQuery";
 
 function BuildProfile({ location, history }) {
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
-  const role = location.state?.role;
-  const email = location.state?.email;
+  const query = useQuery();
+  var role = null;
+  var email = null;
+  if (location && location.state) {
+    role = location.state.role;
+    email = location.state.email;
+  } else {
+    email = query.get("email");
+    role = query.get("role") && parseInt(query.get("role"));
+  }
 
   const onSubmit = async (profileData, image, changedImage) => {
     setLoading(true);

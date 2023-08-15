@@ -228,9 +228,6 @@ def change_state_to_build_profile(email, role):
 
     application = null
     role = int(role)
-    print('333333333333')
-    print(email)
-    print(role)
     try:
         if role == Account.MENTOR:
             try:
@@ -252,7 +249,7 @@ def change_state_to_build_profile(email, role):
         if "front_url" in request.args:
             front_url = request.args["front_url"]
             target_url = (
-                front_url + "application-training?role=" + str(role) + "&email=" + application["email"]
+                front_url + "build-profile?role=" + str(role) + "&email=" + application["email"]
             )
 
         preferred_language = request.args.get("preferred_language", "en-US")
@@ -446,7 +443,7 @@ def edit_application(id, role):
         front_url = data.get("front_url", "")
         target_url = (
             front_url
-            + "application-training?role="
+            + "build-profile?role="
             + str(role)
             + "&email="
             + application.email

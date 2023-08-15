@@ -19,13 +19,15 @@
   <a href="#license">License</a>
 </p>
 
+
 ## Background
 
 Connecting immigrant and refugee youth with a network of mentors.
 
-![Mentee Galary](https://images.ctfassets.net/xig6hkxlux4q/7jHBpgk0ZTO6866qeULq2C/2f958675086131a940c029c48aa3fff9/Frame__Export_Target_.png?w=1200)
-![Mentee Profile](https://images.ctfassets.net/xig6hkxlux4q/75Xw3S1VdEZoqZqyEVaaAP/c52b0e4ccded17d5aa5b6871c23f8caa/mentor_profile.jpg?w=1200)
-![Mentee Admin](https://images.ctfassets.net/xig6hkxlux4q/2T9GWzhVm2nkVK6aQLkojJ/6596d0a56eed3c1d4dfaf3fd20fe2528/admin_data.jpg?w=1200)
+<img width="1504" alt="Screen Shot 2023-08-12 at 1 31 53 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/116ee3ce-ea8e-4526-87b0-1cfecd1c0ef0">
+<img width="1506" alt="Screen Shot 2023-08-12 at 1 29 37 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/dd9325de-cad7-4dde-bbc6-1b9679c8a10e">
+<img width="1502" alt="Screen Shot 2023-08-12 at 1 31 20 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/b3e4a922-eff6-4a22-82ab-3b40355afaa8">
+
 
 ## Usage
 
@@ -86,39 +88,3 @@ This application is built with React, Flask, MongoDB, and Ant Design
 ## License
 
 [MIT](https://github.com/hack4impact-uiuc/mentee/blob/master/LICENSE) licensed. Copyright © 2021 [Hack4Impact UIUC](https://github.com/hack4impact-uiuc).
-
-## Heroku CLI install and get logs from Heroku
-
-1. Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) on local</br>
-
-2. Add the Heroku CLI to your PATH
-- Open the Start menu and search for ``` Environment Variables``` .
-- Click on ``` Edit the system environment variables ```.
-- Click on the ``` Environment Variables ``` button.
-- In the ``` System variables ``` section, find the "Path" variable and click on "Edit".
-- Click on ``` New ``` and add the path to the Heroku CLI installation directory. By default, this is ``` C:\Program Files\Heroku\bin ```, but it may be different if you chose a custom installation directory.
-- Click ``` OK ``` to save your changes.
-
-3. Verify that the Heroku CLI is in your PATH
-- Restart your terminal or Command Prompt
-- Type ``` heroku version ```, If you see the version number of the Heroku CLI, then it has been successfully added to your PATH.
-
-4. Login using Heroku CLI. Type ``` heroku login ``` on your terminal or Command Prompt. 
-
-5. Set log retention on Heroku, please run the commands below on terminal or Command Prompt
-
->>```
->>heroku labs:enable log-runtime-metrics -a mentee-dev
->>heroku config:set LOG_RETENTION_DAYS=90 -a mentee-dev
->>```
-
-6. Get all log data and save on local
->>```
->>heroku logs --source app -a mentee-dev > heroku-logs.txt
->>```
-
-## Install ```papertrail``` add-on on Heroku
-
-You can use ```papertrail``` add-on for advanced search and check logs.<br>
-On the bottom of ```Resource ``` tab on Heroku dashboard, you can search ```papertrail``` and install easily.
-

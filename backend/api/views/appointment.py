@@ -297,7 +297,7 @@ def delete_request(appointment_id):
         if not res_email:
             logger.info("Failed to send email")
 
-    request.status = APPT_STATUS["REJECTED"]
+    request.status = APPT_STATUS["DENIED"]
     request.save()
     return create_response(status=200, message=f"Success")
 

@@ -8,6 +8,7 @@ import {
   Modal,
   TimePicker,
   theme,
+  Drawer,
 } from "antd";
 import { withRouter } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -569,24 +570,46 @@ function MessagesChatArea(props) {
         )}
       </div>
 
-      <Modal
-        className="calendar-modal"
-        title={t("messages.availabilityTitle")}
-        open={isOpenCalendarModal}
-        onCancel={() => setIsOpenCalendarModal(false)}
-        footer={[
-          <Button
-            type="primary"
-            onClick={() => {
-              setIsOpenCalendarModal(false);
-            }}
-          >
-            {t("common.cancel")}
-          </Button>,
-        ]}
-      >
-        <AvailabilityCalendar appointmentdata={appointments} />
-      </Modal>
+      {isMobile ? (
+        // TODO: Consolidate the modal and drawer into one component
+        <Drawer
+          width={"100%"}
+          title={t("messages.availabilityTitle")}
+          open={isOpenCalendarModal}
+          onClose={() => setIsOpenCalendarModal(false)}
+          footer={[
+            <Button
+              type="primary"
+              onClick={() => {
+                setIsOpenCalendarModal(false);
+              }}
+            >
+              {t("common.cancel")}
+            </Button>,
+          ]}
+        >
+          <AvailabilityCalendar appointmentdata={appointments} />
+        </Drawer>
+      ) : (
+        <Modal
+          className="calendar-modal"
+          title={t("messages.availabilityTitle")}
+          open={isOpenCalendarModal}
+          onCancel={() => setIsOpenCalendarModal(false)}
+          footer={[
+            <Button
+              type="primary"
+              onClick={() => {
+                setIsOpenCalendarModal(false);
+              }}
+            >
+              {t("common.cancel")}
+            </Button>,
+          ]}
+        >
+          <AvailabilityCalendar appointmentdata={appointments} />
+        </Modal>
+      )}
     </div>
   );
 }

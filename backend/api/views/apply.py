@@ -378,7 +378,6 @@ def edit_application(id, role):
                     "subject": TRANSLATIONS[preferred_language]["app_approved"],
                 },
             )
-
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["APPROVED"]:

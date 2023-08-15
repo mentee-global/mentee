@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Result, Checkbox, Spin, theme, Tabs } from "antd";
+import moment from "moment";
+import {
+  Form,
+  Button,
+  Result,
+  Checkbox,
+  Modal,
+  TimePicker,
+  DatePicker,
+  notification,
+  Spin,
+  theme,
+  Tabs,
+} from "antd";
 import {
   ClockCircleOutlined,
   InfoCircleFilled,
@@ -44,11 +57,18 @@ function Appointments() {
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalAppointment, setModalAppointment] = useState({});
-  const { onAuthStateChanged, role, profileId } = useAuth();
+  const { isAdmin, onAuthStateChanged, role, profileId } = useAuth();
   const [takeAppoinment, setTakeappoinment] = useState(
     user?.taking_appointments
   );
   const [manualModalvisible, setManualModalvisible] = useState(false);
+  const [menteeArr, setMenteeArr] = useState([]);
+  const [topic, setTopic] = useState();
+  const [message, setMessage] = useState();
+  const [selectedMenteeID, setSelectedMenteeID] = useState(undefined);
+  const [selectedDate, setSelectedDate] = useState();
+  const [selectedStarttime, setSelectedStarttime] = useState();
+  const [selectedEndtime, setSelectedEndtime] = useState();
   const [currentTab, setCurrentTab] = useState("upcoming");
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -59,6 +79,53 @@ function Appointments() {
     availability: t("mentorAppointmentPage.availability"),
   };
 
+  async function getMentees() {
+    const mentee_data = await fetchMentees();
+    if (mentee_data) {
+      if (user && user.pair_partner && user.pair_partner.restricted) {
+        if (user.pair_partner.assign_mentees) {
+          var temp = [];
+          mentee_data.map((mentee_item) => {
+            var check_exist = user.pair_partner.assign_mentees.find(
+              (x) => x.id === mentee_item._id.$oid
+            );
+            if (check_exist) {
+              temp.push(mentee_item);
+            }
+            return false;
+          });
+        }
+      } else {
+        var restricted_partners = await fetchPartners(true);
+        if (!isAdmin && restricted_partners && restricted_partners.length > 0) {
+          var assigned_mentee_ids = [];
+          restricted_partners.map((partner_item) => {
+            if (partner_item.assign_mentees) {
+              partner_item.assign_mentees.map((assign_item) => {
+                assigned_mentee_ids.push(assign_item.id);
+                return false;
+              });
+            }
+            return false;
+          });
+          temp = [];
+          mentee_data.map((mentee_item) => {
+            if (!assigned_mentee_ids.includes(mentee_item._id.$oid)) {
+              temp.push(mentee_item);
+            }
+            return false;
+          });
+        } else {
+          temp = mentee_data;
+        }
+      }
+    }
+    var res = [];
+    for (let mentee_item of temp) {
+      res.push({ id: mentee_item._id.$oid, name: mentee_item.name });
+    }
+    setMenteeArr(res);
+  }
   useEffect(() => {
     async function getAppointments() {
       if (!profileId) return;
@@ -82,6 +149,10 @@ function Appointments() {
 
     onAuthStateChanged(getAppointments);
   }, [appointmentClick, profileId, onAuthStateChanged, i18n.language]);
+
+  useEffect(() => {
+    getMentees();
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -184,6 +255,7 @@ function Appointments() {
     }
     return (
       <div>
+        <b className="appointment-tabs-title">{tabLabels[currentTab.key]}</b>
         <div className="appointments-background">
           {data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
@@ -280,6 +352,173 @@ function Appointments() {
           </div>
         </div>
       </div>
+      <Modal
+        className="manual-add-modal"
+        title={t("mentorAppointmentPage.addAppointment")}
+        open={manualModalvisible}
+        onCancel={() => setManualModalvisible(false)}
+        footer={[
+          <MenteeButton
+            key="save"
+            type="primary"
+            htmlType="submit"
+            form={"manual-form"}
+            content={t("common.save")}
+          />,
+        ]}
+      >
+        <Form
+          form={form}
+          id="manual-form"
+          onFinish={() => handleManualSave()}
+          validateMessages={validationMessage}
+        >
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
+          >
+            {t("common.mentee")}*
+          </div>
+          <Form.Item
+            name="Mentee"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <ModalInput
+              value={selectedMenteeID}
+              type="dropdown-single-object"
+              options={menteeArr}
+              placeholder={t("mentorAppointmentPage.selectMentee")}
+              index={0}
+              handleClick={() => {}}
+              onChange={(value) => {
+                setSelectedMenteeID(value);
+              }}
+            />
+          </Form.Item>
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
+          >
+            {t("mentorAppointmentPage.meetingDate")}*
+          </div>
+          <div className="timeslot-wrapper" style={{ display: "flex" }}>
+            <Form.Item
+              name="Date"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <DatePicker
+                style={{ marginRight: "10px" }}
+                value={selectedDate}
+                placeholder={t("mentorAppointmentPage.selectDate")}
+                onChange={(e) => setSelectedDate(e)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="Start Time"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <TimePicker
+                placeholder={t("mentorAppointmentPage.startTime")}
+                use12Hours={false}
+                format="h:mm A"
+                value={selectedStarttime}
+                onChange={(e) => setSelectedStarttime(e)}
+              />
+            </Form.Item>
+
+            <span
+              className="timeslot"
+              style={{ fontSize: "16px", marginTop: "4px" }}
+            >
+              {" "}
+              ～{" "}
+            </span>
+            <Form.Item
+              name="End Time"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <TimePicker
+                placeholder={t("mentorAppointmentPage.endTime")}
+                use12Hours={false}
+                format="h:mm A"
+                value={selectedEndtime}
+                onChange={(e) => setSelectedEndtime(e)}
+              />
+            </Form.Item>
+          </div>
+          {/* <p id="date_error" className="error">
+            Select date in the past
+          </p> */}
+          <p id="time_error" className="error">
+            {t("mentorAppointmentPage.invalidTimeslot")}
+          </p>
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
+          >
+            {t("mentorAppointmentPage.meetingTopic")}*
+          </div>
+          <Form.Item
+            name="Topic"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <ModalInput
+              value={topic}
+              type="dropdown-single"
+              options={options.specializations}
+              placeholder={t("mentorAppointmentPage.selectTopic")}
+              // clicked={inputClicked[0]}
+              index={1}
+              handleClick={() => {}}
+              onChange={(e) => setTopic(e)}
+            />
+          </Form.Item>
+          <div
+            className="modal-mentee-appointment-header-text"
+            style={{ marginTop: "10px" }}
+          >
+            {t("mentorAppointmentPage.meetingSummary")}*
+          </div>
+          <Form.Item
+            name="Summary"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <ModalInput
+              type="textarea"
+              maxRows={11}
+              // clicked={inputClicked[1]}
+              index={2}
+              handleClick={() => {}}
+              onChange={(e) => setMessage(e.target.value)}
+              value={message}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

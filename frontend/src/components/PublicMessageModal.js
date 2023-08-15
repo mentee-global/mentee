@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Modal, message } from "antd";
+import { Button, Form, Input, Modal, message } from "antd";
 import moment from "moment";
 import ModalInput from "./ModalInput";
 import MenteeButton from "./MenteeButton";
@@ -90,7 +90,6 @@ function PublicMessageModal(props) {
         open={formModalVisible}
         onCancel={closeModals}
         className="appointment-info-modal"
-        style={{ overflow: "hidden" }}
         footer={
           <Button type="primary" htmlType="submit" form="message-form">
             {t("common.submit")}
@@ -101,7 +100,6 @@ function PublicMessageModal(props) {
           id="message-form"
           form={form}
           onFinish={() => handleBookAppointment()}
-          scrollToFirstError
         >
           <div className="modal-container" style={{ height: "fit-content" }}>
             <div className="modal-mentee-inner-container">
@@ -115,16 +113,7 @@ function PublicMessageModal(props) {
                       },
                     ]}
                   >
-                    <ModalInput
-                      style={{ ...styles.modalInput, ...styles.messageInput }}
-                      type="textarea"
-                      maxRows={11}
-                      clicked={inputClicked[2]}
-                      index={2}
-                      handleClick={handleClick}
-                      onChange={(e) => setMessage(e.target.value)}
-                      value={message}
-                    />
+                    <Input.TextArea rows={8} />
                   </Form.Item>
                 </div>
               </div>

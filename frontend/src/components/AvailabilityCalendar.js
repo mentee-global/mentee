@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import moment from "moment";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { Calendar, Modal, Badge, TimePicker } from "antd";
+import { Calendar, Modal, Badge, TimePicker, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
 import MenteeButton from "./MenteeButton.js";
@@ -351,18 +351,12 @@ function AvailabilityCalendar(props) {
         open={visible}
         onCancel={() => setVisible(false)}
         footer={[
-          <MenteeButton
-            key="clear"
-            type="back"
-            onClick={handleClear}
-            content={t("common.clearAll")}
-          />,
-          <MenteeButton
-            key="save"
-            type="primary"
-            onClick={handleOk}
-            content={t("common.save")}
-          />,
+          <Button key="clear" onClick={handleClear}>
+            {t("common.clearAll")}
+          </Button>,
+          <Button key="save" type="primary" onClick={handleOk}>
+            {t("common.save")}
+          </Button>,
         ]}
       >
         <h3 className="hours">

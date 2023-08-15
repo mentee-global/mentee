@@ -23,15 +23,9 @@ function BuildProfile({ location, history }) {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const query = useQuery();
-  let role = null;
-  let email = null;
-  if (location && location.state) {
-    role = location.state.role;
-    email = location.state.email;
-  } else {
-    email = query.get("email");
-    role = query.get("role") && parseInt(query.get("role"));
-  }
+  const role = location.state?.role || parseInt(query.get("role"));
+  const email = location.state?.email || query.get("email");
+  if (!role || !email) history.push("/");
 
   const onSubmit = async (profileData, image, changedImage) => {
     setLoading(true);

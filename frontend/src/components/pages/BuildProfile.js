@@ -23,8 +23,8 @@ function BuildProfile({ location, history }) {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const query = useQuery();
-  var role = null;
-  var email = null;
+  let role = null;
+  let email = null;
   if (location && location.state) {
     role = location.state.role;
     email = location.state.email;

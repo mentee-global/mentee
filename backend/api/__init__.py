@@ -64,12 +64,8 @@ def create_app():
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    # app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-    app.config["MONGODB_SETTINGS"] = {
-        "db": "mentee",
-        "host": "localhost",
-        "port": 27017,
-    }
+    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+
     # firebase
     if not firebase_admin._apps:
         firebase_admin.initialize_app()

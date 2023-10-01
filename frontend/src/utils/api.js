@@ -51,6 +51,16 @@ export const fetchAccountById = (id, type) => {
   );
 };
 
+export const fetchEvents = async (type) => {
+  const requestExtension = `/events/${type}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.events,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const fetchAccounts = (type, restricted = undefined) => {
   const requestExtension = `/accounts/${type}`;
   return authGet(requestExtension, {
@@ -289,6 +299,38 @@ export const getTranslateDocumentCost = (id) => {
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
   return authPost(requestExtension, appointment).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const createEvent = (event, role) => {
+  const requestExtension = `/event_register/${role}`;
+  return authPost(requestExtension, event).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const uploadEventImage = (image, id) => {
+  const requestExtension = `/event_register/${id}/image`;
+  let formData = new FormData();
+  formData.append("image", image);
+  return authPut(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const deleteEvent = (event_item) => {
+  const requestExtension = `/events/delete/${event_item._id.$oid}`;
+  return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
       console.error(err);

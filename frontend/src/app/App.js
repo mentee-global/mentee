@@ -37,6 +37,7 @@ import { getRole } from "utils/auth.service";
 import PublicRoute from "components/PublicRoute";
 import Training from "components/pages/Training";
 import BuildProfile from "components/pages/BuildProfile";
+import Events from "components/pages/Events";
 import { useSelector } from "react-redux";
 
 const { Content } = Layout;
@@ -157,6 +158,9 @@ function App() {
             </PrivateRoute>
             <PrivateRoute path="/messages/:receiverId">
               <Messages />
+            </PrivateRoute>
+            <PrivateRoute path="/events">
+              <Events />
             </PrivateRoute>
           </Content>
         </Layout>

@@ -10,6 +10,7 @@ import {
   UserOutlined,
   UsergroupAddOutlined,
   VideoCameraOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 
@@ -40,6 +41,11 @@ export default function useSidebars(userType, t) {
       label: t("sidebars.appointments"),
       key: "appointments",
       icon: <ClockCircleOutlined />,
+    },
+    {
+      label: t("sidebars.events"),
+      key: "events",
+      icon: <InfoCircleOutlined />,
     },
     {
       label: t("sidebars.videos"),
@@ -75,6 +81,11 @@ export default function useSidebars(userType, t) {
       ],
     },
     {
+      label: t("sidebars.events"),
+      key: "events",
+      icon: <InfoCircleOutlined />,
+    },
+    {
       label: t("sidebars.appointments"),
       key: "mentee-appointments",
       icon: <ClockCircleOutlined />,
@@ -102,6 +113,11 @@ export default function useSidebars(userType, t) {
           key: "partner-gallery",
         },
       ],
+    },
+    {
+      label: t("sidebars.events"),
+      key: "events",
+      icon: <InfoCircleOutlined />,
     },
     {
       label: t("sidebars.profile"),
@@ -147,6 +163,11 @@ export default function useSidebars(userType, t) {
           key: "partner-gallery",
         },
       ],
+    },
+    {
+      label: t("sidebars.events"),
+      key: "events",
+      icon: <InfoCircleOutlined />,
     },
     {
       label: "Reports",

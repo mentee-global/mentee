@@ -188,6 +188,28 @@ export const getAppStatusOptions = () => {
   });
 };
 
+export const formatDateTime = (time_object) => {
+  const month = time_object.getMonth() + 1; // Adding 1 because months are 0-indexed
+  const day = time_object.getDate();
+  const year = time_object.getFullYear();
+
+  const hour = time_object.getHours();
+  const minute = time_object.getMinutes();
+  // const second = time_object.getSeconds();
+
+  const formattedDate = `${month.toString().padStart(2, "0")}/${day
+    .toString()
+    .padStart(2, "0")}/${year}`;
+  const amPM = hour >= 12 ? "PM" : "AM";
+  const formattedHour = hour % 12 || 12; // Convert to 12-hour format
+  const formattedTime = `${formattedHour.toString().padStart(2, "0")}:${minute
+    .toString()
+    .padStart(2, "0")} ${amPM}`;
+
+  const formattedDateTime = `${formattedDate} ${formattedTime}`;
+  return formattedDateTime;
+};
+
 export const OPTION_TYPE = {
   LANGUAGE: "language",
   SPECIALIZATION: "specialization",

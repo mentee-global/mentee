@@ -64,8 +64,12 @@ def create_app():
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-
+    # app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    app.config["MONGODB_SETTINGS"] = {
+        "db": "mentee",
+        "host": "localhost",
+        "port": 27017,
+    }
     # firebase
     if not firebase_admin._apps:
         firebase_admin.initialize_app()
@@ -94,6 +98,7 @@ def create_app():
         admin_notifications,
         masters,
         translation,
+        events
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -115,6 +120,8 @@ def create_app():
     app.register_blueprint(notifications.notifications, url_prefix="/api/notifications")
     app.register_blueprint(masters.masters, url_prefix="/api/masters")
     app.register_blueprint(translation.translation, url_prefix="/api/translation")
+
+    app.register_blueprint(events.event, url_prefix="/api")
 
     app.register_error_handler(Exception, all_exception_handler)
 

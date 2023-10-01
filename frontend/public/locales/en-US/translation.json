@@ -101,6 +101,7 @@
     "selectPrompt": "Please select an option",
     "specializations": "Specializations",
     "submit": "Submit",
+    "title" : "Title",
     "welcome": "Welcome to <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
     "yes": "Yes"
@@ -161,6 +162,7 @@
     "mentor_appt": "Mentee Appointment Request",
     "mentor_contact_me": "Mentor: A Mentee has requested to contact you",
     "new_training": "MENTEE! New training materials available",
+    "new_event": "MENTEE! New event was created",
     "profile_complete": "MENTEE Profile Completed - Please login",
     "send_invite": "Mentee Appointment Appointment Invite",
     "training_complete": "Congratulations for completing the training",
@@ -343,6 +345,27 @@
     "submitError": "Something went wrong -- check your email at the top",
     "yesDonate": "Yes, I can offer a donation now to help support this work!"
   },
+  "events":{
+    "addEvent": "Add Event",
+    "succuessAdd":"You Have Successfully Added an Event!",
+    "errorAdd":"Error, please try again!",
+    "eventTitle": "Event Title",
+    "start":"Start",
+    "end":"End",
+    "summary": "Summary",
+    "allday": "All Day",
+    "noEndDate": "No end date",
+    "startDate": "Start Date",
+    "startTime": "Start Time",
+    "endDate": "End Date",
+    "endTime": "End Time",
+    "uploadImage": "Upload Image",
+    "eventsubmitby": "Event submitted by",
+    "editEvent": "Edit Event",
+    "deleteEvent": "Delete Event",
+    "succuessDelete" : "You have Successfully deleted an Event",
+    "searchByRole": "Search By User Role"
+  },
   "mentorAppointmentPage": {
     "addAppointment": "Add Appointment",
     "allowCall": "Allow Calls",
@@ -470,7 +493,8 @@
     "appointments": "Appointments",
     "explore": "Explore",
     "profile": "Profile",
-    "videos": "Your Videos"
+    "videos": "Your Videos",
+    "events":"Events"
   },
   "verifyEmail": {
     "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",

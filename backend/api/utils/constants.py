@@ -19,6 +19,7 @@ UNREAD_MESSAGE_TEMPLATE = "d-7c75b1b696bb49a7850430d6a1b81ad4"
 NEW_TRAINING_TEMPLATE = "d-0716a65e079843b59eef281809e07f5b"
 SEND_INVITE_TEMPLATE = "d-f6405bbbafd144efa76a58814ac2f8f3"
 ALERT_TO_ADMINS = "d-1808cac1e196446ca8be2ef3ecf93bdb"
+EVENT_TEMPLATE = "d-5be889d30c0b40aebfa3b569aa5b40f0"
 # This lacks timezone so you'll need to add that according to whatever code you're working with
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
 

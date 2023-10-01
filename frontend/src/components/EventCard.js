@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Avatar,
   Typography,
@@ -8,9 +8,7 @@ import {
   Popconfirm,
   notification,
 } from "antd";
-import {
-  UserOutlined,
-} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { formatDateTime } from "utils/consts";
 import "./css/Gallery.scss";
 import { useTranslation } from "react-i18next";

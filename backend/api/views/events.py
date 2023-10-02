@@ -29,7 +29,7 @@ event = Blueprint("event", __name__)  # initialize blueprint
 @event.route("events/<role>", methods=["GET"])
 def get_events(role):
     lang = request.args.get("lang", "en-US")
-    if (int(role) == Account.ADMIN):
+    if int(role) == Account.ADMIN:
         events = Event.objects().order_by("-start_datetime")
     else:
         events = Event.objects(role=str(role)).order_by("-start_datetime")
@@ -59,12 +59,13 @@ def delete_train(id):
 
     return create_response(status=200, message="Successful deletion")
 
+
 ######################################################################
 @event.route("event_register/<role>", methods=["POST"])
 def new_event(role):
     try:
         data = request.get_json()
-        event_id = data['event_id']
+        event_id = data["event_id"]
         user_id = data["user_id"]
         title = data["title"]
         titleTranslated = get_all_translations(data["title"])
@@ -75,8 +76,8 @@ def new_event(role):
             descriptionTranslated = get_all_translations(data["description"])
         start_datetime = None
         end_datetime = None
-        start_datetime_str = ''
-        end_datetime_str = ''
+        start_datetime_str = ""
+        end_datetime_str = ""
         url = None
         if "start_datetime" in data:
             start_datetime = data["start_datetime"]
@@ -87,7 +88,7 @@ def new_event(role):
         if "url" in data:
             url = data["url"]
 
-        if event_id == 0 :
+        if event_id == 0:
             event = Event(
                 user_id=user_id,
                 title=title,
@@ -101,8 +102,8 @@ def new_event(role):
                 date_submitted=datetime.now(),
             )
             event.save()
-            
-            role_name = ''
+
+            role_name = ""
             if int(role) == Account.MENTOR:
                 recipients = MentorProfile.objects.only("email", "preferred_language")
                 role_name = "MENTOR"
@@ -112,10 +113,10 @@ def new_event(role):
             else:
                 recipients = PartnerProfile.objects.only("email", "preferred_language")
                 role_name = "Partner"
-            
-            eventdate = ''
-            if (start_datetime_str != ''):
-                eventdate = start_datetime_str + ' ~ ' + end_datetime_str
+
+            eventdate = ""
+            if start_datetime_str != "":
+                eventdate = start_datetime_str + " ~ " + end_datetime_str
             for recipient in recipients:
                 res, res_msg = send_email(
                     recipient=recipient.email,
@@ -133,7 +134,7 @@ def new_event(role):
                 if not res:
                     msg = "Failed to send new traing data alert email " + res_msg
                     logger.error(msg)
-        else :
+        else:
             event = Event.objects.get(id=event_id)
             event.title = title
             event.titleTranslated = titleTranslated
@@ -142,7 +143,7 @@ def new_event(role):
             event.start_datetime = start_datetime
             event.end_datetime = end_datetime
             event.url = url
-            event.date_submitted=datetime.now()
+            event.date_submitted = datetime.now()
             event.save()
 
     except Exception as e:
@@ -150,16 +151,17 @@ def new_event(role):
 
     return create_response(status=200, data={"event": event})
 
+
 @event.route("event_register/<string:id>/image", methods=["PUT"])
 def uploadImage(id):
     print(id)
     event = Event.objects.get(id=id)
     print(event)
-    if (event):
+    if event:
         try:
             if event.image_file is True and event.image_file.image_hash is True:
                 image_response = imgur_client.delete_image(event.image_file.image_hash)
-            
+
             image = request.files["image"]
             image_response = imgur_client.send_image(image)
             new_image = Image(

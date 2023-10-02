@@ -98,7 +98,7 @@ def create_app():
         admin_notifications,
         masters,
         translation,
-        events
+        events,
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/

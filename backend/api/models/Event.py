@@ -5,6 +5,7 @@ from .base import db
 from mongoengine import *
 from api.models import Image
 
+
 class Event(Document, Mixin):
     user_id = ObjectIdField(required=True)
     title = StringField(required=True)

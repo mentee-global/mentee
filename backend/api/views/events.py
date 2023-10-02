@@ -1,4 +1,3 @@
-from tkinter import NO
 from flask import Blueprint, request
 import json
 from numpy import imag

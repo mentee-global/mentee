@@ -106,22 +106,20 @@ function EventCard(props) {
             <Title style={styles.title} className="gallery-title-text">
               {truncate(event_item.title, 15)}
             </Title>
-            {create_user && (
-              <div className="gallery-header-description">
-                {t("events.eventsubmitby")}:<br />
-                <span>{create_user.name}</span>
-              </div>
-            )}
+            <div className="gallery-header-description">
+              {t("events.eventsubmitby")}:<br />
+              <span>{create_user ? create_user.name : "Admin User"}</span>
+            </div>
           </div>
         </div>
         <div className="datetime-area">
           {event_item.start_datetime && (
             <>
-              <span style={{ fontSize: "15px", color: "blue" }}>
+              <span style={{ fontSize: "15px", color: "#800020" }}>
                 {formatDateTime(new Date(event_item.start_datetime.$date))} ~{" "}
               </span>
               {event_item.end_datetime && (
-                <span style={{ fontSize: "15px", color: "blue" }}>
+                <span style={{ fontSize: "15px", color: "#800020" }}>
                   {formatDateTime(new Date(event_item.end_datetime.$date))}
                 </span>
               )}
@@ -177,6 +175,7 @@ function EventCard(props) {
                 notification["success"]({
                   message: t("events.succuessDelete"),
                 });
+                props.reloading();
                 props.refresh();
               }}
               // onCancel={() => message.info(`No deletion has been made`)}
@@ -192,6 +191,7 @@ function EventCard(props) {
             setOpen={setEventModalvisible}
             event_item={event_item}
             refresh={() => props.refresh()}
+            reloading={() => props.reloading()}
           />
         </div>
       )}

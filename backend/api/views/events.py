@@ -132,11 +132,13 @@ def new_event(role):
                     template_id=EVENT_TEMPLATE,
                 )
                 if not res:
-                    msg = "Failed to send new traing data alert email " + res_msg
+                    msg = "Failed to send new event data alert email " + res_msg
                     logger.error(msg)
         else:
             event = Event.objects.get(id=event_id)
+            event.user_id = user_id
             event.title = title
+            event.role = str(role)
             event.titleTranslated = titleTranslated
             event.description = description
             event.descriptionTranslated = descriptionTranslated

@@ -35,7 +35,7 @@ function Events() {
     token: { colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isAdmin, isPartner, role } = useAuth();
+  const { isAdmin, role } = useAuth();
   const [eventModalvisible, setEventModalvisible] = useState(false);
   const [allEvents, setAllEvents] = useState([]);
   const [query, setQuery] = useState();
@@ -153,13 +153,7 @@ function Events() {
   );
 
   // Add some kind of error 403 code
-  return isPartner ? (
-    <Result
-      status="403"
-      title="403"
-      subTitle={t("gallery.unauthorizedAccess")}
-    />
-  ) : (
+  return (
     <>
       <Affix offsetTop={10}>
         <div style={{ display: "flex" }}>
@@ -198,6 +192,7 @@ function Events() {
             open={eventModalvisible}
             setOpen={setEventModalvisible}
             refresh={() => setReload(!reload)}
+            reloading={() => setPageLoaded(false)}
           />
         </div>
       </Affix>
@@ -248,6 +243,7 @@ function Events() {
             open={eventModalvisible}
             setOpen={setEventModalvisible}
             refresh={() => setReload(!reload)}
+            reloading={() => setPageLoaded(false)}
           />
           <div
             className={css`
@@ -287,6 +283,7 @@ function Events() {
                   event_item={item}
                   users={users}
                   refresh={() => setReload(!reload)}
+                  reloading={() => setPageLoaded(false)}
                 />
               );
             })}

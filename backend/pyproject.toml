@@ -6,7 +6,6 @@ packages = [
 version = "0.1.0"
 description = ""
 authors = ["kenetec <klhester3@gmail.com>"]
-poetry = "1.6.1"
 
 [tool.poetry.scripts]
 start = "scripts:runserver"
@@ -14,7 +13,6 @@ format = "scripts:format"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-poetry = "1.6.1"
 flask-mongoengine = "1.0.0"
 gunicorn = "20.1.0"
 mongoengine = "0.26.0"
@@ -126,11 +124,9 @@ pillow = "^10.0.0"
 mypy = "^0.812"
 pytest = "^6.2.2"
 pylint = "^2.7.1"
-poetry = "1.6.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
-poetry = "1.6.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

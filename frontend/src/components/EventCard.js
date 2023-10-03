@@ -127,24 +127,14 @@ function EventCard(props) {
             </>
           )}
         </div>
-        <div className="gallery-info-section">
-          {event_item.image_file && (
-            <Typography>
-              <img
-                style={{ maxHeight: "60px", width: "80%", marginLeft: "10%" }}
-                className="event-img"
-                src={event_item.image_file.url}
-                alt=""
-              />
-            </Typography>
-          )}
+        <div className="gallery-info-section flex">
           {event_item.description && (
-            <Typography>
+            <Typography style={{ width: "auto", minWidth: "50%" }}>
               <Paragraph
                 style={{
                   fontSize: "18px",
                   fontWeight: 600,
-                  marginTop: "5px",
+                  marginTop: "-5px",
                   marginBottom: "5px",
                 }}
               >
@@ -153,9 +143,10 @@ function EventCard(props) {
               <Paragraph
                 style={{
                   fontSize: "16px",
-                  paddingLeft: "10px",
                   marginTop: "5px",
                   marginBottom: "5px",
+                  paddingRight: "5px",
+                  whiteSpace: "normal",
                 }}
               >
                 {" "}
@@ -163,8 +154,20 @@ function EventCard(props) {
               </Paragraph>
             </Typography>
           )}
-          {event_item.url && <a href={event_item.url}>{event_item.url}</a>}
+          {event_item.image_file && (
+            <Typography style={{ width: "50%" }}>
+              <img
+                style={{ height: "140px", maxWidth: "100%" }}
+                className="event-img"
+                src={event_item.image_file.url}
+                alt=""
+              />
+            </Typography>
+          )}
         </div>
+        {event_item.url && (
+          <a href={event_item.url}>{truncate(event_item.url, 40)}</a>
+        )}
       </div>
       <div
         className={css`

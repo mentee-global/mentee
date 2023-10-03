@@ -49,6 +49,16 @@ def get_events(role):
     return create_response(data={"events": result})
 
 
+@event.route("event/<string:id>", methods=["GET"])
+def get_event_by_id(id):
+    try:
+        event = Event.objects.get(id=id)
+    except:
+        return create_response(status=422, message="event not found")
+
+    return create_response(data={"event": event})
+
+
 @event.route("events/delete/<string:id>", methods=["DELETE"])
 def delete_train(id):
     try:
@@ -117,23 +127,23 @@ def new_event(role):
             eventdate = ""
             if start_datetime_str != "":
                 eventdate = start_datetime_str + " ~ " + end_datetime_str
-            for recipient in recipients:
-                res, res_msg = send_email(
-                    recipient=recipient.email,
-                    data={
-                        "eventtitle": title,
-                        "eventdate": eventdate,
-                        "role": role_name,
-                        recipient.preferred_language: True,
-                        "subject": TRANSLATIONS[recipient.preferred_language][
-                            "new_event"
-                        ],
-                    },
-                    template_id=EVENT_TEMPLATE,
-                )
-                if not res:
-                    msg = "Failed to send new event data alert email " + res_msg
-                    logger.error(msg)
+            # for recipient in recipients:
+            #     res, res_msg = send_email(
+            #         recipient=recipient.email,
+            #         data={
+            #             "eventtitle": title,
+            #             "eventdate": eventdate,
+            #             "role": role_name,
+            #             recipient.preferred_language: True,
+            #             "subject": TRANSLATIONS[recipient.preferred_language][
+            #                 "new_event"
+            #             ],
+            #         },
+            #         template_id=EVENT_TEMPLATE,
+            #     )
+            #     if not res:
+            #         msg = "Failed to send new event data alert email " + res_msg
+            #         logger.error(msg)
         else:
             event = Event.objects.get(id=event_id)
             event.user_id = user_id

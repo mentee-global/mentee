@@ -51,6 +51,17 @@ export const fetchAccountById = (id, type) => {
   );
 };
 
+export const fetchEventById = (id) => {
+  if (!id) return;
+  const requestExtension = `/event/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.event,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const fetchEvents = async (type) => {
   const requestExtension = `/events/${type}`;
   return authGet(requestExtension).then(

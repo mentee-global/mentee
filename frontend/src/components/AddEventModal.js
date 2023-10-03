@@ -63,6 +63,9 @@ function AddEventModal({
         form.setFieldValue("end_date", moment(event_item.end_datetime.$date));
         form.setFieldValue("end_time", moment(event_item.end_datetime.$date));
       }
+      if (event_item.image_file) {
+        setImage(event_item.image_file);
+      }
     }
   }, []);
 
@@ -138,7 +141,7 @@ function AddEventModal({
         );
         if (end_datetime.diff(start_datetime, "seconds") >= 0) {
           handleSave(values);
-          // form.resetFields();
+          form.resetFields();
           setImage(null);
           setOpen(false);
         } else {
@@ -289,44 +292,35 @@ function AddEventModal({
       >
         <Input type="text" />
       </Form.Item>
-      <Form.Item
-        name={"image_file"}
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <ImgCrop rotate aspect={5 / 3}>
-          <Upload
-            onChange={async (file) => {
-              setImage(file.file.originFileObj);
-              setChangedImage(true);
-            }}
-            accept=".png,.jpg,.jpeg"
-            showUploadList={false}
-          >
-            <Button icon={<UploadOutlined />} className="">
-              {t("events.uploadImage")}
-            </Button>
-          </Upload>
-        </ImgCrop>
 
-        {image && (
-          <img
-            style={{ width: "100px", marginLeft: "15px" }}
-            alt=""
-            src={
-              changedImage
-                ? image && URL.createObjectURL(image)
-                : image && image.url
-            }
-          />
-        )}
-      </Form.Item>
+      <ImgCrop rotate aspect={5 / 2}>
+        <Upload
+          onChange={async (file) => {
+            setImage(file.file.originFileObj);
+            setChangedImage(true);
+          }}
+          accept=".png,.jpg,.jpeg"
+          showUploadList={false}
+        >
+          <Button icon={<UploadOutlined />} className="">
+            {t("events.uploadImage")}
+          </Button>
+        </Upload>
+      </ImgCrop>
+
+      {image && (
+        <img
+          style={{ width: "100px", marginLeft: "15px" }}
+          alt=""
+          src={
+            changedImage
+              ? image && URL.createObjectURL(image)
+              : image && image.url
+          }
+        />
+      )}
     </Form>
   );
-
   return isMobile ? (
     <Drawer
       width={"100%"}

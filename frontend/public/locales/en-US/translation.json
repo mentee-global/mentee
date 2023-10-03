@@ -366,7 +366,11 @@
     "succuessDelete" : "You have Successfully deleted an Event",
     "searchByRole": "Search By User Role",
     "errorTimeSetting": "End Date should be after Start Date",
-    "errorURL": "Incorrect URL"
+    "errorURL": "Incorrect URL",
+    "viewEvent": "View Event",
+    "view":"View",
+    "edit":"Edit",
+    "delete":"Delete"
   },
   "mentorAppointmentPage": {
     "addAppointment": "Add Appointment",

@@ -22,6 +22,7 @@ import Messages from "components/pages/Messages";
 import ApplicationForm from "components/pages/ApplicationForm";
 import SocketComponent from "components/SocketComponent";
 import AdminTraining from "components/pages/AdminTraining";
+import EventDetail from "components/pages/EventDetail";
 import { Languages } from "components/Languages";
 import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
@@ -161,6 +162,9 @@ function App() {
             </PrivateRoute>
             <PrivateRoute path="/events">
               <Events />
+            </PrivateRoute>
+            <PrivateRoute path="/event/:id">
+              <EventDetail />
             </PrivateRoute>
           </Content>
         </Layout>

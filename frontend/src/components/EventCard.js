@@ -16,6 +16,7 @@ import { css } from "@emotion/css";
 import { useAuth } from "../utils/hooks/useAuth";
 import AddEventModal from "components/AddEventModal";
 import { deleteEvent } from "utils/api";
+import { NavLink } from "react-router-dom";
 
 const { Title, Paragraph } = Typography;
 
@@ -93,9 +94,9 @@ function EventCard(props) {
     >
       <div
         className="gallery-card-body"
-        style={{ height: isEditable ? "90%" : "100%", overflowY: "auto" }}
+        style={{ height: "90%", overflowY: "auto" }}
       >
-        <div className="gallery-card-header">
+        <div className="gallery-card-header" style={{ height: "7.5rem" }}>
           <Avatar
             size={90}
             icon={getImage(
@@ -112,14 +113,14 @@ function EventCard(props) {
             </div>
           </div>
         </div>
-        <div className="datetime-area">
+        <div className="datetime-area" style={{ marginBottom: "5px" }}>
           {event_item.start_datetime && (
             <>
-              <span style={{ fontSize: "15px", color: "#800020" }}>
+              <span style={{ fontSize: "14px", color: "#800020" }}>
                 {formatDateTime(new Date(event_item.start_datetime.$date))} ~{" "}
               </span>
               {event_item.end_datetime && (
-                <span style={{ fontSize: "15px", color: "#800020" }}>
+                <span style={{ fontSize: "14px", color: "#800020" }}>
                   {formatDateTime(new Date(event_item.end_datetime.$date))}
                 </span>
               )}
@@ -130,7 +131,7 @@ function EventCard(props) {
           {event_item.image_file && (
             <Typography>
               <img
-                style={{ maxHeight: "100px" }}
+                style={{ maxHeight: "60px", width: "80%", marginLeft: "10%" }}
                 className="event-img"
                 src={event_item.image_file.url}
                 alt=""
@@ -139,10 +140,24 @@ function EventCard(props) {
           )}
           {event_item.description && (
             <Typography>
-              <Paragraph style={{ fontSize: "20px", fontWeight: 600 }}>
+              <Paragraph
+                style={{
+                  fontSize: "18px",
+                  fontWeight: 600,
+                  marginTop: "5px",
+                  marginBottom: "5px",
+                }}
+              >
                 {t("events.summary")}:
               </Paragraph>
-              <Paragraph style={{ fontSize: "16px", paddingLeft: "10px" }}>
+              <Paragraph
+                style={{
+                  fontSize: "16px",
+                  paddingLeft: "10px",
+                  marginTop: "5px",
+                  marginBottom: "5px",
+                }}
+              >
                 {" "}
                 {truncate(event_item.description, 30)}
               </Paragraph>
@@ -151,50 +166,57 @@ function EventCard(props) {
           {event_item.url && <a href={event_item.url}>{event_item.url}</a>}
         </div>
       </div>
-      {isEditable && (
-        <div
-          className={css`
-            border-top: 3px solid ${colorPrimary};
-            position: absolute;
-            bottom: -5px;
-            width: 90%;
-          `}
-        >
-          <div className="gallery-button">
-            <Button
-              style={{ marginRight: "10px" }}
-              type="primary"
-              onClick={() => setEventModalvisible(true)}
-            >
-              {t("events.editEvent")}
+      <div
+        className={css`
+          border-top: 3px solid ${colorPrimary};
+          position: absolute;
+          bottom: -5px;
+          width: 90%;
+        `}
+      >
+        <div className="gallery-button">
+          <NavLink to={`/event/${event_item._id.$oid}`}>
+            <Button style={{ marginRight: "10px" }} type="primary">
+              {t("events.view")}
             </Button>
-            <Popconfirm
-              title={`Are you sure you want to delete ?`}
-              onConfirm={() => {
-                deleteEvent(event_item);
-                notification["success"]({
-                  message: t("events.succuessDelete"),
-                });
-                props.reloading();
-                props.refresh();
-              }}
-              // onCancel={() => message.info(`No deletion has been made`)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button type="primary">{t("events.deleteEvent")}</Button>
-            </Popconfirm>
-          </div>
-          <AddEventModal
-            role={role}
-            open={eventModalvisible}
-            setOpen={setEventModalvisible}
-            event_item={event_item}
-            refresh={() => props.refresh()}
-            reloading={() => props.reloading()}
-          />
+          </NavLink>
+          {isEditable && (
+            <>
+              <Button
+                style={{ marginRight: "10px" }}
+                type="primary"
+                onClick={() => setEventModalvisible(true)}
+              >
+                {t("events.edit")}
+              </Button>
+              <Popconfirm
+                title={`Are you sure you want to delete ?`}
+                onConfirm={() => {
+                  deleteEvent(event_item);
+                  notification["success"]({
+                    message: t("events.succuessDelete"),
+                  });
+                  props.reloading();
+                  props.refresh();
+                }}
+                // onCancel={() => message.info(`No deletion has been made`)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button type="primary">{t("events.delete")}</Button>
+              </Popconfirm>
+            </>
+          )}
         </div>
-      )}
+        <AddEventModal
+          role={role}
+          open={eventModalvisible}
+          setOpen={setEventModalvisible}
+          event_item={event_item}
+          refresh={() => props.refresh()}
+          reloading={() => props.reloading()}
+        />
+      </div>
     </div>
   );
 }

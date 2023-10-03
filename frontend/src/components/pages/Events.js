@@ -11,7 +11,6 @@ import {
   Input,
   Checkbox,
   Modal,
-  Result,
   Spin,
   theme,
   Typography,
@@ -248,6 +247,7 @@ function Events() {
           <div
             className={css`
               margin-right: 1em;
+              width: 15rem;
               padding: 1em;
               border-radius: 8px;
               height: fit-content;

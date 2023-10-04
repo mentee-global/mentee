@@ -160,6 +160,7 @@
     "mentor_appt": "Solicitud de cita de mentee",
     "mentor_contact_me": "Mentor: Un mentee ha solicitado ponerse en contacto contigo",
     "new_training": "¡MENTEE! Nuevos materiales de capacitación disponibles",
+    "new_event": "MENTEE! Se creó un nuevo evento",
     "profile_complete": "Perfil de MENTEE completado: por favor, inicia sesión",
     "send_invite": "Invitación a cita de mentee",
     "training_complete": "Felicitaciones por completar la capacitación",
@@ -342,6 +343,35 @@
     "submitError": "Algo salió mal: revisa tu correo electrónico en la parte superior",
     "yesDonate": "Sí, donar"
   },
+  "events":{
+    "addEvent": "Añadir evento",
+    "succuessAdd":"¡Has agregado un evento con éxito!",
+    "errorAdd":"Error, ¡inténtalo de nuevo!",
+    "eventTitle": "Título del evento",
+    "start":"Comenzar",
+    "end":"Fin",
+    "summary": "Resumen",
+    "allday": "Todo el dia",
+    "noEndDate": "Sin fecha de finalización",
+    "startDate": "Fecha de inicio",
+    "startTime": "Hora de inicio",
+    "endDate": "Fecha final",
+    "endTime": "Hora de finalización",
+    "uploadImage": "Cargar imagen",
+    "eventsubmitby": "Evento enviado por",
+    "editEvent": "Editar evento",
+    "deleteEvent": "Eliminar evento",
+    "succuessDelete" : "Has eliminado con éxito un evento",
+    "searchByRole": "Buscar por rol de usuario",
+    "errorTimeSetting": "La fecha de finalización debe ser posterior a la fecha de inicio",
+    "errorURL": "URL incorrecta",
+    "viewEvent": "Ver evento",
+    "view":"Vista",
+    "edit":"Editar",
+    "delete":"Borrar",
+    "upcoming":"Próximo",
+    "past":"Pasado"
+  },
   "mentorAppointmentPage": {
     "addAppointment": "Agregar cita",
     "allowCall": "Permitir llamadas",
@@ -469,7 +499,8 @@
     "appointments": "Citas",
     "explore": "Explorar",
     "profile": "Perfil",
-    "videos": "Tus vídeos"
+    "videos": "Tus vídeos",
+    "events":"Eventos"
   },
   "verifyEmail": {
     "body": "¡Gracias por registrarte!  Por favor, compruebe su correo electrónico para verificar su cuenta.",

@@ -160,6 +160,7 @@
     "mentor_appt": "Solicitação de agendamento do Mentee",
     "mentor_contact_me": "Mentor: Um Mentorado solicitou entrar em contato com você",
     "new_training": "MENTEE! Novos materiais de treinamento disponíveis",
+    "new_event":"MENTEE! Novos materiais de treinamento disponíveis",
     "profile_complete": "Perfil da MENTEE completo - Faça login, por favor",
     "send_invite": "Convite para agendamento do Mentorado",
     "training_complete": "Parabéns por concluir o treinamento",
@@ -342,6 +343,35 @@
     "submitError": "Algo deu errado - verifique seu e-mail na parte superior",
     "yesDonate": "Sim, eu posso fazer uma doação agora para apoiar este projeto!"
   },
+  "events":{
+    "addEvent": "Adicionar Evento",
+    "succuessAdd":"Você adicionou um evento com sucesso!",
+    "errorAdd":"Erro, tente novamente!",
+    "eventTitle": "Título do evento",
+    "start":"Começar",
+    "end":"Fim",
+    "summary": "Resumo",
+    "allday": "Dia todo",
+    "noEndDate": "Sem data de término",
+    "startDate": "Data de início",
+    "startTime": "Hora de início",
+    "endDate": "Data final",
+    "endTime": "Fim do tempo",
+    "uploadImage": "Enviar Imagem",
+    "eventsubmitby": "Evento enviado por",
+    "editEvent": "Editar evento",
+    "deleteEvent": "Excluir evento",
+    "succuessDelete" : "Você excluiu um evento com sucesso",
+    "searchByRole": "Pesquisar por função de usuário",
+    "errorTimeSetting": "A data de término deve ser posterior à data de início",
+    "errorURL": "URL incorreto",
+    "viewEvent": "Ver Evento",
+    "view":"Visualizar",
+    "edit":"Editar",
+    "delete":"Excluir",
+    "upcoming":"Por vir",
+    "past":"Passado"
+  },
   "mentorAppointmentPage": {
     "addAppointment": "Adicionar compromisso",
     "allowCall": "Permitir chamadas",
@@ -469,7 +499,8 @@
     "appointments": "Compromissos",
     "explore": "Explorar",
     "profile": "Perfil",
-    "videos": "Seus vídeos"
+    "videos": "Seus vídeos",
+    "events":"Eventos"
   },
   "verifyEmail": {
     "body": "Um e-mail de verificação foi enviado para o seu e-mail. Por favor, clique no link contido nele para verificar sua conta.",

@@ -370,7 +370,9 @@
     "viewEvent": "View Event",
     "view":"View",
     "edit":"Edit",
-    "delete":"Delete"
+    "delete":"Delete",
+    "upcoming":"Upcoming",
+    "past":"Past"
   },
   "mentorAppointmentPage": {
     "addAppointment": "Add Appointment",

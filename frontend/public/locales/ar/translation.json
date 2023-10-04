@@ -160,6 +160,7 @@
     "mentor_appt": "طلب موعد مع المتدرب",
     "mentor_contact_me": "مرشد: طلب أحد المتدربين الاتصال بك",
     "new_training": "MENTEE! مواد تدريبية جديدة متاحة",
+    "new_event":"MENTEE! تم إنشاء حدث جديد",
     "profile_complete": "الملف الشخصي لـ MENTEE مكتمل - يرجى تسجيل الدخول",
     "send_invite": "دعوة موعد MENTEE",
     "training_complete": "تهانينا على إتمام التدريب",
@@ -342,6 +343,35 @@
     "submitError": "حدث خطأ ما - تحقق من بريدك الإلكتروني في الأعلى",
     "yesDonate": "نعم ، يمكنني تقديم تبرع الآن للمساعدة في دعم هذا العمل!"
   },
+  "events":{
+    "addEvent": "أضف حدثًا",
+    "succuessAdd":"لقد قمت بإضافة حدث بنجاح!",
+    "errorAdd":"خطأ، يرجى المحاولة مرة أخرى!",
+    "eventTitle": "عنوان الحدث",
+    "start":"يبدأ",
+    "end":"نهاية",
+    "summary": "ملخص",
+    "allday": "طوال اليوم",
+    "noEndDate": "لا يوجد تاريخ انتهاء",
+    "startDate": "تاريخ البدء",
+    "startTime": "وقت البدء",
+    "endDate": "تاريخ الانتهاء",
+    "endTime": "وقت النهاية",
+    "uploadImage": "تحميل الصور",
+    "eventsubmitby": "الحدث المقدم م",
+    "editEvent": "تحرير الحدث",
+    "deleteEvent": "حذف الحدث",
+    "succuessDelete" : "لقد قمت بحذف حدث بنجاح",
+    "searchByRole": "البحث حسب دور المستخدم",
+    "errorTimeSetting": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء",
+    "errorURL": "عنوان URL غير صحيح",
+    "viewEvent": "عرض المناسبة",
+    "view":"منظر",
+    "edit":"يحرر",
+    "delete":"يمسح",
+    "upcoming":"القادمة",
+    "past":"ماضي"
+  },
   "mentorAppointmentPage": {
     "addAppointment": "أضف موعد",
     "allowCall": "السماح بالمكالمات",
@@ -469,7 +499,8 @@
     "appointments": "تعيينات",
     "explore": "استكشاف",
     "profile": "حساب تعريفي",
-    "videos": "مقاطع الفيديو الخاصة بك"
+    "videos": "مقاطع الفيديو الخاصة بك",
+    "events":"الأحداث"
   },
   "verifyEmail": {
     "body": " تم إرسال رسالة تحقق إلى بريدك الإلكتروني. الرجاء النقر فوق الارتباط الموجود بالداخل للتحقق من حسابك. ",

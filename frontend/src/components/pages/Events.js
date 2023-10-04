@@ -135,7 +135,7 @@ function Events() {
           checked={upcomingFlag}
           disabled={pastFlag}
         >
-          {t("upcoming")}{" "}
+          {t("events.upcoming")}{" "}
         </Checkbox>
         <Checkbox
           className="modal-availability-checkbox-text"
@@ -145,7 +145,7 @@ function Events() {
           checked={pastFlag}
           disabled={upcomingFlag}
         >
-          {t("Past")}{" "}
+          {t("events.past")}{" "}
         </Checkbox>
       </div>
     </>

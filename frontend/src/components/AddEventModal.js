@@ -292,7 +292,6 @@ function AddEventModal({
       >
         <Input type="text" />
       </Form.Item>
-
       <ImgCrop rotate aspect={5 / 3}>
         <Upload
           onChange={async (file) => {

@@ -73,7 +73,8 @@ function EventCard(props) {
   const create_user = getCreaterData(event_item.user_id);
   let isEditable = false;
   if (isAdmin) isEditable = true;
-  if (isPartner && parseInt(event_item.role) === ACCOUNT_TYPE.PARTNER) isEditable = true;
+  if (isPartner && parseInt(event_item.role) === ACCOUNT_TYPE.PARTNER)
+    isEditable = true;
   if (isMentor && event_item.user_id.$oid === profileId) isEditable = true;
   if (isMentee && event_item.user_id.$oid === profileId) isEditable = true;
 

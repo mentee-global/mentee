@@ -41,7 +41,7 @@ function AddEventModal({
   );
   const [changedImage, setChangedImage] = useState(false);
   const user = useSelector((state) => state.user.user);
-  
+
   // TODO: clean up this useEffect and its useState
   useEffect(() => {
     if (event_item) {
@@ -93,7 +93,7 @@ function AddEventModal({
 
     const newEvent = {
       event_id: event_item ? event_item._id.$oid : 0,
-      user_id: profileId ? profileId : (user && user._id.$oid),
+      user_id: profileId ? profileId : user && user._id.$oid,
       title: values.title,
       start_datetime: start_datetime,
       start_datetime_str: start_datetime_str,

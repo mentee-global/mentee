@@ -21,6 +21,7 @@ import { useAuth } from "utils/hooks/useAuth";
 import { useMediaQuery } from "react-responsive";
 import { validateUrl } from "utils/misc";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { useSelector } from "react-redux";
 
 function AddEventModal({
   role,
@@ -39,7 +40,8 @@ function AddEventModal({
     event_item && event_item.image_file ? event_item.image_file : null
   );
   const [changedImage, setChangedImage] = useState(false);
-
+  const user = useSelector((state) => state.user.user);
+  
   // TODO: clean up this useEffect and its useState
   useEffect(() => {
     if (event_item) {
@@ -91,7 +93,7 @@ function AddEventModal({
 
     const newEvent = {
       event_id: event_item ? event_item._id.$oid : 0,
-      user_id: profileId,
+      user_id: profileId ? profileId : (user && user._id.$oid),
       title: values.title,
       start_datetime: start_datetime,
       start_datetime_str: start_datetime_str,

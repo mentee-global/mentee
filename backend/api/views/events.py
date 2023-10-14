@@ -32,7 +32,7 @@ def get_events(role):
     if int(role) == Account.ADMIN:
         events = Event.objects().order_by("-start_datetime")
     else:
-        events = Event.objects(role=str(role)).order_by("-start_datetime")
+        events = Event.objects(role__in=[role]).order_by("-start_datetime")
     result = []
 
     if lang in TARGET_LANGS:
@@ -71,13 +71,32 @@ def delete_train(id):
 
 
 ######################################################################
-@event.route("event_register/<role>", methods=["POST"])
-def new_event(role):
+def send_mail_for_event(recipients, role_name, title, eventdate):
+    for recipient in recipients:
+        res, res_msg = send_email(
+            recipient=recipient.email,
+            data={
+                "eventtitle": title,
+                "eventdate": eventdate,
+                "role": role_name,
+                recipient.preferred_language: True,
+                "subject": TRANSLATIONS[recipient.preferred_language]["new_event"],
+            },
+            template_id=EVENT_TEMPLATE,
+        )
+        if not res:
+            msg = "Failed to send new event data alert email " + res_msg
+            logger.error(msg)
+
+
+@event.route("event_register", methods=["POST"])
+def new_event():
     try:
         data = request.get_json()
         event_id = data["event_id"]
         user_id = data["user_id"]
         title = data["title"]
+        roles = data["role"]
         titleTranslated = get_all_translations(data["title"])
         description = None
         descriptionTranslated = None
@@ -105,7 +124,7 @@ def new_event(role):
                 titleTranslated=titleTranslated,
                 description=description,
                 descriptionTranslated=descriptionTranslated,
-                role=str(role),
+                role=list(roles),
                 start_datetime=start_datetime,
                 end_datetime=end_datetime,
                 url=url,
@@ -114,41 +133,26 @@ def new_event(role):
             event.save()
 
             role_name = ""
-            if int(role) == Account.MENTOR:
-                recipients = MentorProfile.objects.only("email", "preferred_language")
-                role_name = "MENTOR"
-            elif int(role) == Account.MENTEE:
-                recipients = MenteeProfile.objects.only("email", "preferred_language")
-                role_name = "MENTEE"
-            else:
-                recipients = PartnerProfile.objects.only("email", "preferred_language")
-                role_name = "Partner"
-
             eventdate = ""
             if start_datetime_str != "":
                 eventdate = start_datetime_str + " ~ " + end_datetime_str
-            for recipient in recipients:
-                res, res_msg = send_email(
-                    recipient=recipient.email,
-                    data={
-                        "eventtitle": title,
-                        "eventdate": eventdate,
-                        "role": role_name,
-                        recipient.preferred_language: True,
-                        "subject": TRANSLATIONS[recipient.preferred_language][
-                            "new_event"
-                        ],
-                    },
-                    template_id=EVENT_TEMPLATE,
-                )
-                if not res:
-                    msg = "Failed to send new event data alert email " + res_msg
-                    logger.error(msg)
+            if Account.MENTOR in roles:
+                recipients = MentorProfile.objects.only("email", "preferred_language")
+                role_name = "MENTOR"
+                send_mail_for_event(recipients, role_name, title, eventdate)
+            if Account.MENTEE in roles:
+                recipients = MenteeProfile.objects.only("email", "preferred_language")
+                role_name = "MENTEE"
+                send_mail_for_event(recipients, role_name, title, eventdate)
+            if Account.PARTNER in roles:
+                recipients = PartnerProfile.objects.only("email", "preferred_language")
+                role_name = "Partner"
+                send_mail_for_event(recipients, role_name, title, eventdate)
         else:
             event = Event.objects.get(id=event_id)
             event.user_id = user_id
             event.title = title
-            event.role = str(role)
+            event.role = list(roles)
             event.titleTranslated = titleTranslated
             event.description = description
             event.descriptionTranslated = descriptionTranslated

@@ -25,14 +25,10 @@ function EventDetail({ match }) {
   useEffect(() => {
     async function getEvent() {
       var all_users = [];
-      if (!isAdmin) {
-        all_users = await fetchAccounts(role);
-      } else {
-        const mentor_data = await fetchMentors();
-        const mentee_data = await fetchMentees();
-        const partenr_data = await fetchPartners();
-        all_users = [...mentee_data, ...mentor_data, ...partenr_data];
-      }
+      const mentor_data = await fetchMentors();
+      const mentee_data = await fetchMentees();
+      const partenr_data = await fetchPartners();
+      all_users = [...mentee_data, ...mentor_data, ...partenr_data];
 
       const EventData = await fetchEventById(id);
       if (EventData) {
@@ -66,8 +62,10 @@ function EventDetail({ match }) {
               <div className="gallery-header-description">
                 {t("events.eventsubmitby")} :{" "}
                 <span>
-                  {createUser && createUser.name
+                  {createUser
                     ? createUser.name
+                      ? createUser.name
+                      : createUser.person_name
                     : "Admin User"}
                 </span>
               </div>

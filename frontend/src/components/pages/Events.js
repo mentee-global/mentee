@@ -48,15 +48,10 @@ function Events() {
 
   useEffect(() => {
     async function getAllEvents() {
-      if (!isAdmin) {
-        const user_data = await fetchAccounts(role);
-        setUsers(user_data);
-      } else {
-        const mentor_data = await fetchMentors();
-        const mentee_data = await fetchMentees();
-        const partenr_data = await fetchPartners();
-        setUsers([...mentee_data, ...mentor_data, ...partenr_data]);
-      }
+      const mentor_data = await fetchMentors();
+      const mentee_data = await fetchMentees();
+      const partenr_data = await fetchPartners();
+      setUsers([...mentee_data, ...mentor_data, ...partenr_data]);
       const all_evnet_data = await fetchEvents(role);
       setAllEvents(all_evnet_data);
       setPageLoaded(true);

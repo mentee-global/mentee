@@ -11,7 +11,7 @@ class Event(Document, Mixin):
     title = StringField(required=True)
     start_datetime = DateTimeField(required=False)
     end_datetime = DateTimeField(required=False)
-    role = StringField(required=True)
+    role = ListField(IntField(), required=True)
     description = StringField(required=False)
     url = StringField(required=False)
     titleTranslated = DictField(required=False)

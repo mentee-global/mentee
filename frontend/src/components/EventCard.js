@@ -73,7 +73,7 @@ function EventCard(props) {
   const create_user = getCreaterData(event_item.user_id);
   let isEditable = false;
   if (isAdmin) isEditable = true;
-  if (isPartner && parseInt(event_item.role) === ACCOUNT_TYPE.PARTNER)
+  if (isPartner && event_item.role.includes(ACCOUNT_TYPE.PARTNER))
     isEditable = true;
   if (isMentor && event_item.user_id.$oid === profileId) isEditable = true;
   if (isMentee && event_item.user_id.$oid === profileId) isEditable = true;
@@ -110,7 +110,13 @@ function EventCard(props) {
             </Title>
             <div className="gallery-header-description">
               {t("events.eventsubmitby")}:<br />
-              <span>{create_user ? create_user.name : "Admin User"}</span>
+              <span>
+                {create_user
+                  ? create_user.name
+                    ? create_user.name
+                    : create_user.person_name
+                  : "Admin User"}
+              </span>
             </div>
           </div>
         </div>

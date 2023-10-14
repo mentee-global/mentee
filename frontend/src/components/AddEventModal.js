@@ -33,7 +33,7 @@ function AddEventModal({
 }) {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { t } = useTranslation();
-  const { isAdmin, profileId } = useAuth();
+  const { isAdmin, isMentor, isPartner, isMentee, profileId } = useAuth();
   const [form] = Form.useForm();
 
   const [image, setImage] = useState(
@@ -45,12 +45,10 @@ function AddEventModal({
   // TODO: clean up this useEffect and its useState
   useEffect(() => {
     if (event_item) {
-      if (isAdmin) {
-        form.setFieldValue("user_role", parseInt(event_item.role));
-      }
       form.setFieldValue("title", event_item.title);
       form.setFieldValue("url", event_item.url);
       form.setFieldValue("description", event_item.description);
+      form.setFieldValue("user_role", event_item.role);
       if (event_item.start_datetime) {
         form.setFieldValue(
           "start_date",
@@ -95,6 +93,7 @@ function AddEventModal({
       event_id: event_item ? event_item._id.$oid : 0,
       user_id: profileId ? profileId : user && user._id.$oid,
       title: values.title,
+      role: values.user_role,
       start_datetime: start_datetime,
       start_datetime_str: start_datetime_str,
       end_datetime: end_datetime,
@@ -104,7 +103,7 @@ function AddEventModal({
     };
 
     reloading();
-    var res = await createEvent(newEvent, isAdmin ? values.user_role : role);
+    var res = await createEvent(newEvent);
     if (res && res.data && res.data.success) {
       if (image) {
         await uploadEventImage(image, res.data.result.event._id.$oid);
@@ -177,12 +176,73 @@ function AddEventModal({
         >
           <Select
             allowClear
-            // mode="multiple"
+            mode="multiple"
             options={[
               { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
               { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
               { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
             ]}
+            maxTagCount="responsive"
+          />
+        </Form.Item>
+      )}
+      {isPartner && (
+        <Form.Item
+          name="user_role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            allowClear
+            mode="multiple"
+            options={[
+              { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
+              { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
+              { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
+            ]}
+            maxTagCount="responsive"
+          />
+        </Form.Item>
+      )}
+      {isMentor && (
+        <Form.Item
+          name="user_role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            allowClear
+            mode="multiple"
+            options={[
+              { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
+              { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
+            ]}
+            maxTagCount="responsive"
+          />
+        </Form.Item>
+      )}
+      {isMentee && (
+        <Form.Item
+          name="user_role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            allowClear
+            mode="multiple"
+            options={[{ value: ACCOUNT_TYPE.MENTEE, label: "Mentee" }]}
             maxTagCount="responsive"
           />
         </Form.Item>

@@ -317,8 +317,8 @@ export const createAppointment = (appointment) => {
   );
 };
 
-export const createEvent = (event, role) => {
-  const requestExtension = `/event_register/${role}`;
+export const createEvent = (event) => {
+  const requestExtension = `/event_register`;
   return authPost(requestExtension, event).then(
     (response) => response,
     (err) => {

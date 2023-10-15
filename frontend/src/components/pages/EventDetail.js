@@ -29,7 +29,6 @@ function EventDetail({ match }) {
       const mentee_data = await fetchMentees();
       const partenr_data = await fetchPartners();
       all_users = [...mentee_data, ...mentor_data, ...partenr_data];
-
       const EventData = await fetchEventById(id);
       if (EventData) {
         setEvent(EventData);

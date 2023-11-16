@@ -7,7 +7,6 @@ import jwt
 
 # check the login route
 def test_login_mentor():
-
     # login the example user
     response = login_mentor()
 

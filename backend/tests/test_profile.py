@@ -3,9 +3,9 @@ import os
 from dotenv import load_dotenv
 from pprint import pprint
 
+
 # test the loaded profile of the user
 def test_account_info():
-
     load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")
@@ -24,7 +24,6 @@ def test_account_info():
 
 
 def get_user_data():
-
     load_dotenv()
 
     test_data = {

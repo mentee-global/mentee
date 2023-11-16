@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import jwt
 
+
 # check the login route
 def test_login_mentor():
 
@@ -29,7 +30,6 @@ def test_login_mentor():
 
 
 def test_login_mentor_wrong_password():
-
     load_dotenv()
 
     # wrong data must not return 200
@@ -43,7 +43,6 @@ def test_login_mentor_wrong_password():
 
 
 def test_login_mentor_wrong_email():
-
     load_dotenv()
 
     # wrong data must not return 200
@@ -57,7 +56,6 @@ def test_login_mentor_wrong_email():
 
 
 def login_mentor():
-
     load_dotenv()
 
     test_data = {
@@ -75,7 +73,6 @@ def login_mentor():
 
 
 def response_test(test_data):
-
     BASE_URL = os.getenv("BASE_URL")
 
     # attempt login with the provided data

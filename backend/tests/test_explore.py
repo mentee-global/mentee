@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 
 
 def test_find_mentee():
-
     load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")
@@ -31,7 +30,6 @@ def test_find_mentee():
 
 
 def test_find_mentor():
-
     load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")

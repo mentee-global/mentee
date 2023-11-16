@@ -30,8 +30,8 @@ def test_login_mentor():
 
 def test_login_mentor_wrong_password():
 
-    load_dotenv()    
-    
+    load_dotenv()
+
     # wrong data must not return 200
     test_data = {
         "email": os.getenv("TEST_MENTOR_EMAIL"),
@@ -44,8 +44,8 @@ def test_login_mentor_wrong_password():
 
 def test_login_mentor_wrong_email():
 
-    load_dotenv()    
-    
+    load_dotenv()
+
     # wrong data must not return 200
     test_data = {
         "email": "wrong_email",
@@ -58,8 +58,8 @@ def test_login_mentor_wrong_email():
 
 def login_mentor():
 
-    load_dotenv()    
-    
+    load_dotenv()
+
     test_data = {
         "email": os.getenv("TEST_MENTOR_EMAIL"),
         "password": os.getenv("TEST_MENTOR_PASSWORD"),
@@ -82,4 +82,3 @@ def response_test(test_data):
     response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
 
     assert response.status_code != 200
-

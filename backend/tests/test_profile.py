@@ -13,7 +13,9 @@ def test_account_info():
     profile_id = get_user_data()
 
     # get profile data
-    response = requests.get(f"{BASE_URL}/api/account/{profile_id}?account_type={os.getenv('TEST_MENTOR_ROLE')}") 
+    response = requests.get(
+        f"{BASE_URL}/api/account/{profile_id}?account_type={os.getenv('TEST_MENTOR_ROLE')}"
+    )
     response_email = response.json()["result"]["account"]["email"]
     response_role = response.json()["result"]["account"]["role"]
 
@@ -23,8 +25,8 @@ def test_account_info():
 
 def get_user_data():
 
-    load_dotenv()    
-    
+    load_dotenv()
+
     test_data = {
         "email": os.getenv("TEST_MENTOR_EMAIL"),
         "password": os.getenv("TEST_MENTOR_PASSWORD"),

@@ -222,4 +222,3 @@ export const I18N_LANGUAGES = [
   { value: "pt-BR", label: "Portuguese" },
   { value: "fa-AF", label: "Farsi" },
 ];
-

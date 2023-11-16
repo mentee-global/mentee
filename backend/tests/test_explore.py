@@ -7,22 +7,22 @@ from dotenv import load_dotenv
 
 def test_find_mentee():
 
-    load_dotenv() 
+    load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")
 
     # list all the mentees from the api
     response = requests.get(f"{BASE_URL}/api/accounts/2")
     data = response.json()
-    
+
     assert response.status_code == 200
 
-    assert 'result' in data
-    result = data['result']
-    assert 'accounts' in result
+    assert "result" in data
+    result = data["result"]
+    assert "accounts" in result
 
-    accounts = result['accounts']
-    
+    accounts = result["accounts"]
+
     # get the public mentee instances in the database
     mentee_users = MenteeProfile.objects.filter(is_private=False).count()
 
@@ -32,21 +32,21 @@ def test_find_mentee():
 
 def test_find_mentor():
 
-    load_dotenv() 
+    load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")
 
     # list all the mentors from the api
     response = requests.get(f"{BASE_URL}/api/accounts/1")
     data = response.json()
-    
+
     assert response.status_code == 200
 
-    assert 'result' in data
-    result = data['result']
-    assert 'accounts' in result
+    assert "result" in data
+    result = data["result"]
+    assert "accounts" in result
 
-    accounts = result['accounts']
+    accounts = result["accounts"]
 
     # get the mentor instances in the database
     mentee_users = MentorProfile.objects.count()

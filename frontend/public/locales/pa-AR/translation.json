@@ -48,13 +48,13 @@
   },
   "appointmentStatus": {
     "accepted": "ومنل شو",
-    "denied": "denied",
-    "pending": "pending"
+    "denied": "ونه منل شو",
+    "pending": "معلق "
   },
   "availability": {
-    "addHours": "Add hours",
-    "errorInvalid": "Invalid Times. Please select times correctly",
-    "hours": "Hours",
+    "addHours": "وخت مو اضافه کړی",
+    "errorInvalid": "ناسم وخت. هیله کو سم وخت وټاکی ",
+    "hours": "ساعتونه",
     "title": "Select times for each available session per day"
   },
   "bookmarkSidebar": {

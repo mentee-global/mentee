@@ -39,15 +39,15 @@
       "role": "خپله ونده وټاکی"
     },
     "errorConnection": "که څه ناسم وی خپل انترنت چک کړی ",
-    "existingAccount": "You Already have account you will be redirect to login page",
+    "existingAccount": "تاسو له مخکی اکونت لری تاسو ته د ننوتلو پانی ته لارښونه کیږي",
     "message": {
-      "haveAccount": "You already have an account... redirecting to login"
+      "haveAccount": "له مخکې اوکونت لړی"
     },
-    "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org",
-    "training": "Training"
+    "partnerVerify": "ستاسو بریښنالیک د کډونکونکی په توکی له مخکې راجستر ندی. هیله کوو له اداري برخې سره اړیکه ونیسی admin@menteeglobal.org",
+    "training": "ترینینگ"
   },
   "appointmentStatus": {
-    "accepted": "accepted",
+    "accepted": "ومنل شو",
     "denied": "denied",
     "pending": "pending"
   },

@@ -34,11 +34,11 @@
     "buildProfile": "فروفیل جور کری",
     "completeTrainings": "زه تاییدوم چې ترنینګ می تر سره کړ",
     "confirmation": "مننه له غوښتنلیک څخه مو! ستاسو غوښتنلیک کتل کیژی او ډیر ژر به تاسو سره اړیکه ونیول شی",
-    "emailPrompt": "Please enter your email to start the application process",
+    "emailPrompt": "هلیه کوو د نوم لیکنی لپاره خپل بریښنالیک ولیکی",
     "error": {
-      "role": "Please select a role"
+      "role": "خپله ونده وټاکی"
     },
-    "errorConnection": "Something went wrong check your internet connection",
+    "errorConnection": "که څه ناسم وی خپل انترنت چک کړی ",
     "existingAccount": "You Already have account you will be redirect to login page",
     "message": {
       "haveAccount": "You already have an account... redirecting to login"

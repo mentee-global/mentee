@@ -30,9 +30,9 @@
     "70s+": "70s+"
   },
   "apply": {
-    "approved": "pa-AR-test-Your application has been approved continue to training",
-    "buildProfile": "Build Profile",
-    "completeTrainings": "I confirm I have completed all trainings",
+    "approved": "ستاسو غوشنلیک ومنل شو، ترنینګ ته ادامه ورکری",
+    "buildProfile": "فروفیل جور کری",
+    "completeTrainings": "زه تاییدوم چې ترنینګ می تر سره کړ",
     "confirmation": "Thank you for applying! Your application will be reviewed and you will be contacted shortly.",
     "emailPrompt": "Please enter your email to start the application process",
     "error": {

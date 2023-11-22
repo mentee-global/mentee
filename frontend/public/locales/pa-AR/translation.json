@@ -226,26 +226,26 @@
   },
   "homepage": {
     "existingAccountDesc": "پلت فارم ته ننوتل",
-    "existingAccountTitle": "Existing",
-    "isExistingUser": "Are you a new or existing user?",
-    "newAccountDesc": "Apply - Train - Build",
-    "newAccountTitle": "New"
+    "existingAccountTitle": "شته",
+    "isExistingUser": "تاسونوی یا مخکنی کارونکی یاست؟",
+    "newAccountDesc": "تطبیق- زده کړه- جوړول",
+    "newAccountTitle": "نوی"
   },
   "languages": {
     "ar": "العربية",
-    "en": "English",
-    "es": "Español",
+    "en": "انګریزی",
+    "es": "اسپانیوی",
     "fa": "فارسی",
-    "pa": "Pashto",
-    "pt": "Português"
+    "pa": "پښتو",
+    "pt": "پرتګالی"
   },
   "login": {
-    "apply": "Apply",
-    "clickLoginPrompt": "Please click on your role to continue on",
-    "emailPlaceholder": "Enter your email",
-    "forgotPassword": "Forgot password?",
-    "noAccount": "Don't have an account?",
-    "passwordPlaceholder": "Enter your password",
+    "apply": "نوم لیکنه",
+    "clickLoginPrompt": "د ادامې لپاره مهربانی وکړی پر خپله ونده وټاکی ",
+    "emailPlaceholder": "خپل برښنالیک وارد کړی",
+    "forgotPassword": "پاسورد مو هیر شوی؟",
+    "noAccount": "اکونت نلری؟",
+    "passwordPlaceholder": "خپل پاسورد ولیکی",
     "resetPassword": "Reset it"
   },
   "loginErrors": {

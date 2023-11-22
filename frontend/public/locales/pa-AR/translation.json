@@ -55,10 +55,10 @@
     "addHours": "وخت مو اضافه کړی",
     "errorInvalid": "ناسم وخت. هیله کو سم وخت وټاکی ",
     "hours": "ساعتونه",
-    "title": "Select times for each available session per day"
+    "title": "ورځنۍ شته جلسو لپاره وخت وتاکی"
   },
   "bookmarkSidebar": {
-    "addMentors": "Add Mentors +",
+    "addMentors": "ښوونکی اضافه کړی+",
     "favoriteContacts": "Favorite Contacts",
     "noFavorites": "No favorited Mentors"
   },

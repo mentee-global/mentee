@@ -246,14 +246,14 @@
     "forgotPassword": "پاسورد مو هیر شوی؟",
     "noAccount": "اکونت نلری؟",
     "passwordPlaceholder": "خپل پاسورد ولیکی",
-    "resetPassword": "Reset it"
+    "resetPassword": "بیایی جوړ کړی"
   },
   "loginErrors": {
-    "emailError": "Please enter email",
-    "existingEmail": "This email is already in use in another role",
-    "incorrectCredentials": "Incorrect username and/or password. Please try again.",
-    "noRole": "Please choose a role",
-    "passwordError": "Please enter password",
+    "emailError": "مهربانی وکړی بریښنالیک مو ولیکی",
+    "existingEmail": "دا بریښنالیک له مخکې بلې وندې کې کارول کیږی",
+    "incorrectCredentials": "ناسم نوم یا پاسورد/ مهربانی وکړی بیا هڅه وکړی",
+    "noRole": "مهربانی وکړی ونده وټاکی",
+    "passwordError": "مهربانی وکړی پاسورد ولیکی",
     "reregisterAccount": "Please re-register your account.",
     "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
     "serverError": "Something went wrong.",

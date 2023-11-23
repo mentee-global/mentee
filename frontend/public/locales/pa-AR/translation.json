@@ -292,11 +292,11 @@
     "socialMediaOption2": "نه، مننه",
     "submitError": "څه ناسم دی-- پورته خپل بریښنالیک چک کړی ",
     "topicInterests": "تاسو کومو تولنیزو موضوعاتو ته لیوالتیا لری؟ که کوم یو په لست کې نه وی مهربانی وکړی، اضافه یی کړی:",
-    "workOption1": "I work part-time.",
-    "workOption2": "I work full-time.",
-    "workOption3": "I attend technical school.",
-    "workOption4": "I am a college/university student attaining my first degree.",
-    "workOption5": "I am a college/university students attaining my second or third degree.",
+    "workOption1": "زه نیم ورځ کار کوم ",
+    "workOption2": "زه مکمله ورځ کار کوم",
+    "workOption3": "ما تخیکی ښوونځی کې ګډون کړی",
+    "workOption4": "زه د پوهنتون/ کالج  زده کوونکی یم خپله لمری تحصیلی سند تر لاسه کوم  ",
+    "workOption5": "زه د پوهنتون/ کالج زده کوونکی یم خپله دویم یا دریم تحصیلی سند تر لاسه کوم",
     "workOptions": "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific:"
   },
   "menteeAppointmentModal": {

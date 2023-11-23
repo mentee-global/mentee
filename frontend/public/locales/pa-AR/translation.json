@@ -316,17 +316,17 @@
     "sessionTitle": "د ښوونی جلسه [[ ښوونکی نوم]] سره ",
     "sessionWith": "د ښوونی جلسه [[ ښوونکی نوم]] سره ",
     "successBooking": "آیا تاسو په بریالی توګه د ملاقات وخت وتاکه!",
-    "successBookingDescription": "Appointment with {{mentorName}} on {{notifDate}} from {{timeInterval}}",
-    "successBookingMessage": "You Have Successfully Booked an Appointment with {{mentorName}} on {{notifDate}} from {{timeInterval}}"
+    "successBookingDescription": "ملاقات[[ د ښوونکی نوم]] په [[ نیټه]] په [[ وخت]]",
+    "successBookingMessage": "تاسو په بریالی توګه د ملاقات [[ د ښوونکی نوم]] په [[ نیټه]] په [[ وخت]] وتاکه  "
   },
   "menteeAppointments": {
-    "allPastTab": "All Past",
-    "allUpcomingTab": "All Upcoming",
-    "meetingWith": "Meeting with",
-    "noAppointments": "There are currently no appointments",
-    "noMentorFound": "Mentor Not Found",
-    "pending": "pending",
-    "welcome": "Welcome {{name}}!"
+    "allPastTab": "ټول تیر شوی",
+    "allUpcomingTab": "ټول راتلونکی",
+    "meetingWith": "ملاقات د",
+    "noAppointments": "اوس مهال هیڅ ملاقات نشته",
+    "noMentorFound": "ښوونکی پیدا نشو",
+    "pending": "انتظار",
+    "welcome": "ښه راغلاست[[ نوم]] !"
   },
   "menteeInterestsModal": {
     "error": "Please choose atleast one interest",

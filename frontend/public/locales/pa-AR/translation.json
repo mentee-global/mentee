@@ -191,13 +191,13 @@
     "start": "پيل",
     "startDate": "د پيل نیټه",
     "startTime": "د پيل وخت",
-    "succuessAdd": "آیا تاسو په بریالی توګه غونده اضافه کړه!",
-    "succuessDelete": "آیا تاسو په بریالی توګه غونده لری کړه!",
+    "succuessAdd": "آیا تاسو په بریالی توګه پښه اضافه کړه!",
+    "succuessDelete": "آیا تاسو په بریالی توګه پښه لری کړه!",
     "summary": "لنديزه",
     "upcoming": "راتلونکې",
     "uploadImage": "د عکس اضافه کول",
     "view": "لیدل",
-    "viewEvent": "د غوندې لیدل"
+    "viewEvent": "د پښې لیدل"
   },
   "forgotPassword": {
     "emailResent": "د بریښنالیک بیا لیږل",
@@ -344,7 +344,7 @@
     "privateAccountInfo": "تاسو کولی شی خپل معلومات وګوری، مګر ستاسو اکونت به نورو ته د لټون پر مهال نه ځرګندیږی. "
   },
   "mentorApplication": {
-    "canDonate": "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?",
+    "canDonate": "MENTEE  یوه غیر انتفاعی موسسه ده او د مرستکونکی په مرستې فعالیت تر سره کوی. آیا تاسو کولی شی د یو کال لپاره مالی ملاتړ وکړی؟",
     "commitDuration": "If you are accepted as a global mentor, would you like to commit to...",
     "commitDuration1": "One years with us",
     "commitDuration2": "Two years with us",

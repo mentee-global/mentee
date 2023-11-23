@@ -329,19 +329,19 @@
     "welcome": "ښه راغلاست[[ نوم]] !"
   },
   "menteeInterestsModal": {
-    "error": "Please choose atleast one interest",
-    "interestsTitle": "Areas of interests",
-    "title": "Please Update your interests"
+    "error": "مهرباین وکړی حد اقل یو لوالتیا وتاکی",
+    "interestsTitle": "د لوالتیا برخې",
+    "title": "مهربانی و کړی خپله لوالتیا اپدیت کړی"
   },
   "menteeProfile": {
-    "accountPrivacy": "Account Privacy",
-    "age": "Age",
-    "areasOfInterest": "Areas of interest",
-    "gender": "Gender",
-    "missingFields": "Missing Fields",
-    "organizationAffiliation": "Organization Affliation",
-    "privateAccount": "Private Account",
-    "privateAccountInfo": "You'll be able to see your information, but your account will not show up when people are browsing accounts."
+    "accountPrivacy": "د اکونت خوندي توب",
+    "age": "عمر",
+    "areasOfInterest": "د لوالتیا برخې",
+    "gender": "جنس",
+    "missingFields": "پاتی برخی",
+    "organizationAffiliation": "موسسې سره تړاو",
+    "privateAccount": "شخصی اکونت",
+    "privateAccountInfo": "تاسو کولی شی خپل معلومات وګوری، مګر ستاسو اکونت به نورو ته د لټون پر مهال نه ځرګندیږی. "
   },
   "mentorApplication": {
     "canDonate": "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?",

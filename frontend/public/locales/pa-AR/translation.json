@@ -467,9 +467,9 @@
   },
   "partnerProfile": {
     "briefIntro": "ستاسو د موسسې/ سازمان/ کمپنۍ لنډه پیژنده",
-    "collaborationGrants": "Open to Collaboration on Grants",
-    "collaborationProjects": "Open to Collaboration on Projects",
-    "contactFullName": "Contact Person's Full Name (First Last)",
+    "collaborationGrants": "د مرستې په اړه د همکارۍ لپاره چمتو\n",
+    "collaborationProjects": "د پروژو همکاری لپاره چمتو",
+    "contactFullName": "د اړیکی نیونکی مکمل نوم ( لمړی نوم)",
     "developmentGoals": "Sustainable Development Goals Your Work Supports",
     "location": "Headquarters Location (City, Country)",
     "organizationName": "Organization/Institution/Corporation Full Name",

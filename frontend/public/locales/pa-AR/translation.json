@@ -463,10 +463,10 @@
     "partnersConcerns": "د کوم SDGs په هلکه ستاسو موسسه؟ سازمان/ کمپنی پاملرنه کوی؟",
     "partnershipRelation": "زموږ د شرکت یا ګدون رابطه څه ده؟",
     "pointOfContact": "د اړیکه نیولو لپاره دیړه کس څوک دی؟",
-    "submitError": "Something went wrong -- check your email at the top"
+    "submitError": "څه ناسم دی -- خپل پورته بریښنالیک چک کړی"
   },
   "partnerProfile": {
-    "briefIntro": "Brief Introduction to Your Org/Inst/Corp",
+    "briefIntro": "ستاسو د موسسې/ سازمان/ کمپنۍ لنډه پیژنده",
     "collaborationGrants": "Open to Collaboration on Grants",
     "collaborationProjects": "Open to Collaboration on Projects",
     "contactFullName": "Contact Person's Full Name (First Last)",

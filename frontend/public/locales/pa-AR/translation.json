@@ -459,21 +459,21 @@
     "contactEmail": "د هغو بریښنالیک څه دی؟",
     "introduction": "موږ ستاسو د لوالتیا څخه چې په داوطلب ډول  لپاره ښوونکی شوی، مننه کوو. MENTEE یوه نریواله غیر انتفاعی د شخصیت او تخصص د ودې لپاره او دا چې نړی ښه او صحي ځای شی، موسسه ده.",
     "otherPlaceholder": "نور",
-    "partnerName": "ستاسو د موسسې/ سازمان/ کمپنۍ نوم څه دی؟",
-    "partnersConcerns": "د کوم SDGs په هلکه ستاسو موسسه؟ سازمان/ کمپنی پاملرنه کوی؟",
+    "partnerName": "ستاسو د موسسې/ سازمان/ شرکت نوم څه دی؟",
+    "partnersConcerns": "د کوم SDGs په هلکه ستاسو موسسه؟ سازمان/ شرکت پاملرنه کوی؟",
     "partnershipRelation": "زموږ د شرکت یا ګدون رابطه څه ده؟",
     "pointOfContact": "د اړیکه نیولو لپاره دیړه کس څوک دی؟",
     "submitError": "څه ناسم دی -- خپل پورته بریښنالیک چک کړی"
   },
   "partnerProfile": {
-    "briefIntro": "ستاسو د موسسې/ سازمان/ کمپنۍ لنډه پیژنده",
+    "briefIntro": "ستاسو د موسسې/ سازمان/ شرکت لنډه پیژنده",
     "collaborationGrants": "د مرستې په اړه د همکارۍ لپاره چمتو\n",
     "collaborationProjects": "د پروژو همکاری لپاره چمتو",
     "contactFullName": "د اړیکی نیونکی مکمل نوم ( لمړی نوم)",
-    "developmentGoals": "Sustainable Development Goals Your Work Supports",
-    "location": "Headquarters Location (City, Country)",
-    "organizationName": "Organization/Institution/Corporation Full Name",
-    "projectNames": "Current & Upcoming Project Topics",
+    "developmentGoals": "د دوامداره پراختیا اهداف چې ستاسو کار یی ملاتړ کوي",
+    "location": "د مقر موقعیت( ښار، هیواد)",
+    "organizationName": "د موسسې/ سازمان/ شرکت مکمل نوم",
+    "projectNames": "د اوسنی او راتلونکو پروژو تاپکونه",
     "regionsWork": "Regions Work In"
   },
   "profile": {

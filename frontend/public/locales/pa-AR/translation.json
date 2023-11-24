@@ -455,14 +455,14 @@
     "yourPortal": "ستاسو پورتل"
   },
   "partnerApplication": {
-    "buildTogether": "تاسو نور څنګه فکر کوئ چې موږ کولی شو په راتلونکي کې یوځای جوړ کړو؟",
-    "contactEmail": "What is their email?",
-    "introduction": "We appreciate your interest in becoming a volunteer Global Partner for MENTEE, a global nonprofit accelerating personal and professional growth to make the world a better, healthier place.",
-    "otherPlaceholder": "Other",
-    "partnerName": "What is your organization/institutions/company's name?",
-    "partnersConcerns": "What SDGs does your organization/institution/company care about?",
-    "partnershipRelation": "What is our partnership relationship?",
-    "pointOfContact": "Who is the best contact person?",
+    "buildTogether": "فکر کوی نور څه هم موږ په راتلونکي کې یو څای پرمخ وړلی شو؟",
+    "contactEmail": "د هغو بریښنالیک څه دی؟",
+    "introduction": "موږ ستاسو د لوالتیا څخه چې په داوطلب ډول  لپاره ښوونکی شوی، مننه کوو. MENTEE یوه نریواله غیر انتفاعی د شخصیت او تخصص د ودې لپاره او دا چې نړی ښه او صحي ځای شی، موسسه ده.",
+    "otherPlaceholder": "نور",
+    "partnerName": "ستاسو د موسسې/ سازمان/ کمپنۍ نوم څه دی؟",
+    "partnersConcerns": "د کوم SDGs په هلکه ستاسو موسسه؟ سازمان/ کمپنی پاملرنه کوی؟",
+    "partnershipRelation": "زموږ د شرکت یا ګدون رابطه څه ده؟",
+    "pointOfContact": "د اړیکه نیولو لپاره دیړه کس څوک دی؟",
     "submitError": "Something went wrong -- check your email at the top"
   },
   "partnerProfile": {

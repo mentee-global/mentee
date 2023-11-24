@@ -368,11 +368,11 @@
     "jobDuration": "تاسو سه موده د دې کمپنۍ سره وی؟ ",
     "knowledgeLocation": "مهربانی وکړی له مو سره یی شریک کړی چې ستاسو د کومو برخو، هیوادونو، ایالتونو، ښارونو په هکله علم لری. ",
     "languageBackground": "آیا غیر انګریزی په بله ژبه خبری کوی؟ که هو، مهربانی وکړی لاندې یی ولیکۍ او ځانګړی کری چې ستاسود روانتیا کچه( خبری اترې، روان خبری کول، مورنی) سومره ده. ",
-    "laterDonate": "نه، زه اوس مهال مرسته نشم کولی ولی مهربانی وکړی بل وخت پوښتنه وکړی ",
-    "noDonate": "I'm unable to offer a donation.",
-    "previousLocations": "Where have you lived in your life besides where you live now?",
-    "referral": "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!",
-    "submitError": "Something went wrong -- check your email at the top",
+    "laterDonate": "نه، زه اوس مهال مالی مرسته نشم کولی ولی مهربانی وکړی بل وخت پوښتنه وکړی ",
+    "noDonate": "زه توان نلرم چې مالی مرسته وکړم",
+    "previousLocations": "پرته لا دی ځایه چې اوس ژوند کوو کومو ځایونو کې مو ژوند کړی",
+    "referral": "که تاسو کوم څوک پیژنی چې د نړیوال ښوونکی په توګه دنده تر سره کړی، مهربانی وکړی نوم، بریښنالیک یی شریک کړی موږ به ورسره اړیکه ونیسو!",
+    "submitError": "څه ناسم دی-- پورته خپل بریښنالیک چک کړی ",
     "yesDonate": "Yes, I can offer a donation now to help support this work!"
   },
   "mentorAppointmentPage": {

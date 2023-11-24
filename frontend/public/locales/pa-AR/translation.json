@@ -422,18 +422,18 @@
     "group": "ګروپ",
     "inPerson": "یوازې ",
     "oneOnOne": "۱-پر- ۱",
-    "professionalTitle": "Professional Title",
-    "specializations": "Specializations",
-    "takingAppointments": "Taking Appointments?",
-    "virtual": "virtual"
+    "professionalTitle": "د تخصص عنوان",
+    "specializations": "تخصص",
+    "takingAppointments": "د ملاقات نیول؟",
+    "virtual": "مجازی"
   },
   "mentorVideoPage": {
-    "addVideo": "Add Video",
-    "specializationTag": "Specializations Tag",
-    "videoLink": "Video Link",
-    "videoTagValidate": "Please select a tag",
-    "videoTitle": "Title",
-    "videoTitlePlaceholder": "Enter a title",
+    "addVideo": "ویدیو اضافه کړی",
+    "specializationTag": "د تخصص ضمیمه کول",
+    "videoLink": "د ویدیو لنک",
+    "videoTagValidate": "مهربانی وکړی ضمیمه انتخاب کړی",
+    "videoTitle": "عنوان",
+    "videoTitlePlaceholder": "عنوان ولیکی",
     "videoTitleValidate": "Please enter a title",
     "welcome": "Welcome, {{name}}!",
     "yourUploads": "Your Uploads"

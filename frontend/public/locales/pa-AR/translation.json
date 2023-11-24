@@ -408,7 +408,7 @@
     "areaInterstValidate": "مهربانی وکړی د لیوالتیا برخه مو انتخاب کړی",
     "basicInfoNotice": "ستاسو نوم او بریښنالیک به دی شوونکی ته ولیږدول شی",
     "communicationMethod": "ستاسو د اړیکه غوره میتود کوم دی؟",
-    "communicationMethodValidate": "Please select communication method!",
+    "communicationMethodValidate": "مهربانی وکړی د اړیکې میتود مو وټاکی!",
     "confirmationText": "Your mentor will be getting back to you soon! Feel free to browse the mentor page and reach out to other mentors.",
     "introExample": "Hi Jim! I’m a junior at Oxford University studying Economics. I saw that you’re knowledgeable in Personal Finance, which is something I’m interested in, and I’d love to learn more about your experiences. Thank you for your time!",
     "introPrompt": "Briefly introduce yourself and what you are looking to gain from a Mentor.",

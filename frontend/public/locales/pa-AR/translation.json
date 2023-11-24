@@ -434,14 +434,14 @@
     "videoTagValidate": "مهربانی وکړی ضمیمه انتخاب کړی",
     "videoTitle": "عنوان",
     "videoTitlePlaceholder": "عنوان ولیکی",
-    "videoTitleValidate": "Please enter a title",
-    "welcome": "Welcome, {{name}}!",
-    "yourUploads": "Your Uploads"
+    "videoTitleValidate": "مهربانی وکړی عنوان ولیکی",
+    "welcome": "ښه راغلاست[[ نوم]] !",
+    "yourUploads": "ستاسو اپلودونه"
   },
   "messages": {
-    "availability": "Availability",
-    "availabilityTitle": "Select available hours by specific date",
-    "sendInvite": "Send invite",
+    "availability": "لاسرسی",
+    "availabilityTitle": "د لاسرسی وړ ساعتونه په ځانګړې نیټه کې انتخاب کړی",
+    "sendInvite": "د دعوت لیږل ",
     "sendInviteBody": "Thank you for reaching out for a session! You can select any option that works for you in the below links and book an appointment.",
     "sendMessagePlaceholder": "Send a message",
     "sidebarTitle": "My Messages",

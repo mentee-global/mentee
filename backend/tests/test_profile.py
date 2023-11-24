@@ -17,10 +17,13 @@ def test_account_info():
         f"{BASE_URL}/api/account/{profile_id}?account_type={os.getenv('TEST_MENTOR_ROLE')}"
     )
     response_email = response.json()["result"]["account"]["email"]
-    response_role = response.json()["result"]["account"]["role"]
 
+    assert response.status_code == 200
+    assert "email" in response.json()["result"]["account"]
     assert response_email == os.getenv("TEST_MENTOR_EMAIL")
-    assert response_role == os.getenv("TEST_MENTOR_ROLE")
+    assert "name" in response.json()["result"]["account"]
+    assert "phone_number" in response.json()["result"]["account"]
+    assert "firebase_uid" in response.json()["result"]["account"]
 
 
 def get_user_data():

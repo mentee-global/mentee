@@ -49,6 +49,4 @@ describe('HomePage', () => {
     it('should check the behavior upon click on "New" Card', ()=>{
         homePage.clickNew()
     })
-
-
 })

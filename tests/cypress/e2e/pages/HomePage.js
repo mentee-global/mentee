@@ -39,15 +39,12 @@ export class HomePage {
                 // Clicking the language
                 cy.get('.anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn').trigger('mouseover')
                 cy.contains(previousLanguage.languages[language.value.split("-")[0]]).click()
-
                 // Checking the texts
                 cy.get('.css-nnx7y8').should('contain',currentLanguage.homepage.existingAccountTitle).and('contain.text', currentLanguage.homepage.newAccountTitle)
                 cy.get('.ant-card-meta-description').should('contain.text', currentLanguage.homepage.existingAccountDesc).and('contain.text', currentLanguage.homepage.newAccountDesc)
-                
                 // Storing previous language details
                 previousLanguage=currentLanguage
             })
-    
         })
     }
     clickExisting(){

@@ -47,7 +47,6 @@ def test_find_mentor():
     accounts = result["accounts"]
 
     # get the mentor instances in the database
-    mentee_users = MentorProfile.objects.count()
-
+    mentor_users = MentorProfile.objects.count()
     assert len(accounts) > 0
-    assert len(accounts) == mentee_users
+    assert len(accounts) == mentor_users

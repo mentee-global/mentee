@@ -14,3 +14,4 @@ pyproject.toml000
 .DS_Store
 app.log
 backend/app.log
+tests/.env

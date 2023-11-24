@@ -442,20 +442,20 @@
     "availability": "لاسرسی",
     "availabilityTitle": "د لاسرسی وړ ساعتونه په ځانګړې نیټه کې انتخاب کړی",
     "sendInvite": "د دعوت لیږل ",
-    "sendInviteBody": "Thank you for reaching out for a session! You can select any option that works for you in the below links and book an appointment.",
-    "sendMessagePlaceholder": "Send a message",
-    "sidebarTitle": "My Messages",
-    "startConversation": "Start a conversation today!"
+    "sendInviteBody": "د جلسه لپاره د رسیدګی څخه مننه!  تاسو کولی شئ هر هغه اختیار وټاکئ چې ستاسو لپاره په لاندې لینکونو کې کار کوي او د ملاقات وخت وټاکئ.",
+    "sendMessagePlaceholder": "یو مسیج ولیږی",
+    "sidebarTitle": "زما مسیجونه",
+    "startConversation": "نن خبری او اتړی شروع کړی "
   },
   "navHeader": {
-    "editProfile": "Edit Profile",
-    "findMentee": "Find a Mentee",
-    "findMentor": "Find a Mentor",
-    "findPartner": "Find a Partner",
-    "yourPortal": "Your Portal"
+    "editProfile": "د پروفایل ایدیت",
+    "findMentee": "د زده کونکی پیدا کول",
+    "findMentor": "د ښوونکی پیدا کول",
+    "findPartner": "د شریک پیدا کول",
+    "yourPortal": "ستاسو پورتل"
   },
   "partnerApplication": {
-    "buildTogether": "How else do you think we could build together going forward?",
+    "buildTogether": "تاسو نور څنګه فکر کوئ چې موږ کولی شو په راتلونکي کې یوځای جوړ کړو؟",
     "contactEmail": "What is their email?",
     "introduction": "We appreciate your interest in becoming a volunteer Global Partner for MENTEE, a global nonprofit accelerating personal and professional growth to make the world a better, healthier place.",
     "otherPlaceholder": "Other",

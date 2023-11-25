@@ -502,16 +502,16 @@
     "appointments": "ملاقاتونه",
     "events": "پيښې",
     "explore": "سپړنه",
-    "profile": "Profile",
-    "videos": "Your Videos"
+    "profile": "پروفایل ",
+    "videos": "ستاسو ویدیوګانې"
   },
   "verifyEmail": {
-    "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",
-    "emailResent": "Email resent!",
-    "error": "Error verifying email, please try again!",
-    "header": "Account Verification",
-    "noEmail": "Didn't receive an email?",
-    "refresh": "(Refresh this page if you verified your email)",
+    "body": "یو تاییدی بریښنالیک ستاسو بریښنالیک ته لیږل شوی. مهرباني وکړئ د خپل حساب تصدیق کولو لپاره بریښنالیک کې موجود لینک باندې کلیک وکړئ.",
+    "emailResent": "بریښنالیک بیا لیګنه!",
+    "error": "د بريشنالیک تاییدیدو خطا! مهربانی وکړی بیا هڅه وکړی",
+    "header": "د اکونت تصدیق",
+    "noEmail": "بریښنالیک مو تر لاسه نکړ؟",
+    "refresh": "(که تاسو خپل بریښنالیک تایید کړی نو دا پاڼه تازه کړئ)",
     "resend": "Resend"
   }
 }

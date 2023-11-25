@@ -474,24 +474,24 @@
     "location": "د مقر موقعیت( ښار، هیواد)",
     "organizationName": "د موسسې/ سازمان/ شرکت مکمل نوم",
     "projectNames": "د اوسنی او راتلونکو پروژو تاپکونه",
-    "regionsWork": "Regions Work In"
+    "regionsWork": "په سیمو کې کار کوي\r\n"
   },
   "profile": {
-    "contactInfo": "Contact Info",
-    "edit": "Edit",
-    "emailNotifications": "Email notifications",
-    "textNotifications": "Text notifications",
-    "validateEmail": "Please input a valid email!",
-    "validatePhone": "Please input a valid phone number!"
+    "contactInfo": "د اړیکې معلومات",
+    "edit": "ایدیت",
+    "emailNotifications": "بریښنالیک خبرتیا",
+    "textNotifications": "د مسیج خبرتیا",
+    "validateEmail": "مهربانی وکړی سم بریښنالیک وکاروی",
+    "validatePhone": "مهربانی وکړی سم د تلفن شمیره وکاروی"
   },
   "regions": {
-    "caribbean": "Caribbean",
-    "centralAmerica": "Central America",
-    "centralAsia": "Central Asia",
-    "eastAsia": "East Asia",
-    "europe": "Europe",
-    "middleEast": "Middle East",
-    "northAfrica": "N. Africa",
+    "caribbean": "کارابین",
+    "centralAmerica": "مرکزی امریکا",
+    "centralAsia": "مرکزی آسیا",
+    "eastAsia": "شرقی آسیا",
+    "europe": "اروپا",
+    "middleEast": "منځنۍ آسیا",
+    "northAfrica": "شمالی افریقا",
     "northAmerica": "N. America",
     "oceana": "Oceana",
     "southAmerica": "S. America",

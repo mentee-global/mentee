@@ -11,12 +11,12 @@
     "SDG17": "SDG 17: د موخو تر لاسه کولو لپاره ګدون",
     "SDG2": "SDG 2: د ولګې له منځه وړل",
     "SDG3": "SDG 3: ښه روغتیا او سلامتیا",
-    "SDG4": "SDG 4: Quality Education",
-    "SDG5": "SDG 5: Gender Equality",
-    "SDG6": "SDG 6: Clean Water and Sanitation",
-    "SDG7": "SDG 7: Affordable and Clean Energy",
-    "SDG8": "SDG 8: Decent Work and Economic Growth",
-    "SDG9": "SDG 9: Industry, Innovation and Infrastructures"
+    "SDG4": "SDG 4: با کیفیته تعلیم",
+    "SDG5": "SDG 5:  د جنسیت برابری",
+    "SDG6": "SDG 6:  پاکې اوبه او فاضلاب ",
+    "SDG7": "SDG 7: پاکه او د لاسرسی وړ انرژی",
+    "SDG8": "SDG 8: ښه کار او اقتصادی وده",
+    "SDG9": "SDG 9: صنعت، نوښت او بنسټونه"
   },
   "ageRanges": {
     "16-18": "16-18",
@@ -499,9 +499,9 @@
     "subSaharaAfrica": "سب صحرا افریقا"
   },
   "sidebars": {
-    "appointments": "Appointments",
-    "events": "Events",
-    "explore": "Explore",
+    "appointments": "ملاقاتونه",
+    "events": "پيښې",
+    "explore": "سپړنه",
     "profile": "Profile",
     "videos": "Your Videos"
   },

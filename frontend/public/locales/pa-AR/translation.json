@@ -1,8 +1,8 @@
 {
   "SDGS": {
-    "SDG1": "SDG 1: No poverty",
-    "SDG10": "SDG 10: Reduced Inequality",
-    "SDG11": "SDG 11: Sustainable Cities and Communities",
+    "SDG1": "SDG 1:  ولګې سره مبارزه",
+    "SDG10": "SDG 10: د نا برابری کمول",
+    "SDG11": "SDG 11: دوامداره ټولنی او ښارونه",
     "SDG12": "SDG 12: Responsible Consumption and Production",
     "SDG13": "SDG 13: Climate Action",
     "SDG14": "SDG 14: Life Below Water",
@@ -492,11 +492,11 @@
     "europe": "اروپا",
     "middleEast": "منځنۍ آسیا",
     "northAfrica": "شمالی افریقا",
-    "northAmerica": "N. America",
-    "oceana": "Oceana",
-    "southAmerica": "S. America",
-    "southAsia": "South/SE Asia",
-    "subSaharaAfrica": "Sub-Sahara Africa"
+    "northAmerica": "شمالی امریکا",
+    "oceana": "اوقیانوس",
+    "southAmerica": "جنوبی امریکا",
+    "southAsia": "جنوبی/جنوب شرقی آسیا",
+    "subSaharaAfrica": "سب صحرا افریقا"
   },
   "sidebars": {
     "appointments": "Appointments",

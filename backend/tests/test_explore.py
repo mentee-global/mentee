@@ -1,5 +1,5 @@
 import requests
-from api.models import MenteeProfile, MentorProfile, Admin, Users
+from api.models import MenteeProfile, MentorProfile, PartnerProfile
 from pprint import pprint
 import os
 from dotenv import load_dotenv
@@ -50,3 +50,26 @@ def test_find_mentor():
     mentor_users = MentorProfile.objects.count()
     assert len(accounts) > 0
     assert len(accounts) == mentor_users
+
+
+def test_find_partner():
+    load_dotenv()
+
+    BASE_URL = os.getenv("BASE_URL")
+
+    # list all the partners from the api
+    response = requests.get(f"{BASE_URL}/api/accounts/3")
+    data = response.json()
+
+    assert response.status_code == 200
+
+    assert "result" in data
+    result = data["result"]
+    assert "accounts" in result
+
+    accounts = result["accounts"]
+
+    # get the parter instances in the database
+    partner_users = PartnerProfile.objects.count()
+    assert len(accounts) > 0
+    assert len(accounts) == partner_users

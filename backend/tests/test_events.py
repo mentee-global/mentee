@@ -2,14 +2,16 @@ from api.models import Event
 import requests
 import os
 from dotenv import load_dotenv
+from .utils.login_utils import *
 
 
-def test_events():
+def test_mentor_events():
     load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")
 
-    jwt_token = get_access_token_from_refresh_token()
+    jwt_token = os.environ["MENTOR_JWT_TOKEN"]
+
     mentor_role = int(os.getenv("TEST_MENTOR_ROLE"))
 
     url = f"{BASE_URL}/api/events/{mentor_role}"
@@ -31,59 +33,29 @@ def test_events():
     assert object_events == response_events_count
 
 
-def get_access_token_from_refresh_token():
+def test_mentee_events():
     load_dotenv()
-
-    firebase_api_key = os.getenv("FIREBASE_API_KEY")
-    test_mentor_refresh_token = get_refresh_token()
-
-    url = f"https://securetoken.googleapis.com/v1/token?key={firebase_api_key}"
-
-    data = {"grant_type": "refresh_token", "refresh_token": test_mentor_refresh_token}
-
-    response = requests.post(url, data=data)
-    return response.json()["access_token"]
-
-
-def login_mentor():
-    load_dotenv()
-
-    test_data = {
-        "email": os.getenv("TEST_MENTOR_EMAIL"),
-        "password": os.getenv("TEST_MENTOR_PASSWORD"),
-        "role": int(os.getenv("TEST_MENTOR_ROLE")),
-    }
 
     BASE_URL = os.getenv("BASE_URL")
 
-    # login with the correct data
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
+    jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
-    return response.json()["result"]["token"]
+    mentee_role = int(os.getenv("TEST_MENTEE_ROLE"))
 
-
-def get_refresh_token():
-    first_token = login_mentor()
-
-    firebase_api_key = os.getenv("FIREBASE_API_KEY")
-
+    url = f"{BASE_URL}/api/events/{mentee_role}"
     headers = {
-        "Content-Type": "application/json",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Authorization": jwt_token,
     }
-    params = {
-        "key": firebase_api_key,
-    }
+    response = requests.get(url, headers=headers)
 
-    json_data = {
-        "token": first_token,
-        "returnSecureToken": True,
-    }
+    response_events = response.json()["result"]["events"]
+    response_events_count = len(response_events)
 
-    response = requests.post(
-        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken",
-        params=params,
-        headers=headers,
-        json=json_data,
-    )
+    for response_event in response_events:
+        assert mentee_role in response_event["role"]
 
-    return response.json()["refreshToken"]
+    object_events = Event.objects.filter(role=mentee_role).count()
+
+    assert object_events == response_events_count

@@ -7,9 +7,9 @@ from .utils.login_utils import *
 
 
 # check the login route
-def test_login_mentor():
+def test_login_mentee():
     # login the example user
-    response = login_mentor()
+    response = login_mentee()
 
     assert response.status_code == 200
 
@@ -26,31 +26,31 @@ def test_login_mentor():
     assert "profileId" in decoded_token["claims"]
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == int(os.getenv("TEST_MENTOR_ROLE"))
-    assert decoded_token["claims"]["profileId"] == os.getenv("TEST_MENTOR_PROFILE_ID")
+    assert decoded_token["claims"]["role"] == int(os.getenv("TEST_MENTEE_ROLE"))
+    assert decoded_token["claims"]["profileId"] == os.getenv("TEST_MENTEE_PROFILE_ID")
 
 
-def test_login_mentor_wrong_password():
+def test_login_mentee_wrong_password():
     load_dotenv()
 
     # wrong data must not return 200
     test_data = {
-        "email": os.getenv("TEST_MENTOR_EMAIL"),
+        "email": os.getenv("TEST_MENTEE_EMAIL"),
         "password": "wrong_password",
-        "role": int(os.getenv("TEST_MENTOR_ROLE")),
+        "role": int(os.getenv("TEST_MENTEE_ROLE")),
     }
 
     response_test(test_data)
 
 
-def test_login_mentor_wrong_email():
+def test_login_mentee_wrong_email():
     load_dotenv()
 
     # wrong data must not return 200
     test_data = {
         "email": "wrong_email",
-        "password": os.getenv("TEST_MENTOR_PASSWORD"),
-        "role": int(os.getenv("TEST_MENTOR_ROLE")),
+        "password": os.getenv("TEST_MENTEE_PASSWORD"),
+        "role": int(os.getenv("TEST_MENTEE_ROLE")),
     }
 
     response_test(test_data)

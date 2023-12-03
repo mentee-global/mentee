@@ -12,11 +12,6 @@ const validGuestPassword= Cypress.env('GUEST_PASSWORD')
 const invalidEmail = 'INVALID_EMAIL'
 const invalidPassword = 'INVALID_PASSWORD'
 
-const mentorUrlEnd= Cypress.env('MENTOR_ENDPOINT')
-const menteeUrlEnd= Cypress.env('MENTEE_ENDPOINT')
-const partnerUrlEnd= Cypress.env('PARTNER_ENDPOINT')
-const guestUrlEnd= Cypress.env('GUEST_ENDPOINT')
-const loginUrlEnd= Cypress.env('LOGIN_ENDPOINT')
 export class LoginPage {
     users = ["Mentor", "Mentee", "Partner", "Guest"];
     
@@ -92,6 +87,7 @@ export class LoginPage {
                 if (index == 0) {
                     previousLanguage = currentLanguage
                 }
+                console.log("language translate by ",previousLanguage.languages[language.value.split("-")[0]])
                 // Clicking the language
                 cy.get('.anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn').trigger('mouseover')
                 cy.contains(previousLanguage.languages[language.value.split("-")[0]]).click()
@@ -134,31 +130,31 @@ export class LoginPage {
         this.verifyUrlContains(expectedUrl);
     }
     loginMentor() {
-        this.login(role1, validMentorEmail, validMentorPassword, mentorUrlEnd);
+        this.login(role1, validMentorEmail, validMentorPassword, '/appointments');
     }
     loginMentee() {
-        this.login(role2, validMenteeEmail, validMenteePassword, menteeUrlEnd);
+        this.login(role2, validMenteeEmail, validMenteePassword, '/mentee-appointments');
     }
     loginPartner() {
-        this.login(role3,  validPartnerEmail, validPartnerPassword, partnerUrlEnd);
+        this.login(role3,  validPartnerEmail, validPartnerPassword, '/partner-gallery');
     }
     loginGuest() {
-        this.login(role4, validGuestEmail, validGuestPassword, guestUrlEnd);
+        this.login(role4, validGuestEmail, validGuestPassword, '/guest-page');
     }
     invalidCredentialMentor() {
 
-        this.login(role1, invalidEmail, invalidPassword, loginUrlEnd);
+        this.login(role1, invalidEmail, invalidPassword, '/login');
     }
     invalidCredentialMentee() {
 
-        this.login(role2, invalidEmail, invalidPassword, loginUrlEnd);
+        this.login(role2, invalidEmail, invalidPassword, '/login');
     }
     invalidCredentialPartner() {
 
-        this.login(role3, invalidEmail, invalidPassword, loginUrlEnd);
+        this.login(role3, invalidEmail, invalidPassword, '/login');
     }
     invalidCredentialGuest() {
 
-        this.login(role4, invalidEmail, invalidPassword, loginUrlEnd);
+        this.login(role4, invalidEmail, invalidPassword, '/login');
     }
 }

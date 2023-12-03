@@ -6,10 +6,10 @@ describe('Login Page ', ()=>{
     beforeEach('Open Login Page', ()=>{
         cy.visit('/login')
     })
-    it('Check Existence of Login Pages', ()=>{
+    it.only('Check Existence of Login Pages', ()=>{
         login.componentExist()
     })
-    it.only('Check the functionality of Login Page', ()=>{
+    it('Check the functionality of Login Page', ()=>{
         login.isFunctional()
     })
     it('Should Change The Language For Page 1', () => {

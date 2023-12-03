@@ -14,5 +14,9 @@
     "concurrently": "^8.2.0",
     "dotenv": "^16.3.1",
     "sass": "^1.50.0"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.0",
+    "cypress-plugin-api": "^2.11.1"
   }
 }

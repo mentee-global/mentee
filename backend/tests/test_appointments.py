@@ -2,16 +2,24 @@ import requests
 import os
 from dotenv import load_dotenv
 from api.models import AppointmentRequest
+from .utils.login_utils import *
 
 
 # test the appointments for a mentor
-def test_appointments():
+def test_mentor_appointments():
     load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")
-    profile_id, role = get_user_data()
-    jwt_token = get_access_token_from_refresh_token()
-    os.environ["JWT_TOKEN"] = jwt_token
+
+    login_response = login_mentor()
+    first_token = login_response.json()["result"]["token"]
+    profile_id = login_response.json()["result"]["profileId"]
+    role = login_response.json()["result"]["role"]
+
+    refresh_token = get_refresh_token(first_token)
+    jwt_token = get_access_token(refresh_token)
+
+    os.environ["MENTOR_JWT_TOKEN"] = jwt_token
 
     url = f"{BASE_URL}/api/appointment/{role}/{profile_id}"
     headers = {
@@ -25,7 +33,7 @@ def test_appointments():
     appointments_count = len(appointments)
 
     for appointment in appointments:
-        assert appointment["mentor_id"]["oid"] == profile_id
+        assert appointment["mentor_id"]["$oid"] == profile_id
 
     mentor_appointments = AppointmentRequest.objects.filter(
         mentor_id=profile_id
@@ -33,81 +41,36 @@ def test_appointments():
     assert appointments_count == mentor_appointments
 
 
-# login to return the token
-
-
-def get_access_token_from_refresh_token():
+def test_mentee_appointments():
     load_dotenv()
-
-    firebase_api_key = os.getenv("FIREBASE_API_KEY")
-    test_mentor_refresh_token = get_refresh_token()
-
-    url = f"https://securetoken.googleapis.com/v1/token?key={firebase_api_key}"
-
-    data = {"grant_type": "refresh_token", "refresh_token": test_mentor_refresh_token}
-
-    response = requests.post(url, data=data)
-    return response.json()["access_token"]
-
-
-def get_user_data():
-    load_dotenv()
-
-    test_data = {
-        "email": os.getenv("TEST_MENTOR_EMAIL"),
-        "password": os.getenv("TEST_MENTOR_PASSWORD"),
-        "role": int(os.getenv("TEST_MENTOR_ROLE")),
-    }
 
     BASE_URL = os.getenv("BASE_URL")
 
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
+    login_response = login_mentee()
+    first_token = login_response.json()["result"]["token"]
+    profile_id = login_response.json()["result"]["profileId"]
+    role = login_response.json()["result"]["role"]
 
-    profile_id = response.json()["result"]["profileId"]
-    role = response.json()["result"]["role"]
+    refresh_token = get_refresh_token(first_token)
+    jwt_token = get_access_token(refresh_token)
 
-    return profile_id, role
+    os.environ["MENTEE_JWT_TOKEN"] = jwt_token
 
-
-def login_mentor():
-    load_dotenv()
-
-    test_data = {
-        "email": os.getenv("TEST_MENTOR_EMAIL"),
-        "password": os.getenv("TEST_MENTOR_PASSWORD"),
-        "role": int(os.getenv("TEST_MENTOR_ROLE")),
-    }
-
-    BASE_URL = os.getenv("BASE_URL")
-
-    # login with the correct data
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
-
-    return response.json()["result"]["token"]
-
-
-def get_refresh_token():
-    first_token = login_mentor()
-
-    firebase_api_key = os.getenv("FIREBASE_API_KEY")
-
+    url = f"{BASE_URL}/api/appointment/{role}/{profile_id}"
     headers = {
-        "Content-Type": "application/json",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Authorization": jwt_token,
     }
-    params = {
-        "key": firebase_api_key,
-    }
+    response = requests.get(url, headers=headers)
 
-    json_data = {
-        "token": first_token,
-        "returnSecureToken": True,
-    }
+    appointments = response.json()["result"]["requests"]
+    appointments_count = len(appointments)
 
-    response = requests.post(
-        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken",
-        params=params,
-        headers=headers,
-        json=json_data,
-    )
+    for appointment in appointments:
+        assert appointment["mentee_id"]["$oid"] == profile_id
 
-    return response.json()["refreshToken"]
+    mentee_appointments = AppointmentRequest.objects.filter(
+        mentee_id=profile_id
+    ).count()
+    assert appointments_count == mentee_appointments

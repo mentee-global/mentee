@@ -6,7 +6,7 @@ dotenv.config();
 module.exports = defineConfig({
   rootPath: "../frontend",
   e2e: {
-    baseUrl:Cypress.env("BASE_URL"),
+    baseUrl:process.env.BASE_URL,
     watchForFileChanges:false,
     ensureScrollable: true,
     parseSpecialCharSequences: false,

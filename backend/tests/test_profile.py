@@ -5,12 +5,12 @@ from pprint import pprint
 
 
 # test the loaded profile of the user
-def test_account_info():
+def test_mentor_account_info():
     load_dotenv()
 
     BASE_URL = os.getenv("BASE_URL")
 
-    profile_id = get_user_data()
+    profile_id = os.getenv("TEST_MENTOR_PROFILE_ID")
 
     # get profile data
     response = requests.get(
@@ -24,21 +24,70 @@ def test_account_info():
     assert "name" in response.json()["result"]["account"]
     assert "phone_number" in response.json()["result"]["account"]
     assert "firebase_uid" in response.json()["result"]["account"]
+    assert profile_id == response.json()["result"]["account"]["_id"]["$oid"]
 
 
-def get_user_data():
+# test the loaded profile of the user
+def test_mentee_account_info():
     load_dotenv()
-
-    test_data = {
-        "email": os.getenv("TEST_MENTOR_EMAIL"),
-        "password": os.getenv("TEST_MENTOR_PASSWORD"),
-        "role": int(os.getenv("TEST_MENTOR_ROLE")),
-    }
 
     BASE_URL = os.getenv("BASE_URL")
 
-    # login the example user
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
-    profile_id = response.json()["result"]["profileId"]
+    profile_id = os.getenv("TEST_MENTEE_PROFILE_ID")
 
-    return profile_id
+    # get profile data
+    response = requests.get(
+        f"{BASE_URL}/api/account/{profile_id}?account_type={os.getenv('TEST_MENTEE_ROLE')}"
+    )
+    response_email = response.json()["result"]["account"]["email"]
+
+    assert response.status_code == 200
+    assert "email" in response.json()["result"]["account"]
+    assert response_email == os.getenv("TEST_MENTEE_EMAIL")
+    assert "name" in response.json()["result"]["account"]
+    assert "phone_number" in response.json()["result"]["account"]
+    assert "firebase_uid" in response.json()["result"]["account"]
+    assert profile_id == response.json()["result"]["account"]["_id"]["$oid"]
+
+
+# test the loaded profile of the user
+def test_partner_account_info():
+    load_dotenv()
+
+    BASE_URL = os.getenv("BASE_URL")
+
+    profile_id = os.getenv("TEST_PARTNER_PROFILE_ID")
+
+    # get profile data
+    response = requests.get(
+        f"{BASE_URL}/api/account/{profile_id}?account_type={os.getenv('TEST_PARTNER_ROLE')}"
+    )
+    response_email = response.json()["result"]["account"]["email"]
+
+    assert response.status_code == 200
+    assert "email" in response.json()["result"]["account"]
+    assert response_email == os.getenv("TEST_PARTNER_EMAIL")
+    assert "firebase_uid" in response.json()["result"]["account"]
+    assert profile_id == response.json()["result"]["account"]["_id"]["$oid"]
+
+
+# test the loaded profile of the user
+def test_guest_account_info():
+    load_dotenv()
+
+    BASE_URL = os.getenv("BASE_URL")
+
+    profile_id = os.getenv("TEST_GUEST_PROFILE_ID")
+
+    # get profile data
+    response = requests.get(
+        f"{BASE_URL}/api/account/{profile_id}?account_type={os.getenv('TEST_GUEST_ROLE')}"
+    )
+    response_email = response.json()["result"]["account"]["email"]
+
+    assert response.status_code == 200
+    assert "email" in response.json()["result"]["account"]
+    assert response_email == os.getenv("TEST_GUEST_EMAIL")
+    assert "name" in response.json()["result"]["account"]
+    assert "firebase_uid" in response.json()["result"]["account"]
+    assert profile_id == response.json()["result"]["account"]["_id"]["$oid"]

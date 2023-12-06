@@ -221,4 +221,5 @@ export const I18N_LANGUAGES = [
   { value: "ar", label: "Arabic" },
   { value: "pt-BR", label: "Portuguese" },
   { value: "fa-AF", label: "Farsi" },
+  { value: "pa-AR", label: "Pashto" },
 ];

@@ -28,7 +28,7 @@ import {
   PARTNER_PROFILE,
 } from "utils/consts";
 import ImgCrop from "antd-img-crop";
-import { uploadAccountImage, editAccountProfile } from "utils/api";
+import { uploadAccountImage, editAccountProfile, fetchAccounts } from "utils/api";
 import ModalInput from "./ModalInput";
 
 const { Column } = Table;
@@ -49,8 +49,6 @@ function AdminDataTable({
   isMentee,
   isPartner,
   isGuest,
-  mentors,
-  mentees,
   refresh,
 }) {
   if (isPartner && !data[0]?.id) {
@@ -73,6 +71,20 @@ function AdminDataTable({
   const [selectedMentees, setSelectedMentees] = useState([]);
   const [isChanged, setIschanged] = useState(false);
 
+  const [allMentors, setAllMentors] = useState([]);
+  const [allMentees, setAllMentees] = useState([]);
+
+  useEffect(() => {
+    async function getAllMentorMentee(){
+      const all_mentors = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
+      setAllMentors(all_mentors);
+      const all_mentees = await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+      setAllMentees(all_mentees);
+    }
+    if (isPartner){
+      getAllMentorMentee();
+    }
+  }, [isPartner]);
   useEffect(() => {
     if (
       data &&
@@ -107,7 +119,7 @@ function AdminDataTable({
       if (selectedPartner.assign_mentees) {
         assign_mentees = [...assign_mentees, ...selectedPartner.assign_mentees];
       }
-      mentors.map((item) => {
+      allMentors.map((item) => {
         var record = assign_mentors.find((x) => x.id === item._id["$oid"]);
         if (record === null || record === undefined) {
           temp.push({ id: item._id["$oid"], name: item.name });
@@ -116,7 +128,7 @@ function AdminDataTable({
       });
       setMentorArr(temp);
       temp = [];
-      mentees.map((item) => {
+      allMentees.map((item) => {
         var record = assign_mentees.find((x) => x.id === item._id["$oid"]);
         if (record === null || record === undefined) {
           temp.push({ id: item._id["$oid"], name: item.name });
@@ -125,7 +137,7 @@ function AdminDataTable({
       });
       setMenteeArr(temp);
     }
-  }, [selectedPartner, mentors, mentees, isChanged]);
+  }, [selectedPartner, allMentors, allMentees, isChanged]);
 
   const showModal = (item) => {
     setSelectedPartner(item);
@@ -200,7 +212,7 @@ function AdminDataTable({
         selected_partner.assign_mentors = [];
       }
       selectedMentors.map((mentor_id) => {
-        var mentor_record = mentors.find((x) => x._id.$oid === mentor_id);
+        var mentor_record = allMentors.find((x) => x._id.$oid === mentor_id);
         if (mentor_record !== null && mentor_record !== undefined) {
           selected_partner.assign_mentors.push({
             id: mentor_id,
@@ -219,7 +231,7 @@ function AdminDataTable({
         selected_partner.assign_mentees = [];
       }
       selectedMentees.map((mentee_id) => {
-        var mentee_record = mentees.find((x) => x._id.$oid === mentee_id);
+        var mentee_record = allMentees.find((x) => x._id.$oid === mentee_id);
         if (mentee_record !== null && mentee_record !== undefined) {
           selected_partner.assign_mentees.push({
             id: mentee_id,

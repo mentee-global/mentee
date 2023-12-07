@@ -45,8 +45,6 @@ function AdminAccountData() {
   const [downloadFile, setDownloadFile] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [guestModalVisible, setGuestModalVisible] = useState(false);
-  const [mentors, setMentors] = useState([]);
-  const [mentees, setMentees] = useState([]);
 
   const { onAuthStateChanged } = useAuth();
 
@@ -93,10 +91,6 @@ function AdminAccountData() {
               return true;
             });
           }
-          const mentors = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
-          setMentors(mentors);
-          const mentees = await fetchAccounts(ACCOUNT_TYPE.MENTEE);
-          setMentees(mentees);
 
           setDisplayData(partners_data);
           setFilterData(partners_data);
@@ -301,8 +295,6 @@ function AdminAccountData() {
           isMentee={displayOption === keys.MENTEES}
           isPartner={displayOption === keys.PARTNER}
           isGuest={displayOption === keys.GUEST}
-          mentors={mentors}
-          mentees={mentees}
         />
       </Spin>
     </div>

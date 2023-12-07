@@ -172,22 +172,6 @@ function AdminAccountData() {
   };
 
   const handleAccountDisplay = (key) => {
-    // let newData = [];
-    // if (key === keys.MENTORS) {
-    //   newData = mentorData;
-    // } else if (key === keys.MENTEES) {
-    //   newData = menteeData;
-    // } else if (key === keys.ALL) {
-    //   newData = mentorData.concat(menteeData);
-    // } else if (key === keys.PARTNER) {
-    //   newData = partnerData;
-    // } else if (key === keys.GUEST) {
-    //   newData = guestData;
-    // }
-
-    // setDisplayData(newData);
-    // setFilterData(newData);
-
     setDisplayOption(key);
     setReload(!reload);
   };

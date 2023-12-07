@@ -320,6 +320,7 @@ def get_mentors_appointments():
             {
                 "name": mentor.name,
                 "id": str(mentor.id),
+                "image": mentor.image,
                 "appointments": mentor_appts,
                 "numOfAppointments": len(mentor_appts),
                 "appointmentsAvailable": "Yes"

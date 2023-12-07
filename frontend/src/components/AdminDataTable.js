@@ -28,7 +28,11 @@ import {
   PARTNER_PROFILE,
 } from "utils/consts";
 import ImgCrop from "antd-img-crop";
-import { uploadAccountImage, editAccountProfile, fetchAccounts } from "utils/api";
+import {
+  uploadAccountImage,
+  editAccountProfile,
+  fetchAccounts,
+} from "utils/api";
 import ModalInput from "./ModalInput";
 
 const { Column } = Table;
@@ -75,13 +79,13 @@ function AdminDataTable({
   const [allMentees, setAllMentees] = useState([]);
 
   useEffect(() => {
-    async function getAllMentorMentee(){
+    async function getAllMentorMentee() {
       const all_mentors = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
       setAllMentors(all_mentors);
       const all_mentees = await fetchAccounts(ACCOUNT_TYPE.MENTEE);
       setAllMentees(all_mentees);
     }
-    if (isPartner){
+    if (isPartner) {
       getAllMentorMentee();
     }
   }, [isPartner]);

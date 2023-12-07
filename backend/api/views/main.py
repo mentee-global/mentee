@@ -477,8 +477,12 @@ def edit_mentor(id):
     # Try to retrieve account profile from database
     account = None
     try:
+        token = request.headers.get("Authorization")
+        claims = firebase_admin_auth.verify_id_token(token)
+        login_user_role = claims.get("role")
+
         authorized, response = verify_user(account_type)
-        if not authorized:
+        if not authorized and int(login_user_role) != Account.ADMIN:
             return response
 
         if account_type == Account.MENTEE:
@@ -521,8 +525,12 @@ def uploadImage(id):
     account = None
 
     try:
+        token = request.headers.get("Authorization")
+        claims = firebase_admin_auth.verify_id_token(token)
+        login_user_role = claims.get("role")
+
         authorized, response = verify_user(account_type)
-        if not authorized:
+        if not authorized and int(login_user_role) != Account.ADMIN:
             return response
 
         if account_type == Account.MENTEE:

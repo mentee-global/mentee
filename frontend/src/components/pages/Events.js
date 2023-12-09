@@ -48,16 +48,19 @@ function Events() {
 
   useEffect(() => {
     async function getAllEvents() {
-      const mentor_data = await fetchMentors();
-      const mentee_data = await fetchMentees();
-      const partenr_data = await fetchPartners();
-      setUsers([...mentee_data, ...mentor_data, ...partenr_data]);
       const all_evnet_data = await fetchEvents(role);
       setAllEvents(all_evnet_data);
       setPageLoaded(true);
     }
-
     getAllEvents();
+
+    async function getAllUsersData() {
+      const mentor_data = await fetchMentors();
+      const mentee_data = await fetchMentees();
+      const partenr_data = await fetchPartners();
+      setUsers([...mentee_data, ...mentor_data, ...partenr_data]);
+    }
+    getAllUsersData();
   }, [reload]);
 
   const getFilteredEvents = () => {

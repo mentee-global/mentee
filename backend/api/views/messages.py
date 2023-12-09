@@ -269,20 +269,32 @@ def get_sidebar_mentors(pageNumber):
     mentors = MentorProfile.objects()
     detailMessages = []
 
+    allMessages = DirectMessage.objects.filter(
+        created_at__gte=datetime.fromisoformat(startDate),
+        created_at__lte=datetime.fromisoformat(endDate),
+    ).order_by("-created_at")
+    messages_by_sender_or_recipient = {}
+
+    for message_item in allMessages:
+        if message_item.sender_id not in messages_by_sender_or_recipient:
+            messages_by_sender_or_recipient[message_item.sender_id] = []
+        messages_by_sender_or_recipient[message_item.sender_id].append(message_item)
+        if message_item.recipient_id not in messages_by_sender_or_recipient:
+            messages_by_sender_or_recipient[message_item.recipient_id] = []
+        messages_by_sender_or_recipient[message_item.recipient_id].append(message_item)
+
+    allMentees = MenteeProfile.objects()
+    mentees_by_id = {}
+    for mentee_item in allMentees:
+        mentees_by_id[mentee_item.id] = mentee_item
+
     for mentor in list(mentors):
         user_id = mentor.id
         mentor_user = json.loads(mentor.to_json())
         try:
-            sentMessages = (
-                DirectMessage.objects.filter(
-                    Q(sender_id=user_id) | Q(recipient_id=user_id)
-                )
-                .filter(
-                    created_at__gte=datetime.fromisoformat(startDate),
-                    created_at__lte=datetime.fromisoformat(endDate),
-                )
-                .order_by("-created_at")
-            )
+            sentMessages = ()
+            if user_id in messages_by_sender_or_recipient:
+                sentMessages = messages_by_sender_or_recipient[user_id]
         except:
             continue
         if len(sentMessages) == 0:
@@ -296,7 +308,7 @@ def get_sidebar_mentors(pageNumber):
         contacts = list(dict.fromkeys(contacts))
         for contactId in contacts:
             try:
-                otherUser = MenteeProfile.objects.get(id=contactId)
+                otherUser = mentees_by_id[contactId]
             except:
                 continue
             otherUserObj = {

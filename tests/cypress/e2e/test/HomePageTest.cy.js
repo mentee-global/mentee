@@ -26,27 +26,17 @@ describe('HomePage', () => {
         cy.get('.ant-dropdown-menu.ant-dropdown-menu-root.ant-dropdown-menu-vertical.ant-dropdown-menu-light.css-wxm1m1')
             .should('be.visible')
         cy.get('span.ant-dropdown-menu-title-content').should('contain.text', 'English')
-            .and('contain.text', 'Español').and('contain.text', 'العربية').and('contain.text', 'Português').and('contain.text', 'فارسی')
-        cy.get('span.ant-dropdown-menu-title-content').should('have.length', 5)
-    })
-    it.only('should change the language', () => {
-       homePage.changeLanguage()
+            .and('contain.text', 'Español').and('contain.text', 'العربية').and('contain.text', 'Português')
+            .and('contain.text', 'فارسی').and('contain.text', 'Pashto')
+        cy.get('span.ant-dropdown-menu-title-content').should('have.length', 6)
     })
     it('should change the language', () => {
-        I18N_LANGUAGES.map((item) => {
-            // alert(item.value+" "+item.label)
-            cy.get('.anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn').trigger('mouseover')
-            cy.get('.ant-dropdown-menu-item.ant-dropdown-menu-item-only-child').each(($option, index) => {
-                const language = I18N_LANGUAGES[index];
-                cy.wrap($option).should('contain.text', language.label)
-                // cy.wrap($option).should('have.attr','data-menu-id').and('contain', item.value)
-            })
-        })
+        homePage.changeLanguage()
     })
-    it('should check the behavior upon click on "Existing" Card', ()=>{
+    it('should check the behavior upon click on "Existing" Card', () => {
         homePage.clickExisting()
     })
-    it('should check the behavior upon click on "New" Card', ()=>{
+    it('should check the behavior upon click on "New" Card', () => {
         homePage.clickNew()
     })
 })

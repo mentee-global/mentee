@@ -6,7 +6,7 @@ describe('Login Page ', ()=>{
     beforeEach('Open Login Page', ()=>{
         cy.visit('/login')
     })
-    it.only('Check Existence of Login Pages', ()=>{
+    it('Check Existence of Login Pages', ()=>{
         login.componentExist()
     })
     it('Check the functionality of Login Page', ()=>{

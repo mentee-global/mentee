@@ -1,0 +1,22 @@
+import { ExplorePage } from "../pages/ExplorePage";
+import { LoginPage } from "../pages/LoginPage";
+
+const explore = new ExplorePage("mentee");
+const login = new LoginPage();
+
+describe("Explore Page", () => {
+  beforeEach("Open Explore Page", () => {
+    cy.visit("/login");
+    login.loginMentee();
+    cy.visit("/gallery");
+  });
+  it.only("Check existance of Explore Page", () => {
+    explore.componnentExists();
+  });
+  it.only("Check the functionality of Explore Page", () => {
+    explore.isFunctional();
+  });
+  it.only("Check Filter By Specialization", () => {
+    explore.filterBySpecializations();
+  });
+});

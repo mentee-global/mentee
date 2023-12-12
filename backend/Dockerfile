@@ -13,4 +13,5 @@ WORKDIR /app
 
 ENTRYPOINT [ "python" ]
 
-CMD [ "manage.py", "runprod" ]
+CMD [ "manage.py", "runserver" ]
+# CMD [ "manage.py", "runprod" ]

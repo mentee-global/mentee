@@ -1,14 +1,13 @@
 import requests
 from api.models import MenteeProfile, MentorProfile, PartnerProfile
-from pprint import pprint
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
 
 def test_find_mentee():
-    load_dotenv()
 
-    BASE_URL = os.getenv("BASE_URL")
+    BASE_URL = os.environ.get("BASE_URL")
 
     # list all the mentees from the api
     response = requests.get(f"{BASE_URL}/api/accounts/2")
@@ -26,13 +25,14 @@ def test_find_mentee():
     mentee_users = MenteeProfile.objects.filter(is_private=False).count()
 
     assert len(accounts) > 0
-    assert len(accounts) == mentee_users
+    assert (
+        len(accounts) == mentee_users
+    ), "Mentee accounts retrieved from the api does not match the Mentee accounts in the database."
 
 
 def test_find_mentor():
-    load_dotenv()
 
-    BASE_URL = os.getenv("BASE_URL")
+    BASE_URL = os.environ.get("BASE_URL")
 
     # list all the mentors from the api
     response = requests.get(f"{BASE_URL}/api/accounts/1")
@@ -49,13 +49,14 @@ def test_find_mentor():
     # get the mentor instances in the database
     mentor_users = MentorProfile.objects.count()
     assert len(accounts) > 0
-    assert len(accounts) == mentor_users
+    assert (
+        len(accounts) == mentor_users
+    ), "Mentor accounts retrieved from the api does not match the Mentor accounts in the database."
 
 
 def test_find_partner():
-    load_dotenv()
 
-    BASE_URL = os.getenv("BASE_URL")
+    BASE_URL = os.environ.get("BASE_URL")
 
     # list all the partners from the api
     response = requests.get(f"{BASE_URL}/api/accounts/3")
@@ -72,4 +73,6 @@ def test_find_partner():
     # get the parter instances in the database
     partner_users = PartnerProfile.objects.count()
     assert len(accounts) > 0
-    assert len(accounts) == partner_users
+    assert (
+        len(accounts) == partner_users
+    ), "Partner accounts retrieved from the api does not match the Mentor accounts in the database."

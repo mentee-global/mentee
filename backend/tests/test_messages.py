@@ -1,21 +1,21 @@
 import os, requests
 from dotenv import load_dotenv
 
+load_dotenv()
 
 def test_mentee_messages():
-    load_dotenv()
 
-    mentee_jwt_token = os.getenv("MENTEE_JWT_TOKEN")
+    mentee_jwt_token = os.environ.get("MENTEE_JWT_TOKEN")
 
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Authorization": mentee_jwt_token,
     }
 
-    BASE_URL = os.getenv("BASE_URL")
+    BASE_URL = os.environ.get("BASE_URL")
 
-    mentor_profile_id = os.getenv("TEST_MENTOR_PROFILE_ID")
-    mentee_profile_id = os.getenv("TEST_MENTEE_PROFILE_ID")
+    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    mentee_profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
 
     params = {
         "recipient_id": mentee_profile_id,
@@ -47,19 +47,18 @@ def test_mentee_messages():
 
 
 def test_mentor_messages():
-    load_dotenv()
 
-    mentor_jwt_token = os.getenv("MENTOR_JWT_TOKEN")
+    mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
 
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Authorization": mentor_jwt_token,
     }
 
-    BASE_URL = os.getenv("BASE_URL")
+    BASE_URL = os.environ.get("BASE_URL")
 
-    mentor_profile_id = os.getenv("TEST_MENTOR_PROFILE_ID")
-    mentee_profile_id = os.getenv("TEST_MENTEE_PROFILE_ID")
+    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    mentee_profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
 
     params = {
         "recipient_id": mentor_profile_id,

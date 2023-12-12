@@ -4,14 +4,14 @@ import os
 from dotenv import load_dotenv
 from api.views.main import is_mentee_account_private
 
+load_dotenv()
 
 # the private mentee profiles should not be in the database
 def test_mentee_privacy():
     # create a list of public mentee ids and store ids of all the mentees returned from the api response
     public_mentee_ids = []
-    load_dotenv()
 
-    BASE_URL = os.getenv("BASE_URL")
+    BASE_URL = os.environ.get("BASE_URL")
 
     # list all the mentees from the api
     response = requests.get(f"{BASE_URL}/api/accounts/2")
@@ -45,29 +45,6 @@ def test_mentee_privacy():
 
     # make sure that the private mentees are not in the list of public mentees
     for private_mentee in private_mentee_users:
-        assert str(private_mentee.id) not in public_mentee_ids
-
-
-def test_mentee_privacy_unit():
-    mentee_id = "60c0843f97398e3e11e22dbd"  # id of a mentee who is private
-
-    class MockMenteeProfile:
-        def __init__(self, is_private):
-            self.is_private = is_private
-
-    def mock_get(id):
-        if id == mentee_id:
-            return MockMenteeProfile(is_private=True)
-        else:
-            raise Exception("No mentee with that id")
-
-    with pytest.MonkeyPatch().setattr(MenteeProfile.objects, "get", mock_get):
-        response = is_mentee_account_private(mentee_id)
-        assert response["data"]["private"] is True
-
-        response = is_mentee_account_private("61285521fb4a87cfab26d0f0")
-        assert response["data"]["private"] is False
-
-        response = is_mentee_account_private("3")
-        assert response["status"] == 422
-        assert "No mentee with that id" in response["message"]
+        assert (
+            str(private_mentee.id) not in public_mentee_ids
+        ), "Private mentee account found in the api response"

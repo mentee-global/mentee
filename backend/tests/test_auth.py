@@ -6,6 +6,7 @@ from .utils.login_utils import *
 
 load_dotenv()
 
+
 # check the login route
 def test_login_partner():
     # login the example user
@@ -29,11 +30,12 @@ def test_login_partner():
     assert "role" in decoded_token["claims"]
 
     assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_PARTNER_ROLE"))
-    assert decoded_token["claims"]["profileId"] == os.environ.get("TEST_PARTNER_PROFILE_ID")
+    assert decoded_token["claims"]["profileId"] == os.environ.get(
+        "TEST_PARTNER_PROFILE_ID"
+    )
 
 
 def test_login_mentor_wrong_password():
-
     # wrong data must not return 200
     test_data = {
         "email": os.environ.get("TEST_PARTNER_EMAIL"),
@@ -45,7 +47,6 @@ def test_login_mentor_wrong_password():
 
 
 def test_login_partner_wrong_email():
-
     # wrong data must not return 200
     test_data = {
         "email": "wrong_email",
@@ -79,11 +80,12 @@ def test_login_mentor():
     assert "role" in decoded_token["claims"]
 
     assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_MENTOR_ROLE"))
-    assert decoded_token["claims"]["profileId"] == os.environ.get("TEST_MENTOR_PROFILE_ID")
+    assert decoded_token["claims"]["profileId"] == os.environ.get(
+        "TEST_MENTOR_PROFILE_ID"
+    )
 
 
 def test_login_mentor_wrong_password():
-
     # wrong data must not return 200
     test_data = {
         "email": os.environ.get("TEST_MENTOR_EMAIL"),
@@ -95,7 +97,6 @@ def test_login_mentor_wrong_password():
 
 
 def test_login_mentor_wrong_email():
-
     # wrong data must not return 200
     test_data = {
         "email": "wrong_email",
@@ -129,11 +130,12 @@ def test_login_mentee():
     assert "role" in decoded_token["claims"]
 
     assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_MENTEE_ROLE"))
-    assert decoded_token["claims"]["profileId"] == os.environ.get("TEST_MENTEE_PROFILE_ID")
+    assert decoded_token["claims"]["profileId"] == os.environ.get(
+        "TEST_MENTEE_PROFILE_ID"
+    )
 
 
 def test_login_mentee_wrong_password():
-
     # wrong data must not return 200
     test_data = {
         "email": os.environ.get("TEST_MENTEE_EMAIL"),
@@ -145,7 +147,6 @@ def test_login_mentee_wrong_password():
 
 
 def test_login_mentee_wrong_email():
-
     # wrong data must not return 200
     test_data = {
         "email": "wrong_email",
@@ -180,11 +181,12 @@ def test_login_guest():
 
     assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_GUEST_ROLE"))
     print(decoded_token)
-    assert decoded_token["claims"]["profileId"] == os.environ.get("TEST_GUEST_PROFILE_ID")
+    assert decoded_token["claims"]["profileId"] == os.environ.get(
+        "TEST_GUEST_PROFILE_ID"
+    )
 
 
 def test_login_guest_wrong_password():
-
     # wrong data must not return 200
     test_data = {
         "email": os.environ.get("TEST_GUEST_EMAIL"),
@@ -196,7 +198,6 @@ def test_login_guest_wrong_password():
 
 
 def test_login_guest_wrong_email():
-
     # wrong data must not return 200
     test_data = {
         "email": "wrong_email",

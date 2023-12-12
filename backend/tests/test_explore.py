@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def test_find_mentee():
 
+def test_find_mentee():
     BASE_URL = os.environ.get("BASE_URL")
 
     # list all the mentees from the api
@@ -31,7 +31,6 @@ def test_find_mentee():
 
 
 def test_find_mentor():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     # list all the mentors from the api
@@ -55,7 +54,6 @@ def test_find_mentor():
 
 
 def test_find_partner():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     # list all the partners from the api

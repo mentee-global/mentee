@@ -6,6 +6,7 @@ from api.views.main import is_mentee_account_private
 
 load_dotenv()
 
+
 # the private mentee profiles should not be in the database
 def test_mentee_privacy():
     # create a list of public mentee ids and store ids of all the mentees returned from the api response

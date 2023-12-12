@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 # get access token from refresh token
 def get_access_token(refresh_token):
-
     firebase_api_key = os.environ.get("FIREBASE_API_KEY")
 
     url = f"https://securetoken.googleapis.com/v1/token?key={firebase_api_key}"
@@ -19,7 +19,6 @@ def get_access_token(refresh_token):
 
 # login with the correct data
 def login_mentor():
-
     test_data = {
         "email": os.environ.get("TEST_MENTOR_EMAIL"),
         "password": os.environ.get("TEST_MENTOR_PASSWORD"),
@@ -34,7 +33,6 @@ def login_mentor():
 
 
 def login_mentee():
-
     test_data = {
         "email": os.environ.get("TEST_MENTEE_EMAIL"),
         "password": os.environ.get("TEST_MENTEE_PASSWORD"),
@@ -50,7 +48,6 @@ def login_mentee():
 
 
 def login_guest():
-
     test_data = {
         "email": os.environ.get("TEST_GUEST_EMAIL"),
         "password": os.environ.get("TEST_GUEST_PASSWORD"),
@@ -66,7 +63,6 @@ def login_guest():
 
 
 def login_partner():
-
     test_data = {
         "email": os.environ.get("TEST_PARTNER_EMAIL"),
         "password": os.environ.get("TEST_PARTNER_PASSWORD"),

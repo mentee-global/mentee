@@ -6,8 +6,8 @@ from .utils.login_utils import *
 
 load_dotenv()
 
-def test_mentor_events():
 
+def test_mentor_events():
     BASE_URL = os.environ.get("BASE_URL")
 
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
@@ -36,7 +36,6 @@ def test_mentor_events():
 
 
 def test_mentee_events():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
@@ -65,7 +64,6 @@ def test_mentee_events():
 
 
 def test_create_event_mentor():
-
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
@@ -77,7 +75,6 @@ def test_create_event_mentor():
 
 
 def test_create_event_mentee():
-
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
@@ -125,7 +122,6 @@ def create_event(profile_id, jwt_token):
 
 
 def test_mentor_delete_events():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
@@ -146,7 +142,6 @@ def test_mentor_delete_events():
 
 
 def test_mentee_delete_events():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")

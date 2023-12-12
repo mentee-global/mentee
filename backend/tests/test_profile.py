@@ -5,9 +5,9 @@ from .utils.profile_utils import *
 
 load_dotenv()
 
+
 # test the loaded profile of the user
 def test_mentor_account_info():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
@@ -32,7 +32,6 @@ def test_mentor_account_info():
 
 # test the loaded profile of the user
 def test_mentee_account_info():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
@@ -57,7 +56,6 @@ def test_mentee_account_info():
 
 # test the loaded profile of the user
 def test_partner_account_info():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     profile_id = os.environ.get("TEST_PARTNER_PROFILE_ID")
@@ -77,7 +75,6 @@ def test_partner_account_info():
 
 # test the loaded profile of the user
 def test_guest_account_info():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     profile_id = os.environ.get("TEST_GUEST_PROFILE_ID")
@@ -97,7 +94,6 @@ def test_guest_account_info():
 
 
 def test_mentor_profile_update_contact():
-
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
     account_type = os.environ.get("TEST_MENTOR_ROLE")
@@ -110,7 +106,6 @@ def test_mentor_profile_update_contact():
 
 
 def test_mentee_profile_update_contact():
-
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
     account_type = os.environ.get("TEST_MENTEE_ROLE")

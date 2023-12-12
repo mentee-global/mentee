@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def test_mentee_messages():
 
+def test_mentee_messages():
     mentee_jwt_token = os.environ.get("MENTEE_JWT_TOKEN")
 
     headers = {
@@ -47,7 +47,6 @@ def test_mentee_messages():
 
 
 def test_mentor_messages():
-
     mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
 
     headers = {

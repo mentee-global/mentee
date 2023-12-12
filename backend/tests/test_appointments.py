@@ -6,9 +6,9 @@ from .utils.login_utils import *
 
 load_dotenv()
 
+
 # test the appointments for a mentor
 def test_mentor_appointments():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     login_response = login_mentor()
@@ -45,7 +45,6 @@ def test_mentor_appointments():
 
 
 def test_mentee_appointments():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     login_response = login_mentee()

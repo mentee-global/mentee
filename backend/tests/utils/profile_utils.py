@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def reset_profile_contact(jwt_token, profile_id, account_type):
     BASE_URL = os.environ.get("BASE_URL")
 

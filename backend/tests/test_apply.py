@@ -4,6 +4,7 @@ import os
 
 load_dotenv()
 
+
 def test_apply_mentor():
     BASE_URL = os.environ.get("BASE_URL")
 
@@ -45,7 +46,6 @@ def test_apply_mentor():
 
 
 def test_apply_mentee():
-
     BASE_URL = os.environ.get("BASE_URL")
 
     headers = {

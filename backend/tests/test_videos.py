@@ -4,6 +4,7 @@ import os
 
 load_dotenv()
 
+
 def test_create_video():
     BASE_URL = os.environ.get("BASE_URL")
     profile_id = os.environ.get("MENTOR_PROFILE_ID")

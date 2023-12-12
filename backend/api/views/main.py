@@ -1,3 +1,4 @@
+from ast import Not
 from flask import Blueprint, request
 from sqlalchemy import true
 from datetime import datetime
@@ -37,7 +38,7 @@ from api.utils.request_utils import (
 from api.utils.constants import NEW_APPLICATION_STATUS
 from api.utils.profile_parse import new_profile, edit_profile
 from api.utils.constants import Account
-from api.utils.require_auth import all_users, mentee_only
+from api.utils.require_auth import all_users, mentee_only, verify_user
 from firebase_admin import auth as firebase_admin_auth
 
 
@@ -63,22 +64,31 @@ def get_accounts(account_type):
             "email_notifications",
             "email",
         )
+        all_partners = PartnerProfile.objects()
+        partners_by_assign_mentor = {}
+        for partner_account in all_partners:
+            if partner_account.assign_mentors:
+                for mentor_item in partner_account.assign_mentors:
+                    partners_by_assign_mentor[mentor_item["id"]] = partner_account
         for account in mentors_data:
-            target = {"id": str(account.id), "name": account.name}
-            pair_partner = PartnerProfile.objects(assign_mentors__in=[target]).first()
-            if pair_partner is not None:
-                partner_data = {
-                    "id": str(pair_partner.id),
-                    "email": pair_partner.email,
-                    "organization": pair_partner.organization,
-                    "person_name": pair_partner.person_name,
-                    "website": pair_partner.website,
-                    "image": pair_partner.image,
-                    "restricted": pair_partner.restricted,
-                    "assign_mentors": pair_partner.assign_mentors,
-                    "assign_mentees": pair_partner.assign_mentees,
-                }
-                account.pair_partner = partner_data
+            # target = {"id": str(account.id), "name": account.name}
+            # pair_partner = PartnerProfile.objects(assign_mentors__in=[target]).first()
+
+            if str(account.id) in partners_by_assign_mentor:
+                pair_partner = partners_by_assign_mentor[str(account.id)]
+                if pair_partner is not None:
+                    partner_data = {
+                        "id": str(pair_partner.id),
+                        "email": pair_partner.email,
+                        "organization": pair_partner.organization,
+                        "person_name": pair_partner.person_name,
+                        "website": pair_partner.website,
+                        "image": pair_partner.image,
+                        "restricted": pair_partner.restricted,
+                        "assign_mentors": pair_partner.assign_mentors,
+                        "assign_mentees": pair_partner.assign_mentees,
+                    }
+                    account.pair_partner = partner_data
             if accounts is None:
                 accounts = []
             accounts.append(account)
@@ -86,10 +96,18 @@ def get_accounts(account_type):
         mentees_data = MenteeProfile.objects(is_private=False).exclude(
             "video", "phone_number", "email"
         )
+        all_partners = PartnerProfile.objects()
+        partners_by_assign_mentee = {}
+        for partner_account in all_partners:
+            if partner_account.assign_mentees:
+                for mentee_item in partner_account.assign_mentors:
+                    partners_by_assign_mentee[mentee_item["id"]] = partner_account
         for account in mentees_data:
-            target = {"id": str(account.id), "name": account.name}
-            pair_partner = PartnerProfile.objects(assign_mentees__in=[target]).first()
-            if pair_partner is not None:
+            # target = {"id": str(account.id), "name": account.name}
+            # pair_partner = PartnerProfile.objects(assign_mentees__in=[target]).first()
+            # if pair_partner is not None:
+            if str(account.id) in partners_by_assign_mentee:
+                pair_partner = partners_by_assign_mentee[str(account.id)]
                 partner_data = {
                     "id": str(pair_partner.id),
                     "email": pair_partner.email,
@@ -476,6 +494,14 @@ def edit_mentor(id):
     # Try to retrieve account profile from database
     account = None
     try:
+        token = request.headers.get("Authorization")
+        claims = firebase_admin_auth.verify_id_token(token)
+        login_user_role = claims.get("role")
+
+        authorized, response = verify_user(account_type)
+        if not authorized and int(login_user_role) != Account.ADMIN:
+            return response
+
         if account_type == Account.MENTEE:
             account = MenteeProfile.objects.get(id=id)
         elif account_type == Account.MENTOR:
@@ -516,6 +542,14 @@ def uploadImage(id):
     account = None
 
     try:
+        token = request.headers.get("Authorization")
+        claims = firebase_admin_auth.verify_id_token(token)
+        login_user_role = claims.get("role")
+
+        authorized, response = verify_user(account_type)
+        if not authorized and int(login_user_role) != Account.ADMIN:
+            return response
+
         if account_type == Account.MENTEE:
             account = MenteeProfile.objects.get(id=id)
         elif account_type == Account.MENTOR:

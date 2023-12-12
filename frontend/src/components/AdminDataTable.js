@@ -28,7 +28,11 @@ import {
   PARTNER_PROFILE,
 } from "utils/consts";
 import ImgCrop from "antd-img-crop";
-import { uploadAccountImage, editAccountProfile } from "utils/api";
+import {
+  uploadAccountImage,
+  editAccountProfile,
+  fetchAccounts,
+} from "utils/api";
 import ModalInput from "./ModalInput";
 
 const { Column } = Table;
@@ -49,8 +53,6 @@ function AdminDataTable({
   isMentee,
   isPartner,
   isGuest,
-  mentors,
-  mentees,
   refresh,
 }) {
   if (isPartner && !data[0]?.id) {
@@ -63,7 +65,6 @@ function AdminDataTable({
     data = newData;
   }
   const [accounts, setAccounts] = useState([]);
-  const [mentorAccounts, setMentorAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
@@ -74,6 +75,20 @@ function AdminDataTable({
   const [selectedMentees, setSelectedMentees] = useState([]);
   const [isChanged, setIschanged] = useState(false);
 
+  const [allMentors, setAllMentors] = useState([]);
+  const [allMentees, setAllMentees] = useState([]);
+
+  useEffect(() => {
+    async function getAllMentorMentee() {
+      const all_mentors = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
+      setAllMentors(all_mentors);
+      const all_mentees = await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+      setAllMentees(all_mentees);
+    }
+    if (isPartner) {
+      getAllMentorMentee();
+    }
+  }, [isPartner]);
   useEffect(() => {
     if (
       data &&
@@ -87,19 +102,6 @@ function AdminDataTable({
       );
     }
   }, [data]);
-  useEffect(() => {
-    if (
-      mentors &&
-      (mentors.length !== mentorAccounts.length ||
-        (mentors.length > 0 && mentors[0].id !== mentorAccounts[0].id))
-    ) {
-      setMentorAccounts(
-        mentors.map((d) => {
-          return { id: d._id.$oid, image: d.image ? d.image : null };
-        })
-      );
-    }
-  }, [mentors]);
 
   useEffect(() => {
     if (selectedPartner !== null) {
@@ -115,7 +117,13 @@ function AdminDataTable({
         }
         return false;
       });
-      mentors.map((item) => {
+      if (selectedPartner.assign_mentors) {
+        assign_mentors = [...assign_mentors, ...selectedPartner.assign_mentors];
+      }
+      if (selectedPartner.assign_mentees) {
+        assign_mentees = [...assign_mentees, ...selectedPartner.assign_mentees];
+      }
+      allMentors.map((item) => {
         var record = assign_mentors.find((x) => x.id === item._id["$oid"]);
         if (record === null || record === undefined) {
           temp.push({ id: item._id["$oid"], name: item.name });
@@ -124,16 +132,16 @@ function AdminDataTable({
       });
       setMentorArr(temp);
       temp = [];
-      mentees.map((item) => {
-        var record = assign_mentees.find((x) => x.id === item.id);
+      allMentees.map((item) => {
+        var record = assign_mentees.find((x) => x.id === item._id["$oid"]);
         if (record === null || record === undefined) {
-          temp.push({ id: item.id, name: item.name });
+          temp.push({ id: item._id["$oid"], name: item.name });
         }
         return false;
       });
       setMenteeArr(temp);
     }
-  }, [selectedPartner, mentors, mentees, isChanged]);
+  }, [selectedPartner, allMentors, allMentees, isChanged]);
 
   const showModal = (item) => {
     setSelectedPartner(item);
@@ -208,7 +216,7 @@ function AdminDataTable({
         selected_partner.assign_mentors = [];
       }
       selectedMentors.map((mentor_id) => {
-        var mentor_record = mentors.find((x) => x._id.$oid === mentor_id);
+        var mentor_record = allMentors.find((x) => x._id.$oid === mentor_id);
         if (mentor_record !== null && mentor_record !== undefined) {
           selected_partner.assign_mentors.push({
             id: mentor_id,
@@ -227,7 +235,7 @@ function AdminDataTable({
         selected_partner.assign_mentees = [];
       }
       selectedMentees.map((mentee_id) => {
-        var mentee_record = mentees.find((x) => x.id === mentee_id);
+        var mentee_record = allMentees.find((x) => x._id.$oid === mentee_id);
         if (mentee_record !== null && mentee_record !== undefined) {
           selected_partner.assign_mentees.push({
             id: mentee_id,
@@ -653,11 +661,7 @@ function AdminDataTable({
                       size={30}
                       icon={<UserOutlined />}
                       className="modal-profile-icon2"
-                      src={
-                        data.profilePicUp
-                          ? mentorAccounts.find((m) => m.id === id)?.image?.url
-                          : accounts.find((acc) => acc.id === id)?.image?.url
-                      }
+                      src={accounts.find((acc) => acc.id === id)?.image?.url}
                     />
                   )}
 
@@ -685,35 +689,18 @@ function AdminDataTable({
                             ACCOUNT_TYPE.MENTOR
                           );
                         }
-                        if (data.profilePicUp) {
-                          setMentorAccounts((prev) => {
-                            let newAccounts = [...prev];
-                            let index = accounts.findIndex((a) => a.id == id);
-                            newAccounts[index] = {
-                              id: id,
-                              image: {
-                                url: URL.createObjectURL(
-                                  file.file.originFileObj
-                                ),
-                              },
-                            };
-                            return newAccounts;
-                          });
-                        } else {
-                          setAccounts((prev) => {
-                            let newAccounts = [...prev];
-                            let index = accounts.findIndex((a) => a.id == id);
-                            newAccounts[index] = {
-                              id: id,
-                              image: {
-                                url: URL.createObjectURL(
-                                  file.file.originFileObj
-                                ),
-                              },
-                            };
-                            return newAccounts;
-                          });
-                        }
+
+                        setAccounts((prev) => {
+                          let newAccounts = [...prev];
+                          let index = accounts.findIndex((a) => a.id === id);
+                          newAccounts[index] = {
+                            id: id,
+                            image: {
+                              url: URL.createObjectURL(file.file.originFileObj),
+                            },
+                          };
+                          return newAccounts;
+                        });
 
                         setLoading(false);
                       }}

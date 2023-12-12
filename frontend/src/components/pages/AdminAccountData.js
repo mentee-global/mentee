@@ -27,7 +27,7 @@ const keys = {
   MENTORS: 0,
   MENTEES: 1,
   PARTNER: 2,
-  ALL: 3,
+  // ALL: 3,
   GUEST: 4,
   ASCENDING: 0,
   DESCENDING: 1,
@@ -39,71 +39,69 @@ function AdminAccountData() {
   const [isMenteeDownload, setIsMenteeDownload] = useState(false);
   const [isPartnerDownload, setIsPartnerDownload] = useState(false);
   const [reload, setReload] = useState(true);
-  const [resetFilters, setResetFilters] = useState(false);
-  const [mentorData, setMentorData] = useState([]);
-  const [menteeData, setMenteeData] = useState([]);
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
   const [downloadFile, setDownloadFile] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [guestModalVisible, setGuestModalVisible] = useState(false);
-  const [partnerData, setPartnerData] = useState([]);
-  const [guestData, setGuestData] = useState([]);
-  const [mentors, setMentors] = useState([]);
-
   const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
     async function getData() {
       setIsReloading(true);
-      const mentorRes = await fetchMentorsAppointments();
-      const mentors = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
-      const menteeRes = await fetchMenteesAppointments();
-      const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
-      const Guests = await fetchAccounts(ACCOUNT_TYPE.GUEST);
-      var partners_data = [];
-      if (Partners) {
-        Partners.map((item) => {
-          item.restricted_show = item.restricted ? "Yes" : "No";
-          item.mentor_nums = item.assign_mentors
-            ? item.assign_mentors.length
-            : 0;
-          item.mentee_nums = item.assign_mentees
-            ? item.assign_mentees.length
-            : 0;
-          partners_data.push(item);
-          return true;
-        });
-      }
-      if (mentorRes && menteeRes) {
-        const newMenteeData = menteeRes.menteeData.map((elem) => ({
-          ...elem,
-          isMentee: true,
-        }));
 
-        setMentorData(mentorRes.mentorData);
-        setMenteeData(newMenteeData);
-        setPartnerData(partners_data);
-        setGuestData(Guests);
-        setDisplayData(mentorRes.mentorData);
-        setFilterData(mentorRes.mentorData);
-        if (displayOption === keys.MENTEES) {
-          setDisplayData(newMenteeData);
-          setFilterData(newMenteeData);
-        }
-        if (displayOption === keys.PARTNER) {
+      switch (displayOption) {
+        case keys.MENTEES:
+          const menteeRes = await fetchMenteesAppointments();
+          if (menteeRes) {
+            const newMenteeData = menteeRes.menteeData.map((elem) => ({
+              ...elem,
+              isMentee: true,
+            }));
+            setDisplayData(newMenteeData);
+            setFilterData(newMenteeData);
+          } else {
+            message.error("Could not fetch account data");
+          }
+          break;
+        case keys.MENTORS:
+          const mentorRes = await fetchMentorsAppointments();
+          if (mentorRes) {
+            setDisplayData(mentorRes.mentorData);
+            setFilterData(mentorRes.mentorData);
+          } else {
+            message.error("Could not fetch account data");
+          }
+          break;
+        case keys.PARTNER:
+          const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
+          var partners_data = [];
+          if (Partners) {
+            Partners.map((item) => {
+              item.restricted_show = item.restricted ? "Yes" : "No";
+              item.mentor_nums = item.assign_mentors
+                ? item.assign_mentors.length
+                : 0;
+              item.mentee_nums = item.assign_mentees
+                ? item.assign_mentees.length
+                : 0;
+              partners_data.push(item);
+              return true;
+            });
+          }
+
           setDisplayData(partners_data);
           setFilterData(partners_data);
-        }
-        if (displayOption === keys.GUEST) {
+          break;
+        case keys.GUEST:
+          const Guests = await fetchAccounts(ACCOUNT_TYPE.GUEST);
+
           setDisplayData(Guests);
           setFilterData(Guests);
-        }
-        // setResetFilters(!resetFilters);
-        setMentors(mentors);
-      } else {
-        message.error("Could not fetch account data");
+          break;
+        default:
+          break;
       }
       setIsReloading(false);
     }
@@ -167,22 +165,8 @@ function AdminAccountData() {
   };
 
   const handleAccountDisplay = (key) => {
-    let newData = [];
-    if (key === keys.MENTORS) {
-      newData = mentorData;
-    } else if (key === keys.MENTEES) {
-      newData = menteeData;
-    } else if (key === keys.ALL) {
-      newData = mentorData.concat(menteeData);
-    } else if (key === keys.PARTNER) {
-      newData = partnerData;
-    } else if (key === keys.GUEST) {
-      newData = guestData;
-    }
-
-    setDisplayData(newData);
-    setFilterData(newData);
     setDisplayOption(key);
+    setReload(!reload);
   };
 
   const handleSearchAccount = (name) => {
@@ -239,12 +223,10 @@ function AdminAccountData() {
           <MenteeMentorDropdown
             className="table-button"
             onChange={(key) => handleAccountDisplay(key)}
-            onReset={resetFilters}
           />
           <SortByApptDropdown
             className="table-button"
             onChange={(key) => handleSortData(key)}
-            onReset={resetFilters}
             onChangeData={displayData}
           />
           <Button
@@ -300,7 +282,6 @@ function AdminAccountData() {
             spin={isReloading}
             onClick={() => {
               setReload(!reload);
-              // setResetFilters(!resetFilters);
             }}
           />
         </div>
@@ -313,8 +294,6 @@ function AdminAccountData() {
           isMentee={displayOption === keys.MENTEES}
           isPartner={displayOption === keys.PARTNER}
           isGuest={displayOption === keys.GUEST}
-          mentors={mentors}
-          mentees={menteeData}
         />
       </Spin>
     </div>

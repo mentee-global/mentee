@@ -64,10 +64,10 @@ export function MenteeMentorDropdown(props) {
       key: 4,
       text: "Guests",
     },
-    ALL: {
-      key: 3,
-      text: "All",
-    },
+    // ALL: {
+    //   key: 3,
+    //   text: "All",
+    // },
   };
 
   const [option, setOption] = useState(options.MENTORS);
@@ -95,9 +95,9 @@ export function MenteeMentorDropdown(props) {
       <Menu.Item>
         <a onClick={() => handleClick(options.GUESTS)}>Guests</a>
       </Menu.Item>
-      <Menu.Item>
+      {/* <Menu.Item>
         <a onClick={() => handleClick(options.ALL)}>All</a>
-      </Menu.Item>
+      </Menu.Item> */}
     </Menu>
   );
   return (

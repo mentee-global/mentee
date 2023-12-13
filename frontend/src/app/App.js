@@ -84,6 +84,18 @@ function App() {
               <PublicRoute path="/login">
                 <Login />
               </PublicRoute>
+              <PublicRoute path="/mentor/login">
+                <Login />
+              </PublicRoute>
+              <PublicRoute path="/mentee/login">
+                <Login />
+              </PublicRoute>
+              <PublicRoute path="/partner/login">
+                <Login />
+              </PublicRoute>
+              <PublicRoute path="/readonly/login">
+                <Login />
+              </PublicRoute>
               <PublicRoute path="/admin">
                 <AdminLogin />
               </PublicRoute>

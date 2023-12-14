@@ -31,6 +31,8 @@ function AdminAppointmentData() {
   const [visible, setVisible] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [specMasters, setSpecMasters] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const [searchTopicIndex, setSearchTopicIndex] = useState(false);
 
   const { onAuthStateChanged } = useAuth();
 
@@ -56,19 +58,32 @@ function AdminAppointmentData() {
   }, []);
 
   const handleSearchAppointment = (searchValue) => {
-    if (!searchValue) {
-      setFilterData(appointments);
+    setSearchName(searchValue);
+    var filter_data = appointments;
+    if (searchValue) {
+      filter_data = filter_data.filter((appt) => {
+        return (
+          appt.mentor.match(new RegExp(searchValue, "i")) ||
+          appt.appointment.name.match(new RegExp(searchValue, "i"))
+        );
+      });
     }
-
-    const newFiltered = filterData.filter((appt) => {
-      return (
-        appt.mentor.match(new RegExp(searchValue, "i")) ||
-        appt.appointment.name.match(new RegExp(searchValue, "i"))
-      );
-    });
-    setFilterData(newFiltered);
+    if (searchTopicIndex !== false) {
+      filter_data = filter_data.filter((appt) => {
+        if (appt.appointment.topic) {
+          return appt.appointment.topic === specMasters[searchTopicIndex].value;
+        } else {
+          return appt.appointment.specialist_categories
+            .join(", ")
+            .includes(specMasters[searchTopicIndex].value);
+        }
+      });
+    }
+    setFilterData(filter_data);
   };
+
   const handleResetFilters = () => {
+    setSearchTopicIndex(false);
     setFilterData(appointments);
     setResetFilters(!resetFilters);
   };
@@ -84,11 +99,25 @@ function AdminAppointmentData() {
   };
   // TODO: This is probably a broken function
   const handleSpecializationsDisplay = (index) => {
-    const newFiltered = filterData.filter((appt) => {
-      return appt.appointment.specialist_categories.includes(
-        specMasters[index]
-      );
+    setSearchTopicIndex(index);
+    var newFiltered = appointments.filter((appt) => {
+      if (appt.appointment.topic) {
+        return appt.appointment.topic === specMasters[index].value;
+      } else {
+        return appt.appointment.specialist_categories
+          .join(", ")
+          .includes(specMasters[index].value);
+      }
     });
+    if (searchName) {
+      newFiltered = newFiltered.filter((appt) => {
+        return (
+          appt.mentor.match(new RegExp(searchName, "i")) ||
+          appt.appointment.name.match(new RegExp(searchName, "i"))
+        );
+      });
+    }
+
     setFilterData(newFiltered);
   };
 

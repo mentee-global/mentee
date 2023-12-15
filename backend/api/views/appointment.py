@@ -21,9 +21,8 @@ from api.utils.require_auth import admin_only, all_users, mentor_only
 
 appointment = Blueprint("appointment", __name__)
 
+
 # GET request for appointments by account id
-
-
 @appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
 @all_users
 def get_requests_by_id(account_type, id):

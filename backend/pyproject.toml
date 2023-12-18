@@ -12,7 +12,7 @@ start = "scripts:runserver"
 format = "scripts:format"
 
 [tool.poetry.dependencies]
-python = "^3.9.7"
+python = "^3.8"
 flask-mongoengine = "1.0.0"
 gunicorn = "20.1.0"
 mongoengine = "0.26.0"

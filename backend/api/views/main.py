@@ -10,11 +10,9 @@ from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
 
 from api.models import (
-    db,
     Admin,
     MentorProfile,
     MenteeProfile,
-    AppointmentRequest,
     Users,
     Image,
     Video,

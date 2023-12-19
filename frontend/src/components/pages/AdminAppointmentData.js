@@ -83,7 +83,8 @@ function AdminAppointmentData() {
   }, []);
 
   useEffect(() => {
-    var res = [];
+    setPageNum(1);
+    var res_items = [];
     var all_data = appointments;
     if (searchName) {
       all_data = all_data.filter((appt) => {
@@ -108,10 +109,10 @@ function AdminAppointmentData() {
     if (all_data && all_data.length > 0) {
       for (
         var i = numbersInPage * (pageNum - 1);
-        i < numbersInPage * pageNum;
+        i < Math.min(numbersInPage * pageNum, all_data.length);
         i++
       ) {
-        res.push(all_data[i]);
+        res_items.push(all_data[i]);
       }
     }
     var temp = [];
@@ -128,7 +129,7 @@ function AdminAppointmentData() {
       }
     }
     setPageItems(temp);
-    setFilterData(res);
+    setFilterData(res_items);
   }, [
     numbersInPage,
     pageNum,

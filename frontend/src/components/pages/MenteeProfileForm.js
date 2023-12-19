@@ -151,7 +151,7 @@ function MenteeProfileForm({
     newData.email = email;
     newData.role = ACCOUNT_TYPE.MENTEE;
     newData.video =
-      values.video !== undefined
+      values.video && values.video !== ""
         ? {
             title: MENTEE_DEFAULT_VIDEO_NAME,
             url: values.video,

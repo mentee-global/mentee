@@ -75,7 +75,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
             organization=data["organization"],
-            specializations=data["specializations"],
+            specializations=data.get("specializations", None),
             age=data["age"],
             gender=data["gender"],
             is_private=data.get("is_private", True),

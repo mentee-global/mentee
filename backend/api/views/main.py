@@ -396,7 +396,6 @@ def create_profile_existing_account():
             if is_invalid:
                 logger.info(msg)
                 return create_response(status=422, message=msg)
-
     elif data.get("videos", False) and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 

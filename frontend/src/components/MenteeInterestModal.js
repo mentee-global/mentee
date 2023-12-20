@@ -95,9 +95,11 @@ const styles = {
     paddingTop: 6,
   },
   footer: {
-    borderRadius: 13,
+    borderRadius: 6,
     marginRight: 15,
-    backgroundColor: "#E4BB4F",
+    // backgroundColor: "#E4BB4F",
+    color: "#fff",
+    backgroundColor: "#800020",
   },
   alertToast: {
     color: "#FF0000",

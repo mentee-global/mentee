@@ -2,7 +2,6 @@ from ast import Not
 from flask import Blueprint, request
 from sqlalchemy import true
 from datetime import datetime
-import requests
 from io import BytesIO
 from uuid import uuid4
 from api.utils.google_storage import upload_image_to_storage, compress_image

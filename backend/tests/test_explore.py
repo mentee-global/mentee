@@ -6,12 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def test_find_mentee():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_find_mentee(client):
     # list all the mentees from the api
-    response = requests.get(f"{BASE_URL}/api/accounts/2")
-    data = response.json()
+    response = client.get(f"/api/accounts/2")
+    data = response.get_json()
 
     assert response.status_code == 200
 
@@ -30,12 +28,10 @@ def test_find_mentee():
     ), "Mentee accounts retrieved from the api does not match the Mentee accounts in the database."
 
 
-def test_find_mentor():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_find_mentor(client):
     # list all the mentors from the api
-    response = requests.get(f"{BASE_URL}/api/accounts/1")
-    data = response.json()
+    response = client.get(f"/api/accounts/1")
+    data = response.get_json()
 
     assert response.status_code == 200
 
@@ -53,12 +49,10 @@ def test_find_mentor():
     ), "Mentor accounts retrieved from the api does not match the Mentor accounts in the database."
 
 
-def test_find_partner():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_find_partner(client):
     # list all the partners from the api
-    response = requests.get(f"{BASE_URL}/api/accounts/3")
-    data = response.json()
+    response = client.get(f"/api/accounts/3")
+    data = response.get_json()
 
     assert response.status_code == 200
 

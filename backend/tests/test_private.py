@@ -8,15 +8,13 @@ load_dotenv()
 
 
 # the private mentee profiles should not be in the database
-def test_mentee_privacy():
+def test_mentee_privacy(client):
     # create a list of public mentee ids and store ids of all the mentees returned from the api response
     public_mentee_ids = []
 
-    BASE_URL = os.environ.get("BASE_URL")
-
     # list all the mentees from the api
-    response = requests.get(f"{BASE_URL}/api/accounts/2")
-    data = response.json()
+    response = client.get(f"/api/accounts/2")
+    data = response.get_json()
 
     assert response.status_code == 200
 

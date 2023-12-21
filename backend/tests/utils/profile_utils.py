@@ -5,9 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def reset_profile_contact(jwt_token, profile_id, account_type):
-    BASE_URL = os.environ.get("BASE_URL")
-
+def reset_profile_contact(jwt_token, profile_id, account_type, client):
     params = {
         "account_type": account_type,
     }
@@ -33,9 +31,9 @@ def reset_profile_contact(jwt_token, profile_id, account_type):
         "phone_number": original_phone,
     }
 
-    response = requests.put(
-        f"{BASE_URL}/api/account/{profile_id}",
-        params=params,
+    response = client.put(
+        f"/api/account/{profile_id}",
+        query_string=params,
         headers=headers,
         json=json_data,
     )
@@ -43,27 +41,29 @@ def reset_profile_contact(jwt_token, profile_id, account_type):
     assert response.status_code == 200
 
 
-def reset_mentor_info(original_json_data):
+def reset_mentor_info(original_json_data, client):
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
     account_type = os.environ.get("TEST_MENTOR_ROLE")
     mentor_name = "Roberto Murer Mentor1"
 
-    reset_info(original_json_data, jwt_token, profile_id, account_type, mentor_name)
+    reset_info(
+        original_json_data, jwt_token, profile_id, account_type, mentor_name, client
+    )
 
 
-def reset_mentee_info(original_json_data):
+def reset_mentee_info(original_json_data, client):
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
     account_type = os.environ.get("TEST_MENTEE_ROLE")
     mentee_name = "Robert Mente"
 
-    reset_info(original_json_data, jwt_token, profile_id, account_type, mentee_name)
+    reset_info(
+        original_json_data, jwt_token, profile_id, account_type, mentee_name, client
+    )
 
 
-def reset_info(original_json_data, jwt_token, profile_id, account_type, name):
-    BASE_URL = os.environ.get("BASE_URL")
-
+def reset_info(original_json_data, jwt_token, profile_id, account_type, name, client):
     original_name = name
     original_professional_title = "IT sdfs"
     original_biography = "aaaaa"
@@ -102,9 +102,9 @@ def reset_info(original_json_data, jwt_token, profile_id, account_type, name):
         "Authorization": jwt_token,
     }
 
-    response = requests.put(
-        f"{BASE_URL}/api/account/{profile_id}",
-        params=params,
+    response = client.put(
+        f"/api/account/{profile_id}",
+        query_string=params,
         headers=headers,
         json=original_json_data,
     )

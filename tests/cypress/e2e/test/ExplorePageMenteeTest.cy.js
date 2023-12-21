@@ -10,13 +10,13 @@ describe("Explore Page", () => {
     login.loginMentee();
     cy.visit("/gallery");
   });
-  it.only("Check existance of Explore Page", () => {
+  it("Check existance of Explore Page", () => {
     explore.componnentExists();
   });
-  it.only("Check the functionality of Explore Page", () => {
+  it("Check the functionality of Explore Page", () => {
     explore.isFunctional();
   });
-  it.only("Check Filter By Specialization", () => {
+  it("Check Filter By Specialization", () => {
     explore.filterBySpecializations();
   });
 });

@@ -4,7 +4,6 @@ import { ProfilePage } from "../pages/ProfilePage";
 const profile = new ProfilePage();
 const login = new LoginPage();
 
-
 describe("API Call Test", () => {
   it("should make an API call to a specific URL", () => {
     cy.visit("/login");
@@ -13,7 +12,6 @@ describe("API Call Test", () => {
     profile.visit();
     profile.interceptMentorApiCall();
     profile.waitApiCall();
-
   });
 });
 
@@ -26,14 +24,14 @@ describe("Profile Page Test Correct", () => {
     profile.getContactInfo().should("not.be.empty");
     profile.getEditButton().should("exist").should("be.visible");
 
-    profile.getEmailElement()
+    profile
+      .getEmailElement()
       .should("exist")
       .should("be.visible")
       .invoke("text")
       .then((text) => {
         expect(text.trim()).to.equal(Cypress.env("MENTOR_EMAIL").trim());
       });
-
   });
 });
 
@@ -104,9 +102,7 @@ describe("Profile Page Test Edit Contact", () => {
       .should("be.visible")
       .click();
 
-    cy.get("#nest-messages_email")
-      .clear()
-      .type(Cypress.env("MENTOR_EMAIL"));
+    cy.get("#nest-messages_email").clear().type(Cypress.env("MENTOR_EMAIL"));
 
     cy.get("#nest-messages_phone").clear().type(Cypress.env("MENTOR_PHONE"));
 
@@ -124,62 +120,55 @@ describe("Edit Profile Input Tests", () => {
     login.loginMentor();
     cy.visit("/profile");
 
-    cy.get('.mentor-profile-button > .ant-btn')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
-    .click();
+    cy.get(".mentor-profile-button > .ant-btn")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled")
+      .click();
 
-    cy.get('.ant-upload > .ant-btn')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get(".ant-upload > .ant-btn")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
 
-    cy.get('#name')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get("#name").should("exist").should("be.visible").should("be.enabled");
 
-    cy.get('#professional_title')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get("#professional_title")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
 
-    cy.get('#biography')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get("#biography")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
 
-    cy.get('#offers_in_person')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get("#offers_in_person")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
 
-    cy.get('#offers_group_appointments')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get("#offers_group_appointments")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
 
-    cy.get('#location')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get("#location")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
 
-    cy.get('#website')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
+    cy.get("#website")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
 
-    cy.get('#linkedin')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
-
-
+    cy.get("#linkedin")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled");
   });
 });
-
-
 
 describe("Edit Profile Save Tests", () => {
   it("should get content of mentor profile div", () => {
@@ -187,100 +176,84 @@ describe("Edit Profile Save Tests", () => {
     login.loginMentor();
     cy.visit("/profile");
 
-    cy.get('.mentor-profile-button > .ant-btn')
-    .should("exist")
-    .should("be.visible")
-    .should("be.enabled")
-    .click();
+    cy.get(".mentor-profile-button > .ant-btn")
+      .should("exist")
+      .should("be.visible")
+      .should("be.enabled")
+      .click();
 
-    cy.get('#name')
-    .clear()
-    .type("Test Name");
+    cy.get("#name").clear().type("Test Name");
 
-    cy.get('#professional_title')
-    .clear()
-    .type("Test Title");
+    cy.get("#professional_title").clear().type("Test Title");
 
-    cy.get('#biography')
-    .clear()
-    .type("Test Biography");
+    cy.get("#biography").clear().type("Test Biography");
 
-    cy.get('#offers_in_person')
-    .invoke('attr', 'aria-checked', 'false');
+    cy.get("#offers_in_person").invoke("attr", "aria-checked", "false");
 
-    cy.get('#offers_group_appointments')
-    .invoke('attr', 'aria-checked', 'false');
+    cy.get("#offers_group_appointments").invoke(
+      "attr",
+      "aria-checked",
+      "false"
+    );
 
-    cy.get('#location')
-    .clear()
-    .type("Test Location");
+    cy.get("#location").clear().type("Test Location");
 
-    cy.get('#website')
-    .clear()
-    .type("https://www.youtube.com");
+    cy.get("#website").clear().type("https://www.youtube.com");
 
-    cy.get('#linkedin')
-    .clear()
-    .type("https://www.linkedin.com");
+    cy.get("#linkedin").clear().type("https://www.linkedin.com");
 
-    cy.get(':nth-child(14) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn')
-    .click()
+    cy.get(
+      ":nth-child(14) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn"
+    ).click();
 
     cy.wait(2000);
 
-    cy.get('#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-name > div.mentor-profile-decorations')
-    .should('have.text', 'Test Name');
+    cy.get(
+      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-name > div.mentor-profile-decorations"
+    ).should("have.text", "Test Name");
 
-    cy.get('#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(1) > span:nth-child(2)')
-    .should('have.text', ' Test Location ');
+    cy.get(
+      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(1) > span:nth-child(2)"
+    ).should("have.text", " Test Location ");
 
-    cy.get('#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-about')
-    .should('have.text', 'Test Biography');
-    
-    cy.get('#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(3) > a')
-    .should("exist")
-    .should("be.visible")
-    .should('have.attr', 'href', 'https://www.youtube.com');
+    cy.get(
+      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-about"
+    ).should("have.text", "Test Biography");
 
-    cy.get('#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(4) > a')
-    .should("exist")
-    .should("be.visible")
-    .should('have.attr', 'href', 'https://www.linkedin.com');
-    
-    cy.get('.mentor-profile-button > .ant-btn')
-    .click();
+    cy.get(
+      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(3) > a"
+    )
+      .should("exist")
+      .should("be.visible")
+      .should("have.attr", "href", "https://www.youtube.com");
 
-    cy.get('#name')
-    .clear()
-    .type(Cypress.env("MENTOR_NAME"));
+    cy.get(
+      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(4) > a"
+    )
+      .should("exist")
+      .should("be.visible")
+      .should("have.attr", "href", "https://www.linkedin.com");
 
-    cy.get('#professional_title')
-    .clear()
-    .type("IT sdfs");
+    cy.get(".mentor-profile-button > .ant-btn").click();
 
-    cy.get('#biography')
-    .clear()
-    .type("aaaaa");
+    cy.get("#name").clear().type(Cypress.env("MENTOR_NAME"));
 
-    cy.get('#offers_in_person')
-    .invoke('attr', 'aria-checked', 'true');
+    cy.get("#professional_title").clear().type("IT sdfs");
 
-    cy.get('#offers_group_appointments')
-    .invoke('attr', 'aria-checked', 'true');
+    cy.get("#biography").clear().type("aaaaa");
 
-    cy.get('#location')
-    .clear()
+    cy.get("#offers_in_person").invoke("attr", "aria-checked", "true");
 
-    cy.get('#website')
-    .clear()
-    .type("http://www.google.com");
+    cy.get("#offers_group_appointments").invoke("attr", "aria-checked", "true");
 
-    cy.get('#linkedin')
-    .clear()
+    cy.get("#location").clear();
 
-    cy.get(':nth-child(14) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn')
-    .click()
+    cy.get("#website").clear().type("http://www.google.com");
 
+    cy.get("#linkedin").clear();
+
+    cy.get(
+      ":nth-child(14) > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-btn"
+    ).click();
   });
 });
-

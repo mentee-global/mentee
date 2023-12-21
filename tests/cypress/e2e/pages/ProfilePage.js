@@ -20,7 +20,9 @@ export class ProfilePage {
   }
 
   getContactInfo() {
-    return cy.get(".mentor-profile-contact > div:nth-child(2) > div:nth-child(2)");
+    return cy.get(
+      ".mentor-profile-contact > div:nth-child(2) > div:nth-child(2)"
+    );
   }
 
   getEditButton() {
@@ -28,7 +30,8 @@ export class ProfilePage {
   }
 
   getEmailElement() {
-    return cy.get(".mentor-profile-contact > div:nth-child(2) > div:nth-child(1)");
+    return cy.get(
+      ".mentor-profile-contact > div:nth-child(2) > div:nth-child(1)"
+    );
   }
 }
-

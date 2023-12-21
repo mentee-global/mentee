@@ -7,22 +7,20 @@ from .utils.login_utils import *
 load_dotenv()
 
 
-def test_mentor_events():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_mentor_events(client):
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
     mentor_role = int(os.environ.get("TEST_MENTOR_ROLE"))
 
-    url = f"{BASE_URL}/api/events/{mentor_role}"
+    url = f"/api/events/{mentor_role}"
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br",
         "Authorization": jwt_token,
     }
-    response = requests.get(url, headers=headers)
+    response = client.get(url, headers=headers)
 
-    response_events = response.json()["result"]["events"]
+    response_events = response.get_json()["result"]["events"]
     response_events_count = len(response_events)
 
     for response_event in response_events:
@@ -35,22 +33,20 @@ def test_mentor_events():
     ), "Mentor events retrieved from the api do not match the events retrieved from the database."
 
 
-def test_mentee_events():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_mentee_events(client):
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
     mentee_role = int(os.environ.get("TEST_MENTEE_ROLE"))
 
-    url = f"{BASE_URL}/api/events/{mentee_role}"
+    url = f"/api/events/{mentee_role}"
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br",
         "Authorization": jwt_token,
     }
-    response = requests.get(url, headers=headers)
+    response = client.get(url, headers=headers)
 
-    response_events = response.json()["result"]["events"]
+    response_events = response.get_json()["result"]["events"]
     response_events_count = len(response_events)
 
     for response_event in response_events:
@@ -63,31 +59,29 @@ def test_mentee_events():
     ), "Mentee events retrieved from the api do not match the events retrieved from the database."
 
 
-def test_create_event_mentor():
+def test_create_event_mentor(client):
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
-    create_event(profile_id, jwt_token)
+    create_event(profile_id, jwt_token, client)
     object_events = Event.objects.filter(role=1)
 
     event_exists = any(event.title == "Test Title" for event in object_events)
     assert event_exists, "Mentor failed to create event"
 
 
-def test_create_event_mentee():
+def test_create_event_mentee(client):
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
-    create_event(profile_id, jwt_token)
+    create_event(profile_id, jwt_token, client)
     object_events = Event.objects.filter(role=2)
 
     event_exists = any(event.title == "Test Title" for event in object_events)
     assert event_exists, "Mentee failed to create event"
 
 
-def create_event(profile_id, jwt_token):
-    BASE_URL = os.environ.get("BASE_URL")
-
+def create_event(profile_id, jwt_token, client):
     event_title = "Test Title"
     event_description = "Test"
     event_url = "https://www.google.com"
@@ -114,20 +108,16 @@ def create_event(profile_id, jwt_token):
         "Authorization": jwt_token,
     }
 
-    response = requests.post(
-        f"{BASE_URL}/api/event_register", headers=headers, json=json_data
-    )
+    response = client.post(f"/api/event_register", headers=headers, json=json_data)
 
     assert response.status_code == 200, "Error creating event"
 
 
-def test_mentor_delete_events():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_mentor_delete_events(client):
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
-    user_events = get_events(profile_id, jwt_token, BASE_URL)
+    user_events = get_events(profile_id, jwt_token, client)
 
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -135,19 +125,15 @@ def test_mentor_delete_events():
     }
 
     for event in user_events:
-        response = requests.delete(
-            f"{BASE_URL}/api/events/delete/{event}", headers=headers
-        )
+        response = client.delete(f"/api/events/delete/{event}", headers=headers)
         assert response.status_code == 200, "Unable to delete the created events."
 
 
-def test_mentee_delete_events():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_mentee_delete_events(client):
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
-    user_events = get_events(profile_id, jwt_token, BASE_URL)
+    user_events = get_events(profile_id, jwt_token, client)
 
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -155,22 +141,20 @@ def test_mentee_delete_events():
     }
 
     for event in user_events:
-        response = requests.delete(
-            f"{BASE_URL}/api/events/delete/{event}", headers=headers
-        )
+        response = client.delete(f"/api/events/delete/{event}", headers=headers)
         assert response.status_code == 200, "Unable to delete the created events."
 
 
-def get_events(profile_id, jwt_token, BASE_URL):
-    url = f"{BASE_URL}/api/events/1"
+def get_events(profile_id, jwt_token, client):
+    url = f"/api/events/1"
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br",
         "Authorization": jwt_token,
     }
-    response = requests.get(url, headers=headers)
+    response = client.get(url, headers=headers)
 
-    events = response.json()["result"]["events"]
+    events = response.get_json()["result"]["events"]
     user_events = []
 
     for event in events:

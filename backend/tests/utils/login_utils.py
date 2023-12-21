@@ -17,62 +17,62 @@ def get_access_token(refresh_token):
     return response.json()["access_token"]
 
 
-# login with the correct data
-def login_mentor():
+def login_admin(client):
+    test_data = {
+        "email": os.environ.get("TEST_ADMIN_EMAIL"),
+        "password": os.environ.get("TEST_ADMIN_PASSWORD"),
+        "role": int(os.environ.get("TEST_ADMIN_ROLE")),
+    }
+
+    response = client.post(f"/auth/login", json=test_data)
+
+    return response
+
+
+def login_mentor(client):
     test_data = {
         "email": os.environ.get("TEST_MENTOR_EMAIL"),
         "password": os.environ.get("TEST_MENTOR_PASSWORD"),
         "role": int(os.environ.get("TEST_MENTOR_ROLE")),
     }
 
-    BASE_URL = os.environ.get("BASE_URL")
-
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
+    response = client.post(f"/auth/login", json=test_data)
 
     return response
 
 
-def login_mentee():
+def login_mentee(client):
     test_data = {
         "email": os.environ.get("TEST_MENTEE_EMAIL"),
         "password": os.environ.get("TEST_MENTEE_PASSWORD"),
         "role": int(os.environ.get("TEST_MENTEE_ROLE")),
     }
 
-    BASE_URL = os.environ.get("BASE_URL")
-
-    # login with the correct data
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
+    response = client.post(f"/auth/login", json=test_data)
 
     return response
 
 
-def login_guest():
+def login_guest(client):
     test_data = {
         "email": os.environ.get("TEST_GUEST_EMAIL"),
         "password": os.environ.get("TEST_GUEST_PASSWORD"),
         "role": int(os.environ.get("TEST_GUEST_ROLE")),
     }
 
-    BASE_URL = os.environ.get("BASE_URL")
-
-    # login with the correct data
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
+    response = client.post(f"/auth/login", json=test_data)
 
     return response
 
 
-def login_partner():
+def login_partner(client):
     test_data = {
         "email": os.environ.get("TEST_PARTNER_EMAIL"),
         "password": os.environ.get("TEST_PARTNER_PASSWORD"),
         "role": int(os.environ.get("TEST_PARTNER_ROLE")),
     }
 
-    BASE_URL = os.environ.get("BASE_URL")
-
-    # login with the correct data
-    response = requests.post(f"{BASE_URL}/auth/login", json=test_data)
+    response = client.post(f"/auth/login", json=test_data)
 
     return response
 

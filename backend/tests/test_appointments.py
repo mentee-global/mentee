@@ -8,28 +8,27 @@ load_dotenv()
 
 
 # test the appointments for a mentor
-def test_mentor_appointments():
-    BASE_URL = os.environ.get("BASE_URL")
+def test_mentor_appointments(client):
+    login_response = login_mentor(client)
+    first_token = login_response.get_json()["result"]["token"]
+    role = login_response.get_json()["result"]["role"]
 
-    login_response = login_mentor()
-    first_token = login_response.json()["result"]["token"]
-    profile_id = login_response.json()["result"]["profileId"]
-    role = login_response.json()["result"]["role"]
+    profile_id = profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
 
     refresh_token = get_refresh_token(first_token)
     jwt_token = get_access_token(refresh_token)
 
     os.environ["MENTOR_JWT_TOKEN"] = jwt_token
 
-    url = f"{BASE_URL}/api/appointment/{role}/{profile_id}"
+    url = f"/api/appointment/{role}/{profile_id}"
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br",
         "Authorization": jwt_token,
     }
-    response = requests.get(url, headers=headers)
+    response = client.get(url, headers=headers)
 
-    appointments = response.json()["result"]["requests"]
+    appointments = response.get_json()["result"]["requests"]
     appointments_count = len(appointments)
 
     for appointment in appointments:
@@ -44,28 +43,27 @@ def test_mentor_appointments():
     # ), "Mentor appointments retrieved from the API does not match the stored in the database."
 
 
-def test_mentee_appointments():
-    BASE_URL = os.environ.get("BASE_URL")
+def test_mentee_appointments(client):
+    login_response = login_mentee(client)
+    first_token = login_response.get_json()["result"]["token"]
+    role = login_response.get_json()["result"]["role"]
 
-    login_response = login_mentee()
-    first_token = login_response.json()["result"]["token"]
-    profile_id = login_response.json()["result"]["profileId"]
-    role = login_response.json()["result"]["role"]
+    profile_id = profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
 
     refresh_token = get_refresh_token(first_token)
     jwt_token = get_access_token(refresh_token)
 
     os.environ["MENTEE_JWT_TOKEN"] = jwt_token
 
-    url = f"{BASE_URL}/api/appointment/{role}/{profile_id}"
+    url = f"/api/appointment/{role}/{profile_id}"
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br",
         "Authorization": jwt_token,
     }
-    response = requests.get(url, headers=headers)
+    response = client.get(url, headers=headers)
 
-    appointments = response.json()["result"]["requests"]
+    appointments = response.get_json()["result"]["requests"]
     appointments_count = len(appointments)
 
     for appointment in appointments:

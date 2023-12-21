@@ -8,7 +8,6 @@ on:
     branches:
       - dev
 
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -27,7 +26,7 @@ jobs:
       TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
       TWILIO_PHONE: ${{ secrets.TWILIO_PHONE }}
       FLASK_APP: ${{ secrets.FLASK_APP }}
-      
+
       BASE_URL: ${{ secrets.BASE_URL }}
       TEST_MENTOR_EMAIL: ${{ secrets.TEST_MENTOR_EMAIL }}
       TEST_MENTOR_PASSWORD: ${{ secrets.TEST_MENTOR_PASSWORD }}
@@ -51,31 +50,30 @@ jobs:
       TEST_GUEST_PROFILE_ID: ${{ secrets.TEST_GUEST_PROFILE_ID }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Build and run Backend
-      run: |
-        cd backend
-        touch firebase_service_key.json
-        echo "$FIREBASE_SERVICE_KEY" > firebase_service_key.json
-        cp firebase_service_key.json ./tests
-        ls
-        cat firebase_service_key.json
-        docker build -t backend .
-        docker images
-        docker run --name backend -d -e SENDGRID_API_KEY="$SENDGRID_API_KEY" -e SENDER_EMAIL="$SENDER_EMAIL" -e TWILIO_ACCOUNT_SID="$TWILIO_ACCOUNT_SID" -e TWILIO_AUTH_TOKEN="$TWILIO_AUTH_TOKEN" -e TWILIO_PHONE="$TWILIO_PHONE" -e FLASK_APP="$FLASK_APP" -e IMGUR_KEY="$IMGUR_KEY" -e FIREBASE_API_KEY="$FIREBASE_API_KEY" -e MONGO_USER="$MONGO_USER" -e MONGO_PASSWORD="$MONGO_PASSWORD" -e MONGO_HOST="$MONGO_HOST" -e MONGO_DB="$MONGO_DB" -e GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS" -e BASE_URL="$BASE_URL" -e TEST_MENTOR_EMAIL="$TEST_MENTOR_EMAIL" -e TEST_MENTOR_PASSWORD="$TEST_MENTOR_PASSWORD" -e TEST_MENTOR_ROLE="$TEST_MENTOR_ROLE" -e TEST_MENTOR_PROFILE_ID="$TEST_MENTOR_PROFILE_ID" -e TEST_MENTOR_PHONE_NUMBER="$TEST_MENTOR_PHONE_NUMBER" -e TEST_MENTOR_NAME="$TEST_MENTOR_NAME" -e TEST_MENTEE_EMAIL="$TEST_MENTEE_EMAIL" -e TEST_MENTEE_PASSWORD="$TEST_MENTEE_PASSWORD" -e TEST_MENTEE_ROLE="$TEST_MENTEE_ROLE" -e TEST_MENTEE_PROFILE_ID="$TEST_MENTEE_PROFILE_ID" -e TEST_MENTEE_PHONE_NUMBER="$TEST_MENTEE_PHONE_NUMBER" -e TEST_MENTEE_NAME="$TEST_MENTEE_NAME" -e TEST_PARTNER_EMAIL=$TEST_PARTNER_EMAIL -e TEST_PARTNER_PASSWORD=$TEST_PARTNER_PASSWORD -e TEST_PARTNER_ROLE=$TEST_PARTNER_ROLE -e TEST_PARTNER_PROFILE_ID="$TEST_PARTNER_PROFILE_ID" -e TEST_GUEST_EMAIL="$TEST_GUEST_EMAIL" -e TEST_GUEST_PASSWORD="$TEST_GUEST_PASSWORD" -e TEST_GUEST_ROLE="$TEST_GUEST_ROLE" -e TEST_GUEST_PROFILE_ID="$TEST_GUEST_PROFILE_ID" -p 8000:8000 backend 
+      - name: Build and run Backend
+        run: |
+          cd backend
+          touch firebase_service_key.json
+          echo "$FIREBASE_SERVICE_KEY" > firebase_service_key.json
+          cp firebase_service_key.json ./tests
+          ls
+          cat firebase_service_key.json
+          docker build -t backend .
+          docker images
+          docker run --name backend -d -e SENDGRID_API_KEY="$SENDGRID_API_KEY" -e SENDER_EMAIL="$SENDER_EMAIL" -e TWILIO_ACCOUNT_SID="$TWILIO_ACCOUNT_SID" -e TWILIO_AUTH_TOKEN="$TWILIO_AUTH_TOKEN" -e TWILIO_PHONE="$TWILIO_PHONE" -e FLASK_APP="$FLASK_APP" -e IMGUR_KEY="$IMGUR_KEY" -e FIREBASE_API_KEY="$FIREBASE_API_KEY" -e MONGO_USER="$MONGO_USER" -e MONGO_PASSWORD="$MONGO_PASSWORD" -e MONGO_HOST="$MONGO_HOST" -e MONGO_DB="$MONGO_DB" -e GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_APPLICATION_CREDENTIALS" -e BASE_URL="$BASE_URL" -e TEST_MENTOR_EMAIL="$TEST_MENTOR_EMAIL" -e TEST_MENTOR_PASSWORD="$TEST_MENTOR_PASSWORD" -e TEST_MENTOR_ROLE="$TEST_MENTOR_ROLE" -e TEST_MENTOR_PROFILE_ID="$TEST_MENTOR_PROFILE_ID" -e TEST_MENTOR_PHONE_NUMBER="$TEST_MENTOR_PHONE_NUMBER" -e TEST_MENTOR_NAME="$TEST_MENTOR_NAME" -e TEST_MENTEE_EMAIL="$TEST_MENTEE_EMAIL" -e TEST_MENTEE_PASSWORD="$TEST_MENTEE_PASSWORD" -e TEST_MENTEE_ROLE="$TEST_MENTEE_ROLE" -e TEST_MENTEE_PROFILE_ID="$TEST_MENTEE_PROFILE_ID" -e TEST_MENTEE_PHONE_NUMBER="$TEST_MENTEE_PHONE_NUMBER" -e TEST_MENTEE_NAME="$TEST_MENTEE_NAME" -e TEST_PARTNER_EMAIL=$TEST_PARTNER_EMAIL -e TEST_PARTNER_PASSWORD=$TEST_PARTNER_PASSWORD -e TEST_PARTNER_ROLE=$TEST_PARTNER_ROLE -e TEST_PARTNER_PROFILE_ID="$TEST_PARTNER_PROFILE_ID" -e TEST_GUEST_EMAIL="$TEST_GUEST_EMAIL" -e TEST_GUEST_PASSWORD="$TEST_GUEST_PASSWORD" -e TEST_GUEST_ROLE="$TEST_GUEST_ROLE" -e TEST_GUEST_PROFILE_ID="$TEST_GUEST_PROFILE_ID" -p 8000:8000 backend
 
-    - name: Check if Flask server is up
-      run: |
-        retries=100
-        until curl -sSf http://localhost:8000/api/translation; do
-          ((retries--)) || exit 1
-          sleep 1
-        done
+      - name: Check if Flask server is up
+        run: |
+          retries=100
+          until curl -sSf http://localhost:8000/api/translation; do
+            ((retries--)) || exit 1
+            sleep 1
+          done
 
-        
-    - name: Run Tests
-      run: |
-        docker ps
-        docker exec backend /bin/bash -c "cd tests && pytest"
+      - name: Run Tests
+        run: |
+          docker ps
+          docker exec backend /bin/bash -c "cd tests && pytest"

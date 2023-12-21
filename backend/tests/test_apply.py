@@ -5,9 +5,7 @@ import os
 load_dotenv()
 
 
-def test_apply_mentor():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_apply_mentor(client):
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Content-Type": "application/json",
@@ -38,16 +36,12 @@ def test_apply_mentor():
         "preferred_language": "en-US",
     }
 
-    response = requests.post(
-        f"{BASE_URL}/api/application/new", headers=headers, json=json_data
-    )
+    response = client.post("/api/application/new", headers=headers, json=json_data)
 
-    assert "success" in response.json(), "Unable to apply for Mentor Role"
+    assert "success" in response.get_json(), "Unable to apply for Mentor Role"
 
 
-def test_apply_mentee():
-    BASE_URL = os.environ.get("BASE_URL")
-
+def test_apply_mentee(client):
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Content-Type": "application/json",
@@ -78,8 +72,41 @@ def test_apply_mentee():
         "preferred_language": "en-US",
     }
 
-    response = requests.post(
-        f"{BASE_URL}/api/application/new", headers=headers, json=json_data
-    )
+    response = client.post("/api/application/new", headers=headers, json=json_data)
 
-    assert "success" in response.json(), "Unable to apply for Mentee Role"
+    assert "success" in response.get_json(), "Unable to apply for Mentee Role"
+
+
+def test_build_profile(client):
+    headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+    }
+
+    json_data = {
+        "name": "NAme",
+        "professional_title": "tgfvc",
+        "password": "password123",
+        "confirmPassword": "password123",
+        "biography": "gfvc",
+        "location": "rgfdcx",
+        "languages": [
+            "Bengali",
+        ],
+        "specializations": [
+            "Architecture",
+        ],
+        "video": None,
+        "email": "rgfdc@gmail.com",
+        "role": 1,
+        "preferred_language": "en-US",
+        "image": None,
+        "changedImage": False,
+        "edited": True,
+        "account_type": 1,
+    }
+
+    response = client.post("/api/account", headers=headers, json=json_data)
+
+    assert response.status_code == 200
+    assert response.get_json()["success"] == True

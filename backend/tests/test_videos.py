@@ -5,8 +5,7 @@ import os
 load_dotenv()
 
 
-def test_create_video():
-    BASE_URL = os.environ.get("BASE_URL")
+def test_create_video(client):
     profile_id = os.environ.get("MENTOR_PROFILE_ID")
 
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
@@ -41,34 +40,32 @@ def test_create_video():
         ],
     }
 
-    response = requests.put(
-        f"{BASE_URL}/api/account/{profile_id}",
-        params=params,
+    response = client.put(
+        f"/api/account/{profile_id}",
+        query_string=params,
         headers=headers,
         json=json_data,
     )
 
     assert response.status_code == 200
-    videos = get_videos(profile_id, BASE_URL)
+    videos = get_videos(profile_id, client)
 
     assert any(
         video["title"] == "Test Video" for video in videos
     ), "Test video not created"
 
-    delete_video(profile_id, BASE_URL, headers, params)
+    delete_video(profile_id, headers, params, client)
 
 
-def get_videos(profile_id, BASE_URL):
-    response = requests.get(
-        f"{BASE_URL}/api/account/{profile_id}?account_type={os.environ.get('TEST_MENTOR_ROLE')}"
+def get_videos(profile_id, client):
+    response = client.get(
+        f"/api/account/{profile_id}?account_type={os.environ.get('TEST_MENTOR_ROLE')}"
     )
 
-    print(response)
-
-    return response.json()["result"]["account"]["videos"]
+    return response.get_json()["result"]["account"]["videos"]
 
 
-def delete_video(profile_id, BASE_URL, headers, params):
+def delete_video(profile_id, headers, params, client):
     json_data = {
         "videos": [
             {
@@ -81,9 +78,9 @@ def delete_video(profile_id, BASE_URL, headers, params):
         ],
     }
 
-    response = requests.put(
-        f"{BASE_URL}/api/account/{profile_id}",
-        params=params,
+    response = client.put(
+        f"/api/account/{profile_id}",
+        query_string=params,
         headers=headers,
         json=json_data,
     )

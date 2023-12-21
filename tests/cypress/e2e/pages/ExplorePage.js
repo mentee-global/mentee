@@ -57,7 +57,7 @@ export class ExplorePage {
         ).clear();
       });
     } else {
-      const sampleValues = ["xeh", "ber", "Test"];
+      const sampleValues = ["xeh", "ber", "Roberto M"];
       sampleValues.forEach((value, index) => {
         cy.get(
           "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Space, Steps, message } from "antd";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import {
   CompassOutlined,
   PartitionOutlined,
@@ -20,13 +20,37 @@ const StepNumeration = {
 };
 
 function Login({ location }) {
+  const history = useHistory();
   const { t } = useTranslation();
   const query = useQuery();
-  const [role, setRole] = useState(location?.state?.role ?? query.get("role"));
+  let cur_role = location?.state?.role ?? query.get("role");
+  let cur_current = cur_role ? StepNumeration.login : StepNumeration.role;
+  if (location && location.pathname) {
+    switch (location.pathname) {
+      case "/mentor/login":
+        cur_role = ACCOUNT_TYPE.MENTOR;
+        cur_current = StepNumeration.login;
+        break;
+      case "/mentee/login":
+        cur_role = ACCOUNT_TYPE.MENTEE;
+        cur_current = StepNumeration.login;
+        break;
+      case "/partner/login":
+        cur_role = ACCOUNT_TYPE.PARTNER;
+        cur_current = StepNumeration.login;
+        break;
+      case "/readonly/login":
+        cur_role = ACCOUNT_TYPE.GUEST;
+        cur_current = StepNumeration.login;
+        break;
+      default:
+        break;
+    }
+  }
+  const [role, setRole] = useState(cur_role);
   const email = location?.state?.email ?? query.get("email");
-  const [current, setCurrent] = useState(
-    role ? StepNumeration.login : StepNumeration.role
-  );
+  const [current, setCurrent] = useState(cur_current);
+
   const [messageApi, contextHolder] = message.useMessage();
 
   const SelectCardsStyle = css`
@@ -40,8 +64,24 @@ function Login({ location }) {
   `;
 
   const onClickRole = (role) => {
-    setRole(role);
-    setCurrent(StepNumeration.login);
+    // setRole(role);
+    // setCurrent(StepNumeration.login);
+    switch (role) {
+      case ACCOUNT_TYPE.MENTOR:
+        history.push("/mentor/login");
+        break;
+      case ACCOUNT_TYPE.MENTEE:
+        history.push("/mentee/login");
+        break;
+      case ACCOUNT_TYPE.PARTNER:
+        history.push("/partner/login");
+        break;
+      case ACCOUNT_TYPE.GUEST:
+        history.push("/readonly/login");
+        break;
+      default:
+        break;
+    }
   };
 
   const onChangeStep = (newStep) => {
@@ -49,9 +89,10 @@ function Login({ location }) {
       messageApi.error(t("loginErrors.noRole"));
       return;
     } else if (newStep !== StepNumeration.login) {
+      setCurrent(newStep);
       setRole(null);
+      history.push("/login");
     }
-    setCurrent(newStep);
   };
 
   const progressItems = [

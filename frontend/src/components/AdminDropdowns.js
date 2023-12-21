@@ -139,10 +139,10 @@ export function SpecializationsDropdown(props) {
         return (
           <Menu.Item>
             <a
-              onClick={() => handleClick(i, element)}
+              onClick={() => handleClick(i, element.label)}
               style={{ color: selected.includes(i) ? "red" : "black" }}
             >
-              {element}
+              {element.label}
             </a>
           </Menu.Item>
         );

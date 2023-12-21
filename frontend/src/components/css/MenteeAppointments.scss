@@ -176,4 +176,7 @@
 }
 .interest-modal {
   height: 45vh !important;
+  .modal-container {
+    height: 100% !important;
+  }
 }

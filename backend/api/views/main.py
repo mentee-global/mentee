@@ -10,11 +10,9 @@ from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
 
 from api.models import (
-    db,
     Admin,
     MentorProfile,
     MenteeProfile,
-    AppointmentRequest,
     Users,
     Image,
     Video,
@@ -398,7 +396,6 @@ def create_profile_existing_account():
             if is_invalid:
                 logger.info(msg)
                 return create_response(status=422, message=msg)
-
     elif data.get("videos", False) and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 

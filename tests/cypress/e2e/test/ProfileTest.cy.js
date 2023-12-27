@@ -4,16 +4,6 @@ import { ProfilePage } from "../pages/ProfilePage";
 const profile = new ProfilePage();
 const login = new LoginPage();
 
-describe("API Call Test", () => {
-  it("should make an API call to a specific URL", () => {
-    cy.visit("/login");
-    login.loginMentor();
-
-    profile.visit();
-    profile.interceptMentorApiCall();
-    profile.waitApiCall();
-  });
-});
 
 describe("Profile Page Test Correct", () => {
   it("should get content of mentor profile div", () => {

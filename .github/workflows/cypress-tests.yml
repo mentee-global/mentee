@@ -90,7 +90,6 @@ jobs:
           rm cypress.env.json
           touch cypress.env.json
           echo "$CYPRESS_ENV" > cypress.env.json
-          echo ${{secrets.CYPRESS_BASE_URL}} | sed 's/./& /g'
 
       - name: Run Cypress Tests
         run: |

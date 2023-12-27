@@ -29,7 +29,7 @@ describe("Login Page ", () => {
   it("Partner - Valid Credentials", () => {
     login.loginPartner();
   });
-  it.skip("Guest - Valid Credentials", () => {
+  it("Guest - Valid Credentials", () => {
     login.loginGuest();
   });
   it("Mentor - Invalid Credentials", () => {

@@ -10,13 +10,13 @@ describe("Explore Page", () => {
     login.loginMentor();
     cy.visit("/mentee-gallery");
   });
-  it.only("Check existance of Explore Page", () => {
+  it("Check existance of Explore Page", () => {
     explore.componnentExists();
   });
-  it.only("Check the functionality of Explore Page", () => {
+  it("Check the functionality of Explore Page", () => {
     explore.isFunctional();
   });
-  it.only("Check Filter By Language", () => {
+  it("Check Filter By Language", () => {
     explore.filterByLanguage();
   });
 });

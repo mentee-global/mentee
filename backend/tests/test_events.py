@@ -1,8 +1,11 @@
 from api.models import Event
 import requests
 import os
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 from dotenv import load_dotenv
 from .utils.login_utils import *
+from PIL import Image
+import io
 
 load_dotenv()
 
@@ -63,7 +66,7 @@ def test_create_event_mentor(client):
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
-    create_event(profile_id, jwt_token, client)
+    create_event(profile_id, jwt_token, 0, client)
     object_events = Event.objects.filter(role=1)
 
     event_exists = any(event.title == "Test Title" for event in object_events)
@@ -74,20 +77,67 @@ def test_create_event_mentee(client):
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
-    create_event(profile_id, jwt_token, client)
+    create_event(profile_id, jwt_token, 0, client)
     object_events = Event.objects.filter(role=2)
 
     event_exists = any(event.title == "Test Title" for event in object_events)
     assert event_exists, "Mentee failed to create event"
 
 
-def create_event(profile_id, jwt_token, client):
+def test_edit_event(client):
+    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    jwt_token = os.environ["MENTEE_JWT_TOKEN"]
+
+    user_events = get_events(profile_id, jwt_token, client)
+    event_id = user_events[0]
+
+    create_event(profile_id, jwt_token, event_id, client)
+
+
+def test_event_image(client):
+    admin_jwt_token = os.environ.get("ADMIN_JWT_TOKEN")
+    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    jwt_token = os.environ["MENTEE_JWT_TOKEN"]
+
+    user_events = get_events(profile_id, jwt_token, client)
+    event_id = user_events[0]
+
+    img = Image.new("RGB", (60, 30), color=(73, 109, 137))
+    img.save("mock_image.jpg")
+
+    with open("mock_image.jpg", "rb") as img_file:
+        img_data = img_file.read()
+
+    headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Authorization": admin_jwt_token,
+    }
+
+    data = MultipartEncoder(
+        fields={"image": ("mock_image.jpg", img_data, "image/jpeg")}
+    )
+    headers["Content-Type"] = data.content_type
+
+    response = client.put(
+        f"/api/event_register/{event_id}/image",
+        headers=headers,
+        data=data,
+    )
+    assert response.status_code == 200
+
+    try:
+        os.remove("mock_image.jpg")
+    except:
+        pass
+
+
+def create_event(profile_id, jwt_token, event_id, client):
     event_title = "Test Title"
     event_description = "Test"
     event_url = "https://www.google.com"
 
     json_data = {
-        "event_id": 0,
+        "event_id": event_id,
         "user_id": profile_id,
         "title": event_title,
         "role": [

@@ -19,7 +19,7 @@ describe('Find Mentee Page', () => {
         findMentee.clickFindMentee()
         findMentee.selectLanguage()
     })
-    it.only(('Test Filter By Interest'), ()=>{
+    it(('Test Filter By Interest'), ()=>{
         findMentee.clickFindMentee()
         findMentee.selectInterests()
     })

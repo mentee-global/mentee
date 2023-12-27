@@ -196,3 +196,14 @@ def response_test(test_data, client):
     response = client.post(f"/auth/login", json=test_data)
 
     assert response.status_code != 200
+
+
+def test_verify_email(client):
+    mentor_email = os.environ.get("TEST_MENTOR_EMAIL")
+
+    response = client.get("/verifyEmail", query_string={"email": mentor_email})
+
+    assert "success" in response.get_json()
+
+    response = client.get("/verifyEmail", query_string={"email": "test@example.com"})
+    assert response.status_code != 200

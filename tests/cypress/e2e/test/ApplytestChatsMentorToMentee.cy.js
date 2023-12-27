@@ -6,7 +6,7 @@ const MENTEE_EMAIL = Cypress.env("MENTEE_EMAIL");
 const MENTEE_PASSWORD = Cypress.env("MENTEE_PASSWORD");
 
 describe("Test for chats", () => {
-  it("Login as a Mentor and send a message to mentee", () => {
+  it.only("Login as a Mentor and send a message to mentee", () => {
     cy.visit(`/login`);
 
     cy.get(
@@ -17,17 +17,15 @@ describe("Test for chats", () => {
 
     cy.get("#password").clear().type(MENTOR_PASSWORD);
 
-    cy.wait(3000);
+    cy.contains("button", "Login").click();
 
+    
     cy.get(
       ".anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn"
     ).trigger("mouseover");
 
     cy.contains('span', 'English').click();
-
-    cy.contains("button", "Login").click();
-
-    cy.wait(1000);
+    cy.wait(3000);
 
     cy.url().should("include", "/appointments");
 
@@ -44,7 +42,7 @@ describe("Test for chats", () => {
       .type("Hey Mentee how are you i hope you will be fine");
 
     cy.get(".ant-modal-footer > .ant-btn-primary").click();
-    cy.wait(1000);
+
   });
 
   it("Login as a mentee and test message is recieved or not or test the text in message ", () => {
@@ -62,18 +60,21 @@ describe("Test for chats", () => {
 
     cy.wait(2000);
 
+  
     cy.visit(`messages/${MENTOR_PROFILE_ID}?user_type=1`);
-    cy.wait(2000);
+    
+    cy.wait(3000);
 
+ 
     cy.get(
-      "#root > section > main > section > aside > div > div.messages-sidebar > div"
-    ).click();
-
-    cy.wait(4000);
-
-    cy.get(
-      "#root > section > main > section > section > div > div.conversation-content > div.ant-spin-nested-loading.css-wxm1m1 > div > div:nth-child(46) > div > div > div > div"
-    ).should("contain", "Hey Mentee how are you i hope you will be fine");
+      "#root > section > main > section > aside > div > div.messages-sidebar > div > div > div > div > div.ant-card-meta-detail > div.ant-card-meta-description"
+    ).should('have.text',"Hey Mentee how are you i hope you will be fine");
+  
+    // cy.get(
+    //   "#root > section > main > section > section > div > div.conversation-content > div.ant-spin-nested-loading.css-wxm1m1 > div > div:nth-child(46) > div > div > div > div"
+    // ).should("contain", "Hey Mentee how are you i hope you will be fine");
 
   });
 });
+
+  

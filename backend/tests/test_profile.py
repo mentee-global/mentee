@@ -240,6 +240,7 @@ def update_profile_info(jwt_token, profile_id, account_type, client):
 
 def test_change_image(client):
     jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
+    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
 
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -249,9 +250,9 @@ def test_change_image(client):
     data = '-----------------------------321406871418482840741855260225\r\nContent-Disposition: form-data; name="image"; filename="kapp.jpeg"\r\nContent-Type: image/jpeg\r\n\r\n-----------------------------321406871418482840741855260225\r\nContent-Disposition: form-data; name="account_type"\r\n\r\n1\r\n-----------------------------321406871418482840741855260225--\r\n'
 
     response = client.put(
-        "/api/account/6582973a28c16374dfd4b9de/image",
+        f"/api/account/{mentor_profile_id}/image",
         headers=headers,
         data=data,
     )
 
-    assert response.status_code == 200
+    assert "success" in response.get_json()

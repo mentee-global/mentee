@@ -13,7 +13,7 @@ describe("Explore Page", () => {
   it("Check existance of Explore Page", () => {
     explore.componnentExists();
   });
-  it("Check the functionality of Explore Page", () => {
+  it.only("Check the functionality of Explore Page", () => {
     explore.isFunctional();
   });
   it("Check Filter By Specialization", () => {

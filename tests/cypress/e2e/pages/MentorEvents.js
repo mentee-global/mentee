@@ -66,13 +66,10 @@ export class MentorEvent {
         "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
       )
         .click()
-        .debug();
       cy.get(
         "#root > section > main > div.gallery-container > div:nth-child(1) > div > button"
       )
         .click()
-        .debug();
-
       cy.get(
         "body > div:nth-child(4) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div:nth-child(1) > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div > div > div > div"
       )
@@ -80,7 +77,6 @@ export class MentorEvent {
         .wait(200)
         .type("{enter}")
         .wait(200);
-
       cy.get(
         "body > div:nth-child(4) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > form:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1)"
       )
@@ -148,11 +144,5 @@ export class MentorEvent {
         .as("confirmButton")
         .click();
     });
-
-    // cy.get('#root > section > main > div.gallery-container > div.gallery-mentor-container > div > div.css-132mkms > div > button:nth-child(3)')
-    //     .click();
-
-    // cy.get('body > div:nth-child(3) > div > div.ant-popover-content > div > div > div > div.ant-popconfirm-buttons > button.ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-sm')
-    // .click();
   }
 }

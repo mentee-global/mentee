@@ -13,11 +13,11 @@ describe("Mentor Dashboard", () => {
   it("Check the Add Event Modal Functionality", () => {
     event.addEventFunctional();
   });
-  it("Adding New Event", () => {
+  it.only("Adding New Event", () => {
     event.addNewEvent();
   });
 
-  it("checking that event", () => {
+  it.only("checking that event", () => {
     event.checkCreatedEvent();
   });
 });

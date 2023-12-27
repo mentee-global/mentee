@@ -13,11 +13,16 @@ describe("chceking the video page of mentor", () => {
     cy.get("#password").type(mentorPassword);
 
     cy.get("button.ant-btn-primary").contains("Login").click();
-    cy.wait(1000);
-
+    
     cy.get(
-      'span[role="img"][aria-label="video-camera"].anticon-video-camera'
-    ).click();
+      ".anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn"
+    ).trigger("mouseover");
+
+    cy.contains('span', 'English').click();
+    
+    cy.wait(3000);
+
+    cy.visit('/videos');
 
     cy.get("h2.ant-typography.css-wxm1m1").should("have.text", "Your Videos");
 
@@ -41,7 +46,7 @@ describe("chceking the video page of mentor", () => {
       "have.text",
       "Add Video"
     );
-
+   
     cy.get('button.ant-btn-primary span:contains("Add Video")').click();
 
     cy.get("#video-submit_title").type("my skills intro");
@@ -51,8 +56,9 @@ describe("chceking the video page of mentor", () => {
     );
 
     cy.get("#video-submit_tag").click();
+    cy.get("#video-submit_tag").type('{downarrow}{downarrow}{enter}',{force: true});
 
-    cy.contains(".ant-select-item-option-content", "Computer Science").click();
+    // cy.contains(".ant-select-item-option-content", "Computer Science").click();
 
     cy.get('button.ant-btn-primary span:contains("Submit")').click();
 

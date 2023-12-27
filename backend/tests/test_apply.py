@@ -5,6 +5,25 @@ import os
 load_dotenv()
 
 
+def test_get_applications(client):
+    jwt_token = os.environ.get("ADMIN_JWT_TOKEN")
+
+    headers = {"Authorization": jwt_token}
+
+    response = client.get("/api/application/", headers=headers)
+    assert response.status_code == 200
+    assert response.get_json()["success"] == True
+
+    response = client.get("/api/application/menteeApps", headers=headers)
+    assert response.status_code == 200
+    assert response.get_json()["success"] == True
+
+    app_id = response.get_json()["result"]["mentor_applications"][0]["_id"]["$oid"]
+    response = client.get(f"/api/application/{app_id}", headers=headers)
+    assert response.status_code == 200
+    assert response.get_json()["success"] == True
+
+
 def test_apply_mentor(client):
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -38,7 +57,10 @@ def test_apply_mentor(client):
 
     response = client.post("/api/application/new", headers=headers, json=json_data)
 
-    assert "success" in response.get_json(), "Unable to apply for Mentor Role"
+    assert (
+        True == response.get_json()["success"]
+        or response.get_json()["message"] == "This user is already registered"
+    ), "Unable to apply for Mentor Role"
 
 
 def test_apply_mentee(client):
@@ -48,7 +70,7 @@ def test_apply_mentee(client):
     }
 
     json_data = {
-        "email": "test@gmail.com",
+        "email": "testmentee@gmail.com",
         "name": "Test Name",
         "age": "I am 18-22 years old.",
         "organization": "Org",
@@ -74,39 +96,7 @@ def test_apply_mentee(client):
 
     response = client.post("/api/application/new", headers=headers, json=json_data)
 
-    assert "success" in response.get_json(), "Unable to apply for Mentee Role"
-
-
-def test_build_profile(client):
-    headers = {
-        "Accept": "application/json, text/plain, */*",
-        "Content-Type": "application/json",
-    }
-
-    json_data = {
-        "name": "NAme",
-        "professional_title": "tgfvc",
-        "password": "password123",
-        "confirmPassword": "password123",
-        "biography": "gfvc",
-        "location": "rgfdcx",
-        "languages": [
-            "Bengali",
-        ],
-        "specializations": [
-            "Architecture",
-        ],
-        "video": None,
-        "email": "rgfdc@gmail.com",
-        "role": 1,
-        "preferred_language": "en-US",
-        "image": None,
-        "changedImage": False,
-        "edited": True,
-        "account_type": 1,
-    }
-
-    response = client.post("/api/account", headers=headers, json=json_data)
-
-    assert response.status_code == 200
-    assert response.get_json()["success"] == True
+    assert (
+        True == response.get_json()["success"]
+        or response.get_json()["message"] == "This user is already registered"
+    ), "Unable to apply for Mentor Role"

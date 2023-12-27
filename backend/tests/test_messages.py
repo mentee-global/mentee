@@ -89,6 +89,12 @@ def test_mentor_messages(client):
 def test_message_send(client):
     mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
 
+    mentor_email = os.environ.get("TEST_MENTOR_EMAIL")
+    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    mentor_name = os.environ.get("TEST_MENTOR_NAME")
+    recipient_name = os.environ.get("TEST_RECIPIENT_NAME")
+    recipient_id = os.environ.get("TEST_RECIPIENT_ID")
+
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Content-Type": "application/json",
@@ -97,11 +103,11 @@ def test_message_send(client):
 
     json_data = {
         "message": "Hi",
-        "user_name": "Roberto Murer Mentor1",
-        "user_id": "6340e9b65d085cb418954c3e",
-        "recipient_name": "RobertoMentee3",
-        "recipient_id": "640f8a6114b76ff16f517e2f",
-        "email": "robertmurer+mentor1@gmail.com",
+        "user_name": mentor_name,
+        "user_id": mentor_profile_id,
+        "recipient_name": recipient_name,
+        "recipient_id": recipient_id,
+        "email": mentor_email,
         "link": "http://www.google.com",
         "time": "2023-12-20, 14:17:15+0500",
     }
@@ -117,7 +123,7 @@ def test_messages(client):
         "Authorization": mentor_jwt_token,
     }
 
-    response = client.get(f"/api/messages/")
+    response = client.get(f"/api/messages/", headers=headers)
 
     assert response.status_code == 200
 
@@ -125,27 +131,47 @@ def test_messages(client):
 def test_delete_messages(client):
     mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
 
+    recipient_id = os.environ.get("TEST_RECIPIENT_ID")
+    sender_id= os.environ.get("TEST_MENTOR_PROFILE_ID")
+
     headers = {
         "Accept": "application/json, text/plain, */*",
         "Authorization": mentor_jwt_token,
     }
 
-    response = client.get(f"/api/messages/")
+    response = client.get(f"/api/messages/direct/?recipient_id={recipient_id}&sender_id={sender_id}", headers=headers)
 
-    first_message_id = response.get_json()["result"]["Messages"]["_id"]["$oid"]
+    first_message_id = response.get_json()["result"]["Messages"][0]["_id"]["$oid"]
 
-    response = client.delete(f"/api/messages/{first_message_id}")
+    response = client.delete(f"/api/messages/{first_message_id}", headers=headers)
     assert response.status_code == 200
 
-    response = client.delete(f"/api/messages/5y7949ho0rwejiof")
+    response = client.delete(f"/api/messages/5y7949ho0rwejiof", headers=headers)
     assert response.status_code != 200
 
 
 def test_notifications(client):
     mentor_profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
 
-    response = client.get(f"/api/notifications/{mentor_profile_id}")
+    mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
+
+    headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Authorization": mentor_jwt_token,
+    }
+
+    response = client.get(f"/api/notifications/{mentor_profile_id}", headers=headers)
     assert response.status_code == 200
 
     response = client.get(f"/api/notifications/895uterj4u89rjo")
+    assert response.status_code != 200
+
+
+def test_new_notification(client):
+    user_id = os.environ.get("TEST_RECIPIENT_ID")
+
+    response = client.get(f"/api/notifications/unread_alert/{user_id}")
+    assert response.status_code == 200
+
+    response = client.get(f"/api/notifications/unread_alert/589tufjkerwoi")
     assert response.status_code != 200

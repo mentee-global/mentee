@@ -39,7 +39,7 @@ export class ExplorePage {
 
   isFunctional() {
     if (this.role === "mentor") {
-      const sampleValues = ["Rob", "ber"];
+      const sampleValues = ["roberto", "ber"];
       sampleValues.forEach((value, index) => {
         cy.get(
           "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
@@ -51,13 +51,17 @@ export class ExplorePage {
         ).should("have.attr", "value", value);
         cy.get(
           "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.gallery-card-body > div.gallery-card-header > div > h1"
-        ).should("include.text", value);
+        ).invoke('text')
+          .then((text) => {
+            const val = text.toLowerCase()
+            expect(val).to.include(value)
+          })
         cy.get(
           "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
         ).clear();
       });
     } else {
-      const sampleValues = ["xeh", "ber", "Roberto M"];
+      const sampleValues = ["xeh", "ber", "roberto"];
       sampleValues.forEach((value, index) => {
         cy.get(
           "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
@@ -69,7 +73,12 @@ export class ExplorePage {
         ).should("have.attr", "value", value);
         cy.get(
           "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.gallery-card-body > div.gallery-card-header > div > h1"
-        ).should("include.text", value);
+        )
+          .invoke('text')
+          .then((text) => {
+            const val = text.toLowerCase()
+            expect(val).to.include(value)
+          })
         cy.get(
           "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
         ).clear();

@@ -13,6 +13,7 @@ export class MentorDashboard {
       "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(3) > div > div > div > div > button"
     ).click();
     cy.url().should("include", "/appointments");
+    cy.wait(3000)
   }
   dashboardFunctionality() {
     cy.get(

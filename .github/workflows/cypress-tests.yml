@@ -65,14 +65,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Check if Flask server is up
-        run: |
-          retries=100
-          until curl -sSf http://localhost:8000/api/translation; do
-            ((retries--)) || exit 1
-            sleep 1
-          done
-
       - name: Wait for Frontend to be ready
         run: |
           retries=100

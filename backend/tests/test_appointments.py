@@ -4,8 +4,15 @@ from dotenv import load_dotenv
 from api.models import AppointmentRequest
 from .utils.login_utils import *
 from datetime import datetime, timedelta, timezone
+import json
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
 
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 # test the appointments for a mentor
@@ -15,7 +22,7 @@ def test_mentor_appointments(client):
     assert "token" in login_response.get_json()["result"], f"Token not found in response. {login_response.text}"
     role = login_response.get_json()["result"]["role"]
 
-    profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    profile_id = constants["TEST_MENTOR_PROFILE_ID"]
 
     refresh_token = get_refresh_token(first_token)
     jwt_token = get_access_token(refresh_token)
@@ -41,7 +48,7 @@ def test_mentee_appointments(client):
     first_token = login_response.get_json()["result"]["token"]
     role = login_response.get_json()["result"]["role"]
 
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
 
     refresh_token = get_refresh_token(first_token)
     jwt_token = get_access_token(refresh_token)
@@ -64,8 +71,8 @@ def test_mentee_appointments(client):
 
 def test_create_appointment(client):
     mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
-    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
-    mentee_profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    mentor_profile_id = constants["TEST_MENTOR_PROFILE_ID"]
+    mentee_profile_id = constants["TEST_MENTEE_PROFILE_ID"]
 
     now = datetime.now()
     start_time = now + timedelta(hours=1)

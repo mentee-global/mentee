@@ -1,7 +1,14 @@
 import os, requests
 from dotenv import load_dotenv
+import json
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
 
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 def test_mentee_messages(client):
@@ -14,8 +21,8 @@ def test_mentee_messages(client):
 
     BASE_URL = os.environ.get("BASE_URL")
 
-    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
-    mentee_profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    mentor_profile_id = constants["TEST_MENTOR_PROFILE_ID"]
+    mentee_profile_id = constants["TEST_MENTEE_PROFILE_ID"]
 
     params = {
         "recipient_id": mentee_profile_id,
@@ -54,8 +61,8 @@ def test_mentor_messages(client):
         "Authorization": mentor_jwt_token,
     }
 
-    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
-    mentee_profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    mentor_profile_id = constants["TEST_MENTOR_PROFILE_ID"]
+    mentee_profile_id = constants["TEST_MENTEE_PROFILE_ID"]
 
     params = {
         "recipient_id": mentor_profile_id,
@@ -90,10 +97,10 @@ def test_message_send(client):
     mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
 
     mentor_email = os.environ.get("TEST_MENTOR_EMAIL")
-    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
-    mentor_name = os.environ.get("TEST_MENTOR_NAME")
-    recipient_name = os.environ.get("TEST_RECIPIENT_NAME")
-    recipient_id = os.environ.get("TEST_RECIPIENT_ID")
+    mentor_profile_id = constants["TEST_MENTOR_PROFILE_ID"]
+    mentor_name = constants["TEST_MENTOR_NAME"]
+    recipient_name = constants["TEST_RECIPIENT_NAME"]
+    recipient_id = constants["TEST_RECIPIENT_ID"]
 
     headers = {
         "Accept": "application/json, text/plain, */*",
@@ -131,7 +138,7 @@ def test_messages(client):
 
 
 def test_notifications(client):
-    mentor_profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    mentor_profile_id = constants["TEST_MENTEE_PROFILE_ID"]
 
     mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
 
@@ -148,7 +155,7 @@ def test_notifications(client):
 
 
 def test_new_notification(client):
-    user_id = os.environ.get("TEST_RECIPIENT_ID")
+    user_id = constants["TEST_RECIPIENT_ID"]
 
     response = client.get(f"/api/notifications/unread_alert/{user_id}")
     assert response.status_code == 200, f"Failed to get message alert. {response.text}"

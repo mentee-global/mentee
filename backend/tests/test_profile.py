@@ -2,17 +2,25 @@ import requests
 import os
 from dotenv import load_dotenv
 from .utils.profile_utils import *
+import json
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
 
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 # test the loaded profile of the user
 def test_mentor_account_info(client):
-    profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    profile_id = constants["TEST_MENTOR_PROFILE_ID"]
+    mentor_role = constants["TEST_MENTOR_ROLE"]
 
     # get profile data
     response = client.get(
-        f"/api/account/{profile_id}?account_type={os.environ.get('TEST_MENTOR_ROLE')}"
+        f"/api/account/{profile_id}?account_type={mentor_role}"
     )
     response_email = response.get_json()["result"]["account"]["email"]
 
@@ -41,10 +49,11 @@ def test__wrong_info(client):
 # test the loaded profile of the user
 def test_mentee_account_info(client):
     profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    mentee_role = constants["TEST_MENTEE_ROLE"]
 
     # get profile data
     response = client.get(
-        f"/api/account/{profile_id}?account_type={os.environ.get('TEST_MENTEE_ROLE')}"
+        f"/api/account/{profile_id}?account_type={mentee_role}"
     )
     response_email = response.get_json()["result"]["account"]["email"]
 
@@ -62,11 +71,12 @@ def test_mentee_account_info(client):
 
 # test the loaded profile of the user
 def test_partner_account_info(client):
-    profile_id = os.environ.get("TEST_PARTNER_PROFILE_ID")
+    profile_id = constants["TEST_PARTNER_PROFILE_ID"]
+    partner_role = constants["TEST_PARTNER_ROLE"]
 
     # get profile data
     response = client.get(
-        f"/api/account/{profile_id}?account_type={os.environ.get('TEST_PARTNER_ROLE')}"
+        f"/api/account/{profile_id}?account_type={partner_role}"
     )
     response_email = response.get_json()["result"]["account"]["email"]
 
@@ -79,11 +89,12 @@ def test_partner_account_info(client):
 
 # test the loaded profile of the user
 def test_guest_account_info(client):
-    profile_id = os.environ.get("TEST_GUEST_PROFILE_ID")
+    profile_id = constants["TEST_GUEST_PROFILE_ID"]
+    guest_role = constants["TEST_GUEST_ROLE"]
 
     # get profile data
     response = client.get(
-        f"/api/account/{profile_id}?account_type={os.environ.get('TEST_GUEST_ROLE')}"
+        f"/api/account/{profile_id}?account_type={guest_role}"
     )
     response_email = response.get_json()["result"]["account"]["email"]
 
@@ -97,8 +108,8 @@ def test_guest_account_info(client):
 
 def test_mentor_profile_update_contact(client):
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
-    profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
-    account_type = os.environ.get("TEST_MENTOR_ROLE")
+    profile_id = constants["TEST_MENTOR_PROFILE_ID"]
+    account_type = constants["TEST_MENTOR_ROLE"]
 
     update_profile_contact(jwt_token, profile_id, account_type, client)
 
@@ -109,8 +120,8 @@ def test_mentor_profile_update_contact(client):
 
 def test_mentee_profile_update_contact(client):
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
-    account_type = os.environ.get("TEST_MENTEE_ROLE")
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
+    account_type = constants["TEST_MENTEE_ROLE"]
 
     update_profile_contact(jwt_token, profile_id, account_type, client)
 
@@ -240,7 +251,7 @@ def update_profile_info(jwt_token, profile_id, account_type, client):
 
 def test_change_image(client):
     jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
-    mentor_profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    mentor_profile_id = constants["TEST_MENTOR_PROFILE_ID"]
 
     headers = {
         "Accept": "application/json, text/plain, */*",

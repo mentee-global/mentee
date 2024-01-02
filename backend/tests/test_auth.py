@@ -2,9 +2,16 @@ import requests
 import os
 from dotenv import load_dotenv
 import jwt
+import json
 from .utils.login_utils import *
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
+
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 # check the login route
@@ -28,7 +35,7 @@ def test_login_partner(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_PARTNER_ROLE")), f"Incorrect role in token claims {decoded_token}"
+    assert decoded_token["claims"]["role"] == constants["TEST_PARTNER_ROLE"], f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_mentor_wrong_password(client):
@@ -36,7 +43,7 @@ def test_login_mentor_wrong_password(client):
     test_data = {
         "email": os.environ.get("TEST_PARTNER_EMAIL"),
         "password": "wrong_password",
-        "role": int(os.environ.get("TEST_PARTNER_ROLE")),
+        "role": constants["TEST_PARTNER_ROLE"],
     }
 
     response_test(test_data, client)
@@ -47,7 +54,7 @@ def test_login_partner_wrong_email(client):
     test_data = {
         "email": "wrong_email",
         "password": os.environ.get("TEST_PARTNER_PASSWORD"),
-        "role": int(os.environ.get("TEST_PARTNER_ROLE")),
+        "role": constants["TEST_PARTNER_ROLE"],
     }
 
     response_test(test_data, client)
@@ -74,7 +81,7 @@ def test_login_mentor(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_MENTOR_ROLE")), f"Incorrect role in token claims {decoded_token}"
+    assert decoded_token["claims"]["role"] == constants["TEST_MENTOR_ROLE"], f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_mentor_wrong_password(client):
@@ -82,7 +89,7 @@ def test_login_mentor_wrong_password(client):
     test_data = {
         "email": os.environ.get("TEST_MENTOR_EMAIL"),
         "password": "wrong_password",
-        "role": int(os.environ.get("TEST_MENTOR_ROLE")),
+        "role": constants["TEST_MENTOR_ROLE"],
     }
 
     response_test(test_data, client)
@@ -93,7 +100,7 @@ def test_login_mentor_wrong_email(client):
     test_data = {
         "email": "wrong_email",
         "password": os.environ.get("TEST_MENTOR_PASSWORD"),
-        "role": int(os.environ.get("TEST_MENTOR_ROLE")),
+        "role": constants["TEST_MENTOR_ROLE"],
     }
 
     response_test(test_data, client)
@@ -120,7 +127,7 @@ def test_login_mentee(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_MENTEE_ROLE")), f"Incorrect role in token claims {decoded_token}"
+    assert decoded_token["claims"]["role"] == constants["TEST_MENTEE_ROLE"], f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_mentee_wrong_password(client):
@@ -128,7 +135,7 @@ def test_login_mentee_wrong_password(client):
     test_data = {
         "email": os.environ.get("TEST_MENTEE_EMAIL"),
         "password": "wrong_password",
-        "role": int(os.environ.get("TEST_MENTEE_ROLE")),
+        "role": constants["TEST_MENTEE_ROLE"],
     }
 
     response_test(test_data, client)
@@ -139,7 +146,7 @@ def test_login_mentee_wrong_email(client):
     test_data = {
         "email": "wrong_email",
         "password": os.environ.get("TEST_MENTEE_PASSWORD"),
-        "role": int(os.environ.get("TEST_MENTEE_ROLE")),
+        "role": constants["TEST_MENTEE_ROLE"],
     }
 
     response_test(test_data, client)
@@ -166,7 +173,7 @@ def test_login_guest(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == int(os.environ.get("TEST_GUEST_ROLE")), f"Incorrect role in token claims {decoded_token}"
+    assert decoded_token["claims"]["role"] == constants["TEST_GUEST_ROLE"], f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_guest_wrong_password(client):
@@ -174,7 +181,7 @@ def test_login_guest_wrong_password(client):
     test_data = {
         "email": os.environ.get("TEST_GUEST_EMAIL"),
         "password": "wrong_password",
-        "role": int(os.environ.get("TEST_GUEST_ROLE")),
+        "role": constants["TEST_GUEST_ROLE"],
     }
 
     response_test(test_data, client)
@@ -185,7 +192,7 @@ def test_login_guest_wrong_email(client):
     test_data = {
         "email": "wrong_email",
         "password": os.environ.get("TEST_GUEST_PASSWORD"),
-        "role": int(os.environ.get("TEST_GUEST_ROLE")),
+        "role": constants["TEST_GUEST_ROLE"],
     }
 
     response_test(test_data, client)

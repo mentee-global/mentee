@@ -1,8 +1,15 @@
 import os
 import requests
 from dotenv import load_dotenv
+import json
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'consts.json')
 
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 def reset_profile_contact(jwt_token, profile_id, account_type, client):
@@ -43,9 +50,9 @@ def reset_profile_contact(jwt_token, profile_id, account_type, client):
 
 def reset_mentor_info(original_json_data, client):
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
-    profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
-    account_type = os.environ.get("TEST_MENTOR_ROLE")
-    mentor_name = "Roberto Murer Mentor1"
+    profile_id = constants["TEST_MENTOR_PROFILE_ID"]
+    account_type = constants["TEST_MENTOR_ROLE"]
+    mentor_name = constants["TEST_MENTOR_NAME"]
 
     reset_info(
         original_json_data, jwt_token, profile_id, account_type, mentor_name, client
@@ -54,9 +61,9 @@ def reset_mentor_info(original_json_data, client):
 
 def reset_mentee_info(original_json_data, client):
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
-    account_type = os.environ.get("TEST_MENTEE_ROLE")
-    mentee_name = "Robert Mente"
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
+    account_type = constants["TEST_MENTEE_ROLE"]
+    mentee_name = constants["TEST_MENTEE_NAME"]
 
     reset_info(
         original_json_data, jwt_token, profile_id, account_type, mentee_name, client

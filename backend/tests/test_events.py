@@ -6,14 +6,21 @@ from dotenv import load_dotenv
 from .utils.login_utils import *
 from PIL import Image
 import io
+import json
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
 
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 def test_mentor_events(client):
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
-    mentor_role = int(os.environ.get("TEST_MENTOR_ROLE"))
+    mentor_role = constants["TEST_MENTOR_ROLE"]
 
     url = f"/api/events/{mentor_role}"
     headers = {
@@ -39,7 +46,7 @@ def test_mentor_events(client):
 def test_mentee_events(client):
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
-    mentee_role = int(os.environ.get("TEST_MENTEE_ROLE"))
+    mentee_role = constants["TEST_MENTEE_ROLE"]
 
     url = f"/api/events/{mentee_role}"
     headers = {
@@ -63,7 +70,7 @@ def test_mentee_events(client):
 
 
 def test_create_event_mentor(client):
-    profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    profile_id = constants["TEST_MENTOR_PROFILE_ID"]
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
     create_event(profile_id, jwt_token, 0, client)
@@ -74,7 +81,7 @@ def test_create_event_mentor(client):
 
 
 def test_create_event_mentee(client):
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
     create_event(profile_id, jwt_token, 0, client)
@@ -85,7 +92,7 @@ def test_create_event_mentee(client):
 
 
 def test_edit_event(client):
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
     user_events = get_events(profile_id, jwt_token, client)
@@ -96,7 +103,7 @@ def test_edit_event(client):
 
 def test_event_image(client):
     admin_jwt_token = os.environ.get("ADMIN_JWT_TOKEN")
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
     user_events = get_events(profile_id, jwt_token, client)
@@ -164,7 +171,7 @@ def create_event(profile_id, jwt_token, event_id, client):
 
 
 def test_mentor_delete_events(client):
-    profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
+    profile_id = constants["TEST_MENTOR_PROFILE_ID"]
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
 
     user_events = get_events(profile_id, jwt_token, client)
@@ -180,7 +187,7 @@ def test_mentor_delete_events(client):
 
 
 def test_mentee_delete_events(client):
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
     jwt_token = os.environ["MENTEE_JWT_TOKEN"]
 
     user_events = get_events(profile_id, jwt_token, client)

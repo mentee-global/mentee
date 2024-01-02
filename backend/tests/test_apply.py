@@ -1,8 +1,15 @@
 import requests
 from dotenv import load_dotenv
 import os
+import json
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
 
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 def test_get_applications(client):

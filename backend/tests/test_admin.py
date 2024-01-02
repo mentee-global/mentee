@@ -2,16 +2,23 @@ from dotenv import load_dotenv
 import os
 import secrets
 import string
+import json
 from .utils.login_utils import *
 from api.views.admin import *
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
+
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 def test_admin_info(client):
-    admin_id = os.environ.get("TEST_ADMIN_PROFILE_ID")
+    admin_id = constants["TEST_ADMIN_PROFILE_ID"]
     admin_email = os.environ.get("TEST_ADMIN_EMAIL")
-    admin_name = os.environ.get("TEST_ADMIN_NAME")
+    admin_name = constants["TEST_ADMIN_NAME"]
 
     response = client.get(f"/api/admin/{admin_id}")
 

@@ -1,15 +1,21 @@
 import requests
 from dotenv import load_dotenv
 import os
+import json
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+consts_path = os.path.join(dir_path, 'utils/consts.json')
 
 load_dotenv()
+with open(consts_path, 'r') as f:
+    constants = json.load(f)
 
 
 def test_create_video(client):
-    profile_id = os.environ.get("MENTOR_PROFILE_ID")
+    profile_id = constants["TEST_MENTOR_PROFILE_ID"]
 
     jwt_token = os.environ["MENTOR_JWT_TOKEN"]
-    profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
 
     headers = {
         "Authorization": jwt_token,

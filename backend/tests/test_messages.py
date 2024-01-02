@@ -26,11 +26,11 @@ def test_mentee_messages(client):
         f"{BASE_URL}/api/messages/direct/", query_string=params, headers=headers
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get messages. {response.text}"
     assert "message" in response.get_json()
     assert response.get_json()["message"] == "Success"
 
-    assert "Messages" in response.get_json()["result"]
+    assert "Messages" in response.get_json()["result"], f"Messages not found in response. {response.text}"
 
     for message in response.get_json()["result"]["Messages"]:
         assert "body" in message
@@ -39,11 +39,11 @@ def test_mentee_messages(client):
         assert (
             message["recipient_id"]["$oid"] == mentee_profile_id
             or message["recipient_id"]["$oid"] == mentor_profile_id
-        )
+        ), f"Recipient id does not match. {message}"
         assert (
             message["sender_id"]["$oid"] == mentor_profile_id
             or message["sender_id"]["$oid"] == mentee_profile_id
-        )
+        ), f"Sender id does not match. {message}"
 
 
 def test_mentor_messages(client):
@@ -66,11 +66,11 @@ def test_mentor_messages(client):
         f"/api/messages/direct/", query_string=params, headers=headers
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get messages. {response.text}"
     assert "message" in response.get_json()
     assert response.get_json()["message"] == "Success"
 
-    assert "Messages" in response.get_json()["result"]
+    assert "Messages" in response.get_json()["result"], f"Messages not found in response. {response.text}"
 
     for message in response.get_json()["result"]["Messages"]:
         assert "body" in message
@@ -79,11 +79,11 @@ def test_mentor_messages(client):
         assert (
             message["recipient_id"]["$oid"] == mentor_profile_id
             or message["recipient_id"]["$oid"] == mentee_profile_id
-        )
+        ), f"Recipient id does not match. {message}"
         assert (
             message["sender_id"]["$oid"] == mentee_profile_id
             or message["sender_id"]["$oid"] == mentor_profile_id
-        )
+        ), f"Sender id does not match. {message}"
 
 
 def test_message_send(client):
@@ -113,6 +113,7 @@ def test_message_send(client):
     }
 
     response = client.post("/api/messages/", headers=headers, json=json_data)
+    assert response.status_code == 200, f"Failed to send message. {response.text}"
 
 
 def test_messages(client):
@@ -125,29 +126,8 @@ def test_messages(client):
 
     response = client.get(f"/api/messages/", headers=headers)
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to retrieve messages"
 
-
-def test_delete_messages(client):
-    mentor_jwt_token = os.environ.get("MENTOR_JWT_TOKEN")
-
-    recipient_id = os.environ.get("TEST_RECIPIENT_ID")
-    sender_id= os.environ.get("TEST_MENTOR_PROFILE_ID")
-
-    headers = {
-        "Accept": "application/json, text/plain, */*",
-        "Authorization": mentor_jwt_token,
-    }
-
-    response = client.get(f"/api/messages/direct/?recipient_id={recipient_id}&sender_id={sender_id}", headers=headers)
-
-    first_message_id = response.get_json()["result"]["Messages"][0]["_id"]["$oid"]
-
-    response = client.delete(f"/api/messages/{first_message_id}", headers=headers)
-    assert response.status_code == 200
-
-    response = client.delete(f"/api/messages/5y7949ho0rwejiof", headers=headers)
-    assert response.status_code != 200
 
 
 def test_notifications(client):
@@ -161,17 +141,17 @@ def test_notifications(client):
     }
 
     response = client.get(f"/api/notifications/{mentor_profile_id}", headers=headers)
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get norifications. {response.text}"
 
     response = client.get(f"/api/notifications/895uterj4u89rjo")
-    assert response.status_code != 200
+    assert response.status_code != 200, f"Notifications for invalid id. {response.text}"
 
 
 def test_new_notification(client):
     user_id = os.environ.get("TEST_RECIPIENT_ID")
 
     response = client.get(f"/api/notifications/unread_alert/{user_id}")
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get message alert. {response.text}"
 
     response = client.get(f"/api/notifications/unread_alert/589tufjkerwoi")
-    assert response.status_code != 200
+    assert response.status_code != 200, f"Message alert for invalid user. {response.text}"

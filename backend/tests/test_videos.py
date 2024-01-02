@@ -47,12 +47,12 @@ def test_create_video(client):
         json=json_data,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to create video. {response.text}"
     videos = get_videos(profile_id, client)
 
     assert any(
         video["title"] == "Test Video" for video in videos
-    ), "Test video not created"
+    ), f"Test video not created. {response.text}"
 
     delete_video(profile_id, headers, params, client)
 
@@ -85,4 +85,4 @@ def delete_video(profile_id, headers, params, client):
         json=json_data,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to delete video. {response.text}"

@@ -3,11 +3,22 @@ export class ExplorePage {
   constructor(role) {
     this.role = role;
   }
+  selectEnglish(){
+    cy.get(
+      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3)"
+    )
+      .trigger("mouseover");
+
+    cy.get('.ant-dropdown-menu-title-content')
+      .eq(0)
+      .click()
+  }
   componnentExists() {
     cy.url().should(
       "include",
       this.role === "mentor" ? "/mentee-gallery" : "/gallery"
     );
+
     cy.get(
       "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4.ant-typography.css-jjz8ew.css-wxm1m1"
     ).should("contain.text", "Filter by:");

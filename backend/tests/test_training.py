@@ -14,7 +14,7 @@ def test_create_training(client):
 
     response = client.post("/api/training/1", headers=headers, data=data)
 
-    assert "success" in response.get_json()
+    assert "success" in response.get_json(), f"Failed to create new training. {response.text}"
 
 
 def test_edit_training(client):
@@ -38,7 +38,7 @@ def test_edit_training(client):
             response = client.put(
                 f"/api/training/{new_training_id}", headers=headers, data=data
             )
-            assert response.status_code == 200
+            assert response.status_code == 200, f"Failed to edit training. {response.text}"
 
 
 def test_training(client):
@@ -47,12 +47,12 @@ def test_training(client):
     headers = {"Authorization": jwt_token}
 
     response_all = client.get("/api/training/1")
-    assert response_all.status_code == 200
+    assert response_all.status_code == 200, f"Failed to get trainings. {response.text}"
 
     training_id = response_all.get_json()["result"]["trainings"][0]["_id"]["$oid"]
     response = client.get(f"/api/training/train/{training_id}")
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get single training data. {response.text}"
 
     for training in response_all.get_json()["result"]["trainings"]:
         if training["name"] == "TestNameNew":
@@ -63,7 +63,7 @@ def test_training(client):
             response = client.delete(
                 f"/api/training/{new_training_id}", headers=headers
             )
-            assert response.status_code == 200
+            assert response.status_code == 200, f"Failed to delete training. {response.text}"
 
 
 def test_training_translate(client):
@@ -72,7 +72,7 @@ def test_training_translate(client):
     headers = {"Authorization": jwt_token}
 
     response_all = client.get("/api/training/1")
-    assert response_all.status_code == 200
+    assert response_all.status_code == 200, f"Failed to get all trainings. {response.text}"
 
     for training in response_all.get_json()["result"]["trainings"]:
         if training["name"] == "Mentor Training Manual":
@@ -81,7 +81,7 @@ def test_training_translate(client):
             response = client.put(
                 f"/api/training/translate/{new_training_id}", headers=headers
             )
-            assert response.status_code == 200
+            assert response.status_code == 200, f"Failed to translate training. {response.text}"
 
 
 def test_edit_training_new(client):

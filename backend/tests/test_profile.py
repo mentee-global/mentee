@@ -16,16 +16,16 @@ def test_mentor_account_info(client):
     )
     response_email = response.get_json()["result"]["account"]["email"]
 
-    assert response.status_code == 200
-    assert "email" in response.get_json()["result"]["account"]
+    assert response.status_code == 200, f"Failed to get mentor info. {response.text}"
+    assert "email" in response.get_json()["result"]["account"], f"Email not found in response. {response.text}"
     assert response_email == os.environ.get("TEST_MENTOR_EMAIL")
-    assert "name" in response.get_json()["result"]["account"]
-    assert "phone_number" in response.get_json()["result"]["account"]
+    assert "name" in response.get_json()["result"]["account"], f"Name not found in response. {response.text}"
+    assert "phone_number" in response.get_json()["result"]["account"], f"Phone not found in response. {response.text}"
     assert response.get_json()["result"]["account"]["phone_number"] == os.environ.get(
         "TEST_MENTOR_PHONE_NUMBER"
-    )
-    assert "firebase_uid" in response.get_json()["result"]["account"]
-    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"]
+    ), f"Wrong phone number in response. {response.text}"
+    assert "firebase_uid" in response.get_json()["result"]["account"], f"Firebase ID not in response. {response.text}"
+    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"], f"Wrong profile id in response. {response.text}"
 
 
 def test__wrong_info(client):
@@ -48,16 +48,16 @@ def test_mentee_account_info(client):
     )
     response_email = response.get_json()["result"]["account"]["email"]
 
-    assert response.status_code == 200
-    assert "email" in response.get_json()["result"]["account"]
+    assert response.status_code == 200, f"Failed to get mentee info. {response.text}"
+    assert "email" in response.get_json()["result"]["account"], f"Email not found in response. {response.text}"
     assert response_email == os.environ.get("TEST_MENTEE_EMAIL")
-    assert "name" in response.get_json()["result"]["account"]
-    assert "phone_number" in response.get_json()["result"]["account"]
+    assert "name" in response.get_json()["result"]["account"], f"Name not found in response. {response.text}"
+    assert "phone_number" in response.get_json()["result"]["account"], f"Phone not found in response. {response.text}"
     assert response.get_json()["result"]["account"]["phone_number"] == os.environ.get(
         "TEST_MENTEE_PHONE_NUMBER"
-    )
-    assert "firebase_uid" in response.get_json()["result"]["account"]
-    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"]
+    ), f"Wrong phone number in response. {response.text}"
+    assert "firebase_uid" in response.get_json()["result"]["account"], f"Firebase ID not in response. {response.text}"
+    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"], f"Wrong profile id in response. {response.text}"
 
 
 # test the loaded profile of the user
@@ -70,11 +70,11 @@ def test_partner_account_info(client):
     )
     response_email = response.get_json()["result"]["account"]["email"]
 
-    assert response.status_code == 200
-    assert "email" in response.get_json()["result"]["account"]
-    assert response_email == os.environ.get("TEST_PARTNER_EMAIL")
-    assert "firebase_uid" in response.get_json()["result"]["account"]
-    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"]
+    assert response.status_code == 200, f"Failed to get partner info. {response.text}"
+    assert "email" in response.get_json()["result"]["account"], f"Email not found in response. {response.text}"
+    assert response_email == os.environ.get("TEST_PARTNER_EMAIL"), f"Incorrect email in response. {response.text}"
+    assert "firebase_uid" in response.get_json()["result"]["account"], f"Firebase id not found in response. {response.text}"
+    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"], f"Wrong profile id in response. {response.text}"
 
 
 # test the loaded profile of the user
@@ -88,11 +88,11 @@ def test_guest_account_info(client):
     response_email = response.get_json()["result"]["account"]["email"]
 
     assert response.status_code == 200
-    assert "email" in response.get_json()["result"]["account"]
-    assert response_email == os.environ.get("TEST_GUEST_EMAIL")
+    assert "email" in response.get_json()["result"]["account"], f"Email not found in response. {response.text}"
+    assert response_email == os.environ.get("TEST_GUEST_EMAIL"), f"Incorrect email in response. {response.text}"
     assert "name" in response.get_json()["result"]["account"]
-    assert "firebase_uid" in response.get_json()["result"]["account"]
-    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"]
+    assert "firebase_uid" in response.get_json()["result"]["account"], f"Firebase id not found in response. {response.text}"
+    assert profile_id == response.get_json()["result"]["account"]["_id"]["$oid"], f"Wrong profile id in response. {response.text}"
 
 
 def test_mentor_profile_update_contact(client):
@@ -148,14 +148,14 @@ def update_profile_contact(jwt_token, profile_id, account_type, client):
         json=json_data,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to update contact. {response.text}"
 
     response = client.get(f"/api/account/{profile_id}?account_type={account_type}")
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get account info. {response.text}"
 
-    assert response.get_json()["result"]["account"]["phone_number"] == test_phone
-    assert response.get_json()["result"]["account"]["email"] == test_email
+    assert response.get_json()["result"]["account"]["phone_number"] == test_phone, f"Wrong phone number in response. {response.text}"
+    assert response.get_json()["result"]["account"]["email"] == test_email, f"Wrong email in response. {response.text}"
 
 
 def update_profile_info(jwt_token, profile_id, account_type, client):
@@ -210,27 +210,27 @@ def update_profile_info(jwt_token, profile_id, account_type, client):
         json=json_data,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to update profile info"
 
     response = client.get(f"/api/account/{profile_id}?account_type={account_type}")
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get account data. {response.text}"
 
-    assert response.get_json()["result"]["account"]["name"] == test_name
-    assert response.get_json()["result"]["account"]["biography"] == test_biography
-    assert response.get_json()["result"]["account"]["languages"] == test_languages
+    assert response.get_json()["result"]["account"]["name"] == test_name, f"Wrong name for user. {response.text}"
+    assert response.get_json()["result"]["account"]["biography"] == test_biography, f"Wrong biography for user. {response.text}"
+    assert response.get_json()["result"]["account"]["languages"] == test_languages, f"Wrong language data for user. {response.text}"
 
     if account_type == "1":
         assert (
             response.get_json()["result"]["account"]["professional_title"]
             == test_professional_title
-        )
+        ), f"Wrong professional title. {response.text}"
         assert (
             response.get_json()["result"]["account"]["specializations"]
             == test_specializations
-        )
-        assert response.get_json()["result"]["account"]["linkedin"] == test_linkedin
-        assert response.get_json()["result"]["account"]["website"] == test_website
+        ), f"Wrong specialization data. {response.text}"
+        assert response.get_json()["result"]["account"]["linkedin"] == test_linkedin, f"Wrong Linkedin data. {response.text}"
+        assert response.get_json()["result"]["account"]["website"] == test_website, f"Wrong website data. {response.text}"
 
     if str(account_type) == "1":
         reset_mentor_info(account_data, client)
@@ -255,4 +255,4 @@ def test_change_image(client):
         data=data,
     )
 
-    assert "success" in response.get_json()
+    assert "success" in response.get_json(), f"Failed to change image. {response.text}"

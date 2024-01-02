@@ -12,6 +12,7 @@ load_dotenv()
 def test_mentor_appointments(client):
     login_response = login_mentor(client)
     first_token = login_response.get_json()["result"]["token"]
+    assert "token" in login_response.get_json()["result"], f"Token not found in response. {login_response.text}"
     role = login_response.get_json()["result"]["role"]
 
     profile_id = os.environ.get("TEST_MENTOR_PROFILE_ID")
@@ -32,7 +33,7 @@ def test_mentor_appointments(client):
     appointments = response.get_json()["result"]["requests"]
 
     for appointment in appointments:
-        assert appointment["mentor_id"]["$oid"] == profile_id
+        assert appointment["mentor_id"]["$oid"] == profile_id, f"Received wrong appointments for the mentor {profile_id}. {response.text}"
 
 
 def test_mentee_appointments(client):
@@ -58,7 +59,7 @@ def test_mentee_appointments(client):
     appointments = response.get_json()["result"]["requests"]
 
     for appointment in appointments:
-        assert appointment["mentee_id"]["$oid"] == profile_id
+        assert appointment["mentee_id"]["$oid"] == profile_id, f"Received wrong appointments for the mentee {profile_id}. {response.text}"
 
 
 def test_create_appointment(client):
@@ -93,7 +94,7 @@ def test_create_appointment(client):
 
     response = client.post("/api/appointment/", headers=headers, json=json_data)
 
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to create appointment. {response.text}"
     assert response.get_json()["success"] == True
 
     json_data = {
@@ -110,4 +111,4 @@ def test_create_appointment(client):
 
     response = client.post("/api/appointment/", headers=headers, json=json_data)
 
-    assert response.status_code != 200
+    assert response.status_code != 200, f"Wrong appointment data should not be 200. {response.status_code} {response.text}"

@@ -3,6 +3,16 @@ const email = Cypress.env("MENTOR_EMAIL");
 const password = Cypress.env("MENTOR_PASSWORD");
 
 export class MentorDashboard {
+  selectEnglish(){
+    cy.get(
+      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3)"
+    )
+      .trigger("mouseover");
+
+    cy.get('.ant-dropdown-menu-title-content')
+      .eq(0)
+      .click()
+  }
   loginDashboard() {
     cy.get(
       "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1) > div"

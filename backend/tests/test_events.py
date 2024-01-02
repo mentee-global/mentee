@@ -123,7 +123,7 @@ def test_event_image(client):
         headers=headers,
         data=data,
     )
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to upload image for event. {response.text}"
 
     try:
         os.remove("mock_image.jpg")
@@ -160,7 +160,7 @@ def create_event(profile_id, jwt_token, event_id, client):
 
     response = client.post(f"/api/event_register", headers=headers, json=json_data)
 
-    assert response.status_code == 200, "Error creating event"
+    assert response.status_code == 200, f"Error creating event. {response.text}"
 
 
 def test_mentor_delete_events(client):
@@ -176,7 +176,7 @@ def test_mentor_delete_events(client):
 
     for event in user_events:
         response = client.delete(f"/api/events/delete/{event}", headers=headers)
-        assert response.status_code == 200, "Unable to delete the created events."
+        assert response.status_code == 200, f"Unable to delete the created events. {response.text}"
 
 
 def test_mentee_delete_events(client):
@@ -192,7 +192,7 @@ def test_mentee_delete_events(client):
 
     for event in user_events:
         response = client.delete(f"/api/events/delete/{event}", headers=headers)
-        assert response.status_code == 200, "Unable to delete the created events."
+        assert response.status_code == 200, f"Unable to delete the created events. {response.text}"
 
 
 def get_events(profile_id, jwt_token, client):

@@ -11,16 +11,16 @@ def test_get_applications(client):
     headers = {"Authorization": jwt_token}
 
     response = client.get("/api/application/", headers=headers)
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get applications. {response.text}"
     assert response.get_json()["success"] == True
 
     response = client.get("/api/application/menteeApps", headers=headers)
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get mentee applications. {response.text}"
     assert response.get_json()["success"] == True
 
     app_id = response.get_json()["result"]["mentor_applications"][0]["_id"]["$oid"]
     response = client.get(f"/api/application/{app_id}", headers=headers)
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Failed to get mentor applications. {response.text}"
     assert response.get_json()["success"] == True
 
 
@@ -60,7 +60,7 @@ def test_apply_mentor(client):
     assert (
         True == response.get_json()["success"]
         or response.get_json()["message"] == "This user is already registered"
-    ), "Unable to apply for Mentor Role"
+    ), f"Unable to apply for Mentor Role. {response.text}"
 
 
 def test_apply_mentee(client):
@@ -99,4 +99,4 @@ def test_apply_mentee(client):
     assert (
         True == response.get_json()["success"]
         or response.get_json()["message"] == "This user is already registered"
-    ), "Unable to apply for Mentor Role"
+    ), f"Unable to apply for Mentor Role. {response.text}"

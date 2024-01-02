@@ -19,13 +19,22 @@ describe("Test for chats", () => {
 
     cy.contains("button", "Login").click();
 
+    cy.wait(5000);
+
     
     cy.get(
-      ".anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn"
-    ).trigger("mouseover");
+      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3)"
+    )
+      .trigger("mouseover");
 
-    cy.contains('span', 'English').click();
-    cy.wait(3000);
+    cy.get('.ant-dropdown-menu-title-content')
+      .eq(0)
+      .click()
+    // cy.contains('span', 'English').click();
+
+    //
+
+    cy.wait(1000);
 
     cy.url().should("include", "/appointments");
 
@@ -42,7 +51,9 @@ describe("Test for chats", () => {
       .type("Hey Mentee how are you i hope you will be fine");
 
     cy.get(".ant-modal-footer > .ant-btn-primary").click();
-
+    // cy.wait(1000);
+    cy.get("body > div.ant-message.ant-message-top.css-wxm1m1 > div > div > div")
+      .should('contain.text','successfully sent message')
   });
 
   it("Login as a mentee and test message is recieved or not or test the text in message ", () => {

@@ -113,7 +113,7 @@ def test_message_send(client):
     }
 
     response = client.post("/api/messages/", headers=headers, json=json_data)
-    assert response.status_code == 200, f"Failed to send message. {response.text}"
+    assert response.get_json()["success"] == True, f"Failed to send message. {response.text}"
 
 
 def test_messages(client):

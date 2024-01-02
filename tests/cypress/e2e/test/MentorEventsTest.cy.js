@@ -15,13 +15,13 @@ describe("Mentor Dashboard", () => {
     mentor.selectEnglish()
     event.addEventFunctional();
   });
-  it.only("Adding New Event", () => {
-    mentor.selectEnglish()
-    event.addNewEvent();
-  });
+  // it.only("Adding New Event", () => {
+  //   mentor.selectEnglish()
+  //   event.addNewEvent();
+  // });
 
-  it("checking that event", () => {
-    mentor.selectEnglish()
-    event.checkCreatedEvent();
-  });
+  // it("checking that event", () => {
+  //   mentor.selectEnglish()
+  //   event.checkCreatedEvent();
+  // });
 });

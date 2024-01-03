@@ -5,10 +5,10 @@ import json
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-consts_path = os.path.join(dir_path, 'utils/consts.json')
+consts_path = os.path.join(dir_path, "utils/consts.json")
 
 load_dotenv()
-with open(consts_path, 'r') as f:
+with open(consts_path, "r") as f:
     constants = json.load(f)
 
 
@@ -22,12 +22,16 @@ def test_get_applications(client):
     assert response.get_json()["success"] == True
 
     response = client.get("/api/application/menteeApps", headers=headers)
-    assert response.status_code == 200, f"Failed to get mentee applications. {response.text}"
+    assert (
+        response.status_code == 200
+    ), f"Failed to get mentee applications. {response.text}"
     assert response.get_json()["success"] == True
 
     app_id = response.get_json()["result"]["mentor_applications"][0]["_id"]["$oid"]
     response = client.get(f"/api/application/{app_id}", headers=headers)
-    assert response.status_code == 200, f"Failed to get mentor applications. {response.text}"
+    assert (
+        response.status_code == 200
+    ), f"Failed to get mentor applications. {response.text}"
     assert response.get_json()["success"] == True
 
 

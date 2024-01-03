@@ -4,10 +4,10 @@ import json
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-consts_path = os.path.join(dir_path, 'utils/consts.json')
+consts_path = os.path.join(dir_path, "utils/consts.json")
 
 load_dotenv()
-with open(consts_path, 'r') as f:
+with open(consts_path, "r") as f:
     constants = json.load(f)
 
 
@@ -37,7 +37,9 @@ def test_mentee_messages(client):
     assert "message" in response.get_json()
     assert response.get_json()["message"] == "Success"
 
-    assert "Messages" in response.get_json()["result"], f"Messages not found in response. {response.text}"
+    assert (
+        "Messages" in response.get_json()["result"]
+    ), f"Messages not found in response. {response.text}"
 
     for message in response.get_json()["result"]["Messages"]:
         assert "body" in message
@@ -77,7 +79,9 @@ def test_mentor_messages(client):
     assert "message" in response.get_json()
     assert response.get_json()["message"] == "Success"
 
-    assert "Messages" in response.get_json()["result"], f"Messages not found in response. {response.text}"
+    assert (
+        "Messages" in response.get_json()["result"]
+    ), f"Messages not found in response. {response.text}"
 
     for message in response.get_json()["result"]["Messages"]:
         assert "body" in message
@@ -120,7 +124,9 @@ def test_message_send(client):
     }
 
     response = client.post("/api/messages/", headers=headers, json=json_data)
-    assert response.get_json()["success"] == True, f"Failed to send message. {response.text}"
+    assert (
+        response.get_json()["success"] == True
+    ), f"Failed to send message. {response.text}"
 
 
 def test_messages(client):
@@ -134,7 +140,6 @@ def test_messages(client):
     response = client.get(f"/api/messages/", headers=headers)
 
     assert response.status_code == 200, f"Failed to retrieve messages"
-
 
 
 def test_notifications(client):
@@ -161,4 +166,6 @@ def test_new_notification(client):
     assert response.status_code == 200, f"Failed to get message alert. {response.text}"
 
     response = client.get(f"/api/notifications/unread_alert/589tufjkerwoi")
-    assert response.status_code != 200, f"Message alert for invalid user. {response.text}"
+    assert (
+        response.status_code != 200
+    ), f"Message alert for invalid user. {response.text}"

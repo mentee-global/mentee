@@ -10,10 +10,10 @@ import json
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-consts_path = os.path.join(dir_path, 'utils/consts.json')
+consts_path = os.path.join(dir_path, "utils/consts.json")
 
 load_dotenv()
-with open(consts_path, 'r') as f:
+with open(consts_path, "r") as f:
     constants = json.load(f)
 
 
@@ -130,7 +130,9 @@ def test_event_image(client):
         headers=headers,
         data=data,
     )
-    assert response.status_code == 200, f"Failed to upload image for event. {response.text}"
+    assert (
+        response.status_code == 200
+    ), f"Failed to upload image for event. {response.text}"
 
     try:
         os.remove("mock_image.jpg")
@@ -183,7 +185,9 @@ def test_mentor_delete_events(client):
 
     for event in user_events:
         response = client.delete(f"/api/events/delete/{event}", headers=headers)
-        assert response.status_code == 200, f"Unable to delete the created events. {response.text}"
+        assert (
+            response.status_code == 200
+        ), f"Unable to delete the created events. {response.text}"
 
 
 def test_mentee_delete_events(client):
@@ -199,7 +203,9 @@ def test_mentee_delete_events(client):
 
     for event in user_events:
         response = client.delete(f"/api/events/delete/{event}", headers=headers)
-        assert response.status_code == 200, f"Unable to delete the created events. {response.text}"
+        assert (
+            response.status_code == 200
+        ), f"Unable to delete the created events. {response.text}"
 
 
 def get_events(profile_id, jwt_token, client):

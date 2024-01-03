@@ -5,10 +5,10 @@ import json
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-consts_path = os.path.join(dir_path, 'utils/consts.json')
+consts_path = os.path.join(dir_path, "utils/consts.json")
 
 load_dotenv()
-with open(consts_path, 'r') as f:
+with open(consts_path, "r") as f:
     constants = json.load(f)
 
 
@@ -65,9 +65,7 @@ def test_create_video(client):
 
 def get_videos(profile_id, client):
     mentor_role = constants["TEST_MENTOR_ROLE"]
-    response = client.get(
-        f"/api/account/{profile_id}?account_type={mentor_role}"
-    )
+    response = client.get(f"/api/account/{profile_id}?account_type={mentor_role}")
 
     return response.get_json()["result"]["account"]["videos"]
 

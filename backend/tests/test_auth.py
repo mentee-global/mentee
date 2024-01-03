@@ -7,10 +7,10 @@ from .utils.login_utils import *
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-consts_path = os.path.join(dir_path, 'utils/consts.json')
+consts_path = os.path.join(dir_path, "utils/consts.json")
 
 load_dotenv()
-with open(consts_path, 'r') as f:
+with open(consts_path, "r") as f:
     constants = json.load(f)
 
 
@@ -27,7 +27,9 @@ def test_login_partner(client):
     ), "Unable to log in with the correct partner credentials"
 
     # logged in user must have a token
-    assert "token" in response.get_json()["result"], f"Failed to get token from response. {response.text}"
+    assert (
+        "token" in response.get_json()["result"]
+    ), f"Failed to get token from response. {response.text}"
 
     jwt_token = response.get_json()["result"]["token"]
     decoded_token = jwt.decode(jwt_token, options={"verify_signature": False})
@@ -35,7 +37,9 @@ def test_login_partner(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == constants["TEST_PARTNER_ROLE"], f"Incorrect role in token claims {decoded_token}"
+    assert (
+        decoded_token["claims"]["role"] == constants["TEST_PARTNER_ROLE"]
+    ), f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_mentor_wrong_password(client):
@@ -73,7 +77,9 @@ def test_login_mentor(client):
     ), "Unable to log in with the correct mentor credentials."
 
     # logged in user must have a token
-    assert "token" in response.get_json()["result"], f"Failed to get token from response. {response.text}"
+    assert (
+        "token" in response.get_json()["result"]
+    ), f"Failed to get token from response. {response.text}"
 
     jwt_token = response.get_json()["result"]["token"]
     decoded_token = jwt.decode(jwt_token, options={"verify_signature": False})
@@ -81,7 +87,9 @@ def test_login_mentor(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == constants["TEST_MENTOR_ROLE"], f"Incorrect role in token claims {decoded_token}"
+    assert (
+        decoded_token["claims"]["role"] == constants["TEST_MENTOR_ROLE"]
+    ), f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_mentor_wrong_password(client):
@@ -119,7 +127,9 @@ def test_login_mentee(client):
     ), "Unable to log in with the correct mentee credentials."
 
     # logged in user must have a token
-    assert "token" in response.get_json()["result"], f"Failed to get token from response. {response.text}"
+    assert (
+        "token" in response.get_json()["result"]
+    ), f"Failed to get token from response. {response.text}"
 
     jwt_token = response.get_json()["result"]["token"]
     decoded_token = jwt.decode(jwt_token, options={"verify_signature": False})
@@ -127,7 +137,9 @@ def test_login_mentee(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == constants["TEST_MENTEE_ROLE"], f"Incorrect role in token claims {decoded_token}"
+    assert (
+        decoded_token["claims"]["role"] == constants["TEST_MENTEE_ROLE"]
+    ), f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_mentee_wrong_password(client):
@@ -165,7 +177,9 @@ def test_login_guest(client):
     ), "Unable to log in with the correct guest credentials."
 
     # logged in user must have a token
-    assert "token" in response.get_json()["result"], f"Failed to get token from response. {response.text}"
+    assert (
+        "token" in response.get_json()["result"]
+    ), f"Failed to get token from response. {response.text}"
 
     jwt_token = response.get_json()["result"]["token"]
     decoded_token = jwt.decode(jwt_token, options={"verify_signature": False})
@@ -173,7 +187,9 @@ def test_login_guest(client):
     # the decoded token payload must have the following keys and must match the test data
     assert "role" in decoded_token["claims"]
 
-    assert decoded_token["claims"]["role"] == constants["TEST_GUEST_ROLE"], f"Incorrect role in token claims {decoded_token}"
+    assert (
+        decoded_token["claims"]["role"] == constants["TEST_GUEST_ROLE"]
+    ), f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_guest_wrong_password(client):
@@ -210,7 +226,11 @@ def test_verify_email(client):
 
     response = client.get("/verifyEmail", query_string={"email": mentor_email})
 
-    assert "success" in response.get_json(), f"Test mentor email not verified. {response.text}"
+    assert (
+        "success" in response.get_json()
+    ), f"Test mentor email not verified. {response.text}"
 
     response = client.get("/verifyEmail", query_string={"email": "test@example.com"})
-    assert response.status_code != 200, f"Invalid email should not be verified. {response.text}"
+    assert (
+        response.status_code != 200
+    ), f"Invalid email should not be verified. {response.text}"

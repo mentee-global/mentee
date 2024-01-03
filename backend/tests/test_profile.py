@@ -48,7 +48,7 @@ def test__wrong_info(client):
 
 # test the loaded profile of the user
 def test_mentee_account_info(client):
-    profile_id = os.environ.get("TEST_MENTEE_PROFILE_ID")
+    profile_id = constants["TEST_MENTEE_PROFILE_ID"]
     mentee_role = constants["TEST_MENTEE_ROLE"]
 
     # get profile data

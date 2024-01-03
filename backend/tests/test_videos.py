@@ -64,8 +64,9 @@ def test_create_video(client):
 
 
 def get_videos(profile_id, client):
+    mentor_role = constants["TEST_MENTOR_ROLE"]
     response = client.get(
-        f"/api/account/{profile_id}?account_type={os.environ.get('TEST_MENTOR_ROLE')}"
+        f"/api/account/{profile_id}?account_type={mentor_role}"
     )
 
     return response.get_json()["result"]["account"]["videos"]

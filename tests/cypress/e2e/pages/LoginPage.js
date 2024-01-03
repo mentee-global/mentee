@@ -78,7 +78,8 @@ export class LoginPage {
   isFunctional() {
     let mappedUsers = this.users.map((user, id) => {
       cy.get(
-        `#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(${id + 1
+        `#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(${
+          id + 1
         }) > div`
       ).click();
       cy.get(".ant-typography.css-wxm1m1").should("contain", user);
@@ -107,8 +108,9 @@ export class LoginPage {
     let previousLanguage = {};
     I18N_LANGUAGES.map((language, index) => {
       // Loading the translation
-      const translationPath = `${Cypress.config("rootPath")}/public/locales/${language.value
-        }/translation.json`;
+      const translationPath = `${Cypress.config("rootPath")}/public/locales/${
+        language.value
+      }/translation.json`;
       cy.readFile(translationPath).then((currentLanguage) => {
         if (index == 0) {
           previousLanguage = currentLanguage;
@@ -145,8 +147,9 @@ export class LoginPage {
     let previousLanguage = {};
     I18N_LANGUAGES.map((language, index) => {
       // Loading the translation
-      const translationPath = `${Cypress.config("rootPath")}/public/locales/${language.value
-        }/translation.json`;
+      const translationPath = `${Cypress.config("rootPath")}/public/locales/${
+        language.value
+      }/translation.json`;
       cy.readFile(translationPath).then((currentLanguage) => {
         if (index == 0) {
           previousLanguage = currentLanguage;
@@ -207,11 +210,7 @@ export class LoginPage {
     this.verifyUrlContains(expectedUrl);
   }
   loginMentor() {
-    this.login(
-      role1,
-      validMentorEmail,
-      validMentorPassword,
-      "/appointments");
+    this.login(role1, validMentorEmail, validMentorPassword, "/appointments");
   }
   loginMentee() {
     this.login(
@@ -230,10 +229,7 @@ export class LoginPage {
     );
   }
   loginGuest() {
-    this.login(role4,
-      validGuestEmail,
-      validGuestPassword,
-      "/gallery");
+    this.login(role4, validGuestEmail, validGuestPassword, "/gallery");
   }
   invalidCredentialMentor() {
     this.login(role1, invalidEmail, invalidPassword, "/login");

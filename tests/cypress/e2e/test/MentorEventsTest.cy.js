@@ -8,11 +8,11 @@ describe("Mentor Dashboard", () => {
     mentor.loginDashboard();
   });
   it("Check the Event Page Functionality", () => {
-    mentor.selectEnglish()
+    mentor.selectEnglish();
     event.isFunctional();
   });
   it("Check the Add Event Modal Functionality", () => {
-    mentor.selectEnglish()
+    mentor.selectEnglish();
     event.addEventFunctional();
   });
   // it.only("Adding New Event", () => {

@@ -8,10 +8,10 @@ from api.views.admin import *
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-consts_path = os.path.join(dir_path, 'utils/consts.json')
+consts_path = os.path.join(dir_path, "utils/consts.json")
 
 load_dotenv()
-with open(consts_path, 'r') as f:
+with open(consts_path, "r") as f:
     constants = json.load(f)
 
 
@@ -22,14 +22,26 @@ def test_admin_info(client):
 
     response = client.get(f"/api/admin/{admin_id}")
 
-    assert "name" in response.get_json()["result"]["admin"], f"Admin name not in {response.text}"
-    assert "firebase_uid" in response.get_json()["result"]["admin"], f"Firebase id not in {response.text}"
-    assert "email" in response.get_json()["result"]["admin"], f"Email not in {response.text}"
+    assert (
+        "name" in response.get_json()["result"]["admin"]
+    ), f"Admin name not in {response.text}"
+    assert (
+        "firebase_uid" in response.get_json()["result"]["admin"]
+    ), f"Firebase id not in {response.text}"
+    assert (
+        "email" in response.get_json()["result"]["admin"]
+    ), f"Email not in {response.text}"
     assert "_id" in response.get_json()["result"]["admin"], f"ID not in {response.text}"
 
-    assert admin_id == response.get_json()["result"]["admin"]["_id"]["$oid"], f"Wrong value of admin id. {admin_id} {response.text}"
-    assert admin_email == response.get_json()["result"]["admin"]["email"], f"Wrong admin email. {admin_email} {response.text}"
-    assert admin_name == response.get_json()["result"]["admin"]["name"], f"Wrong admin name. {admin_name} {response.text}"
+    assert (
+        admin_id == response.get_json()["result"]["admin"]["_id"]["$oid"]
+    ), f"Wrong value of admin id. {admin_id} {response.text}"
+    assert (
+        admin_email == response.get_json()["result"]["admin"]["email"]
+    ), f"Wrong admin email. {admin_email} {response.text}"
+    assert (
+        admin_name == response.get_json()["result"]["admin"]["name"]
+    ), f"Wrong admin name. {admin_name} {response.text}"
 
 
 def test_admin_wrong_info(client):
@@ -37,12 +49,16 @@ def test_admin_wrong_info(client):
 
     response = client.get(f"/api/admin/{admin_id}")
 
-    assert response.status_code == 422, f"Wrong admin id should be status 422. {response.status_code}"
+    assert (
+        response.status_code == 422
+    ), f"Wrong admin id should be status 422. {response.status_code}"
 
 
 def test_admin_auth(client):
     login_response = login_admin(client)
-    assert "token" in login_response.get_json()["result"], f"Token not found in response. {login_response.text}"
+    assert (
+        "token" in login_response.get_json()["result"]
+    ), f"Token not found in response. {login_response.text}"
     first_token = login_response.get_json()["result"]["token"]
 
     refresh_token = get_refresh_token(first_token)
@@ -67,7 +83,9 @@ def test_upload_emails(client):
     response = client.post("/api/upload/accountsEmails", headers=headers, data=data)
 
     assert "success" in response.get_json()
-    assert True == response.get_json()["success"], f"Failed to upload bulk emails. {response.text}"
+    assert (
+        True == response.get_json()["success"]
+    ), f"Failed to upload bulk emails. {response.text}"
 
 
 def test_duplicate_guest(client):
@@ -138,4 +156,6 @@ def test_delete_guest_wrong_id(client):
 
     response = client.delete(f"/api/account/4/{new_guest_id}", headers=headers)
 
-    assert response.status_code == 422, f"Non existent guest delete should be error. {response.text}"
+    assert (
+        response.status_code == 422
+    ), f"Non existent guest delete should be error. {response.text}"

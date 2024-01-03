@@ -3,15 +3,12 @@ export class ExplorePage {
   constructor(role) {
     this.role = role;
   }
-  selectEnglish(){
+  selectEnglish() {
     cy.get(
       "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3)"
-    )
-      .trigger("mouseover");
+    ).trigger("mouseover");
 
-    cy.get('.ant-dropdown-menu-title-content')
-      .eq(0)
-      .click()
+    cy.get(".ant-dropdown-menu-title-content").eq(0).click();
   }
   componnentExists() {
     cy.url().should(
@@ -62,11 +59,12 @@ export class ExplorePage {
         ).should("have.attr", "value", value);
         cy.get(
           "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.gallery-card-body > div.gallery-card-header > div > h1"
-        ).invoke('text')
+        )
+          .invoke("text")
           .then((text) => {
-            const val = text.toLowerCase()
-            expect(val).to.include(value)
-          })
+            const val = text.toLowerCase();
+            expect(val).to.include(value);
+          });
         cy.get(
           "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
         ).clear();
@@ -85,11 +83,11 @@ export class ExplorePage {
         cy.get(
           "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.gallery-card-body > div.gallery-card-header > div > h1"
         )
-          .invoke('text')
+          .invoke("text")
           .then((text) => {
-            const val = text.toLowerCase()
-            expect(val).to.include(value)
-          })
+            const val = text.toLowerCase();
+            expect(val).to.include(value);
+          });
         cy.get(
           "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
         ).clear();

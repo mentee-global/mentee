@@ -4,7 +4,6 @@ import { ProfilePage } from "../pages/ProfilePage";
 const profile = new ProfilePage();
 const login = new LoginPage();
 
-
 describe("Profile Page Test Correct", () => {
   it("should get content of mentor profile div", () => {
     cy.visit("/login");

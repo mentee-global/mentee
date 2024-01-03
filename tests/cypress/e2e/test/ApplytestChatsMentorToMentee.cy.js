@@ -21,15 +21,11 @@ describe("Test for chats", () => {
 
     cy.wait(5000);
 
-    
     cy.get(
       "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3)"
-    )
-      .trigger("mouseover");
+    ).trigger("mouseover");
 
-    cy.get('.ant-dropdown-menu-title-content')
-      .eq(0)
-      .click()
+    cy.get(".ant-dropdown-menu-title-content").eq(0).click();
     // cy.contains('span', 'English').click();
 
     //
@@ -52,8 +48,9 @@ describe("Test for chats", () => {
 
     cy.get(".ant-modal-footer > .ant-btn-primary").click();
     // cy.wait(1000);
-    cy.get("body > div.ant-message.ant-message-top.css-wxm1m1 > div > div > div")
-      .should('contain.text','successfully sent message')
+    cy.get(
+      "body > div.ant-message.ant-message-top.css-wxm1m1 > div > div > div"
+    ).should("contain.text", "successfully sent message");
   });
 
   it("Login as a mentee and test message is recieved or not or test the text in message ", () => {
@@ -71,21 +68,16 @@ describe("Test for chats", () => {
 
     cy.wait(2000);
 
-  
     cy.visit(`messages/${MENTOR_PROFILE_ID}?user_type=1`);
-    
+
     cy.wait(3000);
 
- 
     cy.get(
       "#root > section > main > section > aside > div > div.messages-sidebar > div > div > div > div > div.ant-card-meta-detail > div.ant-card-meta-description"
-    ).should('have.text',"Hey Mentee how are you i hope you will be fine");
-  
+    ).should("have.text", "Hey Mentee how are you i hope you will be fine");
+
     // cy.get(
     //   "#root > section > main > section > section > div > div.conversation-content > div.ant-spin-nested-loading.css-wxm1m1 > div > div:nth-child(46) > div > div > div > div"
     // ).should("contain", "Hey Mentee how are you i hope you will be fine");
-
   });
 });
-
-  

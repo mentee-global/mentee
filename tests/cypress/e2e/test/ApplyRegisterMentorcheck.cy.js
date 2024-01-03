@@ -140,20 +140,17 @@ describe("Registration for mentor", () => {
       force: true,
     });
 
-    cy.get('body').then($body => {
-      
-      if ($body.find('#firstName').length) {
-       
-        cy.get('#firstName').then($el => {
-          if ($el.is(':visible')) {
-       
+    cy.get("body").then(($body) => {
+      if ($body.find("#firstName").length) {
+        cy.get("#firstName").then(($el) => {
+          if ($el.is(":visible")) {
             cy.get("#firstName").type("alex");
             cy.get("#lastName").type("john");
-    
+
             cy.get("#phoneNumber").type("+44 318 540229872");
-    
+
             cy.get("#hearAboutUs").type("From My company");
-    
+
             cy.get("#knowledgeLocation")
               .should("have.attr", "rows", "3")
               .should(
@@ -166,7 +163,7 @@ describe("Registration for mentor", () => {
               .type(
                 "i have knowledge of new yourk state city baffelo country is america"
               );
-    
+
             cy.get("#previousLocations")
               .should("have.attr", "rows", "3")
               .should(
@@ -177,7 +174,7 @@ describe("Registration for mentor", () => {
               .should("have.attr", "aria-required", "true")
               .should("have.class", "ant-input")
               .type("I lived in america new yourk and now i am live from UK");
-    
+
             cy.get("#employerName")
               .should(
                 "have.attr",
@@ -187,7 +184,7 @@ describe("Registration for mentor", () => {
               .should("have.attr", "aria-required", "true")
               .should("have.class", "ant-input")
               .type("I lived in america new yourk and now i am live from UK");
-    
+
             cy.get("#jobDescription")
               .should(
                 "have.attr",
@@ -197,7 +194,7 @@ describe("Registration for mentor", () => {
               .should("have.attr", "aria-required", "true")
               .should("have.class", "ant-input")
               .type("I am working as a tester");
-    
+
             cy.get("#jobDuration")
               .should("have.attr", "type", "search")
               .should("have.attr", "autocomplete", "off")
@@ -208,14 +205,18 @@ describe("Registration for mentor", () => {
               .should("have.attr", "aria-owns", "jobDuration_list")
               .should("have.attr", "aria-autocomplete", "list")
               .should("have.attr", "aria-controls", "jobDuration_list")
-              .should("have.attr", "aria-activedescendant", "jobDuration_list_0")
+              .should(
+                "have.attr",
+                "aria-activedescendant",
+                "jobDuration_list_0"
+              )
               .should("have.attr", "aria-required", "true")
               .click();
-    
+
             cy.get(
               "body > div:nth-child(3) > div > div > div.rc-virtual-list > div.rc-virtual-list-holder > div > div > div.ant-select-item.ant-select-item-option.ant-select-item-option-active > div"
             ).click();
-    
+
             cy.get("#commitDuration")
               .should("have.attr", "type", "search")
               .should("have.attr", "autocomplete", "off")
@@ -233,35 +234,35 @@ describe("Registration for mentor", () => {
               )
               .should("have.attr", "aria-required", "true")
               .click();
-    
+
             cy.get(
               "body > div:nth-child(4) > div > div > div.rc-virtual-list > div.rc-virtual-list-holder > div > div > div.ant-select-item.ant-select-item-option.ant-select-item-option-active > div"
             ).click();
-    
+
             cy.get(
               "#immigrationStatus > label:nth-child(1) > span.ant-radio"
             ).click();
-    
+
             cy.get(
               "#communityStatus > label:nth-child(1) > span.ant-radio"
             ).click();
-    
+
             cy.get(
               "#economicBackground  > label:nth-child(1) > span.ant-radio"
             ).click();
-    
+
             cy.get(
               "#isPersonOfColor  > label:nth-child(1) > span.ant-radio"
             ).click();
-    
+
             cy.get(
               "#isPersonOfColor  > label:nth-child(1) > span.ant-radio"
             ).click();
-    
+
             cy.get(
               "#isPersonOfColor  > label:nth-child(1) > span.ant-radio"
             ).click();
-    
+
             cy.get("#genderIdentification")
               .should("have.attr", "type", "search")
               .should("have.attr", "autocomplete", "off")
@@ -276,13 +277,13 @@ describe("Registration for mentor", () => {
               .should("have.attr", "unselectable", "on")
               .should("have.value", "")
               .click();
-    
+
             cy.contains("as a man").click();
-    
+
             cy.get(
               "#isMarginalized > label:nth-child(1) > span:nth-child(2)"
             ).click();
-    
+
             cy.get("#languageBackground")
               .should(
                 "have.attr",
@@ -292,8 +293,10 @@ describe("Registration for mentor", () => {
               .should("have.attr", "aria-required", "true")
               .should("have.class", "ant-input")
               .should("have.attr", "type", "text")
-              .type("No i can speak only english no other language i can speak");
-    
+              .type(
+                "No i can speak only english no other language i can speak"
+              );
+
             cy.get("#referral")
               .should(
                 "have.attr",
@@ -304,24 +307,20 @@ describe("Registration for mentor", () => {
               .should("have.class", "ant-input")
               .should("have.attr", "type", "text")
               .type("No i do not know nay one");
-    
-            cy.get("#canDonate > label:nth-child(3) > span:nth-child(2)").click();
+
+            cy.get(
+              "#canDonate > label:nth-child(3) > span:nth-child(2)"
+            ).click();
             cy.get('button.ant-btn[type="submit"]').click();
-    
-            cy.url().should("include", "/application-form");    
 
-
+            cy.url().should("include", "/application-form");
           } else {
-            
-            cy.log('User Already exists.');
+            cy.log("User Already exists.");
           }
         });
       } else {
-       
-        cy.log('User Already exists');
+        cy.log("User Already exists");
       }
     });
-    
-
   });
 });

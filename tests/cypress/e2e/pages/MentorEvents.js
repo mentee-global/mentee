@@ -64,28 +64,23 @@ export class MentorEvent {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
         "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
-      )
-        .click()
+      ).click();
       cy.get(
         "#root > section > main > div.gallery-container > div:nth-child(1) > div > button"
-      )
-        .click()
+      ).click();
       cy.get(
-        ':nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(1) > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-select > .ant-select-selector > .ant-select-selection-overflow'
-      )
-        .click()
-      cy.wait(500)
+        ":nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(1) > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-select > .ant-select-selector > .ant-select-selection-overflow"
+      ).click();
+      cy.wait(500);
       cy.get(
-        'body > div:nth-child(6) > div > div > div.rc-virtual-list > div.rc-virtual-list-holder > div > div > div.ant-select-item.ant-select-item-option.ant-select-item-option-active > div'
-      )
-        .click()
-      cy.wait(1000)
+        "body > div:nth-child(6) > div > div > div.rc-virtual-list > div.rc-virtual-list-holder > div > div > div.ant-select-item.ant-select-item-option.ant-select-item-option-active > div"
+      ).click();
+      cy.wait(1000);
       cy.get(
         "body > div:nth-child(5) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div.ant-form-item.css-wxm1m1.ant-form-item-has-success > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div > div > div > div"
-      )
-        .click()
+      ).click();
       cy.get(
-        'body > div:nth-child(5) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div:nth-child(2) > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div'
+        "body > div:nth-child(5) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div:nth-child(2) > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div"
       )
         .click()
         .type("Sample Event");
@@ -94,9 +89,9 @@ export class MentorEvent {
       )
         .click()
         .type("2023-12-07{enter}");
-        cy.get(
-          ':nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(3) > :nth-child(1) > :nth-child(2) > :nth-child(1) > :nth-child(1) > [style="display: inline-block; margin-bottom: 0px;"] > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-picker > .ant-picker-input > #start_time'
-        )
+      cy.get(
+        ':nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(3) > :nth-child(1) > :nth-child(2) > :nth-child(1) > :nth-child(1) > [style="display: inline-block; margin-bottom: 0px;"] > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-picker > .ant-picker-input > #start_time'
+      )
         .click()
         .type("1:00 AM{enter}");
       cy.get(
@@ -115,14 +110,13 @@ export class MentorEvent {
         .click()
         .type("testing the add event{enter}");
       cy.get(
-        ':nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(6) > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > #url'
+        ":nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(6) > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > #url"
       )
         .click()
         .type("http://event@mente.com{enter}");
       cy.get(
-        ':nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-footer > .ant-btn-primary'
-      )
-        .click();
+        ":nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-footer > .ant-btn-primary"
+      ).click();
     });
   }
 

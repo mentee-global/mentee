@@ -9,7 +9,7 @@ describe("Mentor Dashboard", () => {
     mentor.dashboardFunctionality();
   });
   it("Should Change the Language", () => {
-    mentor.selectEnglish()
+    mentor.selectEnglish();
     mentor.changeLanguage();
   });
 });

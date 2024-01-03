@@ -85,13 +85,12 @@ describe("Registration for mentee", () => {
       force: true,
     });
 
-    cy.get('body').then($body => {
+    cy.get("body").then(($body) => {
       // Check if the element exists
-      if ($body.find('#firstName').length) {
+      if ($body.find("#firstName").length) {
         // Now check if it's visible
-        cy.get('#firstName').then($el => {
-          if ($el.is(':visible')) {
-         
+        cy.get("#firstName").then(($el) => {
+          if ($el.is(":visible")) {
             cy.get("#firstName").type("alex");
             cy.get("#lastName").type("john");
             cy.get("#organization").type("capregsoft");
@@ -112,18 +111,15 @@ describe("Registration for mentee", () => {
             cy.get('input[value="yes"]').click({ force: true });
             cy.get("#questions").type("Will this give me desired income?");
             cy.get('button.ant-btn[type="submit"]').click();
-
           } else {
             // If not visible, log a message
-            cy.log('User Already exists');
+            cy.log("User Already exists");
           }
         });
       } else {
         // If the element does not exist, log a message
-        cy.log('User Already exixts.');
+        cy.log("User Already exixts.");
       }
     });
-    
-
   });
 });

@@ -108,3 +108,4 @@ def test_edit_training_new(client):
     response = client.put(
         "/api/training/6584030f253f9db5ef3af0c3", headers=headers, data=data
     )
+    assert "success" in response.get_json()

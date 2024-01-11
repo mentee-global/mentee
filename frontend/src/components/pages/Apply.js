@@ -25,6 +25,7 @@ function Apply({ history }) {
   const [currentState, setCurrentState] = useState();
   const [hasApplied, setHasApplied] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [applicationData, setApplicationData] = useState(null);
   const query = useQuery();
 
   const stateItems = [
@@ -56,7 +57,7 @@ function Apply({ history }) {
     if (currentState !== undefined) {
       history.push({
         pathname: stateItems[currentState].redirect,
-        state: { email, role, ignoreHomeLayout: true },
+        state: { email, role, ignoreHomeLayout: true, applicationData },
       });
     }
 
@@ -88,21 +89,27 @@ function Apply({ history }) {
       // Partner's email needs to be verified by admin first
       messageApi.error(t("apply.partnerVerify"));
     } else {
-      const state = await getApplicationStatus(email, role);
+      const { state, application_data } = await getApplicationStatus(
+        email,
+        role
+      );
       switch (state) {
         case NEW_APPLICATION_STATUS.PENDING:
           messageApi.info(t("apply.confirmation"));
           setHasApplied(true);
           setCurrentState(stepNumeration.apply);
+          setApplicationData(application_data);
           break;
         case NEW_APPLICATION_STATUS.APPROVED:
           setCurrentState(stepNumeration.training);
+          setApplicationData(application_data);
           break;
         case NEW_APPLICATION_STATUS.BUILDPROFILE:
           setCurrentState(stepNumeration.buildProfile);
           break;
         default:
           setCurrentState(stepNumeration.apply);
+          setApplicationData(application_data);
           break;
       }
     }

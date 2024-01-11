@@ -17,6 +17,9 @@ function Training({ location, history }) {
   const query = useQuery();
   const role = location.state?.role || parseInt(query.get("role"));
   const email = location.state?.email || query.get("email");
+  const applicationData =
+    location.state?.applicationData || query.get("applicationData");
+  const [buttonFlag, setButtonFlag] = useState(false);
   if (!role || !email) history.push("/");
 
   const onCompleteTraining = async () => {
@@ -43,6 +46,10 @@ function Training({ location, history }) {
       );
     }
     setLoading(false);
+  };
+
+  const allChecked = (value) => {
+    setButtonFlag(value);
   };
 
   return (
@@ -97,13 +104,18 @@ function Training({ location, history }) {
           <LanguageDropdown size="large" />
         </div>
         <Typography.Title level={2}>{t("apply.training")}</Typography.Title>
-        <TrainingList role={role} />
+        <TrainingList
+          role={role}
+          applicationData={applicationData}
+          allChecked={allChecked}
+        />
         <br />
         <Button
           type="primary"
           style={{ width: "100%" }}
           loading={loading}
           onClick={onCompleteTraining}
+          disabled={!buttonFlag}
         >
           {t("apply.completeTrainings")}
         </Button>

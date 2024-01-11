@@ -1,4 +1,5 @@
 from os import name
+from bson import is_valid
 from flask import Blueprint, request
 from sqlalchemy import null
 from api.models import (
@@ -167,7 +168,9 @@ def get_application_status(email, role):
         logger.info(msg)
         return create_response(message=msg, data={"state": None})
 
-    return create_response(data={"state": application.application_state})
+    return create_response(
+        data={"state": application.application_state, "application_data": application}
+    )
 
 
 @apply.route("/profile/exists/<email>/<role>", methods=["GET"])
@@ -221,6 +224,28 @@ def check_profile_exists(email, role):
                     )
 
     return create_response(data={"profileExists": profile_exists})
+
+
+@apply.route("/changeStateTraining", methods=["POST"])
+def change_state_traing_status():
+    data = request.get_json()
+    role = data.get("role")
+    role = int(role)
+    id = data.get("id")
+    traing_status = data.get("traing_status")
+
+    if role == Account.MENTOR:
+        try:
+            application = NewMentorApplication.objects.get(id=id)
+        except:
+            application = MentorApplication.objects.get(id=id)
+    if role == Account.MENTEE:
+        application = MenteeApplication.objects.get(id=id)
+    if role == Account.PARTNER:
+        application = PartnerApplication.objects.get(id=id)
+    application["traingStatus"] = traing_status
+    application.save()
+    return create_response(data={"state": "ok"})
 
 
 @apply.route("/changeStateBuildProfile/<email>/<role>", methods=["GET"])

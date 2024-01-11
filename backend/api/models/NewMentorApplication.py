@@ -1,5 +1,6 @@
 from tokenize import String
 from api.core import Mixin
+from sqlalchemy import false
 from .base import db
 from mongoengine import *
 
@@ -29,6 +30,7 @@ class NewMentorApplication(Document, Mixin):
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
     notes = StringField()
+    traingStatus = DictField(required=False)
 
     def __repr__(self):
         return f"""<Mentor Application email: {self.email}

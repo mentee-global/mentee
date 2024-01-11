@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { List, Button, Typography, Skeleton } from "antd";
-import { getTrainings, downloadBlob, getTrainVideo } from "utils/api";
+import { List, Button, Skeleton, Checkbox } from "antd";
+import {
+  getTrainings,
+  downloadBlob,
+  getTrainVideo,
+  changeStateTraining,
+} from "utils/api";
 import ReactPlayer from "react-player/youtube";
 
 import "./css/TrainingList.scss";
@@ -19,43 +24,114 @@ const placeholder = Array(5).fill({
   url: "https://4x.ant.design/components/form/#API",
 });
 
-const getTrainingComponent = (training) => {
-  switch (training.typee) {
-    case TRAINING_TYPE.VIDEO:
-      return (
-        <ReactPlayer
-          className="react-player"
-          width={400}
-          height={300}
-          url={training.url}
-        />
-      );
-    case TRAINING_TYPE.LINK:
-      return (
-        <a className="external-link" href={training.url} target="_blank">
-          {training.url}
-        </a>
-      );
-    case TRAINING_TYPE.DOCUMENT:
-      return (
-        <Button
-          onClick={async () => {
-            let response = await getTrainVideo(training.id);
-            downloadBlob(response, training.file_name);
-          }}
-        >
-          {training.file_name}
-        </Button>
-      );
-    default:
-      return null;
-  }
-};
-
 const TrainingList = (props) => {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [trainingData, setTrainingData] = useState();
+  const [traingStatus, setTrainingStatus] = useState(
+    props.applicationData && props.applicationData.traingStatus
+      ? props.applicationData.traingStatus
+      : {}
+  );
+  const [flag, setFlag] = useState(false);
+
+  const changeTraingStatus = (id, value) => {
+    let traing_status = traingStatus;
+    let all_checked_flag = true;
+    traing_status[id] = value;
+    trainingData.map((training_item) => {
+      if (traing_status[training_item.id] !== true) {
+        all_checked_flag = false;
+      }
+      return true;
+    });
+    changeStateTraining(
+      props.applicationData._id.$oid,
+      props.role,
+      traing_status
+    );
+    props.allChecked(all_checked_flag);
+    setTrainingStatus(traing_status);
+    setFlag(!flag);
+  };
+
+  const getTrainingComponent = (training) => {
+    switch (training.typee) {
+      case TRAINING_TYPE.VIDEO:
+        return (
+          <>
+            <ReactPlayer
+              className="react-player"
+              width={400}
+              height={300}
+              url={training.url}
+            />
+            <br />
+            <Checkbox
+              style={{ marginTop: "12px" }}
+              className=""
+              onChange={(e) => {
+                changeTraingStatus(training.id, e.target.checked);
+              }}
+              checked={
+                traingStatus[training.id] ? traingStatus[training.id] : false
+              }
+            >
+              {t("traing.completed")}
+            </Checkbox>
+          </>
+        );
+      case TRAINING_TYPE.LINK:
+        return (
+          <>
+            <a className="external-link" href={training.url} target="_blank">
+              {training.url}
+            </a>
+            <br />
+            <Checkbox
+              style={{ marginTop: "12px" }}
+              className=""
+              onChange={(e) => {
+                changeTraingStatus(training.id, e.target.checked);
+              }}
+              checked={
+                traingStatus[training.id] ? traingStatus[training.id] : false
+              }
+            >
+              {t("traing.completed")}
+            </Checkbox>
+          </>
+        );
+      case TRAINING_TYPE.DOCUMENT:
+        return (
+          <>
+            <Button
+              onClick={async () => {
+                let response = await getTrainVideo(training.id);
+                downloadBlob(response, training.file_name);
+              }}
+            >
+              {training.file_name}
+            </Button>
+            <br />
+            <Checkbox
+              style={{ marginTop: "12px" }}
+              className=""
+              onChange={(e) => {
+                changeTraingStatus(training.id, e.target.checked);
+              }}
+              checked={
+                traingStatus[training.id] ? traingStatus[training.id] : false
+              }
+            >
+              {t("traing.completed")}
+            </Checkbox>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
   useEffect(() => {
     setLoading(true);

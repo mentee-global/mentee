@@ -46,6 +46,9 @@
     "partnerVerify": "لم يتم تسجيل بريدك الإلكتروني مسبقًا كشريك.  الرجاء الاتصال بمسؤول admin@menteeglobal.org ",
     "training": "تدريبات"
   },
+  "traing":{
+    "completed":"Completed"
+  },
   "appointmentStatus": {
     "accepted": "مقبول",
     "denied": "مرفوض",

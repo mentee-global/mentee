@@ -46,6 +46,9 @@
     "partnerVerify": "ستاسو بریښنالیک د کډونکونکی په توکی له مخکې راجستر ندی. هیله کوو له اداري برخې سره اړیکه ونیسی admin@menteeglobal.org",
     "training": "ترینینگ"
   },
+  "traing":{
+    "completed":"Completed"
+  },
   "appointmentStatus": {
     "accepted": "ومنل شو",
     "denied": "ونه منل شو",

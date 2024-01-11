@@ -46,6 +46,9 @@
     "partnerVerify": "ایمیل شما از قبل به عنوان شریک ثبت نشده است. لطفا با یک نماینده تماس بگیرید: admin@menteeglobal.org",
     "training": "من ترینینگ را انجام داده ام"
   },
+  "traing":{
+    "completed":"Completed"
+  },
   "appointmentStatus": {
     "accepted": "تایید شده",
     "denied": "رد شده",

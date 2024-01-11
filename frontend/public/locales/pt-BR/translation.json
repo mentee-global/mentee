@@ -46,6 +46,9 @@
     "partnerVerify": "Seu e-mail não está pré-cadastrado como Parceiro. Por favor, contate um de nossos administradores pelo e-mail admin@menteeglobal.org",
     "training": "Treinamento"
   },
+  "traing":{
+    "completed":"Completed"
+  },
   "appointmentStatus": {
     "accepted": "Aceito",
     "denied": "Negado",

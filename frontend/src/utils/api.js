@@ -156,7 +156,8 @@ export const getApplicationStatus = async (email, role) => {
   const requestExtension = `/application/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
   let state = res.data?.result?.state;
-  return state;
+  let application_data = res.data?.result?.application_data;
+  return { state, application_data };
 };
 
 export const checkProfileExists = async (email, role) => {
@@ -165,6 +166,12 @@ export const checkProfileExists = async (email, role) => {
   let profileExists = res.data?.result?.profileExists;
   let rightRole = res.data?.result?.rightRole;
   return { profileExists, rightRole };
+};
+
+export const changeStateTraining = async (id, role, traing_status) => {
+  const requestExtension = `/application/changeStateTraining`;
+  await authPost(requestExtension, { id, role, traing_status });
+  return true;
 };
 
 export const changeStateBuildProfile = async ({ email, role }) => {

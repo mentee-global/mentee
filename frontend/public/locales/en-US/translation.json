@@ -46,6 +46,9 @@
     "partnerVerify": "Your email is not pre-registered as a Partner. Please contact an administrator admin@menteeglobal.org",
     "training": "Training"
   },
+  "traing":{
+    "completed":"Completed"
+  },
   "appointmentStatus": {
     "accepted": "accepted",
     "denied": "denied",

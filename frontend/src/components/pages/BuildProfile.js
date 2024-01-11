@@ -31,7 +31,10 @@ function BuildProfile({ location, history }) {
     setLoading(true);
     const { inFirebase, isVerified } = await checkStatusByEmail(email, role);
     if (!inFirebase) {
-      const state = await getApplicationStatus(email, role);
+      const { state, application_data } = await getApplicationStatus(
+        email,
+        role
+      );
       if (state !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {
         messageApi.error(t("commonProfile.errorTrainingSteps"));
         return;

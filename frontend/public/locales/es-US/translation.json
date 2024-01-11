@@ -46,6 +46,9 @@
     "partnerVerify": "Su correo electrónico no está pre-registrado como Partner. Por favor contacte un administrador al email admin@menteeglobal.org",
     "training": "Entrenamiento"
   },
+  "traing":{
+    "completed":"completed"
+  },
   "appointmentStatus": {
     "accepted": "aceptado",
     "denied": "denegado",

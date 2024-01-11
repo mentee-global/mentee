@@ -29,6 +29,7 @@ class MentorApplication(Document, Mixin):
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
     notes = StringField()
+    traingStatus = DictField(required=False)
 
     def __repr__(self):
         return f"""<Mentor Application email: {self.email}

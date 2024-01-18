@@ -35,6 +35,14 @@ const TrainingList = (props) => {
   );
   const [flag, setFlag] = useState(false);
 
+  useEffect(() => {
+    setTrainingStatus(
+      props.applicationData.traingStatus
+        ? props.applicationData.traingStatus
+        : {}
+    );
+  }, [props.applicationData]);
+
   const changeTraingStatus = (id, value) => {
     if (
       props.applicationData.application_state === "BuildProfile" ||
@@ -157,9 +165,9 @@ const TrainingList = (props) => {
           ? props.applicationData.traingStatus
           : {}
       );
+
     }, 1500);
   }, [props.applicationData]);
-
   return (
     <List
       itemLayout="vertical"

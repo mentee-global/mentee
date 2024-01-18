@@ -20,6 +20,7 @@ function Training({ location, history }) {
   const [applicationData, setApplicationData] = useState(
     location.state?.applicationData
   );
+
   const [flag, setFlag] = useState(false);
 
   const [buttonFlag, setButtonFlag] = useState(false);

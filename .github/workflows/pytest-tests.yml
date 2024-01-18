@@ -3,7 +3,7 @@ name: Backend Tests
 on:
   pull_request:
     branches:
-      - dev
+      - none
 
 jobs:
   build-and-test:

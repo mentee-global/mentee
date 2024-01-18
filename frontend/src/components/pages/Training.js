@@ -1,10 +1,10 @@
 import TrainingList from "components/TrainingList";
 import { withRouter, Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { css } from "@emotion/css";
 import { Button, Space, Typography, message } from "antd";
 import { useTranslation } from "react-i18next";
-import { changeStateBuildProfile } from "utils/api";
+import { changeStateBuildProfile, getApplicationStatus } from "utils/api";
 import LanguageDropdown from "components/LanguageDropdown";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { NEW_APPLICATION_STATUS } from "utils/consts";
@@ -17,10 +17,22 @@ function Training({ location, history }) {
   const query = useQuery();
   const role = location.state?.role || parseInt(query.get("role"));
   const email = location.state?.email || query.get("email");
-  const applicationData =
-    location.state?.applicationData || query.get("applicationData");
+  const [applicationData, setApplicationData] = useState(
+    location.state?.applicationData
+  );
+
   const [buttonFlag, setButtonFlag] = useState(false);
   if (!role || !email) history.push("/");
+
+  useEffect(() => {
+    async function getApplicationData() {
+      var result = await getApplicationStatus(email, role);
+      setApplicationData(result.application_data);
+    }
+    if (!applicationData) {
+      getApplicationData();
+    }
+  }, []);
 
   const onCompleteTraining = async () => {
     if (!role || !email)

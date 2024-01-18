@@ -50,7 +50,6 @@ const TrainingList = (props) => {
     ) {
       return;
     }
-
     let traing_status = traingStatus;
     let all_checked_flag = true;
     traing_status[id] = value;

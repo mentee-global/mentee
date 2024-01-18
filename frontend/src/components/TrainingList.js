@@ -35,7 +35,15 @@ const TrainingList = (props) => {
   );
   const [flag, setFlag] = useState(false);
 
+  useEffect(() => {
+    setTrainingStatus(props.applicationData.traingStatus ? props.applicationData.traingStatus : {});
+  }, [props.applicationData]);
+
   const changeTraingStatus = (id, value) => {
+    if (props.applicationData.application_state ==='BuildProfile' || props.applicationData.application_state ==='COMPLETED'){
+      return;
+    }
+    
     let traing_status = traingStatus;
     let all_checked_flag = true;
     traing_status[id] = value;

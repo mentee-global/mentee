@@ -165,7 +165,6 @@ const TrainingList = (props) => {
           ? props.applicationData.traingStatus
           : {}
       );
-
     }, 1500);
   }, [props.applicationData]);
   return (

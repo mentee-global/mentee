@@ -29,7 +29,10 @@ function Training({ location, history }) {
     async function getApplicationData() {
       var result = await getApplicationStatus(email, role);
       setApplicationData(result.application_data);
-      if (result.application_state ==='BuildProfile' || result.application_state ==='COMPLETED'){
+      if (
+        result.application_state === "BuildProfile" ||
+        result.application_state === "COMPLETED"
+      ) {
         setButtonFlag(false);
       }
       setFlag(!flag);
@@ -66,7 +69,10 @@ function Training({ location, history }) {
   };
 
   const allChecked = (value) => {
-    if (applicationData.application_state ==='BuildProfile' || applicationData.application_state ==='COMPLETED'){
+    if (
+      applicationData.application_state === "BuildProfile" ||
+      applicationData.application_state === "COMPLETED"
+    ) {
       setButtonFlag(false);
     } else {
       setButtonFlag(value);

@@ -3,7 +3,7 @@ name: Frontend Tests
 on:
   pull_request:
     branches:
-      - none
+      - dev
 
 jobs:
   build-and-test:

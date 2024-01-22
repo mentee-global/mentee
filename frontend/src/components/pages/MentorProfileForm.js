@@ -9,7 +9,6 @@ import {
   Select,
   Divider,
   Typography,
-  // Switch,
   Radio,
 } from "antd";
 import { useSelector } from "react-redux";
@@ -92,7 +91,6 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >
@@ -106,7 +104,6 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >
@@ -122,7 +119,6 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >
@@ -141,7 +137,6 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >
@@ -243,7 +238,6 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
         >
@@ -255,7 +249,6 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
           className={styles.formGroupItem}
@@ -272,7 +265,6 @@ function MentorProfileForm({
             rules={[
               {
                 required: true,
-                // message: t("common.inputPrompt"),
               },
             ]}
             className={styles.formGroupItem}
@@ -313,7 +305,6 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
           className={styles.formGroupItem}
@@ -331,13 +322,11 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
           className={styles.formGroupItem}
           valuePropName="checked"
         >
-          {/* <Switch /> */}
           <Radio.Group>
             <Radio value={true}>{t("common.yes")}</Radio>
             <Radio value={false}>{t("common.no")}</Radio>
@@ -373,7 +362,6 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
           className={styles.formGroupItem}
@@ -404,7 +392,6 @@ function MentorProfileForm({
         rules={[
           {
             required: true,
-            // message: t("common.inputPrompt"),
           },
         ]}
       >

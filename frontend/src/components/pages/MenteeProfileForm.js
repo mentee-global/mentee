@@ -95,7 +95,6 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >
@@ -109,7 +108,6 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >
@@ -125,7 +123,6 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >
@@ -144,7 +141,6 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
-                      // message: t("common.inputPrompt"),
                     },
                   ]}
                 >

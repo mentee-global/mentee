@@ -118,7 +118,6 @@ class MentorApplicationForm(Form):
     name = StringField(validators=[InputRequired()])
     cell_number = StringField(validators=[InputRequired()])
     hear_about_us = StringField(validators=[InputRequired()])
-    # offer_donation = StringField(validators=[InputRequired()])
     employer_name = StringField(validators=[InputRequired()])
     role_description = StringField(validators=[InputRequired()])
     languages = StringField(validators=[InputRequired()])

@@ -64,7 +64,6 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
         >
@@ -76,7 +75,6 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
         >
@@ -344,7 +342,6 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
           rules={[
             {
               required: true,
-              // message: t("common.inputPrompt"),
             },
           ]}
         >
@@ -355,36 +352,6 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
             tokenSeparators={[","]}
           />
         </Form.Item>
-        {/* <Form.Item
-          label={t("mentorApplication.canDonate")}
-          name="canDonate"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Radio.Group>
-            <Radio
-              value={
-                "Yes, I can offer a donation now to help suppourt this work!"
-              }
-            >
-              {t("mentorApplication.yesDonate")}
-              <br></br>(https://www.menteteglobal.org/donate)
-            </Radio>
-            <Radio
-              value={
-                "No, unfortunately I cannot offer a donation now but please ask me again."
-              }
-            >
-              {t("mentorApplication.laterDonate")}
-            </Radio>
-            <Radio value={"I'm unable to offer a donation."}>
-              {t("mentorApplication.noDonate")}
-            </Radio>
-          </Radio.Group>
-        </Form.Item> */}
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>
             {t("common.submit")}

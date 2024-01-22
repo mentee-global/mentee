@@ -11,7 +11,7 @@ class MentorApplication(Document, Mixin):
     cell_number = StringField(required=True)
     business_number = StringField()
     hear_about_us = StringField(required=True)
-    offer_donation = BooleanField(required=True)
+    offer_donation = BooleanField(required=False)
     mentoring_options = ListField(StringField(), required=True)
     employer_name = StringField(required=True)
     work_sectors = ListField(StringField(), required=True)

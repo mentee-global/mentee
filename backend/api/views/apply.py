@@ -538,7 +538,6 @@ def create_application():
                 email=data.get("email"),
                 cell_number=data.get("cell_number"),
                 hear_about_us=data.get("hear_about_us"),
-                # offer_donation=data.get("offer_donation"),
                 employer_name=data.get("employer_name"),
                 role_description=data.get("role_description"),
                 immigrant_status=data.get("immigrant_status"),

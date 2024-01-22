@@ -21,7 +21,6 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
       name: `${values.firstName} ${values.lastName}`,
       cell_number: values.phoneNumber,
       hear_about_us: values.hearAboutUs,
-      // offer_donation: values.canDonate,
       employer_name: values.employerName,
       companyTime: values.jobDuration,
       role_description: values.jobDescription,

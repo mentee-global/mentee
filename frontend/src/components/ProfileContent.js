@@ -112,7 +112,7 @@ function ProfileContent(props) {
         <div className="mentor-profile-heading">
           <b>
             {ACCOUNT_TYPE.MENTOR === accountType
-              ? t("mentorProfile.specializations")
+              ? t("common.specializations")
               : ACCOUNT_TYPE.MENTEE === accountType
               ? t("menteeProfile.areasOfInterest")
               : t("partnerProfile.regionsWork")}

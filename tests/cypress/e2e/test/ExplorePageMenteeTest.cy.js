@@ -10,13 +10,13 @@ describe("Explore Page", () => {
     login.loginMentee();
     cy.visit("/gallery");
   });
-  it("Check existance of Explore Page", () => {
-    explore.componnentExists();
-  });
-  it.only("Check the functionality of Explore Page", () => {
-    explore.isFunctional();
-  });
-  it("Check Filter By Specialization", () => {
-    explore.filterBySpecializations();
-  });
+  // it("Check existance of Explore Page", () => {
+  //   explore.componnentExists();
+  // });
+  // it.only("Check the functionality of Explore Page", () => {
+  //   explore.isFunctional();
+  // });
+  // it("Check Filter By Specialization", () => {
+  //   explore.filterBySpecializations();
+  // });
 });

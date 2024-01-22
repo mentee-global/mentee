@@ -3,38 +3,48 @@ describe("Registration for mentee", () => {
     cy.visit("/apply");
 
     const userEmail = "testa24@example.com";
-    cy.get(".ant-input.ant-input-lg.css-wxm1m1").type(userEmail);
+    cy.get("#email").type(userEmail);
     //checking select fro Mentee
     cy.get(".ant-select-selection-search-input").click();
     cy.contains("Mentee").click();
     // click submit button
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click();
+    cy.get(".ant-btn").click();
     cy.wait(1000);
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click({
+    cy.get(".ant-select-selection-item").click({
       force: true,
     });
 
     //////  now checking the validations on input fields
 
-    cy.get('button.ant-btn[type="submit"]').click();
+    cy.get('.ant-btn').click();
+    cy.get('.ant-btn').click();
 
-    cy.get("#firstName_help > div").should("be.visible");
+    cy.get("#firstName").should("be.visible");
+    cy.get("#firstName").type("John Doe");
+    cy.get("#firstName").clear();
     cy.get("#firstName_help > div").should(
       "have.text",
       "Please enter First Name"
     );
 
-    cy.get("#organization_help > div").should("be.visible");
+    cy.get("#organization").should("be.visible");
+    cy.get("#organization").type("companyName");
+    cy.get("#organization").clear();
     cy.get("#organization_help > div").should(
       "have.text",
       "Please enter What organization is supporting you locally or what organization are you affiliated with?"
     );
 
-    cy.get("#age_help > div").should("be.visible");
-    cy.get("#age_help > div").should(
-      "have.text",
-      "Please enter Let us know more about you"
-    );
+    // Click on the age dropdown to open it
+    cy.get("#age").click();
+
+    // Select an option from the dropdown (replace 'I am 18-22' with the actual option text)
+    cy.contains(".ant-select-item-option-content", "I am 23-26").click();
+
+
+
+    // Check if the help message is visible with the expected text
+    cy.get("#age_help > div").should("be.visible").should("have.text", "Please enter Let us know more about you");
 
     cy.get("#immigrantStatus_help > div").should("be.visible");
     cy.get("#immigrantStatus_help > div").should(
@@ -74,14 +84,14 @@ describe("Registration for mentee", () => {
     cy.visit("/apply");
 
     const userEmail = "testa43@example.com";
-    cy.get(".ant-input.ant-input-lg.css-wxm1m1").type(userEmail);
+    cy.get("#email").type(userEmail);
     //checking select fro Mentee
     cy.get(".ant-select-selection-search-input").click();
     cy.contains("Mentee").click();
     // click submit button
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click();
+    cy.get(".ant-btn").click();
     cy.wait(1000);
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click({
+    cy.get(".ant-select-selection-item").click({
       force: true,
     });
 

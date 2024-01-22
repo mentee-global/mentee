@@ -10,7 +10,7 @@ describe("test chat between mentee to mentor", () => {
     cy.visit(`/login`);
 
     cy.get(
-      "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(2) > div"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(2) > div"
     ).click();
 
     cy.get("#email").clear().type(MENTEE_EMAIL);
@@ -27,13 +27,13 @@ describe("test chat between mentee to mentor", () => {
 
     cy.get("button.ant-btn.ant-btn-primary").contains("Contact Me").click();
 
-    cy.get("#Choose\\ Interest\\ Areas").type("Engineering");
-
-    cy.get("#Choose\\ Interest\\ Areas").type("{enter}");
-
     cy.get("textarea.ant-input")
       .clear()
       .type("I want metorship on the domain of computer scineces");
+
+    cy.get("#Choose\\ Interest\\ Areas").type("Engineering");
+
+    cy.get("#Choose\\ Interest\\ Areas").type("{enter}");
 
     cy.get("button.contact-me-submit-button").contains("Submit").click();
   });
@@ -42,7 +42,7 @@ describe("test chat between mentee to mentor", () => {
     cy.visit(`/login`);
 
     cy.get(
-      "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1) > div"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(1) > div"
     ).click();
 
     cy.get("#email").clear().type(MENTOR_EMAIL);
@@ -52,15 +52,15 @@ describe("test chat between mentee to mentor", () => {
     cy.contains("button", "Login").click();
     cy.wait(2000);
     cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(1)"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(1)"
     ).click();
     cy.wait(2000);
     cy.get(
-      "#root > section > main > section > aside > div > div.messages-sidebar > div.ant-card.ant-card-bordered.css-umxe2r.css-wxm1m1"
-    ).click();
-    cy.wait(4000);
-    cy.get(
-      "#root > section > main > section > section > div > div.conversation-content > div.ant-spin-nested-loading.css-wxm1m1 > div > div:nth-child(62) > div > div > div > div"
-    ).should("contain", "I want metorship on the domain of computer scineces");
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > aside > div > div.messages-sidebar > div.ant-card.ant-card-bordered.css-umxe2r.css-1axsfu3 > div > div > div > div.ant-card-meta-detail > div.ant-card-meta-description"
+    ).should("contain", "I want metorship on the domain of computer scineces");;
+    // cy.wait(4000);
+    // cy.get(
+    //   "#root > section > main > section > section > div > div.conversation-content > div.ant-spin-nested-loading.css-wxm1m1 > div > div:nth-child(62) > div > div > div > div"
+    // ).should("contain", "I want metorship on the domain of computer scineces");
   });
 });

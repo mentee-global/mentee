@@ -16,7 +16,7 @@ describe("Login Page ", () => {
   });
   it("Should Change The Language For Page 2", () => {
     cy.get(
-      "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1) > div"
+      ":nth-child(1) > .ant-card"
     ).click();
     login.changeLanguagePage2();
   });

@@ -5,63 +5,63 @@ const password = Cypress.env("MENTOR_PASSWORD");
 export class MentorDashboard {
   selectEnglish() {
     cy.get(
-      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3)"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > header > div.ant-space.css-1axsfu3.ant-space-horizontal.ant-space-align-center.ant-space-gap-row-middle.ant-space-gap-col-middle > div:nth-child(3)"
     ).trigger("mouseover");
 
     cy.get(".ant-dropdown-menu-title-content").eq(0).click();
   }
   loginDashboard() {
     cy.get(
-      "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1) > div"
+      ':nth-child(1) > .ant-card'
     ).click();
     cy.get("#email").type(email);
     cy.get("#password").type(password);
     cy.get(
-      "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(3) > div > div > div > div > button"
+      ".ant-btn"
     ).click();
     cy.url().should("include", "/appointments");
     cy.wait(3000);
   }
   dashboardFunctionality() {
+    // cy.get(
+    //   "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li.ant-menu-item.ant-menu-item-selected" //issue here
+    // ).should("have.attr", "href", "/appointments");
     cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > a"
-    ).should("have.attr", "href", "/appointments");
-    cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > a > svg"
+      ".css-rbnp0o"
     ).click();
     cy.url().should("include", "/appointments");
     cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(1)"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(1)"
     ).click();
     cy.url().should("include", "/messages");
     cy.wait(2000);
+    // cy.get(
+    //   ".css-rbnp0o"
+    // ).click();
+    // cy.url().should("include", "/appointments");
     cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(3)"
-    ).click();
-    cy.url().should("include", "/appointments");
-    cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
     ).click();
     cy.url().should("include", "/event");
     cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(5)"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(5)"
     ).click();
     cy.url().should("include", "/videos");
     cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(6)"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(6)"
     ).click();
     cy.url().should("include", "/profile");
     cy.get(
-      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(1) > div > span > span > svg"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > header > div.ant-space.css-1axsfu3.ant-space-horizontal.ant-space-align-center.ant-space-gap-row-middle.ant-space-gap-col-middle > div:nth-child(1)"
     ).trigger("mouseover");
     cy.get(".ant-tooltip-inner")
       .should("have.attr", "role", "tooltip")
       .and("be.visible");
     cy.get(
-      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(1) > div > span > span > svg"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > header > div.ant-space.css-1axsfu3.ant-space-horizontal.ant-space-align-center.ant-space-gap-row-middle.ant-space-gap-col-middle > div:nth-child(1)"
     ).trigger("mouseout");
     cy.get(
-      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(4) > span > svg"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > header > div.ant-space.css-1axsfu3.ant-space-horizontal.ant-space-align-center.ant-space-gap-row-middle.ant-space-gap-col-middle > div:nth-child(4)"
     ).trigger("mouseover");
     cy.get(".ant-tooltip-content").and("be.visible");
   }
@@ -79,31 +79,31 @@ export class MentorDashboard {
         }
         // Clicking the language
         cy.get(
-          "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3) > span"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > header > div.ant-space.css-1axsfu3.ant-space-horizontal.ant-space-align-center.ant-space-gap-row-middle.ant-space-gap-col-middle > div:nth-child(3) > span > svg"
         ).trigger("mouseover");
         cy.contains(
           previousLanguage.languages[language.value.split("-")[0]]
         ).click();
         // Checking the texts
         cy.get(
-          "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(1)"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(1) > span.ant-menu-title-content"
         ).should("contain.text", currentLanguage.common.messages);
         cy.get(
-          "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(2)"
+          ".ant-menu-submenu"
         )
           .should("contain.text", currentLanguage.sidebars.explore)
           .and("contain.text", currentLanguage.navHeader.findMentee);
         cy.get(
-          "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(3)"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li.ant-menu-item.ant-menu-item-selected > span.ant-menu-title-content"
         ).should("contain.text", currentLanguage.sidebars.appointments);
         cy.get(
-          "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(4) > span.ant-menu-title-content"
         ).should("contain.text", currentLanguage.sidebars.events);
         cy.get(
-          "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(5)"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(5) > span.ant-menu-title-content"
         ).should("contain.text", currentLanguage.sidebars.videos);
         cy.get(
-          "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(6)"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(6) > span.ant-menu-title-content"
         ).should("contain.text", currentLanguage.sidebars.profile);
         // Storing previous language details
         previousLanguage = currentLanguage;

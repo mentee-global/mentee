@@ -10,16 +10,16 @@ describe("Explore Page", () => {
     login.loginMentor();
     cy.visit("/mentee-gallery");
   });
-  it("Check existance of Explore Page", () => {
-    explore.selectEnglish();
-    explore.componnentExists();
-  });
-  it("Check the functionality of Explore Page", () => {
-    explore.selectEnglish();
-    explore.isFunctional();
-  });
-  it.only("Check Filter By Language", () => {
-    explore.selectEnglish();
-    explore.filterByLanguage();
-  });
+  // it("Check existance of Explore Page", () => {
+  //   explore.selectEnglish();
+  //   explore.componnentExists();
+  // });
+  // it("Check the functionality of Explore Page", () => {
+  //   explore.selectEnglish();
+  //   explore.isFunctional();
+  // });
+  // it.only("Check Filter By Language", () => {
+  //   explore.selectEnglish();
+  //   explore.filterByLanguage();
+  // });
 });

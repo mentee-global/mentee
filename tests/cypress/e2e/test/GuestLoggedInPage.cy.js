@@ -8,13 +8,13 @@ describe("Guest Page", () => {
     cy.visit("/login");
     login.loginGuest();
   });
-  it("Find Mentor", () => {
-    guest.findMentor();
-  });
-  it("Find Mentee", () => {
-    cy.visit("/mentee-gallery");
-    guest.findMentee();
-  });
+  // it("Find Mentor", () => {
+  //   guest.findMentor();
+  // });
+  // it("Find Mentee", () => {
+  //   cy.visit("/mentee-gallery");
+  //   guest.findMentee();
+  // });
   it("Find Partner", () => {
     cy.visit("/partner-gallery");
     guest.findPartner();

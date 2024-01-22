@@ -5,33 +5,33 @@ export class MentorEvent {
   isFunctional() {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
-        "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
+        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
       ).click();
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > button"
+        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div:nth-child(1) > div > button"
       )
         .should("have.attr", "type", "button")
         .and("contain.text", currentLanguage.events.addEvent);
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
       )
         .should("have.attr", "type", "text")
         .and("have.attr", "placeholder", currentLanguage.gallery.searchByName);
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > div > label:nth-child(1) > span.ant-checkbox.css-wxm1m1 > input"
+        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div:nth-child(1) > div > div > div > label:nth-child(1) > span.ant-checkbox.ant-wave-target.css-1axsfu3 > input"
       ).should("have.attr", "type", "checkbox");
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > div > label:nth-child(2) > span.ant-checkbox.css-wxm1m1 > input"
+        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div:nth-child(1) > div > div > div > label:nth-child(2) > span.ant-checkbox.ant-wave-target.css-1axsfu3 > input"
       ).should("have.attr", "type", "checkbox");
     });
   }
   addEventFunctional() {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
-        "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
+        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
       ).click();
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > button"
+        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div:nth-child(1) > div > button"
       ).click();
       cy.get(".ant-select-arrow").should("have.attr", "unselectable", "on");
       cy.get(".anticon.anticon-down.ant-select-suffix")

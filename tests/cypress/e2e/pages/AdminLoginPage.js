@@ -71,12 +71,12 @@ export class AdminLogin {
     cy.get("#email").type(email);
     cy.get("#password").type(password);
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
     ).click();
   }
   emptyFields() {
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
     ).click();
     cy.get("#email_help > div")
       .should("be.visible")

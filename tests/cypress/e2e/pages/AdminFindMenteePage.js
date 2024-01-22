@@ -5,18 +5,18 @@ export class FindMentee {
   searchByName() {
     const searchTerm = "ricirab";
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
     ).type(searchTerm);
     cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div.gallery-mentor-container"
     ).should("have.length.greaterThan", 0);
     cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div.gallery-mentor-container"
     ).each(($result) => {
       cy.wrap($result).should("include.text", searchTerm);
     });
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+      ".ant-input-affix-wrapper .ant-input"
     )
       .clear()
       .should("have.value", "");
@@ -42,7 +42,7 @@ export class FindMentee {
       .invoke("text")
       .then((selectedText) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div.gallery-mentor-container"
         ).each(($result) => {
           cy.wrap($result).should("include.text", selectedText);
         });
@@ -61,7 +61,7 @@ export class FindMentee {
         cy.log(`text is equal : ${text}`);
         cy.get(".gallery-button").click();
         cy.get(
-          "#root > section > main > div > div > div:nth-child(1) > div"
+          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.mentor-profile-content-public > div > div"
         ).should("contain.text", text);
       });
     cy.go(-1);

@@ -148,7 +148,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
       <Form onFinish={onFinish} layout="vertical" style={{ width: "100%" }}>
         <Form.Item>
           <Typography>
-            <Paragraph>{t("menteeApplication.introduction")}</Paragraph>
+            <Paragraph id="introduction">{t("menteeApplication.introduction")}</Paragraph>
           </Typography>
         </Form.Item>
         <Form.Item

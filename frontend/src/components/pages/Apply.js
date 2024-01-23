@@ -136,7 +136,7 @@ function Apply({ history }) {
       `}
     >
       {contextHolder}
-      <Link to={"/"}>
+      <Link to={"/"} id="back">
         <Space>
           <ArrowLeftOutlined />
           {t("common.back")}
@@ -201,6 +201,7 @@ function Apply({ history }) {
         <Form.Item>
           <Button
             type="primary"
+            id="submit"
             htmlType="submit"
             style={{ width: "100%" }}
             loading={loading}

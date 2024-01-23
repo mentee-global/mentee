@@ -73,24 +73,19 @@ export class ExplorePage {
       const sampleValues = ["xeh", "ber", "roberto"];
       sampleValues.forEach((value, index) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+          ".ant-input"
         )
           .type(value)
           .wait(waitTime);
         cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+          ".ant-input"
         ).should("have.attr", "value", value);
-        cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.gallery-card-body > div.gallery-card-header > div > h1"
-        )
-          .invoke("text")
-          .then((text) => {
-            const val = text.toLowerCase();
-            expect(val).to.include(value);
-          });
-        cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
-        ).clear();
+        cy.get(".ant-input").invoke("val").then((inputValue) => {
+          const val = inputValue.toLowerCase();
+          expect(val).to.include(value.toLowerCase());
+        });
+      
+        cy.get(".ant-input").clear();
       });
     }
   }

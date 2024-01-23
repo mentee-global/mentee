@@ -51,8 +51,8 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
       <Form onFinish={onFinish} layout="vertical" style={{ width: "100%" }}>
         <Form.Item>
           <Typography>
-            <Paragraph> {t("mentorApplication.introduction")}</Paragraph>
-            <Paragraph> {t("mentorApplication.filloutPrompt")}</Paragraph>
+            <Paragraph id="mentorIntroduction"> {t("mentorApplication.introduction")}</Paragraph>
+            <Paragraph id="mentorfilloutprompt"> {t("mentorApplication.filloutPrompt")}</Paragraph>
           </Typography>
         </Form.Item>
         <Form.Item

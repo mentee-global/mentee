@@ -119,7 +119,7 @@ const ApplicationForm = ({ location, history }) => {
           <LanguageDropdown size="large" />
         </div>
         <Typography>
-          <Title
+          <Title id="welcome"
             level={2}
             className={css`
               span {
@@ -128,7 +128,7 @@ const ApplicationForm = ({ location, history }) => {
               }
             `}
           >
-            <Trans i18nKey={"common.welcome"}>
+            <Trans  i18nKey={"common.welcome"}>
               Welcome to <span>MENTEE!</span>
             </Trans>
           </Title>

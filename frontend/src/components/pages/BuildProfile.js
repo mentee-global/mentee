@@ -60,6 +60,9 @@ function BuildProfile({ location, history }) {
         messageApi.error(t("commonProfile.errorTrainingSteps"));
         return;
       }
+      if (application_data.specializations) {
+        profileData.specializations = application_data.specializations;
+      }
     }
 
     const res = await createAccountProfile(profileData, role, inFirebase);

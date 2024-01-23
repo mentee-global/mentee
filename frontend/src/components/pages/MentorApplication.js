@@ -64,7 +64,6 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
             {
               required: true,
               message: t("common.requiredFirstName"),
-
             },
           ]}
         >

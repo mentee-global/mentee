@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { css } from "@emotion/css";
 import { Result, Space, Typography, message } from "antd";
 import { Link, withRouter } from "react-router-dom";
@@ -22,25 +22,43 @@ function BuildProfile({ location, history }) {
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
+  const [inFirebase, setInFirebase] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [userState, setUserState] = useState("");
+  const [applicationData, setApplicationData] = useState(null);
+
   const query = useQuery();
   const role = location.state?.role || parseInt(query.get("role"));
   const email = location.state?.email || query.get("email");
   if (!role || !email) history.push("/");
 
-  const onSubmit = async (profileData, image, changedImage) => {
-    setLoading(true);
-    const { inFirebase, isVerified } = await checkStatusByEmail(email, role);
-    if (!inFirebase) {
-      const { state, application_data } = await getApplicationStatus(
+  useEffect(() => {
+    async function getUserData() {
+      const { in_firebase, is_verified } = await checkStatusByEmail(
         email,
         role
       );
-      if (state !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {
+      setInFirebase(in_firebase);
+      setIsVerified(is_verified);
+      if (!in_firebase) {
+        const { state, application_data } = await getApplicationStatus(
+          email,
+          role
+        );
+        setUserState(state);
+        setApplicationData(application_data);
+      }
+    }
+
+    getUserData();
+  }, []);
+
+  const onSubmit = async (profileData, image, changedImage) => {
+    setLoading(true);
+    if (!inFirebase) {
+      if (userState !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {
         messageApi.error(t("commonProfile.errorTrainingSteps"));
         return;
-      }
-      if (application_data.specializations) {
-        profileData.specializations = application_data.specializations;
       }
     }
 
@@ -78,6 +96,7 @@ function BuildProfile({ location, history }) {
             email={email}
             newProfile
             onSubmit={onSubmit}
+            applicationData={applicationData}
             loading={loading}
           />
         );

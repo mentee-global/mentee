@@ -45,6 +45,7 @@ function MentorProfileForm({
   loading,
   profileData,
   resetFields,
+  applicationData,
 }) {
   const { t, i18n } = useTranslation();
   const options = useSelector((state) => state.options);
@@ -59,7 +60,10 @@ function MentorProfileForm({
       form.setFieldValue("video", profileData.video?.url);
       setImage(profileData.image);
     }
-  }, [profileData, form, resetFields]);
+    if (applicationData && applicationData.specializations) {
+      form.setFieldValue("specializations", applicationData.specializations);
+    }
+  }, [profileData, form, resetFields, applicationData]);
 
   const educationSubForm = () => (
     <Form.List
@@ -91,6 +95,7 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredSchool"),
                     },
                   ]}
                 >
@@ -104,6 +109,7 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredGraduationYear"),
                     },
                   ]}
                 >
@@ -119,6 +125,7 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredMajors"),
                     },
                   ]}
                 >
@@ -137,6 +144,7 @@ function MentorProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredDegree"),
                     },
                   ]}
                 >
@@ -238,6 +246,7 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
+              message: t("common.requiredFullName"),
             },
           ]}
         >
@@ -249,6 +258,7 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
+              message: t("common.requiredProfessionalTitle"),
             },
           ]}
           className={styles.formGroupItem}
@@ -265,6 +275,7 @@ function MentorProfileForm({
             rules={[
               {
                 required: true,
+                message: t("common.requiredPassword"),
               },
             ]}
             className={styles.formGroupItem}
@@ -305,6 +316,7 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
+              message: t("common.requiredAvailableInPerson"),
             },
           ]}
           className={styles.formGroupItem}
@@ -322,6 +334,7 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
+              message: t("common.requiredAvailableGroupAppointments"),
             },
           ]}
           className={styles.formGroupItem}
@@ -362,6 +375,7 @@ function MentorProfileForm({
           rules={[
             {
               required: true,
+              message: t("common.requiredLanguage"),
             },
           ]}
           className={styles.formGroupItem}
@@ -392,6 +406,7 @@ function MentorProfileForm({
         rules={[
           {
             required: true,
+            message: t("common.requiredSpecializations"),
           },
         ]}
       >

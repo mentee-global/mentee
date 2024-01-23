@@ -95,6 +95,7 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredSchool"),
                     },
                   ]}
                 >
@@ -108,6 +109,7 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredGraduationYear"),
                     },
                   ]}
                 >
@@ -123,6 +125,7 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredMajors"),
                     },
                   ]}
                 >
@@ -141,6 +144,7 @@ function MenteeProfileForm({
                   rules={[
                     {
                       required: true,
+                      message: t("common.requiredDegree"),
                     },
                   ]}
                 >
@@ -235,7 +239,16 @@ function MenteeProfileForm({
           </Upload>
         </ImgCrop>
       </Form.Item>
-      <Form.Item label={t("commonProfile.fullName")} name="name" required>
+      <Form.Item
+        label={t("commonProfile.fullName")}
+        name="name"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredFullName"),
+          },
+        ]}
+      >
         <Input />
       </Form.Item>
       {newProfile ? (
@@ -244,7 +257,12 @@ function MenteeProfileForm({
             label={t("common.password")}
             name="password"
             hasFeedback
-            required
+            rules={[
+              {
+                required: true,
+                message: t("common.requiredPassword"),
+              },
+            ]}
             className={styles.formGroupItem}
           >
             <Input.Password />
@@ -287,7 +305,12 @@ function MenteeProfileForm({
         <Form.Item
           label={t("menteeProfile.gender")}
           name="gender"
-          required
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredGender"),
+            },
+          ]}
           className={styles.formGroupItem}
         >
           <Input />
@@ -297,7 +320,12 @@ function MenteeProfileForm({
         <Form.Item
           label={t("menteeProfile.age")}
           name="age"
-          required
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredAge"),
+            },
+          ]}
           className={styles.formGroupItem}
         >
           <Select options={getAgeRanges(t)} />
@@ -305,7 +333,12 @@ function MenteeProfileForm({
         <Form.Item
           label={t("commonProfile.languages")}
           name="languages"
-          required
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredLanguage"),
+            },
+          ]}
           className={styles.formGroupItem}
         >
           <Select
@@ -332,7 +365,12 @@ function MenteeProfileForm({
         <Form.Item
           label={t("menteeProfile.organizationAffiliation")}
           name="organization"
-          required
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredOrganizationAffiliation"),
+            },
+          ]}
           className={styles.formGroupItem}
         >
           <Input />
@@ -344,7 +382,8 @@ function MenteeProfileForm({
       >
         <Select
           options={options.specializations}
-          mode="multiple"
+          mode="tags"
+          tokenSeparators={[","]}
           placeholder={t("common.pleaseSelect")}
         />
       </Form.Item>

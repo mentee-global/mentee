@@ -157,6 +157,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredFirstName"),
             },
           ]}
         >
@@ -179,6 +180,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredLasttName"),
             },
           ]}
         >
@@ -190,6 +192,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredAgePrompt"),
             },
           ]}
         >
@@ -236,6 +239,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredImmigrationStatus"),
             },
           ]}
         >
@@ -254,6 +258,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
                 rules={[
                   {
                     required: true,
+                    message: t("common.requiredOtherImmigrantStatus"),
                   },
                 ]}
               >
@@ -271,6 +276,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredGenderIdentification"),
             },
           ]}
         >
@@ -309,6 +315,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
                 rules={[
                   {
                     required: true,
+                    message: t("common.requiredOtherGenderIdentification"),
                   },
                 ]}
               >
@@ -323,6 +330,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredLanguage"),
             },
           ]}
         >
@@ -346,6 +354,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
                 rules={[
                   {
                     required: true,
+                    message: t("common.requiredOtherLanguage"),
                   },
                 ]}
               >
@@ -360,6 +369,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredTopicInterests"),
             },
           ]}
         >
@@ -368,7 +378,9 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
               ...(options.specializations ?? []),
               { label: t("common.other"), value: "other" },
             ]}
-            mode="multiple"
+            mode="tags"
+            placeholder={t("common.pleaseSelect")}
+            tokenSeparators={[","]}
           />
         </Form.Item>
         <Form.Item
@@ -384,6 +396,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
                 rules={[
                   {
                     required: true,
+                    message: t("common.requiredOtherTopic"),
                   },
                 ]}
               >
@@ -398,6 +411,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredWorkOptions"),
             },
           ]}
         >
@@ -416,6 +430,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
                 rules={[
                   {
                     required: true,
+                    message: t("common.requiredOtherWorkstate"),
                   },
                 ]}
               >
@@ -430,6 +445,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredSocialMedia"),
             },
           ]}
         >
@@ -456,6 +472,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
                 rules={[
                   {
                     required: true,
+                    message: t("common.requiredOtherSocialMedia"),
                   },
                 ]}
               >

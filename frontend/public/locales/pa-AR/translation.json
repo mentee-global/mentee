@@ -269,11 +269,11 @@
     "viewProfile": "د فروفایل لیدنه"
   },
   "homepage": {
-    "existingAccountDesc": "پلت فارم ته ننوتل",
-    "existingAccountTitle": "شته",
+    "existingAccountDesc": "مینټیز، مشاورین، شریکان",
+    "existingAccountTitle": "MENTEE اوسنی غړی",
     "isExistingUser": "تاسونوی یا مخکنی کارونکی یاست؟",
-    "newAccountDesc": "تطبیق- زده کړه- جوړول",
-    "newAccountTitle": "نوی"
+    "newAccountDesc": "تطبیق کړئ، روزنه ورکړئ، جوړ کړئ",
+    "newAccountTitle": "MENTEE نوی غړی"
   },
   "languages": {
     "ar": "العربية",

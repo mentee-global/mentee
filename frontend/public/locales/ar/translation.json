@@ -239,11 +239,11 @@
     "viewProfile": "عرض الصفحة الشخصية"
   },
   "homepage": {
-    "existingAccountDesc": "منصة تسجيل الدخول",
-    "existingAccountTitle": "موجود",
+    "existingAccountDesc": "المتدربون، الموجهون، الشركاء",
+    "existingAccountTitle": "عضو MENTEE الحالي",
     "isExistingUser": "هل أنت مستخدم جديد أو موجود؟",
-    "newAccountDesc": " تطبيق - تدريب - بناء ",
-    "newAccountTitle": "جديد"
+    "newAccountDesc": "تطبيق، تدريب، بناء",
+    "newAccountTitle": "جديد MENTEE عضو"
   },
   "languages": {
     "ar": "العربية",

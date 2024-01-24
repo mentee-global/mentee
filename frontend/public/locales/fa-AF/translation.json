@@ -239,11 +239,11 @@
     "viewProfile": "مشاهده پروفایل "
   },
   "homepage": {
-    "existingAccountDesc": "ورود به پلت فرم",
-    "existingAccountTitle": "موجود",
+    "existingAccountDesc": "مربیان، مربیان، شرکا",
+    "existingAccountTitle": "عضو موجود MENTEE",
     "isExistingUser": "آیا شما یک کاربر موجود هستید یا جدید؟",
-    "newAccountDesc": "تطبيق - تمرین - ساخت",
-    "newAccountTitle": "جدید"
+    "newAccountDesc": "درخواست کنید، آموزش دهید، بسازید",
+    "newAccountTitle": "عضو جدید MENTEE"
   },
   "languages": {
     "ar": "عربی",

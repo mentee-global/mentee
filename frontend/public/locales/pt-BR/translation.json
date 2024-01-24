@@ -239,11 +239,11 @@
     "viewProfile": "Ver perfil"
   },
   "homepage": {
-    "existingAccountDesc": "LOGIN",
-    "existingAccountTitle": "JÁ SOU CADASTRADO",
+    "existingAccountDesc": "Mentorados, Mentores, Parceiros",
+    "existingAccountTitle": "Membro existente do MENTEE",
     "isExistingUser": "Você é um usuário novo ou já tem cadastro?",
-    "newAccountDesc": "APLICAR",
-    "newAccountTitle": "NOVO"
+    "newAccountDesc": "Aplicar, Teinar, Construir",
+    "newAccountTitle": "Novo Membro MENTEE"
   },
   "languages": {
     "ar": "العربية",

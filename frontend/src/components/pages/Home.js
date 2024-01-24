@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
 import { Space } from "antd";
 import SelectCard from "components/SelectCard";
+import "../css/Home.scss";
 
 const SelectCardsStyle = css`
   width: 100%;

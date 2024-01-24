@@ -239,11 +239,11 @@
     "viewProfile": "Ver perfil"
   },
   "homepage": {
-    "existingAccountDesc": "INICIO DE SESIÓN",
-    "existingAccountTitle": "EXISTENTE",
+    "existingAccountDesc": "Mentees, Mentors, Socio",
+    "existingAccountTitle": "EXISTENTE MENTEE Miembro",
     "isExistingUser": "¿Es usted un usuario nuevo o existente?",
-    "newAccountDesc": "APLICAR",
-    "newAccountTitle": "NUEVO"
+    "newAccountDesc": "Aplicar, Entrenar, Construir",
+    "newAccountTitle": "NUEVO MENTEE Miembro"
   },
   "languages": {
     "ar": "Arabe",

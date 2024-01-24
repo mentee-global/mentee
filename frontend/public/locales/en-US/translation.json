@@ -240,11 +240,11 @@
     "viewProfile": "View Profile"
   },
   "homepage": {
-    "existingAccountDesc": "Platform Login",
-    "existingAccountTitle": "Existing",
+    "existingAccountDesc": "Mentees, Mentors, Partners",
+    "existingAccountTitle": "Existing MENTEE Member",
     "isExistingUser": "Are you a new or existing user?",
-    "newAccountDesc": "Apply - Train - Build",
-    "newAccountTitle": "New"
+    "newAccountDesc": "Apply, Train, Build",
+    "newAccountTitle": "New MENTEE Member"
   },
   "languages": {
     "ar": "العربية",

@@ -57,7 +57,9 @@ function NewTrainingConfirm({ match }) {
                 {train.typee === TRAINING_TYPE.DOCUMENT && (
                   <Button
                     onClick={async () => {
-                      let response = await getTrainVideo(train.id);
+                      let response = await getTrainVideo(
+                        train.id ? train.id : train._id.$oid
+                      );
                       downloadBlob(response, train.file_name);
                     }}
                   >

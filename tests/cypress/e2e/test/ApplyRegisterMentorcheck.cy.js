@@ -5,18 +5,20 @@ describe("Registration for mentor", () => {
     const userEmail = "test40@example.com";
     cy.get("#email").type(userEmail);
     //checking select fro Mentor
-    cy.get(".ant-select-selection-search-input").click();
+    cy.get("#role").click();
+    cy.wait(1000);
     cy.contains("Mentor").click();
     // click submit button
-    cy.get(".ant-btn").click();
+    cy.get("#submit").click();
     cy.wait(1000);
-    cy.get(".ant-select-selection-item").click({
+    cy.get("#select_mentor").click({
       force: true,
     });
-
-    cy.get('.ant-btn').click();
-    cy.get('.ant-btn').click();
-
+    cy.wait(1000);
+    cy.get('#submit').click();
+    cy.wait(1000);
+    cy.get('#submit').click();
+    cy.wait(1000);
     cy.get("#firstName").should("be.visible");
     cy.get("#firstName_help > div").should(
       "have.text",

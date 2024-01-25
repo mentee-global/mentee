@@ -474,7 +474,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" block loading={loading}>
+          <Button id="submit" type="primary" htmlType="submit" block loading={loading}>
             {t("common.submit")}
           </Button>
         </Form.Item>

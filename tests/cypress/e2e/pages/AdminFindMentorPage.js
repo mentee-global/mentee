@@ -7,7 +7,7 @@ export class FindMentor {
     cy.get(".ant-input").type(searchTerm);
     cy.get(".ant-input").should("have.length.greaterThan", 0);
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div.gallery-mentor-container"
+      ".gallery-mentor-container"
     ).each(($result) => {
       cy.wrap($result).should("include.text", searchTerm);
     });

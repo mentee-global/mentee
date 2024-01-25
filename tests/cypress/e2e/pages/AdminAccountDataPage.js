@@ -4,7 +4,7 @@ export class AdminAccountData {
   }
   searchByName() {
     const searchTerm = "roberto";
-    cy.get("#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.table-search > span > span > span.ant-input-affix-wrapper.css-1axsfu3.ant-input-outlined > input").type(`${searchTerm}{enter}`);
+    cy.get(".ant-input").type(`${searchTerm}{enter}`);
     cy.get(".ant-table-tbody")
       .should("have.length.greaterThan", 0)
       .and("contain.text", searchTerm);

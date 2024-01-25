@@ -150,7 +150,7 @@ function BuildProfile({ location, history }) {
             flex-direction: row;
           `}
         >
-          <Link to={"/"}>
+          <Link to={"/"} id="back">
             <Space>
               <ArrowLeftOutlined />
               {t("common.back")}

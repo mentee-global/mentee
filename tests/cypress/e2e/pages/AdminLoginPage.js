@@ -71,12 +71,12 @@ export class AdminLogin {
     cy.get("#email").type(email);
     cy.get("#password").type(password);
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
+      "#submit"
     ).click();
   }
   emptyFields() {
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
+      "#submit"
     ).click();
     cy.get("#email_help > div")
       .should("be.visible")
@@ -87,8 +87,7 @@ export class AdminLogin {
   }
   validCredentials() {
     this.loginAdmin(validEmail, validPassword);
-    cy.url().should("include", "/account-data");
-  }
+    cy.url({ timeout: 10000 }).should("include", "/account-data");  }
   invalidCredentials() {
     cy.readFile(translationPath).then((currentLanguage) => {
       this.loginAdmin(invalidEmail, invalidPassword);

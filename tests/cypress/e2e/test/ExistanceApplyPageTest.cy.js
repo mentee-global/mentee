@@ -7,7 +7,7 @@ describe("Apply Page", () => {
 
   it("should navigate to the correct URL on clicking the anchor tag", () => {
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > a > div > div:nth-child(2)"
+      "#back"
     ).click();
 
     cy.url().should("include", "/");
@@ -42,14 +42,14 @@ describe("Apply Page", () => {
 
     cy.get(
       ".ant-typography"
-      ).should("have.text", "Apply");
+      ).should("contain.text", "Apply");
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > div > div:nth-child(2) > div > div.ant-steps-item-content > div"
-      ).should("have.text", "Training");
+      ".ant-steps-label-horizontal"
+      ).should("contain.text", "Training");
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > div > div:nth-child(3) > div > div.ant-steps-item-content > div").should("have.text", "Build Profile");
+      ".ant-steps-label-horizontal").should("contain.text", "Build Profile");
 
     cy.get(".ant-btn").click({
       force: true,

@@ -5,13 +5,13 @@ export class FindMentee {
   searchByName() {
     const searchTerm = "ricirab";
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+      ".ant-input"
     ).type(searchTerm);
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div.gallery-mentor-container"
+      ".gallery-mentor-container"
     ).should("have.length.greaterThan", 0);
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div.gallery-mentor-container"
+      ".gallery-mentor-container"
     ).each(($result) => {
       cy.wrap($result).should("include.text", searchTerm);
     });
@@ -42,7 +42,7 @@ export class FindMentee {
       .invoke("text")
       .then((selectedText) => {
         cy.get(
-          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div.gallery-container > div.gallery-mentor-container"
+          ".gallery-mentor-container"
         ).each(($result) => {
           cy.wrap($result).should("include.text", selectedText);
         });
@@ -59,9 +59,9 @@ export class FindMentee {
       .then((selectedText) => {
         const text = selectedText;
         cy.log(`text is equal : ${text}`);
-        cy.get(".gallery-button").click();
+        cy.get(".gallery-button", {timeout: 10000}).click();
         cy.get(
-          "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.mentor-profile-content-public > div > div"
+          ".mentor-specialization-tag"
         ).should("contain.text", text);
       });
     cy.go(-1);

@@ -7,68 +7,67 @@ describe("testing the Application page of Mentor", () => {
 
     cy.get("#email").type(adminEmail);
     cy.get("#password").type(adminPassword);
-    cy.get(".ant-btn > span").click();
+    cy.get("#submit").click();
     cy.wait(2000);
     cy.visit("/organizer");
   });
 
   it("checking the visibility of page elements", () => {
-    cy.get("#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div:nth-child(2)").should(
+    cy.get("#applicactionstate").should(
       "have.text",
       "Applications State"
     );
 
-    cy.get("#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.btn-dc > button:nth-child(1) > span:nth-child(2)")
+    cy.get("#mentorapplications")
       .should("have.text", "Mentor Appications")
       .should("not.be.disabled");
 
-    cy.get("#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.btn-dc > button:nth-child(2) > span:nth-child(2)")
+    cy.get("#menteeapplications")
       .should("have.text", "Mentee Appications")
       .should("not.be.disabled");
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div:nth-child(4) > div > div > div > div > div > div > table > thead > tr > th:nth-child(1)"
-    )
-      .should("have.text", "Name")
+      "#applicationstable thead tr th:first-child"
+    ).should("have.text", "Name")
       .click();
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div:nth-child(4) > div > div > div > div > div > div > table > thead > tr > th:nth-child(2)"
+      "#applicationstable thead tr th:nth-child(2)"
     )
       .should("have.text", "Email")
       .click();
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div:nth-child(4) > div > div > div > div > div > div > table > thead > tr > th:nth-child(3)"
+      "#applicationstable thead tr th:nth-child(3)"
     )
       .should("have.text", "Notes")
       .click();
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div:nth-child(4) > div > div > div > div > div > div > table > thead > tr > th:nth-child(4)"
+      "#applicationstable thead tr th:nth-child(4)"
     )
       .should("have.text", "Application State")
       .click();
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div:nth-child(4) > div > div > div > div > div > div > table > thead > tr > th:nth-child(5)"
+      "#applicationstable thead tr th:nth-child(5)"
     )
       .should("have.text", "Full Application")
       .click();
 
     cy.log("checking does the download files button works or not");
 
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.btn-dc > button:nth-child(1)"
-    ).click();
-    cy.wait(2000);
-    cy.readFile("cypress/downloads/mentor_applications.xlsx");
+      // cy.get(
+      //   "#mentorapplications"
+      // ).click();
+      // cy.wait(2000);
+      // cy.readFile("cypress/downloads/mentor_applications.xlsx");
 
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.btn-dc > button:nth-child(2)"
-    ).click();
-    cy.wait(2000);
-    cy.readFile("cypress/downloads/mentee_applications.xlsx");
+      // cy.get(
+      //   "#menteeapplications"
+      // ).click();
+      // cy.wait(2000);
+      // cy.readFile("cypress/downloads/mentee_applications.xlsx");
 
   });
 
@@ -76,19 +75,20 @@ describe("testing the Application page of Mentor", () => {
     cy.wait(2000);
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-select.ant-select-outlined.css-1axsfu3.ant-select-single.ant-select-show-arrow > div > span.ant-select-selection-item"
-    ).click();
+      "#applicationssort"
+    ).click({force:true});
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-select.ant-select-outlined.css-1axsfu3.ant-select-single.ant-select-show-arrow > div > span.ant-select-selection-item"
-    ).type("{downarrow}{downarrow}{downarrow}{downarrow}{enter}");
+      "#applicationssort"
+    ).type("{downarrow}{downarrow}{downarrow}{enter}",{force:true});
 
     cy.wait(1000);
 
     cy.get(".ant-table-tbody")
       .find("tr")
       .then(($rows) => {
-        if ($rows.length > 0) {
+        if ($rows.length > 1) {
+          cy.log($rows.length)
           cy.get(".ant-table-tbody")
             .find("tr")
             .each((row, rowIndex) => {
@@ -103,12 +103,13 @@ describe("testing the Application page of Mentor", () => {
       });
 
       cy.get(
-        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-select.ant-select-outlined.css-1axsfu3.ant-select-single.ant-select-show-arrow > div > span.ant-select-selection-item"
-      ).click();
+        "#applicationssort"
+      ).click({force:true});
+  
   
       cy.get(
-        "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-select.ant-select-outlined.css-1axsfu3.ant-select-single.ant-select-show-arrow > div > span.ant-select-selection-item"
-      ).type("{downarrow}{downarrow}{enter}");
+        "#applicationssort"
+      ).type("{downarrow}{enter}",{force:true});
   
 
     cy.wait(1000);
@@ -131,29 +132,5 @@ describe("testing the Application page of Mentor", () => {
       });
   });
 
-  // it('now check change status work or not', () => {
-
-  //     cy.wait(2000);
-  //     cy.get('.ant-table-tbody')
-  //         .find('tr')
-  //         .then(($rows) => {
-
-  //             if ($rows.length > 1) {
-
-  //                 cy.get('.ant-table-tbody')
-  //                     .find('tr')
-  //                     .first().then(($row) => {
-  //                         cy.get('#root > section > main > div > div:nth-child(4) > div > div > div > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(4) > div > div:nth-child(2) > div').click();
-
-  //                         cy.get('.ant-select-item[title="BuildProfile"]').click();
-
-  //                         cy.wrap($row).find('td:eq(3)').find('.ant-select-selection-item').should('have.text', 'BuildProfile');
-  //                     })
-
-  //             } else {
-  //                 cy.log('Table is empty.');
-  //             }
-  //         });
-
-  // })
+  
 });

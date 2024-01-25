@@ -5,19 +5,21 @@ describe("Registration for mentee", () => {
     const userEmail = "testa24@example.com";
     cy.get("#email").type(userEmail);
     //checking select fro Mentee
-    cy.get(".ant-select-selection-search-input").click();
+    cy.get("#role").click();
+    cy.wait(1000);
     cy.contains("Mentee").click();
     // click submit button
-    cy.get(".ant-btn").click();
+    cy.get("#submit").click();
     cy.wait(1000);
-    cy.get(".ant-select-selection-item").click({
+    cy.get("#select_mentee").click({
       force: true,
     });
-
+    cy.wait(1000);
     //////  now checking the validations on input fields
 
-    cy.get('.ant-btn').click();
-    cy.get('.ant-btn').click();
+    cy.get('#submit').click();
+    cy.wait(1000);
+    cy.get('#submit').click();
 
     cy.get("#firstName").should("be.visible");
     cy.get("#firstName").type("John Doe");

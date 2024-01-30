@@ -67,6 +67,7 @@
   },
   "common": {
     "admin": "مسؤل",
+    "support": "مؤيد، مشجع، داعم",
     "apply": "تطبيق",
     "back": " الرجوع للخلف ",
     "bug": "تقرير خطأ",
@@ -147,7 +148,11 @@
     "requiredOrganizationAffiliation":"الرجاء إدخال انتماء المنظمة",
     "requiredAvailableInPerson":"الرجاء إدخال هذا الحقل",
     "requiredAvailableGroupAppointments":"الرجاء إدخال هذا الحقل",
-    "requiredProfessionalTitle":"الرجاء إدخال المسمى الوظيفي"
+    "requiredProfessionalTitle":"الرجاء إدخال المسمى الوظيفي",
+    "requiredBriefIntro": "الرجاء إدخال مقدمة موجزة",
+    "requiredRegion":"الرجاء إدخال المناطق",
+    "requiredDevelopmentGoals": "الرجاء إدخال أهداف التنمية المستدامة التي يدعمها عملك",
+    "requiredCheckbox":"يرجى التحقق من هذا الحقل"
   },
   "commonApplication": {
     "genderIdentification": "الجنس",
@@ -546,7 +551,8 @@
     "explore": "استكشاف",
     "profile": "حساب تعريفي",
     "videos": "مقاطع الفيديو الخاصة بك",
-    "events":"الأحداث"
+    "events":"الأحداث",
+    "training": "تدريبات"
   },
   "verifyEmail": {
     "body": " تم إرسال رسالة تحقق إلى بريدك الإلكتروني. الرجاء النقر فوق الارتباط الموجود بالداخل للتحقق من حسابك. ",

@@ -67,6 +67,7 @@
   },
   "common": {
     "admin": "Administrador",
+    "support": "Apoiador",
     "apply": "Aplicar",
     "back": "Voltar",
     "bug": "Reportar um bug",
@@ -147,7 +148,11 @@
     "requiredOrganizationAffiliation":"Insira a afiliação da organização",
     "requiredAvailableInPerson":"Por favor insira este campo",
     "requiredAvailableGroupAppointments":"Por favor insira este campo",
-    "requiredProfessionalTitle":"Insira o título profissional"
+    "requiredProfessionalTitle":"Insira o título profissional",
+    "requiredBriefIntro": "Insira uma breve introdução",
+    "requiredRegion":"Insira as regiões",
+    "requiredDevelopmentGoals": "Insira os Objetivos de Desenvolvimento Sustentável que seu trabalho apoia",
+    "requiredCheckbox":"Por favor verifique este campo"
   },
   "commonApplication": {
     "genderIdentification": "Como você se identifica?",
@@ -546,7 +551,8 @@
     "explore": "Explorar",
     "profile": "Perfil",
     "videos": "Seus vídeos",
-    "events":"Eventos"
+    "events":"Eventos",
+    "training": "Treinamento"
   },
   "verifyEmail": {
     "body": "Um e-mail de verificação foi enviado para o seu e-mail. Por favor, clique no link contido nele para verificar sua conta.",

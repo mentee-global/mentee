@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
-import { Button, Switch, Upload, Avatar, Form, Select, Input } from "antd";
+import { Button, Upload, Avatar, Form, Select, Input, Radio} from "antd";
 import { useTranslation } from "react-i18next";
 import { ACCOUNT_TYPE, getRegions, getSDGs } from "../utils/consts";
 import { urlRegex } from "../utils/misc";
@@ -101,7 +101,12 @@ function PartnerProfileForm({
       <Form.Item
         label={t("partnerProfile.organizationName")}
         name="organization"
-        required
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredFullName"),
+          },
+        ]}
       >
         <Input />
       </Form.Item>
@@ -111,7 +116,12 @@ function PartnerProfileForm({
             label={t("common.password")}
             name="password"
             hasFeedback
-            required
+            rules={[
+              {
+                required: true,
+                message: t("common.requiredPassword"),
+              },
+            ]}
             className={styles.formGroupItem}
           >
             <Input.Password />
@@ -143,6 +153,12 @@ function PartnerProfileForm({
       <Form.Item
         label={t("partnerProfile.location")}
         name="location"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredKnowledgeLocation"),
+          },
+        ]}
         className={styles.formGroupItem}
       >
         <Input />
@@ -150,18 +166,37 @@ function PartnerProfileForm({
       <Form.Item
         label={t("partnerProfile.contactFullName")}
         name="person_name"
-        required
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredFullName"),
+          },
+        ]}
       >
         <Input />
       </Form.Item>
       <Form.Item
         label={t("partnerProfile.regionsWork")}
         name="regions"
-        required
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredRegion"),
+          },
+        ]}
       >
         <Select mode="multiple" options={getRegions(t)} />
       </Form.Item>
-      <Form.Item label={t("partnerProfile.briefIntro")} name="intro">
+      <Form.Item 
+        label={t("partnerProfile.briefIntro")} 
+        name="intro"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredBriefIntro"),
+          },
+        ]}
+      >
         <Input.TextArea rows={3} />
       </Form.Item>
       <div className={styles.formGroup}>
@@ -193,7 +228,16 @@ function PartnerProfileForm({
         </Form.Item>
       </div>
 
-      <Form.Item label={t("partnerProfile.developmentGoals")} name="sdgs">
+      <Form.Item 
+        label={t("partnerProfile.developmentGoals")}
+        name="sdgs"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredDevelopmentGoals"),
+          },
+        ]}
+      >
         <Select mode="multiple" options={getSDGs(t)} />
       </Form.Item>
       <Form.Item label={t("partnerProfile.projectNames")} name="topics">
@@ -203,18 +247,34 @@ function PartnerProfileForm({
         <Form.Item
           label={t("partnerProfile.collaborationGrants")}
           name="open_grants"
-          required
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredCheckbox"),
+            },
+          ]}
           className={styles.formGroupItem}
         >
-          <Switch />
+          <Radio.Group>
+            <Radio value={true}>{t("common.yes")}</Radio>
+            <Radio value={false}>{t("common.no")}</Radio>
+          </Radio.Group>
         </Form.Item>
         <Form.Item
           label={t("partnerProfile.collaborationProjects")}
           name="open_projects"
-          required
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredCheckbox"),
+            },
+          ]}
           className={styles.formGroupItem}
         >
-          <Switch />
+          <Radio.Group>
+            <Radio value={true}>{t("common.yes")}</Radio>
+            <Radio value={false}>{t("common.no")}</Radio>
+          </Radio.Group>
         </Form.Item>
       </div>
       <Form.Item>

@@ -55,7 +55,7 @@ function BuildProfile({ location, history }) {
 
   const onSubmit = async (profileData, image, changedImage) => {
     setLoading(true);
-    if (!inFirebase) {
+    if (!inFirebase && role !== ACCOUNT_TYPE.PARTNER) {
       if (userState !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {
         messageApi.error(t("commonProfile.errorTrainingSteps"));
         return;
@@ -81,7 +81,20 @@ function BuildProfile({ location, history }) {
         }
       }
       messageApi.info(t("commonProfile.accountCreated"));
-      history.push({ pathname: "/login", state: { email, role } });
+      let path = "";
+      if (role === ACCOUNT_TYPE.MENTOR) {
+        path = "/mentor";
+      }
+      if (role === ACCOUNT_TYPE.MENTEE) {
+        path = "/mentee";
+      }
+      if (role === ACCOUNT_TYPE.PARTNER) {
+        path = "/partner";
+      }
+      if (role === ACCOUNT_TYPE.GUEST) {
+        path = "/readonly";
+      }
+      history.push({ pathname: path + "/login", state: { email, role } });
     } else {
       messageApi.error(t("commonProfile.error.save"));
     }

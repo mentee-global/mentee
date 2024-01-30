@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
-import { Button, Upload, Avatar, Form, Select, Input, Radio} from "antd";
+import { Button, Upload, Avatar, Form, Select, Input, Radio } from "antd";
 import { useTranslation } from "react-i18next";
 import { ACCOUNT_TYPE, getRegions, getSDGs } from "../utils/consts";
 import { urlRegex } from "../utils/misc";
@@ -187,8 +187,8 @@ function PartnerProfileForm({
       >
         <Select mode="multiple" options={getRegions(t)} />
       </Form.Item>
-      <Form.Item 
-        label={t("partnerProfile.briefIntro")} 
+      <Form.Item
+        label={t("partnerProfile.briefIntro")}
         name="intro"
         rules={[
           {
@@ -228,7 +228,7 @@ function PartnerProfileForm({
         </Form.Item>
       </div>
 
-      <Form.Item 
+      <Form.Item
         label={t("partnerProfile.developmentGoals")}
         name="sdgs"
         rules={[

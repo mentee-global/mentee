@@ -16,13 +16,13 @@ export class AdminLogin {
         .should("have.attr", "type", "password")
         .and("have.attr", "aria-required", "true");
       cy.get(
-        "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
+        "#submit"
       )
         .should("be.enabled")
         .and("have.attr", "type", "submit")
         .and("contain.text", currentLanguage.common.login);
       cy.get(
-        "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > a"
+        "a"  
       )
         .should("have.attr", "href", "/forgot-password")
         .and("contain.text", currentLanguage.login.forgotPassword);
@@ -48,19 +48,19 @@ export class AdminLogin {
         ).click();
         // Checking The Text
         cy.get(
-          "#root > section > main > div > div > div.css-1c9mpvn > div > h2"
+          "h2"
         ).should("contain.text", currentLanguage.common.admin);
         cy.get(
-          "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(1) > div > div.ant-col.ant-form-item-label.css-wxm1m1 > label"
-        ).should("have.attr", "title", currentLanguage.common.email);
+          ".ant-form-item-required"
+        ).eq(0).should("have.attr", "title", currentLanguage.common.email);
         cy.get(
-          "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(2) > div > div.ant-col.ant-form-item-label.css-wxm1m1 > label"
+          ".ant-form-item-required"
         ).should("have.attr", "title", currentLanguage.common.password);
         cy.get(
-          "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button"
+          "#submit"
         ).should("contain.text", currentLanguage.common.login);
         cy.get(
-          "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > a"
+          "a"
         ).should("contain.text", currentLanguage.login.forgotPassword);
         // Storing previous language details
         previousLanguage = currentLanguage;

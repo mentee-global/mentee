@@ -201,6 +201,7 @@ function AdminAccountData() {
       <div className="table-search">
         <Input.Search
           placeholder="Search by name"
+          id="search"
           prefix={<UserOutlined />}
           allowClear
           size="medium"

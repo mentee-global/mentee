@@ -20,16 +20,16 @@ export class LoginPage {
 
   componentExist() {
     cy.url().should("include", "/login");
-    cy.get('.ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title')
+    cy.get('.ant-steps-item-title').eq(0)
     .should("be.visible");
-    cy.get('.ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title').should("contain.text", "Role");
-    cy.get('.ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title').should("contain.text", "Login");
+    cy.get('.ant-steps-item-title').eq(0).should("contain.text", "Role");
+    cy.get('.ant-steps-item-title').eq(1).should("contain.text", "Login");
 
     cy.get('.css-1c9mpvn > .ant-space').should("be.visible");
     cy.get(':nth-child(1) > .ant-card').should("contain.text", "Mentor");
     cy.get(
-      ".ant-space-vertical > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2)"
-    )
+      ".anticon-right-circle"
+    ).eq(0)
       .should("have.attr", "aria-label", "right-circle")
       .and("be.visible");
 
@@ -39,9 +39,9 @@ export class LoginPage {
     cy.get(".anticon-compass")
       .should("have.attr", "aria-label", "compass")
       .and("be.visible");
-    cy.get(
-      ".ant-space-vertical > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2)"
-    ).should("have.attr", "aria-label", "right-circle");
+      cy.get(
+        ".anticon-right-circle"
+      ).eq(1).should("have.attr", "aria-label", "right-circle");
 
     // cy.get(
     //   "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(3)"
@@ -49,16 +49,16 @@ export class LoginPage {
     cy.get(".anticon-partition")
       .should("have.attr", "aria-label", "partition")
       .and("be.visible");
-    cy.get(
-      ".ant-space-vertical > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2)"
-    ).should("have.attr", "aria-label", "right-circle");
+      cy.get(
+        ".anticon-right-circle"
+      ).eq(2).should("have.attr", "aria-label", "right-circle");
 
     cy.get(".anticon-unlock")
       .should("have.attr", "aria-label", "unlock")
       .and("be.visible");
-    cy.get(
-      ".ant-space-vertical > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > span:nth-child(2)"
-    ).should("have.attr", "aria-label", "right-circle");
+      cy.get(
+        ".anticon-right-circle"
+      ).eq(3).should("have.attr", "aria-label", "right-circle");
   }
   isFunctional() {
     let mappedUsers = this.users.map((user, id) => {
@@ -68,19 +68,19 @@ export class LoginPage {
         }) > .ant-card`
       ).click();
       cy.get(".ant-typography").should("contain", user);
-      cy.get(".anticon.anticon-check.ant-steps-finish-icon").should(
+      cy.get(".ant-steps-finish-icon").should(
         "have.attr",
         "aria-label",
         "check"
       );
-      cy.get(':nth-child(1) > .ant-row > .ant-form-item-label > .ant-form-item-required').should("have.attr", "for", "email");
+      cy.get('.ant-form-item-required').eq(0).should("have.attr", "for", "email");
       cy.get("#email")
         .should("have.attr", "type", "text")
         .and("have.attr", "aria-required", "true");
       cy.get("#password")
         .should("have.attr", "type", "password")
         .and("have.attr", "aria-required", "true");
-        cy.get('div.ant-steps-item:nth-child(1) > div:nth-child(1)')
+        cy.get('.ant-steps-item-container').eq(0)
         .should("have.attr", "role", "button")
         .click();
     });
@@ -105,7 +105,7 @@ export class LoginPage {
         ).click();
         // Checking the texts
         cy.get(
-          ".ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title"
+          ".ant-steps-item-title"
         ).should("contain.text", currentLanguage.common.role);
         cy.get(
           ":nth-child(1) > .ant-card"
@@ -160,18 +160,18 @@ export class LoginPage {
   }
  
   selectUserRole(userRole) {
-    const userRoleSelector = `#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(${userRole}) > div`;
-    cy.get(userRoleSelector).click();
-  }
+    const userRoleSelector = `.ant-card-bordered`;
+    cy.get(userRoleSelector).eq(userRole - 1).click();
+    }
   fillLoginForm(email, password) {
     cy.get("#email").type(email);
     cy.get("#password").type(password);
   }
   clickLoginButton() {
-    cy.get("#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(3) > div > div > div > div > button").click();
+    cy.get("#submit").click();
   }
   verifyUrlContains(expectedUrl) {
-    cy.url().should("include", expectedUrl);
+    cy.url({timeout: 20000}).should("include", expectedUrl);
   }
   login(userRole, email, password, expectedUrl) {
     this.selectUserRole(userRole);

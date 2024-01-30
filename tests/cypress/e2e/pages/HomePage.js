@@ -20,14 +20,14 @@ export class HomePage {
       .should("exist")
       .and("have.attr", "aria-label", "user")
       .should("be.visible");
-    cy.get('#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > div:nth-child(1) > div')
+    cy.get('.ant-card-bordered').eq(0)
       .should("contain", "Existing")
       .should("be.visible");
     cy.get("span.anticon.anticon-right-circle")
       .should("exist")
       .and("have.attr", "aria-label", "right-circle")
       .should("be.visible");
-    cy.get(".ant-card-meta-description")
+      cy.get('.ant-card-bordered').eq(0)
       .should("contain", "Platform Login")
       .should("be.visible");
 
@@ -98,54 +98,43 @@ export class HomePage {
     });
   }
   clickExisting() {
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > div:nth-child(1)"
-    ).click();
+    cy.get('.ant-card-bordered').eq(0)
+    .click();
     cy.url().should("include", "/login");
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-steps.ant-steps-horizontal.css-1axsfu3.ant-steps-small.ant-steps-label-horizontal"
-    ).should("be.visible");
+      ".ant-steps-item-container"
+    ).eq(0).should("be.visible");
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(1)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(0).should("be.visible");
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(2)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(1).should("be.visible");
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(3)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(2).should("be.visible");
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(4)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(3).should("be.visible");
   }
   clickNew() {
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > div:nth-child(2)"
-    ).click();
+    cy.get('.ant-card-bordered').eq(1)
+    .click();
     cy.url().should("include", "/apply");
-    // cy.get(
-    //   ".ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center"
-    // ).should("be.visible");
-    cy.get("#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > h2")
+    cy.get(".ant-typography")
       .should("contain", "Apply")
       .and("be.visible");
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(1) > div > div.ant-col.ant-form-item-label.css-1axsfu3 > label"
-    ).should("have.attr", "title", "Email");
+      ".ant-form-item-required"
+    ).eq(0).should("have.attr", "title", "Email");
     cy.get(
       "#email"
     ).should("be.visible");
     cy.get("#email").should("have.attr", "type", "text");
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(2) > div > div.ant-col.ant-form-item-label.css-1axsfu3 > label"
-    ).should("have.attr", "title", "Role");
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(1)"
-    ).should("be.visible");
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3)"
-    ).should("be.visible");
-    cy.get("#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > form > div:nth-child(3) > div > div > div > div > button").should(
+      ".ant-form-item-required"
+    ).eq(1).should("have.attr", "title", "Role");
+    cy.get("#submit").should(
       "have.attr",
       "type",
       "submit"

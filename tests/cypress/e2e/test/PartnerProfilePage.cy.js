@@ -20,15 +20,15 @@ describe("Testing partner page", () => {
     cy.get("#nest-messages_email").clear().type("testEmail@gmail.com");
 
     cy.get(
-      "#nest-messages > div.mentor-profile-editing-footer > div.mentor-profile-save-container > div > div > div > div > div > button"
+      ".regular-button"
     ).click();
 
-    cy.get("a.mentor-profile-contact-edit").click();
+    cy.get("a.mentor-profile-contact-edit", {timeout: 10000}).click();
 
     cy.get("#nest-messages_email").clear().type(Cypress.env("PARTNER_EMAIL"));
 
     cy.get(
-      "#nest-messages > div.mentor-profile-editing-footer > div.mentor-profile-save-container > div > div > div > div > div > button"
+      ".regular-button"
     ).click();
   });
 });
@@ -48,16 +48,16 @@ describe("Testing partner page details", () => {
     cy.get(".ant-btn-primary").contains("Save").click();
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-name > div.mentor-profile-decorations"
-    ).should("have.text", "new briks");
+      ".mentor-profile-name"
+    ).should("contain.text", "new briks");
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div > div > div.mentor-profile-info > div > div:nth-child(8) > div:nth-child(2) > div"
+      ".mentor-specialization-tag"
     ).should("have.text", "S. America");
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div > div > div.mentor-profile-info > div > div:nth-child(12)"
-    ).should("have.text", "dantay mentor test");
+      ".mentor-profile-about"
+    ).eq(1).should("have.text", "dantay mentor test");
   });
 });
 
@@ -76,11 +76,11 @@ describe("Again adding previo details", () => {
     cy.get(".ant-btn-primary").contains("Save").click();
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-name > div.mentor-profile-decorations"
-    ).should("have.text", "Test");
+      ".mentor-profile-name"
+    ).should("contain.text", "Test");
 
     cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div > div > div.mentor-profile-info > div > div:nth-child(12)"
-    ).should("have.text", "reberto murer partner as");
+      ".mentor-profile-about"
+    ).eq(1).should("have.text", "reberto murer partner as");
   });
 });

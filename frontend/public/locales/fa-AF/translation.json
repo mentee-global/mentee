@@ -49,6 +49,9 @@
   "traing":{
     "completed":"تکمیل شد"
   },
+  "traing":{
+    "completed":"تکمیل شد"
+  },
   "appointmentStatus": {
     "accepted": "تایید شده",
     "denied": "رد شده",

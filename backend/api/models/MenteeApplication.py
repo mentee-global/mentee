@@ -23,6 +23,7 @@ class MenteeApplication(Document, Mixin):
     date_submitted = DateTimeField(required=True)
     notes = StringField()
     traingStatus = DictField(required=False)
+    partner = StringField()
 
     def __repr__(self):
         return f"""Mentee Application email: {self.email}

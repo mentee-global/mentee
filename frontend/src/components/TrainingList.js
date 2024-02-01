@@ -73,18 +73,20 @@ const TrainingList = (props) => {
               url={training.url}
             />
             <br />
-            <Checkbox
-              style={{ marginTop: "12px" }}
-              className=""
-              onChange={(e) => {
-                changeTraingStatus(training.id, e.target.checked);
-              }}
-              checked={
-                traingStatus[training.id] ? traingStatus[training.id] : false
-              }
-            >
-              {t("traing.completed")}
-            </Checkbox>
+            {props.applicationData && (
+              <Checkbox
+                style={{ marginTop: "12px" }}
+                className=""
+                onChange={(e) => {
+                  changeTraingStatus(training.id, e.target.checked);
+                }}
+                checked={
+                  traingStatus[training.id] ? traingStatus[training.id] : false
+                }
+              >
+                {t("traing.completed")}
+              </Checkbox>
+            )}
           </>
         );
       case TRAINING_TYPE.LINK:
@@ -94,18 +96,20 @@ const TrainingList = (props) => {
               {training.url}
             </a>
             <br />
-            <Checkbox
-              style={{ marginTop: "12px" }}
-              className=""
-              onChange={(e) => {
-                changeTraingStatus(training.id, e.target.checked);
-              }}
-              checked={
-                traingStatus[training.id] ? traingStatus[training.id] : false
-              }
-            >
-              {t("traing.completed")}
-            </Checkbox>
+            {props.applicationData && (
+              <Checkbox
+                style={{ marginTop: "12px" }}
+                className=""
+                onChange={(e) => {
+                  changeTraingStatus(training.id, e.target.checked);
+                }}
+                checked={
+                  traingStatus[training.id] ? traingStatus[training.id] : false
+                }
+              >
+                {t("traing.completed")}
+              </Checkbox>
+            )}
           </>
         );
       case TRAINING_TYPE.DOCUMENT:
@@ -120,18 +124,20 @@ const TrainingList = (props) => {
               {training.file_name}
             </Button>
             <br />
-            <Checkbox
-              style={{ marginTop: "12px" }}
-              className=""
-              onChange={(e) => {
-                changeTraingStatus(training.id, e.target.checked);
-              }}
-              checked={
-                traingStatus[training.id] ? traingStatus[training.id] : false
-              }
-            >
-              {t("traing.completed")}
-            </Checkbox>
+            {props.applicationData && (
+              <Checkbox
+                style={{ marginTop: "12px" }}
+                className=""
+                onChange={(e) => {
+                  changeTraingStatus(training.id, e.target.checked);
+                }}
+                checked={
+                  traingStatus[training.id] ? traingStatus[training.id] : false
+                }
+              >
+                {t("traing.completed")}
+              </Checkbox>
+            )}
           </>
         );
       default:

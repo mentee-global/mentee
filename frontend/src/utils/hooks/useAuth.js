@@ -43,17 +43,29 @@ function useProvideAuth() {
     new Promise((resolve) => resolve)
   );
 
-  const resetRoleState = () => {
-    setRoleState({
-      role: ACCOUNT_TYPE.GUEST,
-      isAdmin: false,
-      isMentor: false,
-      isMentee: false,
-      isPartner: false,
-      isGuest: false,
-    });
-    setProfileId(null);
-    localStorage.removeItem("profileId");
+  const resetRoleState = (profile_id = null, role = null) => {
+    if (profile_id) {
+      setRoleState({
+        role: Number(role),
+        isAdmin: `${role}` === `${ACCOUNT_TYPE.ADMIN}`,
+        isMentor: `${role}` === `${ACCOUNT_TYPE.MENTOR}`,
+        isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
+        isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
+        isGuest: `${role}` === `${ACCOUNT_TYPE.GUEST}`,
+      });
+      setProfileId(profile_id);
+    } else {
+      setRoleState({
+        role: ACCOUNT_TYPE.GUEST,
+        isAdmin: false,
+        isMentor: false,
+        isMentee: false,
+        isPartner: false,
+        isGuest: false,
+      });
+      setProfileId(null);
+      localStorage.removeItem("profileId");
+    }
   };
 
   // Subscribe to user on mount
@@ -67,18 +79,33 @@ function useProvideAuth() {
       await getIdTokenResult(true)
         .then((idTokenResult) => {
           const { role, profileId } = idTokenResult.claims;
-          setProfileId(profileId);
-          localStorage.setItem("profileId", profileId);
-          setRoleState({
-            role: Number(role),
-            isAdmin: `${role}` === `${ACCOUNT_TYPE.ADMIN}`,
-            isMentor: `${role}` === `${ACCOUNT_TYPE.MENTOR}`,
-            isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
-            isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
-            isGuest: `${role}` === `${ACCOUNT_TYPE.GUEST}`,
-          });
+          const supportUserID = localStorage.getItem("support_user_id");
+          const cur_role = localStorage.getItem("role");
+          const cur_user_id = localStorage.getItem("profileId");
+          if (!(role == ACCOUNT_TYPE.SUPPORT && supportUserID)) {
+            setProfileId(profileId);
+            localStorage.setItem("profileId", profileId);
+            setRoleState({
+              role: Number(role),
+              isAdmin: `${role}` === `${ACCOUNT_TYPE.ADMIN}`,
+              isMentor: `${role}` === `${ACCOUNT_TYPE.MENTOR}`,
+              isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
+              isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
+              isGuest: `${role}` === `${ACCOUNT_TYPE.GUEST}`,
+            });
 
-          Promise.resolve(idTokenResult).then(onAuthUpdate);
+            Promise.resolve(idTokenResult).then(onAuthUpdate);
+          } else {
+            setProfileId(cur_user_id);
+            setRoleState({
+              role: Number(cur_role),
+              isAdmin: `${cur_role}` === `${ACCOUNT_TYPE.ADMIN}`,
+              isMentor: `${cur_role}` === `${ACCOUNT_TYPE.MENTOR}`,
+              isMentee: `${cur_role}` === `${ACCOUNT_TYPE.MENTEE}`,
+              isPartner: `${cur_role}` === `${ACCOUNT_TYPE.PARTNER}`,
+              isGuest: `${cur_role}` === `${ACCOUNT_TYPE.GUEST}`,
+            });
+          }
         })
         .catch(() => Promise.resolve(null).then(onAuthUpdate));
     });

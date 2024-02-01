@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Form, Input, Radio, Typography, Select, Button } from "antd";
 import { useTranslation } from "react-i18next";
-import { createApplication } from "utils/api";
+import { createApplication, fetchPartners } from "utils/api";
 import "components/css/MentorApplicationPage.scss";
 
 const { Paragraph } = Typography;
@@ -10,6 +10,24 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
   const { t } = useTranslation();
   const options = useSelector((state) => state.options);
   const [loading, setLoading] = useState();
+  const [partnerOptions, setPartnerOptions] = useState([
+    { value: 0, label: t("commonApplication.no-affiliation") },
+  ]);
+  useEffect(() => {
+    async function getPartners() {
+      const partenr_data = await fetchPartners();
+      partenr_data.map((item) => {
+        partnerOptions.push({
+          value: item._id.$oid,
+          label: item.organization,
+        });
+        return true;
+      });
+      setPartnerOptions(partnerOptions);
+      setLoading(false);
+    }
+    getPartners();
+  }, []);
 
   // TODO: Clean this and MentorApplication.js up with the constants
   // constant declarations
@@ -129,6 +147,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
       workstate: workState,
       isSocial: values.socialMedia,
       questions: values.questions,
+      partner: values.partner,
       date_submitted: new Date(),
       role,
     };
@@ -489,6 +508,18 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
             rows={3}
             placeholder={t("menteeApplication.questionsPlaceholder")}
           />
+        </Form.Item>
+        <Form.Item
+          label={t("commonApplication.partner")}
+          name="partner"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredPartner"),
+            },
+          ]}
+        >
+          <Select options={[...partnerOptions]} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import { Avatar, Typography, Button, Tooltip, theme } from "antd";
 import {
   EnvironmentOutlined,
@@ -7,10 +7,14 @@ import {
   GlobalOutlined,
 } from "@ant-design/icons";
 
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
 import "./css/Gallery.scss";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "features/userSlice";
+import { useAuth } from "../utils/hooks/useAuth";
+
 const { Title, Paragraph } = Typography;
 
 const styles = {
@@ -39,6 +43,10 @@ function MenteeCard(props) {
     token: { colorPrimary, colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const user = useSelector((state) => state.user.user);
+  const { resetRoleState } = useAuth();
 
   function getImage(image) {
     if (!image) {
@@ -46,6 +54,21 @@ function MenteeCard(props) {
     } else {
       return <img src={image} alt="" />;
     }
+  }
+
+  function loginOtherUser(e, user_data) {
+    localStorage.setItem("support_user_id", user._id.$oid);
+    resetRoleState(user_data.id, ACCOUNT_TYPE.MENTEE);
+    dispatch(
+      fetchUser({
+        id: user_data.id,
+        role: ACCOUNT_TYPE.MENTEE,
+      })
+    );
+    localStorage.setItem("role", ACCOUNT_TYPE.MENTEE);
+    localStorage.setItem("profileId", user_data.id);
+
+    history.push(REDIRECTS[ACCOUNT_TYPE.MENTEE]);
   }
 
   function truncate(str, maxLength) {
@@ -154,11 +177,21 @@ function MenteeCard(props) {
           width: 90%;
         `}
       >
-        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>
-          <div className="gallery-button">
-            <Button type="primary">{t("gallery.viewProfile")}</Button>
-          </div>
-        </NavLink>
+        {props.isSupport ? (
+          <>
+            <div className="gallery-button">
+              <Button onClick={(e) => loginOtherUser(e, props)} type="primary">
+                {t("common.login")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTEE}/${props.id}`}>
+            <div className="gallery-button">
+              <Button type="primary">{t("gallery.viewProfile")}</Button>
+            </div>
+          </NavLink>
+        )}
       </div>
     </div>
   );

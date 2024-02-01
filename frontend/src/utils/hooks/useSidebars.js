@@ -27,6 +27,11 @@ export default function useSidebars(userType, t) {
       icon: <MessageOutlined />,
     },
     {
+      label: t("sidebars.training"),
+      key: "mentor/training",
+      icon: <VideoCameraOutlined />,
+    },
+    {
       label: t("sidebars.explore"),
       key: "galleries",
       icon: <SearchOutlined />,
@@ -66,6 +71,11 @@ export default function useSidebars(userType, t) {
       icon: <MessageOutlined />,
     },
     {
+      label: t("sidebars.training"),
+      key: "mentee/training",
+      icon: <VideoCameraOutlined />,
+    },
+    {
       label: t("sidebars.explore"),
       key: "galleries",
       icon: <SearchOutlined />,
@@ -102,6 +112,11 @@ export default function useSidebars(userType, t) {
       label: t("common.messages"),
       key: `messages/${ACCOUNT_TYPE.PARTNER}`,
       icon: <MessageOutlined />,
+    },
+    {
+      label: t("sidebars.training"),
+      key: "partner/training",
+      icon: <VideoCameraOutlined />,
     },
     {
       label: t("sidebars.explore"),
@@ -144,6 +159,23 @@ export default function useSidebars(userType, t) {
     },
   ];
 
+  const supportSidebar = [
+    {
+      label: t("navHeader.findMentor"),
+      key: "support/all-mentors",
+      icon: <ToolOutlined />,
+    },
+    {
+      label: t("navHeader.findMentee"),
+      key: "support/all-mentees",
+      icon: <CompassOutlined />,
+    },
+    {
+      label: t("navHeader.findPartner"),
+      key: "support/all-partners",
+      icon: <PartitionOutlined />,
+    },
+  ];
   const adminSidebar = [
     {
       label: t("sidebars.explore"),
@@ -234,6 +266,8 @@ export default function useSidebars(userType, t) {
       return partnerSidebar;
     case ACCOUNT_TYPE.GUEST:
       return guestSidebar;
+    case ACCOUNT_TYPE.SUPPORT:
+      return supportSidebar;
     case ACCOUNT_TYPE.ADMIN:
       return adminSidebar;
     default:

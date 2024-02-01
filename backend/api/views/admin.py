@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
-from api.models import Users, VerifiedEmail, Admin, Guest
+from api.models import Support, Users, VerifiedEmail, Admin, Guest
 from api.utils.require_auth import admin_only
 from api.utils.request_utils import get_profile_model
 from api.utils.constants import Account
@@ -112,7 +112,7 @@ def upload_account_emailText():
     messageText = request.form["messageText"]
     password = request.form["password"]
     name = request.form["name"]
-    if role == Account.GUEST:
+    if role == Account.GUEST or role == Account.SUPPORT:
         email = messageText
         email = email.replace(" ", "")
         duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
@@ -122,8 +122,12 @@ def upload_account_emailText():
                 return create_response(status=422, message="Can't create firebase user")
             firebase_uid = firebase_user.uid
 
-            guest = Guest(email=email, name=name, firebase_uid=firebase_uid)
-            guest.save()
+            if role == Account.GUEST:
+                guest = Guest(email=email, name=name, firebase_uid=firebase_uid)
+                guest.save()
+            else:
+                support = Support(email=email, name=name, firebase_uid=firebase_uid)
+                support.save()
 
             verified_email = VerifiedEmail(email=email, role=str(role), password="")
             verified_email.save()

@@ -26,13 +26,12 @@ import {
 } from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 import { useSelector } from "react-redux";
-import ModalInput from "../ModalInput";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
 
 const { Title, Text, Paragraph } = Typography;
 
-function Gallery() {
+function Gallery(props) {
   const {
     token: { colorPrimaryBg, colorPrimary },
   } = theme.useToken();
@@ -261,8 +260,9 @@ function Gallery() {
       />
     </>
   );
+  console.log("zzz", props.isSupport, isMentee, user);
 
-  return !(isAdmin || isMentee || isGuest) ? (
+  return !(props.isSupport || isAdmin || isMentee || isGuest) ? (
     <Result
       status="403"
       title="403"
@@ -368,6 +368,7 @@ function Gallery() {
                 onEditFav={onEditFav}
                 image={mentor.image}
                 pair_partner={mentor.pair_partner}
+                isSupport={props.isSupport}
               />
             ))}
           </div>

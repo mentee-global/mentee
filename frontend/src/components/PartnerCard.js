@@ -1,23 +1,22 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import { Avatar, Typography, Tooltip, theme, Button } from "antd";
 import {
   LinkOutlined,
   LinkedinOutlined,
-  StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
   YoutubeOutlined,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
-
-import MenteeButton from "./MenteeButton";
-
 import "./css/Gallery.scss";
-import { ACCOUNT_TYPE, getRegions } from "utils/consts";
+import { ACCOUNT_TYPE, getRegions, REDIRECTS } from "utils/consts";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
 import { css } from "@emotion/css";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "features/userSlice";
+import { useAuth } from "../utils/hooks/useAuth";
 
 const styles = {
   title: {
@@ -47,6 +46,11 @@ function PartnerCard(props) {
     token: { colorPrimary, colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const user = useSelector((state) => state.user.user);
+  const { resetRoleState } = useAuth();
+
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;
@@ -61,6 +65,21 @@ function PartnerCard(props) {
     ) : (
       str
     );
+  }
+
+  function loginOtherUser(e, user_data) {
+    localStorage.setItem("support_user_id", user._id.$oid);
+    resetRoleState(user_data.id, ACCOUNT_TYPE.PARTNER);
+    dispatch(
+      fetchUser({
+        id: user_data.id,
+        role: ACCOUNT_TYPE.PARTNER,
+      })
+    );
+    localStorage.setItem("role", ACCOUNT_TYPE.PARTNER);
+    localStorage.setItem("profileId", user_data.id);
+
+    history.push(REDIRECTS[ACCOUNT_TYPE.PARTNER]);
   }
 
   return (
@@ -172,11 +191,21 @@ function PartnerCard(props) {
           width: 90%;
         `}
       >
-        <NavLink to={`/gallery/${ACCOUNT_TYPE.PARTNER}/${props.id}`}>
-          <div className="gallery-button">
-            <Button type="primary">{t("gallery.viewProfile")}</Button>
-          </div>
-        </NavLink>
+        {props.isSupport ? (
+          <>
+            <div className="gallery-button">
+              <Button onClick={(e) => loginOtherUser(e, props)} type="primary">
+                {t("common.login")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <NavLink to={`/gallery/${ACCOUNT_TYPE.PARTNER}/${props.id}`}>
+            <div className="gallery-button">
+              <Button type="primary">{t("gallery.viewProfile")}</Button>
+            </div>
+          </NavLink>
+        )}
       </div>
     </div>
   );

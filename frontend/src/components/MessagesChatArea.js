@@ -1,15 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  Avatar,
-  Layout,
-  Input,
-  Button,
-  Spin,
-  Modal,
-  TimePicker,
-  theme,
-  Drawer,
-} from "antd";
+import { Avatar, Input, Button, Spin, Modal, theme, Drawer } from "antd";
 import { withRouter } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import moment from "moment-timezone";
@@ -45,7 +35,6 @@ function MessagesChatArea(props) {
   const [isAlreadyInvitedByMentor, setIsAlreadyInvitedByMentor] =
     useState(false);
   const [updateContent, setUpdateContent] = useState(false);
-  const [isInviteSent, setIsInviteSent] = useState(false);
   const [isOpenCalendarModal, setIsOpenCalendarModal] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [availabeInFuture, setAvailabeInFuture] = useState([]);
@@ -267,7 +256,6 @@ function MessagesChatArea(props) {
       sender_id: profileId,
       recipient_id: activeMessageId,
     };
-    setIsInviteSent(true);
     socketInvite.emit("invite", inviteMsg);
     let dateTime = moment().utc();
     var availabes_in_future = [];
@@ -410,11 +398,7 @@ function MessagesChatArea(props) {
                 !isPartner &&
                 availabeInFuture.length > 0 && (
                   <div>
-                    <Button
-                      disabled={isInviteSent}
-                      onClick={sendInvite}
-                      type="primary"
-                    >
+                    <Button onClick={sendInvite} type="primary">
                       {t("messages.sendInvite")}
                     </Button>
                   </div>

@@ -67,6 +67,7 @@
   },
   "common": {
     "admin": "Admin",
+    "support": "Supporter",
     "apply": "Apply",
     "back": "Back",
     "bug": "Report a Bug",
@@ -148,9 +149,16 @@
     "requiredOrganizationAffiliation":"Please enter Organization Affliation",
     "requiredAvailableInPerson":"Please enter this field",
     "requiredAvailableGroupAppointments":"Please enter this field",
-    "requiredProfessionalTitle":"Please enter Professional Title"
+    "requiredProfessionalTitle":"Please enter Professional Title",
+    "requiredBriefIntro": "Please enter Brief Introduction",
+    "requiredRegion":"Please enter Regions",
+    "requiredDevelopmentGoals": "Please enter  Sustainable Development Goals Your Work Supports",
+    "requiredCheckbox":"Please check this field",
+    "requiredPartner": "Please select a Partner"
   },
   "commonApplication": {
+    "no-affiliation":"no-affiliation",
+    "partner":"If you are currently affiliated to a partner organization, please select it from the below list, or select no-affiliation.",
     "genderIdentification": "What do you identify as?",
     "lgbtq": "as LGBTQ+",
     "man": "as a man",
@@ -547,7 +555,8 @@
     "explore": "Explore",
     "profile": "Profile",
     "videos": "Your Videos",
-    "events":"Events"
+    "events":"Events",
+    "training":"Training"
   },
   "verifyEmail": {
     "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",

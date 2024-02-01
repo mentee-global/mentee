@@ -212,7 +212,7 @@ def login():
             profile.firebase_uid = firebase_uid
             profile.save()
     except:
-        if role != Account.ADMIN and role != Account.GUEST:
+        if role != Account.ADMIN and role != Account.GUEST and role != Account.SUPPORT:
             # user failed to create profile during registration phase
             # prompt frontend to return user to appropriate phase
 

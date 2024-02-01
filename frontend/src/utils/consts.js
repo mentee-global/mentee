@@ -37,6 +37,7 @@ export const ACCOUNT_TYPE = {
   MENTEE: 2,
   PARTNER: 3,
   GUEST: 4,
+  SUPPORT: 5,
 };
 
 export const ACCOUNT_TYPE_LABELS = {
@@ -45,6 +46,7 @@ export const ACCOUNT_TYPE_LABELS = {
   [ACCOUNT_TYPE.MENTEE]: "mentee",
   [ACCOUNT_TYPE.PARTNER]: "partner",
   [ACCOUNT_TYPE.GUEST]: "guest",
+  [ACCOUNT_TYPE.SUPPORT]: "support",
 };
 
 export const REDIRECTS = {
@@ -53,6 +55,7 @@ export const REDIRECTS = {
   [ACCOUNT_TYPE.PARTNER]: "/partner-gallery",
   [ACCOUNT_TYPE.ADMIN]: "/account-data",
   [ACCOUNT_TYPE.GUEST]: "/gallery",
+  [ACCOUNT_TYPE.SUPPORT]: "/support/all-mentors",
 };
 
 export const PLURAL_TYPE = {

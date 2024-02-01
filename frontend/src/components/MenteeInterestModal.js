@@ -7,6 +7,7 @@ import { useAuth } from "utils/hooks/useAuth";
 import { useHistory } from "react-router";
 import "./css/MenteeAppointments.scss";
 import { useSelector } from "react-redux";
+import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
 
 function MenteeProfileModal(props) {
   const history = useHistory();
@@ -36,7 +37,7 @@ function MenteeProfileModal(props) {
       specializations: specializations,
     };
     saveEdits(updatedProfile).then(() => {
-      history.go(0);
+      history.push(REDIRECTS[ACCOUNT_TYPE.MENTEE]);
     });
   };
 

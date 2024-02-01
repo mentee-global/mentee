@@ -10,12 +10,13 @@ import { logout } from "utils/auth.service";
 import { useAuth } from "utils/hooks/useAuth";
 import { collapse, resetUser } from "features/userSlice";
 import "components/css/Navigation.scss";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS, REDIRECTS } from "utils/consts";
 import {
   FormOutlined,
   MenuFoldOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { fetchUser } from "features/userSlice";
 
 const { Header } = Layout;
 
@@ -30,6 +31,7 @@ function NavigationHeader() {
   const { user, role } = useSelector((state) => state.user);
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   const [openDropdown, setOpenDropdown] = useState(false);
+  const supportUserID = localStorage.getItem("support_user_id");
 
   const logoutUser = () => {
     logout().then(() => {
@@ -39,9 +41,25 @@ function NavigationHeader() {
     });
   };
 
-  const getDropdownMenuItems = () => {
+  const goBackSupportDashbaord = (support_User_ID) => {
+    localStorage.removeItem("support_user_id");
+    resetRoleState(support_User_ID, ACCOUNT_TYPE.SUPPORT);
+    dispatch(
+      fetchUser({
+        id: support_User_ID,
+        role: ACCOUNT_TYPE.SUPPORT,
+      })
+    );
+    history.push(REDIRECTS[ACCOUNT_TYPE.SUPPORT]);
+    localStorage.setItem("role", ACCOUNT_TYPE.SUPPORT);
+    localStorage.setItem("profileId", support_User_ID);
+  };
+
+  const getDropdownMenuItems = (support_User_ID) => {
     const renderEdit =
-      role !== ACCOUNT_TYPE.ADMIN && role !== ACCOUNT_TYPE.GUEST;
+      role !== ACCOUNT_TYPE.ADMIN &&
+      role !== ACCOUNT_TYPE.GUEST &&
+      role !== ACCOUNT_TYPE.SUPPORT;
     const items = [];
     if (renderEdit) {
       items.push({
@@ -56,10 +74,22 @@ function NavigationHeader() {
         type: "divider",
       });
     }
-    items.push({
-      key: "sign-out",
-      label: <span onClick={() => logoutUser()}>{t("common.logout")}</span>,
-    });
+    if (!support_User_ID) {
+      items.push({
+        key: "sign-out",
+        label: <span onClick={() => logoutUser()}>{t("common.logout")}</span>,
+      });
+    } else {
+      items.push({
+        key: "",
+        label: (
+          <span onClick={() => goBackSupportDashbaord(support_User_ID)}>
+            {t("common.logout")}
+          </span>
+        ),
+      });
+    }
+
     return items;
   };
 
@@ -72,11 +102,19 @@ function NavigationHeader() {
     >
       {isMobile && <MenuFoldOutlined onClick={() => dispatch(collapse())} />}
       <div style={{ flex: "1 1 0%" }} />
+      {supportUserID && user && (
+        <div style={{ marginRight: "15px" }}>
+          The session is being impersonated as user {user.name} and role{" "}
+          {ACCOUNT_TYPE_LABELS[role]}
+        </div>
+      )}
       <Space size="middle" style={{ lineHeight: "100%" }}>
-        {role !== ACCOUNT_TYPE.GUEST && <NotificationBell />}
+        {role !== ACCOUNT_TYPE.GUEST && role !== ACCOUNT_TYPE.SUPPORT && (
+          <NotificationBell />
+        )}
         <Dropdown
           menu={{
-            items: getDropdownMenuItems(),
+            items: getDropdownMenuItems(supportUserID),
           }}
           onOpenChange={() => setOpenDropdown(!openDropdown)}
           open={openDropdown}

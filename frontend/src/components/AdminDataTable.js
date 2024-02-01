@@ -53,6 +53,7 @@ function AdminDataTable({
   isMentee,
   isPartner,
   isGuest,
+  isSupport,
   refresh,
 }) {
   if (isPartner && !data[0]?.id) {
@@ -402,7 +403,7 @@ function AdminDataTable({
         {!isPartner && (
           <>
             <Column title="Name" dataIndex="name" key="name" />
-            {!isGuest && (
+            {!isGuest && !isSupport && (
               <Column
                 title="No. of Appointments"
                 dataIndex="numOfAppointments"
@@ -410,7 +411,7 @@ function AdminDataTable({
                 align="center"
               />
             )}
-            {isGuest && (
+            {(isGuest || isSupport) && (
               <Column
                 title="Email"
                 dataIndex="email"
@@ -418,7 +419,7 @@ function AdminDataTable({
                 align="center"
               />
             )}
-            {!isMentee && !isGuest && (
+            {!isMentee && !isGuest && !isSupport && (
               <>
                 <Column
                   title="Appointments Available?"
@@ -456,6 +457,8 @@ function AdminDataTable({
                       data.id ? data.id : data._id.$oid,
                       isGuest
                         ? ACCOUNT_TYPE.GUEST
+                        : isSupport
+                        ? ACCOUNT_TYPE.SUPPORT
                         : data.isMentee
                         ? ACCOUNT_TYPE.MENTEE
                         : ACCOUNT_TYPE.MENTOR,
@@ -473,7 +476,7 @@ function AdminDataTable({
               )}
               align="center"
             />
-            {!isGuest && (
+            {!isGuest && !isSupport && (
               <Column
                 title="Link to Profile"
                 dataIndex="id"
@@ -615,7 +618,7 @@ function AdminDataTable({
               )}
               align="center"
             />
-            {!isGuest && (
+            {!isGuest && !isSupport && (
               <Column
                 title="Link to Profile"
                 className="link-td"
@@ -642,7 +645,7 @@ function AdminDataTable({
             )}
           </>
         )}
-        {!isGuest && (
+        {!isGuest && !isSupport && (
           <Column
             title="Profile Picture"
             dataIndex="id"

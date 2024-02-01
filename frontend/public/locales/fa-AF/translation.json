@@ -44,7 +44,10 @@
       "haveAccount": "حساب دارید؟"
     },
     "partnerVerify": "ایمیل شما از قبل به عنوان شریک ثبت نشده است. لطفا با یک نماینده تماس بگیرید: admin@menteeglobal.org",
-    "training": "من ترینینگ را انجام داده ام"
+    "training": "آموزش"
+  },
+  "traing":{
+    "completed":"تکمیل شد"
   },
   "traing":{
     "completed":"تکمیل شد"
@@ -67,6 +70,7 @@
   },
   "common": {
     "admin": "مدیر",
+    "support": "حامی",
     "apply": "ثبت نام کردن",
     "back": "بازگشت",
     "bug": "گزارش باگ",
@@ -147,9 +151,16 @@
     "requiredOrganizationAffiliation":"لطفا وابستگی سازمان را وارد کنید",
     "requiredAvailableInPerson":"لطفا این فیلد را وارد کنید",
     "requiredAvailableGroupAppointments":"لطفا این فیلد را وارد کنید",
-    "requiredProfessionalTitle":"لطفا عنوان حرفه ای را وارد کنید"
+    "requiredProfessionalTitle":"لطفا عنوان حرفه ای را وارد کنید",
+    "requiredBriefIntro": "لطفاً معرفی مختصر را وارد کنید",
+    "requiredRegion":"لطفا مناطق را وارد کنید",
+    "requiredDevelopmentGoals": "لطفا اهداف توسعه پایدار که کار شما از آنها پشتیبانی می کند را وارد کنید",
+    "requiredCheckbox":"لطفا این فیلد را بررسی کنید",
+    "requiredPartner": "لطفا یک شریک انتخاب کنید"
   },
   "commonApplication": {
+    "no-affiliation":"عدم وابستگی",
+    "partner":"اگر در حال حاضر به یک سازمان شریک وابسته هستید، لطفاً آن را از لیست زیر انتخاب کنید یا بدون وابستگی را انتخاب کنید.",
     "genderIdentification": "شناسایی جنسیت",
     "lgbtq": "LGBTQ",
     "man": "مرد",
@@ -546,7 +557,8 @@
     "explore": "کاویدن ",
     "profile": "مشخصات",
     "videos":"ویدیوهای شما",
-    "events":"مناسبت ها"
+    "events":"مناسبت ها",
+    "training": "آموزش"
   },
   "verifyEmail": {
     "body": "لطفا ایمیل خود را برای تایید ایمیل خود بررسی کنید",

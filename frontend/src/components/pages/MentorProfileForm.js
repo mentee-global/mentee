@@ -322,7 +322,6 @@ function MentorProfileForm({
           className={styles.formGroupItem}
           valuePropName="checked"
         >
-          {/* <Switch /> */}
           <Radio.Group>
             <Radio value={true}>{t("common.yes")}</Radio>
             <Radio value={false}>{t("common.no")}</Radio>

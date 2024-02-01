@@ -26,6 +26,7 @@ from .Notifications import Notifications
 from .Languages import Languages
 from .Specializations import Specializations
 from .Guest import Guest
+from .Support import Support
 
 __all__ = [
     "db",
@@ -53,6 +54,7 @@ __all__ = [
     "Languages",
     "Specializations",
     "Guest",
+    "Support",
 ]
 
 # You must import all of the new Models you create to this page

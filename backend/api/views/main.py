@@ -13,6 +13,7 @@ from api.models import (
     Admin,
     MentorProfile,
     MenteeProfile,
+    Support,
     Users,
     Image,
     Video,
@@ -69,9 +70,6 @@ def get_accounts(account_type):
                 for mentor_item in partner_account.assign_mentors:
                     partners_by_assign_mentor[mentor_item["id"]] = partner_account
         for account in mentors_data:
-            # target = {"id": str(account.id), "name": account.name}
-            # pair_partner = PartnerProfile.objects(assign_mentors__in=[target]).first()
-
             if str(account.id) in partners_by_assign_mentor:
                 pair_partner = partners_by_assign_mentor[str(account.id)]
                 if pair_partner is not None:
@@ -101,9 +99,6 @@ def get_accounts(account_type):
                 for mentee_item in partner_account.assign_mentors:
                     partners_by_assign_mentee[mentee_item["id"]] = partner_account
         for account in mentees_data:
-            # target = {"id": str(account.id), "name": account.name}
-            # pair_partner = PartnerProfile.objects(assign_mentees__in=[target]).first()
-            # if pair_partner is not None:
             if str(account.id) in partners_by_assign_mentee:
                 pair_partner = partners_by_assign_mentee[str(account.id)]
                 partner_data = {
@@ -132,6 +127,8 @@ def get_accounts(account_type):
 
     elif account_type == Account.GUEST:
         accounts = Guest.objects()
+    elif account_type == Account.SUPPORT:
+        accounts = Support.objects()
     else:
         msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)
@@ -159,6 +156,8 @@ def get_account(id):
             account = PartnerProfile.objects.get(id=id)
         elif account_type == Account.GUEST:
             account = Guest.objects.get(id=id)
+        elif account_type == Account.SUPPORT:
+            account = Support.objects.get(id=id)
         else:
             msg = "Level param doesn't match existing account types"
             return create_response(status=422, message=msg)
@@ -286,6 +285,19 @@ def create_mentor_profile():
     firebase_uid = firebase_user.uid
     data["firebase_uid"] = firebase_uid
     new_account.save()
+
+    if account_type == Account.MENTEE:
+        mentee_partenr_id = data.get("partner")
+        if mentee_partenr_id is not None and mentee_partenr_id != 0:
+            partenr_account = PartnerProfile.objects.get(id=mentee_partenr_id)
+            if partenr_account is not None:
+                assign_mentees = []
+                if partenr_account.assign_mentees:
+                    assign_mentees = partenr_account.assign_mentees
+                assign_mentees.append({"id": new_account.id, "name": new_account.name})
+                partenr_account.assign_mentees = assign_mentees
+                partenr_account.save()
+
     user = Users(
         firebase_uid=firebase_uid,
         email=email,
@@ -293,6 +305,7 @@ def create_mentor_profile():
         verified=False,
     )
     user.save()
+
     if account_type != Account.PARTNER:
         try:
             application = application_model(account_type)
@@ -496,7 +509,11 @@ def edit_mentor(id):
         login_user_role = claims.get("role")
 
         authorized, response = verify_user(account_type)
-        if not authorized and int(login_user_role) != Account.ADMIN:
+        if (
+            not authorized
+            and int(login_user_role) != Account.ADMIN
+            and int(login_user_role) != Account.SUPPORT
+        ):
             return response
 
         if account_type == Account.MENTEE:
@@ -544,7 +561,11 @@ def uploadImage(id):
         login_user_role = claims.get("role")
 
         authorized, response = verify_user(account_type)
-        if not authorized and int(login_user_role) != Account.ADMIN:
+        if (
+            not authorized
+            and int(login_user_role) != Account.ADMIN
+            and int(login_user_role) != Account.SUPPORT
+        ):
             return response
 
         if account_type == Account.MENTEE:

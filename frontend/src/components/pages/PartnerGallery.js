@@ -24,7 +24,7 @@ import { css } from "@emotion/css";
 
 const { Title } = Typography;
 
-function PartnerGallery() {
+function PartnerGallery(props) {
   const {
     token: { colorPrimaryBg },
   } = theme.useToken();
@@ -124,7 +124,7 @@ function PartnerGallery() {
   );
 
   // Add some kind of error 403 code
-  return !isPartner && !isAdmin && !isGuest ? (
+  return !props.isSupport && !isPartner && !isAdmin && !isGuest ? (
     <Result
       status="403"
       title="403"
@@ -217,6 +217,7 @@ function PartnerGallery() {
                 id={partner._id["$oid"]}
                 firebase_uid={partner.firebase_uid}
                 image={partner.image}
+                isSupport={props.isSupport}
               />
             ))}
           </div>

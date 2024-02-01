@@ -15,20 +15,17 @@ import {
   FloatButton,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn } from "utils/auth.service";
 import { useLocation } from "react-router";
 import { useAuth } from "../../utils/hooks/useAuth";
 import { useSelector } from "react-redux";
-import ModalInput from "../ModalInput";
 import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
 import { css } from "@emotion/css";
 
 const { Title } = Typography;
 
-function Gallery() {
+function Gallery(props) {
   const {
     token: { colorPrimaryBg, colorPrimary },
   } = theme.useToken();
@@ -308,6 +305,7 @@ function Gallery() {
                   age={mentee.age}
                   id={mentee._id["$oid"]}
                   pair_partner={mentee.pair_partner}
+                  isSupport={props.isSupport}
                 />
               );
             })}

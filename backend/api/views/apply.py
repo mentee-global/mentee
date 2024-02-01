@@ -564,6 +564,9 @@ def create_application():
                 status=422, message="This user is already registered"
             )
         else:
+            partner = data.get("partner")
+            if partner == 0:
+                partner = None
             new_application = MenteeApplication(
                 email=data.get("email"),
                 name=data.get("name"),
@@ -576,6 +579,7 @@ def create_application():
                 workstate=data.get("workstate"),
                 isSocial=data.get("isSocial"),
                 questions=data.get("questions", ""),
+                partner=partner,
                 application_state="PENDING",
                 date_submitted=data.get("date_submitted"),
             )

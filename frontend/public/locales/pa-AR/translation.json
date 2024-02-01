@@ -67,6 +67,7 @@
   },
   "common": {
     "admin": "مسؤل",
+    "support": "ملاتړ کوونکی",
     "apply": "درخواست کول",
     "back": "سنیدل",
     "bug": "د اشتباه شریکول",
@@ -148,9 +149,16 @@
     "requiredOrganizationAffiliation":"مهرباني وکړئ د سازمان تړاو داخل کړئ",
     "requiredAvailableInPerson":"مهرباني وکړئ دا ساحه دننه کړئ",
     "requiredAvailableGroupAppointments":"مهرباني وکړئ دا ساحه دننه کړئ",
-    "requiredProfessionalTitle":"مهرباني وکړئ مسلکي سرلیک دننه کړئ"
+    "requiredProfessionalTitle":"مهرباني وکړئ مسلکي سرلیک دننه کړئ",
+    "requiredBriefIntro": "مهرباني وکړئ لنډه پیژندنه دننه کړئ",
+    "requiredRegion":"مهرباني وکړئ سیمې ته ننوځئ",
+    "requiredDevelopmentGoals": "مهرباني وکړئ د دوامدار پراختیا اهداف داخل کړئ چې ستاسو د کار ملاتړ کوي",
+    "requiredCheckbox":"مهرباني وکړئ دا ساحه وګورئ",
+    "requiredPartner": "مهرباني وکړئ یو شریک وټاکئ"
   },
   "commonApplication": {
+    "no-affiliation":"بې تړاو",
+    "partner":"که تاسو اوس مهال د یوې شریکې موسسې سره تړاو لرئ، مهرباني وکړئ دا د لاندې لیست څخه وټاکئ، یا غیر تړاو غوره کړئ.",
     "genderIdentification": "د جنسیت پیژندنه",
     "lgbtq": " LGBTQ+",
     "man": "سړی",
@@ -547,7 +555,8 @@
     "events": "پيښې",
     "explore": "سپړنه",
     "profile": "پروفایل ",
-    "videos": "ستاسو ویدیوګانې"
+    "videos": "ستاسو ویدیوګانې",
+    "training": "ترینینگ"
   },
   "verifyEmail": {
     "body": "یو تاییدی بریښنالیک ستاسو بریښنالیک ته لیږل شوی. مهرباني وکړئ د خپل حساب تصدیق کولو لپاره بریښنالیک کې موجود لینک باندې کلیک وکړئ.",

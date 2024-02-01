@@ -23,7 +23,11 @@ def verify_user(required_role):
         logger.info(e)
         return UNAUTHORIZED, create_response(status=500, message=msg)
 
-    if required_role == ALL_USERS or int(role) == required_role:
+    if (
+        required_role == ALL_USERS
+        or int(role) == required_role
+        or int(role) == Account.SUPPORT
+    ):
         return AUTHORIZED, None
     else:
         msg = "Unauthorized"

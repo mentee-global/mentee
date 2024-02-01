@@ -422,7 +422,7 @@ function MenteeProfileForm({
         <Switch>{t("menteeProfile.privateAccount")}</Switch>
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" block loading={loading}>
+        <Button  id="submit" type="primary" htmlType="submit" block loading={loading}>
           {t("common.save")}
         </Button>
       </Form.Item>

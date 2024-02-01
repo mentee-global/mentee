@@ -186,6 +186,7 @@ function ApplicationOrganizer({ isMentor }) {
     >
       <div className="btn-dc">
         <Button
+          id="mentorapplications"
           className="btn-d"
           icon={<DownloadOutlined />}
           onClick={async () => {
@@ -195,6 +196,7 @@ function ApplicationOrganizer({ isMentor }) {
           Mentor Appications
         </Button>
         <Button
+          id="menteeapplications"
           className="btn-d"
           icon={<DownloadOutlined />}
           onClick={async () => {
@@ -204,11 +206,11 @@ function ApplicationOrganizer({ isMentor }) {
           Mentee Appications
         </Button>
       </div>
-      <div style={{ fontSize: 20, fontWeight: 400, padding: 10 }}>
+      <div id="applicactionstate" style={{ fontSize: 20, fontWeight: 400, padding: 10 }}>
         Applications State
       </div>
 
-      <Select
+      <Select id="applicationssort"
         style={{ width: 160, height: 50, padding: 10 }}
         onChange={(value) => {
           setAppstate(value);
@@ -219,7 +221,7 @@ function ApplicationOrganizer({ isMentor }) {
         options={[...getAppStatusOptions(), { value: "all", label: "All" }]}
       />
       <div style={{ margin: 10 }}>
-        <Table columns={columns} dataSource={filterdData} />;
+        <Table id="applicationstable" columns={columns} dataSource={filterdData} />;
       </div>
       {selectedID && (
         <Modal

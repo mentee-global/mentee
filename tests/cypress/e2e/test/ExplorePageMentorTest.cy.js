@@ -18,7 +18,7 @@ describe("Explore Page", () => {
     explore.selectEnglish();
     explore.isFunctional();
   });
-  it.only("Check Filter By Language", () => {
+  it("Check Filter By Language", () => {
     explore.selectEnglish();
     explore.filterByLanguage();
   });

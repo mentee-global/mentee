@@ -4,19 +4,15 @@ export class FindMentor {
   }
   searchByName() {
     const searchTerm = "robert";
+    cy.get(".ant-input").type(searchTerm);
+    cy.get(".ant-input").should("have.length.greaterThan", 0);
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
-    ).type(searchTerm);
-    cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container"
-    ).should("have.length.greaterThan", 0);
-    cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+      ".gallery-mentor-container"
     ).each(($result) => {
       cy.wrap($result).should("include.text", searchTerm);
     });
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+      ".ant-input-affix-wrapper .ant-input"
     ).clear();
   }
   selectPartner() {
@@ -27,7 +23,7 @@ export class FindMentor {
       .invoke("text")
       .then((selectedText) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+          ".ant-select-selection-item"
         ).each(($result) => {
           cy.wrap($result).should("include.text", selectedText);
         });
@@ -42,7 +38,7 @@ export class FindMentor {
       .invoke("text")
       .then((selectedText) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+          ":nth-child(6) > .ant-select-selector > .ant-select-selection-overflow"
         ).each(($result) => {
           cy.wrap($result).should("include.text", selectedText);
         });
@@ -57,7 +53,7 @@ export class FindMentor {
       .invoke("text")
       .then((selectedText) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+          ":nth-child(1) > .ant-select-selection-item > .ant-select-selection-item-content"
         ).each(($result) => {
           cy.wrap($result).should("include.text", selectedText);
         });

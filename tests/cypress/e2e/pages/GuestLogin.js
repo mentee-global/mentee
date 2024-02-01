@@ -27,51 +27,31 @@ export class GuestLogin extends ExplorePage {
 class PartnerComponent {
   componnentExists() {
     cy.url().should("include", "partner-gallery");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4.ant-typography.css-jjz8ew.css-wxm1m1"
-    ).should("contain.text", "Organization");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4:nth-child(3)"
-    ).should("contain.text", "Regions");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4:nth-child(5)"
-    ).should("contain.text", "Project Topics");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4:nth-child(7)"
-    ).should("contain.text", "SDGS");
-    cy.get("#root > section > main > div.gallery-container").should(
+    cy.get('.css-jjz8ew').should("contain.text", "Organization");
+    cy.get('.css-156ebuz > :nth-child(3)').should("contain.text", "Regions");
+    cy.get('.css-156ebuz > :nth-child(5)').should("contain.text", "Project Topics");
+    cy.get('.css-156ebuz > :nth-child(7)').should("contain.text", "SDGS");
+    cy.get('.gallery-container > :nth-child(1)').should(
       "be.visible"
     );
-    cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.css-132mkms > a > div > button > span"
-    ).should("have.text", "View Profile");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div"
-    ).should("be.visible");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
-    ).should("have.attr", "placeholder", "Search by organization");
+    cy.get('.gallery-button > .ant-btn > span').should("have.text", "View Profile");
+    cy.get('.css-156ebuz').should("be.visible");
+    cy.get(':nth-child(2) > .ant-input').should("have.attr", "placeholder", "Search by organization");
   }
   isFunctional() {
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span:nth-child(2) > input"
-    )
+    cy.get(':nth-child(2) > .ant-input')
       .type("test")
       .wait(500);
     cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container > div > div.gallery-card-body > div.gallery-card-header > div > h1"
+      "h1.ant-typography"
     ).should("have.text", "Test");
   }
 
   filterByRegion() {
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > div:nth-child(4) > div"
-    )
+    cy.get(':nth-child(4) > .ant-select-selector > .ant-select-selection-overflow')
       .click()
       .wait(500);
     cy.get("div[title='S. America']").click().wait(500);
-    cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container > div > div.gallery-card-body > article > div"
-    ).should("have.text", "S. America");
+    cy.get(':nth-child(3) > div.ant-typography').should("have.text", "S. America");
   }
 }

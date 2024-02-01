@@ -4,7 +4,7 @@ export class AdminAccountData {
   }
   searchByName() {
     const searchTerm = "roberto";
-    cy.get(".ant-input.css-wxm1m1").type(`${searchTerm}{enter}`);
+    cy.get("#search").type(`${searchTerm}{enter}`);
     cy.get(".ant-table-tbody")
       .should("have.length.greaterThan", 0)
       .and("contain.text", searchTerm);
@@ -14,7 +14,7 @@ export class AdminAccountData {
 
     roles.map((role) => {
       cy.get(
-        "#root > section > main > div > div.table-header > div.table-button-group > a:nth-child(1)"
+        ".table-button-group > :nth-child(1)"
       ).click();
       cy.get(".ant-dropdown-menu-title-content").eq(role).click();
       const roleSpecificHeadings = this.getRoleSpecificHeading(role);

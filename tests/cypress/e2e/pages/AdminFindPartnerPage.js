@@ -6,14 +6,14 @@ export class FindPartner {
     const searchTerm = "myorganization";
     cy.get(".ant-input-prefix").eq(0).type(searchTerm);
     cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+      ".gallery-mentor-container"
     ).should("have.length.greaterThan", 0);
     //As there is no data present against the searched value, I may choose to comment out the assertion script.
     // cy.get('#root > section > main > div.gallery-container > div.gallery-mentor-container').each(($result) => {
     //     cy.wrap($result).should('include.text', searchTerm);
     // })
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span:nth-child(2)"
+      ".ant-input-affix-wrapper .ant-input"
     )
       .clear()
       .should("have.value", "");
@@ -26,7 +26,7 @@ export class FindPartner {
       .invoke("text")
       .then((selectedText) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container"
+          ".gallery-mentor-container"
         ).each(($result) => {
           cy.wrap($result).should("include.text", selectedText);
         });

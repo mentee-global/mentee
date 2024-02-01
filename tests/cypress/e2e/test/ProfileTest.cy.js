@@ -143,6 +143,7 @@ describe("Edit Profile Input Tests", () => {
       .should("be.enabled");
 
     cy.get("#location")
+      .scrollIntoView()
       .should("exist")
       .should("be.visible")
       .should("be.enabled");
@@ -198,26 +199,26 @@ describe("Edit Profile Save Tests", () => {
     cy.wait(2000);
 
     cy.get(
-      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-name > div.mentor-profile-decorations"
+      ".mentor-profile-decorations"
     ).should("have.text", "Test Name");
 
     cy.get(
-      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(1) > span:nth-child(2)"
+      ".mentor-profile-tags-container > :nth-child(1) > :nth-child(2)"
     ).should("have.text", " Test Location ");
 
     cy.get(
-      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-about"
+      ".mentor-profile-about"
     ).should("have.text", "Test Biography");
 
     cy.get(
-      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(3) > a"
+      ":nth-child(3) > a"
     )
       .should("exist")
       .should("be.visible")
       .should("have.attr", "href", "https://www.youtube.com");
 
     cy.get(
-      "#root > section > main > div > div > div > div.mentor-profile-info > div > div.mentor-profile-tags-container > span:nth-child(4) > a"
+      ":nth-child(4) > a"
     )
       .should("exist")
       .should("be.visible")

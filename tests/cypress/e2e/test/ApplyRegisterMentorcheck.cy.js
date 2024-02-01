@@ -3,20 +3,23 @@ describe("Registration for mentor", () => {
     cy.visit("/apply");
 
     const userEmail = "test40@example.com";
-    cy.get(".ant-input.ant-input-lg.css-wxm1m1").type(userEmail);
+    cy.get("#email").type(userEmail);
     //checking select fro Mentor
-    cy.get(".ant-select-selection-search-input").click();
+    cy.get("#role").click();
+    cy.wait(1000);
     cy.contains("Mentor").click();
     // click submit button
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click();
+    cy.get("#submit").click();
     cy.wait(1000);
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click({
+    cy.get("#select_mentor").click({
       force: true,
     });
-
-    cy.get('button.ant-btn[type="submit"]').click();
-
-    cy.get("#firstName_help > div").should("be.visible");
+    cy.wait(1000);
+    cy.get('#submit').click();
+    cy.wait(1000);
+    cy.get('#submit').click();
+    cy.wait(1000);
+    cy.get("#firstName").should("be.visible");
     cy.get("#firstName_help > div").should(
       "have.text",
       "Please enter First Name"
@@ -129,14 +132,14 @@ describe("Registration for mentor", () => {
     cy.visit("/apply");
 
     const userEmail = "teta401@example.com";
-    cy.get(".ant-input.ant-input-lg.css-wxm1m1").type(userEmail);
+    cy.get("#email").type(userEmail);
     //checking select fro Mentor
     cy.get(".ant-select-selection-search-input").click();
     cy.contains("Mentor").click();
     // click submit button
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click();
+    cy.get(".ant-btn").click();
     cy.wait(1000);
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click({
+    cy.get(".ant-select-selection-item").click({
       force: true,
     });
 

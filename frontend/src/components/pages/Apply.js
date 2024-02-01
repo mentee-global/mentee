@@ -136,7 +136,7 @@ function Apply({ history }) {
       `}
     >
       {contextHolder}
-      <Link to={"/"}>
+      <Link to={"/"} id="back">
         <Space>
           <ArrowLeftOutlined />
           {t("common.back")}
@@ -183,9 +183,9 @@ function Apply({ history }) {
           ]}
         >
           <Select>
-            <Option value={ACCOUNT_TYPE.MENTOR}>{t("common.mentor")}</Option>
-            <Option value={ACCOUNT_TYPE.MENTEE}>{t("common.mentee")}</Option>
-            <Option value={ACCOUNT_TYPE.PARTNER}>{t("common.partner")}</Option>
+            <Option id="select_mentor" value={ACCOUNT_TYPE.MENTOR}>{t("common.mentor")}</Option>
+            <Option id="select_mentee" value={ACCOUNT_TYPE.MENTEE}>{t("common.mentee")}</Option>
+            <Option id="select_partner" value={ACCOUNT_TYPE.PARTNER}>{t("common.partner")}</Option>
           </Select>
         </Form.Item>
         {currentState !== undefined && (
@@ -201,6 +201,7 @@ function Apply({ history }) {
         <Form.Item>
           <Button
             type="primary"
+            id="submit"
             htmlType="submit"
             style={{ width: "100%" }}
             loading={loading}

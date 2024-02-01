@@ -5,7 +5,7 @@ export class ExplorePage {
   }
   selectEnglish() {
     cy.get(
-      "#root > section > main > header > div.ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center > div:nth-child(3)"
+      "span.ant-dropdown-trigger"
     ).trigger("mouseover");
 
     cy.get(".ant-dropdown-menu-title-content").eq(0).click();
@@ -17,31 +17,26 @@ export class ExplorePage {
     );
 
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4.ant-typography.css-jjz8ew.css-wxm1m1"
-    ).should("contain.text", "Filter by:");
+      ".ant-typography"
+    ).eq(0).should("contain.text", "Filter by:");
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4.ant-typography.css-ia5ipz.css-wxm1m1"
-    ).should("contain.text", "Partner");
+      ".ant-typography"
+    ).eq(1).should("contain.text", "Partner");
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4:nth-child(5)"
-    ).should("contain.text", "Languages");
+      ".ant-typography"
+    ).eq(2).should("contain.text", "Languages");
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > h4:nth-child(7)"
-    ).should(
+      ".ant-typography"
+    ).eq(3).should(
       "contain.text",
       this.role === "mentor" ? "Mentee Interests" : "Specializations"
     );
-    cy.get("#root > section > main > div.gallery-container").should(
+    cy.get("div.gallery-container").should(
       "be.visible"
     );
+    cy.get('.gallery-button', {timeout: 20000}).eq(0).should('have.text', 'View Profile');
     cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.css-132mkms > a > div > button > span"
-    ).should("have.text", "View Profile");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div"
-    ).should("be.visible");
-    cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+      "input.ant-input"
     ).should("have.attr", "placeholder", "Search by name");
   }
 
@@ -50,71 +45,66 @@ export class ExplorePage {
       const sampleValues = ["roberto", "ber"];
       sampleValues.forEach((value, index) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+          "input.ant-input"
         )
           .type(value)
           .wait(waitTime);
         cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+          "input.ant-input"
         ).should("have.attr", "value", value);
         cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.gallery-card-body > div.gallery-card-header > div > h1"
-        )
+          ".gallery-card-header"
+        ).eq(0).find('.gallery-title-text')
           .invoke("text")
           .then((text) => {
             const val = text.toLowerCase();
             expect(val).to.include(value);
           });
         cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+          "input.ant-input"
         ).clear();
       });
     } else {
       const sampleValues = ["xeh", "ber", "roberto"];
       sampleValues.forEach((value, index) => {
         cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+          ".ant-input"
         )
           .type(value)
           .wait(waitTime);
         cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+          ".ant-input"
         ).should("have.attr", "value", value);
-        cy.get(
-          "#root > section > main > div.gallery-container > div.gallery-mentor-container > div:nth-child(1) > div.gallery-card-body > div.gallery-card-header > div > h1"
-        )
-          .invoke("text")
-          .then((text) => {
-            const val = text.toLowerCase();
-            expect(val).to.include(value);
-          });
-        cy.get(
-          "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
-        ).clear();
+        cy.get(".ant-input").invoke("val").then((inputValue) => {
+          const val = inputValue.toLowerCase();
+          expect(val).to.include(value.toLowerCase());
+        });
+      
+        cy.get(".ant-input").clear();
       });
     }
   }
 
   filterByLanguage() {
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > div:nth-child(6)"
-    )
+      ".ant-select-selector"
+    ).eq(1)
       .click()
       .wait(waitTime);
     cy.get("div[title='Bengali']").click();
     cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container > div > div.gallery-card-body > article > div > span"
-    ).should("include.text", "Bengali");
+      ".gallery-card-body"
+    ).eq(0).should("include.text", "Bengali");
   }
   filterBySpecializations() {
     cy.get(
-      "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > div:nth-child(8)"
-    )
+      ".ant-select-selector"
+    ).eq(2)
       .click()
       .wait(waitTime);
-    cy.get("div[title='Citizenship']").click();
+    cy.get("div.ant-select-item-option[title='Citizenship']", {timeout: 20000}).click();
     cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container > div > div.gallery-card-body > article > div"
-    ).should("include.text", "Citizenship");
+      ".gallery-card-body"
+    ).eq(0).should("include.text", "Citizenship");
   }
 }

@@ -6,7 +6,6 @@ export class HomePage {
       .should("exist")
       .and("have.attr", "xmlns", "http://www.w3.org/2000/svg")
       .should("be.visible");
-
     cy.get(".ant-space-horizontal").should("exist").should("be.visible");
     cy.get("span.anticon.anticon-form.css-15ifzd0")
       .should("exist")
@@ -21,19 +20,14 @@ export class HomePage {
       .should("exist")
       .and("have.attr", "aria-label", "user")
       .should("be.visible");
-    cy.get('[style=""] > .ant-card')
-      .should(
-        "have.attr",
-        "class",
-        "ant-card ant-card-bordered css-ot64mz css-wxm1m1"
-      )
-      .and("contain", "Existing")
+    cy.get('.ant-card-bordered').eq(0)
+      .should("contain", "Existing")
       .should("be.visible");
     cy.get("span.anticon.anticon-right-circle")
       .should("exist")
       .and("have.attr", "aria-label", "right-circle")
       .should("be.visible");
-    cy.get(".ant-card-meta-description")
+      cy.get('.ant-card-bordered').eq(0)
       .should("contain", "Platform Login")
       .should("be.visible");
 
@@ -42,12 +36,7 @@ export class HomePage {
       .and("have.attr", "aria-label", "usergroup-add")
       .should("be.visible");
     cy.get(":nth-child(2) > .ant-card")
-      .should(
-        "have.attr",
-        "class",
-        "ant-card ant-card-bordered css-ot64mz css-wxm1m1"
-      )
-      .and("contain", "New")
+      .should("contain", "New")
       .should("be.visible");
     cy.get("span.anticon.anticon-right-circle")
       .should("exist")
@@ -75,11 +64,7 @@ export class HomePage {
     cy.get(
       "span.anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn"
     ).should("have.css", "cursor", "pointer");
-    cy.get(".ant-card.ant-card-bordered.css-ot64mz.css-wxm1m1").should(
-      "have.css",
-      "cursor",
-      "pointer"
-    );
+    cy.get(".css-ot64mz").should("have.css", "cursor", "pointer");
     cy.get(".ant-space-item").should("have.css", "cursor", "pointer");
   }
   changeLanguage() {
@@ -113,54 +98,43 @@ export class HomePage {
     });
   }
   clickExisting() {
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > div:nth-child(1)"
-    ).click();
+    cy.get('.ant-card-bordered').eq(0)
+    .click();
     cy.url().should("include", "/login");
     cy.get(
-      ".ant-steps.ant-steps-horizontal.css-wxm1m1.ant-steps-small.ant-steps-label-horizontal"
-    ).should("be.visible");
+      ".ant-steps-item-container"
+    ).eq(0).should("be.visible");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(0).should("be.visible");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(2)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(1).should("be.visible");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(3)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(2).should("be.visible");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(4)"
-    ).should("be.visible");
+      ".ant-card-bordered"
+    ).eq(3).should("be.visible");
   }
   clickNew() {
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > div:nth-child(2)"
-    ).click();
+    cy.get('.ant-card-bordered').eq(1)
+    .click();
     cy.url().should("include", "/apply");
-    cy.get(
-      ".ant-space.css-wxm1m1.ant-space-horizontal.ant-space-align-center"
-    ).should("be.visible");
-    cy.get(".ant-typography.css-wxm1m1")
+    cy.get(".ant-typography")
       .should("contain", "Apply")
       .and("be.visible");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(1) > div > div.ant-col.ant-form-item-label.css-wxm1m1 > label"
-    ).should("have.attr", "title", "Email");
+      ".ant-form-item-required"
+    ).eq(0).should("have.attr", "title", "Email");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(1)"
+      "#email"
     ).should("be.visible");
     cy.get("#email").should("have.attr", "type", "text");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(2) > div > div.ant-col.ant-form-item-label.css-wxm1m1 > label"
-    ).should("have.attr", "title", "Role");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(2)"
-    ).should("be.visible");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div > form > div:nth-child(3)"
-    ).should("be.visible");
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").should(
+      ".ant-form-item-required"
+    ).eq(1).should("have.attr", "title", "Role");
+    cy.get("#submit").should(
       "have.attr",
       "type",
       "submit"

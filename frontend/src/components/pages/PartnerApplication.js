@@ -269,11 +269,11 @@ function PartnerApplication(props) {
     <div className="background2">
       <div className="instructions">
         <h1 className="welcome-page">
-          <Trans i18nKey={"common.welcome"}>
+          <Trans id="welcome" i18nKey={"common.welcome"}>
             Welcome to <strong>MENTEE!</strong>
           </Trans>
         </h1>
-        <p className="para-1">
+        <p id="introduction" className="para-1">
           {t("partnerApplication.introduction")}
           <br></br>
         </p>

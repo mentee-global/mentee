@@ -143,6 +143,7 @@ function LoginForm({ role, defaultEmail }) {
         <Form.Item>
           <Button
             type="primary"
+            id="submit"
             htmlType="submit"
             style={{ width: "100%" }}
             loading={loading}

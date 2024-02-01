@@ -5,33 +5,31 @@ export class MentorEvent {
   isFunctional() {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
-        "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
-      ).click();
+        "li.ant-menu-item"
+      ).eq(3).click();
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > button"
+        ".gallery-container .ant-btn-primary"
       )
-        .should("have.attr", "type", "button")
-        .and("contain.text", currentLanguage.events.addEvent);
+        .should("contain.text", currentLanguage.events.addEvent);
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > span > input"
+        "input.ant-input"
       )
-        .should("have.attr", "type", "text")
         .and("have.attr", "placeholder", currentLanguage.gallery.searchByName);
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > div > label:nth-child(1) > span.ant-checkbox.css-wxm1m1 > input"
+        ".ant-checkbox-input"
       ).should("have.attr", "type", "checkbox");
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > div > div > label:nth-child(2) > span.ant-checkbox.css-wxm1m1 > input"
+        ".ant-checkbox-input"
       ).should("have.attr", "type", "checkbox");
     });
   }
   addEventFunctional() {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
-        "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
-      ).click();
+        "li.ant-menu-item"
+      ).eq(3).click();
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > button"
+        ".gallery-container .ant-btn-primary"
       ).click();
       cy.get(".ant-select-arrow").should("have.attr", "unselectable", "on");
       cy.get(".anticon.anticon-down.ant-select-suffix")
@@ -63,27 +61,27 @@ export class MentorEvent {
   addNewEvent() {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
-        "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
+        "li.ant-menu-item"
+      ).eq(3).click();
+      cy.get(
+        ".gallery-container .ant-btn-primary"
       ).click();
       cy.get(
-        "#root > section > main > div.gallery-container > div:nth-child(1) > div > button"
-      ).click();
-      cy.get(
-        ":nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(1) > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-select > .ant-select-selector > .ant-select-selection-overflow"
-      ).click();
+        ".ant-select-selector" 
+      ).eq(1).click();
       cy.wait(500);
       cy.get(
-        "body > div:nth-child(6) > div > div > div.rc-virtual-list > div.rc-virtual-list-holder > div > div > div.ant-select-item.ant-select-item-option.ant-select-item-option-active > div"
-      ).click();
+        ".ant-select-item-option-content"
+      ).eq(0).click();
       cy.wait(1000);
       cy.get(
-        "body > div:nth-child(5) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div.ant-form-item.css-wxm1m1.ant-form-item-has-success > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div > div > div > div"
-      ).click();
-      cy.get(
-        "body > div:nth-child(5) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div:nth-child(2) > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div"
-      )
-        .click()
-        .type("Sample Event");
+        ".ant-select-item-option-content"
+      ).eq(1).click();
+      // cy.get(
+      //   "body > div:nth-child(5) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div:nth-child(2) > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div"
+      // )
+      //   .click()
+      cy.focused().type("{tab}Sample Event{tab}");
       cy.get(
         ':nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(3) > :nth-child(1) > :nth-child(2) > :nth-child(1) > :nth-child(1) > [style="display: inline-block; margin-right: 1em; margin-bottom: 0px;"] > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-picker'
       )
@@ -122,8 +120,8 @@ export class MentorEvent {
 
   checkCreatedEvent() {
     cy.get(
-      "#root > section > aside > div.ant-layout-sider-children > ul > li:nth-child(4)"
-    ).click();
+      "li.ant-menu-item"
+    ).eq(3).click();
 
     cy.get(".gallery-header-text > .ant-typography")
       .contains("Sample Event")

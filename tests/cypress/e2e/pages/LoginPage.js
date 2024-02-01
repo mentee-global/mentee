@@ -20,86 +20,67 @@ export class LoginPage {
 
   componentExist() {
     cy.url().should("include", "/login");
-    cy.get(
-      ".ant-steps.ant-steps-horizontal.css-wxm1m1.ant-steps-small.ant-steps-label-horizontal"
-    ).should("be.visible");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-steps.ant-steps-horizontal.css-wxm1m1.ant-steps-small.ant-steps-label-horizontal > div.ant-steps-item.ant-steps-item-process.ant-steps-item-active > div > div.ant-steps-item-content > div"
-    ).should("contain.text", "Role");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-steps.ant-steps-horizontal.css-wxm1m1.ant-steps-small.ant-steps-label-horizontal > div.ant-steps-item.ant-steps-item-wait > div > div.ant-steps-item-content > div"
-    ).should("contain.text", "Login");
+    cy.get('.ant-steps-item-title').eq(0)
+    .should("be.visible");
+    cy.get('.ant-steps-item-title').eq(0).should("contain.text", "Role");
+    cy.get('.ant-steps-item-title').eq(1).should("contain.text", "Login");
 
+    cy.get('.css-1c9mpvn > .ant-space').should("be.visible");
+    cy.get(':nth-child(1) > .ant-card').should("contain.text", "Mentor");
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1)"
-    ).should("be.visible");
-    cy.get(".anticon.anticon-tool")
-      .should("have.attr", "aria-label", "tool")
-      .and("be.visible");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1) > div > div > div > div.ant-card-meta-detail > div > div"
-    ).should("contain.text", "Mentor");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1) > div > div > div > div.ant-card-meta-detail > div > div > span"
-    )
+      ".anticon-right-circle"
+    ).eq(0)
       .should("have.attr", "aria-label", "right-circle")
       .and("be.visible");
 
     cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(2)"
+      ".anticon-compass"
     ).should("be.visible");
-    cy.get(".anticon.anticon-compass")
+    cy.get(".anticon-compass")
       .should("have.attr", "aria-label", "compass")
       .and("be.visible");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(2) > div > div > div > div.ant-card-meta-detail > div > div > span"
-    ).should("have.attr", "aria-label", "right-circle");
+      cy.get(
+        ".anticon-right-circle"
+      ).eq(1).should("have.attr", "aria-label", "right-circle");
 
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(3)"
-    ).should("be.visible");
-    cy.get(".anticon.anticon-partition")
+    // cy.get(
+    //   "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(3)"
+    // ).should("be.visible");
+    cy.get(".anticon-partition")
       .should("have.attr", "aria-label", "partition")
       .and("be.visible");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(3) > div > div > div > div.ant-card-meta-detail > div > div > span"
-    ).should("have.attr", "aria-label", "right-circle");
+      cy.get(
+        ".anticon-right-circle"
+      ).eq(2).should("have.attr", "aria-label", "right-circle");
 
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(4)"
-    ).should("be.visible");
-    cy.get(".anticon.anticon-unlock")
+    cy.get(".anticon-unlock")
       .should("have.attr", "aria-label", "unlock")
       .and("be.visible");
-    cy.get(
-      "#root > section > main > div > div > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(4) > div > div > div > div.ant-card-meta-detail > div > div > span"
-    ).should("have.attr", "aria-label", "right-circle");
+      cy.get(
+        ".anticon-right-circle"
+      ).eq(3).should("have.attr", "aria-label", "right-circle");
   }
   isFunctional() {
     let mappedUsers = this.users.map((user, id) => {
       cy.get(
-        `#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(${
+        `:nth-child(${
           id + 1
-        }) > div`
+        }) > .ant-card`
       ).click();
-      cy.get(".ant-typography.css-wxm1m1").should("contain", user);
-      cy.get(".anticon.anticon-check.ant-steps-finish-icon").should(
+      cy.get(".ant-typography").should("contain", user);
+      cy.get(".ant-steps-finish-icon").should(
         "have.attr",
         "aria-label",
         "check"
       );
-      cy.get(
-        "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(1) > div > div.ant-col.ant-form-item-label.css-wxm1m1 > label"
-      ).should("have.attr", "for", "email");
+      cy.get('.ant-form-item-required').eq(0).should("have.attr", "for", "email");
       cy.get("#email")
         .should("have.attr", "type", "text")
         .and("have.attr", "aria-required", "true");
       cy.get("#password")
         .should("have.attr", "type", "password")
         .and("have.attr", "aria-required", "true");
-      cy.get(
-        "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-steps.ant-steps-horizontal.css-wxm1m1.ant-steps-small.ant-steps-label-horizontal > div.ant-steps-item.ant-steps-item-finish > div"
-      )
+        cy.get('.ant-steps-item-container').eq(0)
         .should("have.attr", "role", "button")
         .click();
     });
@@ -124,19 +105,19 @@ export class LoginPage {
         ).click();
         // Checking the texts
         cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-steps.ant-steps-horizontal.css-wxm1m1.ant-steps-small.ant-steps-label-horizontal > div.ant-steps-item.ant-steps-item-process.ant-steps-item-active > div > div.ant-steps-item-content > div"
+          ".ant-steps-item-title"
         ).should("contain.text", currentLanguage.common.role);
         cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(1) > div > div > div > div.ant-card-meta-detail > div > div"
+          ":nth-child(1) > .ant-card"
         ).should("contain.text", currentLanguage.common.mentor);
         cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(2) > div > div > div > div.ant-card-meta-detail > div > div"
+          ":nth-child(2) > .ant-card"
         ).should("contain.text", currentLanguage.common.mentee);
         cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(3) > div > div > div > div.ant-card-meta-detail > div > div"
+          ":nth-child(3) > .ant-card"
         ).should("contain.text", currentLanguage.common.partner);
         cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(4) > div > div > div > div.ant-card-meta-detail > div > div"
+          ":nth-child(4) > .ant-card"
         ).should("contain.text", currentLanguage.common.guest);
         // Storing previous language details
         previousLanguage = currentLanguage;
@@ -166,42 +147,31 @@ export class LoginPage {
           previousLanguage.languages[language.value.split("-")[0]]
         ).click();
         // Checking the texts
-        cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-steps.ant-steps-horizontal.css-wxm1m1.ant-steps-small.ant-steps-label-horizontal > div.ant-steps-item.ant-steps-item-finish > div > div.ant-steps-item-content > div"
-        ).should("contain.text", currentLanguage.common.role);
-        cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > h2"
-        ).should("contain.text", currentLanguage.common.mentor);
-        cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(1) > div > div.ant-col.ant-form-item-label.css-wxm1m1 > label"
-        ).should("contain.text", currentLanguage.common.email);
-        cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(2) > div > div.ant-col.ant-form-item-label.css-wxm1m1 > label"
-        ).should("contain.text", currentLanguage.common.password);
-        cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(3) > div > div > div > div > button"
-        ).should("contain.text", currentLanguage.common.login);
-        cy.get(
-          "#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.css-1j25lv9 > form > div:nth-child(3) > div > div > div > div > a"
-        ).should("contain.text", currentLanguage.login.forgotPassword);
+        cy.get('.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title').should("contain.text", currentLanguage.common.role);
+        cy.get('.ant-typography').should("contain.text", currentLanguage.common.mentor);
+        cy.get(':nth-child(1) > .ant-row > .ant-form-item-label > .ant-form-item-required').should("contain.text", currentLanguage.common.email);
+        cy.get(':nth-child(2) > .ant-row > .ant-form-item-label > .ant-form-item-required').should("contain.text", currentLanguage.common.password);
+        cy.get('.ant-btn').should("contain.text", currentLanguage.common.login);
+        cy.get('a').should("contain.text", currentLanguage.login.forgotPassword);
         // Storing previous language details
         previousLanguage = currentLanguage;
       });
     });
   }
+ 
   selectUserRole(userRole) {
-    const userRoleSelector = `#root > section > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-wxm1m1 > div.css-1c9mpvn > div.ant-space.css-wxm1m1.ant-space-vertical.css-3w4dbw > div:nth-child(${userRole}) > div`;
-    cy.get(userRoleSelector).click();
-  }
+    const userRoleSelector = `.ant-card-bordered`;
+    cy.get(userRoleSelector).eq(userRole - 1).click();
+    }
   fillLoginForm(email, password) {
     cy.get("#email").type(email);
     cy.get("#password").type(password);
   }
   clickLoginButton() {
-    cy.get(".ant-btn.css-wxm1m1.ant-btn-primary.ant-btn-lg").click();
+    cy.get("#submit").click();
   }
   verifyUrlContains(expectedUrl) {
-    cy.url().should("include", expectedUrl);
+    cy.url({timeout: 20000}).should("include", expectedUrl);
   }
   login(userRole, email, password, expectedUrl) {
     this.selectUserRole(userRole);

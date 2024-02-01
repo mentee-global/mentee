@@ -167,7 +167,9 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
       <Form onFinish={onFinish} layout="vertical" style={{ width: "100%" }}>
         <Form.Item>
           <Typography>
-            <Paragraph id="introduction">{t("menteeApplication.introduction")}</Paragraph>
+            <Paragraph id="introduction">
+              {t("menteeApplication.introduction")}
+            </Paragraph>
           </Typography>
         </Form.Item>
         <Form.Item
@@ -522,7 +524,13 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           <Select options={[...partnerOptions]} />
         </Form.Item>
         <Form.Item>
-          <Button id="submit" type="primary" htmlType="submit" block loading={loading}>
+          <Button
+            id="submit"
+            type="primary"
+            htmlType="submit"
+            block
+            loading={loading}
+          >
             {t("common.submit")}
           </Button>
         </Form.Item>

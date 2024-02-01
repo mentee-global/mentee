@@ -53,8 +53,14 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
       <Form onFinish={onFinish} layout="vertical" style={{ width: "100%" }}>
         <Form.Item>
           <Typography>
-            <Paragraph id="mentorIntroduction"> {t("mentorApplication.introduction")}</Paragraph>
-            <Paragraph id="mentorfilloutprompt"> {t("mentorApplication.filloutPrompt")}</Paragraph>
+            <Paragraph id="mentorIntroduction">
+              {" "}
+              {t("mentorApplication.introduction")}
+            </Paragraph>
+            <Paragraph id="mentorfilloutprompt">
+              {" "}
+              {t("mentorApplication.filloutPrompt")}
+            </Paragraph>
           </Typography>
         </Form.Item>
         <Form.Item
@@ -370,7 +376,13 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
           />
         </Form.Item>
         <Form.Item>
-          <Button id="submit" type="primary" htmlType="submit" block loading={loading}>
+          <Button
+            id="submit"
+            type="primary"
+            htmlType="submit"
+            block
+            loading={loading}
+          >
             {t("common.submit")}
           </Button>
         </Form.Item>

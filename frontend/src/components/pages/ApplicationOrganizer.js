@@ -206,11 +206,15 @@ function ApplicationOrganizer({ isMentor }) {
           Mentee Appications
         </Button>
       </div>
-      <div id="applicactionstate" style={{ fontSize: 20, fontWeight: 400, padding: 10 }}>
+      <div
+        id="applicactionstate"
+        style={{ fontSize: 20, fontWeight: 400, padding: 10 }}
+      >
         Applications State
       </div>
 
-      <Select id="applicationssort"
+      <Select
+        id="applicationssort"
         style={{ width: 160, height: 50, padding: 10 }}
         onChange={(value) => {
           setAppstate(value);
@@ -221,7 +225,12 @@ function ApplicationOrganizer({ isMentor }) {
         options={[...getAppStatusOptions(), { value: "all", label: "All" }]}
       />
       <div style={{ margin: 10 }}>
-        <Table id="applicationstable" columns={columns} dataSource={filterdData} />;
+        <Table
+          id="applicationstable"
+          columns={columns}
+          dataSource={filterdData}
+        />
+        ;
       </div>
       {selectedID && (
         <Modal

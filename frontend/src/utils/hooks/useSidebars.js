@@ -197,7 +197,7 @@ export default function useSidebars(userType, t) {
       ],
     },
     {
-      label: t("sidebars.events"),
+      label: "Events",
       key: "events",
       icon: <InfoCircleOutlined />,
     },

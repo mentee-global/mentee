@@ -31,7 +31,5 @@ class PartnerProfile(Document, Mixin):
 
     def __repr__(self):
         return f"""<Partner email: {self.email}
-                \n name: {self.name}
-                \n phone_number: {self.phone_number}
-                \n organization: {self.organization}
-                \n role: {self.role}>"""
+                \n person_name: {self.person_name}
+                \n organization: {self.organization}>"""

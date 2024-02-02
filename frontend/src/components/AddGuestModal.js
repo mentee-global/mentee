@@ -17,7 +17,7 @@ function AddGuestModal(props) {
     setValuesChanged(false);
   }, [props.guestModalVisible]);
 
-  const onFinish = useCallback((valuesChanged) => {
+  const onFinish = useCallback((valuesChanged, user_role) => {
     async function addGuestUser(name, email, password, user_role) {
       await adminUploadEmailsText(email, user_role, password, name).then(
         (res) => {
@@ -35,7 +35,7 @@ function AddGuestModal(props) {
     }
     if (valuesChanged) {
       form.validateFields().then((values) => {
-        addGuestUser(values.name, values.email, values.password, role);
+        addGuestUser(values.name, values.email, values.password, user_role);
       });
     } else {
       props.setGuestModalVisible(false);
@@ -60,7 +60,10 @@ function AddGuestModal(props) {
     return Promise.resolve();
   };
 
-  const onChangeRole = (e) => setRole(e.target.value);
+  const onChangeRole = (e) => {
+    console.log("eee", e.target.value);
+    setRole(e.target.value);
+  };
 
   return (
     <Modal
@@ -82,7 +85,7 @@ function AddGuestModal(props) {
           <Form
             form={form}
             onValuesChange={handleValuesChange}
-            onFinish={() => onFinish(valuesChanged)}
+            onFinish={() => onFinish(valuesChanged, role)}
           >
             <Form.Item
               name="name"

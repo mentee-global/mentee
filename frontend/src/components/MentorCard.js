@@ -95,7 +95,7 @@ function MentorCard(props) {
         border: 2px solid ${colorPrimaryBg};
         border-radius: 8px;
         position: relative;
-        height: 35em;
+        height: 37em;
         padding: 20px;
         padding-top: 0px;
         :hover {

@@ -10,9 +10,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
   const { t } = useTranslation();
   const options = useSelector((state) => state.options);
   const [loading, setLoading] = useState();
-  const [partnerOptions, setPartnerOptions] = useState([
-    { value: 0, label: t("commonApplication.no-affiliation") },
-  ]);
+  const [partnerOptions, setPartnerOptions] = useState([]);
   useEffect(() => {
     async function getPartners() {
       const partenr_data = await fetchPartners();
@@ -22,6 +20,10 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           label: item.organization,
         });
         return true;
+      });
+      partnerOptions.push({
+        value: 0,
+        label: t("commonApplication.no-affiliation"),
       });
       setPartnerOptions(partnerOptions);
       setLoading(false);

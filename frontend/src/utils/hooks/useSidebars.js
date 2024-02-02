@@ -178,20 +178,20 @@ export default function useSidebars(userType, t) {
   ];
   const adminSidebar = [
     {
-      label: t("sidebars.explore"),
+      label: "Explore",
       key: "galleries",
       icon: <SearchOutlined />,
       children: [
         {
-          label: t("navHeader.findMentor"),
+          label: "Find a Mentor",
           key: "gallery",
         },
         {
-          label: t("navHeader.findMentee"),
+          label: "Find a Mentee",
           key: "mentee-gallery",
         },
         {
-          label: t("navHeader.findPartner"),
+          label: "Find a Partner",
           key: "partner-gallery",
         },
       ],

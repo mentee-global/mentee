@@ -56,9 +56,13 @@ function App() {
 
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
+  // useEffect(() => {
+  //   setRole(getRole());
+  // }, [user]);
+
   useEffect(() => {
-    setRole(getRole());
-  }, [user]);
+    setStartPathTime(new Date().getTime());
+  }, [path]);
 
   useEffect(() => {
     setStartPathTime(new Date().getTime());

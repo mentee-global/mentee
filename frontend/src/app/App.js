@@ -50,15 +50,15 @@ function App() {
 
   const { t, i18n } = useTranslation();
   const [antdLocale, setAntdLocale] = useState(getAntdLocale(i18n.language));
-  const { user, role } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const path = window.location.href;
-  // const [role, setRole] = useState(getRole());
+  const [role, setRole] = useState(getRole());
 
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
-  // useEffect(() => {
-  //   setRole(getRole());
-  // }, [user]);
+  useEffect(() => {
+    setRole(getRole());
+  }, [user]);
 
   useEffect(() => {
     setStartPathTime(new Date().getTime());

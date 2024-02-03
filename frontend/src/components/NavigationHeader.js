@@ -54,7 +54,7 @@ function NavigationHeader() {
     );
     history.push(REDIRECTS[ACCOUNT_TYPE.SUPPORT]);
   };
-  
+
   const getDropdownMenuItems = (support_User_ID) => {
     const renderEdit =
       role !== ACCOUNT_TYPE.ADMIN &&

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
 import { Avatar, Typography, Button, Rate, Tooltip, theme } from "antd";
 import {
@@ -46,11 +46,11 @@ function MentorCard(props) {
     token: { colorPrimary, colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isMentee, resetRoleState } = useAuth();
+  const { isMentee, resetRoleState, role } = useAuth();
   const [favorite, setFavorite] = useState(props.favorite);
   const dispatch = useDispatch();
   const history = useHistory();
-  const user = useSelector((state) => state.user.user);
+  const { user } = useSelector((state) => state.user);
 
   function getImage(image) {
     if (!image) {
@@ -75,6 +75,8 @@ function MentorCard(props) {
 
   function loginOtherUser(e, user_data) {
     localStorage.setItem("support_user_id", user._id.$oid);
+    localStorage.setItem("role", ACCOUNT_TYPE.MENTOR);
+    localStorage.setItem("profileId", user_data.id);
     resetRoleState(user_data.id, ACCOUNT_TYPE.MENTOR);
     dispatch(
       fetchUser({
@@ -82,9 +84,6 @@ function MentorCard(props) {
         role: ACCOUNT_TYPE.MENTOR,
       })
     );
-    localStorage.setItem("role", ACCOUNT_TYPE.MENTOR);
-    localStorage.setItem("profileId", user_data.id);
-
     history.push(REDIRECTS[ACCOUNT_TYPE.MENTOR]);
   }
 
@@ -203,7 +202,7 @@ function MentorCard(props) {
           <>
             <div className="gallery-button">
               <Button onClick={(e) => loginOtherUser(e, props)} type="primary">
-                {t("common.login")}
+                {t("common.impersonate")}
               </Button>
             </div>
           </>

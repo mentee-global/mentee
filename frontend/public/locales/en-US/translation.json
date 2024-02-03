@@ -154,7 +154,9 @@
     "requiredRegion":"Please enter Regions",
     "requiredDevelopmentGoals": "Please enter  Sustainable Development Goals Your Work Supports",
     "requiredCheckbox":"Please check this field",
-    "requiredPartner": "Please select a Partner"
+    "requiredPartner": "Please select a Partner",
+    "stopImpersonating":"Stop Impersonating",
+    "impersonate":"Impersonate"
   },
   "commonApplication": {
     "no-affiliation":"no-affiliation",

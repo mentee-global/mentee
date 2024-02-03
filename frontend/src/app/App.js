@@ -46,22 +46,32 @@ import { ACCOUNT_TYPE } from "utils/consts";
 const { Content } = Layout;
 
 function App() {
+  const [startPathTime, setStartPathTime] = useState(new Date().getTime());
+
   const { t, i18n } = useTranslation();
   const [antdLocale, setAntdLocale] = useState(getAntdLocale(i18n.language));
-  const { user } = useSelector((state) => state.user);
-  const [role, setRole] = useState(getRole());
+  const { user, role } = useSelector((state) => state.user);
+  const path = window.location.href;
+  // const [role, setRole] = useState(getRole());
 
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
+  // useEffect(() => {
+  //   setRole(getRole());
+  // }, [user]);
+
   useEffect(() => {
-    setRole(getRole());
-  }, [user]);
+    setStartPathTime(new Date().getTime());
+  }, [path])
 
   useEffect(() => {
     setAntdLocale(getAntdLocale(i18n.language));
   }, [i18n.language]);
 
+  const cur_time = new Date().getTime();
+  
   return (
+    <>
     <ConfigProvider
       locale={antdLocale}
       // TODO: Move this to a theme file
@@ -124,66 +134,90 @@ function App() {
               {role == ACCOUNT_TYPE.SUPPORT ? (
                 <Gallery isSupport={true} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/support/all-mentees">
               {role == ACCOUNT_TYPE.SUPPORT ? (
                 <MenteeGallery isSupport={true} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/support/all-partners">
               {role == ACCOUNT_TYPE.SUPPORT ? (
                 <PartnerGallery isSupport={true} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/appointments">
               {role == ACCOUNT_TYPE.MENTOR ? (
                 <Appointments />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/mentor/training">
               {role == ACCOUNT_TYPE.MENTOR ? (
                 <TrainingData role={ACCOUNT_TYPE.MENTOR} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/videos">
               {role == ACCOUNT_TYPE.MENTOR ? (
                 <Videos />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
 
@@ -191,22 +225,30 @@ function App() {
               {role == ACCOUNT_TYPE.MENTEE ? (
                 <MenteeAppointments />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/mentee/training">
               {role == ACCOUNT_TYPE.MENTEE ? (
                 <TrainingData role={ACCOUNT_TYPE.MENTEE} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/profile">
@@ -215,11 +257,15 @@ function App() {
               role == ACCOUNT_TYPE.PARTNER ? (
                 <Profile />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
 
@@ -227,13 +273,17 @@ function App() {
               {role == ACCOUNT_TYPE.MENTEE ||
               role == ACCOUNT_TYPE.GUEST ||
               role == ACCOUNT_TYPE.ADMIN ? (
-                <Gallery />
+                <Gallery/>
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
 
@@ -243,11 +293,15 @@ function App() {
               role == ACCOUNT_TYPE.ADMIN ? (
                 <PartnerGallery />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/mentee-gallery" exact>
@@ -255,13 +309,17 @@ function App() {
               role == ACCOUNT_TYPE.MENTEE ||
               role == ACCOUNT_TYPE.GUEST ||
               role == ACCOUNT_TYPE.ADMIN ? (
-                <MenteeGallery />
+                <MenteeGallery/>
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
 
@@ -276,88 +334,120 @@ function App() {
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <ApplicationOrganizer isMentor={true} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/menteeOrganizer">
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <ApplicationOrganizer isMentor={false} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/account-data">
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <AdminAccountData />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/all-appointments">
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <AdminAppointmentData />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/admin-training">
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <AdminTraining />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/languages">
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <Languages />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/specializations">
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <Specializations />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
             <PrivateRoute path="/messages-details">
               {role == ACCOUNT_TYPE.ADMIN ? (
                 <AdminMessages />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
 
@@ -365,11 +455,15 @@ function App() {
               {role == ACCOUNT_TYPE.PARTNER ? (
                 <TrainingData role={ACCOUNT_TYPE.PARTNER} />
               ) : (
-                <Result
-                  status="403"
-                  title="403"
-                  subTitle={t("gallery.unauthorizedAccess")}
-                />
+                <>
+                {cur_time - startPathTime > 100 && (
+                  <Result
+                    status="403"
+                    title="403"
+                    subTitle={t("gallery.unauthorizedAccess")}
+                  />
+                )}
+                </>
               )}
             </PrivateRoute>
 
@@ -386,6 +480,7 @@ function App() {
         </Layout>
       </Router>
     </ConfigProvider>
+    </>
   );
 }
 

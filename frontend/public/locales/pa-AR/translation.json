@@ -154,7 +154,9 @@
     "requiredRegion":"مهرباني وکړئ سیمې ته ننوځئ",
     "requiredDevelopmentGoals": "مهرباني وکړئ د دوامدار پراختیا اهداف داخل کړئ چې ستاسو د کار ملاتړ کوي",
     "requiredCheckbox":"مهرباني وکړئ دا ساحه وګورئ",
-    "requiredPartner": "مهرباني وکړئ یو شریک وټاکئ"
+    "requiredPartner": "مهرباني وکړئ یو شریک وټاکئ",
+    "stopImpersonating":"تقلید بند کړئ",
+    "impersonate":"تقلید"
   },
   "commonApplication": {
     "no-affiliation":"بې تړاو",

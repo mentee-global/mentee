@@ -78,7 +78,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             specializations=data.get("specializations", None),
             age=data["age"],
             gender=data["gender"],
-            is_private=data.get("is_private", True),
+            is_private=data.get("is_private", False),
         )
 
         if "video" in data and data.get("video") is not None:

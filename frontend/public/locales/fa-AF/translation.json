@@ -156,7 +156,9 @@
     "requiredRegion":"لطفا مناطق را وارد کنید",
     "requiredDevelopmentGoals": "لطفا اهداف توسعه پایدار که کار شما از آنها پشتیبانی می کند را وارد کنید",
     "requiredCheckbox":"لطفا این فیلد را بررسی کنید",
-    "requiredPartner": "لطفا یک شریک انتخاب کنید"
+    "requiredPartner": "لطفا یک شریک انتخاب کنید",
+    "stopImpersonating":"جعل هویت را متوقف کنید",
+    "impersonate":"جعل هویت"
   },
   "commonApplication": {
     "no-affiliation":"عدم وابستگی",

@@ -153,7 +153,9 @@
     "requiredRegion":"الرجاء إدخال المناطق",
     "requiredDevelopmentGoals": "الرجاء إدخال أهداف التنمية المستدامة التي يدعمها عملك",
     "requiredCheckbox":"يرجى التحقق من هذا الحقل",
-    "requiredPartner": "الرجاء اختيار شريك"
+    "requiredPartner": "الرجاء اختيار شريك",
+    "stopImpersonating":"التوقف عن انتحال الشخصية",
+    "impersonate":"انتحال شخصية"
   },
   "commonApplication": {
     "no-affiliation":"عدم الانتماء",

@@ -153,7 +153,9 @@
     "requiredRegion":"Insira as regiões",
     "requiredDevelopmentGoals": "Insira os Objetivos de Desenvolvimento Sustentável que seu trabalho apoia",
     "requiredCheckbox":"Por favor verifique este campo",
-    "requiredPartner": "Selecione um parceiro"
+    "requiredPartner": "Selecione um parceiro",
+    "stopImpersonating":"Pare de se passar por",
+    "impersonate":"Personificar"
   },
   "commonApplication": {
     "no-affiliation":"sem afiliação",

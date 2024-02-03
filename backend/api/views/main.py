@@ -68,7 +68,7 @@ def get_accounts(account_type):
         for partner_account in all_partners:
             if partner_account.assign_mentors:
                 for mentor_item in partner_account.assign_mentors:
-                    partners_by_assign_mentor[mentor_item["id"]] = partner_account
+                    partners_by_assign_mentor[str(mentor_item["id"])] = partner_account
         for account in mentors_data:
             if str(account.id) in partners_by_assign_mentor:
                 pair_partner = partners_by_assign_mentor[str(account.id)]
@@ -98,7 +98,7 @@ def get_accounts(account_type):
             if partner_account.assign_mentees:
                 for mentee_item in partner_account.assign_mentees:
                     if "id" in mentee_item:
-                        partners_by_assign_mentee[mentee_item["id"]] = partner_account
+                        partners_by_assign_mentee[str(mentee_item["id"])] = partner_account
         for account in mentees_data:
             if str(account.id) in partners_by_assign_mentee:
                 pair_partner = partners_by_assign_mentee[str(account.id)]
@@ -295,7 +295,7 @@ def create_mentor_profile():
                 assign_mentees = []
                 if partenr_account.assign_mentees:
                     assign_mentees = partenr_account.assign_mentees
-                assign_mentees.append({"id": new_account.id, "name": new_account.name})
+                assign_mentees.append({"id": str(new_account.id), "name": new_account.name})
                 partenr_account.assign_mentees = assign_mentees
                 partenr_account.save()
 

@@ -67,7 +67,6 @@ function MenteeCard(props) {
     );
     localStorage.setItem("role", ACCOUNT_TYPE.MENTEE);
     localStorage.setItem("profileId", user_data.id);
-
     history.push(REDIRECTS[ACCOUNT_TYPE.MENTEE]);
   }
 
@@ -181,7 +180,7 @@ function MenteeCard(props) {
           <>
             <div className="gallery-button">
               <Button onClick={(e) => loginOtherUser(e, props)} type="primary">
-                {t("common.login")}
+                {t("common.impersonate")}
               </Button>
             </div>
           </>

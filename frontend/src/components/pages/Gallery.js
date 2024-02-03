@@ -260,7 +260,6 @@ function Gallery(props) {
       />
     </>
   );
-  console.log("zzz", props.isSupport, isMentee, user);
 
   return !(props.isSupport || isAdmin || isMentee || isGuest) ? (
     <Result

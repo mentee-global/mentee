@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Layout, theme, Dropdown, Space, Tooltip } from "antd";
 import { withRouter, useHistory } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
@@ -43,6 +43,8 @@ function NavigationHeader() {
 
   const goBackSupportDashbaord = (support_User_ID) => {
     localStorage.removeItem("support_user_id");
+    localStorage.setItem("role", ACCOUNT_TYPE.SUPPORT);
+    localStorage.setItem("profileId", support_User_ID);
     resetRoleState(support_User_ID, ACCOUNT_TYPE.SUPPORT);
     dispatch(
       fetchUser({
@@ -51,10 +53,8 @@ function NavigationHeader() {
       })
     );
     history.push(REDIRECTS[ACCOUNT_TYPE.SUPPORT]);
-    localStorage.setItem("role", ACCOUNT_TYPE.SUPPORT);
-    localStorage.setItem("profileId", support_User_ID);
   };
-
+  
   const getDropdownMenuItems = (support_User_ID) => {
     const renderEdit =
       role !== ACCOUNT_TYPE.ADMIN &&
@@ -84,7 +84,7 @@ function NavigationHeader() {
         key: "",
         label: (
           <span onClick={() => goBackSupportDashbaord(support_User_ID)}>
-            {t("common.logout")}
+            {t("common.stopImpersonating")}
           </span>
         ),
       });

@@ -195,7 +195,7 @@ function PartnerCard(props) {
           <>
             <div className="gallery-button">
               <Button onClick={(e) => loginOtherUser(e, props)} type="primary">
-                {t("common.login")}
+                {t("common.impersonate")}
               </Button>
             </div>
           </>

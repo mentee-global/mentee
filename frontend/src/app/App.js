@@ -57,10 +57,12 @@ function App() {
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
   useEffect(() => {
+    console.log("user change--------");
     setRole(getRole());
   }, [user]);
 
   useEffect(() => {
+    console.log("path change--------");
     setStartPathTime(new Date().getTime());
   }, [path]);
 
@@ -69,6 +71,9 @@ function App() {
   }, [i18n.language]);
 
   const cur_time = new Date().getTime();
+
+  console.log("role", role);
+  console.log("time", cur_time, startPathTime, cur_time - startPathTime);
 
   return (
     <>

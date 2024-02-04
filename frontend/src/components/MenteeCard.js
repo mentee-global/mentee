@@ -100,9 +100,7 @@ function MenteeCard(props) {
             <Title style={styles.title} className="gallery-title-text">
               {truncate(props.name, 15)}
             </Title>
-            <div className="gallery-header-description">
-              {props.gender} {"|"} {props.organization}
-            </div>
+            <div className="gallery-header-description">{props.gender}</div>
           </div>
         </div>
         {props.location && (

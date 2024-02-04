@@ -24,6 +24,7 @@ import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { phoneRegex, urlRegex } from "utils/misc";
+import { fetchPartners } from "utils/api";
 
 const styles = {
   formGroup: css`
@@ -57,6 +58,7 @@ function MenteeProfileForm({
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
   const [form] = Form.useForm();
+  const [partnerOptions, setPartnerOptions] = useState([]);
 
   useEffect(() => {
     if (profileData) {
@@ -64,7 +66,32 @@ function MenteeProfileForm({
       form.setFieldValue("video", profileData.video?.url);
       setImage(profileData.image);
     }
-  }, [profileData, form, resetFields]);
+    if (applicationData) {
+      form.setFieldValue(
+        "organization",
+        applicationData.partner ? applicationData.partner : 0
+      );
+    }
+  }, [profileData, form, resetFields, applicationData]);
+
+  useEffect(() => {
+    async function getPartners() {
+      const partenr_data = await fetchPartners();
+      partenr_data.map((item) => {
+        partnerOptions.push({
+          value: item._id.$oid,
+          label: item.organization,
+        });
+        return true;
+      });
+      partnerOptions.push({
+        value: 0,
+        label: t("commonApplication.no-affiliation"),
+      });
+      setPartnerOptions(partnerOptions);
+    }
+    getPartners();
+  });
 
   const educationSubForm = () => (
     <Form.List
@@ -196,9 +223,6 @@ function MenteeProfileForm({
     newData.image = image;
     newData.changedImage = changedImage;
     newData.edited = edited;
-    if (applicationData && applicationData.partner) {
-      newData.partner = applicationData.partner;
-    }
     onSubmit(newData);
   };
 
@@ -365,7 +389,7 @@ function MenteeProfileForm({
         >
           <Input />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label={t("menteeProfile.organizationAffiliation")}
           name="organization"
           rules={[
@@ -377,6 +401,19 @@ function MenteeProfileForm({
           className={styles.formGroupItem}
         >
           <Input />
+        </Form.Item> */}
+        <Form.Item
+          label={t("menteeProfile.organizationAffiliation")}
+          name="organization"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredOrganizationAffiliation"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Select options={[...partnerOptions]} />
         </Form.Item>
       </div>
       <Form.Item

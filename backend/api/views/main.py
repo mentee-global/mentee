@@ -290,7 +290,7 @@ def create_mentor_profile():
     new_account.save()
 
     if account_type == Account.MENTEE:
-        mentee_partenr_id = data.get("partner")
+        mentee_partenr_id = data.get("organization")
         if mentee_partenr_id is not None and mentee_partenr_id != 0:
             partenr_account = PartnerProfile.objects.get(id=mentee_partenr_id)
             if partenr_account is not None:

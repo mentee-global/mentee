@@ -59,6 +59,7 @@ function MenteeProfileForm({
   const [edited, setEdited] = useState(false);
   const [form] = Form.useForm();
   const [partnerOptions, setPartnerOptions] = useState([]);
+  const [flag, setFlag] = useState(false);
 
   useEffect(() => {
     if (profileData) {
@@ -77,18 +78,21 @@ function MenteeProfileForm({
   useEffect(() => {
     async function getPartners() {
       const partenr_data = await fetchPartners();
-      partenr_data.map((item) => {
-        partnerOptions.push({
-          value: item._id.$oid,
-          label: item.organization,
+      if (!(partnerOptions.length > 0)){
+        partenr_data.map((item) => {
+          partnerOptions.push({
+            value: item._id.$oid,
+            label: item.organization,
+          });
+          return true;
         });
-        return true;
-      });
-      partnerOptions.push({
-        value: 0,
-        label: t("commonApplication.no-affiliation"),
-      });
-      setPartnerOptions(partnerOptions);
+        partnerOptions.push({
+          value: 0,
+          label: t("commonApplication.no-affiliation"),
+        });
+        setPartnerOptions(partnerOptions);
+        setFlag(!flag);
+      }
     }
     getPartners();
   });

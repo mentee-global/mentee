@@ -78,7 +78,7 @@ function MenteeProfileForm({
   useEffect(() => {
     async function getPartners() {
       const partenr_data = await fetchPartners();
-      if (!(partnerOptions.length > 0)){
+      if (!(partnerOptions.length > 0)) {
         partenr_data.map((item) => {
           partnerOptions.push({
             value: item._id.$oid,

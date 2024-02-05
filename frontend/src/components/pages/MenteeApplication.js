@@ -22,7 +22,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
         return true;
       });
       partnerOptions.push({
-        value: 0,
+        value: null,
         label: t("commonApplication.no-affiliation"),
       });
       setPartnerOptions(partnerOptions);
@@ -518,7 +518,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           name="partner"
           rules={[
             {
-              required: true,
+              required: false,
               message: t("common.requiredPartner"),
             },
           ]}

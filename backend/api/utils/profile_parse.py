@@ -213,8 +213,23 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.organization = data.get("organization", profile.organization)
         profile.is_private = data.get("is_private", profile.is_private)
         profile.specializations = data.get("specializations", profile.specializations)
-
         if ex_organization != profile.organization:
+            # for old data---------------------------------
+            pair_partner_data = PartnerProfile.objects(
+                assign_mentees__in=[{"id": str(profile.id), "name": profile.name}]
+            )
+            for wrong_partner_item in pair_partner_data:
+                assign_mentees = []
+                for mentee_item in wrong_partner_item.assign_mentees:
+                    mentee_item_id = None
+                    if "id" in mentee_item:
+                        mentee_item_id = str(mentee_item["id"])
+                    if mentee_item_id is not None and mentee_item_id != str(profile.id):
+                        assign_mentees.append(mentee_item)
+
+                wrong_partner_item.assign_mentees = assign_mentees
+                wrong_partner_item.save()
+            # -------------------------------------------------------------------------
             if profile.organization is not None and profile.organization != 0:
                 partenr_account = PartnerProfile.objects.get(id=profile.organization)
                 if partenr_account is not None:
@@ -224,16 +239,9 @@ def edit_profile(data: dict = {}, profile: object = None):
                     assign_mentees.append({"id": str(profile.id), "name": profile.name})
                     partenr_account.assign_mentees = assign_mentees
                     partenr_account.save()
-            if ex_organization is not None and ex_organization != 0:
-                partenr_account = PartnerProfile.objects.get(id=ex_organization)
-                if partenr_account is not None:
-                    assign_mentees = []
-                    for mentee_item in partenr_account.assign_mentees:
-                        if str(mentee_item.id) != str(ex_organization):
-                            assign_mentees.append(mentee_item)
-                    partenr_account.assign_mentees = assign_mentees
-                    partenr_account.save()
 
+        if profile.organization == 0:
+            profile.organization = None
         if "video" in data and data.get("video") is not None:
             video_data = data.get("video")
 

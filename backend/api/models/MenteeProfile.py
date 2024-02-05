@@ -19,7 +19,7 @@ class MenteeProfile(Document, Mixin):
     education = ListField(EmbeddedDocumentField(Education))
     languages = ListField(StringField(), required=True)
     biography = StringField()
-    organization = StringField(required=True)
+    organization = StringField(required=False)
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)
     is_private = BooleanField(required=True)

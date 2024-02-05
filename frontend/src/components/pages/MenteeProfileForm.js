@@ -65,6 +65,9 @@ function MenteeProfileForm({
     if (profileData) {
       form.setFieldsValue(profileData);
       form.setFieldValue("video", profileData.video?.url);
+      if (profileData.organization == 0) {
+        form.setFieldValue("organization", null);
+      }
       setImage(profileData.image);
     }
     if (applicationData) {
@@ -87,7 +90,7 @@ function MenteeProfileForm({
           return true;
         });
         partnerOptions.push({
-          value: 0,
+          value: null,
           label: t("commonApplication.no-affiliation"),
         });
         setPartnerOptions(partnerOptions);
@@ -411,7 +414,7 @@ function MenteeProfileForm({
           name="organization"
           rules={[
             {
-              required: true,
+              required: false,
               message: t("common.requiredOrganizationAffiliation"),
             },
           ]}

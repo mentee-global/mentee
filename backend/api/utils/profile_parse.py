@@ -207,11 +207,32 @@ def edit_profile(data: dict = {}, profile: object = None):
                 profile.videos = []
                 profile.video = None
     elif isinstance(profile, MenteeProfile):
+        ex_organization = profile.organization
         profile.age = data.get("age", profile.age)
         profile.gender = data.get("gender", profile.gender)
         profile.organization = data.get("organization", profile.organization)
         profile.is_private = data.get("is_private", profile.is_private)
         profile.specializations = data.get("specializations", profile.specializations)
+
+        if ex_organization != profile.organization:
+            if profile.organization is not None and profile.organization != 0:
+                partenr_account = PartnerProfile.objects.get(id=profile.organization)
+                if partenr_account is not None:
+                    assign_mentees = []
+                    if partenr_account.assign_mentees:
+                        assign_mentees = partenr_account.assign_mentees
+                    assign_mentees.append({"id": str(profile.id), "name": profile.name})
+                    partenr_account.assign_mentees = assign_mentees
+                    partenr_account.save()
+            if ex_organization is not None and ex_organization != 0:
+                partenr_account = PartnerProfile.objects.get(id=ex_organization)
+                if partenr_account is not None:
+                    assign_mentees = []
+                    for mentee_item in partenr_account.assign_mentees:
+                        if str(mentee_item.id) != str(ex_organization):
+                            assign_mentees.append(mentee_item)
+                    partenr_account.assign_mentees = assign_mentees
+                    partenr_account.save()
 
         if "video" in data and data.get("video") is not None:
             video_data = data.get("video")

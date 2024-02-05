@@ -73,7 +73,7 @@ function MenteeProfileForm({
     if (applicationData) {
       form.setFieldValue(
         "organization",
-        applicationData.partner ? applicationData.partner : 0
+        applicationData.partner ? applicationData.partner : null
       );
     }
   }, [profileData, form, resetFields, applicationData]);

@@ -69,7 +69,7 @@ class MenteeForm(Form):
     age = StringField(validators=[InputRequired()])
     gender = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.DataRequired()])
-    organization = StringField(validators=[InputRequired()])
+    # organization = StringField(validators=[InputRequired()])
 
 
 class PartnerForm(Form):

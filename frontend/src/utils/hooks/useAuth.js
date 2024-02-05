@@ -79,10 +79,13 @@ function useProvideAuth() {
       await getIdTokenResult(true)
         .then((idTokenResult) => {
           const { role, profileId } = idTokenResult.claims;
+          console.log('profileID----------', profileId);
           const supportUserID = localStorage.getItem("support_user_id");
           const cur_role = localStorage.getItem("role");
           const cur_user_id = localStorage.getItem("profileId");
+          console.log('cur_user_id----------', cur_user_id);
           if (!(role == ACCOUNT_TYPE.SUPPORT && supportUserID)) {
+            console.log('1111', profileId);
             setProfileId(profileId);
             localStorage.setItem("profileId", profileId);
             setRoleState({
@@ -96,6 +99,7 @@ function useProvideAuth() {
 
             Promise.resolve(idTokenResult).then(onAuthUpdate);
           } else {
+            console.log('2222', cur_user_id);
             setProfileId(cur_user_id);
             setRoleState({
               role: Number(cur_role),

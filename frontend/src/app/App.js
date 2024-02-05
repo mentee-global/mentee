@@ -56,7 +56,12 @@ function App() {
 
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
+  // useEffect(() => {
+  //   setRole(getRole());
+  // }, [user]);
+
   useEffect(() => {
+    console.log("user change--------");
     setRole(getRole());
   }, [user]);
 

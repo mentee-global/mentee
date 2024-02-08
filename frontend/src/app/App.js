@@ -61,6 +61,7 @@ function App() {
   // }, [user]);
 
   useEffect(() => {
+    console.log("user change--------");
     setRole(getRole());
   }, [user]);
 

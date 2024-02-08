@@ -119,7 +119,15 @@ def upload_account_emailText():
         if not duplicates:
             firebase_user, error_http_response = create_firebase_user(email, password)
             if error_http_response:
-                return create_response(status=422, message="Can't create firebase user")
+                try:
+                    firebase_user = firebase_admin_auth.get_user_by_email(email)
+                except Exception as e:
+                    logger.error(e)
+                    logger.warning(f"{email} is not verified in Firebase")
+                    return create_response(
+                        status=422, message="Can't create firebase user"
+                    )
+
             firebase_uid = firebase_user.uid
 
             if role == Account.GUEST:

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { Modal, Form, Input, Button, message, Typography, Radio } from "antd";
-import { adminUploadEmailsText } from "utils/api";
+import { adminUploadEmailsText, checkStatusByEmail } from "utils/api";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ function AddGuestModal(props) {
   const { t } = useTranslation();
   const [valuesChanged, setValuesChanged] = useState(false);
   const [role, setRole] = useState(ACCOUNT_TYPE.GUEST);
+  const [alreadyInFirebase, setAlreadyInFirebase] = useState(false);
 
   useEffect(() => {
     form.resetFields();
@@ -61,8 +62,12 @@ function AddGuestModal(props) {
   };
 
   const onChangeRole = (e) => {
-    console.log("eee", e.target.value);
     setRole(e.target.value);
+  };
+
+  const checkEmailExsit = async (e) => {
+    const { inFirebase } = await checkStatusByEmail(e.target.value, role);
+    setAlreadyInFirebase(inFirebase);
   };
 
   return (
@@ -116,13 +121,17 @@ function AddGuestModal(props) {
                 },
               ]}
             >
-              <Input bordered={true} placeholder={t("common.email")} />
+              <Input
+                bordered={true}
+                placeholder={t("common.email")}
+                onBlur={(e) => checkEmailExsit(e)}
+              />
             </Form.Item>
             <Form.Item
               name="password"
               rules={[
                 {
-                  required: true,
+                  required: alreadyInFirebase ? false : true,
                   message: "Please input Password.",
                 },
               ]}
@@ -133,13 +142,14 @@ function AddGuestModal(props) {
                 }
                 bordered={true}
                 placeholder={t("common.password")}
+                disabled={alreadyInFirebase}
               />
             </Form.Item>
             <Form.Item
               name="confirm"
               rules={[
                 {
-                  required: true,
+                  required: alreadyInFirebase ? false : true,
                   message: "Please confirm password!",
                 },
                 { validator: validatePassword },
@@ -151,6 +161,7 @@ function AddGuestModal(props) {
                 }
                 bordered={true}
                 placeholder={t("commonProfile.confirmPassword")}
+                disabled={alreadyInFirebase}
               />
             </Form.Item>
 

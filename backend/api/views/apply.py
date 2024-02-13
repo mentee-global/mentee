@@ -87,6 +87,10 @@ def get_application_by_id(id):
 def get_application_mentee_by_id(id):
     try:
         application = MenteeApplication.objects.get(id=id)
+        if application is not None and application.partner is not None:
+            partner_data = PartnerProfile.objects.get(id=application.partner)
+            if partner_data is not None:
+                application.organization = partner_data.organization
     except:
         msg = "No application currently exist with this id " + id
         logger.info(msg)

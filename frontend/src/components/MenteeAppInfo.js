@@ -26,7 +26,9 @@ function NewMentorAppInfo({ info }) {
             "What organization is supporting you locally or what organization are you affiliated with? "
           }
         </div>
-        <div className="answer">{info.organization}</div>
+        <div className="answer">
+          {info.organization ? info.organization : info.partner}
+        </div>
       </div>
       <div className="single-info-section info2">
         <div className="question">{"Age"}</div>

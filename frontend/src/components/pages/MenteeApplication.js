@@ -192,6 +192,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
+              message: t("common.requiredLasttName"),
             },
           ]}
         >
@@ -203,7 +204,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
-              message: t("common.requiredLasttName"),
+              message: t("common.requiredOrganizationAffiliation"),
             },
           ]}
         >

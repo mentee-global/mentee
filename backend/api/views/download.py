@@ -209,7 +209,6 @@ def download_mentee_apps(apps):
             [
                 acct.name,
                 acct.email,
-                # acct.age,
                 ",".join(acct.immigrant_status),
                 acct.Country,
                 acct.identify,

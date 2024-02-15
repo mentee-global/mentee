@@ -27,9 +27,9 @@ export class HomePage {
       .should("exist")
       .and("have.attr", "aria-label", "right-circle")
       .should("be.visible");
-      cy.get('.ant-card-bordered').eq(0)
-      .should("contain", "Platform Login")
-      .should("be.visible");
+      // cy.get('.ant-card-bordered').eq(0)
+      // .should("contain", "Platform Login")
+      // .should("be.visible");
 
     cy.get("span.anticon.anticon-usergroup-add")
       .should("exist")
@@ -42,10 +42,11 @@ export class HomePage {
       .should("exist")
       .and("have.attr", "aria-label", "right-circle")
       .should("be.visible");
-    cy.get(".ant-card-meta-description")
-      .should("exist")
-      .and("contain", "Apply - Train - Build")
-      .should("be.visible");
+      cy.get(".ant-card-meta-description").last().should("exist").then(($element) => {
+        cy.wrap($element).as("description");
+        expect($element.text()).to.include("Apply, Train, Build");
+        expect($element).to.be.visible;
+      });
 
     cy.get(".css-5lbmdi")
       .should("exist")

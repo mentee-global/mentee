@@ -4,10 +4,10 @@ export class AdminAccountData {
   }
   searchByName() {
     const searchTerm = "roberto";
-    cy.get("#search").type(`${searchTerm}{enter}`);
+    cy.get("#search").type(`${searchTerm}{enter}`).wait(5000);
     cy.get(".ant-table-tbody")
       .should("have.length.greaterThan", 0)
-      .and("contain.text", searchTerm);
+      .and("contain.text",searchTerm);
   }
   filterByRole() {
     const roles = [0, 1, 2, 3];

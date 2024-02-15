@@ -9,9 +9,7 @@ describe("test chat between mentee to mentor", () => {
   it("Login as a Mentee and send a message to metor", () => {
     cy.visit(`/login`);
 
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(2) > div"
-    ).click();
+    cy.get(':nth-child(2) > .ant-card').click();
 
     cy.get("#email").clear().type(MENTEE_EMAIL);
 
@@ -19,7 +17,7 @@ describe("test chat between mentee to mentor", () => {
 
     cy.contains("button", "Login").click();
 
-    cy.wait(2000);
+    cy.wait(3000);
 
     cy.visit(`gallery/1/${MENTOR_PROFILE_ID}`);
 
@@ -41,26 +39,17 @@ describe("test chat between mentee to mentor", () => {
   it("Login as a Mentor and send a message to mentee", () => {
     cy.visit(`/login`);
 
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(1) > div"
-    ).click();
+    cy.get(':nth-child(1) > .ant-card').click();
 
     cy.get("#email").clear().type(MENTOR_EMAIL);
 
     cy.get("#password").clear().type(MENTOR_PASSWORD);
 
     cy.contains("button", "Login").click();
-    cy.wait(2000);
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li:nth-child(1)"
-    ).click();
-    cy.wait(2000);
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > aside > div > div.messages-sidebar > div.ant-card.ant-card-bordered.css-umxe2r.css-1axsfu3 > div > div > div > div.ant-card-meta-detail > div.ant-card-meta-description"
-    ).should("contain", "I want metorship on the domain of computer scineces");;
-    // cy.wait(4000);
-    // cy.get(
-    //   "#root > section > main > section > section > div > div.conversation-content > div.ant-spin-nested-loading.css-wxm1m1 > div > div:nth-child(62) > div > div > div > div"
-    // ).should("contain", "I want metorship on the domain of computer scineces");
+    cy.wait(3000);
+    cy.get(".notifications-section").click();
+    cy.wait(10000);
+    cy.get(':nth-child(1) .ant-card-meta-description')
+    .first().should("contain", "Hey Mentee how are you i hope you will be fine");
   });
 });

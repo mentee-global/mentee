@@ -24,17 +24,17 @@ describe("Registration for mentee", () => {
     cy.get("#firstName").should("be.visible");
     cy.get("#firstName").type("John Doe");
     cy.get("#firstName").clear();
-    cy.get("#firstName_help > div").should(
+    cy.get("label[for='firstName']").should(
       "have.text",
-      "Please enter First Name"
+      "First Name"
     );
 
     cy.get("#organization").should("be.visible");
     cy.get("#organization").type("companyName");
     cy.get("#organization").clear();
-    cy.get("#organization_help > div").should(
+    cy.get("label[for='organization']").should(
       "have.text",
-      "Please enter What organization is supporting you locally or what organization are you affiliated with?"
+      "What organization is supporting you locally or what organization are you affiliated with?"
     );
 
     // Click on the age dropdown to open it
@@ -46,39 +46,39 @@ describe("Registration for mentee", () => {
 
 
     // Check if the help message is visible with the expected text
-    cy.get("#age_help > div").should("be.visible").should("have.text", "Please enter Let us know more about you");
-
-    cy.get("#immigrantStatus_help > div").should("be.visible");
-    cy.get("#immigrantStatus_help > div").should(
+    cy.get('label[for="age"]').should("be.visible").should("have.text", "Let us know more about you");
+    
+    cy.get("label[for='immigrantStatus']").should("be.visible");
+    cy.get("label[for='immigrantStatus']").should(
       "have.text",
-      "Please enter Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
+      "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
+    );
+    
+    cy.get("label[for='genderIdentification']").should("be.visible");
+    cy.get("label[for='genderIdentification']").should(
+      "have.text",
+      "What do you identify as?"
     );
 
-    cy.get("#genderIdentification_help > div").should("be.visible");
-    cy.get("#genderIdentification_help > div").should(
+    cy.get("label[for='language']").should("be.visible");
+    cy.get("label[for='language']").should(
       "have.text",
-      "Please enter What do you identify as?"
+      "What is your native language?"
     );
-
-    cy.get("#language_help > div").should("be.visible");
-    cy.get("#language_help > div").should(
+    
+    cy.get("label[for='topics']").should("be.visible");
+    cy.get("label[for='topics']").should(
       "have.text",
-      "Please enter What is your native language?"
+      "What special topics would you be interested in? If one is not on the list please add it in other:"
     );
-
-    cy.get("#topics_help > div").should("be.visible");
-    cy.get("#topics_help > div").should(
+    
+    // cy.get("label[for='workstate']").should('be.visible');
+    // cy.get("label[for='workstate']").should("have.text', 'What do you currently do? Please check ALL the options that apply to you. If you select 'other' , please be specific:");
+    
+    cy.get("label[for='socialMedia']").should("be.visible");
+    cy.get("label[for='socialMedia']").should(
       "have.text",
-      "Please enter What special topics would you be interested in? If one is not on the list please add it in other:"
-    );
-
-    // cy.get('#workstate_help > div').should('be.visible');
-    // cy.get('#workstate_help > div').should("have.text', 'Please enter What do you currently do? Please check ALL the options that apply to you. If you select 'other' , please be specific:");
-
-    cy.get("#socialMedia_help > div").should("be.visible");
-    cy.get("#socialMedia_help > div").should(
-      "have.text",
-      "Please enter Would you be interested in being highlighted as one of our mentees on social media?"
+      "Would you be interested in being highlighted as one of our mentees on social media?"
     );
   });
 

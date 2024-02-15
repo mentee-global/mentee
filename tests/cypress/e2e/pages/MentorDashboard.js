@@ -5,7 +5,7 @@ const password = Cypress.env("MENTOR_PASSWORD");
 export class MentorDashboard {
   selectEnglish() {
     cy.get(
-      "span.ant-dropdown-trigger"
+      "span.ant-dropdown-trigger",{timeout:1000}
     ).trigger("mouseover");
 
     cy.get(".ant-dropdown-menu-title-content").eq(0).click();
@@ -36,19 +36,19 @@ export class MentorDashboard {
     cy.wait(2000);
     cy.get(
       "li.ant-menu-item"
-    ).eq(2).click();
+    ).eq(3).click();
     cy.url().should("include", "/appointments");
     cy.get(
       "li.ant-menu-item"
-    ).eq(3).click();
+    ).eq(4).click();
     cy.url().should("include", "/event");
     cy.get(
       "li.ant-menu-item"
-    ).eq(4).click();
+    ).eq(5).click();
     cy.url().should("include", "/videos");
     cy.get(
       "li.ant-menu-item"
-    ).eq(5).click();
+    ).eq(6).click();
     cy.url().should("include", "/profile");
     // cy.get(
     //   "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > header > div.ant-space.css-1axsfu3.ant-space-horizontal.ant-space-align-center.ant-space-gap-row-middle.ant-space-gap-col-middle > div:nth-child(1)"
@@ -94,16 +94,16 @@ export class MentorDashboard {
           .and("contain.text", currentLanguage.navHeader.findMentee);
           cy.get(
             "li.ant-menu-item"
-          ).eq(2).should("contain.text", currentLanguage.sidebars.appointments);
+          ).eq(3).should("contain.text", currentLanguage.sidebars.appointments);
           cy.get(
             "li.ant-menu-item"
-          ).eq(3).should("contain.text", currentLanguage.sidebars.events);
+          ).eq(4).should("contain.text", currentLanguage.sidebars.events);
           cy.get(
             "li.ant-menu-item"
-          ).eq(4).should("contain.text", currentLanguage.sidebars.videos);
+          ).eq(5).should("contain.text", currentLanguage.sidebars.videos);
           cy.get(
             "li.ant-menu-item"
-          ).eq(5).should("contain.text", currentLanguage.sidebars.profile);
+          ).eq(6).should("contain.text", currentLanguage.sidebars.profile);
         // Storing previous language details
         previousLanguage = currentLanguage;
       });

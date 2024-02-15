@@ -34,7 +34,7 @@ class PartnerComponent {
     cy.get('.gallery-container > :nth-child(1)').should(
       "be.visible"
     );
-    cy.get('.gallery-button > .ant-btn > span').should("have.text", "View Profile");
+    cy.get('.gallery-button > .ant-btn > span').first().should("have.text", "View Profile");
     cy.get('.css-156ebuz').should("be.visible");
     cy.get(':nth-child(2) > .ant-input').should("have.attr", "placeholder", "Search by organization");
   }

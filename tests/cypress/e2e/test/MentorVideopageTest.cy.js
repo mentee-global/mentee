@@ -23,14 +23,14 @@ describe("chceking the video page of mentor", () => {
     mentor.selectEnglish();
     cy.get(
       "li.ant-menu-item"
-    ).eq(4).click();
+    ).eq(5).click();
 
     cy.get(
       "li.ant-menu-item"
-    ).eq(4).should("contain.text", "Your Videos");
+    ).eq(5).should("contain.text", "Your Videos");
 
     cy.get(
-      ".ant-table-thead"
+      ".ant-table-thead",{timeout:5000}
     ).should("contain.text", "Title");
 
     cy.get(
@@ -63,7 +63,7 @@ describe("chceking the video page of mentor", () => {
     cy.contains(".ant-select-item-option-content", "Computer Science").click();
 
     cy.get('button.ant-btn-primary span:contains("Submit")').click();
-
+    cy.wait(5000);
     cy.get(".ant-table-tbody").should("contain.text", "my skills intro");
 
     cy.get(

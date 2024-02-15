@@ -9,9 +9,7 @@ describe("Test for chats", () => {
   it.only("Login as a Mentor and send a message to mentee", () => {
     cy.visit(`/login`);
    
-    cy.get(
-      " #root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div.ant-space.css-1axsfu3.ant-space-vertical.ant-space-gap-row-middle.ant-space-gap-col-middle.css-3w4dbw > div:nth-child(1) > div" 
-    ).click();
+    cy.get(':nth-child(1) > .ant-card').click();
 
     cy.get("#email").clear().type(MENTOR_EMAIL);
 
@@ -19,11 +17,9 @@ describe("Test for chats", () => {
 
     cy.contains("button", "Login").click();
 
-    cy.wait(5000);
+    cy.wait(10000);
 
-    cy.get(
-      "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > header > div.ant-space.css-1axsfu3.ant-space-horizontal.ant-space-align-center.ant-space-gap-row-middle.ant-space-gap-col-middle > div:nth-child(3) "
-    ).trigger("mouseover");
+    cy.get('.ant-space-gap-row-middle > :nth-child(3)').trigger("mouseover");
 
 
     cy.get(".ant-dropdown-menu-title-content").eq(0).click();
@@ -49,9 +45,7 @@ describe("Test for chats", () => {
 
     cy.get(".ant-modal-footer > .ant-btn-primary").click();
     // cy.wait(1000);
-    cy.get(
-      "body > div.ant-message.ant-message-top.css-1axsfu3 > div > div > div > div > span:nth-child(2)"
-    ).should("contain.text", "successfully sent message");
+    cy.get('.ant-message-custom-content > :nth-child(2)').should("contain.text", "successfully sent message");
   });
 
   it("Login as a mentee and test message is recieved or not or test the text in message ", () => {

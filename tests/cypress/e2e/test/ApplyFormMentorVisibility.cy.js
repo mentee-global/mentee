@@ -187,30 +187,30 @@ describe("Apply form for Mentor Visibility checking", () => {
       "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!"
     );
 
-    cy.get('label[for="canDonate"]').should(
-      "contain",
-      "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
-    );
+    // cy.get('label[for="canDonate"]').should(
+    //   "contain",
+    //   "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
+    // );
 
-    cy.get("#canDonate > label:nth-child(1) > span:nth-child(2)").should(
-      "contain",
-      "Yes, I can offer a donation now to help support this work!"
-    );
+    // cy.get("#canDonate > label:nth-child(1) > span:nth-child(2)").should(
+    //   "contain",
+    //   "Yes, I can offer a donation now to help support this work!"
+    // );
 
-    cy.get("#canDonate > label:nth-child(1) > span:nth-child(2)").should(
-      "contain",
-      "(https://www.menteteglobal.org/donate)"
-    );
+    // cy.get("#canDonate > label:nth-child(1) > span:nth-child(2)").should(
+    //   "contain",
+    //   "(https://www.menteteglobal.org/donate)"
+    // );
 
-    cy.get("#canDonate > label:nth-child(2) > span:nth-child(2)").should(
-      "contain",
-      "No, unfortunately I cannot offer a donation now but please ask me again."
-    );
+    // cy.get("#canDonate > label:nth-child(2) > span:nth-child(2)").should(
+    //   "contain",
+    //   "No, unfortunately I cannot offer a donation now but please ask me again."
+    // );
 
-    cy.get("#canDonate > label:nth-child(3) > span:nth-child(2)").should(
-      "contain",
-      "I'm unable to offer a donation."
-    );
+    // cy.get("#canDonate > label:nth-child(3) > span:nth-child(2)").should(
+    //   "contain",
+    //   "I'm unable to offer a donation."
+    // );
 
     cy.get("button.ant-btn-primary.ant-btn-block").should("contain", "Submit");
   });

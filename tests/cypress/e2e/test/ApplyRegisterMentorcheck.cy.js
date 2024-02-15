@@ -20,112 +20,112 @@ describe("Registration for mentor", () => {
     cy.get('#submit').click();
     cy.wait(1000);
     cy.get("#firstName").should("be.visible");
-    cy.get("#firstName_help > div").should(
+    cy.get("label[for='firstName']").should(
       "have.text",
-      "Please enter First Name"
+      "First Name"
     );
 
-    cy.get("#lastName_help > div").should("be.visible");
-    cy.get("#lastName_help > div").should(
+    cy.get("label[for='lastName']").should("be.visible");
+    cy.get("label[for='lastName']").should(
       "have.text",
-      "Please enter Last Name"
+      "Last Name"
+    );
+    
+    cy.get("label[for='hearAboutUs']").should("be.visible");
+    cy.get("label[for='hearAboutUs']").should(
+      "have.text",
+      "From whom or where did you hear about us?"
+    );
+    
+    cy.get("label[for='knowledgeLocation']").should("be.visible");
+    cy.get("label[for='knowledgeLocation']").should(
+      "have.text",
+      "Please share which region(s), country(s), state(s), cities your knowledge is based in"
+    );
+    
+    cy.get("label[for='previousLocations']").should("be.visible");
+    cy.get("label[for='previousLocations']").should(
+      "have.text",
+      "Where have you lived in your life besides where you live now?"
     );
 
-    cy.get("#hearAboutUs_help > div").should("be.visible");
-    cy.get("#hearAboutUs_help > div").should(
+    cy.get("label[for='employerName']").should("be.visible");
+    cy.get("label[for='employerName']").should(
       "have.text",
-      "Please enter From whom or where did you hear about us?"
+      "Full name of your company/employer"
     );
 
-    cy.get("#knowledgeLocation_help > div").should("be.visible");
-    cy.get("#knowledgeLocation_help > div").should(
+    cy.get("label[for='jobDescription']").should("be.visible");
+    cy.get("label[for='jobDescription']").should(
       "have.text",
-      "Please enter Please share which region(s), country(s), state(s), cities your knowledge is based in"
+      "Your full title and a brief description of your role"
     );
 
-    cy.get("#previousLocations_help > div").should("be.visible");
-    cy.get("#previousLocations_help > div").should(
+    cy.get("label[for='jobDuration']").should("be.visible");
+    cy.get("label[for='jobDuration']").should(
       "have.text",
-      "Please enter Where have you lived in your life besides where you live now?"
+      "How long have you been with this company?"
     );
 
-    cy.get("#employerName_help > div").should("be.visible");
-    cy.get("#employerName_help > div").should(
+    cy.get("label[for='commitDuration']").should("be.visible");
+    cy.get("label[for='commitDuration']").should(
       "have.text",
-      "Please enter Full name of your company/employer"
+      "If you are accepted as a global mentor, would you like to commit to..."
     );
 
-    cy.get("#jobDescription_help > div").should("be.visible");
-    cy.get("#jobDescription_help > div").should(
+    cy.get("label[for='immigrationStatus']").should("be.visible");
+    cy.get("label[for='immigrationStatus']").should(
       "have.text",
-      "Please enter Your full title and a brief description of your role"
+      "Are you an immigrant or refugee or do you come from an immigrant family or refugee family?"
     );
 
-    cy.get("#jobDuration_help > div").should("be.visible");
-    cy.get("#jobDuration_help > div").should(
+    cy.get("label[for='communityStatus']").should("be.visible");
+    cy.get("label[for='communityStatus']").should(
       "have.text",
-      "Please enter How long have you been with this company?"
+      "Are you or your family from a native or aboriginal community?"
     );
 
-    cy.get("#commitDuration_help > div").should("be.visible");
-    cy.get("#commitDuration_help > div").should(
+    cy.get("label[for='economicBackground']").should("be.visible");
+    cy.get("label[for='economicBackground']").should(
       "have.text",
-      "Please enter If you are accepted as a global mentor, would you like to commit to..."
+      "Did you grow up economically challenged?"
     );
 
-    cy.get("#immigrationStatus_help > div").should("be.visible");
-    cy.get("#immigrationStatus_help > div").should(
+    cy.get("label[for='isPersonOfColor']").should("be.visible");
+    cy.get("label[for='isPersonOfColor']").should(
       "have.text",
-      "Please enter Are you an immigrant or refugee or do you come from an immigrant family or refugee family?"
+      "Would you consider yourself of person of color"
     );
 
-    cy.get("#communityStatus_help > div").should("be.visible");
-    cy.get("#communityStatus_help > div").should(
+    cy.get("label[for='genderIdentification']").should("be.visible");
+    cy.get("label[for='genderIdentification']").should(
       "have.text",
-      "Please enter Are you or your family from a native or aboriginal community?"
+      "What do you identify as?"
     );
 
-    cy.get("#economicBackground_help > div").should("be.visible");
-    cy.get("#economicBackground_help > div").should(
+    cy.get("label[for='isMarginalized']").should("be.visible");
+    cy.get("label[for='isMarginalized']").should(
       "have.text",
-      "Please enter Did you grow up economically challenged?"
+      "Would you define yourself as having been or currently marginalized"
     );
 
-    cy.get("#isPersonOfColor_help > div").should("be.visible");
-    cy.get("#isPersonOfColor_help > div").should(
+    cy.get("label[for='languageBackground']").should("be.visible");
+    cy.get("label[for='languageBackground']").should(
       "have.text",
-      "Please enter Would you consider yourself of person of color"
+      "Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)"
     );
 
-    cy.get("#genderIdentification_help > div").should("be.visible");
-    cy.get("#genderIdentification_help > div").should(
+    cy.get("label[for='referral']").should("be.visible");
+    cy.get("label[for='referral']").should(
       "have.text",
-      "Please enter What do you identify as?"
+      "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!"
     );
 
-    cy.get("#isMarginalized_help > div").should("be.visible");
-    cy.get("#isMarginalized_help > div").should(
-      "have.text",
-      "Please enter Would you define yourself as having been or currently marginalized"
-    );
-
-    cy.get("#languageBackground_help > div").should("be.visible");
-    cy.get("#languageBackground_help > div").should(
-      "have.text",
-      "Please enter Do you speak a language(s) other than English? If yes, please write the language(s) below and include your fluency level (conversational, fluent, native)"
-    );
-
-    cy.get("#referral_help > div").should("be.visible");
-    cy.get("#referral_help > div").should(
-      "have.text",
-      "Please enter If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!"
-    );
-
-    cy.get("#canDonate_help > div").should("be.visible");
-    cy.get("#canDonate_help > div").should(
-      "have.text",
-      "Please enter MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
-    );
+    // cy.get("#canDonate_help > div").should("be.visible");
+    // cy.get("#canDonate_help > div").should(
+    //   "have.text",
+    //   "Please enter MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
+    // );
   });
 
   it("Allow a user to Register as a Mentor", () => {

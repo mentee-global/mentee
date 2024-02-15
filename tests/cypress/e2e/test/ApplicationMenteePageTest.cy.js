@@ -13,7 +13,7 @@ describe("testing the Application page of Mentor", () => {
   });
 
   it("checking the visibility of page elements", () => {
-    cy.get("#applicactionstate").should(
+    cy.get("#applicactionstate",{timeout: 10000}).should(
       "have.text",
       "Applications State"
     );
@@ -61,13 +61,13 @@ describe("testing the Application page of Mentor", () => {
         cy.get(
         "#mentorapplications"
       ).click();
-      cy.wait(2000);
+      cy.wait(5000);
       cy.readFile("cypress/downloads/mentor_applications.xlsx");
 
       cy.get(
         "#menteeapplications"
       ).click();
-      cy.wait(2000);
+      cy.wait(5000);
       cy.readFile("cypress/downloads/mentee_applications.xlsx");
 
   });
@@ -76,14 +76,13 @@ describe("testing the Application page of Mentor", () => {
     cy.wait(2000);
 
     cy.get(
-      "#applicationssort"
+      "#applicationssort",{timeout: 10000}
     ).click({force:true});
 
     cy.get(
       "#applicationssort"
-    ).type("{downarrow}{downarrow}{downarrow}{enter}",{force:true});;
-
-    cy.wait(1000);
+    ).type("{downarrow}{downarrow}{downarrow}{enter}",{force:true});
+    cy.wait(3000);
 
     cy.get(".ant-table-tbody")
       .find("tr")
@@ -95,7 +94,7 @@ describe("testing the Application page of Mentor", () => {
             .each((row, rowIndex) => {
               cy.wrap(row)
                 .find("td:eq(3)")
-                .find(".ant-select-selection-item")
+                .find(".ant-select-selection-item",{timeout:10000})
                 .should("have.text", "BuildProfile");
             });
         } else {
@@ -104,15 +103,15 @@ describe("testing the Application page of Mentor", () => {
       });
 
       cy.get(
-        "#applicationssort"
+        "#applicationssort",{timeout: 10000}
       ).click({force:true});
   
   
       cy.get(
-        "#applicationssort"
+        "#applicationssort",{timeout: 10000}
       ).type("{downarrow}{enter}",{force:true});
 
-    cy.wait(1000);
+    cy.wait(3000);
 
     cy.get(".ant-table-tbody")
       .find("tr")

@@ -108,6 +108,12 @@
     "welcome": "Bem-vindo ao <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
     "yes": "Sim",
+    "elementary":"Escola primária",
+    "high":"Ensino médio",
+    "technical":"Escola Técnica",
+    "bachelor":"Bacharel",
+    "masters":"Mestre",
+    "doctorate":"Doutorado",
 
     "requiredFirstName":"Por favor insira o primeiro nome",
     "requiredLasttName":"Por favor insira o sobrenome",
@@ -307,6 +313,7 @@
     "immigrationStatus": "Deixe-nos saber mais sobre você. Assinale todos os itens que se aplicam a você! Caso você selecione o item \"outro(s)\", por favor, seja específico!",
     "introduction": "Agradecemos o seu interesse em fazer parte da comunidade MENTEE! Você receberá acesso aos nossos mentores globais e aos programas de suporte! Mal podemos esperar para ver o que você vai alcançar! Lembre-se: como mentorado, você pode ficar aqui e buscar mentorias, aprendizado e desenvolvimento pelo resto de sua vida, caso você queira ficar conosco por todo este tempo :)",
     "languageBackground": "Qual é o seu idioma nativo?",
+    "preferredLanguage":"Idiomas preferidos",
     "orgAffiliation": "Qual organização está apoiando você localmente ou a qual organização você está afiliado?",
     "otherPlaceholder": "Outro(s)",
     "otherQuestions": "Você tem alguma pergunta?",
@@ -365,7 +372,9 @@
     "missingFields": "Campos ausentes",
     "organizationAffiliation": "Afiliação da organização",
     "privateAccount": "Conta privada",
-    "privateAccountInfo": "Você poderá ver suas informações, mas sua conta não aparecerá quando as pessoas estiverem buscando outras contas."
+    "privateAccountInfo": "Você poderá ver suas informações, mas sua conta não aparecerá quando as pessoas estiverem buscando outras contas.",
+    "is_student":"Você é um estudante atual?",
+    "edu_level":"Qual é o seu nível de escolaridade mais alto que você possui?"
   },
   "mentorApplication": {
     "canDonate": "A MENTEE é uma organização voluntária e somos sustentados por doações. Você teria condição de nos fazer doações por um ano?",

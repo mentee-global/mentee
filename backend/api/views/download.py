@@ -12,7 +12,7 @@ from api.models import (
 )
 from flask import send_file, Blueprint, request
 from api.utils.require_auth import admin_only
-from api.utils.constants import Account
+from api.utils.constants import Account, EDUCATION_LEVEL
 
 download = Blueprint("download", __name__)
 
@@ -209,11 +209,13 @@ def download_mentee_apps(apps):
             [
                 acct.name,
                 acct.email,
-                acct.age,
+                # acct.age,
                 ",".join(acct.immigrant_status),
                 acct.Country,
                 acct.identify,
-                acct.language,
+                acct.language
+                if isinstance(acct.language, str)
+                else ",".join(acct.language),
                 ",".join(acct.topics),
                 ",".join(acct.workstate),
                 acct.isSocial,
@@ -225,7 +227,7 @@ def download_mentee_apps(apps):
     columns = [
         " Full Name",
         "email",
-        "age",
+        # "age",
         "immigrant status",
         "Country",
         "identify",
@@ -356,6 +358,8 @@ def download_mentee_accounts(accounts, partner_object):
                     edu.graduation_year,
                 )
             )
+        if acct.education_level is not None:
+            educations.append(EDUCATION_LEVEL[acct.education_level])
         accts.append(
             [
                 acct.name,

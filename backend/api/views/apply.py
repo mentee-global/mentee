@@ -576,7 +576,7 @@ def create_application():
                 name=data.get("name"),
                 age=data.get("age"),
                 immigrant_status=data.get("immigrant_status"),
-                Country=data.get("Country", ""),
+                Country=data.get("country", ""),
                 identify=data.get("identify"),
                 language=data.get("language"),
                 topics=data.get("topics"),

@@ -36,6 +36,16 @@ const authDelete = async (url, config) =>
     headers: { Authorization: await getUserIdToken() },
   });
 
+export const getAllcountries = () => {
+  const requestExtension = "https://restcountries.com/v3.1/all";
+  return axios.get(requestExtension, {}).then(
+    (response) => response.data,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const fetchAccountById = (id, type) => {
   if (!id) return;
   const requestExtension = `/account/${id}`;

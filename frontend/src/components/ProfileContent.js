@@ -310,6 +310,14 @@ function ProfileContent(props) {
             <b>{t("commonProfile.education")}</b>
           </div>
           <div>{getEducations(props.mentor.education)}</div>
+          {accountType == ACCOUNT_TYPE.MENTEE && (
+            <>
+              <div>
+                {props.mentor.education_level &&
+                  t("common." + props.mentor.education_level)}
+              </div>
+            </>
+          )}
         </>
       )}
       <br />

@@ -108,6 +108,12 @@
     "welcome": "¡Bienvenido a <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
     "yes": "Sí",
+    "elementary":"Escuela primaria",
+    "high":"Escuela secundaria",
+    "technical":"Escuela Técnica",
+    "bachelor":"Bachiller",
+    "masters":"Maestro",
+    "doctorate":"Doctorado",
 
     "requiredFirstName":"Por favor ingrese el nombre",
     "requiredLasttName":"Por favor ingrese el apellido",
@@ -307,6 +313,7 @@
     "immigrationStatus": "Háganos saber más sobre usted. ",
     "introduction": "¡Agradecemos su interés en formar parte de la comunidad MENTEE! ",
     "languageBackground": "Cuál es tu idioma nativo?",
+    "preferredLanguage":"preferido Idioma(s)",
     "orgAffiliation": "¿Qué organización lo está apoyando localmente o a qué organización está afiliado?",
     "otherPlaceholder": "Otro",
     "otherQuestions": "¿Tiene usted alguna pregunta?",
@@ -365,7 +372,9 @@
     "missingFields": "Campos faltantes",
     "organizationAffiliation": "Organización Afiliación",
     "privateAccount": "Cuenta privada",
-    "privateAccountInfo": "Podrá ver su información, pero su cuenta no aparecerá cuando las personas estén buscando cuentas."
+    "privateAccountInfo": "Podrá ver su información, pero su cuenta no aparecerá cuando las personas estén buscando cuentas.",
+    "is_student":"¿Eres un estudiante actual?",
+    "edu_level":"¿Cuál es tu nivel más alto de educación tienes?"
   },
   "mentorApplication": {
     "canDonate": "MENTEE es una organización de voluntarios y nos sustentan las donaciones. ",

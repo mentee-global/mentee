@@ -75,6 +75,16 @@ function MenteeProfileForm({
         "organization",
         applicationData.partner ? applicationData.partner : null
       );
+      form.setFieldValue("name", applicationData.name);
+      form.setFieldValue("location", applicationData.Country);
+      form.setFieldValue("gender", applicationData.identify);
+      if (applicationData.language) {
+        if (typeof applicationData.language === "string") {
+          form.setFieldValue("languages", [applicationData.language]);
+        } else {
+          form.setFieldValue("languages", applicationData.language);
+        }
+      }
     }
   }, [profileData, form, resetFields, applicationData]);
 
@@ -283,7 +293,7 @@ function MenteeProfileForm({
           },
         ]}
       >
-        <Input />
+        <Input readOnly />
       </Form.Item>
       {newProfile ? (
         <div className={styles.formGroup}>
@@ -333,6 +343,7 @@ function MenteeProfileForm({
           label={t("commonProfile.location")}
           name="location"
           className={styles.formGroupItem}
+          style={{ display: "none" }}
         >
           <Input />
         </Form.Item>
@@ -346,6 +357,7 @@ function MenteeProfileForm({
             },
           ]}
           className={styles.formGroupItem}
+          style={{ display: "none" }}
         >
           <Input />
         </Form.Item>
@@ -374,6 +386,7 @@ function MenteeProfileForm({
             },
           ]}
           className={styles.formGroupItem}
+          style={{ display: "none" }}
         >
           <Select
             options={options.languages}
@@ -437,7 +450,75 @@ function MenteeProfileForm({
       <Typography.Title level={4}>
         {t("commonProfile.education")}
       </Typography.Title>
-      {educationSubForm()}
+      {/* {educationSubForm()} */}
+      <div className={styles.formGroup}>
+        <Form.Item
+          label={t("menteeProfile.is_student")}
+          name="isStudent"
+          className={styles.formGroupItem}
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredReferral"),
+            },
+          ]}
+        >
+          <Select
+            options={[
+              {
+                label: t("common.yes"),
+                value: "Yes",
+              },
+              {
+                label: t("common.no"),
+                value: "No",
+              },
+            ]}
+            placeholder={t("common.pleaseSelect")}
+          />
+        </Form.Item>
+        <Form.Item
+          label={t("menteeProfile.edu_level")}
+          name="education_level"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredReferral"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Select
+            options={[
+              {
+                label: t("common.elementary"),
+                value: "elementary",
+              },
+              {
+                label: t("common.high"),
+                value: "high",
+              },
+              {
+                label: t("common.technical"),
+                value: "technical",
+              },
+              {
+                label: t("common.bachelor"),
+                value: "bachelor",
+              },
+              {
+                label: t("common.masters"),
+                value: "masters",
+              },
+              {
+                label: t("common.doctorate"),
+                value: "doctorate",
+              },
+            ]}
+            placeholder={t("common.pleaseSelect")}
+          />
+        </Form.Item>
+      </div>
       <Typography.Title level={4}>
         {t("commonProfile.addVideos")}
       </Typography.Title>

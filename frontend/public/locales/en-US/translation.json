@@ -109,6 +109,12 @@
     "welcome": "Welcome to <1>MENTEE!</1>",
     "whatsapp": "WhatsApp",
     "yes": "Yes",
+    "elementary":"Elementary school",
+    "high":"High school",
+    "technical":"Technical school",
+    "bachelor":"Bachelor",
+    "masters":"Master",
+    "doctorate":"Doctorate",
 
     "requiredFirstName":"Please enter First Name",
     "requiredLasttName":"Please enter Last Name",
@@ -308,6 +314,7 @@
     "immigrationStatus": "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific.",
     "introduction": "We appreciate your interest in becoming part of the MENTEE community! You will gain access to our global mentors and supportive programs. We can't wait to see all you will achieve. Remember, as a mentee you can stay here and actively seek mentorship, learning, and development for life, if you'd like to stay with us that long. :)",
     "languageBackground": "What is your native language?",
+    "preferredLanguage":"Preferred Language(s)",
     "orgAffiliation": "What organization is supporting you locally or what organization are you affiliated with?",
     "otherPlaceholder": "Other",
     "otherQuestions": "Do you have any questions?",
@@ -366,7 +373,9 @@
     "missingFields": "Missing Fields",
     "organizationAffiliation": "Organization Affliation",
     "privateAccount": "Private Account",
-    "privateAccountInfo": "You'll be able to see your information, but your account will not show up when people are browsing accounts."
+    "privateAccountInfo": "You'll be able to see your information, but your account will not show up when people are browsing accounts.",
+    "is_student":"Are you a current student?",
+    "edu_level":"What is your highest level of education do you have?"
   },
   "mentorApplication": {
     "canDonate": "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?",

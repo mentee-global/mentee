@@ -276,7 +276,6 @@ def create_mentor_profile():
 
     logger.info(data)
     new_account = new_profile(data=data, profile_type=account_type)
-
     if not new_account:
         msg = "Could not parse Account Data"
         logger.info(msg)
@@ -288,7 +287,6 @@ def create_mentor_profile():
     firebase_uid = firebase_user.uid
     data["firebase_uid"] = firebase_uid
     new_account.save()
-
     if account_type == Account.MENTEE:
         mentee_partenr_id = data.get("organization")
         if mentee_partenr_id is not None and mentee_partenr_id != 0:

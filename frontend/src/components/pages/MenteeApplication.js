@@ -216,65 +216,6 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
         >
           <Input placeholder={t("common.lastName")} />
         </Form.Item>
-        {/* <Form.Item
-          label={t("menteeApplication.orgAffiliation")}
-          name="organization"
-          rules={[
-            {
-              required: true,
-              message: t("common.requiredOrganizationAffiliation"),
-            },
-          ]}
-        >
-          <Input placeholder={t("menteeApplication.orgAffiliation")} />
-        </Form.Item> */}
-        {/* <Form.Item
-          label={t("menteeApplication.agePrompt")}
-          name="age"
-          rules={[
-            {
-              required: true,
-              message: t("common.requiredAgePrompt"),
-            },
-          ]}
-        >
-          <Select
-            options={[
-              {
-                value: "I am 18-22 years old.",
-                label: t("menteeApplication.ageAnswer1"),
-              },
-              {
-                value: "I am 23- 26 years old",
-                label: t("menteeApplication.ageAnswer2"),
-              },
-              {
-                value: "I am 27-30",
-                label: t("menteeApplication.ageAnswer3"),
-              },
-              {
-                value: "I am 30-35",
-                label: t("menteeApplication.ageAnswer4"),
-              },
-              {
-                value: "I am 36-40",
-                label: t("menteeApplication.ageAnswer5"),
-              },
-              {
-                value: "I am 41-50",
-                label: t("menteeApplication.ageAnswer6"),
-              },
-              {
-                value: "I am 51-60",
-                label: t("menteeApplication.ageAnswer7"),
-              },
-              {
-                value: "I am 61+",
-                label: t("menteeApplication.ageAnswer8"),
-              },
-            ]}
-          />
-        </Form.Item> */}
         <Form.Item
           label={t("menteeApplication.immigrationStatus")}
           name="immigrantStatus"
@@ -319,7 +260,6 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
             },
           ]}
         >
-          {/* <Input placeholder={t("menteeApplication.countryPlaceholder")} /> */}
           <Select showSearch options={countryOptions} mode="single" />
         </Form.Item>
         <Form.Item

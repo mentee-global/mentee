@@ -30,10 +30,6 @@ function NewMentorAppInfo({ info }) {
           {info.organization ? info.organization : "No affiliation"}
         </div>
       </div>
-      {/* <div className="single-info-section info2">
-        <div className="question">{"Age"}</div>
-        <div className="answer">{info.age}</div>
-      </div> */}
 
       <div className="single-info-section info2">
         <div className="question">

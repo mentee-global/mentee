@@ -14,7 +14,6 @@ class MenteeApplication(Document, Mixin):
     immigrant_status = ListField(StringField(), required=True)
     Country = StringField()
     identify = StringField(required=True)
-    # language = StringField(required=True)
     language = ListField(StringField())
     topics = ListField(StringField(), required=True)
     workstate = ListField(StringField(), required=True)

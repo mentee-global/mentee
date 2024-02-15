@@ -409,19 +409,6 @@ function MenteeProfileForm({
         >
           <Input />
         </Form.Item>
-        {/* <Form.Item
-          label={t("menteeProfile.organizationAffiliation")}
-          name="organization"
-          rules={[
-            {
-              required: true,
-              message: t("common.requiredOrganizationAffiliation"),
-            },
-          ]}
-          className={styles.formGroupItem}
-        >
-          <Input />
-        </Form.Item> */}
         <Form.Item
           label={t("menteeProfile.organizationAffiliation")}
           name="organization"
@@ -450,7 +437,6 @@ function MenteeProfileForm({
       <Typography.Title level={4}>
         {t("commonProfile.education")}
       </Typography.Title>
-      {/* {educationSubForm()} */}
       <div className={styles.formGroup}>
         <Form.Item
           label={t("menteeProfile.is_student")}

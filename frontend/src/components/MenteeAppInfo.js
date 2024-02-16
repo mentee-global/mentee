@@ -54,8 +54,12 @@ function NewMentorAppInfo({ info }) {
         <div className="answer">{info.identify}</div>
       </div>
       <div className="single-info-section info2">
-        <div className="question">{"What is your native language?"}</div>
-        <div className="answer">{info.language}</div>
+        <div className="question">{"Preferred Language(s)"}</div>
+        <div className="answer">
+          {Array.isArray(info.language)
+            ? info.language.join(", ")
+            : info.language}
+        </div>
       </div>
 
       <div className="single-info-section info2">

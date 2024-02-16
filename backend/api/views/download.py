@@ -123,11 +123,15 @@ def download_apps_info():
     account_type = int(data.get("account_type", 0))
     apps = None
 
+    partner_object = {}
     try:
         if account_type == Account.MENTOR:
             apps = NewMentorApplication.objects
         elif account_type == Account.MENTEE:
             apps = MenteeApplication.objects
+            partner_data = PartnerProfile.objects
+            for partner_item in partner_data:
+                partner_object[str(partner_item.id)] = partner_item.organization
 
     except:
         msg = "Failed to get accounts"
@@ -137,7 +141,7 @@ def download_apps_info():
     if account_type == Account.MENTOR:
         return download_mentor_apps(apps)
     elif account_type == Account.MENTEE:
-        return download_mentee_apps(apps)
+        return download_mentee_apps(apps, partner_object)
 
     msg = "Invalid input"
     logger.info(msg)
@@ -201,7 +205,7 @@ def download_mentor_apps(apps):
     return generate_sheet("accounts", accts, columns)
 
 
-def download_mentee_apps(apps):
+def download_mentee_apps(apps, partner_object):
     accts = []
 
     for acct in apps:
@@ -221,6 +225,9 @@ def download_mentee_apps(apps):
                 acct.questions,
                 acct.application_state,
                 acct.notes,
+                partner_object[acct.partner]
+                if acct.partner in partner_object
+                else acct.partner,
             ]
         )
     columns = [
@@ -237,6 +244,7 @@ def download_mentee_apps(apps):
         "questions",
         "application state",
         "notes",
+        "Organization Affiliation",
     ]
     return generate_sheet("accounts", accts, columns)
 

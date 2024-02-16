@@ -33,10 +33,16 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
       const all_countires = await getAllcountries();
       var temp_countires = [];
       if (all_countires) {
-        all_countires.map((country_item) => {
+        // Extract country names
+        const countryNames = all_countires.map(
+          (country) => country.name.common
+        );
+        // Sort country names in ascending order
+        const sortedCountryNames = countryNames.sort();
+        sortedCountryNames.map((country_name) => {
           temp_countires.push({
-            label: country_item.name.common,
-            value: country_item.name.common,
+            label: country_name,
+            value: country_name,
           });
         });
       }

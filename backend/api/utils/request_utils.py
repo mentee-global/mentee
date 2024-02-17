@@ -69,7 +69,6 @@ class MenteeForm(Form):
     age = StringField(validators=[InputRequired()])
     gender = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.DataRequired()])
-    # organization = StringField(validators=[InputRequired()])
 
 
 class PartnerForm(Form):
@@ -132,7 +131,6 @@ class MentorApplicationForm(Form):
 class MenteeApplicationForm(Form):
     email = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
-    age = StringField(validators=[InputRequired()])
     immigrant_status = FieldList(StringField(), validators=[validators.DataRequired()])
     identify = StringField(validators=[InputRequired()])
     language = StringField(validators=[InputRequired()])

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Form, Input, Radio, Typography, Select, Button } from "antd";
 import { useTranslation } from "react-i18next";
-import { createApplication, fetchPartners } from "utils/api";
+import { createApplication, fetchPartners, getAllcountries } from "utils/api";
 import "components/css/MentorApplicationPage.scss";
 
 const { Paragraph } = Typography;
@@ -11,6 +11,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
   const options = useSelector((state) => state.options);
   const [loading, setLoading] = useState();
   const [partnerOptions, setPartnerOptions] = useState([]);
+  const [countryOptions, setCountryOptions] = useState([]);
   useEffect(() => {
     async function getPartners() {
       const partenr_data = await fetchPartners();
@@ -28,6 +29,20 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
       setPartnerOptions(partnerOptions);
       setLoading(false);
     }
+    async function getAllCountries() {
+      const all_countires = await getAllcountries();
+      var temp_countires = [];
+      if (all_countires) {
+        all_countires.map((country_item) => {
+          temp_countires.push({
+            label: country_item.name.common,
+            value: country_item.name.common,
+          });
+        });
+      }
+      setCountryOptions(temp_countires);
+    }
+    getAllCountries();
     getPartners();
   }, []);
 
@@ -174,6 +189,9 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
             </Paragraph>
           </Typography>
         </Form.Item>
+        <Form.Item label={"Email"}>
+          <Input value={email} readOnly />
+        </Form.Item>
         <Form.Item
           label={t("common.firstName")}
           name="firstName"
@@ -192,69 +210,11 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           rules={[
             {
               required: true,
-            },
-          ]}
-        >
-          <Input placeholder={t("common.lastName")} />
-        </Form.Item>
-        <Form.Item
-          label={t("menteeApplication.orgAffiliation")}
-          name="organization"
-          rules={[
-            {
-              required: true,
               message: t("common.requiredLasttName"),
             },
           ]}
         >
-          <Input placeholder={t("menteeApplication.orgAffiliation")} />
-        </Form.Item>
-        <Form.Item
-          label={t("menteeApplication.agePrompt")}
-          name="age"
-          rules={[
-            {
-              required: true,
-              message: t("common.requiredAgePrompt"),
-            },
-          ]}
-        >
-          <Select
-            options={[
-              {
-                value: "I am 18-22 years old.",
-                label: t("menteeApplication.ageAnswer1"),
-              },
-              {
-                value: "I am 23- 26 years old",
-                label: t("menteeApplication.ageAnswer2"),
-              },
-              {
-                value: "I am 27-30",
-                label: t("menteeApplication.ageAnswer3"),
-              },
-              {
-                value: "I am 30-35",
-                label: t("menteeApplication.ageAnswer4"),
-              },
-              {
-                value: "I am 36-40",
-                label: t("menteeApplication.ageAnswer5"),
-              },
-              {
-                value: "I am 41-50",
-                label: t("menteeApplication.ageAnswer6"),
-              },
-              {
-                value: "I am 51-60",
-                label: t("menteeApplication.ageAnswer7"),
-              },
-              {
-                value: "I am 61+",
-                label: t("menteeApplication.ageAnswer8"),
-              },
-            ]}
-          />
+          <Input placeholder={t("common.lastName")} />
         </Form.Item>
         <Form.Item
           label={t("menteeApplication.immigrationStatus")}
@@ -290,8 +250,17 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
             ) : null
           }
         </Form.Item>
-        <Form.Item label={t("menteeApplication.countryOrigin")} name="country">
-          <Input placeholder={t("menteeApplication.countryPlaceholder")} />
+        <Form.Item
+          label={t("menteeApplication.countryPlaceholder")}
+          name="country"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredHearAboutUs"),
+            },
+          ]}
+        >
+          <Select showSearch options={countryOptions} mode="single" />
         </Form.Item>
         <Form.Item
           label={t("commonApplication.genderIdentification")}
@@ -348,7 +317,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           }
         </Form.Item>
         <Form.Item
-          label={t("menteeApplication.languageBackground")}
+          label={t("menteeApplication.preferredLanguage")}
           name="language"
           rules={[
             {
@@ -358,6 +327,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
           ]}
         >
           <Select
+            mode="multiple"
             options={[
               ...(options.languages ?? []),
               { label: t("common.other"), value: "other" },

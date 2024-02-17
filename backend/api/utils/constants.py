@@ -39,6 +39,16 @@ NEW_APPLICATION_STATUS = {
     "REJECTED": "REJECTED",
 }
 
+# Education Level
+EDUCATION_LEVEL = {
+    "elementary": "Elementary school",
+    "high": "High school",
+    "technical": "Technical school",
+    "bachelor": "Bachelor",
+    "masters": "Master",
+    "doctorate": "Doctorate",
+}
+
 
 class Account(Enum):
     ADMIN = 0

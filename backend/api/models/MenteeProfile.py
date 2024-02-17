@@ -17,6 +17,8 @@ class MenteeProfile(Document, Mixin):
     phone_number = StringField()
     image = EmbeddedDocumentField(Image)
     education = ListField(EmbeddedDocumentField(Education))
+    isStudent = StringField()
+    education_level = StringField()
     languages = ListField(StringField(), required=True)
     biography = StringField()
     organization = StringField(required=False)

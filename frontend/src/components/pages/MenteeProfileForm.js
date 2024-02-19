@@ -24,7 +24,7 @@ import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { phoneRegex, urlRegex } from "utils/misc";
-import { fetchPartners } from "utils/api";
+import { fetchPartners, getAllcountries } from "utils/api";
 
 const styles = {
   formGroup: css`
@@ -59,7 +59,76 @@ function MenteeProfileForm({
   const [edited, setEdited] = useState(false);
   const [form] = Form.useForm();
   const [partnerOptions, setPartnerOptions] = useState([]);
+  const [countryOptions, setCountryOptions] = useState([]);
   const [flag, setFlag] = useState(false);
+
+  const immigrantOptions = [
+    {
+      value: "I am a refugee",
+      label: t("menteeApplication.immigrantOption1"),
+    },
+    {
+      value:
+        "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
+      label: t("menteeApplication.immigrantOption2"),
+    },
+    {
+      value: "I am black.",
+      label: t("menteeApplication.immigrantOption3"),
+    },
+    {
+      value: "I am Hispanic/Latino.",
+      label: t("menteeApplication.immigrantOption4"),
+    },
+    {
+      value: "I am of native/ aboriginal/indigenous origins.",
+      label: t("menteeApplication.immigrantOption5"),
+    },
+    {
+      value: "I identify as LGTBQ.",
+      label: t("menteeApplication.immigrantOption6"),
+    },
+    {
+      value: "I have economic hardship.",
+      label: t("menteeApplication.immigrantOption7"),
+    },
+    {
+      value: "I come from a country at war.",
+      label: t("menteeApplication.immigrantOption8"),
+    },
+    {
+      value: "other",
+      label: t("common.other"),
+    },
+  ];
+
+  const workOptions = [
+    {
+      value: "I work part-time.",
+      label: t("menteeApplication.workOption1"),
+    },
+    {
+      value: "I work full-time.",
+      label: t("menteeApplication.workOption2"),
+    },
+    {
+      value: "I attend technical school.",
+      label: t("menteeApplication.workOption3"),
+    },
+    {
+      value: "I am a college/university student attaining my first degree.",
+      label: t("menteeApplication.workOption4"),
+    },
+    {
+      value:
+        "I am a college/university students attaining my second or third degree.",
+      label: t("menteeApplication.workOption5"),
+    },
+    {
+      value: "other",
+      label: t("common.other"),
+    },
+  ];
 
   useEffect(() => {
     if (profileData) {
@@ -78,6 +147,8 @@ function MenteeProfileForm({
       form.setFieldValue("name", applicationData.name);
       form.setFieldValue("location", applicationData.Country);
       form.setFieldValue("gender", applicationData.identify);
+      form.setFieldValue("immigrant_status", applicationData.immigrant_status);
+      form.setFieldValue("workstate", applicationData.workstate);
       if (applicationData.language) {
         if (typeof applicationData.language === "string") {
           form.setFieldValue("languages", [applicationData.language]);
@@ -85,6 +156,7 @@ function MenteeProfileForm({
           form.setFieldValue("languages", applicationData.language);
         }
       }
+      form.setFieldValue("specializations", applicationData.topics);
     }
   }, [profileData, form, resetFields, applicationData]);
 
@@ -107,8 +179,29 @@ function MenteeProfileForm({
         setFlag(!flag);
       }
     }
+
+    async function getAllCountries() {
+      const all_countires = await getAllcountries();
+      var temp_countires = [];
+      if (all_countires) {
+        // Extract country names
+        const countryNames = all_countires.map(
+          (country) => country.name.common
+        );
+        // Sort country names in ascending order
+        const sortedCountryNames = countryNames.sort();
+        sortedCountryNames.map((country_name) => {
+          temp_countires.push({
+            label: country_name,
+            value: country_name,
+          });
+        });
+      }
+      setCountryOptions(temp_countires);
+    }
+    getAllCountries();
     getPartners();
-  });
+  }, []);
 
   const educationSubForm = () => (
     <Form.List
@@ -293,7 +386,7 @@ function MenteeProfileForm({
           },
         ]}
       >
-        <Input readOnly />
+        <Input readOnly={profileData ? false : true} />
       </Form.Item>
       {newProfile ? (
         <div className={styles.formGroup}>
@@ -340,15 +433,15 @@ function MenteeProfileForm({
       </Form.Item>
       <div className={styles.formGroup}>
         <Form.Item
-          label={t("commonProfile.location")}
+          label={t("menteeApplication.countryPlaceholder")}
           name="location"
           className={styles.formGroupItem}
-          style={{ display: "none" }}
+          style={{ display: profileData ? "block" : "none" }}
         >
-          <Input />
+          <Select showSearch options={countryOptions} mode="single" />
         </Form.Item>
         <Form.Item
-          label={t("menteeProfile.gender")}
+          label={t("commonApplication.genderIdentification")}
           name="gender"
           rules={[
             {
@@ -357,7 +450,7 @@ function MenteeProfileForm({
             },
           ]}
           className={styles.formGroupItem}
-          style={{ display: "none" }}
+          style={{ display: profileData ? "block" : "none" }}
         >
           <Input />
         </Form.Item>
@@ -377,7 +470,7 @@ function MenteeProfileForm({
           <Select options={getAgeRanges(t)} />
         </Form.Item>
         <Form.Item
-          label={t("commonProfile.languages")}
+          label={t("menteeApplication.preferredLanguage")}
           name="languages"
           rules={[
             {
@@ -386,7 +479,7 @@ function MenteeProfileForm({
             },
           ]}
           className={styles.formGroupItem}
-          style={{ display: "none" }}
+          style={{ display: profileData ? "block" : "none" }}
         >
           <Select
             options={options.languages}
@@ -426,6 +519,7 @@ function MenteeProfileForm({
       <Form.Item
         label={t("menteeProfile.areasOfInterest")}
         name="specializations"
+        style={{ display: profileData ? "block" : "none" }}
       >
         <Select
           options={options.specializations}
@@ -433,6 +527,32 @@ function MenteeProfileForm({
           tokenSeparators={[","]}
           placeholder={t("common.pleaseSelect")}
         />
+      </Form.Item>
+      <Form.Item
+        label={t("menteeApplication.immigrationStatus")}
+        name="immigrant_status"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredImmigrationStatus"),
+          },
+        ]}
+        style={{ display: profileData ? "block" : "none" }}
+      >
+        <Select options={immigrantOptions} mode="multiple" />
+      </Form.Item>
+      <Form.Item
+        label={t("menteeApplication.workOptions")}
+        name="workstate"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredWorkOptions"),
+          },
+        ]}
+        style={{ display: profileData ? "block" : "none" }}
+      >
+        <Select mode="multiple" options={workOptions} />
       </Form.Item>
       <Typography.Title level={4}>
         {t("commonProfile.education")}

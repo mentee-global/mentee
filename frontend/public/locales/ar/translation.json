@@ -114,6 +114,8 @@
     "bachelor":"بكالوريوس",
     "masters":"يتقن",
     "doctorate":"دكتوراه",
+    "immigrationStatus":"حالة الهجرة",
+    "workOptions": "خيارات العمل",
 
     "requiredFirstName":"الرجاء إدخال الاسم الأول",
     "requiredLasttName":"الرجاء إدخال الاسم الأخير",

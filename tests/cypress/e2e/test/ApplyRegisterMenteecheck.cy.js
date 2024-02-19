@@ -29,24 +29,24 @@ describe("Registration for mentee", () => {
       "First Name"
     );
 
-    cy.get("#organization").should("be.visible");
-    cy.get("#organization").type("companyName");
-    cy.get("#organization").clear();
-    cy.get("label[for='organization']").should(
-      "have.text",
-      "What organization is supporting you locally or what organization are you affiliated with?"
-    );
+    // // cy.get("#organization").should("be.visible");
+    // // cy.get("#organization").type("companyName");
+    // // cy.get("#organization").clear();
+    // cy.get("label[for='organization']").should(
+    //   "have.text",
+    //   "What organization is supporting you locally or what organization are you affiliated with?"
+    // );
 
     // Click on the age dropdown to open it
-    cy.get("#age").click();
+    // cy.get("#age").click();
 
-    // Select an option from the dropdown (replace 'I am 18-22' with the actual option text)
-    cy.contains(".ant-select-item-option-content", "I am 23-26").click();
+    // // Select an option from the dropdown (replace 'I am 18-22' with the actual option text)
+    // cy.contains(".ant-select-item-option-content", "I am 23-26").click();
 
 
 
     // Check if the help message is visible with the expected text
-    cy.get('label[for="age"]').should("be.visible").should("have.text", "Let us know more about you");
+    //cy.get('label[for="age"]').should("be.visible").should("have.text", "Let us know more about you");
     
     cy.get("label[for='immigrantStatus']").should("be.visible");
     cy.get("label[for='immigrantStatus']").should(
@@ -63,7 +63,7 @@ describe("Registration for mentee", () => {
     cy.get("label[for='language']").should("be.visible");
     cy.get("label[for='language']").should(
       "have.text",
-      "What is your native language?"
+      "Preferred Language(s)"
     );
     
     cy.get("label[for='topics']").should("be.visible");

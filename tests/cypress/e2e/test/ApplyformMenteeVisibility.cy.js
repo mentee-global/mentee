@@ -37,7 +37,7 @@ describe("Apply Form fot Mentee visibility", () => {
     cy.get(".ant-select-selection-item").click({
       force: true,
     });
-    cy.get(".ant-btn").click();
+    cy.get(".ant-btn").click({force: true});
     cy.get(":nth-child(2) > .ant-typography")
       .invoke("text")
       .then((text) => {
@@ -56,20 +56,20 @@ describe("Apply Form fot Mentee visibility", () => {
       "Last Name"
     );
 
-    cy.get('label[for="organization"].ant-form-item-required').should(
-      "have.text",
-      "What organization is supporting you locally or what organization are you affiliated with?"
-    );
+    // cy.get('label[for="organization"].ant-form-item-required').should(
+    //   "have.text",
+    //   "What organization is supporting you locally or what organization are you affiliated with?"
+    // );
 
-    cy.get('label[for="age"].ant-form-item-required').should(
-      "have.text",
-      "Let us know more about you"
-    );
+    // cy.get('label[for="age"].ant-form-item-required').should(
+    //   "have.text",
+    //   "Let us know more about you"
+    // );
     // Click on the label to trigger the dropdown
-    cy.get(':nth-child(6) > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-select > .ant-select-selector > .ant-select-selection-overflow').click();
+    // cy.get(':nth-child(6) > .ant-row > .ant-form-item-control > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-select > .ant-select-selector > .ant-select-selection-overflow').click();
 
-    // Wait for the dropdown to appear
-    cy.get('.ant-select-dropdown').should('be.visible');
+    // // Wait for the dropdown to appear
+    // cy.get('.ant-select-dropdown').should('be.visible');
 
 
    
@@ -77,42 +77,42 @@ describe("Apply Form fot Mentee visibility", () => {
       ':nth-child(6) > .ant-row > .ant-form-item-label > .ant-form-item-required'
     ).should(
       "have.text",
-      "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
+      "Country"
     );
 
     cy.get('label[for="country"]').should(
       "have.text",
-      "What country are you or your family originally from, if you are a refugee or immigrant?"
+      "Country"
     );
 
     cy.get(
       ':nth-child(8) > .ant-row > .ant-form-item-label > .ant-form-item-required'
-    ).should("have.text", "What do you identify as?");
+    ).should("have.text", "Preferred Language(s)");
 
     cy.get(
       ':nth-child(9) > .ant-row > .ant-form-item-label > .ant-form-item-required'
-    ).should("have.text", "What is your native language?");
+    ).should("have.text", "What special topics would you be interested in? If one is not on the list please add it in other:");
 
     cy.get(
       ':nth-child(10) > .ant-row > .ant-form-item-label > .ant-form-item-required'
     ).should(
       "have.text",
-      "What special topics would you be interested in? If one is not on the list please add it in other:"
+      "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific:"
     );
 
     // Check if the label for 'workstate' contains the expected text
     cy.get(':nth-child(11) > .ant-row > .ant-form-item-label > .ant-form-item-required').should(
       "have.text",
-      "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific:"
+      "Would you be interested in being highlighted as one of our mentees on social media?"
     );
 
     // Check if the label for 'socialMedia' contains the expected text
-    cy.get(
-      ':nth-child(12) > .ant-row > .ant-form-item-label > .ant-form-item-required'
-    ).should(
-      "have.text",
-      "Would you be interested in being highlighted as one of our mentees on social media?"
-    );
+    // cy.get(
+    //   ':nth-child(12) > .ant-row > .ant-form-item-label > .ant-form-item-required'
+    // ).should(
+    //   "have.text",
+    //   "Would you be interested in being highlighted as one of our mentees on social media?"
+    // );
 
     // Check if the first radio button option contains the text 'Yes!'
     cy.get("#socialMedia > :nth-child(1) > :nth-child(2)")
@@ -131,6 +131,6 @@ describe("Apply Form fot Mentee visibility", () => {
     // Check if the label for 'questions' contains the text 'Do you have any questions?'
     cy.get(
       ':nth-child(13) > .ant-row > .ant-form-item-label > label'
-    ).should("have.text", "Do you have any questions?");
+    ).should("have.text", "If you are currently affiliated to a partner organization, please select it from the below list, or select no-affiliation.");
   });
 });

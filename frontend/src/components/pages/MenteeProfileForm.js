@@ -376,6 +376,9 @@ function MenteeProfileForm({
           </Upload>
         </ImgCrop>
       </Form.Item>
+      <Form.Item label={"Email"}>
+        <Input value={email} readOnly />
+      </Form.Item>
       <Form.Item
         label={t("commonProfile.fullName")}
         name="name"

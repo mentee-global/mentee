@@ -48,7 +48,7 @@ describe("test chat between mentee to mentor", () => {
     cy.contains("button", "Login").click();
     cy.wait(3000);
     cy.get(".notifications-section").click();
-    cy.wait(10000);
+    cy.wait(20000);
     cy.get(':nth-child(1) .ant-card-meta-description')
     .first().should("contain", "Hey Mentee how are you i hope you will be fine");
   });

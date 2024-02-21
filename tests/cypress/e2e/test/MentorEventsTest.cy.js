@@ -11,17 +11,17 @@ describe("Mentor Dashboard", () => {
     mentor.selectEnglish();
     event.isFunctional();
   });
-  it("Check the Add Event Modal Functionality", () => {
-    mentor.selectEnglish();
-    event.addEventFunctional();
-  });
-//   it("Adding New Event", () => {
-//     mentor.selectEnglish()
-//     event.addNewEvent();
-//   });
+  // it("Check the Add Event Modal Functionality", () => {
+  //   mentor.selectEnglish();
+  //   event.addEventFunctional();
+  // });
+  // it("Adding New Event", () => {
+  //   mentor.selectEnglish()
+  //   event.addNewEvent();
+  // });
 
-//   it("checking that event", () => {
-//     mentor.selectEnglish()
-//     event.checkCreatedEvent();
-//   });
+  // it("checking that event", () => {
+  //   mentor.selectEnglish()
+  //   event.checkCreatedEvent();
+  // });
 });

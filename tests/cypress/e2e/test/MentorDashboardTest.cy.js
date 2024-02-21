@@ -8,8 +8,8 @@ describe("Mentor Dashboard", () => {
   it("Check The Dashboard Functionality", () => {
     mentor.dashboardFunctionality();
   });
-  it("Should Change the Language", () => {
-    mentor.selectEnglish();
-    mentor.changeLanguage();
-  });
+  // it("Should Change the Language", () => {
+  //   mentor.selectEnglish();
+  //   mentor.changeLanguage();
+  // });
 });

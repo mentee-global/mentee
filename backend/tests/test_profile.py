@@ -98,9 +98,9 @@ def test_partner_account_info(client):
     assert (
         "email" in response.get_json()["result"]["account"]
     ), f"Email not found in response. {response.text}"
-    # assert response_email == os.environ.get(
-    #     "TEST_PARTNER_EMAIL"
-    # ), f"Incorrect email in response. {response.text}"
+    assert response_email == os.environ.get(
+        "TEST_PARTNER_EMAIL"
+    ), f"Incorrect email in response. {response.text}"
     assert (
         "firebase_uid" in response.get_json()["result"]["account"]
     ), f"Firebase id not found in response. {response.text}"

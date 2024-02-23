@@ -117,6 +117,8 @@
     "bachelor":"عزب",
     "masters":"استاد",
     "doctorate":"دکتری",
+    "immigrationStatus":"وضعیت مهاجرت",
+    "workOptions": "گزینه های کاری",
 
     "requiredFirstName":"لطفا نام را وارد کنید",
     "requiredLasttName":"لطفا نام خانوادگی را وارد کنید",

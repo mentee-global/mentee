@@ -115,6 +115,8 @@
     "bachelor":"بیچلر",
     "masters":"ماسټر",
     "doctorate":"دوکتورا",
+    "immigrationStatus":"د کډوالۍ وضعیت",
+    "workOptions": "د کار اختیارونه",
 
     "requiredFirstName":"مهرباني وکړئ لومړی نوم ولیکئ",
     "requiredLasttName":"مهرباني وکړئ وروستی نوم ولیکئ",

@@ -115,6 +115,8 @@
     "bachelor":"Bachelor",
     "masters":"Master",
     "doctorate":"Doctorate",
+    "immigrationStatus":"Immigration Status",
+    "workOptions": "Work Options",
 
     "requiredFirstName":"Please enter First Name",
     "requiredLasttName":"Please enter Last Name",

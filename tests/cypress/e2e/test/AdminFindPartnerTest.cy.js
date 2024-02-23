@@ -15,10 +15,10 @@ describe("Find Mentor Page Suite", () => {
     findPartner.clickFindPartner();
     findPartner.selectRegions();
   });
-  // it("Test Filter By Project Topics", () => {
-  //   findPartner.clickFindPartner();
-  //   findPartner.selectProjectTopics();
-  // });
+  it("Test Filter By Project Topics", () => {
+    findPartner.clickFindPartner();
+    findPartner.selectProjectTopics();
+  });
   it("Test Filter By SDGS", () => {
     findPartner.clickFindPartner();
     findPartner.selectSDGS();

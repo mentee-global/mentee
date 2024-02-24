@@ -96,7 +96,7 @@ function App() {
 
   const cur_time = new Date().getTime();
   const is_Hub_url = allHubData[curPath];
-  
+
   return (
     <>
       <ConfigProvider

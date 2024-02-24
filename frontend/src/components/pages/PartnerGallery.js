@@ -29,7 +29,7 @@ function PartnerGallery(props) {
     token: { colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isAdmin, isPartner, isGuest } = useAuth();
+  const { isAdmin, isPartner, isGuest, isHub } = useAuth();
   const [partners, setPartners] = useState([]);
   const [regions, setRegions] = useState([]);
   const [query, setQuery] = useState();
@@ -59,7 +59,9 @@ function PartnerGallery(props) {
       const matchSdgs =
         sdgs.length === 0 || sdgs.some((s) => partner.sdgs.indexOf(s) >= 0);
       const matchestopics =
-        !query2 || partner.topics.toUpperCase().includes(query2.toUpperCase());
+        !query2 ||
+        (partner.topics &&
+          partner.topics.toUpperCase().includes(query2.toUpperCase()));
       const matchesName =
         !query ||
         partner.organization.toUpperCase().includes(query.toUpperCase());
@@ -124,7 +126,7 @@ function PartnerGallery(props) {
   );
 
   // Add some kind of error 403 code
-  return !props.isSupport && !isPartner && !isAdmin && !isGuest ? (
+  return !props.isSupport && !isPartner && !isAdmin && !isHub ? (
     <Result
       status="403"
       title="403"

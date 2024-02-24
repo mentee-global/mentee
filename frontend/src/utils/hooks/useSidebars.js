@@ -176,6 +176,40 @@ export default function useSidebars(userType, t) {
       icon: <PartitionOutlined />,
     },
   ];
+  const hubSidebar = [
+    {
+      label: "Explore",
+      key: "galleries",
+      icon: <SearchOutlined />,
+      children: [
+        {
+          label: "Find a Partner",
+          key: "partner-gallery",
+        },
+      ],
+    },
+    {
+      label: "Events",
+      key: "events",
+      icon: <InfoCircleOutlined />,
+    },
+    // {
+    //   label: "Reports",
+    //   key: "reports",
+    //   icon: <DatabaseOutlined />,
+    //   children: [
+    //     {
+    //       label: "Account Data",
+    //       key: "account-data",
+    //     },
+    //   ],
+    // },
+    {
+      label: t("sidebars.training"),
+      key: "partner/training",
+      icon: <VideoCameraOutlined />,
+    },
+  ];
   const adminSidebar = [
     {
       label: "Explore",
@@ -209,6 +243,10 @@ export default function useSidebars(userType, t) {
         {
           label: "Account Data",
           key: "account-data",
+        },
+        {
+          label: "Hub Data",
+          key: "hub-data",
         },
         {
           label: "All Appointments",
@@ -270,6 +308,8 @@ export default function useSidebars(userType, t) {
       return supportSidebar;
     case ACCOUNT_TYPE.ADMIN:
       return adminSidebar;
+    case ACCOUNT_TYPE.HUB:
+      return hubSidebar;
     default:
       return [];
   }

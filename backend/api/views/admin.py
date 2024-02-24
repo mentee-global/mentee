@@ -1,9 +1,9 @@
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
-from api.models import Support, Users, VerifiedEmail, Admin, Guest
+from api.models import Support, Users, VerifiedEmail, Admin, Guest, Hub, Image
 from api.utils.require_auth import admin_only
-from api.utils.request_utils import get_profile_model
+from api.utils.request_utils import get_profile_model, imgur_client
 from api.utils.constants import Account
 import csv
 import io
@@ -96,6 +96,69 @@ def upload_account_emails():
                 )
                 email.save()
     return create_response(status=200, message="success")
+
+
+@admin.route("hub_register", methods=["PUT"])
+@admin_only
+def create_hub_account():
+    id = request.form["id"]
+    email = request.form["email"]
+    password = request.form["password"]
+    name = request.form["name"]
+    url = request.form["url"]
+    image = request.files["image"]
+    role = Account.HUB
+
+    if id is not None and id != "":
+        hub_account = Hub.objects.get(id=id)
+        if hub_account is not None:
+            hub_account.name = name
+            hub_account.url = url
+            if hub_account.image is True and hub_account.image.image_hash is True:
+                image_response = imgur_client.delete_image(hub_account.image.image_hash)
+            if image is not None:
+                image_response = imgur_client.send_image(image)
+                new_image = Image(
+                    url=image_response["data"]["link"],
+                    image_hash=image_response["data"]["deletehash"],
+                )
+                hub_account.image = new_image
+            hub_account.save()
+        return create_response(status=200, message="Edit Hub user successfully")
+    else:
+        duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
+        if not duplicates:
+            firebase_user, error_http_response = create_firebase_user(email, password)
+            if error_http_response:
+                try:
+                    firebase_user = firebase_admin_auth.get_user_by_email(email)
+                except Exception as e:
+                    logger.error(e)
+                    logger.warning(f"{email} is not verified in Firebase")
+                    return create_response(
+                        status=422, message="Can't create firebase user"
+                    )
+            firebase_uid = firebase_user.uid
+            hub = Hub(name=name, email=email, firebase_uid=firebase_uid, url=url)
+
+            if image is not None:
+                image_response = imgur_client.send_image(image)
+                new_image = Image(
+                    url=image_response["data"]["link"],
+                    image_hash=image_response["data"]["deletehash"],
+                )
+                hub.image = new_image
+
+            hub.save()
+
+            verified_email = VerifiedEmail(email=email, role=str(role), password="")
+            verified_email.save()
+        else:
+            return create_response(
+                status=500, message="This Email is already registered"
+            )
+
+        return create_response(status=200, message="Add Hub user successfully")
 
 
 @admin.route("/upload/accountsEmails", methods=["POST"])

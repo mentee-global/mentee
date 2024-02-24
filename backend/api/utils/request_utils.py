@@ -22,6 +22,7 @@ from api.models import (
     NewMentorApplication,
     PartnerApplication,
     Support,
+    Hub,
 )
 from api.utils.constants import Account, TARGET_LANGS
 
@@ -273,6 +274,8 @@ def get_profile_model(role):
         return Guest
     elif role == Account.SUPPORT:
         return Support
+    elif role == Account.HUB:
+        return Hub
     else:
         raise ValueError("Invalid role")
 

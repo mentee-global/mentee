@@ -160,6 +160,8 @@ def login():
     email = data.get("email")
     password = data.get("password")
     role = int(data.get("role"))
+    path = data.get("path", None)
+
     firebase_user = None
     profile_model = get_profile_model(role)
 
@@ -205,6 +207,15 @@ def login():
 
     try:
         profile = profile_model.objects.get(email=email)
+        if profile is None:
+            msg = "Couldn't find profile with these credentials"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+        if role == Account.HUB and path is not None:
+            if "/" + profile.url != path:
+                msg = "Couldn't find proper hub profile with these credentials"
+                logger.info(msg)
+                return create_response(status=422, message=msg)
         logger.info("Profile found")
         profile_id = str(profile.id)
 
@@ -212,7 +223,12 @@ def login():
             profile.firebase_uid = firebase_uid
             profile.save()
     except:
-        if role != Account.ADMIN and role != Account.GUEST and role != Account.SUPPORT:
+        if (
+            role != Account.ADMIN
+            and role != Account.GUEST
+            and role != Account.SUPPORT
+            and role != Account.HUB
+        ):
             # user failed to create profile during registration phase
             # prompt frontend to return user to appropriate phase
 

@@ -11,7 +11,7 @@ import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS, REDIRECTS } from "utils/consts";
 import fireauth from "utils/fireauth";
 import { fetchUser } from "features/userSlice";
 
-function LoginForm({ role, defaultEmail }) {
+function LoginForm({ role, defaultEmail, location }) {
   const history = useHistory();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -24,7 +24,11 @@ function LoginForm({ role, defaultEmail }) {
     setLoading(true);
 
     // Non-admin checking for status of account
-    if (role !== ACCOUNT_TYPE.ADMIN && role !== ACCOUNT_TYPE.SUPPORT) {
+    if (
+      role !== ACCOUNT_TYPE.ADMIN &&
+      role !== ACCOUNT_TYPE.SUPPORT &&
+      role !== ACCOUNT_TYPE.HUB
+    ) {
       const { profileExists, rightRole } = await checkProfileExists(
         email,
         role
@@ -49,7 +53,12 @@ function LoginForm({ role, defaultEmail }) {
       }
     }
 
-    const res = await login(email, password, role);
+    const res = await login(
+      email,
+      password,
+      role,
+      location ? location.pathname : undefined
+    );
     if (!res || !res.success) {
       if (res?.data?.result?.existingEmail) {
         messageApi.error(t("loginErrors.existingEmail"));

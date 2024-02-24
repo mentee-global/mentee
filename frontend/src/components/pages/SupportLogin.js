@@ -1,11 +1,10 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { ACCOUNT_TYPE } from "utils/consts";
 import LoginForm from "components/LoginForm";
-function SupportLogin() {
+function SupportLogin({ role, location }) {
   return (
     <>
-      <LoginForm role={ACCOUNT_TYPE.SUPPORT} />
+      <LoginForm role={role} location={location} />
     </>
   );
 }

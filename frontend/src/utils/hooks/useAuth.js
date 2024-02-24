@@ -36,6 +36,7 @@ function useProvideAuth() {
     isMentee: false,
     isPartner: false,
     isGuest: false,
+    isHub: false,
   });
 
   const [profileId, setProfileId] = useState();
@@ -52,6 +53,7 @@ function useProvideAuth() {
         isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
         isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
         isGuest: `${role}` === `${ACCOUNT_TYPE.GUEST}`,
+        isHub: `${role}` === `${ACCOUNT_TYPE.HUB}`,
       });
       setProfileId(profile_id);
     } else {
@@ -62,6 +64,7 @@ function useProvideAuth() {
         isMentee: false,
         isPartner: false,
         isGuest: false,
+        isHub: false,
       });
       setProfileId(null);
       localStorage.removeItem("profileId");
@@ -92,6 +95,7 @@ function useProvideAuth() {
               isMentee: `${role}` === `${ACCOUNT_TYPE.MENTEE}`,
               isPartner: `${role}` === `${ACCOUNT_TYPE.PARTNER}`,
               isGuest: `${role}` === `${ACCOUNT_TYPE.GUEST}`,
+              isHub: `${role}` === `${ACCOUNT_TYPE.HUB}`,
             });
 
             Promise.resolve(idTokenResult).then(onAuthUpdate);
@@ -104,6 +108,7 @@ function useProvideAuth() {
               isMentee: `${cur_role}` === `${ACCOUNT_TYPE.MENTEE}`,
               isPartner: `${cur_role}` === `${ACCOUNT_TYPE.PARTNER}`,
               isGuest: `${cur_role}` === `${ACCOUNT_TYPE.GUEST}`,
+              isHub: `${role}` === `${ACCOUNT_TYPE.HUB}`,
             });
           }
         })
@@ -120,6 +125,7 @@ function useProvideAuth() {
     isMentee: roleState.isMentee,
     isPartner: roleState.isPartner,
     isGuest: roleState.isGuest,
+    isHub: roleState.isHub,
     profileId: profileId,
     resetRoleState,
     onAuthUpdate,

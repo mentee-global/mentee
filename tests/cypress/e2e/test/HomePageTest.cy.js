@@ -25,6 +25,9 @@ describe("HomePage", () => {
     cy.get(".anticon.anticon-global.ant-dropdown-trigger.css-c1sjzn").trigger(
       "mouseover"
     );
+    // cy.get(
+    //   "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > main > div > div.ant-col.ant-col-11.css-qqdj8t.css-1axsfu3 > div.css-1c9mpvn > div > div:nth-child(1) > div > div > div > div.ant-card-meta-detail > div.ant-card-meta-description"
+    // ).should("be.visible");
     cy.get("span.ant-dropdown-menu-title-content")
       .should("contain.text", "English")
       .and("contain.text", "Español")

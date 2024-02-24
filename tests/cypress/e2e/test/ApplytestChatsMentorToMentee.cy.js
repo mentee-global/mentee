@@ -70,5 +70,9 @@ describe("Test for chats", () => {
     cy.get(
       "#root > section > main > section > aside > div > div.messages-sidebar > div > div > div > div > div.ant-card-meta-detail > div.ant-card-meta-description"
     ).should("have.text", "Hey Mentee how are you i hope you will be fine");
+
+    // cy.get(
+    //   "#root > section > main > section > section > div > div.conversation-content > div.ant-spin-nested-loading.css-wxm1m1 > div > div:nth-child(46) > div > div > div > div"
+    // ).should("contain", "Hey Mentee how are you i hope you will be fine");
   });
 });

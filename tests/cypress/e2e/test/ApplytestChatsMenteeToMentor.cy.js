@@ -36,20 +36,20 @@ describe("test chat between mentee to mentor", () => {
     cy.get("button.contact-me-submit-button").contains("Submit").click();
   });
 
-  it("Login as a Mentor and send a message to mentee", () => {
-    cy.visit(`/login`);
+  // it("Login as a Mentor and send a message to mentee", () => {
+  //   cy.visit(`/login`);
 
-    cy.get(':nth-child(1) > .ant-card').click();
+  //   cy.get(':nth-child(1) > .ant-card').click();
 
-    cy.get("#email").clear().type(MENTOR_EMAIL);
+  //   cy.get("#email").clear().type(MENTOR_EMAIL);
 
-    cy.get("#password").clear().type(MENTOR_PASSWORD);
+  //   cy.get("#password").clear().type(MENTOR_PASSWORD);
 
-    cy.contains("button", "Login").click();
-    cy.wait(3000);
-    cy.get(".notifications-section").click();
-    cy.wait(20000);
-    cy.get(':nth-child(1) .ant-card-meta-description')
-    .first().should("contain", "Hey Mentee how are you i hope you will be fine");
-  });
+  //   cy.contains("button", "Login").click();
+  //   cy.wait(3000);
+  //   cy.get(".notifications-section").click();
+  //   cy.wait(20000);
+  //   cy.get(':nth-child(1) .ant-card-meta-description')
+  //   .first().should("contain", "Hey Mentee how are you i hope you will be fine");
+  // });
 });

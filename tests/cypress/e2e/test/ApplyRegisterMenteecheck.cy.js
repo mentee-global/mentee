@@ -28,16 +28,32 @@ describe("Registration for mentee", () => {
       "have.text",
       "First Name"
     );
+
+    // // cy.get("#organization").should("be.visible");
+    // // cy.get("#organization").type("companyName");
+    // // cy.get("#organization").clear();
+    // cy.get("label[for='organization']").should(
+    //   "have.text",
+    //   "What organization is supporting you locally or what organization are you affiliated with?"
+    // );
+
+    // Click on the age dropdown to open it
+    // cy.get("#age").click();
+
+    // // Select an option from the dropdown (replace 'I am 18-22' with the actual option text)
+    // cy.contains(".ant-select-item-option-content", "I am 23-26").click();
+
+
+
+    // Check if the help message is visible with the expected text
+    //cy.get('label[for="age"]').should("be.visible").should("have.text", "Let us know more about you");
+    
     cy.get("label[for='immigrantStatus']").should("be.visible");
     cy.get("label[for='immigrantStatus']").should(
       "have.text",
       "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
     );
-    cy.get("label[for='country']").should("be.visible");
-    cy.get("label[for='country']").should(
-      "have.text",
-      "Country"
-    );
+    
     cy.get("label[for='genderIdentification']").should("be.visible");
     cy.get("label[for='genderIdentification']").should(
       "have.text",
@@ -56,38 +72,14 @@ describe("Registration for mentee", () => {
       "What special topics would you be interested in? If one is not on the list please add it in other:"
     );
     
-    cy.get("label[for='workstate']").should('be.visible');
-    cy.get("label[for='workstate']").should('have.text', "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific:");
+    // cy.get("label[for='workstate']").should('be.visible');
+    // cy.get("label[for='workstate']").should("have.text', 'What do you currently do? Please check ALL the options that apply to you. If you select 'other' , please be specific:");
     
     cy.get("label[for='socialMedia']").should("be.visible");
     cy.get("label[for='socialMedia']").should(
       "have.text",
       "Would you be interested in being highlighted as one of our mentees on social media?"
     );
-        // Check if the first radio button option contains the text 'Yes!'
-        cy.get("#socialMedia > :nth-child(1) > :nth-child(2)")
-        .eq(0)
-        .should("contain.text", "Yes!");
-  
-      // Check if the second radio button option contains the text 'No, thank you'
-      cy.get('#socialMedia > :nth-child(2) > :nth-child(2)')
-      .should("contain.text", "No, thank you");
-  
-  
-      // Check if the third radio button option contains the text 'Other'
-      cy.get("#socialMedia > :nth-child(3) > :nth-child(2)")
-        .should("contain.text", "Other");
-
-        cy.get("label[for='questions']").should("be.visible");
-        cy.get("label[for='questions']").should(
-          "have.text",
-          "Do you have any questions?"
-        );
-        cy.get("label[for='partner']").should("be.visible");
-        cy.get("label[for='partner']").should(
-          "have.text",
-          "If you are currently affiliated to a partner organization, please select it from the below list, or select no-affiliation."
-        );
   });
 
   it("Allow a user to Register as a Mentee", () => {

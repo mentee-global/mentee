@@ -44,7 +44,7 @@ class PartnerComponent {
       .wait(500);
     cy.get(
       "h1.ant-typography"
-    ).first().should("have.text", "Test");
+    ).should("have.text", "Test");
   }
 
   filterByRegion() {
@@ -52,6 +52,6 @@ class PartnerComponent {
       .click()
       .wait(500);
     cy.get("div[title='S. America']").click().wait(500);
-    cy.get(':nth-child(3) > div.ant-typography').first().should("have.text", "S. America");
+    cy.get(':nth-child(3) > div.ant-typography').should("have.text", "S. America");
   }
 }

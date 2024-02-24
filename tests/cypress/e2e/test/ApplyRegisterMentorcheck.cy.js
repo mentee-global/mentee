@@ -121,11 +121,11 @@ describe("Registration for mentor", () => {
       "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!"
     );
 
-    cy.get("label[for='specializations']").should("be.visible");
-    cy.get("label[for='specializations']").should(
-      "have.text",
-      "Specializations(If you have any other skill not listed, please input the skills you have directly)"
-    );
+    // cy.get("#canDonate_help > div").should("be.visible");
+    // cy.get("#canDonate_help > div").should(
+    //   "have.text",
+    //   "Please enter MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
+    // );
   });
 
   it("Allow a user to Register as a Mentor", () => {

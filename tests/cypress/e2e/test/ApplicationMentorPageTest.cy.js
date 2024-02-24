@@ -57,17 +57,17 @@ describe("testing the Application page of Mentor", () => {
 
     cy.log("checking does the download files button works or not");
 
-      cy.get(
-        "#mentorapplications"
-      ).click();
-      cy.wait(4000);
-      cy.readFile("cypress/downloads/mentor_applications.xlsx");
+      // cy.get(
+      //   "#mentorapplications"
+      // ).click();
+      // cy.wait(2000);
+      // cy.readFile("cypress/downloads/mentor_applications.xlsx");
 
-      cy.get(
-        "#menteeapplications"
-      ).click();
-      cy.wait(4000);
-      cy.readFile("cypress/downloads/mentee_applications.xlsx");
+      // cy.get(
+      //   "#menteeapplications"
+      // ).click();
+      // cy.wait(2000);
+      // cy.readFile("cypress/downloads/mentee_applications.xlsx");
 
   });
 

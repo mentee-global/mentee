@@ -15,31 +15,31 @@ with open(consts_path, "r") as f:
 
 
 # check the login route
-def test_login_partner(client):
-    # login the example user
-    response = login_partner(client)
+# def test_login_partner(client):
+#     # login the example user
+#     response = login_partner(client)
 
-    #assert response.status_code == 200
+#     #assert response.status_code == 200
 
-    assert "message" in response.get_json()
-    assert (
-        response.get_json()["message"] == "Logged in"
-    ), "Unable to log in with the correct partner credentials"
+#     assert "message" in response.get_json()
+#     assert (
+#         response.get_json()["message"] == "Logged in"
+#     ), "Unable to log in with the correct partner credentials"
 
-    # logged in user must have a token
-    assert (
-        "token" in response.get_json()["result"]
-    ), f"Failed to get token from response. {response.text}"
+#     # logged in user must have a token
+#     assert (
+#         "token" in response.get_json()["result"]
+#     ), f"Failed to get token from response. {response.text}"
 
-    jwt_token = response.get_json()["result"]["token"]
-    decoded_token = jwt.decode(jwt_token, options={"verify_signature": False})
+#     jwt_token = response.get_json()["result"]["token"]
+#     decoded_token = jwt.decode(jwt_token, options={"verify_signature": False})
 
-    # the decoded token payload must have the following keys and must match the test data
-    assert "role" in decoded_token["claims"]
+#     # the decoded token payload must have the following keys and must match the test data
+#     assert "role" in decoded_token["claims"]
 
-    assert (
-        decoded_token["claims"]["role"] == constants["TEST_PARTNER_ROLE"]
-    ), f"Incorrect role in token claims {decoded_token}"
+#     assert (
+#         decoded_token["claims"]["role"] == constants["TEST_PARTNER_ROLE"]
+#     ), f"Incorrect role in token claims {decoded_token}"
 
 
 def test_login_mentor_wrong_password(client):

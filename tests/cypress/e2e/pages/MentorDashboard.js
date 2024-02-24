@@ -22,13 +22,6 @@ export class MentorDashboard {
     cy.url({timeout: 20000}).should("include", "/appointments");
   }
   dashboardFunctionality() {
-    // cy.get(
-    //   "#root > div.ant-layout.ant-layout-has-sider.css-1axsfu3 > aside > div.ant-layout-sider-children > ul > li.ant-menu-item.ant-menu-item-selected" //issue here
-    // ).should("have.attr", "href", "/appointments");
-    // cy.get(
-    //   ".css-rbnp0o"
-    // ).click();
-    // cy.url().should("include", "/appointments");
     cy.get(
       "li.ant-menu-item"
     ).eq(0).click();
@@ -80,6 +73,7 @@ export class MentorDashboard {
         cy.get(
           "span.ant-dropdown-trigger"
         ).trigger("mouseover");
+        cy.wait(1000);
         cy.contains(
           previousLanguage.languages[language.value.split("-")[0]]
         ).click();

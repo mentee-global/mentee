@@ -80,6 +80,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log("user change--------");
     setRole(getRole());
   }, [user]);
 
@@ -95,6 +96,7 @@ function App() {
 
   const cur_time = new Date().getTime();
   const is_Hub_url = allHubData[curPath];
+  
   return (
     <>
       <ConfigProvider
@@ -144,7 +146,6 @@ function App() {
                     <SupportLogin role={ACCOUNT_TYPE.HUB} />
                   </PublicRoute>
                 )}
-
                 <PublicRoute path="/apply">
                   <Apply />
                 </PublicRoute>

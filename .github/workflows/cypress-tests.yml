@@ -7,10 +7,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
-    resources:
-      memory: 4096MB  
-      cpu: 2          
+    runs-on: ubuntu-latest         
     env:
       MONGO_USER: ${{ secrets.MONGO_USER }}
       MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}

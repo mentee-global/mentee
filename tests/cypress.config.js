@@ -14,6 +14,7 @@ module.exports = defineConfig({
     pageLoadTimeout: 30000,
     retries: 2,
     "numTestsKeptInMemory": 0,
+    "experimentalMemoryManagement": true,
     setupNodeEvents(on, config) {
       
       // implement node event listeners here

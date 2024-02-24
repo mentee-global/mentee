@@ -20,6 +20,7 @@ from .DirectMessage import DirectMessage
 from .Admin import Admin
 from .Training import Training
 from .Event import Event
+from .Hub import Hub
 from .PartnerProfile import PartnerProfile
 from .MentorApplication import MentorApplication
 from .Notifications import Notifications
@@ -48,6 +49,7 @@ __all__ = [
     "PartnerApplication",
     "Training",
     "Event",
+    "Hub",
     "PartnerProfile",
     "MentorApplication",
     "Notifications",

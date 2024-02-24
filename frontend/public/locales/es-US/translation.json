@@ -68,6 +68,8 @@
   "common": {
     "admin": "Administrador",
     "support": "Seguidor",
+    "hub": "Socio central",
+    "powered_by":"impulsado por MENTEE!",
     "apply": "Aplicar",
     "back": "Atrás",
     "bug": "Reportar un error",

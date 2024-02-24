@@ -68,11 +68,12 @@ export const sendPasswordResetEmail = (email) => {
   return post("/forgotPassword", { email, preferred_language: i18n.language });
 };
 
-export const login = async (email, password, role) =>
+export const login = async (email, password, role, path = undefined) =>
   await post("/login", {
     email: email && email.trim(),
     password: password && password.trim(),
     role: String(role) && String(role).trim(),
+    path: path,
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
       localStorage.setItem("role", role);

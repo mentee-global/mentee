@@ -20,6 +20,7 @@ from api.models import (
     PartnerProfile,
     Notifications,
     Guest,
+    Hub,
 )
 from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS, ALERT_TO_ADMINS
 from api.utils.request_utils import send_email
@@ -132,6 +133,8 @@ def get_accounts(account_type):
         accounts = Guest.objects()
     elif account_type == Account.SUPPORT:
         accounts = Support.objects()
+    elif account_type == Account.HUB:
+        accounts = Hub.objects()
     else:
         msg = "Given parameter does not match the current exiting account_types of accounts"
         return create_response(status=422, message=msg)
@@ -161,6 +164,9 @@ def get_account(id):
             account = Guest.objects.get(id=id)
         elif account_type == Account.SUPPORT:
             account = Support.objects.get(id=id)
+        elif account_type == Account.HUB:
+            account = Hub.objects.get(id=id)
+
         else:
             msg = "Level param doesn't match existing account types"
             return create_response(status=422, message=msg)

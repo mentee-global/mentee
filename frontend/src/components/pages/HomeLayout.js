@@ -9,7 +9,7 @@ import { useMediaQuery } from "react-responsive";
 import { FormOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-function HomeLayout({ children, ignoreHomeLayout, location }) {
+function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
   const { t } = useTranslation();
   const isTablet = useMediaQuery({ query: `(max-width: 991px)` });
   const history = useHistory();
@@ -149,13 +149,52 @@ function HomeLayout({ children, ignoreHomeLayout, location }) {
               }
             `}
           >
-            <Logo
-              className={css`
-                width: 100%;
-                height: 100%;
-                fill-opacity: 0.7;
-              `}
-            />
+            {is_Hub_url ? (
+              <>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                    paddingTop: "15%",
+                    textAlign: "center",
+                  }}
+                >
+                  <img alt="" src={is_Hub_url.image.url} />
+                  <div
+                    style={{
+                      width: "100%",
+                      textAlign: "right",
+                      marginBottom: "0px",
+                      position: "absolute",
+                      bottom: "10px",
+                      paddingRight: "20px",
+                    }}
+                  >
+                    <SmallLogo
+                      className={css`
+                        width: 1.2em;
+                        height: 1.2em;
+                        cursor: pointer;
+                        margin-right: 10px;
+                      `}
+                      onClick={() => history.push("/")}
+                    />
+                    <span style={{ fontSize: "1.1rem" }}>
+                      {t("common.powered_by")}
+                    </span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Logo
+                className={css`
+                  width: 100%;
+                  height: 100%;
+                  fill-opacity: 0.7;
+                `}
+              />
+            )}
           </div>
         </Col>
       )}

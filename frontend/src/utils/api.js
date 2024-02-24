@@ -334,6 +334,24 @@ export const createAppointment = (appointment) => {
   );
 };
 
+export const adminHubUserData = (values, __image, id) => {
+  const requestExtension = `/hub_register`;
+  let formData = new FormData();
+  formData.append("id", id);
+  formData.append("email", values.email);
+  formData.append("name", values.name);
+  formData.append("url", values.url);
+  formData.append("password", values.password);
+  formData.append("image", __image);
+
+  return authPut(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createEvent = (event) => {
   const requestExtension = `/event_register`;
   return authPost(requestExtension, event).then(

@@ -57,6 +57,7 @@ class Account(Enum):
     PARTNER = 3
     GUEST = 4
     SUPPORT = 5
+    HUB = 6
 
     def __eq__(self, other):
         return self.value == other

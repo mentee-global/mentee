@@ -25,6 +25,7 @@ import AdminTraining from "components/pages/AdminTraining";
 import TrainingData from "components/pages/TrainingData";
 import EventDetail from "components/pages/EventDetail";
 import { Languages } from "components/Languages";
+import { Hubs } from "components/Hubs";
 import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
 import PartnerGallery from "components/pages/PartnerGallery";
@@ -42,6 +43,7 @@ import BuildProfile from "components/pages/BuildProfile";
 import Events from "components/pages/Events";
 import { useSelector } from "react-redux";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { fetchAccounts } from "utils/api";
 
 const { Content } = Layout;
 
@@ -53,6 +55,8 @@ function App() {
   const { user } = useSelector((state) => state.user);
   const path = window.location.href;
   const [role, setRole] = useState(getRole());
+  const [allHubData, setAllHubData] = useState({});
+  const [curPath, setCurPath] = useState("");
 
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
@@ -61,12 +65,29 @@ function App() {
   // }, [user]);
 
   useEffect(() => {
+    const getData = async () => {
+      let data = await fetchAccounts(ACCOUNT_TYPE.HUB);
+      if (data) {
+        var temp = {};
+        data.map((item) => {
+          temp[item.url] = item;
+          return true;
+        });
+        setAllHubData(temp);
+      }
+    };
+    getData();
+  }, []);
+
+  useEffect(() => {
     console.log("user change--------");
     setRole(getRole());
   }, [user]);
 
   useEffect(() => {
     setStartPathTime(new Date().getTime());
+    var paths = path.split("/");
+    setCurPath(paths[paths.length - 1]);
   }, [path]);
 
   useEffect(() => {
@@ -74,6 +95,7 @@ function App() {
   }, [i18n.language]);
 
   const cur_time = new Date().getTime();
+  const is_Hub_url = allHubData[curPath];
 
   return (
     <>
@@ -94,7 +116,7 @@ function App() {
             {role && <NavigationSider />}
             <Content>
               {role && <NavigationHeader />}
-              <HomeLayout ignoreHomeLayout={role}>
+              <HomeLayout ignoreHomeLayout={role} is_Hub_url={is_Hub_url}>
                 <PublicRoute exact path="/">
                   <Home />
                 </PublicRoute>
@@ -117,8 +139,13 @@ function App() {
                   <AdminLogin />
                 </PublicRoute>
                 <PublicRoute path="/support">
-                  <SupportLogin />
+                  <SupportLogin role={ACCOUNT_TYPE.SUPPORT} />
                 </PublicRoute>
+                {allHubData && allHubData[curPath] && (
+                  <PublicRoute path={"/" + curPath}>
+                    <SupportLogin role={ACCOUNT_TYPE.HUB} />
+                  </PublicRoute>
+                )}
                 <PublicRoute path="/apply">
                   <Apply />
                 </PublicRoute>
@@ -295,6 +322,7 @@ function App() {
               <PrivateRoute path="/partner-gallery" exact>
                 {role == ACCOUNT_TYPE.PARTNER ||
                 role == ACCOUNT_TYPE.GUEST ||
+                role == ACCOUNT_TYPE.HUB ||
                 role == ACCOUNT_TYPE.ADMIN ? (
                   <PartnerGallery />
                 ) : (
@@ -366,8 +394,23 @@ function App() {
                 )}
               </PrivateRoute>
               <PrivateRoute path="/account-data">
-                {role == ACCOUNT_TYPE.ADMIN ? (
+                {role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.HUB ? (
                   <AdminAccountData />
+                ) : (
+                  <>
+                    {cur_time - startPathTime > 100 && (
+                      <Result
+                        status="403"
+                        title="403"
+                        subTitle={t("gallery.unauthorizedAccess")}
+                      />
+                    )}
+                  </>
+                )}
+              </PrivateRoute>
+              <PrivateRoute path="/hub-data">
+                {role == ACCOUNT_TYPE.ADMIN ? (
+                  <Hubs />
                 ) : (
                   <>
                     {cur_time - startPathTime > 100 && (
@@ -457,7 +500,7 @@ function App() {
               </PrivateRoute>
 
               <PrivateRoute path="/partner/training">
-                {role == ACCOUNT_TYPE.PARTNER ? (
+                {role == ACCOUNT_TYPE.PARTNER || role == ACCOUNT_TYPE.HUB ? (
                   <TrainingData role={ACCOUNT_TYPE.PARTNER} />
                 ) : (
                   <>

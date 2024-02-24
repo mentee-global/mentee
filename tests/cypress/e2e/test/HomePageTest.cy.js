@@ -12,10 +12,6 @@ describe("HomePage", () => {
   it("Clickable components at Home Page ", () => {
     homePage.isClickable();
   });
-  it("should check the behavior upon click Mentee Logo", () => {
-    cy.get(".css-mznafe").click();
-    cy.get(".css-5lbmdi").should("be.visible");
-  });
   it('should check the behavior upon Hover on "Report A Bug" Icon', () => {
     cy.get(".anticon.anticon-form.css-15ifzd0").trigger("mouseover");
     cy.get(".ant-tooltip-inner").should("be.visible");

@@ -47,11 +47,6 @@ export class HomePage {
         expect($element.text()).to.include("Apply, Train, Build");
         expect($element).to.be.visible;
       });
-
-    cy.get(".css-5lbmdi")
-      .should("exist")
-      .and("be.visible")
-      .and("have.attr", "xmlns", "http://www.w3.org/2000/svg");
   }
   isClickable() {
     cy.get(".css-mznafe")

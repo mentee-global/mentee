@@ -7,7 +7,7 @@ export class MentorDashboard {
     cy.get(
       "span.ant-dropdown-trigger",{timeout:1000}
     ).trigger("mouseover");
-
+    cy.wait(1000);
     cy.get(".ant-dropdown-menu-title-content").eq(0).click();
   }
   loginDashboard() {

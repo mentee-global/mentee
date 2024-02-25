@@ -10,6 +10,7 @@ describe("chceking the video page of mentor", () => {
   it("checking page elements visibility", () => {
     cy.visit("/login");
     login.loginMentor();
+    cy.wait(10000);
     mentor.selectEnglish();
     cy.get(
       "li.ant-menu-item"
@@ -53,7 +54,7 @@ describe("chceking the video page of mentor", () => {
     cy.contains(".ant-select-item-option-content", "Computer Science").click();
 
     cy.get('button.ant-btn-primary span:contains("Submit")').click();
-    cy.wait(5000);
+    cy.wait(10000);
     cy.get(".ant-table-tbody").should("contain.text", "my skills intro");
 
     cy.get(

@@ -1,14 +1,30 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
-import { getProfileId, getRole } from "utils/auth.service";
-import { REDIRECTS } from "utils/consts";
+import { getRole, getLoginPath } from "utils/auth.service";
+import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
 
 function PublicRoute({ children, ...rest }) {
+  var role = getRole();
+  var login_path = "";
+  if (role == ACCOUNT_TYPE.HUB) {
+    login_path = getLoginPath();
+    if (!login_path) login_path = "";
+  }
   return (
     <Route
       {...rest}
       render={() =>
-        !getRole() ? children : <Redirect to={REDIRECTS[getRole()]} />
+        !role ? (
+          children
+        ) : (
+          <Redirect
+            to={
+              role == ACCOUNT_TYPE.HUB
+                ? login_path + REDIRECTS[role]
+                : REDIRECTS[role]
+            }
+          />
+        )
       }
     />
   );

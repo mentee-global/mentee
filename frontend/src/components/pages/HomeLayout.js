@@ -149,7 +149,7 @@ function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
               }
             `}
           >
-            {is_Hub_url ? (
+            {is_Hub_url && location.pathname !== "/" ? (
               <>
                 <div
                   style={{
@@ -160,7 +160,11 @@ function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
                     textAlign: "center",
                   }}
                 >
-                  <img alt="" src={is_Hub_url.image.url} />
+                  <img
+                    alt=""
+                    src={is_Hub_url.image.url}
+                    style={{ maxWidth: "100%" }}
+                  />
                   <div
                     style={{
                       width: "100%",
@@ -171,18 +175,18 @@ function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
                       paddingRight: "20px",
                     }}
                   >
+                    <span style={{ fontSize: "1.1rem", fontStyle: "italic" }}>
+                      {t("common.powered_by")}
+                    </span>
                     <SmallLogo
                       className={css`
                         width: 1.2em;
                         height: 1.2em;
                         cursor: pointer;
-                        margin-right: 10px;
+                        margin-left: 10px;
                       `}
                       onClick={() => history.push("/")}
                     />
-                    <span style={{ fontSize: "1.1rem" }}>
-                      {t("common.powered_by")}
-                    </span>
                   </div>
                 </div>
               </>

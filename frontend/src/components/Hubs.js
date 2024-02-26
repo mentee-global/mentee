@@ -211,7 +211,13 @@ export const Hubs = () => {
       >
         <Input addonBefore="URL" />
       </Form.Item>
-      <ImgCrop rotate aspect={5 / 3}>
+      <ImgCrop
+        rotate
+        fillColor={"transparent"}
+        aspect={5 / 3}
+        minZoom={0.2}
+        cropperProps={{ restrictPosition: false }}
+      >
         <Upload
           onChange={async (file) => {
             setImage(file.file.originFileObj);

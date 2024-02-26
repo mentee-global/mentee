@@ -88,7 +88,11 @@ function LoginForm({ role, defaultEmail, location }) {
           role,
         })
       );
-      history.push(REDIRECTS[role]);
+      if (role == ACCOUNT_TYPE.HUB) {
+        history.push(location.pathname + REDIRECTS[role]);
+      } else {
+        history.push(REDIRECTS[role]);
+      }
     });
   };
 

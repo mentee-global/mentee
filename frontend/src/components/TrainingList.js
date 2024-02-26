@@ -11,6 +11,7 @@ import ReactPlayer from "react-player/youtube";
 import "./css/TrainingList.scss";
 import { I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../utils/hooks/useAuth";
 
 const placeholder = Array(5).fill({
   _id: {
@@ -28,6 +29,7 @@ const TrainingList = (props) => {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [trainingData, setTrainingData] = useState();
+  const { isHub } = useAuth();
   const [traingStatus, setTrainingStatus] = useState(
     props.applicationData && props.applicationData.traingStatus
       ? props.applicationData.traingStatus
@@ -166,19 +168,28 @@ const TrainingList = (props) => {
     }, 1500);
   }, [props.applicationData]);
   return (
-    <List
-      itemLayout="vertical"
-      size="large"
-      dataSource={trainingData ?? placeholder}
-      renderItem={(item) => (
-        <List.Item key={item._id.$oid}>
-          <Skeleton loading={loading} active>
-            <List.Item.Meta title={item.name} description={item.description} />
-            {getTrainingComponent(item)}
-          </Skeleton>
-        </List.Item>
+    <>
+      {isHub ? (
+        <></>
+      ) : (
+        <List
+          itemLayout="vertical"
+          size="large"
+          dataSource={trainingData ?? placeholder}
+          renderItem={(item) => (
+            <List.Item key={item._id.$oid}>
+              <Skeleton loading={loading} active>
+                <List.Item.Meta
+                  title={item.name}
+                  description={item.description}
+                />
+                {getTrainingComponent(item)}
+              </Skeleton>
+            </List.Item>
+          )}
+        />
       )}
-    />
+    </>
   );
 };
 

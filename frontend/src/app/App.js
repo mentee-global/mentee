@@ -80,7 +80,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("user change--------");
     setRole(getRole());
   }, [user]);
 
@@ -96,7 +95,6 @@ function App() {
 
   const cur_time = new Date().getTime();
   const is_Hub_url = allHubData[curPath];
-
   return (
     <>
       <ConfigProvider
@@ -318,7 +316,18 @@ function App() {
                   </>
                 )}
               </PrivateRoute>
-
+              {Object.keys(allHubData).map((hub_url) => {
+                return (
+                  <>
+                    <PrivateRoute path={"/" + hub_url + "/partner-gallery"}>
+                      <PartnerGallery />
+                    </PrivateRoute>
+                    <PrivateRoute path={"/" + hub_url + "/events"}>
+                      <Events />
+                    </PrivateRoute>
+                  </>
+                );
+              })}
               <PrivateRoute path="/partner-gallery" exact>
                 {role == ACCOUNT_TYPE.PARTNER ||
                 role == ACCOUNT_TYPE.GUEST ||

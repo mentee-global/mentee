@@ -77,6 +77,7 @@ export const login = async (email, password, role, path = undefined) =>
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
       localStorage.setItem("role", role);
+      localStorage.setItem("login_path", path);
       await fireauth
         .auth()
         .signInWithCustomToken(data.result.token)
@@ -90,6 +91,7 @@ export const login = async (email, password, role, path = undefined) =>
 
 export const logout = async () => {
   localStorage.removeItem("role");
+  localStorage.removeItem("login_path");
   localStorage.removeItem("support_user_id");
   localStorage.removeItem("profileId");
   await fireauth
@@ -162,6 +164,9 @@ export const isUserPartner = async () => {
 
 export const getRole = () => {
   return localStorage.getItem("role");
+};
+export const getLoginPath = () => {
+  return localStorage.getItem("login_path");
 };
 
 export const getProfileId = () => {

@@ -33,10 +33,11 @@ describe("Apply Form fot Mentee visibility", () => {
 
     // click submit button
     cy.get(".ant-btn").click();
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get(".ant-select-selection-item").click({
       force: true,
     });
+    cy.wait(2000);
     cy.get(".ant-btn").click({force: true});
     cy.get(":nth-child(2) > .ant-typography")
       .invoke("text")

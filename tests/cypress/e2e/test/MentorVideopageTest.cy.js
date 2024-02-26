@@ -59,7 +59,7 @@ describe("chceking the video page of mentor", () => {
 
     cy.get(
       ".ant-btn-dangerous"
-    ).eq(1).click();
+    ).eq(0).click();
 
     cy.contains("span", "Yes").click();
   });

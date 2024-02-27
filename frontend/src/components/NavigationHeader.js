@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationBell from "components/NotificationBell";
 import LanguageDropdown from "components/LanguageDropdown";
-import { logout } from "utils/auth.service";
+import { getLoginPath, logout } from "utils/auth.service";
 import { useAuth } from "utils/hooks/useAuth";
 import { collapse, resetUser } from "features/userSlice";
 import "components/css/Navigation.scss";
@@ -34,10 +34,15 @@ function NavigationHeader() {
   const supportUserID = localStorage.getItem("support_user_id");
 
   const logoutUser = () => {
+    var login_path = getLoginPath();
     logout().then(() => {
       resetRoleState();
       dispatch(resetUser());
-      history.push("/");
+      if (login_path && login_path != "") {
+        window.location.href = login_path;
+      } else {
+        history.push("/");
+      }
     });
   };
 
@@ -65,7 +70,11 @@ function NavigationHeader() {
       items.push({
         key: "edit-profile",
         label: (
-          <span onClick={() => history.push("/profile")}>
+          <span
+            onClick={() => {
+              if (role !== ACCOUNT_TYPE.HUB) history.push("/profile");
+            }}
+          >
             {t("navHeader.editProfile")}
           </span>
         ),

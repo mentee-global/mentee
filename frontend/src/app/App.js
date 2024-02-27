@@ -30,6 +30,7 @@ import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
 import PartnerGallery from "components/pages/PartnerGallery";
 import NavigationHeader from "components/NavigationHeader";
+import HubFooter from "components/HubFooter";
 import NavigationSider from "components/NavigationSider";
 import Initiator from "components/Initiator";
 import PrivateRoute from "components/PrivateRoute";
@@ -70,7 +71,7 @@ function App() {
       if (data) {
         var temp = {};
         data.map((item) => {
-          temp[item.url] = item;
+          temp["/" + item.url] = item;
           return true;
         });
         setAllHubData(temp);
@@ -86,7 +87,7 @@ function App() {
   useEffect(() => {
     setStartPathTime(new Date().getTime());
     var paths = path.split("/");
-    setCurPath(paths[paths.length - 1]);
+    setCurPath("/" + paths[paths.length - 1]);
   }, [path]);
 
   useEffect(() => {
@@ -94,7 +95,6 @@ function App() {
   }, [i18n.language]);
 
   const cur_time = new Date().getTime();
-  const is_Hub_url = allHubData[curPath];
 
   return (
     <>
@@ -115,7 +115,8 @@ function App() {
             {role && <NavigationSider />}
             <Content>
               {role && <NavigationHeader />}
-              <HomeLayout ignoreHomeLayout={role} is_Hub_url={is_Hub_url}>
+              {role == ACCOUNT_TYPE.HUB && <HubFooter />}
+              <HomeLayout ignoreHomeLayout={role} allHubData={allHubData}>
                 <PublicRoute exact path="/">
                   <Home />
                 </PublicRoute>
@@ -141,7 +142,7 @@ function App() {
                   <SupportLogin role={ACCOUNT_TYPE.SUPPORT} />
                 </PublicRoute>
                 {allHubData && allHubData[curPath] && (
-                  <PublicRoute path={"/" + curPath}>
+                  <PublicRoute path={curPath}>
                     <SupportLogin role={ACCOUNT_TYPE.HUB} />
                   </PublicRoute>
                 )}

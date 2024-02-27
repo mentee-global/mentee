@@ -9,7 +9,7 @@ import { useMediaQuery } from "react-responsive";
 import { FormOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
+function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
   const { t } = useTranslation();
   const isTablet = useMediaQuery({ query: `(max-width: 991px)` });
   const history = useHistory();
@@ -18,6 +18,22 @@ function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
     "/application-form",
     "/application-training",
     "/build-profile",
+  ];
+
+  const homeLayoutPaths = [
+    "/",
+    "/login",
+    "/mentor/login",
+    "/mentee/login",
+    "/partner/login",
+    "/readonly/login",
+    "/admin",
+    "/support",
+    "/apply",
+    "/application-form",
+    "/application-training",
+    "/build-profile",
+    "/forgot-password",
   ];
 
   if (ignoreHomeLayout || ignoreLayoutPaths.includes(location.pathname)) {
@@ -149,20 +165,23 @@ function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
               }
             `}
           >
-            {is_Hub_url && location.pathname !== "/" ? (
+            {allHubData && allHubData[location.pathname] ? (
               <>
                 <div
                   style={{
                     position: "relative",
                     width: "100%",
                     height: "100%",
-                    paddingTop: "15%",
                     textAlign: "center",
+                    verticalAlign: "middle",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   <img
                     alt=""
-                    src={is_Hub_url.image.url}
+                    src={allHubData[location.pathname].image.url}
                     style={{ maxWidth: "100%" }}
                   />
                   <div
@@ -175,29 +194,43 @@ function HomeLayout({ children, ignoreHomeLayout, is_Hub_url, location }) {
                       paddingRight: "20px",
                     }}
                   >
-                    <span style={{ fontSize: "1.1rem", fontStyle: "italic" }}>
-                      {t("common.powered_by")}
-                    </span>
-                    <SmallLogo
-                      className={css`
-                        width: 1.2em;
-                        height: 1.2em;
-                        cursor: pointer;
-                        margin-left: 10px;
-                      `}
-                      onClick={() => history.push("/")}
-                    />
+                    <div style={{ display: "flex", justifyContent: "end" }}>
+                      <div
+                        style={{
+                          fontSize: "20px",
+                          fontStyle: "italic",
+                          paddingTop: "15px",
+                        }}
+                      >
+                        {t("common.powered_by")}
+                      </div>
+                      <div>
+                        <Logo
+                          className={css`
+                            height: 80px;
+                            width: 160px;
+                            cursor: pointer;
+                            margin-left: 10px;
+                          `}
+                          onClick={() => history.push("/")}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>
             ) : (
-              <Logo
-                className={css`
-                  width: 100%;
-                  height: 100%;
-                  fill-opacity: 0.7;
-                `}
-              />
+              <>
+                {homeLayoutPaths.includes(location.pathname) && (
+                  <Logo
+                    className={css`
+                      width: 100%;
+                      height: 100%;
+                      fill-opacity: 0.7;
+                    `}
+                  />
+                )}
+              </>
             )}
           </div>
         </Col>

@@ -19,6 +19,7 @@ function NavigationSider() {
   const { t } = useTranslation();
   const history = useHistory();
   const collapsed = useSelector((state) => state.user.collapsed);
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const role = getRole();
   const sidebarItems = useSidebars(role, t);
@@ -55,13 +56,26 @@ function NavigationSider() {
       width={220}
       closable={false}
       title={
-        <SmallLogo
-          className={css`
-            height: 30px;
-            width: 30px;
-          `}
-          alt="MENTEE"
-        />
+        <>
+          {role == ACCOUNT_TYPE.HUB ? (
+            <img
+              src={user?.image?.url}
+              alt="hub"
+              className={css`
+                height: 30px;
+                width: 30px;
+              `}
+            />
+          ) : (
+            <SmallLogo
+              className={css`
+                height: 30px;
+                width: 30px;
+              `}
+              alt="MENTEE"
+            />
+          )}
+        </>
       }
       headerStyle={{
         padding: ".5em",
@@ -103,23 +117,51 @@ function NavigationSider() {
       <NavLink to={defaultRoute()}>
         {/* TODO: Add a smooth transition of logo change */}
         {!collapsed ? (
-          <Logo
-            className={css`
-              height: 90px;
-              width: 100%;
-              padding: 1em;
-            `}
-            alt="MENTEE"
-          />
+          <>
+            {role == ACCOUNT_TYPE.HUB ? (
+              <img
+                src={user?.image?.url}
+                alt="hub"
+                className={css`
+                  height: 90px;
+                  width: 100%;
+                  padding: 1em;
+                `}
+              />
+            ) : (
+              <Logo
+                className={css`
+                  height: 90px;
+                  width: 100%;
+                  padding: 1em;
+                `}
+                alt="MENTEE"
+              />
+            )}
+          </>
         ) : (
-          <SmallLogo
-            className={css`
-              height: 90px;
-              width: 100%;
-              padding: 1em;
-            `}
-            alt="MENTEE"
-          />
+          <>
+            {role == ACCOUNT_TYPE.HUB ? (
+              <img
+                src={user?.image?.url}
+                alt="hub"
+                className={css`
+                  height: 90px;
+                  width: 100%;
+                  padding: 1em;
+                `}
+              />
+            ) : (
+              <SmallLogo
+                className={css`
+                  height: 90px;
+                  width: 100%;
+                  padding: 1em;
+                `}
+                alt="MENTEE"
+              />
+            )}
+          </>
         )}
       </NavLink>
       {/* {user && user.pair_partner && user.pair_partner.email && (

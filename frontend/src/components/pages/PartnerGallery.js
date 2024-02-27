@@ -126,7 +126,7 @@ function PartnerGallery(props) {
   );
 
   // Add some kind of error 403 code
-  return !props.isSupport && !isPartner && !isAdmin && !isHub ? (
+  return !props.isSupport && !isPartner && !isAdmin && !isGuest && !isHub ? (
     <Result
       status="403"
       title="403"

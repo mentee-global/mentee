@@ -23,6 +23,14 @@
 .dark-mentee-logo g {
   fill: white;
 }
+.navigation-footer {
+  display: flex;
+  justify-content: end;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 5px;
+}
 
 @media (min-width: 501px) {
   // For desktop screens

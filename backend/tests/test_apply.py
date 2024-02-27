@@ -91,7 +91,7 @@ def test_apply_mentee(client):
         ],
         "country": "Country",
         "identify": "man",
-        "language": "Arabic",
+        "language": ["Arabic"],
         "topics": [
             "Architecture",
         ],

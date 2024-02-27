@@ -8,10 +8,10 @@ export class FindMentee {
       ".ant-input"
     ).type(searchTerm);
     cy.get(
-      ".gallery-mentor-container"
+      ".gallery-mentor-container",{timeout: 10000}
     ).should("have.length.greaterThan", 0);
     cy.get(
-      ".gallery-mentor-container"
+      ".gallery-mentor-container", {timeout: 10000}
     ).each(($result) => {
       cy.wrap($result).should("include.text", searchTerm);
     });
@@ -23,7 +23,7 @@ export class FindMentee {
   }
   selectPartner() {
     cy.get(".ant-select-selector").eq(0).click();
-    cy.get(".rc-virtual-list").eq(0).click();
+    cy.get(".rc-virtual-list", {timeout: 10000}).eq(0).click();
     //As there is no data present against the selected value, I may choose to comment out the assertion script.
     // .invoke('text')
     // .then((selectedText) => {
@@ -42,7 +42,7 @@ export class FindMentee {
       .invoke("text")
       .then((selectedText) => {
         cy.get(
-          ".gallery-mentor-container"
+          ".gallery-mentor-container", {timeout: 10000}
         ).each(($result) => {
           cy.wrap($result).should("include.text", selectedText);
         });
@@ -59,7 +59,7 @@ export class FindMentee {
       .then((selectedText) => {
         const text = selectedText;
         cy.log(`text is equal : ${text}`);
-        cy.get(".gallery-button", {timeout: 10000}).click();
+        cy.get(".gallery-button", {timeout: 15000}).eq(1).click();
         cy.get(
           ".mentor-specialization-tag"
         ).should("contain.text", text);

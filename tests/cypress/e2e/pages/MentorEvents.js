@@ -6,9 +6,9 @@ export class MentorEvent {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
         "li.ant-menu-item"
-      ).eq(3).click();
+      ).eq(4).click();
       cy.get(
-        ".gallery-container .ant-btn-primary"
+        ".gallery-container .ant-btn-primary",{timeout:10000}
       )
         .should("contain.text", currentLanguage.events.addEvent);
       cy.get(
@@ -27,9 +27,9 @@ export class MentorEvent {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
         "li.ant-menu-item"
-      ).eq(3).click();
+      ).eq(4).click();
       cy.get(
-        ".gallery-container .ant-btn-primary"
+        ".gallery-container .ant-btn-primary",{timeout:10000}
       ).click();
       cy.get(".ant-select-arrow").should("have.attr", "unselectable", "on");
       cy.get(".anticon.anticon-down.ant-select-suffix")
@@ -62,9 +62,9 @@ export class MentorEvent {
     cy.readFile(translationPath).then((currentLanguage) => {
       cy.get(
         "li.ant-menu-item"
-      ).eq(3).click();
+      ).eq(4).click();
       cy.get(
-        ".gallery-container .ant-btn-primary"
+        ".gallery-container .ant-btn-primary",{timeout:10000}
       ).click();
       cy.get(
         ".ant-select-selector" 
@@ -72,16 +72,15 @@ export class MentorEvent {
       cy.wait(500);
       cy.get(
         ".ant-select-item-option-content"
-      ).eq(0).click();
+      ).eq(0).click({force: true});
       cy.wait(1000);
       cy.get(
         ".ant-select-item-option-content"
-      ).eq(1).click();
-      // cy.get(
-      //   "body > div:nth-child(5) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > form > div:nth-child(2) > div > div.ant-col.ant-form-item-control.css-wxm1m1 > div > div"
-      // )
-      //   .click()
-      cy.focused().type("{tab}Sample Event{tab}");
+      ).eq(1).click({force: true});
+      cy.wait(3000);
+      cy.get('input#title').last().type('Sample Event');
+
+
       cy.get(
         ':nth-child(5) > .ant-modal-root > .ant-modal-wrap > .ant-modal > .ant-modal-content > .ant-modal-body > .ant-form > :nth-child(3) > :nth-child(1) > :nth-child(2) > :nth-child(1) > :nth-child(1) > [style="display: inline-block; margin-right: 1em; margin-bottom: 0px;"] > .ant-row > .ant-col > .ant-form-item-control-input > .ant-form-item-control-input-content > .ant-picker'
       )
@@ -121,16 +120,13 @@ export class MentorEvent {
   checkCreatedEvent() {
     cy.get(
       "li.ant-menu-item"
-    ).eq(3).click();
+    ).eq(4).click();
 
-    cy.get(".gallery-header-text > .ant-typography")
+    cy.get(".gallery-header-text > .ant-typography",{timeout:10000})
       .contains("Sample Event")
       .should("exist");
 
-    cy.get(
-      "#root > section > main > div.gallery-container > div.gallery-mentor-container > div > div.gallery-card-body > div.gallery-info-section.flex > article > div:nth-child(2)"
-    )
-      .contains("testing the add event")
+    cy.contains("testing the add event")
       .should("exist");
 
     cy.get(".css-1jsjdag").each(($div) => {

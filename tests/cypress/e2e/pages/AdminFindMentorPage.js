@@ -7,7 +7,7 @@ export class FindMentor {
     cy.get(".ant-input").type(searchTerm);
     cy.get(".ant-input").should("have.length.greaterThan", 0);
     cy.get(
-      ".gallery-mentor-container"
+      ".gallery-mentor-container", {timeout: 10000}
     ).each(($result) => {
       cy.wrap($result).should("include.text", searchTerm);
     });
@@ -17,7 +17,7 @@ export class FindMentor {
   }
   selectPartner() {
     cy.get(".ant-select-selector").eq(0).click();
-    cy.get(".rc-virtual-list")
+    cy.get(".rc-virtual-list",{timeout: 10000})
       .eq(0)
       .click()
       .invoke("text")
@@ -25,7 +25,9 @@ export class FindMentor {
         cy.get(
           ".ant-select-selection-item"
         ).each(($result) => {
-          cy.wrap($result).should("include.text", selectedText);
+          //cy.wrap($result).should("include.text", selectedText);
+          cy.wrap($result).as("result");
+          expect(selectedText).to.include($result.text());
         });
       });
     cy.get(".ant-select-clear").click({ force: true });
@@ -55,7 +57,7 @@ export class FindMentor {
         cy.get(
           ":nth-child(1) > .ant-select-selection-item > .ant-select-selection-item-content"
         ).each(($result) => {
-          cy.wrap($result).should("include.text", selectedText);
+          cy.wrap($result).wait(1000).should("include.text", selectedText);
         });
       });
     cy.get(".ant-select-clear").click({ force: true });

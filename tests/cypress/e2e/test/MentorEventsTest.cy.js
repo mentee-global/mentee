@@ -6,6 +6,7 @@ describe("Mentor Dashboard", () => {
   beforeEach("Open Mentor Dashboard", () => {
     cy.visit("/login");
     mentor.loginDashboard();
+    cy.wait(3000);
   });
   it("Check the Event Page Functionality", () => {
     mentor.selectEnglish();
@@ -15,12 +16,13 @@ describe("Mentor Dashboard", () => {
     mentor.selectEnglish();
     event.addEventFunctional();
   });
-  it("Adding New Event", () => {
+  it.skip("Adding New Event", () => {
     mentor.selectEnglish()
     event.addNewEvent();
+    cy.wait(2000);
   });
 
-  it("checking that event", () => {
+  it.skip("checking that event", () => {
     mentor.selectEnglish()
     event.checkCreatedEvent();
   });

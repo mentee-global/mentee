@@ -93,6 +93,7 @@ export const login = async (email, password, role, path = undefined) =>
 
 export const logout = async () => {
   localStorage.removeItem("role");
+  localStorage.removeItem("login_path");
   localStorage.removeItem("support_user_id");
   localStorage.removeItem("profileId");
   await fireauth

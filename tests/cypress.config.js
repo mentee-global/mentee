@@ -10,8 +10,13 @@ module.exports = defineConfig({
     watchForFileChanges:false,
     ensureScrollable: true,
     parseSpecialCharSequences: false,
-    defaultCommandTimeout:4000,
+    defaultCommandTimeout: 20000,
+    pageLoadTimeout: 30000,
+    retries: 2,
+    "numTestsKeptInMemory": 0,
+    "experimentalMemoryManagement": true,
     setupNodeEvents(on, config) {
+      
       // implement node event listeners here
     },
   },

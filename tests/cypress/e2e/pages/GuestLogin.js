@@ -34,7 +34,7 @@ class PartnerComponent {
     cy.get('.gallery-container > :nth-child(1)').should(
       "be.visible"
     );
-    cy.get('.gallery-button > .ant-btn > span').should("have.text", "View Profile");
+    cy.get('.gallery-button > .ant-btn > span').first().should("have.text", "View Profile");
     cy.get('.css-156ebuz').should("be.visible");
     cy.get(':nth-child(2) > .ant-input').should("have.attr", "placeholder", "Search by organization");
   }
@@ -44,7 +44,7 @@ class PartnerComponent {
       .wait(500);
     cy.get(
       "h1.ant-typography"
-    ).should("have.text", "Test");
+    ).first().should("have.text", "Test");
   }
 
   filterByRegion() {
@@ -52,6 +52,6 @@ class PartnerComponent {
       .click()
       .wait(500);
     cy.get("div[title='S. America']").click().wait(500);
-    cy.get(':nth-child(3) > div.ant-typography').should("have.text", "S. America");
+    cy.get(':nth-child(3) > div.ant-typography').first().should("have.text", "S. America");
   }
 }

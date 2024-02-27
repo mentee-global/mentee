@@ -9,7 +9,7 @@ describe("Testing partner page", () => {
 
     cy.visit("/profile");
 
-    cy.get("a.mentor-profile-contact-edit").click();
+    cy.get("a.mentor-profile-contact-edit",{timeout:10000}).click();
 
     cy.get("#nest-messages_email")
       .should("exist")
@@ -17,7 +17,7 @@ describe("Testing partner page", () => {
       .should("have.value", Cypress.env("PARTNER_EMAIL").trim())
       .should("be.enabled");
 
-    cy.get("#nest-messages_email").clear().type("testEmail@gmail.com");
+    cy.get("#nest-messages_email").clear().type("robertmurer+partner1@gmail.com");
 
     cy.get(
       ".regular-button"
@@ -53,7 +53,7 @@ describe("Testing partner page details", () => {
 
     cy.get(
       ".mentor-specialization-tag"
-    ).should("have.text", "S. America");
+    ).first().should("have.text", "Central America");
 
     cy.get(
       ".mentor-profile-about"

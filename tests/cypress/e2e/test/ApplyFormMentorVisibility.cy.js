@@ -135,19 +135,6 @@ describe("Apply form for Mentor Visibility checking", () => {
       "No"
     );
 
-    cy.get('label[for="economicBackground"]').should(
-      "contain",
-      "Did you grow up economically challenged?"
-    );
-    cy.get("#communityStatus > label:nth-child(1) > span:nth-child(2)").should(
-      "contain",
-      "Yes"
-    );
-    cy.get("#communityStatus > label:nth-child(2) > span:nth-child(2)").should(
-      "contain",
-      "No"
-    );
-
     cy.get('label[for="isPersonOfColor"]').should(
       "contain",
       "Would you consider yourself of person of color"
@@ -186,32 +173,8 @@ describe("Apply form for Mentor Visibility checking", () => {
       "contain",
       "If you know someone who would be a great global mentor, please share their name, email, and we'll contact them!"
     );
-
-    cy.get('label[for="canDonate"]').should(
-      "contain",
-      "MENTEE is a volunteer organization and we are sustained by donations. Are you able to offer a donation for one year?"
-    );
-
-    cy.get("#canDonate > label:nth-child(1) > span:nth-child(2)").should(
-      "contain",
-      "Yes, I can offer a donation now to help support this work!"
-    );
-
-    cy.get("#canDonate > label:nth-child(1) > span:nth-child(2)").should(
-      "contain",
-      "(https://www.menteteglobal.org/donate)"
-    );
-
-    cy.get("#canDonate > label:nth-child(2) > span:nth-child(2)").should(
-      "contain",
-      "No, unfortunately I cannot offer a donation now but please ask me again."
-    );
-
-    cy.get("#canDonate > label:nth-child(3) > span:nth-child(2)").should(
-      "contain",
-      "I'm unable to offer a donation."
-    );
-
+    cy.get('label[for="specializations"]').should(
+      "contain","Specializations(If you have any other skill not listed, please input the skills you have directly)")
     cy.get("button.ant-btn-primary.ant-btn-block").should("contain", "Submit");
   });
 });

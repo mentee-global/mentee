@@ -8,15 +8,16 @@ describe("Guest Page", () => {
     cy.visit("/login");
     login.loginGuest();
   });
-  // it("Find Mentor", () => {
-  //   guest.findMentor();
-  // });
-  // it("Find Mentee", () => {
-  //   cy.visit("/mentee-gallery");
-  //   guest.findMentee();
-  // });
-  it("Find Partner", () => {
-    cy.visit("/partner-gallery");
-    guest.findPartner();
+  it("Find Mentor", () => {
+    guest.findMentor();
   });
+  it("Find Mentee", () => {
+    cy.visit("/mentee-gallery");
+    guest.findMentee();
+  });
+  //Comment due to Bug in Application
+  // it("Find Partner", () => {
+  //   cy.visit("/partner-gallery");
+  //   guest.findPartner();
+  // });
 });

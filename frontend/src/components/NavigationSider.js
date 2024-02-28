@@ -62,8 +62,8 @@ function NavigationSider() {
               src={user?.image?.url}
               alt="hub"
               className={css`
-                height: 30px;
-                width: 30px;
+                height: auto;
+                width: 100%;
               `}
             />
           ) : (
@@ -123,7 +123,7 @@ function NavigationSider() {
                 src={user?.image?.url}
                 alt="hub"
                 className={css`
-                  height: 90px;
+                  height: auto;
                   width: 100%;
                   padding: 1em;
                 `}
@@ -146,7 +146,7 @@ function NavigationSider() {
                 src={user?.image?.url}
                 alt="hub"
                 className={css`
-                  height: 90px;
+                  height: auto;
                   width: 100%;
                   padding: 1em;
                 `}

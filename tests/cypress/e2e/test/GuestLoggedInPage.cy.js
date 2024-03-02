@@ -15,9 +15,8 @@ describe("Guest Page", () => {
     cy.visit("/mentee-gallery");
     guest.findMentee();
   });
-  //Comment due to Bug in Application
-  // it("Find Partner", () => {
-  //   cy.visit("/partner-gallery");
-  //   guest.findPartner();
-  // });
+  it("Find Partner", () => {
+    cy.visit("/partner-gallery");
+    guest.findPartner();
+  });
 });

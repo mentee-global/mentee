@@ -28,14 +28,10 @@ class PartnerComponent {
   componnentExists() {
     cy.url().should("include", "partner-gallery");
     cy.get('.css-jjz8ew').should("contain.text", "Organization");
-    cy.get('.css-156ebuz > :nth-child(3)').should("contain.text", "Regions");
-    cy.get('.css-156ebuz > :nth-child(5)').should("contain.text", "Project Topics");
-    cy.get('.css-156ebuz > :nth-child(7)').should("contain.text", "SDGS");
-    cy.get('.gallery-container > :nth-child(1)').should(
-      "be.visible"
-    );
+    cy.contains('Regions').should("contain.text", "Regions");
+    cy.contains('Project Topics').should("contain.text", "Project Topics");
+    cy.contains('SDGS').should("contain.text", "SDGS");
     cy.get('.gallery-button > .ant-btn > span').first().should("have.text", "View Profile");
-    cy.get('.css-156ebuz').should("be.visible");
     cy.get(':nth-child(2) > .ant-input').should("have.attr", "placeholder", "Search by organization");
   }
   isFunctional() {

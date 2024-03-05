@@ -20,13 +20,13 @@ def test_find_mentee(client):
     accounts = result["accounts"]
 
 # There is no need to write assertion on db level data because its change frequently (Database assertion)
-    # # get the public mentee instances in the database
-    # mentee_users = MenteeProfile.objects.filter(is_private=False).count()
+    # get the public mentee instances in the database
+    mentee_users = MenteeProfile.objects.filter(is_private=False).count()
 
-    # assert len(accounts) > 0
-    # assert (
-    #     len(accounts) == mentee_users
-    # ), "Mentee accounts retrieved from the api does not match the Mentee accounts in the database."
+    assert len(accounts) > 0
+    assert (
+        len(accounts) == mentee_users
+    ), "Mentee accounts retrieved from the api does not match the Mentee accounts in the database."
 
 
 def test_find_mentor(client):
@@ -41,14 +41,12 @@ def test_find_mentor(client):
     assert "accounts" in result
 
     accounts = result["accounts"]
-
-# There is no need to write assertion on db level data because its change frequently (Database assertion)
-    # get the mentor instances in the database
-    # mentor_users = MentorProfile.objects.count()
-    # assert len(accounts) > 0
-    # assert (
-    #     len(accounts) == mentor_users
-    # ), "Mentor accounts retrieved from the api does not match the Mentor accounts in the database."
+    #get the mentor instances in the database
+    mentor_users = MentorProfile.objects.count()
+    assert len(accounts) > 0
+    assert (
+        len(accounts) == mentor_users
+    ), "Mentor accounts retrieved from the api does not match the Mentor accounts in the database."
 
 
 def test_find_partner(client):
@@ -63,10 +61,9 @@ def test_find_partner(client):
     assert "accounts" in result
 
     accounts = result["accounts"]
-# There is no need to write assertion on db level data because its change frequently (Database assertion)
-    # get the parter instances in the database
-    # partner_users = PartnerProfile.objects.count()
-    # assert len(accounts) > 0
-    # assert (
-    #     len(accounts) == partner_users
-    # ), "Partner accounts retrieved from the api does not match the Mentor accounts in the database."
+    #get the parter instances in the database
+    partner_users = PartnerProfile.objects.count()
+    assert len(accounts) > 0
+    assert (
+        len(accounts) == partner_users
+    ), "Partner accounts retrieved from the api does not match the Mentor accounts in the database."

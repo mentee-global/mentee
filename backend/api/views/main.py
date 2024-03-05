@@ -135,12 +135,14 @@ def get_accounts(account_type):
                         restricted__ne=True, hub_id=request.args["hub_user_id"]
                     )
                 else:
-                    accounts = PartnerProfile.objects(restricted__ne=True)
+                    accounts = PartnerProfile.objects.filter(
+                        restricted__ne=True, hub_id=None
+                    )
         else:
             if "hub_user_id" in request.args:
                 accounts = PartnerProfile.objects(hub_id=request.args["hub_user_id"])
             else:
-                accounts = PartnerProfile.objects()
+                accounts = PartnerProfile.objects(hub_id=None)
 
     elif account_type == Account.GUEST:
         accounts = Guest.objects()

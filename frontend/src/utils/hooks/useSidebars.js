@@ -185,6 +185,11 @@ export default function useSidebars(userType, user, t) {
   ];
   const hubSidebar = [
     {
+      label: t("common.messages"),
+      key: `messages/${ACCOUNT_TYPE.PARTNER}`,
+      icon: <MessageOutlined />,
+    },
+    {
       label: "Explore",
       key: "galleries",
       icon: <SearchOutlined />,
@@ -218,7 +223,7 @@ export default function useSidebars(userType, user, t) {
     },
   ];
   if (parseInt(userType) == ACCOUNT_TYPE.HUB) {
-    if (!user.hub_id) {
+    if (user && !user.hub_id) {
       hubSidebar.push({
         label: t("sidebars.invite_link"),
         key: url_prefix_hub + "/invite-link",

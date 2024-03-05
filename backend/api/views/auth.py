@@ -215,6 +215,12 @@ def login():
             msg = "Couldn't find profile with these credentials"
             logger.info(msg)
             return create_response(status=422, message=msg)
+        else:
+            if role == Account.PARTNER:
+                if profile.hub_id is not None:
+                    msg = "Couldn't find profile with these credentials"
+                    logger.info(msg)
+                    return create_response(status=422, message=msg)
         if role == Account.HUB and path is not None:
             if "hub_id" in profile and profile.hub_id is not None:
                 hub_profile = Hub.objects.get(id=profile.hub_id)

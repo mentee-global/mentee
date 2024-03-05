@@ -211,22 +211,16 @@ def login():
         user.save()
 
     try:
+        profile = profile_model.objects.get(email=email)
         if profile is None:
             msg = "Couldn't find profile with these credentials"
             logger.info(msg)
             return create_response(status=422, message=msg)
         if role == Account.HUB and path is not None:
-            if "hub_id" in profile and profile.hub_id is not None:
-                hub_profile = Hub.objects.get(id=profile.hub_id)
-                if hub_profile is None or "/" + hub_profile.url != path:
-                    msg = "Couldn't find proper hub profile with these credentials"
-                    logger.info(msg)
-                    return create_response(status=422, message=msg)
-            else:
-                if "/" + profile.url != path:
-                    msg = "Couldn't find proper hub profile with these credentials"
-                    logger.info(msg)
-                    return create_response(status=422, message=msg)
+            if "/" + profile.url != path:
+                msg = "Couldn't find proper hub profile with these credentials"
+                logger.info(msg)
+                return create_response(status=422, message=msg)
         logger.info("Profile found")
         profile_id = str(profile.id)
 

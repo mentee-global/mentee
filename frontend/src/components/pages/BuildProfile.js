@@ -58,6 +58,27 @@ function BuildProfile({ location, history, hub_user }) {
     getUserData();
   }, []);
 
+  useEffect(() => {
+    async function getUserData() {
+      const { in_firebase, is_verified } = await checkStatusByEmail(
+        email,
+        role
+      );
+      setInFirebase(in_firebase);
+      setIsVerified(is_verified);
+      if (!in_firebase) {
+        const { state, application_data } = await getApplicationStatus(
+          email,
+          role
+        );
+        setUserState(state);
+        setApplicationData(application_data);
+      }
+    }
+
+    getUserData();
+  }, []);
+
   const onSubmit = async (profileData, image, changedImage) => {
     setLoading(true);
     if (!inFirebase && role !== ACCOUNT_TYPE.PARTNER) {
@@ -99,11 +120,7 @@ function BuildProfile({ location, history, hub_user }) {
       if (role === ACCOUNT_TYPE.GUEST) {
         path = "/readonly";
       }
-      if (hub_user) {
-        history.push({ pathname: "/" + hub_user.url, state: { email, role } });
-      } else {
-        history.push({ pathname: path + "/login", state: { email, role } });
-      }
+      history.push({ pathname: path + "/login", state: { email, role } });
     } else {
       messageApi.error(t("commonProfile.error.save"));
     }

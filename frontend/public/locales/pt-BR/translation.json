@@ -570,9 +570,7 @@
     "profile": "Perfil",
     "videos": "Seus vídeos",
     "events":"Eventos",
-    "training": "Treinamento",
-    "invite_link":"Link de convite",
-    "generate_invite_link":"Gerar link de convite"
+    "training": "Treinamento"
   },
   "verifyEmail": {
     "body": "Um e-mail de verificação foi enviado para o seu e-mail. Por favor, clique no link contido nele para verificar sua conta.",

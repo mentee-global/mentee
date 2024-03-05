@@ -192,20 +192,7 @@ function AdminAccountData() {
 
   const handleAccountDisplay = (key) => {
     setDisplayOption(key);
-    handleResetFilters();
     setReload(!reload);
-  };
-
-  const searchbyHub = (key) => {
-    if (!key || displayOption !== keys.PARTNER) {
-      setFilterData(displayData);
-      return;
-    }
-    let newFiltered = [];
-    newFiltered = displayData.filter((account) => {
-      return account.hub_id === key;
-    });
-    setFilterData(newFiltered);
   };
 
   const handleSearchAccount = (name) => {

@@ -553,7 +553,6 @@ def edit_mentor(id):
             not authorized
             and int(login_user_role) != Account.ADMIN
             and int(login_user_role) != Account.SUPPORT
-            and int(login_user_role) != Account.HUB
         ):
             return response
 

@@ -159,17 +159,6 @@ function App() {
                 <PublicRoute path="/build-profile">
                   <BuildProfile />
                 </PublicRoute>
-                {Object.keys(allHubData).map((hub_url) => {
-                  if (allHubData[hub_url].invite_key) {
-                    return (
-                      <PublicRoute
-                        path={hub_url + "/" + allHubData[hub_url].invite_key}
-                      >
-                        <BuildProfile hub_user={allHubData[hub_url]} />
-                      </PublicRoute>
-                    );
-                  }
-                })}
                 <PublicRoute path="/forgot-password">
                   <ForgotPassword />
                 </PublicRoute>
@@ -333,14 +322,11 @@ function App() {
               {Object.keys(allHubData).map((hub_url) => {
                 return (
                   <>
-                    <PrivateRoute path={hub_url + "/partner-gallery"}>
+                    <PrivateRoute path={"/" + hub_url + "/partner-gallery"}>
                       <PartnerGallery />
                     </PrivateRoute>
-                    <PrivateRoute path={hub_url + "/events"}>
+                    <PrivateRoute path={"/" + hub_url + "/events"}>
                       <Events />
-                    </PrivateRoute>
-                    <PrivateRoute path={hub_url + "/invite-link"}>
-                      <HubInviteLink />
                     </PrivateRoute>
                   </>
                 );

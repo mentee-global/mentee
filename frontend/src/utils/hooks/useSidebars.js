@@ -19,7 +19,7 @@ import { getLoginPath } from "utils/auth.service";
  * @param {Function} t translation function
  * @returns Sidebar for user type
  */
-export default function useSidebars(userType, user, t) {
+export default function useSidebars(userType, t) {
   var url_prefix_hub = "";
   if (parseInt(userType) == ACCOUNT_TYPE.HUB) {
     url_prefix_hub = getLoginPath();
@@ -217,15 +217,6 @@ export default function useSidebars(userType, user, t) {
       icon: <VideoCameraOutlined />,
     },
   ];
-  if (parseInt(userType) == ACCOUNT_TYPE.HUB) {
-    if (!user.hub_id) {
-      hubSidebar.push({
-        label: t("sidebars.invite_link"),
-        key: url_prefix_hub + "/invite-link",
-        icon: <VideoCameraOutlined />,
-      });
-    }
-  }
   const adminSidebar = [
     {
       label: "Explore",

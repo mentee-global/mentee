@@ -59,13 +59,7 @@ function NavigationSider() {
         <>
           {role == ACCOUNT_TYPE.HUB ? (
             <img
-              src={
-                user
-                  ? user.hub_user
-                    ? user.hub_user.image.url
-                    : user.image.url
-                  : ""
-              }
+              src={user?.image?.url}
               alt="hub"
               className={css`
                 height: auto;
@@ -126,13 +120,7 @@ function NavigationSider() {
           <>
             {role == ACCOUNT_TYPE.HUB ? (
               <img
-                src={
-                  user
-                    ? user.hub_user
-                      ? user.hub_user.image.url
-                      : user.image.url
-                    : ""
-                }
+                src={user?.image?.url}
                 alt="hub"
                 className={css`
                   height: auto;
@@ -155,13 +143,7 @@ function NavigationSider() {
           <>
             {role == ACCOUNT_TYPE.HUB ? (
               <img
-                src={
-                  user
-                    ? user.hub_user
-                      ? user.hub_user.image.url
-                      : user.image.url
-                    : ""
-                }
+                src={user?.image?.url}
                 alt="hub"
                 className={css`
                   height: auto;

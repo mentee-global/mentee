@@ -52,11 +52,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
     "/forgot-password",
   ];
 
-  if (
-    ignoreHomeLayout ||
-    ignoreLayoutPaths.includes(location.pathname) ||
-    checkFlagInviteLink
-  ) {
+  if (ignoreHomeLayout || ignoreLayoutPaths.includes(location.pathname)) {
     return children;
   }
 

@@ -26,7 +26,7 @@ def test_mentor_account_info(client):
     assert (
         "email" in response.get_json()["result"]["account"]
     ), f"Email not found in response. {response.text}"
-    # assert response_email == os.environ.get("TEST_MENTOR_EMAIL")
+    assert response_email == os.environ.get("TEST_MENTOR_EMAIL")
     assert (
         "name" in response.get_json()["result"]["account"]
     ), f"Name not found in response. {response.text}"

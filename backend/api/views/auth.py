@@ -211,6 +211,7 @@ def login():
         user.save()
 
     try:
+        profile = profile_model.objects.get(email=email)
         if profile is None:
             msg = "Couldn't find profile with these credentials"
             logger.info(msg)

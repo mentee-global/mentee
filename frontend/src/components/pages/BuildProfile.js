@@ -58,6 +58,27 @@ function BuildProfile({ location, history, hub_user }) {
     getUserData();
   }, []);
 
+  useEffect(() => {
+    async function getUserData() {
+      const { in_firebase, is_verified } = await checkStatusByEmail(
+        email,
+        role
+      );
+      setInFirebase(in_firebase);
+      setIsVerified(is_verified);
+      if (!in_firebase) {
+        const { state, application_data } = await getApplicationStatus(
+          email,
+          role
+        );
+        setUserState(state);
+        setApplicationData(application_data);
+      }
+    }
+
+    getUserData();
+  }, []);
+
   const onSubmit = async (profileData, image, changedImage) => {
     setLoading(true);
     if (!inFirebase && role !== ACCOUNT_TYPE.PARTNER) {

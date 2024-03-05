@@ -573,7 +573,9 @@
     "profile": "مشخصات",
     "videos":"ویدیوهای شما",
     "events":"مناسبت ها",
-    "training": "آموزش"
+    "training": "آموزش",
+    "invite_link":"لینک دعوت",
+    "generate_invite_link":"ایجاد پیوند دعوت"
   },
   "verifyEmail": {
     "body": "لطفا ایمیل خود را برای تایید ایمیل خود بررسی کنید",

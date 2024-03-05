@@ -18,7 +18,7 @@ import {
 import { sendVerificationEmail } from "utils/auth.service";
 import useQuery from "utils/hooks/useQuery";
 
-function BuildProfile({ location, history }) {
+function BuildProfile({ location, history, hub_user }) {
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
@@ -28,9 +28,14 @@ function BuildProfile({ location, history }) {
   const [applicationData, setApplicationData] = useState(null);
 
   const query = useQuery();
-  const role = location.state?.role || parseInt(query.get("role"));
+  var role = location.state?.role || parseInt(query.get("role"));
+  if (hub_user) {
+    role = ACCOUNT_TYPE.PARTNER;
+  }
   const email = location.state?.email || query.get("email");
-  if (!role || !email) history.push("/");
+  if (!hub_user) {
+    if (!role || !email) history.push("/");
+  }
 
   useEffect(() => {
     async function getUserData() {
@@ -94,7 +99,11 @@ function BuildProfile({ location, history }) {
       if (role === ACCOUNT_TYPE.GUEST) {
         path = "/readonly";
       }
-      history.push({ pathname: path + "/login", state: { email, role } });
+      if (hub_user) {
+        history.push({ pathname: "/" + hub_user.url, state: { email, role } });
+      } else {
+        history.push({ pathname: path + "/login", state: { email, role } });
+      }
     } else {
       messageApi.error(t("commonProfile.error.save"));
     }
@@ -131,6 +140,7 @@ function BuildProfile({ location, history }) {
             newProfile
             onSubmit={onSubmit}
             loading={loading}
+            hub_user={hub_user}
           />
         );
       default:

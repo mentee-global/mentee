@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile, Admin, PartnerProfile
+from api.models import db, Users, MentorProfile, Admin, PartnerProfile, Hub
 from api.core import create_response, logger
 from api.utils.constants import (
     USER_VERIFICATION_TEMPLATE,
@@ -164,6 +164,11 @@ def login():
 
     firebase_user = None
     profile_model = get_profile_model(role)
+    if role == Account.HUB:
+        if not profile_model.objects(email=email):
+            profile_model = get_profile_model(Account.PARTNER)
+
+    profile = profile_model.objects.get(email=email)
 
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
@@ -179,7 +184,7 @@ def login():
             return create_response(status=422, message=msg)
 
         except:
-            if Users.objects(email=email) or profile_model.objects(email=email):
+            if Users.objects(email=email) or profile:
                 # old account, need to create a firebase account
                 # no password -> no sign-in methods -> forced to reset password
                 firebase_user, error_http_response = create_firebase_user(email, None)
@@ -206,16 +211,22 @@ def login():
         user.save()
 
     try:
-        profile = profile_model.objects.get(email=email)
         if profile is None:
             msg = "Couldn't find profile with these credentials"
             logger.info(msg)
             return create_response(status=422, message=msg)
         if role == Account.HUB and path is not None:
-            if "/" + profile.url != path:
-                msg = "Couldn't find proper hub profile with these credentials"
-                logger.info(msg)
-                return create_response(status=422, message=msg)
+            if "hub_id" in profile and profile.hub_id is not None:
+                hub_profile = Hub.objects.get(id=profile.hub_id)
+                if hub_profile is None or "/" + hub_profile.url != path:
+                    msg = "Couldn't find proper hub profile with these credentials"
+                    logger.info(msg)
+                    return create_response(status=422, message=msg)
+            else:
+                if "/" + profile.url != path:
+                    msg = "Couldn't find proper hub profile with these credentials"
+                    logger.info(msg)
+                    return create_response(status=422, message=msg)
         logger.info("Profile found")
         profile_id = str(profile.id)
 

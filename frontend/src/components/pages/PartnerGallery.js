@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { fetchPartners } from "../../utils/api";
 import {
   Input,
-  Checkbox,
   Modal,
   Result,
   Spin,
@@ -14,13 +13,14 @@ import {
   Button,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
 import { useAuth } from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
-import { getRegions, getSDGs } from "utils/consts";
+import { ACCOUNT_TYPE, getRegions, getSDGs } from "utils/consts";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
+import { useSelector } from "react-redux";
+import { getRole } from "utils/auth.service";
 
 const { Title } = Typography;
 
@@ -37,18 +37,30 @@ function PartnerGallery(props) {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [query2, setQuery2] = useState();
   const [sdgs, setSdgs] = useState([]);
+  const { user } = useSelector((state) => state.user);
+  const role = getRole();
 
   useEffect(() => {
-    async function getPartners() {
-      const Partner_data = await fetchPartners();
+    async function getPartners(hub_user_id) {
+      const Partner_data = await fetchPartners(undefined, hub_user_id);
       if (Partner_data) {
         setPartners(Partner_data);
       }
       setPageLoaded(true);
     }
 
-    getPartners();
-  }, []);
+    var hub_user_id = null;
+    if (role == ACCOUNT_TYPE.HUB && user) {
+      if (user.hub_id) {
+        hub_user_id = user.hub_id;
+      } else {
+        hub_user_id = user._id.$oid;
+      }
+    }
+    if (user) {
+      getPartners(hub_user_id);
+    }
+  }, [user]);
 
   const getFilterdPartners = () =>
     partners.filter((partner) => {
@@ -134,106 +146,97 @@ function PartnerGallery(props) {
     />
   ) : (
     <>
-      {isHub ? (
-        <></>
-      ) : (
-        <>
-          <Affix offsetTop={10}>
-            <Button
-              onClick={() => setMobileFilterVisible(true)}
-              className={css`
-                display: none;
-                @media only screen and (max-width: 640px) {
-                  margin-top: 2%;
-                  margin-left: 2%;
-                  display: grid;
-                }
-              `}
-              type="primary"
-            >
-              {t("gallery.filter")}
-            </Button>
-          </Affix>
-          <Modal
-            onCancel={() => {
+      <Affix offsetTop={10}>
+        <Button
+          onClick={() => setMobileFilterVisible(true)}
+          className={css`
+            display: none;
+            @media only screen and (max-width: 640px) {
+              margin-top: 2%;
+              margin-left: 2%;
+              display: grid;
+            }
+          `}
+          type="primary"
+        >
+          {t("gallery.filter")}
+        </Button>
+      </Affix>
+      <Modal
+        onCancel={() => {
+          setMobileFilterVisible(false);
+        }}
+        open={mobileFilterVisible}
+        footer={[
+          <Button type="primary" onClick={() => setMobileFilterVisible(false)}>
+            {t("common.apply")}
+          </Button>,
+          <Button
+            onClick={() => {
               setMobileFilterVisible(false);
+              setRegions([]);
+              setQuery("");
             }}
-            open={mobileFilterVisible}
-            footer={[
-              <Button
-                type="primary"
-                onClick={() => setMobileFilterVisible(false)}
-              >
-                {t("common.apply")}
-              </Button>,
-              <Button
-                onClick={() => {
-                  setMobileFilterVisible(false);
-                  setRegions([]);
-                  setQuery("");
-                }}
-              >
-                {t("common.cancel")}
-              </Button>,
-            ]}
+          >
+            {t("common.cancel")}
+          </Button>,
+        ]}
+      >
+        {getFilterForm()}
+      </Modal>
+
+      <div className="gallery-container">
+        <FloatButton.BackTop />
+        <Affix offsetTop={10}>
+          <div
+            className={css`
+              margin-right: 1em;
+              padding: 1em;
+              border-radius: 8px;
+              height: fit-content;
+              border: 2px solid ${colorPrimaryBg};
+              @media only screen and (max-width: 640px) {
+                display: none;
+              }
+            `}
           >
             {getFilterForm()}
-          </Modal>
-
-          <div className="gallery-container">
-            <FloatButton.BackTop />
-            <Affix offsetTop={10}>
-              <div
-                className={css`
-                  margin-right: 1em;
-                  padding: 1em;
-                  border-radius: 8px;
-                  height: fit-content;
-                  border: 2px solid ${colorPrimaryBg};
-                  @media only screen and (max-width: 640px) {
-                    display: none;
-                  }
-                `}
-              >
-                {getFilterForm()}
-              </div>
-            </Affix>
-
-            {!pageLoaded ? (
-              <div
-                className={css`
-                  display: flex;
-                  flex: 1;
-                  justify-content: center;
-                  align-items: center;
-                  height: 80vh;
-                `}
-              >
-                <Spin size="large" loading />
-              </div>
-            ) : (
-              <div className="gallery-mentor-container">
-                {getFilterdPartners().map((partner, key) => (
-                  <PartnerCard
-                    key={key}
-                    organization={partner.organization}
-                    email={partner.email}
-                    location={partner.location}
-                    regions={partner.regions}
-                    website={partner.website}
-                    linkedin={partner.linkedin}
-                    video={partner.video}
-                    id={partner._id["$oid"]}
-                    firebase_uid={partner.firebase_uid}
-                    image={partner.image}
-                    isSupport={props.isSupport}
-                  />
-                ))}
-              </div>
-            )}
           </div>
-        </>
-      )}
+        </Affix>
+
+        {!pageLoaded ? (
+          <div
+            className={css`
+              display: flex;
+              flex: 1;
+              justify-content: center;
+              align-items: center;
+              height: 80vh;
+            `}
+          >
+            <Spin size="large" loading />
+          </div>
+        ) : (
+          <div className="gallery-mentor-container">
+            {getFilterdPartners().map((partner, key) => (
+              <PartnerCard
+                key={key}
+                organization={partner.organization}
+                email={partner.email}
+                location={partner.location}
+                regions={partner.regions}
+                website={partner.website}
+                linkedin={partner.linkedin}
+                video={partner.video}
+                id={partner._id["$oid"]}
+                firebase_uid={partner.firebase_uid}
+                image={partner.image}
+                isSupport={props.isSupport}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </>
   );
 }

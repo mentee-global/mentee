@@ -32,6 +32,7 @@ function PartnerProfileForm({
   onSubmit,
   profileData,
   resetFields,
+  hub_user,
 }) {
   const { t, i18n } = useTranslation();
   const [image, setImage] = useState(null);
@@ -49,12 +50,17 @@ function PartnerProfileForm({
 
   const onFinish = async (values) => {
     let newData = values;
-    newData.email = email;
+    if (email) {
+      newData.email = email;
+    }
     newData.role = ACCOUNT_TYPE.PARTNER;
     newData.preferred_language = i18n.language;
     newData.image = image;
     newData.changedImage = changedImage;
     newData.edited = edited;
+    if (hub_user) {
+      newData.hub_id = hub_user._id.$oid;
+    }
     onSubmit(newData);
   };
 
@@ -98,6 +104,24 @@ function PartnerProfileForm({
           </Upload>
         </ImgCrop>
       </Form.Item>
+      {hub_user && (
+        <Form.Item
+          label={"Email"}
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Please input Email.",
+            },
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      )}
       <Form.Item
         label={t("partnerProfile.organizationName")}
         name="organization"

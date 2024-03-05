@@ -217,3 +217,51 @@ export function SortByDateDropdown(props) {
     </Dropdown>
   );
 }
+
+export function HubsDropdown(props) {
+  const [option, setOption] = useState("Filter by");
+  const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    setOption("Filter by");
+  }, [props.onReset]);
+
+  const handleClick = (newOption, text) => {
+    setOption(text);
+    const newSelected = selected;
+    newSelected.push(newSelected);
+    setSelected(newSelected);
+    props.onChange(newOption);
+  };
+
+  const overlay = (
+    <Menu>
+      {props.options &&
+        props.options.map((element, i) => {
+          return (
+            <Menu.Item>
+              <a
+                onClick={() => handleClick(element.value, element.label)}
+                style={{ color: selected.includes(i) ? "red" : "black" }}
+              >
+                {element.label}
+              </a>
+            </Menu.Item>
+          );
+        })}
+    </Menu>
+  );
+
+  return (
+    <Dropdown
+      overlay={overlay}
+      className={props.className}
+      trigger={["click"]}
+      overlayStyle={{ overflowY: "auto", height: "auto" }}
+    >
+      <a>
+        {option} <DownOutlined />
+      </a>
+    </Dropdown>
+  );
+}

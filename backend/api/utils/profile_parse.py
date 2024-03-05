@@ -1,3 +1,4 @@
+from api.models.Hub import Hub
 from api.models.PartnerProfile import PartnerProfile
 from api.models import Education, Video, MentorProfile, MenteeProfile
 from api.utils.constants import Account
@@ -31,6 +32,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             sdgs=data.get("sdgs"),
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
+            hub_id=data.get("hub_id"),
         )
         new_profile.website = data.get("website")
         new_profile.linkedin = data.get("linkedin")
@@ -130,6 +132,9 @@ def edit_profile(data: dict = {}, profile: object = None):
     """
     if not data or not profile:
         return False
+    if isinstance(profile, Hub):
+        profile.invite_key = data.get("invite_key", profile.invite_key)
+        return True
     if isinstance(profile, PartnerProfile):
         # Edit fields or keep original data if no added data
         profile.organization = data.get("organization", profile.organization)

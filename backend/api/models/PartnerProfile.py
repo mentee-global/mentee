@@ -28,6 +28,8 @@ class PartnerProfile(Document, Mixin):
     assign_mentors = ListField(DictField(), required=False)
     assign_mentees = ListField(DictField(), required=False)
     preferred_language = StringField(required=False, default="en-US")
+    hub_id = StringField(required=False)
+    hub_user = DictField(required=False)
 
     def __repr__(self):
         return f"""<Partner email: {self.email}

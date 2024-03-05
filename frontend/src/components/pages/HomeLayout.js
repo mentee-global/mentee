@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Row, Space, Tooltip } from "antd";
 import { useHistory, withRouter } from "react-router-dom";
 import { css } from "@emotion/css";
@@ -13,6 +13,22 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
   const { t } = useTranslation();
   const isTablet = useMediaQuery({ query: `(max-width: 991px)` });
   const history = useHistory();
+  const [checkFlagInviteLink, setCheckFlagInviteLink] = useState(false);
+
+  useEffect(() => {
+    setCheckFlagInviteLink(false);
+    Object.keys(allHubData).map((hub_url) => {
+      if (allHubData[hub_url].invite_key) {
+        if (
+          location.pathname ==
+          hub_url + "/" + allHubData[hub_url].invite_key
+        ) {
+          setCheckFlagInviteLink(true);
+        }
+      }
+      return true;
+    });
+  }, [location, allHubData]);
 
   const ignoreLayoutPaths = [
     "/application-form",
@@ -36,7 +52,11 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
     "/forgot-password",
   ];
 
-  if (ignoreHomeLayout || ignoreLayoutPaths.includes(location.pathname)) {
+  if (
+    ignoreHomeLayout ||
+    ignoreLayoutPaths.includes(location.pathname) ||
+    checkFlagInviteLink
+  ) {
     return children;
   }
 

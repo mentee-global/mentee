@@ -12,6 +12,7 @@ class Hub(Document, Mixin):
     name = StringField(required=True)
     image = EmbeddedDocumentField(Image)
     url = StringField(required=True)
+    invite_key = StringField(required=False)
 
     def __repr__(self):
         return f"""<Hub id:{self.id} 

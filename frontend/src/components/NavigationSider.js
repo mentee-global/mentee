@@ -22,7 +22,7 @@ function NavigationSider() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const role = getRole();
-  const sidebarItems = useSidebars(role, t);
+  const sidebarItems = useSidebars(role, user, t);
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   const currentPage = [history.location.pathname.split("/")[1]];
 
@@ -59,7 +59,13 @@ function NavigationSider() {
         <>
           {role == ACCOUNT_TYPE.HUB ? (
             <img
-              src={user?.image?.url}
+              src={
+                user
+                  ? user.hub_user
+                    ? user.hub_user.image.url
+                    : user.image.url
+                  : ""
+              }
               alt="hub"
               className={css`
                 height: auto;
@@ -120,7 +126,13 @@ function NavigationSider() {
           <>
             {role == ACCOUNT_TYPE.HUB ? (
               <img
-                src={user?.image?.url}
+                src={
+                  user
+                    ? user.hub_user
+                      ? user.hub_user.image.url
+                      : user.image.url
+                    : ""
+                }
                 alt="hub"
                 className={css`
                   height: auto;
@@ -143,7 +155,13 @@ function NavigationSider() {
           <>
             {role == ACCOUNT_TYPE.HUB ? (
               <img
-                src={user?.image?.url}
+                src={
+                  user
+                    ? user.hub_user
+                      ? user.hub_user.image.url
+                      : user.image.url
+                    : ""
+                }
                 alt="hub"
                 className={css`
                   height: auto;

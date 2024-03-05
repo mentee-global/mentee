@@ -82,11 +82,16 @@ export const fetchEvents = async (type) => {
   );
 };
 
-export const fetchAccounts = (type, restricted = undefined) => {
+export const fetchAccounts = (
+  type,
+  restricted = undefined,
+  hub_user_id = null
+) => {
   const requestExtension = `/accounts/${type}`;
   return authGet(requestExtension, {
     params: {
       restricted: restricted,
+      hub_user_id: hub_user_id,
     },
   }).then(
     (response) => response.data.result.accounts,
@@ -1010,8 +1015,11 @@ export const fetchMenteeByID = async (id) => {
 export const fetchMentors = async () => {
   return await fetchAccounts(ACCOUNT_TYPE.MENTOR);
 };
-export const fetchPartners = async (restricted = undefined) => {
-  return await fetchAccounts(ACCOUNT_TYPE.PARTNER, restricted);
+export const fetchPartners = async (
+  restricted = undefined,
+  hub_user_id = null
+) => {
+  return await fetchAccounts(ACCOUNT_TYPE.PARTNER, restricted, hub_user_id);
 };
 
 export const fetchMentees = async () => {

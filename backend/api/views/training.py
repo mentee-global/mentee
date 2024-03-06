@@ -3,6 +3,7 @@ import json
 from werkzeug.utils import secure_filename
 from api.core import create_response, logger
 from api.models import (
+    Hub,
     Training,
     MentorProfile,
     MenteeProfile,
@@ -38,6 +39,23 @@ def get_trainings(role):
     lang = request.args.get("lang", "en-US")
     trainings = Training.objects(role=str(role))
     result = []
+
+    Hub_users = Hub.objects()
+    Hub_users_object = {}
+    for hub_user in Hub_users:
+        Hub_users_object[str(hub_user.id)] = {
+            "name": hub_user.name,
+            "url": hub_user.url,
+            "email": hub_user.email,
+            "image": hub_user.image,
+        }
+
+    temp = []
+    for training in trainings:
+        if training.hub_id is not None:
+            training.hub_user = Hub_users_object[str(training.hub_id)]
+        temp.append(training)
+    trainings = temp
 
     if lang in TARGET_LANGS:
         for training in trainings:
@@ -114,6 +132,12 @@ def get_train_id_edit(id):
 
     new_name = request.form.get("name", train.name)
     new_description = request.form.get("description", train.description)
+
+    hub_id = None
+    if "hub_id" in request.form:
+        hub_id = request.form["hub_id"]
+    train.hub_id = hub_id
+
     if train.name != new_name:
         train.name = new_name
         train.nameTranslated = get_all_translations(new_name)
@@ -153,6 +177,10 @@ def new_train(role):
         descriptionTranslated = get_all_translations(request.form["description"])
         typee = request.form["typee"]
         isVideo = True if request.form["isVideo"] == "true" else False
+        hub_id = None
+
+        if "hub_id" in request.form:
+            hub_id = request.form["hub_id"]
 
         train = Training(
             name=name,
@@ -163,6 +191,7 @@ def new_train(role):
             typee=typee,
             isVideo=isVideo,
             date_submitted=datetime.now(),
+            hub_id=hub_id,
         )
         if not isVideo:
             document = request.files.get("document", None)
@@ -186,8 +215,22 @@ def new_train(role):
             recipients = MentorProfile.objects.only("email", "preferred_language")
         elif int(role) == Account.MENTEE:
             recipients = MenteeProfile.objects.only("email", "preferred_language")
-        else:
+        elif int(role) == Account.PARTNER:
             recipients = PartnerProfile.objects.only("email", "preferred_language")
+        else:
+            hub_users = Hub.objects.filter(id=hub_id).only(
+                "email", "preferred_language"
+            )
+            partners = PartnerProfile.objects.filter(hub_id=hub_id).only(
+                "email", "preferred_language"
+            )
+            recipients = []
+            for hub_user in hub_users:
+                recipients.append(hub_user)
+            for partner_user in partners:
+                recipients.append(partner_user)
+            print("www", recipients)
+
         front_url = request.form["front_url"]
         target_url = front_url + "new_training/" + role + "/" + str(new_train_id)
 

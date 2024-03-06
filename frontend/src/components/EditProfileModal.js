@@ -9,6 +9,7 @@ import { useMediaQuery } from "react-responsive";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MenteeProfileForm from "./pages/MenteeProfileForm";
 import PartnerProfileForm from "./PartnerProfileForm";
+import HubForm from "./HubForm";
 
 function EditProfileModal({ profileData, onSave, role }) {
   const profileId = getProfileId();
@@ -52,6 +53,31 @@ function EditProfileModal({ profileData, onSave, role }) {
             resetFields={resetFields}
           />
         );
+      case ACCOUNT_TYPE.HUB:
+        if (profileData.hub_id) {
+          return (
+            <PartnerProfileForm
+              role={ACCOUNT_TYPE.PARTNER}
+              email={email}
+              onSubmit={onSubmit}
+              loading={saving}
+              profileData={profileData}
+              resetFields={resetFields}
+            />
+          );
+        } else {
+          return (
+            <HubForm
+              role={ACCOUNT_TYPE.HUB}
+              email={email}
+              onSubmit={onSubmit}
+              loading={saving}
+              profileData={profileData}
+              resetFields={resetFields}
+            />
+          );
+        }
+
       default:
         return (
           <Result
@@ -64,17 +90,21 @@ function EditProfileModal({ profileData, onSave, role }) {
 
   const onSubmit = async (newData) => {
     setSaving(true);
-    if (!newData.edited) {
+    if (!newData.edited && !newData.changedImage) {
       setOpen(false);
       setSaving(false);
       return;
     }
 
     const menteeID = profileId;
-    await editAccountProfile(newData, menteeID, role);
+    var user_role = role;
+    if (role == ACCOUNT_TYPE.HUB && profileData.hub_id) {
+      user_role = ACCOUNT_TYPE.PARTNER;
+    }
+    await editAccountProfile(newData, menteeID, user_role);
 
     if (newData.changedImage) {
-      await uploadAccountImage(newData.image, menteeID, role);
+      await uploadAccountImage(newData.image, menteeID, user_role);
     }
 
     setResetFields(!resetFields);

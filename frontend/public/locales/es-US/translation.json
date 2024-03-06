@@ -572,7 +572,8 @@
     "events":"Eventos",
     "training": "Entrenamiento",
     "invite_link":"Enlace de invitación",
-    "generate_invite_link":"Generar enlace de invitación"
+    "generate_invite_link":"Generar enlace de invitación",
+    "community":"Comunidad"
   },
   "verifyEmail": {
     "body": "¡Gracias por registrarte!  Por favor, compruebe su correo electrónico para verificar su cuenta.",

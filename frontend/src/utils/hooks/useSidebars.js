@@ -217,9 +217,14 @@ export default function useSidebars(userType, user, t) {
     //   ],
     // },
     {
-      label: t("sidebars.training"),
+      label: t("sidebars.community"),
       key: url_prefix_hub + "/partner/training",
       icon: <VideoCameraOutlined />,
+    },
+    {
+      label: t("sidebars.profile"),
+      key: url_prefix_hub + "/profile",
+      icon: <UserOutlined />,
     },
   ];
   if (parseInt(userType) == ACCOUNT_TYPE.HUB) {

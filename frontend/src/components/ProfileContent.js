@@ -71,6 +71,9 @@ function ProfileContent(props) {
   }
 
   const getTitle = (name, age) => {
+    if (accountType === ACCOUNT_TYPE.HUB && name) {
+      return name;
+    }
     if (accountType === ACCOUNT_TYPE.MENTOR && name) {
       return name;
     } else if (name && age) {
@@ -106,6 +109,9 @@ function ProfileContent(props) {
   };
 
   const displayTags = () => {
+    if (accountType == ACCOUNT_TYPE.HUB) {
+      return <></>;
+    }
     let tags = account?.specializations ?? account?.regions ?? [];
     return (
       <div>
@@ -295,31 +301,40 @@ function ProfileContent(props) {
       ) : (
         <>
           <div className="mentor-profile-heading">
-            <b>{t("commonProfile.biography")}</b>
+            <b>
+              {accountType == ACCOUNT_TYPE.HUB
+                ? "URL"
+                : t("commonProfile.biography")}
+            </b>
           </div>
-          <div className="mentor-profile-about">{props.mentor.biography}</div>
+          <div className="mentor-profile-about">
+            {accountType == ACCOUNT_TYPE.HUB
+              ? props.mentor.url
+              : props.mentor.biography}
+          </div>
         </>
       )}
 
       <br />
       {displayTags()}
       <br />
-      {accountType !== ACCOUNT_TYPE.PARTNER && (
-        <>
-          <div className="mentor-profile-heading">
-            <b>{t("commonProfile.education")}</b>
-          </div>
-          <div>{getEducations(props.mentor.education)}</div>
-          {accountType == ACCOUNT_TYPE.MENTEE && (
-            <>
-              <div>
-                {props.mentor.education_level &&
-                  t("common." + props.mentor.education_level)}
-              </div>
-            </>
-          )}
-        </>
-      )}
+      {accountType !== ACCOUNT_TYPE.PARTNER &&
+        accountType !== ACCOUNT_TYPE.HUB && (
+          <>
+            <div className="mentor-profile-heading">
+              <b>{t("commonProfile.education")}</b>
+            </div>
+            <div>{getEducations(props.mentor.education)}</div>
+            {accountType == ACCOUNT_TYPE.MENTEE && (
+              <>
+                <div>
+                  {props.mentor.education_level &&
+                    t("common." + props.mentor.education_level)}
+                </div>
+              </>
+            )}
+          </>
+        )}
       <br />
       {accountType == ACCOUNT_TYPE.MENTEE && (
         <>
@@ -351,7 +366,8 @@ function ProfileContent(props) {
           )}
         </>
       )}
-      {accountType === ACCOUNT_TYPE.PARTNER && (
+      {(accountType === ACCOUNT_TYPE.PARTNER ||
+        (accountType === ACCOUNT_TYPE.HUB && props.mentor.hub_id)) && (
         <>
           <div className="mentor-profile-heading">
             <b>{t("partnerProfile.contactFullName")}</b>

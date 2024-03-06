@@ -20,11 +20,13 @@ function UpdateTrainingModal({
   open,
   currentTraining,
   loading,
+  hubOptions,
 }) {
   const [form] = Form.useForm();
   const [trainingType, setTrainingType] = useState("");
   const [isNewDocument, setIsNewDocument] = useState(false);
   const [valuesChanged, setValuesChanged] = useState(false);
+  const [role, setRole] = useState(null);
   const newTraining = !currentTraining;
 
   const handleValuesChange = (changedValues, allValues) => {
@@ -171,12 +173,31 @@ function UpdateTrainingModal({
             },
           ]}
         >
-          <Select>
+          <Select onChange={(val) => setRole(val)}>
             <Option value={ACCOUNT_TYPE.MENTOR}>Mentor</Option>
             <Option value={ACCOUNT_TYPE.MENTEE}>Mentee</Option>
             <Option value={ACCOUNT_TYPE.PARTNER}>Partner</Option>
+            <Option value={ACCOUNT_TYPE.HUB}>Hub</Option>
           </Select>
         </Form.Item>
+        {role === ACCOUNT_TYPE.HUB && (
+          <Form.Item
+            name="hub_id"
+            label="Hub"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Select>
+              <Option value={""}></Option>
+              {hubOptions.map((item) => {
+                return <Option value={item.value}>{item.label}</Option>;
+              })}
+            </Select>
+          </Form.Item>
+        )}
       </Form>
     </Modal>
   );

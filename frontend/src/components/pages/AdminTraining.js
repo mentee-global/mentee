@@ -6,10 +6,11 @@ import {
   getTrainById,
   getTrainings,
   getTrainVideo,
-  getTranslateDocumentCost,
+  fetchAccounts,
   newTrainCreate,
 } from "utils/api";
 import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
+import { HubsDropdown } from "../AdminDropdowns";
 import {
   Table,
   Popconfirm,
@@ -45,11 +46,32 @@ const AdminTraining = () => {
   const [openUpdateTraining, setOpenUpdateTraining] = useState(false);
   const [currentTraining, setCurrentTraining] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hubOptions, setHubOptions] = useState([]);
+  const [resetFilters, setResetFilters] = useState(false);
+  const [allData, setAllData] = useState([]);
 
   const onCancelTrainingForm = () => {
     setTrainingId(null);
     setCurrentTraining(null);
     setOpenUpdateTraining(false);
+  };
+
+  useEffect(() => {
+    async function getHubData() {
+      var temp = [];
+      const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
+      hub_data.map((hub_item) => {
+        temp.push({ label: hub_item.name, value: hub_item._id.$oid });
+        return true;
+      });
+      setHubOptions(temp);
+    }
+    getHubData();
+  }, []);
+
+  const handleResetFilters = () => {
+    setResetFilters(!resetFilters);
+    setTrainingData(allData);
   };
 
   const onFinishTrainingForm = async (values, isNewTraining) => {
@@ -177,8 +199,10 @@ const AdminTraining = () => {
       let newData = await getTrainings(role);
       if (newData) {
         setTrainingData(newData);
+        setAllData(newData);
       } else {
         setTrainingData([]);
+        setAllData([]);
         notification.error({
           message: "ERROR",
           description: "Couldn't get trainings",
@@ -249,6 +273,13 @@ const AdminTraining = () => {
       align: "center",
     },
     {
+      title: "Hub User",
+      dataIndex: "hub_user",
+      key: "hub_user",
+      render: (hub_user) => <>{hub_user.name}</>,
+      align: "center",
+    },
+    {
       title: "Edit",
       dataIndex: "id",
       key: "id",
@@ -282,6 +313,12 @@ const AdminTraining = () => {
     },
   ];
 
+  const searchbyHub = (hub_id) => {
+    if (role === ACCOUNT_TYPE.HUB) {
+      setTrainingData(allData.filter((x) => x.hub_id == hub_id));
+    }
+  };
+
   const tabItems = [
     {
       label: `Mentee`,
@@ -298,17 +335,24 @@ const AdminTraining = () => {
       key: ACCOUNT_TYPE.PARTNER,
       disabled: translateLoading,
     },
+    {
+      label: `Hub`,
+      key: ACCOUNT_TYPE.HUB,
+      disabled: translateLoading,
+    },
   ];
 
   return (
     <div className="trains">
       <Tabs
         defaultActiveKey={ACCOUNT_TYPE.MENTEE}
-        onChange={(key) => setRole(key)}
-        d
+        onChange={(key) => {
+          setRole(key);
+          setResetFilters(!resetFilters);
+        }}
         items={tabItems}
       />
-      <div className="table-button-group">
+      <div className="flex" style={{ marginBottom: "1rem" }}>
         <Button
           className="table-button"
           icon={<PlusCircleOutlined />}
@@ -318,6 +362,16 @@ const AdminTraining = () => {
           disabled={translateLoading}
         >
           New Training
+        </Button>
+        <div style={{ lineHeight: "30px", marginLeft: "1rem" }}>Hub</div>
+        <HubsDropdown
+          className="table-button hub-drop-down"
+          options={hubOptions}
+          onChange={(key) => searchbyHub(key)}
+          onReset={resetFilters}
+        />
+        <Button className="" onClick={() => handleResetFilters()}>
+          Clear Filters
         </Button>
       </div>
       <Spin spinning={translateLoading}>
@@ -337,6 +391,7 @@ const AdminTraining = () => {
         onFinish={onFinishTrainingForm}
         currentTraining={currentTraining}
         loading={loading}
+        hubOptions={hubOptions}
       />
     </div>
   );

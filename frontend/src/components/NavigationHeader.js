@@ -72,7 +72,19 @@ function NavigationHeader() {
         label: (
           <span
             onClick={() => {
-              if (role !== ACCOUNT_TYPE.HUB) history.push("/profile");
+              if (role !== ACCOUNT_TYPE.HUB) {
+                history.push("/profile");
+              } else {
+                if (user) {
+                  var hub_url = "";
+                  if (user.hub_id) {
+                    hub_url = "/" + user.hub_user.url;
+                  } else {
+                    hub_url = "/" + user.url;
+                  }
+                  history.push(hub_url + "/profile");
+                }
+              }
             }}
           >
             {t("navHeader.editProfile")}

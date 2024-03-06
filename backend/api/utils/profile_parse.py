@@ -134,6 +134,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         return False
     if isinstance(profile, Hub):
         profile.invite_key = data.get("invite_key", profile.invite_key)
+        profile.name = data.get("name", profile.name)
         return True
     if isinstance(profile, PartnerProfile):
         # Edit fields or keep original data if no added data

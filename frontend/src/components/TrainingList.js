@@ -9,9 +9,10 @@ import {
 import ReactPlayer from "react-player/youtube";
 
 import "./css/TrainingList.scss";
-import { I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../utils/hooks/useAuth";
+import { useSelector } from "react-redux";
 
 const placeholder = Array(5).fill({
   _id: {
@@ -36,6 +37,7 @@ const TrainingList = (props) => {
       : {}
   );
   const [flag, setFlag] = useState(false);
+  const { user } = useSelector((state) => state.user);
 
   const changeTraingStatus = (id, value) => {
     if (
@@ -151,7 +153,17 @@ const TrainingList = (props) => {
     setLoading(true);
     getTrainings(props.role)
       .then((trains) => {
-        setTrainingData(trains);
+        if (props.role == ACCOUNT_TYPE.HUB && user) {
+          var hub_user_id = null;
+          if (user.hub_id) {
+            hub_user_id = user.hub_id;
+          } else {
+            hub_user_id = user._id.$oid;
+          }
+          setTrainingData(trains.filter((x) => x.hub_id == hub_user_id));
+        } else {
+          setTrainingData(trains);
+        }
         setLoading(false);
         setFlag(!flag);
       })
@@ -167,28 +179,25 @@ const TrainingList = (props) => {
       );
     }, 1500);
   }, [props.applicationData]);
+
   return (
     <>
-      {isHub ? (
-        <></>
-      ) : (
-        <List
-          itemLayout="vertical"
-          size="large"
-          dataSource={trainingData ?? placeholder}
-          renderItem={(item) => (
-            <List.Item key={item._id.$oid}>
-              <Skeleton loading={loading} active>
-                <List.Item.Meta
-                  title={item.name}
-                  description={item.description}
-                />
-                {getTrainingComponent(item)}
-              </Skeleton>
-            </List.Item>
-          )}
-        />
-      )}
+      <List
+        itemLayout="vertical"
+        size="large"
+        dataSource={trainingData ?? placeholder}
+        renderItem={(item) => (
+          <List.Item key={item._id.$oid}>
+            <Skeleton loading={loading} active>
+              <List.Item.Meta
+                title={item.name}
+                description={item.description}
+              />
+              {getTrainingComponent(item)}
+            </Skeleton>
+          </List.Item>
+        )}
+      />
     </>
   );
 };

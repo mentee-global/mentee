@@ -20,6 +20,8 @@ class Training(Document, Mixin):
     isVideo = BooleanField(required=True)
     typee = StringField(required=True)
     file_name = StringField()
+    hub_id = StringField(required=False)
+    hub_user = DictField(required=False)
 
     def __repr__(self):
         return f"""<Training  : {self.name}

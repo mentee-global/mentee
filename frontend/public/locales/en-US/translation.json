@@ -573,7 +573,8 @@
     "events":"Events",
     "training":"Training",
     "invite_link":"Invite Link",
-    "generate_invite_link":"Generate Invite Link"
+    "generate_invite_link":"Generate Invite Link",
+    "community":"Community"
   },
   "verifyEmail": {
     "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",

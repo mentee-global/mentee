@@ -339,6 +339,12 @@ function App() {
                     <PrivateRoute path={hub_url + "/events"}>
                       <Events />
                     </PrivateRoute>
+                    <PrivateRoute path={hub_url + "/partner/training"}>
+                      <TrainingData role={ACCOUNT_TYPE.HUB} />
+                    </PrivateRoute>
+                    <PrivateRoute path={hub_url + "/profile"}>
+                      <Profile />
+                    </PrivateRoute>
                     <PrivateRoute path={hub_url + "/invite-link"}>
                       <HubInviteLink />
                     </PrivateRoute>

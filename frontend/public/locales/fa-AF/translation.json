@@ -575,7 +575,8 @@
     "events":"مناسبت ها",
     "training": "آموزش",
     "invite_link":"لینک دعوت",
-    "generate_invite_link":"ایجاد پیوند دعوت"
+    "generate_invite_link":"ایجاد پیوند دعوت",
+    "community":"انجمن"
   },
   "verifyEmail": {
     "body": "لطفا ایمیل خود را برای تایید ایمیل خود بررسی کنید",

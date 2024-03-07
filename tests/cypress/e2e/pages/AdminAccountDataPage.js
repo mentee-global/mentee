@@ -15,7 +15,7 @@ export class AdminAccountData {
     roles.map((role) => {
       cy.get(
         ".table-button-group > :nth-child(1)"
-      ).click();
+      ).last().click();
       cy.get(".ant-dropdown-menu-title-content").eq(role).click();
       const roleSpecificHeadings = this.getRoleSpecificHeading(role);
       roleSpecificHeadings.forEach((heading) => {

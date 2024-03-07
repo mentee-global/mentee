@@ -62,6 +62,8 @@ function PartnerProfileForm({
       newData.hub_id = hub_user._id.$oid;
     }
     onSubmit(newData);
+    setChangedImage(false);
+    setEdited(false);
   };
 
   return (

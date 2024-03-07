@@ -53,6 +53,7 @@ function AdminAccountData() {
   const { onAuthStateChanged } = useAuth();
   const [hubOptions, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
+  const [searchHubUserId, setSearchHubUserId] = useState(null);
 
   useEffect(() => {
     async function getHubData() {
@@ -168,7 +169,7 @@ function AdminAccountData() {
   };
   const handlePartnersDownload = async () => {
     setIsPartnerDownload(true);
-    const file = await downloadPartnersData();
+    const file = await downloadPartnersData(searchHubUserId);
     setDownloadFile(file);
     setIsPartnerDownload(false);
   };
@@ -201,6 +202,7 @@ function AdminAccountData() {
       setFilterData(displayData);
       return;
     }
+    setSearchHubUserId(key);
     let newFiltered = [];
     newFiltered = displayData.filter((account) => {
       return account.hub_id === key;
@@ -228,6 +230,7 @@ function AdminAccountData() {
 
   const handleResetFilters = () => {
     setResetFilters(!resetFilters);
+    setSearchHubUserId(null);
     if (displayOption === keys.PARTNER) {
       setFilterData(displayData);
     }

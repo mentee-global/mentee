@@ -124,23 +124,36 @@ def get_accounts(account_type):
         if "restricted" in request.args:
             if request.args["restricted"] == "true":
                 if "hub_user_id" in request.args:
-                    accounts = PartnerProfile.objects.filter(
-                        restricted=True, hub_id=request.args["hub_user_id"]
-                    )
+                    if request.args["hub_user_id"] != "":
+                        accounts = PartnerProfile.objects.filter(
+                            restricted=True, hub_id=request.args["hub_user_id"]
+                        )
+                    else:
+                        accounts = PartnerProfile.objects(restricted=True)
                 else:
-                    accounts = PartnerProfile.objects(restricted=True)
+                    accounts = PartnerProfile.objects.filter(
+                        restricted=True, hub_id=None
+                    )
             else:
                 if "hub_user_id" in request.args:
-                    accounts = PartnerProfile.objects.filter(
-                        restricted__ne=True, hub_id=request.args["hub_user_id"]
-                    )
+                    if request.args["hub_user_id"] != "":
+                        accounts = PartnerProfile.objects.filter(
+                            restricted__ne=True, hub_id=request.args["hub_user_id"]
+                        )
+                    else:
+                        accounts = PartnerProfile.objects.filter(restricted__ne=True)
                 else:
                     accounts = PartnerProfile.objects.filter(
                         restricted__ne=True, hub_id=None
                     )
         else:
             if "hub_user_id" in request.args:
-                accounts = PartnerProfile.objects(hub_id=request.args["hub_user_id"])
+                if request.args["hub_user_id"] != "":
+                    accounts = PartnerProfile.objects(
+                        hub_id=request.args["hub_user_id"]
+                    )
+                else:
+                    accounts = PartnerProfile.objects()
             else:
                 accounts = PartnerProfile.objects(hub_id=None)
 
@@ -610,6 +623,7 @@ def uploadImage(id):
             not authorized
             and int(login_user_role) != Account.ADMIN
             and int(login_user_role) != Account.SUPPORT
+            and int(login_user_role) != Account.HUB
         ):
             return response
 

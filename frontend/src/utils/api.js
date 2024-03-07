@@ -85,7 +85,7 @@ export const fetchEvents = async (type) => {
 export const fetchAccounts = (
   type,
   restricted = undefined,
-  hub_user_id = null
+  hub_user_id = ""
 ) => {
   const requestExtension = `/accounts/${type}`;
   return authGet(requestExtension, {
@@ -576,12 +576,13 @@ export const downloadMenteesData = async () => {
 
   downloadBlob(response, "mentee_data.xlsx");
 };
-export const downloadPartnersData = async () => {
+export const downloadPartnersData = async (searchHubUserId = null) => {
   const requestExtension = "/download/accounts/all";
   let response = await authGet(requestExtension, {
     responseType: "blob",
     params: {
       account_type: ACCOUNT_TYPE.PARTNER,
+      hub_user_id: searchHubUserId,
     },
   }).catch(console.error);
 

@@ -81,6 +81,8 @@ def download_appointments():
 def download_accounts_info():
     data = request.args
     account_type = int(data.get("account_type", 0))
+    hub_user_id = data.get("hub_user_id")
+
     accounts = None
 
     try:
@@ -97,7 +99,12 @@ def download_accounts_info():
             for partner_item in partner_data:
                 partner_object[str(partner_item.id)] = partner_item.organization
         elif account_type == Account.PARTNER:
-            accounts = PartnerProfile.objects(firebase_uid__nin=admin_ids)
+            if hub_user_id is not None:
+                accounts = PartnerProfile.objects.filter(
+                    firebase_uid__nin=admin_ids, hub_id=hub_user_id
+                )
+            else:
+                accounts = PartnerProfile.objects(firebase_uid__nin=admin_ids)
 
     except:
         msg = "Failed to get accounts"

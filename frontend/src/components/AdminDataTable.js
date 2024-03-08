@@ -590,6 +590,16 @@ function AdminDataTable({
                 );
               }}
             />
+            <Column
+              title="Hub"
+              className="link-td"
+              dataIndex="hub_user"
+              key="hub_user"
+              align="center"
+              render={(hub_user) => {
+                return hub_user && hub_user.name;
+              }}
+            />
 
             <Column
               title="Delete"

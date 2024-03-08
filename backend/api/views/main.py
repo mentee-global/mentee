@@ -121,6 +121,15 @@ def get_accounts(account_type):
                 accounts = []
             accounts.append(account)
     elif account_type == Account.PARTNER:
+        Hub_users = Hub.objects()
+        Hub_users_object = {}
+        for hub_user in Hub_users:
+            Hub_users_object[str(hub_user.id)] = {
+                "name": hub_user.name,
+                "url": hub_user.url,
+                "email": hub_user.email,
+                "image": hub_user.image,
+            }
         if "restricted" in request.args:
             if request.args["restricted"] == "true":
                 if "hub_user_id" in request.args:
@@ -156,7 +165,12 @@ def get_accounts(account_type):
                     accounts = PartnerProfile.objects()
             else:
                 accounts = PartnerProfile.objects(hub_id=None)
-
+        temp = []
+        for account in accounts:
+            if account.hub_id is not None:
+                account.hub_user = Hub_users_object[str(account.hub_id)]
+            temp.append(account)
+        accounts = temp
     elif account_type == Account.GUEST:
         accounts = Guest.objects()
     elif account_type == Account.SUPPORT:

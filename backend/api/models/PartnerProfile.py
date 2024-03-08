@@ -30,6 +30,7 @@ class PartnerProfile(Document, Mixin):
     preferred_language = StringField(required=False, default="en-US")
     hub_id = StringField(required=False)
     hub_user = DictField(required=False)
+    hub_user_name = StringField(required=False)
 
     def __repr__(self):
         return f"""<Partner email: {self.email}

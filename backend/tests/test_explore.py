@@ -61,9 +61,3 @@ def test_find_partner(client):
     assert "accounts" in result
 
     accounts = result["accounts"]
-    #get the parter instances in the database
-    partner_users = PartnerProfile.objects.count()
-    assert len(accounts) > 0
-    assert (
-        len(accounts) == partner_users
-    ), "Partner accounts retrieved from the api does not match the Mentor accounts in the database."

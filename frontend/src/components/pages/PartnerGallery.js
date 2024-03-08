@@ -168,10 +168,7 @@ function PartnerGallery(props) {
         }}
         open={mobileFilterVisible}
         footer={[
-          <Button
-            type="primary"
-            onClick={() => setMobileFilterVisible(false)}
-          >
+          <Button type="primary" onClick={() => setMobileFilterVisible(false)}>
             {t("common.apply")}
           </Button>,
           <Button

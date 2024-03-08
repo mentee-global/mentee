@@ -146,115 +146,102 @@ function PartnerGallery(props) {
     />
   ) : (
     <>
-      {isHub ? (
-        <></>
-      ) : (
-        <>
-          <Affix offsetTop={10}>
-            <Button
-              onClick={() => setMobileFilterVisible(true)}
-              className={css`
-                display: none;
-                @media only screen and (max-width: 640px) {
-                  margin-top: 2%;
-                  margin-left: 2%;
-                  display: grid;
-                }
-              `}
-              type="primary"
-            >
-              {t("gallery.filter")}
-            </Button>
-          </Affix>
-          <Modal
-            onCancel={() => {
+      <Affix offsetTop={10}>
+        <Button
+          onClick={() => setMobileFilterVisible(true)}
+          className={css`
+            display: none;
+            @media only screen and (max-width: 640px) {
+              margin-top: 2%;
+              margin-left: 2%;
+              display: grid;
+            }
+          `}
+          type="primary"
+        >
+          {t("gallery.filter")}
+        </Button>
+      </Affix>
+      <Modal
+        onCancel={() => {
+          setMobileFilterVisible(false);
+        }}
+        open={mobileFilterVisible}
+        footer={[
+          <Button
+            type="primary"
+            onClick={() => setMobileFilterVisible(false)}
+          >
+            {t("common.apply")}
+          </Button>,
+          <Button
+            onClick={() => {
               setMobileFilterVisible(false);
+              setRegions([]);
+              setQuery("");
             }}
-            open={mobileFilterVisible}
-            footer={[
-              <Button
-                type="primary"
-                onClick={() => setMobileFilterVisible(false)}
-              >
-                {t("common.apply")}
-              </Button>,
-              <Button
-                onClick={() => {
-                  setMobileFilterVisible(false);
-                  setRegions([]);
-                  setQuery("");
-                }}
-              >
-                {t("common.cancel")}
-              </Button>,
-            ]}
+          >
+            {t("common.cancel")}
+          </Button>,
+        ]}
+      >
+        {getFilterForm()}
+      </Modal>
+
+      <div className="gallery-container">
+        <FloatButton.BackTop />
+        <Affix offsetTop={10}>
+          <div
+            className={css`
+              margin-right: 1em;
+              padding: 1em;
+              border-radius: 8px;
+              height: fit-content;
+              border: 2px solid ${colorPrimaryBg};
+              @media only screen and (max-width: 640px) {
+                display: none;
+              }
+            `}
           >
             {getFilterForm()}
-          </Modal>
-
-          <div className="gallery-container">
-            <FloatButton.BackTop />
-            <Affix offsetTop={10}>
-              <div
-                className={css`
-                  margin-right: 1em;
-                  padding: 1em;
-                  border-radius: 8px;
-                  height: fit-content;
-                  border: 2px solid ${colorPrimaryBg};
-                  @media only screen and (max-width: 640px) {
-                    display: none;
-                  }
-                `}
-              >
-                {getFilterForm()}
-              </div>
-            </Affix>
-
-            {!pageLoaded ? (
-              <div
-                className={css`
-                  display: flex;
-                  flex: 1;
-                  justify-content: center;
-                  align-items: center;
-                  height: 80vh;
-                `}
-              >
-                <Spin size="large" loading />
-              </div>
-            ) : (
-              <div className="gallery-mentor-container">
-                {getFilterdPartners().map((partner, key) => (
-                  <PartnerCard
-                    key={key}
-                    organization={partner.organization}
-                    email={partner.email}
-                    location={partner.location}
-                    regions={partner.regions}
-                    website={partner.website}
-                    linkedin={partner.linkedin}
-                    video={partner.video}
-                    id={partner._id["$oid"]}
-                    firebase_uid={partner.firebase_uid}
-                    image={partner.image}
-                    isSupport={props.isSupport}
-                  />
-                ))}
-              </div>
-            )}
           </div>
-        </>
-      )}
+        </Affix>
+
+        {!pageLoaded ? (
+          <div
+            className={css`
+              display: flex;
+              flex: 1;
+              justify-content: center;
+              align-items: center;
+              height: 80vh;
+            `}
+          >
+            <Spin size="large" loading />
+          </div>
+        ) : (
+          <div className="gallery-mentor-container">
+            {getFilterdPartners().map((partner, key) => (
+              <PartnerCard
+                key={key}
+                organization={partner.organization}
+                email={partner.email}
+                location={partner.location}
+                regions={partner.regions}
+                website={partner.website}
+                linkedin={partner.linkedin}
+                video={partner.video}
+                id={partner._id["$oid"]}
+                firebase_uid={partner.firebase_uid}
+                image={partner.image}
+                isSupport={props.isSupport}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </>
   );
 }
-
-const styles = {
-  searchInput: {
-    borderRadius: 10,
-    marginBottom: 5,
-  },
-};
 
 export default PartnerGallery;

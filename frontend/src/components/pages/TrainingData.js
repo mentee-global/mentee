@@ -32,7 +32,7 @@ function TrainingData({ role }) {
     >
       <Typography.Title level={2}>
         {role == ACCOUNT_TYPE.HUB
-          ? t("sidebars.community_info")
+          ? t("sidebars.info_board")
           : t("apply.training")}
       </Typography.Title>
       <TrainingList role={role} />

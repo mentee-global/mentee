@@ -229,7 +229,6 @@ def new_train(role):
                 recipients.append(hub_user)
             for partner_user in partners:
                 recipients.append(partner_user)
-            print("www", recipients)
 
         front_url = request.form["front_url"]
         target_url = front_url + "new_training/" + role + "/" + str(new_train_id)

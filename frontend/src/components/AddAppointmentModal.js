@@ -54,7 +54,7 @@ function AddAppointmentModal({
             });
           }
         } else {
-          var restricted_partners = await fetchPartners(true);
+          var restricted_partners = await fetchPartners(true, null);
           if (
             !isAdmin &&
             restricted_partners &&

@@ -574,7 +574,9 @@
     "invite_link":"Enlace de invitación",
     "generate_invite_link":"Generar enlace de invitación",
     "community":"Comunidad",
-    "community_info":"Información de la comunidad"
+    "community_info":"Información de la comunidad",
+    "inforamtion":"Información",
+    "info_board":"Tarjeta de la información"
   },
   "verifyEmail": {
     "body": "¡Gracias por registrarte!  Por favor, compruebe su correo electrónico para verificar su cuenta.",

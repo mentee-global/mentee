@@ -574,7 +574,9 @@
     "invite_link":"Link de convite",
     "generate_invite_link":"Gerar link de convite",
     "community":"Comunidade",
-    "community_info":"Informações da comunidade"
+    "community_info":"Informações da comunidade",
+    "inforamtion":"Informação",
+    "info_board":"Quadro de Informações"
   },
   "verifyEmail": {
     "body": "Um e-mail de verificação foi enviado para o seu e-mail. Por favor, clique no link contido nele para verificar sua conta.",

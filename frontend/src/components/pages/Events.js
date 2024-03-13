@@ -4,7 +4,7 @@ import {
   fetchMentees,
   fetchPartners,
   fetchEvents,
-  fetchAccounts,
+  fetchAccountById,
 } from "utils/api";
 import EventCard from "../EventCard";
 import {
@@ -26,6 +26,8 @@ import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
 import AddEventModal from "components/AddEventModal";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { useSelector } from "react-redux";
+import { getRole } from "utils/auth.service";
 
 const { Title } = Typography;
 
@@ -34,7 +36,7 @@ function Events() {
     token: { colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isAdmin, role, isHub } = useAuth();
+  const { isAdmin } = useAuth();
   const [eventModalvisible, setEventModalvisible] = useState(false);
   const [allEvents, setAllEvents] = useState([]);
   const [query, setQuery] = useState();
@@ -45,22 +47,43 @@ function Events() {
   const [upcomingFlag, setUpcomingFlag] = useState(false);
   const [pastFlag, setPastFlag] = useState(false);
   const [reload, setReload] = useState(true);
+  const [hubUrl, setHubUrl] = useState("");
+  const { user } = useSelector((state) => state.user);
+  const role = getRole();
 
   useEffect(() => {
-    async function getAllEvents() {
-      const all_evnet_data = await fetchEvents(role);
+    async function getAllEvents(hub_user_id) {
+      const all_evnet_data = await fetchEvents(role, hub_user_id);
       setAllEvents(all_evnet_data);
       setPageLoaded(true);
     }
-    getAllEvents();
-
-    async function getAllUsersData() {
-      const mentor_data = await fetchMentors();
-      const mentee_data = await fetchMentees();
-      const partenr_data = await fetchPartners();
-      setUsers([...mentee_data, ...mentor_data, ...partenr_data]);
+    var hub_user_id = null;
+    if (role == ACCOUNT_TYPE.HUB && user) {
+      if (user.hub_id) {
+        hub_user_id = user.hub_id;
+        if (user.hub_user) {
+          setHubUrl("/" + user.hub_user.url);
+        }
+      } else {
+        hub_user_id = user._id.$oid;
+        setHubUrl("/" + user.url);
+      }
     }
-    getAllUsersData();
+    getAllEvents(hub_user_id);
+
+    async function getAllUsersData(hub_user_id) {
+      if (hub_user_id) {
+        const partenr_data = await fetchPartners(undefined, hub_user_id);
+        const hub_user = await fetchAccountById(hub_user_id, ACCOUNT_TYPE.HUB);
+        setUsers([...partenr_data, hub_user]);
+      } else {
+        const mentor_data = await fetchMentors();
+        const mentee_data = await fetchMentees();
+        const partenr_data = await fetchPartners(undefined, null);
+        setUsers([...mentee_data, ...mentor_data, ...partenr_data]);
+      }
+    }
+    getAllUsersData(hub_user_id);
   }, [reload]);
 
   const getFilteredEvents = () => {
@@ -152,151 +175,143 @@ function Events() {
   // Add some kind of error 403 code
   return (
     <>
-      {isHub ? (
-        <></>
-      ) : (
-        <>
-          <Affix offsetTop={10}>
-            <div style={{ display: "flex" }}>
-              <Button
-                onClick={() => setMobileFilterVisible(true)}
-                className={css`
-                  display: none;
-                  @media only screen and (max-width: 640px) {
-                    margin-top: 2%;
-                    margin-left: 2%;
-                    display: grid;
-                  }
-                `}
-                type="primary"
-              >
-                {t("gallery.filter")}
-              </Button>
-              <Button
-                className={css`
-                  display: none;
-                  margin-top: 2%;
-                  margin-left: 2%;
-                  @media only screen and (max-width: 640px) {
-                    display: grid;
-                  }
-                `}
-                type="primary"
-                onClick={() => {
-                  setEventModalvisible(true);
-                }}
-              >
-                {t("events.addEvent")}
-              </Button>
-              <AddEventModal
-                role={role}
-                open={eventModalvisible}
-                setOpen={setEventModalvisible}
-                refresh={() => setReload(!reload)}
-                reloading={() => setPageLoaded(false)}
-              />
-            </div>
-          </Affix>
-          <Modal
-            onCancel={() => {
-              setMobileFilterVisible(false);
-            }}
-            open={mobileFilterVisible}
-            footer={[
-              <Button
-                onClick={() => setMobileFilterVisible(false)}
-                type="primary"
-              >
-                {t("common.apply")}
-              </Button>,
-              <Button
-                onClick={() => {
-                  setMobileFilterVisible(false);
-                  setQuery("");
-                }}
-              >
-                {t("common.cancel")}
-              </Button>,
-            ]}
-            bodyStyle={{
-              padding: "1rem",
+      <Affix offsetTop={10}>
+        <div style={{ display: "flex" }}>
+          <Button
+            onClick={() => setMobileFilterVisible(true)}
+            className={css`
+              display: none;
+              @media only screen and (max-width: 640px) {
+                margin-top: 2%;
+                margin-left: 2%;
+                display: grid;
+              }
+            `}
+            type="primary"
+          >
+            {t("gallery.filter")}
+          </Button>
+          <Button
+            className={css`
+              display: none;
+              margin-top: 2%;
+              margin-left: 2%;
+              @media only screen and (max-width: 640px) {
+                display: grid;
+              }
+            `}
+            type="primary"
+            onClick={() => {
+              setEventModalvisible(true);
             }}
           >
+            {t("events.addEvent")}
+          </Button>
+          <AddEventModal
+            role={role}
+            open={eventModalvisible}
+            setOpen={setEventModalvisible}
+            refresh={() => setReload(!reload)}
+            reloading={() => setPageLoaded(false)}
+          />
+        </div>
+      </Affix>
+      <Modal
+        onCancel={() => {
+          setMobileFilterVisible(false);
+        }}
+        open={mobileFilterVisible}
+        footer={[
+          <Button onClick={() => setMobileFilterVisible(false)} type="primary">
+            {t("common.apply")}
+          </Button>,
+          <Button
+            onClick={() => {
+              setMobileFilterVisible(false);
+              setQuery("");
+            }}
+          >
+            {t("common.cancel")}
+          </Button>,
+        ]}
+        bodyStyle={{
+          padding: "1rem",
+        }}
+      >
+        {getFilterForm()}
+      </Modal>
+      <div className="gallery-container">
+        <FloatButton.BackTop />
+        <Affix offsetTop={10}>
+          <Button
+            className={css`
+              margin-top: 10px;
+              margin-bottom: 10px;
+              @media only screen and (max-width: 640px) {
+                display: none;
+              }
+            `}
+            type="primary"
+            onClick={() => {
+              setEventModalvisible(true);
+            }}
+          >
+            {t("events.addEvent")}
+          </Button>
+          <AddEventModal
+            role={role}
+            open={eventModalvisible}
+            setOpen={setEventModalvisible}
+            refresh={() => setReload(!reload)}
+            reloading={() => setPageLoaded(false)}
+          />
+          <div
+            className={css`
+              margin-right: 1em;
+              width: 15rem;
+              padding: 1em;
+              border-radius: 8px;
+              height: fit-content;
+              border: 2px solid ${colorPrimaryBg};
+
+              @media only screen and (max-width: 640px) {
+                display: none;
+              }
+            `}
+          >
             {getFilterForm()}
-          </Modal>
-          <div className="gallery-container">
-            <FloatButton.BackTop />
-            <Affix offsetTop={10}>
-              <Button
-                className={css`
-                  margin-top: 10px;
-                  margin-bottom: 10px;
-                  @media only screen and (max-width: 640px) {
-                    display: none;
-                  }
-                `}
-                type="primary"
-                onClick={() => {
-                  setEventModalvisible(true);
-                }}
-              >
-                {t("events.addEvent")}
-              </Button>
-              <AddEventModal
-                role={role}
-                open={eventModalvisible}
-                setOpen={setEventModalvisible}
-                refresh={() => setReload(!reload)}
-                reloading={() => setPageLoaded(false)}
-              />
-              <div
-                className={css`
-                  margin-right: 1em;
-                  width: 15rem;
-                  padding: 1em;
-                  border-radius: 8px;
-                  height: fit-content;
-                  border: 2px solid ${colorPrimaryBg};
-
-                  @media only screen and (max-width: 640px) {
-                    display: none;
-                  }
-                `}
-              >
-                {getFilterForm()}
-              </div>
-            </Affix>
-
-            {!pageLoaded ? (
-              <div
-                className={css`
-                  display: flex;
-                  flex: 1;
-                  justify-content: center;
-                  align-items: center;
-                  height: 80vh;
-                `}
-              >
-                <Spin size="large" spinning />
-              </div>
-            ) : (
-              <div className="gallery-mentor-container">
-                {getFilteredEvents().map((item, key) => {
-                  return (
-                    <EventCard
-                      key={key}
-                      event_item={item}
-                      users={users}
-                      refresh={() => setReload(!reload)}
-                      reloading={() => setPageLoaded(false)}
-                    />
-                  );
-                })}
-              </div>
-            )}
           </div>
-        </>
-      )}
+        </Affix>
+
+        {!pageLoaded ? (
+          <div
+            className={css`
+              display: flex;
+              flex: 1;
+              justify-content: center;
+              align-items: center;
+              height: 80vh;
+            `}
+          >
+            <Spin size="large" spinning />
+          </div>
+        ) : (
+          <div className="gallery-mentor-container">
+            {getFilteredEvents().map((item, key) => {
+              return (
+                <EventCard
+                  key={key}
+                  event_item={item}
+                  hub_url={hubUrl}
+                  users={users}
+                  refresh={() => setReload(!reload)}
+                  reloading={() => setPageLoaded(false)}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
     </>
   );
 }

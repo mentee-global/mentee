@@ -46,7 +46,8 @@ function EventCard(props) {
     token: { colorPrimary, colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isAdmin, isPartner, isMentor, profileId, role, isMentee } = useAuth();
+  const { isAdmin, isPartner, isMentor, profileId, role, isMentee, isHub } =
+    useAuth();
   const [eventModalvisible, setEventModalvisible] = useState(false);
 
   function getImage(image) {
@@ -77,6 +78,7 @@ function EventCard(props) {
     isEditable = true;
   if (isMentor && event_item.user_id.$oid === profileId) isEditable = true;
   if (isMentee && event_item.user_id.$oid === profileId) isEditable = true;
+  if (isHub && event_item.user_id.$oid === profileId) isEditable = true;
 
   return (
     <div
@@ -185,7 +187,7 @@ function EventCard(props) {
         `}
       >
         <div className="gallery-button">
-          <NavLink to={`/event/${event_item._id.$oid}`}>
+          <NavLink to={props.hub_url + `/event/${event_item._id.$oid}`}>
             <Button style={{ marginRight: "10px" }} type="primary">
               {t("events.view")}
             </Button>

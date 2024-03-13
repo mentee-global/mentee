@@ -11,6 +11,7 @@ import {
   UsergroupAddOutlined,
   VideoCameraOutlined,
   InfoCircleOutlined,
+  LaptopOutlined,
 } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getLoginPath } from "utils/auth.service";
@@ -190,18 +191,18 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
-      label: "Explore",
+      label: t("sidebars.explore"),
       key: "galleries",
       icon: <SearchOutlined />,
       children: [
         {
-          label: "Find a Partner",
+          label: t("navHeader.findPartner"),
           key: url_prefix_hub + "/partner-gallery",
         },
       ],
     },
     {
-      label: "Events",
+      label: t("sidebars.events"),
       key: url_prefix_hub + "/events",
       icon: <InfoCircleOutlined />,
     },
@@ -217,9 +218,9 @@ export default function useSidebars(userType, user, t) {
     //   ],
     // },
     {
-      label: t("sidebars.community"),
+      label: t("sidebars.inforamtion"),
       key: url_prefix_hub + "/partner/training",
-      icon: <VideoCameraOutlined />,
+      icon: <LaptopOutlined />,
     },
     {
       label: t("sidebars.profile"),

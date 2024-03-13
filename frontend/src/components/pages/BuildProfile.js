@@ -71,7 +71,8 @@ function BuildProfile({ location, history, hub_user }) {
     const accountId = res?.data?.result?.mentorId;
 
     if (accountId) {
-      const verificationRes = await sendVerificationEmail(email);
+      var email_new_registered = email ? email : res?.data?.result?.email;
+      const verificationRes = await sendVerificationEmail(email_new_registered);
       if (!verificationRes) {
         messageApi.error(t("verifyEmail.error"));
       }
@@ -100,9 +101,15 @@ function BuildProfile({ location, history, hub_user }) {
         path = "/readonly";
       }
       if (hub_user) {
-        history.push({ pathname: "/" + hub_user.url, state: { email, role } });
+        history.push({
+          pathname: "/" + hub_user.url,
+          state: { email: email_new_registered, role },
+        });
       } else {
-        history.push({ pathname: path + "/login", state: { email, role } });
+        history.push({
+          pathname: path + "/login",
+          state: { email: email_new_registered, role },
+        });
       }
     } else {
       messageApi.error(t("commonProfile.error.save"));

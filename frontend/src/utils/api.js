@@ -72,9 +72,13 @@ export const fetchEventById = (id) => {
   );
 };
 
-export const fetchEvents = async (type) => {
+export const fetchEvents = async (type, hub_user_id = null) => {
   const requestExtension = `/events/${type}`;
-  return authGet(requestExtension).then(
+  return authGet(requestExtension, {
+    params: {
+      hub_user_id: hub_user_id,
+    },
+  }).then(
     (response) => response.data.result.events,
     (err) => {
       console.error(err);
@@ -347,6 +351,7 @@ export const adminHubUserData = (values, __image, id) => {
   formData.append("name", values.name);
   formData.append("url", values.url);
   formData.append("password", values.password);
+  formData.append("invite_key", values.invite_key ? values.invite_key : "");
   formData.append("image", __image);
 
   return authPut(requestExtension, formData).then(

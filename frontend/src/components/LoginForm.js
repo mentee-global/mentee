@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Form, Input, Button, message, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { css } from "@emotion/css";
@@ -12,6 +12,11 @@ import fireauth from "utils/fireauth";
 import { fetchUser } from "features/userSlice";
 
 function LoginForm({ role, defaultEmail, location }) {
+  if (!defaultEmail) {
+    if (location && location.state && location.state.email) {
+      defaultEmail = location.state.email;
+    }
+  }
   const history = useHistory();
   const { t } = useTranslation();
   const dispatch = useDispatch();

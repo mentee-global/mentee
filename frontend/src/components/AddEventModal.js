@@ -33,7 +33,8 @@ function AddEventModal({
 }) {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { t } = useTranslation();
-  const { isAdmin, isMentor, isPartner, isMentee, profileId } = useAuth();
+  const { isAdmin, isMentor, isPartner, isMentee, profileId, isHub } =
+    useAuth();
   const [form] = Form.useForm();
 
   const [image, setImage] = useState(
@@ -66,6 +67,10 @@ function AddEventModal({
       if (event_item.image_file) {
         setImage(event_item.image_file);
       }
+    } else {
+      if (role == ACCOUNT_TYPE.HUB) {
+        form.setFieldValue("user_role", [ACCOUNT_TYPE.HUB]);
+      }
     }
   }, []);
 
@@ -89,6 +94,15 @@ function AddEventModal({
       `${end_datetime} ${values.end_time.format("HH:mm:ss")}`
     );
 
+    var hub_user_id = null;
+    if (role == ACCOUNT_TYPE.HUB && user) {
+      if (user.hub_id) {
+        hub_user_id = user.hub_id;
+      } else {
+        hub_user_id = user._id.$oid;
+      }
+    }
+
     const newEvent = {
       event_id: event_item ? event_item._id.$oid : 0,
       user_id: profileId ? profileId : user && user._id.$oid,
@@ -100,6 +114,7 @@ function AddEventModal({
       end_datetime_str: end_datetime_str,
       description: values.description,
       url: values.url,
+      hub_id: hub_user_id,
     };
 
     reloading();
@@ -246,6 +261,25 @@ function AddEventModal({
               { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
               { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
             ]}
+            maxTagCount="responsive"
+          />
+        </Form.Item>
+      )}
+      {isHub && (
+        <Form.Item
+          style={{ display: "none" }}
+          name="user_role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            allowClear
+            mode="multiple"
+            options={[{ value: ACCOUNT_TYPE.HUB, label: "Hub" }]}
             maxTagCount="responsive"
           />
         </Form.Item>

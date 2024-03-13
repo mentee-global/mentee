@@ -18,6 +18,7 @@ class Event(Document, Mixin):
     descriptionTranslated = DictField(required=False)
     image_file = EmbeddedDocumentField(Image, required=False)
     date_submitted = DateTimeField(required=True)
+    hub_id = StringField(required=False)
 
     def __repr__(self):
         return f"""<Event  : {self.title}

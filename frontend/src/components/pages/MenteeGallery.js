@@ -62,7 +62,7 @@ function Gallery(props) {
             setMentees(temp);
           }
         } else {
-          var restricted_partners = await fetchPartners(true);
+          var restricted_partners = await fetchPartners(true, null);
           if (
             !isAdmin &&
             restricted_partners &&
@@ -99,12 +99,12 @@ function Gallery(props) {
     async function getAllPartners() {
       var all_data = [];
       if (isAdmin) {
-        all_data = await fetchPartners();
+        all_data = await fetchPartners(undefined, null);
       } else {
         if (user && user.pair_partner && user.pair_partner.restricted) {
           all_data = [user.pair_partner];
         } else {
-          all_data = await fetchPartners(false);
+          all_data = await fetchPartners(false, null);
         }
       }
       var temp = [];

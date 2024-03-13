@@ -39,7 +39,8 @@ function NavigationHeader() {
       resetRoleState();
       dispatch(resetUser());
       if (login_path && login_path != "") {
-        window.location.href = login_path;
+        // window.location.href = login_path;
+        history.push(login_path);
       } else {
         history.push("/");
       }

@@ -58,7 +58,6 @@ function App() {
   const path = window.location.href;
   const [role, setRole] = useState(getRole());
   const [allHubData, setAllHubData] = useState({});
-  const [curPath, setCurPath] = useState("");
 
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
@@ -87,8 +86,6 @@ function App() {
 
   useEffect(() => {
     setStartPathTime(new Date().getTime());
-    var paths = path.split("/");
-    setCurPath("/" + paths[paths.length - 1]);
   }, [path]);
 
   useEffect(() => {
@@ -142,11 +139,6 @@ function App() {
                 <PublicRoute path="/support">
                   <SupportLogin role={ACCOUNT_TYPE.SUPPORT} />
                 </PublicRoute>
-                {allHubData && allHubData[curPath] && (
-                  <PublicRoute path={curPath}>
-                    <SupportLogin role={ACCOUNT_TYPE.HUB} />
-                  </PublicRoute>
-                )}
                 <PublicRoute path="/apply">
                   <Apply />
                 </PublicRoute>
@@ -160,15 +152,20 @@ function App() {
                   <BuildProfile />
                 </PublicRoute>
                 {Object.keys(allHubData).map((hub_url) => {
-                  if (allHubData[hub_url].invite_key) {
-                    return (
-                      <PublicRoute
-                        path={hub_url + "/" + allHubData[hub_url].invite_key}
-                      >
-                        <BuildProfile hub_user={allHubData[hub_url]} />
+                  return (
+                    <>
+                      <PublicRoute exact path={hub_url}>
+                        <SupportLogin role={ACCOUNT_TYPE.HUB} />
                       </PublicRoute>
-                    );
-                  }
+                      {allHubData[hub_url].invite_key && (
+                        <PublicRoute
+                          path={hub_url + "/" + allHubData[hub_url].invite_key}
+                        >
+                          <BuildProfile hub_user={allHubData[hub_url]} />
+                        </PublicRoute>
+                      )}
+                    </>
+                  );
                 })}
                 <PublicRoute path="/forgot-password">
                   <ForgotPassword />
@@ -347,6 +344,9 @@ function App() {
                     </PrivateRoute>
                     <PrivateRoute path={hub_url + "/invite-link"}>
                       <HubInviteLink />
+                    </PrivateRoute>
+                    <PrivateRoute path={hub_url + "/event/:id"}>
+                      <EventDetail />
                     </PrivateRoute>
                   </>
                 );

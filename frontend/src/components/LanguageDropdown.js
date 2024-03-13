@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAndFetchUser } from "features/userSlice";
-import { Dropdown, Button, Space } from "antd";
+import { Dropdown } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import moment from "moment";

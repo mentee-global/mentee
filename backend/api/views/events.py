@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from api.core import create_response, logger
 from api.models import (
     Event,
+    Hub,
     Image,
     MentorProfile,
     MenteeProfile,
@@ -29,8 +30,13 @@ event = Blueprint("event", __name__)  # initialize blueprint
 @event.route("events/<role>", methods=["GET"])
 def get_events(role):
     lang = request.args.get("lang", "en-US")
+    hub_user_id = request.args.get("hub_user_id", None)
     if int(role) == Account.ADMIN:
         events = Event.objects().order_by("-start_datetime")
+    elif int(role) == Account.HUB:
+        events = Event.objects.filter(
+            role__in=[role], hub_id=str(hub_user_id)
+        ).order_by("-start_datetime")
     else:
         events = Event.objects(role__in=[role]).order_by("-start_datetime")
     result = []
@@ -108,6 +114,7 @@ def new_event():
         start_datetime_str = ""
         end_datetime_str = ""
         url = None
+        hub_id = None
         if "start_datetime" in data:
             start_datetime = data["start_datetime"]
             start_datetime_str = data["start_datetime_str"]
@@ -116,6 +123,8 @@ def new_event():
             end_datetime_str = data["end_datetime_str"]
         if "url" in data:
             url = data["url"]
+        if "hub_id" in data:
+            hub_id = data["hub_id"]
 
         if event_id == 0:
             event = Event(
@@ -128,6 +137,7 @@ def new_event():
                 start_datetime=start_datetime,
                 end_datetime=end_datetime,
                 url=url,
+                hub_id=hub_id,
                 date_submitted=datetime.now(),
             )
             event.save()
@@ -148,7 +158,21 @@ def new_event():
                 recipients = PartnerProfile.objects.only("email", "preferred_language")
                 role_name = "Partner"
                 send_mail_for_event(recipients, role_name, title, eventdate)
+            if hub_id is not None:
+                role_name = "Hub"
+                partners = PartnerProfile.objects.filter(hub_id=hub_id).only(
+                    "email", "preferred_language"
+                )
+                hub_users = Hub.objects(id=hub_id).only("email", "preferred_language")
+                recipients = []
+                for hub_user in hub_users:
+                    recipients.append(hub_user)
+                for partner_user in partners:
+                    recipients.append(partner_user)
+                send_mail_for_event(recipients, role_name, title, eventdate)
         else:
+            print("www")
+            print(hub_id)
             event = Event.objects.get(id=event_id)
             event.user_id = user_id
             event.title = title
@@ -159,6 +183,7 @@ def new_event():
             event.start_datetime = start_datetime
             event.end_datetime = end_datetime
             event.url = url
+            event.hub_id = hub_id
             event.date_submitted = datetime.now()
             event.save()
 
@@ -170,9 +195,7 @@ def new_event():
 
 @event.route("event_register/<string:id>/image", methods=["PUT"])
 def uploadImage(id):
-    print(id)
     event = Event.objects.get(id=id)
-    print(event)
     if event:
         try:
             if event.image_file is True and event.image_file.image_hash is True:
@@ -184,7 +207,6 @@ def uploadImage(id):
                 url=image_response["data"]["link"],
                 image_hash=image_response["data"]["deletehash"],
             )
-            print(new_image)
             event.image_file = new_image
             event.save()
             return create_response(status=200, message=f"Image upload success")

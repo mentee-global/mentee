@@ -14,7 +14,7 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
   const [countryOptions, setCountryOptions] = useState([]);
   useEffect(() => {
     async function getPartners() {
-      const partenr_data = await fetchPartners();
+      const partenr_data = await fetchPartners(undefined, null);
       partenr_data.map((item) => {
         partnerOptions.push({
           value: item._id.$oid,

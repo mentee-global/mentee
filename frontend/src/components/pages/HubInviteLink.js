@@ -4,7 +4,6 @@ import { fetchUser } from "features/userSlice";
 import { Input, theme, Affix, Button, FloatButton, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import "../css/Gallery.scss";
-import { useAuth } from "../../utils/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
 import { ACCOUNT_TYPE } from "utils/consts";

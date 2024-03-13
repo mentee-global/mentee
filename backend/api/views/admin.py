@@ -1,3 +1,4 @@
+from api.views.messages import invite
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
@@ -8,6 +9,7 @@ from api.utils.constants import Account
 import csv
 import io
 from api.views.auth import create_firebase_user
+from numpy import imag
 
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
@@ -106,7 +108,11 @@ def create_hub_account():
     password = request.form["password"]
     name = request.form["name"]
     url = request.form["url"]
-    image = request.files["image"]
+    invite_key = request.form["invite_key"]
+    image = None
+    if "image" in request.files:
+        image = request.files["image"]
+
     role = Account.HUB
 
     if id is not None and id != "":
@@ -114,6 +120,7 @@ def create_hub_account():
         if hub_account is not None:
             hub_account.name = name
             hub_account.url = url
+            hub_account.invite_key = invite_key
             if hub_account.image is True and hub_account.image.image_hash is True:
                 image_response = imgur_client.delete_image(hub_account.image.image_hash)
             if image is not None:
@@ -139,7 +146,13 @@ def create_hub_account():
                         status=422, message="Can't create firebase user"
                     )
             firebase_uid = firebase_user.uid
-            hub = Hub(name=name, email=email, firebase_uid=firebase_uid, url=url)
+            hub = Hub(
+                name=name,
+                email=email,
+                firebase_uid=firebase_uid,
+                url=url,
+                invite_key=invite_key,
+            )
 
             if image is not None:
                 image_response = imgur_client.send_image(image)

@@ -11,6 +11,8 @@ from api.utils.request_utils import PartnerForm
 
 from api.models import (
     Admin,
+    MenteeApplication,
+    MentorApplication,
     MentorProfile,
     MenteeProfile,
     Support,
@@ -374,6 +376,16 @@ def create_mentor_profile():
         verified=False,
     )
     user.save()
+    if account_type == Account.MENTEE:
+        app_data = MenteeApplication.objects.get(email=email)
+        if app_data is not None:
+            app_data.application_state = "COMPLETED"
+            app_data.save()
+    if account_type == Account.MENTOR:
+        app_data = MentorApplication.objects.get(email=email)
+        if app_data is not None:
+            app_data.application_state = "COMPLETED"
+            app_data.save()
 
     if account_type != Account.PARTNER:
         try:
@@ -432,6 +444,7 @@ def create_mentor_profile():
         message=f"Successfully created {account_type} Profile account {new_account.email}",
         data={
             "mentorId": str(new_account.id),
+            "email": new_account.email,
             "token": firebase_admin_auth.create_custom_token(
                 firebase_uid, {"role": account_type}
             ).decode("utf-8"),
@@ -551,6 +564,7 @@ def create_profile_existing_account():
         message=f"Successfully created {account_type} Profile for existing account {new_account.email}",
         data={
             "mentorId": str(new_account.id),
+            "email": new_account.email,
             "token": firebase_admin_auth.create_custom_token(
                 new_account.firebase_uid, {"role": account_type}
             ).decode("utf-8"),
@@ -563,7 +577,8 @@ def create_profile_existing_account():
 # @all_users
 def edit_mentor(id):
     data = request.get_json()
-
+    print("edit-----------")
+    print(data)
     try:
         account_type = int(request.args["account_type"])
     except:
@@ -593,7 +608,10 @@ def edit_mentor(id):
         elif account_type == Account.PARTNER:
             account = PartnerProfile.objects.get(id=id)
         elif account_type == Account.HUB:
-            account = Hub.objects.get(id=id)
+            try:
+                account = Hub.objects.get(id=id)
+            except:
+                account = PartnerProfile.objects.get(id=id)
         else:
             msg = "Level param doesn't match existing account types"
             return create_response(status=422, message=msg)
@@ -606,6 +624,8 @@ def edit_mentor(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    print("account-----------")
+    print(account)
     if not edit_profile(data, account):
         msg = "Couldn't update profile"
         return create_response(status=500, message=msg)

@@ -46,6 +46,7 @@ export const Hubs = () => {
         form.setFieldValue("name", record.name);
         form.setFieldValue("email", record.email);
         form.setFieldValue("url", record.url);
+        form.setFieldValue("invite_key", record.invite_key);
         if (record.image) {
           setImage(record.image);
         }
@@ -123,6 +124,19 @@ export const Hubs = () => {
       ACCOUNT_TYPE.HUB
     );
     setAlreadyInFirebase(inFirebase);
+  };
+
+  const generateLink = async () => {
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let key = "";
+
+    for (let i = 0; i < 20; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      key += charset[randomIndex];
+    }
+    form.setFieldValue("invite_key", key);
+    setValuesChanged(true);
   };
 
   const HubForm = () => (
@@ -211,6 +225,21 @@ export const Hubs = () => {
       >
         <Input addonBefore="URL" />
       </Form.Item>
+      <Button
+        className={css`
+          margin-top: 0px;
+          margin-bottom: 5px;
+        `}
+        type="primary"
+        onClick={() => {
+          generateLink();
+        }}
+      >
+        {"Generate Key"}
+      </Button>
+      <Form.Item name="invite_key">
+        <Input addonBefore="Invite Key" readOnly />
+      </Form.Item>
       <ImgCrop
         rotate
         fillColor={"transparent"}
@@ -269,10 +298,19 @@ export const Hubs = () => {
       render: (email) => <span>{email}</span>,
     },
     {
-      title: "URL",
+      title: "Hub URL",
       dataIndex: "url",
       key: "url",
       render: (url) => <span>{url}</span>,
+    },
+    {
+      title: "Invite URL",
+      key: "invite_url",
+      render: (record) => {
+        if (record.invite_key) {
+          return <span>{"/" + record.url + "/" + record.invite_key}</span>;
+        }
+      },
     },
     {
       title: "Logo",

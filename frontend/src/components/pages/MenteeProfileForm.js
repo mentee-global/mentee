@@ -162,7 +162,7 @@ function MenteeProfileForm({
 
   useEffect(() => {
     async function getPartners() {
-      const partenr_data = await fetchPartners();
+      const partenr_data = await fetchPartners(undefined, null);
       if (!(partnerOptions.length > 0)) {
         partenr_data.map((item) => {
           partnerOptions.push({

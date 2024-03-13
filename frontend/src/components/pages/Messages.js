@@ -61,7 +61,7 @@ function Messages(props) {
   useEffect(() => {
     async function getData() {
       const data = await getLatestMessages(profileId);
-      const restricted_partners = await fetchPartners(true);
+      const restricted_partners = await fetchPartners(true, null);
       setLatestConvos(data);
       setRestrictedPartners(restricted_partners);
       if (data?.length) {

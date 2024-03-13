@@ -8,10 +8,11 @@ import {
   fetchMentors,
   fetchMentees,
   fetchPartners,
-  fetchAccounts,
+  fetchAccountById,
 } from "utils/api";
 import { useTranslation } from "react-i18next";
-import { formatDateTime } from "utils/consts";
+import { ACCOUNT_TYPE, formatDateTime } from "utils/consts";
+import { useSelector } from "react-redux";
 
 const { Title, Paragraph } = Typography;
 
@@ -19,16 +20,24 @@ function EventDetail({ match }) {
   const id = match.params.id;
   const [event, setEvent] = useState({});
   const [createUser, setCreateUser] = useState({});
-  const { isAdmin, role } = useAuth();
+  const { isHub } = useAuth();
   const { t } = useTranslation();
+  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    async function getEvent() {
+    async function getEvent(hub_user_id = null) {
       var all_users = [];
-      const mentor_data = await fetchMentors();
-      const mentee_data = await fetchMentees();
-      const partenr_data = await fetchPartners();
-      all_users = [...mentee_data, ...mentor_data, ...partenr_data];
+      if (isHub) {
+        const partenr_data = await fetchPartners(undefined, hub_user_id);
+        const hub_user = await fetchAccountById(hub_user_id, ACCOUNT_TYPE.HUB);
+        all_users = [...partenr_data, hub_user];
+      } else {
+        const mentor_data = await fetchMentors();
+        const mentee_data = await fetchMentees();
+        const partenr_data = await fetchPartners(undefined, null);
+        all_users = [...mentee_data, ...mentor_data, ...partenr_data];
+      }
+
       const EventData = await fetchEventById(id);
       if (EventData) {
         setEvent(EventData);
@@ -41,7 +50,15 @@ function EventDetail({ match }) {
         setCreateUser(create_user);
       }, 500);
     }
-    getEvent();
+    var hub_user_id = null;
+    if (isHub && user) {
+      if (user.hub_id) {
+        hub_user_id = user.hub_id;
+      } else {
+        hub_user_id = user._id.$oid;
+      }
+    }
+    getEvent(hub_user_id);
   }, [id]);
 
   return (

@@ -577,7 +577,9 @@
     "invite_link":"لینک دعوت",
     "generate_invite_link":"ایجاد پیوند دعوت",
     "community":"انجمن",
-    "community_info":"اطلاعات جامعه"
+    "community_info":"اطلاعات جامعه",
+    "inforamtion":"اطلاعات",
+    "info_board":"تابلوی اطلاعات"
   },
   "verifyEmail": {
     "body": "لطفا ایمیل خود را برای تایید ایمیل خود بررسی کنید",

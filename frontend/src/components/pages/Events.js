@@ -175,114 +175,111 @@ function Events() {
   // Add some kind of error 403 code
   return (
     <>
-      <Affix offsetTop={10}>
-        <div style={{ display: "flex" }}>
-          <Button
-            onClick={() => setMobileFilterVisible(true)}
-            className={css`
-              display: none;
-              @media only screen and (max-width: 640px) {
-                margin-top: 2%;
-                margin-left: 2%;
-                display: grid;
-              }
-            `}
-            type="primary"
-          >
-            {t("gallery.filter")}
-          </Button>
-          <Button
-            className={css`
-              display: none;
-              margin-top: 2%;
-              margin-left: 2%;
-              @media only screen and (max-width: 640px) {
-                display: grid;
-              }
-            `}
-            type="primary"
-            onClick={() => {
-              setEventModalvisible(true);
-            }}
-          >
-            {t("events.addEvent")}
-          </Button>
-          <AddEventModal
-            role={role}
-            open={eventModalvisible}
-            setOpen={setEventModalvisible}
-            refresh={() => setReload(!reload)}
-            reloading={() => setPageLoaded(false)}
-          />
-        </div>
-      </Affix>
-      <Modal
-        onCancel={() => {
-          setMobileFilterVisible(false);
-        }}
-        open={mobileFilterVisible}
-        footer={[
-          <Button onClick={() => setMobileFilterVisible(false)} type="primary">
-            {t("common.apply")}
-          </Button>,
-          <Button
-            onClick={() => {
+      {isHub ? (
+        <></>
+      ) : (
+        <>
+          <Affix offsetTop={10}>
+            <div style={{ display: "flex" }}>
+              <Button
+                onClick={() => setMobileFilterVisible(true)}
+                className={css`
+                  display: none;
+                  @media only screen and (max-width: 640px) {
+                    margin-top: 2%;
+                    margin-left: 2%;
+                    display: grid;
+                  }
+                `}
+                type="primary"
+              >
+                {t("gallery.filter")}
+              </Button>
+              <Button
+                className={css`
+                  display: none;
+                  margin-top: 2%;
+                  margin-left: 2%;
+                  @media only screen and (max-width: 640px) {
+                    display: grid;
+                  }
+                `}
+                type="primary"
+                onClick={() => {
+                  setEventModalvisible(true);
+                }}
+              >
+                {t("events.addEvent")}
+              </Button>
+              <AddEventModal
+                role={role}
+                open={eventModalvisible}
+                setOpen={setEventModalvisible}
+                refresh={() => setReload(!reload)}
+                reloading={() => setPageLoaded(false)}
+              />
+            </div>
+          </Affix>
+          <Modal
+            onCancel={() => {
               setMobileFilterVisible(false);
-              setQuery("");
             }}
-          >
-            {t("common.cancel")}
-          </Button>,
-        ]}
-        bodyStyle={{
-          padding: "1rem",
-        }}
-      >
-        {getFilterForm()}
-      </Modal>
-      <div className="gallery-container">
-        <FloatButton.BackTop />
-        <Affix offsetTop={10}>
-          <Button
-            className={css`
-              margin-top: 10px;
-              margin-bottom: 10px;
-              @media only screen and (max-width: 640px) {
-                display: none;
-              }
-            `}
-            type="primary"
-            onClick={() => {
-              setEventModalvisible(true);
+            open={mobileFilterVisible}
+            footer={[
+              <Button
+                onClick={() => setMobileFilterVisible(false)}
+                type="primary"
+              >
+                {t("common.apply")}
+              </Button>,
+              <Button
+                onClick={() => {
+                  setMobileFilterVisible(false);
+                  setQuery("");
+                }}
+              >
+                {t("common.cancel")}
+              </Button>,
+            ]}
+            bodyStyle={{
+              padding: "1rem",
             }}
-          >
-            {t("events.addEvent")}
-          </Button>
-          <AddEventModal
-            role={role}
-            open={eventModalvisible}
-            setOpen={setEventModalvisible}
-            refresh={() => setReload(!reload)}
-            reloading={() => setPageLoaded(false)}
-          />
-          <div
-            className={css`
-              margin-right: 1em;
-              width: 15rem;
-              padding: 1em;
-              border-radius: 8px;
-              height: fit-content;
-              border: 2px solid ${colorPrimaryBg};
-
-              @media only screen and (max-width: 640px) {
-                display: none;
-              }
-            `}
           >
             {getFilterForm()}
-          </div>
-        </Affix>
-
+          </Modal>
+          <div className="gallery-container">
+            <FloatButton.BackTop />
+            <Affix offsetTop={10}>
+              <Button
+                className={css`
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                  @media only screen and (max-width: 640px) {
+                    display: none;
+                  }
+                `}
+                type="primary"
+                onClick={() => {
+                  setEventModalvisible(true);
+                }}
+              >
+                {t("events.addEvent")}
+              </Button>
+              <AddEventModal
+                role={role}
+                open={eventModalvisible}
+                setOpen={setEventModalvisible}
+                refresh={() => setReload(!reload)}
+                reloading={() => setPageLoaded(false)}
+              />
+              <div
+                className={css`
+                  margin-right: 1em;
+                  width: 15rem;
+                  padding: 1em;
+                  border-radius: 8px;
+                  height: fit-content;
+                  border: 2px solid ${colorPrimaryBg};
         {!pageLoaded ? (
           <div
             className={css`
@@ -310,8 +307,8 @@ function Events() {
               );
             })}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </>
   );
 }

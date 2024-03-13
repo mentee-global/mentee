@@ -191,7 +191,7 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
-      label: t("sidebars.explore"),
+      label: "Explore",
       key: "galleries",
       icon: <SearchOutlined />,
       children: [

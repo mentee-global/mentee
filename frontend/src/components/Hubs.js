@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   deleteAccountById,
   fetchAccountById,
@@ -16,6 +16,7 @@ import {
   EyeTwoTone,
   UploadOutlined,
   UserOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 
 import "./css/Training.scss";
@@ -37,6 +38,9 @@ export const Hubs = () => {
   const [alreadyInFirebase, setAlreadyInFirebase] = useState(false);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
+  const [inviteURL, setInviteURL] = useState("");
+  const inviteURLRef = useRef(null);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const showModal = async (_id, isNew) => {
     if (isNew === false) {
@@ -50,6 +54,11 @@ export const Hubs = () => {
         if (record.image) {
           setImage(record.image);
         }
+        if (record.url && record.invite_key) {
+          setInviteURL(
+            window.location.host + "/" + record.url + "/" + record.invite_key
+          );
+        }
       }
       setSelectedID(_id.$oid);
     } else {
@@ -57,6 +66,7 @@ export const Hubs = () => {
       setSelectedID("");
       form.resetFields();
       setImage(null);
+      setInviteURL("");
     }
   };
 
@@ -66,6 +76,7 @@ export const Hubs = () => {
     setSelectedID("");
     form.resetFields();
     setImage(null);
+    setInviteURL("");
   };
 
   const handleValuesChange = () => {
@@ -136,7 +147,19 @@ export const Hubs = () => {
       key += charset[randomIndex];
     }
     form.setFieldValue("invite_key", key);
+    var hub_url = form.getFieldValue("url");
+    if (hub_url) {
+      setInviteURL(window.location.host + "/" + hub_url + "/" + key);
+    }
     setValuesChanged(true);
+  };
+
+  const copyInviteLink = () => {
+    if (inviteURL) {
+      inviteURLRef.current.select();
+      document.execCommand("copy");
+      messageApi.success("Copied");
+    }
   };
 
   const HubForm = () => (
@@ -224,6 +247,11 @@ export const Hubs = () => {
         ]}
       >
         <Input addonBefore="URL" />
+        <br />
+        <p>
+          ※Please only enter the name of the hub to be used in the URL and not
+          the full url
+        </p>
       </Form.Item>
       <Button
         className={css`
@@ -237,9 +265,24 @@ export const Hubs = () => {
       >
         {"Generate Key"}
       </Button>
-      <Form.Item name="invite_key">
+      <Form.Item name="invite_key" style={{ display: "none" }}>
         <Input addonBefore="Invite Key" readOnly />
       </Form.Item>
+      <div style={{ display: "flex", marginBottom: "20px" }}>
+        <Input
+          style={{}}
+          ref={inviteURLRef}
+          addonBefore="Invite URL"
+          readOnly
+          value={inviteURL}
+        />
+        <div
+          style={{ cursor: "pointer", paddingTop: "6px", marginLeft: "10px" }}
+          onClick={() => copyInviteLink()}
+        >
+          <CopyOutlined />
+        </div>
+      </div>
       <ImgCrop
         rotate
         fillColor={"transparent"}
@@ -402,6 +445,7 @@ export const Hubs = () => {
   }, [reload]);
   return (
     <div className="trains">
+      {contextHolder}
       <div className="rolesContainer">
         <div
           className={css`

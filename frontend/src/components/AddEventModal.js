@@ -316,6 +316,25 @@ function AddEventModal({
           />
         </Form.Item>
       )}
+      {isHub && (
+        <Form.Item
+          style={{ display: "none" }}
+          name="user_role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            allowClear
+            mode="multiple"
+            options={[{ value: ACCOUNT_TYPE.HUB, label: "Hub" }]}
+            maxTagCount="responsive"
+          />
+        </Form.Item>
+      )}
       <Form.Item
         name="title"
         label={t("common.title")}

@@ -435,6 +435,7 @@
     "deleteEvent": "حذف رویداد",
     "succuessDelete" : "شما با موفقیت یک رویداد را حذف کردید",
     "searchByRole": "جستجو بر اساس نقش کاربر",
+    "searchByHub": "جستجو بر اساس کاربر Hub",
     "errorTimeSetting": "تاریخ پایان باید بعد از تاریخ شروع باشد",
     "errorURL": "URL نادرست است",
     "viewEvent": "مشاهده رویداد",

@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 function AddEventModal({
   role,
   open,
+  hubOptions,
   setOpen,
   event_item,
   refresh,
@@ -42,6 +43,7 @@ function AddEventModal({
   );
   const [changedImage, setChangedImage] = useState(false);
   const user = useSelector((state) => state.user.user);
+  const [userRole, setUserRole] = useState([]);
 
   // TODO: clean up this useEffect and its useState
   useEffect(() => {
@@ -49,7 +51,20 @@ function AddEventModal({
       form.setFieldValue("title", event_item.title);
       form.setFieldValue("url", event_item.url);
       form.setFieldValue("description", event_item.description);
-      form.setFieldValue("user_role", event_item.role);
+      if (
+        typeof event_item.role == "string" ||
+        typeof event_item.role == "number"
+      ) {
+        form.setFieldValue("user_role", [parseInt(event_item.role)]);
+        setUserRole([parseInt(event_item.role)]);
+      } else {
+        form.setFieldValue("user_role", event_item.role);
+        setUserRole(event_item.role);
+      }
+      if (event_item.hub_id) {
+        form.setFieldValue("hub_id", event_item.hub_id);
+      }
+
       if (event_item.start_datetime) {
         form.setFieldValue(
           "start_date",
@@ -72,7 +87,7 @@ function AddEventModal({
         form.setFieldValue("user_role", [ACCOUNT_TYPE.HUB]);
       }
     }
-  }, []);
+  }, [open]);
 
   async function handleSave(values) {
     // TODO: Optimize and swap these to dayjs
@@ -114,7 +129,7 @@ function AddEventModal({
       end_datetime_str: end_datetime_str,
       description: values.description,
       url: values.url,
-      hub_id: hub_user_id,
+      hub_id: values.hub_id ? values.hub_id : hub_user_id,
     };
 
     reloading();
@@ -180,26 +195,43 @@ function AddEventModal({
   const EventForm = (event_item) => (
     <Form form={form} layout="vertical">
       {isAdmin && (
-        <Form.Item
-          name="user_role"
-          label={t("common.role")}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            allowClear
-            mode="multiple"
-            options={[
-              { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
-              { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
-              { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
+        <>
+          <Form.Item
+            name="user_role"
+            label={t("common.role")}
+            rules={[
+              {
+                required: true,
+              },
             ]}
-            maxTagCount="responsive"
-          />
-        </Form.Item>
+          >
+            <Select
+              allowClear
+              mode="multiple"
+              options={[
+                { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
+                { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
+                { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
+                { value: ACCOUNT_TYPE.HUB, label: "Hub" },
+              ]}
+              maxTagCount="responsive"
+              onChange={(val) => setUserRole(val)}
+            />
+          </Form.Item>
+          {userRole.includes(ACCOUNT_TYPE.HUB) && (
+            <Form.Item
+              name="hub_id"
+              label={"Hub User"}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Select options={hubOptions} maxTagCount="responsive" />
+            </Form.Item>
+          )}
+        </>
       )}
       {isPartner && (
         <Form.Item
@@ -261,6 +293,25 @@ function AddEventModal({
               { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
               { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
             ]}
+            maxTagCount="responsive"
+          />
+        </Form.Item>
+      )}
+      {isHub && (
+        <Form.Item
+          style={{ display: "none" }}
+          name="user_role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            allowClear
+            mode="multiple"
+            options={[{ value: ACCOUNT_TYPE.HUB, label: "Hub" }]}
             maxTagCount="responsive"
           />
         </Form.Item>

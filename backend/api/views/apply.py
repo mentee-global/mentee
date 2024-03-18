@@ -245,6 +245,9 @@ def change_state_traing_status():
             application = MentorApplication.objects.get(id=id)
     if role == Account.MENTEE:
         application = MenteeApplication.objects.get(id=id)
+        if application.language is not None:
+            if isinstance(application.language, str):
+                application.language = [application.language]
     if role == Account.PARTNER:
         application = PartnerApplication.objects.get(id=id)
     application["traingStatus"] = traing_status

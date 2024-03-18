@@ -223,6 +223,7 @@ function EventCard(props) {
         <AddEventModal
           role={role}
           open={eventModalvisible}
+          hubOptions={props.hubOptions}
           setOpen={setEventModalvisible}
           event_item={event_item}
           refresh={() => props.refresh()}

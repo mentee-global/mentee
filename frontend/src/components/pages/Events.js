@@ -5,6 +5,7 @@ import {
   fetchPartners,
   fetchEvents,
   fetchAccountById,
+  fetchAccounts,
 } from "utils/api";
 import EventCard from "../EventCard";
 import {
@@ -41,6 +42,7 @@ function Events() {
   const [allEvents, setAllEvents] = useState([]);
   const [query, setQuery] = useState();
   const [searchRole, setSearchRole] = useState(0);
+  const [searchHub, setSearchHub] = useState("");
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const [users, setUsers] = useState([]);
@@ -48,6 +50,7 @@ function Events() {
   const [pastFlag, setPastFlag] = useState(false);
   const [reload, setReload] = useState(true);
   const [hubUrl, setHubUrl] = useState("");
+  const [hubOptions, setHubOptions] = useState([]);
   const { user } = useSelector((state) => state.user);
   const role = getRole();
   useEffect(() => {
@@ -83,6 +86,20 @@ function Events() {
       }
     }
     getAllUsersData(hub_user_id);
+
+    async function getAllHubUsers() {
+      const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
+      var temp = [{ value: "", label: " " }];
+      hub_data.map((hub_item) => {
+        temp.push({ label: hub_item.name, value: hub_item._id.$oid });
+        return true;
+      });
+      setHubOptions(temp);
+    }
+
+    if (isAdmin) {
+      getAllHubUsers();
+    }
   }, [reload]);
 
   const getFilteredEvents = () => {
@@ -105,9 +122,16 @@ function Events() {
         (item.start_datetime &&
           new Date(item.start_datetime.$date).getTime() < new Date().getTime());
 
-      const matchRole = !(searchRole > 0) || parseInt(item.role) === searchRole;
+      const matchRole =
+        !(searchRole > 0) ||
+        parseInt(item.role) === searchRole ||
+        item.role.includes(searchRole);
 
-      return matchesText && matchesUpcoming && matchesPast && matchRole;
+      const matchHub = searchHub == "" || item.hub_id == searchHub;
+
+      return (
+        matchesText && matchesUpcoming && matchesPast && matchRole && matchHub
+      );
     });
   };
 
@@ -128,23 +152,41 @@ function Events() {
         onChange={(e) => setQuery(e.target.value)}
       />
       {isAdmin && (
-        <Select
-          className={css`
-            width: 100%;
-            margin-top: 10px;
-          `}
-          allowClear
-          // mode="multiple"
-          placeholder={t("events.searchByRole")}
-          options={[
-            { value: 0, label: " " },
-            { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
-            { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
-            { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
-          ]}
-          onChange={(selected) => setSearchRole(selected)}
-          maxTagCount="responsive"
-        />
+        <>
+          <Select
+            className={css`
+              width: 100%;
+              margin-top: 10px;
+            `}
+            allowClear
+            // mode="multiple"
+            placeholder={t("events.searchByRole")}
+            options={[
+              { value: 0, label: " " },
+              { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
+              { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
+              { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
+              { value: ACCOUNT_TYPE.HUB, label: "Hub" },
+            ]}
+            onChange={(selected) => {
+              setSearchRole(selected);
+              setSearchHub("");
+            }}
+            maxTagCount="responsive"
+          />
+          {searchRole == ACCOUNT_TYPE.HUB && (
+            <Select
+              className={css`
+                width: 100%;
+                margin-top: 10px;
+              `}
+              placeholder={t("events.searchByHub")}
+              options={hubOptions}
+              onChange={(selected) => setSearchHub(selected)}
+              maxTagCount="responsive"
+            />
+          )}
+        </>
       )}
       <div style={{ marginTop: "15px" }}>
         <Checkbox
@@ -260,6 +302,7 @@ function Events() {
           <AddEventModal
             role={role}
             open={eventModalvisible}
+            hubOptions={hubOptions}
             setOpen={setEventModalvisible}
             refresh={() => setReload(!reload)}
             reloading={() => setPageLoaded(false)}
@@ -303,6 +346,7 @@ function Events() {
                   event_item={item}
                   hub_url={hubUrl}
                   users={users}
+                  hubOptions={hubOptions}
                   refresh={() => setReload(!reload)}
                   reloading={() => setPageLoaded(false)}
                 />

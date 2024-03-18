@@ -30,7 +30,6 @@ const TrainingList = (props) => {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [trainingData, setTrainingData] = useState();
-  const { isHub } = useAuth();
   const [traingStatus, setTrainingStatus] = useState(
     props.applicationData && props.applicationData.traingStatus
       ? props.applicationData.traingStatus

@@ -433,6 +433,7 @@
     "deleteEvent": "Delete Event",
     "succuessDelete" : "You have Successfully deleted an Event",
     "searchByRole": "Search By User Role",
+    "searchByHub": "Search By Hub User",
     "errorTimeSetting": "End Date should be after Start Date",
     "errorURL": "Incorrect URL",
     "viewEvent": "View Event",

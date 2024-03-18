@@ -432,6 +432,7 @@
     "deleteEvent": "Excluir evento",
     "succuessDelete" : "Você excluiu um evento com sucesso",
     "searchByRole": "Pesquisar por função de usuário",
+    "searchByHub": "Pesquisar por usuário do hub",
     "errorTimeSetting": "A data de término deve ser posterior à data de início",
     "errorURL": "URL incorreto",
     "viewEvent": "Ver Evento",

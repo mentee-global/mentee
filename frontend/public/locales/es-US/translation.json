@@ -432,6 +432,7 @@
     "deleteEvent": "Eliminar evento",
     "succuessDelete" : "Has eliminado con éxito un evento",
     "searchByRole": "Buscar por rol de usuario",
+    "searchByHub": "Buscar por usuario del concentrador",
     "errorTimeSetting": "La fecha de finalización debe ser posterior a la fecha de inicio",
     "errorURL": "URL incorrecta",
     "viewEvent": "Ver evento",

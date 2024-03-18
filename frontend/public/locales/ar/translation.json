@@ -432,6 +432,7 @@
     "deleteEvent": "حذف الحدث",
     "succuessDelete" : "لقد قمت بحذف حدث بنجاح",
     "searchByRole": "البحث حسب دور المستخدم",
+    "searchByHub": "البحث حسب مستخدم المحور",
     "errorTimeSetting": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء",
     "errorURL": "عنوان URL غير صحيح",
     "viewEvent": "عرض المناسبة",

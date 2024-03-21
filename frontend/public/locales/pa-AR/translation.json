@@ -262,7 +262,9 @@
     "upcoming": "راتلونکې",
     "uploadImage": "د عکس اضافه کول",
     "view": "لیدل",
-    "viewEvent": "د پښې لیدل"
+    "viewEvent": "د پښې لیدل",
+    "attatchment":"ضمیمه",
+    "period":"دوره"
   },
   "forgotPassword": {
     "emailResent": "د بریښنالیک بیا لیږل",

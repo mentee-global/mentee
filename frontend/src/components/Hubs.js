@@ -196,14 +196,13 @@ export const Hubs = () => {
           bordered={true}
           placeholder={"Email"}
           onBlur={(e) => checkEmailExsit(e)}
-          disabled={selectedID != "" ? true : false}
         />
       </Form.Item>
       <Form.Item
         name="password"
         rules={[
           {
-            required: alreadyInFirebase || selectedID != "" ? false : true,
+            required: alreadyInFirebase ? false : true,
             message: "Please input Password.",
           },
         ]}
@@ -214,14 +213,14 @@ export const Hubs = () => {
           }
           bordered={true}
           placeholder={"Password"}
-          disabled={alreadyInFirebase || selectedID != ""}
+          disabled={alreadyInFirebase}
         />
       </Form.Item>
       <Form.Item
         name="confirm"
         rules={[
           {
-            required: alreadyInFirebase || selectedID != "" ? false : true,
+            required: alreadyInFirebase ? false : true,
             message: "Please confirm password!",
           },
           { validator: validatePassword },
@@ -233,7 +232,7 @@ export const Hubs = () => {
           }
           bordered={true}
           placeholder={"Confirm Password"}
-          disabled={alreadyInFirebase || selectedID != ""}
+          disabled={alreadyInFirebase}
         />
       </Form.Item>
 

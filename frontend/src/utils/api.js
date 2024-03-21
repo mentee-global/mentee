@@ -362,6 +362,16 @@ export const adminHubUserData = (values, __image, id) => {
   );
 };
 
+export const editEmailPassword = (data) => {
+  const requestExtension = `/edit_email_password`;
+  return authPost(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createEvent = (event) => {
   const requestExtension = `/event_register`;
   return authPost(requestExtension, event).then(

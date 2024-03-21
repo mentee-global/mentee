@@ -440,7 +440,9 @@
     "edit":"Editar",
     "delete":"Excluir",
     "upcoming":"Por vir",
-    "past":"Passado"
+    "past":"Passado",
+    "attatchment":"Anexo",
+    "period":"Período"
   },
   "mentorAppointmentPage": {
     "addAppointment": "Adicionar compromisso",

@@ -5,7 +5,11 @@ from datetime import datetime
 import requests
 from io import BytesIO
 from uuid import uuid4
-from api.utils.google_storage import upload_image_to_storage, compress_image
+from api.utils.google_storage import (
+    delete_image_from_storage,
+    upload_image_to_storage,
+    compress_image,
+)
 from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
 
@@ -64,7 +68,6 @@ def get_accounts(account_type):
             "taking_appointments",
             "text_notifications",
             "email_notifications",
-            "email",
         )
         all_partners = PartnerProfile.objects()
         partners_by_assign_mentor = {}
@@ -93,7 +96,7 @@ def get_accounts(account_type):
             accounts.append(account)
     elif account_type == Account.MENTEE:
         mentees_data = MenteeProfile.objects(is_private=False).exclude(
-            "video", "phone_number", "email"
+            "video", "phone_number"
         )
         all_partners = PartnerProfile.objects()
         partners_by_assign_mentee = {}
@@ -577,8 +580,6 @@ def create_profile_existing_account():
 # @all_users
 def edit_mentor(id):
     data = request.get_json()
-    print("edit-----------")
-    print(data)
     try:
         account_type = int(request.args["account_type"])
     except:
@@ -624,8 +625,6 @@ def edit_mentor(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    print("account-----------")
-    print(account)
     if not edit_profile(data, account):
         msg = "Couldn't update profile"
         return create_response(status=500, message=msg)

@@ -440,7 +440,9 @@
     "edit":"يحرر",
     "delete":"يمسح",
     "upcoming":"القادمة",
-    "past":"ماضي"
+    "past":"ماضي",
+    "attatchment":"مرفق",
+    "period":"فترة"
   },
   "mentorAppointmentPage": {
     "addAppointment": "أضف موعد",

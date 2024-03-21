@@ -91,6 +91,15 @@ function EventDetail({ match }) {
           <div className="datetime-area" style={{ marginTop: "20px" }}>
             {event.start_datetime && (
               <>
+                <label
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 600,
+                    marginRight: "10px",
+                  }}
+                >
+                  {t("events.period")} :{" "}
+                </label>
                 <span style={{ fontSize: "20px", color: "#800020" }}>
                   {formatDateTime(new Date(event.start_datetime.$date))} ~{" "}
                 </span>
@@ -104,6 +113,16 @@ function EventDetail({ match }) {
 
             {event.image_file && (
               <Typography>
+                <Paragraph
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 600,
+                    marginTop: "5px",
+                    marginBottom: "5px",
+                  }}
+                >
+                  {t("events.attatchment")}:
+                </Paragraph>
                 <img
                   style={{ marginLeft: "5%", marginTop: "15px", width: "60%" }}
                   className="event-img"
@@ -137,7 +156,37 @@ function EventDetail({ match }) {
               </Typography>
             )}
             <div style={{ marginTop: "15px" }}>
-              {event.url && <a href={event.url}>{event.url}</a>}
+              {event.url && (
+                <>
+                  <Typography>
+                    <Paragraph
+                      style={{
+                        fontSize: "20px",
+                        fontWeight: 600,
+                        marginTop: "5px",
+                        marginBottom: "5px",
+                      }}
+                    >
+                      {"URL"}:
+                    </Paragraph>
+                    <Paragraph
+                      style={{
+                        fontSize: "16px",
+                        paddingLeft: "10px",
+                        marginTop: "5px",
+                        marginBottom: "5px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth:'65%'
+                      }}
+                    >
+                      <a style={{ whiteSpace: "nowrap" }} href={event.url}>
+                        {event.url}
+                      </a>
+                    </Paragraph>
+                  </Typography>
+                </>
+              )}
             </div>
           </div>
         </div>

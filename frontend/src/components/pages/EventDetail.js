@@ -175,9 +175,13 @@ function EventDetail({ match }) {
                         paddingLeft: "10px",
                         marginTop: "5px",
                         marginBottom: "5px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     >
-                      <a href={event.url}>{event.url}</a>
+                      <a style={{ whiteSpace: "nowrap" }} href={event.url}>
+                        {event.url}
+                      </a>
                     </Paragraph>
                   </Typography>
                 </>

@@ -2,7 +2,21 @@ from api.views.messages import invite
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
-from api.models import Support, Users, VerifiedEmail, Admin, Guest, Hub, Image
+from api.models import (
+    MenteeApplication,
+    MenteeProfile,
+    MentorApplication,
+    MentorProfile,
+    NewMentorApplication,
+    PartnerProfile,
+    Support,
+    Users,
+    VerifiedEmail,
+    Admin,
+    Guest,
+    Hub,
+    Image,
+)
 from api.utils.require_auth import admin_only
 from api.utils.request_utils import get_profile_model, imgur_client
 from api.utils.constants import Account
@@ -121,6 +135,30 @@ def create_hub_account():
             hub_account.name = name
             hub_account.url = url
             hub_account.invite_key = invite_key
+            if hub_account.email != email:
+                ex_email = hub_account.email
+                firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
+                if password is not None:
+                    firebase_admin_auth.update_user(
+                        firebase_user.uid, email=email, password=password
+                    )
+                else:
+                    firebase_admin_auth.update_user(
+                        firebase_user.uid,
+                        email=email,
+                    )
+                hub_account.email = email
+                ex_data = Users.objects.filter(email=ex_email)
+                if len(ex_data) > 0:
+                    for ex_item in ex_data:
+                        ex_item.email = email
+                        ex_item.save()
+                ex_data = VerifiedEmail.objects.filter(email=ex_email)
+                if len(ex_data) > 0:
+                    for ex_item in ex_data:
+                        ex_item.email = email
+                        ex_item.save()
+
             if hub_account.image is True and hub_account.image.image_hash is True:
                 image_response = imgur_client.delete_image(hub_account.image.image_hash)
             if image is not None:
@@ -250,3 +288,78 @@ def get_admin(id):
         msg = "Admin does not exist"
         logger.info(msg)
         return create_response(status=422, message=msg)
+
+
+@admin.route("edit_email_password", methods=["POST"])
+@admin_only
+def editEmailPassword():
+    data = request.get_json()
+    email = data["email"]
+    ex_email = data["ex_email"]
+    password = None
+    if "password" in data:
+        password = data["password"]
+    firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
+
+    if password is not None:
+        firebase_admin_auth.update_user(
+            firebase_user.uid, email=email, password=password
+        )
+    else:
+        firebase_admin_auth.update_user(
+            firebase_user.uid,
+            email=email,
+        )
+    if email != ex_email:
+        ex_data = MenteeApplication.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = MentorApplication.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = MenteeProfile.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = MentorProfile.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = NewMentorApplication.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = PartnerProfile.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = Users.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = VerifiedEmail.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = Guest.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = Support.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+
+    return create_response(status=200, message="successful edited")

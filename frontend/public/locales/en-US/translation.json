@@ -441,7 +441,9 @@
     "edit":"Edit",
     "delete":"Delete",
     "upcoming":"Upcoming",
-    "past":"Past"
+    "past":"Past",
+    "attatchment":"Attatchment",
+    "period":"Period"
   },
   "mentorAppointmentPage": {
     "addAppointment": "Add Appointment",

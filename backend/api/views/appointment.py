@@ -318,6 +318,7 @@ def get_mentors_appointments():
         data.append(
             {
                 "name": mentor.name,
+                "email": mentor.email,
                 "id": str(mentor.id),
                 "image": mentor.image,
                 "appointments": mentor_appts,

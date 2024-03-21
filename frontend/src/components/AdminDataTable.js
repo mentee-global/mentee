@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Table,
   Popconfirm,
@@ -9,12 +9,17 @@ import {
   Spin,
   Modal,
   Switch,
+  Form,
+  Input,
 } from "antd";
 import {
   LinkOutlined,
   DeleteOutlined,
   EditFilled,
   UserOutlined,
+  EditOutlined,
+  EyeInvisibleOutlined,
+  EyeTwoTone,
 } from "@ant-design/icons";
 import { JsonToTable } from "react-json-to-table";
 
@@ -32,6 +37,7 @@ import {
   uploadAccountImage,
   editAccountProfile,
   fetchAccounts,
+  editEmailPassword,
 } from "utils/api";
 import ModalInput from "./ModalInput";
 
@@ -68,6 +74,7 @@ function AdminDataTable({
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditEmailModalVisible, setIsEditEmailModalVisible] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [mentorArr, setMentorArr] = useState([]);
   const [menteeArr, setMenteeArr] = useState([]);
@@ -78,6 +85,10 @@ function AdminDataTable({
 
   const [allMentors, setAllMentors] = useState([]);
   const [allMentees, setAllMentees] = useState([]);
+
+  const [form] = Form.useForm();
+  const [valuesChanged, setValuesChanged] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
 
   useEffect(() => {
     async function getAllMentorMentee() {
@@ -388,6 +399,137 @@ function AdminDataTable({
       )
     );
   };
+
+  const handleEditClose = () => {
+    setIsEditEmailModalVisible(false);
+    form.resetFields();
+    setSelectedRecord(null);
+  };
+  const handleValuesChange = () => {
+    setValuesChanged(true);
+  };
+
+  const validatePassword = (_, value) => {
+    const passwordFieldValue = form.getFieldValue("password");
+    if (passwordFieldValue != value) {
+      return Promise.reject(new Error("The passwords do not match"));
+    }
+
+    return Promise.resolve();
+  };
+
+  const success = () => {
+    message.success("Successfully Edited");
+    handleEditClose();
+  };
+
+  const onFinish = useCallback((valuesChanged, _selected_record) => {
+    async function saveValues(values, _selected_record) {
+      values.ex_email = _selected_record.email;
+      await editEmailPassword(values).then((res) => {
+        if (res.status === 200) {
+          refresh();
+          success();
+        } else {
+          if (res.response && res.response.status === 422) {
+            alert("Failed create firebase account");
+          } else {
+            alert("Already registered Email: " + values.email);
+          }
+        }
+      });
+    }
+    if (valuesChanged) {
+      form
+        .validateFields()
+        .then((values) => {
+          saveValues(values, _selected_record);
+        })
+        .catch((info) => {
+          console.error("Validate Failed:", info);
+        });
+    } else {
+      handleEditClose();
+    }
+  }, []);
+
+  const EditEmailForm = () => (
+    <Form
+      form={form}
+      onValuesChange={handleValuesChange}
+      onFinish={() => onFinish(valuesChanged, selectedRecord)}
+    >
+      <Form.Item
+        name="email"
+        rules={[
+          {
+            required: true,
+            message: "Please input Email.",
+          },
+          {
+            type: "email",
+            message: "The input is not valid E-mail!",
+          },
+        ]}
+      >
+        <Input bordered={true} placeholder={"Email"} />
+      </Form.Item>
+      <Form.Item
+        name="password"
+        rules={[
+          {
+            required: false,
+            message: "Please input Password.",
+          },
+        ]}
+      >
+        <Input.Password
+          iconRender={(visible) =>
+            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+          }
+          bordered={true}
+          placeholder={"Password"}
+        />
+      </Form.Item>
+      <Form.Item
+        name="confirm"
+        rules={[
+          {
+            required: false,
+            message: "Please confirm password!",
+          },
+          { validator: validatePassword },
+        ]}
+      >
+        <Input.Password
+          iconRender={(visible) =>
+            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+          }
+          bordered={true}
+          placeholder={"Confirm Password"}
+        />
+      </Form.Item>
+
+      <Form.Item>
+        <Button
+          className="regular-button"
+          htmlType="submit"
+          style={{ marginTop: "20px" }}
+        >
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+
+  const showEditEmailModal = async (_data_record) => {
+    setIsEditEmailModalVisible(true);
+    if (_data_record) {
+      form.setFieldValue("email", _data_record.email);
+      setSelectedRecord(_data_record);
+    }
+  };
+
   return (
     <>
       <Table
@@ -400,6 +542,32 @@ function AdminDataTable({
         }}
         rowKey={(account) => account.id}
       >
+        <Column
+          title="Edit"
+          dataIndex={"email"}
+          key="email"
+          render={(text, data) => (
+            <>
+              <Modal
+                title="Edit"
+                open={isEditEmailModalVisible}
+                footer={<div></div>}
+                onCancel={handleEditClose}
+                closable={true}
+                width={"600px"}
+                mask={false}
+              >
+                {" "}
+                {EditEmailForm()}
+              </Modal>
+              <EditOutlined
+                className="delete-user-btn"
+                onClick={() => showEditEmailModal(data)}
+              />
+            </>
+          )}
+          align="center"
+        />
         {!isPartner && (
           <>
             <Column title="Name" dataIndex="name" key="name" />
@@ -557,12 +725,6 @@ function AdminDataTable({
               key="organization"
               align="center"
             />
-            {/* <Column
-            title="Headquarters Location"
-            dataIndex="location"
-            key="location"
-            align="center"
-          /> */}
             <Column
               title="Contact Person's Full Name"
               dataIndex="person_name"

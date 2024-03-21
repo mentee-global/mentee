@@ -443,7 +443,9 @@
     "edit":"ویرایش کنید",
     "delete":"حذف",
     "upcoming":"آینده",
-    "past":"گذشته"
+    "past":"گذشته",
+    "attatchment":"پیوست",
+    "period":"دوره زمانی"
   },
   "mentorAppointmentPage": {
     "addAppointment": "قرار ملاقات را اضافه کنید",

@@ -483,6 +483,16 @@ export const sendInviteMail = (
   );
 };
 
+export const generateURL = () => {
+  const requestExtension = `/application/generate_url`;
+  return authGet(requestExtension).then(
+    (response) => response.data.url,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;
   return authGet(requestExtension).then(

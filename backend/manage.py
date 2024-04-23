@@ -9,6 +9,7 @@ from flask import request
 app = create_app()
 
 
+
 @app.after_request
 def log_request(response):
     if response.status_code >= 400:

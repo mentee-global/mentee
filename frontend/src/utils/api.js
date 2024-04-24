@@ -484,9 +484,9 @@ export const sendInviteMail = (
 };
 
 export const generateURL = () => {
-  const requestExtension = `/application/generate_url`;
+  const requestExtension = `/meeting/generateUrl`;
   return authGet(requestExtension).then(
-    (response) => response.data.url,
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }

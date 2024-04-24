@@ -11,15 +11,29 @@ const { Title } = Typography;
 function URLGeneration() {
   const [urlModalVisible, setUrlModalVisible] = useState(false);
   const [generatedUrl, setGeneratedUrl] = useState("");
-  var url;
 
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(generatedUrl);
       message.success("URL copied to clipboard!");
     } catch (error) {
       console.error("Failed to copy:", error);
       message.error("Failed to copy URL to clipboard.");
+    }
+  };
+
+  const getURL = () => {
+    try {
+      generateURL().then(resp => {
+        const url = resp.url;
+        setGeneratedUrl(url); // Update the generatedUrl state with the new URL
+      }).catch(error => {
+        console.error('Error:', error);
+        message.error("Failed to generate meeting link.");
+      });
+    } catch (error) {
+      console.error("Failed to generate meeting link.");
+      message.error("Failed to generate meeting link.");
     }
   };
 
@@ -33,7 +47,7 @@ function URLGeneration() {
         visible={urlModalVisible}
         onCancel={() => setUrlModalVisible(false)}
         footer={[
-          <Button key="generate" type="primary" onClick={url = generateURL}>
+          <Button key="generate" type="primary" onClick={getURL}>
             Generate
           </Button>,
           <Button key="cancel" onClick={() => setUrlModalVisible(false)}>

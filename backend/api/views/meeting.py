@@ -9,22 +9,21 @@ from googleapiclient.discovery import build
 from flask import Blueprint
 from api.core import create_response
 
-application = Blueprint("application", __name__)
+meeting = Blueprint("meeting", __name__)
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 token = json.loads(os.getenv('OAUTH_TOKEN'))
 
-@application.route("/generate_url", methods=["GET"])
-def generate_url():
-
-    creds = Credentials.from_authorized_user_info(token, SCOPES)
-    if not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            print('Token has expired please contact admin')
-
+@meeting.route("/generateUrl", methods=["GET"])
+def generateUrl():
     try:
+        creds = Credentials.from_authorized_user_info(token, SCOPES)
+        if not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                return create_response(status=422, message=f'Token has expired please contact admin')
+
         service = build('calendar', 'v3', credentials=creds)
 
         # Define the event details
@@ -38,7 +37,7 @@ def generate_url():
             'visibility': 'public',
             "settings.access_type":'Open',
             'attendees': [
-                {'email': 'abdullahjavaid39mts@gmail.com', 'role': 'host', 'sendNotifications': False}],
+                {'email': 'robertmurer+mentor1@gmail.com', 'role': 'host', 'sendNotifications': False}],
             'conferenceData': {
                 'createRequest': {
                     'requestId': 'your-unique-request-id',

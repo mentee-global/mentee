@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, Input, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import axios from "axios";
-import {
-  generateURL
-} from "utils/api";
+import { generateURL } from "utils/api";
 
 const { Title } = Typography;
 
@@ -24,13 +22,15 @@ function URLGeneration() {
 
   const getURL = () => {
     try {
-      generateURL().then(resp => {
-        const url = resp.url;
-        setGeneratedUrl(url); // Update the generatedUrl state with the new URL
-      }).catch(error => {
-        console.error('Error:', error);
-        message.error("Failed to generate meeting link.");
-      });
+      generateURL()
+        .then((resp) => {
+          const url = resp.url;
+          setGeneratedUrl(url); // Update the generatedUrl state with the new URL
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          message.error("Failed to generate meeting link.");
+        });
     } catch (error) {
       console.error("Failed to generate meeting link.");
       message.error("Failed to generate meeting link.");
@@ -39,7 +39,16 @@ function URLGeneration() {
 
   return (
     <>
-      <Button type="primary" style={{ marginTop: "16px", marginLeft: "8px", display: "flex", alignItems: "center"}} onClick={() => setUrlModalVisible(true)}>
+      <Button
+        type="primary"
+        style={{
+          marginTop: "16px",
+          marginLeft: "8px",
+          display: "flex",
+          alignItems: "center",
+        }}
+        onClick={() => setUrlModalVisible(true)}
+      >
         Create Meeting Link
       </Button>
       <Modal

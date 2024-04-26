@@ -4,6 +4,7 @@ from api.models import (
     MenteeProfile,
     Message,
     DirectMessage,
+    GroupMessage,
     PartnerProfile,
     Availability,
     Specializations,
@@ -372,6 +373,21 @@ def get_sidebar_mentors(pageNumber):
     )
 
 
+@messages.route("/group/", methods=["GET"])
+@all_users
+def get_group_messages():
+    try:
+        messages = GroupMessage.objects(Q(hub_user_id=request.args.get("hub_user_id")))
+    except:
+        msg = "Invalid parameters provided"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    msg = "Success"
+    if not messages:
+        msg = request.args
+    return create_response(data={"Messages": messages}, status=200, message=msg)
+
+
 @messages.route("/direct/", methods=["GET"])
 @all_users
 def get_direct_messages():
@@ -390,6 +406,32 @@ def get_direct_messages():
     if not messages:
         msg = request.args
     return create_response(data={"Messages": messages}, status=200, message=msg)
+
+
+@socketio.on("sendGroup")
+def chatGroup(msg, methods=["POST"]):
+    try:
+        message = GroupMessage(
+            body=msg["body"],
+            message_read=msg["message_read"],
+            sender_id=msg["sender_id"],
+            hub_user_id=msg["hub_user_id"],
+            created_at=msg["time"],
+        )
+        logger.info(msg["hub_user_id"])
+        socketio.emit(msg["hub_user_id"], json.loads(message.to_json()))
+    except Exception as e:
+        logger.info(e)
+        return create_response(status=500, message="Failed to send message")
+
+    try:
+        message.save()
+        msg = "successfully sent message"
+    except:
+        msg = "Error in meessage"
+        logger.info(msg)
+        return create_response(status=500, message="Failed to send message")
+    return create_response(status=200, message="successfully sent message")
 
 
 @socketio.on("send")

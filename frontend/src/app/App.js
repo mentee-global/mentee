@@ -19,6 +19,7 @@ import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import MenteeGallery from "components/pages/MenteeGallery";
 import Messages from "components/pages/Messages";
+import GroupMessages from "components/pages/GroupMessages";
 import ApplicationForm from "components/pages/ApplicationForm";
 import SocketComponent from "components/SocketComponent";
 import AdminTraining from "components/pages/AdminTraining";
@@ -46,7 +47,6 @@ import HubInviteLink from "components/pages/HubInviteLink";
 import { useSelector } from "react-redux";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { fetchAccounts } from "utils/api";
-import CreateMeetingLink from "components/CreateMeetingLink";
 
 const { Content } = Layout;
 
@@ -349,6 +349,11 @@ function App() {
                     <PrivateRoute path={hub_url + "/event/:id"}>
                       <EventDetail />
                     </PrivateRoute>
+                    <PrivateRoute
+                      path={hub_url + "/group_messages/:hub_user_id"}
+                    >
+                      <GroupMessages />
+                    </PrivateRoute>
                   </>
                 );
               })}
@@ -556,9 +561,6 @@ function App() {
               </PrivateRoute>
               <PrivateRoute path="/event/:id">
                 <EventDetail />
-              </PrivateRoute>  
-              <PrivateRoute path="/createmeetinglink">
-                <CreateMeetingLink />  
               </PrivateRoute>
             </Content>
           </Layout>

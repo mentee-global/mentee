@@ -177,7 +177,7 @@ function EventDetail({ match }) {
                         marginBottom: "5px",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        maxWidth:'65%'
+                        maxWidth: "65%",
                       }}
                     >
                       <a style={{ whiteSpace: "nowrap" }} href={event.url}>

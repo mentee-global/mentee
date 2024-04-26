@@ -799,6 +799,17 @@ export const getDetailMessages = (
     }
   );
 };
+
+export const getGroupMessageData = (hub_user_id) => {
+  const requestExtension = `/messages/group/?hub_user_id=${hub_user_id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const getMessageData = (sender_id, recipient_id) => {
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
   return authGet(requestExtension).then(

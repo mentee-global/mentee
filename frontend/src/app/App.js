@@ -19,6 +19,7 @@ import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import MenteeGallery from "components/pages/MenteeGallery";
 import Messages from "components/pages/Messages";
+import GroupMessages from "components/pages/GroupMessages";
 import ApplicationForm from "components/pages/ApplicationForm";
 import SocketComponent from "components/SocketComponent";
 import AdminTraining from "components/pages/AdminTraining";
@@ -347,6 +348,11 @@ function App() {
                     </PrivateRoute>
                     <PrivateRoute path={hub_url + "/event/:id"}>
                       <EventDetail />
+                    </PrivateRoute>
+                    <PrivateRoute
+                      path={hub_url + "/group_messages/:hub_user_id"}
+                    >
+                      <GroupMessages />
                     </PrivateRoute>
                   </>
                 );

@@ -17,6 +17,7 @@ from .VerifiedEmail import VerifiedEmail
 from .MenteeProfile import MenteeProfile
 from .Message import Message
 from .DirectMessage import DirectMessage
+from .GroupMessage import GroupMessage
 from .Admin import Admin
 from .Training import Training
 from .Event import Event

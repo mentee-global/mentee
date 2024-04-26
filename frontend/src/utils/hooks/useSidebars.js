@@ -22,10 +22,18 @@ import { getLoginPath } from "utils/auth.service";
  */
 export default function useSidebars(userType, user, t) {
   var url_prefix_hub = "";
+  var hub_user_id = null;
   if (parseInt(userType) == ACCOUNT_TYPE.HUB) {
     url_prefix_hub = getLoginPath();
     if (url_prefix_hub && url_prefix_hub.charAt(0) == "/") {
       url_prefix_hub = url_prefix_hub.slice(1);
+    }
+    if (user) {
+      if (user.hub_id) {
+        hub_user_id = user.hub_id;
+      } else {
+        hub_user_id = user._id.$oid;
+      }
     }
   }
   const mentorSidebar = [
@@ -188,6 +196,11 @@ export default function useSidebars(userType, user, t) {
     {
       label: t("common.messages"),
       key: `messages/${ACCOUNT_TYPE.PARTNER}`,
+      icon: <MessageOutlined />,
+    },
+    {
+      label: t("common.group_message"),
+      key: url_prefix_hub + `/group_messages/${hub_user_id}`,
       icon: <MessageOutlined />,
     },
     {

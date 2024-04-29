@@ -140,7 +140,6 @@ function GroupMessageChatArea(props) {
               var sender_user = particiants.find(
                 (x) => x._id.$oid == block.sender_id.$oid
               );
-              console.log("sender", sender_user);
               return (
                 <div
                   className={`chatRight__items you-${

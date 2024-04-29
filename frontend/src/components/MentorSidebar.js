@@ -34,7 +34,6 @@ function MentorSidebar(props) {
       icon: <MailOutlined />,
     },
   };
-
   return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
 }
 

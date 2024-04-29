@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Avatar, Input, Button, Spin, theme, Tooltip } from "antd";
-import { withRouter } from "react-router-dom";
+import { withRouter, NavLink } from "react-router-dom";
 import moment from "moment-timezone";
 import { SendOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useAuth } from "utils/hooks/useAuth";
@@ -8,6 +8,7 @@ import { sendNotifyUnreadMessage } from "utils/api";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "react-responsive";
 import { css } from "@emotion/css";
+import { ACCOUNT_TYPE } from "utils/consts";
 
 function GroupMessageChatArea(props) {
   const {
@@ -156,15 +157,29 @@ function GroupMessageChatArea(props) {
                     <div className="flex">
                       {block.sender_id.$oid !== profileId && sender_user && (
                         <span>
-                          <Tooltip
-                            title={
-                              sender_user.name
-                                ? sender_user.name
-                                : sender_user.organization
-                            }
+                          <NavLink
+                            to={`/gallery/${
+                              sender_user.hub_user_id
+                                ? ACCOUNT_TYPE.PARTNER
+                                : ACCOUNT_TYPE.HUB
+                            }/${block.sender_id.$oid}`}
                           >
-                            <Avatar src={sender_user?.image?.url} />{" "}
-                          </Tooltip>
+                            <Avatar
+                              src={sender_user?.image?.url}
+                              style={{ cursor: "pointer" }}
+                            />
+                            <div
+                              style={{
+                                cursor: "pointer",
+                                fontSize: "11px",
+                                textAlign: "center",
+                              }}
+                            >
+                              {sender_user.name
+                                ? sender_user.name
+                                : sender_user.organization}
+                            </div>
+                          </NavLink>
                         </span>
                       )}
                       <div className="convo">

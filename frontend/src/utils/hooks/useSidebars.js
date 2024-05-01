@@ -44,7 +44,7 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
-      label: t("Create Meeting Link"),
+      label: t("Meeting Link"),
       key: `createmeetinglink/${ACCOUNT_TYPE.MENTOR}`,
       icon: <LinkOutlined />,
     },
@@ -93,7 +93,7 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
-      label: t("Create Meeting Link"),
+      label: t("Meeting Link"),
       key: `createmeetinglink/${ACCOUNT_TYPE.MENTEE}`,
       icon: <LinkOutlined />,
     },
@@ -141,7 +141,7 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
-      label: t("Create Meeting Link"),
+      label: t("Meeting Link"),
       key: `createmeetinglink/${ACCOUNT_TYPE.PARTNER}`,
       icon: <LinkOutlined />,
     },
@@ -215,7 +215,7 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
-      label: t("Create Meeting Link"),
+      label: t("Meeting Link"),
       key: `createmeetinglink/${ACCOUNT_TYPE.HUB}`,
       icon: <LinkOutlined />,
     },
@@ -292,7 +292,7 @@ export default function useSidebars(userType, user, t) {
       ],
     },
     {
-      label: t("Create Meeting Link"),
+      label: t("Meeting Link"),
       key: `createmeetinglink/${ACCOUNT_TYPE.ADMIN}`,
       icon: <LinkOutlined />,
     },

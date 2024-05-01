@@ -9,7 +9,7 @@ import {
 const { Title } = Typography;
 
 function URLGeneration() {
-  const [urlModalVisible, setUrlModalVisible] = useState(false);
+  const [urlModalVisible, setUrlModalVisible] = useState(true);
   const [generatedUrl, setGeneratedUrl] = useState("");
 
   const copyToClipboard = () => {
@@ -38,9 +38,6 @@ function URLGeneration() {
 
   return (
     <>
-      <Button type="primary" style={{ marginTop: "16px", marginLeft: "8px", display: "flex", alignItems: "center"}} onClick={() => setUrlModalVisible(true)}>
-        Create Meeting Link
-      </Button>
       <Modal
         title="Generate Meeting Link"
         visible={urlModalVisible}

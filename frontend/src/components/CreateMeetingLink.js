@@ -1,24 +1,22 @@
 import React, { useState } from "react";
 import { Modal, Button, Input, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
-import axios from "axios";
-import {
-  generateURL
-} from "utils/api";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 
 function URLGeneration() {
   const [urlModalVisible, setUrlModalVisible] = useState(true);
   const [generatedUrl, setGeneratedUrl] = useState("");
+  const { t } = useTranslation();
 
   const copyToClipboard = () => {
     try {
       navigator.clipboard.writeText(generatedUrl);
-      message.success("URL copied to clipboard!");
+      message.success(t("meeting.copyMessage"));
     } catch (error) {
-      console.error("Failed to copy:", error);
-      message.error("Failed to copy URL to clipboard.");
+      console.error(t("meeting.errorCopy"), error);
+      message.error(t("meeting.errorCopy"));
     }
   };
 
@@ -31,28 +29,28 @@ function URLGeneration() {
       }
       setGeneratedUrl(result);
     } catch (error) {
-      console.error("Failed to generate meeting link.");
-      message.error("Failed to generate meeting link.");
+      console.error(t("meeting.errorGenerating"));
+      message.error(t("meeting.errorGenerating"));
     }
   };
 
   return (
     <>
       <Modal
-        title="Generate Meeting Link"
+        title={t("meeting.title")}
         visible={urlModalVisible}
         onCancel={() => setUrlModalVisible(false)}
         footer={[
           <Button key="generate" type="primary" onClick={getURL}>
-            Generate
+            {t("meeting.generateButton")}
           </Button>,
           <Button key="cancel" onClick={() => setUrlModalVisible(false)}>
-            Cancel
+            {t("meeting.cancelButton")}
           </Button>,
         ]}
       >
         <div>
-          <Title level={4}>Generated URL:</Title>
+          <Title level={4}>{t("meeting.generatedURL")}</Title>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Input value={generatedUrl} readOnly />
             <Button
@@ -62,6 +60,9 @@ function URLGeneration() {
               style={{ marginLeft: "8px" }}
             />
           </div>
+        </div>
+        <div style={{ marginTop: "14px", fontSize: "12px" }}>
+          {t("meeting.limitWarning")}
         </div>
       </Modal>
     </>

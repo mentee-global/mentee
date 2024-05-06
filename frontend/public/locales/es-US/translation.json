@@ -580,7 +580,8 @@
     "community":"Comunidad",
     "community_info":"Información de la comunidad",
     "inforamtion":"Información",
-    "info_board":"Tarjeta de la información"
+    "info_board":"Tarjeta de la información",
+    "meeting":"Enlace de reunión"
   },
   "verifyEmail": {
     "body": "¡Gracias por registrarte!  Por favor, compruebe su correo electrónico para verificar su cuenta.",
@@ -590,5 +591,15 @@
     "noEmail": "No recibió un correo electrónico?",
     "refresh": "Actualizar",
     "resend": "Reenviar correo electrónico"
+  },
+  "meeting": {
+    "title": "Generar Enlace de Reunión",
+    "generateButton": "Generar",
+    "cancelButton": "Cancelar",
+    "generatedURL": "URL Generada",
+    "errorGenerating": "Error al generar el enlace de reunión.",
+    "errorCopy": "Error al copiar la URL al portapapeles.",
+    "copyMessage": "¡URL copiada al portapapeles!",
+    "limitWarning": "Por favor, tenga en cuenta que la reunión tendrá un límite de 100 asistentes, y sin límite de tiempo."
   }
 }

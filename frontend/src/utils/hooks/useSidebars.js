@@ -12,6 +12,7 @@ import {
   VideoCameraOutlined,
   InfoCircleOutlined,
   LaptopOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getLoginPath } from "utils/auth.service";
@@ -41,6 +42,11 @@ export default function useSidebars(userType, user, t) {
       label: t("common.messages"),
       key: `messages/${ACCOUNT_TYPE.MENTOR}`,
       icon: <MessageOutlined />,
+    },
+    {
+      label: t("Meeting Link"),
+      key: `createmeetinglink/${ACCOUNT_TYPE.MENTOR}`,
+      icon: <LinkOutlined />,
     },
     {
       label: t("sidebars.training"),
@@ -87,6 +93,11 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
+      label: t("Meeting Link"),
+      key: `createmeetinglink/${ACCOUNT_TYPE.MENTEE}`,
+      icon: <LinkOutlined />,
+    },
+    {
       label: t("sidebars.training"),
       key: "mentee/training",
       icon: <VideoCameraOutlined />,
@@ -128,6 +139,11 @@ export default function useSidebars(userType, user, t) {
       label: t("common.messages"),
       key: `messages/${ACCOUNT_TYPE.PARTNER}`,
       icon: <MessageOutlined />,
+    },
+    {
+      label: t("Meeting Link"),
+      key: `createmeetinglink/${ACCOUNT_TYPE.PARTNER}`,
+      icon: <LinkOutlined />,
     },
     {
       label: t("sidebars.training"),
@@ -197,6 +213,11 @@ export default function useSidebars(userType, user, t) {
       label: t("common.messages"),
       key: `messages/${ACCOUNT_TYPE.PARTNER}`,
       icon: <MessageOutlined />,
+    },
+    {
+      label: t("Meeting Link"),
+      key: `createmeetinglink/${ACCOUNT_TYPE.HUB}`,
+      icon: <LinkOutlined />,
     },
     {
       label: t("common.group_message"),
@@ -269,6 +290,11 @@ export default function useSidebars(userType, user, t) {
           key: "partner-gallery",
         },
       ],
+    },
+    {
+      label: t("Meeting Link"),
+      key: `createmeetinglink/${ACCOUNT_TYPE.ADMIN}`,
+      icon: <LinkOutlined />,
     },
     {
       label: "Events",

@@ -483,6 +483,16 @@ export const sendInviteMail = (
   );
 };
 
+export const generateToken = () => {
+  const requestExtension = `/meeting/generateToken`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;
   return authGet(requestExtension).then(

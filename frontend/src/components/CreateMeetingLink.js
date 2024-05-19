@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { Modal, Button, Input, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import {generateToken} from "utils/api";
 
 const { Title } = Typography;
 
-function URLGeneration() {
+function Meeting() {
   const [urlModalVisible, setUrlModalVisible] = useState(true);
-  const [generatedUrl, setGeneratedUrl] = useState("");
+  const [generatedRoomName, setGeneratedRoomName] = useState("");
+  const [generatedToken, setGeneratedToken] = useState("");
+  const [AppID, setGeneratedAppID] = useState("");
   const { t } = useTranslation();
 
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText(generatedUrl);
+      navigator.clipboard.writeText(generatedRoomName);
       message.success(t("meeting.copyMessage"));
     } catch (error) {
       console.error(t("meeting.errorCopy"), error);
@@ -20,17 +23,44 @@ function URLGeneration() {
     }
   };
 
-  const getURL = () => {
+  const getRoomName = () => {
     try {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let result = 'https://jitsi.ff3l.net/';
+      let RoomName = '';
       for (let i = 0; i < 10; i++) {
-          result += characters.charAt(Math.floor(Math.random() * characters.length));
+        RoomName += characters.charAt(Math.floor(Math.random() * characters.length));
       }
-      setGeneratedUrl(result);
+      setGeneratedRoomName(RoomName);
     } catch (error) {
       console.error(t("meeting.errorGenerating"));
       message.error(t("meeting.errorGenerating"));
+    }
+  };
+
+  const joinMeeting = () => {
+    try {
+      getToken();
+      // showMeetingPanel(generatedToken, AppID);
+      message.success(generatedToken);
+      message.success(AppID);
+    } catch (error) {
+      console.error("Error: ", error);
+      message.error("Unable to join meeting");
+    }
+  };
+
+  const getToken = () => {
+    try {
+      generateToken().then(resp => {
+        setGeneratedToken(resp.token);
+        setGeneratedAppID(resp.appID);
+      }).catch(error => {
+        console.error('Error:', error);
+        message.error("Unable to generate token");
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      message.error("Unable to generate token");
     }
   };
 
@@ -41,8 +71,11 @@ function URLGeneration() {
         visible={urlModalVisible}
         onCancel={() => setUrlModalVisible(false)}
         footer={[
-          <Button key="generate" type="primary" onClick={getURL}>
+          <Button key="generate" type="primary" onClick={getRoomName}>
             {t("meeting.generateButton")}
+          </Button>,
+          <Button key="join" type="primary" onClick={joinMeeting}>
+            {"Join Meeting"}
           </Button>,
           <Button key="cancel" onClick={() => setUrlModalVisible(false)}>
             {t("meeting.cancelButton")}
@@ -52,7 +85,7 @@ function URLGeneration() {
         <div>
           <Title level={4}>{t("meeting.generatedURL")}</Title>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Input value={generatedUrl} readOnly />
+            <Input value={generatedRoomName} readOnly />
             <Button
               type="link"
               icon={<CopyOutlined />}
@@ -69,4 +102,4 @@ function URLGeneration() {
   );
 }
 
-export default URLGeneration;
+export default Meeting;

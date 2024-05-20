@@ -93,7 +93,7 @@
     "mentor": "Mentor",
     "message": "Mensaje",
     "messages": "Mensajes",
-    "group_message":"Mensajes grupales",
+    "group_message":"Chat de Grupo",
     "name": "Nombre",
     "no": "No",
     "other": "Otro",
@@ -593,13 +593,18 @@
     "resend": "Reenviar correo electrónico"
   },
   "meeting": {
-    "title": "Generar Enlace de Reunión",
-    "generateButton": "Generar",
+    "title": "Crear/Unirse a la Reunión",
+    "generateButton": "Crear Sala",
     "cancelButton": "Cancelar",
-    "generatedURL": "URL Generada",
-    "errorGenerating": "Error al generar el enlace de reunión.",
-    "errorCopy": "Error al copiar la URL al portapapeles.",
-    "copyMessage": "¡URL copiada al portapapeles!",
-    "limitWarning": "Por favor, tenga en cuenta que la reunión tendrá un límite de 100 asistentes, y sin límite de tiempo."
+    "generatedURL": "Nombre de la Sala",
+    "errorGenerating": "Error al generar la reunión.",
+    "errorCopy": "Error al copiar el nombre de la sala al portapapeles.",
+    "copyMessage": "¡Nombre de la sala copiado al portapapeles!",
+    "limitWarning": "Tenga en cuenta que la reunión tendrá un límite de 100 asistentes y no habrá límite de tiempo.",
+    "placeHolder": "Genere o pegue el nombre de la sala para unirse",
+    "roomName": "Por favor proporcione un nombre de sala para unirse.",
+    "getToken": "No se puede unir a la reunión",
+    "generateToken": "No se puede generar el token",
+    "joinMeeting": "Unirse a la Reunión"
   }
 }

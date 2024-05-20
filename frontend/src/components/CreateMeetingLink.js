@@ -6,6 +6,7 @@ import { generateToken } from "utils/api";
 import { useDispatch } from 'react-redux';
 import { setPanel, removePanel } from 'features/meetingPanelSlice';
 import { JaaSMeeting } from '@jitsi/react-sdk';
+import { useHistory } from "react-router-dom"; // Import useHistory from react-router-dom
 
 const { Title } = Typography;
 
@@ -19,10 +20,12 @@ function Meeting() {
   const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
   const dispatch = useDispatch();
   const joinButtonRef = useRef(null);
+  const [editedUrl, setEditedUrl] = useState("");
+  const history = useHistory(); // Get the history object from React Router
 
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText(generatedRoomName);
+      navigator.clipboard.writeText(editedUrl || generatedRoomName);;
       message.success(t("meeting.copyMessage"));
     } catch (error) {
       console.error(t("meeting.errorCopy"), error);
@@ -38,6 +41,7 @@ function Meeting() {
         RoomName += characters.charAt(Math.floor(Math.random() * characters.length));
       }
       setGeneratedRoomName(RoomName);
+      setEditedUrl(RoomName);
     } catch (error) {
       console.error(t("meeting.errorGenerating"));
       message.error(t("meeting.errorGenerating"));
@@ -81,6 +85,9 @@ function Meeting() {
         return;
       }
       getToken();
+      message.success(generatedToken);
+      message.success(AppID);
+ 
       dispatch(removePanel());
       document.body.style.marginRight = "30%";
       document.body.style.transition = "margin-right 0.3s";
@@ -111,6 +118,12 @@ function Meeting() {
     }
   };
 
+  const redirectToMessages = () => {
+
+    history.push("/appointments"); // Redirect to the messages page
+
+  };
+
   useEffect(() => {
     const roomNameFromLocalStorage = localStorage.getItem("roomName");
     if (roomNameFromLocalStorage) {
@@ -129,23 +142,37 @@ function Meeting() {
       <Modal
         title={t("meeting.title")}
         visible={urlModalVisible}
-        onCancel={() => setUrlModalVisible(false)}
+        onCancel={() => {
+
+          setUrlModalVisible(false);
+
+          redirectToMessages(); // Redirect to messages page on cancel
+
+        }}
         footer={[
-          <Button key="generate" type="primary" onClick={getRoomName}>
-            {t("meeting.generateButton")}
-          </Button>,
-          <Button ref={joinButtonRef} key="join" type="primary" onClick={joinMeeting}>
-            {"Join Meeting"}
-          </Button>,
-          <Button key="cancel" onClick={() => setUrlModalVisible(false)}>
-            {t("meeting.cancelButton")}
-          </Button>,
+          <div key="left-buttons" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            <Button key="generate" style={{ color: 'red', borderColor: 'red', backgroundColor: 'white' }} onClick={getRoomName}>
+              {t("meeting.generateButton")}
+            </Button>,
+            <div>
+              <Button ref={joinButtonRef} key="join" type="primary" onClick={joinMeeting}>
+                {"Join Meeting"}
+              </Button>,
+              <Button key="cancel" style={{ marginLeft: '8px' }} onClick={redirectToMessages}>
+                {t("meeting.cancelButton")}
+              </Button>,
+            </div>  
+          /</div>
         ]}
       >
         <div>
           <Title level={4}>{t("meeting.generatedURL")}</Title>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Input value={generatedRoomName} readOnly />
+            <Input
+              value={editedUrl}
+              onChange={(e) => setEditedUrl(e.target.value)}
+              placeholder={t("Generate or Paste meeting link to join")} // Add placeholder text here
+            />
             <Button
               type="link"
               icon={<CopyOutlined />}

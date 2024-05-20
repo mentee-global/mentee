@@ -167,7 +167,7 @@ function Meeting() {
             <Input
               value={RoomName}
               onChange={(e) => setRoomName(e.target.value)}
-              placeholder={t("Generate or Paste Meeting Link to Join")}
+              placeholder={t("meeting.placeHolder")}
             />
             <Button
               type="link"

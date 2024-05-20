@@ -13,7 +13,6 @@ function Meeting() {
   const [urlModalVisible, setUrlModalVisible] = useState(true);
   const [generatedRoomName, setGeneratedRoomName] = useState("");
   const [generatedToken, setGeneratedToken] = useState("");
-  const [isJitsiOpen, setIsJitsiOpen] = useState(true);
   const [AppID, setGeneratedAppID] = useState("");
   const { t } = useTranslation();
   const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
@@ -44,19 +43,12 @@ function Meeting() {
   };
 
   const createSidePanel = () => {
-    return <div style={{ position: 'fixed',
-    top: 0,
-    right: 0,
-    width: '30%',
-    height: '100vh',
-    transition: 'all 0.3s ease-in-out',
-    transform: isJitsiOpen ? 'translateX(0)' : 'translateX(100%)' }}>
-      <JaaSMeeting
+    return <div><JaaSMeeting
     getIFrameRef={iframeRef => {
       iframeRef.style.position = 'fixed';
       iframeRef.style.top = 0;
       iframeRef.style.right = 0;
-      iframeRef.style.width = '100%';
+      iframeRef.style.width = '30%';
       iframeRef.style.height = '100vh';      
       }
     }

@@ -79,8 +79,8 @@ function Meeting() {
   const joinMeeting = () => {
     try {
       if (!RoomName) {
-        console.error("Error: Room name is null or empty");
-        message.error("Please provide a room name to join.");
+        console.error(t("meeting.roomName"));
+        message.error(t("meeting.roomName"));
         return;
       }
       getToken(); 
@@ -90,7 +90,7 @@ function Meeting() {
       dispatch(setPanel(createSidePanel()));
     } catch (error) {
       console.error("Error: ", error);
-      message.error("Unable to join meeting");
+      message.error(t("meeting.getToken"));
     }
   };
 
@@ -106,11 +106,11 @@ function Meeting() {
         setAppID(resp.appID);
       }).catch(error => {
         console.error('Error:', error);
-        message.error("Unable to generate token");
+        message.error(t("meeting.generateToken"));
       });
     } catch (error) {
       console.error('Error:', error);
-      message.error("Unable to generate token");
+      message.error(t("meeting.generateToken"));
     }
   };
 
@@ -152,7 +152,7 @@ function Meeting() {
             </Button>,
             <div>
               <Button ref={joinButtonRef} key="join" type="primary" onClick={joinMeeting}>
-                {"Join Meeting"}
+                {t("meeting.joinMeeting")}
               </Button>,
               <Button key="cancel" style={{ marginLeft: '8px' }} onClick={redirectToMessages}>
                 {t("meeting.cancelButton")}

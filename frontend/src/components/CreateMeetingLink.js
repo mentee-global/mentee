@@ -6,26 +6,26 @@ import { generateToken } from "utils/api";
 import { useDispatch } from 'react-redux';
 import { setPanel, removePanel } from 'features/meetingPanelSlice';
 import { JaaSMeeting } from '@jitsi/react-sdk';
-import { useHistory } from "react-router-dom"; // Import useHistory from react-router-dom
+import { useHistory } from "react-router-dom";
 
 const { Title } = Typography;
 
 function Meeting() {
-  const [urlModalVisible, setUrlModalVisible] = useState(true);
-  const [generatedRoomName, setGeneratedRoomName] = useState("");
-  const [generatedToken, setGeneratedToken] = useState("");
-  const [AppID, setGeneratedAppID] = useState("");
-  const [reloadFlag, setReloadFlag] = useState(false);
-  const { t } = useTranslation();
-  const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
-  const dispatch = useDispatch();
   const joinButtonRef = useRef(null);
-  const [editedUrl, setEditedUrl] = useState("");
-  const history = useHistory(); // Get the history object from React Router
+  const [urlModalVisible, setUrlModalVisible] = useState(true);
+  const [RoomName, setRoomName] = useState("");
+  const [Token, setToken] = useState("");
+  const [AppID, setAppID] = useState("");
+  const [reloadFlag, setReloadFlag] = useState(false);
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+
+  const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
 
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText(editedUrl || generatedRoomName);;
+      navigator.clipboard.writeText(RoomName);;
       message.success(t("meeting.copyMessage"));
     } catch (error) {
       console.error(t("meeting.errorCopy"), error);
@@ -36,12 +36,11 @@ function Meeting() {
   const getRoomName = () => {
     try {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let RoomName = '';
+      let generatedRoomName = '';
       for (let i = 0; i < 10; i++) {
-        RoomName += characters.charAt(Math.floor(Math.random() * characters.length));
+        generatedRoomName += characters.charAt(Math.floor(Math.random() * characters.length));
       }
-      setGeneratedRoomName(RoomName);
-      setEditedUrl(RoomName);
+      setRoomName(generatedRoomName);
     } catch (error) {
       console.error(t("meeting.errorGenerating"));
       message.error(t("meeting.errorGenerating"));
@@ -54,14 +53,14 @@ function Meeting() {
         <JaaSMeeting
           getIFrameRef={iframeRef => {
             iframeRef.style.position = 'fixed';
-            iframeRef.style.top = 0;
+            iframeRef.style.bottom = 0;
             iframeRef.style.right = 0;
             iframeRef.style.width = '30%';
-            iframeRef.style.height = '100vh';
+            iframeRef.style.height = '93vh';
           }}
           appId={AppID}
-          roomName={ReactAppID + '/' + generatedRoomName}
-          jwt={generatedToken}
+          roomName={ReactAppID + '/' + RoomName}
+          jwt={Token}
           configOverwrite={{
             disableThirdPartyRequests: true,
             disableLocalVideoFlip: true,
@@ -79,15 +78,12 @@ function Meeting() {
 
   const joinMeeting = () => {
     try {
-      if (!generatedRoomName) {
+      if (!RoomName) {
         console.error("Error: Room name is null or empty");
         message.error("Please provide a room name to join.");
         return;
       }
-      getToken();
-      message.success(generatedToken);
-      message.success(AppID);
- 
+      getToken(); 
       dispatch(removePanel());
       document.body.style.marginRight = "30%";
       document.body.style.transition = "margin-right 0.3s";
@@ -101,13 +97,13 @@ function Meeting() {
   const getToken = () => {
     try {
       if (reloadFlag) {
-        localStorage.setItem("roomName", generatedRoomName);
+        localStorage.setItem("roomName", RoomName);
         window.location.reload();
       }
       setReloadFlag(true);
       generateToken().then(resp => {
-        setGeneratedToken(resp.token);
-        setGeneratedAppID(resp.appID);
+        setToken(resp.token);
+        setAppID(resp.appID);
       }).catch(error => {
         console.error('Error:', error);
         message.error("Unable to generate token");
@@ -120,14 +116,14 @@ function Meeting() {
 
   const redirectToMessages = () => {
 
-    history.push("/appointments"); // Redirect to the messages page
+    history.push("/appointments");
 
   };
 
   useEffect(() => {
     const roomNameFromLocalStorage = localStorage.getItem("roomName");
     if (roomNameFromLocalStorage) {
-      setGeneratedRoomName(roomNameFromLocalStorage);
+      setRoomName(roomNameFromLocalStorage);
       localStorage.removeItem("roomName");
       setTimeout(() => {
         if (joinButtonRef.current) {
@@ -146,7 +142,7 @@ function Meeting() {
 
           setUrlModalVisible(false);
 
-          redirectToMessages(); // Redirect to messages page on cancel
+          redirectToMessages();
 
         }}
         footer={[
@@ -162,16 +158,16 @@ function Meeting() {
                 {t("meeting.cancelButton")}
               </Button>,
             </div>  
-          /</div>
+          </div>
         ]}
       >
         <div>
           <Title level={4}>{t("meeting.generatedURL")}</Title>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Input
-              value={editedUrl}
-              onChange={(e) => setEditedUrl(e.target.value)}
-              placeholder={t("Generate or Paste meeting link to join")} // Add placeholder text here
+              value={RoomName}
+              onChange={(e) => setRoomName(e.target.value)}
+              placeholder={t("Generate or Paste Meeting Link to Join")}
             />
             <Button
               type="link"

@@ -12,7 +12,7 @@ from api.utils.jaas_jwt_builder import JaaSJwtBuilder
 meeting = Blueprint("meeting", __name__)
 
 API_KEY = os.environ.get("EIGHT_X_EIGHT_API_KEY")
-APP_ID = os.environ.get("EIGHT_X_EIGHT_APP_ID")
+APP_ID = os.environ.get("REACT_APP_EIGHT_X_EIGHT_APP_ID")
 
 @meeting.route("/generateToken", methods=["GET"])
 def generateToken():
@@ -25,14 +25,13 @@ def generateToken():
             jaasJwt = JaaSJwtBuilder()
             token = jaasJwt.withDefaults() \
                 .withApiKey(API_KEY) \
-                    .withUserName("Zeeshan") \
-                        .withUserEmail("m.zeeshanasghar101@gmail.com") \
-                            .withModerator(True) \
+                    .withUserName("User Name") \
+                        .withUserEmail("email_address@email.com") \
+                            .withModerator(False) \
                                 .withAppID(APP_ID) \
                                     .withUserAvatar("https://asda.com/avatar") \
                                         .signWith(PRIVATE_KEY)
 
-        print("HERE")
         return create_response(data={"token": token.decode('utf-8'), "appID": APP_ID})
 
     except Exception as error:

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import { Modal, Button, Input, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -18,17 +18,7 @@ function Meeting() {
   const { t } = useTranslation();
   const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const roomNameFromLocalStorage = localStorage.getItem("roomName");
-    if (roomNameFromLocalStorage) {
-      setGeneratedRoomName(roomNameFromLocalStorage);
-      localStorage.removeItem("roomName");
-      while (!generatedRoomName){
-        joinMeeting();  
-      }
-    }
-  }, []);
+  const joinButtonRef = useRef(null);
 
   const copyToClipboard = () => {
     try {
@@ -121,6 +111,19 @@ function Meeting() {
     }
   };
 
+  useEffect(() => {
+    const roomNameFromLocalStorage = localStorage.getItem("roomName");
+    if (roomNameFromLocalStorage) {
+      setGeneratedRoomName(roomNameFromLocalStorage);
+      localStorage.removeItem("roomName");
+      setTimeout(() => {
+        if (joinButtonRef.current) {
+          joinButtonRef.current.click();
+        }
+      }, 1000);
+    }
+  }, []);
+
   return (
     <>
       <Modal
@@ -131,7 +134,7 @@ function Meeting() {
           <Button key="generate" type="primary" onClick={getRoomName}>
             {t("meeting.generateButton")}
           </Button>,
-          <Button key="join" type="primary" onClick={joinMeeting}>
+          <Button ref={joinButtonRef} key="join" type="primary" onClick={joinMeeting}>
             {"Join Meeting"}
           </Button>,
           <Button key="cancel" onClick={() => setUrlModalVisible(false)}>

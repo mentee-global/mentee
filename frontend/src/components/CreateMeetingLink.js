@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Input, Typography, message } from "antd";
-import { CopyOutlined, RightOutlined, LeftOutlined } from "@ant-design/icons";
+import { CopyOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { generateToken } from "utils/api";
 import { useDispatch } from 'react-redux';
@@ -14,9 +14,21 @@ function Meeting() {
   const [generatedRoomName, setGeneratedRoomName] = useState("");
   const [generatedToken, setGeneratedToken] = useState("");
   const [AppID, setGeneratedAppID] = useState("");
+  const [reloadFlag, setReloadFlag] = useState(false);
   const { t } = useTranslation();
   const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const roomNameFromLocalStorage = localStorage.getItem("roomName");
+    if (roomNameFromLocalStorage) {
+      setGeneratedRoomName(roomNameFromLocalStorage);
+      localStorage.removeItem("roomName");
+      while (!generatedRoomName){
+        joinMeeting();  
+      }
+    }
+  }, []);
 
   const copyToClipboard = () => {
     try {
@@ -43,31 +55,32 @@ function Meeting() {
   };
 
   const createSidePanel = () => {
-    return <div><JaaSMeeting
-    getIFrameRef={iframeRef => {
-      iframeRef.style.position = 'fixed';
-      iframeRef.style.top = 0;
-      iframeRef.style.right = 0;
-      iframeRef.style.width = '30%';
-      iframeRef.style.height = '100vh';      
-      }
-    }
-    appId = { AppID }
-    roomName = { ReactAppID + '/' + generatedRoomName }
-    jwt = { generatedToken }
-    
-    configOverwrite = {{
-        disableThirdPartyRequests: true,
-        disableLocalVideoFlip: true,
-        backgroundAlpha: 0.5
-    }}
-    interfaceConfigOverwrite = {{
-        VIDEO_LAYOUT_FIT: 'nocrop',
-        MOBILE_APP_PROMO: false,
-        TILE_VIEW_MAX_COLUMNS: 4
-    }}
-  /></div>;
-
+    return (
+      <div>
+        <JaaSMeeting
+          getIFrameRef={iframeRef => {
+            iframeRef.style.position = 'fixed';
+            iframeRef.style.top = 0;
+            iframeRef.style.right = 0;
+            iframeRef.style.width = '30%';
+            iframeRef.style.height = '100vh';
+          }}
+          appId={AppID}
+          roomName={ReactAppID + '/' + generatedRoomName}
+          jwt={generatedToken}
+          configOverwrite={{
+            disableThirdPartyRequests: true,
+            disableLocalVideoFlip: true,
+            backgroundAlpha: 0.5
+          }}
+          interfaceConfigOverwrite={{
+            VIDEO_LAYOUT_FIT: 'nocrop',
+            MOBILE_APP_PROMO: false,
+            TILE_VIEW_MAX_COLUMNS: 4
+          }}
+        />
+      </div>
+    );
   };
 
   const joinMeeting = () => {
@@ -90,6 +103,11 @@ function Meeting() {
 
   const getToken = () => {
     try {
+      if (reloadFlag) {
+        localStorage.setItem("roomName", generatedRoomName);
+        window.location.reload();
+      }
+      setReloadFlag(true);
       generateToken().then(resp => {
         setGeneratedToken(resp.token);
         setGeneratedAppID(resp.appID);

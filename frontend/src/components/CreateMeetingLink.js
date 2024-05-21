@@ -56,7 +56,7 @@ function Meeting() {
             iframeRef.style.bottom = 0;
             iframeRef.style.right = 0;
             iframeRef.style.width = '30%';
-            iframeRef.style.height = '93vh';
+            iframeRef.style.height = 'calc(100vh - 50px)';
           }}
           appId={AppID}
           roomName={ReactAppID + '/' + RoomName}

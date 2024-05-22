@@ -93,7 +93,7 @@
     "mentor": "Mentor",
     "message": "Message",
     "messages": "Messages",
-    "group_message":"Group Messages",
+    "group_message":"Group Chat",
     "name": "Name",
     "no": "No",
     "confirm": "Confirm",
@@ -594,13 +594,18 @@
     "resend": "Resend"
   },
   "meeting": {
-    "title": "Generate Meeting Link",
-    "generateButton": "Generate",
+    "title": "Create/Join Meeting",
+    "generateButton": "Create Room",
     "cancelButton": "Cancel",
-    "generatedURL": "Generated URL",
-    "errorGenerating": "Failed to generate meeting link.",
-    "errorCopy": "Failed to copy URL to clipboard.",
-    "copyMessage": "URL copied to clipboard!",
-    "limitWarning": "Please note that the meeting will have a limit of 100 attendees, and no time limit."
+    "generatedURL": "Room Name",
+    "errorGenerating": "Failed to generate meeting.",
+    "errorCopy": "Failed to copy room name to clipboard.",
+    "copyMessage": "Room name copied to clipboard!",
+    "limitWarning": "Please note that the meeting will have a limit of 100 attendees, and no time limit.",
+    "placeHolder": "Generate or Paste Room Name to Join",
+    "roomName": "Please provide a room name to join.",
+    "getToken": "Unable to join meeting",
+    "generateToken": "Unable to generate token",
+    "joinMeeting": "Join Meeting"
   }
 }

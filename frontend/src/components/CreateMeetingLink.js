@@ -21,7 +21,7 @@ function Meeting() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
+  // const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
 
   const copyToClipboard = () => {
     try {
@@ -59,7 +59,7 @@ function Meeting() {
             iframeRef.style.height = 'calc(100vh - 50px)';
           }}
           appId={AppID}
-          roomName={ReactAppID + '/' + RoomName}
+          roomName={{AppID} + '/' + RoomName}
           jwt={Token}
           configOverwrite={{
             disableThirdPartyRequests: true,
@@ -114,10 +114,8 @@ function Meeting() {
     }
   };
 
-  const redirectToMessages = () => {
-
-    history.push("/appointments");
-
+  const redirectBack = () => {
+    history.goBack();
   };
 
   useEffect(() => {
@@ -139,11 +137,8 @@ function Meeting() {
         title={t("meeting.title")}
         visible={urlModalVisible}
         onCancel={() => {
-
           setUrlModalVisible(false);
-
-          redirectToMessages();
-
+          redirectBack();
         }}
         footer={[
           <div key="left-buttons" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
@@ -154,7 +149,7 @@ function Meeting() {
               <Button ref={joinButtonRef} key="join" type="primary" onClick={joinMeeting}>
                 {t("meeting.joinMeeting")}
               </Button>,
-              <Button key="cancel" style={{ marginLeft: '8px' }} onClick={redirectToMessages}>
+              <Button key="cancel" style={{ marginLeft: '8px' }} onClick={redirectBack}>
                 {t("meeting.cancelButton")}
               </Button>,
             </div>  

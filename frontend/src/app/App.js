@@ -568,8 +568,8 @@ function App() {
                 <CreateMeetingLink />  
               </PrivateRoute>
             </Content>
+            <MeetingPanel />
           </Layout>
-          <MeetingPanel />
         </Router>
       </ConfigProvider>
     </>

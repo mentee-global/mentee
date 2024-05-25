@@ -13,7 +13,7 @@ from api.utils.jaas_jwt_builder import JaaSJwtBuilder
 meeting = Blueprint("meeting", __name__)
 
 API_KEY = os.environ.get("EIGHT_X_EIGHT_API_KEY")
-APP_ID = os.environ.get("REACT_APP_EIGHT_X_EIGHT_APP_ID")
+APP_ID = os.environ.get("EIGHT_X_EIGHT_APP_ID")
 ENCODED_PRIVATE_KEY = os.environ.get('EIGHT_X_EIGHT_ENCODED_PRIVATE_KEY')
 
 @meeting.route("/generateToken", methods=["GET"])

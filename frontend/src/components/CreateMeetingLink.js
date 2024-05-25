@@ -15,7 +15,6 @@ function Meeting() {
   const [RoomName, setRoomName] = useState("");
   const [Token, setToken] = useState("");
   const [AppID, setAppID] = useState("");
-  const [reloadFlag, setReloadFlag] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -51,13 +50,11 @@ function Meeting() {
         message.error(t("meeting.roomName"));
         return;
       }
-
-      await getToken();
-
-      dispatch(removePanel());
       
+      const response = await getToken();
+      dispatch(removePanel());
       setTimeout(() => {
-        dispatch(setPanel({ api_id: AppID, room_name: RoomName, token: Token }));
+        dispatch(setPanel({ app_id: response.appID, room_name: RoomName, token: response.token }));
       }, 500);
     } catch (error) {
       console.error("Error: ", error);
@@ -70,6 +67,7 @@ function Meeting() {
       const resp = await generateToken();
       setToken(resp.token);
       setAppID(resp.appID);
+      return resp
     } catch (error) {
       console.error('Error:', error);
       message.error(t("meeting.generateToken"));

@@ -1,11 +1,10 @@
-import React, { useState, useEffect , useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button, Input, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { generateToken } from "utils/api";
 import { useDispatch } from 'react-redux';
 import { setPanel, removePanel } from 'features/meetingPanelSlice';
-import { JaaSMeeting } from '@jitsi/react-sdk';
 import { useHistory } from "react-router-dom";
 
 const { Title } = Typography;
@@ -16,16 +15,13 @@ function Meeting() {
   const [RoomName, setRoomName] = useState("");
   const [Token, setToken] = useState("");
   const [AppID, setAppID] = useState("");
-  const [reloadFlag, setReloadFlag] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  // const ReactAppID = process.env.REACT_APP_EIGHT_X_EIGHT_APP_ID;
-
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText(RoomName);;
+      navigator.clipboard.writeText(RoomName);
       message.success(t("meeting.copyMessage"));
     } catch (error) {
       console.error(t("meeting.errorCopy"), error);
@@ -47,67 +43,31 @@ function Meeting() {
     }
   };
 
-  const createSidePanel = () => {
-    return (
-      <div>
-        <JaaSMeeting
-          getIFrameRef={iframeRef => {
-            iframeRef.style.position = 'fixed';
-            iframeRef.style.bottom = 0;
-            iframeRef.style.right = 0;
-            iframeRef.style.width = '30%';
-            iframeRef.style.height = 'calc(100vh - 50px)';
-          }}
-          appId={AppID}
-          roomName={{AppID} + '/' + RoomName}
-          jwt={Token}
-          configOverwrite={{
-            disableThirdPartyRequests: true,
-            disableLocalVideoFlip: true,
-            backgroundAlpha: 0.5
-          }}
-          interfaceConfigOverwrite={{
-            VIDEO_LAYOUT_FIT: 'nocrop',
-            MOBILE_APP_PROMO: false,
-            TILE_VIEW_MAX_COLUMNS: 4
-          }}
-        />
-      </div>
-    );
-  };
-
-  const joinMeeting = () => {
+  const joinMeeting = async () => {
     try {
       if (!RoomName) {
         console.error(t("meeting.roomName"));
         message.error(t("meeting.roomName"));
         return;
       }
-      getToken(); 
+      
+      const response = await getToken();
       dispatch(removePanel());
-      document.body.style.marginRight = "30%";
-      document.body.style.transition = "margin-right 0.3s";
-      dispatch(setPanel(createSidePanel()));
+      setTimeout(() => {
+        dispatch(setPanel({ app_id: response.appID, room_name: RoomName, token: response.token }));
+      }, 500);
     } catch (error) {
       console.error("Error: ", error);
       message.error(t("meeting.getToken"));
     }
   };
 
-  const getToken = () => {
+  const getToken = async () => {
     try {
-      if (reloadFlag) {
-        localStorage.setItem("roomName", RoomName);
-        window.location.reload();
-      }
-      setReloadFlag(true);
-      generateToken().then(resp => {
-        setToken(resp.token);
-        setAppID(resp.appID);
-      }).catch(error => {
-        console.error('Error:', error);
-        message.error(t("meeting.generateToken"));
-      });
+      const resp = await generateToken();
+      setToken(resp.token);
+      setAppID(resp.appID);
+      return resp
     } catch (error) {
       console.error('Error:', error);
       message.error(t("meeting.generateToken"));
@@ -131,15 +91,17 @@ function Meeting() {
     }
   }, []);
 
+  const handleCancel = () => {
+    setUrlModalVisible(false);
+    redirectBack();
+  };
+
   return (
     <>
       <Modal
         title={t("meeting.title")}
         visible={urlModalVisible}
-        onCancel={() => {
-          setUrlModalVisible(false);
-          redirectBack();
-        }}
+        onCancel={handleCancel}
         footer={[
           <div key="left-buttons" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
             <Button key="generate" style={{ color: 'red', borderColor: 'red', backgroundColor: 'white' }} onClick={getRoomName}>
@@ -149,7 +111,7 @@ function Meeting() {
               <Button ref={joinButtonRef} key="join" type="primary" onClick={joinMeeting}>
                 {t("meeting.joinMeeting")}
               </Button>,
-              <Button key="cancel" style={{ marginLeft: '8px' }} onClick={redirectBack}>
+              <Button key="cancel" style={{ marginLeft: '8px' }} onClick={handleCancel}>
                 {t("meeting.cancelButton")}
               </Button>,
             </div>  

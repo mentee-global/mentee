@@ -21,7 +21,7 @@ function Meeting() {
 
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText(RoomName);
+      navigator.clipboard.writeText('https://8x8.vc/' + AppID + '/' + RoomName);
       message.success(t("meeting.copyMessage"));
     } catch (error) {
       console.error(t("meeting.errorCopy"), error);
@@ -36,7 +36,7 @@ function Meeting() {
       for (let i = 0; i < 10; i++) {
         generatedRoomName += characters.charAt(Math.floor(Math.random() * characters.length));
       }
-      setRoomName(generatedRoomName);
+      setRoomName(generatedRoomName.split('/').pop());
     } catch (error) {
       console.error(t("meeting.errorGenerating"));
       message.error(t("meeting.errorGenerating"));
@@ -78,19 +78,6 @@ function Meeting() {
     history.goBack();
   };
 
-  useEffect(() => {
-    const roomNameFromLocalStorage = localStorage.getItem("roomName");
-    if (roomNameFromLocalStorage) {
-      setRoomName(roomNameFromLocalStorage);
-      localStorage.removeItem("roomName");
-      setTimeout(() => {
-        if (joinButtonRef.current) {
-          joinButtonRef.current.click();
-        }
-      }, 1000);
-    }
-  }, []);
-
   const handleCancel = () => {
     setUrlModalVisible(false);
     redirectBack();
@@ -123,7 +110,7 @@ function Meeting() {
           <div style={{ display: "flex", alignItems: "center" }}>
             <Input
               value={RoomName}
-              onChange={(e) => setRoomName(e.target.value)}
+              onChange={(e) => setRoomName(e.target.value.split('/').pop())}
               placeholder={t("meeting.placeHolder")}
             />
             <Button

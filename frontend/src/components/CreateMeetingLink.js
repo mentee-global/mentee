@@ -22,10 +22,12 @@ function URLGeneration() {
 
   const getURL = () => {
     try {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let result = 'https://jitsi.ff3l.net/';
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let result = "https://jitsi.ff3l.net/";
       for (let i = 0; i < 10; i++) {
-          result += characters.charAt(Math.floor(Math.random() * characters.length));
+        result += characters.charAt(
+          Math.floor(Math.random() * characters.length)
+        );
       }
       setGeneratedUrl(result);
     } catch (error) {

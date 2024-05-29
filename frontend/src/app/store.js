@@ -3,7 +3,7 @@ import userReducer from "features/userSlice";
 import notificationsReducer from "features/notificationsSlice";
 import messagesReducer from "features/messagesSlice";
 import optionsReducer from "features/optionsSlice";
-import meetingPanelReducer from 'features/meetingPanelSlice';
+import meetingPanelReducer from "features/meetingPanelSlice";
 
 export default configureStore({
   reducer: {

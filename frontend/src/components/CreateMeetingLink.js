@@ -3,8 +3,8 @@ import { Modal, Button, Input, Typography, message } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { generateToken } from "utils/api";
-import { useDispatch } from 'react-redux';
-import { setPanel, removePanel } from 'features/meetingPanelSlice';
+import { useDispatch } from "react-redux";
+import { setPanel, removePanel } from "features/meetingPanelSlice";
 import { useHistory } from "react-router-dom";
 
 const { Title } = Typography;
@@ -21,7 +21,7 @@ function Meeting() {
 
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText('https://8x8.vc/' + AppID + '/' + RoomName);
+      navigator.clipboard.writeText("https://8x8.vc/" + AppID + "/" + RoomName);
       message.success(t("meeting.copyMessage"));
     } catch (error) {
       console.error(t("meeting.errorCopy"), error);
@@ -31,12 +31,14 @@ function Meeting() {
 
   const getRoomName = () => {
     try {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let generatedRoomName = '';
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let generatedRoomName = "";
       for (let i = 0; i < 10; i++) {
-        generatedRoomName += characters.charAt(Math.floor(Math.random() * characters.length));
+        generatedRoomName += characters.charAt(
+          Math.floor(Math.random() * characters.length)
+        );
       }
-      setRoomName(generatedRoomName.split('/').pop());
+      setRoomName(generatedRoomName.split("/").pop());
     } catch (error) {
       console.error(t("meeting.errorGenerating"));
       message.error(t("meeting.errorGenerating"));
@@ -50,11 +52,17 @@ function Meeting() {
         message.error(t("meeting.roomName"));
         return;
       }
-      
+
       const response = await getToken();
       dispatch(removePanel());
       setTimeout(() => {
-        dispatch(setPanel({ app_id: response.appID, room_name: RoomName, token: response.token }));
+        dispatch(
+          setPanel({
+            app_id: response.appID,
+            room_name: RoomName,
+            token: response.token,
+          })
+        );
       }, 500);
     } catch (error) {
       console.error("Error: ", error);
@@ -67,9 +75,9 @@ function Meeting() {
       const resp = await generateToken();
       setToken(resp.token);
       setAppID(resp.appID);
-      return resp
+      return resp;
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       message.error(t("meeting.generateToken"));
     }
   };
@@ -90,19 +98,46 @@ function Meeting() {
         visible={urlModalVisible}
         onCancel={handleCancel}
         footer={[
-          <div key="left-buttons" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-            <Button key="generate" style={{ color: 'red', borderColor: 'red', backgroundColor: 'white' }} onClick={getRoomName}>
+          <div
+            key="left-buttons"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Button
+              key="generate"
+              style={{
+                color: "red",
+                borderColor: "red",
+                backgroundColor: "white",
+              }}
+              onClick={getRoomName}
+            >
               {t("meeting.generateButton")}
-            </Button>,
+            </Button>
+            ,
             <div>
-              <Button ref={joinButtonRef} key="join" type="primary" onClick={joinMeeting}>
+              <Button
+                ref={joinButtonRef}
+                key="join"
+                type="primary"
+                onClick={joinMeeting}
+              >
                 {t("meeting.joinMeeting")}
-              </Button>,
-              <Button key="cancel" style={{ marginLeft: '8px' }} onClick={handleCancel}>
+              </Button>
+              ,
+              <Button
+                key="cancel"
+                style={{ marginLeft: "8px" }}
+                onClick={handleCancel}
+              >
                 {t("meeting.cancelButton")}
-              </Button>,
-            </div>  
-          </div>
+              </Button>
+              ,
+            </div>
+          </div>,
         ]}
       >
         <div>
@@ -110,7 +145,7 @@ function Meeting() {
           <div style={{ display: "flex", alignItems: "center" }}>
             <Input
               value={RoomName}
-              onChange={(e) => setRoomName(e.target.value.split('/').pop())}
+              onChange={(e) => setRoomName(e.target.value.split("/").pop())}
               placeholder={t("meeting.placeHolder")}
             />
             <Button
@@ -130,4 +165,3 @@ function Meeting() {
 }
 
 export default Meeting;
-

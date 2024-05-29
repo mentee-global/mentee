@@ -3,10 +3,12 @@ import {
   UserOutlined,
   CalendarOutlined,
   MailOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "utils/hooks/useAuth";
+import CreateMeetingLink from "./components/CreateMeetingLink";
 
 function MenteeSidebar(props) {
   const { t } = useTranslation();
@@ -29,7 +31,17 @@ function MenteeSidebar(props) {
       icon: <MailOutlined />,
     },
   };
-  return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
+
+  //return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
+
+  return (
+    <Sidebar pages={pages} selectedPage={props.selectedPage}>
+      <Sidebar.Item key="createmeetinglink">
+        <CreateMeetingLink />
+      </Sidebar.Item>
+      {/* Other sidebar content within Sidebar.Item components */}
+    </Sidebar>
+  );
 }
 
 export default MenteeSidebar;

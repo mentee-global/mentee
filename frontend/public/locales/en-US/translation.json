@@ -581,7 +581,8 @@
     "community":"Community",
     "community_info":"Community Information",
     "inforamtion":"Information",
-    "info_board":"Information Board"
+    "info_board":"Information Board",
+    "meeting":"Meeting Link"
   },
   "verifyEmail": {
     "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",
@@ -591,5 +592,15 @@
     "noEmail": "Didn't receive an email?",
     "refresh": "(Refresh this page if you verified your email)",
     "resend": "Resend"
+  },
+  "meeting": {
+    "title": "Generate Meeting Link",
+    "generateButton": "Generate",
+    "cancelButton": "Cancel",
+    "generatedURL": "Generated URL",
+    "errorGenerating": "Failed to generate meeting link.",
+    "errorCopy": "Failed to copy URL to clipboard.",
+    "copyMessage": "URL copied to clipboard!",
+    "limitWarning": "Please note that the meeting will have a limit of 100 attendees, and no time limit."
   }
 }

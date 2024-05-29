@@ -33,7 +33,8 @@ function PartnerSidebar(props) {
       </Sidebar.Item>
       {/* Other sidebar content within Sidebar.Item components */}
     </Sidebar>
-  );
+  );  
+
 }
 
 export default PartnerSidebar;

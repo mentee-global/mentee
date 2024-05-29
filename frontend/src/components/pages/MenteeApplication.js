@@ -15,18 +15,19 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
   useEffect(() => {
     async function getPartners() {
       const partenr_data = await fetchPartners(undefined, null);
+      var temp_partner_options = [];
       partenr_data.map((item) => {
-        partnerOptions.push({
+        temp_partner_options.push({
           value: item._id.$oid,
           label: item.organization,
         });
         return true;
       });
-      partnerOptions.push({
+      temp_partner_options.push({
         value: null,
         label: t("commonApplication.no-affiliation"),
       });
-      setPartnerOptions(partnerOptions);
+      setPartnerOptions(temp_partner_options);
       setLoading(false);
     }
     async function getAllCountries() {
@@ -499,7 +500,13 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
             },
           ]}
         >
-          <Select options={[...partnerOptions]} />
+          <Select
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
+            }
+            options={[...partnerOptions]}
+          />
         </Form.Item>
         <Form.Item>
           <Button

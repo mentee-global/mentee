@@ -19,7 +19,7 @@ def test_find_mentee(client):
 
     accounts = result["accounts"]
 
-# There is no need to write assertion on db level data because its change frequently (Database assertion)
+    # There is no need to write assertion on db level data because its change frequently (Database assertion)
     # get the public mentee instances in the database
     mentee_users = MenteeProfile.objects.filter(is_private=False).count()
 
@@ -41,7 +41,7 @@ def test_find_mentor(client):
     assert "accounts" in result
 
     accounts = result["accounts"]
-    #get the mentor instances in the database
+    # get the mentor instances in the database
     mentor_users = MentorProfile.objects.count()
     assert len(accounts) > 0
     assert (

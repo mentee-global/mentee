@@ -14,7 +14,8 @@ meeting = Blueprint("meeting", __name__)
 
 API_KEY = os.environ.get("EIGHT_X_EIGHT_API_KEY")
 APP_ID = os.environ.get("EIGHT_X_EIGHT_APP_ID")
-ENCODED_PRIVATE_KEY = os.environ.get('EIGHT_X_EIGHT_ENCODED_PRIVATE_KEY')
+ENCODED_PRIVATE_KEY = os.environ.get("EIGHT_X_EIGHT_ENCODED_PRIVATE_KEY")
+
 
 @meeting.route("/generateToken", methods=["GET"])
 def generateToken():
@@ -23,17 +24,21 @@ def generateToken():
         PRIVATE_KEY = base64.b64decode(ENCODED_PRIVATE_KEY)
         print(PRIVATE_KEY)
         jaasJwt = JaaSJwtBuilder()
-        token = jaasJwt.withDefaults() \
-            .withApiKey(API_KEY) \
-                .withUserName("User Name") \
-                    .withUserEmail("email_address@email.com") \
-                        .withModerator(False) \
-                            .withAppID(APP_ID) \
-                                .withUserAvatar("https://asda.com/avatar") \
-                                    .signWith(PRIVATE_KEY)
+        token = (
+            jaasJwt.withDefaults()
+            .withApiKey(API_KEY)
+            .withUserName("User Name")
+            .withUserEmail("email_address@email.com")
+            .withModerator(False)
+            .withAppID(APP_ID)
+            .withUserAvatar("https://asda.com/avatar")
+            .signWith(PRIVATE_KEY)
+        )
 
-        return create_response(data={"token": token.decode('utf-8'), "appID": APP_ID})
+        return create_response(data={"token": token.decode("utf-8"), "appID": APP_ID})
 
     except Exception as error:
         print(error)
-        return create_response(status=422, message=f'Failed to generate token for meeting')
+        return create_response(
+            status=422, message=f"Failed to generate token for meeting"
+        )

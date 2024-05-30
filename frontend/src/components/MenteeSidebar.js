@@ -14,7 +14,6 @@ function MenteeSidebar(props) {
   const { t } = useTranslation();
   const { role } = useAuth();
 
-  
   const pages = {
     appointments: {
       name: t("sidebars.appointments"),
@@ -42,8 +41,7 @@ function MenteeSidebar(props) {
       </Sidebar.Item>
       {/* Other sidebar content within Sidebar.Item components */}
     </Sidebar>
-  );  
-
+  );
 }
 
 export default MenteeSidebar;

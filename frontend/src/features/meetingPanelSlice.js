@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const meetingPanelSlice = createSlice({
-  name: "meetingPanel",
+  name: 'meetingPanel',
   initialState: {
     panelComponent: null,
   },

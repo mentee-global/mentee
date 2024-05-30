@@ -45,7 +45,7 @@ function MentorSidebar(props) {
       </Sidebar.Item>
       {/* Other sidebar content within Sidebar.Item components */}
     </Sidebar>
-  );
+  );  
 }
 
 export default MentorSidebar;

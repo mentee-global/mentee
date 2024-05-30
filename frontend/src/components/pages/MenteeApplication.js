@@ -28,7 +28,6 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
         label: t("commonApplication.no-affiliation"),
       });
       setPartnerOptions(temp_partner_options);
-
       setLoading(false);
     }
     async function getAllCountries() {

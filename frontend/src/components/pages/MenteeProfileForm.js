@@ -345,7 +345,7 @@ function MenteeProfileForm({
       onValuesChange={() => setEdited(true)}
     >
       <Form.Item>
-        <ImgCrop rotate aspect={1}>
+        <ImgCrop rotate aspect={1} minZoom={0.2}>
           <Upload
             onChange={async (file) => {
               setImage(file.file.originFileObj);

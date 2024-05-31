@@ -648,29 +648,36 @@ def uploadImage(id):
 
     try:
         token = request.headers.get("Authorization")
-        claims = firebase_admin_auth.verify_id_token(token)
-        login_user_role = claims.get("role")
-
-        authorized, response = verify_user(account_type)
-        if (
-            not authorized
-            and int(login_user_role) != Account.ADMIN
-            and int(login_user_role) != Account.SUPPORT
-            and int(login_user_role) != Account.HUB
-        ):
-            return response
-
-        if account_type == Account.MENTEE:
-            account = MenteeProfile.objects.get(id=id)
-        elif account_type == Account.MENTOR:
-            account = MentorProfile.objects.get(id=id)
-        elif account_type == Account.PARTNER:
-            account = PartnerProfile.objects.get(id=id)
-        elif account_type == Account.HUB:
-            account = Hub.objects.get(id=id)
+        if token is None:
+            if account_type == Account.PARTNER:
+                account = PartnerProfile.objects.get(id=id)
+            else:
+                msg = "Level param doesn't match existing account types"
+                return create_response(status=422, message=msg)
         else:
-            msg = "Level param doesn't match existing account types"
-            return create_response(status=422, message=msg)
+            claims = firebase_admin_auth.verify_id_token(token)
+            login_user_role = claims.get("role")
+
+            authorized, response = verify_user(account_type)
+            if (
+                not authorized
+                and int(login_user_role) != Account.ADMIN
+                and int(login_user_role) != Account.SUPPORT
+                and int(login_user_role) != Account.HUB
+            ):
+                return response
+
+            if account_type == Account.MENTEE:
+                account = MenteeProfile.objects.get(id=id)
+            elif account_type == Account.MENTOR:
+                account = MentorProfile.objects.get(id=id)
+            elif account_type == Account.PARTNER:
+                account = PartnerProfile.objects.get(id=id)
+            elif account_type == Account.HUB:
+                account = Hub.objects.get(id=id)
+            else:
+                msg = "Level param doesn't match existing account types"
+                return create_response(status=422, message=msg)
     except:
         msg = ""
         if account_type == Account.MENTEE:

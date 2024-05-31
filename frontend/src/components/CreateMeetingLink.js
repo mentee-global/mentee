@@ -19,9 +19,17 @@ function Meeting() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const copyToClipboard = () => {
+  const copyToClipboard = async () => {
     try {
-      navigator.clipboard.writeText("https://8x8.vc/" + AppID + "/" + RoomName);
+      if (AppID===""){
+        const response = await getToken();
+        setTimeout(() => {
+          navigator.clipboard.writeText('https://8x8.vc/' + response.appID + '/' + RoomName);
+        }, 100);
+      }
+      else{
+        navigator.clipboard.writeText('https://8x8.vc/' + AppID + '/' + RoomName);  
+      }
       message.success(t("meeting.copyMessage"));
     } catch (error) {
       console.error(t("meeting.errorCopy"), error);
@@ -63,7 +71,7 @@ function Meeting() {
             token: response.token,
           })
         );
-      }, 500);
+      }, 100);
     } catch (error) {
       console.error("Error: ", error);
       message.error(t("meeting.getToken"));

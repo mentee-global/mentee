@@ -65,12 +65,22 @@ function Messages(props) {
       setLatestConvos(data);
       setRestrictedPartners(restricted_partners);
       if (data?.length) {
-        dispatch(
-          updateNotificationsCount({
-            recipient: profileId,
-            sender: data[0].otherId,
-          })
-        );
+        let unread_message_senders = [];
+        data.map((message_item) => {
+          if (
+            message_item.message_read === false &&
+            !unread_message_senders.includes(message_item.otherId)
+          ) {
+            unread_message_senders.push(message_item.otherId);
+            dispatch(
+              updateNotificationsCount({
+                recipient: profileId,
+                sender: message_item.otherId,
+              })
+            );
+          }
+        });
+
         history.push(
           `/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`
         );

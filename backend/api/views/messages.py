@@ -186,13 +186,14 @@ def contact_mentor(mentor_id):
 def get_sidebar(user_id):
     try:
         sentMessages = DirectMessage.objects.filter(
-            (Q(sender_id=user_id) | Q(recipient_id=user_id)) & Q(message_read=False)
+            Q(sender_id=user_id) | Q(recipient_id=user_id)
         ).order_by("-created_at")
 
         contacts = []
         sidebarContacts = set()
         for message in sentMessages:
             otherId = message["recipient_id"]
+            message_read = message["message_read"]
 
             if str(otherId) == user_id:
                 otherId = message["sender_id"]
@@ -234,6 +235,7 @@ def get_sidebar(user_id):
 
                 sidebarObject = {
                     "otherId": str(otherId),
+                    "message_read": message_read,
                     "numberOfMessages": len(
                         [
                             messagee

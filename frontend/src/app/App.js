@@ -116,7 +116,6 @@ function App() {
             {role && <NavigationSider />}
             <Content>
               {role && <NavigationHeader />}
-              {role == ACCOUNT_TYPE.HUB && <HubFooter />}
               <HomeLayout ignoreHomeLayout={role} allHubData={allHubData}>
                 <PublicRoute exact path="/">
                   <Home />
@@ -356,6 +355,9 @@ function App() {
                     >
                       <GroupMessages />
                     </PrivateRoute>
+                    <PrivateRoute path={hub_url + "/new_training/:type/:id"}>
+                      <NewTrainingConfirm />
+                    </PrivateRoute>
                   </>
                 );
               })}
@@ -567,6 +569,7 @@ function App() {
               <PrivateRoute path="/createmeetinglink">
                 <CreateMeetingLink />
               </PrivateRoute>
+              {role == ACCOUNT_TYPE.HUB && <HubFooter />}
             </Content>
             <MeetingPanel />
           </Layout>

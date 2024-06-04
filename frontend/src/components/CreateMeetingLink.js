@@ -125,7 +125,6 @@ function Meeting() {
             >
               {t("meeting.generateButton")}
             </Button>
-            ,
             <div>
               <Button
                 ref={joinButtonRef}
@@ -135,7 +134,6 @@ function Meeting() {
               >
                 {t("meeting.joinMeeting")}
               </Button>
-              ,
               <Button
                 key="cancel"
                 style={{ marginLeft: "8px" }}
@@ -143,9 +141,8 @@ function Meeting() {
               >
                 {t("meeting.cancelButton")}
               </Button>
-              ,
             </div>
-          </div>,
+          </div>
         ]}
       >
         <div>

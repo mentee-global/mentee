@@ -26,9 +26,9 @@
 .navigation-footer {
   display: flex;
   justify-content: end;
-  // position: absolute;
-  bottom: 0;
-  right: 0;
+  position: fixed;
+  bottom: 30px;
+  left: 10px;
   padding: 5px;
 }
 

@@ -133,7 +133,7 @@ function GroupMessageChatArea(props) {
       ) : (
         <div></div>
       )}
-      <div className="conversation-content">
+      <div className="conversation-content group-conversation-content">
         <Spin spinning={loading}>
           {messages &&
             messages.map((block) => {

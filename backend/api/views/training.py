@@ -211,6 +211,7 @@ def new_train(role):
 
         # TODO: Remove this so that it is a job in the background
         new_train_id = train.id
+        hub_url = ""
         if int(role) == Account.MENTOR:
             recipients = MentorProfile.objects.only("email", "preferred_language")
         elif int(role) == Account.MENTEE:
@@ -219,7 +220,7 @@ def new_train(role):
             recipients = PartnerProfile.objects.only("email", "preferred_language")
         else:
             hub_users = Hub.objects.filter(id=hub_id).only(
-                "email", "preferred_language"
+                "email", "preferred_language", "url"
             )
             partners = PartnerProfile.objects.filter(hub_id=hub_id).only(
                 "email", "preferred_language"
@@ -227,10 +228,14 @@ def new_train(role):
             recipients = []
             for hub_user in hub_users:
                 recipients.append(hub_user)
+                if hub_url == "":
+                    hub_url = hub_user.url + "/"
             for partner_user in partners:
                 recipients.append(partner_user)
         front_url = request.form["front_url"]
-        target_url = front_url + "new_training/" + role + "/" + str(new_train_id)
+        target_url = (
+            front_url + hub_url + "new_training/" + role + "/" + str(new_train_id)
+        )
 
         for recipient in recipients:
             res, res_msg = send_email(

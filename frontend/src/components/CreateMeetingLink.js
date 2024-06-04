@@ -21,14 +21,17 @@ function Meeting() {
 
   const copyToClipboard = async () => {
     try {
-      if (AppID===""){
+      if (AppID === "") {
         const response = await getToken();
         setTimeout(() => {
-          navigator.clipboard.writeText('https://8x8.vc/' + response.appID + '/' + RoomName);
+          navigator.clipboard.writeText(
+            "https://8x8.vc/" + response.appID + "/" + RoomName
+          );
         }, 100);
-      }
-      else{
-        navigator.clipboard.writeText('https://8x8.vc/' + AppID + '/' + RoomName);  
+      } else {
+        navigator.clipboard.writeText(
+          "https://8x8.vc/" + AppID + "/" + RoomName
+        );
       }
       message.success(t("meeting.copyMessage"));
     } catch (error) {

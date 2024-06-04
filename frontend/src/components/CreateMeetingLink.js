@@ -145,7 +145,7 @@ function Meeting() {
                 {t("meeting.cancelButton")}
               </Button>
             </div>
-          </div>,
+          </div>
         ]}
       >
         <div>

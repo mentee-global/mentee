@@ -124,7 +124,9 @@ function MessageCard(props) {
         >
           <Meta
             avatar={<Avatar src={accountData.image?.url} />}
-            title={accountData.name}
+            title={
+              accountData.name ? accountData.name : accountData.organization
+            }
             description={latestMessage.body}
           />
         </div>

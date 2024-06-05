@@ -3,7 +3,7 @@ from api.core import create_response, logger
 from flask import Blueprint
 from api.models.MenteeProfile import MenteeProfile, MentorProfile
 from mongoengine.queryset.visitor import Q
-from api.models import DirectMessage, PartnerProfile
+from api.models import DirectMessage, PartnerProfile, Hub
 from api.utils.request_utils import send_email, send_sms
 from api.utils.constants import (
     WEEKLY_NOTIF_REMINDER,
@@ -21,13 +21,38 @@ def get_unread_dm_count(id):
     try:
         notifications = DirectMessage.objects(
             Q(recipient_id=id) & Q(message_read=False)
-        ).count()
+        )
+        unread_message_number = 0
+        checked_ids = set()
+        for message_item in notifications:
+            sender_id = message_item["sender_id"]
+            if sender_id not in checked_ids:
+                sender = MentorProfile.objects.get(id=sender_id)
+                if not sender:
+                    sender = MenteeProfile.objects.get(id=sender_id)
+                    if not sender:
+                        sender = PartnerProfile.objects.get(id=sender_id)
+                        if not sender:
+                            sender = Hub.objects.get(id=sender_id)
+                            if sender:
+                                unread_message_number = unread_message_number + 1
+                                continue
+                    else:
+                        unread_message_number = unread_message_number + 1
+                        continue
+                else:
+                    unread_message_number = unread_message_number + 1
+                    continue
+            else:
+                unread_message_number = unread_message_number + 1
+                continue
+
     except Exception as e:
         msg = "No mentee with that id"
         logger.info(e)
         return create_response(status=422, message=msg)
 
-    return create_response(data={"notifications": notifications})
+    return create_response(data={"notifications": unread_message_number})
 
 
 @notifications.route("/unread_alert/<id>", methods=["GET"])

@@ -193,6 +193,7 @@ def get_sidebar(user_id):
         sidebarContacts = set()
         for message in sentMessages:
             otherId = message["recipient_id"]
+            message_read = message["message_read"]
 
             if str(otherId) == user_id:
                 otherId = message["sender_id"]
@@ -234,6 +235,7 @@ def get_sidebar(user_id):
 
                 sidebarObject = {
                     "otherId": str(otherId),
+                    "message_read": message_read,
                     "numberOfMessages": len(
                         [
                             messagee

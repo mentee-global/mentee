@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Avatar, Input, Button, Spin, Modal, theme, Drawer } from "antd";
-import { withRouter } from "react-router-dom";
+import { withRouter, NavLink } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import moment from "moment-timezone";
 import { SendOutlined, ArrowLeftOutlined } from "@ant-design/icons";
@@ -359,13 +359,27 @@ function MessagesChatArea(props) {
               <ArrowLeftOutlined />
             </div>
           )}
-          <Avatar size={60} src={accountData.image?.url} />
+          <NavLink
+            to={`/gallery/${userType ? userType : ACCOUNT_TYPE.HUB}/${
+              accountData._id.$oid
+            }`}
+          >
+            <Avatar size={60} src={accountData.image?.url} />
+          </NavLink>
           <div className="messages-chat-area-header-info">
             <div className="messages-chat-area-header-name">
-              {isPartner ? accountData.organization : accountData.name}
+              {isPartner
+                ? accountData.organization
+                : accountData.name
+                ? accountData.name
+                : accountData.organization}
             </div>
             <div className="messages-chat-area-header-title">
-              {isPartner ? accountData.intro : accountData.professional_title}
+              {isPartner
+                ? accountData.intro
+                : accountData.professional_title
+                ? accountData.professional_title
+                : accountData.intro}
             </div>
             {((isBookingVisible && inviteeId === otherId) ||
               isAlreadyInvited) && (

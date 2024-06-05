@@ -27,22 +27,31 @@ def get_unread_dm_count(id):
         for message_item in notifications:
             sender_id = message_item["sender_id"]
             if sender_id not in checked_ids:
-                sender = MentorProfile.objects.get(id=sender_id)
-                if not sender:
-                    sender = MenteeProfile.objects.get(id=sender_id)
-                    if not sender:
-                        sender = PartnerProfile.objects.get(id=sender_id)
-                        if not sender:
-                            sender = Hub.objects.get(id=sender_id)
+                try:
+                    sender = MentorProfile.objects.get(id=sender_id)
+                    if sender:
+                        unread_message_number = unread_message_number + 1
+                        continue
+                except:
+                    try:
+                        sender = MenteeProfile.objects.get(id=sender_id)
+                        if sender:
+                            unread_message_number = unread_message_number + 1
+                            continue
+                    except:
+                        try:
+                            sender = PartnerProfile.objects.get(id=sender_id)
                             if sender:
                                 unread_message_number = unread_message_number + 1
                                 continue
-                    else:
-                        unread_message_number = unread_message_number + 1
-                        continue
-                else:
-                    unread_message_number = unread_message_number + 1
-                    continue
+                        except:
+                            try:
+                                sender = Hub.objects.get(id=sender_id)
+                                if sender:
+                                    unread_message_number = unread_message_number + 1
+                                    continue
+                            except:
+                                continue
             else:
                 unread_message_number = unread_message_number + 1
                 continue

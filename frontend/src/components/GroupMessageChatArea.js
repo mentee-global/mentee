@@ -180,7 +180,6 @@ function GroupMessageChatArea(props) {
                                 style={{ cursor: "pointer" }}
                               />
                             </div>
-
                             <div
                               style={{
                                 cursor: "pointer",

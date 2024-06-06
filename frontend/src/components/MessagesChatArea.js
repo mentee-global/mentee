@@ -347,6 +347,16 @@ function MessagesChatArea(props) {
     `,
   };
 
+  const linkify = (text) => {
+    const urlPattern =
+      /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+    return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+  };
+
+  const HtmlContent = ({ content }) => {
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  };
+
   return (
     <div className="conversation-container">
       {accountData ? (
@@ -460,7 +470,7 @@ function MessagesChatArea(props) {
                               : styles.bubbleReceived}
                           `}
                         >
-                          {block.body}
+                          <HtmlContent content={linkify(block.body)} />
                           {block.availabes_in_future !== undefined &&
                             block.availabes_in_future !== null &&
                             block.availabes_in_future.length > 0 &&

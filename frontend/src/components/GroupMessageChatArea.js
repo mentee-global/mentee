@@ -174,13 +174,13 @@ function GroupMessageChatArea(props) {
                                 : ACCOUNT_TYPE.HUB
                             }/${block.sender_id.$oid}`}
                           >
-                            <div style={{width: "50px", textAlign:'center'}}>
+                            <div style={{ width: "50px", textAlign: "center" }}>
                               <Avatar
                                 src={sender_user?.image?.url}
                                 style={{ cursor: "pointer" }}
                               />
                             </div>
-                            
+
                             <div
                               style={{
                                 cursor: "pointer",

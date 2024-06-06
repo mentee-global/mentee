@@ -51,6 +51,12 @@ function GroupMessageChatArea(props) {
     }
   };
 
+  const linkify = (text) => {
+    const urlPattern =
+      /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+    return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+  };
+
   const sendMessage = (e) => {
     let currentMessage = messageText;
     if (!currentMessage.trim().length) {
@@ -106,6 +112,10 @@ function GroupMessageChatArea(props) {
       clear: left;
       background-color: #f4f5f9;
     `,
+  };
+
+  const HtmlContent = ({ content }) => {
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
   };
 
   return (
@@ -164,15 +174,22 @@ function GroupMessageChatArea(props) {
                                 : ACCOUNT_TYPE.HUB
                             }/${block.sender_id.$oid}`}
                           >
-                            <Avatar
-                              src={sender_user?.image?.url}
-                              style={{ cursor: "pointer" }}
-                            />
+                            <div style={{width: "50px", textAlign:'center'}}>
+                              <Avatar
+                                src={sender_user?.image?.url}
+                                style={{ cursor: "pointer" }}
+                              />
+                            </div>
+                            
                             <div
                               style={{
                                 cursor: "pointer",
                                 fontSize: "11px",
-                                textAlign: "center",
+                                textAlign: "left",
+                                width: "50px",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
                               }}
                             >
                               {sender_user.name
@@ -195,7 +212,7 @@ function GroupMessageChatArea(props) {
                               : styles.bubbleReceived}
                           `}
                         >
-                          {block.body}
+                          <HtmlContent content={linkify(block.body)} />
                         </div>
                       </div>
                     </div>

@@ -37,7 +37,6 @@ const authDelete = async (url, config) =>
   });
 
 export const getAllcountries = () => {
-  // const requestExtension = "https://restcountries.com/v3.1/all";
   const requestExtension = "/countries";
   return authGet(requestExtension, {}).then(
     (response) => response.data.result,

@@ -27,6 +27,7 @@ from api.models import (
     Notifications,
     Guest,
     Hub,
+    Countries,
 )
 from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS, ALERT_TO_ADMINS
 from api.utils.request_utils import send_email
@@ -723,3 +724,16 @@ def is_mentee_account_private(id):
         return create_response(status=422, message=msg)
 
     return create_response(data={"private": True if mentee.is_private else False})
+
+
+@main.route("/countries", methods=["GET"])
+# @all_users
+def getAllCountries():
+    try:
+        countries = Countries.objects()
+    except:
+        msg = "failed connection"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    return create_response(data={"countries": countries})

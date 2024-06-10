@@ -181,12 +181,12 @@ function MenteeProfileForm({
     }
 
     async function getAllCountries() {
-      const all_countires = await getAllcountries();
+      const all_countries = await getAllcountries();
       var temp_countires = [];
-      if (all_countires) {
+      if (all_countries && all_countries.countries) {
         // Extract country names
-        const countryNames = all_countires.map(
-          (country) => country.name.common
+        const countryNames = all_countries.countries.map(
+          (country) => country.country_name
         );
         // Sort country names in ascending order
         const sortedCountryNames = countryNames.sort();

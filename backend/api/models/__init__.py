@@ -26,6 +26,7 @@ from .PartnerProfile import PartnerProfile
 from .MentorApplication import MentorApplication
 from .Notifications import Notifications
 from .Languages import Languages
+from .Countries import Countries
 from .Specializations import Specializations
 from .Guest import Guest
 from .Support import Support
@@ -55,6 +56,7 @@ __all__ = [
     "MentorApplication",
     "Notifications",
     "Languages",
+    "Countries",
     "Specializations",
     "Guest",
     "Support",

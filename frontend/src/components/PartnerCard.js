@@ -69,17 +69,32 @@ function PartnerCard(props) {
 
   function loginOtherUser(e, user_data) {
     localStorage.setItem("support_user_id", user._id.$oid);
-    resetRoleState(user_data.id, ACCOUNT_TYPE.PARTNER);
-    dispatch(
-      fetchUser({
-        id: user_data.id,
-        role: ACCOUNT_TYPE.PARTNER,
-      })
-    );
-    localStorage.setItem("role", ACCOUNT_TYPE.PARTNER);
-    localStorage.setItem("profileId", user_data.id);
-
-    history.push(REDIRECTS[ACCOUNT_TYPE.PARTNER]);
+    if (user_data.hub_user && user_data.hub_user.name) {
+      localStorage.setItem("login_path", user_data.hub_user.url);
+      resetRoleState(user_data.id, ACCOUNT_TYPE.HUB);
+      dispatch(
+        fetchUser({
+          id: user_data.id,
+          role: ACCOUNT_TYPE.HUB,
+        })
+      );
+      localStorage.setItem("role", ACCOUNT_TYPE.HUB);
+      localStorage.setItem("profileId", user_data.id);
+      history.push(
+        "/" + user_data.hub_user.url + REDIRECTS[ACCOUNT_TYPE.PARTNER]
+      );
+    } else {
+      resetRoleState(user_data.id, ACCOUNT_TYPE.PARTNER);
+      dispatch(
+        fetchUser({
+          id: user_data.id,
+          role: ACCOUNT_TYPE.PARTNER,
+        })
+      );
+      localStorage.setItem("role", ACCOUNT_TYPE.PARTNER);
+      localStorage.setItem("profileId", user_data.id);
+      history.push(REDIRECTS[ACCOUNT_TYPE.PARTNER]);
+    }
   }
 
   return (
@@ -181,6 +196,27 @@ function PartnerCard(props) {
               {props.video.title}
             </a>
           </Paragraph>
+        )}
+        {props.hub_user && props.hub_user.name && (
+          <>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
+            >
+              HUB
+            </Title>
+            <div style={{ display: "flex" }}>
+              <img
+                src={props.hub_user.image?.url}
+                alt=""
+                style={{ width: "auto", height: "30px", marginRight: "10px" }}
+              />
+              <Paragraph>{props.hub_user.name}</Paragraph>
+            </div>
+          </>
         )}
       </div>
       <div

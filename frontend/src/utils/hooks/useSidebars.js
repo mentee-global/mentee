@@ -207,6 +207,11 @@ export default function useSidebars(userType, user, t) {
       key: "support/all-partners",
       icon: <PartitionOutlined />,
     },
+    {
+      label: t("navHeader.findHubs"),
+      key: "support/all-hubs",
+      icon: <ToolOutlined />,
+    },
   ];
   const hubSidebar = [
     {

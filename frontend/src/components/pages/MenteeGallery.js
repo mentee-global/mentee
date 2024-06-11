@@ -45,7 +45,7 @@ function Gallery(props) {
   const user = useSelector((state) => state.user.user);
   useEffect(() => {
     async function getMentees() {
-      const mentee_data = await fetchMentees();
+      const mentee_data = await fetchMentees(props.isSupport);
       if (mentee_data) {
         if (user && user.pair_partner && user.pair_partner.restricted) {
           if (user.pair_partner.assign_mentees) {

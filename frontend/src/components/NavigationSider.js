@@ -62,8 +62,8 @@ function NavigationSider() {
               src={
                 user
                   ? user.hub_user
-                    ? user.hub_user.image.url
-                    : user.image.url
+                    ? user.hub_user.image?.url
+                    : user.image?.url
                   : ""
               }
               alt="hub"
@@ -129,8 +129,8 @@ function NavigationSider() {
                 src={
                   user
                     ? user.hub_user
-                      ? user.hub_user.image.url
-                      : user.image.url
+                      ? user.hub_user.image?.url
+                      : user.image?.url
                     : ""
                 }
                 alt="hub"
@@ -158,8 +158,8 @@ function NavigationSider() {
                 src={
                   user
                     ? user.hub_user
-                      ? user.hub_user.image.url
-                      : user.image.url
+                      ? user.hub_user.image?.url
+                      : user.image?.url
                     : ""
                 }
                 alt="hub"

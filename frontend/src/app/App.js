@@ -30,6 +30,7 @@ import { Hubs } from "components/Hubs";
 import { Specializations } from "components/Specializations";
 import { AdminMessages } from "components/pages/AdminSeeMessages";
 import PartnerGallery from "components/pages/PartnerGallery";
+import HubGallery from "components/pages/HubGallery";
 import NavigationHeader from "components/NavigationHeader";
 import HubFooter from "components/HubFooter";
 import NavigationSider from "components/NavigationSider";
@@ -206,6 +207,21 @@ function App() {
               <PrivateRoute path="/support/all-partners">
                 {role == ACCOUNT_TYPE.SUPPORT ? (
                   <PartnerGallery isSupport={true} />
+                ) : (
+                  <>
+                    {cur_time - startPathTime > 100 && (
+                      <Result
+                        status="403"
+                        title="403"
+                        subTitle={t("gallery.unauthorizedAccess")}
+                      />
+                    )}
+                  </>
+                )}
+              </PrivateRoute>
+              <PrivateRoute path="/support/all-hubs">
+                {role == ACCOUNT_TYPE.SUPPORT ? (
+                  <HubGallery isSupport={true} />
                 ) : (
                   <>
                     {cur_time - startPathTime > 100 && (

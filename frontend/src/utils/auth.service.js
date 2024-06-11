@@ -77,7 +77,7 @@ export const login = async (email, password, role, path = undefined) =>
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
       localStorage.setItem("role", role);
-      if (path) {
+      if (path && role == ACCOUNT_TYPE.HUB) {
         localStorage.setItem("login_path", path);
       }
       await fireauth

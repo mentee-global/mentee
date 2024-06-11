@@ -49,6 +49,7 @@ function NavigationHeader() {
 
   const goBackSupportDashbaord = (support_User_ID) => {
     localStorage.removeItem("support_user_id");
+    localStorage.removeItem("login_path");
     localStorage.setItem("role", ACCOUNT_TYPE.SUPPORT);
     localStorage.setItem("profileId", support_User_ID);
     resetRoleState(support_User_ID, ACCOUNT_TYPE.SUPPORT);

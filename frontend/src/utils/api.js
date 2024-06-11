@@ -1059,8 +1059,8 @@ export const fetchPartners = async (
   return await fetchAccounts(ACCOUNT_TYPE.PARTNER, restricted, hub_user_id);
 };
 
-export const fetchMentees = async () => {
-  return await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+export const fetchMentees = async (from_suppport_user = undefined) => {
+  return await fetchAccounts(ACCOUNT_TYPE.MENTEE, from_suppport_user);
 };
 
 export const fetchAppointmentsByMenteeId = async (id) => {

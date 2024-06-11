@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchPartners } from "../../utils/api";
+import { fetchPartners, fetchAccounts } from "../../utils/api";
 import {
   Input,
   Modal,
@@ -37,7 +37,9 @@ function PartnerGallery(props) {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [query2, setQuery2] = useState();
   const [sdgs, setSdgs] = useState([]);
+  const [searchHub, setSearchHub] = useState(null);
   const { user } = useSelector((state) => state.user);
+  const [hubOptions, setHubOptions] = useState([]);
   const role = getRole();
 
   useEffect(() => {
@@ -49,6 +51,16 @@ function PartnerGallery(props) {
       setPageLoaded(true);
     }
 
+    async function getHubData() {
+      var temp = [];
+      const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
+      hub_data.map((hub_item) => {
+        temp.push({ label: hub_item.name, value: hub_item._id.$oid });
+        return true;
+      });
+      setHubOptions(temp);
+    }
+
     var hub_user_id = null;
     if (role == ACCOUNT_TYPE.HUB && user) {
       if (user.hub_id) {
@@ -57,8 +69,12 @@ function PartnerGallery(props) {
         hub_user_id = user._id.$oid;
       }
     }
+    if (role == ACCOUNT_TYPE.SUPPORT) {
+      hub_user_id = "";
+    }
     if (user) {
       getPartners(hub_user_id);
+      getHubData();
     }
   }, [user]);
 
@@ -70,6 +86,9 @@ function PartnerGallery(props) {
         regions.some((s) => partner.regions.indexOf(s) >= 0);
       const matchSdgs =
         sdgs.length === 0 || sdgs.some((s) => partner.sdgs.indexOf(s) >= 0);
+      const matchHub =
+        !searchHub || (partner.hub_id && partner.hub_id == searchHub);
+
       const matchestopics =
         !query2 ||
         (partner.topics &&
@@ -79,7 +98,11 @@ function PartnerGallery(props) {
         partner.organization.toUpperCase().includes(query.toUpperCase());
 
       return (
-        matchesSpecializations && matchesName && matchestopics && matchSdgs
+        matchesSpecializations &&
+        matchesName &&
+        matchestopics &&
+        matchSdgs &&
+        matchHub
       );
     });
 
@@ -132,6 +155,18 @@ function PartnerGallery(props) {
         mode="multiple"
         options={getSDGs(t)}
         onChange={(selected) => setSdgs(selected)}
+        maxTagCount="responsive"
+      />
+      <Title level={4}>HUB</Title>
+      <Select
+        className={css`
+          width: 100%;
+        `}
+        placeholder={"HUB"}
+        allowClear
+        // mode="multiple"
+        options={hubOptions}
+        onChange={(selected) => setSearchHub(selected)}
         maxTagCount="responsive"
       />
     </>
@@ -232,6 +267,7 @@ function PartnerGallery(props) {
                 firebase_uid={partner.firebase_uid}
                 image={partner.image}
                 isSupport={props.isSupport}
+                hub_user={partner.hub_user}
               />
             ))}
           </div>

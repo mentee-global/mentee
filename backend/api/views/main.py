@@ -96,9 +96,12 @@ def get_accounts(account_type):
                 accounts = []
             accounts.append(account)
     elif account_type == Account.MENTEE:
-        mentees_data = MenteeProfile.objects(is_private=False).exclude(
-            "video", "phone_number"
-        )
+        if "restricted" in request.args:
+            mentees_data = MenteeProfile.objects().exclude("video", "phone_number")
+        else:
+            mentees_data = MenteeProfile.objects(is_private=False).exclude(
+                "video", "phone_number"
+            )
         all_partners = PartnerProfile.objects()
         partners_by_assign_mentee = {}
         for partner_account in all_partners:

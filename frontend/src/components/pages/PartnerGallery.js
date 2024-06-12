@@ -90,7 +90,6 @@ function PartnerGallery(props) {
         !(role == ACCOUNT_TYPE.SUPPORT) ||
         !searchHub ||
         (partner.hub_id && partner.hub_id == searchHub);
-
       const matchestopics =
         !query2 ||
         (partner.topics &&

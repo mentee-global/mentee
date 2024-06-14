@@ -26,8 +26,12 @@ const ApplicationForm = ({ location, history }) => {
     setSuccessfulSubmit(true);
   };
 
-  const onSubmitFailure = () => {
-    messageApi.error(t("apply.errorConnection"));
+  const onSubmitFailure = (message = null) => {
+    if (message) {
+      messageApi.error(message);
+    } else {
+      messageApi.error(t("apply.errorConnection"));
+    }
   };
 
   const getApplicationForm = () => {

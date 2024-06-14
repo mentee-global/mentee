@@ -635,5 +635,6 @@ def create_application():
         logger.info(msg)
 
     return create_response(
-        message=f"Successfully created application with name {new_application.email}"
+        status=200,
+        message=f"Successfully created application with name {new_application.email}",
     )

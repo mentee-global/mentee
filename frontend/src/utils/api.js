@@ -167,6 +167,7 @@ export const createApplication = (application) => {
     (response) => response,
     (err) => {
       console.error(err);
+      return err;
     }
   );
 };

@@ -522,6 +522,7 @@ def create_application():
 
     data = request.get_json()
     preferred_language = data.get("preferred_language", "en-US")
+    print("preferred_language!!!!", preferred_language)
     role = data.get("role")
 
     if role == Account.MENTOR:

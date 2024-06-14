@@ -178,8 +178,8 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
 
     const res = await createApplication(data);
     setLoading(false);
-
-    if (res && res.response && res.response.status === 200) {
+    console.log("res", res);
+    if (res && res.status === 200) {
       onSubmitSuccess();
     } else {
       if (

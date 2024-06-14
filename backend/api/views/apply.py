@@ -291,6 +291,8 @@ def change_state_to_build_profile(email, role):
             )
 
         preferred_language = request.args.get("preferred_language", "en-US")
+        if preferred_language not in TRANSLATIONS:
+            preferred_language = "en-US"
         success, msg = send_email(
             recipient=application["email"],
             data={
@@ -361,6 +363,8 @@ def edit_application(id, role):
 
     data = request.get_json()
     preferred_language = data.get("preferred_language", "en-US")
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
     role = int(role)
     logger.info(data)
     # Try to retrieve Mentor application from database
@@ -523,6 +527,9 @@ def create_application():
     data = request.get_json()
     preferred_language = data.get("preferred_language", "en-US")
     print("preferred_language!!!!", preferred_language)
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
+
     role = data.get("role")
 
     if role == Account.MENTOR:

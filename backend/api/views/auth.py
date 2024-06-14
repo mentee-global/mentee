@@ -20,6 +20,8 @@ def verify_email():
     data = request.json
     email = data.get("email")
     preferred_language = data.get("preferred_language", "en-US")
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
     verification_link = None
 
     try:
@@ -283,6 +285,9 @@ def login():
 
 def send_forgot_password_email(email, preferred_language="en-US"):
     reset_link = None
+
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page

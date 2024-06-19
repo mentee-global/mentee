@@ -66,7 +66,12 @@ function Verify({ location, history }) {
             if (res) {
               messageApi.success(t("verifyEmail.emailResent"));
             } else {
-              messageApi.error(t("verifyEmail.error"));
+              messageApi.error({
+                content: t("verifyEmail.error"),
+                duration: 0,
+                key: "verifyEmail.error",
+                onClick: () => messageApi.destroy("verifyEmail.error"),
+              });
             }
           }}
         >

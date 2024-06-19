@@ -96,6 +96,7 @@ export const logout = async () => {
   localStorage.removeItem("login_path");
   localStorage.removeItem("support_user_id");
   localStorage.removeItem("profileId");
+  localStorage.removeItem("direct_path");
   await fireauth
     .auth()
     .signOut()

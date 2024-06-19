@@ -46,7 +46,7 @@ import BuildProfile from "components/pages/BuildProfile";
 import Events from "components/pages/Events";
 import HubInviteLink from "components/pages/HubInviteLink";
 import { useSelector } from "react-redux";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, FRONT_BASE_URL } from "utils/consts";
 import { fetchAccounts } from "utils/api";
 import CreateMeetingLink from "components/CreateMeetingLink";
 import MeetingPanel from "components/MeetingPanel";
@@ -90,6 +90,12 @@ function App() {
 
   useEffect(() => {
     setStartPathTime(new Date().getTime());
+    if (path.indexOf("/event") > 0) {
+      if (!role) {
+        let direct_path = path.replace(FRONT_BASE_URL, "");
+        localStorage.setItem("direct_path", direct_path);
+      }
+    }
   }, [path]);
 
   useEffect(() => {

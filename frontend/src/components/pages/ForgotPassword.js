@@ -25,14 +25,24 @@ function ForgotPassword({ location, history }) {
         setEmailSent(true);
       }
     } else {
-      messageApi.error(t("forgotPassword.error"));
+      messageApi.error({
+        content: t("forgotPassword.error"),
+        duration: 0,
+        key: "forgotPassword.error",
+        onClick: () => messageApi.destroy("forgotPassword.error"),
+      });
     }
     setLoading(false);
   };
 
   const onFinishFailed = (errorInfo) => {
     console.error("Failed:", errorInfo);
-    messageApi.error(`${t("forgotPassword.error")}`);
+    messageApi.error({
+      content: t("forgotPassword.error"),
+      duration: 0,
+      key: "forgotPassword.error",
+      onClick: () => messageApi.destroy("forgotPassword.error"),
+    });
   };
 
   return (

@@ -67,12 +67,22 @@ function Apply({ history }) {
       role
     ).catch((err) => {
       setLoading(false);
-      messageApi.error(`${err}`);
+      messageApi.error({
+        content: `${err}`,
+        duration: 0,
+        key: "error_msg",
+        onClick: () => messageApi.destroy("error_msg"),
+      });
     });
 
     if (inFirebase && profileExists) {
       // Redirect to login page
-      messageApi.info(t("apply.message.haveAccount"));
+      messageApi.info({
+        content: t("apply.message.haveAccount"),
+        duration: 0,
+        key: "haveAccount",
+        onClick: () => messageApi.destroy("haveAccount"),
+      });
       setTimeout(() => {
         history.push({
           pathname: "/login",
@@ -87,7 +97,12 @@ function Apply({ history }) {
       setCurrentState(stepNumeration.buildProfile);
     } else if (role === ACCOUNT_TYPE.PARTNER && !isVerified) {
       // Partner's email needs to be verified by admin first
-      messageApi.error(t("apply.partnerVerify"));
+      messageApi.error({
+        content: t("apply.partnerVerify"),
+        duration: 0,
+        key: "partnerVerify",
+        onClick: () => messageApi.destroy("partnerVerify"),
+      });
     } else {
       const { state, application_data } = await getApplicationStatus(
         email,
@@ -118,7 +133,12 @@ function Apply({ history }) {
 
   const onFinishFailed = (errorInfo) => {
     console.error("Failed:", errorInfo);
-    messageApi.error(`${t("forgotPassword.error")}`);
+    messageApi.error({
+      content: t("forgotPassword.error"),
+      duration: 0,
+      key: "forgotPassword",
+      onClick: () => messageApi.destroy("forgotPassword"),
+    });
   };
 
   return (

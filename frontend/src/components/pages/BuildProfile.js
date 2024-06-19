@@ -62,7 +62,12 @@ function BuildProfile({ location, history, hub_user }) {
     setLoading(true);
     if (!inFirebase && role !== ACCOUNT_TYPE.PARTNER) {
       if (userState !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {
-        messageApi.error(t("commonProfile.errorTrainingSteps"));
+        messageApi.error({
+          content: t("commonProfile.errorTrainingSteps"),
+          duration: 0,
+          key: "errorTrainingSteps",
+          onClick: () => messageApi.destroy("errorTrainingSteps"),
+        });
         return;
       }
     }
@@ -74,7 +79,12 @@ function BuildProfile({ location, history, hub_user }) {
       var email_new_registered = email ? email : res?.data?.result?.email;
       const verificationRes = await sendVerificationEmail(email_new_registered);
       if (!verificationRes) {
-        messageApi.error(t("verifyEmail.error"));
+        messageApi.error({
+          content: t("verifyEmail.error"),
+          duration: 0,
+          key: "verifyEmail",
+          onClick: () => messageApi.destroy("verifyEmail"),
+        });
       }
       if (profileData.changedImage) {
         const uploadImageRes = await uploadAccountImage(
@@ -83,7 +93,13 @@ function BuildProfile({ location, history, hub_user }) {
           role
         );
         if (!uploadImageRes) {
-          messageApi.error(t("commonProfile.error.uploadImage"));
+          messageApi.error({
+            content: t("commonProfile.error.uploadImage"),
+            duration: 0,
+            key: "commonProfile.error.uploadImage",
+            onClick: () =>
+              messageApi.destroy("commonProfile.error.uploadImage"),
+          });
         }
       }
       messageApi.info(t("commonProfile.accountCreated"));
@@ -112,7 +128,12 @@ function BuildProfile({ location, history, hub_user }) {
         });
       }
     } else {
-      messageApi.error(t("commonProfile.error.save"));
+      messageApi.error({
+        content: t("commonProfile.error.save"),
+        duration: 0,
+        key: "commonProfile.error.save",
+        onClick: () => messageApi.destroy("commonProfile.error.save"),
+      });
     }
     setLoading(false);
   };

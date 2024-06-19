@@ -28,9 +28,19 @@ const ApplicationForm = ({ location, history }) => {
 
   const onSubmitFailure = (message = null) => {
     if (message) {
-      messageApi.error(message);
+      messageApi.error({
+        content: message,
+        duration: 0,
+        key: "error_msg",
+        onClick: () => messageApi.destroy("error_msg"),
+      });
     } else {
-      messageApi.error(t("apply.errorConnection"));
+      messageApi.error({
+        content: t("apply.errorConnection"),
+        duration: 0,
+        key: "apply.errorConnection",
+        onClick: () => messageApi.destroy("apply.errorConnection"),
+      });
     }
   };
 

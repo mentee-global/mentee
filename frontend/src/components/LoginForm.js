@@ -39,7 +39,12 @@ function LoginForm({ role, defaultEmail, location }) {
         role
       );
       if (rightRole && parseInt(rightRole) !== role) {
-        messageApi.error(t("loginErrors.wrongRole"));
+        messageApi.error({
+          content: t("loginErrors.wrongRole"),
+          duration: 0,
+          key: "loginErrors.wrongRole",
+          onClick: () => messageApi.destroy("loginErrors.wrongRole"),
+        });
         setLoading(false);
         return;
       }
@@ -52,7 +57,12 @@ function LoginForm({ role, defaultEmail, location }) {
           state: { email, role },
         });
       } else if (profileExists === false && inFirebase === false) {
-        messageApi.error(t("loginErrors.incorrectCredentials"));
+        messageApi.error({
+          content: t("loginErrors.incorrectCredentials"),
+          duration: 0,
+          key: "loginErrors.incorrectCredentials",
+          onClick: () => messageApi.destroy("loginErrors.incorrectCredentials"),
+        });
         setLoading(false);
         return;
       }
@@ -66,18 +76,38 @@ function LoginForm({ role, defaultEmail, location }) {
     );
     if (!res || !res.success) {
       if (res?.data?.result?.existingEmail) {
-        messageApi.error(t("loginErrors.existingEmail"));
+        messageApi.error({
+          content: t("loginErrors.existingEmail"),
+          duration: 0,
+          key: "loginErrors.existingEmail",
+          onClick: () => messageApi.destroy("loginErrors.existingEmail"),
+        });
         setLoading(false);
       } else {
-        messageApi.error(t("loginErrors.incorrectCredentials"));
+        messageApi.error({
+          content: t("loginErrors.incorrectCredentials"),
+          duration: 0,
+          key: "loginErrors.incorrectCredentials",
+          onClick: () => messageApi.destroy("loginErrors.incorrectCredentials"),
+        });
         setLoading(false);
       }
       return;
     } else if (res.result.passwordReset) {
-      messageApi.error(t("loginErrors.resetPassword"));
+      messageApi.error({
+        content: t("loginErrors.resetPassword"),
+        duration: 0,
+        key: "loginErrors.resetPassword",
+        onClick: () => messageApi.destroy("loginErrors.resetPassword"),
+      });
       history.push("/forgot-password");
     } else if (res.result.recreateAccount) {
-      messageApi.error(t("loginErrors.reregisterAccount"));
+      messageApi.error({
+        content: t("loginErrors.reregisterAccount"),
+        duration: 0,
+        key: "loginErrors.reregisterAccount",
+        onClick: () => messageApi.destroy("loginErrors.reregisterAccount"),
+      });
       history.push("/application-page");
     }
     const unsubscribe = fireauth.auth().onAuthStateChanged(async (user) => {
@@ -93,10 +123,18 @@ function LoginForm({ role, defaultEmail, location }) {
           role,
         })
       );
-      if (role == ACCOUNT_TYPE.HUB) {
-        history.push(location.pathname + REDIRECTS[role]);
+      let direct_path = localStorage.getItem("direct_path");
+      if (direct_path) {
+        history.push(direct_path);
+        setTimeout(() => {
+          localStorage.removeItem("direct_path");
+        }, 1000);
       } else {
-        history.push(REDIRECTS[role]);
+        if (role == ACCOUNT_TYPE.HUB) {
+          history.push(location.pathname + REDIRECTS[role]);
+        } else {
+          history.push(REDIRECTS[role]);
+        }
       }
     });
   };

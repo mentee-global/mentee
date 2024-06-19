@@ -34,10 +34,20 @@ function PublicMessageModal({ mentorId, menteeId, menteeName }) {
       time: moment().format("YYYY-MM-DD, HH:mm:ssZZ"),
     };
     if (!(await sendMessage(data))) {
-      messageApi.error("failed to send message");
+      messageApi.error({
+        content: t("failed to send message"),
+        duration: 0,
+        key: "failed_to_send_message",
+        onClick: () => messageApi.destroy("failed_to_send_message"),
+      });
       return;
     }
-    messageApi.success("successfully sent message");
+    messageApi.success({
+      content: t("successfully sent message"),
+      duration: 0,
+      key: "successfully_sent_message",
+      onClick: () => messageApi.destroy("successfully_sent_message"),
+    });
     setLoading(false);
     closeModals();
   };

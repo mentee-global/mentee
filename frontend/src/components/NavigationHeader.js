@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Layout, theme, Dropdown, Space, Tooltip } from "antd";
+import ImgCrop from "antd-img-crop";
+import { Avatar, Layout, theme, Dropdown, Space, Tooltip, Upload } from "antd";
 import { withRouter, useHistory } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { fetchUser } from "features/userSlice";
+import { uploadAccountImage } from "utils/api";
 
 const { Header } = Layout;
 
@@ -25,6 +27,7 @@ function NavigationHeader() {
     token: { colorBgContainer },
   } = theme.useToken();
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
   const { resetRoleState } = useAuth();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -95,6 +98,35 @@ function NavigationHeader() {
       });
       items.push({
         type: "divider",
+      });
+    }
+    if (role === ACCOUNT_TYPE.ADMIN) {
+      items.push({
+        key: "admin-avatar-change",
+        label: (
+          <ImgCrop rotate aspect={5 / 3} minZoom={0.2}>
+            <Upload
+              onChange={async (file) => {
+                await uploadAccountImage(
+                  file.file.originFileObj,
+                  user._id.$oid,
+                  ACCOUNT_TYPE.ADMIN
+                );
+                dispatch(
+                  fetchUser({
+                    id: user._id.$oid,
+                    role: ACCOUNT_TYPE.ADMIN,
+                  })
+                );
+                setLoading(!loading);
+              }}
+              accept=".png,.jpg,.jpeg"
+              showUploadList={false}
+            >
+              Edit Avatar
+            </Upload>
+          </ImgCrop>
+        ),
       });
     }
     if (!support_User_ID) {

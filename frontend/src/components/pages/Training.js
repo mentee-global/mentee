@@ -45,7 +45,12 @@ function Training({ location, history }) {
 
   const onCompleteTraining = async () => {
     if (!role || !email)
-      messageApi.error("Could not submit this role's application form");
+      messageApi.error({
+        content: "Could not submit this role's application form",
+        duration: 0,
+        key: "failed_submit",
+        onClick: () => messageApi.destroy("failed_submit"),
+      });
 
     setLoading(true);
     let state = await changeStateBuildProfile({
@@ -54,7 +59,12 @@ function Training({ location, history }) {
       preferred_language: i18n.language,
     }).catch((err) => {
       console.error(err);
-      messageApi.error(t("apply.errorConnection"));
+      messageApi.error({
+        content: t("apply.errorConnection"),
+        duration: 0,
+        key: "apply.errorConnection",
+        onClick: () => messageApi.destroy("apply.errorConnection"),
+      });
     });
     if (state === NEW_APPLICATION_STATUS.BUILDPROFILE) {
       history.push({
@@ -62,9 +72,12 @@ function Training({ location, history }) {
         state: { email, role },
       });
     } else {
-      messageApi.error(
-        "Application status could not be changed to BuildProfile"
-      );
+      messageApi.error({
+        content: "Application status could not be changed to BuildProfile",
+        duration: 0,
+        key: "BuildProfile",
+        onClick: () => messageApi.destroy("BuildProfile"),
+      });
     }
     setLoading(false);
   };

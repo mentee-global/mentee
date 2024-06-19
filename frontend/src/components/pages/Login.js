@@ -86,7 +86,12 @@ function Login({ location }) {
 
   const onChangeStep = (newStep) => {
     if (newStep === StepNumeration.login && !role) {
-      messageApi.error(t("loginErrors.noRole"));
+      messageApi.error({
+        content: t("loginErrors.noRole"),
+        duration: 0,
+        key: "loginErrors.noRole",
+        onClick: () => messageApi.destroy("loginErrors.noRole"),
+      });
       return;
     } else if (newStep !== StepNumeration.login) {
       setCurrent(newStep);

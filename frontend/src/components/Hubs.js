@@ -158,7 +158,9 @@ export const Hubs = () => {
     if (inviteURL) {
       inviteURLRef.current.select();
       document.execCommand("copy");
-      messageApi.success("Copied");
+      messageApi.success({
+        content: "Copied",
+      });
     }
   };
 

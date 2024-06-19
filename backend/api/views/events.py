@@ -77,11 +77,12 @@ def delete_train(id):
 
 
 ######################################################################
-def send_mail_for_event(recipients, role_name, title, eventdate):
+def send_mail_for_event(recipients, role_name, title, eventdate, target_url):
     for recipient in recipients:
         res, res_msg = send_email(
             recipient=recipient.email,
             data={
+                "link": target_url,
                 "eventtitle": title,
                 "eventdate": eventdate,
                 "role": role_name,
@@ -103,6 +104,7 @@ def new_event():
         user_id = data["user_id"]
         title = data["title"]
         roles = data["role"]
+        front_url = data["front_url"]
         titleTranslated = get_all_translations(data["title"])
         description = None
         descriptionTranslated = None
@@ -142,6 +144,8 @@ def new_event():
             )
             event.save()
 
+            new_event_id = event.id
+            target_url = front_url + "event/" + str(new_event_id)
             role_name = ""
             eventdate = ""
             if start_datetime_str != "":
@@ -149,30 +153,34 @@ def new_event():
             if Account.MENTOR in roles:
                 recipients = MentorProfile.objects.only("email", "preferred_language")
                 role_name = "MENTOR"
-                send_mail_for_event(recipients, role_name, title, eventdate)
+
+                send_mail_for_event(recipients, role_name, title, eventdate, target_url)
             if Account.MENTEE in roles:
                 recipients = MenteeProfile.objects.only("email", "preferred_language")
                 role_name = "MENTEE"
-                send_mail_for_event(recipients, role_name, title, eventdate)
+                send_mail_for_event(recipients, role_name, title, eventdate, target_url)
             if Account.PARTNER in roles:
                 recipients = PartnerProfile.objects.only("email", "preferred_language")
                 role_name = "Partner"
-                send_mail_for_event(recipients, role_name, title, eventdate)
+                send_mail_for_event(recipients, role_name, title, eventdate, target_url)
             if hub_id is not None:
                 role_name = "Hub"
                 partners = PartnerProfile.objects.filter(hub_id=hub_id).only(
                     "email", "preferred_language"
                 )
-                hub_users = Hub.objects(id=hub_id).only("email", "preferred_language")
+                hub_users = Hub.objects(id=hub_id).only(
+                    "email", "preferred_language", "url"
+                )
                 recipients = []
                 for hub_user in hub_users:
                     recipients.append(hub_user)
+                    target_url = (
+                        front_url + hub_user.url + "/event/" + str(new_event_id)
+                    )
                 for partner_user in partners:
                     recipients.append(partner_user)
-                send_mail_for_event(recipients, role_name, title, eventdate)
+                send_mail_for_event(recipients, role_name, title, eventdate, target_url)
         else:
-            print("www")
-            print(hub_id)
             event = Event.objects.get(id=event_id)
             event.user_id = user_id
             event.title = title

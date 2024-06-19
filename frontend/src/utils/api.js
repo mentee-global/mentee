@@ -375,6 +375,7 @@ export const editEmailPassword = (data) => {
 
 export const createEvent = (event) => {
   const requestExtension = `/event_register`;
+  event.front_url = FRONT_BASE_URL;
   return authPost(requestExtension, event).then(
     (response) => response,
     (err) => {

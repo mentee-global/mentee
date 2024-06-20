@@ -8,6 +8,9 @@ function PrivateRoute({ children, ...rest }) {
   if (path.indexOf("/new_training") > 0) {
     login_url = "/" + path.split("/")[1];
   }
+  if (path.indexOf("/event") > 0) {
+    login_url = "/" + path.split("/")[1];
+  }
 
   return (
     <Route

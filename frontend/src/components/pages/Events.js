@@ -74,15 +74,21 @@ function Events() {
     getAllEvents(hub_user_id);
 
     async function getAllUsersData(hub_user_id) {
+      const admin_data = await fetchAccounts(ACCOUNT_TYPE.ADMIN);
       if (hub_user_id) {
         const partenr_data = await fetchPartners(undefined, hub_user_id);
         const hub_user = await fetchAccountById(hub_user_id, ACCOUNT_TYPE.HUB);
-        setUsers([...partenr_data, hub_user]);
+        setUsers([...partenr_data, hub_user, ...admin_data]);
       } else {
         const mentor_data = await fetchMentors();
         const mentee_data = await fetchMentees();
         const partenr_data = await fetchPartners(undefined, null);
-        setUsers([...mentee_data, ...mentor_data, ...partenr_data]);
+        setUsers([
+          ...mentee_data,
+          ...mentor_data,
+          ...partenr_data,
+          ...admin_data,
+        ]);
       }
     }
     getAllUsersData(hub_user_id);

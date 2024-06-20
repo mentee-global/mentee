@@ -70,7 +70,7 @@ function EventDetail({ match }) {
 
   return (
     <>
-      {event && !event.role.includes(role) ? (
+      {role !== ACCOUNT_TYPE.ADMIN && event && event.role && !event.role.includes(role) ? (
         <Result
           status="403"
           title="403"

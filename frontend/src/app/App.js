@@ -92,7 +92,7 @@ function App() {
     setStartPathTime(new Date().getTime());
     if (path.indexOf("/event") > 0) {
       if (!role) {
-        let direct_path = path.replace(FRONT_BASE_URL, "");
+        let direct_path = "/event" + path.split("/event")[1];
         localStorage.setItem("direct_path", direct_path);
       }
     }

@@ -100,12 +100,25 @@ function EventCard(props) {
         style={{ height: "90%", overflowY: "auto" }}
       >
         <div className="gallery-card-header" style={{ height: "7.5rem" }}>
-          <Avatar
-            size={90}
-            icon={getImage(
-              create_user && create_user.image && create_user.image.url
-            )}
-          />
+          {create_user && create_user.role > 0 ? (
+            <NavLink
+              to={`/gallery/${create_user.role}/${event_item.user_id.$oid}`}
+            >
+              <Avatar
+                size={90}
+                icon={getImage(
+                  create_user && create_user.image && create_user.image.url
+                )}
+              />
+            </NavLink>
+          ) : (
+            <Avatar
+              size={90}
+              icon={getImage(
+                create_user && create_user.image && create_user.image.url
+              )}
+            />
+          )}
           <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
               {truncate(event_item.title, 15)}

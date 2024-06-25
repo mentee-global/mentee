@@ -104,7 +104,6 @@ function EventDetail({ match }) {
                     icon={<UserOutlined />}
                   />
                 )}
-
                 <div style={{ marginLeft: "20px" }}>
                   <Title className="gallery-title-text">
                     {event && event.title}

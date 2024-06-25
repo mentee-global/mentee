@@ -14,6 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { ACCOUNT_TYPE, formatDateTime } from "utils/consts";
 import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
 
 const { Title, Paragraph } = Typography;
 
@@ -84,11 +85,25 @@ function EventDetail({ match }) {
           <div className={"mentor-profile-content-public"}>
             <div style={{ minWidth: "65%" }}>
               <div style={{ display: "flex" }}>
-                <Avatar
-                  size={120}
-                  src={createUser && createUser.image && createUser.image.url}
-                  icon={<UserOutlined />}
-                />
+                {createUser && createUser.role > 0 ? (
+                  <NavLink
+                    to={`/gallery/${createUser.role}/${event.user_id.$oid}`}
+                  >
+                    <Avatar
+                      size={120}
+                      src={
+                        createUser && createUser.image && createUser.image.url
+                      }
+                      icon={<UserOutlined />}
+                    />
+                  </NavLink>
+                ) : (
+                  <Avatar
+                    size={120}
+                    src={createUser && createUser.image && createUser.image.url}
+                    icon={<UserOutlined />}
+                  />
+                )}
                 <div style={{ marginLeft: "20px" }}>
                   <Title className="gallery-title-text">
                     {event && event.title}

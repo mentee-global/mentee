@@ -54,7 +54,11 @@ export const fetchAccountById = (id, type) => {
       account_type: type,
     },
   }).then(
-    (response) => response.data.result.account,
+    (response) => {
+      let res = response.data.result.account;
+      res.role = type;
+      return res;
+    },
     (err) => {
       console.error(err);
     }
@@ -98,7 +102,14 @@ export const fetchAccounts = (
       hub_user_id: hub_user_id,
     },
   }).then(
-    (response) => response.data.result.accounts,
+    (response) => {
+      let account_data = response.data.result.accounts;
+      account_data.map((account_item) => {
+        account_item.role = type;
+        return true;
+      });
+      return account_data;
+    },
     (err) => {
       console.error(err);
     }

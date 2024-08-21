@@ -122,8 +122,7 @@ export function getRegions(t) {
 }
 
 export const AGE_RANGES = [
-  "16-18",
-  "19-22",
+  "18-22",
   "23-25",
   "26-30",
   "30s",

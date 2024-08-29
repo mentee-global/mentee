@@ -39,11 +39,9 @@ function BuildProfile({ location, history, hub_user }) {
 
   useEffect(() => {
     async function getUserData() {
-      const { in_firebase, is_verified, profileExists} = await checkStatusByEmail(
-        email,
-        role
-      );
-      if (profileExists){
+      const { in_firebase, is_verified, profileExists } =
+        await checkStatusByEmail(email, role);
+      if (profileExists) {
         history.push({
           pathname: "/login",
           state: { email, role },

@@ -80,4 +80,4 @@ This application is built with React, Flask, MongoDB, and Ant Design
 [MIT](https://github.com/hack4impact-uiuc/mentee/blob/master/LICENSE) licensed. Copyright © 2021 [Hack4Impact UIUC](https://github.com/hack4impact-uiuc).
 
 ## Log
-2024.08.17 - updated Heroku Stack to heroku-22 from heroku-20
+2024.08.17 - updated Heroku Stack to heroku-24 from heroku-20

@@ -90,6 +90,11 @@ function MenteeApplication({ email, role, onSubmitSuccess, onSubmitFailure }) {
       label: t("menteeApplication.immigrantOption8"),
     },
     {
+      value:
+        "In a crisis situation within my country due to my gender, race, religion, sexuality, political affiliation or something else.",
+      label: t("menteeApplication.immigrantOption9"),
+    },
+    {
       value: "other",
       label: t("common.other"),
     },

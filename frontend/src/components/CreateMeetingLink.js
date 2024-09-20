@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { updateAndFetchUser } from "features/userSlice";
 import { useAuth } from "../utils/hooks/useAuth";
+
 const { Title } = Typography;
 
 function Meeting() {
@@ -72,6 +73,7 @@ function Meeting() {
       message.error(t("meeting.errorCopy"));
     }
   };
+
   const copyToClipboard = async () => {
     try {
       if (AppID === "") {

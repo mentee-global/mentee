@@ -139,6 +139,7 @@ def edit_profile(data: dict = {}, profile: object = None):
             "preferred_language", profile.preferred_language
         )
         profile.roomName = data.get("roomName", profile.roomName)
+
         return True
     if isinstance(profile, PartnerProfile):
         # Edit fields or keep original data if no added data

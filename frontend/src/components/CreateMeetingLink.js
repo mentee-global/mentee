@@ -211,7 +211,9 @@ function Meeting() {
                   marginTop: "20px",
                 }}
               >
-                <div style={{ fontWeight: "bold" }}>{t("meeting.defaultName")}</div>
+                <div style={{ fontWeight: "bold" }}>
+                  {t("meeting.defaultName")}
+                </div>
                 <div style={{ marginLeft: "36px" }}>
                   {user && user.roomName}
                 </div>

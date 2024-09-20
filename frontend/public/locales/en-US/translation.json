@@ -599,6 +599,7 @@
     "generateButton": "Create Room",
     "cancelButton": "Cancel",
     "generatedURL": "Room Name",
+    "defaultName": "Default Room",
     "errorGenerating": "Failed to generate meeting.",
     "errorCopy": "Failed to copy room name to clipboard.",
     "copyMessage": "Room name copied to clipboard!",

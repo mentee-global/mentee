@@ -599,6 +599,7 @@
     "generateButton": "خونه جوړول",
     "cancelButton": "لغوه کول",
     "generatedURL": "د خونې نوم",
+    "defaultName": "ډیفالټ کوټه",
     "errorGenerating": "په غونډه کې ناکام شو.",
     "errorCopy": "د خونې نوم په کلېپ بورډ کې کاپي کولو کې ناکام شو.",
     "copyMessage": "د خونې نوم په کلېپ بورډ کې کاپي شو!",

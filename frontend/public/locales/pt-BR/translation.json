@@ -598,6 +598,7 @@
     "generateButton": "Criar Sala",
     "cancelButton": "Cancelar",
     "generatedURL": "Nome da Sala",
+    "defaultName": "Sala padrão",
     "errorGenerating": "Falha ao gerar a reunião.",
     "errorCopy": "Falha ao copiar o nome da sala para a área de transferência.",
     "copyMessage": "Nome da sala copiado para a área de transferência!",

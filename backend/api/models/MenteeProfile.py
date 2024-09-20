@@ -32,6 +32,7 @@ class MenteeProfile(Document, Mixin):
     immigrant_status = ListField(StringField(), required=False)
     workstate = ListField(StringField(), required=False)
     preferred_language = StringField(required=False, default="en-US")
+    roomName = StringField(required=False)
 
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.firebase_uid} \n name: {self.name}

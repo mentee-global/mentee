@@ -598,6 +598,7 @@
     "generateButton": "ایجاد اتاق",
     "cancelButton": "لغو",
     "generatedURL": "نام اتاق",
+    "defaultName": "اتاق پیش فرض",
     "errorGenerating": "ایجاد جلسه ناموفق بود.",
     "errorCopy": "کپی نام اتاق به کلیپ بورد ناموفق بود.",
     "copyMessage": "نام اتاق به کلیپ بورد کپی شد!",

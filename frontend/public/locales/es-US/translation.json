@@ -598,6 +598,7 @@
     "generateButton": "Crear Sala",
     "cancelButton": "Cancelar",
     "generatedURL": "Nombre de la Sala",
+    "defaultName": "Habitación predeterminada",
     "errorGenerating": "Error al generar la reunión.",
     "errorCopy": "Error al copiar el nombre de la sala al portapapeles.",
     "copyMessage": "¡Nombre de la sala copiado al portapapeles!",

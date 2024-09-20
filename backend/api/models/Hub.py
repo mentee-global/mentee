@@ -14,6 +14,7 @@ class Hub(Document, Mixin):
     url = StringField(required=True)
     invite_key = StringField(required=False)
     preferred_language = StringField(required=False, default="en-US")
+    roomName = StringField(required=False)
 
     def __repr__(self):
         return f"""<Hub id:{self.id} 

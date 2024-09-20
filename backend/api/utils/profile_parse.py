@@ -138,6 +138,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.preferred_language = data.get(
             "preferred_language", profile.preferred_language
         )
+        profile.roomName = data.get("roomName", profile.roomName)
         return True
     if isinstance(profile, PartnerProfile):
         # Edit fields or keep original data if no added data
@@ -166,6 +167,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.preferred_language = data.get(
             "preferred_language", profile.preferred_language
         )
+        profile.roomName = data.get("roomName", profile.roomName)
         return True
 
     if isinstance(profile, MentorProfile):
@@ -287,6 +289,7 @@ def edit_profile(data: dict = {}, profile: object = None):
     profile.preferred_language = data.get(
         "preferred_language", profile.preferred_language
     )
+    profile.roomName = data.get("roomName", profile.roomName)
 
     # Create education object
     if "education" in data:

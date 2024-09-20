@@ -11,6 +11,7 @@ class Admin(Document, Mixin):
     email = StringField(required=True)
     name = StringField(required=True)
     image = EmbeddedDocumentField(Image)
+    roomName = StringField(required=False)
 
     def __repr__(self):
         return f"""<User id:{self.id} 

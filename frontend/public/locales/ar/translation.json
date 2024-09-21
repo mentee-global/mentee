@@ -598,6 +598,7 @@
     "generateButton": "إنشاء غرفة",
     "cancelButton": "إلغاء",
     "generatedURL": "اسم الغرفة",
+    "defaultName": "الغرفة الافتراضية",
     "errorGenerating": "فشل في إنشاء الاجتماع.",
     "errorCopy": "فشل في نسخ اسم الغرفة إلى الحافظة.",
     "copyMessage": "تم نسخ اسم الغرفة إلى الحافظة!",

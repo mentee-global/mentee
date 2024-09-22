@@ -27,13 +27,6 @@ function Meeting() {
   useEffect(() => {
     if (user && !user.roomName) {
       if (!isAdmin && !isGuest) {
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let generatedRoomName = "";
-        for (let i = 0; i < 5; i++) {
-          generatedRoomName += characters.charAt(
-            Math.floor(Math.random() * characters.length)
-          );
-        }
         var name = "";
         if (user.name) {
           name = user.name.replace(/\s+/g, "");
@@ -42,13 +35,15 @@ function Meeting() {
             name = user.person_name.replace(/\s+/g, "");
           }
         }
-        dispatch(
-          updateAndFetchUser({
-            data: { roomName: name + "_" + generatedRoomName },
-            id: user?._id?.$oid,
-            role: user.role,
-          })
-        );
+        if (name !== "") {
+          dispatch(
+            updateAndFetchUser({
+              data: { roomName: name },
+              id: user?._id?.$oid,
+              role: user.role,
+            })
+          );
+        }
       }
     }
   }, [user]);

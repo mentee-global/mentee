@@ -1,6 +1,6 @@
 from api.models.Hub import Hub
 from api.models.PartnerProfile import PartnerProfile
-from api.models import Education, Video, MentorProfile, MenteeProfile
+from api.models import Education, Video, MentorProfile, MenteeProfile, Admin
 from api.utils.constants import Account
 
 
@@ -132,6 +132,9 @@ def edit_profile(data: dict = {}, profile: object = None):
     """
     if not data or not profile:
         return False
+    if isinstance(profile, Admin):
+        profile.roomName = data.get("roomName", profile.roomName)
+        return True
     if isinstance(profile, Hub):
         profile.invite_key = data.get("invite_key", profile.invite_key)
         profile.name = data.get("name", profile.name)

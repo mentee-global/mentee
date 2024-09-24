@@ -26,7 +26,7 @@ function Meeting() {
 
   useEffect(() => {
     if (user && !user.roomName) {
-      if (!isAdmin && !isGuest) {
+      if (!isGuest) {
         var name = "";
         if (user.name) {
           name = user.name.replace(/\s+/g, "");
@@ -40,7 +40,7 @@ function Meeting() {
             updateAndFetchUser({
               data: { roomName: name },
               id: user?._id?.$oid,
-              role: user.role,
+              role: isAdmin ? 0 : user.role,
             })
           );
         }

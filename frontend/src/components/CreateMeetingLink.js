@@ -167,18 +167,10 @@ function Meeting() {
             key="left-buttons"
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "end",
               width: "100%",
             }}
           >
-            <Button
-              key="generate"
-              type="primary"
-              onClick={() => joinMeeting("personal")}
-              style={{ minWidth: "180px" }}
-            >
-              {t("meeting.joinPersonalMeeting")}
-            </Button>
             <div>
               <Button
                 ref={joinButtonRef}
@@ -189,13 +181,13 @@ function Meeting() {
               >
                 {t("meeting.joinMeeting")}
               </Button>
-              <Button
+              {/* <Button
                 key="cancel"
                 style={{ marginLeft: "8px" }}
                 onClick={handleCancel}
               >
                 {t("meeting.cancelButton")}
-              </Button>
+              </Button> */}
             </div>
           </div>,
         ]}
@@ -206,25 +198,44 @@ function Meeting() {
           </div>
           {user && user.roomName && (
             <>
+              <Title
+                level={4}
+                style={{ marginTop: "16px", marginBottom: "2px" }}
+              >
+                {t("meeting.personalRoom")}
+              </Title>
               <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  marginTop: "20px",
+                  justifyContent: "space-between",
+                  width: "100%",
                 }}
               >
-                <div style={{ fontWeight: "bold" }}>
-                  {t("meeting.personalRoom")}
-                </div>
-                <div style={{ marginLeft: "36px" }}>
-                  {user && user.roomName}
+                <div style={{ display: "flex" }}>
+                  <div
+                    style={{
+                      marginLeft: "5px",
+                      marginTop: "3px",
+                      fontSize: "16px",
+                    }}
+                  >
+                    {user && user.roomName}
+                  </div>
+                  <Button
+                    type="link"
+                    icon={<CopyOutlined />}
+                    onClick={() => copyDefaultToClipboard(user.roomName)}
+                    style={{ marginLeft: "8px" }}
+                  />
                 </div>
                 <Button
-                  type="link"
-                  icon={<CopyOutlined />}
-                  onClick={() => copyDefaultToClipboard(user.roomName)}
-                  style={{ marginLeft: "8px" }}
-                />
+                  key="generate"
+                  type="primary"
+                  onClick={() => joinMeeting("personal")}
+                  style={{ minWidth: "180px" }}
+                >
+                  {t("meeting.joinPersonalMeeting")}
+                </Button>
               </div>
             </>
           )}

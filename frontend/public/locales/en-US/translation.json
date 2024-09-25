@@ -599,15 +599,18 @@
     "generateButton": "Create Room",
     "cancelButton": "Cancel",
     "generatedURL": "Room Name",
-    "defaultName": "Default Room",
+    "personalRoom": "Personal Room",
+    "roomInputInstructin":"Use any name you would like for this room and then click join meeting to open it",
+    "copyIconInstruction":"Click paper icon to copy the link and send it to anyone",
     "errorGenerating": "Failed to generate meeting.",
     "errorCopy": "Failed to copy room name to clipboard.",
     "copyMessage": "Room name copied to clipboard!",
     "limitWarning": "Please note that the meeting will have a limit of 100 attendees, and no time limit.",
-    "placeHolder": "Generate or Paste Room Name to Join",
+    "placeHolder": "Type or Paste Room Name to Join",
     "roomName": "Please provide a room name to join.",
     "getToken": "Unable to join meeting",
     "generateToken": "Unable to generate token",
+    "joinPersonalMeeting":"Join Personal Meeting",
     "joinMeeting": "Join Meeting"
   }
 }

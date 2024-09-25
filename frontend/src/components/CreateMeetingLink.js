@@ -193,41 +193,58 @@ function Meeting() {
         ]}
       >
         <div>
-          <div style={{ marginTop: "14px", fontSize: "12px" }}>
+          <div style={{ marginTop: "10px", fontSize: "12px" }}>
             {t("meeting.limitWarning")}
           </div>
           {user && user.roomName && (
             <>
               <Title
                 level={4}
-                style={{ marginTop: "16px", marginBottom: "2px" }}
+                style={{
+                  marginTop: "16px",
+                  marginBottom: "2px",
+                  fontSize: "15px",
+                }}
               >
                 {t("meeting.personalRoom")}
               </Title>
               <div
                 style={{
+                  marginTop: "5px",
+                  fontSize: "12px",
+                  marginBottom: "5px",
+                }}
+              >
+                {t("meeting.copyIconInstruction")}
+              </div>
+              <div
+                style={{
+                  marginBottom: "10px",
                   display: "flex",
                   justifyContent: "space-between",
                   width: "100%",
                 }}
               >
-                <div style={{ display: "flex" }}>
-                  <div
-                    style={{
-                      marginLeft: "5px",
-                      marginTop: "3px",
-                      fontSize: "16px",
-                    }}
-                  >
-                    {user && user.roomName}
-                  </div>
-                  <Button
-                    type="link"
-                    icon={<CopyOutlined />}
-                    onClick={() => copyDefaultToClipboard(user.roomName)}
-                    style={{ marginLeft: "8px" }}
-                  />
-                </div>
+                <Input
+                  readOnly
+                  value={user && user.roomName}
+                  onChange={(e) => setRoomName(e.target.value.split("/").pop())}
+                  placeholder={t("meeting.placeHolder")}
+                />
+                <Button
+                  type="link"
+                  icon={<CopyOutlined />}
+                  onClick={() => copyDefaultToClipboard(user.roomName)}
+                  style={{ marginLeft: "8px" }}
+                />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  width: "100%",
+                }}
+              >
                 <Button
                   key="generate"
                   type="primary"
@@ -239,7 +256,10 @@ function Meeting() {
               </div>
             </>
           )}
-          <Title level={4} style={{ marginTop: "16px", marginBottom: "2px" }}>
+          <Title
+            level={4}
+            style={{ marginTop: "16px", marginBottom: "2px", fontSize: "15px" }}
+          >
             {t("meeting.generatedURL")}
           </Title>
           <div
@@ -259,11 +279,6 @@ function Meeting() {
               onClick={copyToClipboard}
               style={{ marginLeft: "8px" }}
             />
-          </div>
-          <div
-            style={{ marginTop: "14px", fontSize: "12px", marginBottom: "5px" }}
-          >
-            {t("meeting.copyIconInstruction")}
           </div>
         </div>
       </Modal>

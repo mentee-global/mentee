@@ -598,15 +598,18 @@
     "generateButton": "Criar Sala",
     "cancelButton": "Cancelar",
     "generatedURL": "Nome da Sala",
-    "defaultName": "Sala padrão",
+    "personalRoom": "Sala Pessoal",
+    "roomInputInstructin":"Utilize qualquer nome que desejar para esta sala e clique em aderir à reunião para a abrir",
+    "copyIconInstruction":"Clique no ícone de papel para copiar o link e enviá-lo para qualquer pessoa",
     "errorGenerating": "Falha ao gerar a reunião.",
     "errorCopy": "Falha ao copiar o nome da sala para a área de transferência.",
     "copyMessage": "Nome da sala copiado para a área de transferência!",
     "limitWarning": "Por favor, note que a reunião terá um limite de 100 participantes, sem limite de tempo.",
-    "placeHolder": "Gerar ou colar o nome da sala para entrar",
+    "placeHolder": "Introduza ou cole o nome da sala para aderir",
     "roomName": "Por favor, forneça um nome de sala para entrar.",
     "getToken": "Não foi possível entrar na reunião",
     "generateToken": "Não foi possível gerar o token",
+    "joinPersonalMeeting":"Entrar na reunião pessoal",
     "joinMeeting": "Entrar na Reunião"
   }  
 }

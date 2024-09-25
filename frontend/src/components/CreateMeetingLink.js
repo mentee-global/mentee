@@ -106,9 +106,13 @@ function Meeting() {
     }
   };
 
-  const joinMeeting = async () => {
+  const joinMeeting = async (type = "") => {
     try {
-      if (!RoomName) {
+      var meeting_room = RoomName;
+      if (type === "personal") {
+        meeting_room = user.roomName;
+      }
+      if (!meeting_room) {
         console.error(t("meeting.roomName"));
         message.error(t("meeting.roomName"));
         return;
@@ -120,7 +124,7 @@ function Meeting() {
         dispatch(
           setPanel({
             app_id: response.appID,
-            room_name: RoomName,
+            room_name: meeting_room,
             token: response.token,
           })
         );
@@ -169,14 +173,11 @@ function Meeting() {
           >
             <Button
               key="generate"
-              style={{
-                color: "red",
-                borderColor: "red",
-                backgroundColor: "white",
-              }}
-              onClick={getRoomName}
+              type="primary"
+              onClick={() => joinMeeting("personal")}
+              style={{ minWidth: "180px" }}
             >
-              {t("meeting.generateButton")}
+              {t("meeting.joinPersonalMeeting")}
             </Button>
             <div>
               <Button
@@ -184,6 +185,7 @@ function Meeting() {
                 key="join"
                 type="primary"
                 onClick={joinMeeting}
+                style={{ minWidth: "180px" }}
               >
                 {t("meeting.joinMeeting")}
               </Button>
@@ -199,6 +201,9 @@ function Meeting() {
         ]}
       >
         <div>
+          <div style={{ marginTop: "14px", fontSize: "12px" }}>
+            {t("meeting.limitWarning")}
+          </div>
           {user && user.roomName && (
             <>
               <div
@@ -209,7 +214,7 @@ function Meeting() {
                 }}
               >
                 <div style={{ fontWeight: "bold" }}>
-                  {t("meeting.defaultName")}
+                  {t("meeting.personalRoom")}
                 </div>
                 <div style={{ marginLeft: "36px" }}>
                   {user && user.roomName}
@@ -223,7 +228,14 @@ function Meeting() {
               </div>
             </>
           )}
-          <Title level={4}>{t("meeting.generatedURL")}</Title>
+          <Title level={4} style={{ marginTop: "16px", marginBottom: "2px" }}>
+            {t("meeting.generatedURL")}
+          </Title>
+          <div
+            style={{ marginTop: "0px", fontSize: "12px", marginBottom: "5px" }}
+          >
+            {t("meeting.roomInputInstructin")}
+          </div>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Input
               value={RoomName}
@@ -237,9 +249,11 @@ function Meeting() {
               style={{ marginLeft: "8px" }}
             />
           </div>
-        </div>
-        <div style={{ marginTop: "14px", fontSize: "12px" }}>
-          {t("meeting.limitWarning")}
+          <div
+            style={{ marginTop: "14px", fontSize: "12px", marginBottom: "5px" }}
+          >
+            {t("meeting.copyIconInstruction")}
+          </div>
         </div>
       </Modal>
     </>

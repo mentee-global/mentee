@@ -20,6 +20,7 @@ import moment from "moment";
 import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 import { css } from "@emotion/css";
+import { fetchPartners } from "utils/api";
 
 const styles = {
   formGroup: css`
@@ -53,15 +54,50 @@ function MentorProfileForm({
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
   const [form] = Form.useForm();
+  const [partnerOptions, setPartnerOptions] = useState([]);
+  const [flag, setFlag] = useState(false);
+
+  useEffect(() => {
+    async function getPartners() {
+      const partenr_data = await fetchPartners(undefined, null);
+      if (!(partnerOptions.length > 0)) {
+        partenr_data.map((item) => {
+          partnerOptions.push({
+            value: item._id.$oid,
+            label: item.organization,
+          });
+          return true;
+        });
+        partnerOptions.push({
+          value: null,
+          label: t("commonApplication.no-affiliation"),
+        });
+        setPartnerOptions(partnerOptions);
+        setFlag(!flag);
+      }
+    }
+
+    getPartners();
+  }, [])
 
   useEffect(() => {
     if (profileData) {
       form.setFieldsValue(profileData);
       form.setFieldValue("video", profileData.video?.url);
       setImage(profileData.image);
+
+      if (profileData.organization == 0) {
+        form.setFieldValue("organization", null);
+      }
     }
-    if (applicationData && applicationData.specializations) {
-      form.setFieldValue("specializations", applicationData.specializations);
+    if (applicationData) {
+      if (applicationData.specializations){
+        form.setFieldValue("specializations", applicationData.specializations);
+      }
+      form.setFieldValue(
+        "organization",
+        applicationData.partner ? applicationData.partner : null
+      );
     }
   }, [profileData, form, resetFields, applicationData]);
 
@@ -415,6 +451,19 @@ function MentorProfileForm({
           placeholder={t("common.pleaseSelect")}
           tokenSeparators={[","]}
         />
+      </Form.Item>
+      <Form.Item
+        label={t("menteeProfile.organizationAffiliation")}
+        name="organization"
+        rules={[
+          {
+            required: false,
+            message: t("common.requiredOrganizationAffiliation"),
+          },
+        ]}
+        className={styles.formGroupItem}
+      >
+        <Select options={[...partnerOptions]} />
       </Form.Item>
       <Typography.Title level={4}>
         {t("commonProfile.education")}

@@ -548,6 +548,9 @@ def create_application():
                 status=422, message="This user is already registered"
             )
         else:
+            partner = data.get("partner")
+            if partner == 0:
+                partner = None
             new_application = NewMentorApplication(
                 name=data.get("name"),
                 email=data.get("email"),
@@ -570,6 +573,7 @@ def create_application():
                 specialistTime=data.get("specialistTime"),
                 application_state="PENDING",
                 specializations=data.get("specializations"),
+                partner=partner,
             )
 
     if role == Account.MENTEE:

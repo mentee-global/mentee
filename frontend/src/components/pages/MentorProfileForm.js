@@ -78,7 +78,7 @@ function MentorProfileForm({
     }
 
     getPartners();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (profileData) {
@@ -91,7 +91,7 @@ function MentorProfileForm({
       }
     }
     if (applicationData) {
-      if (applicationData.specializations){
+      if (applicationData.specializations) {
         form.setFieldValue("specializations", applicationData.specializations);
       }
       form.setFieldValue(

@@ -44,6 +44,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             firebase_uid=data["firebase_uid"],
             name=data["name"],
             email=data["email"],
+            organization=data["organization"],
             professional_title=data["professional_title"],
             specializations=data["specializations"],
             offers_in_person=data.get("offers_in_person", False),
@@ -175,6 +176,8 @@ def edit_profile(data: dict = {}, profile: object = None):
         return True
 
     if isinstance(profile, MentorProfile):
+        ex_organization = profile.organization
+        profile.organization = data.get("organization", profile.organization)
         # Edit fields or keep original data if no added data
         profile.professional_title = data.get(
             "professional_title", profile.professional_title
@@ -191,6 +194,37 @@ def edit_profile(data: dict = {}, profile: object = None):
         )
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.website = data.get("website", profile.website)
+
+        if ex_organization != profile.organization:
+            # for old data---------------------------------
+            pair_partner_data = PartnerProfile.objects(
+                assign_mentors__in=[{"id": str(profile.id), "name": profile.name}]
+            )
+            for wrong_partner_item in pair_partner_data:
+                assign_mentors = []
+                for mentee_item in wrong_partner_item.assign_mentors:
+                    mentee_item_id = None
+                    if "id" in mentee_item:
+                        mentee_item_id = str(mentee_item["id"])
+                    if mentee_item_id is not None and mentee_item_id != str(profile.id):
+                        assign_mentors.append(mentee_item)
+
+                wrong_partner_item.assign_mentors = assign_mentors
+                wrong_partner_item.save()
+            # -------------------------------------------------------------------------
+            if profile.organization is not None and profile.organization != 0:
+                partenr_account = PartnerProfile.objects.get(id=profile.organization)
+                if partenr_account is not None:
+                    assign_mentors = []
+                    if partenr_account.assign_mentors:
+                        assign_mentors = partenr_account.assign_mentors
+                    assign_mentors.append({"id": str(profile.id), "name": profile.name})
+                    partenr_account.assign_mentors = assign_mentors
+                    partenr_account.save()
+
+        if profile.organization == 0:
+            profile.organization = None
+
         if "video" in data and data.get("video") is not None:
             video_data = data.get("video")
             if video_data:

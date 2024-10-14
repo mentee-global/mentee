@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form, Input, Radio, Typography, Select } from "antd";
 import { useTranslation } from "react-i18next";
-import { createApplication } from "utils/api";
-import { phoneRegex, validatePhoneNumber } from "utils/misc";
+import { createApplication, fetchPartners } from "utils/api";
+import { phoneRegex } from "utils/misc";
 import { useSelector } from "react-redux";
 
 const { Paragraph } = Typography;
@@ -13,6 +13,28 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
   const { t } = useTranslation();
   const [loading, setloading] = useState(false);
   const options = useSelector((state) => state.options);
+  const [partnerOptions, setPartnerOptions] = useState([]);
+
+  useEffect(() => {
+    async function getPartners() {
+      const partenr_data = await fetchPartners(undefined, null);
+      var temp_partner_options = [];
+      partenr_data.map((item) => {
+        temp_partner_options.push({
+          value: item._id.$oid,
+          label: item.organization,
+        });
+        return true;
+      });
+      temp_partner_options.push({
+        value: null,
+        label: t("commonApplication.no-affiliation"),
+      });
+      setPartnerOptions(temp_partner_options);
+      setloading(false);
+    }
+    getPartners();
+  }, []);
 
   const onFinish = async (values) => {
     setloading(true);
@@ -37,6 +59,8 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
       pastLiveLocation: values.previousLocations,
       date_submitted: new Date(),
       specializations: values.specializations,
+      organization: values.organization,
+      partner: values.partner,
       role,
     };
     const res = await createApplication(data);
@@ -373,6 +397,24 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
             mode="tags"
             placeholder={t("common.pleaseSelect")}
             tokenSeparators={[","]}
+          />
+        </Form.Item>
+        <Form.Item
+          label={t("commonApplication.partner")}
+          name="partner"
+          rules={[
+            {
+              required: false,
+              message: t("common.requiredPartner"),
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
+            }
+            options={[...partnerOptions]}
           />
         </Form.Item>
         <Form.Item>

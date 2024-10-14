@@ -364,6 +364,19 @@ def create_mentor_profile():
     data["firebase_uid"] = firebase_uid
     new_account.firebase_uid = firebase_uid
     new_account.save()
+    if account_type == Account.MENTOR:
+        mentor_partenr_id = data.get("organization")
+        if mentor_partenr_id is not None and mentor_partenr_id != 0:
+            partenr_account = PartnerProfile.objects.get(id=mentor_partenr_id)
+            if partenr_account is not None:
+                assign_mentors = []
+                if partenr_account.assign_mentors:
+                    assign_mentors = partenr_account.assign_mentors
+                assign_mentors.append(
+                    {"id": str(new_account.id), "name": new_account.name}
+                )
+                partenr_account.assign_mentors = assign_mentors
+                partenr_account.save()
     if account_type == Account.MENTEE:
         mentee_partenr_id = data.get("organization")
         if mentee_partenr_id is not None and mentee_partenr_id != 0:
@@ -390,11 +403,11 @@ def create_mentor_profile():
         if app_data is not None:
             app_data.application_state = "COMPLETED"
             app_data.save()
-    if account_type == Account.MENTOR:
-        app_data = MentorApplication.objects.get(email=email)
-        if app_data is not None:
-            app_data.application_state = "COMPLETED"
-            app_data.save()
+    # if account_type == Account.MENTOR:
+    #     app_data = MentorApplication.objects.get(email=email)
+    #     if app_data is not None:
+    #         app_data.application_state = "COMPLETED"
+    #         app_data.save()
 
     if account_type != Account.PARTNER:
         try:

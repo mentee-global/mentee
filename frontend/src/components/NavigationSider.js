@@ -84,7 +84,7 @@ function NavigationSider() {
             // />
             <img
               src={SmallLogoImage}
-              alt={''}
+              alt={""}
               className={css`
                 height: 30px;
                 width: 30px;
@@ -161,7 +161,7 @@ function NavigationSider() {
               // />
               <img
                 src={BigLogoImage}
-                alt={''}
+                alt={""}
                 className={css`
                   height: 50px;
                   padding-left: 2em;
@@ -199,7 +199,7 @@ function NavigationSider() {
               // />
               <img
                 src={SmallLogoImage}
-                alt={''}
+                alt={""}
                 className={css`
                   height: 90px;
                   width: 100%;

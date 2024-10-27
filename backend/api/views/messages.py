@@ -413,7 +413,7 @@ def get_direct_messages():
 @socketio.on("sendGroup")
 def chatGroup(msg, methods=["POST"]):
     try:
-        print('sssssssssssss')
+        print("sssssssssssss")
         message = GroupMessage(
             body=msg["body"],
             message_read=msg["message_read"],

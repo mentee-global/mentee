@@ -39,7 +39,7 @@ function HubFooter() {
         /> */}
         <img
           src={BigLogoImage}
-          alt={''}
+          alt={""}
           className={css`
             height: 40px;
             cursor: pointer;

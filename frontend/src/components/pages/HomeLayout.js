@@ -113,7 +113,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
         /> */}
         <img
           src={SmallLogoImage}
-          alt={''}
+          alt={""}
           className={css`
             position: absolute;
             top: 1em;
@@ -179,7 +179,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
             className={css`
               padding-left: 4em;
               border-radius: 2em;
-              text-aling:center;
+              text-aling: center;
               width: 100%;
               height: 100%;
               background: #c6ffdd;
@@ -252,7 +252,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                         /> */}
                         <img
                           src={BigLogoImage}
-                          alt={''}
+                          alt={""}
                           className={css`
                             width: 50px;
                             cursor: pointer;
@@ -275,18 +275,23 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                   //     fill-opacity: 0.7;
                   //   `}
                   // />
-                  <div style={{display:'flex', justifyContent:'center', paddingTop:'5%'}}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      paddingTop: "5%",
+                    }}
+                  >
                     <img
                       src={BigLogoImage}
-                      alt={''}
+                      alt={""}
                       className={css`
                         width: 100%;
-                        max-width:600px;
+                        max-width: 600px;
                         fill-opacity: 0.7;
                       `}
                     />
                   </div>
-                  
                 )}
               </>
             )}

@@ -44,13 +44,13 @@ function GroupMessageChatArea(props) {
     let temp = {};
     let tmep_inputs = {};
     // console.log(messages)
-    if (messages && messages.length > 0){
-      messages.map(message_item => {
+    if (messages && messages.length > 0) {
+      messages.map((message_item) => {
         if (message_item._id && message_item._id.$oid) {
           temp[message_item._id.$oid] = false;
           tmep_inputs[message_item._id.$oid] = false;
         }
-      })
+      });
       setDotMenuFlags(dotMenuFlags);
       setReplyInputFlags(tmep_inputs);
     }
@@ -131,7 +131,7 @@ function GroupMessageChatArea(props) {
     }, 1000);
     msg["sender_id"] = { $oid: msg["sender_id"] };
     msg["hub_user_id"] = { $oid: msg["hub_user_id"] };
-    msg["parent_message_id"] = { $oid: block_id};
+    msg["parent_message_id"] = { $oid: block_id };
     msg.time = moment().local().format("LLL");
     props.addMyMessage(msg);
     let temp = replyInputFlags;
@@ -157,7 +157,7 @@ function GroupMessageChatArea(props) {
     let temp = dotMenuFlags;
     temp[block_id] = !temp[block_id];
     setDotMenuFlags(temp);
-  }
+  };
 
   const getDropdownMenuItems = (block) => {
     const items = [];
@@ -182,8 +182,8 @@ function GroupMessageChatArea(props) {
     items.push({
       type: "divider",
     });
-    return items
-  }
+    return items;
+  };
 
   const HtmlContent = ({ content }) => {
     return <div dangerouslySetInnerHTML={{ __html: content }} />;
@@ -286,18 +286,22 @@ function GroupMessageChatArea(props) {
                         </div>
                       </div>
                       {block.sender_id.$oid !== profileId && sender_user && (
-                      <div>
-                        <Dropdown
-                          menu={{
-                            items: getDropdownMenuItems(block),
-                          }}
-                          onOpenChange={() => changeDropdown(block._id.$oid)}
-                          open={dotMenuFlags[block._id.$oid]}
-                          placement="bottom"
-                        >
-                          <div style={{paddingLeft:'10px', cursor:'pointer'}}>⋮</div>
-                        </Dropdown>
-                      </div>
+                        <div>
+                          <Dropdown
+                            menu={{
+                              items: getDropdownMenuItems(block),
+                            }}
+                            onOpenChange={() => changeDropdown(block._id.$oid)}
+                            open={dotMenuFlags[block._id.$oid]}
+                            placement="bottom"
+                          >
+                            <div
+                              style={{ paddingLeft: "10px", cursor: "pointer" }}
+                            >
+                              ⋮
+                            </div>
+                          </Dropdown>
+                        </div>
                       )}
                     </div>
 
@@ -309,26 +313,28 @@ function GroupMessageChatArea(props) {
                             .local()
                             .format("LLL")}
                     </span>
-                    {block.sender_id.$oid !== profileId && sender_user && replyInputFlags[block._id.$oid] && (
-                      <div
-                        className="reply-message-container"
-                      >
-                        <TextArea
-                          className="reply-message-textarea"
-                          value={replyMessageText}
-                          onChange={(e) => setReplyMessageText(e.target.value)}
-                          autoSize={{ minRows: 1, maxRows: 3 }}
-                        />
-                        <Button
-                          onClick={() => sendReplyMessage(block._id.$oid)}
-                          className="reply-message-send-button"
-                          shape="circle"
-                          type="primary"
-                          icon={<SendOutlined rotate={315} />}
-                          size={32}
-                        />
-                      </div>
-                    )}
+                    {block.sender_id.$oid !== profileId &&
+                      sender_user &&
+                      replyInputFlags[block._id.$oid] && (
+                        <div className="reply-message-container">
+                          <TextArea
+                            className="reply-message-textarea"
+                            value={replyMessageText}
+                            onChange={(e) =>
+                              setReplyMessageText(e.target.value)
+                            }
+                            autoSize={{ minRows: 1, maxRows: 3 }}
+                          />
+                          <Button
+                            onClick={() => sendReplyMessage(block._id.$oid)}
+                            className="reply-message-send-button"
+                            shape="circle"
+                            type="primary"
+                            icon={<SendOutlined rotate={315} />}
+                            size={32}
+                          />
+                        </div>
+                      )}
                   </div>
                 </div>
               );

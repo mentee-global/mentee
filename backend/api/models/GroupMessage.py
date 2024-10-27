@@ -11,6 +11,7 @@ class GroupMessage(Document, Mixin):
     sender_id = ObjectIdField(required=True)
     hub_user_id = ObjectIdField(required=True)
     created_at = DateTimeField(required=True)
+    parnet_message_id = ObjectIdField(required=False)
 
     def __repr__(self):
         return f"<GroupMessage:{self.body} \n Sent by:{self.sender_id}>"

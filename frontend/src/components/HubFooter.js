@@ -4,7 +4,8 @@ import { withRouter, useHistory } from "react-router-dom";
 import { css } from "@emotion/css";
 import { useTranslation } from "react-i18next";
 import "components/css/Navigation.scss";
-import { ReactComponent as Logo } from "resources/mentee.svg";
+// import { ReactComponent as Logo } from "resources/mentee.svg";
+import BigLogoImage from "resources/Mentee_logo_letter.png";
 
 const { Footer } = Layout;
 
@@ -27,12 +28,21 @@ function HubFooter() {
         {t("common.powered_by")}
       </div>
       <div>
-        <Logo
+        {/* <Logo
           className={css`
             height: 50px;
             width: 100px;
             cursor: pointer;
             margin-left: 10px;
+          `}
+          onClick={() => history.push("/")}
+        /> */}
+        <img
+          src={BigLogoImage}
+          alt={''}
+          className={css`
+            height: 40px;
+            cursor: pointer;
           `}
           onClick={() => history.push("/")}
         />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Avatar, Input, Button, Spin, theme, Tooltip } from "antd";
+import { Avatar, Input, Button, Spin, theme, Dropdown } from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import moment from "moment-timezone";
 import { SendOutlined, ArrowLeftOutlined } from "@ant-design/icons";
@@ -19,6 +19,7 @@ function GroupMessageChatArea(props) {
   const { TextArea } = Input;
   const { profileId, isPartner } = useAuth();
   const [messageText, setMessageText] = useState("");
+  const [replyMessageText, setReplyMessageText] = useState("");
   const [accountData, setAccountData] = useState(null);
 
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
@@ -26,6 +27,9 @@ function GroupMessageChatArea(props) {
   const { messages, loading, hub_user_id, particiants } = props;
   const messagesEndRef = useRef(null);
   const buttonRef = useRef(null);
+  const [dotMenuFlags, setDotMenuFlags] = useState({});
+  const [replyInputFlags, setReplyInputFlags] = useState({});
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
@@ -37,6 +41,19 @@ function GroupMessageChatArea(props) {
   };
   useEffect(() => {
     scrollToBottom();
+    let temp = {};
+    let tmep_inputs = {};
+    // console.log(messages)
+    if (messages && messages.length > 0){
+      messages.map(message_item => {
+        if (message_item._id && message_item._id.$oid) {
+          temp[message_item._id.$oid] = false;
+          tmep_inputs[message_item._id.$oid] = false;
+        }
+      })
+      setDotMenuFlags(dotMenuFlags);
+      setReplyInputFlags(tmep_inputs);
+    }
   }, [loading, messages]);
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
@@ -85,21 +102,43 @@ function GroupMessageChatArea(props) {
     setMessageText("");
     return;
   };
-  //   if (!activeMessageId || !messages || !messages.length) {
-  //     return (
-  //       <div className="no-messages">
-  //         {isMobile && (
-  //           <div
-  //             onClick={showSideBar}
-  //             style={{ cursor: "pointer", width: "20px", fontSize: "16px" }}
-  //           >
-  //             <ArrowLeftOutlined />
-  //           </div>
-  //         )}
-  //         <div className="start-convo">{t("messages.startConversation")}</div>
-  //       </div>
-  //     );
-  //   }
+
+  const sendReplyMessage = (block_id) => {
+    let currentMessage = replyMessageText;
+    if (!currentMessage.trim().length) {
+      let temp = replyInputFlags;
+      temp[block_id] = false;
+      setReplyInputFlags(temp);
+      setRefreshFlag(!refreshFlag);
+      return;
+    }
+    let dateTime = moment().utc();
+    const msg = {
+      body: currentMessage,
+      message_read: false,
+      sender_id: profileId,
+      hub_user_id: hub_user_id,
+      parent_message_id: block_id,
+      time: dateTime,
+    };
+    socket.emit("sendGroup", msg);
+    setTimeout(() => {
+      particiants.map((particiant_user) => {
+        if (particiant_user._id.$oid != profileId) {
+          sendNotifyUnreadMessage(particiant_user._id.$oid);
+        }
+      });
+    }, 1000);
+    msg["sender_id"] = { $oid: msg["sender_id"] };
+    msg["hub_user_id"] = { $oid: msg["hub_user_id"] };
+    msg["parent_message_id"] = { $oid: block_id};
+    msg.time = moment().local().format("LLL");
+    props.addMyMessage(msg);
+    let temp = replyInputFlags;
+    temp[block_id] = false;
+    setReplyInputFlags(temp);
+    return;
+  };
 
   const styles = {
     bubbleSent: css`
@@ -113,6 +152,38 @@ function GroupMessageChatArea(props) {
       background-color: #f4f5f9;
     `,
   };
+
+  const changeDropdown = (block_id) => {
+    let temp = dotMenuFlags;
+    temp[block_id] = !temp[block_id];
+    setDotMenuFlags(temp);
+  }
+
+  const getDropdownMenuItems = (block) => {
+    const items = [];
+    items.push({
+      key: "reply",
+      label: (
+        <span
+          onClick={() => {
+            let temp = replyInputFlags;
+            temp[block._id.$oid] = !temp[block._id.$oid];
+            setReplyInputFlags(temp);
+            let dot_temp = dotMenuFlags;
+            dot_temp[block._id.$oid] = false;
+            setDotMenuFlags(dot_temp);
+            setRefreshFlag(!refreshFlag);
+          }}
+        >
+          {t("messages.reply")}
+        </span>
+      ),
+    });
+    items.push({
+      type: "divider",
+    });
+    return items
+  }
 
   const HtmlContent = ({ content }) => {
     return <div dangerouslySetInnerHTML={{ __html: content }} />;
@@ -214,6 +285,20 @@ function GroupMessageChatArea(props) {
                           <HtmlContent content={linkify(block.body)} />
                         </div>
                       </div>
+                      {block.sender_id.$oid !== profileId && sender_user && (
+                      <div>
+                        <Dropdown
+                          menu={{
+                            items: getDropdownMenuItems(block),
+                          }}
+                          onOpenChange={() => changeDropdown(block._id.$oid)}
+                          open={dotMenuFlags[block._id.$oid]}
+                          placement="bottom"
+                        >
+                          <div style={{paddingLeft:'10px', cursor:'pointer'}}>⋮</div>
+                        </Dropdown>
+                      </div>
+                      )}
                     </div>
 
                     <span style={{ opacity: "40%" }}>
@@ -224,6 +309,26 @@ function GroupMessageChatArea(props) {
                             .local()
                             .format("LLL")}
                     </span>
+                    {block.sender_id.$oid !== profileId && sender_user && replyInputFlags[block._id.$oid] && (
+                      <div
+                        className="reply-message-container"
+                      >
+                        <TextArea
+                          className="reply-message-textarea"
+                          value={replyMessageText}
+                          onChange={(e) => setReplyMessageText(e.target.value)}
+                          autoSize={{ minRows: 1, maxRows: 3 }}
+                        />
+                        <Button
+                          onClick={() => sendReplyMessage(block._id.$oid)}
+                          className="reply-message-send-button"
+                          shape="circle"
+                          type="primary"
+                          icon={<SendOutlined rotate={315} />}
+                          size={32}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               );

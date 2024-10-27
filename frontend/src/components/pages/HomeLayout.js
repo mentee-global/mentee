@@ -3,8 +3,10 @@ import { Col, Row, Space, Tooltip } from "antd";
 import { useHistory, withRouter } from "react-router-dom";
 import { css } from "@emotion/css";
 import LanguageDropdown from "components/LanguageDropdown";
-import { ReactComponent as Logo } from "resources/mentee.svg";
-import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
+// import { ReactComponent as Logo } from "resources/mentee.svg";
+import BigLogoImage from "resources/Mentee_logo_letter.png";
+// import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
+import SmallLogoImage from "resources/Mentee_logo_small.png";
 import { useMediaQuery } from "react-responsive";
 import { FormOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -98,13 +100,26 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           }
         `}
       >
-        <SmallLogo
+        {/* <SmallLogo
           className={css`
             position: absolute;
             top: 1em;
             left: 1em;
             width: 2em;
             height: 2em;
+            cursor: pointer;
+          `}
+          onClick={() => history.push("/")}
+        /> */}
+        <img
+          src={SmallLogoImage}
+          alt={""}
+          className={css`
+            position: absolute;
+            top: 1em;
+            left: 1em;
+            width: 2.5em;
+            height: 2.5em;
             cursor: pointer;
           `}
           onClick={() => history.push("/")}
@@ -164,6 +179,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
             className={css`
               padding-left: 4em;
               border-radius: 2em;
+              text-aling: center;
               width: 100%;
               height: 100%;
               background: #c6ffdd;
@@ -225,10 +241,20 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                         {t("common.powered_by")}
                       </div>
                       <div>
-                        <Logo
+                        {/* <Logo
                           className={css`
                             height: 80px;
                             width: 160px;
+                            cursor: pointer;
+                            margin-left: 10px;
+                          `}
+                          onClick={() => history.push("/")}
+                        /> */}
+                        <img
+                          src={BigLogoImage}
+                          alt={""}
+                          className={css`
+                            width: 50px;
                             cursor: pointer;
                             margin-left: 10px;
                           `}
@@ -242,13 +268,30 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
             ) : (
               <>
                 {homeLayoutPaths.includes(location.pathname) && (
-                  <Logo
-                    className={css`
-                      width: 100%;
-                      height: 100%;
-                      fill-opacity: 0.7;
-                    `}
-                  />
+                  // <Logo
+                  //   className={css`
+                  //     width: 100%;
+                  //     height: 100%;
+                  //     fill-opacity: 0.7;
+                  //   `}
+                  // />
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      paddingTop: "5%",
+                    }}
+                  >
+                    <img
+                      src={BigLogoImage}
+                      alt={""}
+                      className={css`
+                        width: 100%;
+                        max-width: 600px;
+                        fill-opacity: 0.7;
+                      `}
+                    />
+                  </div>
                 )}
               </>
             )}

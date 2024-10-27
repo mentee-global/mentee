@@ -6,8 +6,10 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import useSidebars from "utils/hooks/useSidebars";
 import { collapse } from "features/userSlice";
-import { ReactComponent as Logo } from "resources/mentee.svg";
-import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
+// import { ReactComponent as Logo } from "resources/mentee.svg";
+import BigLogoImage from "resources/Mentee_logo_letter.png";
+// import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
+import SmallLogoImage from "resources/Mentee_logo_small.png";
 import "components/css/Navigation.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { css } from "@emotion/css";
@@ -73,12 +75,20 @@ function NavigationSider() {
               `}
             />
           ) : (
-            <SmallLogo
+            // <SmallLogo
+            //   className={css`
+            //     height: 30px;
+            //     width: 30px;
+            //   `}
+            //   alt="MENTEE"
+            // />
+            <img
+              src={SmallLogoImage}
+              alt={""}
               className={css`
                 height: 30px;
                 width: 30px;
               `}
-              alt="MENTEE"
             />
           )}
         </>
@@ -141,13 +151,22 @@ function NavigationSider() {
                 `}
               />
             ) : (
-              <Logo
+              // <Logo
+              //   className={css`
+              //     height: 90px;
+              //     width: 100%;
+              //     padding: 1em;
+              //   `}
+              //   alt="MENTEE"
+              // />
+              <img
+                src={BigLogoImage}
+                alt={""}
                 className={css`
-                  height: 90px;
-                  width: 100%;
-                  padding: 1em;
+                  height: 50px;
+                  padding-left: 2em;
+                  padding-top: 0.5em;
                 `}
-                alt="MENTEE"
               />
             )}
           </>
@@ -170,13 +189,22 @@ function NavigationSider() {
                 `}
               />
             ) : (
-              <SmallLogo
+              // <SmallLogo
+              //   className={css`
+              //     height: 90px;
+              //     width: 100%;
+              //     padding: 1em;
+              //   `}
+              //   alt="MENTEE"
+              // />
+              <img
+                src={SmallLogoImage}
+                alt={""}
                 className={css`
                   height: 90px;
                   width: 100%;
                   padding: 1em;
                 `}
-                alt="MENTEE"
               />
             )}
           </>

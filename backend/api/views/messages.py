@@ -418,6 +418,7 @@ def chatGroup(msg, methods=["POST"]):
             message_read=msg["message_read"],
             sender_id=msg["sender_id"],
             hub_user_id=msg["hub_user_id"],
+            parent_message_id=msg["parent_message_id"],
             created_at=msg["time"],
         )
         logger.info(msg["hub_user_id"])

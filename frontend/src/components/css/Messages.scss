@@ -226,6 +226,9 @@
   width: 100%;
   display: flex;
   align-items: end;
+  padding-left: 50px;
+  position: relative;
+  min-width: 500px;
 
   .reply-message-textarea {
     width: 100%;
@@ -234,8 +237,29 @@
   .reply-message-send-button {
     margin-left: 0.5em;
   }
+  .ant-btn-icon {
+    margin-bottom: 0;
+  }
 }
-
+.emoji-icon {
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  height: 20px;
+  margin-bottom: 5px;
+}
+.emoji-container {
+  position: absolute;
+  bottom: 50px;
+  right: 30px;
+  max-width: 450px;
+}
+.conversation-footer {
+  .emoji-icon {
+    height: 20px;
+    margin-top: 5px;
+  }
+}
 @media (max-width: 761px) {
   .messages-sidebar-background {
     width: 100% !important;

@@ -112,7 +112,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           onClick={() => history.push("/")}
         /> */}
         <img
-          src={SmallLogoImage}
+          src={BigLogoImage}
           alt={""}
           className={css`
             position: absolute;

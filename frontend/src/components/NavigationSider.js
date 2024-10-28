@@ -83,7 +83,7 @@ function NavigationSider() {
             //   alt="MENTEE"
             // />
             <img
-              src={SmallLogoImage}
+              src={BigLogoImage}
               alt={""}
               className={css`
                 height: 30px;
@@ -198,7 +198,7 @@ function NavigationSider() {
               //   alt="MENTEE"
               // />
               <img
-                src={SmallLogoImage}
+                src={BigLogoImage}
                 alt={""}
                 className={css`
                   height: 90px;

@@ -85,7 +85,6 @@ function GroupMessageChatArea(props) {
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
-
   const linkify = (text) => {
     const urlPattern =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;

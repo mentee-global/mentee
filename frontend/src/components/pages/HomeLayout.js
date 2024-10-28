@@ -118,8 +118,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
             position: absolute;
             top: 1em;
             left: 1em;
-            width: 2.5em;
-            height: 2.5em;
+            height: 50px;
             cursor: pointer;
           `}
           onClick={() => history.push("/")}

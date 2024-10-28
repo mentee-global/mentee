@@ -117,7 +117,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           className={css`
             position: absolute;
             top: 1em;
-            left: 1em;
+            left: 0.5em;
             height: 50px;
             cursor: pointer;
           `}

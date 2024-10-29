@@ -278,7 +278,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                     style={{
                       display: "flex",
                       justifyContent: "center",
-                      paddingTop: "5%",
+                      paddingTop: "20%",
                     }}
                   >
                     <img
@@ -286,7 +286,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                       alt={""}
                       className={css`
                         width: 100%;
-                        max-width: 600px;
+                        max-width: 400px;
                         fill-opacity: 0.7;
                       `}
                     />

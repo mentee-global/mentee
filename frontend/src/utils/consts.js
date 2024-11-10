@@ -228,3 +228,48 @@ export const I18N_LANGUAGES = [
   { value: "fa-AF", label: "Farsi" },
   { value: "pa-AR", label: "Pashto" },
 ];
+
+export const TIMEZONE_OPTIONS = [
+  { value: "UTC-12:00", label: "(UTC-12:00) International Date Line West" },
+  { value: "UTC-11:00", label: "(UTC-11:00) Coordinated Universal Time-11" },
+  { value: "UTC-10:00", label: "(UTC-10:00) Hawaii" },
+  { value: "UTC-09:00", label: "(UTC-09:00) Alaska" },
+  { value: "UTC-08:00", label: "(UTC-08:00) Pacific Time (US & Canada)" },
+  { value: "UTC-07:00", label: "(UTC-07:00) Mountain Time (US & Canada)" },
+  { value: "UTC-06:00", label: "(UTC-06:00) Central Time (US & Canada)" },
+  { value: "UTC-05:00", label: "(UTC-05:00) Eastern Time (US & Canada)" },
+  { value: "UTC-04:00", label: "(UTC-04:00) Atlantic Time (Canada)" },
+  { value: "UTC-03:00", label: "(UTC-03:00) Buenos Aires" },
+  { value: "UTC-02:00", label: "(UTC-02:00) Coordinated Universal Time-02" },
+  { value: "UTC-01:00", label: "(UTC-01:00) Azores" },
+  {
+    value: "UTC+00:00",
+    label: "(UTC+00:00) Greenwich Mean Time: Dublin, Edinburgh, Lisbon, London",
+  },
+  {
+    value: "UTC+01:00",
+    label: "(UTC+01:00) Central European Time: Amsterdam, Berlin, Rome, Paris",
+  },
+  {
+    value: "UTC+02:00",
+    label: "(UTC+02:00) Eastern European Time: Athens, Bucharest, Jerusalem",
+  },
+  {
+    value: "UTC+03:00",
+    label: "(UTC+03:00) Moscow, St. Petersburg, Volgograd",
+  },
+  { value: "UTC+04:00", label: "(UTC+04:00) Abu Dhabi, Muscat" },
+  { value: "UTC+05:00", label: "(UTC+05:00) Islamabad, Karachi" },
+  { value: "UTC+06:00", label: "(UTC+06:00) Dhaka" },
+  { value: "UTC+07:00", label: "(UTC+07:00) Bangkok, Hanoi, Jakarta" },
+  {
+    value: "UTC+08:00",
+    label: "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi",
+  },
+  { value: "UTC+09:00", label: "(UTC+09:00) Tokyo, Osaka, Sapporo" },
+  { value: "UTC+10:00", label: "(UTC+10:00) Sydney, Melbourne, Brisbane" },
+  { value: "UTC+11:00", label: "(UTC+11:00) Solomon Islands, New Caledonia" },
+  { value: "UTC+12:00", label: "(UTC+12:00) Auckland, Wellington" },
+  { value: "UTC+13:00", label: "(UTC+13:00) Nuku'alofa" },
+  { value: "UTC+14:00", label: "(UTC+14:00) Kiritimati Island" },
+];

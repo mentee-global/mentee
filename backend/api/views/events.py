@@ -11,11 +11,11 @@ from api.models import (
     MenteeProfile,
     PartnerProfile,
 )
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+import re
 from api.utils.translate import (
     get_all_translations,
 )
-from datetime import datetime
 from api.utils.constants import (
     Account,
     EVENT_TEMPLATE,
@@ -77,8 +77,26 @@ def delete_train(id):
 
 
 ######################################################################
-def send_mail_for_event(recipients, role_name, title, eventdate, target_url):
+def send_mail_for_event(
+    recipients, role_name, title, eventdate, target_url, start_datetime, end_datetime
+):
     for recipient in recipients:
+        if recipient.timezone:
+            print("timezone", recipient.timezone)
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", recipient.timezone)
+            print("match", match)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                eventdate.append(
+                    start_datetime.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
+                    + " ~ "
+                    + end_datetime.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
+                )
+
         res, res_msg = send_email(
             recipient=recipient.email,
             data={
@@ -151,18 +169,48 @@ def new_event():
             if start_datetime_str != "":
                 eventdate = start_datetime_str + " ~ " + end_datetime_str
             if Account.MENTOR in roles:
-                recipients = MentorProfile.objects.only("email", "preferred_language")
+                recipients = MentorProfile.objects.only(
+                    "email", "preferred_language", "timezone"
+                )
                 role_name = "MENTOR"
 
-                send_mail_for_event(recipients, role_name, title, eventdate, target_url)
+                send_mail_for_event(
+                    recipients,
+                    role_name,
+                    title,
+                    eventdate,
+                    target_url,
+                    start_datetime,
+                    end_datetime,
+                )
             if Account.MENTEE in roles:
-                recipients = MenteeProfile.objects.only("email", "preferred_language")
+                recipients = MenteeProfile.objects.only(
+                    "email", "preferred_language", "timezone"
+                )
                 role_name = "MENTEE"
-                send_mail_for_event(recipients, role_name, title, eventdate, target_url)
+                send_mail_for_event(
+                    recipients,
+                    role_name,
+                    title,
+                    eventdate,
+                    target_url,
+                    start_datetime,
+                    end_datetime,
+                )
             if Account.PARTNER in roles:
-                recipients = PartnerProfile.objects.only("email", "preferred_language")
+                recipients = PartnerProfile.objects.only(
+                    "email", "preferred_language", "timezone"
+                )
                 role_name = "Partner"
-                send_mail_for_event(recipients, role_name, title, eventdate, target_url)
+                send_mail_for_event(
+                    recipients,
+                    role_name,
+                    title,
+                    eventdate,
+                    target_url,
+                    start_datetime,
+                    end_datetime,
+                )
             if hub_id is not None:
                 role_name = "Hub"
                 partners = PartnerProfile.objects.filter(hub_id=hub_id).only(

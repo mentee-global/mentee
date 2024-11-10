@@ -165,7 +165,10 @@
     "requiredCheckbox":"يرجى التحقق من هذا الحقل",
     "requiredPartner": "الرجاء اختيار شريك",
     "stopImpersonating":"التوقف عن انتحال الشخصية",
-    "impersonate":"انتحال شخصية"
+    "impersonate":"انتحال شخصية",
+    "timezone":"المنطقة الزمنية",
+    "requiredTimezone":"الرجاء إدخال المنطقة الزمنية",
+    "requiredAvatar":"الرجاء تحميل صورة الملف الشخصي"
   },
   "commonApplication": {
     "no-affiliation":"عدم الانتماء",

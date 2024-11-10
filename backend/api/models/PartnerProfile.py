@@ -32,6 +32,7 @@ class PartnerProfile(Document, Mixin):
     hub_user = DictField(required=False)
     hub_user_name = StringField(required=False)
     roomName = StringField(required=False)
+    timezone = StringField(required=True)
 
     def __repr__(self):
         return f"""<Partner email: {self.email}

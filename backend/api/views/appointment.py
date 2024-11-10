@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from flask import Blueprint, request
 from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
 from api.core import create_response, logger
@@ -18,6 +18,7 @@ from api.utils.constants import (
     TRANSLATIONS,
 )
 from api.utils.require_auth import admin_only, all_users, mentor_only
+import re
 
 appointment = Blueprint("appointment", __name__)
 
@@ -112,6 +113,24 @@ def send_invite_email():
         end_time = end_date_object.strftime("%I:%M%p %Z")
         avail_htmls.append(start_time + " ~ " + end_time)
 
+        if mentee.timezone:
+            print("timezone", mentee.timezone)
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+            print("match", match)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                avail_htmls.append(
+                    start_date_object.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
+                    + " ~ "
+                    + start_date_object.astimezone(offset).strftime(
+                        "%m-%d-%Y %I:%M%p %Z"
+                    )
+                )
+
     if len(avail_htmls) > 0 and mentee.email_notifications:
         res, res_msg = (
             send_email(
@@ -176,6 +195,24 @@ def create_appointment():
 
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
+    if mentee.timezone:
+        print("timezone", mentee.timezone)
+        match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+        print("match", match)
+        if match:
+            hours_offset = int(match.group(1))
+            minutes_offset = int(match.group(2))
+            # Create a timezone with the parsed offset
+            offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+            # Convert the datetime to the target timezone
+            converted_date = date_object.astimezone(offset)
+            start_time_local_timezone = converted_date.strftime(
+                APPT_TIME_FORMAT + " %Z"
+            )
+        else:
+            start_time_local_timezone = start_time
+    else:
+        start_time_local_timezone = start_time
 
     if mentee.email_notifications:
         res, res_msg = send_email(
@@ -184,7 +221,7 @@ def create_appointment():
             data={
                 "confirmation": True,
                 "name": mentor.name,
-                "date": start_time,
+                "date": start_time_local_timezone,
                 mentee.preferred_language: True,
                 "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
             },
@@ -194,12 +231,31 @@ def create_appointment():
             logger.info(msg)
 
     if mentor.email_notifications:
+        if mentor.timezone:
+            print("timezone", mentor.timezone)
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentor.timezone)
+            print("match", match)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                converted_date = date_object.astimezone(offset)
+                start_time_local_timezone = converted_date.strftime(
+                    APPT_TIME_FORMAT + " %Z"
+                )
+            else:
+                start_time_local_timezone = start_time
+        else:
+            start_time_local_timezone = start_time
+
         res, res_msg = send_email(
             recipient=mentor.email,
             template_id=MENTOR_APPT_TEMPLATE,
             data={
                 "name": mentee.name,
-                "date": start_time,
+                "date": start_time_local_timezone,
                 mentor.preferred_language: True,
                 "subject": TRANSLATIONS[mentee.preferred_language]["mentor_appt"],
             },
@@ -247,11 +303,30 @@ def put_appointment(id):
 
     if mentee.email_notifications:
         start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
+        if mentee.timezone:
+            print("timezone", mentee.timezone)
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+            print("match", match)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                converted_date = appointment.timeslot.start_time.astimezone(offset)
+                start_time_local_timezone = converted_date.strftime(
+                    APPT_TIME_FORMAT + " %Z"
+                )
+            else:
+                start_time_local_timezone = start_time
+        else:
+            start_time_local_timezone = start_time
+
         res_email = send_email(
             recipient=mentee.email,
             data={
                 "name": mentor.name,
-                "date": start_time,
+                "date": start_time_local_timezone,
                 "approved": True,
                 mentee.preferred_language: True,
                 "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
@@ -282,6 +357,26 @@ def delete_request(appointment_id):
 
     if mentee.email_notifications:
         start_time = request.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
+
+        if mentee.timezone:
+            print("timezone", mentee.timezone)
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+            print("match", match)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                converted_date = request.timeslot.start_time.astimezone(offset)
+                start_time_local_timezone = converted_date.strftime(
+                    APPT_TIME_FORMAT + " %Z"
+                )
+            else:
+                start_time_local_timezone = start_time
+        else:
+            start_time_local_timezone = start_time
+
         res_email = send_email(
             recipient=mentee.email,
             data={

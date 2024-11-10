@@ -166,7 +166,10 @@
     "requiredCheckbox":"مهرباني وکړئ دا ساحه وګورئ",
     "requiredPartner": "مهرباني وکړئ یو شریک وټاکئ",
     "stopImpersonating":"تقلید بند کړئ",
-    "impersonate":"تقلید"
+    "impersonate":"تقلید",
+    "timezone":"د وخت زون",
+    "requiredTimezone":"مهرباني وکړئ د وخت زون دننه کړئ",
+    "requiredAvatar":"مهرباني وکړئ د پروفایل عکس اپلوډ کړئ"
   },
   "commonApplication": {
     "no-affiliation":"بې تړاو",

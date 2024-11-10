@@ -166,7 +166,10 @@
     "requiredCheckbox":"Please check this field",
     "requiredPartner": "Please select a Partner",
     "stopImpersonating":"Stop Impersonating",
-    "impersonate":"Impersonate"
+    "impersonate":"Impersonate",
+    "timezone":"Time Zone",
+    "requiredTimezone":"Please enter time zone",
+    "requiredAvatar":"Please upload profile image"
   },
   "commonApplication": {
     "no-affiliation":"no-affiliation",

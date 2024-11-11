@@ -9,15 +9,14 @@ import {
   Form,
   Input,
   Select,
-  Divider,
   Switch,
 } from "antd";
 import { useSelector } from "react-redux";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   ACCOUNT_TYPE,
   MENTEE_DEFAULT_VIDEO_NAME,
   getAgeRanges,
+  TIMEZONE_OPTIONS,
 } from "utils/consts";
 import moment from "moment";
 import ImgCrop from "antd-img-crop";
@@ -61,6 +60,7 @@ function MenteeProfileForm({
   const [partnerOptions, setPartnerOptions] = useState([]);
   const [countryOptions, setCountryOptions] = useState([]);
   const [flag, setFlag] = useState(false);
+  const [finishFlag, setFinishFlag] = useState(false);
 
   const immigrantOptions = [
     {
@@ -208,120 +208,9 @@ function MenteeProfileForm({
     getPartners();
   }, []);
 
-  const educationSubForm = () => (
-    <Form.List
-      name="education"
-      initialValue={[
-        {
-          school: "",
-          graduation_year: "",
-          majors: undefined,
-          education_level: "",
-        },
-      ]}
-    >
-      {(fields, { add, remove }) => (
-        <>
-          {fields.map(({ key, name, ...restField }) => (
-            <div
-              key={key}
-              className={css`
-                margin-bottom: 2em;
-              `}
-            >
-              <div className={styles.formGroup}>
-                <Form.Item
-                  className={styles.formGroupItem}
-                  {...restField}
-                  label={t("commonProfile.school")}
-                  name={[name, "school"]}
-                  rules={[
-                    {
-                      required: true,
-                      message: t("common.requiredSchool"),
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  className={styles.formGroupItem}
-                  {...restField}
-                  name={[name, "graduation_year"]}
-                  label={t("commonProfile.graduationYear")}
-                  rules={[
-                    {
-                      required: true,
-                      message: t("common.requiredGraduationYear"),
-                    },
-                  ]}
-                >
-                  <Input type="number" />
-                </Form.Item>
-              </div>
-              <div className={styles.formGroup}>
-                <Form.Item
-                  {...restField}
-                  className={styles.formGroupItem}
-                  name={[name, "majors"]}
-                  label={t("commonProfile.majors")}
-                  rules={[
-                    {
-                      required: true,
-                      message: t("common.requiredMajors"),
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder={t("commonProfile.majorsExamples")}
-                    mode="tags"
-                    allowClear
-                    tokenSeparators={[","]}
-                  />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, "education_level"]}
-                  className={styles.formGroupItem}
-                  label={t("commonProfile.degree")}
-                  rules={[
-                    {
-                      required: true,
-                      message: t("common.requiredDegree"),
-                    },
-                  ]}
-                >
-                  <Input placeholder={t("commonProfile.degreeExample")} />
-                </Form.Item>
-              </div>
-              {key !== 0 && (
-                <DeleteOutlined
-                  onClick={() => remove(name)}
-                  className={css`
-                    float: right;
-                    color: #ff4d4f;
-                  `}
-                />
-              )}
-              <Divider />
-            </div>
-          ))}
-          <Form.Item>
-            <Button
-              type="dashed"
-              onClick={() => add()}
-              block
-              icon={<PlusOutlined />}
-            >
-              {t("commonProfile.addMoreEducation")}
-            </Button>
-          </Form.Item>
-        </>
-      )}
-    </Form.List>
-  );
-
   const onFinish = async (values) => {
+    setFinishFlag(true);
+    if (!image) return;
     let newData = values;
     newData.email = email;
     newData.role = ACCOUNT_TYPE.MENTEE;
@@ -380,7 +269,25 @@ function MenteeProfileForm({
             />
           </Upload>
         </ImgCrop>
+        {!image && finishFlag && (
+          <div
+            class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
+            role="alert"
+          >
+            <div class="ant-form-item-explain-error">
+              {t("common.requiredAvatar")}
+            </div>
+          </div>
+        )}
       </Form.Item>
+      <div
+        class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
+        role="alert"
+      >
+        <div class="ant-form-item-explain-error">
+          Please upload profile image
+        </div>
+      </div>
       <Form.Item label={"Email"}>
         <Input value={email} readOnly />
       </Form.Item>
@@ -524,6 +431,19 @@ function MenteeProfileForm({
           <Select options={[...partnerOptions]} />
         </Form.Item>
       </div>
+      <Form.Item
+        label={t("common.timezone")}
+        name="timezone"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredTimezone"),
+          },
+        ]}
+        className={styles.formGroupItem}
+      >
+        <Select options={[...TIMEZONE_OPTIONS]} />
+      </Form.Item>
       <Form.Item
         label={t("menteeProfile.areasOfInterest")}
         name="specializations"

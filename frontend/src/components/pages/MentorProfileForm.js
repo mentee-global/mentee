@@ -13,7 +13,11 @@ import {
 } from "antd";
 import { useSelector } from "react-redux";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { ACCOUNT_TYPE, MENTEE_DEFAULT_VIDEO_NAME } from "utils/consts";
+import {
+  ACCOUNT_TYPE,
+  MENTEE_DEFAULT_VIDEO_NAME,
+  TIMEZONE_OPTIONS,
+} from "utils/consts";
 
 import { urlRegex } from "utils/misc";
 import moment from "moment";
@@ -56,6 +60,7 @@ function MentorProfileForm({
   const [form] = Form.useForm();
   const [partnerOptions, setPartnerOptions] = useState([]);
   const [flag, setFlag] = useState(false);
+  const [finishFlag, setFinishFlag] = useState(false);
 
   useEffect(() => {
     async function getPartners() {
@@ -215,6 +220,8 @@ function MentorProfileForm({
   );
 
   const onFinish = async (values) => {
+    setFinishFlag(true);
+    if (!image) return;
     let newData = values;
     newData.email = email;
     newData.role = ACCOUNT_TYPE.MENTOR;
@@ -273,6 +280,16 @@ function MentorProfileForm({
             />
           </Upload>
         </ImgCrop>
+        {!image && finishFlag && (
+          <div
+            class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
+            role="alert"
+          >
+            <div class="ant-form-item-explain-error">
+              {t("common.requiredAvatar")}
+            </div>
+          </div>
+        )}
       </Form.Item>
       <div className={styles.formGroup}>
         <Form.Item
@@ -464,6 +481,19 @@ function MentorProfileForm({
         className={styles.formGroupItem}
       >
         <Select options={[...partnerOptions]} />
+      </Form.Item>
+      <Form.Item
+        label={t("common.timezone")}
+        name="timezone"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredTimezone"),
+          },
+        ]}
+        className={styles.formGroupItem}
+      >
+        <Select options={[...TIMEZONE_OPTIONS]} />
       </Form.Item>
       <Typography.Title level={4}>
         {t("commonProfile.education")}

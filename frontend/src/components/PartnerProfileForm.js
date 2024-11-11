@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import { Button, Upload, Avatar, Form, Select, Input, Radio } from "antd";
 import { useTranslation } from "react-i18next";
-import { ACCOUNT_TYPE, getRegions, getSDGs } from "../utils/consts";
+import {
+  ACCOUNT_TYPE,
+  getRegions,
+  getSDGs,
+  TIMEZONE_OPTIONS,
+} from "../utils/consts";
 import { urlRegex } from "../utils/misc";
 import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
@@ -38,6 +43,7 @@ function PartnerProfileForm({
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
   const [edited, setEdited] = useState(false);
+  const [finishFlag, setFinishFlag] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -49,6 +55,8 @@ function PartnerProfileForm({
   }, [profileData, form, resetFields]);
 
   const onFinish = async (values) => {
+    setFinishFlag(true);
+    if (!image) return;
     let newData = values;
     if (email) {
       newData.email = email;
@@ -105,6 +113,16 @@ function PartnerProfileForm({
             />
           </Upload>
         </ImgCrop>
+        {!image && finishFlag && (
+          <div
+            class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
+            role="alert"
+          >
+            <div class="ant-form-item-explain-error">
+              {t("common.requiredAvatar")}
+            </div>
+          </div>
+        )}
       </Form.Item>
       {hub_user && (
         <Form.Item
@@ -253,7 +271,19 @@ function PartnerProfileForm({
           <Input />
         </Form.Item>
       </div>
-
+      <Form.Item
+        label={t("common.timezone")}
+        name="timezone"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredTimezone"),
+          },
+        ]}
+        className={styles.formGroupItem}
+      >
+        <Select options={[...TIMEZONE_OPTIONS]} />
+      </Form.Item>
       <Form.Item
         label={t("partnerProfile.developmentGoals")}
         name="sdgs"

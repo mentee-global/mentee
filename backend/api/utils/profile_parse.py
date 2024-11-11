@@ -173,6 +173,7 @@ def edit_profile(data: dict = {}, profile: object = None):
             "preferred_language", profile.preferred_language
         )
         profile.roomName = data.get("roomName", profile.roomName)
+        profile.timezone = data.get("timezone", profile.timezone)
         return True
 
     if isinstance(profile, MentorProfile):
@@ -194,6 +195,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         )
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.website = data.get("website", profile.website)
+        profile.timezone = data.get("timezone", profile.timezone)
 
         if ex_organization != profile.organization:
             # for old data---------------------------------
@@ -267,6 +269,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.is_private = data.get("is_private", profile.is_private)
         profile.specializations = data.get("specializations", profile.specializations)
         profile.workstate = data.get("workstate", profile.workstate)
+        profile.timezone = data.get("timezone", profile.timezone)
         profile.immigrant_status = data.get(
             "immigrant_status", profile.immigrant_status
         )

@@ -165,7 +165,10 @@
     "requiredCheckbox":"Por favor verifique este campo",
     "requiredPartner": "Selecione um parceiro",
     "stopImpersonating":"Pare de se passar por",
-    "impersonate":"Personificar"
+    "impersonate":"Personificar",
+    "timezone":"Fuso horário",
+    "requiredTimezone":"Por favor, insira o fuso horário",
+    "requiredAvatar":"Por favor, carregue a imagem do perfil"
   },
   "commonApplication": {
     "no-affiliation":"sem afiliação",

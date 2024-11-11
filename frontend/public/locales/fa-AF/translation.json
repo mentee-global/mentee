@@ -165,7 +165,10 @@
     "requiredCheckbox":"لطفا این فیلد را بررسی کنید",
     "requiredPartner": "لطفا یک شریک انتخاب کنید",
     "stopImpersonating":"جعل هویت را متوقف کنید",
-    "impersonate":"جعل هویت"
+    "impersonate":"جعل هویت",
+    "timezone":"منطقه زمانی",
+    "requiredTimezone":"لطفا منطقه زمانی را وارد کنید",
+    "requiredAvatar":"لطفا تصویر نمایه را آپلود کنید"
   },
   "commonApplication": {
     "no-affiliation":"عدم وابستگی",

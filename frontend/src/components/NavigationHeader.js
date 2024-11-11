@@ -156,7 +156,7 @@ function NavigationHeader() {
       style={{ background: colorBgContainer, display: "flex" }}
       theme="light"
     >
-      {!user.timezone && (
+      {user && !user.timezone && (
         <div style={{ color: "red" }}>Please set time zone in profile page</div>
       )}
       {isMobile && <MenuFoldOutlined onClick={() => dispatch(collapse())} />}

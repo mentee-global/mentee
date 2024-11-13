@@ -33,6 +33,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
             hub_id=data.get("hub_id"),
+            timezone=data.get("timezone"),
         )
         new_profile.website = data.get("website")
         new_profile.linkedin = data.get("linkedin")
@@ -52,6 +53,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
             taking_appointments=data.get("taking_appointments", False),
+            timezone=data.get("timezone"),
         )
 
         new_profile.website = data.get("website")
@@ -86,6 +88,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             education_level=data.get("education_level", "elementary"),
             immigrant_status=data.get("immigrant_status"),
             workstate=data.get("workstate"),
+            timezone=data.get("timezone"),
         )
 
         if "video" in data and data.get("video") is not None:

@@ -399,6 +399,15 @@ function ProfileContent(props) {
           </div>
         </>
       )}
+      {props.mentor.timezone && (
+        <>
+          <div className="mentor-profile-heading">
+            <b>{t("common.timezone")}</b>
+          </div>
+          <div>{props.mentor.timezone}</div>
+          <br />
+        </>
+      )}
 
       {props.mentor.video && (
         <div className="mentor-profile-heading">

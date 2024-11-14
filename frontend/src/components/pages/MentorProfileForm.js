@@ -221,7 +221,6 @@ function MentorProfileForm({
 
   const onFinish = async (values) => {
     setFinishFlag(true);
-    if (!image) return;
     let newData = values;
     newData.email = email;
     newData.role = ACCOUNT_TYPE.MENTOR;

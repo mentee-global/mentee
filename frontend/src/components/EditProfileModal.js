@@ -89,6 +89,9 @@ function EditProfileModal({ profileData, onSave, role }) {
   };
 
   const onSubmit = async (newData) => {
+    if (!newData.image) {
+      return;
+    }
     setSaving(true);
     if (!newData.edited && !newData.changedImage) {
       setOpen(false);

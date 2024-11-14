@@ -82,19 +82,26 @@ def send_mail_for_event(
 ):
     for recipient in recipients:
         if recipient.timezone:
-            print("timezone", recipient.timezone)
             match = re.match(r"UTC([+-]\d{2}):(\d{2})", recipient.timezone)
-            print("match", match)
             if match:
                 hours_offset = int(match.group(1))
                 minutes_offset = int(match.group(2))
                 # Create a timezone with the parsed offset
                 offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
                 # Convert the datetime to the target timezone
-                eventdate.append(
-                    start_datetime.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
+
+                eventdate = (
+                    datetime.strptime(
+                        start_datetime.replace("Z", "+00:00"), "%Y-%m-%dT%H:%M:%S.%f%z"
+                    )
+                    .astimezone(offset)
+                    .strftime("%m-%d-%Y %I:%M%p %Z")
                     + " ~ "
-                    + end_datetime.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
+                    + datetime.strptime(
+                        end_datetime.replace("Z", "+00:00"), "%Y-%m-%dT%H:%M:%S.%f%z"
+                    )
+                    .astimezone(offset)
+                    .strftime("%m-%d-%Y %I:%M%p %Z")
                 )
 
         res, res_msg = send_email(

@@ -162,7 +162,7 @@ function NavigationHeader() {
           role === ACCOUNT_TYPE.MENTOR ||
           role === ACCOUNT_TYPE.PARTNER) && (
           <div style={{ color: "red" }}>
-            Please set time zone in profile page
+            Please set time zone in <a href="/profile">profile page</a>
           </div>
         )}
       {isMobile && <MenuFoldOutlined onClick={() => dispatch(collapse())} />}

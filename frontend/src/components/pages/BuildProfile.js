@@ -63,6 +63,14 @@ function BuildProfile({ location, history, hub_user }) {
   }, []);
 
   const onSubmit = async (profileData, image, changedImage) => {
+    if (!profileData.image) {
+      messageApi.error({
+        content: t("common.requiredAvatar"),
+        duration: 0,
+        key: "requiredAvatar",
+      });
+      return;
+    }
     setLoading(true);
     if (!inFirebase && role !== ACCOUNT_TYPE.PARTNER) {
       if (userState !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {

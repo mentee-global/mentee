@@ -56,7 +56,6 @@ function PartnerProfileForm({
 
   const onFinish = async (values) => {
     setFinishFlag(true);
-    if (!image) return;
     let newData = values;
     if (email) {
       newData.email = email;

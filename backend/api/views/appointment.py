@@ -114,9 +114,7 @@ def send_invite_email():
         avail_htmls.append(start_time + " ~ " + end_time)
 
         if mentee.timezone:
-            print("timezone", mentee.timezone)
             match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
-            print("match", match)
             if match:
                 hours_offset = int(match.group(1))
                 minutes_offset = int(match.group(2))
@@ -196,9 +194,7 @@ def create_appointment():
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
     if mentee.timezone:
-        print("timezone", mentee.timezone)
         match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
-        print("match", match)
         if match:
             hours_offset = int(match.group(1))
             minutes_offset = int(match.group(2))
@@ -232,9 +228,7 @@ def create_appointment():
 
     if mentor.email_notifications:
         if mentor.timezone:
-            print("timezone", mentor.timezone)
             match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentor.timezone)
-            print("match", match)
             if match:
                 hours_offset = int(match.group(1))
                 minutes_offset = int(match.group(2))
@@ -304,9 +298,7 @@ def put_appointment(id):
     if mentee.email_notifications:
         start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
         if mentee.timezone:
-            print("timezone", mentee.timezone)
             match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
-            print("match", match)
             if match:
                 hours_offset = int(match.group(1))
                 minutes_offset = int(match.group(2))

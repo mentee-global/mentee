@@ -168,7 +168,9 @@
     "impersonate":"Personificar",
     "timezone":"Fuso horário",
     "requiredTimezone":"Por favor, insira o fuso horário",
-    "requiredAvatar":"Por favor, carregue a imagem do perfil"
+    "requiredAvatar":"Por favor, carregue a imagem do perfil",
+    "birthday" : "Aniversário",
+    "requiredBirthday":"Por favor, insira o aniversário"
   },
   "commonApplication": {
     "no-affiliation":"sem afiliação",

@@ -89,6 +89,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             immigrant_status=data.get("immigrant_status"),
             workstate=data.get("workstate"),
             timezone=data.get("timezone"),
+            birthday=data.get("birthday"),
         )
 
         if "video" in data and data.get("video") is not None:
@@ -273,6 +274,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.specializations = data.get("specializations", profile.specializations)
         profile.workstate = data.get("workstate", profile.workstate)
         profile.timezone = data.get("timezone", profile.timezone)
+        profile.birthday = data.get("birthday", profile.birthday)
         profile.immigrant_status = data.get(
             "immigrant_status", profile.immigrant_status
         )

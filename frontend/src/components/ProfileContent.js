@@ -21,6 +21,7 @@ import "./css/Profile.scss";
 import { getTranslatedOptions } from "utils/translations";
 import EditProfileModal from "components/EditProfileModal";
 import { getProfileId, getRole } from "utils/auth.service";
+import { formatDate } from "utils/consts";
 
 function ProfileContent(props) {
   const { t } = useTranslation();
@@ -290,6 +291,15 @@ function ProfileContent(props) {
         )}
       </div>
       <br />
+      {props.mentor.birthday && (
+        <>
+          <div className="mentor-profile-heading">
+            <b>{t("common.birthday")}</b>
+          </div>
+          <div>{formatDate(new Date(props.mentor.birthday.$date))}</div>
+          <br />
+        </>
+      )}
       {accountType === ACCOUNT_TYPE.PARTNER ? (
         <>
           {" "}

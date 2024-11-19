@@ -168,7 +168,9 @@
     "impersonate":"انتحال شخصية",
     "timezone":"المنطقة الزمنية",
     "requiredTimezone":"الرجاء إدخال المنطقة الزمنية",
-    "requiredAvatar":"الرجاء تحميل صورة الملف الشخصي"
+    "requiredAvatar":"الرجاء تحميل صورة الملف الشخصي",
+    "birthday" : "عيد ميلاد",
+    "requiredBirthday":"الرجاء إدخال تاريخ الميلاد"
   },
   "commonApplication": {
     "no-affiliation":"عدم الانتماء",

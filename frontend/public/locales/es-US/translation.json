@@ -168,7 +168,9 @@
     "impersonate":"Personificar",
     "timezone":"Huso horario",
     "requiredTimezone":"Por favor, introduzca la zona horaria",
-    "requiredAvatar":"Por favor sube una imagen de perfil"
+    "requiredAvatar":"Por favor sube una imagen de perfil",
+    "birthday" : "Cumpleaños",
+    "requiredBirthday":"Por favor, introduzca su fecha de nacimiento"
   },
   "commonApplication": {
     "no-affiliation":"sin afiliación",

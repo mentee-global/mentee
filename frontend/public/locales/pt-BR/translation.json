@@ -169,8 +169,8 @@
     "timezone":"Fuso horário",
     "requiredTimezone":"Por favor, insira o fuso horário",
     "requiredAvatar":"Por favor, carregue a imagem do perfil",
-    "birthday" : "Aniversário",
-    "requiredBirthday":"Por favor, insira o aniversário"
+    "birthday" : "Data de Nascimento",
+    "requiredBirthday":"Por favor, insira a Data de Nascimento"
   },
   "commonApplication": {
     "no-affiliation":"sem afiliação",

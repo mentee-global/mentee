@@ -193,6 +193,18 @@ export const getAppStatusOptions = () => {
   });
 };
 
+export const formatDate = (time_object) => {
+  const month = time_object.getMonth() + 1; // Adding 1 because months are 0-indexed
+  const day = time_object.getDate();
+  const year = time_object.getFullYear();
+
+  const formattedDate = `${month.toString().padStart(2, "0")}/${day
+    .toString()
+    .padStart(2, "0")}/${year}`;
+
+  return formattedDate;
+};
+
 export const formatDateTime = (time_object) => {
   const month = time_object.getMonth() + 1; // Adding 1 because months are 0-indexed
   const day = time_object.getDate();

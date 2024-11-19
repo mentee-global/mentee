@@ -168,7 +168,9 @@
     "impersonate":"جعل هویت",
     "timezone":"منطقه زمانی",
     "requiredTimezone":"لطفا منطقه زمانی را وارد کنید",
-    "requiredAvatar":"لطفا تصویر نمایه را آپلود کنید"
+    "requiredAvatar":"لطفا تصویر نمایه را آپلود کنید",
+    "birthday" : "تولد",
+    "requiredBirthday":"لطفا تولد را وارد کنید"
   },
   "commonApplication": {
     "no-affiliation":"عدم وابستگی",

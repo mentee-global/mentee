@@ -169,7 +169,9 @@
     "impersonate":"Impersonate",
     "timezone":"Time Zone",
     "requiredTimezone":"Please enter time zone",
-    "requiredAvatar":"Please upload profile image"
+    "requiredAvatar":"Please upload profile image",
+    "birthday" : "Birthday",
+    "requiredBirthday":"Please enter birthday"
   },
   "commonApplication": {
     "no-affiliation":"no-affiliation",

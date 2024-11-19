@@ -10,6 +10,7 @@ import {
   Input,
   Select,
   Switch,
+  DatePicker,
 } from "antd";
 import { useSelector } from "react-redux";
 import {
@@ -61,6 +62,7 @@ function MenteeProfileForm({
   const [countryOptions, setCountryOptions] = useState([]);
   const [flag, setFlag] = useState(false);
   const [finishFlag, setFinishFlag] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const immigrantOptions = [
     {
@@ -143,6 +145,9 @@ function MenteeProfileForm({
         form.setFieldValue("organization", null);
       }
       setImage(profileData.image);
+      if (profileData.birthday) {
+        form.setFieldValue("birthday", moment(profileData.birthday.$date));
+      }
     }
     if (applicationData) {
       form.setFieldValue(
@@ -227,6 +232,39 @@ function MenteeProfileForm({
     newData.changedImage = changedImage;
     newData.edited = edited;
     onSubmit(newData);
+  };
+
+  function getAgeRange(birthday) {
+    let res = "";
+    if (birthday) {
+      birthday = birthday.format("YYYY");
+      let age = new Date().getFullYear() - birthday;
+      if (age >= 18 && age <= 22) {
+        res = "18-22";
+      } else if (age >= 23 && age <= 25) {
+        res = "23-25";
+      } else if (age >= 26 && age <= 30) {
+        res = "26-30";
+      } else if (age >= 31 && age < 40) {
+        res = "30s";
+      } else if (age >= 41 && age < 50) {
+        res = "40s";
+      } else if (age >= 51 && age < 60) {
+        res = "50s";
+      } else if (age >= 61 && age < 70) {
+        res = "60s";
+      } else if (age > 70) {
+        res = "70s";
+      }
+    }
+    return res;
+  }
+
+  const changeBirthday = () => {
+    let birthday = form.getFieldValue("birthday");
+    let age_range = getAgeRange(birthday);
+    form.setFieldValue("age", age_range);
+    setRefresh(!refresh);
   };
 
   return (
@@ -342,6 +380,26 @@ function MenteeProfileForm({
           </Form.Item>
         </div>
       ) : null}
+
+      <Form.Item
+        name="birthday"
+        label={t("common.birthday")}
+        rules={[
+          {
+            required: false,
+            message: t("common.requiredBirthday"),
+          },
+        ]}
+        style={{
+          display: "inline-block",
+        }}
+      >
+        <DatePicker
+          placeholder={t("common.birthday")}
+          onChange={() => changeBirthday()}
+        />
+      </Form.Item>
+
       <Form.Item label={t("commonProfile.biography")} name="biography">
         <Input.TextArea rows={3} />
       </Form.Item>
@@ -381,7 +439,10 @@ function MenteeProfileForm({
           ]}
           className={styles.formGroupItem}
         >
-          <Select options={getAgeRanges(t)} />
+          <Select
+            options={getAgeRanges(t)}
+            disabled={form.getFieldValue("birthday") ? true : false}
+          />
         </Form.Item>
         <Form.Item
           label={t("menteeApplication.preferredLanguage")}

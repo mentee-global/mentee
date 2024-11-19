@@ -169,7 +169,9 @@
     "impersonate":"تقلید",
     "timezone":"د وخت زون",
     "requiredTimezone":"مهرباني وکړئ د وخت زون دننه کړئ",
-    "requiredAvatar":"مهرباني وکړئ د پروفایل عکس اپلوډ کړئ"
+    "requiredAvatar":"مهرباني وکړئ د پروفایل عکس اپلوډ کړئ",
+    "birthday" : "د زیږیدو نیټه",
+    "requiredBirthday":"مهرباني وکړئ د زیږون نیټه ولیکئ"
   },
   "commonApplication": {
     "no-affiliation":"بې تړاو",

@@ -170,7 +170,7 @@
     "timezone":"د وخت زون",
     "requiredTimezone":"مهرباني وکړئ د وخت زون دننه کړئ",
     "requiredAvatar":"مهرباني وکړئ د پروفایل عکس اپلوډ کړئ",
-    "birthday" : "د زیږیدو نیټه",
+    "birthday" : "د زیږون نیټه",
     "requiredBirthday":"مهرباني وکړئ د زیږون نیټه ولیکئ"
   },
   "commonApplication": {

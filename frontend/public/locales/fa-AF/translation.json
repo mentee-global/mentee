@@ -169,8 +169,8 @@
     "timezone":"منطقه زمانی",
     "requiredTimezone":"لطفا منطقه زمانی را وارد کنید",
     "requiredAvatar":"لطفا تصویر نمایه را آپلود کنید",
-    "birthday" : "تولد",
-    "requiredBirthday":"لطفا تولد را وارد کنید"
+    "birthday" : "تاریخ تولد",
+    "requiredBirthday":"لطفا تاریخ تولد را وارد کنید"
   },
   "commonApplication": {
     "no-affiliation":"عدم وابستگی",

@@ -169,7 +169,7 @@
     "timezone":"المنطقة الزمنية",
     "requiredTimezone":"الرجاء إدخال المنطقة الزمنية",
     "requiredAvatar":"الرجاء تحميل صورة الملف الشخصي",
-    "birthday" : "عيد ميلاد",
+    "birthday" : "تاريخ الميلاد",
     "requiredBirthday":"الرجاء إدخال تاريخ الميلاد"
   },
   "commonApplication": {

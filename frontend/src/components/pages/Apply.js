@@ -62,6 +62,7 @@ function Apply({ history }) {
     }
 
     setLoading(true);
+    email = email.toLowerCase();
     const { inFirebase, profileExists, isVerified } = await checkStatusByEmail(
       email,
       role

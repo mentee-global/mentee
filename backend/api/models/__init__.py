@@ -30,6 +30,8 @@ from .Countries import Countries
 from .Specializations import Specializations
 from .Guest import Guest
 from .Support import Support
+from .SignOrigin import SignOrigin
+from .SignedDocs import SignedDocs
 
 __all__ = [
     "db",
@@ -60,6 +62,8 @@ __all__ = [
     "Specializations",
     "Guest",
     "Support",
+    "SignOrigin",
+    "SignedDocs",
 ]
 
 # You must import all of the new Models you create to this page

@@ -273,6 +273,13 @@ const AdminTraining = () => {
       align: "center",
     },
     {
+      title: "Sign",
+      dataIndex: "requried_sign",
+      key: "requried_sign",
+      render: (requried_sign) => <>{requried_sign ? "required" : ""}</>,
+      align: "center",
+    },
+    {
       title: "Hub User",
       dataIndex: "hub_user",
       key: "hub_user",

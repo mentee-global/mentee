@@ -11,7 +11,6 @@ import ReactPlayer from "react-player/youtube";
 import "./css/TrainingList.scss";
 import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 
 const placeholder = Array(5).fill({
@@ -65,92 +64,115 @@ const TrainingList = (props) => {
   };
 
   const getTrainingComponent = (training) => {
-    switch (training.typee) {
-      case TRAINING_TYPE.VIDEO:
-        return (
-          <>
-            <ReactPlayer
-              className="react-player"
-              width={400}
-              height={300}
-              url={training.url}
-            />
-            <br />
-            {props.applicationData && (
-              <Checkbox
-                style={{ marginTop: "12px" }}
-                className=""
-                onChange={(e) => {
-                  changeTraingStatus(training.id, e.target.checked);
+    if (
+      training.requried_sign &&
+      (!training.signed_data || !training.signed_data[training._id.$oid])
+    ) {
+      return (
+        <>
+          <a
+            className="external-link"
+            href={"/digital-sign?train_id=" + training._id.$oid+'&email='+props.email+"&role="+props.role}
+          >
+            You need to sign Policy first
+          </a>
+        </>
+      );
+    } else {
+      switch (training.typee) {
+        case TRAINING_TYPE.VIDEO:
+          return (
+            <>
+              <ReactPlayer
+                className="react-player"
+                width={400}
+                height={300}
+                url={training.url}
+              />
+              <br />
+              {props.applicationData && (
+                <Checkbox
+                  style={{ marginTop: "12px" }}
+                  className=""
+                  onChange={(e) => {
+                    changeTraingStatus(training.id, e.target.checked);
+                  }}
+                  checked={
+                    traingStatus[training.id]
+                      ? traingStatus[training.id]
+                      : false
+                  }
+                >
+                  {t("traing.completed")}
+                </Checkbox>
+              )}
+            </>
+          );
+        case TRAINING_TYPE.LINK:
+          return (
+            <>
+              <a className="external-link" href={training.url} target="_blank">
+                {training.url}
+              </a>
+              <br />
+              {props.applicationData && (
+                <Checkbox
+                  style={{ marginTop: "12px" }}
+                  className=""
+                  onChange={(e) => {
+                    changeTraingStatus(training.id, e.target.checked);
+                  }}
+                  checked={
+                    traingStatus[training.id]
+                      ? traingStatus[training.id]
+                      : false
+                  }
+                >
+                  {t("traing.completed")}
+                </Checkbox>
+              )}
+            </>
+          );
+        case TRAINING_TYPE.DOCUMENT:
+          return (
+            <>
+              <Button
+                onClick={async () => {
+                  let response = await getTrainVideo(training.id);
+                  downloadBlob(response, training.file_name);
                 }}
-                checked={
-                  traingStatus[training.id] ? traingStatus[training.id] : false
-                }
               >
-                {t("traing.completed")}
-              </Checkbox>
-            )}
-          </>
-        );
-      case TRAINING_TYPE.LINK:
-        return (
-          <>
-            <a className="external-link" href={training.url} target="_blank">
-              {training.url}
-            </a>
-            <br />
-            {props.applicationData && (
-              <Checkbox
-                style={{ marginTop: "12px" }}
-                className=""
-                onChange={(e) => {
-                  changeTraingStatus(training.id, e.target.checked);
-                }}
-                checked={
-                  traingStatus[training.id] ? traingStatus[training.id] : false
-                }
-              >
-                {t("traing.completed")}
-              </Checkbox>
-            )}
-          </>
-        );
-      case TRAINING_TYPE.DOCUMENT:
-        return (
-          <>
-            <Button
-              onClick={async () => {
-                let response = await getTrainVideo(training.id);
-                downloadBlob(response, training.file_name);
-              }}
-            >
-              {training.file_name}
-            </Button>
-            <br />
-            {props.applicationData && (
-              <Checkbox
-                style={{ marginTop: "12px" }}
-                className=""
-                onChange={(e) => {
-                  changeTraingStatus(training.id, e.target.checked);
-                }}
-                checked={
-                  traingStatus[training.id] ? traingStatus[training.id] : false
-                }
-              >
-                {t("traing.completed")}
-              </Checkbox>
-            )}
-          </>
-        );
-      default:
-        return null;
+                {training.file_name}
+              </Button>
+              <br />
+              {props.applicationData && (
+                <Checkbox
+                  style={{ marginTop: "12px" }}
+                  className=""
+                  onChange={(e) => {
+                    changeTraingStatus(training.id, e.target.checked);
+                  }}
+                  checked={
+                    traingStatus[training.id]
+                      ? traingStatus[training.id]
+                      : false
+                  }
+                >
+                  {t("traing.completed")}
+                </Checkbox>
+              )}
+            </>
+          );
+        default:
+          return null;
+      }
     }
   };
 
   useEffect(() => {
     setLoading(true);
-    getTrainings(props.role)
+    console.log("user-----------", user);
+    getTrainings(props.role, user ? user.email : null)
       .then((trains) => {
         if (props.role == ACCOUNT_TYPE.HUB && user) {
           var hub_user_id = null;

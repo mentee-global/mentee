@@ -97,6 +97,23 @@ def get_trainings(role):
 
     trainings = temp
 
+    Hub_users = Hub.objects()
+    Hub_users_object = {}
+    for hub_user in Hub_users:
+        Hub_users_object[str(hub_user.id)] = {
+            "name": hub_user.name,
+            "url": hub_user.url,
+            "email": hub_user.email,
+            "image": hub_user.image,
+        }
+
+    temp = []
+    for training in trainings:
+        if training.hub_id is not None:
+            training.hub_user = Hub_users_object[str(training.hub_id)]
+        temp.append(training)
+    trainings = temp
+
     if lang in TARGET_LANGS:
         for training in trainings:
             training_dict = json.loads(training.to_json())

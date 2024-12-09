@@ -185,9 +185,9 @@ def contact_mentor(mentor_id):
 @all_users
 def get_sidebar(user_id):
     try:
-        sentMessages = DirectMessage.objects.filter(
-            Q(sender_id=user_id) | Q(recipient_id=user_id)
-        ).order_by("-created_at")
+        sentMessages = DirectMessage.objects.filter(Q(recipient_id=user_id)).order_by(
+            "-created_at"
+        )
 
         contacts = []
         sidebarContacts = set()

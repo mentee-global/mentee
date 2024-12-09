@@ -13,6 +13,7 @@ import {
   InfoCircleOutlined,
   LaptopOutlined,
   LinkOutlined,
+  FileOutlined,
 } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getLoginPath } from "utils/auth.service";
@@ -348,6 +349,11 @@ export default function useSidebars(userType, user, t) {
       label: "Trainings",
       key: "admin-training",
       icon: <VideoCameraOutlined />,
+    },
+    {
+      label: "Sign Docs",
+      key: "admin-sign",
+      icon: <FileOutlined />,
     },
     {
       label: "Resources",

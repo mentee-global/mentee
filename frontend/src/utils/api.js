@@ -225,13 +225,51 @@ export const checkStatusByEmail = async (email, role) => {
   let isVerified = res.data?.result?.isVerified;
   return { inFirebase, profileExists, isVerified };
 };
+export const getSignedData = async (role) => {
+  const requestExtension = `/training/getSignedDoc/${role}`;
+  const res = await authGet(requestExtension, {}).catch(console.error);
 
-export const getTrainings = async (role, lang = i18n.language) => {
+  const data = res.data.result.signed;
+  return data;
+};
+export const getSignedDocfile = async (id) => {
+  const requestExtension = `/training/getSignedDocfile/${id}`;
+  const res = await authGet(requestExtension, {
+    responseType: "blob",
+  }).catch(console.error);
+  return res;
+};
+export const getOriginSignDoc = async () => {
+  const requestExtension = `/training/getOriginDoc`;
+  const res = await authGet(requestExtension, {
+    responseType: "blob",
+  }).catch(console.error);
+  return res;
+};
+
+export const saveSignedDoc = async (signedBlob, user_email, train_id, role) => {
+  const requestExtension = `/training/saveSignedDoc`;
+  const formData = new FormData();
+  formData.append("signedPdf", signedBlob);
+  formData.append("user_email", user_email);
+  formData.append("role", role);
+  formData.append("train_id", train_id);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
+  return response;
+};
+
+export const getTrainings = async (
+  role,
+  user_email = null,
+  lang = i18n.language
+) => {
   const requestExtension = `/training/${role}`;
-
   const res = await authGet(requestExtension, {
     params: {
       lang: lang,
+      user_email: user_email,
     },
   }).catch(console.error);
   const trains = res.data.result.trainings;
@@ -306,6 +344,20 @@ export const EditTrainById = async (id, values = []) => {
     formData.append(key, value);
   });
   let response = await authPut(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
+};
+
+export const newPolicyCreate = async (values) => {
+  const { role } = values;
+  const requestExtension = `/training/add_policy/${role}`;
+  const formData = new FormData();
+  formData.append("front_url", FRONT_BASE_URL);
+  Object.entries(values).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  let response = await authPost(requestExtension, formData).catch((err) => {
     console.error(err);
   });
   return response?.data;

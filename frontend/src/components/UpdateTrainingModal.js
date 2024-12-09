@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Radio, Select, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Radio,
+  Select,
+  Upload,
+  Checkbox,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { TRAINING_TYPE, ACCOUNT_TYPE } from "utils/consts";
 import "components/css/Training.scss";
@@ -123,6 +132,30 @@ function UpdateTrainingModal({
             <Radio value={TRAINING_TYPE.LINK}> External Link </Radio>
           </Radio.Group>
         </Form.Item>
+        <Form.Item
+          rules={[
+            {
+              required: false,
+            },
+          ]}
+          name="requried_sign"
+          valuePropName="checked"
+        >
+          <Checkbox>Required Sign</Checkbox>
+        </Form.Item>
+        {newTraining && (
+          <Form.Item
+            rules={[
+              {
+                required: false,
+              },
+            ]}
+            name="send_notification"
+            valuePropName="checked"
+          >
+            <Checkbox>Send Notification</Checkbox>
+          </Form.Item>
+        )}
         {trainingType === TRAINING_TYPE.DOCUMENT ? (
           <Form.Item
             name="document"

@@ -87,7 +87,6 @@ const AdminSign = () => {
   };
 
   const handleTrainingDownload = async (record) => {
-    console.log("record", record);
     let response = await getSignedDocfile(record._id.$oid);
     if (!response) {
       notification.error({
@@ -116,7 +115,6 @@ const AdminSign = () => {
     const getData = async () => {
       setLoading(true);
       let newData = await getSignedData(role);
-      console.log("new data", newData);
       if (newData) {
         setSignedData(newData);
         setAllData(newData);

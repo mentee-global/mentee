@@ -72,7 +72,14 @@ const TrainingList = (props) => {
         <>
           <a
             className="external-link"
-            href={"/digital-sign?train_id=" + training._id.$oid+'&email='+props.email+"&role="+props.role}
+            href={
+              "/digital-sign?train_id=" +
+              training._id.$oid +
+              "&email=" +
+              props.email +
+              "&role=" +
+              props.role
+            }
           >
             You need to sign Policy first
           </a>

@@ -148,7 +148,7 @@ function Training({ location, history }) {
         <TrainingList
           role={role}
           applicationData={applicationData}
-          user_email = {email}
+          user_email={email}
           allChecked={allChecked}
         />
         <br />

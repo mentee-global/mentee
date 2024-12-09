@@ -19,8 +19,8 @@ const DigitalSign = ({ location }) => {
   const signaturePadRef = useRef(null);
   const { user } = useSelector((state) => state.user);
   let user_email = new URLSearchParams(location.search).get("email");
-  if (user){
-    user_email = user.email
+  if (user) {
+    user_email = user.email;
   }
 
   useEffect(() => {

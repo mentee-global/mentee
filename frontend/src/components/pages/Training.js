@@ -20,7 +20,7 @@ function Training({ location, history }) {
   const [applicationData, setApplicationData] = useState(
     location.state?.applicationData
   );
-  console.log('email', email);
+  console.log("email", email);
 
   const [flag, setFlag] = useState(false);
 
@@ -93,7 +93,6 @@ function Training({ location, history }) {
       setButtonFlag(value);
     }
   };
-  
 
   return (
     <div
@@ -150,7 +149,7 @@ function Training({ location, history }) {
         <TrainingList
           role={role}
           applicationData={applicationData}
-          user_email={email?email:null}
+          user_email={email ? email : null}
           allChecked={allChecked}
         />
         <br />

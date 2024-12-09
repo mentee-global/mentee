@@ -257,9 +257,9 @@ function App() {
                   </>
                 )}
               </PrivateRoute>
-              <PrivateRoute path="/digital-sign">
+              <PublicRoute path="/digital-sign">
                 <DigitalSign />
-              </PrivateRoute>
+              </PublicRoute>
               <PrivateRoute path="/mentor/training">
                 {role == ACCOUNT_TYPE.MENTOR ? (
                   <TrainingData role={ACCOUNT_TYPE.MENTOR} />

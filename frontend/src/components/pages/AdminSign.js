@@ -95,7 +95,7 @@ const AdminSign = () => {
       });
       return;
     }
-    downloadBlob(response, record.user_email);
+    downloadBlob(response, "signed_document.pdf");
   };
 
   useMemo(() => {

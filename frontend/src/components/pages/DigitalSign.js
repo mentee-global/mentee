@@ -6,17 +6,22 @@ import { Typography, Button } from "antd";
 import { useTranslation } from "react-i18next";
 import { PDFDocument } from "pdf-lib";
 import SignatureCanvas from "react-signature-canvas";
+import { useSelector } from "react-redux";
 
 const DigitalSign = ({ location }) => {
   const { t } = useTranslation();
   const train_id = new URLSearchParams(location.search).get("train_id");
-  const user_email = new URLSearchParams(location.search).get("email");
   const role = new URLSearchParams(location.search).get("role");
   const [signDoc, setSignDoc] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [signedPdfBlob, setSignedPdfBlob] = useState(null);
   const [signedpdfUrl, setSignedpdfUrl] = useState(null);
   const signaturePadRef = useRef(null);
+  const { user } = useSelector((state) => state.user);
+  let user_email = new URLSearchParams(location.search).get("email");
+  if (user){
+    user_email = user.email
+  }
 
   useEffect(() => {
     getOriginSignDoc()

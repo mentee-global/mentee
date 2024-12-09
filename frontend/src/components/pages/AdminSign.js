@@ -98,19 +98,6 @@ const AdminSign = () => {
     downloadBlob(response, record.user_email);
   };
 
-  const getAvailableLangs = (record) => {
-    if (!record?.translations) return [I18N_LANGUAGES[0]];
-    let items = I18N_LANGUAGES.filter((lang) => {
-      return (
-        Object.keys(record?.translations).includes(lang.value) &&
-        record?.translations[lang.value] !== null
-      );
-    });
-    // Appends English by default
-    items.unshift(I18N_LANGUAGES[0]);
-    return items;
-  };
-
   useMemo(() => {
     const getData = async () => {
       setLoading(true);

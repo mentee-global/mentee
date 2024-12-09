@@ -76,7 +76,7 @@ const TrainingList = (props) => {
               "/digital-sign?train_id=" +
               training._id.$oid +
               "&email=" +
-              props.email +
+              props.user_email +
               "&role=" +
               props.role
             }
@@ -178,7 +178,6 @@ const TrainingList = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    console.log("user-----------", user);
     getTrainings(props.role, user ? user.email : null)
       .then((trains) => {
         if (props.role == ACCOUNT_TYPE.HUB && user) {

@@ -103,7 +103,7 @@ function AddPolicyModal({ onCancel, onFinish, open, loading, hubOptions }) {
         >
           <Input.TextArea />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="role"
           label="Role"
           rules={[
@@ -118,7 +118,7 @@ function AddPolicyModal({ onCancel, onFinish, open, loading, hubOptions }) {
             <Option value={ACCOUNT_TYPE.PARTNER}>Partner</Option>
             <Option value={ACCOUNT_TYPE.HUB}>Hub</Option>
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         {role === ACCOUNT_TYPE.HUB && (
           <Form.Item
             name="hub_id"

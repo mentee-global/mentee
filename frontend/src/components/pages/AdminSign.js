@@ -1,17 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  deleteTrainbyId,
   downloadBlob,
   getSignedData,
   getSignedDocfile,
   fetchAccounts,
   newPolicyCreate,
 } from "utils/api";
-import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
-import { HubsDropdown } from "../AdminDropdowns";
+import { ACCOUNT_TYPE } from "utils/consts";
 import {
   Table,
-  Popconfirm,
   message,
   Button,
   notification,
@@ -19,29 +16,21 @@ import {
   Tabs,
   Skeleton,
 } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusCircleOutlined,
-  TeamOutlined,
-} from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 
 import "components/css/Training.scss";
-import AdminDownloadDropdown from "../AdminDownloadDropdown";
 import AddPolicyModal from "../AddPolicyModal";
 
 const AdminSign = () => {
-  const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
+  const [role, setRole] = useState("policy");
   const [signedData, setSignedData] = useState([]);
   const [reload, setReload] = useState(true);
   const [translateLoading, setTranslateLoading] = useState(false);
-  const [translateOpen, setTranslateOpen] = useState(false);
   const [openAddPolicy, setOpenAddPolicy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hubOptions, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
-  const [allData, setAllData] = useState([]);
 
   const onCancelTrainingForm = () => {
     setOpenAddPolicy(false);
@@ -59,11 +48,6 @@ const AdminSign = () => {
     }
     getHubData();
   }, []);
-
-  const handleResetFilters = () => {
-    setResetFilters(!resetFilters);
-    setSignedData(allData);
-  };
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -87,7 +71,7 @@ const AdminSign = () => {
   };
 
   const handleTrainingDownload = async (record) => {
-    let response = await getSignedDocfile(record._id.$oid);
+    let response = await getSignedDocfile(record._id.$oid, role);
     if (!response) {
       notification.error({
         message: "ERROR",
@@ -95,7 +79,10 @@ const AdminSign = () => {
       });
       return;
     }
-    downloadBlob(response, "signed_document.pdf");
+    downloadBlob(
+      response,
+      role === "policy" ? "Policy_doc.pdf" : "signed_document.pdf"
+    );
   };
 
   useMemo(() => {
@@ -104,10 +91,8 @@ const AdminSign = () => {
       let newData = await getSignedData(role);
       if (newData) {
         setSignedData(newData);
-        setAllData(newData);
       } else {
         setSignedData([]);
-        setAllData([]);
         notification.error({
           message: "ERROR",
           description: "Couldn't get trainings",
@@ -120,10 +105,13 @@ const AdminSign = () => {
 
   const columns = [
     {
-      title: "User",
-      dataIndex: "user_email",
-      key: "user_email",
-      render: (user_email) => <>{user_email}</>,
+      title: role === "policy" ? "Name" : "User",
+      dataIndex: role === "policy" ? "name" : "user_email",
+      key: role === "policy" ? "name" : "user_email",
+      render:
+        role === "policy"
+          ? (name) => <>{name}</>
+          : (user_email) => <>{user_email}</>,
     },
     {
       title: "Document",
@@ -132,20 +120,19 @@ const AdminSign = () => {
       render: (id, record) => {
         return (
           <Button onClick={() => handleTrainingDownload(record)}>
-            Download Signed PDF
+            {role === "policy" ? "Download Policy PDF" : "Download Signed PDF"}
           </Button>
         );
       },
     },
   ];
 
-  const searchbyHub = (hub_id) => {
-    if (role === ACCOUNT_TYPE.HUB) {
-      setSignedData(allData.filter((x) => x.hub_id == hub_id));
-    }
-  };
-
   const tabItems = [
+    {
+      label: `Policy Doc`,
+      key: "policy",
+      disabled: translateLoading,
+    },
     {
       label: `Mentee`,
       key: ACCOUNT_TYPE.MENTEE,
@@ -161,17 +148,12 @@ const AdminSign = () => {
       key: ACCOUNT_TYPE.PARTNER,
       disabled: translateLoading,
     },
-    // {
-    //   label: `Hub`,
-    //   key: ACCOUNT_TYPE.HUB,
-    //   disabled: translateLoading,
-    // },
   ];
 
   return (
     <div className="trains">
       <Tabs
-        defaultActiveKey={ACCOUNT_TYPE.MENTEE}
+        defaultActiveKey={"policy"}
         onChange={(key) => {
           setRole(key);
           setResetFilters(!resetFilters);

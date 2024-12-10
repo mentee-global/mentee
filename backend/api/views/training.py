@@ -39,11 +39,15 @@ training = Blueprint("training", __name__)  # initialize blueprint
 
 @training.route("/getSignedDocfile/<id>", methods=["GET"])
 def getSignedDocfile(id):
-    data = SignedDocs.objects().filter(id=id).first()
+    role = request.args.get("role", "policy")
+    if role == "policy":
+        data = SignOrigin.objects().filter(id=id).first()
+    else:
+        data = SignedDocs.objects().filter(id=id).first()
     document = data.filee.read()
     data.document_file = document
     return send_file(
-        BytesIO(document), download_name=data.user_email, mimetype="application/pdf"
+        BytesIO(document), download_name="down_doc", mimetype="application/pdf"
     )
 
 
@@ -61,7 +65,10 @@ def getOriginDoc():
 
 @training.route("/getSignedDoc/<role>", methods=["GET"])
 def getSignedData(role):
-    data = SignedDocs.objects(role=str(role))
+    if role == "policy":
+        data = SignOrigin.objects()
+    else:
+        data = SignedDocs.objects(role=str(role))
     return create_response(data={"signed": data})
 
 

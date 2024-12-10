@@ -36,6 +36,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
     "/application-form",
     "/application-training",
     "/build-profile",
+    "/digital-sign",
   ];
 
   const homeLayoutPaths = [

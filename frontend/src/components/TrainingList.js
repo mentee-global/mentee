@@ -80,6 +80,8 @@ const TrainingList = (props) => {
               "&role=" +
               props.role
             }
+            rel="noreferrer"
+            target="_blank"
           >
             You need to sign Policy first
           </a>

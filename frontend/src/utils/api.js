@@ -232,9 +232,10 @@ export const getSignedData = async (role) => {
   const data = res.data.result.signed;
   return data;
 };
-export const getSignedDocfile = async (id) => {
+export const getSignedDocfile = async (id, role) => {
   const requestExtension = `/training/getSignedDocfile/${id}`;
   const res = await authGet(requestExtension, {
+    role: role,
     responseType: "blob",
   }).catch(console.error);
   return res;

@@ -1,28 +1,20 @@
-import { withRouter } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
-import { getOriginSignDoc, saveSignedDoc, getTrainVideo } from "utils/api";
-import { css } from "@emotion/css";
-import { Typography, Button } from "antd";
+import { saveSignedDoc, getTrainVideo } from "utils/api";
+import { Button, Modal } from "antd";
 import { useTranslation } from "react-i18next";
 import { PDFDocument } from "pdf-lib";
 import SignatureCanvas from "react-signature-canvas";
-import { useSelector } from "react-redux";
 
-const DigitalSign = ({ location }) => {
+const DigitalSignModal = (props) => {
   const { t } = useTranslation();
-  const train_id = new URLSearchParams(location.search).get("train_id");
-  const role = new URLSearchParams(location.search).get("role");
+  const train_id = props.train_id;
+  const role = props.role;
   const [signDoc, setSignDoc] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [signedPdfBlob, setSignedPdfBlob] = useState(null);
   const [signedpdfUrl, setSignedpdfUrl] = useState(null);
   const signaturePadRef = useRef(null);
-  const { user } = useSelector((state) => state.user);
-  let user_email = new URLSearchParams(location.search).get("email");
-  if (user) {
-    user_email = user.email;
-  }
-  const previousPath = document.referrer || "No referrer available";
+  let user_email = props.email;
   
   useEffect(() => {
     getTrainVideo(train_id)
@@ -93,9 +85,7 @@ const DigitalSign = ({ location }) => {
   };
 
   const goBackAndRefresh = () => {
-    if (previousPath) {
-      window.location.href = previousPath;
-    }
+    props.finish();
   };
 
   const downloadSignedPdf = () => {
@@ -109,27 +99,31 @@ const DigitalSign = ({ location }) => {
   };
 
   return (
-    <div
-      className={css`
-        min-width: 400px;
-        width: 90%;
-        background: #fff;
-        border-radius: 2em;
-        padding: 2em;
-        margin: 1em 0;
-        @media (max-width: 991px) {
-          width: 90%;
-          margin: 2em 0;
-        }
-
-        @media (max-width: 575px) {
-          width: 100%;
-          margin: 0;
-          border-radius: 0;
-        }
-      `}
+    <Modal
+      style={{minWidth:"800px"}}
+      title="Sign"
+      open={props.open}
+      onCancel={() => props.finish()}
+      footer={[
+        <Button onClick={() => signaturePadRef.current.clear()}>Clear</Button>,
+        <Button
+          type="primary"
+          style={{ marginLeft: "20px", marginRight: "20px" }}
+          onClick={saveSignature}
+        >
+          Add Signature
+        </Button>,
+        <Button disabled={!signedPdfBlob} onClick={downloadSignedPdf}>Download Signed PDF</Button>,
+        <Button
+          disabled={!signedPdfBlob}
+          style={{ marginLeft: "20px" }}
+          type="primary"
+          onClick={goBackAndRefresh}
+        >
+          Confirm
+        </Button>
+      ]}
     >
-      <Typography.Title level={2}>Sign page</Typography.Title>
       {signDoc && (
         <iframe
           src={signedpdfUrl ? signedpdfUrl : pdfUrl}
@@ -162,30 +156,9 @@ const DigitalSign = ({ location }) => {
             }}
           />
         </div>
-        <Button onClick={() => signaturePadRef.current.clear()}>Clear</Button>
-        <Button
-          type="primary"
-          style={{ marginLeft: "20px", marginRight: "20px" }}
-          // disabled={signaturePadRef.current.isEmpty()}
-          onClick={saveSignature}
-        >
-          Add Signature
-        </Button>
-        {signedPdfBlob && (
-          <>
-            <Button onClick={downloadSignedPdf}>Download Signed PDF</Button>
-            <Button
-              style={{ marginLeft: "20px" }}
-              type="primary"
-              onClick={goBackAndRefresh}
-            >
-              Back
-            </Button>
-          </>
-        )}
-      </div>
-    </div>
+        </div>
+    </Modal>
   );
 };
 
-export default withRouter(DigitalSign);
+export default DigitalSignModal;

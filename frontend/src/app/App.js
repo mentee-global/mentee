@@ -25,7 +25,6 @@ import SocketComponent from "components/SocketComponent";
 import AdminTraining from "components/pages/AdminTraining";
 import AdminSign from "components/pages/AdminSign";
 import TrainingData from "components/pages/TrainingData";
-import DigitalSign from "components/pages/DigitalSign";
 import EventDetail from "components/pages/EventDetail";
 import { Languages } from "components/Languages";
 import { Hubs } from "components/Hubs";
@@ -144,9 +143,6 @@ function App() {
                 <PublicRoute path="/readonly/login">
                   <Login />
                 </PublicRoute>
-                <PublicRoute path="/digital-sign">
-                  <DigitalSign />
-                </PublicRoute>
                 <PublicRoute path="/admin">
                   <AdminLogin />
                 </PublicRoute>
@@ -259,9 +255,6 @@ function App() {
                     )}
                   </>
                 )}
-              </PrivateRoute>
-              <PrivateRoute path="/digital-sign-logged">
-                <DigitalSign />
               </PrivateRoute>
               <PrivateRoute path="/mentor/training">
                 {role == ACCOUNT_TYPE.MENTOR ? (

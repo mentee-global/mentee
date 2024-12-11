@@ -83,7 +83,7 @@ def get_trainings(role):
     if user_email is not None:
         signed_data = SignedDocs.objects(user_email=user_email)
         for item in signed_data:
-            signed_trainings[str(item.training_id)] = item
+            signed_trainings[str(item.training_id)] = item.id
 
     Hub_users = Hub.objects()
     Hub_users_object = {}
@@ -100,7 +100,9 @@ def get_trainings(role):
         if training.hub_id is not None:
             training.hub_user = Hub_users_object[str(training.hub_id)]
         if str(training.id) in signed_trainings:
-            training.signed_data = {str(training.id): "Signed"}
+            training.signed_data = {
+                str(training.id): signed_trainings[str(training.id)]
+            }
         temp.append(training)
 
     trainings = temp

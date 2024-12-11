@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { saveSignedDoc, getTrainVideo } from "utils/api";
-import { Button, Modal } from "antd";
+import { Button, Modal, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { PDFDocument } from "pdf-lib";
 import SignatureCanvas from "react-signature-canvas";
@@ -85,6 +85,10 @@ const DigitalSignModal = (props) => {
   };
 
   const goBackAndRefresh = () => {
+    setSignDoc(null);
+    setSignedpdfUrl(null);
+    setPdfUrl(null);
+    setSignedPdfBlob(null);
     props.finish();
   };
 
@@ -103,7 +107,13 @@ const DigitalSignModal = (props) => {
       style={{ minWidth: "800px" }}
       title="Sign"
       open={props.open}
-      onCancel={() => props.finish()}
+      onCancel={() => {
+        setSignDoc(null);
+        setSignedpdfUrl(null);
+        setPdfUrl(null);
+        setSignedPdfBlob(null);
+        props.finish();
+      }}
       footer={[
         <Button onClick={() => signaturePadRef.current.clear()}>Clear</Button>,
         <Button
@@ -126,13 +136,28 @@ const DigitalSignModal = (props) => {
         </Button>,
       ]}
     >
-      {signDoc && (
+      {signDoc ? (
         <iframe
-          src={signedpdfUrl ? signedpdfUrl : pdfUrl}
+          src={
+            (signedpdfUrl ? signedpdfUrl : pdfUrl) +
+            "#view=Fit&navpanes=0&scrollbar=0"
+          }
           title="PDF Viewer"
           width="100%"
           height="600px"
         ></iframe>
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            minHeight: "50px",
+          }}
+        >
+          <Spin spinning={true}></Spin>
+        </div>
       )}
       {/* Signature Pad */}
       <div style={{ textAlign: "center" }}>

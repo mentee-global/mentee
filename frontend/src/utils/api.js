@@ -235,6 +235,7 @@ export const getSignedData = async (role) => {
 export const getSignedDocfile = async (id, role) => {
   const requestExtension = `/training/getSignedDocfile/${id}/${role}`;
   const res = await authGet(requestExtension, {
+    role: role,
     responseType: "blob",
   }).catch(console.error);
   return res;

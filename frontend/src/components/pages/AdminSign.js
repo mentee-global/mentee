@@ -22,7 +22,7 @@ import "components/css/Training.scss";
 import AddPolicyModal from "../AddPolicyModal";
 
 const AdminSign = () => {
-  const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
+  const [role, setRole] = useState("policy");
   const [signedData, setSignedData] = useState([]);
   const [reload, setReload] = useState(true);
   const [translateLoading, setTranslateLoading] = useState(false);
@@ -136,6 +136,11 @@ const AdminSign = () => {
 
   const tabItems = [
     {
+      label: `Policy Doc`,
+      key: "policy",
+      disabled: translateLoading,
+    },
+    {
       label: `Mentee`,
       key: ACCOUNT_TYPE.MENTEE,
       disabled: translateLoading,
@@ -155,7 +160,7 @@ const AdminSign = () => {
   return (
     <div className="trains">
       <Tabs
-        defaultActiveKey={ACCOUNT_TYPE.MENTEE}
+        defaultActiveKey={"policy"}
         onChange={(key) => {
           setRole(key);
           setResetFilters(!resetFilters);

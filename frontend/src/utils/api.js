@@ -233,7 +233,7 @@ export const getSignedData = async (role) => {
   return data;
 };
 export const getSignedDocfile = async (id, role) => {
-  const requestExtension = `/training/getSignedDocfile/${id}`;
+  const requestExtension = `/training/getSignedDocfile/${id}/${role}`;
   const res = await authGet(requestExtension, {
     role: role,
     responseType: "blob",

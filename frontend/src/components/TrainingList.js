@@ -12,6 +12,7 @@ import "./css/TrainingList.scss";
 import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import DigitalSignModal from "./DigitalSignModal";
 
 const placeholder = Array(5).fill({
   _id: {
@@ -29,6 +30,10 @@ const TrainingList = (props) => {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [trainingData, setTrainingData] = useState();
+  const [openSignModal, setOpenSignModal] = useState(false);
+  const [selectedTrainid, setSelectedTrainid] = useState(null);
+  const [reload, setReload] = useState(false);
+
   const [traingStatus, setTrainingStatus] = useState(
     props.applicationData && props.applicationData.traingStatus
       ? props.applicationData.traingStatus
@@ -66,25 +71,20 @@ const TrainingList = (props) => {
   const getTrainingComponent = (training) => {
     if (
       training.requried_sign &&
+      training.typee === TRAINING_TYPE.DOCUMENT &&
       (!training.signed_data || !training.signed_data[training._id.$oid])
     ) {
       return (
         <>
-          <a
-            className="external-link"
-            href={
-              "/digital-sign?train_id=" +
-              training._id.$oid +
-              "&email=" +
-              props.user_email +
-              "&role=" +
-              props.role
-            }
-            rel="noreferrer"
-            target="_blank"
+          <Button
+            type="primary"
+            onClick={() => {
+              setOpenSignModal(true);
+              setSelectedTrainid(training._id.$oid);
+            }}
           >
-            You need to sign Policy first
-          </a>
+            Sign
+          </Button>
         </>
       );
     } else {
@@ -180,7 +180,7 @@ const TrainingList = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    getTrainings(props.role, user ? user.email : null)
+    getTrainings(props.role, user ? user.email : props.user_email)
       .then((trains) => {
         if (props.role == ACCOUNT_TYPE.HUB && user) {
           var hub_user_id = null;
@@ -197,7 +197,7 @@ const TrainingList = (props) => {
         setFlag(!flag);
       })
       .catch((e) => console.error(e));
-  }, [i18n.language]);
+  }, [i18n.language, user, reload]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -226,6 +226,17 @@ const TrainingList = (props) => {
             </Skeleton>
           </List.Item>
         )}
+      />
+      <DigitalSignModal
+        role={props.role}
+        email={props.user_email}
+        train_id={selectedTrainid}
+        open={openSignModal}
+        finish={() => {
+          setReload(!reload);
+          setOpenSignModal(false);
+          setSelectedTrainid(null);
+        }}
       />
     </>
   );

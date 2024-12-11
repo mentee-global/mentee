@@ -25,7 +25,6 @@ import SocketComponent from "components/SocketComponent";
 import AdminTraining from "components/pages/AdminTraining";
 import AdminSign from "components/pages/AdminSign";
 import TrainingData from "components/pages/TrainingData";
-import DigitalSign from "components/pages/DigitalSign";
 import EventDetail from "components/pages/EventDetail";
 import { Languages } from "components/Languages";
 import { Hubs } from "components/Hubs";
@@ -257,9 +256,6 @@ function App() {
                   </>
                 )}
               </PrivateRoute>
-              <PublicRoute path="/digital-sign">
-                <DigitalSign />
-              </PublicRoute>
               <PrivateRoute path="/mentor/training">
                 {role == ACCOUNT_TYPE.MENTOR ? (
                   <TrainingData role={ACCOUNT_TYPE.MENTOR} />

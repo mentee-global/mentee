@@ -16,7 +16,6 @@ import {
   Tabs,
   Skeleton,
 } from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 
 import "components/css/Training.scss";
@@ -125,6 +124,14 @@ const AdminSign = () => {
         );
       },
     },
+    {
+      title: "Signed Date",
+      dataIndex: "date_submitted",
+      key: "date_submitted",
+      render: (date_submitted) => (
+        <>{new Date(date_submitted.$date).toLocaleString()}</>
+      ),
+    },
   ];
 
   const tabItems = [
@@ -161,16 +168,6 @@ const AdminSign = () => {
         items={tabItems}
       />
       <div className="flex" style={{ marginBottom: "1rem" }}>
-        <Button
-          className="table-button"
-          icon={<PlusCircleOutlined />}
-          onClick={() => {
-            setOpenAddPolicy(true);
-          }}
-          disabled={translateLoading}
-        >
-          New Policy Doc
-        </Button>
         {/* <div style={{ lineHeight: "30px", marginLeft: "1rem" }}>Hub</div>
         <HubsDropdown
           className="table-button hub-drop-down"

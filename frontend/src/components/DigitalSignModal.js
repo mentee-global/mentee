@@ -1,30 +1,23 @@
-import { withRouter } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
-import { getOriginSignDoc, saveSignedDoc } from "utils/api";
-import { css } from "@emotion/css";
-import { Typography, Button } from "antd";
+import { saveSignedDoc, getTrainVideo } from "utils/api";
+import { Button, Modal } from "antd";
 import { useTranslation } from "react-i18next";
 import { PDFDocument } from "pdf-lib";
 import SignatureCanvas from "react-signature-canvas";
-import { useSelector } from "react-redux";
 
-const DigitalSign = ({ location }) => {
+const DigitalSignModal = (props) => {
   const { t } = useTranslation();
-  const train_id = new URLSearchParams(location.search).get("train_id");
-  const role = new URLSearchParams(location.search).get("role");
+  const train_id = props.train_id;
+  const role = props.role;
   const [signDoc, setSignDoc] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [signedPdfBlob, setSignedPdfBlob] = useState(null);
   const [signedpdfUrl, setSignedpdfUrl] = useState(null);
   const signaturePadRef = useRef(null);
-  const { user } = useSelector((state) => state.user);
-  let user_email = new URLSearchParams(location.search).get("email");
-  if (user) {
-    user_email = user.email;
-  }
+  let user_email = props.email;
 
   useEffect(() => {
-    getOriginSignDoc()
+    getTrainVideo(train_id)
       .then((res) => {
         if (res.data) {
           setPdfUrl(
@@ -36,12 +29,14 @@ const DigitalSign = ({ location }) => {
         }
       })
       .catch((e) => console.error(e));
-  }, []);
+  }, [props.open]);
 
   const saveSignature = async () => {
     if (!signDoc) return;
     if (signaturePadRef.current.isEmpty()) return;
 
+    const now = new Date();
+    const dateTime = now.toLocaleString();
     // Get the signature as an image
     const signatureDataURL = signaturePadRef.current
       .getTrimmedCanvas()
@@ -59,15 +54,22 @@ const DigitalSign = ({ location }) => {
 
     // Get the first page and add the signature
     const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
+    const lastpage = pages[pages.length - 1];
 
     // Customize position and size of the signature
-    const { width, height } = firstPage.getSize();
-    firstPage.drawImage(signatureImage, {
+    const { width, height } = lastpage.getSize();
+    lastpage.drawImage(signatureImage, {
       x: width / 2 - 120, // Centered horizontally
       y: 70, // Adjust Y position
       width: 100,
       height: 40,
+    });
+
+    // Add the current date and time to the PDF
+    lastpage.drawText(`${dateTime}`, {
+      x: width / 2 + 90, // Adjust the X position
+      y: 75, // Adjust the Y position
+      size: 12,
     });
 
     // Save the updated PDF
@@ -82,6 +84,10 @@ const DigitalSign = ({ location }) => {
     saveSignedDoc(signedBlob, user_email, train_id, role);
   };
 
+  const goBackAndRefresh = () => {
+    props.finish();
+  };
+
   const downloadSignedPdf = () => {
     if (signedPdfBlob) {
       const url = URL.createObjectURL(signedPdfBlob);
@@ -93,27 +99,33 @@ const DigitalSign = ({ location }) => {
   };
 
   return (
-    <div
-      className={css`
-        min-width: 400px;
-        width: 90%;
-        background: #fff;
-        border-radius: 2em;
-        padding: 2em;
-        margin: 1em 0;
-        @media (max-width: 991px) {
-          width: 90%;
-          margin: 2em 0;
-        }
-
-        @media (max-width: 575px) {
-          width: 100%;
-          margin: 0;
-          border-radius: 0;
-        }
-      `}
+    <Modal
+      style={{ minWidth: "800px" }}
+      title="Sign"
+      open={props.open}
+      onCancel={() => props.finish()}
+      footer={[
+        <Button onClick={() => signaturePadRef.current.clear()}>Clear</Button>,
+        <Button
+          type="primary"
+          style={{ marginLeft: "20px", marginRight: "20px" }}
+          onClick={saveSignature}
+        >
+          Add Signature
+        </Button>,
+        <Button disabled={!signedPdfBlob} onClick={downloadSignedPdf}>
+          Download Signed PDF
+        </Button>,
+        <Button
+          disabled={!signedPdfBlob}
+          style={{ marginLeft: "20px" }}
+          type="primary"
+          onClick={goBackAndRefresh}
+        >
+          Confirm
+        </Button>,
+      ]}
     >
-      <Typography.Title level={2}>Sign page</Typography.Title>
       {signDoc && (
         <iframe
           src={signedpdfUrl ? signedpdfUrl : pdfUrl}
@@ -146,21 +158,9 @@ const DigitalSign = ({ location }) => {
             }}
           />
         </div>
-        <Button onClick={() => signaturePadRef.current.clear()}>Clear</Button>
-        <Button
-          type="primary"
-          style={{ marginLeft: "20px", marginRight: "20px" }}
-          // disabled={signaturePadRef.current.isEmpty()}
-          onClick={saveSignature}
-        >
-          Add Signature
-        </Button>
-        {signedPdfBlob && (
-          <Button onClick={downloadSignedPdf}>Download Signed PDF</Button>
-        )}
       </div>
-    </div>
+    </Modal>
   );
 };
 
-export default withRouter(DigitalSign);
+export default DigitalSignModal;

@@ -37,9 +37,8 @@ from api.utils.request_utils import send_email
 training = Blueprint("training", __name__)  # initialize blueprint
 
 
-@training.route("/getSignedDocfile/<id>", methods=["GET"])
-def getSignedDocfile(id):
-    role = request.args.get("role", "policy")
+@training.route("/getSignedDocfile/<id>/<role>", methods=["GET"])
+def getSignedDocfile(id, role):
     if role == "policy":
         data = SignOrigin.objects().filter(id=id).first()
     else:

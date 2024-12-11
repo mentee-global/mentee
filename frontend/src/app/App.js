@@ -144,6 +144,9 @@ function App() {
                 <PublicRoute path="/readonly/login">
                   <Login />
                 </PublicRoute>
+                <PublicRoute path="/digital-sign">
+                  <DigitalSign />
+                </PublicRoute>
                 <PublicRoute path="/admin">
                   <AdminLogin />
                 </PublicRoute>
@@ -257,9 +260,9 @@ function App() {
                   </>
                 )}
               </PrivateRoute>
-              <PublicRoute path="/digital-sign">
+              <PrivateRoute path="/digital-sign-logged">
                 <DigitalSign />
-              </PublicRoute>
+              </PrivateRoute>
               <PrivateRoute path="/mentor/training">
                 {role == ACCOUNT_TYPE.MENTOR ? (
                   <TrainingData role={ACCOUNT_TYPE.MENTOR} />

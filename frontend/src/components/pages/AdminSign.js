@@ -16,14 +16,13 @@ import {
   Tabs,
   Skeleton,
 } from "antd";
-import { PlusCircleOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 
 import "components/css/Training.scss";
 import AddPolicyModal from "../AddPolicyModal";
 
 const AdminSign = () => {
-  const [role, setRole] = useState("policy");
+  const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
   const [signedData, setSignedData] = useState([]);
   const [reload, setReload] = useState(true);
   const [translateLoading, setTranslateLoading] = useState(false);
@@ -125,14 +124,17 @@ const AdminSign = () => {
         );
       },
     },
+    {
+      title: "Signed Date",
+      dataIndex: "date_submitted",
+      key: "date_submitted",
+      render: (date_submitted) => (
+        <>{new Date(date_submitted.$date).toLocaleString()}</>
+      ),
+    },
   ];
 
   const tabItems = [
-    {
-      label: `Policy Doc`,
-      key: "policy",
-      disabled: translateLoading,
-    },
     {
       label: `Mentee`,
       key: ACCOUNT_TYPE.MENTEE,
@@ -153,7 +155,7 @@ const AdminSign = () => {
   return (
     <div className="trains">
       <Tabs
-        defaultActiveKey={"policy"}
+        defaultActiveKey={ACCOUNT_TYPE.MENTEE}
         onChange={(key) => {
           setRole(key);
           setResetFilters(!resetFilters);
@@ -161,16 +163,6 @@ const AdminSign = () => {
         items={tabItems}
       />
       <div className="flex" style={{ marginBottom: "1rem" }}>
-        <Button
-          className="table-button"
-          icon={<PlusCircleOutlined />}
-          onClick={() => {
-            setOpenAddPolicy(true);
-          }}
-          disabled={translateLoading}
-        >
-          New Policy Doc
-        </Button>
         {/* <div style={{ lineHeight: "30px", marginLeft: "1rem" }}>Hub</div>
         <HubsDropdown
           className="table-button hub-drop-down"

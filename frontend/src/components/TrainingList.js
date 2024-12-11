@@ -66,25 +66,30 @@ const TrainingList = (props) => {
   const getTrainingComponent = (training) => {
     if (
       training.requried_sign &&
+      training.typee === TRAINING_TYPE.DOCUMENT &&
       (!training.signed_data || !training.signed_data[training._id.$oid])
     ) {
       return (
         <>
+          Click&nbsp;&nbsp;
           <a
             className="external-link"
             href={
-              "/digital-sign?train_id=" +
+              (user
+                ? "/digital-sign-logged?train_id="
+                : "/digital-sign?train_id=") +
               training._id.$oid +
               "&email=" +
               props.user_email +
               "&role=" +
               props.role
             }
-            rel="noreferrer"
-            target="_blank"
+            // rel="noreferrer"
+            // target="_blank"
           >
-            You need to sign Policy first
+            here
           </a>
+          &nbsp;&nbsp;for&nbsp;&nbsp;Sign
         </>
       );
     } else {
@@ -197,7 +202,7 @@ const TrainingList = (props) => {
         setFlag(!flag);
       })
       .catch((e) => console.error(e));
-  }, [i18n.language]);
+  }, [i18n.language, user]);
 
   useEffect(() => {
     setTimeout(() => {

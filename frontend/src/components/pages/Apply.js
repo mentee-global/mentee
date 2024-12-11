@@ -27,6 +27,7 @@ function Apply({ history }) {
   const [messageApi, contextHolder] = message.useMessage();
   const [applicationData, setApplicationData] = useState(null);
   const query = useQuery();
+  const [form] = Form.useForm();
 
   const stateItems = [
     {
@@ -165,6 +166,7 @@ function Apply({ history }) {
       </Link>
       <Typography.Title level={2}>{t("common.apply")}</Typography.Title>
       <Form
+        form={form}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
@@ -191,7 +193,13 @@ function Apply({ history }) {
             },
           ]}
         >
-          <Input prefix={<UserOutlined />} autoFocus />
+          <Input
+            prefix={<UserOutlined />}
+            autoFocus
+            onChange={(e) => {
+              form.setFieldsValue({ email: e.target.value.toLowerCase() });
+            }}
+          />
         </Form.Item>
         <Form.Item
           name="role"

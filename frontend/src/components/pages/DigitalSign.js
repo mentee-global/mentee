@@ -1,6 +1,6 @@
 import { withRouter } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
-import { getOriginSignDoc, saveSignedDoc } from "utils/api";
+import { getOriginSignDoc, saveSignedDoc, getTrainVideo } from "utils/api";
 import { css } from "@emotion/css";
 import { Typography, Button } from "antd";
 import { useTranslation } from "react-i18next";
@@ -22,9 +22,10 @@ const DigitalSign = ({ location }) => {
   if (user) {
     user_email = user.email;
   }
-
+  const previousPath = document.referrer || "No referrer available";
+  
   useEffect(() => {
-    getOriginSignDoc()
+    getTrainVideo(train_id)
       .then((res) => {
         if (res.data) {
           setPdfUrl(
@@ -42,6 +43,8 @@ const DigitalSign = ({ location }) => {
     if (!signDoc) return;
     if (signaturePadRef.current.isEmpty()) return;
 
+    const now = new Date();
+    const dateTime = now.toLocaleString();
     // Get the signature as an image
     const signatureDataURL = signaturePadRef.current
       .getTrimmedCanvas()
@@ -59,15 +62,22 @@ const DigitalSign = ({ location }) => {
 
     // Get the first page and add the signature
     const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
+    const lastpage = pages[pages.length - 1];
 
     // Customize position and size of the signature
-    const { width, height } = firstPage.getSize();
-    firstPage.drawImage(signatureImage, {
+    const { width, height } = lastpage.getSize();
+    lastpage.drawImage(signatureImage, {
       x: width / 2 - 120, // Centered horizontally
       y: 70, // Adjust Y position
       width: 100,
       height: 40,
+    });
+
+    // Add the current date and time to the PDF
+    lastpage.drawText(`${dateTime}`, {
+      x: width / 2 + 90, // Adjust the X position
+      y: 75, // Adjust the Y position
+      size: 12,
     });
 
     // Save the updated PDF
@@ -80,6 +90,12 @@ const DigitalSign = ({ location }) => {
       )
     );
     saveSignedDoc(signedBlob, user_email, train_id, role);
+  };
+
+  const goBackAndRefresh = () => {
+    if (previousPath) {
+      window.location.href = previousPath;
+    }
   };
 
   const downloadSignedPdf = () => {
@@ -156,7 +172,16 @@ const DigitalSign = ({ location }) => {
           Add Signature
         </Button>
         {signedPdfBlob && (
-          <Button onClick={downloadSignedPdf}>Download Signed PDF</Button>
+          <>
+            <Button onClick={downloadSignedPdf}>Download Signed PDF</Button>
+            <Button
+              style={{ marginLeft: "20px" }}
+              type="primary"
+              onClick={goBackAndRefresh}
+            >
+              Back
+            </Button>
+          </>
         )}
       </div>
     </div>

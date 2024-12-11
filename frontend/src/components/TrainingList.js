@@ -4,6 +4,7 @@ import {
   getTrainings,
   downloadBlob,
   getTrainVideo,
+  getSignedDocfile,
   changeStateTraining,
 } from "utils/api";
 import ReactPlayer from "react-player/youtube";
@@ -147,7 +148,14 @@ const TrainingList = (props) => {
             <>
               <Button
                 onClick={async () => {
-                  let response = await getTrainVideo(training.id);
+                  let response = null;
+                  if (training.signed_data[training._id.$oid]) {
+                    response = await getSignedDocfile(
+                      training.signed_data[training._id.$oid].$oid
+                    );
+                  } else {
+                    response = await getTrainVideo(training.id);
+                  }
                   downloadBlob(response, training.file_name);
                 }}
               >
@@ -229,7 +237,7 @@ const TrainingList = (props) => {
       />
       <DigitalSignModal
         role={props.role}
-        email={props.user_email}
+        email={props.user_email ? props.user_email : user ? user.email : null}
         train_id={selectedTrainid}
         open={openSignModal}
         finish={() => {

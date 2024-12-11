@@ -19,21 +19,15 @@ import {
 import { withRouter } from "react-router-dom";
 
 import "components/css/Training.scss";
-import AddPolicyModal from "../AddPolicyModal";
 
 const AdminSign = () => {
-  const [role, setRole] = useState("policy");
+  const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
   const [signedData, setSignedData] = useState([]);
   const [reload, setReload] = useState(true);
   const [translateLoading, setTranslateLoading] = useState(false);
-  const [openAddPolicy, setOpenAddPolicy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hubOptions, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
-
-  const onCancelTrainingForm = () => {
-    setOpenAddPolicy(false);
-  };
 
   useEffect(() => {
     async function getHubData() {
@@ -47,27 +41,6 @@ const AdminSign = () => {
     }
     getHubData();
   }, []);
-
-  const onFinish = async (values) => {
-    setLoading(true);
-    message.loading("Announcing new Policy...", 3);
-    const res = await newPolicyCreate(values);
-    if (!res?.success) {
-      notification.error({
-        message: "ERROR",
-        description: `Couldn't add new policy doc`,
-      });
-    } else {
-      setOpenAddPolicy(false);
-      notification.success({
-        message: "SUCCESS",
-        description: "New Policy doc has been added successfully",
-      });
-    }
-
-    setLoading(false);
-    setReload(!reload);
-  };
 
   const handleTrainingDownload = async (record) => {
     let response = await getSignedDocfile(record._id.$oid, role);
@@ -136,11 +109,6 @@ const AdminSign = () => {
 
   const tabItems = [
     {
-      label: `Policy Doc`,
-      key: "policy",
-      disabled: translateLoading,
-    },
-    {
       label: `Mentee`,
       key: ACCOUNT_TYPE.MENTEE,
       disabled: translateLoading,
@@ -160,7 +128,7 @@ const AdminSign = () => {
   return (
     <div className="trains">
       <Tabs
-        defaultActiveKey={"policy"}
+        defaultActiveKey={ACCOUNT_TYPE.MENTEE}
         onChange={(key) => {
           setRole(key);
           setResetFilters(!resetFilters);
@@ -184,13 +152,6 @@ const AdminSign = () => {
           <Table columns={columns} dataSource={signedData} />
         </Skeleton>
       </Spin>
-      <AddPolicyModal
-        open={openAddPolicy}
-        onCancel={onCancelTrainingForm}
-        onFinish={onFinish}
-        loading={loading}
-        hubOptions={hubOptions}
-      />
     </div>
   );
 };

@@ -132,17 +132,19 @@ function UpdateTrainingModal({
             <Radio value={TRAINING_TYPE.LINK}> External Link </Radio>
           </Radio.Group>
         </Form.Item>
-        <Form.Item
-          rules={[
-            {
-              required: false,
-            },
-          ]}
-          name="requried_sign"
-          valuePropName="checked"
-        >
-          <Checkbox>Required Sign</Checkbox>
-        </Form.Item>
+        {form.getFieldValue("typee") === TRAINING_TYPE.DOCUMENT && (
+          <Form.Item
+            rules={[
+              {
+                required: false,
+              },
+            ]}
+            name="requried_sign"
+            valuePropName="checked"
+          >
+            <Checkbox>Required Sign</Checkbox>
+          </Form.Item>
+        )}
         {newTraining && (
           <Form.Item
             rules={[

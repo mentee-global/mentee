@@ -33,7 +33,7 @@ const TrainingList = (props) => {
   const [openSignModal, setOpenSignModal] = useState(false);
   const [selectedTrainid, setSelectedTrainid] = useState(null);
   const [reload, setReload] = useState(false);
-  
+
   const [traingStatus, setTrainingStatus] = useState(
     props.applicationData && props.applicationData.traingStatus
       ? props.applicationData.traingStatus
@@ -76,7 +76,15 @@ const TrainingList = (props) => {
     ) {
       return (
         <>
-          <Button type="primary" onClick={() => {setOpenSignModal(true);setSelectedTrainid(training._id.$oid);}}>Sign</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setOpenSignModal(true);
+              setSelectedTrainid(training._id.$oid);
+            }}
+          >
+            Sign
+          </Button>
         </>
       );
     } else {

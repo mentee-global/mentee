@@ -33,6 +33,8 @@ from api.utils.constants import (
     TRANSLATION_COST_PER_PAGE,
 )
 from api.utils.request_utils import send_email
+import pytz
+
 
 training = Blueprint("training", __name__)  # initialize blueprint
 
@@ -251,7 +253,7 @@ def saveSignedDoc():
             signedDoc = SignedDocs(
                 training_id=train_id,
                 role=str(role),
-                date_submitted=datetime.now(),
+                date_submitted=datetime.now(pytz.utc),
                 user_email=user_email,
             )
             signedDoc.filee.put(signedPdf, filename="signed_doc")

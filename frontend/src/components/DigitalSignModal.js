@@ -15,7 +15,7 @@ const DigitalSignModal = (props) => {
   const [signedpdfUrl, setSignedpdfUrl] = useState(null);
   const signaturePadRef = useRef(null);
   let user_email = props.email;
-  
+
   useEffect(() => {
     getTrainVideo(train_id)
       .then((res) => {
@@ -29,7 +29,7 @@ const DigitalSignModal = (props) => {
         }
       })
       .catch((e) => console.error(e));
-  }, []);
+  }, [props.open]);
 
   const saveSignature = async () => {
     if (!signDoc) return;
@@ -100,7 +100,7 @@ const DigitalSignModal = (props) => {
 
   return (
     <Modal
-      style={{minWidth:"800px"}}
+      style={{ minWidth: "800px" }}
       title="Sign"
       open={props.open}
       onCancel={() => props.finish()}
@@ -113,7 +113,9 @@ const DigitalSignModal = (props) => {
         >
           Add Signature
         </Button>,
-        <Button disabled={!signedPdfBlob} onClick={downloadSignedPdf}>Download Signed PDF</Button>,
+        <Button disabled={!signedPdfBlob} onClick={downloadSignedPdf}>
+          Download Signed PDF
+        </Button>,
         <Button
           disabled={!signedPdfBlob}
           style={{ marginLeft: "20px" }}
@@ -121,7 +123,7 @@ const DigitalSignModal = (props) => {
           onClick={goBackAndRefresh}
         >
           Confirm
-        </Button>
+        </Button>,
       ]}
     >
       {signDoc && (
@@ -156,7 +158,7 @@ const DigitalSignModal = (props) => {
             }}
           />
         </div>
-        </div>
+      </div>
     </Modal>
   );
 };

@@ -155,7 +155,17 @@ def delete_train(id):
 # @admin_only
 def get_train(id):
     try:
+        user_email = request.args.get("user_email", None)
         train = Training.objects.get(id=id)
+        if user_email is not None:
+            signed_data = (
+                SignedDocs.objects.filter(user_email=user_email)
+                .filter(training_id=id)
+                .first()
+            )
+            if signed_data is not None:
+                train.signed_data = {str(id): signed_data.id}
+
     except:
         return create_response(status=422, message="training not found")
 

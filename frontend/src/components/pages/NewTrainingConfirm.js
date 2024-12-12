@@ -1,30 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { withRouter } from "react-router-dom";
-import { getTrainById, getTrainVideo, downloadBlob } from "../../utils/api";
+import {
+  getTrainById,
+  getTrainVideo,
+  downloadBlob,
+  getSignedDocfile,
+} from "../../utils/api";
 import { List, Button } from "antd";
 import ReactPlayer from "react-player/youtube";
 import { TRAINING_TYPE } from "utils/consts";
 import "../css/TrainingList.scss";
+import { useSelector } from "react-redux";
+import DigitalSignModal from "../DigitalSignModal";
 
 // TODO: Finish trasnlating this confirm
 function NewTrainingConfirm({ match }) {
-  const { t, i18n } = useTranslation();
   const [train, setTrain] = useState({});
   const [loading, setLoading] = useState(false);
-  const accountType = match.params.type;
   const id = match.params.id;
+  const [openSignModal, setOpenSignModal] = useState(false);
+  const [selectedTrainid, setSelectedTrainid] = useState(null);
+  const [reload, setReload] = useState(false);
+  const { user } = useSelector((state) => state.user);
   useEffect(() => {
     setLoading(true);
     async function getNewTraining() {
-      const record = await getTrainById(id);
+      const record = await getTrainById(id, user ? user.email : null);
       if (record) {
         setTrain(record);
         setLoading(false);
       }
     }
     getNewTraining();
-  }, [id]);
+  }, [id, reload]);
   return (
     <div className="">
       <h1 className="new-train-header">MENTEE Required New Trainings</h1>
@@ -55,32 +63,72 @@ function NewTrainingConfirm({ match }) {
                   </a>
                 )}
                 {train.typee === TRAINING_TYPE.DOCUMENT && (
-                  <Button
-                    onClick={async () => {
-                      let response = await getTrainVideo(
-                        train.id ? train.id : train._id.$oid
-                      );
-                      downloadBlob(response, train.file_name);
-                    }}
-                  >
-                    {train.file_name}
-                  </Button>
+                  <>
+                    {train.requried_sign &&
+                    (!train.signed_data ||
+                      !train.signed_data[train._id.$oid]) ? (
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          setOpenSignModal(true);
+                          setSelectedTrainid(train._id.$oid);
+                        }}
+                      >
+                        Sign
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={async () => {
+                          let response = null;
+                          if (train.signed_data[train._id.$oid]) {
+                            response = await getSignedDocfile(
+                              train.signed_data[train._id.$oid].$oid
+                            );
+                          } else {
+                            response = await getTrainVideo(
+                              train.id ? train.id : train._id.$oid
+                            );
+                          }
+                          downloadBlob(response, train.file_name);
+                        }}
+                      >
+                        {train.file_name}
+                      </Button>
+                    )}
+                  </>
                 )}
               </List.Item>
             )}
           </List>
         </div>
         <div className="btnContainer" style={{ justifyContent: "center" }}>
-          <div
-            className={`applySubmit2`}
-            onClick={async () => {
-              window.location.href = "/";
-            }}
-          >
-            I confirm I have completed the training.
-          </div>
+          {train.typee === TRAINING_TYPE.DOCUMENT &&
+          train.requried_sign &&
+          (!train.signed_data || !train.signed_data[train._id.$oid]) ? (
+            <></>
+          ) : (
+            <div
+              className={`applySubmit2`}
+              onClick={async () => {
+                window.location.href = "/";
+              }}
+            >
+              I confirm I have completed the training.
+            </div>
+          )}
         </div>
       </div>
+      <DigitalSignModal
+        role={user ? user.role : null}
+        email={user ? user.email : null}
+        train_id={selectedTrainid}
+        open={openSignModal}
+        finish={() => {
+          setReload(!reload);
+          setOpenSignModal(false);
+          setSelectedTrainid(null);
+        }}
+      />
     </div>
   );
 }

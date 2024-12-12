@@ -320,9 +320,13 @@ export const deleteTrainbyId = (id, accountType) => {
   );
 };
 
-export const getTrainById = async (id) => {
+export const getTrainById = async (id, user_email = null) => {
   const requestExtension = `/training/train/${id}`;
-  let response = await authGet(requestExtension).catch(console.error);
+  let response = await authGet(requestExtension, {
+    params: {
+      user_email: user_email,
+    },
+  }).catch(console.error);
   const train = response.data.result.train;
   return train;
 };

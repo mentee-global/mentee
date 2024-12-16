@@ -39,9 +39,14 @@ function NavigationHeader() {
 
   const logoutUser = () => {
     var login_path = getLoginPath();
+    var n50_flag = localStorage.getItem("n50_user");
+    if (n50_flag) {
+      login_path = "/n50";
+    }
     logout().then(() => {
       resetRoleState();
       dispatch(resetUser());
+      localStorage.removeItem("n50_user");
       if (login_path && login_path != "") {
         // window.location.href = login_path;
         history.push(login_path);

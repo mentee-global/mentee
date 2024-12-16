@@ -38,59 +38,95 @@ function GroupMessages(props) {
   }
 
   const messageListener = (data) => {
-    if (
-      data?.hub_user_id?.$oid === activeMessageId &&
-      data?.sender_id?.$oid !== profileId
-    ) {
-      setMessages((prevMessages) => [...prevMessages, data]);
-      dispatch(
-        updateNotificationsCount({
-          recipient: profileId,
-          sender: data.sender_id.$oid,
-        })
-      );
+    if (hub_user_id) {
+      if (
+        data?.hub_user_id?.$oid === activeMessageId &&
+        data?.sender_id?.$oid !== profileId
+      ) {
+        setMessages((prevMessages) => [...prevMessages, data]);
+        dispatch(
+          updateNotificationsCount({
+            recipient: profileId,
+            sender: data.sender_id.$oid,
+          })
+        );
+      }
+    } else {
+      if (data?.sender_id?.$oid !== profileId) {
+        setMessages((prevMessages) => [...prevMessages, data]);
+        dispatch(
+          updateNotificationsCount({
+            recipient: profileId,
+            sender: data.sender_id.$oid,
+          })
+        );
+      }
     }
   };
 
   useEffect(() => {
     async function getParticiants(hub_user_id) {
       var temp = [];
-      const Partner_data = await fetchPartners(undefined, hub_user_id);
+      let Partner_data = [];
+      if (hub_user_id) {
+        Partner_data = await fetchPartners(undefined, hub_user_id);
+      } else {
+        Partner_data = await fetchPartners();
+      }
+
       if (Partner_data) {
         temp = Partner_data;
       }
 
-      const hub_user = await fetchAccountById(hub_user_id, ACCOUNT_TYPE.HUB);
-      if (hub_user) {
-        temp.push(hub_user);
+      if (hub_user_id) {
+        const hub_user = await fetchAccountById(hub_user_id, ACCOUNT_TYPE.HUB);
+        if (hub_user) {
+          temp.push(hub_user);
+        }
       }
       setParticiants(temp);
     }
-
-    if (hub_user_id) {
-      getParticiants(hub_user_id);
-    }
+    getParticiants(hub_user_id);
   }, [hub_user_id]);
 
   useEffect(() => {
-    if (socket && hub_user_id) {
-      socket.on(hub_user_id, messageListener);
-      return () => {
-        socket.off(hub_user_id, messageListener);
-      };
+    if (socket) {
+      if (hub_user_id) {
+        socket.on(hub_user_id, messageListener);
+        return () => {
+          socket.off(hub_user_id, messageListener);
+        };
+      } else {
+        socket.on("group-partner", messageListener);
+        return () => {
+          socket.off("group-partner", messageListener);
+        };
+      }
     }
-  }, [socket, hub_user_id, activeMessageId]);
+  }, [socket, hub_user_id, profileId, activeMessageId]);
 
   useEffect(() => {
     dispatch(
-      setActiveMessageId(props.match ? props.match.params.hub_user_id : null)
+      setActiveMessageId(
+        props.match
+          ? props.match.params.hub_user_id
+            ? props.match.params.hub_user_id
+            : props.match.params.receiverId
+          : null
+      )
     );
   });
 
   useEffect(() => {
     async function getData(hub_user_id) {
       dispatch(
-        setActiveMessageId(props.match ? props.match.params.hub_user_id : null)
+        setActiveMessageId(
+          props.match
+            ? props.match.params.hub_user_id
+              ? props.match.params.hub_user_id
+              : props.match.params.receiverId
+            : null
+        )
       );
       if (profileId) {
         setLoading(true);

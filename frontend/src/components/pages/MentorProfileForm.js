@@ -51,6 +51,7 @@ function MentorProfileForm({
   profileData,
   resetFields,
   applicationData,
+  n50_flag,
 }) {
   const { t, i18n } = useTranslation();
   const options = useSelector((state) => state.options);
@@ -61,6 +62,7 @@ function MentorProfileForm({
   const [partnerOptions, setPartnerOptions] = useState([]);
   const [flag, setFlag] = useState(false);
   const [finishFlag, setFinishFlag] = useState(false);
+  var n50_user = localStorage.getItem("n50_user");
 
   useEffect(() => {
     async function getPartners() {
@@ -479,7 +481,7 @@ function MentorProfileForm({
         ]}
         className={styles.formGroupItem}
       >
-        <Select options={[...partnerOptions]} />
+        <Select options={[...partnerOptions]} disabled={n50_flag || n50_user} />
       </Form.Item>
       <Form.Item
         label={t("common.timezone")}

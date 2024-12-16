@@ -8,6 +8,7 @@ import useSidebars from "utils/hooks/useSidebars";
 import { collapse } from "features/userSlice";
 // import { ReactComponent as Logo } from "resources/mentee.svg";
 import BigLogoImage from "resources/Mentee_logo_letter.png";
+import N50SmallLogoImage from "resources/N50 Logo_small.png";
 // import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
 import SmallLogoImage from "resources/Mentee_logo_small.png";
 import "components/css/Navigation.scss";
@@ -27,6 +28,7 @@ function NavigationSider() {
   const sidebarItems = useSidebars(role, user, t);
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   const currentPage = [history.location.pathname.split("/")[1]];
+  const n50_flag = localStorage.getItem("n50_user");
 
   const onClick = ({ key }) => {
     isMobile && dispatch(collapse());
@@ -83,7 +85,7 @@ function NavigationSider() {
             //   alt="MENTEE"
             // />
             <img
-              src={BigLogoImage}
+              src={n50_flag ? N50SmallLogoImage : BigLogoImage}
               alt={""}
               className={css`
                 height: 30px;
@@ -160,7 +162,7 @@ function NavigationSider() {
               //   alt="MENTEE"
               // />
               <img
-                src={BigLogoImage}
+                src={n50_flag ? N50SmallLogoImage : BigLogoImage}
                 alt={""}
                 className={css`
                   height: 50px;

@@ -26,6 +26,8 @@ from api.utils.constants import (
     PROFILE_COMPLETED,
     TRANSLATIONS,
     ALERT_TO_ADMINS,
+    N50_ID_DEV,
+    N50_ID_PROD,
 )
 from api.utils.request_utils import (
     send_email,
@@ -280,10 +282,17 @@ def change_state_to_build_profile(email, role):
         application["application_state"] = NEW_APPLICATION_STATUS["BUILDPROFILE"]
         application.save()
         target_url = ""
+        n50_url = ""
+        if (
+            application["partner"] == N50_ID_DEV
+            or application["partner"] == N50_ID_PROD
+        ):
+            n50_url = "n50/"
         if "front_url" in request.args:
             front_url = request.args["front_url"]
             target_url = (
                 front_url
+                + n50_url
                 + "build-profile?role="
                 + str(role)
                 + "&email="
@@ -419,8 +428,12 @@ def edit_application(id, role):
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["APPROVED"]:
         front_url = data.get("front_url", "")
+        n50_url = ""
+        if application.partner == N50_ID_DEV or application.partner == N50_ID_PROD:
+            n50_url = "n50/"
         target_url = (
             front_url
+            + n50_url
             + "application-training?role="
             + str(role)
             + "&email="

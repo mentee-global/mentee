@@ -36,6 +36,10 @@ function BuildProfile({ location, history, hub_user }) {
   if (!hub_user) {
     if (!role || !email) history.push("/");
   }
+  var n50_flag = false;
+  if (location && location.pathname.includes("n50")) {
+    n50_flag = true;
+  }
 
   useEffect(() => {
     async function getUserData() {
@@ -117,10 +121,10 @@ function BuildProfile({ location, history, hub_user }) {
       messageApi.info(t("commonProfile.accountCreated"));
       let path = "";
       if (role === ACCOUNT_TYPE.MENTOR) {
-        path = "/mentor";
+        path = n50_flag ? "/n50/mentor" : "/mentor";
       }
       if (role === ACCOUNT_TYPE.MENTEE) {
-        path = "/mentee";
+        path = n50_flag ? "/n50/mentee" : "/mentee";
       }
       if (role === ACCOUNT_TYPE.PARTNER) {
         path = "/partner";
@@ -160,6 +164,7 @@ function BuildProfile({ location, history, hub_user }) {
             onSubmit={onSubmit}
             applicationData={applicationData}
             loading={loading}
+            n50_flag={n50_flag}
           />
         );
       case ACCOUNT_TYPE.MENTEE:
@@ -170,6 +175,7 @@ function BuildProfile({ location, history, hub_user }) {
             onSubmit={onSubmit}
             applicationData={applicationData}
             loading={loading}
+            n50_flag={n50_flag}
           />
         );
       case ACCOUNT_TYPE.PARTNER:

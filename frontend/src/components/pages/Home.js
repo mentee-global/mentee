@@ -17,7 +17,7 @@ const SelectCardsStyle = css`
   }
 `;
 
-function Home() {
+function Home({ location }) {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -29,18 +29,28 @@ function Home() {
           title={t("homepage.existingAccountTitle")}
           description={t("homepage.existingAccountDesc")}
           onClick={() => {
-            history.push("/login");
+            if (location && location.pathname.includes("n50")) {
+              history.push("/n50/login");
+            } else {
+              history.push("/login");
+            }
           }}
         />
         <SelectCard
           avatar={<UsergroupAddOutlined />}
           title={t("homepage.newAccountTitle")}
           description={t("homepage.newAccountDesc")}
-          onClick={() =>
-            history.push({
-              pathname: "/apply",
-            })
-          }
+          onClick={() => {
+            if (location && location.pathname.includes("n50")) {
+              history.push({
+                pathname: "/n50/apply",
+              });
+            } else {
+              history.push({
+                pathname: "/apply",
+              });
+            }
+          }}
         />
       </Space>
     </>

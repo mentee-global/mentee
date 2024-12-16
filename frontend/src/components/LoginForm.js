@@ -11,7 +11,7 @@ import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS, REDIRECTS } from "utils/consts";
 import fireauth from "utils/fireauth";
 import { fetchUser } from "features/userSlice";
 
-function LoginForm({ role, defaultEmail, location }) {
+function LoginForm({ role, defaultEmail, n50_flag, location }) {
   if (!defaultEmail) {
     if (location && location.state && location.state.email) {
       defaultEmail = location.state.email;
@@ -124,6 +124,9 @@ function LoginForm({ role, defaultEmail, location }) {
         })
       );
       let direct_path = localStorage.getItem("direct_path");
+      if (n50_flag) {
+        localStorage.setItem("n50_user", true);
+      }
       if (direct_path) {
         setTimeout(() => {
           history.push(direct_path);

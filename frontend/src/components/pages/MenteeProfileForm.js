@@ -51,6 +51,7 @@ function MenteeProfileForm({
   profileData,
   resetFields,
   applicationData,
+  n50_flag,
 }) {
   const { t, i18n } = useTranslation();
   const options = useSelector((state) => state.options);
@@ -63,6 +64,7 @@ function MenteeProfileForm({
   const [flag, setFlag] = useState(false);
   const [finishFlag, setFinishFlag] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  var n50_user = localStorage.getItem("n50_user");
 
   const immigrantOptions = [
     {
@@ -488,7 +490,10 @@ function MenteeProfileForm({
           ]}
           className={styles.formGroupItem}
         >
-          <Select options={[...partnerOptions]} />
+          <Select
+            options={[...partnerOptions]}
+            disabled={n50_flag || n50_user}
+          />
         </Form.Item>
       </div>
       <Form.Item

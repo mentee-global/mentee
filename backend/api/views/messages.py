@@ -5,6 +5,7 @@ from api.models import (
     Message,
     DirectMessage,
     GroupMessage,
+    PartnerGroupMessage,
     PartnerProfile,
     Availability,
     Specializations,
@@ -379,7 +380,13 @@ def get_sidebar_mentors(pageNumber):
 @all_users
 def get_group_messages():
     try:
-        messages = GroupMessage.objects(Q(hub_user_id=request.args.get("hub_user_id")))
+        hub_user_id = request.args.get("hub_user_id", None)
+        if hub_user_id is not None and hub_user_id != "":
+            messages = GroupMessage.objects(
+                Q(hub_user_id=request.args.get("hub_user_id"))
+            )
+        else:
+            messages = PartnerGroupMessage.objects()
     except:
         msg = "Invalid parameters provided"
         logger.info(msg)
@@ -413,22 +420,37 @@ def get_direct_messages():
 @socketio.on("sendGroup")
 def chatGroup(msg, methods=["POST"]):
     try:
-        message = GroupMessage(
-            body=msg["body"],
-            message_read=msg["message_read"],
-            sender_id=msg["sender_id"],
-            hub_user_id=msg["hub_user_id"],
-            parent_message_id=msg["parent_message_id"],
-            created_at=msg["time"],
-        )
-        logger.info(msg["hub_user_id"])
-        socketio.emit(msg["hub_user_id"], json.loads(message.to_json()))
+        if "hub_user_id" in msg and msg["hub_user_id"] is not None:
+            message = GroupMessage(
+                body=msg["body"],
+                message_read=msg["message_read"],
+                sender_id=msg["sender_id"],
+                hub_user_id=msg["hub_user_id"],
+                parent_message_id=msg["parent_message_id"],
+                created_at=msg["time"],
+            )
+            logger.info(msg["hub_user_id"])
+
+        else:
+            message = PartnerGroupMessage(
+                body=msg["body"],
+                message_read=msg["message_read"],
+                sender_id=msg["sender_id"],
+                parent_message_id=msg["parent_message_id"],
+                created_at=msg["time"],
+            )
+            logger.info(msg["sender_id"])
+
     except Exception as e:
         logger.info(e)
         return create_response(status=500, message="Failed to send message")
 
     try:
         message.save()
+        if "hub_user_id" in msg and msg["hub_user_id"] is not None:
+            socketio.emit(msg["hub_user_id"], json.loads(message.to_json()))
+        else:
+            socketio.emit("group-partner", json.loads(message.to_json()))
         msg = "successfully sent message"
     except:
         msg = "Error in meessage"

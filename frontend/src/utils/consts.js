@@ -11,6 +11,10 @@ export const FRONT_BASE_URL = IS_PRODUCTION
   ? BASE_URL
   : `http://localhost:3000/`;
 
+export const N50_ID = IS_PRODUCTION
+  ? "673629a96d37195fa12e2a51"
+  : "675985b41684c4310ac00e4c";
+
 export const API_URL = BASE_URL + "api/";
 
 export const AUTH_URL = BASE_URL + "auth/";

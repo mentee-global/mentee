@@ -19,7 +19,7 @@ import useQuery from "utils/hooks/useQuery";
 
 const { Option } = Select;
 
-function Apply({ history }) {
+function Apply({ history, location }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [currentState, setCurrentState] = useState();
@@ -28,22 +28,28 @@ function Apply({ history }) {
   const [applicationData, setApplicationData] = useState(null);
   const query = useQuery();
   const [form] = Form.useForm();
+  var n50_flag = false;
+  if (location && location.pathname.includes("n50")) {
+    n50_flag = true;
+  }
 
   const stateItems = [
     {
       title: t("common.apply"),
       key: "apply",
-      redirect: "/application-form",
+      redirect: n50_flag ? "/n50/application-form" : "/application-form",
     },
     {
       title: t("apply.training"),
       key: "training",
-      redirect: "/application-training",
+      redirect: n50_flag
+        ? "/n50/application-training"
+        : "/application-training",
     },
     {
       title: t("apply.buildProfile"),
       key: "buildProfile",
-      redirect: "/build-profile",
+      redirect: n50_flag ? "/n50/build-profile" : "/build-profile",
     },
   ];
 

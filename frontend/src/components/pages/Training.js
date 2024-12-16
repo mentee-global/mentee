@@ -20,8 +20,10 @@ function Training({ location, history }) {
   const [applicationData, setApplicationData] = useState(
     location.state?.applicationData
   );
-  console.log("email", email);
-
+  var n50_flag = false;
+  if (location && location.pathname.includes("n50")) {
+    n50_flag = true;
+  }
   const [flag, setFlag] = useState(false);
 
   const [buttonFlag, setButtonFlag] = useState(false);
@@ -69,7 +71,7 @@ function Training({ location, history }) {
     });
     if (state === NEW_APPLICATION_STATUS.BUILDPROFILE) {
       history.push({
-        pathname: "/build-profile",
+        pathname: n50_flag ? "/n50/build-profile" : "/build-profile",
         state: { email, role },
       });
     } else {

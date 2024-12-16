@@ -25,9 +25,17 @@ function Login({ location }) {
   const query = useQuery();
   let cur_role = location?.state?.role ?? query.get("role");
   let cur_current = cur_role ? StepNumeration.login : StepNumeration.role;
+  var n50_flag = false;
+  if (location && location.pathname.includes("n50")) {
+    n50_flag = true;
+  }
   if (location && location.pathname) {
     switch (location.pathname) {
       case "/mentor/login":
+        cur_role = ACCOUNT_TYPE.MENTOR;
+        cur_current = StepNumeration.login;
+        break;
+      case "/n50/mentor/login":
         cur_role = ACCOUNT_TYPE.MENTOR;
         cur_current = StepNumeration.login;
         break;
@@ -35,7 +43,15 @@ function Login({ location }) {
         cur_role = ACCOUNT_TYPE.MENTEE;
         cur_current = StepNumeration.login;
         break;
+      case "/n50/mentee/login":
+        cur_role = ACCOUNT_TYPE.MENTEE;
+        cur_current = StepNumeration.login;
+        break;
       case "/partner/login":
+        cur_role = ACCOUNT_TYPE.PARTNER;
+        cur_current = StepNumeration.login;
+        break;
+      case "/n50/partner/login":
         cur_role = ACCOUNT_TYPE.PARTNER;
         cur_current = StepNumeration.login;
         break;
@@ -68,13 +84,25 @@ function Login({ location }) {
     // setCurrent(StepNumeration.login);
     switch (role) {
       case ACCOUNT_TYPE.MENTOR:
-        history.push("/mentor/login");
+        if (n50_flag) {
+          history.push("/n50/mentor/login");
+        } else {
+          history.push("/mentor/login");
+        }
         break;
       case ACCOUNT_TYPE.MENTEE:
-        history.push("/mentee/login");
+        if (n50_flag) {
+          history.push("/n50/mentee/login");
+        } else {
+          history.push("/mentee/login");
+        }
         break;
       case ACCOUNT_TYPE.PARTNER:
-        history.push("/partner/login");
+        if (n50_flag) {
+          history.push("/n50/partner/login");
+        } else {
+          history.push("/partner/login");
+        }
         break;
       case ACCOUNT_TYPE.GUEST:
         history.push("/readonly/login");
@@ -96,7 +124,11 @@ function Login({ location }) {
     } else if (newStep !== StepNumeration.login) {
       setCurrent(newStep);
       setRole(null);
-      history.push("/login");
+      if (n50_flag) {
+        history.push("/n50/login");
+      } else {
+        history.push("/login");
+      }
     }
   };
 
@@ -132,7 +164,9 @@ function Login({ location }) {
     {
       title: "Login",
       key: "login",
-      content: <LoginForm role={role} defaultEmail={email} />,
+      content: (
+        <LoginForm role={role} defaultEmail={email} n50_flag={n50_flag} />
+      ),
     },
   ];
 

@@ -128,16 +128,31 @@ function App() {
                 <PublicRoute exact path="/">
                   <Home />
                 </PublicRoute>
+                <PublicRoute exact path="/n50">
+                  <Home />
+                </PublicRoute>
                 <PublicRoute path="/login">
+                  <Login />
+                </PublicRoute>
+                <PublicRoute path="/n50/login">
                   <Login />
                 </PublicRoute>
                 <PublicRoute path="/mentor/login">
                   <Login />
                 </PublicRoute>
+                <PublicRoute path="/n50/mentor/login">
+                  <Login />
+                </PublicRoute>
                 <PublicRoute path="/mentee/login">
                   <Login />
                 </PublicRoute>
+                <PublicRoute path="/n50/mentee/login">
+                  <Login />
+                </PublicRoute>
                 <PublicRoute path="/partner/login">
+                  <Login />
+                </PublicRoute>
+                <PublicRoute path="/n50/partner/login">
                   <Login />
                 </PublicRoute>
                 <PublicRoute path="/readonly/login">
@@ -152,13 +167,25 @@ function App() {
                 <PublicRoute path="/apply">
                   <Apply />
                 </PublicRoute>
+                <PublicRoute path="/n50/apply">
+                  <Apply />
+                </PublicRoute>
                 <PublicRoute path="/application-form">
+                  <ApplicationForm />
+                </PublicRoute>
+                <PublicRoute path="/n50/application-form">
                   <ApplicationForm />
                 </PublicRoute>
                 <PublicRoute path="/application-training">
                   <Training />
                 </PublicRoute>
+                <PublicRoute path="/n50/application-training">
+                  <Training />
+                </PublicRoute>
                 <PublicRoute path="/build-profile">
+                  <BuildProfile />
+                </PublicRoute>
+                <PublicRoute path="/n50/build-profile">
                   <BuildProfile />
                 </PublicRoute>
                 {Object.keys(allHubData).map((hub_url) => {
@@ -597,6 +624,9 @@ function App() {
 
               <PrivateRoute path="/messages/:receiverId">
                 <Messages />
+              </PrivateRoute>
+              <PrivateRoute path={"/partner_group_messages/:receiverId"}>
+                <GroupMessages />
               </PrivateRoute>
               <PrivateRoute path="/events">
                 <Events />

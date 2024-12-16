@@ -5,6 +5,7 @@ import { css } from "@emotion/css";
 import LanguageDropdown from "components/LanguageDropdown";
 // import { ReactComponent as Logo } from "resources/mentee.svg";
 import BigLogoImage from "resources/Mentee_logo_letter.png";
+import N50Logo from "resources/N50_logo.png";
 // import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
 import SmallLogoImage from "resources/Mentee_logo_small.png";
 import { useMediaQuery } from "react-responsive";
@@ -37,6 +38,21 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
     "/application-training",
     "/build-profile",
     "/digital-sign",
+    "/n50/application-form",
+    "/n50/application-training",
+    "/n50/build-profile",
+  ];
+
+  const N50Path = [
+    "/n50",
+    "/n50/login",
+    "/n50/mentor/login",
+    "/n50/mentee/login",
+    "/n50/partner/login",
+    "/n50/apply",
+    "/n50/application-form",
+    "/n50/application-training",
+    "/n50/build-profile",
   ];
 
   const homeLayoutPaths = [
@@ -288,6 +304,25 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                       className={css`
                         width: 100%;
                         max-width: 200px;
+                        fill-opacity: 0.7;
+                      `}
+                    />
+                  </div>
+                )}
+                {N50Path.includes(location.pathname) && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      paddingTop: "35%",
+                    }}
+                  >
+                    <img
+                      src={N50Logo}
+                      alt={""}
+                      className={css`
+                        width: 100%;
+                        max-width: 300px;
                         fill-opacity: 0.7;
                       `}
                     />

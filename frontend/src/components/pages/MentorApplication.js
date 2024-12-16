@@ -4,12 +4,18 @@ import { useTranslation } from "react-i18next";
 import { createApplication, fetchPartners } from "utils/api";
 import { phoneRegex } from "utils/misc";
 import { useSelector } from "react-redux";
-
+import { N50_ID } from "utils/consts";
 const { Paragraph } = Typography;
 
 // constant declarations
 const { TextArea } = Input;
-function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
+function MentorApplication({
+  email,
+  role,
+  n50_flag,
+  onSubmitFailure,
+  onSubmitSuccess,
+}) {
   const { t } = useTranslation();
   const [loading, setloading] = useState(false);
   const options = useSelector((state) => state.options);
@@ -20,16 +26,27 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
       const partenr_data = await fetchPartners(undefined, null);
       var temp_partner_options = [];
       partenr_data.map((item) => {
-        temp_partner_options.push({
-          value: item._id.$oid,
-          label: item.organization,
-        });
+        if (n50_flag) {
+          if (item._id.$oid === N50_ID) {
+            temp_partner_options.push({
+              value: item._id.$oid,
+              label: item.organization,
+            });
+          }
+        } else {
+          temp_partner_options.push({
+            value: item._id.$oid,
+            label: item.organization,
+          });
+        }
         return true;
       });
-      temp_partner_options.push({
-        value: null,
-        label: t("commonApplication.no-affiliation"),
-      });
+      if (!n50_flag) {
+        temp_partner_options.push({
+          value: null,
+          label: t("commonApplication.no-affiliation"),
+        });
+      }
       setPartnerOptions(temp_partner_options);
       setloading(false);
     }
@@ -404,7 +421,7 @@ function MentorApplication({ email, role, onSubmitFailure, onSubmitSuccess }) {
           name="partner"
           rules={[
             {
-              required: false,
+              required: n50_flag ? true : false,
               message: t("common.requiredPartner"),
             },
           ]}

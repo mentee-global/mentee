@@ -881,7 +881,9 @@ export const getDetailMessages = (
 };
 
 export const getGroupMessageData = (hub_user_id) => {
-  const requestExtension = `/messages/group/?hub_user_id=${hub_user_id}`;
+  const requestExtension = `/messages/group/?hub_user_id=${
+    hub_user_id ? hub_user_id : ""
+  }`;
   return authGet(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {

@@ -18,6 +18,7 @@ from .MenteeProfile import MenteeProfile
 from .Message import Message
 from .DirectMessage import DirectMessage
 from .GroupMessage import GroupMessage
+from .PartnerGroupMessage import PartnerGroupMessage
 from .Admin import Admin
 from .Training import Training
 from .Event import Event
@@ -64,6 +65,8 @@ __all__ = [
     "Support",
     "SignOrigin",
     "SignedDocs",
+    "GroupMessage",
+    "PartnerGroupMessage",
 ]
 
 # You must import all of the new Models you create to this page

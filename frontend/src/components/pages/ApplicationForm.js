@@ -21,6 +21,10 @@ const ApplicationForm = ({ location, history }) => {
   const [successfulSubmit, setSuccessfulSubmit] = useState(undefined);
   const role = location.state?.role;
   const email = location.state?.email;
+  var n50_flag = false;
+  if (location && location.pathname.includes("n50")) {
+    n50_flag = true;
+  }
 
   const onSubmitSuccess = () => {
     setSuccessfulSubmit(true);
@@ -57,6 +61,7 @@ const ApplicationForm = ({ location, history }) => {
       case ACCOUNT_TYPE.MENTOR:
         return (
           <MentorApplication
+            n50_flag={n50_flag}
             email={email}
             role={role}
             onSubmitFailure={onSubmitFailure}
@@ -67,6 +72,7 @@ const ApplicationForm = ({ location, history }) => {
         return (
           <MenteeApplication
             email={email}
+            n50_flag={n50_flag}
             role={role}
             onSubmitFailure={onSubmitFailure}
             onSubmitSuccess={onSubmitSuccess}

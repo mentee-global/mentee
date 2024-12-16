@@ -142,6 +142,11 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
+      label: t("common.group_message"),
+      key: `partner_group_messages/${user ? user._id.$oid : ""}`,
+      icon: <MessageOutlined />,
+    },
+    {
       label: t("sidebars.meeting"),
       key: `createmeetinglink/${ACCOUNT_TYPE.PARTNER}`,
       icon: <LinkOutlined />,

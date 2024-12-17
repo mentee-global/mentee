@@ -128,18 +128,31 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           `}
           onClick={() => history.push("/")}
         /> */}
-        <img
-          src={BigLogoImage}
-          alt={""}
-          className={css`
-            position: absolute;
-            top: 1em;
-            left: 0.5em;
-            height: 50px;
-            cursor: pointer;
-          `}
-          onClick={() => history.push("/")}
-        />
+        {(isTablet && N50Path.includes(location.pathname)) ? (
+          <img
+            src={N50Logo}
+            alt={""}
+            className={css`
+              position: absolute;
+              top: 0em;
+              left: 0.5em;
+              height: 75px;
+            `}
+          />
+        ) : (
+          <img
+            src={BigLogoImage}
+            alt={""}
+            className={css`
+              position: absolute;
+              top: 1em;
+              left: 0.5em;
+              height: 50px;
+              cursor: pointer;
+            `}
+            onClick={() => history.push("/")}
+          />
+        )}
         <Space
           className={css`
             position: absolute;
@@ -315,34 +328,18 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                       style={{
                         display: "flex",
                         justifyContent: "center",
-                        paddingTop: "25%",
+                        paddingTop: "35%",
                       }}
                     >
-                      <div>
-                        <div>
-                          <img
-                            src={BigLogoImage}
-                            alt={""}
-                            className={css`
-                              width: 100%;
-                              max-width: 145px;
-                              fill-opacity: 0.7;
-                              margin-left: 15px;
-                            `}
-                          />
-                        </div>
-                        <div>
-                          <img
-                            src={N50Logo}
-                            alt={""}
-                            className={css`
-                              width: 100%;
-                              max-width: 180px;
-                              fill-opacity: 0.7;
-                            `}
-                          />
-                        </div>
-                      </div>
+                      <img
+                        src={N50Logo}
+                        alt={""}
+                        className={css`
+                          width: 100%;
+                          max-width: 300px;
+                          fill-opacity: 0.7;
+                        `}
+                      />
                     </div>
                     <div
                       style={{

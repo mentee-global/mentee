@@ -54,6 +54,9 @@ function MentorApplication({
   }, []);
 
   const onFinish = async (values) => {
+    if (n50_flag) {
+      values.partner = N50_ID;
+    }
     setloading(true);
     const data = {
       email,
@@ -421,7 +424,7 @@ function MentorApplication({
           name="partner"
           rules={[
             {
-              required: n50_flag ? true : false,
+              required: false,
               message: t("common.requiredPartner"),
             },
           ]}
@@ -431,6 +434,8 @@ function MentorApplication({
             filterOption={(input, option) =>
               (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
             }
+            defaultValue={n50_flag ? N50_ID : null}
+            disabled={n50_flag}
             options={[...partnerOptions]}
           />
         </Form.Item>

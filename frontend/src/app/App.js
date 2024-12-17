@@ -63,7 +63,7 @@ function App() {
   const path = window.location.href;
   const [role, setRole] = useState(getRole());
   const [allHubData, setAllHubData] = useState({});
-
+  const [n50Flag, setN50flag] = useState(false);
   // TODO: Remove this when we have a proper solution for this
   // some kind of cached method of updating on login status change
   // useEffect(() => {
@@ -91,6 +91,14 @@ function App() {
 
   useEffect(() => {
     setStartPathTime(new Date().getTime());
+    setTimeout(() => {
+      let n50_flag = localStorage.getItem("n50_user");
+      if (n50_flag) {
+        setN50flag(true);
+      } else {
+        setN50flag(false);
+      }
+    }, 500);
     if (path.indexOf("/event") > 0) {
       if (!role) {
         let direct_path = "event" + path.split("/event")[1];
@@ -644,6 +652,7 @@ function App() {
                 <CreateMeetingLink />
               </PrivateRoute>
               {role == ACCOUNT_TYPE.HUB && <HubFooter />}
+              {n50Flag && <HubFooter />}
             </Content>
             <MeetingPanel />
           </Layout>

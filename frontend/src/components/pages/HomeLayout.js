@@ -140,6 +140,18 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           `}
           onClick={() => history.push("/")}
         />
+        {N50Path.includes(location.pathname) && (
+          <img
+            src={N50Logo}
+            alt={""}
+            className={css`
+              position: absolute;
+              top: 0em;
+              left: 4.5em;
+              height: 75px;
+            `}
+          />
+        )}
         <Space
           className={css`
             position: absolute;

@@ -147,6 +147,9 @@ function MenteeApplication({
   ];
 
   const onFinish = async (values) => {
+    if (n50_flag) {
+      values.partner = N50_ID;
+    }
     setLoading(true);
     let immigrantStatus = values.immigrantStatus;
     let topics = values.topics;
@@ -201,7 +204,6 @@ function MenteeApplication({
 
     const res = await createApplication(data);
     setLoading(false);
-    console.log("res", res);
     if (res && res.status === 200) {
       onSubmitSuccess();
     } else {
@@ -527,7 +529,7 @@ function MenteeApplication({
           name="partner"
           rules={[
             {
-              required: n50_flag ? true : false,
+              required: false,
               message: t("common.requiredPartner"),
             },
           ]}
@@ -537,6 +539,8 @@ function MenteeApplication({
             filterOption={(input, option) =>
               (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
             }
+            defaultValue={n50_flag ? N50_ID : null}
+            disabled={n50_flag}
             options={[...partnerOptions]}
           />
         </Form.Item>

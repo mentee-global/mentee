@@ -310,23 +310,84 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                   </div>
                 )}
                 {N50Path.includes(location.pathname) && (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      paddingTop: "35%",
-                    }}
-                  >
-                    <img
-                      src={N50Logo}
-                      alt={""}
-                      className={css`
-                        width: 100%;
-                        max-width: 300px;
-                        fill-opacity: 0.7;
-                      `}
-                    />
-                  </div>
+                  <>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        paddingTop: "25%",
+                      }}
+                    >
+                      <div>
+                        <div>
+                          <img
+                            src={BigLogoImage}
+                            alt={""}
+                            className={css`
+                              width: 100%;
+                              max-width: 145px;
+                              fill-opacity: 0.7;
+                              margin-left: 15px;
+                            `}
+                          />
+                        </div>
+                        <div>
+                          <img
+                            src={N50Logo}
+                            alt={""}
+                            className={css`
+                              width: 100%;
+                              max-width: 180px;
+                              fill-opacity: 0.7;
+                            `}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: "90%",
+                        textAlign: "right",
+                        marginBottom: "0px",
+                        position: "absolute",
+                        bottom: "30px",
+                        paddingRight: "20px",
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "end" }}>
+                        <div
+                          style={{
+                            fontSize: "20px",
+                            fontStyle: "italic",
+                            paddingTop: "15px",
+                          }}
+                        >
+                          {t("common.powered_by")}
+                        </div>
+                        <div>
+                          {/* <Logo
+                          className={css`
+                            height: 80px;
+                            width: 160px;
+                            cursor: pointer;
+                            margin-left: 10px;
+                          `}
+                          onClick={() => history.push("/")}
+                        /> */}
+                          <img
+                            src={BigLogoImage}
+                            alt={""}
+                            className={css`
+                              width: 50px;
+                              cursor: pointer;
+                              margin-left: 10px;
+                            `}
+                            onClick={() => history.push("/")}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </>
             )}

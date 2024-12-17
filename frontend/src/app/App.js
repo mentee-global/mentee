@@ -97,6 +97,12 @@ function App() {
         localStorage.setItem("direct_path", direct_path);
       }
     }
+    if (path.indexOf("/new_training") > 0) {
+      if (!role) {
+        let direct_path = "new_training" + path.split("/new_training")[1];
+        localStorage.setItem("direct_path", direct_path);
+      }
+    }
   }, [path]);
 
   useEffect(() => {

@@ -660,7 +660,9 @@ def edit_mentor(id):
 def uploadImage(id):
     image = request.files["image"]
     try:
-        account_type = int(request.form["account_type"])
+        account_type = request.form["account_type"]
+        if isinstance(account_type, str):
+            account_type = int(account_type)
     except:
         msg = "Level param doesn't exist or isn't an int"
         return create_response(status=422, message=msg)

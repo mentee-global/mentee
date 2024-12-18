@@ -674,6 +674,10 @@ def uploadImage(id):
         if token is None:
             if account_type == Account.PARTNER:
                 account = PartnerProfile.objects.get(id=id)
+            elif account_type == Account.MENTEE:
+                account = MenteeProfile.objects.get(id=id)
+            elif account_type == Account.MENTOR:
+                account = MentorProfile.objects.get(id=id)
             else:
                 msg = "Level param doesn't match existing account types"
                 return create_response(status=422, message=msg)
@@ -689,7 +693,6 @@ def uploadImage(id):
                 and int(login_user_role) != Account.HUB
             ):
                 return response
-
             if account_type == Account.MENTEE:
                 account = MenteeProfile.objects.get(id=id)
             elif account_type == Account.MENTOR:
@@ -701,6 +704,7 @@ def uploadImage(id):
             elif account_type == Account.ADMIN:
                 account = Admin.objects.get(id=id)
 
+            
             else:
                 msg = "Level param doesn't match existing account types"
                 return create_response(status=422, message=msg)

@@ -264,6 +264,7 @@ export const saveSignedDoc = async (signedBlob, user_email, train_id, role) => {
 export const getTrainings = async (
   role,
   user_email = null,
+  user_id = null,
   lang = i18n.language
 ) => {
   const requestExtension = `/training/${role}`;
@@ -271,6 +272,7 @@ export const getTrainings = async (
     params: {
       lang: lang,
       user_email: user_email,
+      user_id: user_id,
     },
   }).catch(console.error);
   const trains = res.data.result.trainings;

@@ -24,6 +24,9 @@ class Training(Document, Mixin):
     hub_id = StringField(required=False)
     hub_user = DictField(required=False)
     signed_data = DictField(required=False)
+    partner_id = StringField(required=False)
+    mentor_id = StringField(required=False)
+    mentee_id = StringField(required=False)
 
     def __repr__(self):
         return f"""<Training  : {self.name}

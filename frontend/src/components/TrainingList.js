@@ -188,7 +188,11 @@ const TrainingList = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    getTrainings(props.role, user ? user.email : props.user_email)
+    getTrainings(
+      props.role,
+      user ? user.email : props.user_email,
+      user ? user._id.$oid : null
+    )
       .then((trains) => {
         if (props.role == ACCOUNT_TYPE.HUB && user) {
           var hub_user_id = null;

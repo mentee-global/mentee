@@ -128,17 +128,52 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           `}
           onClick={() => history.push("/")}
         /> */}
-        {(isTablet && N50Path.includes(location.pathname)) ? (
-          <img
-            src={N50Logo}
-            alt={""}
-            className={css`
-              position: absolute;
-              top: 0em;
-              left: 0.5em;
-              height: 75px;
-            `}
-          />
+        {isTablet && N50Path.includes(location.pathname) ? (
+          <>
+            <img
+              src={N50Logo}
+              alt={""}
+              className={css`
+                position: absolute;
+                top: 0em;
+                left: 40%;
+                height: 75px;
+              `}
+            />
+            <div
+              style={{ position: "absolute", bottom: "10px", witth: "100%" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "end",
+                  paddingRight: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "20px",
+                    fontStyle: "italic",
+                    paddingTop: "15px",
+                  }}
+                >
+                  {t("common.powered_by")}
+                </div>
+                <div>
+                  <img
+                    src={BigLogoImage}
+                    alt={""}
+                    className={css`
+                      width: 50px;
+                      cursor: pointer;
+                      margin-left: 10px;
+                    `}
+                    onClick={() => history.push("/")}
+                  />
+                </div>
+              </div>
+            </div>
+          </>
         ) : (
           <img
             src={BigLogoImage}
@@ -206,7 +241,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
         >
           <div
             className={css`
-              padding-left: 4em;
+              padding-left: 0em;
               border-radius: 2em;
               text-aling: center;
               width: 100%;
@@ -343,7 +378,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                     </div>
                     <div
                       style={{
-                        width: "90%",
+                        width: "96%",
                         textAlign: "right",
                         marginBottom: "0px",
                         position: "absolute",

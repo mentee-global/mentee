@@ -7,6 +7,7 @@ import {
   getTrainings,
   getTrainVideo,
   fetchAccounts,
+  fetchPartners,
   newTrainCreate,
 } from "utils/api";
 import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
@@ -48,6 +49,7 @@ const AdminTraining = () => {
   const [loading, setLoading] = useState(false);
   const [hubOptions, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
+  const [partnerOptions, setPartnerOptions] = useState([]);
   const [allData, setAllData] = useState([]);
 
   const onCancelTrainingForm = () => {
@@ -66,7 +68,22 @@ const AdminTraining = () => {
       });
       setHubOptions(temp);
     }
+    async function getPartners() {
+      var temp = [];
+      const data = await fetchPartners();
+      data.map((item) => {
+        temp.push({
+          label: item.organization,
+          value: item._id.$oid,
+          assign_mentees: item.assign_mentees,
+          assign_mentors: item.assign_mentors,
+        });
+        return true;
+      });
+      setPartnerOptions(temp);
+    }
     getHubData();
+    getPartners();
   }, []);
 
   const handleResetFilters = () => {
@@ -399,6 +416,7 @@ const AdminTraining = () => {
         currentTraining={currentTraining}
         loading={loading}
         hubOptions={hubOptions}
+        partnerOptions={partnerOptions}
       />
     </div>
   );

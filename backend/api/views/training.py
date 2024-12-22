@@ -34,6 +34,7 @@ from api.utils.constants import (
 )
 from api.utils.request_utils import send_email
 import pytz
+from mongoengine.queryset.visitor import Q
 
 
 training = Blueprint("training", __name__)  # initialize blueprint
@@ -77,7 +78,21 @@ def getSignedData(role):
 def get_trainings(role):
     lang = request.args.get("lang", "en-US")
     user_email = request.args.get("user_email", None)
+    user_id = request.args.get("user_id", None)
     trainings = Training.objects(role=str(role))
+
+    append_data = []
+    if int(role) == Account.MENTOR:
+        if user_id is None:
+            append_data = Training.objects(Q(mentor_id__ne=None) & Q(mentor_id__ne=""))
+        else:
+            append_data = Training.objects(mentor_id=user_id)
+    if int(role) == Account.MENTEE:
+        if user_id is None:
+            append_data = Training.objects(Q(mentee_id__ne=None) & Q(mentee_id__ne=""))
+        else:
+            append_data = Training.objects(mentee_id=user_id)
+
     result = []
     signed_trainings = {}
     if user_email is not None:
@@ -97,6 +112,15 @@ def get_trainings(role):
 
     temp = []
     for training in trainings:
+        if training.hub_id is not None:
+            training.hub_user = Hub_users_object[str(training.hub_id)]
+        if str(training.id) in signed_trainings:
+            training.signed_data = {
+                str(training.id): signed_trainings[str(training.id)]
+            }
+        temp.append(training)
+
+    for training in append_data:
         if training.hub_id is not None:
             training.hub_user = Hub_users_object[str(training.hub_id)]
         if str(training.id) in signed_trainings:
@@ -225,7 +249,15 @@ def get_train_id_edit(id):
     train.role = str(request.form.get("role", train.role))
     train.typee = request.form.get("typee", train.typee)
     train.isVideo = isVideo
-    train.requried_sign = True if request.form["requried_sign"] == "true" else False
+    requried_sign = False
+    if "requried_sign" in request.form and request.form["requried_sign"] == "true":
+        requried_sign = True
+    train.requried_sign = requried_sign
+
+    train.partner_id = request.form.get("partner_id", train.partner_id)
+    train.mentor_id = request.form.get("mentor_id", train.mentor_id)
+    train.mentee_id = request.form.get("mentee_id", train.mentee_id)
+
     if not isVideo and request.form.get("isNewDocument", False) == "true":
         document = request.files.get("document", None)
         if not document:
@@ -332,11 +364,35 @@ def new_train(role):
         descriptionTranslated = get_all_translations(request.form["description"])
         typee = request.form["typee"]
         isVideo = True if request.form["isVideo"] == "true" else False
-        requried_sign = True if request.form["requried_sign"] == "true" else False
+        requried_sign = False
+        if "requried_sign" in request.form and request.form["requried_sign"] == "true":
+            requried_sign = True
+
         hub_id = None
 
         if "hub_id" in request.form:
             hub_id = request.form["hub_id"]
+        partner_id = None
+        if (
+            "partner_id" in request.form
+            and request.form["partner_id"] is not None
+            and request.form["partner_id"] != ""
+        ):
+            partner_id = request.form["partner_id"]
+        mentor_id = None
+        if (
+            "mentor_id" in request.form
+            and request.form["mentor_id"] is not None
+            and request.form["mentor_id"] != ""
+        ):
+            mentor_id = request.form["mentor_id"]
+        mentee_id = None
+        if (
+            "mentee_id" in request.form
+            and request.form["mentee_id"] is not None
+            and request.form["mentee_id"] != ""
+        ):
+            mentee_id = request.form["mentee_id"]
 
         train = Training(
             name=name,
@@ -349,6 +405,9 @@ def new_train(role):
             requried_sign=requried_sign,
             date_submitted=datetime.now(),
             hub_id=hub_id,
+            partner_id=partner_id,
+            mentor_id=mentor_id,
+            mentee_id=mentee_id,
         )
         if not isVideo:
             document = request.files.get("document", None)
@@ -375,7 +434,31 @@ def new_train(role):
             elif int(role) == Account.MENTEE:
                 recipients = MenteeProfile.objects.only("email", "preferred_language")
             elif int(role) == Account.PARTNER:
-                recipients = PartnerProfile.objects.only("email", "preferred_language")
+                if partner_id is not None:
+                    recipients = []
+                    partner_data = PartnerProfile.objects.filter(id=partner_id).only(
+                        "email", "preferred_language"
+                    )
+                    for item in partner_data:
+                        recipients.append(item)
+                    if mentor_id is not None:
+                        mentor_data = MentorProfile.objects.filter(id=mentor_id).only(
+                            "email", "preferred_language"
+                        )
+                        for item in mentor_data:
+                            item.mentor = "mentor"
+                            recipients.append(item)
+                    if mentee_id is not None:
+                        mentee_data = MenteeProfile.objects.filter(id=mentee_id).only(
+                            "email", "preferred_language"
+                        )
+                        for item in mentee_data:
+                            item.mentee = "mentee"
+                            recipients.append(item)
+                else:
+                    recipients = PartnerProfile.objects.only(
+                        "email", "preferred_language"
+                    )
             else:
                 hub_users = Hub.objects.filter(id=hub_id).only(
                     "email", "preferred_language", "url"
@@ -396,6 +479,24 @@ def new_train(role):
             )
 
             for recipient in recipients:
+                if recipient.mentor == "mentor":
+                    target_url = (
+                        front_url
+                        + hub_url
+                        + "new_training/"
+                        + str(Account.MENTOR)
+                        + "/"
+                        + str(new_train_id)
+                    )
+                if recipient.mentee == "mentee":
+                    target_url = (
+                        front_url
+                        + hub_url
+                        + "new_training/"
+                        + str(Account.MENTEE)
+                        + "/"
+                        + str(new_train_id)
+                    )
                 res, res_msg = send_email(
                     recipient=recipient.email,
                     data={

@@ -202,6 +202,7 @@ def new_announce(role):
                     data={
                         "link": target_url,
                         "title": announce.name,
+                        "announcement": announce.description,
                         "subject": "New Announcement",
                     },
                     template_id=NEW_ANNOUNCE_TEMPLATE,

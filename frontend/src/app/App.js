@@ -114,12 +114,6 @@ function App() {
         localStorage.setItem("direct_path", direct_path);
       }
     }
-    if (path.indexOf("/announcement") > 0) {
-      if (!role) {
-        let direct_path = "announcement" + path.split("/announcement")[1];
-        localStorage.setItem("direct_path", direct_path);
-      }
-    }
   }, [path]);
 
   useEffect(() => {
@@ -675,9 +669,9 @@ function App() {
               <PrivateRoute path="/announcements">
                 <Announcements />
               </PrivateRoute>
-              <PrivateRoute path="/announcement/:id">
+              <PublicRoute path="/announcement/:id">
                 <AnnouncementDetail />
-              </PrivateRoute>
+              </PublicRoute>
               <PrivateRoute path="/createmeetinglink">
                 <CreateMeetingLink />
               </PrivateRoute>

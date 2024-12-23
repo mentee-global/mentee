@@ -76,6 +76,11 @@ export default function useSidebars(userType, user, t) {
       icon: <InfoCircleOutlined />,
     },
     {
+      label: t("sidebars.announcements"),
+      key: "announcements",
+      icon: <InfoCircleOutlined />,
+    },
+    {
       label: t("sidebars.videos"),
       key: "videos",
       icon: <VideoCameraOutlined />,
@@ -121,6 +126,11 @@ export default function useSidebars(userType, user, t) {
     {
       label: t("sidebars.events"),
       key: "events",
+      icon: <InfoCircleOutlined />,
+    },
+    {
+      label: t("sidebars.announcements"),
+      key: "announcements",
       icon: <InfoCircleOutlined />,
     },
     {
@@ -170,6 +180,11 @@ export default function useSidebars(userType, user, t) {
     {
       label: t("sidebars.events"),
       key: "events",
+      icon: <InfoCircleOutlined />,
+    },
+    {
+      label: t("sidebars.announcements"),
+      key: "announcements",
       icon: <InfoCircleOutlined />,
     },
     {
@@ -353,6 +368,11 @@ export default function useSidebars(userType, user, t) {
     {
       label: "Trainings",
       key: "admin-training",
+      icon: <VideoCameraOutlined />,
+    },
+    {
+      label: "Announcement",
+      key: "admin-announcement",
       icon: <VideoCameraOutlined />,
     },
     {

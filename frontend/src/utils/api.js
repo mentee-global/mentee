@@ -370,6 +370,97 @@ export const newPolicyCreate = async (values) => {
   return response?.data;
 };
 
+export const getAnnouncements = async (
+  role,
+  user_id = null,
+  hub_user_id = null,
+  lang = i18n.language
+) => {
+  const requestExtension = `/announcement/${role}`;
+  const res = await authGet(requestExtension, {
+    params: {
+      lang: lang,
+      user_id: user_id,
+      hub_user_id: hub_user_id,
+    },
+  }).catch(console.error);
+  const data = res.data.result.res;
+  let newData = [];
+  for (let item of data) {
+    item.id = item._id["$oid"];
+    newData.push(item);
+  }
+  return newData;
+};
+
+export const newAnnounceCreate = async (values) => {
+  const { role } = values;
+  const requestExtension = `/announcement/register/${role}`;
+  const formData = new FormData();
+  formData.append("front_url", FRONT_BASE_URL);
+  Object.entries(values).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  let response = await authPost(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
+};
+
+export const uploadAnnounceImage = (image, id) => {
+  const requestExtension = `/announcement/upload/${id}/image`;
+  let formData = new FormData();
+  formData.append("image", image);
+  return authPut(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getAnnounceDoc = async (id, lang = i18n.language) => {
+  const requestExtension = `/announcement/getDoc/${id}`;
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      lang: lang,
+    },
+  }).catch(console.error);
+  return response;
+};
+
+export const deleteAnnouncebyId = (id) => {
+  const requestExtension = `/announcement/delete/${id}`;
+  return authDelete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
+    }
+  );
+};
+
+export const getAnnounceById = async (id) => {
+  const requestExtension = `/announcement/get/${id}`;
+  let response = await authGet(requestExtension, {
+    params: {},
+  }).catch(console.error);
+  const announcement = response.data.result.announcement;
+  return announcement;
+};
+export const EditAnnounceById = async (id, values = []) => {
+  const requestExtension = `/announcement/edit/${id}`;
+  const formData = new FormData();
+  Object.entries(values).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  let response = await authPut(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
+};
+
 export const newTrainCreate = async (values) => {
   const { role } = values;
   const requestExtension = `/training/${role}`;

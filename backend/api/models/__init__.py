@@ -33,6 +33,7 @@ from .Guest import Guest
 from .Support import Support
 from .SignOrigin import SignOrigin
 from .SignedDocs import SignedDocs
+from .Announcement import Announcement
 
 __all__ = [
     "db",
@@ -67,6 +68,7 @@ __all__ = [
     "SignedDocs",
     "GroupMessage",
     "PartnerGroupMessage",
+    "Announcement",
 ]
 
 # You must import all of the new Models you create to this page

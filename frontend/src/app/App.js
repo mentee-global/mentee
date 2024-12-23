@@ -23,6 +23,7 @@ import GroupMessages from "components/pages/GroupMessages";
 import ApplicationForm from "components/pages/ApplicationForm";
 import SocketComponent from "components/SocketComponent";
 import AdminTraining from "components/pages/AdminTraining";
+import AdminAnnouncement from "components/pages/AdminAnnouncement";
 import AdminSign from "components/pages/AdminSign";
 import TrainingData from "components/pages/TrainingData";
 import EventDetail from "components/pages/EventDetail";
@@ -45,9 +46,11 @@ import PublicRoute from "components/PublicRoute";
 import Training from "components/pages/Training";
 import BuildProfile from "components/pages/BuildProfile";
 import Events from "components/pages/Events";
+import Announcements from "components/pages/Announcements";
+import AnnouncementDetail from "components/pages/AnnouncementDetail";
 import HubInviteLink from "components/pages/HubInviteLink";
 import { useSelector } from "react-redux";
-import { ACCOUNT_TYPE, FRONT_BASE_URL } from "utils/consts";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { fetchAccounts } from "utils/api";
 import CreateMeetingLink from "components/CreateMeetingLink";
 import MeetingPanel from "components/MeetingPanel";
@@ -108,6 +111,12 @@ function App() {
     if (path.indexOf("/new_training") > 0) {
       if (!role) {
         let direct_path = "new_training" + path.split("/new_training")[1];
+        localStorage.setItem("direct_path", direct_path);
+      }
+    }
+    if (path.indexOf("/announcement") > 0) {
+      if (!role) {
+        let direct_path = "announcement" + path.split("/announcement")[1];
         localStorage.setItem("direct_path", direct_path);
       }
     }
@@ -544,6 +553,21 @@ function App() {
                   </>
                 )}
               </PrivateRoute>
+              <PrivateRoute path="/admin-announcement">
+                {role == ACCOUNT_TYPE.ADMIN ? (
+                  <AdminAnnouncement />
+                ) : (
+                  <>
+                    {cur_time - startPathTime > 100 && (
+                      <Result
+                        status="403"
+                        title="403"
+                        subTitle={t("gallery.unauthorizedAccess")}
+                      />
+                    )}
+                  </>
+                )}
+              </PrivateRoute>
               <PrivateRoute path="/admin-training">
                 {role == ACCOUNT_TYPE.ADMIN ? (
                   <AdminTraining />
@@ -647,6 +671,12 @@ function App() {
               </PrivateRoute>
               <PrivateRoute path="/event/:id">
                 <EventDetail />
+              </PrivateRoute>
+              <PrivateRoute path="/announcements">
+                <Announcements />
+              </PrivateRoute>
+              <PrivateRoute path="/announcement/:id">
+                <AnnouncementDetail />
               </PrivateRoute>
               <PrivateRoute path="/createmeetinglink">
                 <CreateMeetingLink />

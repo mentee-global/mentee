@@ -78,6 +78,7 @@ function UpdateAnnouncementModal({
       );
     } else {
       setImage(null);
+      form.setFieldValue("send_notification", true);
     }
   }, [open, currentAnnounce]);
 
@@ -136,7 +137,7 @@ function UpdateAnnouncementModal({
             name="send_notification"
             valuePropName="checked"
           >
-            <Checkbox>Send Notification</Checkbox>
+            <Checkbox defaultChecked>Send Notification</Checkbox>
           </Form.Item>
         )}
         <Form.Item

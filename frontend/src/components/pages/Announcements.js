@@ -76,14 +76,6 @@ function Announcements() {
     });
   };
 
-  function truncate(str, maxLength) {
-    return str.length > maxLength ? (
-      <Tooltip title={str}> {str.substring(0, maxLength - 3) + "..."} </Tooltip>
-    ) : (
-      str
-    );
-  }
-
   const getFilterForm = () => (
     <>
       <Title
@@ -146,13 +138,15 @@ function Announcements() {
       dataIndex: "file_name",
       key: "file_name",
       render: (file_name, record) => {
-        return (
-          <AdminDownloadDropdown
-            options={getAvailableLangs(record)}
-            title={file_name}
-            onClick={(lang) => handleAnnounceDownload(record, lang)}
-          />
-        );
+        if (file_name && file_name !== "") {
+          return (
+            <AdminDownloadDropdown
+              options={getAvailableLangs(record)}
+              title={file_name}
+              onClick={(lang) => handleAnnounceDownload(record, lang)}
+            />
+          );
+        }
       },
     },
     {
@@ -160,7 +154,9 @@ function Announcements() {
       dataIndex: "image",
       key: "image",
       render: (image) => {
-        return <img style={{ maxHeight: "50px" }} src={image.url} alt="" />;
+        if (image) {
+          return <img style={{ maxHeight: "50px" }} src={image.url} alt="" />;
+        }
       },
     },
     {

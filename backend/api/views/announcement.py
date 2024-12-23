@@ -199,7 +199,11 @@ def new_announce(role):
             for recipient in recipients:
                 res, res_msg = send_email(
                     recipient=recipient.email,
-                    data={"link": target_url, "title": announce.name},
+                    data={
+                        "link": target_url,
+                        "title": announce.name,
+                        "subject": "New Announcement",
+                    },
                     template_id=NEW_ANNOUNCE_TEMPLATE,
                 )
                 if not res:

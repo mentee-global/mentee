@@ -704,6 +704,7 @@ def uploadImage(id):
             elif account_type == Account.ADMIN:
                 account = Admin.objects.get(id=id)
 
+            
             else:
                 msg = "Level param doesn't match existing account types"
                 return create_response(status=422, message=msg)

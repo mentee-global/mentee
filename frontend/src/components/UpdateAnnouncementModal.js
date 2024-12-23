@@ -157,7 +157,7 @@ function UpdateAnnouncementModal({
         </Form.Item>
         <Form.Item
           name="description"
-          label="Training Description"
+          label="Description"
           rules={[
             {
               required: true,

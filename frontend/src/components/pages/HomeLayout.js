@@ -363,7 +363,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                       style={{
                         display: "flex",
                         justifyContent: "center",
-                        paddingTop: "35%",
+                        paddingTop: "30%",
                       }}
                     >
                       <img

@@ -11,6 +11,7 @@ import {
   FloatButton,
   Tooltip,
   notification,
+  Table,
 } from "antd";
 import { NavLink } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
@@ -21,33 +22,12 @@ import { ACCOUNT_TYPE, I18N_LANGUAGES } from "utils/consts";
 import { useSelector } from "react-redux";
 import { getRole } from "utils/auth.service";
 import AdminDownloadDropdown from "../AdminDownloadDropdown";
-import Item from "antd/es/list/Item";
 
-const { Title, Paragraph } = Typography;
-const styles = {
-  title: {
-    fontSize: "2em",
-    whiteSpace: "normal",
-    overflow: "visible",
-    textOverflow: "ellipsis",
-    margin: 0,
-  },
-  subTitle: {
-    fontSize: "1.5em px",
-    whiteSpace: "normal",
-    overflow: "visible",
-    textOverflow: "ellipsis",
-    margin: 0,
-  },
-  icon: {
-    fontSize: "20px",
-    paddingRight: "7px",
-  },
-};
+const { Title } = Typography;
 
 function Announcements() {
   const {
-    token: { colorPrimary, colorPrimaryBg },
+    token: { colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
   const [allData, setAllData] = useState([]);
@@ -148,11 +128,61 @@ function Announcements() {
     downloadBlob(response, record.file_name);
   };
 
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (name) => <>{name}</>,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (description) => <>{description}</>,
+    },
+    {
+      title: "Document",
+      dataIndex: "file_name",
+      key: "file_name",
+      render: (file_name, record) => {
+        return (
+          <AdminDownloadDropdown
+            options={getAvailableLangs(record)}
+            title={file_name}
+            onClick={(lang) => handleAnnounceDownload(record, lang)}
+          />
+        );
+      },
+    },
+    {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (image) => {
+        return <img style={{ maxHeight: "50px" }} src={image.url} alt="" />;
+      },
+    },
+    {
+      title: "",
+      dataIndex: "id",
+      key: "id",
+      render: (id) => (
+        <NavLink to={hubUrl + `/announcement/${id}`}>
+          <Button style={{}} type="primary">
+            {t("events.view")}
+          </Button>
+        </NavLink>
+      ),
+      align: "center",
+    },
+  ];
+
   // Add some kind of error 403 code
   return (
     <>
       <Affix offsetTop={10}>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", marginTop: "20px", marginLeft: "20px" }}>
           <Button
             onClick={() => setMobileFilterVisible(true)}
             className={css`
@@ -193,7 +223,7 @@ function Announcements() {
       >
         {getFilterForm()}
       </Modal>
-      <div className="gallery-container">
+      <div className="">
         <FloatButton.BackTop />
         <Affix offsetTop={10}>
           <div
@@ -204,7 +234,8 @@ function Announcements() {
               border-radius: 8px;
               height: fit-content;
               border: 2px solid ${colorPrimaryBg};
-
+              margin-top: 20px;
+              margin-left: 20px;
               @media only screen and (max-width: 640px) {
                 display: none;
               }
@@ -227,110 +258,8 @@ function Announcements() {
             <Spin size="large" spinning />
           </div>
         ) : (
-          <div className="gallery-mentor-container">
-            {getFilteredData().map((item, key) => {
-              return (
-                <div
-                  className={css`
-                    background-color: white;
-                    border: 2px solid ${colorPrimaryBg};
-                    border-radius: 8px;
-                    position: relative;
-                    height: 27em;
-                    padding: 20px;
-                    padding-top: 0px;
-                    :hover {
-                      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-                    }
-                  `}
-                >
-                  <div
-                    className="gallery-card-body"
-                    style={{ height: "90%", overflowY: "auto" }}
-                  >
-                    <div
-                      className="gallery-card-header"
-                      style={{ height: "4.5rem" }}
-                    >
-                      <div
-                        className="gallery-header-text gallery-info-section"
-                        style={{ paddingLeft: "0px" }}
-                      >
-                        <Title
-                          style={styles.title}
-                          className="gallery-title-text"
-                        >
-                          {truncate(item.name, 15)}
-                        </Title>
-                      </div>
-                    </div>
-                    <div className="gallery-info-section flex">
-                      {item.description && (
-                        <Typography style={{ width: "auto", minWidth: "50%" }}>
-                          <Paragraph
-                            style={{
-                              fontSize: "18px",
-                              fontWeight: 600,
-                              marginTop: "-5px",
-                              marginBottom: "5px",
-                            }}
-                          >
-                            {t("events.summary")}:
-                          </Paragraph>
-                          <Paragraph
-                            style={{
-                              fontSize: "16px",
-                              marginTop: "5px",
-                              marginBottom: "5px",
-                              paddingRight: "5px",
-                              whiteSpace: "normal",
-                            }}
-                          >
-                            {" "}
-                            {truncate(item.description, 30)}
-                          </Paragraph>
-                        </Typography>
-                      )}
-                      {item.image && (
-                        <Typography style={{ width: "50%" }}>
-                          <img
-                            style={{ height: "140px", maxWidth: "100%" }}
-                            className="event-img"
-                            src={item.image.url}
-                            alt=""
-                          />
-                        </Typography>
-                      )}
-                    </div>
-                    {item.file_name && (
-                      <div style={{ marginTop: "30px" }}>
-                        <AdminDownloadDropdown
-                          options={getAvailableLangs(Item)}
-                          title={item.file_name}
-                          onClick={(lang) => handleAnnounceDownload(item, lang)}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className={css`
-                      border-top: 3px solid ${colorPrimary};
-                      position: absolute;
-                      bottom: -5px;
-                      width: 90%;
-                    `}
-                  >
-                    <div className="gallery-button">
-                      <NavLink to={hubUrl + `/announcement/${item._id.$oid}`}>
-                        <Button style={{ marginRight: "10px" }} type="primary">
-                          {t("events.view")}
-                        </Button>
-                      </NavLink>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div style={{ padding: "20px" }}>
+            <Table columns={columns} dataSource={getFilteredData()} />
           </div>
         )}
       </div>

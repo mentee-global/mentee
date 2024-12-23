@@ -1,22 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  deleteTrainbyId,
+  deleteAnnouncebyId,
   downloadBlob,
-  EditTrainById,
-  getTrainById,
-  getTrainings,
-  getTrainVideo,
+  EditAnnounceById,
+  getAnnounceById,
+  getAnnouncements,
+  getAnnounceDoc,
   fetchAccounts,
   fetchPartners,
-  newTrainCreate,
+  newAnnounceCreate,
+  uploadAnnounceImage,
 } from "utils/api";
-import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, I18N_LANGUAGES } from "utils/consts";
 import { HubsDropdown } from "../AdminDropdowns";
 import {
   Table,
   Popconfirm,
   message,
-  Radio,
   Button,
   notification,
   Spin,
@@ -33,29 +33,26 @@ import { withRouter } from "react-router-dom";
 
 import "components/css/Training.scss";
 import AdminDownloadDropdown from "../AdminDownloadDropdown";
-import TrainingTranslationModal from "../TrainingTranslationModal";
-import UpdateTrainingForm from "../UpdateTrainingModal";
+import UpdateAnnouncementModal from "../UpdateAnnouncementModal";
 
-const AdminTraining = () => {
+const AdminAnnouncement = () => {
   const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
-  const [trainingData, setTrainingData] = useState([]);
+  const [announceData, setAnnounceData] = useState([]);
   const [reload, setReload] = useState(true);
-  const [translateLoading, setTranslateLoading] = useState(false);
-  const [translateOpen, setTranslateOpen] = useState(false);
   // const [documentCost, setDocumentCost] = useState(null);
-  const [trainingId, setTrainingId] = useState(null);
-  const [openUpdateTraining, setOpenUpdateTraining] = useState(false);
-  const [currentTraining, setCurrentTraining] = useState(null);
+  const [announceId, setAnnounceId] = useState(null);
+  const [openUpdateAnnounce, setOpenUpdateAnnounce] = useState(false);
+  const [currentAnnounce, setCurrentAnnounce] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hubOptions, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
   const [partnerOptions, setPartnerOptions] = useState([]);
   const [allData, setAllData] = useState([]);
 
-  const onCancelTrainingForm = () => {
-    setTrainingId(null);
-    setCurrentTraining(null);
-    setOpenUpdateTraining(false);
+  const onCancelAnnounceForm = () => {
+    setAnnounceId(null);
+    setCurrentAnnounce(null);
+    setOpenUpdateAnnounce(false);
   };
 
   useEffect(() => {
@@ -88,64 +85,75 @@ const AdminTraining = () => {
 
   const handleResetFilters = () => {
     setResetFilters(!resetFilters);
-    setTrainingData(allData);
+    setAnnounceData(allData);
   };
 
-  const onFinishTrainingForm = async (values, isNewTraining) => {
+  const onFinishAnnounceForm = async (
+    values,
+    isNewAnnounce,
+    image,
+    changedImage
+  ) => {
     setLoading(true);
-    if (isNewTraining) {
-      message.loading("Announcing new training...", 3);
-      const res = await newTrainCreate(values);
+    let res = null;
+    if (isNewAnnounce) {
+      message.loading("Announcing new Announcement...", 3);
+      res = await newAnnounceCreate(values);
       if (!res?.success) {
         notification.error({
           message: "ERROR",
-          description: `Couldn't create new training`,
+          description: `Couldn't create new Announcement`,
         });
       } else {
         notification.success({
           message: "SUCCESS",
-          description: "New training has been created successfully",
+          description: "New Announcement has been created successfully",
         });
       }
     } else {
-      const res = await EditTrainById(trainingId, values);
+      res = await EditAnnounceById(announceId, values);
       if (!res?.success) {
         notification.error({
           message: "ERROR",
-          description: `Couldn't update training`,
+          description: `Couldn't update Announcement`,
         });
       } else {
         notification.success({
           message: "SUCCESS",
-          description: "Training has been updated successfully",
+          description: "Announcement has been updated successfully",
         });
+      }
+    }
+    if (image && changedImage) {
+      if (res && res.success) {
+        await uploadAnnounceImage(image, res.result.announce._id.$oid);
       }
     }
     setLoading(false);
-    setTrainingId(null);
+    setAnnounceId(null);
     setReload(!reload);
-    setCurrentTraining(null);
-    setOpenUpdateTraining(false);
+    setCurrentAnnounce(null);
+    setOpenUpdateAnnounce(false);
   };
 
-  const openUpdateTrainingModal = (id = null) => {
+  const openUpdateAnnounceModal = (id = null) => {
     if (id) {
-      setTrainingId(id);
-      getTrainById(id).then((res) => {
+      setAnnounceId(id);
+      getAnnounceById(id).then((res) => {
         if (res) {
-          setCurrentTraining(res);
-          setOpenUpdateTraining(true);
+          setCurrentAnnounce(res);
+          setOpenUpdateAnnounce(true);
         }
       });
     } else {
-      setTrainingId(null);
-      setCurrentTraining(null);
-      setOpenUpdateTraining(true);
+      setAnnounceId(null);
+      setCurrentAnnounce(null);
+      setOpenUpdateAnnounce(true);
     }
   };
 
-  const handleTrainingDownload = async (record, lang) => {
-    let response = await getTrainVideo(record.id, lang);
+  const handleAnnounceDownload = async (record, lang) => {
+    let response = await getAnnounceDoc(record.id, lang);
     if (!response) {
       notification.error({
         message: "ERROR",
@@ -156,18 +164,18 @@ const AdminTraining = () => {
     downloadBlob(response, record.file_name);
   };
 
-  const deleteTrain = async (id) => {
-    const success = await deleteTrainbyId(id);
+  const deleteAnnounce = async (id) => {
+    const success = await deleteAnnouncebyId(id);
     if (success) {
       notification.success({
         message: "SUCCESS",
-        description: "Training has been deleted successfully",
+        description: "Announcement has been deleted successfully",
       });
       setReload(!reload);
     } else {
       notification.error({
         message: "ERROR",
-        description: `Couldn't delete training`,
+        description: `Couldn't delete Announcement`,
       });
     }
   };
@@ -185,44 +193,19 @@ const AdminTraining = () => {
     return items;
   };
 
-  const translateOpenChange = async (selectedId) => {
-    // setTranslateLoading(true);
-    // message.loading("Getting translation cost...", 4);
-    setTrainingId(selectedId);
-    // const res = await getTranslateDocumentCost(selectedId);
-    // if (!res?.success) {
-    //   notification.error({
-    //     message: "ERROR",
-    //     description: `Couldn't get translation cost`,
-    //   });
-    //   setTranslateLoading(false);
-    //   return;
-    // }
-    // const resPrice = res?.result?.cost;
-
-    // let formatCost = Intl.NumberFormat("en-US", {
-    //   style: "currency",
-    //   currency: "USD",
-    //   maximumSignificantDigits: 3,
-    // });
-    // setDocumentCost(formatCost.format(resPrice));
-    // setTranslateLoading(false);
-    setTranslateOpen(true);
-  };
-
   useMemo(() => {
     const getData = async () => {
       setLoading(true);
-      let newData = await getTrainings(role);
+      let newData = await getAnnouncements(role);
       if (newData) {
-        setTrainingData(newData);
+        setAnnounceData(newData);
         setAllData(newData);
       } else {
-        setTrainingData([]);
+        setAnnounceData([]);
         setAllData([]);
         notification.error({
           message: "ERROR",
-          description: "Couldn't get trainings",
+          description: "Couldn't get Announcements",
         });
       }
       setLoading(false);
@@ -238,63 +221,36 @@ const AdminTraining = () => {
       render: (name) => <>{name}</>,
     },
     {
-      title: "URL",
-      dataIndex: "url",
-      key: "url",
-      render: (url, record) => {
-        if (record.typee !== TRAINING_TYPE.DOCUMENT) {
-          return (
-            <a href={url} target="_blank">
-              {url}
-            </a>
-          );
-        } else {
-          return (
-            <AdminDownloadDropdown
-              options={getAvailableLangs(record)}
-              title="Download Document"
-              onClick={(lang) => handleTrainingDownload(record, lang)}
-            />
-          );
-        }
-      },
-    },
-    {
       title: "Description",
       dataIndex: "description",
       key: "description",
       render: (description) => <>{description}</>,
     },
     {
-      title: "Type",
-      dataIndex: "typee",
-      key: "typee",
-      render: (typee) => <>{typee}</>,
-    },
-    {
-      title: "Translate Document",
-      dataIndex: "id",
-      key: "id",
-      render: (trainingId, record) => (
-        <>
-          {record.typee === TRAINING_TYPE.DOCUMENT ? (
-            <TeamOutlined
-              className={"delete-user-btn"}
-              onClick={() => translateOpenChange(trainingId)}
+      title: "Document",
+      dataIndex: "file_name",
+      key: "file_name",
+      render: (file_name, record) => {
+        if (file_name && file_name !== "") {
+          return (
+            <AdminDownloadDropdown
+              options={getAvailableLangs(record)}
+              title={file_name}
+              onClick={(lang) => handleAnnounceDownload(record, lang)}
             />
-          ) : (
-            <></>
-          )}
-        </>
-      ),
-      align: "center",
+          );
+        }
+      },
     },
     {
-      title: "Sign",
-      dataIndex: "requried_sign",
-      key: "requried_sign",
-      render: (requried_sign) => <>{requried_sign ? "required" : ""}</>,
-      align: "center",
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (image) => {
+        if (image) {
+          return <img style={{ maxHeight: "50px" }} src={image.url} alt="" />;
+        }
+      },
     },
     {
       title: "Hub User",
@@ -310,7 +266,7 @@ const AdminTraining = () => {
       render: (id) => (
         <EditOutlined
           className="delete-user-btn"
-          onClick={() => openUpdateTrainingModal(id)}
+          onClick={() => openUpdateAnnounceModal(id)}
         />
       ),
 
@@ -324,7 +280,7 @@ const AdminTraining = () => {
         <Popconfirm
           title={`Are you sure you want to delete ?`}
           onConfirm={() => {
-            deleteTrain(id);
+            deleteAnnounce(id);
           }}
           onCancel={() => message.info(`No deletion has been made`)}
           okText="Yes"
@@ -339,7 +295,7 @@ const AdminTraining = () => {
 
   const searchbyHub = (hub_id) => {
     if (role === ACCOUNT_TYPE.HUB) {
-      setTrainingData(allData.filter((x) => x.hub_id == hub_id));
+      setAnnounceData(allData.filter((x) => x.hub_id == hub_id));
     }
   };
 
@@ -347,22 +303,22 @@ const AdminTraining = () => {
     {
       label: `Mentee`,
       key: ACCOUNT_TYPE.MENTEE,
-      disabled: translateLoading,
+      disabled: false,
     },
     {
       label: `Mentor`,
       key: ACCOUNT_TYPE.MENTOR,
-      disabled: translateLoading,
+      disabled: false,
     },
     {
       label: `Partner`,
       key: ACCOUNT_TYPE.PARTNER,
-      disabled: translateLoading,
+      disabled: false,
     },
     {
       label: `Hub`,
       key: ACCOUNT_TYPE.HUB,
-      disabled: translateLoading,
+      disabled: false,
     },
   ];
 
@@ -381,11 +337,11 @@ const AdminTraining = () => {
           className="table-button"
           icon={<PlusCircleOutlined />}
           onClick={() => {
-            openUpdateTrainingModal();
+            openUpdateAnnounceModal();
           }}
-          disabled={translateLoading}
+          disabled={false}
         >
-          New Training
+          New Announcement
         </Button>
         <div style={{ lineHeight: "30px", marginLeft: "1rem" }}>Hub</div>
         <HubsDropdown
@@ -398,22 +354,16 @@ const AdminTraining = () => {
           Clear Filters
         </Button>
       </div>
-      <Spin spinning={translateLoading}>
+      <Spin spinning={false}>
         <Skeleton loading={loading} active>
-          <Table columns={columns} dataSource={trainingData} />
+          <Table columns={columns} dataSource={announceData} />
         </Skeleton>
       </Spin>
-      <TrainingTranslationModal
-        setOpenModal={setTranslateOpen}
-        openModal={translateOpen}
-        //documentCost={documentCost}
-        trainingId={trainingId}
-      />
-      <UpdateTrainingForm
-        open={openUpdateTraining}
-        onCancel={onCancelTrainingForm}
-        onFinish={onFinishTrainingForm}
-        currentTraining={currentTraining}
+      <UpdateAnnouncementModal
+        open={openUpdateAnnounce}
+        onCancel={onCancelAnnounceForm}
+        onFinish={onFinishAnnounceForm}
+        currentAnnounce={currentAnnounce}
         loading={loading}
         hubOptions={hubOptions}
         partnerOptions={partnerOptions}
@@ -422,4 +372,4 @@ const AdminTraining = () => {
   );
 };
 
-export default withRouter(AdminTraining);
+export default withRouter(AdminAnnouncement);

@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Radio,
-  Select,
-  Upload,
-  Checkbox,
-} from "antd";
+import { Button, Form, Input, Modal, Select, Upload, Checkbox } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { TRAINING_TYPE, ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE } from "utils/consts";
 import "components/css/Training.scss";
+import ImgCrop from "antd-img-crop";
 
 const { Option } = Select;
 
@@ -23,30 +15,27 @@ const normFile = (e) => {
 };
 
 // TODO: Change the weird names of some of the forms like typee and filee
-function UpdateTrainingModal({
+function UpdateAnnouncementModal({
   onCancel,
   onFinish,
   open,
-  currentTraining,
+  currentAnnounce,
   loading,
   hubOptions,
   partnerOptions,
 }) {
   const [form] = Form.useForm();
-  const [trainingType, setTrainingType] = useState("");
-  const [isNewDocument, setIsNewDocument] = useState(false);
   const [valuesChanged, setValuesChanged] = useState(false);
   const [role, setRole] = useState(null);
   const [mentors, setMentors] = useState([]);
   const [mentees, setMentees] = useState([]);
-  const newTraining = !currentTraining;
+  const [image, setImage] = useState(
+    currentAnnounce && currentAnnounce.image ? currentAnnounce.image : null
+  );
+  const [changedImage, setChangedImage] = useState(false);
+  const newAnnouncement = !currentAnnounce;
 
   const handleValuesChange = (changedValues, allValues) => {
-    if (changedValues.typee) {
-      setTrainingType(changedValues.typee);
-    } else if (changedValues.document) {
-      setIsNewDocument(true);
-    }
     setValuesChanged(true);
   };
 
@@ -59,10 +48,10 @@ function UpdateTrainingModal({
           onFinish(
             {
               ...values,
-              isNewDocument,
-              isVideo: values.typee !== TRAINING_TYPE.DOCUMENT,
             },
-            newTraining
+            newAnnouncement,
+            image,
+            changedImage
           );
         })
         .catch((info) => {
@@ -76,22 +65,22 @@ function UpdateTrainingModal({
   useEffect(() => {
     form.resetFields();
     setValuesChanged(false);
-    setIsNewDocument(false);
-    setTrainingType(TRAINING_TYPE.VIDEO);
-    if (currentTraining) {
-      setTrainingType(currentTraining.typee);
-      currentTraining.role = parseInt(currentTraining.role);
-      form.setFieldsValue(currentTraining);
-
-      if (currentTraining.typee === TRAINING_TYPE.DOCUMENT) {
-        form.setFieldValue("document", [
-          {
-            name: currentTraining.file_name,
-          },
-        ]);
-      }
+    if (currentAnnounce) {
+      currentAnnounce.role = parseInt(currentAnnounce.role);
+      form.setFieldsValue(currentAnnounce);
+      form.setFieldValue("document", [
+        {
+          name: currentAnnounce.file_name,
+        },
+      ]);
+      setImage(
+        currentAnnounce && currentAnnounce.image ? currentAnnounce.image : null
+      );
+    } else {
+      setImage(null);
+      form.setFieldValue("send_notification", true);
     }
-  }, [open, currentTraining]);
+  }, [open, currentAnnounce]);
 
   const setMentorMentees = (partner_id) => {
     var partner_data = partnerOptions.find((x) => x.value === partner_id);
@@ -114,7 +103,7 @@ function UpdateTrainingModal({
 
   return (
     <Modal
-      title="Training Editor"
+      title="Announcement Editor"
       onOk={onOk}
       onCancel={onCancel}
       open={open}
@@ -128,7 +117,7 @@ function UpdateTrainingModal({
       >
         <Form.Item
           name="name"
-          label="Training Name"
+          label="Name"
           rules={[
             {
               required: true,
@@ -138,36 +127,7 @@ function UpdateTrainingModal({
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="typee"
-          label="Training Type"
-          initialValue={TRAINING_TYPE.VIDEO}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Radio.Group>
-            <Radio value={TRAINING_TYPE.VIDEO}>Video</Radio>
-            <Radio value={TRAINING_TYPE.DOCUMENT}> Document </Radio>
-            <Radio value={TRAINING_TYPE.LINK}> External Link </Radio>
-          </Radio.Group>
-        </Form.Item>
-        {form.getFieldValue("typee") === TRAINING_TYPE.DOCUMENT && (
-          <Form.Item
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-            name="requried_sign"
-            valuePropName="checked"
-          >
-            <Checkbox>Required Sign</Checkbox>
-          </Form.Item>
-        )}
-        {newTraining && (
+        {newAnnouncement && (
           <Form.Item
             rules={[
               {
@@ -177,42 +137,27 @@ function UpdateTrainingModal({
             name="send_notification"
             valuePropName="checked"
           >
-            <Checkbox>Send Notification</Checkbox>
-          </Form.Item>
-        )}
-        {trainingType === TRAINING_TYPE.DOCUMENT ? (
-          <Form.Item
-            name="document"
-            label="Document"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-          >
-            <Upload accept=".pdf" maxCount={1} beforeUpload={() => false}>
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-          </Form.Item>
-        ) : (
-          <Form.Item
-            name="url"
-            label="URL"
-            rules={[
-              {
-                required: true,
-                type: "url",
-              },
-            ]}
-          >
-            <Input />
+            <Checkbox defaultChecked>Send Notification</Checkbox>
           </Form.Item>
         )}
         <Form.Item
+          name="document"
+          label="Document"
+          rules={[
+            {
+              required: false,
+            },
+          ]}
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
+        >
+          <Upload accept=".pdf" maxCount={1} beforeUpload={() => false}>
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item
           name="description"
-          label="Training Description"
+          label="Description"
           rules={[
             {
               required: true,
@@ -221,6 +166,36 @@ function UpdateTrainingModal({
         >
           <Input.TextArea />
         </Form.Item>
+        <ImgCrop rotate aspect={5 / 3} minZoom={0.2}>
+          <Upload
+            onChange={async (file) => {
+              setImage(file.file.originFileObj);
+              setChangedImage(true);
+            }}
+            accept=".png,.jpg,.jpeg"
+            showUploadList={false}
+          >
+            <Button
+              icon={<UploadOutlined />}
+              className=""
+              style={{ marginBottom: "24px" }}
+            >
+              Upload Image
+            </Button>
+          </Upload>
+        </ImgCrop>
+
+        {image && (
+          <img
+            style={{ width: "100px", marginLeft: "15px" }}
+            alt=""
+            src={
+              changedImage
+                ? image && URL.createObjectURL(image)
+                : image && image.url
+            }
+          />
+        )}
         <Form.Item
           name="role"
           label="Role"
@@ -326,4 +301,4 @@ function UpdateTrainingModal({
   );
 }
 
-export default UpdateTrainingModal;
+export default UpdateAnnouncementModal;

@@ -15,12 +15,12 @@ function PublicRoute({ children, ...rest }) {
   if (path.indexOf("/announcement/") > -1) {
     announcement_detail_flag = true;
   }
-  
+
   return (
     <Route
       {...rest}
       render={() =>
-        (!role || announcement_detail_flag) ? (
+        !role || announcement_detail_flag ? (
           children
         ) : (
           <Redirect

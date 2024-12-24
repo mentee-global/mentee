@@ -50,6 +50,8 @@ const AdminTraining = () => {
   const [hubOptions, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
   const [partnerOptions, setPartnerOptions] = useState([]);
+  const [mentorOptions, setMentorOptions] = useState([]);
+  const [menteeOptions, setMenteeOptions] = useState([]);
   const [allData, setAllData] = useState([]);
 
   const onCancelTrainingForm = () => {
@@ -68,9 +70,9 @@ const AdminTraining = () => {
       });
       setHubOptions(temp);
     }
-    async function getPartners() {
+    async function getUsers() {
       var temp = [];
-      const data = await fetchPartners();
+      let data = await fetchPartners();
       data.map((item) => {
         temp.push({
           label: item.organization,
@@ -81,9 +83,13 @@ const AdminTraining = () => {
         return true;
       });
       setPartnerOptions(temp);
+      data = await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+      setMenteeOptions(data);
+      data = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
+      setMentorOptions(data);
     }
     getHubData();
-    getPartners();
+    getUsers();
   }, []);
 
   const handleResetFilters = () => {
@@ -186,27 +192,7 @@ const AdminTraining = () => {
   };
 
   const translateOpenChange = async (selectedId) => {
-    // setTranslateLoading(true);
-    // message.loading("Getting translation cost...", 4);
     setTrainingId(selectedId);
-    // const res = await getTranslateDocumentCost(selectedId);
-    // if (!res?.success) {
-    //   notification.error({
-    //     message: "ERROR",
-    //     description: `Couldn't get translation cost`,
-    //   });
-    //   setTranslateLoading(false);
-    //   return;
-    // }
-    // const resPrice = res?.result?.cost;
-
-    // let formatCost = Intl.NumberFormat("en-US", {
-    //   style: "currency",
-    //   currency: "USD",
-    //   maximumSignificantDigits: 3,
-    // });
-    // setDocumentCost(formatCost.format(resPrice));
-    // setTranslateLoading(false);
     setTranslateOpen(true);
   };
 
@@ -417,6 +403,8 @@ const AdminTraining = () => {
         loading={loading}
         hubOptions={hubOptions}
         partnerOptions={partnerOptions}
+        menteeOptions={menteeOptions}
+        mentorOptions={mentorOptions}
       />
     </div>
   );

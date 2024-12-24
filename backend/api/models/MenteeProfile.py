@@ -35,6 +35,7 @@ class MenteeProfile(Document, Mixin):
     roomName = StringField(required=False)
     timezone = StringField(required=True)
     birthday = DateField(required=False)
+    mentorMentee = StringField(required=False)
 
     def __repr__(self):
         return f"""<MenteeProfile user_id:{self.firebase_uid} \n name: {self.name}

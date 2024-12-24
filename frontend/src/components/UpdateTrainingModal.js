@@ -31,6 +31,8 @@ function UpdateTrainingModal({
   loading,
   hubOptions,
   partnerOptions,
+  menteeOptions,
+  mentorOptions,
 }) {
   const [form] = Form.useForm();
   const [trainingType, setTrainingType] = useState("");
@@ -82,6 +84,27 @@ function UpdateTrainingModal({
       setTrainingType(currentTraining.typee);
       currentTraining.role = parseInt(currentTraining.role);
       form.setFieldsValue(currentTraining);
+      if (currentTraining.role == ACCOUNT_TYPE.MENTOR) {
+        if (currentTraining.mentor_id && currentTraining.mentor_id.length > 0) {
+          setMentors(mentorOptions);
+        }
+      }
+      if (currentTraining.role == ACCOUNT_TYPE.MENTEE) {
+        if (currentTraining.mentee_id && currentTraining.mentee_id.length > 0) {
+          setMentees(menteeOptions);
+        }
+      }
+      if (currentTraining.role == ACCOUNT_TYPE.PARTNER) {
+        if (currentTraining.partner_id) {
+          var partner_data = partnerOptions.find(
+            (x) => x.value === currentTraining.partner_id
+          );
+          if (partner_data) {
+            setMentees(partner_data.assign_mentees);
+            setMentors(partner_data.assign_mentors);
+          }
+        }
+      }
 
       if (currentTraining.typee === TRAINING_TYPE.DOCUMENT) {
         form.setFieldValue("document", [
@@ -90,25 +113,46 @@ function UpdateTrainingModal({
           },
         ]);
       }
+    } else {
+      setMentors([]);
+      setMentees([]);
     }
   }, [open, currentTraining]);
 
   const setMentorMentees = (partner_id) => {
+    form.setFieldValue("mentor_id", null);
+    form.setFieldValue("mentee_id", null);
     var partner_data = partnerOptions.find((x) => x.value === partner_id);
     if (partner_data) {
       setMentees(partner_data.assign_mentees);
       setMentors(partner_data.assign_mentors);
+      let default_data = [];
+      partner_data.assign_mentees.map((item) => {
+        default_data.push(item.id.$oid ? item.id.$oid : item.id);
+        return true;
+      });
+      form.setFieldValue("mentee_id", default_data);
+      default_data = [];
+      partner_data.assign_mentors.map((item) => {
+        default_data.push(item.id.$oid ? item.id.$oid : item.id);
+        return true;
+      });
+      form.setFieldValue("mentor_id", default_data);
     }
   };
 
   const changeRole = (val) => {
     setRole(val);
-    if (val !== ACCOUNT_TYPE.PARTNER) {
-      form.setFieldValue("partner_id", "");
-      form.setFieldValue("mentor_id", "");
-      form.setFieldValue("mentee_id", "");
-      setMentees([]);
-      setMentors([]);
+    form.setFieldValue("partner_id", "");
+    form.setFieldValue("mentor_id", null);
+    form.setFieldValue("mentee_id", null);
+    setMentees([]);
+    setMentors([]);
+    if (val === ACCOUNT_TYPE.MENTEE) {
+      setMentees(menteeOptions);
+    }
+    if (val === ACCOUNT_TYPE.MENTOR) {
+      setMentors(mentorOptions);
     }
   };
 
@@ -260,48 +304,66 @@ function UpdateTrainingModal({
           </Form.Item>
         )}
         {mentors && mentors.length > 0 && (
-          <Form.Item
-            name="mentor_id"
-            label="Mentor"
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-          >
-            <Select>
-              <Option value={""}></Option>
-              {mentors.map((item) => {
-                return (
-                  <Option value={item.id.$oid ? item.id.$oid : item.id}>
-                    {item.name}
-                  </Option>
-                );
-              })}
-            </Select>
-          </Form.Item>
+          <>
+            <Form.Item
+              name="mentor_id"
+              label="Mentor"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <Select mode="multiple">
+                {mentors.map((item) => {
+                  return (
+                    <Option
+                      value={
+                        item._id
+                          ? item._id.$oid
+                          : item.id.$oid
+                          ? item.id.$oid
+                          : item.id
+                      }
+                    >
+                      {item.name}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </>
         )}
         {mentees && mentees.length > 0 && (
-          <Form.Item
-            name="mentee_id"
-            label="Mentee"
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-          >
-            <Select>
-              <Option value={""}></Option>
-              {mentees.map((item) => {
-                return (
-                  <Option value={item.id.$oid ? item.id.$oid : item.id}>
-                    {item.name}
-                  </Option>
-                );
-              })}
-            </Select>
-          </Form.Item>
+          <>
+            <Form.Item
+              name="mentee_id"
+              label="Mentee"
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+            >
+              <Select mode="multiple">
+                {mentees.map((item) => {
+                  return (
+                    <Option
+                      value={
+                        item._id
+                          ? item._id.$oid
+                          : item.id.$oid
+                          ? item.id.$oid
+                          : item.id
+                      }
+                    >
+                      {item.name}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
+          </>
         )}
         {role === ACCOUNT_TYPE.HUB && (
           <Form.Item

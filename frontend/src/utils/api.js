@@ -348,7 +348,11 @@ export const EditTrainById = async (id, values = []) => {
   const requestExtension = `/training/${id}`;
   const formData = new FormData();
   Object.entries(values).forEach(([key, value]) => {
-    formData.append(key, value);
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
   });
   let response = await authPut(requestExtension, formData).catch((err) => {
     console.error(err);
@@ -399,7 +403,11 @@ export const newAnnounceCreate = async (values) => {
   const formData = new FormData();
   formData.append("front_url", FRONT_BASE_URL);
   Object.entries(values).forEach(([key, value]) => {
-    formData.append(key, value);
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
   });
   let response = await authPost(requestExtension, formData).catch((err) => {
     console.error(err);
@@ -453,7 +461,11 @@ export const EditAnnounceById = async (id, values = []) => {
   const requestExtension = `/announcement/edit/${id}`;
   const formData = new FormData();
   Object.entries(values).forEach(([key, value]) => {
-    formData.append(key, value);
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
   });
   let response = await authPut(requestExtension, formData).catch((err) => {
     console.error(err);
@@ -467,7 +479,11 @@ export const newTrainCreate = async (values) => {
   const formData = new FormData();
   formData.append("front_url", FRONT_BASE_URL);
   Object.entries(values).forEach(([key, value]) => {
-    formData.append(key, value);
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
   });
   let response = await authPost(requestExtension, formData).catch((err) => {
     console.error(err);

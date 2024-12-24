@@ -84,14 +84,22 @@ def get_trainings(role):
     append_data = []
     if int(role) == Account.MENTOR:
         if user_id is None:
-            append_data = Training.objects(Q(mentor_id__ne=None) & Q(mentor_id__ne=""))
+            append_data = Training.objects(
+                Q(mentor_id__ne=None)
+                & Q(mentor_id__ne=[])
+                & Q(role__ne=str(Account.MENTOR))
+            )
         else:
-            append_data = Training.objects(mentor_id=user_id)
+            append_data = Training.objects(mentor_id__in=[user_id])
     if int(role) == Account.MENTEE:
         if user_id is None:
-            append_data = Training.objects(Q(mentee_id__ne=None) & Q(mentee_id__ne=""))
+            append_data = Training.objects(
+                Q(mentee_id__ne=None)
+                & Q(mentee_id__ne=[])
+                & Q(role__ne=str(Account.MENTEE))
+            )
         else:
-            append_data = Training.objects(mentee_id=user_id)
+            append_data = Training.objects(mentee_id__in=[user_id])
 
     result = []
     signed_trainings = {}
@@ -255,8 +263,11 @@ def get_train_id_edit(id):
     train.requried_sign = requried_sign
 
     train.partner_id = request.form.get("partner_id", train.partner_id)
-    train.mentor_id = request.form.get("mentor_id", train.mentor_id)
-    train.mentee_id = request.form.get("mentee_id", train.mentee_id)
+    if "mentor_id" in request.form and request.form["mentor_id"] is not None:
+        train.mentor_id = list(json.loads(request.form["mentor_id"]))
+
+    if "mentee_id" in request.form and request.form["mentee_id"] is not None:
+        train.mentee_id = list(json.loads(request.form["mentee_id"]))
 
     if not isVideo and request.form.get("isNewDocument", False) == "true":
         document = request.files.get("document", None)
@@ -380,19 +391,11 @@ def new_train(role):
         ):
             partner_id = request.form["partner_id"]
         mentor_id = None
-        if (
-            "mentor_id" in request.form
-            and request.form["mentor_id"] is not None
-            and request.form["mentor_id"] != ""
-        ):
-            mentor_id = request.form["mentor_id"]
+        if "mentor_id" in request.form and request.form["mentor_id"] is not None:
+            mentor_id = list(json.loads(request.form["mentor_id"]))
         mentee_id = None
-        if (
-            "mentee_id" in request.form
-            and request.form["mentee_id"] is not None
-            and request.form["mentee_id"] != ""
-        ):
-            mentee_id = request.form["mentee_id"]
+        if "mentee_id" in request.form and request.form["mentee_id"] is not None:
+            mentee_id = list(json.loads(request.form["mentee_id"]))
 
         train = Training(
             name=name,
@@ -430,41 +433,61 @@ def new_train(role):
             new_train_id = train.id
             hub_url = ""
             if int(role) == Account.MENTOR:
-                recipients = MentorProfile.objects.only("email", "preferred_language")
+                if mentor_id is not None:
+                    mentor_data = MentorProfile.objects.filter(id__in=mentor_id).only(
+                        "email", "preferred_language", "mentorMentee"
+                    )
+                    recipients = []
+                    for item in mentor_data:
+                        recipients.append(item)
+                else:
+                    recipients = MentorProfile.objects.only(
+                        "email", "preferred_language"
+                    )
             elif int(role) == Account.MENTEE:
-                recipients = MenteeProfile.objects.only("email", "preferred_language")
+                if mentee_id is not None:
+                    mentee_data = MenteeProfile.objects.filter(id__in=mentee_id).only(
+                        "email", "preferred_language", "mentorMentee"
+                    )
+                    recipients = []
+                    for item in mentee_data:
+                        recipients.append(item)
+                else:
+                    recipients = MenteeProfile.objects.only(
+                        "email", "preferred_language"
+                    )
             elif int(role) == Account.PARTNER:
                 if partner_id is not None:
                     recipients = []
                     partner_data = PartnerProfile.objects.filter(id=partner_id).only(
-                        "email", "preferred_language"
+                        "email", "preferred_language", "mentorMentee"
                     )
                     for item in partner_data:
                         recipients.append(item)
                     if mentor_id is not None:
-                        mentor_data = MentorProfile.objects.filter(id=mentor_id).only(
-                            "email", "preferred_language"
-                        )
+                        mentor_data = MentorProfile.objects.filter(
+                            id__in=mentor_id
+                        ).only("email", "preferred_language", "mentorMentee")
                         for item in mentor_data:
-                            item.mentor = "mentor"
+                            item.mentorMentee = "mentor"
                             recipients.append(item)
                     if mentee_id is not None:
-                        mentee_data = MenteeProfile.objects.filter(id=mentee_id).only(
-                            "email", "preferred_language"
-                        )
+                        mentee_data = MenteeProfile.objects.filter(
+                            id__in=mentee_id
+                        ).only("email", "preferred_language", "mentorMentee")
                         for item in mentee_data:
-                            item.mentee = "mentee"
+                            item.mentorMentee = "mentee"
                             recipients.append(item)
                 else:
                     recipients = PartnerProfile.objects.only(
-                        "email", "preferred_language"
+                        "email", "preferred_language", "mentorMentee"
                     )
             else:
                 hub_users = Hub.objects.filter(id=hub_id).only(
-                    "email", "preferred_language", "url"
+                    "email", "preferred_language", "url", "mentorMentee"
                 )
                 partners = PartnerProfile.objects.filter(hub_id=hub_id).only(
-                    "email", "preferred_language"
+                    "email", "preferred_language", "mentorMentee"
                 )
                 recipients = []
                 for hub_user in hub_users:
@@ -479,7 +502,7 @@ def new_train(role):
             )
 
             for recipient in recipients:
-                if recipient.mentor == "mentor":
+                if recipient.mentorMentee == "mentor":
                     target_url = (
                         front_url
                         + hub_url
@@ -488,7 +511,7 @@ def new_train(role):
                         + "/"
                         + str(new_train_id)
                     )
-                if recipient.mentee == "mentee":
+                if recipient.mentorMentee == "mentee":
                     target_url = (
                         front_url
                         + hub_url

@@ -23,6 +23,8 @@ function UpdateAnnouncementModal({
   loading,
   hubOptions,
   partnerOptions,
+  menteeOptions,
+  mentorOptions,
 }) {
   const [form] = Form.useForm();
   const [valuesChanged, setValuesChanged] = useState(false);
@@ -76,28 +78,69 @@ function UpdateAnnouncementModal({
       setImage(
         currentAnnounce && currentAnnounce.image ? currentAnnounce.image : null
       );
+      if (currentAnnounce.role == ACCOUNT_TYPE.MENTOR) {
+        if (currentAnnounce.mentor_id && currentAnnounce.mentor_id.length > 0) {
+          setMentors(mentorOptions);
+        }
+      }
+      if (currentAnnounce.role == ACCOUNT_TYPE.MENTEE) {
+        if (currentAnnounce.mentee_id && currentAnnounce.mentee_id.length > 0) {
+          setMentees(menteeOptions);
+        }
+      }
+      if (currentAnnounce.role == ACCOUNT_TYPE.PARTNER) {
+        if (currentAnnounce.partner_id) {
+          var partner_data = partnerOptions.find(
+            (x) => x.value === currentAnnounce.partner_id
+          );
+          if (partner_data) {
+            setMentees(partner_data.assign_mentees);
+            setMentors(partner_data.assign_mentors);
+          }
+        }
+      }
     } else {
       setImage(null);
       form.setFieldValue("send_notification", true);
+      setMentees([]);
+      setMentors([]);
     }
   }, [open, currentAnnounce]);
 
   const setMentorMentees = (partner_id) => {
+    form.setFieldValue("mentor_id", null);
+    form.setFieldValue("mentee_id", null);
     var partner_data = partnerOptions.find((x) => x.value === partner_id);
     if (partner_data) {
       setMentees(partner_data.assign_mentees);
       setMentors(partner_data.assign_mentors);
+      let default_data = [];
+      partner_data.assign_mentees.map((item) => {
+        default_data.push(item.id.$oid ? item.id.$oid : item.id);
+        return true;
+      });
+      form.setFieldValue("mentee_id", default_data);
+      default_data = [];
+      partner_data.assign_mentors.map((item) => {
+        default_data.push(item.id.$oid ? item.id.$oid : item.id);
+        return true;
+      });
+      form.setFieldValue("mentor_id", default_data);
     }
   };
 
   const changeRole = (val) => {
     setRole(val);
-    if (val !== ACCOUNT_TYPE.PARTNER) {
-      form.setFieldValue("partner_id", "");
-      form.setFieldValue("mentor_id", "");
-      form.setFieldValue("mentee_id", "");
-      setMentees([]);
-      setMentors([]);
+    form.setFieldValue("partner_id", "");
+    form.setFieldValue("mentor_id", null);
+    form.setFieldValue("mentee_id", null);
+    setMentees([]);
+    setMentors([]);
+    if (val === ACCOUNT_TYPE.MENTEE) {
+      setMentees(menteeOptions);
+    }
+    if (val === ACCOUNT_TYPE.MENTOR) {
+      setMentors(mentorOptions);
     }
   };
 
@@ -244,11 +287,18 @@ function UpdateAnnouncementModal({
               },
             ]}
           >
-            <Select>
-              <Option value={""}></Option>
+            <Select mode="multiple">
               {mentors.map((item) => {
                 return (
-                  <Option value={item.id.$oid ? item.id.$oid : item.id}>
+                  <Option
+                    value={
+                      item._id
+                        ? item._id.$oid
+                        : item.id.$oid
+                        ? item.id.$oid
+                        : item.id
+                    }
+                  >
                     {item.name}
                   </Option>
                 );
@@ -266,11 +316,18 @@ function UpdateAnnouncementModal({
               },
             ]}
           >
-            <Select>
-              <Option value={""}></Option>
+            <Select mode="multiple">
               {mentees.map((item) => {
                 return (
-                  <Option value={item.id.$oid ? item.id.$oid : item.id}>
+                  <Option
+                    value={
+                      item._id
+                        ? item._id.$oid
+                        : item.id.$oid
+                        ? item.id.$oid
+                        : item.id
+                    }
+                  >
                     {item.name}
                   </Option>
                 );

@@ -27,7 +27,6 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusCircleOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 
@@ -47,6 +46,8 @@ const AdminAnnouncement = () => {
   const [hubOptions, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
   const [partnerOptions, setPartnerOptions] = useState([]);
+  const [mentorOptions, setMentorOptions] = useState([]);
+  const [menteeOptions, setMenteeOptions] = useState([]);
   const [allData, setAllData] = useState([]);
 
   const onCancelAnnounceForm = () => {
@@ -65,9 +66,9 @@ const AdminAnnouncement = () => {
       });
       setHubOptions(temp);
     }
-    async function getPartners() {
+    async function getUsers() {
       var temp = [];
-      const data = await fetchPartners();
+      let data = await fetchPartners();
       data.map((item) => {
         temp.push({
           label: item.organization,
@@ -78,9 +79,13 @@ const AdminAnnouncement = () => {
         return true;
       });
       setPartnerOptions(temp);
+      data = await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+      setMenteeOptions(data);
+      data = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
+      setMentorOptions(data);
     }
     getHubData();
-    getPartners();
+    getUsers();
   }, []);
 
   const handleResetFilters = () => {
@@ -367,6 +372,8 @@ const AdminAnnouncement = () => {
         loading={loading}
         hubOptions={hubOptions}
         partnerOptions={partnerOptions}
+        menteeOptions={menteeOptions}
+        mentorOptions={mentorOptions}
       />
     </div>
   );

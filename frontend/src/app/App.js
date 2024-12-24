@@ -205,6 +205,9 @@ function App() {
                 <PublicRoute path="/n50/build-profile">
                   <BuildProfile />
                 </PublicRoute>
+                <PublicRoute path="/announcement/:id">
+                  <AnnouncementDetail />
+                </PublicRoute>
                 {Object.keys(allHubData).map((hub_url) => {
                   return (
                     <>
@@ -669,9 +672,6 @@ function App() {
               <PrivateRoute path="/announcements">
                 <Announcements />
               </PrivateRoute>
-              <PublicRoute path="/announcement/:id">
-                <AnnouncementDetail />
-              </PublicRoute>
               <PrivateRoute path="/createmeetinglink">
                 <CreateMeetingLink />
               </PrivateRoute>

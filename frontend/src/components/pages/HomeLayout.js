@@ -74,7 +74,8 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
   if (
     ignoreHomeLayout ||
     ignoreLayoutPaths.includes(location.pathname) ||
-    checkFlagInviteLink
+    checkFlagInviteLink ||
+    location.pathname.includes('/announcement/')
   ) {
     return children;
   }

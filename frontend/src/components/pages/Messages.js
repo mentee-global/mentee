@@ -123,6 +123,13 @@ function Messages(props) {
 
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
+    setTimeout(() => {
+      async function fetchLatest() {
+        const data = await getLatestMessages(profileId);
+        setLatestConvos(data);
+      }
+      fetchLatest();
+    }, 500);
   };
 
   // BUG: If we swap between breakpoints of mobile/desktop, the sidebar will not update

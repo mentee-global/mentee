@@ -522,7 +522,9 @@
     "sendMessagePlaceholder": "Send a message",
     "sidebarTitle": "My Messages",
     "reply":"Reply",
-    "startConversation": "Start a conversation today!"
+    "startConversation": "Start a conversation today!",
+    "sent": "Sent",
+    "search": "Search"
   },
   "navHeader": {
     "editProfile": "Edit Profile",

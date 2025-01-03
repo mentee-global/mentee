@@ -70,11 +70,16 @@ function MessagesSidebar(props) {
     }
   }
   return (
-    <Spin spinning={props.loading}>
-      <Sider
-        style={{ background: "white" }}
-        width={400}
-        className="messages-sidebar-background"
+    <Sider
+      style={{ background: "white" }}
+      width={400}
+      className="messages-sidebar-background"
+    >
+      <Spin
+        wrapperClassName={css`
+          width: 100%;
+        `}
+        spinning={props.loading}
       >
         <div className="messages-sidebar-header">
           <h1>{t("messages.sidebarTitle")}</h1>
@@ -129,8 +134,8 @@ function MessagesSidebar(props) {
               }
             })}
         </div>
-      </Sider>
-    </Spin>
+      </Spin>
+    </Sider>
   );
 }
 

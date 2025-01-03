@@ -250,11 +250,13 @@ def get_sidebar(user_id):
                     "otherUser": otherUserObj,
                     "latestMessage": json.loads(message.to_json()),
                 }
+                
+                allMessages = [json.loads(message.to_json()) for message in sentMessages]
 
                 contacts.append(sidebarObject)
                 sidebarContacts.add(otherId)
 
-        return create_response(data={"data": contacts}, status=200, message="res")
+        return create_response(data={"data": contacts, "allMessages": allMessages,}, status=200, message="res")
     except Exception as e:
         logger.info(e)
         return create_response(status=422, message=str(e))

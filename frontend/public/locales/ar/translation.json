@@ -521,7 +521,9 @@
     "sendMessagePlaceholder": "ارسل رسالة",
     "sidebarTitle": "رسائلي",
     "reply":"رد",
-    "startConversation": "ابدأ محادثة اليوم!"
+    "startConversation": "ابدأ محادثة اليوم!",
+    "send": "إرسال",
+    "search": "بحث"
   },
   "navHeader": {
     "editProfile": "تعديل الملف الشخصي",

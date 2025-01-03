@@ -522,7 +522,9 @@
     "sendMessagePlaceholder": "یو مسیج ولیږی",
     "sidebarTitle": "زما مسیجونه",
     "reply":"ځواب ورکړئ",
-    "startConversation": "نن خبری او اتړی شروع کړی "
+    "startConversation": "نن خبری او اتړی شروع کړی ",
+    "send": "لیږل",
+    "search": "پلټل"
   },
   "navHeader": {
     "editProfile": "د پروفایل ایدیت",

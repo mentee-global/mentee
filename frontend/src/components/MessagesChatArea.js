@@ -605,7 +605,7 @@ function MessagesChatArea(props) {
               icon={<SendOutlined rotate={315} />}
               size={48}
             >
-              {t("messages.sent")}
+              {t("messages.send")}
             </Button>
           </>
         )}

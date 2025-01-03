@@ -28,12 +28,15 @@ function Messages(props) {
   const [restrictedPartners, setRestrictedPartners] = useState([]);
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
   const user = useSelector((state) => state.user.user);
+  const [sidebarLoading, setSidebarLoading] = useState(false);
 
   const messageListener = (data) => {
     async function fetchLatest() {
+      setSidebarLoading(true);
       const { data, allMessages } = await getLatestMessages(profileId);
       setLatestConvos(data);
       setAllMessages(allMessages);
+      setSidebarLoading(false);
     }
     fetchLatest();
     if (data.allowBooking === "true") {
@@ -62,10 +65,12 @@ function Messages(props) {
 
   useEffect(() => {
     async function getData() {
+      setSidebarLoading(true);
       const data = await getLatestMessages(profileId);
       const restricted_partners = await fetchPartners(true, null);
       setLatestConvos(data?.data);
       setAllMessages(data?.allMessages);
+      setSidebarLoading(false);
       setRestrictedPartners(restricted_partners);
       if (data && data?.data?.length) {
         let unread_message_senders = [];
@@ -126,6 +131,7 @@ function Messages(props) {
 
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
+    setAllMessages((prevMessages) => [...prevMessages, msg]);
     setTimeout(() => {
       async function fetchLatest() {
         const { data } = await getLatestMessages(profileId);
@@ -146,6 +152,7 @@ function Messages(props) {
         restrictedPartners={restrictedPartners}
         allMessages={allMessages}
         user={user}
+        loading={sidebarLoading}
       />
       <Layout style={{ backgroundColor: "white" }}>
         <MessagesChatArea

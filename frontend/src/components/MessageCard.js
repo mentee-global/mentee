@@ -90,13 +90,13 @@ function MessageCard(props) {
     }
   `;
 
-const descriptionClass = css`
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  display: block;
-`
+  const descriptionClass = css`
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+  `;
 
   return (
     <Card
@@ -133,13 +133,9 @@ const descriptionClass = css`
         >
           <Meta
             avatar={<Avatar src={otherUser.image} />}
-            title={
-              otherUser.name ? otherUser.name : accountData.organization
-            }
+            title={otherUser.name ? otherUser.name : accountData.organization}
             description={
-              <span className={descriptionClass}>
-                {latestMessage.body}
-              </span>
+              <span className={descriptionClass}>{latestMessage.body}</span>
             }
           />
         </div>

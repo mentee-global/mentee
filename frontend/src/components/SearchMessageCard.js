@@ -10,7 +10,12 @@ import { useMediaQuery } from "react-responsive";
 import { useHistory } from "react-router";
 import MessageCard from "./MessageCard";
 
-const SearchMessageCard = ({ messages, searchQuery, side_data, activeMessageId }) => {
+const SearchMessageCard = ({
+  messages,
+  searchQuery,
+  side_data,
+  activeMessageId,
+}) => {
   const [activeTab, setActiveTab] = useState("message");
   const {
     token: { colorPrimaryBorder, colorBorderSecondary },
@@ -91,7 +96,11 @@ const SearchMessageCard = ({ messages, searchQuery, side_data, activeMessageId }
               .includes(searchQuery.toLowerCase())
           )
             return (
-              <MessageCard key={chat.otherId} chat={chat} active={chat.otherId === activeMessageId} />
+              <MessageCard
+                key={chat.otherId}
+                chat={chat}
+                active={chat.otherId === activeMessageId}
+              />
             );
         })}
       </TabPane>

@@ -1002,7 +1002,7 @@ export const getGroupMessageData = (hub_user_id) => {
 };
 
 export const getMessageData = (sender_id, recipient_id) => {
-  if(typeof recipient_id !== "string") return;
+  if (typeof recipient_id !== "string") return;
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
   return authGet(requestExtension).then(
     (response) => response.data.result.Messages,

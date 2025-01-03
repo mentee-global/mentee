@@ -374,7 +374,15 @@ function MessagesChatArea(props) {
   };
 
   const HtmlContent = ({ content }) => {
-    return <div style={{wordBreak: isMobile ? 'break-word' : 'normal', fontSize: '15px'}} dangerouslySetInnerHTML={{ __html: content }} />;
+    return (
+      <div
+        style={{
+          wordBreak: isMobile ? "break-word" : "normal",
+          fontSize: "15px",
+        }}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
   };
 
   return (

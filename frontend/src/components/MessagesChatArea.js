@@ -23,9 +23,11 @@ import { css } from "@emotion/css";
 
 function MessagesChatArea(props) {
   const {
-    token: { colorPrimaryBg, colorPrimary },
+    token: { colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
+  const queryParameters = new URLSearchParams(window.location.search);
+  const messageId = queryParameters.get("message_id");
   const { socket } = props;
   const { TextArea } = Input;
   const { profileId, isMentee, isMentor, isPartner } = useAuth();
@@ -62,6 +64,18 @@ function MessagesChatArea(props) {
       });
     }
   };
+
+  function scrollToElement(id) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
+  }
+
   useEffect(() => {
     async function fetchAccount() {
       var account = null;
@@ -135,9 +149,15 @@ function MessagesChatArea(props) {
     }
     fetchAccount();
   }, [updateContent, otherId, messages]);
+
   useEffect(() => {
-    scrollToBottom();
-  }, [loading, messages]);
+    if (messageId) {
+      if (!messages?.length) return;
+      scrollToElement(messageId);
+    } else {
+      scrollToBottom();
+    }
+  }, [loading, messages, messageId]);
 
   async function getAppointments() {
     const mentorID = profileId;
@@ -354,7 +374,15 @@ function MessagesChatArea(props) {
   };
 
   const HtmlContent = ({ content }) => {
-    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+    return (
+      <div
+        style={{
+          wordBreak: isMobile ? "break-word" : "normal",
+          fontSize: "15px",
+        }}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
   };
 
   return (
@@ -436,12 +464,13 @@ function MessagesChatArea(props) {
       <div className="conversation-content">
         <Spin spinning={loading}>
           {accountData &&
-            messages.map((block) => {
+            messages.map((block, index) => {
               return (
                 <div
                   className={`chatRight__items you-${
                     block.sender_id.$oid === profileId ? "sent" : "received"
                   }`}
+                  id={block?._id?.$oid || index}
                 >
                   <div
                     className={`chatRight__inner  message-area ${
@@ -568,13 +597,16 @@ function MessagesChatArea(props) {
               onClick={sendMessage}
               className={css`
                 margin-left: 0.5em;
+                padding: 0.5em;
               `}
-              shape="circle"
+              shape="default"
               type="primary"
               ref={buttonRef}
               icon={<SendOutlined rotate={315} />}
               size={48}
-            />
+            >
+              {t("messages.sent")}
+            </Button>
           </>
         )}
       </div>

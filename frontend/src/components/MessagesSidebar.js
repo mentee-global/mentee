@@ -4,6 +4,9 @@ import { withRouter } from "react-router-dom";
 import { Divider, Input, Layout } from "antd";
 import MessageCard from "./MessageCard";
 import { useTranslation } from "react-i18next";
+import { SearchOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
+import SearchMessageCard from "./SearchMessageCard";
 
 function MessagesSidebar(props) {
   const { t } = useTranslation();
@@ -75,13 +78,37 @@ function MessagesSidebar(props) {
       <div className="messages-sidebar-header">
         <h1>{t("messages.sidebarTitle")}</h1>
       </div>
+      <div
+        className={css`
+          padding: 0 20px;
+          margin-bottom: 10px;
+        `}
+      >
+        <Input
+          placeholder={t("messages.search")}
+          prefix={<SearchOutlined />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       <Divider className="header-divider" orientation="left"></Divider>
       <div className="messages-sidebar" style={{ paddingTop: "1em" }}>
-        {side_data &&
+        {searchQuery && (
+          <SearchMessageCard
+            activeMessageId={activeMessageId}
+            messages={props?.allMessages}
+            searchQuery={searchQuery}
+            side_data={side_data}
+          />
+        )}
+        {!searchQuery &&
+          side_data &&
           side_data.length > 0 &&
           side_data.map((chat) => {
             if (
-              chat.otherId.toLowerCase().includes(searchQuery.toLowerCase())
+              chat.otherUser.name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
             ) {
               if (chat.otherId === activeMessageId) {
                 return (

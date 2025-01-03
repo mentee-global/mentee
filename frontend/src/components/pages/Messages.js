@@ -16,6 +16,7 @@ function Messages(props) {
   const { history } = props;
   const dispatch = useDispatch();
   const [latestConvos, setLatestConvos] = useState([]);
+  const [allMessages, setAllMessages] = useState([]);
   const activeMessageId = useSelector(
     (state) => state.messages.activeMessageId
   );
@@ -30,8 +31,9 @@ function Messages(props) {
 
   const messageListener = (data) => {
     async function fetchLatest() {
-      const data = await getLatestMessages(profileId);
+      const { data, allMessages } = await getLatestMessages(profileId);
       setLatestConvos(data);
+      setAllMessages(allMessages);
     }
     fetchLatest();
     if (data.allowBooking === "true") {
@@ -62,11 +64,12 @@ function Messages(props) {
     async function getData() {
       const data = await getLatestMessages(profileId);
       const restricted_partners = await fetchPartners(true, null);
-      setLatestConvos(data);
+      setLatestConvos(data?.data);
+      setAllMessages(data?.allMessages);
       setRestrictedPartners(restricted_partners);
-      if (data?.length) {
+      if (data && data?.data?.length) {
         let unread_message_senders = [];
-        data.map((message_item) => {
+        data?.data.map((message_item) => {
           if (
             message_item.message_read === false &&
             !unread_message_senders.includes(message_item.otherId)
@@ -82,7 +85,7 @@ function Messages(props) {
         });
 
         history.push(
-          `/messages/${data[0].otherId}?user_type=${data[0].otherUser.user_type}`
+          `/messages/${data?.data[0].otherId}?user_type=${data?.data[0].otherUser.user_type}`
         );
       } else {
         history.push("/messages/3");
@@ -125,7 +128,7 @@ function Messages(props) {
     setMessages((prevMessages) => [...prevMessages, msg]);
     setTimeout(() => {
       async function fetchLatest() {
-        const data = await getLatestMessages(profileId);
+        const { data } = await getLatestMessages(profileId);
         setLatestConvos(data);
       }
       fetchLatest();
@@ -141,6 +144,7 @@ function Messages(props) {
         latestConvos={latestConvos}
         activeMessageId={activeMessageId}
         restrictedPartners={restrictedPartners}
+        allMessages={allMessages}
         user={user}
       />
       <Layout style={{ backgroundColor: "white" }}>

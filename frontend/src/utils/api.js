@@ -47,7 +47,7 @@ export const getAllcountries = () => {
 };
 
 export const fetchAccountById = (id, type) => {
-  if (!id) return;
+  if (!id || typeof id !== "string") return;
   const requestExtension = `/account/${id}`;
   return authGet(requestExtension, {
     params: {
@@ -962,7 +962,7 @@ export const getDirectMessages = (user_id) => {
 export const getLatestMessages = (user_id) => {
   const requestExtension = `/messages/contacts/${user_id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result.data,
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }
@@ -1002,6 +1002,7 @@ export const getGroupMessageData = (hub_user_id) => {
 };
 
 export const getMessageData = (sender_id, recipient_id) => {
+  if (typeof recipient_id !== "string") return;
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
   return authGet(requestExtension).then(
     (response) => response.data.result.Messages,

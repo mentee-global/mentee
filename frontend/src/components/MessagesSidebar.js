@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 
-import { Divider, Input, Layout } from "antd";
+import { Divider, Input, Layout, Spin } from "antd";
 import MessageCard from "./MessageCard";
 import { useTranslation } from "react-i18next";
 import { SearchOutlined } from "@ant-design/icons";
@@ -70,61 +70,67 @@ function MessagesSidebar(props) {
     }
   }
   return (
-    <Sider
-      style={{ background: "white" }}
-      width={400}
-      className="messages-sidebar-background"
-    >
-      <div className="messages-sidebar-header">
-        <h1>{t("messages.sidebarTitle")}</h1>
-      </div>
-      <div
-        className={css`
-          padding: 0 20px;
-          margin-bottom: 10px;
-        `}
+    <Spin spinning={props.loading}>
+      <Sider
+        style={{ background: "white" }}
+        width={400}
+        className="messages-sidebar-background"
       >
-        <Input
-          placeholder={t("messages.search")}
-          prefix={<SearchOutlined />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-      <Divider className="header-divider" orientation="left"></Divider>
-      <div className="messages-sidebar" style={{ paddingTop: "1em" }}>
-        {searchQuery && (
-          <SearchMessageCard
-            activeMessageId={activeMessageId}
-            messages={props?.allMessages}
-            searchQuery={searchQuery}
-            side_data={side_data}
+        <div className="messages-sidebar-header">
+          <h1>{t("messages.sidebarTitle")}</h1>
+        </div>
+        <div
+          className={css`
+            padding: 0 20px;
+            margin-bottom: 10px;
+          `}
+        >
+          <Input
+            placeholder={t("messages.search")}
+            prefix={<SearchOutlined />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
-        )}
-        {!searchQuery &&
-          side_data &&
-          side_data.length > 0 &&
-          side_data.map((chat) => {
-            if (
-              chat.otherUser.name
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())
-            ) {
-              if (chat.otherId === activeMessageId) {
-                return (
-                  <MessageCard key={chat.otherId} chat={chat} active={true} />
-                );
+        </div>
+        <Divider className="header-divider" orientation="left"></Divider>
+        <div className="messages-sidebar" style={{ paddingTop: "1em" }}>
+          {searchQuery && (
+            <SearchMessageCard
+              activeMessageId={activeMessageId}
+              messages={props?.allMessages}
+              searchQuery={searchQuery}
+              side_data={side_data}
+            />
+          )}
+          {!searchQuery &&
+            side_data &&
+            side_data.length > 0 &&
+            side_data.map((chat) => {
+              if (
+                chat.otherUser.name
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
+              ) {
+                if (chat.otherId === activeMessageId) {
+                  return (
+                    <MessageCard key={chat.otherId} chat={chat} active={true} />
+                  );
+                } else {
+                  return (
+                    <MessageCard
+                      key={chat.otherId}
+                      chat={chat}
+                      active={false}
+                    />
+                  );
+                }
               } else {
-                return (
-                  <MessageCard key={chat.otherId} chat={chat} active={false} />
-                );
+                return <></>;
               }
-            } else {
-              return <></>;
-            }
-          })}
-      </div>
-    </Sider>
+            })}
+        </div>
+      </Sider>
+    </Spin>
   );
 }
 

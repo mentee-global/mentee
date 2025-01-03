@@ -33,7 +33,7 @@ function Messages(props) {
     async function fetchLatest() {
       const { data, allMessages } = await getLatestMessages(profileId);
       setLatestConvos(data);
-      setAllMessages(allMessages)
+      setAllMessages(allMessages);
     }
     fetchLatest();
     if (data.allowBooking === "true") {
@@ -65,7 +65,7 @@ function Messages(props) {
       const data = await getLatestMessages(profileId);
       const restricted_partners = await fetchPartners(true, null);
       setLatestConvos(data?.data);
-      setAllMessages(data?.allMessages)
+      setAllMessages(data?.allMessages);
       setRestrictedPartners(restricted_partners);
       if (data && data?.data?.length) {
         let unread_message_senders = [];

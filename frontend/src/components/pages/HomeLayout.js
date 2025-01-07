@@ -123,7 +123,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
               className={css`
                 position: absolute;
                 top: 0em;
-                height: 75px;
+                height: 120px;
               `}
             />
             <div style={{ position: "absolute", bottom: "10px" }}>
@@ -136,7 +136,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
               >
                 <div
                   style={{
-                    fontSize: "20px",
+                    fontSize: "16px",
                     fontStyle: "italic",
                     paddingTop: "15px",
                   }}
@@ -148,7 +148,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                     src={BigLogoImage}
                     alt={""}
                     className={css`
-                      width: 50px;
+                      width: 40px;
                       cursor: pointer;
                       margin-left: 10px;
                     `}

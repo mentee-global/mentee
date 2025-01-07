@@ -3,11 +3,8 @@ import { Col, Row, Space, Tooltip } from "antd";
 import { useHistory, withRouter } from "react-router-dom";
 import { css } from "@emotion/css";
 import LanguageDropdown from "components/LanguageDropdown";
-// import { ReactComponent as Logo } from "resources/mentee.svg";
 import BigLogoImage from "resources/Mentee_logo_letter.png";
 import N50Logo from "resources/N50_logo.png";
-// import { ReactComponent as SmallLogo } from "resources/menteeSmall.svg";
-import SmallLogoImage from "resources/Mentee_logo_small.png";
 import { useMediaQuery } from "react-responsive";
 import { FormOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -89,7 +86,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
       <Col
         span={isTablet ? 24 : 11}
         className={css`
-          @media (max-width: 991px) and (min-width: 576px) {
+          @media (max-width: 991px) and (min-width: 319px) {
             display: flex;
             justify-content: center;
           }
@@ -118,17 +115,6 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           }
         `}
       >
-        {/* <SmallLogo
-          className={css`
-            position: absolute;
-            top: 1em;
-            left: 1em;
-            width: 2em;
-            height: 2em;
-            cursor: pointer;
-          `}
-          onClick={() => history.push("/")}
-        /> */}
         {isTablet && N50Path.includes(location.pathname) ? (
           <>
             <img
@@ -137,13 +123,10 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
               className={css`
                 position: absolute;
                 top: 0em;
-                left: 40%;
-                height: 75px;
+                height: 120px;
               `}
             />
-            <div
-              style={{ position: "absolute", bottom: "10px", witth: "100%" }}
-            >
+            <div style={{ position: "absolute", bottom: "10px" }}>
               <div
                 style={{
                   display: "flex",
@@ -153,7 +136,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
               >
                 <div
                   style={{
-                    fontSize: "20px",
+                    fontSize: "16px",
                     fontStyle: "italic",
                     paddingTop: "15px",
                   }}
@@ -165,7 +148,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                     src={BigLogoImage}
                     alt={""}
                     className={css`
-                      width: 50px;
+                      width: 40px;
                       cursor: pointer;
                       margin-left: 10px;
                     `}
@@ -244,7 +227,8 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
             className={css`
               padding-left: 0em;
               border-radius: 2em;
-              text-aling: center;
+              position: relative;
+              text-align: center;
               width: 100%;
               height: 100%;
               background: #c6ffdd;
@@ -306,15 +290,6 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                         {t("common.powered_by")}
                       </div>
                       <div>
-                        {/* <Logo
-                          className={css`
-                            height: 80px;
-                            width: 160px;
-                            cursor: pointer;
-                            margin-left: 10px;
-                          `}
-                          onClick={() => history.push("/")}
-                        /> */}
                         <img
                           src={BigLogoImage}
                           alt={""}
@@ -333,13 +308,6 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
             ) : (
               <>
                 {homeLayoutPaths.includes(location.pathname) && (
-                  // <Logo
-                  //   className={css`
-                  //     width: 100%;
-                  //     height: 100%;
-                  //     fill-opacity: 0.7;
-                  //   `}
-                  // />
                   <div
                     style={{
                       display: "flex",
@@ -379,12 +347,12 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                     </div>
                     <div
                       style={{
-                        width: "96%",
+                        width: "100%",
                         textAlign: "right",
                         marginBottom: "0px",
                         position: "absolute",
-                        bottom: "30px",
-                        paddingRight: "20px",
+                        bottom: "10px",
+                        right: "20px",
                       }}
                     >
                       <div style={{ display: "flex", justifyContent: "end" }}>
@@ -398,15 +366,6 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                           {t("common.powered_by")}
                         </div>
                         <div>
-                          {/* <Logo
-                          className={css`
-                            height: 80px;
-                            width: 160px;
-                            cursor: pointer;
-                            margin-left: 10px;
-                          `}
-                          onClick={() => history.push("/")}
-                        /> */}
                           <img
                             src={BigLogoImage}
                             alt={""}

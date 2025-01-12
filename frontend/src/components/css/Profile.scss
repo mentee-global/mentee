@@ -21,6 +21,26 @@
   word-wrap: break-word;
 }
 
+.mentor-profile-contact-icon {
+  margin-top: 6px;
+  margin-right: 2%;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .mentor-profile-contact {
+    margin-top: 4px;
+  }
+
+  .mentor-profile-button {
+    margin-top: 1rem;
+  }
+
+  .mentor-profile-heading {
+    margin: 0
+  }
+}
+
 @media (min-width: 768px) {
   //For desktop
 

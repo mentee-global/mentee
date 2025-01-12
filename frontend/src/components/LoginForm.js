@@ -200,6 +200,11 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           ]}
         >
           <Input.Password prefix={<LockOutlined />} />
+          <div style={{ width: "100%", textAlign: "end" }}>
+            <Link to={{ pathname: "/forgot-password", state: { role } }}>
+              {t("login.forgotPassword")}
+            </Link>
+          </div>
         </Form.Item>
         <Form.Item>
           <Button
@@ -211,9 +216,55 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           >
             {t("common.login")}
           </Button>
-          <Link to={{ pathname: "/forgot-password", state: { role } }}>
-            {t("login.forgotPassword")}
-          </Link>
+          <p
+            className={css`
+              width: 100%;
+              text-align: center;
+              line-height: 0.1em;
+              position: relative;
+              padding-top: 8px;
+
+              &::before,
+              &::after {
+                content: "";
+                position: absolute;
+                top: 90%;
+                width: 40%;
+                height: 1px;
+                background: #000;
+                padding: 0 8px;
+              }
+
+              &::before {
+                left: 0;
+                margin-left: 4px;
+              }
+
+              &::after {
+                right: 0;
+                margin-right: 4px;
+              }
+            `}
+          >
+            <span
+              className={css`
+                padding: 0 10px;
+              `}
+            >
+              OR
+            </span>
+          </p>
+          <div style={{ paddingTop: "4px", textAlign: "end" }}>
+            <Link to={{ pathname: "/apply" }}>
+              <Button
+                style={{ width: "100%" }}
+                type="primary"
+                htmlType="button"
+              >
+                {t("login.registerUser")}
+              </Button>
+            </Link>
+          </div>
         </Form.Item>
       </Form>
     </div>

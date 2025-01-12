@@ -158,7 +158,13 @@ function NavigationHeader() {
   return (
     <Header
       className="navigation-header"
-      style={{ background: colorBgContainer, display: "flex" }}
+      style={{
+        background: colorBgContainer,
+        display: "flex",
+        position: "sticky",
+        top: 0,
+        zIndex: 999,
+      }}
       theme="light"
     >
       {user &&

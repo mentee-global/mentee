@@ -448,7 +448,7 @@ function ProfileContent(props) {
       )}
       {props.mentor.pair_partner && props.mentor.pair_partner.email && (
         <>
-          <div style={{ marginTop: "10px" }} className="mentor-profile-heading">
+          <div style={{ marginTop: "20px" }} className="mentor-profile-heading">
             <b>{t("common.partner")}</b>
           </div>
           <Avatar

@@ -189,23 +189,32 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
         >
           <Input prefix={<UserOutlined />} autoFocus />
         </Form.Item>
-        <Form.Item
-          name="password"
-          label={t("common.password")}
-          rules={[
-            {
-              required: true,
-              message: t("loginErrors.passwordError"),
-            },
-          ]}
-        >
-          <Input.Password prefix={<LockOutlined />} />
-          <div style={{ width: "100%", textAlign: "end" }}>
+        <div style={{ position: "relative" }}>
+          <Form.Item
+            name="password"
+            label={t("common.password")}
+            rules={[
+              {
+                required: true,
+                message: t("loginErrors.passwordError"),
+              },
+            ]}
+          >
+            <Input.Password prefix={<LockOutlined />} />
+          </Form.Item>
+          <div
+            style={{
+              width: "100%",
+              textAlign: "end",
+              position: "absolute",
+              top: "70px",
+            }}
+          >
             <Link to={{ pathname: "/forgot-password", state: { role } }}>
               {t("login.forgotPassword")}
             </Link>
           </div>
-        </Form.Item>
+        </div>
         <Form.Item>
           <Button
             type="primary"
@@ -216,55 +225,59 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           >
             {t("common.login")}
           </Button>
-          <p
-            className={css`
-              width: 100%;
-              text-align: center;
-              line-height: 0.1em;
-              position: relative;
-              padding-top: 8px;
+          {role !== ACCOUNT_TYPE.ADMIN && (
+            <div>
+              <p
+                className={css`
+                  width: 100%;
+                  text-align: center;
+                  line-height: 0.1em;
+                  position: relative;
+                  padding-top: 8px;
 
-              &::before,
-              &::after {
-                content: "";
-                position: absolute;
-                top: 90%;
-                width: 40%;
-                height: 1px;
-                background: #000;
-                padding: 0 8px;
-              }
+                  &::before,
+                  &::after {
+                    content: "";
+                    position: absolute;
+                    top: 90%;
+                    width: 40%;
+                    height: 1px;
+                    background: #000;
+                    padding: 0 8px;
+                  }
 
-              &::before {
-                left: 0;
-                margin-left: 4px;
-              }
+                  &::before {
+                    left: 0;
+                    margin-left: 4px;
+                  }
 
-              &::after {
-                right: 0;
-                margin-right: 4px;
-              }
-            `}
-          >
-            <span
-              className={css`
-                padding: 0 10px;
-              `}
-            >
-              OR
-            </span>
-          </p>
-          <div style={{ paddingTop: "4px", textAlign: "end" }}>
-            <Link to={{ pathname: "/apply" }}>
-              <Button
-                style={{ width: "100%" }}
-                type="primary"
-                htmlType="button"
+                  &::after {
+                    right: 0;
+                    margin-right: 4px;
+                  }
+                `}
               >
-                {t("login.registerUser")}
-              </Button>
-            </Link>
-          </div>
+                <span
+                  className={css`
+                    padding: 0 10px;
+                  `}
+                >
+                  OR
+                </span>
+              </p>
+              <div style={{ paddingTop: "4px", textAlign: "end" }}>
+                <Link to={{ pathname: "/apply" }}>
+                  <Button
+                    style={{ width: "100%" }}
+                    type="primary"
+                    htmlType="button"
+                  >
+                    {t("login.registerUser")}
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
         </Form.Item>
       </Form>
     </div>

@@ -222,7 +222,7 @@ function Events() {
   // Add some kind of error 403 code
   return (
     <>
-      <Affix offsetTop={10}>
+      <Affix offsetTop={50}>
         <div style={{ display: "flex" }}>
           <Button
             onClick={() => setMobileFilterVisible(true)}
@@ -289,7 +289,7 @@ function Events() {
       </Modal>
       <div className="gallery-container">
         <FloatButton.BackTop />
-        <Affix offsetTop={10}>
+        <Affix offsetTop={50}>
           <Button
             className={css`
               margin-top: 10px;

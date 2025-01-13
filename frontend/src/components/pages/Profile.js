@@ -162,11 +162,7 @@ function Profile() {
           </div>
           <div className="mentor-profile-save-container">
             <Form.Item>
-              <Button
-                className="regular-button"
-                type="primary"
-                htmlType="submit"
-              >
+              <Button type="primary" htmlType="submit">
                 {t("common.save")}
               </Button>
             </Form.Item>

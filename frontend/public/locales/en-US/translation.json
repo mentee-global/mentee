@@ -281,6 +281,7 @@
   },
   "login": {
     "apply": "Apply",
+    "registerUser": "Register User",
     "clickLoginPrompt": "Please click on your role to continue on",
     "emailPlaceholder": "Enter your email",
     "forgotPassword": "Forgot password?",

@@ -270,6 +270,7 @@ function Appointments() {
             <Spin spinning={isLoading}>
               <Tabs
                 items={tabItems}
+                rootClassName="appointments-tabs-view"
                 defaultActiveKey="upcoming"
                 onChange={(tab) => setCurrentTab(tab)}
               />

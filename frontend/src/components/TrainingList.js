@@ -7,13 +7,14 @@ import {
   getSignedDocfile,
   changeStateTraining,
 } from "utils/api";
-import ReactPlayer from "react-player/youtube";
+import { useMediaQuery } from "react-responsive";
 
 import "./css/TrainingList.scss";
-import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, TRAINING_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import DigitalSignModal from "./DigitalSignModal";
+import ReactPlayer from "react-player/youtube";
 
 const placeholder = Array(5).fill({
   _id: {
@@ -30,6 +31,7 @@ const placeholder = Array(5).fill({
 const TrainingList = (props) => {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const isMobile = useMediaQuery({ query: `(max-width: 540px)` });
   const [trainingData, setTrainingData] = useState();
   const [openSignModal, setOpenSignModal] = useState(false);
   const [selectedTrainid, setSelectedTrainid] = useState(null);
@@ -95,7 +97,7 @@ const TrainingList = (props) => {
             <>
               <ReactPlayer
                 className="react-player"
-                width={400}
+                width={isMobile ? 340 : 400}
                 height={300}
                 url={training.url}
               />
@@ -228,7 +230,7 @@ const TrainingList = (props) => {
         size="large"
         dataSource={trainingData ?? placeholder}
         renderItem={(item) => (
-          <List.Item key={item._id.$oid}>
+          <List.Item style={{ padding: isMobile && 0 }} key={item._id.$oid}>
             <Skeleton loading={loading} active>
               <List.Item.Meta
                 title={item.name}

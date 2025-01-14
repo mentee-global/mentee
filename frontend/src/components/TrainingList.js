@@ -203,9 +203,13 @@ const TrainingList = (props) => {
           } else {
             hub_user_id = user._id.$oid;
           }
-          setTrainingData(trains.sort((a, b)=> a.sort_order - b.sort_order).filter((x) => x.hub_id == hub_user_id));
+          setTrainingData(
+            trains
+              .sort((a, b) => a.sort_order - b.sort_order)
+              .filter((x) => x.hub_id == hub_user_id)
+          );
         } else {
-          setTrainingData(trains.sort((a, b)=> a.sort_order - b.sort_order));
+          setTrainingData(trains.sort((a, b) => a.sort_order - b.sort_order));
         }
         setLoading(false);
         setFlag(!flag);

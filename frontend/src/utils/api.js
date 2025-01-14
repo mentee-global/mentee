@@ -30,6 +30,12 @@ const authPut = async (url, data, config) =>
     headers: { Authorization: await getUserIdToken() },
   });
 
+const authPatch = async (url, data, config) =>
+  instance.patch(url, data, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
+
 const authDelete = async (url, config) =>
   instance.delete(url, {
     ...config,
@@ -277,11 +283,25 @@ export const getTrainings = async (
   }).catch(console.error);
   const trains = res.data.result.trainings;
   let newTrain = [];
+  let seenOids = new Set();
   for (let train of trains) {
-    train.id = train._id["$oid"];
-    newTrain.push(train);
+    const oid = train._id["$oid"];
+    if (!seenOids.has(oid)) {
+      train.id = oid;
+      newTrain.push(train);
+      seenOids.add(oid);
+    }
   }
   return newTrain;
+};
+
+export const updateTrainings = async (data) => {
+  const requestExtension = `/training/update_multiple`;
+  const res = await authPatch(requestExtension, {
+    trainings: data,
+  }).catch(console.error);
+  const trains = res.data.result.trainings;
+  return trains;
 };
 
 export const getNotifys = async () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   deleteTrainbyId,
   downloadBlob,
@@ -9,6 +9,7 @@ import {
   fetchAccounts,
   fetchPartners,
   newTrainCreate,
+  updateTrainings,
 } from "utils/api";
 import { ACCOUNT_TYPE, I18N_LANGUAGES, TRAINING_TYPE } from "utils/consts";
 import { HubsDropdown } from "../AdminDropdowns";
@@ -26,6 +27,7 @@ import {
 import {
   DeleteOutlined,
   EditOutlined,
+  HolderOutlined,
   PlusCircleOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
@@ -35,6 +37,69 @@ import "components/css/Training.scss";
 import AdminDownloadDropdown from "../AdminDownloadDropdown";
 import TrainingTranslationModal from "../TrainingTranslationModal";
 import UpdateTrainingForm from "../UpdateTrainingModal";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { DndContext } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+
+const RowContext = React.createContext({});
+const DragHandle = () => {
+  const { setActivatorNodeRef, listeners } = useContext(RowContext);
+  return (
+    <Button
+      type="text"
+      size="small"
+      icon={<HolderOutlined />}
+      style={{
+        cursor: "move",
+      }}
+      ref={setActivatorNodeRef}
+      {...listeners}
+    />
+  );
+};
+
+const Row = (props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props["data-row-key"],
+  });
+  const style = {
+    ...props.style,
+    transform: CSS.Translate.toString(transform),
+    transition,
+    ...(isDragging
+      ? {
+          position: "relative",
+          zIndex: 9999,
+        }
+      : {}),
+  };
+  const contextValue = useMemo(
+    () => ({
+      setActivatorNodeRef,
+      listeners,
+    }),
+    [setActivatorNodeRef, listeners]
+  );
+  return (
+    <RowContext.Provider value={contextValue}>
+      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+    </RowContext.Provider>
+  );
+};
 
 const AdminTraining = () => {
   const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
@@ -94,7 +159,7 @@ const AdminTraining = () => {
 
   const handleResetFilters = () => {
     setResetFilters(!resetFilters);
-    setTrainingData(allData);
+    setTrainingData(allData.sort((a, b) => a.sort_order - b.sort_order));
   };
 
   const onFinishTrainingForm = async (values, isNewTraining) => {
@@ -178,6 +243,43 @@ const AdminTraining = () => {
     }
   };
 
+  const onDragEnd = async ({ active, over }) => {
+    if (active.id !== over?.id) {
+      const updatedTrainingData = [...trainingData];
+      const activeIndex = updatedTrainingData.findIndex(
+        (record) => record.id === active?.id
+      );
+      const overIndex = updatedTrainingData.findIndex(
+        (record) => record.id === over?.id
+      );
+      const movedTrainingData = arrayMove(
+        updatedTrainingData,
+        activeIndex,
+        overIndex
+      );
+      const updatedData = movedTrainingData.map((item, index) => ({
+        id: item.id,
+        updated_data: { sort_order: index },
+      }));
+      setLoading(true);
+      const response = await updatedTraningData(updatedData);
+      if (response) {
+        setLoading(false);
+      }
+      setTrainingData(movedTrainingData);
+    }
+  };
+
+  const updatedTraningData = async (data) => {
+    try {
+      await updateTrainings(data);
+      return "success";
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
   const getAvailableLangs = (record) => {
     if (!record?.translations) return [I18N_LANGUAGES[0]];
     let items = I18N_LANGUAGES.filter((lang) => {
@@ -201,8 +303,8 @@ const AdminTraining = () => {
       setLoading(true);
       let newData = await getTrainings(role);
       if (newData) {
-        setTrainingData(newData);
-        setAllData(newData);
+        setTrainingData(newData.sort((a, b) => a.sort_order - b.sort_order));
+        setAllData(newData.sort((a, b) => a.sort_order - b.sort_order));
       } else {
         setTrainingData([]);
         setAllData([]);
@@ -217,6 +319,12 @@ const AdminTraining = () => {
   }, [role, reload]);
 
   const columns = [
+    {
+      key: "sort",
+      align: "center",
+      width: 80,
+      render: () => <DragHandle />,
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -325,7 +433,11 @@ const AdminTraining = () => {
 
   const searchbyHub = (hub_id) => {
     if (role === ACCOUNT_TYPE.HUB) {
-      setTrainingData(allData.filter((x) => x.hub_id == hub_id));
+      setTrainingData(
+        allData
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .filter((x) => x.hub_id == hub_id)
+      );
     }
   };
 
@@ -351,6 +463,8 @@ const AdminTraining = () => {
       disabled: translateLoading,
     },
   ];
+
+  console.log(trainingData);
 
   return (
     <div className="trains">
@@ -386,7 +500,26 @@ const AdminTraining = () => {
       </div>
       <Spin spinning={translateLoading}>
         <Skeleton loading={loading} active>
-          <Table columns={columns} dataSource={trainingData} />
+          <DndContext
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext
+              items={trainingData.map((i) => i.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <Table
+                rowKey="id"
+                components={{
+                  body: {
+                    row: Row,
+                  },
+                }}
+                columns={columns}
+                dataSource={trainingData}
+              />
+            </SortableContext>
+          </DndContext>
         </Skeleton>
       </Spin>
       <TrainingTranslationModal

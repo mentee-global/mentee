@@ -81,6 +81,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
     <Row
       className={css`
         height: 100vh;
+        width: 100vw;
       `}
     >
       <Col

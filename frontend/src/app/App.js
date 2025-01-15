@@ -139,8 +139,7 @@ function App() {
           <Initiator />
           <Layout hasSider style={{ position: "relative", height: "100%" }}>
             {role && <NavigationSider />}
-            <Content style={{ height: "100vh", overflow: "hidden" }}>
-              {role && <NavigationHeader />}
+            <Content style={{display: role && 'none'}}>
               <HomeLayout ignoreHomeLayout={role} allHubData={allHubData}>
                 <PublicRoute exact path="/">
                   <Home />
@@ -228,6 +227,9 @@ function App() {
                   <ForgotPassword />
                 </PublicRoute>
               </HomeLayout>
+            </Content>
+            {role && <Content style={{ height: "100vh", overflow: "hidden" }}>
+              {role && <NavigationHeader />}
               <div style={{ height: "calc(100vh - 48px)", overflow: "auto" }}>
                 <PrivateRoute path="/support/all-mentors">
                   {role == ACCOUNT_TYPE.SUPPORT ? (
@@ -679,7 +681,7 @@ function App() {
                 {role == ACCOUNT_TYPE.HUB && <HubFooter />}
                 {n50Flag && <HubFooter />}
               </div>
-            </Content>
+            </Content>}
             <MeetingPanel />
           </Layout>
         </Router>

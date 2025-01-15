@@ -291,6 +291,7 @@
   flex-direction: row;
   margin-bottom: 5%;
   margin-left: 1%;
+  height: 100%
 }
 
 .appointment-card {
@@ -316,7 +317,7 @@
 
 .appointments-date-block {
   display: flex;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .appointments-date-text-block {
@@ -344,9 +345,10 @@
 
 .appointments-column {
   overflow: hidden;
-  padding: 5% 3%;
+  padding: 3% 2%;
   height: 100%;
   width: 80%;
+  padding-bottom: 0;
 }
 
 .appointments-welcome-box {
@@ -408,6 +410,10 @@
   margin-right: 1%;
 }
 
+.appointments-tabs-view .ant-card-body {
+  padding: 20px;
+}
+
 .appointments-tab-item-selected {
   background-color: $appointments-tab-item-selected-background-color;
   color: $appointments-tab-item-selected-color;
@@ -463,12 +469,18 @@
   margin-right: 10px;
 }
 
+.appointments-tabs-view .ant-tabs-content-holder {
+  height: 70vh;
+  overflow: auto;
+}
+
 .error {
   display: none;
 }
 @media (max-width: 667px) {
   .appointments-tabs {
     display: block;
+    margin-bottom: 0;
     button {
       margin-bottom: 10px;
     }
@@ -476,6 +488,7 @@
   .appointments-column {
     width: 100%;
     flex-basis: 100%;
+    padding: 0;
   }
   .appointments-date-text-block {
     width: 60px;

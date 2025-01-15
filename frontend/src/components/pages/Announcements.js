@@ -255,7 +255,16 @@ function Announcements() {
           </div>
         ) : (
           <div style={{ padding: "20px" }}>
-            <Table columns={columns} dataSource={getFilteredData()} />
+            <Table
+              className={css`
+                .ant-table-content {
+                  width: 100%;
+                  overflow: auto;
+                }
+              `}
+              columns={columns}
+              dataSource={getFilteredData()}
+            />
           </div>
         )}
       </div>

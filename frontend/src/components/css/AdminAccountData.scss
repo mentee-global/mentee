@@ -123,3 +123,19 @@
     }
   }
 }
+
+.table-header {
+  flex-direction: row;
+}
+
+@media (max-width: 600px) {
+  .table-header {
+    flex-direction: column;
+  }
+
+  .table-search {
+    width: 100% !important;
+  }
+}
+
+

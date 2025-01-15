@@ -102,9 +102,7 @@ function MessageCard(props) {
     <Card
       onClick={openMessage}
       className={css`
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
+        width: 100%;
         margin-bottom: 3%;
         border: 1px solid "#e8e8e8";
         box-sizing: border-box;

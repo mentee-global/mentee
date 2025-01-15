@@ -83,7 +83,7 @@ const Row = (props) => {
     ...(isDragging
       ? {
           position: "relative",
-          zIndex: 9999,
+          zIndex: 999,
         }
       : {}),
   };

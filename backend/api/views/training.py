@@ -3,6 +3,7 @@ from flask import Blueprint, request
 import json
 from werkzeug.utils import secure_filename
 from api.core import create_response, logger
+from bson import ObjectId
 from api.models import (
     Hub,
     SignedDocs,

@@ -89,13 +89,20 @@ function MessageCard(props) {
       background: ${colorPrimaryBg};
     }
   `;
+
+  const descriptionClass = css`
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+  `;
+
   return (
     <Card
       onClick={openMessage}
       className={css`
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
+        width: 100%;
         margin-bottom: 3%;
         border: 1px solid "#e8e8e8";
         box-sizing: border-box;
@@ -111,7 +118,7 @@ function MessageCard(props) {
         ${active && activeCardStyle}
       `}
     >
-      {accountData ? (
+      {otherUser ? (
         <div
           className={
             active &&
@@ -123,11 +130,11 @@ function MessageCard(props) {
           }
         >
           <Meta
-            avatar={<Avatar src={accountData.image?.url} />}
-            title={
-              accountData.name ? accountData.name : accountData.organization
+            avatar={<Avatar src={otherUser.image} />}
+            title={otherUser.name ? otherUser.name : accountData.organization}
+            description={
+              <span className={descriptionClass}>{latestMessage.body}</span>
             }
-            description={latestMessage.body}
           />
         </div>
       ) : null}

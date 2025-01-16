@@ -521,7 +521,9 @@
     "sendMessagePlaceholder": "Enviar un mensaje",
     "sidebarTitle": "Mis mensajes",
     "reply":"Responder",
-    "startConversation": "¡Comienza una conversación hoy!"
+    "startConversation": "¡Comienza una conversación hoy!",
+    "send": "Enviar",
+    "search": "Buscar"
   },
   "navHeader": {
     "editProfile": "Editar perfil",

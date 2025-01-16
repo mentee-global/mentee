@@ -26,6 +26,7 @@ function TrainingData({ role }) {
         @media (max-width: 575px) {
           width: 100%;
           margin: 0;
+          padding: 1em;
           border-radius: 0;
         }
       `}

@@ -6,6 +6,7 @@
   margin-left: auto;
   margin-right: auto;
   max-height: 100%;
+  overflow: hidden;
   // height: calc(100% - 50px);
 }
 
@@ -16,9 +17,9 @@
 
 .messages-sidebar {
   overflow: auto;
-  width: 100%;
   height: calc(100vh - 113px - 90px);
   padding-bottom: 2%;
+  margin: 0 20px;
 }
 
 .messages-chat-area-header {
@@ -52,7 +53,7 @@
 .messages-sidebar-header {
   background-color: white;
   overflow-y: hidden;
-  padding-left: 10%;
+  padding-left: 20px;
   font-size: 3ch;
   height: 89px;
 }
@@ -104,10 +105,10 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   padding: 12px;
-  position: fixed;
   position: sticky;
-  bottom: 0;
+  bottom: 0px;
   width: 100%;
 }
 
@@ -115,7 +116,7 @@
   display: flex;
   flex-direction: column;
   // padding-bottom: 60px; // synced with --chat-footer-height, for some reason var() doesn't work
-  height: calc(100vh - #{($nav-header-height + $footer-gap)});
+  // height: calc(100vh - #{($nav-header-height + $footer-gap)});
 }
 
 .conversation-content {
@@ -124,6 +125,7 @@
   flex: 1;
   padding: 12px;
   max-height: calc(100vh - #{($nav-header-height + $footer-gap)} - 90px);
+  min-height: calc(100vh - #{($nav-header-height + $footer-gap)} - 90px);
 }
 .group-conversation-content {
   max-height: calc(100vh - #{($nav-header-height + $footer-gap)});
@@ -155,7 +157,6 @@
 }
 
 .convo {
-  max-width: 330px;
   display: block;
 }
 
@@ -274,5 +275,8 @@
   }
   .conversation-footer {
     width: 100vw;
+  }
+  .no-messages {
+    display: none !important;
   }
 }

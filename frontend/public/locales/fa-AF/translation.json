@@ -521,7 +521,9 @@
     "sendMessagePlaceholder": "ارسال یک پیام",
     "sidebarTitle": "پیام های من",
     "reply":"پاسخ دهید",
-    "startConversation": "امروز یک مکالمه را شروع کنید!"
+    "startConversation": "امروز یک مکالمه را شروع کنید!",
+    "send": "ارسال",
+    "search": "جستجو"
   },
   "navHeader": {
     "editProfile": "ویرایش نمایه",

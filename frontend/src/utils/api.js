@@ -30,6 +30,12 @@ const authPut = async (url, data, config) =>
     headers: { Authorization: await getUserIdToken() },
   });
 
+const authPatch = async (url, data, config) =>
+  instance.patch(url, data, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
+
 const authDelete = async (url, config) =>
   instance.delete(url, {
     ...config,
@@ -47,7 +53,7 @@ export const getAllcountries = () => {
 };
 
 export const fetchAccountById = (id, type) => {
-  if (!id) return;
+  if (!id || typeof id !== "string") return;
   const requestExtension = `/account/${id}`;
   return authGet(requestExtension, {
     params: {
@@ -277,11 +283,25 @@ export const getTrainings = async (
   }).catch(console.error);
   const trains = res.data.result.trainings;
   let newTrain = [];
+  let seenOids = new Set();
   for (let train of trains) {
-    train.id = train._id["$oid"];
-    newTrain.push(train);
+    const oid = train._id["$oid"];
+    if (!seenOids.has(oid)) {
+      train.id = oid;
+      newTrain.push(train);
+      seenOids.add(oid);
+    }
   }
   return newTrain;
+};
+
+export const updateTrainings = async (data) => {
+  const requestExtension = `/training/update_multiple`;
+  const res = await authPatch(requestExtension, {
+    trainings: data,
+  }).catch(console.error);
+  const trains = res.data.result.trainings;
+  return trains;
 };
 
 export const getNotifys = async () => {
@@ -962,7 +982,7 @@ export const getDirectMessages = (user_id) => {
 export const getLatestMessages = (user_id) => {
   const requestExtension = `/messages/contacts/${user_id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result.data,
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }
@@ -1002,6 +1022,7 @@ export const getGroupMessageData = (hub_user_id) => {
 };
 
 export const getMessageData = (sender_id, recipient_id) => {
+  if (typeof recipient_id !== "string") return;
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
   return authGet(requestExtension).then(
     (response) => response.data.result.Messages,

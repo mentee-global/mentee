@@ -35,3 +35,9 @@
 .update-training-form {
   padding: 2em;
 }
+
+@media (max-width: 600px) {
+  .table-button-group {
+    flex-direction: column;
+  }
+}

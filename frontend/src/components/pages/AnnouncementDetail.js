@@ -144,7 +144,6 @@ function AnnouncementDetail({ match }) {
                           marginBottom: "5px",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
-                          maxWidth: "65%",
                         }}
                       >
                         <AdminDownloadDropdown

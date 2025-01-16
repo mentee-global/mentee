@@ -134,3 +134,18 @@
 .ant-card-meta-description {
   font-weight: bold !important;
 }
+
+.ant-table-content {
+  overflow: auto;
+}
+
+@media (max-width: 600px) {
+  .btn-d {
+  width: 100%;
+  margin: 10px 0;
+  }
+  .btn-dc {
+    flex-direction: column;
+    padding: 0 10px;
+  }
+}

@@ -28,6 +28,7 @@ function GroupMessageChatArea(props) {
   const [replyInputFlags, setReplyInputFlags] = useState({});
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [emojiUp, setEmojiUp] = useState(false);
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
 
   const scrollToBottom = () => {
@@ -196,6 +197,7 @@ function GroupMessageChatArea(props) {
             setDotMenuFlags(dot_temp);
             setRefreshFlag(!refreshFlag);
             setReplyMessageText("");
+            setShowEmojiPicker(false);
           }}
         >
           {t("messages.reply")}
@@ -329,10 +331,32 @@ function GroupMessageChatArea(props) {
                       alt=""
                       className="emoji-icon"
                       src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-                      onClick={() => setShowEmojiPicker((val) => !val)}
+                      onClick={(e) => {
+                        console.log(
+                          "eee",
+                          e,
+                          e.target.getBoundingClientRect(),
+                          window.innerHeight
+                        );
+                        if (
+                          e.target.getBoundingClientRect().y <
+                          window.innerHeight / 2
+                        ) {
+                          setEmojiUp(false);
+                        } else {
+                          setEmojiUp(true);
+                        }
+                        setShowEmojiPicker((val) => !val);
+                      }}
                     />
                     {showEmojiPicker && (
-                      <div className="emoji-container">
+                      <div
+                        className={
+                          emojiUp
+                            ? "up emoji-container"
+                            : "down emoji-container"
+                        }
+                      >
                         <EmojiPicker
                           onEmojiClick={(e) => onEmojiClick(e, "reply")}
                         />

@@ -251,9 +251,14 @@
 }
 .emoji-container {
   position: absolute;
-  bottom: 50px;
   right: 30px;
   max-width: 450px;
+}
+.emoji-container.down {
+  top: 50px;
+}
+.emoji-container.up {
+  bottom: 50px;
 }
 .conversation-footer {
   .emoji-icon {

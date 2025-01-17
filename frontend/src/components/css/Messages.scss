@@ -128,7 +128,7 @@
   min-height: calc(100vh - #{($nav-header-height + $footer-gap)} - 90px);
 }
 .group-conversation-content {
-  max-height: calc(100vh - #{($nav-header-height + $footer-gap)});
+  max-height: calc(100vh - #{($nav-header-height + $footer-gap)} - 40px);
 }
 
 .no-messages {

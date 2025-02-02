@@ -8,7 +8,8 @@
     "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\"",
     "setup:backend": "cd backend && poetry install",
     "setup:frontend": "cd frontend && yarn",
-    "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\""
+    "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\"",
+    "local": "concurrently \"cd frontend && npm start\" \"cd backend && python manage.py runserver\"" 
   },
   "dependencies": {
     "concurrently": "^8.2.0",

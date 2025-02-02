@@ -6,6 +6,7 @@ from api.models import Availability
 
 
 class GroupMessage(Document, Mixin):
+    title = StringField(required=False)
     body = StringField(required=True)
     message_read = BooleanField(required=True)
     sender_id = ObjectIdField(required=True)

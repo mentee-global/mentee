@@ -1,7 +1,11 @@
+# Backend .gitignore
+myenv/
+venv/
+env/
+.env
+__pycache__/
 *.pyc
 .vscode/
-venv/
-__pycache__
 .DS_Store/
 migrations/
 postgres-data/

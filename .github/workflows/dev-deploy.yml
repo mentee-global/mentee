@@ -60,6 +60,10 @@ jobs:
           # Use the path artifacts because frontend/build is in gitignore
           path: ${{ github.workspace }}/frontend/artifacts
 
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
       - name: Deploy to Heroku
         uses: AkhileshNS/heroku-deploy@v3.12.13
         with:

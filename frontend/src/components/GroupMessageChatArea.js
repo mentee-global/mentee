@@ -76,14 +76,16 @@ function GroupMessageChatArea(props) {
   }, [loading, messages, shouldScroll]);
 
   useEffect(() => {
-    const content = document.querySelector('.conversation-content');
+    const content = document.querySelector(".conversation-content");
     if (content) {
       const handleScroll = () => {
-        const isAtBottom = content.scrollHeight - content.scrollTop <= content.clientHeight + 100;
+        const isAtBottom =
+          content.scrollHeight - content.scrollTop <=
+          content.clientHeight + 100;
         setShouldScroll(isAtBottom);
       };
-      content.addEventListener('scroll', handleScroll);
-      return () => content.removeEventListener('scroll', handleScroll);
+      content.addEventListener("scroll", handleScroll);
+      return () => content.removeEventListener("scroll", handleScroll);
     }
   }, []);
 
@@ -91,7 +93,8 @@ function GroupMessageChatArea(props) {
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
   const linkify = (text) => {
-    const urlPattern = /(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]/gi;
+    const urlPattern =
+      /(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]/gi;
     return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
   };
 
@@ -125,7 +128,7 @@ function GroupMessageChatArea(props) {
       _id: { $oid: Date.now().toString() },
       sender_id: { $oid: msg.sender_id },
       hub_user_id: { $oid: msg.hub_user_id },
-      time: moment().local().format("LLL")
+      time: moment().local().format("LLL"),
     };
 
     props.addMyMessage(displayMsg);
@@ -134,7 +137,7 @@ function GroupMessageChatArea(props) {
     // Simple notification
     if (particiants?.length > 0) {
       setTimeout(() => {
-        particiants.forEach(user => {
+        particiants.forEach((user) => {
           if (user._id.$oid !== profileId) {
             sendNotifyUnreadMessage(user._id.$oid);
           }
@@ -165,9 +168,9 @@ function GroupMessageChatArea(props) {
 
     // Clear input and close reply box
     setReplyMessageText("");
-    setReplyInputFlags(prevFlags => ({
+    setReplyInputFlags((prevFlags) => ({
       ...prevFlags,
-      [block_id]: false
+      [block_id]: false,
     }));
 
     // Emit to the same channel as regular messages
@@ -180,7 +183,7 @@ function GroupMessageChatArea(props) {
       sender_id: { $oid: msg.sender_id },
       hub_user_id: { $oid: msg.hub_user_id },
       parent_message_id: block_id,
-      time: moment().local().format("LLL")
+      time: moment().local().format("LLL"),
     };
 
     // Add to local state
@@ -190,7 +193,7 @@ function GroupMessageChatArea(props) {
     // Send notifications
     if (particiants?.length > 0) {
       setTimeout(() => {
-        particiants.forEach(user => {
+        particiants.forEach((user) => {
           if (user._id.$oid !== profileId) {
             sendNotifyUnreadMessage(user._id.$oid);
           }
@@ -213,42 +216,44 @@ function GroupMessageChatArea(props) {
   };
 
   const changeDropdown = (block_id) => {
-    setDotMenuFlags(prevFlags => ({
+    setDotMenuFlags((prevFlags) => ({
       ...prevFlags,
-      [block_id]: !prevFlags[block_id]
+      [block_id]: !prevFlags[block_id],
     }));
     setRefreshFlag(!refreshFlag);
   };
 
   const getDropdownMenuItems = (block) => {
-    return [{
-      key: "reply",
-      label: (
-        <span
-          onClick={() => {
-            setReplyInputFlags(prevFlags => {
-              const newFlags = { ...prevFlags };
-              // Reset all flags to false
-              Object.keys(newFlags).forEach(key => {
-                newFlags[key] = false;
+    return [
+      {
+        key: "reply",
+        label: (
+          <span
+            onClick={() => {
+              setReplyInputFlags((prevFlags) => {
+                const newFlags = { ...prevFlags };
+                // Reset all flags to false
+                Object.keys(newFlags).forEach((key) => {
+                  newFlags[key] = false;
+                });
+                // Set current message's reply flag to true
+                newFlags[block._id.$oid] = true;
+                return newFlags;
               });
-              // Set current message's reply flag to true
-              newFlags[block._id.$oid] = true;
-              return newFlags;
-            });
-            setDotMenuFlags(prevFlags => ({
-              ...prevFlags,
-              [block._id.$oid]: false
-            }));
-            setReplyMessageText("");
-            setShowEmojiPicker(false);
-            setRefreshFlag(!refreshFlag);
-          }}
-        >
-          {t("messages.reply")}
-        </span>
-      ),
-    }];
+              setDotMenuFlags((prevFlags) => ({
+                ...prevFlags,
+                [block._id.$oid]: false,
+              }));
+              setReplyMessageText("");
+              setShowEmojiPicker(false);
+              setRefreshFlag(!refreshFlag);
+            }}
+          >
+            {t("messages.reply")}
+          </span>
+        ),
+      },
+    ];
   };
 
   const HtmlContent = ({ content }) => {
@@ -322,9 +327,10 @@ function GroupMessageChatArea(props) {
                         width: fit-content;
                         font-weight: bold;
                         margin-bottom: 4px;
-                        background-color: ${block.sender_id.$oid === profileId 
-                          ? colorPrimaryBg  // Your messages - use theme color
-                          : '#f4f5f9'      // Other messages - keep original color
+                        background-color: ${
+                          block.sender_id.$oid === profileId
+                            ? colorPrimaryBg // Your messages - use theme color
+                            : "#f4f5f9" // Other messages - keep original color
                         };
                       `}
                     >
@@ -338,9 +344,10 @@ function GroupMessageChatArea(props) {
                       margin-left: 8px;
                       width: fit-content;
                       white-space: pre-wrap;
-                      background-color: ${block.sender_id.$oid === profileId 
-                        ? colorPrimaryBg  // Your messages - use theme color
-                        : '#f4f5f9'      // Other messages - keep original color
+                      background-color: ${
+                        block.sender_id.$oid === profileId
+                          ? colorPrimaryBg // Your messages - use theme color
+                          : "#f4f5f9" // Other messages - keep original color
                       };
                     `}
                   >
@@ -443,14 +450,19 @@ function GroupMessageChatArea(props) {
         </Spin>
         <div ref={messagesEndRef} />
       </div>
-      <div className="conversation-footer" style={{ justifyContent: 'flex-start' }}>
-        <div style={{ 
-          width: '80%',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          marginLeft: '20px'
-        }}>
+      <div
+        className="conversation-footer"
+        style={{ justifyContent: "flex-start" }}
+      >
+        <div
+          style={{
+            width: "80%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            marginLeft: "20px",
+          }}
+        >
           {/* Title input */}
           <TextArea
             className="message-input"
@@ -458,18 +470,18 @@ function GroupMessageChatArea(props) {
             value={messageTitle}
             onChange={(e) => setMessageTitle(e.target.value)}
             autoSize={{ minRows: 1, maxRows: 1 }}
-            style={{ textAlign: 'left' }}
+            style={{ textAlign: "left" }}
           />
-          
+
           {/* Message input container */}
-          <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+          <div style={{ display: "flex", alignItems: "flex-start" }}>
             <TextArea
               className="message-input"
               placeholder={t("messages.sendMessagePlaceholder")}
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               autoSize={{ minRows: 1, maxRows: 3 }}
-              style={{ textAlign: 'left' }}
+              style={{ textAlign: "left" }}
             />
             <img
               alt=""
@@ -491,7 +503,7 @@ function GroupMessageChatArea(props) {
             />
           </div>
         </div>
-        
+
         {showReplyEmojiPicker && (
           <div className="emoji-container">
             <EmojiPicker onEmojiClick={(e) => onEmojiClick(e, "main")} />

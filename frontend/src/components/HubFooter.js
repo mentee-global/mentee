@@ -29,7 +29,7 @@ function HubFooter() {
           gap: "5px",
           fontSize: "15px",
           fontStyle: "italic",
-          paddingTop: "10px"
+          paddingTop: "10px",
         }}
       >
         <span>{t("common.powered_by")}</span>

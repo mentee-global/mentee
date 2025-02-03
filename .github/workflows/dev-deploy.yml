@@ -40,7 +40,7 @@ jobs:
         run: yarn install && yarn run build
 
       - name: save build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: ${{ github.workspace }}/frontend/build

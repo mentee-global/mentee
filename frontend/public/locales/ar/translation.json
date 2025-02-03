@@ -523,7 +523,8 @@
     "reply":"رد",
     "startConversation": "ابدأ محادثة اليوم!",
     "send": "إرسال",
-    "search": "بحث"
+    "search": "بحث",
+    "titlePlaceholder": "ادخل عنوان الرسالة (اختياري)"
   },
   "navHeader": {
     "editProfile": "تعديل الملف الشخصي",

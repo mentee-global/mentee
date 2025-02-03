@@ -524,7 +524,8 @@
     "reply":"ځواب ورکړئ",
     "startConversation": "نن خبری او اتړی شروع کړی ",
     "send": "لیږل",
-    "search": "پلټل"
+    "search": "پلټل",
+    "titlePlaceholder": "عنوان پیام را وارد کړی (اختیاری)"  
   },
   "navHeader": {
     "editProfile": "د پروفایل ایدیت",

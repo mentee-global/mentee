@@ -523,7 +523,8 @@
     "reply":"پاسخ دهید",
     "startConversation": "امروز یک مکالمه را شروع کنید!",
     "send": "ارسال",
-    "search": "جستجو"
+    "search": "جستجو",
+    "titlePlaceholder": "عنوان پیام را وارد کنید (اختیاری)" 
   },
   "navHeader": {
     "editProfile": "ویرایش نمایه",

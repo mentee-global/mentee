@@ -487,7 +487,7 @@
     "communicationMethod": "What is your preferred communication method?",
     "communicationMethodValidate": "Please select communication method!",
     "confirmationText": "Your mentor will be getting back to you soon! Feel free to browse the mentor page and reach out to other mentors.",
-    "introExample": "Hi Jim! I’m a junior at Oxford University studying Economics. I saw that you’re knowledgeable in Personal Finance, which is something I’m interested in, and I’d love to learn more about your experiences. Thank you for your time!",
+    "introExample": "Hi Jim! I'm a junior at Oxford University studying Economics. I saw that you're knowledgeable in Personal Finance, which is something I'm interested in, and I'd love to learn more about your experiences. Thank you for your time!",
     "introPrompt": "Briefly introduce yourself and what you are looking to gain from a Mentor.",
     "introPromptValidate": "Please write an introduction!",
     "reachOutTo": "Reach out to {{mentorName}}",
@@ -525,7 +525,8 @@
     "reply":"Reply",
     "startConversation": "Start a conversation today!",
     "send": "Send",
-    "search": "Search"
+    "search": "Search",
+    "titlePlaceholder": "Enter message title (optional)"
   },
   "navHeader": {
     "editProfile": "Edit Profile",

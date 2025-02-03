@@ -107,9 +107,10 @@
   justify-content: center;
   align-items: center;
   padding: 12px;
-  position: sticky;
+  position: relative;
   bottom: 0px;
   width: 100%;
+  z-index: 2;
 }
 
 .conversation-container {
@@ -143,42 +144,37 @@
   font-size: larger;
 }
 
-.bubble-received {
-  color: #323e4a;
-  padding: 5px 15px;
-  border-radius: 5px;
-  max-width: 300px;
-  margin-left: 8px;
-  width: fit-content;
-  overflow-wrap: break-word;
-  float: left;
-  clear: left;
-  background-color: #f4f5f9;
+.chatRight__items {
+  margin-bottom: 1rem;
+}
+
+.chatRight__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .convo {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.bubble-received {
+  background-color: #f4f5f9;
+  float: none;
+  clear: none;
 }
 
 .bubble-sent {
-  color: #323e4a;
-  padding: 5px 15px;
-  border-radius: 5px;
-  max-width: 300px;
-  width: fit-content;
-  overflow-wrap: break-word;
-  float: right;
-  clear: right;
-  background-color: rgba(228, 187, 79, 0.4);
+  background-color: #f4f5f9;
+  float: none;
+  clear: none;
 }
 
 .chatRight__items > .chatRight__inner {
   display: flex;
   align-items: flex-end;
-}
-
-.chatRight__inner {
-  margin-bottom: 6px;
 }
 
 .chatRight__inner span img {
@@ -279,4 +275,40 @@
   .no-messages {
     display: none !important;
   }
+}
+
+/* Add styles for powered by container */
+.powered-by-container {
+  position: absolute;
+  right: 10px;
+  bottom: -30px;
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  z-index: 1;
+}
+
+/* Add specific margin to the image if needed */
+.powered-by-container img {
+  margin-left: 30px;
+}
+
+/* Target the powered by text and logo directly */
+[class*="powered-by"],
+[class*="powered_by"],
+[class*="poweredBy"] {
+  position: absolute !important;
+  right: 10px !important;
+  bottom: -30px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 100px !important; /* Much larger gap */
+  z-index: 1 !important;
+}
+
+/* Target any image inside powered by container */
+[class*="powered-by"] img,
+[class*="powered_by"] img,
+[class*="poweredBy"] img {
+  margin-left: 50px !important; /* Much larger margin */
 }

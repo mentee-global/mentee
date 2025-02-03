@@ -20,6 +20,7 @@ function GroupMessageChatArea(props) {
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
   const [replyMessageText, setReplyMessageText] = useState("");
+  const [messageTitle, setMessageTitle] = useState("");
 
   const { messages, loading, hub_user_id, particiants } = props;
   const messagesEndRef = useRef(null);
@@ -30,6 +31,7 @@ function GroupMessageChatArea(props) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiUp, setEmojiUp] = useState(false);
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
+  const [shouldScroll, setShouldScroll] = useState(true);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
@@ -68,27 +70,31 @@ function GroupMessageChatArea(props) {
     return sortedArray;
   }
   useEffect(() => {
-    scrollToBottom();
-    let temp = {};
-    let tmep_inputs = {};
-    if (messages && messages.length > 0) {
-      messages.map((message_item) => {
-        if (message_item._id && message_item._id.$oid) {
-          temp[message_item._id.$oid] = false;
-          tmep_inputs[message_item._id.$oid] = false;
-        }
-      });
-      setDotMenuFlags(temp);
-      setReplyInputFlags(tmep_inputs);
-      setRefreshFlag(!refreshFlag);
+    if (shouldScroll) {
+      scrollToBottom();
     }
-  }, [loading, messages]);
+  }, [loading, messages, shouldScroll]);
+
+  useEffect(() => {
+    const content = document.querySelector(".conversation-content");
+    if (content) {
+      const handleScroll = () => {
+        const isAtBottom =
+          content.scrollHeight - content.scrollTop <=
+          content.clientHeight + 100;
+        setShouldScroll(isAtBottom);
+      };
+      content.addEventListener("scroll", handleScroll);
+      return () => content.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
   /*
     To do: Load user on opening. Read from mongo and also connect to socket.
   */
   const linkify = (text) => {
     const urlPattern =
-      /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+      /(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]/gi;
     return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
   };
 
@@ -97,8 +103,10 @@ function GroupMessageChatArea(props) {
     if (!currentMessage.trim().length) {
       return;
     }
+
     let dateTime = moment().utc();
     const msg = {
+      title: messageTitle.trim(),
       body: currentMessage,
       message_read: false,
       sender_id: profileId,
@@ -106,20 +114,36 @@ function GroupMessageChatArea(props) {
       parent_message_id: null,
       time: dateTime,
     };
-    socket.emit("sendGroup", msg);
-    setTimeout(() => {
-      particiants.map((particiant_user) => {
-        if (particiant_user._id.$oid != profileId) {
-          sendNotifyUnreadMessage(particiant_user._id.$oid);
-        }
-      });
-    }, 1000);
-    msg["sender_id"] = { $oid: msg["sender_id"] };
-    msg["hub_user_id"] = { $oid: msg["hub_user_id"] };
-    msg.time = moment().local().format("LLL");
-    props.addMyMessage(msg);
+
+    // Clear inputs immediately
+    setMessageTitle("");
     setMessageText("");
-    return;
+
+    // Basic message emission
+    socket.emit("sendGroup", msg);
+
+    // Simple message display
+    const displayMsg = {
+      ...msg,
+      _id: { $oid: Date.now().toString() },
+      sender_id: { $oid: msg.sender_id },
+      hub_user_id: { $oid: msg.hub_user_id },
+      time: moment().local().format("LLL"),
+    };
+
+    props.addMyMessage(displayMsg);
+    setShouldScroll(true);
+
+    // Simple notification
+    if (particiants?.length > 0) {
+      setTimeout(() => {
+        particiants.forEach((user) => {
+          if (user._id.$oid !== profileId) {
+            sendNotifyUnreadMessage(user._id.$oid);
+          }
+        });
+      }, 0);
+    }
   };
 
   const sendReplyMessage = (block_id) => {
@@ -131,6 +155,7 @@ function GroupMessageChatArea(props) {
       setRefreshFlag(!refreshFlag);
       return;
     }
+
     let dateTime = moment().utc();
     const msg = {
       body: currentMessage,
@@ -140,23 +165,41 @@ function GroupMessageChatArea(props) {
       parent_message_id: block_id,
       time: dateTime,
     };
+
+    // Clear input and close reply box
+    setReplyMessageText("");
+    setReplyInputFlags((prevFlags) => ({
+      ...prevFlags,
+      [block_id]: false,
+    }));
+
+    // Emit to the same channel as regular messages
     socket.emit("sendGroup", msg);
-    setTimeout(() => {
-      particiants.map((particiant_user) => {
-        if (particiant_user._id.$oid != profileId) {
-          sendNotifyUnreadMessage(particiant_user._id.$oid);
-        }
-      });
-    }, 1000);
-    msg["sender_id"] = { $oid: msg["sender_id"] };
-    msg["hub_user_id"] = { $oid: msg["hub_user_id"] };
-    msg["parent_message_id"] = block_id;
-    msg.time = moment().local().format("LLL");
-    props.addMyMessage(msg);
-    let temp = replyInputFlags;
-    temp[block_id] = false;
-    setReplyInputFlags(temp);
-    return;
+
+    // Format for local display
+    const displayMsg = {
+      ...msg,
+      _id: { $oid: Date.now().toString() },
+      sender_id: { $oid: msg.sender_id },
+      hub_user_id: { $oid: msg.hub_user_id },
+      parent_message_id: block_id,
+      time: moment().local().format("LLL"),
+    };
+
+    // Add to local state
+    props.addMyMessage(displayMsg);
+    setShouldScroll(true);
+
+    // Send notifications
+    if (particiants?.length > 0) {
+      setTimeout(() => {
+        particiants.forEach((user) => {
+          if (user._id.$oid !== profileId) {
+            sendNotifyUnreadMessage(user._id.$oid);
+          }
+        });
+      }, 0);
+    }
   };
 
   const styles = {
@@ -173,38 +216,44 @@ function GroupMessageChatArea(props) {
   };
 
   const changeDropdown = (block_id) => {
-    let temp = dotMenuFlags;
-    temp[block_id] = !temp[block_id];
-    setDotMenuFlags(temp);
+    setDotMenuFlags((prevFlags) => ({
+      ...prevFlags,
+      [block_id]: !prevFlags[block_id],
+    }));
     setRefreshFlag(!refreshFlag);
   };
 
   const getDropdownMenuItems = (block) => {
-    const items = [];
-    items.push({
-      key: "reply",
-      label: (
-        <span
-          onClick={() => {
-            let temp = replyInputFlags;
-            Object.keys(temp).forEach((key) => {
-              temp[key] = false;
-            });
-            temp[block._id.$oid] = true;
-            setReplyInputFlags(temp);
-            let dot_temp = dotMenuFlags;
-            dot_temp[block._id.$oid] = false;
-            setDotMenuFlags(dot_temp);
-            setRefreshFlag(!refreshFlag);
-            setReplyMessageText("");
-            setShowEmojiPicker(false);
-          }}
-        >
-          {t("messages.reply")}
-        </span>
-      ),
-    });
-    return items;
+    return [
+      {
+        key: "reply",
+        label: (
+          <span
+            onClick={() => {
+              setReplyInputFlags((prevFlags) => {
+                const newFlags = { ...prevFlags };
+                // Reset all flags to false
+                Object.keys(newFlags).forEach((key) => {
+                  newFlags[key] = false;
+                });
+                // Set current message's reply flag to true
+                newFlags[block._id.$oid] = true;
+                return newFlags;
+              });
+              setDotMenuFlags((prevFlags) => ({
+                ...prevFlags,
+                [block._id.$oid]: false,
+              }));
+              setReplyMessageText("");
+              setShowEmojiPicker(false);
+              setRefreshFlag(!refreshFlag);
+            }}
+          >
+            {t("messages.reply")}
+          </span>
+        ),
+      },
+    ];
   };
 
   const HtmlContent = ({ content }) => {
@@ -230,36 +279,26 @@ function GroupMessageChatArea(props) {
         <>
           <div
             style={{ marginLeft: 50 * depth + "px" }}
-            className={`chatRight__items you-${
-              block.sender_id.$oid === profileId && depth === 0
-                ? "sent"
-                : "received"
-            }`}
+            className="chatRight__items you-received"
           >
             <div
-              className={`chatRight__inner  message-area ${
-                block.sender_id.$oid !== profileId || depth !== 0
-                  ? "flex-start"
-                  : "flex-end"
-              }`}
+              className="chatRight__inner message-area flex-start"
               data-chat="person1"
             >
               <div className="flex">
-                {block.sender_id.$oid !== profileId && sender_user && (
-                  <span>
-                    <NavLink
-                      to={`/gallery/${
-                        sender_user.hub_user_id
-                          ? ACCOUNT_TYPE.PARTNER
-                          : ACCOUNT_TYPE.HUB
-                      }/${block.sender_id.$oid}`}
-                    >
-                      <div style={{ width: "50px", textAlign: "center" }}>
-                        <Avatar
-                          src={sender_user?.image?.url}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
+                <span>
+                  <NavLink
+                    to={`/gallery/${
+                      sender_user?.hub_user_id
+                        ? ACCOUNT_TYPE.PARTNER
+                        : ACCOUNT_TYPE.HUB
+                    }/${block.sender_id.$oid}`}
+                  >
+                    <div style={{ width: "50px", textAlign: "center" }}>
+                      <Avatar
+                        src={sender_user?.image?.url}
+                        style={{ cursor: "pointer" }}
+                      />
                       <div
                         style={{
                           cursor: "pointer",
@@ -271,14 +310,33 @@ function GroupMessageChatArea(props) {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {sender_user.name
+                        {sender_user?.name
                           ? sender_user.name
-                          : sender_user.organization}
+                          : sender_user?.organization}
                       </div>
-                    </NavLink>
-                  </span>
-                )}
+                    </div>
+                  </NavLink>
+                </span>
                 <div className="convo">
+                  {block.title && (
+                    <div
+                      className={css`
+                        padding: 5px 15px;
+                        border-radius: 5px;
+                        margin-left: 8px;
+                        width: fit-content;
+                        font-weight: bold;
+                        margin-bottom: 4px;
+                        background-color: ${
+                          block.sender_id.$oid === profileId
+                            ? colorPrimaryBg // Your messages - use theme color
+                            : "#f4f5f9" // Other messages - keep original color
+                        };
+                      `}
+                    >
+                      {block.title}
+                    </div>
+                  )}
                   <div
                     className={css`
                       padding: 5px 15px;
@@ -286,9 +344,11 @@ function GroupMessageChatArea(props) {
                       margin-left: 8px;
                       width: fit-content;
                       white-space: pre-wrap;
-                      ${block.sender_id.$oid === profileId
-                        ? styles.bubbleSent
-                        : styles.bubbleReceived}
+                      background-color: ${
+                        block.sender_id.$oid === profileId
+                          ? colorPrimaryBg // Your messages - use theme color
+                          : "#f4f5f9" // Other messages - keep original color
+                      };
                     `}
                   >
                     <HtmlContent content={linkify(block.body)} />
@@ -390,37 +450,65 @@ function GroupMessageChatArea(props) {
         </Spin>
         <div ref={messagesEndRef} />
       </div>
-      <div className="conversation-footer">
-        <TextArea
-          className="message-input"
-          placeholder={t("messages.sendMessagePlaceholder")}
-          value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
-          autoSize={{ minRows: 1, maxRows: 3 }}
-        />
-        <img
-          alt=""
-          className="emoji-icon"
-          src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-          onClick={() => setShowReplyEmojiPicker((val) => !val)}
-        />
+      <div
+        className="conversation-footer"
+        style={{ justifyContent: "flex-start" }}
+      >
+        <div
+          style={{
+            width: "80%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            marginLeft: "20px",
+          }}
+        >
+          {/* Title input */}
+          <TextArea
+            className="message-input"
+            placeholder={t("messages.titlePlaceholder")}
+            value={messageTitle}
+            onChange={(e) => setMessageTitle(e.target.value)}
+            autoSize={{ minRows: 1, maxRows: 1 }}
+            style={{ textAlign: "left" }}
+          />
+
+          {/* Message input container */}
+          <div style={{ display: "flex", alignItems: "flex-start" }}>
+            <TextArea
+              className="message-input"
+              placeholder={t("messages.sendMessagePlaceholder")}
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              autoSize={{ minRows: 1, maxRows: 3 }}
+              style={{ textAlign: "left" }}
+            />
+            <img
+              alt=""
+              className="emoji-icon"
+              src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
+              onClick={() => setShowReplyEmojiPicker((val) => !val)}
+            />
+            <Button
+              id="sendMessagebtn"
+              onClick={sendMessage}
+              className={css`
+                margin-left: 0.5em;
+              `}
+              shape="circle"
+              type="primary"
+              ref={buttonRef}
+              icon={<SendOutlined rotate={315} />}
+              size={48}
+            />
+          </div>
+        </div>
+
         {showReplyEmojiPicker && (
           <div className="emoji-container">
             <EmojiPicker onEmojiClick={(e) => onEmojiClick(e, "main")} />
           </div>
         )}
-        <Button
-          id="sendMessagebtn"
-          onClick={sendMessage}
-          className={css`
-            margin-left: 0.5em;
-          `}
-          shape="circle"
-          type="primary"
-          ref={buttonRef}
-          icon={<SendOutlined rotate={315} />}
-          size={48}
-        />
       </div>
     </div>
   );

@@ -424,11 +424,12 @@ def chatGroup(msg, methods=["POST"]):
     try:
         if "hub_user_id" in msg and msg["hub_user_id"] is not None:
             message = GroupMessage(
+                title=msg.get("title"),
                 body=msg["body"],
                 message_read=msg["message_read"],
                 sender_id=msg["sender_id"],
                 hub_user_id=msg["hub_user_id"],
-                parent_message_id=msg["parent_message_id"],
+                parent_message_id=msg.get("parent_message_id"),
                 created_at=msg["time"],
             )
             logger.info(msg["hub_user_id"])

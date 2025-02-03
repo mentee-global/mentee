@@ -23,26 +23,23 @@ function HubFooter() {
       theme="light"
     >
       <div
-        style={{ fontSize: "15px", fontStyle: "italic", paddingTop: "10px" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "5px",
+          fontSize: "15px",
+          fontStyle: "italic",
+          paddingTop: "10px",
+        }}
       >
-        {t("common.powered_by")}
-      </div>
-      <div>
-        {/* <Logo
-          className={css`
-            height: 50px;
-            width: 100px;
-            cursor: pointer;
-            margin-left: 10px;
-          `}
-          onClick={() => history.push("/")}
-        /> */}
+        <span>{t("common.powered_by")}</span>
         <img
           src={BigLogoImage}
           alt={""}
           className={css`
             height: 40px;
             cursor: pointer;
+            margin-left: 6px;
           `}
           onClick={() => history.push("/")}
         />

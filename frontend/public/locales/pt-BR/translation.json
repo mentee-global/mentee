@@ -523,7 +523,8 @@
     "reply":"Responder",
     "startConversation": "Comece uma conversa hoje!",
     "send": "Enviar",
-    "search": "Buscar"
+    "search": "Buscar",
+    "titlePlaceholder": "Insira o título da mensagem (opcional)"  
   },
   "navHeader": {
     "editProfile": "Editar Perfil",

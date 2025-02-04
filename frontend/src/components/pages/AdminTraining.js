@@ -517,6 +517,7 @@ const AdminTraining = () => {
                 }}
                 columns={columns}
                 dataSource={trainingData}
+                pagination={false}
               />
             </SortableContext>
           </DndContext>

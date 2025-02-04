@@ -21,7 +21,6 @@ function GroupMessageChatArea(props) {
   const [messageText, setMessageText] = useState("");
   const [replyMessageText, setReplyMessageText] = useState("");
   const [messageTitle, setMessageTitle] = useState("");
-
   const { messages, loading, hub_user_id, particiants } = props;
   const messagesEndRef = useRef(null);
   const buttonRef = useRef(null);
@@ -32,7 +31,6 @@ function GroupMessageChatArea(props) {
   const [emojiUp, setEmojiUp] = useState(false);
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(true);
-
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
       messagesEndRef.current.scrollIntoView({
@@ -103,7 +101,6 @@ function GroupMessageChatArea(props) {
     if (!currentMessage.trim().length) {
       return;
     }
-
     let dateTime = moment().utc();
     const msg = {
       title: messageTitle.trim(),
@@ -114,7 +111,6 @@ function GroupMessageChatArea(props) {
       parent_message_id: null,
       time: dateTime,
     };
-
     // Clear inputs immediately
     setMessageTitle("");
     setMessageText("");
@@ -503,7 +499,6 @@ function GroupMessageChatArea(props) {
             />
           </div>
         </div>
-
         {showReplyEmojiPicker && (
           <div className="emoji-container">
             <EmojiPicker onEmojiClick={(e) => onEmojiClick(e, "main")} />

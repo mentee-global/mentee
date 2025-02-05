@@ -394,10 +394,28 @@ function ProfileContent(props) {
           <div className="mentor-profile-about">{account.person_name}</div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>{t("partnerProfile.projectNames")} </b>
+            {props.mentor &&
+            props.mentor.hub_user &&
+            props.mentor.hub_user.name === "GSRFoundation" ? (
+              <b>How we’re deploying funding from the GSR Foundation</b>
+            ) : (
+              <b>{t("partnerProfile.projectNames")} </b>
+            )}
           </div>
           <div className="mentor-profile-about">{account.topics}</div>
           <br /> <br />
+          {props.mentor &&
+            props.mentor.hub_user &&
+            props.mentor.hub_user.name === "GSRFoundation" &&
+            account.success && (
+              <>
+                <div className="mentor-profile-heading">
+                  <b>What does success for your organization look like</b>
+                </div>
+                <div className="mentor-profile-about">{account.success}</div>
+                <br /> <br />
+              </>
+            )}
           <div className="mentor-profile-heading">
             <b>{t("partnerProfile.developmentGoals")} </b>
           </div>

@@ -90,10 +90,20 @@ function PartnerGallery(props) {
         !(role == ACCOUNT_TYPE.SUPPORT) ||
         !searchHub ||
         (partner.hub_id && partner.hub_id == searchHub);
-      const matchestopics =
-        !query2 ||
-        (partner.topics &&
-          partner.topics.toUpperCase().includes(query2.toUpperCase()));
+
+      let matchestopics = false;
+      if (user && user.hub_user && user.hub_user.name === "GSRFoundation") {
+        matchestopics =
+          !query2 ||
+          (partner.topics &&
+            partner.topics.toUpperCase().includes(query2.toUpperCase()));
+      } else {
+        matchestopics =
+          !query2 ||
+          (partner.topics &&
+            partner.topics.toUpperCase().includes(query2.toUpperCase()));
+      }
+
       const matchesName =
         !query ||
         partner.organization.toUpperCase().includes(query.toUpperCase());
@@ -136,12 +146,20 @@ function PartnerGallery(props) {
         mode="multiple"
         maxTagCount="responsive"
       />
-      <Title level={4}>{t("gallery.projectTopics")}</Title>
+      <Title level={4}>
+        {user && user.hub_user && user.hub_user.name === "GSRFoundation"
+          ? t("gallery.projectTopicsPlaceholder_GSR")
+          : t("gallery.projectTopics")}
+      </Title>
       <Input
         className={css`
           width: 100%;
         `}
-        placeholder={t("gallery.projectTopicsPlaceholder")}
+        placeholder={
+          user && user.hub_user && user.hub_user.name === "GSRFoundation"
+            ? t("gallery.projectTopicsPlaceholder_GSR")
+            : t("gallery.projectTopicsPlaceholder")
+        }
         allowClear
         onChange={(e) => setQuery2(e.target.value)}
         prefix={<SearchOutlined />}

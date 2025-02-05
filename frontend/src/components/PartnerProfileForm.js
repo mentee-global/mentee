@@ -295,9 +295,21 @@ function PartnerProfileForm({
       >
         <Select mode="multiple" options={getSDGs(t)} />
       </Form.Item>
-      <Form.Item label={t("partnerProfile.projectNames")} name="topics">
+      <Form.Item
+        label={
+          hub_user && hub_user.name === "GSRFoundation"
+            ? t("partnerProfile.projectNames_GSR")
+            : t("partnerProfile.projectNames")
+        }
+        name="topics"
+      >
         <Input.TextArea rows={3} />
       </Form.Item>
+      {hub_user && hub_user.name === "GSRFoundation" && (
+        <Form.Item label={t("partnerProfile.success_GSR")} name="success">
+          <Input.TextArea rows={3} />
+        </Form.Item>
+      )}
       <div className={styles.formGroup}>
         <Form.Item
           label={t("partnerProfile.collaborationGrants")}

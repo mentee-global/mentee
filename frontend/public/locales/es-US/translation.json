@@ -256,6 +256,7 @@
     "organizationPlaceholder": "Buscar por organización",
     "projectTopics": "Temas del proyecto",
     "projectTopicsPlaceholder": "Buscar por tema de proyecto",
+    "projectTopicsPlaceholder_GSR":"Uso de fondos de GSR y proyectos implementados",
     "regions": "Regiones",
     "sdgs": "ODS",
     "searchByName": "Buscar por nombre",
@@ -554,6 +555,8 @@
     "location": "Ubicación de la sede (ciudad, país)",
     "organizationName": "Organización/Institución/Corporación Nombre Completo",
     "projectNames": "Topicos de proyectos actuales y futuros",
+    "projectNames_GSR":"Cómo estamos utilizando la financiación de la Fundación GSR?Escriba oraciones completas para describir cómo está utilizando los fondos con términos clave (es decir, criptomonedas, computadoras, mujeres, desfavorecidos, educación, etc.)",
+    "success_GSR":"¿Cómo se ve el éxito para su organización? (es decir, aumentaremos nuestros ingresos en un 20%, lo que nos permitirá atender a 300 personas más, etc.)",
     "regionsWork": "Regiones donde trabajar"
   },
   "profile": {

@@ -29,6 +29,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             open_grants=data.get("open_grants"),
             open_projects=data.get("open_projects"),
             topics=data.get("topics"),
+            success=data.get("success"),
             sdgs=data.get("sdgs"),
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
@@ -159,6 +160,7 @@ def edit_profile(data: dict = {}, profile: object = None):
         profile.open_projects = data.get("open_projects", profile.open_projects)
         profile.linkedin = data.get("linkedin", profile.linkedin)
         profile.topics = data.get("topics", profile.topics)
+        profile.success = data.get("success", profile.success)
         profile.sdgs = data.get("sdgs", profile.sdgs)
         profile.intro = data.get("intro", profile.intro)
         profile.person_name = data.get("person_name", profile.person_name)

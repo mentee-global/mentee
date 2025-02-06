@@ -239,6 +239,7 @@ def update_multiple_trainings():
 
     return create_response(data=result)
 
+
 @training.route("/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_train(id):

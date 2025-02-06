@@ -253,6 +253,10 @@ def get_sidebar(user_id):
                 
                 allMessages = [json.loads(message.to_json()) for message in sentMessages]
 
+                allMessages = [
+                    json.loads(message.to_json()) for message in sentMessages
+                ]
+
                 contacts.append(sidebarObject)
                 sidebarContacts.add(otherId)
 

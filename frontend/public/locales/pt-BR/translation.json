@@ -256,6 +256,7 @@
     "organizationPlaceholder": "Pesquisar por organização",
     "projectTopics": "Temas de Projeto",
     "projectTopicsPlaceholder": "Pesquise por temas de projeto",
+    "projectTopicsPlaceholder_GSR":"Utilização de fundos de RSC e projetos implementados",
     "regions": "Regiões",
     "sdgs": "ODS (Objetivos de Desenvolvimento Sustentável)",
     "searchByName": "Busca por nome",
@@ -554,6 +555,8 @@
     "location": "Localização da Sede (Cidade, País)",
     "organizationName": "Nome Completo da Organização/Instituição/Corporação",
     "projectNames": "Temas de projetos atuais e futuros",
+    "projectNames_GSR":"Como você está distribuindo o financiamento da GSR Foundation? Escreva frases completas para descrever como você está usando os fundos com termos-chave (por exemplo, cripto, computadores, mulheres, desfavorecidos, educação, etc.)",
+    "success_GSR":"Como é o sucesso para sua organização? (por exemplo, aumentaremos nossa renda em 20%, o que nos permitirá atender mais 300 pessoas, etc.)",
     "regionsWork": "Regiões em que trabalho"
   },
   "profile": {

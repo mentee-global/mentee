@@ -213,6 +213,17 @@ def get_account(id):
             account = MentorProfile.objects.get(id=id)
         elif account_type == Account.PARTNER:
             account = PartnerProfile.objects.get(id=id)
+            if "hub_id" in account and account.hub_id is not None:
+                hub_profile = Hub.objects.get(id=account.hub_id)
+                hub_user = {
+                    "id": str(hub_profile.id),
+                    "email": hub_profile.email,
+                    "name": hub_profile.name,
+                    "image": hub_profile.image,
+                    "url": hub_profile.url,
+                    "invite_key": hub_profile.invite_key,
+                }
+                account.hub_user = hub_user
         elif account_type == Account.GUEST:
             account = Guest.objects.get(id=id)
         elif account_type == Account.SUPPORT:

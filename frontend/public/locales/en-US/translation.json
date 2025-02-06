@@ -257,6 +257,7 @@
     "organizationPlaceholder": "Search by organization",
     "projectTopics": "Project Topics",
     "projectTopicsPlaceholder": "Search by project Topics",
+    "projectTopicsPlaceholder_GSR":"Use of GSR Funds & Projects Implemented",
     "regions": "Regions",
     "sdgs": "SDGS",
     "searchByName": "Search by name",
@@ -556,6 +557,8 @@
     "location": "Headquarters Location (City, Country)",
     "organizationName": "Organization/Institution/Corporation Full Name",
     "projectNames": "Current & Upcoming Project Topics",
+    "projectNames_GSR":"How we’re deploying funding from the GSR Foundation? Write in full sentences to describe how you are using the funds with key terms (i.e. crypto, computers, women, disadvantaged, education, etc)",
+    "success_GSR":"What does success for your organization look like? (i.e. we will grow our income by 20%, allowing us to serve 300 more people, etc.)",
     "regionsWork": "Regions Work In"
   },
   "profile": {

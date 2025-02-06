@@ -32,6 +32,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
+
 import {
   arrayMove,
   SortableContext,
@@ -46,15 +47,21 @@ import "components/css/Training.scss";
 import AdminDownloadDropdown from "../AdminDownloadDropdown";
 import TrainingTranslationModal from "../TrainingTranslationModal";
 import UpdateTrainingForm from "../UpdateTrainingModal";
+
 import {
   arrayMove,
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, MeasuringStrategy } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+
+import "components/css/Training.scss";
+import AdminDownloadDropdown from "../AdminDownloadDropdown";
+import TrainingTranslationModal from "../TrainingTranslationModal";
+import UpdateTrainingForm from "../UpdateTrainingModal";
 
 const RowContext = React.createContext({});
 const DragHandle = () => {
@@ -84,18 +91,18 @@ const Row = (props) => {
     isDragging,
   } = useSortable({
     id: props["data-row-key"],
+    animateLayoutChanges: () => false,
   });
-  const style = {
+
+  const style = useMemo(() => ({
     ...props.style,
     transform: CSS.Translate.toString(transform),
-    transition,
-    ...(isDragging
-      ? {
-          position: "relative",
-          zIndex: 999,
-        }
-      : {}),
-  };
+    transition: 'none',  // Disable all transitions
+    position: isDragging ? 'relative' : undefined,
+    zIndex: isDragging ? 999 : undefined,
+    background: isDragging ? '#fafafa' : undefined,
+  }), [props.style, transform, isDragging]);
+
   const contextValue = useMemo(
     () => ({
       setActivatorNodeRef,
@@ -103,6 +110,7 @@ const Row = (props) => {
     }),
     [setActivatorNodeRef, listeners]
   );
+
   return (
     <RowContext.Provider value={contextValue}>
       <tr {...props} ref={setNodeRef} style={style} {...attributes} />

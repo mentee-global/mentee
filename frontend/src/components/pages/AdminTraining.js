@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState, useCallback } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   deleteTrainbyId,
   downloadBlob,
@@ -32,15 +32,6 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { DndContext, MeasuringStrategy } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 import "components/css/Training.scss";
 import AdminDownloadDropdown from "../AdminDownloadDropdown";
@@ -110,61 +101,6 @@ const Row = (props) => {
   );
 };
 
-const RowContext = React.createContext({});
-const DragHandle = () => {
-  const { setActivatorNodeRef, listeners } = useContext(RowContext);
-  return (
-    <Button
-      type="text"
-      size="small"
-      icon={<HolderOutlined />}
-      style={{
-        cursor: "move",
-      }}
-      ref={setActivatorNodeRef}
-      {...listeners}
-    />
-  );
-};
-
-const Row = (props) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props["data-row-key"],
-    animateLayoutChanges: () => false,
-  });
-
-  const style = useMemo(() => ({
-    ...props.style,
-    transform: CSS.Translate.toString(transform),
-    transition: 'none',  // Disable all transitions
-    position: isDragging ? 'relative' : undefined,
-    zIndex: isDragging ? 999 : undefined,
-    background: isDragging ? '#fafafa' : undefined,
-  }), [props.style, transform, isDragging]);
-
-  const contextValue = useMemo(
-    () => ({
-      setActivatorNodeRef,
-      listeners,
-    }),
-    [setActivatorNodeRef, listeners]
-  );
-
-  return (
-    <RowContext.Provider value={contextValue}>
-      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
-    </RowContext.Provider>
-  );
-};
-
 const AdminTraining = () => {
   const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
   const [trainingData, setTrainingData] = useState([]);
@@ -182,19 +118,6 @@ const AdminTraining = () => {
   const [mentorOptions, setMentorOptions] = useState([]);
   const [menteeOptions, setMenteeOptions] = useState([]);
   const [allData, setAllData] = useState([]);
-
-  useEffect(() => {
-    // Suppress ResizeObserver loop limit exceeded error
-    const resizeObserverError = window.ResizeObserver.prototype.constructor;
-    window.ResizeObserver.prototype.constructor = (...args) => {
-      const observer = resizeObserverError(...args);
-      const error = observer.error;
-      observer.error = () => {
-        // Ignore ResizeObserver loop limit exceeded error
-      };
-      return observer;
-    };
-  }, []);
 
   const onCancelTrainingForm = () => {
     setTrainingId(null);
@@ -320,30 +243,32 @@ const AdminTraining = () => {
     }
   };
 
-  const onDragEnd = useCallback((event) => {
-    const { active, over } = event;
-    
-    if (!over || active.id === over.id) {
-      return;
+  const onDragEnd = async ({ active, over }) => {
+    if (active.id !== over?.id) {
+      const updatedTrainingData = [...trainingData];
+      const activeIndex = updatedTrainingData.findIndex(
+        (record) => record.id === active?.id
+      );
+      const overIndex = updatedTrainingData.findIndex(
+        (record) => record.id === over?.id
+      );
+      const movedTrainingData = arrayMove(
+        updatedTrainingData,
+        activeIndex,
+        overIndex
+      );
+      const updatedData = movedTrainingData.map((item, index) => ({
+        id: item.id,
+        updated_data: { sort_order: index },
+      }));
+      setLoading(true);
+      const response = await updatedTraningData(updatedData);
+      if (response) {
+        setLoading(false);
+      }
+      setTrainingData(movedTrainingData);
     }
-
-    setTrainingData((items) => {
-      const oldIndex = items.findIndex((item) => item.id === active.id);
-      const newIndex = items.findIndex((item) => item.id === over.id);
-
-      const newItems = arrayMove(items, oldIndex, newIndex);
-      
-      requestAnimationFrame(() => {
-        const updatedOrder = newItems.map((item, index) => ({
-          id: item.id,
-          updated_data: { sort_order: index + 1 },
-        }));
-        updatedTraningData(updatedOrder);
-      });
-
-      return newItems;
-    });
-  }, []);
+  };
 
   const updatedTraningData = async (data) => {
     try {
@@ -397,21 +322,19 @@ const AdminTraining = () => {
     {
       key: "sort",
       align: "center",
-      width: 60,
+      width: 80,
       render: () => <DragHandle />,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 200,
       render: (name) => <>{name}</>,
     },
     {
       title: "URL",
       dataIndex: "url",
       key: "url",
-      width: 350,
       render: (url, record) => {
         if (record.typee !== TRAINING_TYPE.DOCUMENT) {
           return (
@@ -434,21 +357,18 @@ const AdminTraining = () => {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      width: 250,
       render: (description) => <>{description}</>,
     },
     {
       title: "Type",
       dataIndex: "typee",
       key: "typee",
-      width: 120,
       render: (typee) => <>{typee}</>,
     },
     {
       title: "Translate Document",
       dataIndex: "id",
       key: "id",
-      width: 110,
       render: (trainingId, record) => (
         <>
           {record.typee === TRAINING_TYPE.DOCUMENT ? (
@@ -467,7 +387,6 @@ const AdminTraining = () => {
       title: "Sign",
       dataIndex: "requried_sign",
       key: "requried_sign",
-      width: 100,
       render: (requried_sign) => <>{requried_sign ? "required" : ""}</>,
       align: "center",
     },
@@ -475,28 +394,26 @@ const AdminTraining = () => {
       title: "Hub User",
       dataIndex: "hub_user",
       key: "hub_user",
-      width: 150,
       render: (hub_user) => <>{hub_user.name}</>,
       align: "center",
     },
     {
-      title: "",
+      title: "Edit",
       dataIndex: "id",
       key: "id",
-      width: 40,
       render: (id) => (
         <EditOutlined
           className="delete-user-btn"
           onClick={() => openUpdateTrainingModal(id)}
         />
       ),
+
       align: "center",
     },
     {
-      title: "",
+      title: "Delete",
       dataIndex: "id",
       key: "id",
-      width: 40,
       render: (id) => (
         <Popconfirm
           title={`Are you sure you want to delete ?`}
@@ -586,7 +503,6 @@ const AdminTraining = () => {
           <DndContext
             modifiers={[restrictToVerticalAxis]}
             onDragEnd={onDragEnd}
-            autoScroll={false}
           >
             <SortableContext
               items={trainingData.map((i) => i.id)}
@@ -602,8 +518,6 @@ const AdminTraining = () => {
                 columns={columns}
                 dataSource={trainingData}
                 pagination={false}
-                style={{ width: '100%' }}
-                tableLayout="fixed"
               />
             </SortableContext>
           </DndContext>

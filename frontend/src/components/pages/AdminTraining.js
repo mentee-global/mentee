@@ -46,15 +46,6 @@ import "components/css/Training.scss";
 import AdminDownloadDropdown from "../AdminDownloadDropdown";
 import TrainingTranslationModal from "../TrainingTranslationModal";
 import UpdateTrainingForm from "../UpdateTrainingModal";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { DndContext } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 const RowContext = React.createContext({});
 const DragHandle = () => {

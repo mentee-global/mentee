@@ -47,7 +47,6 @@ import AdminDownloadDropdown from "../AdminDownloadDropdown";
 import TrainingTranslationModal from "../TrainingTranslationModal";
 import UpdateTrainingForm from "../UpdateTrainingModal";
 
-// Ensure RowContext is declared only once
 const RowContext = React.createContext({});
 
 const DragHandle = () => {
@@ -66,6 +65,7 @@ const DragHandle = () => {
   );
 };
 
+// Ensure Row is declared only once
 const Row = (props) => {
   const {
     attributes,

@@ -96,7 +96,9 @@ function PartnerGallery(props) {
         matchestopics =
           !query2 ||
           (partner.topics &&
-            partner.topics.toUpperCase().includes(query2.toUpperCase()));
+            partner.topics.toUpperCase().includes(query2.toUpperCase())) ||
+          (partner.success &&
+            partner.success.toUpperCase().includes(query2.toUpperCase()));
       } else {
         matchestopics =
           !query2 ||
@@ -253,6 +255,7 @@ function PartnerGallery(props) {
               border-radius: 8px;
               height: fit-content;
               border: 2px solid ${colorPrimaryBg};
+              max-width: 250px;
               @media only screen and (max-width: 640px) {
                 display: none;
               }

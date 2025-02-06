@@ -250,6 +250,8 @@ def get_sidebar(user_id):
                     "otherUser": otherUserObj,
                     "latestMessage": json.loads(message.to_json()),
                 }
+                
+                allMessages = [json.loads(message.to_json()) for message in sentMessages]
 
                 allMessages = [
                     json.loads(message.to_json()) for message in sentMessages

@@ -170,6 +170,71 @@ def get_trainings(role):
 
     return create_response(data={"trainings": result})
 
+@training.route("/update_multiple", methods=["PATCH"])
+def update_multiple_trainings():
+    data = request.json.get("trainings", [])
+    if not data:
+        return create_response(status=400, message="No trainings provided for update")
+
+    updated_trainings = []
+    failed_updates = []
+
+    for training in data:
+        training_id = training.get("id")
+        update_data = training.get("updated_data", {})
+
+        if not training_id:
+            failed_updates.append({"error": "Training ID is required"})
+            continue
+
+        try:
+            training_id = ObjectId(training_id)
+        except Exception as e:
+            failed_updates.append({"error": f"Invalid ID format: {str(e)}"})
+            continue
+
+        train = Training.objects(id=training_id).first()
+        if not train:
+            failed_updates.append({"error": f"Training with ID {training_id} not found"})
+            continue
+
+        train_data = train.to_mongo().to_dict()
+
+        # Exclude `_id` and `sort_order` for comparison
+        train_data.pop("_id", None)
+        existing_sort_order = train_data.pop("sort_order", None)
+        updated_sort_order = update_data.get("sort_order")
+
+        # Compare all fields except `sort_order`
+        other_fields_match = all(
+            train_data.get(key) == value
+            for key, value in update_data.items()
+            if key != "sort_order"
+        )
+
+        if not other_fields_match:
+            failed_updates.append({
+                "error": f"Only sort_order can be updated. Mismatched fields for ID {training_id}"
+            })
+            continue
+
+        # Update sort_order if it's different
+        if updated_sort_order != existing_sort_order:
+            train.update(sort_order=updated_sort_order)
+            updated_trainings.append(train.reload())
+        else:
+            failed_updates.append({
+                "error": f"No changes in sort_order for ID {training_id}"
+            })
+
+    result = {
+        "updated_trainings": [json.loads(t.to_json()) for t in updated_trainings],
+        "failed_updates": failed_updates,
+    }
+
+    return create_response(data=result)
+
+
 
 @training.route("/update_multiple", methods=["PATCH"])
 def update_multiple_trainings():

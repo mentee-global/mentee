@@ -32,6 +32,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
+
 import {
   arrayMove,
   SortableContext,
@@ -75,18 +76,18 @@ const Row = (props) => {
     isDragging,
   } = useSortable({
     id: props["data-row-key"],
+    animateLayoutChanges: () => false,
   });
-  const style = {
+
+  const style = useMemo(() => ({
     ...props.style,
     transform: CSS.Translate.toString(transform),
-    transition,
-    ...(isDragging
-      ? {
-          position: "relative",
-          zIndex: 999,
-        }
-      : {}),
-  };
+    transition: 'none',  // Disable all transitions
+    position: isDragging ? 'relative' : undefined,
+    zIndex: isDragging ? 999 : undefined,
+    background: isDragging ? '#fafafa' : undefined,
+  }), [props.style, transform, isDragging]);
+
   const contextValue = useMemo(
     () => ({
       setActivatorNodeRef,
@@ -94,6 +95,62 @@ const Row = (props) => {
     }),
     [setActivatorNodeRef, listeners]
   );
+
+  return (
+    <RowContext.Provider value={contextValue}>
+      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+    </RowContext.Provider>
+  );
+};
+
+const RowContext = React.createContext({});
+const DragHandle = () => {
+  const { setActivatorNodeRef, listeners } = useContext(RowContext);
+  return (
+    <Button
+      type="text"
+      size="small"
+      icon={<HolderOutlined />}
+      style={{
+        cursor: "move",
+      }}
+      ref={setActivatorNodeRef}
+      {...listeners}
+    />
+  );
+};
+
+const Row = (props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: props["data-row-key"],
+    animateLayoutChanges: () => false,
+  });
+
+  const style = useMemo(() => ({
+    ...props.style,
+    transform: CSS.Translate.toString(transform),
+    transition: 'none',  // Disable all transitions
+    position: isDragging ? 'relative' : undefined,
+    zIndex: isDragging ? 999 : undefined,
+    background: isDragging ? '#fafafa' : undefined,
+  }), [props.style, transform, isDragging]);
+
+  const contextValue = useMemo(
+    () => ({
+      setActivatorNodeRef,
+      listeners,
+    }),
+    [setActivatorNodeRef, listeners]
+  );
+
   return (
     <RowContext.Provider value={contextValue}>
       <tr {...props} ref={setNodeRef} style={style} {...attributes} />

@@ -93,8 +93,8 @@ function PartnerGallery(props) {
 
       let matchestopics = false;
       if (
-        (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
-        (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+        (user && user.hub_user && user.hub_user.name === "GSRFoundation") ||
+        (user.role === ACCOUNT_TYPE.HUB && user.name === "GSRFoundation")
       ) {
         matchestopics =
           !query2 ||
@@ -154,8 +154,8 @@ function PartnerGallery(props) {
         maxTagCount="responsive"
       />
       <Title level={4}>
-        {(user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
-        (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+        {(user && user.hub_user && user.hub_user.name === "GSRFoundation") ||
+        (user.role === ACCOUNT_TYPE.HUB && user.name === "GSRFoundation")
           ? t("gallery.projectTopicsPlaceholder_GSR")
           : t("gallery.projectTopics")}
       </Title>
@@ -164,8 +164,8 @@ function PartnerGallery(props) {
           width: 100%;
         `}
         placeholder={
-          (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
-          (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+          (user && user.hub_user && user.hub_user.name === "GSRFoundation") ||
+          (user.role === ACCOUNT_TYPE.HUB && user.name === "GSRFoundation")
             ? t("gallery.projectTopicsPlaceholder_GSR")
             : t("gallery.projectTopicsPlaceholder")
         }

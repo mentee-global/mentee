@@ -396,7 +396,7 @@ function ProfileContent(props) {
           <div className="mentor-profile-heading">
             {props.mentor &&
             props.mentor.hub_user &&
-            props.mentor.hub_user.url === "GSRFoundation" ? (
+            props.mentor.hub_user.name === "GSRFoundation" ? (
               <b>How we’re deploying funding from the GSR Foundation</b>
             ) : (
               <b>{t("partnerProfile.projectNames")} </b>
@@ -406,7 +406,7 @@ function ProfileContent(props) {
           <br /> <br />
           {props.mentor &&
             props.mentor.hub_user &&
-            props.mentor.hub_user.url === "GSRFoundation" &&
+            props.mentor.hub_user.name === "GSRFoundation" &&
             account.success && (
               <>
                 <div className="mentor-profile-heading">

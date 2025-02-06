@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { Form, Input, Radio, Checkbox } from "antd";
+import { Form, Input, Checkbox } from "antd";
 import MenteeButton from "../MenteeButton";
 import { createApplication } from "../../utils/api";
 import "../../components/css/MentorApplicationPage.scss";
+import { useTranslation, Trans } from "react-i18next";
+
+// TODO: Remove this dead code
 
 const relationOptions = [
   "MENTEE serves those you support as mentees",
@@ -33,12 +36,13 @@ const sdgsOptions = [
   "SDG 17: Partnership to Achieve the Goals",
 ];
 function PartnerApplication(props) {
+  const { t } = useTranslation();
   const [submitError, setSubmitError] = useState();
   const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
 
   // sets text fields
   const [organization, setorganization] = useState(null);
-  const [contanctPerson, setcontanctPerson] = useState(null);
+  const [contactPerson, setContactPerson] = useState(null);
   const [personEmail, setpersonEmail] = useState(null);
   const [relationShip, setrelationShip] = useState([]);
   const [otherRelation, setOtherRelation] = useState(null);
@@ -67,7 +71,7 @@ function PartnerApplication(props) {
   const verifyRequiredFieldsAreFilled = () => {
     const requiredQuestions = [
       organization,
-      contanctPerson,
+      contactPerson,
       personEmail,
       relationShip,
       howBuild,
@@ -93,10 +97,7 @@ function PartnerApplication(props) {
     return (
       <div className="page-one-column-container">
         <Form>
-          <div>
-            {" "}
-            {"*What is your organization/institutions/company's name?"}
-          </div>
+          <div>{t("partnerApplication.partnerName")}</div>
           <Form.Item
             className="input-form"
             rules={[
@@ -106,16 +107,15 @@ function PartnerApplication(props) {
             ]}
           >
             {isMissingError(organization) && (
-              <p style={{ color: "red" }}>Please input first name.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="*Organization"
               value={organization}
               onChange={(e) => setorganization(e.target.value)}
             />
           </Form.Item>
-          <div> {"*Who is the best contact person?"}</div>
+          <div> {t("partnerApplication.pointOfContact")}</div>
           <Form.Item
             className="input-form"
             rules={[
@@ -124,16 +124,15 @@ function PartnerApplication(props) {
               },
             ]}
           >
-            {isMissingError(contanctPerson) && (
-              <p style={{ color: "red" }}>Please input last name.</p>
+            {isMissingError(contactPerson) && (
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
-              placeholder="*Contact person*"
-              value={contanctPerson}
-              onChange={(e) => setcontanctPerson(e.target.value)}
+              value={contactPerson}
+              onChange={(e) => setContactPerson(e.target.value)}
             />
           </Form.Item>
-          <div>{"*What is their email?"}</div>
+          <div>{t("partnerApplication.contactEmail")}</div>
 
           <Form.Item
             className="input-form"
@@ -144,19 +143,17 @@ function PartnerApplication(props) {
             ]}
           >
             {isMissingError(personEmail) && (
-              <p style={{ color: "red" }}>Please input email.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="*Email"
               value={personEmail}
               onChange={(e) => setpersonEmail(e.target.value)}
             />
-            <h1></h1>
-            <div>{"*What is our partnership relationship?"}</div>
+            <div>{t("partnerApplication.partnershipRelation")}</div>
             <Form.Item className="input-form">
               {isMissingError(relationShip) && (
-                <p style={{ color: "red" }}>Please select an option.</p>
+                <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
               )}
               <Checkbox.Group
                 options={relationOptions}
@@ -174,11 +171,10 @@ function PartnerApplication(props) {
                 ]}
               >
                 {isMissingError(otherRelation) && (
-                  <p style={{ color: "red" }}>Please input cell.</p>
+                  <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
                 )}
                 <Input
                   type="text"
-                  placeholder="*other"
                   value={otherRelation}
                   onChange={(e) => setOtherRelation(e.target.value)}
                 />
@@ -187,14 +183,10 @@ function PartnerApplication(props) {
               ""
             )}
           </Form.Item>
-          <div>
-            {
-              "*What SDGs does your organization/institution/company care about?"
-            }
-          </div>
+          <div>{t("partnerApplication.partnersConcerns")}</div>
           <Form.Item className="input-form">
             {isMissingError(SDGS) && (
-              <p style={{ color: "red" }}>Please select an option.</p>
+              <p style={{ color: "red" }}>{t("common.selectPrompt")}</p>
             )}
             <Checkbox.Group
               options={sdgsOptions}
@@ -203,9 +195,7 @@ function PartnerApplication(props) {
             />
           </Form.Item>
 
-          <div>
-            {"*How else do you think we could build together going forward?"}
-          </div>
+          <div>{t("partnerApplication.buildTogether")}</div>
           <Form.Item
             className="input-form"
             rules={[
@@ -215,11 +205,10 @@ function PartnerApplication(props) {
             ]}
           >
             {isMissingError(howBuild) && (
-              <p style={{ color: "red" }}>Please input cell.</p>
+              <p style={{ color: "red" }}>{t("common.inputPrompt")}</p>
             )}
             <Input
               type="text"
-              placeholder="*howBuild"
               value={howBuild}
               onChange={(e) => setHowBuild(e.target.value)}
             />
@@ -229,7 +218,6 @@ function PartnerApplication(props) {
     );
   }
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
   function handleSubmit(event) {
     let relations = relationShip;
     event.preventDefault();
@@ -237,7 +225,7 @@ function PartnerApplication(props) {
       if (otherRelation) {
         setShowMissingFieldErrors(false);
         relations = relations.filter(function (value, index, arr) {
-          return value != "other";
+          return value !== "other";
         });
         relations.push("Other: " + otherRelation);
       } else {
@@ -256,7 +244,7 @@ function PartnerApplication(props) {
       const data = {
         email: props.headEmail,
         organization: organization,
-        contanctPerson: contanctPerson,
+        contactPerson: contactPerson,
         personEmail: personEmail,
         relationShip: relations,
         SDGS: SDGS,
@@ -268,8 +256,6 @@ function PartnerApplication(props) {
       const res = await createApplication(data);
 
       if (res) {
-        setIsSubmitted(true);
-        console.log(res);
         props.submitHandler();
       } else {
         setSubmitError(true);
@@ -282,11 +268,13 @@ function PartnerApplication(props) {
   return (
     <div className="background2">
       <div className="instructions">
-        <h1 className="welcome-page">Welcome to MENTEE!</h1>
-        <p className="para-1">
-          We appreciate your interest in becoming a volunteer Global Partner for
-          MENTEE, a global nonprofit accelerating personal and professional
-          growth to make the world a better, healthier place.
+        <h1 className="welcome-page">
+          <Trans id="welcome" i18nKey={"common.welcome"}>
+            Welcome to <strong>MENTEE!</strong>
+          </Trans>
+        </h1>
+        <p id="introduction" className="para-1">
+          {t("partnerApplication.introduction")}
           <br></br>
         </p>
       </div>
@@ -296,14 +284,12 @@ function PartnerApplication(props) {
         <div className="submit-button sbtn">
           <MenteeButton
             width="150px"
-            content={<b> Submit</b>}
+            content={<b>{t("common.submit")}</b>}
             onClick={handleSubmit}
           />
         </div>
         {submitError ? (
-          <h1 className="error">
-            Some thing went wrong check you add your Email at Top
-          </h1>
+          <h1 className="error">{t("partnerApplication.submitError")}</h1>
         ) : (
           ""
         )}

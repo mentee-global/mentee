@@ -1,13 +1,29 @@
-from flask import Blueprint, request, jsonify
+from api.views.messages import invite
+from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
-from api.models import Users, VerifiedEmail, Admin
+from api.models import (
+    MenteeApplication,
+    MenteeProfile,
+    MentorApplication,
+    MentorProfile,
+    NewMentorApplication,
+    PartnerProfile,
+    Support,
+    Users,
+    VerifiedEmail,
+    Admin,
+    Guest,
+    Hub,
+    Image,
+)
 from api.utils.require_auth import admin_only
-from api.utils.request_utils import get_profile_model
+from api.utils.request_utils import get_profile_model, imgur_client
 from api.utils.constants import Account
 import csv
 import io
-
+from api.views.auth import create_firebase_user
+from numpy import imag
 
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
@@ -98,6 +114,104 @@ def upload_account_emails():
     return create_response(status=200, message="success")
 
 
+@admin.route("hub_register", methods=["PUT"])
+@admin_only
+def create_hub_account():
+    id = request.form["id"]
+    email = request.form["email"]
+    password = request.form["password"]
+    name = request.form["name"]
+    url = request.form["url"]
+    invite_key = request.form["invite_key"]
+    image = None
+    if "image" in request.files:
+        image = request.files["image"]
+
+    role = Account.HUB
+
+    if id is not None and id != "":
+        hub_account = Hub.objects.get(id=id)
+        if hub_account is not None:
+            hub_account.name = name
+            hub_account.url = url
+            hub_account.invite_key = invite_key
+            if hub_account.email != email:
+                ex_email = hub_account.email
+                firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
+                if password is not None:
+                    firebase_admin_auth.update_user(
+                        firebase_user.uid, email=email, password=password
+                    )
+                else:
+                    firebase_admin_auth.update_user(
+                        firebase_user.uid,
+                        email=email,
+                    )
+                hub_account.email = email
+                ex_data = Users.objects.filter(email=ex_email)
+                if len(ex_data) > 0:
+                    for ex_item in ex_data:
+                        ex_item.email = email
+                        ex_item.save()
+                ex_data = VerifiedEmail.objects.filter(email=ex_email)
+                if len(ex_data) > 0:
+                    for ex_item in ex_data:
+                        ex_item.email = email
+                        ex_item.save()
+
+            if hub_account.image is True and hub_account.image.image_hash is True:
+                image_response = imgur_client.delete_image(hub_account.image.image_hash)
+            if image is not None:
+                image_response = imgur_client.send_image(image)
+                new_image = Image(
+                    url=image_response["data"]["link"],
+                    image_hash=image_response["data"]["deletehash"],
+                )
+                hub_account.image = new_image
+            hub_account.save()
+        return create_response(status=200, message="Edit Hub user successfully")
+    else:
+        duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
+        if not duplicates:
+            firebase_user, error_http_response = create_firebase_user(email, password)
+            if error_http_response:
+                try:
+                    firebase_user = firebase_admin_auth.get_user_by_email(email)
+                except Exception as e:
+                    logger.error(e)
+                    logger.warning(f"{email} is not verified in Firebase")
+                    return create_response(
+                        status=422, message="Can't create firebase user"
+                    )
+            firebase_uid = firebase_user.uid
+            hub = Hub(
+                name=name,
+                email=email,
+                firebase_uid=firebase_uid,
+                url=url,
+                invite_key=invite_key,
+            )
+
+            if image is not None:
+                image_response = imgur_client.send_image(image)
+                new_image = Image(
+                    url=image_response["data"]["link"],
+                    image_hash=image_response["data"]["deletehash"],
+                )
+                hub.image = new_image
+
+            hub.save()
+
+            verified_email = VerifiedEmail(email=email, role=str(role), password="")
+            verified_email.save()
+        else:
+            return create_response(
+                status=500, message="This Email is already registered"
+            )
+
+        return create_response(status=200, message="Add Hub user successfully")
+
+
 @admin.route("/upload/accountsEmails", methods=["POST"])
 @admin_only
 def upload_account_emailText():
@@ -108,20 +222,53 @@ def upload_account_emailText():
     """
 
     role = request.form["role"]
+    role = int(role)
     messageText = request.form["messageText"]
-
-    for email in messageText.split(";"):
+    password = request.form["password"]
+    name = request.form["name"]
+    if role == Account.GUEST or role == Account.SUPPORT:
+        email = messageText
         email = email.replace(" ", "")
         duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
         if not duplicates:
-            email = VerifiedEmail(email=email, role=str(role), password="")
-            email.save()
+            firebase_user, error_http_response = create_firebase_user(email, password)
+            if error_http_response:
+                try:
+                    firebase_user = firebase_admin_auth.get_user_by_email(email)
+                except Exception as e:
+                    logger.error(e)
+                    logger.warning(f"{email} is not verified in Firebase")
+                    return create_response(
+                        status=422, message="Can't create firebase user"
+                    )
 
-    return create_response(status=200, message="success")
+            firebase_uid = firebase_user.uid
+
+            if role == Account.GUEST:
+                guest = Guest(email=email, name=name, firebase_uid=firebase_uid)
+                guest.save()
+            else:
+                support = Support(email=email, name=name, firebase_uid=firebase_uid)
+                support.save()
+
+            verified_email = VerifiedEmail(email=email, role=str(role), password="")
+            verified_email.save()
+        else:
+            return create_response(
+                status=500, message="This Email is already registered"
+            )
+    else:
+        for email in messageText.split(";"):
+            email = email.replace(" ", "")
+            duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
+            if not duplicates:
+                email = VerifiedEmail(email=email, role=str(role), password="")
+                email.save()
+
+    return create_response(status=200, message="Add users successfully")
 
 
 @admin.route("/admin/<id>", methods=["GET"])
-@admin_only
 def get_admin(id):
     # return create_response(data={"admin": {"_id":{"$oid":"60765e9289899aeee51a8b27"},"email":"klhester3@gmail.com","firebase_uid":"xsW41z9Hc6Y9r6Te0JAcXhlYneA2","name":"candle"}})
 
@@ -141,3 +288,78 @@ def get_admin(id):
         msg = "Admin does not exist"
         logger.info(msg)
         return create_response(status=422, message=msg)
+
+
+@admin.route("edit_email_password", methods=["POST"])
+@admin_only
+def editEmailPassword():
+    data = request.get_json()
+    email = data["email"]
+    ex_email = data["ex_email"]
+    password = None
+    if "password" in data:
+        password = data["password"]
+    firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
+
+    if password is not None:
+        firebase_admin_auth.update_user(
+            firebase_user.uid, email=email, password=password
+        )
+    else:
+        firebase_admin_auth.update_user(
+            firebase_user.uid,
+            email=email,
+        )
+    if email != ex_email:
+        ex_data = MenteeApplication.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = MentorApplication.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = MenteeProfile.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = MentorProfile.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = NewMentorApplication.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = PartnerProfile.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = Users.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = VerifiedEmail.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = Guest.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = Support.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+
+    return create_response(status=200, message="successful edited")

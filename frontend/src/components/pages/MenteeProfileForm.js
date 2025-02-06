@@ -1,750 +1,663 @@
 import React, { useEffect, useState } from "react";
-import { withRouter, useHistory } from "react-router-dom";
-import { Checkbox, Button, message, Upload, Avatar } from "antd";
-import ModalInput from "../ModalInput";
-import { refreshToken, getCurrentUser, getUserEmail } from "utils/auth.service";
+import { withRouter } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
-  createMenteeProfile,
-  getAppState,
-  isHaveAccount,
-  uploadMenteeImage,
-} from "utils/api";
-import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
+  Button,
+  Upload,
+  Avatar,
+  Typography,
+  Form,
+  Input,
+  Select,
+  Switch,
+  DatePicker,
+} from "antd";
+import { useSelector } from "react-redux";
 import {
-  LANGUAGES,
+  ACCOUNT_TYPE,
   MENTEE_DEFAULT_VIDEO_NAME,
-  AGE_RANGES,
-  SPECIALIZATIONS,
+  getAgeRanges,
+  TIMEZONE_OPTIONS,
 } from "utils/consts";
-import { useMediaQuery } from "react-responsive";
 import moment from "moment";
-import "../css/AntDesign.scss";
-import "../css/Modal.scss";
-import "../css/RegisterForm.scss";
-import "../css/MenteeButton.scss";
-import { sendVerificationEmail } from "utils/auth.service";
 import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
-function MenteeRegisterForm(props) {
-  const history = useHistory();
-  const isMobile = useMediaQuery({ query: `(max-width: 500px)` });
-  const numInputs = 14;
-  const [inputClicked, setInputClicked] = useState(
-    new Array(numInputs).fill(false)
-  ); // each index represents an input box, respectively
-  const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
-  const [validate, setValidate] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(false);
-  const [name, setName] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [languages, setLanguages] = useState([]);
-  const [educations, setEducations] = useState([]);
-  const [biography, setBiography] = useState();
-  const [gender, setGender] = useState();
-  const [age, setAge] = useState();
-  const [phone, setPhone] = useState();
-  const [organization, setOrganization] = useState();
-  const [privacy, setPrivacy] = useState(false);
-  const [video, setVideo] = useState();
-  const [password, setPassword] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState(null);
-  const [localProfile, setLocalProfile] = useState({});
-  const [specializations, setSpecializations] = useState([]);
-  const [err, setErr] = useState(false);
+import { css } from "@emotion/css";
+import { phoneRegex, urlRegex } from "utils/misc";
+import { fetchPartners, getAllcountries } from "utils/api";
+
+const styles = {
+  formGroup: css`
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    width: 100%;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0;
+    }
+  `,
+  formGroupItem: css`
+    flex: 1;
+  `,
+};
+
+function MenteeProfileForm({
+  email,
+  newProfile,
+  loading,
+  onSubmit,
+  profileData,
+  resetFields,
+  applicationData,
+  n50_flag,
+}) {
+  const { t, i18n } = useTranslation();
+  const options = useSelector((state) => state.options);
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
-  const [langMasters, setLangMasters] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
+  const [edited, setEdited] = useState(false);
+  const [form] = Form.useForm();
+  const [partnerOptions, setPartnerOptions] = useState([]);
+  const [countryOptions, setCountryOptions] = useState([]);
+  const [flag, setFlag] = useState(false);
+  const [finishFlag, setFinishFlag] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  var n50_user = localStorage.getItem("n50_user");
+
+  const immigrantOptions = [
+    {
+      value: "I am a refugee",
+      label: t("menteeApplication.immigrantOption1"),
+    },
+    {
+      value:
+        "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
+      label: t("menteeApplication.immigrantOption2"),
+    },
+    {
+      value: "I am black.",
+      label: t("menteeApplication.immigrantOption3"),
+    },
+    {
+      value: "I am Hispanic/Latino.",
+      label: t("menteeApplication.immigrantOption4"),
+    },
+    {
+      value: "I am of native/ aboriginal/indigenous origins.",
+      label: t("menteeApplication.immigrantOption5"),
+    },
+    {
+      value: "I identify as LGTBQ.",
+      label: t("menteeApplication.immigrantOption6"),
+    },
+    {
+      value: "I have economic hardship.",
+      label: t("menteeApplication.immigrantOption7"),
+    },
+    {
+      value: "I come from a country at war.",
+      label: t("menteeApplication.immigrantOption8"),
+    },
+    {
+      value:
+        "In a crisis situation within my country due to my gender, race, religion, sexuality, political affiliation or something else.",
+      label: t("menteeApplication.immigrantOption9"),
+    },
+    {
+      value: "other",
+      label: t("common.other"),
+    },
+  ];
+
+  const workOptions = [
+    {
+      value: "I work part-time.",
+      label: t("menteeApplication.workOption1"),
+    },
+    {
+      value: "I work full-time.",
+      label: t("menteeApplication.workOption2"),
+    },
+    {
+      value: "I attend technical school.",
+      label: t("menteeApplication.workOption3"),
+    },
+    {
+      value: "I am a college/university student attaining my first degree.",
+      label: t("menteeApplication.workOption4"),
+    },
+    {
+      value:
+        "I am a college/university students attaining my second or third degree.",
+      label: t("menteeApplication.workOption5"),
+    },
+    {
+      value: "other",
+      label: t("common.other"),
+    },
+  ];
 
   useEffect(() => {
-    const mentee = JSON.parse(localStorage.getItem("mentee"));
-
-    async function getMasters() {
-      setLangMasters(await LANGUAGES());
-      setSpecMasters(await SPECIALIZATIONS());
+    if (profileData) {
+      form.setFieldsValue(profileData);
+      form.setFieldValue("video", profileData.video?.url);
+      if (profileData.organization == 0) {
+        form.setFieldValue("organization", null);
+      }
+      setImage(profileData.image);
+      if (profileData.birthday) {
+        form.setFieldValue("birthday", moment(profileData.birthday.$date));
+      }
     }
-    getMasters();
-  }, []);
-  const info = (msg) => {
-    message.success(msg);
-  };
-  function renderEducationInputs() {
-    return (
-      educations &&
-      educations.map((education, i) => (
-        <div className="modal-education-container">
-          <div className="modal-education-sidebar"></div>
-          <div className="modal-inner-education-container">
-            <div className="modal-input-container">
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="text"
-                title="School *"
-                clicked={inputClicked[10 + i * 4]} // Each education degree has four inputs, i.e. i * 4
-                index={10 + i * 4}
-                handleClick={handleClick}
-                onEducationChange={handleSchoolChange}
-                educationIndex={i}
-                value={education.school}
-                valid={isValid[10 + i * 4]}
-                validate={validate}
-              />
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="text"
-                title="End Year/Expected *"
-                clicked={inputClicked[10 + i * 4 + 1]}
-                index={10 + i * 4 + 1}
-                handleClick={handleClick}
-                onEducationChange={handleGraduationDateChange}
-                educationIndex={i}
-                value={education.graduation_year}
-                valid={isValid[10 + i * 4 + 1]}
-                validate={validate}
-              />
-            </div>
-            <div className="modal-input-container">
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="dropdown-multiple"
-                title="Major(s) *"
-                clicked={inputClicked[10 + i * 4 + 2]}
-                index={10 + i * 4 + 2}
-                handleClick={handleClick}
-                onEducationChange={handleMajorsChange}
-                educationIndex={i}
-                options={[]}
-                placeholder="Ex. Computer Science, Biology"
-                value={education.majors}
-                valid={isValid[10 + i * 4 + 2]}
-                validate={validate}
-              />
-              <ModalInput
-                style={styles.modalInput}
-                height={65}
-                type="text"
-                title="Degree *"
-                clicked={inputClicked[10 + i * 4 + 3]}
-                index={10 + i * 4 + 3}
-                handleClick={handleClick}
-                educationIndex={i}
-                onEducationChange={handleDegreeChange}
-                placeholder="Ex. Bachelor's"
-                value={education.education_level}
-                valid={isValid[10 + i * 4 + 3]}
-                validate={validate}
-              />
-            </div>
-            <div
-              className="modal-input-container modal-education-delete-container"
-              onClick={() => handleDeleteEducation(i)}
-            >
-              <div className="modal-education-delete-text">delete</div>
-              <DeleteOutlined className="modal-education-delete-icon" />
-            </div>
-          </div>
-        </div>
-      ))
-    );
-  }
-
-  function handleClick(index) {
-    // Sets only the clicked input box to true to change color, else false
-    let newClickedInput = new Array(numInputs).fill(false);
-    newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
-  }
-
-  function validateNotEmpty(arr, index) {
-    let tempValid = isValid;
-    tempValid[index] = arr.length > 0;
-    setIsValid(tempValid);
-  }
-
-  function updateLocalStorage(newLocalProfile) {
-    setLocalProfile(newLocalProfile);
-    localStorage.setItem("mentee", JSON.stringify(newLocalProfile));
-  }
-
-  function handleSchoolChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    education.school = e.target.value;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4] = !!education.school;
-    setIsValid(newValid);
-  }
-
-  function handleGraduationDateChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    education.graduation_year = e.target.value;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4 + 1] = !!education.graduation_year;
-    setIsValid(newValid);
-  }
-
-  function handleMajorsChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    const majors = [];
-    e.forEach((value) => majors.push(value));
-    education.majors = majors;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4 + 2] = !!education.majors.length;
-    setIsValid(newValid);
-  }
-
-  function handleDegreeChange(e, index) {
-    const newEducations = [...educations];
-    let education = newEducations[index];
-    education.education_level = e.target.value;
-    newEducations[index] = education;
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    let newValid = [...isValid];
-    newValid[10 + index * 4 + 3] = !!education.education_level;
-    setIsValid(newValid);
-  }
-
-  const handleAddEducation = () => {
-    const newEducations = [...educations];
-    newEducations.push({
-      education_level: "",
-      majors: [],
-      school: "",
-      graduation_year: "",
-    });
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    setIsValid([...isValid, true, true, true, true]);
-  };
-
-  const handleDeleteEducation = (educationIndex) => {
-    const newEducations = [...educations];
-    newEducations.splice(educationIndex, 1);
-    setEducations(newEducations);
-    let newLocalProfile = { ...localProfile, education: newEducations };
-    updateLocalStorage(newLocalProfile);
-
-    const newValidArray = [...isValid];
-    newValidArray.splice(10 + educationIndex * 4, 4);
-    setIsValid(newValidArray);
-  };
-
-  function handleVideoChange(e) {
-    setVideo(e.target.value);
-    let newLocalProfile = { ...localProfile, video: e.target.value };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handlePrivacyChange(e) {
-    setPrivacy(e.target.checked);
-    let newLocalProfile = { ...localProfile, is_private: e.target.checked };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleNameChange(e) {
-    const name = e.target.value;
-
-    if (name.length < 50) {
-      let newValid = [...isValid];
-
-      newValid[0] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[0] = false;
-      setIsValid(newValid);
-    }
-    setName(name);
-    let newLocalProfile = { ...localProfile, name: name };
-    updateLocalStorage(newLocalProfile);
-  }
-  function handlePassChange(e) {
-    const pass = e.target.value;
-
-    if (pass.length >= 8) {
-      let newValid = [...isValid];
-
-      newValid[30] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[30] = false;
-      setIsValid(newValid);
-    }
-    setPassword(pass);
-  }
-  function handlePassConfirmChange(e) {
-    const pass = e.target.value;
-
-    if (pass === password) {
-      let newValid = [...isValid];
-
-      newValid[31] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[31] = false;
-      setIsValid(newValid);
-    }
-    setConfirmPassword(pass);
-    let newLocalProfile = { ...localProfile, password: pass };
-    updateLocalStorage(newLocalProfile);
-  }
-  function handleBiographyChange(e) {
-    const biography = e.target.value;
-
-    if (biography.length < 1002) {
-      let newValid = [...isValid];
-
-      newValid[8] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[8] = false;
-      setIsValid(newValid);
-    }
-
-    setBiography(biography);
-    let newLocalProfile = { ...localProfile, biography: biography };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleLocationChange(e) {
-    const location = e.target.value;
-
-    if (location.length < 70) {
-      let newValid = [...isValid];
-
-      newValid[9] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[9] = false;
-      setIsValid(newValid);
-    }
-
-    setLocation(location);
-    let newLocalProfile = { ...localProfile, location: location };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleGenderChange(e) {
-    const gender = e.target.value;
-    setGender(gender);
-    let newLocalProfile = { ...localProfile, gender: gender };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleAgeChange(e) {
-    setAge(e);
-    let newLocalProfile = { ...localProfile, age: e };
-    updateLocalStorage(newLocalProfile);
-    validateNotEmpty(e, 4);
-  }
-
-  function handleLanguageChange(e) {
-    setLanguages(e);
-    validateNotEmpty(e, 5);
-    let newLocalProfile = { ...localProfile, languages: e };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handlePhoneChange(e) {
-    setPhone(e.target.value);
-    let newLocalProfile = { ...localProfile, phone_number: e.target.value };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleOrganizationChange(e) {
-    setOrganization(e.target.value);
-    let newLocalProfile = { ...localProfile, organization: e.target.value };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  const handleSaveEdits = async () => {
-    async function saveEdits(data) {
-      const { isHave, isHaveProfile, isVerified } = await isHaveAccount(
-        props.headEmail,
-        props.role
+    if (applicationData) {
+      form.setFieldValue(
+        "organization",
+        applicationData.partner ? applicationData.partner : null
       );
-      if (isHave == false) {
-        const state = await getAppState(props.headEmail, props.role);
-        if (state != "BuildProfile" && !isVerified) {
-          setErr(true);
-          return;
+      form.setFieldValue("name", applicationData.name);
+      form.setFieldValue("location", applicationData.Country);
+      form.setFieldValue("gender", applicationData.identify);
+      form.setFieldValue("immigrant_status", applicationData.immigrant_status);
+      form.setFieldValue("workstate", applicationData.workstate);
+      if (applicationData.language) {
+        if (typeof applicationData.language === "string") {
+          form.setFieldValue("languages", [applicationData.language]);
+        } else {
+          form.setFieldValue("languages", applicationData.language);
         }
       }
-      const res = await createMenteeProfile(data, props.isHave);
-      const menteeId =
-        res && res.data && res.data.result ? res.data.result.mentorId : false;
+      form.setFieldValue("specializations", applicationData.topics);
+    }
+  }, [profileData, form, resetFields, applicationData]);
 
-      setSaving(false);
-      setValidate(false);
-
-      if (menteeId) {
-        setError(false);
-        setIsValid([...isValid].fill(true));
-        info("Your account has been created now you can login to Mentee");
-        await sendVerificationEmail(props.headEmail);
-        if (changedImage) {
-          await uploadMenteeImage(image, menteeId);
-        }
-
-        history.push("/login");
-      } else {
-        setError(true);
+  useEffect(() => {
+    async function getPartners() {
+      const partenr_data = await fetchPartners(undefined, null);
+      if (!(partnerOptions.length > 0)) {
+        partenr_data.map((item) => {
+          partnerOptions.push({
+            value: item._id.$oid,
+            label: item.organization,
+          });
+          return true;
+        });
+        partnerOptions.push({
+          value: null,
+          label: t("commonApplication.no-affiliation"),
+        });
+        setPartnerOptions(partnerOptions);
+        setFlag(!flag);
       }
     }
 
-    if (isValid.includes(false)) {
-      setValidate(true);
-      return;
+    async function getAllCountries() {
+      const all_countries = await getAllcountries();
+      var temp_countires = [];
+      if (all_countries && all_countries.countries) {
+        // Extract country names
+        const countryNames = all_countries.countries.map(
+          (country) => country.country_name
+        );
+        // Sort country names in ascending order
+        const sortedCountryNames = countryNames.sort();
+        sortedCountryNames.map((country_name) => {
+          temp_countires.push({
+            label: country_name,
+            value: country_name,
+          });
+        });
+      }
+      setCountryOptions(temp_countires);
     }
+    getAllCountries();
+    getPartners();
+  }, []);
 
-    const newProfile = {
-      name,
-      password: password,
-      gender,
-      location,
-      age,
-      email: props.headEmail,
-      phone_number: phone,
-      education: educations,
-      languages: languages,
-      biography,
-      organization,
-      specializations: specializations,
-      video: video
+  const onFinish = async (values) => {
+    setFinishFlag(true);
+    let newData = values;
+    newData.email = email;
+    newData.role = ACCOUNT_TYPE.MENTEE;
+    newData.video =
+      values.video && values.video !== ""
         ? {
             title: MENTEE_DEFAULT_VIDEO_NAME,
-            url: video,
+            url: values.video,
             tag: MENTEE_DEFAULT_VIDEO_NAME,
             date_uploaded: moment().format(),
           }
-        : undefined,
-      is_private: privacy,
-    };
+        : null;
+    newData.preferred_language = i18n.language;
+    newData.image = image;
+    newData.changedImage = changedImage;
+    newData.edited = edited;
+    onSubmit(newData);
+  };
 
-    if (!isValid.includes(false)) {
-      setSaving(true);
-      await saveEdits(newProfile);
+  function getAgeRange(birthday) {
+    let res = "";
+    if (birthday) {
+      birthday = birthday.format("YYYY");
+      let age = new Date().getFullYear() - birthday;
+      if (age >= 18 && age <= 22) {
+        res = "18-22";
+      } else if (age >= 23 && age <= 25) {
+        res = "23-25";
+      } else if (age >= 26 && age <= 30) {
+        res = "26-30";
+      } else if (age >= 31 && age < 40) {
+        res = "30s";
+      } else if (age >= 41 && age < 50) {
+        res = "40s";
+      } else if (age >= 51 && age < 60) {
+        res = "50s";
+      } else if (age >= 61 && age < 70) {
+        res = "60s";
+      } else if (age > 70) {
+        res = "70s";
+      }
     }
+    return res;
+  }
+
+  const changeBirthday = () => {
+    let birthday = form.getFieldValue("birthday");
+    let age_range = getAgeRange(birthday);
+    form.setFieldValue("age", age_range);
+    setRefresh(!refresh);
   };
 
   return (
-    <div className="register-content">
-      <div className="register-header">
-        <h2>Welcome. Tell us about yourself.</h2>
-        {error && (
-          <div className="register-error">
-            Error or missing fields, try again.
-          </div>
-        )}
-        <div>{validate && <b style={styles.alertToast}>Missing Fields</b>}</div>
-      </div>
-      <div className="modal-profile-container2">
-        <Avatar
-          size={120}
-          icon={<UserOutlined />}
-          className="modal-profile-icon"
-          src={
-            changedImage
-              ? image && URL.createObjectURL(image)
-              : image && image.url
-          }
-        />
-        <ImgCrop rotate aspect={5 / 3}>
+    <Form
+      form={form}
+      onFinish={onFinish}
+      layout="vertical"
+      style={{ width: "100%", marginTop: "1em" }}
+      onValuesChange={() => setEdited(true)}
+    >
+      <Form.Item>
+        <ImgCrop rotate aspect={1} minZoom={0.2}>
           <Upload
             onChange={async (file) => {
               setImage(file.file.originFileObj);
               setChangedImage(true);
+              setEdited(true);
             }}
             accept=".png,.jpg,.jpeg"
             showUploadList={false}
           >
+            <Avatar
+              size={120}
+              icon={<UserOutlined />}
+              src={
+                changedImage
+                  ? image && URL.createObjectURL(image)
+                  : image && image.url
+              }
+            />
             <Button
               shape="circle"
               icon={<EditFilled />}
-              className="modal-profile-icon-edit"
+              className={css`
+                position: absolute;
+                top: 0;
+                left: 0;
+              `}
             />
           </Upload>
         </ImgCrop>
-      </div>
-      <div className="modal-inner-container">
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Full Name *"
-            clicked={inputClicked[0]}
-            index={0}
-            handleClick={handleClick}
-            onChange={handleNameChange}
-            value={name}
-            valid={isValid[0]}
-            validate={validate}
-            errorPresent={name && name.length > 50}
-            errorMessage="Name field is too long."
-          />
-        </div>
-        {!props.isHave ? (
-          <div className="modal-input-container">
-            <ModalInput
-              style={styles.modalInput}
-              type="password"
-              title="Password *"
-              clicked={inputClicked[30]}
-              index={30}
-              handleClick={handleClick}
-              onChange={handlePassChange}
-              value={password}
-              valid={isValid[30]}
-              validate={validate}
-              errorPresent={password && password.length > 50}
-              errorMessage="password field is too long."
-            />
-            <ModalInput
-              style={styles.modalInput}
-              type="password"
-              title="Confirm Password *"
-              clicked={inputClicked[31]}
-              index={31}
-              handleClick={handleClick}
-              onChange={handlePassConfirmChange}
-              value={confirmPassword}
-              valid={isValid[31]}
-              validate={validate}
-              errorPresent={password != confirmPassword}
-              errorMessage="password not match."
-            />
+        {!image && finishFlag && (
+          <div
+            class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
+            role="alert"
+          >
+            <div class="ant-form-item-explain-error">
+              {t("common.requiredAvatar")}
+            </div>
           </div>
-        ) : (
-          ""
         )}
-        <div className="modal-input-container Bio">
-          <ModalInput
-            style={styles.textareaInput}
-            type="textarea"
-            maxRows={3}
-            hasBorder={false}
-            title="Biography *"
-            clicked={inputClicked[1]}
-            index={1}
-            handleClick={handleClick}
-            onChange={handleBiographyChange}
-            value={biography}
-            valid={isValid[8]}
-            validate={validate}
-            errorPresent={biography && biography.length > 1002}
-            errorMessage="Biography field is too long."
-          />
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Location"
-            clicked={inputClicked[2]}
-            index={2}
-            handleClick={handleClick}
-            onChange={handleLocationChange}
-            value={location}
-            valid={isValid[9]}
-            validate={validate}
-            errorPresent={location && location.length > 70}
-            errorMessage="Location field is too long."
-          />
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Gender *"
-            clicked={inputClicked[3]}
-            index={3}
-            handleClick={handleClick}
-            onChange={handleGenderChange}
-            value={gender}
-          />
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="dropdown-single"
-            title="Age *"
-            clicked={inputClicked[4]}
-            index={4}
-            handleClick={handleClick}
-            onChange={handleAgeChange}
-            options={AGE_RANGES}
-            value={age}
-            valid={isValid[4]}
-            validate={validate}
-          />
-          <ModalInput
-            style={styles.modalInput}
-            type="dropdown-multiple"
-            title="Language(s)*"
-            placeholder="Ex. English, Spanish"
-            clicked={inputClicked[5]}
-            index={5}
-            options={langMasters}
-            handleClick={handleClick}
-            onChange={handleLanguageChange}
-            validate={validate}
-            valid={isValid[5]}
-            value={languages}
-          />
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Phone"
-            clicked={inputClicked[7]}
-            index={7}
-            handleClick={handleClick}
-            onChange={handlePhoneChange}
-            value={phone}
-          />
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Organization Affliation *"
-            clicked={inputClicked[8]}
-            index={8}
-            handleClick={handleClick}
-            onChange={handleOrganizationChange}
-            value={organization}
-            valid={isValid[8]}
-            validate={validate}
-          />
-        </div>
-        <ModalInput
-          style={styles.modalInput}
-          type="dropdown-multiple"
-          title="Areas of interest "
-          clicked={inputClicked[99]}
-          index={99}
-          handleClick={handleClick}
-          onChange={(e) => {
-            setSpecializations(e);
-            let newLocalProfile = { ...localProfile, specializations: e };
-            updateLocalStorage(newLocalProfile);
-          }}
-          options={specMasters}
-          value={specializations}
-          valid={isValid[99]}
-          validate={validate}
-        />
-        <div className="modal-education-header">Education</div>
-        {renderEducationInputs()}
-        <div
-          className="modal-input-container modal-education-add-container"
-          onClick={handleAddEducation}
-        >
-          <PlusCircleFilled className="modal-education-add-icon" />
-          <div className="modal-education-add-text">Add more</div>
-        </div>
-        <div className="modal-education-header">Add Videos</div>
-        <div className="modal-education-body">
-          <div>Introduce yourself via YouTube video!</div>
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            clicked={inputClicked[6]}
-            index={6}
-            handleClick={handleClick}
-            onChange={handleVideoChange}
-            placeholder="Paste Link"
-            value={video}
-          />
-        </div>
-        <div className="modal-education-header">Account Privacy</div>
-        <div className="modal-education-body">
-          <Checkbox
-            onChange={handlePrivacyChange}
-            value={privacy}
-            checked={privacy}
-          >
-            Private Account
-          </Checkbox>
-          <div>
-            You'll be able to see your information, but your account will not
-            show up when people are browsing accounts.
-          </div>
-          {err && <p>Please complete apply and training steps first</p>}
-          <Button
-            type="default"
-            shape="round"
-            className="regular-button"
-            style={styles.saveButton}
-            onClick={handleSaveEdits}
-            loading={saving}
-          >
-            Save
-          </Button>
+      </Form.Item>
+      <div
+        class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
+        role="alert"
+      >
+        <div class="ant-form-item-explain-error">
+          Please upload profile image
         </div>
       </div>
-    </div>
+      <Form.Item label={"Email"}>
+        <Input value={email} readOnly />
+      </Form.Item>
+      <Form.Item
+        label={t("commonProfile.fullName")}
+        name="name"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredFullName"),
+          },
+        ]}
+      >
+        <Input readOnly={profileData ? false : true} />
+      </Form.Item>
+      {newProfile ? (
+        <div className={styles.formGroup}>
+          <Form.Item
+            label={t("common.password")}
+            name="password"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: t("common.requiredPassword"),
+              },
+            ]}
+            className={styles.formGroupItem}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label={t("commonProfile.confirmPassword")}
+            name="confirmPassword"
+            dependencies={["password"]}
+            hasFeedback
+            required
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(t("commonProfile.passwordMismatch"))
+                  );
+                },
+              }),
+            ]}
+            className={styles.formGroupItem}
+          >
+            <Input.Password />
+          </Form.Item>
+        </div>
+      ) : null}
+
+      <Form.Item
+        name="birthday"
+        label={t("common.birthday")}
+        rules={[
+          {
+            required: false,
+            message: t("common.requiredBirthday"),
+          },
+        ]}
+        style={{
+          display: "inline-block",
+        }}
+      >
+        <DatePicker
+          placeholder={t("common.birthday")}
+          onChange={() => changeBirthday()}
+        />
+      </Form.Item>
+
+      <Form.Item label={t("commonProfile.biography")} name="biography">
+        <Input.TextArea rows={3} />
+      </Form.Item>
+      <div className={styles.formGroup}>
+        <Form.Item
+          label={t("menteeApplication.countryPlaceholder")}
+          name="location"
+          className={styles.formGroupItem}
+          style={{ display: profileData ? "block" : "none" }}
+        >
+          <Select showSearch options={countryOptions} mode="single" />
+        </Form.Item>
+        <Form.Item
+          label={t("commonApplication.genderIdentification")}
+          name="gender"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredGender"),
+            },
+          ]}
+          className={styles.formGroupItem}
+          style={{ display: profileData ? "block" : "none" }}
+        >
+          <Input />
+        </Form.Item>
+      </div>
+      <div className={styles.formGroup}>
+        <Form.Item
+          label={t("menteeProfile.age")}
+          name="age"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredAge"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Select
+            options={getAgeRanges(t)}
+            disabled={form.getFieldValue("birthday") ? true : false}
+          />
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.preferredLanguage")}
+          name="languages"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredLanguage"),
+            },
+          ]}
+          className={styles.formGroupItem}
+          style={{ display: profileData ? "block" : "none" }}
+        >
+          <Select
+            options={options.languages}
+            mode="multiple"
+            placeholder={t("commonProfile.languagesExample")}
+          />
+        </Form.Item>
+      </div>
+      <div className={styles.formGroup}>
+        <Form.Item
+          label={t("commonProfile.phone")}
+          name="phone_number"
+          rules={[
+            {
+              pattern: new RegExp(phoneRegex),
+              message: t("profile.validatePhone"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label={t("menteeProfile.organizationAffiliation")}
+          name="organization"
+          rules={[
+            {
+              required: false,
+              message: t("common.requiredOrganizationAffiliation"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Select
+            options={[...partnerOptions]}
+            disabled={n50_flag || n50_user}
+          />
+        </Form.Item>
+      </div>
+      <Form.Item
+        label={t("common.timezone")}
+        name="timezone"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredTimezone"),
+          },
+        ]}
+        className={styles.formGroupItem}
+      >
+        <Select options={[...TIMEZONE_OPTIONS]} />
+      </Form.Item>
+      <Form.Item
+        label={t("menteeProfile.areasOfInterest")}
+        name="specializations"
+        style={{ display: profileData ? "block" : "none" }}
+      >
+        <Select
+          options={options.specializations}
+          mode="tags"
+          tokenSeparators={[","]}
+          placeholder={t("common.pleaseSelect")}
+        />
+      </Form.Item>
+      <Form.Item
+        label={t("menteeApplication.immigrationStatus")}
+        name="immigrant_status"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredImmigrationStatus"),
+          },
+        ]}
+        style={{ display: profileData ? "block" : "none" }}
+      >
+        <Select options={immigrantOptions} mode="multiple" />
+      </Form.Item>
+      <Form.Item
+        label={t("menteeApplication.workOptions")}
+        name="workstate"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredWorkOptions"),
+          },
+        ]}
+        style={{ display: profileData ? "block" : "none" }}
+      >
+        <Select mode="multiple" options={workOptions} />
+      </Form.Item>
+      <Typography.Title level={4}>
+        {t("commonProfile.education")}
+      </Typography.Title>
+      <div className={styles.formGroup}>
+        <Form.Item
+          label={t("menteeProfile.is_student")}
+          name="isStudent"
+          className={styles.formGroupItem}
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredReferral"),
+            },
+          ]}
+        >
+          <Select
+            options={[
+              {
+                label: t("common.yes"),
+                value: "Yes",
+              },
+              {
+                label: t("common.no"),
+                value: "No",
+              },
+            ]}
+            placeholder={t("common.pleaseSelect")}
+          />
+        </Form.Item>
+        <Form.Item
+          label={t("menteeProfile.edu_level")}
+          name="education_level"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredReferral"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Select
+            options={[
+              {
+                label: t("common.elementary"),
+                value: "elementary",
+              },
+              {
+                label: t("common.high"),
+                value: "high",
+              },
+              {
+                label: t("common.technical"),
+                value: "technical",
+              },
+              {
+                label: t("common.bachelor"),
+                value: "bachelor",
+              },
+              {
+                label: t("common.masters"),
+                value: "masters",
+              },
+              {
+                label: t("common.doctorate"),
+                value: "doctorate",
+              },
+            ]}
+            placeholder={t("common.pleaseSelect")}
+          />
+        </Form.Item>
+      </div>
+      <Typography.Title level={4}>
+        {t("commonProfile.addVideos")}
+      </Typography.Title>
+      <Typography.Paragraph>
+        {t("commonProfile.introductionVideo")}
+      </Typography.Paragraph>
+      <Form.Item
+        label={t("commonProfile.pasteLink")}
+        name="video"
+        rules={[
+          {
+            pattern: new RegExp(urlRegex),
+            message: t("common.invalidUrl"),
+          },
+        ]}
+      >
+        <Input addonBefore="URL" />
+      </Form.Item>
+      <Typography.Title level={4}>
+        {t("menteeProfile.accountPrivacy")}
+      </Typography.Title>
+      <Typography.Paragraph>
+        {t("menteeProfile.privateAccountInfo")}
+      </Typography.Paragraph>
+      <Form.Item name="is_private" valuePropName="checked" required>
+        <Switch>{t("menteeProfile.privateAccount")}</Switch>
+      </Form.Item>
+      <Form.Item>
+        <Button
+          id="submit"
+          type="primary"
+          htmlType="submit"
+          block
+          loading={loading}
+        >
+          {t("common.save")}
+        </Button>
+      </Form.Item>
+    </Form>
   );
 }
 
-const styles = {
-  modalInput: {
-    height: 65,
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
-  },
-  textareaInput: {
-    height: 65,
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
-    marginBottom: "80px",
-  },
-  alertToast: {
-    color: "#FF0000",
-    display: "inline-block",
-    marginRight: 10,
-  },
-
-  saveButton: {
-    position: "relative",
-    top: "2em",
-  },
-};
-
-export default withRouter(MenteeRegisterForm);
+export default withRouter(MenteeProfileForm);

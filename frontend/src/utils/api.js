@@ -1,62 +1,121 @@
 import axios from "axios";
-import { API_URL, ACCOUNT_TYPE, PLURAL_TYPE } from "utils/consts";
+import {
+  API_URL,
+  ACCOUNT_TYPE,
+  PLURAL_TYPE,
+  FRONT_BASE_URL,
+} from "utils/consts";
 import { getUserIdToken } from "utils/auth.service";
-import { lang } from "moment";
+import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: API_URL,
 });
 
 const authGet = async (url, config) =>
-  instance
-    .get(url, { ...config, headers: { Authorization: await getUserIdToken() } })
-    .catch(console.error);
+  instance.get(url, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
 const authPost = async (url, data, config) =>
-  instance
-    .post(url, data, {
-      ...config,
-      headers: { Authorization: await getUserIdToken() },
-    })
-    .catch(console.error);
+  instance.post(url, data, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
 const authPut = async (url, data, config) =>
-  instance
-    .put(url, data, {
-      ...config,
-      headers: { Authorization: await getUserIdToken() },
-    })
-    .catch(console.error);
+  instance.put(url, data, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
+
+const authPatch = async (url, data, config) =>
+  instance.patch(url, data, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
 const authDelete = async (url, config) =>
-  instance
-    .delete(url, {
-      ...config,
-      headers: { Authorization: await getUserIdToken() },
-    })
-    .catch(console.error);
+  instance.delete(url, {
+    ...config,
+    headers: { Authorization: await getUserIdToken() },
+  });
 
-export const fetchAccountById = (id, type) => {
-  if (!id) return;
-  const requestExtension = `/account/${id}`;
-  return instance
-    .get(requestExtension, {
-      params: {
-        account_type: type,
-      },
-    })
-    .then(
-      (response) => response.data.result.account,
-      (err) => {
-        console.error(err);
-      }
-    );
+export const getAllcountries = () => {
+  const requestExtension = "/countries";
+  return authGet(requestExtension, {}).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
 };
 
-export const fetchAccounts = (type) => {
+export const fetchAccountById = (id, type) => {
+  if (!id || typeof id !== "string") return;
+  const requestExtension = `/account/${id}`;
+  return authGet(requestExtension, {
+    params: {
+      account_type: type,
+    },
+  }).then(
+    (response) => {
+      let res = response.data.result.account;
+      res.role = type;
+      return res;
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const fetchEventById = (id) => {
+  if (!id) return;
+  const requestExtension = `/event/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.event,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const fetchEvents = async (type, hub_user_id = null) => {
+  const requestExtension = `/events/${type}`;
+  return authGet(requestExtension, {
+    params: {
+      hub_user_id: hub_user_id,
+    },
+  }).then(
+    (response) => response.data.result.events,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const fetchAccounts = (
+  type,
+  restricted = undefined,
+  hub_user_id = ""
+) => {
   const requestExtension = `/accounts/${type}`;
-  return instance.get(requestExtension).then(
-    (response) => response.data.result.accounts,
+  return authGet(requestExtension, {
+    params: {
+      restricted: restricted,
+      hub_user_id: hub_user_id,
+    },
+  }).then(
+    (response) => {
+      let account_data = response.data.result.accounts;
+      account_data.map((account_item) => {
+        account_item.role = type;
+        return true;
+      });
+      return account_data;
+    },
     (err) => {
       console.error(err);
     }
@@ -65,26 +124,11 @@ export const fetchAccounts = (type) => {
 
 export const editAccountProfile = (profile, id, type) => {
   const requestExtension = `/account/${id}`;
-  return instance
-    .put(requestExtension, profile, {
-      params: {
-        account_type: type,
-      },
-    })
-    .then(
-      (response) => response,
-      (err) => {
-        console.error(err);
-      }
-    );
-};
-
-export const uploadAccountImage = (data, id, type) => {
-  let formData = new FormData();
-  formData.append("image", data);
-  formData.append("account_type", type);
-  const requestExtension = `/account/${id}/image`;
-  return instance.put(requestExtension, formData).then(
+  return authPut(requestExtension, profile, {
+    params: {
+      account_type: type,
+    },
+  }).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -92,14 +136,27 @@ export const uploadAccountImage = (data, id, type) => {
   );
 };
 
-export const createAccountProfile = async (profile, type, isHave) => {
+export const uploadAccountImage = (data, id, type) => {
+  let formData = new FormData();
+  formData.append("image", data);
+  formData.append("account_type", type);
+  const requestExtension = `/account/${id}/image`;
+  return authPut(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const createAccountProfile = async (profile, type, inFirebase) => {
   profile["account_type"] = type;
   let requestExtension = `/account`;
-  if (isHave == true) {
+  if (inFirebase) {
     requestExtension = `/accountProfile`;
   }
 
-  return await instance.post(requestExtension, profile).then(
+  return authPost(requestExtension, profile).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -109,10 +166,10 @@ export const createAccountProfile = async (profile, type, isHave) => {
 
 export const fetchApplications = async (isMentor) => {
   let requestExtension = "/application/";
-  if (isMentor == false) {
+  if (isMentor === false) {
     requestExtension = "/application/menteeApps";
   }
-  return await authGet(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response && response.data.result,
     (err) => {
       console.error(err);
@@ -122,86 +179,158 @@ export const fetchApplications = async (isMentor) => {
 
 export const createApplication = (application) => {
   const requestExtension = `/application/new`;
+  application.preferred_language = i18n.language;
   return instance.post(requestExtension, application).then(
     (response) => response,
     (err) => {
       console.error(err);
+      return err;
     }
   );
 };
-let state = "";
-export const getAppState = async (email, role) => {
-  const requestExtension = `/application/checkConfirm/${email}/${role}`;
+
+export const getApplicationStatus = async (email, role) => {
+  const requestExtension = `/application/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  state = res.data.result.state;
-  console.log(state);
-  return state;
+  let state = res.data?.result?.state;
+  let application_data = res.data?.result?.application_data;
+  return { state, application_data };
 };
-let isHaveProfile = false;
-export const isHaveProfilee = async (email, role) => {
-  const requestExtension = `/application/isHaveProfile/${email}/${role}`;
+
+export const checkProfileExists = async (email, role) => {
+  const requestExtension = `/application/profile/exists/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  isHaveProfile = res.data.result.isHaveProfile;
-  let rightRole = null;
-  if (res.data.result.rightRole) {
-    rightRole = res.data.result.rightRole;
-  }
-  console.log(isHaveProfile);
-  return { isHaveProfile, rightRole };
+  let profileExists = res.data?.result?.profileExists;
+  let rightRole = res.data?.result?.rightRole;
+  return { profileExists, rightRole };
 };
-export const changeStateBuildProfile = async (email, role) => {
+
+export const changeStateTraining = async (id, role, traing_status) => {
+  const requestExtension = `/application/changeStateTraining`;
+  await authPost(requestExtension, { id, role, traing_status });
+  return true;
+};
+
+export const changeStateBuildProfile = async ({ email, role }) => {
   const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
-  const res = await instance.get(requestExtension);
-  state = res.data.result.state;
-  console.log(state);
+  const res = await authGet(requestExtension, {
+    params: {
+      front_url: FRONT_BASE_URL,
+      preferred_language: i18n.language,
+    },
+  });
+  let state = res.data?.result?.state;
   return state;
 };
 
-export const isHaveAccount = async (email, role) => {
-  const requestExtension = `/application/checkHaveAccount/${email}/${role}`;
+export const checkStatusByEmail = async (email, role) => {
+  const requestExtension = `/application/email/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
-  let isHave = res.data.result.isHave;
-  let isHaveProfile = res.data.result.isHaveProfile;
-  let isVerified = res.data.result.isVerified;
-  console.log(isHave, isHaveProfile, isVerified);
-  return { isHave, isHaveProfile, isVerified };
+  let inFirebase = res.data?.result?.inFirebase;
+  let profileExists = res.data?.result?.profileExists;
+  let isVerified = res.data?.result?.isVerified;
+  return { inFirebase, profileExists, isVerified };
+};
+export const getSignedData = async (role) => {
+  const requestExtension = `/training/getSignedDoc/${role}`;
+  const res = await authGet(requestExtension, {}).catch(console.error);
+
+  const data = res.data.result.signed;
+  return data;
+};
+export const getSignedDocfile = async (id, role) => {
+  const requestExtension = `/training/getSignedDocfile/${id}/${role}`;
+  const res = await authGet(requestExtension, {
+    role: role,
+    responseType: "blob",
+  }).catch(console.error);
+  return res;
+};
+export const getOriginSignDoc = async () => {
+  const requestExtension = `/training/getOriginDoc`;
+  const res = await authGet(requestExtension, {
+    responseType: "blob",
+  }).catch(console.error);
+  return res;
 };
 
-export const getTrainings = async (role) => {
+export const saveSignedDoc = async (signedBlob, user_email, train_id, role) => {
+  const requestExtension = `/training/saveSignedDoc`;
+  const formData = new FormData();
+  formData.append("signedPdf", signedBlob);
+  formData.append("user_email", user_email);
+  formData.append("role", role);
+  formData.append("train_id", train_id);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
+  return response;
+};
+
+export const getTrainings = async (
+  role,
+  user_email = null,
+  user_id = null,
+  lang = i18n.language
+) => {
   const requestExtension = `/training/${role}`;
-  const res = await instance.get(requestExtension);
+  const res = await authGet(requestExtension, {
+    params: {
+      lang: lang,
+      user_email: user_email,
+      user_id: user_id,
+    },
+  }).catch(console.error);
   const trains = res.data.result.trainings;
   let newTrain = [];
+  let seenOids = new Set();
   for (let train of trains) {
-    train.id = train._id["$oid"];
-    newTrain.push(train);
+    const oid = train._id["$oid"];
+    if (!seenOids.has(oid)) {
+      train.id = oid;
+      newTrain.push(train);
+      seenOids.add(oid);
+    }
   }
-  console.log(newTrain);
   return newTrain;
 };
+
+export const updateTrainings = async (data) => {
+  const requestExtension = `/training/update_multiple`;
+  const res = await authPatch(requestExtension, {
+    trainings: data,
+  }).catch(console.error);
+  const trains = res.data.result.trainings;
+  return trains;
+};
+
 export const getNotifys = async () => {
-  const requestExtension = `/notifys`;
-  const res = await instance.get(requestExtension);
+  const requestExtension = `/notifys/`;
+  const res = await authGet(requestExtension).catch(console.error);
   const notifys = res.data.result.notifys;
   return notifys;
 };
+
 export const markNotifyReaded = async (id) => {
   const requestExtension = `/notifys/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension).catch(console.error);
   const notify = response.data.result.notify;
-  console.log(notify);
   return notify;
 };
+
 export const newNotify = async (message, mentorId, readed) => {
   const requestExtension = `/notifys/newNotify`;
   const formData = new FormData();
   formData.append("message", message);
   formData.append("mentorId", mentorId);
   formData.append("readed", readed);
-  let response = await authPost(requestExtension, formData);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
   let notify = response.data.result.notify;
   return notify;
 };
+
 export const deleteTrainbyId = (id, accountType) => {
   const requestExtension = `/training/${id}`;
   return authDelete(requestExtension).then(
@@ -212,76 +341,261 @@ export const deleteTrainbyId = (id, accountType) => {
     }
   );
 };
-export const getTrainById = async (id) => {
+
+export const getTrainById = async (id, user_email = null) => {
   const requestExtension = `/training/train/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension, {
+    params: {
+      user_email: user_email,
+    },
+  }).catch(console.error);
   const train = response.data.result.train;
   return train;
 };
-export const getTrainVideo = async (id) => {
+
+export const getTrainVideo = async (id, lang = i18n.language) => {
   const requestExtension = `/training/trainVideo/${id}`;
-  let response = await authGet(requestExtension, { responseType: "blob" });
-  console.log(response);
-  //const train = response.data.result.train;
-  //console.log(train);
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      lang: lang,
+    },
+  }).catch(console.error);
   return response;
 };
-export const EditTrainById = async (
-  id,
-  name,
-  url,
-  description,
-  role,
-  isVideo,
-  filee,
-  typee
-) => {
+
+export const EditTrainById = async (id, values = []) => {
   const requestExtension = `/training/${id}`;
   const formData = new FormData();
-  formData.append("name", name);
-  formData.append("url", url);
-  formData.append("description", description);
-  formData.append("role", role);
-  formData.append("typee", typee);
-
-  formData.append("isVideo", isVideo);
-  if (!isVideo) {
-    formData.append("filee", filee);
-  }
-  let response = await authPut(requestExtension, formData);
-  let Train = response.data.result.train;
-  return Train;
+  Object.entries(values).forEach(([key, value]) => {
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
+  });
+  let response = await authPut(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
 };
-export const newTrainCreate = async (
-  name,
-  url,
-  description,
+
+export const newPolicyCreate = async (values) => {
+  const { role } = values;
+  const requestExtension = `/training/add_policy/${role}`;
+  const formData = new FormData();
+  formData.append("front_url", FRONT_BASE_URL);
+  Object.entries(values).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  let response = await authPost(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
+};
+
+export const getAnnouncements = async (
   role,
-  isVideo,
-  filee,
-  typee
+  user_id = null,
+  hub_user_id = null,
+  lang = i18n.language
 ) => {
+  const requestExtension = `/announcement/${role}`;
+  const res = await authGet(requestExtension, {
+    params: {
+      lang: lang,
+      user_id: user_id,
+      hub_user_id: hub_user_id,
+    },
+  }).catch(console.error);
+  const data = res.data.result.res;
+  let newData = [];
+  for (let item of data) {
+    item.id = item._id["$oid"];
+    newData.push(item);
+  }
+  return newData;
+};
+
+export const newAnnounceCreate = async (values) => {
+  const { role } = values;
+  const requestExtension = `/announcement/register/${role}`;
+  const formData = new FormData();
+  formData.append("front_url", FRONT_BASE_URL);
+  Object.entries(values).forEach(([key, value]) => {
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
+  });
+  let response = await authPost(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
+};
+
+export const uploadAnnounceImage = (image, id) => {
+  const requestExtension = `/announcement/upload/${id}/image`;
+  let formData = new FormData();
+  formData.append("image", image);
+  return authPut(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getAnnounceDoc = async (id, lang = i18n.language) => {
+  const requestExtension = `/announcement/getDoc/${id}`;
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      lang: lang,
+    },
+  }).catch(console.error);
+  return response;
+};
+
+export const deleteAnnouncebyId = (id) => {
+  const requestExtension = `/announcement/delete/${id}`;
+  return authDelete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
+    }
+  );
+};
+
+export const getAnnounceById = async (id) => {
+  const requestExtension = `/announcement/get/${id}`;
+  let response = await authGet(requestExtension, {
+    params: {},
+  }).catch(console.error);
+  const announcement = response.data.result.announcement;
+  return announcement;
+};
+export const EditAnnounceById = async (id, values = []) => {
+  const requestExtension = `/announcement/edit/${id}`;
+  const formData = new FormData();
+  Object.entries(values).forEach(([key, value]) => {
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
+  });
+  let response = await authPut(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
+};
+
+export const newTrainCreate = async (values) => {
+  const { role } = values;
   const requestExtension = `/training/${role}`;
   const formData = new FormData();
-  formData.append("name", name);
-  formData.append("url", url);
-  formData.append("typee", typee);
-
-  formData.append("description", description);
-
-  formData.append("role", role);
-
-  formData.append("isVideo", isVideo);
-  if (!isVideo) {
-    formData.append("filee", filee);
-  }
-  let response = await authPost(requestExtension, formData);
-  let Train = response.data.result.train;
-  return Train;
+  formData.append("front_url", FRONT_BASE_URL);
+  Object.entries(values).forEach(([key, value]) => {
+    if (key === "mentor_id" || key === "mentee_id") {
+      formData.append(key, JSON.stringify(value));
+    } else {
+      formData.append(key, value);
+    }
+  });
+  let response = await authPost(requestExtension, formData).catch((err) => {
+    console.error(err);
+  });
+  return response?.data;
 };
+
+export const translateDocuments = (id) => {
+  const requestExtension = `/training/translate/${id}`;
+  return authPut(requestExtension).then(
+    (response) => response?.data,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const getTranslateDocumentCost = (id) => {
+  const requestExtension = `/training/translateCost/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response?.data,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createAppointment = (appointment) => {
   const requestExtension = `/appointment/`;
-  return instance.post(requestExtension, appointment).then(
+  return authPost(requestExtension, appointment).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const adminHubUserData = (values, __image, id) => {
+  const requestExtension = `/hub_register`;
+  let formData = new FormData();
+  formData.append("id", id);
+  formData.append("email", values.email);
+  formData.append("name", values.name);
+  formData.append("url", values.url);
+  formData.append("password", values.password);
+  formData.append("invite_key", values.invite_key ? values.invite_key : "");
+  formData.append("image", __image);
+
+  return authPut(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const editEmailPassword = (data) => {
+  const requestExtension = `/edit_email_password`;
+  return authPost(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const createEvent = (event) => {
+  const requestExtension = `/event_register`;
+  event.front_url = FRONT_BASE_URL;
+  return authPost(requestExtension, event).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const uploadEventImage = (image, id) => {
+  const requestExtension = `/event_register/${id}/image`;
+  let formData = new FormData();
+  formData.append("image", image);
+  return authPut(requestExtension, formData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const deleteEvent = (event_item) => {
+  const requestExtension = `/events/delete/${event_item._id.$oid}`;
+  return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -291,7 +605,7 @@ export const createAppointment = (appointment) => {
 
 export const acceptAppointment = (id) => {
   const requestExtension = `/appointment/accept/${id}`;
-  return instance.put(requestExtension, {}).then(
+  return authPut(requestExtension, {}).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -301,7 +615,7 @@ export const acceptAppointment = (id) => {
 
 export const deleteAppointment = (id) => {
   const requestExtension = `/appointment/${id}`;
-  return instance.delete(requestExtension).then(
+  return authDelete(requestExtension).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -311,7 +625,7 @@ export const deleteAppointment = (id) => {
 
 export const fetchAppointmentsById = (id, accountType) => {
   const requestExtension = `/appointment/${accountType}/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -321,7 +635,7 @@ export const fetchAppointmentsById = (id, accountType) => {
 
 export const getIsEmailVerified = (email, password) => {
   const requestExtension = `/verifyEmail?email=${email}&password=${password}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -332,7 +646,7 @@ export const getIsEmailVerified = (email, password) => {
 
 export const fetchAvailability = (id) => {
   const requestExtension = `/availability/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -342,8 +656,36 @@ export const fetchAvailability = (id) => {
 
 export const sendNotifyUnreadMessage = (recipient_id) => {
   const requestExtension = `/notifications/unread_alert/${recipient_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.message,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const sendInviteMail = (
+  recipient_id,
+  sender_id,
+  availabes_in_future
+) => {
+  const requestExtension = `/appointment/send_invite_email`;
+  return authPost(requestExtension, {
+    recipient_id: recipient_id,
+    sener_id: sender_id,
+    availabes_in_future: availabes_in_future,
+  }).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const generateToken = () => {
+  const requestExtension = `/meeting/generateToken`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }
@@ -352,7 +694,7 @@ export const sendNotifyUnreadMessage = (recipient_id) => {
 
 export const getUnreadDMCount = (id) => {
   const requestExtension = `/notifications/${id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result,
     (err) => {
       console.error(err);
@@ -366,7 +708,7 @@ export const updateUnreadDMCount = (recipient, sender) => {
     sender,
   };
   const requestExtension = `/notifications/update`;
-  return instance.put(requestExtension, data).then(
+  return authPut(requestExtension, data).then(
     (response) => response,
     (err) => err
   );
@@ -375,7 +717,7 @@ export const updateUnreadDMCount = (recipient, sender) => {
 export const editAvailability = (timeslots, id) => {
   const requestExtension = `/availability/${id}`;
   let availability = { Availability: timeslots };
-  return instance.put(requestExtension, availability).then(
+  return authPut(requestExtension, availability).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -420,7 +762,7 @@ export const downloadMentorsData = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTOR,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_data.xlsx");
 };
@@ -431,7 +773,7 @@ export const downloadMentorsApps = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTOR,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentor_applications.xlsx");
 };
@@ -442,7 +784,7 @@ export const downloadMenteeApps = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTEE,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_applications.xlsx");
 };
@@ -454,18 +796,19 @@ export const downloadMenteesData = async () => {
     params: {
       account_type: ACCOUNT_TYPE.MENTEE,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_data.xlsx");
 };
-export const downloadPartnersData = async () => {
+export const downloadPartnersData = async (searchHubUserId = null) => {
   const requestExtension = "/download/accounts/all";
   let response = await authGet(requestExtension, {
     responseType: "blob",
     params: {
       account_type: ACCOUNT_TYPE.PARTNER,
+      hub_user_id: searchHubUserId,
     },
-  });
+  }).catch(console.error);
 
   downloadBlob(response, "mentee_data.xlsx");
 };
@@ -501,7 +844,7 @@ export const editFavMentorById = (mentee_id, mentor_id, favorite) => {
     mentor_id,
     favorite,
   };
-  return instance.put(requestExtension, data).then(
+  return authPut(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -511,7 +854,7 @@ export const editFavMentorById = (mentee_id, mentor_id, favorite) => {
 
 export const getFavMentorsById = (mentee_id) => {
   const requestExtension = `/mentee/favorites/${mentee_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.favorites,
     (err) => console.error(err)
   );
@@ -519,7 +862,7 @@ export const getFavMentorsById = (mentee_id) => {
 
 export const sendMessage = (data) => {
   const requestExtension = `/messages/`;
-  return instance.post(requestExtension, data).then(
+  return authPost(requestExtension, data).then(
     (response) => response,
     (err) => {
       console.error(err);
@@ -529,9 +872,11 @@ export const sendMessage = (data) => {
 
 export const updateApplicationById = async (data, id, isMentor) => {
   let requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTOR}`;
-  if (isMentor == false) {
+  if (isMentor === false) {
     requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
   }
+  data.front_url = FRONT_BASE_URL;
+  data.preferred_language = i18n.language;
   return await authPut(requestExtension, data).then(
     (response) => response,
     (err) => {
@@ -542,13 +887,27 @@ export const updateApplicationById = async (data, id, isMentor) => {
 
 export const getApplicationById = async (id, isMentor) => {
   let requestExtension = `/application/${id}`;
-  if (isMentor == false) {
+  if (isMentor === false) {
     requestExtension = `/application/mentee/${id}`;
   }
   return authGet(requestExtension).then(
     (response) => response.data.result.mentor_application,
     (err) => {
       console.error(err);
+    }
+  );
+};
+
+export const deleteApplication = async (id, isMentor) => {
+  let requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTOR}`;
+  if (isMentor === false) {
+    requestExtension = `/application/${id}/${ACCOUNT_TYPE.MENTEE}`;
+  }
+  return authDelete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
     }
   );
 };
@@ -570,16 +929,24 @@ export const adminUploadEmails = (file, password, isMentor) => {
   );
 };
 
-export const adminUploadEmailsText = (messageText, role) => {
+export const adminUploadEmailsText = (
+  messageText,
+  role,
+  password = null,
+  name = null
+) => {
   const requestExtension = "/upload/accountsEmails";
   let formData = new FormData();
   formData.append("messageText", messageText);
   formData.append("role", role);
+  formData.append("password", password);
+  formData.append("name", name);
 
   return authPost(requestExtension, formData).then(
     (response) => response,
     (err) => {
       console.error(err);
+      return err;
     }
   );
 };
@@ -594,7 +961,7 @@ export const getAdmin = (id) => {
 
 export const getMessages = (user_id) => {
   const requestExtension = `/messages/?recipient_id=${user_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {
       console.error(err);
@@ -604,7 +971,7 @@ export const getMessages = (user_id) => {
 
 export const getDirectMessages = (user_id) => {
   const requestExtension = `/direct/messages/?recipient_id=${user_id}&sender_id=${user_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {
       console.error(err);
@@ -614,8 +981,8 @@ export const getDirectMessages = (user_id) => {
 
 export const getLatestMessages = (user_id) => {
   const requestExtension = `/messages/contacts/${user_id}`;
-  return instance.get(requestExtension).then(
-    (response) => response.data.result.data,
+  return authGet(requestExtension).then(
+    (response) => response.data.result,
     (err) => {
       console.error(err);
     }
@@ -629,7 +996,7 @@ export const getDetailMessages = (
   endDate
 ) => {
   const requestExtension = `/messages/contacts/mentors/${pageNumber}?searchTerm=${searchTerm}&startDate=${startDate}&endDate=${endDate}&pageSize=${pageSize}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => {
       return {
         data: response.data.result.data,
@@ -641,9 +1008,23 @@ export const getDetailMessages = (
     }
   );
 };
+
+export const getGroupMessageData = (hub_user_id) => {
+  const requestExtension = `/messages/group/?hub_user_id=${
+    hub_user_id ? hub_user_id : ""
+  }`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.Messages,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const getMessageData = (sender_id, recipient_id) => {
+  if (typeof recipient_id !== "string") return;
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data.result.Messages,
     (err) => {
       console.error(err);
@@ -653,7 +1034,7 @@ export const getMessageData = (sender_id, recipient_id) => {
 
 export const getMenteePrivateStatus = (profileId) => {
   const requestExtension = `/account/${profileId}/private`;
-  return instance.get(requestExtension).then(
+  return authGet(requestExtension).then(
     (response) => response.data && response.data.result,
     (err) => {
       console.error(err);
@@ -664,20 +1045,16 @@ export const getMenteePrivateStatus = (profileId) => {
 export const sendMenteeMentorEmail = (
   mentorId,
   menteeId,
-  responseEmail,
   interestAreas,
-  communicationMethod,
   message
 ) => {
   const requestExtension = `/messages/mentor/${mentorId}`;
   const data = {
     mentee_id: menteeId,
-    response_email: responseEmail,
     interest_areas: interestAreas,
-    communication_method: communicationMethod,
     message: message,
   };
-  return instance.post(requestExtension, data).then(
+  return authPost(requestExtension, data).then(
     (response) => response,
     (err) => console.error(err)
   );
@@ -697,7 +1074,7 @@ export const EditLanguageById = async (id, name) => {
   const requestExtension = `/masters/languages/${id}`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPut(requestExtension, formData);
+  let response = await authPut(requestExtension, formData).catch(console.error);
   let record = response.data.result.result;
   return record;
 };
@@ -705,15 +1082,17 @@ export const newLanguageCreate = async (name) => {
   const requestExtension = `/masters/languages`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPost(requestExtension, formData);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
 
   let record = response.data.result.result;
   return record;
 };
 
-export const fetchLanguages = async () => {
+export const fetchAdminLanguages = async () => {
   const requestExtension = `/masters/languages`;
-  var records = await instance.get(requestExtension);
+  var records = await authGet(requestExtension).catch(console.error);
   var res = [];
   var languages = records.data.result.result;
   var index = 0;
@@ -728,7 +1107,7 @@ export const fetchLanguages = async () => {
 
 export const getLanguageById = async (id) => {
   const requestExtension = `/masters/languages/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension).catch(console.error);
   const record = response.data.result.result;
   return record;
 };
@@ -744,9 +1123,9 @@ export const deleteSpecializationByID = (id) => {
   );
 };
 
-export const fetchSpecializations = async () => {
+export const fetchAdminSpecializations = async () => {
   const requestExtension = `/masters/specializations`;
-  var records = await instance.get(requestExtension);
+  var records = await authGet(requestExtension).catch(console.error);
   var res = [];
   var specializations = records.data.result.result;
   var index = 0;
@@ -761,7 +1140,7 @@ export const fetchSpecializations = async () => {
 
 export const getSpecializationById = async (id) => {
   const requestExtension = `/masters/specializations/${id}`;
-  let response = await authGet(requestExtension);
+  let response = await authGet(requestExtension).catch(console.error);
   const record = response.data.result.result;
   return record;
 };
@@ -770,18 +1149,59 @@ export const EditSpecializationById = async (id, name) => {
   const requestExtension = `/masters/specializations/${id}`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPut(requestExtension, formData);
+  let response = await authPut(requestExtension, formData).catch(console.error);
   let record = response.data.result.result;
   return record;
 };
+
 export const newSpecializationCreate = async (name) => {
   const requestExtension = `/masters/specializations`;
   const formData = new FormData();
   formData.append("name", name);
-  let response = await authPost(requestExtension, formData);
+  let response = await authPost(requestExtension, formData).catch(
+    console.error
+  );
 
   let record = response.data.result.result;
   return record;
+};
+
+export const getDisplayLanguages = async () => {
+  const requestExtension = `/masters/languages`;
+  const records = await authGet(requestExtension).catch(console.error);
+  const currentLang = i18n.language;
+  let res = [];
+  const languages = records.data?.result?.result ?? [];
+  for (let language of languages) {
+    const value = language.name;
+    res.push({ value, label: language?.translations?.[currentLang] ?? value });
+  }
+  return res;
+};
+
+export const getDisplaySpecializations = async () => {
+  const requestExtension = `/masters/specializations`;
+  const records = await authGet(requestExtension).catch(console.error);
+  const currentLang = i18n.language;
+  let res = [];
+  const specializations = records.data?.result?.result ?? [];
+  for (let specialization of specializations) {
+    const value = specialization.name;
+    res.push({
+      value,
+      label: specialization?.translations?.[currentLang] ?? value,
+    });
+  }
+  return res;
+};
+
+export const translateOption = async (optionType, selectId) => {
+  const requestExtension = `/masters/translate`;
+  const formData = new FormData();
+  formData.append("optionType", optionType);
+  formData.append("selectId", selectId);
+  const result = await authPut(requestExtension, formData).catch(console.error);
+  return result.data?.result;
 };
 
 /**
@@ -790,15 +1210,15 @@ export const newSpecializationCreate = async (name) => {
  * should there be a need to change the value for ACCOUNT_TYPE
  */
 
-export const createMentorProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, isHave);
+export const createMentorProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.MENTOR, inFirebase);
 };
 
-export const createMenteeProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE, isHave);
+export const createMenteeProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.MENTEE, inFirebase);
 };
-export const createPartnerProfile = async (data, isHave) => {
-  return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER, isHave);
+export const createPartnerProfile = async (data, inFirebase) => {
+  return await createAccountProfile(data, ACCOUNT_TYPE.PARTNER, inFirebase);
 };
 
 export const editMentorProfile = async (data, id) => {
@@ -834,12 +1254,15 @@ export const fetchMenteeByID = async (id) => {
 export const fetchMentors = async () => {
   return await fetchAccounts(ACCOUNT_TYPE.MENTOR);
 };
-export const fetchPartners = async () => {
-  return await fetchAccounts(ACCOUNT_TYPE.PARTNER);
+export const fetchPartners = async (
+  restricted = undefined,
+  hub_user_id = null
+) => {
+  return await fetchAccounts(ACCOUNT_TYPE.PARTNER, restricted, hub_user_id);
 };
 
-export const fetchMentees = async () => {
-  return await fetchAccounts(ACCOUNT_TYPE.MENTEE);
+export const fetchMentees = async (from_suppport_user = undefined) => {
+  return await fetchAccounts(ACCOUNT_TYPE.MENTEE, from_suppport_user);
 };
 
 export const fetchAppointmentsByMenteeId = async (id) => {

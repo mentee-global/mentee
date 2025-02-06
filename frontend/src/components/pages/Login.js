@@ -1,224 +1,188 @@
-import React, { useState, useEffect } from "react";
-import { useHistory, useLocation, NavLink } from "react-router-dom";
-import { Input } from "antd";
-import firebase from "firebase";
-import { useDispatch } from "react-redux";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { LOGIN_ERROR_MSGS, ACCOUNT_TYPE } from "utils/consts";
-import { login, sendVerificationEmail } from "utils/auth.service";
-import { fetchUser } from "features/userSlice";
-import usePersistedState from "utils/hooks/usePersistedState";
-import SelectLogin from "./SelectLogin";
-import "../css/Login.scss";
-import { isHaveProfilee, isHaveAccount } from "../../utils/api";
-const Logins = Object.freeze({
-  mentee: {
-    title: "Mentee",
-    type: ACCOUNT_TYPE.MENTEE,
-    redirect: "/mentee-appointments",
-  },
-  mentor: {
-    title: "Mentor",
-    type: ACCOUNT_TYPE.MENTOR,
-    redirect: "/appointments",
-  },
-  partner: {
-    title: "Partner",
-    type: ACCOUNT_TYPE.PARTNER,
-    redirect: "/profile",
-  },
-});
-const getRoleObject = (key) => {
-  return { ...Logins[key] };
+import React, { useState } from "react";
+import { Space, Steps, message } from "antd";
+import { withRouter, useHistory } from "react-router-dom";
+import {
+  CompassOutlined,
+  PartitionOutlined,
+  ToolOutlined,
+  UnlockOutlined,
+} from "@ant-design/icons";
+import { ACCOUNT_TYPE } from "utils/consts";
+import { useTranslation } from "react-i18next";
+import SelectCard from "components/SelectCard";
+import { css } from "@emotion/css";
+import LoginForm from "components/LoginForm";
+import useQuery from "utils/hooks/useQuery";
+
+const StepNumeration = {
+  role: 0,
+  login: 1,
 };
-function Login() {
+
+function Login({ location }) {
   const history = useHistory();
-  const location = useLocation();
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [inputFocus, setInputFocus] = useState([false, false]);
-  const [error, setError] = useState(false);
-  const [displaySelect, setDisplaySelect] = useState(false);
-  const [roleObject, setroleObject] = useState({});
-  const [errorMessage, setErrorMessage] = useState(
-    LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
-  );
-  const [loggingIn, setLoggingIn] = useState(false);
-  const [permissions, setPermissions] = usePersistedState(
-    "permissions",
-    ACCOUNT_TYPE.MENTEE
-  );
+  const { t } = useTranslation();
+  const query = useQuery();
+  let cur_role = location?.state?.role ?? query.get("role");
+  let cur_current = cur_role ? StepNumeration.login : StepNumeration.role;
+  var n50_flag = false;
+  if (location && location.pathname.includes("n50")) {
+    n50_flag = true;
+  }
+  if (location && location.pathname) {
+    switch (location.pathname) {
+      case "/mentor/login":
+        cur_role = ACCOUNT_TYPE.MENTOR;
+        cur_current = StepNumeration.login;
+        break;
+      case "/n50/mentor/login":
+        cur_role = ACCOUNT_TYPE.MENTOR;
+        cur_current = StepNumeration.login;
+        break;
+      case "/mentee/login":
+        cur_role = ACCOUNT_TYPE.MENTEE;
+        cur_current = StepNumeration.login;
+        break;
+      case "/n50/mentee/login":
+        cur_role = ACCOUNT_TYPE.MENTEE;
+        cur_current = StepNumeration.login;
+        break;
+      case "/partner/login":
+        cur_role = ACCOUNT_TYPE.PARTNER;
+        cur_current = StepNumeration.login;
+        break;
+      case "/n50/partner/login":
+        cur_role = ACCOUNT_TYPE.PARTNER;
+        cur_current = StepNumeration.login;
+        break;
+      case "/readonly/login":
+        cur_role = ACCOUNT_TYPE.GUEST;
+        cur_current = StepNumeration.login;
+        break;
+      default:
+        break;
+    }
+  }
+  const [role, setRole] = useState(cur_role);
+  const email = location?.state?.email ?? query.get("email");
+  const [current, setCurrent] = useState(cur_current);
 
-  const handleDisplayImages = () => {
-    setDisplaySelect(true);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const SelectCardsStyle = css`
+    width: 100%;
+    flex: 1;
+    justify-content: center;
+    @media (max-width: 991px) {
+      flex: 0;
+      margin-top: 5em;
+    }
+  `;
+
+  const onClickRole = (role) => {
+    // setRole(role);
+    // setCurrent(StepNumeration.login);
+    switch (role) {
+      case ACCOUNT_TYPE.MENTOR:
+        if (n50_flag) {
+          history.push("/n50/mentor/login");
+        } else {
+          history.push("/mentor/login");
+        }
+        break;
+      case ACCOUNT_TYPE.MENTEE:
+        if (n50_flag) {
+          history.push("/n50/mentee/login");
+        } else {
+          history.push("/mentee/login");
+        }
+        break;
+      case ACCOUNT_TYPE.PARTNER:
+        if (n50_flag) {
+          history.push("/n50/partner/login");
+        } else {
+          history.push("/partner/login");
+        }
+        break;
+      case ACCOUNT_TYPE.GUEST:
+        history.push("/readonly/login");
+        break;
+      default:
+        break;
+    }
   };
-  const handleSelect = async (key) => {
-    console.log(key);
-    let RoleObj = getRoleObject(key);
-    if (RoleObj) {
-      console.log(RoleObj);
-      setLoggingIn(true);
-      setLoading(true);
-      const { isHaveProfile, rightRole } = await isHaveProfilee(
-        email,
-        RoleObj.type
-      );
-      if (rightRole) {
-        if (rightRole !== RoleObj.type) {
-          setErrorMessage("wrong Role please choose account right Role");
-          setError(true);
-          setLoading(false);
-          setLoggingIn(false);
-          setLoggingIn(false);
 
-          return;
-          //return wrong Role
-        }
+  const onChangeStep = (newStep) => {
+    if (newStep === StepNumeration.login && !role) {
+      messageApi.error({
+        content: t("loginErrors.noRole"),
+        duration: 0,
+        key: "loginErrors.noRole",
+        onClick: () => messageApi.destroy("loginErrors.noRole"),
+      });
+      return;
+    } else if (newStep !== StepNumeration.login) {
+      setCurrent(newStep);
+      setRole(null);
+      if (n50_flag) {
+        history.push("/n50/login");
       } else {
-        setError(false);
-        const { isHave } = await isHaveAccount(email, RoleObj.type);
-        if (isHaveProfile == false && isHave == true) {
-          //redirect to apply with role and email passed
-          history.push({
-            pathname: "/application-page",
-            state: { email: email, role: RoleObj.type },
-          });
-          return;
-        } else if (isHaveProfile == false && isHave == false) {
-          setErrorMessage(LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG);
-          setError(true);
-          setLoggingIn(false);
-          setLoading(false);
-
-          return;
-        } else if (isHaveProfile == true) {
-          setError(false);
-          const res = await login(email, password, RoleObj.type);
-          console.log(res?.result);
-          setLoading(false);
-
-          if (!res || !res.success) {
-            if (res?.data?.result?.existingEmail) {
-              setErrorMessage(LOGIN_ERROR_MSGS.EXISTING_EMAIL);
-              setLoading(false);
-            } else {
-              setErrorMessage(
-                LOGIN_ERROR_MSGS.INCORRECT_NAME_PASSWORD_ERROR_MSG
-              );
-              setLoading(false);
-            }
-            setError(true);
-          } else if (res.result.passwordReset) {
-            setErrorMessage(LOGIN_ERROR_MSGS.RESET_PASSWORD_ERROR_MSG);
-            setError(true);
-            setLoading(false);
-          } else if (res.result.recreateAccount) {
-            setErrorMessage(LOGIN_ERROR_MSGS.RECREATE_ACCOUNT_ERROR_MSG);
-            setError(true);
-            setLoading(false);
-          }
-          setPermissions(RoleObj.type);
-          const unsubscribe = firebase
-            .auth()
-            .onAuthStateChanged(async (user) => {
-              unsubscribe();
-              if (!user) return;
-
-              if (res.result.redirectToVerify) {
-                await sendVerificationEmail(email);
-                history.push("/verify");
-              } else {
-                dispatch(
-                  fetchUser({
-                    id: res.result.profileId,
-                    role: res.result.role,
-                  })
-                );
-                history.push(RoleObj.redirect);
-              }
-            });
-
-          setLoggingIn(false);
-          setroleObject(RoleObj);
-        }
+        history.push("/login");
       }
     }
   };
-  function handleInputFocus(index) {
-    let newClickedInput = [false, false];
-    newClickedInput[index] = true;
-    setInputFocus(newClickedInput);
-  }
+
+  const progressItems = [
+    {
+      title: t("common.role"),
+      key: "role",
+      content: (
+        <Space direction="vertical" className={SelectCardsStyle} size="middle">
+          <SelectCard
+            avatar={<ToolOutlined />}
+            title={t("common.mentor")}
+            onClick={() => onClickRole(ACCOUNT_TYPE.MENTOR)}
+          />
+          <SelectCard
+            avatar={<CompassOutlined />}
+            title={t("common.mentee")}
+            onClick={() => onClickRole(ACCOUNT_TYPE.MENTEE)}
+          />
+          <SelectCard
+            avatar={<PartitionOutlined />}
+            title={t("common.partner")}
+            onClick={() => onClickRole(ACCOUNT_TYPE.PARTNER)}
+          />
+          <SelectCard
+            avatar={<UnlockOutlined />}
+            title={t("common.guest")}
+            onClick={() => onClickRole(ACCOUNT_TYPE.GUEST)}
+          />
+        </Space>
+      ),
+    },
+    {
+      title: "Login",
+      key: "login",
+      content: (
+        <LoginForm role={role} defaultEmail={email} n50_flag={n50_flag} />
+      ),
+    },
+  ];
+
   return (
-    <div className="containerr">
-      <h1 className="home-header3">
-        Welcome to <span>MENTEE!</span>
-      </h1>
-      <div className="page-background">
-        <div className="login-content">
-          <h1 className="login-text">
-            Please Login {roleObject && roleObject.title}
-          </h1>
-
-          <div
-            className={`login-input-container${
-              inputFocus[0] ? "__clicked" : ""
-            }`}
-          >
-            <Input
-              className="login-input"
-              onFocus={() => handleInputFocus(0)}
-              disabled={loggingIn}
-              onChange={(e) => setEmail(e.target.value)}
-              bordered={false}
-              placeholder="Email"
-            />
-          </div>
-          <div
-            className={`login-input-container${
-              inputFocus[1] ? "__clicked" : ""
-            }`}
-          >
-            <Input.Password
-              className="login-input_pass"
-              disabled={loggingIn}
-              iconRender={(visible) =>
-                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-              }
-              onFocus={() => handleInputFocus(1)}
-              onChange={(e) => setPassword(e.target.value)}
-              bordered={false}
-              placeholder="Password"
-            />
-          </div>
-
-          <div className="account-help-container">
-            <div className="account-link">
-              Don't Have an account?{" "}
-              <NavLink to={`/application-page`} className="login-register-link">
-                Apply
-              </NavLink>
-            </div>
-            <div className="account-link">
-              <div>Forgot password?</div>
-              <NavLink to="/forgot-password" className="login-register-link">
-                Reset it
-              </NavLink>
-            </div>
-          </div>
-        </div>
-      </div>
-      {error && <h1 className="login-error">{errorMessage}</h1>}
-      {loading ? <h1 className="loadingg">Loading ..</h1> : ""}
-      <SelectLogin
-        displaySelect={displaySelect}
-        handleDisplayImages={handleDisplayImages}
-        handleSelect={handleSelect}
-      ></SelectLogin>
-    </div>
+    <>
+      {contextHolder}
+      <Steps
+        current={current}
+        responsive
+        size="small"
+        items={progressItems}
+        onChange={onChangeStep}
+      />
+      {progressItems[current].content}
+    </>
   );
 }
 
-export default Login;
+export default withRouter(Login);

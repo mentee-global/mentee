@@ -3,9 +3,12 @@ import {
   deleteSpecializationByID,
   EditSpecializationById,
   getSpecializationById,
-  fetchSpecializations,
+  fetchAdminSpecializations,
   newSpecializationCreate,
+  translateOption,
 } from "utils/api";
+import { useDispatch } from "react-redux";
+import { fetchOptions } from "features/optionsSlice";
 import { Input, Form, Button } from "antd";
 import { Table, Popconfirm, message, Modal } from "antd";
 import {
@@ -14,9 +17,12 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 
-import "./css/Trains.scss";
+import "./css/Training.scss";
+import { OPTION_TYPE } from "utils/consts";
+import { css } from "@emotion/css";
 
 export const Specializations = () => {
+  const dispatch = useDispatch();
   const [data, setData] = useState([]);
   const [err, setErr] = useState(false);
   const [reload, setReload] = useState(true);
@@ -70,6 +76,7 @@ export const Specializations = () => {
       }
     }
 
+    dispatch(fetchOptions());
     setReload(!reload);
   };
 
@@ -87,6 +94,15 @@ export const Specializations = () => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      <i>
+        New selections will automatically translate into the languages we
+        support. <b>However new edits will not auto translate</b>
+      </i>
+      {/* <Button
+        onClick={() => translateOption(OPTION_TYPE.SPECIALIZATION, selectedID)}
+      >
+        Translate
+      </Button> */}
     </Form>
   );
 
@@ -132,13 +148,14 @@ export const Specializations = () => {
         <>
           <Modal
             title="Specialization"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={() => handleOk(false)}
             onCancel={handleCancel}
             okText="save"
             closable={false}
             width={"600px"}
             className={id}
+            mask={false}
           >
             {" "}
             {SpecForm()}
@@ -166,9 +183,9 @@ export const Specializations = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let dataa = await fetchSpecializations();
-      if (dataa) {
-        setData(dataa);
+      let resSpecializations = await fetchAdminSpecializations();
+      if (resSpecializations) {
+        setData(resSpecializations);
       } else {
         setErr(true);
       }
@@ -178,9 +195,13 @@ export const Specializations = () => {
   return (
     <div className="trains">
       <div className="rolesContainer">
-        <div className="table-button-group">
+        <div
+          className={css`
+            margin-bottom: 1em;
+          `}
+        >
           <Button
-            className="table-button"
+            type="primary"
             icon={<PlusCircleOutlined />}
             onClick={() => {
               showModal("", true);
@@ -195,7 +216,7 @@ export const Specializations = () => {
       </div>
       <Modal
         title="Specialization"
-        visible={isModalVisible2}
+        open={isModalVisible2}
         onOk={() => handleOk(true)}
         onCancel={handleCancel}
         okText="save"

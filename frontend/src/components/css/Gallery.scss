@@ -4,7 +4,6 @@
   display: flex;
   flex-direction: row;
   padding: 1vh;
-  background-color: white;
 }
 
 .gallery-filter-container {
@@ -48,11 +47,11 @@
   overflow: hidden;
   margin-bottom: 75px;
 
-  @media only screen and (max-width: 1200px) {
+  @media only screen and (max-width: 1550px) {
     grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
   }
 
-  @media only screen and (max-width: 800px) {
+  @media only screen and (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
   }
   @media only screen and (max-width: 600px) {
@@ -65,7 +64,7 @@
   border: 2px solid $theme-orange;
   border-radius: 8px;
   position: relative;
-  height: 24em;
+  height: 27em;
   padding: 20px;
   padding-top: 0px;
 }
@@ -110,13 +109,6 @@
   margin-top: 10px;
   margin-top: 10px;
   text-decoration: none;
-}
-
-.gallery-info-section {
-  width: 100%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .gallery-info-section {

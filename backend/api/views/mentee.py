@@ -1,14 +1,14 @@
 from api.core import create_response, logger
-from api.models import MentorProfile, Users, MenteeProfile
+from api.models import MentorProfile, MenteeProfile
 from flask import Blueprint, request
-from api.utils.require_auth import admin_only
-from firebase_admin import auth as firebase_admin_auth
 from api.utils.constants import Account
+from api.utils.require_auth import mentee_only
 
 mentee = Blueprint("mentee", __name__)
 
 
 @mentee.route("/editFavMentor", methods=["PUT"])
+@mentee_only
 def edit_fav_mentor():
     try:
         data = request.get_json()
@@ -20,7 +20,6 @@ def edit_fav_mentor():
         msg = "invalid parameters provided"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    print()
     try:
         mentee = MenteeProfile.objects.get(id=mentee_id)
         if not favorite and mentor_id in mentee.favorite_mentors_ids:
@@ -42,6 +41,7 @@ def edit_fav_mentor():
 
 
 @mentee.route("/favorites/<id>", methods=["GET"])
+@mentee_only
 def get_favorites(id):
     try:
         mentee = MenteeProfile.objects.get(id=id)

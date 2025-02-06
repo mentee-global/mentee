@@ -1,4 +1,5 @@
 import moment from "moment";
+
 import { APPOINTMENT_STATUS } from "./consts";
 import { ACCOUNT_TYPE } from "utils/consts";
 
@@ -20,7 +21,7 @@ export const formatAppointments = (data, type) => {
   let appointments = data.requests;
   if (type === ACCOUNT_TYPE.MENTOR) {
     appointments = data.requests.filter(
-      (elem) => !elem.status || elem.status !== APPOINTMENT_STATUS.REJECTED
+      (elem) => elem?.status !== APPOINTMENT_STATUS.DENIED
     );
   }
 
@@ -50,7 +51,6 @@ export const formatAppointments = (data, type) => {
   let appointment;
   for (appointment of appointments) {
     const timeslot = appointment.timeslot;
-
     const startTime = moment(timeslot.start_time.$date);
     const endTime = moment(timeslot.end_time.$date);
 
@@ -65,7 +65,6 @@ export const formatAppointments = (data, type) => {
       currentKey = "past";
     }
     let keyInfo = appointmentType[currentKey];
-
     const formattedAppointment = {
       message: appointment.message,
       id: appointment._id.$oid,
@@ -73,8 +72,8 @@ export const formatAppointments = (data, type) => {
       menteeID: appointment.mentee_id && appointment.mentee_id.$oid,
       name: appointment.name,
       mentorName: appointment.mentor_name,
-      date: startTime.format("dddd MMMM Do, YYYY"),
-      time: startTime.format("h:mm a") + " - " + endTime.format("h:mm a"),
+      date: startTime.format("LL"),
+      time: startTime.format("LT") + " - " + endTime.format("LT"),
       isoTime: startTime.format(),
       topic: appointment.topic,
       allowTexts: appointment.allow_texts,

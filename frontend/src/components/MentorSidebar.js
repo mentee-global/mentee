@@ -3,29 +3,49 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   CalendarOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 import Sidebar from "./Sidebar";
-
-const pages = {
-  appointments: {
-    name: "Appointments",
-    path: "/appointments",
-    icon: <CalendarOutlined />,
-  },
-  videos: {
-    name: "Your Videos",
-    path: "/videos",
-    icon: <VideoCameraOutlined />,
-  },
-  profile: {
-    name: "Profile",
-    path: "/profile",
-    icon: <UserOutlined />,
-  },
-};
+import { useTranslation } from "react-i18next";
+import { useAuth } from "utils/hooks/useAuth";
+import CreateMeetingLink from "./components/CreateMeetingLink";
 
 function MentorSidebar(props) {
-  return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
+  const { t } = useTranslation();
+  const { role } = useAuth();
+  const pages = {
+    appointments: {
+      name: t("sidebars.appointments"),
+      path: "/appointments",
+      icon: <CalendarOutlined />,
+    },
+    videos: {
+      name: t("sidebars.videos"),
+      path: "/videos",
+      icon: <VideoCameraOutlined />,
+    },
+    profile: {
+      name: t("sidebars.profile"),
+      path: "/profile",
+      icon: <UserOutlined />,
+    },
+    message: {
+      name: t("common.messages"),
+      path: "/messages/" + role,
+      icon: <MailOutlined />,
+    },
+  };
+
+  //return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
+
+  return (
+    <Sidebar pages={pages} selectedPage={props.selectedPage}>
+      <Sidebar.Item key="createmeetinglink">
+        <CreateMeetingLink />
+      </Sidebar.Item>
+      {/* Other sidebar content within Sidebar.Item components */}
+    </Sidebar>
+  );
 }
 
 export default MentorSidebar;

@@ -16,6 +16,7 @@ class PartnerApplication(Document, Mixin):
     howBuild = StringField(required=True)
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
+    traingStatus = DictField(required=False)
 
     def __repr__(self):
         return f"""<partner Application email: {self.email}

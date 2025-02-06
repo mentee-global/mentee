@@ -1,45 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button, Form, Input, Select } from "antd";
+import {
+  Button,
+  Form,
+  Select,
+  Typography,
+  Table,
+  Space,
+  Popconfirm,
+} from "antd";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
-import MentorVideo from "../MentorVideo";
-import VideoSubmit from "../VideoSubmit";
-import { SPECIALIZATIONS } from "utils/consts.js";
-import { formatDropdownItems } from "utils/inputs";
+import VideoSubmit from "components/VideoSubmit";
 import { updateAndFetchUser } from "features/userSlice";
 import { ACCOUNT_TYPE } from "utils/consts.js";
-import useAuth from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 import "../css/Videos.scss";
+import { useTranslation } from "react-i18next";
+import { css } from "@emotion/css";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PushpinOutlined,
+} from "@ant-design/icons";
 
 function Videos() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [videos, setVideos] = useState([]);
+  const [open, setOpen] = useState(false);
   const user = useSelector((state) => state.user.user);
-  const [filtered, setFiltered] = useState([]);
-  const [selectFilter, setSelectFilter] = useState("");
-  const [titleFilter, setTitleFilter] = useState("");
-  const [specMasters, setSpecMasters] = useState([]);
+  const options = useSelector((state) => state.options);
   const [form] = Form.useForm();
   const { profileId } = useAuth();
 
   useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
-    }
-    getMasters();
-  }, []);
-
-  useEffect(() => {
     if (user) {
-      let videos = JSON.parse(JSON.stringify(user.videos));
+      let result = JSON.parse(JSON.stringify(user.videos));
       // Formats all dates from objects (in Epoch) to MongoDB parsable
-      videos.forEach((video, index) => {
+      result.forEach((video, index) => {
         const date = video.date_uploaded.$date;
-        videos[index].date_uploaded = moment(date).format();
+        result[index].date_uploaded = moment(date).format();
       });
 
-      setVideos(videos);
-      setFiltered(videos);
+      const newVideos = result.map((video, index) => ({
+        ...video,
+        key: index,
+      }));
+      setVideos(newVideos);
     }
   }, [user]);
 
@@ -50,24 +57,10 @@ function Videos() {
     dispatch(updateAndFetchUser({ data, id, role: ACCOUNT_TYPE.MENTOR }));
   }
 
-  const handleSearchVideo = (query) => {
-    setTitleFilter(query);
-    query = query.toUpperCase();
-    let newVideos = [];
-    for (let video of videos) {
-      let title = video.title.toUpperCase();
-      if (title.search(query) > -1) {
-        newVideos.push(video);
-      }
-    }
-    setFiltered(newVideos);
-  };
-
   const handleDeleteVideo = (video) => {
     let newVideos = [...videos];
     let id = newVideos.indexOf(video);
     newVideos.splice(id, 1);
-    setVideos(newVideos);
     updateVideos(newVideos, profileId);
   };
 
@@ -78,8 +71,6 @@ function Videos() {
       tag: specialization,
     };
     newVideos[id] = video;
-    setVideos(newVideos);
-    setFiltered(newVideos);
     updateVideos(newVideos, profileId);
   };
 
@@ -90,103 +81,100 @@ function Videos() {
       (a, b) => moment(a.date_uploaded).diff(moment(b.date_uploaded)) * -1
     );
     newVideos.unshift(video);
-    setVideos(newVideos);
-    setFiltered(newVideos);
     updateVideos(newVideos, profileId);
   };
 
-  const filterSpecialization = (value) => {
-    const filteredVideos = videos.filter((video, index, arr) => {
-      // eslint-disable-next-line eqeqeq
-      return specMasters.indexOf(video.tag) == value;
+  const handleSubmitVideo = () => {
+    form.validateFields().then((values) => {
+      let newVideo = {
+        ...values,
+        date_uploaded: moment().format(),
+        tag: values.tag,
+        key: videos.length,
+      };
+      const newVideos = [...videos, newVideo];
+      updateVideos(newVideos, profileId);
+      form.resetFields();
+      setOpen(false);
     });
-    setFiltered(filteredVideos);
-    setSelectFilter(value);
   };
 
-  const handleClearFilters = () => {
-    setFiltered(videos);
-    setTitleFilter("");
-    setSelectFilter("");
-  };
-
-  const handleSearchChange = (event) => {
-    setTitleFilter(event.target.value);
-  };
-
-  const handleSubmitVideo = (video) => {
-    let newVideos = [...videos];
-    video = {
-      ...video,
-      date_uploaded: moment().format(),
-      tag: specMasters[video.tag],
-    };
-    newVideos.push(video);
-
-    form.resetFields();
-    handleClearFilters();
-    setVideos(newVideos);
-    setFiltered(newVideos);
-    updateVideos(newVideos, profileId);
-  };
-
-  const VideosContainer = () => {
-    return (
-      <div className="videos-container">
-        <div className="videos-table-title">
-          <h1>Specializations Tag</h1>
-          <h1>Delete</h1>
-        </div>
-        {filtered &&
-          filtered.map((video, index) => (
-            <MentorVideo
-              title={video.title}
-              date={video.date_uploaded}
-              tag={video.tag}
-              id={index}
-              video={video}
-              onChangeTag={handleVideoTag}
-              onPin={handlePinVideo}
-              onDelete={handleDeleteVideo}
-            />
-          ))}
-      </div>
-    );
-  };
+  const columns = [
+    {
+      title: t("mentorVideoPage.videoTitle"),
+      dataIndex: "title",
+      key: "title",
+      render: (_, record) => (
+        <a href={record.url} target="_blank" rel="noreferrer">
+          {record.title}
+        </a>
+      ),
+    },
+    {
+      title: t("mentorVideoPage.specializationTag"),
+      dataIndex: "tag",
+      key: "tag",
+      render: (_, record) => (
+        <Select
+          placeholder={t("common.specializations")}
+          onChange={(value) => handleVideoTag(record.key, value)}
+          value={record.tag}
+          className={css`
+            width: 200px;
+          `}
+          options={options.specializations}
+        />
+      ),
+    },
+    {
+      title: <EditOutlined />,
+      dataIndex: "actions",
+      key: "actions",
+      render: (_, record) => (
+        <Space>
+          <Button
+            icon={<PushpinOutlined />}
+            shape="circle"
+            type={record.key === 0 ? "primary" : "default"}
+            onClick={() => handlePinVideo(record.key)}
+          />
+          <Popconfirm
+            title={t("common.delete")}
+            description="Are you sure to delete this?"
+            onConfirm={() => handleDeleteVideo(record)}
+            okText={t("common.yes")}
+            cancelText={t("common.no")}
+          >
+            <Button icon={<DeleteOutlined />} danger shape="circle" />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
   return (
-    <div style={{ height: "100%" }}>
-      <div className="videos-header">
-        <div className="videos-header-title">Welcome, {user?.name}</div>
-      </div>
-      <div className="filter-card">
-        <h1 className="videos-upload-title">Your Uploads</h1>
-        <div className="filters">
-          <Input.Search
-            style={{ width: 300 }}
-            value={titleFilter}
-            onChange={handleSearchChange}
-            onSearch={(value) => handleSearchVideo(value)}
-            placeholder="Title"
-          />
-          <Select
-            style={{ width: 200 }}
-            onChange={(value) => filterSpecialization(value)}
-            value={selectFilter}
-          >
-            {formatDropdownItems(specMasters)}
-          </Select>
-          <Button onClick={handleClearFilters}>Clear</Button>
-        </div>
-      </div>
-      <Row>
-        <Col span={16}>
-          <VideosContainer />
-        </Col>
-        <Col span={8}>
-          <VideoSubmit handleSubmitVideo={handleSubmitVideo} form={form} />
-        </Col>
-      </Row>
+    <div
+      className={css`
+        margin: 32px;
+      `}
+    >
+      <VideoSubmit
+        setOpen={setOpen}
+        open={open}
+        form={form}
+        handleSubmitVideo={handleSubmitVideo}
+      />
+      <Typography.Title level={2}>{t("sidebars.videos")}</Typography.Title>
+      <Button
+        type="primary"
+        className={css`
+          margin-bottom: 16px;
+        `}
+        onClick={() => setOpen(true)}
+      >
+        {t("mentorVideoPage.addVideo")}
+      </Button>
+      <Table columns={columns} dataSource={videos} />
     </div>
   );
 }

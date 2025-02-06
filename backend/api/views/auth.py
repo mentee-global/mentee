@@ -1,21 +1,16 @@
-from csv import excel
-from email import message
-from flask import Blueprint, request, jsonify
-from sqlalchemy import false
+from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile, Admin, MenteeProfile, PartnerProfile
-from api.core import create_response, serialize_list, logger
+from api.models import db, Users, MentorProfile, Admin, PartnerProfile, Hub
+from api.core import create_response, logger
 from api.utils.constants import (
     USER_VERIFICATION_TEMPLATE,
     USER_FORGOT_PASSWORD_TEMPLATE,
     Account,
+    TRANSLATIONS,
 )
 from api.utils.request_utils import send_email, get_profile_model
 from api.utils.firebase import client as firebase_client
-import requests
-import pyrebase
-import os
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
@@ -24,6 +19,9 @@ auth = Blueprint("auth", __name__)  # initialize blueprint
 def verify_email():
     data = request.json
     email = data.get("email")
+    preferred_language = data.get("preferred_language", "en-US")
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
     verification_link = None
 
     try:
@@ -40,8 +38,11 @@ def verify_email():
 
     if not send_email(
         recipient=email,
-        subject="Mentee Email Verification",
-        data={"link": verification_link},
+        data={
+            "link": verification_link,
+            preferred_language: True,
+            "subject": TRANSLATIONS[preferred_language]["verify_email"],
+        },
         template_id=USER_VERIFICATION_TEMPLATE,
     ):
         msg = "Could not send email"
@@ -49,28 +50,6 @@ def verify_email():
         return create_response(status=422, message=msg)
 
     return create_response(message="Sent verification link to email")
-
-
-def check_email_in_use(email, model_to_remove):
-    profile_models = [
-        get_profile_model(Account.MENTEE),
-        get_profile_model(Account.MENTOR),
-        get_profile_model(Account.ADMIN),
-    ]
-    profile_models.remove(model_to_remove)
-    for profile_model in profile_models:
-        profile = None
-        try:
-            profile = profile_model.objects.get(email=email)
-        except:
-            # Could not find email in current profile model
-            continue
-
-        if profile:
-            logger.info("email found!")
-            return True
-    logger.info("email not found!")
-    return False
 
 
 def create_firebase_user(email, password):
@@ -93,12 +72,6 @@ def create_firebase_user(email, password):
         error_http_response = create_response(status=500, message=msg)
 
     return firebase_user, error_http_response
-
-
-@auth.route("/hat", methods=["GET"])
-def hat():
-    ps = MentorProfile.objects
-    return create_response(message="does", data={"ps": ps})
 
 
 @auth.route("/register", methods=["POST"])
@@ -188,9 +161,16 @@ def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
-    role = data.get("role")
+    role = int(data.get("role"))
+    path = data.get("path", None)
+
     firebase_user = None
-    profile_model = get_profile_model(int(role))
+    profile_model = get_profile_model(role)
+    if role == Account.HUB:
+        if not profile_model.objects(email=email):
+            profile_model = get_profile_model(Account.PARTNER)
+
+    profile = profile_model.objects.get(email=email)
 
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
@@ -206,7 +186,7 @@ def login():
             return create_response(status=422, message=msg)
 
         except:
-            if Users.objects(email=email) or profile_model.objects(email=email):
+            if Users.objects(email=email) or profile:
                 # old account, need to create a firebase account
                 # no password -> no sign-in methods -> forced to reset password
                 firebase_user, error_http_response = create_firebase_user(email, None)
@@ -233,14 +213,41 @@ def login():
         user.save()
 
     try:
-        profile = profile_model.objects.get(email=email)
+        if profile is None:
+            msg = "Couldn't find profile with these credentials"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+        else:
+            if role == Account.PARTNER:
+                if profile.hub_id is not None:
+                    msg = "Couldn't find profile with these credentials"
+                    logger.info(msg)
+                    return create_response(status=422, message=msg)
+        if role == Account.HUB and path is not None:
+            if "hub_id" in profile and profile.hub_id is not None:
+                hub_profile = Hub.objects.get(id=profile.hub_id)
+                if hub_profile is None or "/" + hub_profile.url != path:
+                    msg = "Couldn't find proper hub profile with these credentials"
+                    logger.info(msg)
+                    return create_response(status=422, message=msg)
+            else:
+                if "/" + profile.url != path:
+                    msg = "Couldn't find proper hub profile with these credentials"
+                    logger.info(msg)
+                    return create_response(status=422, message=msg)
+        logger.info("Profile found")
         profile_id = str(profile.id)
 
         if not profile.firebase_uid or profile.firebase_uid != firebase_uid:
             profile.firebase_uid = firebase_uid
             profile.save()
     except:
-        if role != Account.ADMIN:
+        if (
+            role != Account.ADMIN
+            and role != Account.GUEST
+            and role != Account.SUPPORT
+            and role != Account.HUB
+        ):
             # user failed to create profile during registration phase
             # prompt frontend to return user to appropriate phase
 
@@ -276,8 +283,11 @@ def login():
     )
 
 
-def send_forgot_password_email(email):
+def send_forgot_password_email(email, preferred_language="en-US"):
     reset_link = None
+
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
 
     try:
         # TODO: Add ActionCodeSetting for custom link/redirection back to main page
@@ -294,7 +304,11 @@ def send_forgot_password_email(email):
     if not send_email(
         recipient=email,
         subject="Mentee Password Reset",
-        data={"link": reset_link},
+        data={
+            "link": reset_link,
+            preferred_language: True,
+            "subject": TRANSLATIONS[preferred_language]["forgot_password"],
+        },
         template_id=USER_FORGOT_PASSWORD_TEMPLATE,
     ):
         msg = "Cannot send email"
@@ -306,8 +320,9 @@ def send_forgot_password_email(email):
 def forgot_password():
     data = request.json
     email = data.get("email", "")
+    preferred_language = data.get("preferred_language", "en-US")
 
-    error = send_forgot_password_email(email)
+    error = send_forgot_password_email(email, preferred_language)
 
     return (
         error and error or create_response(message="Sent password reset link to email")

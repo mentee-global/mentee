@@ -1,20 +1,23 @@
-// import {fetchLanguages, fetchSpecializations} from "./api";
-import axios from "axios";
-export const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.REACT_APP_ENV === "development"
-      ? "https://mentee-dev.herokuapp.com/"
-      : "https://app.menteeglobal.org/"
-    : "http://localhost:8000/";
+export const IS_PRODUCTION = process.env.NODE_ENV === "production";
+export const IS_DEVELOPMENT = process.env.REACT_APP_ENV === "development";
 
-export const FRONT_BASE_URL =
-  process.env.NODE_ENV === "production" ? BASE_URL : `http://localhost:3000/`;
+export const BASE_URL = IS_PRODUCTION
+  ? IS_DEVELOPMENT
+    ? "https://mentee-dev.herokuapp.com/"
+    : "https://app.menteeglobal.org/"
+  : "http://localhost:8000/";
+
+export const FRONT_BASE_URL = IS_PRODUCTION
+  ? BASE_URL
+  : `http://localhost:3000/`;
+
+export const N50_ID = IS_PRODUCTION
+  ? IS_DEVELOPMENT
+    ? "675985b41684c4310ac00e4c"
+    : "673629a96d37195fa12e2a51"
+  : "675985b41684c4310ac00e4c";
 
 export const API_URL = BASE_URL + "api/";
-
-const instance = axios.create({
-  baseURL: API_URL,
-});
 
 export const AUTH_URL = BASE_URL + "auth/";
 
@@ -40,6 +43,28 @@ export const ACCOUNT_TYPE = {
   MENTEE: 2,
   PARTNER: 3,
   GUEST: 4,
+  SUPPORT: 5,
+  HUB: 6,
+};
+
+export const ACCOUNT_TYPE_LABELS = {
+  [ACCOUNT_TYPE.ADMIN]: "admin",
+  [ACCOUNT_TYPE.MENTOR]: "mentor",
+  [ACCOUNT_TYPE.MENTEE]: "mentee",
+  [ACCOUNT_TYPE.PARTNER]: "partner",
+  [ACCOUNT_TYPE.GUEST]: "guest",
+  [ACCOUNT_TYPE.SUPPORT]: "support",
+  [ACCOUNT_TYPE.HUB]: "hub",
+};
+
+export const REDIRECTS = {
+  [ACCOUNT_TYPE.MENTOR]: "/appointments",
+  [ACCOUNT_TYPE.MENTEE]: "/mentee-appointments",
+  [ACCOUNT_TYPE.PARTNER]: "/partner-gallery",
+  [ACCOUNT_TYPE.ADMIN]: "/account-data",
+  [ACCOUNT_TYPE.GUEST]: "/gallery",
+  [ACCOUNT_TYPE.SUPPORT]: "/support/all-mentors",
+  [ACCOUNT_TYPE.HUB]: "/partner-gallery",
 };
 
 export const PLURAL_TYPE = {
@@ -79,54 +104,31 @@ export const REGIONS = [
   "South/SE Asia",
   "Oceana",
 ];
-// export const LANGUAGES = [
-//   "Arabic",
-//   "Bengali",
-//   "Burmese",
-//   "Cantonese",
-//   "English",
-//   "French",
-//   "German",
-//   "Hebrew",
-//   "Hindi",
-//   "Italian",
-//   "Japanese",
-//   "Karen",
-//   "Mandarin",
-//   "Portuguese",
-//   "Russian",
-//   "Spanish",
-//   "Swahili",
-//   "Urdu",
-//   "Other",
-// ];
 
-// const getAllLangs = async() =>{
-//   const requestExtension = `/masters/languages`;
-//   var records = await instance.get(requestExtension);
-//   var res = [];
-//   var languages = records.data.result.result;
-//   for (let language of languages) {
-//     language.id = language._id["$oid"];
-//     res.push(language);
-//   }
-//   return res;
-// }
-
-export const LANGUAGES = async () => {
-  const requestExtension = `/masters/languages`;
-  var records = await instance.get(requestExtension);
-  var res = [];
-  var languages = records.data.result.result;
-  for (let language of languages) {
-    res.push(language.name);
-  }
-  return res;
+// TODO: Get a better way to map regions to i18n keys
+const regionI18NMapping = {
+  "N. America": "northAmerica",
+  "Central America": "centralAmerica",
+  "S. America": "southAmerica",
+  Caribbean: "caribbean",
+  Europe: "europe",
+  "Middle East": "middleEast",
+  "N. Africa": "northAfrica",
+  "Sub-Sahara Africa": "subSaharaAfrica",
+  "Central Asia": "centralAsia",
+  "East Asia": "eastAsia",
+  "South/SE Asia": "southAsia",
+  Oceana: "oceana",
 };
 
+export function getRegions(t) {
+  return REGIONS.map((region) =>
+    Object({ label: t(`regions.${regionI18NMapping[region]}`), value: region })
+  );
+}
+
 export const AGE_RANGES = [
-  "16-18",
-  "19-22",
+  "18-22",
   "23-25",
   "26-30",
   "30s",
@@ -136,64 +138,13 @@ export const AGE_RANGES = [
   "70s+",
 ];
 
-// export const SPECIALIZATIONS = [
-//   "Advocacy and Activism",
-//   "Architecture",
-//   "Arts:Dance/Design/Music and More",
-//   "Citizenship",
-//   "Computer Science",
-//   "Education, Personal Guidance On Next Steps",
-//   "Engineering",
-//   "Entrepreneurship",
-//   "Finance, Business",
-//   "Finance, Personal",
-//   "Health, Community, and Environment",
-//   "Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
-//   "Interview Skills & Practice",
-//   "Journalism",
-//   "Language Lessons",
-//   "Law",
-//   "Legal Issues, Business",
-//   "Legal Issues, Related to Personal Issues (Excluding Citizenship)",
-//   "Media/Public Relations",
-//   "Medicine",
-//   "Nonprofits/NGOs",
-//   "Political Science",
-//   "Professional Speaking",
-//   "Psychology: The Study of Clinical Practice (Not Personal Issues)",
-//   "Research",
-//   "Resume/CV Writing",
-//   "Self Confidence",
-//   "Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
-//   "Teaching: Skills & Methods",
-//   "Technology Training",
-//   "Tourism: Field of",
-//   "Writing: Improving writing skills, writing books/articles, scholarly writing",
-//   "Other",
-// ];
+export function getAgeRanges(t) {
+  return AGE_RANGES.map((ageRange) =>
+    Object({ label: t(`ageRanges.${ageRange}`), value: ageRange })
+  );
+}
 
-export const SPECIALIZATIONS = async () => {
-  const requestExtension = `/masters/specializations`;
-  var records = await instance.get(requestExtension);
-  var res = [];
-  var specializations = records.data.result.result;
-  for (let specialization of specializations) {
-    res.push(specialization.name);
-  }
-  return res;
-};
 export const GENDERS = ["Male", "Female", "Non-Binary", "Other"];
-
-export const AGES = [
-  "Under 18 years",
-  "18 to 24",
-  "25 to 29",
-  "30 to 34",
-  "35 to 39",
-  "40 to 44",
-  "45 to 49",
-  "Over 60",
-];
 
 // Keys for fields of Appointments
 export const APPOINTMENT_FORM_KEYS = [
@@ -205,36 +156,35 @@ export const APPOINTMENT_FORM_KEYS = [
   "allow_texts",
 ];
 
-// Keys for fields of Message
-export const MESSAGE_FORM_KEYS = [
-  "message",
-  "user_name",
-  "user_id",
-  "recipient_name",
-  "recipient_id",
-  "email",
-  "link",
-  "time",
-];
 export const SDGS = [
-  "SDG 1: No poverty",
-  "SDG 2: Zero Hunger",
-  "SDG 3: Good Health & Well-being",
-  "SDG 4: Quality Education",
-  "SDG 5: Gender Equality",
-  "SDG 6: Clean Water and Sanitation",
-  "SDG 7: Affordable and Clean Energy",
-  "SDG 8: Decent Work and Economic Growth",
-  "SDG 9: Industry, Innovation and Infrastructures",
-  "SDG 10: Reduced Inequality",
-  "SDG 11: Sustainable Cities and Communities",
-  "SDG 12: Responsible Consumption and Production",
-  "SDG 13: Climate Action",
-  "SDG 14: Life Below Water",
-  "SDG 15: Life on Land",
-  "SDG 16: Peace and Justice Strong Institutions",
-  "SDG 17: Partnership to Achieve the Goals",
+  "SDG1",
+  "SDG2",
+  "SDG3",
+  "SDG4",
+  "SDG5",
+  "SDG6",
+  "SDG7",
+  "SDG8",
+  "SDG9",
+  "SDG10",
+  "SDG11",
+  "SDG12",
+  "SDG13",
+  "SDG14",
+  "SDG15",
+  "SDG16",
+  "SDG17",
 ];
+
+export function getSDGs(t) {
+  return SDGS.map((sdg) =>
+    Object({
+      label: t(`SDGS.${sdg}`),
+      value: t(`SDGS.${sdg}`, { lng: "en" }),
+    })
+  );
+}
+
 export const NEW_APPLICATION_STATUS = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
@@ -243,13 +193,101 @@ export const NEW_APPLICATION_STATUS = {
   REJECTED: "REJECTED",
 };
 
-// Error messages for login
-export const LOGIN_ERROR_MSGS = {
-  INCORRECT_NAME_PASSWORD_ERROR_MSG:
-    "Incorrect username and/or password. Please try again.",
-  RESET_PASSWORD_ERROR_MSG:
-    "Please reset password. A link to reset your password has been sent to your email.",
-  SERVER_ERROR_MSG: "Something went wrong.",
-  RECREATE_ACCOUNT_ERROR_MSG: "Please re-register your account.",
-  EXISTING_EMAIL: "This email is already in use in another role",
+export const getAppStatusOptions = () => {
+  return Object.values(NEW_APPLICATION_STATUS).map((status) => {
+    return { value: status, label: status };
+  });
 };
+
+export const formatDate = (time_object) => {
+  const month = time_object.getMonth() + 1; // Adding 1 because months are 0-indexed
+  const day = time_object.getDate();
+  const year = time_object.getFullYear();
+
+  const formattedDate = `${month.toString().padStart(2, "0")}/${day
+    .toString()
+    .padStart(2, "0")}/${year}`;
+
+  return formattedDate;
+};
+
+export const formatDateTime = (time_object) => {
+  const month = time_object.getMonth() + 1; // Adding 1 because months are 0-indexed
+  const day = time_object.getDate();
+  const year = time_object.getFullYear();
+
+  const hour = time_object.getHours();
+  const minute = time_object.getMinutes();
+  // const second = time_object.getSeconds();
+
+  const formattedDate = `${month.toString().padStart(2, "0")}/${day
+    .toString()
+    .padStart(2, "0")}/${year}`;
+  const amPM = hour >= 12 ? "PM" : "AM";
+  const formattedHour = hour % 12 || 12; // Convert to 12-hour format
+  const formattedTime = `${formattedHour.toString().padStart(2, "0")}:${minute
+    .toString()
+    .padStart(2, "0")} ${amPM}`;
+
+  const formattedDateTime = `${formattedDate} ${formattedTime}`;
+  return formattedDateTime;
+};
+
+export const OPTION_TYPE = {
+  LANGUAGE: "language",
+  SPECIALIZATION: "specialization",
+};
+
+export const I18N_LANGUAGES = [
+  { value: "en-US", label: "English" },
+  { value: "es-US", label: "Spanish" },
+  { value: "ar", label: "Arabic" },
+  { value: "pt-BR", label: "Portuguese" },
+  { value: "fa-AF", label: "Farsi" },
+  { value: "pa-AR", label: "Pashto" },
+];
+
+export const TIMEZONE_OPTIONS = [
+  { value: "UTC-12:00", label: "(UTC-12:00) International Date Line West" },
+  { value: "UTC-11:00", label: "(UTC-11:00) Coordinated Universal Time-11" },
+  { value: "UTC-10:00", label: "(UTC-10:00) Hawaii" },
+  { value: "UTC-09:00", label: "(UTC-09:00) Alaska" },
+  { value: "UTC-08:00", label: "(UTC-08:00) Pacific Time (US & Canada)" },
+  { value: "UTC-07:00", label: "(UTC-07:00) Mountain Time (US & Canada)" },
+  { value: "UTC-06:00", label: "(UTC-06:00) Central Time (US & Canada)" },
+  { value: "UTC-05:00", label: "(UTC-05:00) Eastern Time (US & Canada)" },
+  { value: "UTC-04:00", label: "(UTC-04:00) Atlantic Time (Canada)" },
+  { value: "UTC-03:00", label: "(UTC-03:00) Buenos Aires" },
+  { value: "UTC-02:00", label: "(UTC-02:00) Coordinated Universal Time-02" },
+  { value: "UTC-01:00", label: "(UTC-01:00) Azores" },
+  {
+    value: "UTC+00:00",
+    label: "(UTC+00:00) Greenwich Mean Time: Dublin, Edinburgh, Lisbon, London",
+  },
+  {
+    value: "UTC+01:00",
+    label: "(UTC+01:00) Central European Time: Amsterdam, Berlin, Rome, Paris",
+  },
+  {
+    value: "UTC+02:00",
+    label: "(UTC+02:00) Eastern European Time: Athens, Bucharest, Jerusalem",
+  },
+  {
+    value: "UTC+03:00",
+    label: "(UTC+03:00) Moscow, St. Petersburg, Volgograd",
+  },
+  { value: "UTC+04:00", label: "(UTC+04:00) Abu Dhabi, Muscat" },
+  { value: "UTC+05:00", label: "(UTC+05:00) Islamabad, Karachi" },
+  { value: "UTC+06:00", label: "(UTC+06:00) Dhaka" },
+  { value: "UTC+07:00", label: "(UTC+07:00) Bangkok, Hanoi, Jakarta" },
+  {
+    value: "UTC+08:00",
+    label: "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi",
+  },
+  { value: "UTC+09:00", label: "(UTC+09:00) Tokyo, Osaka, Sapporo" },
+  { value: "UTC+10:00", label: "(UTC+10:00) Sydney, Melbourne, Brisbane" },
+  { value: "UTC+11:00", label: "(UTC+11:00) Solomon Islands, New Caledonia" },
+  { value: "UTC+12:00", label: "(UTC+12:00) Auckland, Wellington" },
+  { value: "UTC+13:00", label: "(UTC+13:00) Nuku'alofa" },
+  { value: "UTC+14:00", label: "(UTC+14:00) Kiritimati Island" },
+];

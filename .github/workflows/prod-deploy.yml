@@ -5,7 +5,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches:
-      - master
+      - main
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
         run: yarn install && yarn run build
 
       - name: save build artifacts
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: ${{ github.workspace }}/frontend/build
@@ -54,10 +54,14 @@ jobs:
       - uses: actions/checkout@v3.3.0
 
       - name: Downloading build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: frontend-build
           path: ${{ github.workspace }}/frontend/artifacts
+
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
 
       - name: Deploy to Heroku
         uses: AkhileshNS/heroku-deploy@v3.12.13
@@ -65,4 +69,4 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "mentee-h4i"
           heroku_email: "h4i.mentee.auth@gmail.com"
-          branch: master
+          branch: main

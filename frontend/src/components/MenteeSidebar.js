@@ -1,22 +1,47 @@
 import React from "react";
-import { UserOutlined, CalendarOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  CalendarOutlined,
+  MailOutlined,
+  LinkOutlined,
+} from "@ant-design/icons";
 import Sidebar from "./Sidebar";
-
-const pages = {
-  appointments: {
-    name: "Appointments",
-    path: "/mentee-appointments",
-    icon: <CalendarOutlined />,
-  },
-  profile: {
-    name: "Profile",
-    path: "/profile",
-    icon: <UserOutlined />,
-  },
-};
+import { useTranslation } from "react-i18next";
+import { useAuth } from "utils/hooks/useAuth";
+import CreateMeetingLink from "./components/CreateMeetingLink";
 
 function MenteeSidebar(props) {
-  return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
+  const { t } = useTranslation();
+  const { role } = useAuth();
+
+  const pages = {
+    appointments: {
+      name: t("sidebars.appointments"),
+      path: "/mentee-appointments",
+      icon: <CalendarOutlined />,
+    },
+    profile: {
+      name: t("sidebars.profile"),
+      path: "/profile",
+      icon: <UserOutlined />,
+    },
+    message: {
+      name: t("common.messages"),
+      path: "/messages/" + role,
+      icon: <MailOutlined />,
+    },
+  };
+
+  //return <Sidebar pages={pages} selectedPage={props.selectedPage} />;
+
+  return (
+    <Sidebar pages={pages} selectedPage={props.selectedPage}>
+      <Sidebar.Item key="createmeetinglink">
+        <CreateMeetingLink />
+      </Sidebar.Item>
+      {/* Other sidebar content within Sidebar.Item components */}
+    </Sidebar>
+  );
 }
 
 export default MenteeSidebar;

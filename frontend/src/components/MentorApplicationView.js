@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Typography } from "antd";
+import { Typography } from "antd";
 import MentorAppInfo from "./MentorAppInfo";
 import MentorAppProgress from "./MentorAppProgress";
-import { getApplicationById, updateApplicationById } from "../utils/api";
+import { updateApplicationById } from "../utils/api";
 import "./css/MentorApplicationView.scss";
-import { NEW_APPLICATION_STATUS } from "utils/consts";
+import { getAppStatusOptions } from "utils/consts";
 import ModalInput from "./ModalInput";
 import NewMentorAppInfo from "./NewMentorAppInfo";
 import MenteeAppInfo from "./MenteeAppInfo";
@@ -36,13 +36,7 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
             await updateApplicationById(dataa, id, isMentor);
             setAppstate(e);
           }}
-          options={[
-            NEW_APPLICATION_STATUS.PENDING,
-            NEW_APPLICATION_STATUS.APPROVED,
-            NEW_APPLICATION_STATUS.BUILDPROFILE,
-            NEW_APPLICATION_STATUS.COMPLETED,
-            NEW_APPLICATION_STATUS.REJECTED,
-          ]}
+          options={getAppStatusOptions()}
           value={appstate}
           handleClick={() => {}}
         />

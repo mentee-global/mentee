@@ -1,29 +1,34 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
-import "antd/dist/antd.css";
 import "./index.scss";
 import App from "app/App";
 import * as serviceWorker from "utils/serviceWorker";
-import firebase from "firebase";
 import { Provider } from "react-redux";
 import store from "./app/store";
+import moment from "moment";
+import dayjs from "dayjs";
+import "moment/locale/es";
+import "moment/locale/ar";
+import "moment/locale/fa";
+import "moment/locale/pt";
+import "dayjs/locale/es";
+import "dayjs/locale/ar";
+import "dayjs/locale/fa";
+import "dayjs/locale/pt";
+import i18n from "utils/i18n";
+import { ProvideAuth } from "utils/hooks/useAuth";
 
-firebase.initializeApp({
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: "mentee-d0304.firebaseapp.com",
-  projectId: "mentee-d0304",
-  storageBucket: "mentee-d0304.appspot.com",
-  messagingSenderId: "64054250486",
-  appId: "1:64054250486:web:5dda0b621ca92dc03ad5d7",
-  measurementId: "G-HSJ2934X33",
-});
-
-firebase.analytics();
+moment.locale(i18n.language);
+dayjs.locale(i18n.language);
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <ProvideAuth>
+        <Suspense>
+          <App />
+        </Suspense>
+      </ProvideAuth>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")

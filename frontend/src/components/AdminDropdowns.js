@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Menu, Dropdown } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { SPECIALIZATIONS } from "../utils/consts";
+import { getDisplaySpecializations } from "utils/api";
 
 export function SortByApptDropdown(props) {
   const options = {
@@ -60,10 +60,18 @@ export function MenteeMentorDropdown(props) {
       key: 2,
       text: "Partners",
     },
-    ALL: {
-      key: 3,
-      text: "All",
+    GUESTS: {
+      key: 4,
+      text: "Guests",
     },
+    SUPPORT: {
+      key: 5,
+      text: "Supporters",
+    },
+    // ALL: {
+    //   key: 3,
+    //   text: "All",
+    // },
   };
 
   const [option, setOption] = useState(options.MENTORS);
@@ -89,8 +97,14 @@ export function MenteeMentorDropdown(props) {
         <a onClick={() => handleClick(options.PARTNERS)}>Partners</a>
       </Menu.Item>
       <Menu.Item>
-        <a onClick={() => handleClick(options.ALL)}>All</a>
+        <a onClick={() => handleClick(options.GUESTS)}>Guests</a>
       </Menu.Item>
+      <Menu.Item>
+        <a onClick={() => handleClick(options.SUPPORT)}>Supporters</a>
+      </Menu.Item>
+      {/* <Menu.Item>
+        <a onClick={() => handleClick(options.ALL)}>All</a>
+      </Menu.Item> */}
     </Menu>
   );
   return (
@@ -113,7 +127,7 @@ export function SpecializationsDropdown(props) {
 
   useEffect(() => {
     async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
+      setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
   }, []);
@@ -132,10 +146,10 @@ export function SpecializationsDropdown(props) {
         return (
           <Menu.Item>
             <a
-              onClick={() => handleClick(i, element)}
+              onClick={() => handleClick(i, element.label)}
               style={{ color: selected.includes(i) ? "red" : "black" }}
             >
-              {element}
+              {element.label}
             </a>
           </Menu.Item>
         );
@@ -199,6 +213,54 @@ export function SortByDateDropdown(props) {
     <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
       <a>
         {option ? option.text : "Sort Order"} <DownOutlined />
+      </a>
+    </Dropdown>
+  );
+}
+
+export function HubsDropdown(props) {
+  const [option, setOption] = useState("Filter by");
+  const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    setOption("Filter by");
+  }, [props.onReset]);
+
+  const handleClick = (newOption, text) => {
+    setOption(text);
+    const newSelected = selected;
+    newSelected.push(newSelected);
+    setSelected(newSelected);
+    props.onChange(newOption);
+  };
+
+  const overlay = (
+    <Menu>
+      {props.options &&
+        props.options.map((element, i) => {
+          return (
+            <Menu.Item>
+              <a
+                onClick={() => handleClick(element.value, element.label)}
+                style={{ color: selected.includes(i) ? "red" : "black" }}
+              >
+                {element.label}
+              </a>
+            </Menu.Item>
+          );
+        })}
+    </Menu>
+  );
+
+  return (
+    <Dropdown
+      overlay={overlay}
+      className={props.className}
+      trigger={["click"]}
+      overlayStyle={{ overflowY: "auto", height: "auto" }}
+    >
+      <a>
+        {option} <DownOutlined />
       </a>
     </Dropdown>
   );

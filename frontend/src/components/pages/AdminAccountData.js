@@ -16,17 +16,24 @@ import {
   fetchAccounts,
   downloadPartnersData,
 } from "../../utils/api";
-import { MenteeMentorDropdown, SortByApptDropdown } from "../AdminDropdowns";
+import {
+  MenteeMentorDropdown,
+  SortByApptDropdown,
+  HubsDropdown,
+} from "../AdminDropdowns";
 import UploadEmails from "../UploadEmails";
+import AddGuestModal from "../AddGuestModal";
 import AdminDataTable from "../AdminDataTable";
-import useAuth from "utils/hooks/useAuth";
+import { useAuth } from "utils/hooks/useAuth";
 import { ACCOUNT_TYPE } from "utils/consts";
 
 const keys = {
   MENTORS: 0,
   MENTEES: 1,
   PARTNER: 2,
-  ALL: 3,
+  // ALL: 3,
+  GUEST: 4,
+  SUPPORT: 5,
   ASCENDING: 0,
   DESCENDING: 1,
 };
@@ -37,41 +44,91 @@ function AdminAccountData() {
   const [isMenteeDownload, setIsMenteeDownload] = useState(false);
   const [isPartnerDownload, setIsPartnerDownload] = useState(false);
   const [reload, setReload] = useState(true);
-  const [resetFilters, setResetFilters] = useState(false);
-  const [mentorData, setMentorData] = useState([]);
-  const [menteeData, setMenteeData] = useState([]);
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
   const [filterData, setFilterData] = useState([]);
   const [downloadFile, setDownloadFile] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
-  const [partnerData, setPartnerData] = useState([]);
-  const [mentors, setMentors] = useState([]);
-
+  const [guestModalVisible, setGuestModalVisible] = useState(false);
   const { onAuthStateChanged } = useAuth();
+  const [hubOptions, setHubOptions] = useState([]);
+  const [resetFilters, setResetFilters] = useState(false);
+  const [searchHubUserId, setSearchHubUserId] = useState(null);
+
+  useEffect(() => {
+    async function getHubData() {
+      var temp = [];
+      const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
+      hub_data.map((hub_item) => {
+        temp.push({ label: hub_item.name, value: hub_item._id.$oid });
+        return true;
+      });
+      setHubOptions(temp);
+    }
+    getHubData();
+  }, []);
 
   useEffect(() => {
     async function getData() {
       setIsReloading(true);
-      const mentorRes = await fetchMentorsAppointments();
-      const mentors = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
-      const menteeRes = await fetchMenteesAppointments();
-      const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
-      if (mentorRes && menteeRes) {
-        const newMenteeData = menteeRes.menteeData.map((elem) => ({
-          ...elem,
-          isMentee: true,
-        }));
 
-        setMentorData(mentorRes.mentorData);
-        setMenteeData(newMenteeData);
-        setDisplayData(mentorRes.mentorData);
-        setFilterData(mentorRes.mentorData);
-        setResetFilters(!resetFilters);
-        setPartnerData(Partners);
-        setMentors(mentors);
-      } else {
-        message.error("Could not fetch account data");
+      switch (displayOption) {
+        case keys.MENTEES:
+          const menteeRes = await fetchMenteesAppointments();
+          if (menteeRes) {
+            const newMenteeData = menteeRes.menteeData.map((elem) => ({
+              ...elem,
+              isMentee: true,
+            }));
+            setDisplayData(newMenteeData);
+            setFilterData(newMenteeData);
+          } else {
+            message.error("Could not fetch account data");
+          }
+          break;
+        case keys.MENTORS:
+          const mentorRes = await fetchMentorsAppointments();
+          if (mentorRes) {
+            setDisplayData(mentorRes.mentorData);
+            setFilterData(mentorRes.mentorData);
+          } else {
+            message.error("Could not fetch account data");
+          }
+          break;
+        case keys.PARTNER:
+          const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER);
+          var partners_data = [];
+          if (Partners) {
+            Partners.map((item) => {
+              item.restricted_show = item.restricted ? "Yes" : "No";
+              item.mentor_nums = item.assign_mentors
+                ? item.assign_mentors.length
+                : 0;
+              item.mentee_nums = item.assign_mentees
+                ? item.assign_mentees.length
+                : 0;
+              partners_data.push(item);
+              return true;
+            });
+          }
+
+          setDisplayData(partners_data);
+          setFilterData(partners_data);
+          break;
+        case keys.GUEST:
+          const Guests = await fetchAccounts(ACCOUNT_TYPE.GUEST);
+
+          setDisplayData(Guests);
+          setFilterData(Guests);
+          break;
+        case keys.SUPPORT:
+          const Supporters = await fetchAccounts(ACCOUNT_TYPE.SUPPORT);
+
+          setDisplayData(Supporters);
+          setFilterData(Supporters);
+          break;
+        default:
+          break;
       }
       setIsReloading(false);
     }
@@ -93,6 +150,10 @@ function AdminAccountData() {
     setUploadModalVisible(true);
   };
 
+  const handleAddGuest = () => {
+    setGuestModalVisible(true);
+  };
+
   const handleMentorsDownload = async () => {
     setIsMentorDownload(true);
     const file = await downloadMentorsData();
@@ -108,7 +169,7 @@ function AdminAccountData() {
   };
   const handlePartnersDownload = async () => {
     setIsPartnerDownload(true);
-    const file = await downloadPartnersData();
+    const file = await downloadPartnersData(searchHubUserId);
     setDownloadFile(file);
     setIsPartnerDownload(false);
   };
@@ -131,20 +192,22 @@ function AdminAccountData() {
   };
 
   const handleAccountDisplay = (key) => {
-    let newData = [];
-    if (key === keys.MENTORS) {
-      newData = mentorData;
-    } else if (key === keys.MENTEES) {
-      newData = menteeData;
-    } else if (key === keys.ALL) {
-      newData = mentorData.concat(menteeData);
-    } else if (key == keys.PARTNER) {
-      newData = partnerData;
-    }
-
-    setDisplayData(newData);
-    setFilterData(newData);
     setDisplayOption(key);
+    handleResetFilters();
+    setReload(!reload);
+  };
+
+  const searchbyHub = (key) => {
+    if (!key || displayOption !== keys.PARTNER) {
+      setFilterData(displayData);
+      return;
+    }
+    setSearchHubUserId(key);
+    let newFiltered = [];
+    newFiltered = displayData.filter((account) => {
+      return account.hub_id === key;
+    });
+    setFilterData(newFiltered);
   };
 
   const handleSearchAccount = (name) => {
@@ -165,6 +228,14 @@ function AdminAccountData() {
     setFilterData(newFiltered);
   };
 
+  const handleResetFilters = () => {
+    setResetFilters(!resetFilters);
+    setSearchHubUserId(null);
+    if (displayOption === keys.PARTNER) {
+      setFilterData(displayData);
+    }
+  };
+
   return (
     <div className="account-data-body">
       <div style={{ display: "none" }}>
@@ -176,14 +247,28 @@ function AdminAccountData() {
           <a href="account-data">Account Data</a>
         </Breadcrumb.Item>
       </Breadcrumb>
-      <div className="table-search">
+      <div
+        className="table-search flex table-button-group"
+        style={{ width: "25rem" }}
+      >
         <Input.Search
           placeholder="Search by name"
+          id="search"
           prefix={<UserOutlined />}
           allowClear
           size="medium"
           onSearch={(value) => handleSearchAccount(value)}
         />
+        <div style={{ lineHeight: "30px", marginLeft: "1rem" }}>Hub</div>
+        <HubsDropdown
+          className="table-button hub-drop-down"
+          options={hubOptions}
+          onChange={(key) => searchbyHub(key)}
+          onReset={resetFilters}
+        />
+        <Button className="" onClick={() => handleResetFilters()}>
+          Clear Filters
+        </Button>
       </div>
       <div className="table-header">
         <div className="table-title">
@@ -193,19 +278,32 @@ function AdminAccountData() {
             ? "Mentees"
             : displayOption === keys.PARTNER
             ? "Partners"
+            : displayOption === keys.GUEST
+            ? "Guests"
+            : displayOption === keys.SUPPORT
+            ? "Supporters"
             : "All"}
         </div>
         <div className="table-button-group">
           <MenteeMentorDropdown
             className="table-button"
             onChange={(key) => handleAccountDisplay(key)}
-            onReset={resetFilters}
           />
           <SortByApptDropdown
             className="table-button"
             onChange={(key) => handleSortData(key)}
-            onReset={resetFilters}
             onChangeData={displayData}
+          />
+          <Button
+            className="table-button"
+            icon={<PlusOutlined />}
+            onClick={() => handleAddGuest()}
+          >
+            Add New Guest/Support
+          </Button>
+          <AddGuestModal
+            setGuestModalVisible={setGuestModalVisible}
+            guestModalVisible={guestModalVisible}
           />
           <Button
             className="table-button"
@@ -249,7 +347,6 @@ function AdminAccountData() {
             spin={isReloading}
             onClick={() => {
               setReload(!reload);
-              setResetFilters(!resetFilters);
             }}
           />
         </div>
@@ -258,9 +355,11 @@ function AdminAccountData() {
         <AdminDataTable
           data={filterData}
           deleteAccount={handleDeleteAccount}
+          refresh={() => setReload(!reload)}
           isMentee={displayOption === keys.MENTEES}
           isPartner={displayOption === keys.PARTNER}
-          mentors={mentors}
+          isGuest={displayOption === keys.GUEST}
+          isSupport={displayOption === keys.SUPPORT}
         />
       </Spin>
     </div>

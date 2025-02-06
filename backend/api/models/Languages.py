@@ -5,9 +5,10 @@ from mongoengine import *
 
 
 class Languages(Document, Mixin):
-    """Model for mentor application."""
+    """Model for Languages Options."""
 
     name = StringField(required=True)
+    translations = DictField()
     updated_at = DateTimeField(required=True)
 
     def __repr__(self):

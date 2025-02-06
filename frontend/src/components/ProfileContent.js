@@ -6,35 +6,41 @@ import {
   LinkedinOutlined,
   LockFilled,
   StarFilled,
+  UserOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { formatLinkForHref } from "utils/misc";
-import MentorProfileModal from "./MentorProfileModal";
-import MenteeProfileModal from "./MenteeProfileModal";
-import MenteeAppointmentModal from "./MenteeAppointmentModal";
-import PublicMessageModal from "./PublicMessageModal";
-import { ACCOUNT_TYPE } from "utils/consts";
-import useAuth from "utils/hooks/useAuth";
+import PublicMessageModal from "components/PublicMessageModal";
+import { ACCOUNT_TYPE, getRegions } from "utils/consts";
+import { fetchMenteeByID, editFavMentorById } from "utils/api";
+import { Rate, Tooltip, Avatar } from "antd";
+import { useSelector } from "react-redux";
+import MentorContactModal from "components/MentorContactModal";
+
 import "./css/Profile.scss";
-import { getMenteeID } from "utils/auth.service";
-import { fetchMenteeByID, editFavMentorById } from "../utils/api";
-import { Rate, Tooltip } from "antd";
-import MentorContactModal from "./MentorContactModal";
-import PartnerProfileModal from "./PartnerProfileModal";
+import { getTranslatedOptions } from "utils/translations";
+import EditProfileModal from "components/EditProfileModal";
+import { getProfileId, getRole } from "utils/auth.service";
+import { formatDate } from "utils/consts";
 
 function ProfileContent(props) {
+  const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const { accountType, account } = props;
-  const { isMentor, isMentee, isPartner, profileId } = useAuth();
+  const profileId = getProfileId();
+  const role = getRole();
+  const isMentee = role == ACCOUNT_TYPE.MENTEE;
+  const isGuest = role == ACCOUNT_TYPE.GUEST;
   const [mentee, setMentee] = useState();
   const [favorite, setFavorite] = useState(false);
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
 
   useEffect(() => {
-    console.log(accountType);
     async function getMentee() {
-      const mentee_id = await getMenteeID();
-      const mentee_data = await fetchMenteeByID(mentee_id);
-      if (mentee_data) {
-        setMentee(mentee_data);
+      const menteeId = profileId;
+      const menteeData = await fetchMenteeByID(menteeId);
+      if (menteeData) {
+        setMentee(menteeData);
       }
     }
     if (isMentee) {
@@ -51,7 +57,7 @@ function ProfileContent(props) {
       setFavoriteMentorIds(fav_set);
       setFavorite(fav_set.has(props.id));
     }
-    if (isMentee) {
+    if (isMentee && mentee) {
       initializeFavorites();
     }
   }, [mentee]);
@@ -66,11 +72,14 @@ function ProfileContent(props) {
   }
 
   const getTitle = (name, age) => {
-    if (accountType == ACCOUNT_TYPE.MENTOR && name) {
+    if (accountType === ACCOUNT_TYPE.HUB && name) {
+      return name;
+    }
+    if (accountType === ACCOUNT_TYPE.MENTOR && name) {
       return name;
     } else if (name && age) {
       return name + ", " + age;
-    } else if (accountType == ACCOUNT_TYPE.PARTNER) {
+    } else if (accountType === ACCOUNT_TYPE.PARTNER) {
       return account.organization;
     }
   };
@@ -81,44 +90,44 @@ function ProfileContent(props) {
     }
   };
   const getLanguages = (languages) => {
-    return languages.join(" • ");
+    return getTranslatedOptions(languages, options.languages).join(" • ");
   };
 
-  const getSpecializationTags = (specializations) => {
-    return specializations.map((specialization, idx) => (
-      <div className="mentor-specialization-tag">{specialization}</div>
+  const getTags = (tags) => {
+    if (accountType === ACCOUNT_TYPE.PARTNER) {
+      tags = getTranslatedOptions(
+        tags,
+        accountType === ACCOUNT_TYPE.PARTNER
+          ? getRegions(t)
+          : options.specializations
+      );
+    }
+    return tags.map((tag, idx) => (
+      <div className="mentor-specialization-tag" key={idx}>
+        {tag}
+      </div>
     ));
   };
 
-  const getSpecializations = (isMentor) => {
-    if (accountType == ACCOUNT_TYPE.MENTOR) {
-      return (
-        <div>
-          <div className="mentor-profile-heading">
-            <b>Specializations</b>
-          </div>
-          <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
-        </div>
-      );
-    } else if (accountType == ACCOUNT_TYPE.MENTEE) {
-      return (
-        <div>
-          <div className="mentor-profile-heading">
-            <b>Areas of interest</b>
-          </div>
-          <div>{getSpecializationTags(props.mentor.specializations || [])}</div>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <div className="mentor-profile-heading">
-            <b>Regions Work In</b>
-          </div>
-          <div>{getSpecializationTags(account?.regions || [])}</div>
-        </div>
-      );
+  const displayTags = () => {
+    if (accountType == ACCOUNT_TYPE.HUB) {
+      return <></>;
     }
+    let tags = account?.specializations ?? account?.regions ?? [];
+    return (
+      <div>
+        <div className="mentor-profile-heading">
+          <b>
+            {ACCOUNT_TYPE.MENTOR === accountType
+              ? t("common.specializations")
+              : ACCOUNT_TYPE.MENTEE === accountType
+              ? t("menteeProfile.areasOfInterest")
+              : t("partnerProfile.regionsWork")}
+          </b>
+        </div>
+        <div>{getTags(tags)}</div>
+      </div>
+    );
   };
 
   const getEducations = (educations) => {
@@ -133,9 +142,9 @@ function ProfileContent(props) {
             <br />
             {education.education_level}, {major}
             <br />
-            <t className="mentor-profile-heading">
+            <p className="mentor-profile-heading">
               {education.graduation_year}
-            </t>
+            </p>
           </div>
         ))}
       </>
@@ -148,7 +157,9 @@ function ProfileContent(props) {
         <div className="mentor-profile-decorations">
           {getTitle(props.mentor.name, props.mentor.age)}
           <div>{getPrivacy(props.mentor.is_private)}</div>
-          {isMentee && favoriteMentorIds.size && accountType == 1 ? (
+          {isMentee &&
+          favoriteMentorIds.size &&
+          accountType === ACCOUNT_TYPE.MENTOR ? (
             <div className="favorite-button-profile">
               <Rate
                 character={<StarFilled />}
@@ -162,20 +173,23 @@ function ProfileContent(props) {
         <div className="mentor-profile-actions">
           <div className="mentor-profile-book-appt-btn">
             {isMentee &&
-              (props.isMentor ||
-                parseInt(accountType, 10) === ACCOUNT_TYPE.MENTOR) && (
+              (props.isMentor || accountType === ACCOUNT_TYPE.MENTOR) && (
                 <>
                   <MentorContactModal
                     mentorName={props.mentor?.name}
                     mentorId={props.mentor?._id?.$oid}
                     menteeId={profileId}
-                    mentorSpecializations={props.mentor?.specializations}
+                    mentorSpecializations={getTranslatedOptions(
+                      props.mentor?.specializations,
+                      options.specializations
+                    )}
                   />
                 </>
               )}
           </div>
           <div className="mentor-profile-send-msg-btn">
             {!props.isMentor &&
+              !isGuest &&
               parseInt(accountType, 10) !== ACCOUNT_TYPE.MENTOR &&
               props.mentor &&
               props.mentor._id &&
@@ -183,42 +197,23 @@ function ProfileContent(props) {
               profileId && (
                 <PublicMessageModal
                   menteeName={props.mentor.name}
-                  menteeID={
+                  menteeId={
                     props.mentor && props.mentor._id && props.mentor._id["$oid"]
                   }
-                  mentorID={profileId}
+                  mentorId={profileId}
                 />
               )}
           </div>
         </div>
-        {isMentor && props.showEditBtn ? (
+        {props.showEditBtn ? (
           <div className="mentor-profile-button">
-            <MentorProfileModal
-              mentor={props.mentor}
+            <EditProfileModal
+              profileData={props.mentor}
               onSave={props.handleSaveEdits}
+              role={accountType}
             />
           </div>
-        ) : (
-          isMentee &&
-          props.showEditBtn && (
-            <div className="mentor-profile-button">
-              <MenteeProfileModal
-                mentee={props.mentor}
-                onSave={props.handleSaveEdits}
-              />
-            </div>
-          )
-        )}
-        {isPartner && props.showEditBtn ? (
-          <div className="mentor-profile-button">
-            <PartnerProfileModal
-              mentor={account}
-              onSave={props.handleSaveEdits}
-            />
-          </div>
-        ) : (
-          ""
-        )}
+        ) : null}
       </div>
       <br />
 
@@ -296,72 +291,155 @@ function ProfileContent(props) {
         )}
       </div>
       <br />
-      {accountType == ACCOUNT_TYPE.PARTNER ? (
+      {props.mentor.birthday && (
+        <>
+          <div className="mentor-profile-heading">
+            <b>{t("common.birthday")}</b>
+          </div>
+          <div>{formatDate(new Date(props.mentor.birthday.$date))}</div>
+          <br />
+        </>
+      )}
+      {accountType === ACCOUNT_TYPE.PARTNER ? (
         <>
           {" "}
           <div className="mentor-profile-heading">
-            <b>Brief Introduction to Your Org/Inst/Corp</b>
+            <b>{t("partnerProfile.briefIntro")}</b>
           </div>
           <div className="mentor-profile-about">{account.intro}</div>
         </>
       ) : (
         <>
           <div className="mentor-profile-heading">
-            <b>Bio</b>
+            <b>
+              {accountType == ACCOUNT_TYPE.HUB
+                ? "URL"
+                : t("commonProfile.biography")}
+            </b>
           </div>
-          <div className="mentor-profile-about">{props.mentor.biography}</div>
+          <div className="mentor-profile-about">
+            {accountType == ACCOUNT_TYPE.HUB
+              ? props.mentor.url
+              : props.mentor.biography}
+          </div>
         </>
       )}
 
       <br />
-      {getSpecializations(props.mentor.specializations)}
+      {displayTags()}
       <br />
-      {accountType != ACCOUNT_TYPE.PARTNER && (
+      {accountType !== ACCOUNT_TYPE.PARTNER &&
+        accountType !== ACCOUNT_TYPE.HUB && (
+          <>
+            <div className="mentor-profile-heading">
+              <b>{t("commonProfile.education")}</b>
+            </div>
+            <div>{getEducations(props.mentor.education)}</div>
+            {accountType == ACCOUNT_TYPE.MENTEE && (
+              <>
+                <div>
+                  {props.mentor.education_level &&
+                    t("common." + props.mentor.education_level)}
+                </div>
+              </>
+            )}
+          </>
+        )}
+      <br />
+      {props.mentor.timezone && (
         <>
           <div className="mentor-profile-heading">
-            <b>Education</b>
+            <b>{t("common.timezone")}</b>
           </div>
-          <div>{getEducations(props.mentor.education)}</div>
+          <div>{props.mentor.timezone}</div>
+          <br />
         </>
       )}
-      <br />
-      {accountType == ACCOUNT_TYPE.PARTNER && (
+      {accountType == ACCOUNT_TYPE.MENTEE && (
+        <>
+          {props.mentor.languages && (
+            <>
+              <div className="mentor-profile-heading">
+                <b>{t("menteeApplication.preferredLanguage")}</b>
+              </div>
+              <div>{getTags(props.mentor.languages)}</div>
+              <br />
+            </>
+          )}
+          {props.mentor.immigrant_status && (
+            <>
+              <div className="mentor-profile-heading">
+                <b>{t("common.immigrationStatus")}</b>
+              </div>
+              <div>{getTags(props.mentor.immigrant_status)}</div>
+              <br />
+            </>
+          )}
+          {props.mentor.workstate && (
+            <>
+              <div className="mentor-profile-heading">
+                <b>{t("common.workOptions")}</b>
+              </div>
+              <div>{getTags(props.mentor.workstate)}</div>
+            </>
+          )}
+        </>
+      )}
+      {(accountType === ACCOUNT_TYPE.PARTNER ||
+        (accountType === ACCOUNT_TYPE.HUB && props.mentor.hub_id)) && (
         <>
           <div className="mentor-profile-heading">
-            <b>Contact Person's Full Name</b>
+            <b>{t("partnerProfile.contactFullName")}</b>
           </div>
           <div className="mentor-profile-about">{account.person_name}</div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>Current & Upcoming Project Topics </b>
+            {props.mentor &&
+            props.mentor.hub_user &&
+            props.mentor.hub_user.url === "GSRFoundation" ? (
+              <b>How we’re deploying funding from the GSR Foundation</b>
+            ) : (
+              <b>{t("partnerProfile.projectNames")} </b>
+            )}
           </div>
           <div className="mentor-profile-about">{account.topics}</div>
           <br /> <br />
+          {props.mentor &&
+            props.mentor.hub_user &&
+            props.mentor.hub_user.url === "GSRFoundation" &&
+            account.success && (
+              <>
+                <div className="mentor-profile-heading">
+                  <b>What does success for your organization look like</b>
+                </div>
+                <div className="mentor-profile-about">{account.success}</div>
+                <br /> <br />
+              </>
+            )}
           <div className="mentor-profile-heading">
-            <b>Sustainable Development Goals Your Work Supports </b>
+            <b>{t("partnerProfile.developmentGoals")} </b>
           </div>
           <div className="mentor-profile-about">{account.sdgs}</div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>Open to Collaboration on Grants</b>
+            <b>{t("partnerProfile.collaborationGrants")}</b>
           </div>
           <div className="mentor-profile-about">
             {account.open_grants ? "Yes" : "No"}
           </div>
           <br /> <br />
           <div className="mentor-profile-heading">
-            <b>Open to Collaboration on Projects</b>
+            <b>{t("partnerProfile.collaborationProjects")}</b>
           </div>
           <div className="mentor-profile-about">
             {account.open_projects ? "Yes" : "No"}
           </div>
         </>
       )}
-
       {props.mentor.video && (
         <div className="mentor-profile-heading">
           <div className="mentor-profile-heading">
-            <b>Video</b>
+            <b>{t("commonProfile.video")}</b>
           </div>
           <LinkOutlined className="mentor-profile-tag-icon" />
           <Tooltip
@@ -385,6 +463,24 @@ function ProfileContent(props) {
             </a>
           </Tooltip>
         </div>
+      )}
+      {props.mentor.pair_partner && props.mentor.pair_partner.email && (
+        <>
+          <div style={{ marginTop: "20px" }} className="mentor-profile-heading">
+            <b>{t("common.partner")}</b>
+          </div>
+          <Avatar
+            size={45}
+            src={
+              props.mentor.pair_partner.image &&
+              props.mentor.pair_partner.image.url
+            }
+            icon={<UserOutlined />}
+          />
+          <label style={{ marginLeft: "10px" }}>
+            {props.mentor.pair_partner.organization}
+          </label>
+        </>
       )}
     </div>
   );

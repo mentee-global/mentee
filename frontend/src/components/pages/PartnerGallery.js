@@ -1,42 +1,82 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { fetchPartners } from "../../utils/api";
-import { Input, Checkbox, Modal, Result, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import { fetchPartners, fetchAccounts } from "../../utils/api";
+import {
+  Input,
+  Modal,
+  Result,
+  Spin,
+  FloatButton,
+  Affix,
+  Select,
+  Typography,
+  theme,
+  Button,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import MenteeButton from "../MenteeButton";
 import "../css/Gallery.scss";
-import { isLoggedIn, getMenteeID, getMentorID } from "utils/auth.service";
-import { useLocation } from "react-router";
-import useAuth from "../../utils/hooks/useAuth";
+import { useAuth } from "../../utils/hooks/useAuth";
 import PartnerCard from "../PartnerCard";
-import { REGIONS, SDGS } from "utils/consts";
+import { ACCOUNT_TYPE, getRegions, getSDGs } from "utils/consts";
+import { useTranslation } from "react-i18next";
+import { css } from "@emotion/css";
+import { useSelector } from "react-redux";
+import { getRole } from "utils/auth.service";
 
-function PartnerGallery() {
-  const { isAdmin, isPartner, profileId } = useAuth();
+const { Title } = Typography;
+
+function PartnerGallery(props) {
+  const {
+    token: { colorPrimaryBg },
+  } = theme.useToken();
+  const { t } = useTranslation();
+  const { isAdmin, isPartner, isGuest, isHub } = useAuth();
   const [partners, setPartners] = useState([]);
   const [regions, setRegions] = useState([]);
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
-  const location = useLocation();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [query2, setQuery2] = useState();
   const [sdgs, setSdgs] = useState([]);
+  const [searchHub, setSearchHub] = useState(null);
+  const { user } = useSelector((state) => state.user);
+  const [hubOptions, setHubOptions] = useState([]);
+  const role = getRole();
 
   useEffect(() => {
-    async function getPartners() {
-      const Partner_data = await fetchPartners();
+    async function getPartners(hub_user_id) {
+      const Partner_data = await fetchPartners(undefined, hub_user_id);
       if (Partner_data) {
         setPartners(Partner_data);
       }
-    }
-
-    getPartners();
-  }, []);
-
-  useEffect(() => {
-    if (isPartner || isAdmin) {
       setPageLoaded(true);
     }
-  }, [isPartner, isAdmin]);
+
+    async function getHubData() {
+      var temp = [];
+      const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
+      hub_data.map((hub_item) => {
+        temp.push({ label: hub_item.name, value: hub_item._id.$oid });
+        return true;
+      });
+      setHubOptions(temp);
+    }
+
+    var hub_user_id = null;
+    if (role == ACCOUNT_TYPE.HUB && user) {
+      if (user.hub_id) {
+        hub_user_id = user.hub_id;
+      } else {
+        hub_user_id = user._id.$oid;
+      }
+    }
+    if (role == ACCOUNT_TYPE.SUPPORT) {
+      hub_user_id = "";
+    }
+    if (user) {
+      getPartners(hub_user_id);
+      getHubData();
+    }
+  }, [user]);
 
   const getFilterdPartners = () =>
     partners.filter((partner) => {
@@ -46,132 +86,207 @@ function PartnerGallery() {
         regions.some((s) => partner.regions.indexOf(s) >= 0);
       const matchSdgs =
         sdgs.length === 0 || sdgs.some((s) => partner.sdgs.indexOf(s) >= 0);
-      const matchestopics =
-        !query2 || partner.topics.toUpperCase().includes(query2.toUpperCase());
+      const matchHub =
+        !(role == ACCOUNT_TYPE.SUPPORT) ||
+        !searchHub ||
+        (partner.hub_id && partner.hub_id == searchHub);
+
+      let matchestopics = false;
+      if (
+        (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
+        (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+      ) {
+        matchestopics =
+          !query2 ||
+          (partner.topics &&
+            partner.topics.toUpperCase().includes(query2.toUpperCase())) ||
+          (partner.success &&
+            partner.success.toUpperCase().includes(query2.toUpperCase()));
+      } else {
+        matchestopics =
+          !query2 ||
+          (partner.topics &&
+            partner.topics.toUpperCase().includes(query2.toUpperCase()));
+      }
+
       const matchesName =
         !query ||
         partner.organization.toUpperCase().includes(query.toUpperCase());
 
       return (
-        matchesSpecializations && matchesName && matchestopics && matchSdgs
+        matchesSpecializations &&
+        matchesName &&
+        matchestopics &&
+        matchSdgs &&
+        matchHub
       );
     });
 
+  console.log("uuu", user);
+
+  const getFilterForm = () => (
+    <>
+      <Title
+        level={4}
+        className={css`
+          margin-top: 0;
+        `}
+      >
+        {t("gallery.organization")}
+      </Title>
+      <Input
+        placeholder={t("gallery.organizationPlaceholder")}
+        prefix={<SearchOutlined />}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <Title level={4}>{t("gallery.regions")}</Title>
+      <Select
+        placeholder={t("gallery.regions")}
+        onChange={(value) => {
+          setRegions(value);
+        }}
+        options={getRegions(t)}
+        className={css`
+          width: 100%;
+        `}
+        allowClear
+        mode="multiple"
+        maxTagCount="responsive"
+      />
+      <Title level={4}>
+        {(user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
+        (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+          ? t("gallery.projectTopicsPlaceholder_GSR")
+          : t("gallery.projectTopics")}
+      </Title>
+      <Input
+        className={css`
+          width: 100%;
+        `}
+        placeholder={
+          (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
+          (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+            ? t("gallery.projectTopicsPlaceholder_GSR")
+            : t("gallery.projectTopicsPlaceholder")
+        }
+        allowClear
+        onChange={(e) => setQuery2(e.target.value)}
+        prefix={<SearchOutlined />}
+      />
+      <Title level={4}>{t("gallery.sdgs")}</Title>
+      <Select
+        className={css`
+          width: 100%;
+        `}
+        placeholder={t("gallery.sdgs")}
+        allowClear
+        mode="multiple"
+        options={getSDGs(t)}
+        onChange={(selected) => setSdgs(selected)}
+        maxTagCount="responsive"
+      />
+      {role == ACCOUNT_TYPE.SUPPORT && (
+        <>
+          <Title level={4}>HUB</Title>
+          <Select
+            className={css`
+              width: 100%;
+            `}
+            placeholder={"HUB"}
+            allowClear
+            // mode="multiple"
+            options={hubOptions}
+            onChange={(selected) => setSearchHub(selected)}
+            maxTagCount="responsive"
+          />
+        </>
+      )}
+    </>
+  );
+
   // Add some kind of error 403 code
-  return !isPartner && !isAdmin ? (
+  return !props.isSupport && !isPartner && !isAdmin && !isGuest && !isHub ? (
     <Result
       status="403"
       title="403"
-      subTitle="Sorry, you are not authorized to access this page."
+      subTitle={t("gallery.unauthorizedAccess")}
     />
   ) : (
     <>
-      <MenteeButton
-        onClick={() => setMobileFilterVisible(true)}
-        content="Filter"
-        theme="back"
-        id="filter-button"
-      />
+      <Affix offsetTop={10}>
+        <Button
+          onClick={() => setMobileFilterVisible(true)}
+          className={css`
+            display: none;
+            @media only screen and (max-width: 640px) {
+              margin-top: 2%;
+              margin-left: 2%;
+              display: grid;
+            }
+          `}
+          type="primary"
+        >
+          {t("gallery.filter")}
+        </Button>
+      </Affix>
       <Modal
         onCancel={() => {
           setMobileFilterVisible(false);
         }}
-        visible={mobileFilterVisible}
+        open={mobileFilterVisible}
         footer={[
-          <MenteeButton
-            content="Apply"
-            key="apply"
-            onClick={() => setMobileFilterVisible(false)}
-          />,
-          <MenteeButton
-            content="Cancel"
-            key="cancel"
+          <Button type="primary" onClick={() => setMobileFilterVisible(false)}>
+            {t("common.apply")}
+          </Button>,
+          <Button
             onClick={() => {
               setMobileFilterVisible(false);
               setRegions([]);
               setQuery("");
             }}
-          />,
+          >
+            {t("common.cancel")}
+          </Button>,
         ]}
       >
-        <div className="no-margin gallery-filter-container">
-          <div className="gallery-filter-header">Filter By:</div>
-          <div className="gallery-filter-section-title">Organization </div>
-          <Input
-            placeholder="Search by Organization Name"
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-
-          <div className="gallery-filter-section-title">REGIONS</div>
-          <Checkbox.Group
-            defaultValue={regions}
-            options={REGIONS}
-            onChange={(checked) => setRegions(checked)}
-            value={regions}
-          />
-          <div className="gallery-filter-section-title">Project Topics</div>
-          <Input
-            placeholder="Search by project Topics "
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            value={query2}
-            onChange={(e) => setQuery2(e.target.value)}
-          />
-          <div className="gallery-filter-section-title">SDGS</div>
-          <Checkbox.Group
-            defaultValue={sdgs}
-            options={SDGS}
-            onChange={(checked) => setSdgs(checked)}
-            value={sdgs}
-          />
-        </div>
+        {getFilterForm()}
       </Modal>
 
       <div className="gallery-container">
-        <div className="gallery-filter-container mobile-invisible">
-          <div className="gallery-filter-header">Filter By:</div>
-          <div className="gallery-filter-section-title">Organization</div>
-          <Input
-            placeholder="Search by organization "
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+        <FloatButton.BackTop />
+        <Affix offsetTop={10}>
+          <div
+            className={css`
+              margin-right: 1em;
+              padding: 1em;
+              border-radius: 8px;
+              height: fit-content;
+              border: 2px solid ${colorPrimaryBg};
+              max-width: 250px;
+              @media only screen and (max-width: 640px) {
+                display: none;
+              }
+            `}
+          >
+            {getFilterForm()}
+          </div>
+        </Affix>
 
-          <div className="gallery-filter-section-title">REGIONS</div>
-          <Checkbox.Group
-            defaultValue={regions}
-            options={REGIONS}
-            onChange={(checked) => setRegions(checked)}
-          />
-          <div className="gallery-filter-section-title">Project Topics</div>
-          <Input
-            placeholder="Search by project Topics "
-            prefix={<SearchOutlined />}
-            style={styles.searchInput}
-            value={query2}
-            onChange={(e) => setQuery2(e.target.value)}
-          />
-          <div className="gallery-filter-section-title">SDGS</div>
-          <Checkbox.Group
-            defaultValue={sdgs}
-            options={SDGS}
-            onChange={(checked) => setSdgs(checked)}
-            value={sdgs}
-          />
-        </div>
-
-        <div className="gallery-mentor-container">
-          {!pageLoaded ? (
-            <div className="loadingIcon">
-              {" "}
-              <Spin />{" "}
-            </div>
-          ) : (
-            getFilterdPartners().map((partner, key) => (
+        {!pageLoaded ? (
+          <div
+            className={css`
+              display: flex;
+              flex: 1;
+              justify-content: center;
+              align-items: center;
+              height: 80vh;
+            `}
+          >
+            <Spin size="large" loading />
+          </div>
+        ) : (
+          <div className="gallery-mentor-container">
+            {getFilterdPartners().map((partner, key) => (
               <PartnerCard
                 key={key}
                 organization={partner.organization}
@@ -184,20 +299,15 @@ function PartnerGallery() {
                 id={partner._id["$oid"]}
                 firebase_uid={partner.firebase_uid}
                 image={partner.image}
+                isSupport={props.isSupport}
+                hub_user={partner.hub_user}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
 }
-
-const styles = {
-  searchInput: {
-    borderRadius: 10,
-    marginBottom: 5,
-  },
-};
 
 export default PartnerGallery;

@@ -1,643 +1,561 @@
-import React, { useState } from "react";
-import { Form, Input, Radio, Checkbox } from "antd";
-import MenteeButton from "../MenteeButton";
-import { createApplication } from "../../utils/api";
-import "../../components/css/MentorApplicationPage.scss";
-// constant declarations
-const immigrantOptions = [
-  "I am a refugee",
-  "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
-  "I am black.",
-  "I am Hispanic/Latino.",
-  "I am of native/ aboriginal/indigenous origins.",
-  "I identify as LGTBQ.",
-  "I have economic hardship.",
-  "I come from a country at war.",
-  "other",
-];
-const topicOptions = [
-  "Advocacy and Activism",
-  "Architecture",
-  "Arts:Dance/Design/Music and More",
-  "Citizenship",
-  "Computer Science",
-  "Education, Personal Guidance On Next Steps",
-  "Engineering",
-  "Entrepreneurship",
-  "Finance, Business",
-  "Finance, Personal",
-  "Health, Community, and Enviornment",
-  "Health, Personal: Nutrition, Personal Life Coach, Yoga & Meditation",
-  "Interview Skills & Practice",
-  "Journalism",
-  "Language Lessons",
-  "Law",
-  "Legal Issues, Business",
-  "Legal Issues, Related to Personal Issues (Excluding Citizenship)",
-  "Media/Public Relations",
-  "Medicine",
-  "Nonprofits/NGOs",
-  "Political Science",
-  "Professional Speaking",
-  "Psychology: The Study of Clinical Practice (Not Personal Issues)",
-  "Research",
-  "Resume/CV Writing",
-  "Self Confidence",
-  "Small Business: Help With Setting Up, Consulting on Vision, Overall Guidance & More",
-  "Teaching: Skills & Methods",
-  "Technology Training",
-  "Tourism: Field of",
-  "Writing: Improving writing skills, writing books/articles, scholarly writing",
-  "Other",
-];
-const workOptions = [
-  "I work part-time.",
-  "I work full-time.",
-  "I attend technical school.",
-  "I am a college/university student attaining my first degree.",
-  "I am a college/university students attaining my second or third degree.",
-  "Other",
-];
-const { TextArea } = Input;
-function MenteeApplication(props) {
-  const [submitError, setSubmitError] = useState();
-  const [showMissingFieldErrors, setShowMissingFieldErrors] = useState(false);
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Form, Input, Radio, Typography, Select, Button } from "antd";
+import { useTranslation } from "react-i18next";
+import { createApplication, fetchPartners, getAllcountries } from "utils/api";
+import "components/css/MentorApplicationPage.scss";
+import { N50_ID } from "utils/consts";
 
-  // sets text fields
-  const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
-  const [organization, setOrganization] = useState(null);
-  const [age, setAge] = useState(null);
-  const [immigrantStatus, setImmigrantStatus] = useState([]);
-  const [otherImmigrantStatus, setotherImmigrantStatus] = useState("");
-  const [Country, setCountry] = useState(null);
-  const [identify, setidentify] = useState(null);
-  const [otherIdentify, setOtherIdentify] = useState("");
-  const [language, setLanguage] = useState(null);
-  const [otherLanguage, setotherLanguage] = useState("");
-  const [topics, setTopics] = useState([]);
-  const [otherTopics, setOtherTopics] = useState("");
-  const [workstate, setWorkstate] = useState([]);
-  const [otherWorkState, setotherWorkState] = useState("");
-  const [isSocial, setIsSocial] = useState(null);
-  const [otherIsSocial, setOtherIsSocial] = useState("");
-  const [questions, setQuestions] = useState(null);
-  function onChangeCheck5(checkedValues) {
-    let optionsSelected = [];
-    checkedValues.forEach((value) => {
-      optionsSelected.push(value);
-    });
-    setTopics(optionsSelected);
-  }
-  function onChangeCheck3(checkedValues) {
-    let optionsSelected = [];
-    checkedValues.forEach((value) => {
-      optionsSelected.push(value);
-    });
-    setImmigrantStatus(optionsSelected);
-  }
-  function onChangeCheck7(checkedValues) {
-    console.log(checkedValues);
-    let optionsSelected = [];
-    checkedValues.forEach((value) => {
-      optionsSelected.push(value);
-    });
-    setWorkstate(optionsSelected);
-  }
+const { Paragraph } = Typography;
+function MenteeApplication({
+  email,
+  role,
+  n50_flag,
+  onSubmitSuccess,
+  onSubmitFailure,
+}) {
+  const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
+  const [loading, setLoading] = useState();
+  const [partnerOptions, setPartnerOptions] = useState([]);
+  const [countryOptions, setCountryOptions] = useState([]);
+  useEffect(() => {
+    async function getPartners() {
+      const partenr_data = await fetchPartners(undefined, null);
+      var temp_partner_options = [];
+      partenr_data.map((item) => {
+        if (n50_flag) {
+          if (item._id.$oid === N50_ID) {
+            temp_partner_options.push({
+              value: item._id.$oid,
+              label: item.organization,
+            });
+          }
+        } else {
+          temp_partner_options.push({
+            value: item._id.$oid,
+            label: item.organization,
+          });
+        }
+        return true;
+      });
+      if (!n50_flag) {
+        temp_partner_options.push({
+          value: null,
+          label: t("commonApplication.no-affiliation"),
+        });
+      }
+      setPartnerOptions(temp_partner_options);
+      setLoading(false);
+    }
+    async function getAllCountries() {
+      const all_countries = await getAllcountries();
+      var temp_countires = [];
+      if (all_countries && all_countries.countries) {
+        // Extract country names
+        const countryNames = all_countries.countries.map(
+          (country) => country.country_name
+        );
+        // Sort country names in ascending order
+        const sortedCountryNames = countryNames.sort();
+        sortedCountryNames.map((country_name) => {
+          temp_countires.push({
+            label: country_name,
+            value: country_name,
+          });
+        });
+      }
+      setCountryOptions(temp_countires);
+    }
+    getAllCountries();
+    getPartners();
+  }, []);
 
-  const shouldShowErrors = () => (v) =>
-    (!v || (typeof v === "object" && v.length === 0)) && showMissingFieldErrors;
+  // TODO: Clean this and MentorApplication.js up with the constants
+  // constant declarations
+  const immigrantOptions = [
+    {
+      value: "I am a refugee",
+      label: t("menteeApplication.immigrantOption1"),
+    },
+    {
+      value:
+        "I am an immigrant (I am newly arrived or my parents are newly arrived in the country I am in)",
+      label: t("menteeApplication.immigrantOption2"),
+    },
+    {
+      value: "I am black.",
+      label: t("menteeApplication.immigrantOption3"),
+    },
+    {
+      value: "I am Hispanic/Latino.",
+      label: t("menteeApplication.immigrantOption4"),
+    },
+    {
+      value: "I am of native/ aboriginal/indigenous origins.",
+      label: t("menteeApplication.immigrantOption5"),
+    },
+    {
+      value: "I identify as LGTBQ.",
+      label: t("menteeApplication.immigrantOption6"),
+    },
+    {
+      value: "I have economic hardship.",
+      label: t("menteeApplication.immigrantOption7"),
+    },
+    {
+      value: "I come from a country at war.",
+      label: t("menteeApplication.immigrantOption8"),
+    },
+    {
+      value:
+        "In a crisis situation within my country due to my gender, race, religion, sexuality, political affiliation or something else.",
+      label: t("menteeApplication.immigrantOption9"),
+    },
+    {
+      value: "other",
+      label: t("common.other"),
+    },
+  ];
 
-  // creates steps layout
+  const workOptions = [
+    {
+      value: "I work part-time.",
+      label: t("menteeApplication.workOption1"),
+    },
+    {
+      value: "I work full-time.",
+      label: t("menteeApplication.workOption2"),
+    },
+    {
+      value: "I attend technical school.",
+      label: t("menteeApplication.workOption3"),
+    },
+    {
+      value: "I am a college/university student attaining my first degree.",
+      label: t("menteeApplication.workOption4"),
+    },
+    {
+      value:
+        "I am a college/university students attaining my second or third degree.",
+      label: t("menteeApplication.workOption5"),
+    },
+    {
+      value: "other",
+      label: t("common.other"),
+    },
+  ];
 
-  const verifyRequiredFieldsAreFilled = () => {
-    const requiredQuestions = [
-      firstName,
-      lastName,
-      organization,
-      age,
-      immigrantStatus,
-      identify,
-      language,
-      topics,
-      workstate,
-      isSocial,
-    ];
+  const onFinish = async (values) => {
+    if (n50_flag) {
+      values.partner = N50_ID;
+    }
+    setLoading(true);
+    let immigrantStatus = values.immigrantStatus;
+    let topics = values.topics;
+    let workState = values.workstate;
 
-    if (
-      requiredQuestions.some(
-        (x) => !x || (typeof x === "object" && x.length === 0)
-      )
-    ) {
-      setShowMissingFieldErrors(true);
-      return false;
+    if (values.socialMedia === "other") {
+      values.socialMedia = values.otherSocialMedia;
+    }
+    if (values.genderIdentification === "other") {
+      values.genderIdentification = values.otherGenderIdentification;
+    }
+    if (values.language === "other") {
+      values.language = values.otherLanguage;
     }
 
-    if (showMissingFieldErrors) setShowMissingFieldErrors(false);
+    if (values.immigrantStatus.includes("other")) {
+      immigrantStatus = immigrantStatus.filter(function (value, index, arr) {
+        return value !== "other";
+      });
+      immigrantStatus.push("Other: " + values.otherImmigrantStatus);
+    }
+    if (values.topics.includes("other")) {
+      topics = topics.filter(function (value, index, arr) {
+        return value !== "other";
+      });
+      topics.push("Other: " + values.otherTopics);
+    }
+    if (values.workstate.includes("other")) {
+      workState = workState.filter(function (value, index, arr) {
+        return value !== "other";
+      });
+      workState.push("other: " + values.otherWorkState);
+    }
 
-    return true;
+    const data = {
+      email,
+      name: `${values.firstName} ${values.lastName}`,
+      age: values.age,
+      organization: values.organization,
+      immigrant_status: immigrantStatus,
+      country: values.country,
+      identify: values.genderIdentification,
+      language: values.language,
+      topics: topics,
+      workstate: workState,
+      isSocial: values.socialMedia,
+      questions: values.questions,
+      partner: values.partner,
+      date_submitted: new Date(),
+      role,
+    };
+
+    const res = await createApplication(data);
+    setLoading(false);
+    if (res && res.status === 200) {
+      onSubmitSuccess();
+    } else {
+      if (
+        res &&
+        res.response &&
+        res.response.data &&
+        res.response.data.message
+      ) {
+        onSubmitFailure(res.response.data.message);
+      } else {
+        onSubmitFailure();
+      }
+    }
   };
 
-  function pageOne() {
-    const isMissingError = shouldShowErrors();
-    return (
-      <div className="page-one-column-container">
-        <Form>
-          <div> {"First Name"}</div>
-          <Form.Item
-            className="input-form"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            {isMissingError(firstName) && (
-              <p style={{ color: "red" }}>Please input first name. *</p>
-            )}
-            <Input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-          </Form.Item>
-          <div> {"Last Name"}</div>
-          <Form.Item
-            className="input-form"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            {isMissingError(lastName) && (
-              <p style={{ color: "red" }}>Please input last name. *</p>
-            )}
-            <Input
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </Form.Item>
-
-          <div>
-            {" "}
-            {
-              "What organization is supporting you locally or what organization are you affiliated with? *"
-            }
-          </div>
-          <Form.Item
-            className="input-form"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            {isMissingError(organization) && (
-              <p style={{ color: "red" }}>Please input cell.</p>
-            )}
-            <Input
-              type="text"
-              placeholder="Organiztion"
-              value={organization}
-              onChange={(e) => setOrganization(e.target.value)}
-            />
-          </Form.Item>
-          <div>{"Let us know more about you *"}</div>
-          <div className="input-form">
-            <div className="time-options-answers">
-              {isMissingError(age) && (
-                <p style={{ color: "red" }}>Please select an option. *</p>
-              )}
-              <Radio.Group onChange={(e) => setAge(e.target.value)} value={age}>
-                <Radio value={"I am 18-22 years old."}>
-                  I am 18-22 years old.
-                </Radio>
-                <Radio value={"I am 24- 26 years old"}>
-                  I am 24- 26 years old
-                </Radio>
-                <Radio value={"I am 27-30"}>I am 27-30</Radio>
-                <Radio value={"I am 30-35"}>I am 30-35</Radio>
-                <Radio value={"I am 36-40"}>I am 36-40</Radio>
-                <Radio value={"I am 41-50"}>I am 41-50</Radio>
-                <Radio value={"I am 51-60"}>I am 51-60</Radio>
-                <Radio value={"I am 61 or older"}>I am 61 or older</Radio>
-              </Radio.Group>
-            </div>
-          </div>
-          <div>
-            {
-              "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific. *"
-            }
-          </div>
-
-          <Form.Item className="input-form">
-            {isMissingError(immigrantStatus) && (
-              <p style={{ color: "red" }}>Please select an option.</p>
-            )}
-            <Checkbox.Group
-              options={immigrantOptions}
-              value={immigrantStatus}
-              onChange={onChangeCheck3}
-            />
-          </Form.Item>
-          {immigrantStatus.includes("other") ? (
-            <Form.Item
-              className="input-form"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              {isMissingError(otherImmigrantStatus) && (
-                <p style={{ color: "red" }}>Please input cell.</p>
-              )}
-              <Input
-                type="text"
-                placeholder="Other"
-                value={otherImmigrantStatus}
-                onChange={(e) => setotherImmigrantStatus(e.target.value)}
-              />
-            </Form.Item>
-          ) : (
-            ""
-          )}
-          <div>
-            {
-              "What country are you or your family originally from, if you are a refugee or immigrant?"
-            }
-          </div>
-          <Form.Item
-            className="input-form"
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-          >
-            <Input
-              type="text"
-              placeholder="Country"
-              value={Country}
-              onChange={(e) => setCountry(e.target.value)}
-            />
-          </Form.Item>
-          <div>{"Let us know more about you. How do you identify? *"}</div>
-
-          <div className="input-form">
-            <div className="time-options-answers">
-              {isMissingError(identify) && (
-                <p style={{ color: "red" }}>Please select an option. *</p>
-              )}
-              <Radio.Group
-                onChange={(e) => setidentify(e.target.value)}
-                value={identify}
-              >
-                <Radio value={"As a male"}>As a male</Radio>
-                <Radio value={"As a female"}>As a female</Radio>
-                <Radio value={"As LGBTQ+"}>As LGBTQ+</Radio>
-                <Radio value={"other"}>Other</Radio>
-              </Radio.Group>
-            </div>
-          </div>
-          {identify == "other" ? (
-            <Form.Item
-              className="input-form"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              {isMissingError(otherIdentify) && (
-                <p style={{ color: "red" }}>Please input cell.</p>
-              )}
-              <Input
-                type="text"
-                placeholder="other"
-                value={otherIdentify}
-                onChange={(e) => setOtherIdentify(e.target.value)}
-              />
-            </Form.Item>
-          ) : (
-            ""
-          )}
-          <div>{"What is your native language? *"}</div>
-          <div className="input-form">
-            <div className="time-options-answers">
-              {isMissingError(language) && (
-                <p style={{ color: "red" }}>Please select an option. *</p>
-              )}
-              <Radio.Group
-                onChange={(e) => setLanguage(e.target.value)}
-                value={language}
-              >
-                <Radio value={"Arabic"}>Arabic</Radio>
-                <Radio value={"Bengali"}>Bengali</Radio>
-                <Radio value={"Burmese"}>Burmese</Radio>
-                <Radio value={"Cantonese"}>Cantonese</Radio>
-                <Radio value={"Dari"}>Dari</Radio>
-                <Radio value={"English"}>English</Radio>
-                <Radio value={"French"}>French</Radio>
-                <Radio value={"German"}>German</Radio>
-                <Radio value={"Hebrew"}>Hebrew</Radio>
-                <Radio value={"Hindu"}>Hindu</Radio>
-                <Radio value={"italian"}>italian</Radio>
-                <Radio value={"japanese"}>japanese</Radio>
-                <Radio value={"Karen"}>Karen</Radio>
-                <Radio value={"Mandarin"}>Mandarin</Radio>
-                <Radio value={"Portuguese"}>Portuguese</Radio>
-                <Radio value={"Russian"}>Russian</Radio>
-                <Radio value={"Spanish"}>Spanish</Radio>
-                <Radio value={"Swahili"}>Swahili</Radio>
-                <Radio value={"Urdu"}>Urdu</Radio>
-                <Radio value={"other"}>Other</Radio>
-              </Radio.Group>
-            </div>
-          </div>
-          {language == "other" ? (
-            <Form.Item
-              className="input-form"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              {isMissingError(otherLanguage) && (
-                <p style={{ color: "red" }}>Please input cell.</p>
-              )}
-              <Input
-                type="text"
-                placeholder="other"
-                value={otherLanguage}
-                onChange={(e) => setotherLanguage(e.target.value)}
-              />
-            </Form.Item>
-          ) : (
-            ""
-          )}
-          <div>
-            {
-              "What special topics would you be interested in? If one is not on the list please add it in other: *"
-            }
-          </div>
-          <Form.Item className="input-form">
-            {isMissingError(topics) && (
-              <p style={{ color: "red" }}>Please select an option.</p>
-            )}
-            <Checkbox.Group
-              options={topicOptions}
-              value={topics}
-              onChange={onChangeCheck5}
-            />
-          </Form.Item>
-          {topics.includes("Other") ? (
-            <Form.Item
-              className="input-form"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              {isMissingError(otherTopics) && (
-                <p style={{ color: "red" }}>Please input cell.</p>
-              )}
-              <Input
-                type="text"
-                placeholder="other"
-                value={otherTopics}
-                onChange={(e) => setOtherTopics(e.target.value)}
-              />
-            </Form.Item>
-          ) : (
-            ""
-          )}
-          <div>
-            {
-              "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific *"
-            }
-          </div>
-          <Form.Item className="input-form">
-            {isMissingError(workstate) && (
-              <p style={{ color: "red" }}>Please select an option.</p>
-            )}
-            <Checkbox.Group
-              options={workOptions}
-              value={workstate}
-              onChange={onChangeCheck7}
-            />
-          </Form.Item>
-          {workstate.includes("Other") ? (
-            <Form.Item
-              className="input-form"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              {isMissingError(otherWorkState) && (
-                <p style={{ color: "red" }}>Please input cell.</p>
-              )}
-              <Input
-                type="text"
-                placeholder="other"
-                value={otherWorkState}
-                onChange={(e) => setotherWorkState(e.target.value)}
-              />
-            </Form.Item>
-          ) : (
-            ""
-          )}
-          <div>
-            {
-              "	Would you be interested in being highlighted as one of our mentees on social media? *"
-            }
-          </div>
-
-          <div className="input-form">
-            <div className="time-options-answers">
-              {isMissingError(isSocial) && (
-                <p style={{ color: "red" }}>Please select an option.</p>
-              )}
-              <Radio.Group
-                onChange={(e) => setIsSocial(e.target.value)}
-                value={isSocial}
-              >
-                <Radio value={"yes"}>Yes!</Radio>
-                <Radio value={"No"}>No, thank you.</Radio>
-                <Radio value={"other"}>Other</Radio>
-              </Radio.Group>
-            </div>
-          </div>
-          {isSocial == "other" ? (
-            <Form.Item
-              className="input-form"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              {isMissingError(otherIsSocial) && (
-                <p style={{ color: "red" }}>Please input cell.</p>
-              )}
-              <Input
-                type="text"
-                placeholder="other"
-                value={otherIsSocial}
-                onChange={(e) => setOtherIsSocial(e.target.value)}
-              />
-            </Form.Item>
-          ) : (
-            ""
-          )}
-          <div>{"Do you have any questions?"}</div>
-          <Form.Item
-            className="input-form"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input
-              type="text"
-              placeholder="questions"
-              value={questions}
-              onChange={(e) => setQuestions(e.target.value)}
-            />
-          </Form.Item>
-        </Form>
-      </div>
-    );
-  }
-
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  function handleSubmit(event) {
-    event.preventDefault();
-    let imms = immigrantStatus;
-    let topicss = topics;
-    let states = workstate;
-    if (immigrantStatus.includes("other")) {
-      if (otherImmigrantStatus) {
-        setShowMissingFieldErrors(false);
-        imms = imms.filter(function (value, index, arr) {
-          return value != "other";
-        });
-        imms.push("Other: " + otherImmigrantStatus);
-      } else {
-        setShowMissingFieldErrors(true);
-        return false;
-      }
-    }
-    if (identify == "other") {
-      setidentify(otherIdentify);
-    }
-    if (language == "other") {
-      setLanguage(otherLanguage);
-    }
-    if (topics.includes("Other")) {
-      if (otherTopics) {
-        setShowMissingFieldErrors(false);
-        topicss = topicss.filter(function (value, index, arr) {
-          return value != "Other";
-        });
-        topicss.push("Other: " + otherTopics);
-      } else {
-        setShowMissingFieldErrors(true);
-        return false;
-      }
-    }
-    if (workstate.includes("Other")) {
-      if (otherWorkState) {
-        setShowMissingFieldErrors(false);
-        states = states.filter(function (value, index, arr) {
-          return value != "Other";
-        });
-        states.push("Other: " + otherWorkState);
-      } else {
-        setShowMissingFieldErrors(true);
-        return false;
-      }
-    }
-    if (isSocial == "other") {
-      setIsSocial(otherIsSocial);
-    }
-
-    if (!verifyRequiredFieldsAreFilled()) return;
-    if (props.headEmail === "") {
-      setSubmitError(true);
-      return;
-    }
-
-    async function submitApplication() {
-      // onOk send the put request
-      const data = {
-        email: props.headEmail,
-        name: firstName + " " + lastName,
-        age: age,
-        organization: organization,
-        immigrant_status: imms,
-        Country: Country,
-        identify: identify,
-        language: language,
-        topics: topicss,
-        workstate: states,
-        isSocial: isSocial,
-        questions: questions,
-        date_submitted: new Date(),
-        role: props.role,
-      };
-
-      const res = await createApplication(data);
-
-      if (res) {
-        setIsSubmitted(true);
-        console.log(res);
-        props.submitHandler();
-      } else {
-        setSubmitError(true);
-      }
-    }
-
-    submitApplication();
-  }
-
   return (
-    <div className="background">
-      <div className="instructions">
-        <h1 className="welcome-page">Welcome to MENTEE!</h1>
-        <p className="para-1">
-          We appreciate your interest in becoming part of the MENTEE community!
-          You will gain access to our global mentors and supportive programs. We
-          can't wait to see all you will achieve. Remember, as a mentee you can
-          stay here and actively seek mentorship, learning, and development for
-          life, if you'd like to stay with us that long. :)
-        </p>
-        <br></br>
-      </div>
-
-      {pageOne()}
-      <div className="submit-button">
-        <MenteeButton
-          width="205px"
-          content={<b> Submit</b>}
-          onClick={handleSubmit}
-        />
-      </div>
-      {submitError ? (
-        <h1 className="error">
-          Some thing went wrong check you add your Email at Top
-        </h1>
-      ) : (
-        ""
-      )}
+    <div>
+      <Form onFinish={onFinish} layout="vertical" style={{ width: "100%" }}>
+        <Form.Item>
+          <Typography>
+            <Paragraph id="introduction">
+              {t("menteeApplication.introduction")}
+            </Paragraph>
+          </Typography>
+        </Form.Item>
+        <Form.Item label={"Email"}>
+          <Input value={email} readOnly />
+        </Form.Item>
+        <Form.Item
+          label={t("common.firstName")}
+          name="firstName"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredFirstName"),
+            },
+          ]}
+        >
+          <Input placeholder={t("common.firstName")} />
+        </Form.Item>
+        <Form.Item
+          label={t("common.lastName")}
+          name="lastName"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredLasttName"),
+            },
+          ]}
+        >
+          <Input placeholder={t("common.lastName")} />
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.immigrationStatus")}
+          name="immigrantStatus"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredImmigrationStatus"),
+            },
+          ]}
+        >
+          <Select options={immigrantOptions} mode="multiple" />
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.immigrantStatus !== currentValues.immigrantStatus
+          }
+        >
+          {({ getFieldValue }) =>
+            getFieldValue("immigrantStatus")?.includes("other") ? (
+              <Form.Item
+                name="otherImmigrantStatus"
+                rules={[
+                  {
+                    required: true,
+                    message: t("common.requiredOtherImmigrantStatus"),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.countryPlaceholder")}
+          name="country"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredHearAboutUs"),
+            },
+          ]}
+        >
+          <Select showSearch options={countryOptions} mode="single" />
+        </Form.Item>
+        <Form.Item
+          label={t("commonApplication.genderIdentification")}
+          name="genderIdentification"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredGenderIdentification"),
+            },
+          ]}
+        >
+          <Select
+            options={[
+              {
+                label: t("commonApplication.man"),
+                value: "man",
+              },
+              {
+                label: t("commonApplication.woman"),
+                value: "woman",
+              },
+              {
+                label: t("commonApplication.lgbtq"),
+                value: "LGTBQ+",
+              },
+              {
+                label: t("commonApplication.other"),
+                value: "other",
+              },
+            ]}
+          />
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.genderIdentification !==
+            currentValues.genderIdentification
+          }
+        >
+          {({ getFieldValue }) =>
+            getFieldValue("genderIdentification") === "other" ? (
+              <Form.Item
+                name="otherGenderIdentification"
+                rules={[
+                  {
+                    required: true,
+                    message: t("common.requiredOtherGenderIdentification"),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.preferredLanguage")}
+          name="language"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredLanguage"),
+            },
+          ]}
+        >
+          <Select
+            mode="multiple"
+            options={[
+              ...(options.languages ?? []),
+              { label: t("common.other"), value: "other" },
+            ]}
+          />
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.language !== currentValues.language
+          }
+        >
+          {({ getFieldValue }) =>
+            getFieldValue("language") === "other" ? (
+              <Form.Item
+                name="otherLanguage"
+                rules={[
+                  {
+                    required: true,
+                    message: t("common.requiredOtherLanguage"),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.topicInterests")}
+          name="topics"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredTopicInterests"),
+            },
+          ]}
+        >
+          <Select
+            options={[
+              ...(options.specializations ?? []),
+              { label: t("common.other"), value: "other" },
+            ]}
+            mode="tags"
+            placeholder={t("common.pleaseSelect")}
+            tokenSeparators={[","]}
+          />
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.topics !== currentValues.topics
+          }
+        >
+          {({ getFieldValue }) =>
+            getFieldValue("topics")?.includes("other") ? (
+              <Form.Item
+                name="otherTopic"
+                rules={[
+                  {
+                    required: true,
+                    message: t("common.requiredOtherTopic"),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.workOptions")}
+          name="workstate"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredWorkOptions"),
+            },
+          ]}
+        >
+          <Select mode="multiple" options={workOptions} />
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.workstate !== currentValues.workstate
+          }
+        >
+          {({ getFieldValue }) =>
+            getFieldValue("workstate")?.includes("other") ? (
+              <Form.Item
+                name="otherWorkstate"
+                rules={[
+                  {
+                    required: true,
+                    message: t("common.requiredOtherWorkstate"),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.socialMedia")}
+          name="socialMedia"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredSocialMedia"),
+            },
+          ]}
+        >
+          <Radio.Group>
+            <Radio value={"yes"}>
+              {t("menteeApplication.socialMediaOption1")}
+            </Radio>
+            <Radio value={"no"}>
+              {t("menteeApplication.socialMediaOption2")}
+            </Radio>
+            <Radio value={"other"}>{t("common.other")}</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.socialMedia !== currentValues.socialMedia
+          }
+        >
+          {({ getFieldValue }) =>
+            getFieldValue("socialMedia") === "other" ? (
+              <Form.Item
+                name="otherSocialMedia"
+                rules={[
+                  {
+                    required: true,
+                    message: t("common.requiredOtherSocialMedia"),
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+        <Form.Item
+          label={t("menteeApplication.otherQuestions")}
+          name="questions"
+        >
+          <Input.TextArea
+            rows={3}
+            placeholder={t("menteeApplication.questionsPlaceholder")}
+          />
+        </Form.Item>
+        <Form.Item
+          label={t("commonApplication.partner")}
+          name="partner"
+          rules={[
+            {
+              required: false,
+              message: t("common.requiredPartner"),
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
+            }
+            defaultValue={n50_flag ? N50_ID : null}
+            disabled={n50_flag}
+            options={[...partnerOptions]}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            id="submit"
+            type="primary"
+            htmlType="submit"
+            block
+            loading={loading}
+          >
+            {t("common.submit")}
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 }

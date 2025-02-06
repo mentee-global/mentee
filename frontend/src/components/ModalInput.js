@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Select, Input, InputNumber } from "antd";
 import "./css/Modal.scss";
 import { NodeExpandOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 
@@ -26,6 +27,7 @@ function ModalInput(props) {
     errorPresent,
     errorMessage,
   } = props;
+  const { t } = useTranslation();
   const [isClicked, setIsClicked] = useState(clicked);
 
   useEffect(() => {
@@ -89,10 +91,18 @@ function ModalInput(props) {
     return style;
   }
 
-  const returnDropdownItems = (items) => {
+  const returnDropdownItems = (items, type = null) => {
     let options = [];
     for (let i = 0; i < items.length; i++) {
-      options.push(<Option key={items[i]}>{items[i]}</Option>);
+      if (type === "object") {
+        options.push(
+          <Option key={items[i].id} value={items[i].id}>
+            {items[i].name}
+          </Option>
+        );
+      } else {
+        options.push(<Option key={items[i]}>{items[i]}</Option>);
+      }
     }
     return options;
   };
@@ -139,12 +149,34 @@ function ModalInput(props) {
               allowClear
               bordered={false}
               style={{ width: "100%" }}
-              placeholder="Please select"
+              placeholder={
+                props.placeholder ? props.placeholder : t("common.pleaseSelect")
+              }
+              onChange={handleOnChange}
+              value={props.value}
+              defaultValue={defaultValue}
+              options={options}
+            />
+            {errorPresent && <p className="input-error">{errorMessage}</p>}
+          </div>
+        );
+      case "dropdown-single-object":
+        return (
+          <div>
+            <Select
+              className="input-text"
+              onClick={() => handleClick(index)}
+              allowClear
+              bordered={false}
+              style={{ width: "100%" }}
+              placeholder={
+                props.placeholder ? props.placeholder : t("common.pleaseSelect")
+              }
               onChange={handleOnChange}
               value={props.value}
               defaultValue={defaultValue}
             >
-              {returnDropdownItems(options)}
+              {returnDropdownItems(options, "object")}
             </Select>
             {errorPresent && <p className="input-error">{errorMessage}</p>}
           </div>
@@ -159,13 +191,33 @@ function ModalInput(props) {
               allowClear
               bordered={false}
               style={{ width: "100%" }}
-              placeholder={placeholder || "Please select"}
+              placeholder={placeholder || t("common.pleaseSelect")}
+              onChange={handleOnChange}
+              value={props.value}
+              tokenSeparators={[","]}
+              defaultValue={defaultValue}
+              options={options}
+            />
+            {errorPresent && <p className="input-error">{errorMessage}</p>}
+          </div>
+        );
+      case "dropdown-multiple-object":
+        return (
+          <div>
+            <Select
+              className="input-text"
+              onClick={() => handleClick(index)}
+              mode={onEducationChange ? "tags" : "multiple"}
+              allowClear
+              bordered={false}
+              style={{ width: "100%" }}
+              placeholder={placeholder || t("common.pleaseSelect")}
               onChange={handleOnChange}
               value={props.value}
               tokenSeparators={[","]}
               defaultValue={defaultValue}
             >
-              {returnDropdownItems(options)}
+              {returnDropdownItems(options, "object")}
             </Select>
             {errorPresent && <p className="input-error">{errorMessage}</p>}
           </div>

@@ -8,10 +8,19 @@
     "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\"",
     "setup:backend": "cd backend && poetry install",
     "setup:frontend": "cd frontend && yarn",
-    "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\""
+    "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\"",
+    "local": "concurrently \"cd frontend && npm start\" \"cd backend && python manage.py runserver\"" 
   },
   "dependencies": {
-    "debounce": "^1.2.1",
+    "concurrently": "^8.2.0",
+    "dotenv": "^16.3.1",
+    "emoji-picker-react": "^4.3.0",
+    "pdf-lib": "^1.17.1",
+    "react-signature-canvas": "^1.0.6",
     "sass": "^1.50.0"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.0",
+    "cypress-plugin-api": "^2.11.1"
   }
 }

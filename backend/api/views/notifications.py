@@ -1,32 +1,71 @@
-from datetime import datetime
-
 from flask.globals import request
 from api.core import create_response, logger
 from flask import Blueprint
 from api.models.MenteeProfile import MenteeProfile, MentorProfile
 from mongoengine.queryset.visitor import Q
-from api.models import DirectMessage, PartnerProfile
+from api.models import DirectMessage, PartnerProfile, Hub
 from api.utils.request_utils import send_email, send_sms
-from api.utils.constants import WEEKLY_NOTIF_REMINDER, UNREAD_MESSAGE_TEMPLATE
+from api.utils.constants import (
+    WEEKLY_NOTIF_REMINDER,
+    UNREAD_MESSAGE_TEMPLATE,
+    TRANSLATIONS,
+)
+from api.utils.require_auth import all_users
 
 notifications = Blueprint("notifications", __name__)
 
 
 @notifications.route("/<id>", methods=["GET"])
+@all_users
 def get_unread_dm_count(id):
     try:
         notifications = DirectMessage.objects(
             Q(recipient_id=id) & Q(message_read=False)
-        ).count()
+        )
+        unread_message_number = 0
+        checked_ids = set()
+        for message_item in notifications:
+            sender_id = message_item["sender_id"]
+            if sender_id not in checked_ids:
+                try:
+                    sender = MentorProfile.objects.get(id=sender_id)
+                    if sender:
+                        unread_message_number = unread_message_number + 1
+                        continue
+                except:
+                    try:
+                        sender = MenteeProfile.objects.get(id=sender_id)
+                        if sender:
+                            unread_message_number = unread_message_number + 1
+                            continue
+                    except:
+                        try:
+                            sender = PartnerProfile.objects.get(id=sender_id)
+                            if sender:
+                                unread_message_number = unread_message_number + 1
+                                continue
+                        except:
+                            try:
+                                sender = Hub.objects.get(id=sender_id)
+                                if sender:
+                                    unread_message_number = unread_message_number + 1
+                                    continue
+                            except:
+                                continue
+            else:
+                unread_message_number = unread_message_number + 1
+                continue
+
     except Exception as e:
         msg = "No mentee with that id"
         logger.info(e)
         return create_response(status=422, message=msg)
 
-    return create_response(data={"notifications": notifications})
+    return create_response(data={"notifications": unread_message_number})
 
 
 @notifications.route("/unread_alert/<id>", methods=["GET"])
+# @all_users
 def send_unread_alert(id):
     try:
         notifications_count = DirectMessage.objects(
@@ -56,7 +95,13 @@ def send_unread_alert(id):
                 if email is not None and user_record.email_notifications:
                     res, res_msg = send_email(
                         recipient=email,
-                        data={"number_unread": str(notifications_count)},
+                        data={
+                            "number_unread": str(notifications_count),
+                            user_record.preferred_language: True,
+                            "subject": TRANSLATIONS[user_record.preferred_language][
+                                "unread_message"
+                            ],
+                        },
                         template_id=UNREAD_MESSAGE_TEMPLATE,
                     )
                     if not res:
@@ -83,6 +128,7 @@ def send_unread_alert(id):
 
 
 @notifications.route("/update", methods=["PUT"])
+@all_users
 def update_unread_count():
     data = request.get_json()
     if not data:
@@ -106,6 +152,7 @@ def update_unread_count():
 
 
 @notifications.route("/weeklyemails", methods=["GET"])
+@all_users
 def send_weekly_emails():
     try:
         mentee_users = MenteeProfile.objects()
@@ -126,7 +173,11 @@ def send_weekly_emails():
         if notifications_count > 0:
             res, res_msg = send_email(
                 recipient=user.email,
-                data={"number_unread": str(notifications_count)},
+                data={
+                    "number_unread": str(notifications_count),
+                    user.preferred_language: True,
+                    "subject": TRANSLATIONS[user.preferred_language]["weekly_notif"],
+                },
                 template_id=WEEKLY_NOTIF_REMINDER,
             )
             if not res:
@@ -146,7 +197,11 @@ def send_weekly_emails():
             res, res_msg = send_email(
                 recipient=user.email,
                 template_id=WEEKLY_NOTIF_REMINDER,
-                data={"number_unread": str(notifications_count)},
+                data={
+                    "number_unread": str(notifications_count),
+                    user.preferred_language: True,
+                    "subject": TRANSLATIONS[user.preferred_language]["weekly_notif"],
+                },
             )
             if not res:
                 msg = "Failed to send mentee email " + res_msg

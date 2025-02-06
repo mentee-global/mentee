@@ -11,6 +11,7 @@ class Users(Document, Mixin):
     email = StringField(required=True)
     role = StringField(required=True)
     mongooseVersion = IntField(db_field="__v")
+    roomName = StringField(required=False)
 
     # legacy fields (DO NOT USE)
     password = StringField()

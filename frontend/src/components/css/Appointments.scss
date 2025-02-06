@@ -24,14 +24,14 @@
 
 .vl {
   position: relative;
-  border-left: 3px solid #a58123;
+  border-left: 3px solid black;
   height: 31px;
   left: 42.91px;
 }
 
 .hl {
   position: relative;
-  border-left: 1px solid #a58123;
+  border-left: 1px solid black;
   height: 355px;
   bottom: -125px;
   left: 10px;
@@ -39,30 +39,13 @@
 }
 
 .ar-modal-container {
-  //min-height: 450px;
+  min-height: 450px;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .ar-footer {
   height: 50px;
-}
-
-.ar-status {
-  position: relative;
-  width: 80px;
-  height: 37.8px;
-  left: 335.14px;
-  top: 20px;
-
-  font-family: Helvetica;
-  font-style: italic;
-  font-weight: bold;
-  font-size: 12px;
-  line-height: 14px;
-  text-align: right;
-
-  color: #828282;
 }
 
 .ar-modal-title {
@@ -83,6 +66,7 @@
 .ar-phone,
 .ar-contact,
 .ar-email,
+.ar-status,
 .ar-email-only {
   position: relative;
   width: 189px;
@@ -113,7 +97,6 @@
 .personal-info {
   position: relative;
   top: 20px;
-  height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -183,8 +166,6 @@
   font-weight: bold;
   font-size: 16px;
   line-height: 18px;
-
-  color: #a58123;
 }
 
 .ar-apt-time {
@@ -199,8 +180,6 @@
   font-weight: bold;
   font-size: 16px;
   line-height: 18px;
-
-  color: #a58123;
 }
 
 .ar-categories-title {
@@ -215,8 +194,6 @@
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
-
-  color: #a58123;
 }
 
 .ar-categories {
@@ -231,8 +208,6 @@
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
-
-  color: #000000;
 }
 
 .ar-goals-title {
@@ -247,8 +222,6 @@
   font-weight: bold;
   font-size: 14px;
   line-height: 16px;
-
-  color: #a58123;
 }
 
 .ar-goals {
@@ -262,9 +235,6 @@
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
-
-  color: #000000;
-
   overflow: visible;
 }
 
@@ -321,14 +291,15 @@
   flex-direction: row;
   margin-bottom: 5%;
   margin-left: 1%;
+  height: 100%;
 }
 
 .appointment-card {
-  background-color: $appointment-card-background-color;
+  background-color: #bfacae;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 13px;
+  border-radius: 8px;
   padding: 15px;
   margin-bottom: 18px;
   margin-left: 25px;
@@ -336,7 +307,7 @@
 }
 
 .appointments-background {
-  background: $appointment-background-color;
+  border: 0.5px solid black;
   padding: 46px 13px 48px 20px;
   border-radius: 8px;
   width: auto;
@@ -346,12 +317,11 @@
 
 .appointments-date-block {
   display: flex;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .appointments-date-text-block {
   font-size: 13px;
-  color: $appointments-date-text-block-color;
   display: block;
   font-weight: bold;
   line-height: 1;
@@ -369,14 +339,16 @@
 
 .appointments-row {
   border-left: solid;
-  border-color: $appointments-row-border-color;
   border-width: 2px;
-  width: 100%;
+  width: calc(100% - 100px);
 }
 
 .appointments-column {
-  padding: 5% 3%;
-  height: 100vh;
+  overflow: hidden;
+  padding: 3% 2%;
+  height: 100%;
+  width: 80%;
+  padding-bottom: 0;
 }
 
 .appointments-welcome-box {
@@ -386,12 +358,11 @@
 .appointment-description {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 400px;
+  // white-space: nowrap;
+  // width: 400px;
 }
 .appointment-time,
 .appointment-description {
-  color: $appointments-description;
   line-height: 15px;
 }
 
@@ -405,7 +376,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 400px;
+  // width: 400px;
 }
 
 .appointment-tabs-title {
@@ -439,6 +410,10 @@
   margin-right: 1%;
 }
 
+.appointments-tabs-view .ant-card-body {
+  padding: 20px;
+}
+
 .appointments-tab-item-selected {
   background-color: $appointments-tab-item-selected-background-color;
   color: $appointments-tab-item-selected-color;
@@ -451,12 +426,13 @@
   border-top-right-radius: 7px;
   overflow: hidden;
   margin: 5px 3% 2% 3%;
+  height: 100%;
 }
 
 .calendar-header {
   display: flex;
   align-items: center;
-  background-color: $appointment-card-background-color;
+  background-color: #bfacae;
   font-weight: bold;
   padding-left: 1%;
   height: 50px;
@@ -464,9 +440,7 @@
 }
 
 .calendar-container {
-  height: 400px;
-  overflow-y: scroll;
-  margin-bottom: 15px;
+  height: 100%;
 }
 
 .empty-appointments-list {
@@ -493,4 +467,33 @@
 .modal-profile-icon2 {
   margin-top: 15px;
   margin-right: 10px;
+}
+
+.appointments-tabs-view .ant-tabs-content-holder {
+  height: 70vh;
+  overflow: auto;
+}
+
+.error {
+  display: none;
+}
+@media (max-width: 667px) {
+  .appointments-tabs {
+    display: block;
+    margin-bottom: 0;
+    button {
+      margin-bottom: 10px;
+    }
+  }
+  .appointments-column {
+    width: 100%;
+    flex-basis: 100%;
+    padding: 0;
+  }
+  .appointments-date-text-block {
+    width: 60px;
+  }
+  .appointments-row {
+    width: calc(100% - 60px);
+  }
 }

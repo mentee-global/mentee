@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { fetchOptions } from "features/optionsSlice";
 import {
   deleteLanguageByID,
   EditLanguageById,
   getLanguageById,
-  fetchLanguages,
+  fetchAdminLanguages,
   newLanguageCreate,
+  translateOption,
 } from "utils/api";
 import { Input, Form, Button } from "antd";
 import { Table, Popconfirm, message, Modal } from "antd";
@@ -14,7 +17,9 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 
-import "./css/Trains.scss";
+import "./css/Training.scss";
+import { OPTION_TYPE } from "utils/consts";
+import { css } from "@emotion/css";
 
 export const Languages = () => {
   const [data, setData] = useState([]);
@@ -25,6 +30,7 @@ export const Languages = () => {
   const [isModalVisible2, setIsModalVisible2] = useState(false);
   const [errMessage, setErrorMessage] = useState(null);
   const [selectedID, setSelectedID] = useState("");
+  const dispatch = useDispatch();
 
   const showModal = async (id, isNew) => {
     if (isNew === false) {
@@ -70,6 +76,7 @@ export const Languages = () => {
       }
     }
 
+    dispatch(fetchOptions());
     setReload(!reload);
   };
 
@@ -77,6 +84,16 @@ export const Languages = () => {
     setIsModalVisible(false);
     setIsModalVisible2(false);
   };
+
+  // const handleTranslate = () => {
+  //   console.log(selectedID);
+  //   const result = translateOption(OPTION_TYPE.LANGUAGE, selectedID);
+  //   if (result) {
+  //     message.success("Translation has been done successfully");
+  //   } else {
+  //     message.error("Translation has failed");
+  //   }
+  // };
 
   const LanguageForm = () => (
     <Form className="trainForm">
@@ -87,6 +104,11 @@ export const Languages = () => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      <i>
+        New selections will automatically translate into the languages we
+        support. <b>However new edits will not auto translate</b>
+      </i>
+      {/* <Button onClick={() => handleTranslate()}>Translate</Button> */}
     </Form>
   );
 
@@ -132,13 +154,14 @@ export const Languages = () => {
         <>
           <Modal
             title="Language"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={() => handleOk(false)}
             onCancel={handleCancel}
             okText="save"
             closable={false}
             width={"600px"}
             className={id}
+            mask={false}
           >
             {" "}
             {LanguageForm()}
@@ -166,7 +189,7 @@ export const Languages = () => {
   };
   useEffect(() => {
     const getData = async () => {
-      let dataa = await fetchLanguages();
+      let dataa = await fetchAdminLanguages();
       if (dataa) {
         setData(dataa);
       } else {
@@ -178,9 +201,13 @@ export const Languages = () => {
   return (
     <div className="trains">
       <div className="rolesContainer">
-        <div className="table-button-group">
+        <div
+          className={css`
+            margin-bottom: 1em;
+          `}
+        >
           <Button
-            className="table-button"
+            type="primary"
             icon={<PlusCircleOutlined />}
             onClick={() => {
               showModal("", true);
@@ -195,7 +222,7 @@ export const Languages = () => {
       </div>
       <Modal
         title="Language"
-        visible={isModalVisible2}
+        open={isModalVisible2}
         onOk={() => handleOk(true)}
         onCancel={handleCancel}
         okText="save"

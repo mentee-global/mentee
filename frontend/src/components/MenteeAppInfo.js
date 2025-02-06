@@ -26,11 +26,9 @@ function NewMentorAppInfo({ info }) {
             "What organization is supporting you locally or what organization are you affiliated with? "
           }
         </div>
-        <div className="answer">{info.organization}</div>
-      </div>
-      <div className="single-info-section info2">
-        <div className="question">{"Age"}</div>
-        <div className="answer">{info.age}</div>
+        <div className="answer">
+          {info.organization ? info.organization : "No affiliation"}
+        </div>
       </div>
 
       <div className="single-info-section info2">
@@ -46,11 +44,7 @@ function NewMentorAppInfo({ info }) {
         </div>
       </div>
       <div className="single-info-section info2">
-        <div className="question">
-          {
-            "What country are you or your family originally from, if you are a refugee or immigrant?"
-          }
-        </div>
+        <div className="question">{"Country"}</div>
         <div className="answer">{info.Country}</div>
       </div>
       <div className="single-info-section info2">
@@ -60,8 +54,12 @@ function NewMentorAppInfo({ info }) {
         <div className="answer">{info.identify}</div>
       </div>
       <div className="single-info-section info2">
-        <div className="question">{"What is your native language?"}</div>
-        <div className="answer">{info.language}</div>
+        <div className="question">{"Preferred Language(s)"}</div>
+        <div className="answer">
+          {Array.isArray(info.language)
+            ? info.language.join(", ")
+            : info.language}
+        </div>
       </div>
 
       <div className="single-info-section info2">

@@ -1,24 +1,24 @@
-from functools import total_ordering
-from os import path
-from flask import Blueprint, request, jsonify
-from numpy import sort
+from flask import Blueprint, request
 from api.models import (
     MentorProfile,
     MenteeProfile,
-    Users,
     Message,
     DirectMessage,
+    GroupMessage,
+    PartnerGroupMessage,
     PartnerProfile,
+    Availability,
+    Specializations,
 )
-from api.utils.request_utils import MessageForm, is_invalid_form, send_email
-from api.utils.constants import Account, MENTOR_CONTACT_ME
-from api.core import create_response, serialize_list, logger
-from api.models import db
+from api.utils.request_utils import send_email
+from api.utils.constants import Account, MENTOR_CONTACT_ME, TRANSLATIONS
+from api.utils.require_auth import all_users
+from api.utils.translate import get_translated_options
+from api.core import create_response, logger
 import json
 from datetime import datetime
 from api import socketio
 from mongoengine.queryset.visitor import Q
-from flask_socketio import join_room, leave_room
 from urllib.parse import unquote
 
 
@@ -26,6 +26,7 @@ messages = Blueprint("messages", __name__)
 
 
 @messages.route("/", methods=["GET"])
+@all_users
 def get_messages():
     try:
         messages = Message.objects.filter(**request.args)
@@ -40,6 +41,7 @@ def get_messages():
 
 
 @messages.route("/<string:message_id>", methods=["DELETE"])
+@all_users
 def delete_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -59,6 +61,7 @@ def delete_message(message_id):
 
 
 @messages.route("/<string:message_id>", methods=["PUT"])
+@all_users
 def update_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -82,9 +85,12 @@ def update_message(message_id):
 
 
 @messages.route("/", methods=["POST"])
+@all_users
 def create_message():
     data = request.get_json()
-
+    availabes_in_future = None
+    if "availabes_in_future" in data:
+        availabes_in_future = data.get("availabes_in_future")
     try:
         message = DirectMessage(
             body=data["message"],
@@ -92,6 +98,7 @@ def create_message():
             sender_id=data["user_id"],
             recipient_id=data["recipient_id"],
             created_at=data.get("time"),
+            availabes_in_future=availabes_in_future,
         )
     except Exception as e:
         msg = "Invalid parameter provided"
@@ -112,6 +119,7 @@ def create_message():
 
 
 @messages.route("/mentor/<string:mentor_id>", methods=["POST"])
+@all_users
 def contact_mentor(mentor_id):
     data = request.get_json()
     if "mentee_id" not in data:
@@ -125,21 +133,28 @@ def contact_mentor(mentor_id):
         msg = "Could not find mentor or mentee for given ids"
         return create_response(status=422, message=msg)
 
+    interest_areas = data.get("interest_areas", [])
+    translated_interest_areas = get_translated_options(
+        mentor.preferred_language, interest_areas, Specializations
+    )
+
     res, res_msg = send_email(
         mentor.email,
         data={
-            "response_email": mentee.email,
-            "interest_areas": data.get("interest_areas", ""),
-            "communication_method": data.get("communication_method", ""),
+            "interest_areas": ", ".join(translated_interest_areas),
             "message": data.get("message", ""),
             "name": mentee.name,
+            mentor.preferred_language: True,
+            "subject": TRANSLATIONS[mentor.preferred_language]["mentor_contact_me"],
         },
         template_id=MENTOR_CONTACT_ME,
     )
+    email_sent_status = ""
     if not res:
         msg = "Failed to send mentee email " + res_msg
         logger.info(msg)
-        return create_response(status=500, message="Failed to send message")
+        # return create_response(status=500, message="Failed to send message")
+        email_sent_status = ", But failed to send message"
 
     try:
         message = DirectMessage(
@@ -147,7 +162,7 @@ def contact_mentor(mentor_id):
             message_read=False,
             sender_id=mentee_id,
             recipient_id=mentor_id,
-            created_at=datetime.today().isoformat(),
+            created_at=datetime.utcnow().isoformat(),
         )
 
         socketio.emit(mentor_id, json.loads(message.to_json()))
@@ -162,20 +177,24 @@ def contact_mentor(mentor_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    return create_response(status=200, message="successfully sent email message")
+    return create_response(
+        status=200, message="successfully sent email message" + email_sent_status
+    )
 
 
 @messages.route("/contacts/<string:user_id>", methods=["GET"])
+@all_users
 def get_sidebar(user_id):
     try:
         sentMessages = DirectMessage.objects.filter(
-            Q(sender_id=user_id) | Q(recipient_id=user_id)
+            Q(recipient_id=user_id) | Q(sender_id=user_id)
         ).order_by("-created_at")
 
         contacts = []
         sidebarContacts = set()
         for message in sentMessages:
             otherId = message["recipient_id"]
+            message_read = message["message_read"]
 
             if str(otherId) == user_id:
                 otherId = message["sender_id"]
@@ -217,6 +236,7 @@ def get_sidebar(user_id):
 
                 sidebarObject = {
                     "otherId": str(otherId),
+                    "message_read": message_read,
                     "numberOfMessages": len(
                         [
                             messagee
@@ -231,16 +251,28 @@ def get_sidebar(user_id):
                     "latestMessage": json.loads(message.to_json()),
                 }
 
+                allMessages = [
+                    json.loads(message.to_json()) for message in sentMessages
+                ]
+
                 contacts.append(sidebarObject)
                 sidebarContacts.add(otherId)
 
-        return create_response(data={"data": contacts}, status=200, message="res")
+        return create_response(
+            data={
+                "data": contacts,
+                "allMessages": allMessages,
+            },
+            status=200,
+            message="res",
+        )
     except Exception as e:
         logger.info(e)
         return create_response(status=422, message=str(e))
 
 
 @messages.route("/contacts/mentors/<int:pageNumber>", methods=["GET"])
+@all_users
 def get_sidebar_mentors(pageNumber):
     searchTerm = request.args.get("searchTerm")
     searchTerm = unquote(searchTerm)
@@ -252,20 +284,32 @@ def get_sidebar_mentors(pageNumber):
     mentors = MentorProfile.objects()
     detailMessages = []
 
+    allMessages = DirectMessage.objects.filter(
+        created_at__gte=datetime.fromisoformat(startDate),
+        created_at__lte=datetime.fromisoformat(endDate),
+    ).order_by("-created_at")
+    messages_by_sender_or_recipient = {}
+
+    for message_item in allMessages:
+        if message_item.sender_id not in messages_by_sender_or_recipient:
+            messages_by_sender_or_recipient[message_item.sender_id] = []
+        messages_by_sender_or_recipient[message_item.sender_id].append(message_item)
+        if message_item.recipient_id not in messages_by_sender_or_recipient:
+            messages_by_sender_or_recipient[message_item.recipient_id] = []
+        messages_by_sender_or_recipient[message_item.recipient_id].append(message_item)
+
+    allMentees = MenteeProfile.objects()
+    mentees_by_id = {}
+    for mentee_item in allMentees:
+        mentees_by_id[mentee_item.id] = mentee_item
+
     for mentor in list(mentors):
         user_id = mentor.id
         mentor_user = json.loads(mentor.to_json())
         try:
-            sentMessages = (
-                DirectMessage.objects.filter(
-                    Q(sender_id=user_id) | Q(recipient_id=user_id)
-                )
-                .filter(
-                    created_at__gte=datetime.fromisoformat(startDate),
-                    created_at__lte=datetime.fromisoformat(endDate),
-                )
-                .order_by("-created_at")
-            )
+            sentMessages = ()
+            if user_id in messages_by_sender_or_recipient:
+                sentMessages = messages_by_sender_or_recipient[user_id]
         except:
             continue
         if len(sentMessages) == 0:
@@ -279,7 +323,7 @@ def get_sidebar_mentors(pageNumber):
         contacts = list(dict.fromkeys(contacts))
         for contactId in contacts:
             try:
-                otherUser = MenteeProfile.objects.get(id=contactId)
+                otherUser = mentees_by_id[contactId]
             except:
                 continue
             otherUserObj = {
@@ -343,7 +387,29 @@ def get_sidebar_mentors(pageNumber):
     )
 
 
+@messages.route("/group/", methods=["GET"])
+@all_users
+def get_group_messages():
+    try:
+        hub_user_id = request.args.get("hub_user_id", None)
+        if hub_user_id is not None and hub_user_id != "":
+            messages = GroupMessage.objects(
+                Q(hub_user_id=request.args.get("hub_user_id"))
+            )
+        else:
+            messages = PartnerGroupMessage.objects()
+    except:
+        msg = "Invalid parameters provided"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    msg = "Success"
+    if not messages:
+        msg = request.args
+    return create_response(data={"Messages": messages}, status=200, message=msg)
+
+
 @messages.route("/direct/", methods=["GET"])
+@all_users
 def get_direct_messages():
     try:
         messages = DirectMessage.objects(
@@ -362,23 +428,74 @@ def get_direct_messages():
     return create_response(data={"Messages": messages}, status=200, message=msg)
 
 
+@socketio.on("sendGroup")
+def chatGroup(msg, methods=["POST"]):
+    try:
+        if "hub_user_id" in msg and msg["hub_user_id"] is not None:
+            message = GroupMessage(
+                title=msg.get("title"),
+                body=msg["body"],
+                message_read=msg["message_read"],
+                sender_id=msg["sender_id"],
+                hub_user_id=msg["hub_user_id"],
+                parent_message_id=msg.get("parent_message_id"),
+                created_at=msg["time"],
+            )
+            logger.info(msg["hub_user_id"])
+
+        else:
+            message = PartnerGroupMessage(
+                body=msg["body"],
+                message_read=msg["message_read"],
+                sender_id=msg["sender_id"],
+                parent_message_id=msg["parent_message_id"],
+                created_at=msg["time"],
+            )
+            logger.info(msg["sender_id"])
+
+    except Exception as e:
+        logger.info(e)
+        return create_response(status=500, message="Failed to send message")
+
+    try:
+        message.save()
+        if "hub_user_id" in msg and msg["hub_user_id"] is not None:
+            socketio.emit(msg["hub_user_id"], json.loads(message.to_json()))
+        else:
+            socketio.emit("group-partner", json.loads(message.to_json()))
+        msg = "successfully sent message"
+    except:
+        msg = "Error in meessage"
+        logger.info(msg)
+        return create_response(status=500, message="Failed to send message")
+    return create_response(status=200, message="successfully sent message")
+
+
 @socketio.on("send")
 def chat(msg, methods=["POST"]):
-    # print("here")
     try:
+        availabes_in_future = None
+        if "availabes_in_future" in msg:
+            availabes_in_future = [
+                Availability(
+                    start_time=availability.get("start_time").get("$date"),
+                    end_time=availability.get("end_time").get("$date"),
+                )
+                for availability in msg["availabes_in_future"]
+            ]
+
         message = DirectMessage(
             body=msg["body"],
             message_read=msg["message_read"],
             sender_id=msg["sender_id"],
             recipient_id=msg["recipient_id"],
             created_at=msg["time"],
+            availabes_in_future=availabes_in_future,
         )
-        # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
 
     except Exception as e:
-        # msg="Invalid parameter provided"
         logger.info(e)
         return create_response(status=500, message="Failed to send message")
     try:
@@ -393,9 +510,7 @@ def chat(msg, methods=["POST"]):
 
 @socketio.on("invite")
 def invite(msg, methods=["POST"]):
-    print("inisdede new created inivte cintrlloererer")
     try:
-        # msg['created_at'] = time
         logger.info(msg["recipient_id"])
         inviteObject = {
             "inviteeId": msg["sender_id"],
@@ -404,7 +519,6 @@ def invite(msg, methods=["POST"]):
         socketio.emit(msg["recipient_id"], inviteObject)
 
     except Exception as e:
-        # msg="Invalid parameter provided"
         logger.info(e)
         return create_response(status=500, message="Failed to send invite")
     try:

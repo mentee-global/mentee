@@ -17,14 +17,32 @@
   align-items: center;
   justify-content: center;
 }
+.mentor-profile-about {
+  word-wrap: break-word;
+}
+
+.mentor-profile-contact-icon {
+  margin-top: 6px;
+  margin-right: 2%;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .mentor-profile-contact {
+    margin-top: 4px;
+  }
+
+  .mentor-profile-button {
+    margin-top: 1rem;
+  }
+
+  .mentor-profile-heading {
+    margin: 0;
+  }
+}
 
 @media (min-width: 768px) {
   //For desktop
-  .background-color-strip {
-    height: 170px;
-    background: $background-color-strip-color;
-    background-color: #fcf6e8;
-  }
 
   .mentor-profile-content {
     padding-top: 80px;
@@ -73,10 +91,6 @@
     font-size: 0.9em;
   }
 
-  .mentor-profile-heading {
-    color: $mentor-profile-heading-color;
-  }
-
   .yellow-dot {
     color: $yellow-dot-color;
   }
@@ -99,11 +113,10 @@
 
   .mentor-profile-about {
     width: 90%;
-    word-wrap: break-word;
   }
 
   .mentor-specialization-tag {
-    border: 3px solid $specialization-tag-border;
+    border: 1px solid black;
     border-radius: 13px;
     font-weight: bold;
     display: inline-block;
@@ -115,9 +128,7 @@
   }
 
   .mentor-profile-contact {
-    border-top-color: $specialization-tag-border;
-    border-top-width: 36px;
-    border-top-style: solid;
+    border: 1px solid #efefef;
     border-radius: 8px;
     width: 25%;
     height: 30%;
@@ -128,7 +139,6 @@
   .mentor-profile-contact-header {
     font-size: 20px;
     font-weight: bold;
-    background: $specialization-tag-border;
     height: 36px;
   }
 

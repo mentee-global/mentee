@@ -11,7 +11,7 @@ class MentorApplication(Document, Mixin):
     cell_number = StringField(required=True)
     business_number = StringField()
     hear_about_us = StringField(required=True)
-    offer_donation = BooleanField(required=True)
+    offer_donation = BooleanField(required=False)
     mentoring_options = ListField(StringField(), required=True)
     employer_name = StringField(required=True)
     work_sectors = ListField(StringField(), required=True)
@@ -29,6 +29,7 @@ class MentorApplication(Document, Mixin):
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
     notes = StringField()
+    traingStatus = DictField(required=False)
 
     def __repr__(self):
         return f"""<Mentor Application email: {self.email}

@@ -1,71 +1,71 @@
 @import "_app";
 
 .register-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	height: 100%;
-	width: 40%;
-	background-color: white;
-	padding: 2.5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 40%;
+  background-color: white;
+  padding: 2.5%;
 }
 
 .register-error {
-	color: red;
+  color: red;
 }
 
 .verify-container {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	height: 100%;
-	background-color: white;
-	padding: 2.5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  background-color: white;
+  padding: 2.5%;
 }
 .verify-login-button {
-	width: 300px;
-	margin-top: 80px;
+  width: 300px;
+  margin-top: 80px;
 }
 
 .verify-header-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
 }
 
 .verify-header-text {
-	width: 70%;
+  width: 75%;
 }
 
 .verify-header-text-description {
-	color: gray;
+  color: gray;
 }
 
 .verify-header-image {
-	width: 30%;
+  width: 30%;
 }
 
 .verify-resend-link,
 .verify-resend-link:focus {
-	color: $mentee-button-regular;
-	margin-left: 5px;
-	padding: 0px;
-	transition-duration: 0.4s;
+  color: $mentee-button-regular;
+  margin-left: 5px;
+  padding: 0px;
+  transition-duration: 0.4s;
 }
 
 .verify-resend-link:hover {
-	color: $register-link-hover;
+  color: $register-link-hover;
 }
 
 @media (max-width: 768px) {
-	.register-container {
-		height: 60vh;
-		width: 100%;
-	}
+  .register-container {
+    height: 60vh;
+    width: 100%;
+  }
 
-	.verify-container {
-		height: 40vh;
-		width: 100%;
-	}
+  .verify-container {
+    height: 40vh;
+    width: 100%;
+  }
 }

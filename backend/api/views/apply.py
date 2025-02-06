@@ -1,7 +1,9 @@
-from email.mime import application
-from flask import Blueprint, request, jsonify
-from sqlalchemy import false, null
+from os import name
+from bson import is_valid
+from flask import Blueprint, request
+from sqlalchemy import null
 from api.models import (
+    Admin,
     NewMentorApplication,
     VerifiedEmail,
     Users,
@@ -12,11 +14,9 @@ from api.models import (
     PartnerProfile,
     MentorApplication,
 )
-from api.core import create_response, serialize_list, logger
+from api.core import create_response, logger
 from api.utils.require_auth import admin_only
 from api.utils.constants import (
-    MENTOR_APP_STATES,
-    MENTOR_APP_OFFER,
     MENTOR_APP_SUBMITTED,
     MENTEE_APP_SUBMITTED,
     MENTOR_APP_REJECTED,
@@ -24,17 +24,22 @@ from api.utils.constants import (
     APP_APROVED,
     TRAINING_COMPLETED,
     PROFILE_COMPLETED,
+    TRANSLATIONS,
+    ALERT_TO_ADMINS,
+    N50_ID_DEV,
+    N50_ID_PROD,
 )
 from api.utils.request_utils import (
     send_email,
     is_invalid_form,
-    send_email_html,
     MentorApplicationForm,
     MenteeApplicationForm,
     PartnerApplicationForm,
+    get_profile_model,
 )
 from api.utils.constants import Account
 from firebase_admin import auth as firebase_admin_auth
+import urllib
 
 apply = Blueprint("apply", __name__)
 
@@ -84,6 +89,10 @@ def get_application_by_id(id):
 def get_application_mentee_by_id(id):
     try:
         application = MenteeApplication.objects.get(id=id)
+        if application is not None and application.partner is not None:
+            partner_data = PartnerProfile.objects.get(id=application.partner)
+            if partner_data is not None:
+                application.organization = partner_data.organization
     except:
         msg = "No application currently exist with this id " + id
         logger.info(msg)
@@ -92,54 +101,54 @@ def get_application_mentee_by_id(id):
     return create_response(data={"mentor_application": application})
 
 
-####################################################################################
-@apply.route("/checkHaveAccount/<email>/<role>", methods=["GET"])
-def get_is_has_Account(email, role):
+@apply.route("/email/status/<email>/<role>", methods=["GET"])
+def get_email_status_by_role(email, role):
     role = int(role)
-    application = null
-    isVerified = null
+    email = email.lower()
+    response_data = {
+        "inFirebase": False,
+        "isVerified": False,
+        "profileExists": False,
+    }
+
     try:
-        email2 = VerifiedEmail.objects.get(email=email, role=str(role))
-        isVerified = True
-    except:
-        isVerified = False
+        VerifiedEmail.objects.get(email=email, role=str(role))
+        response_data["isVerified"] = True
+    except Exception as e:
+        logger.error(e)
+        logger.info(f"{email} is not verified in VerifiedEmail Model")
+
     try:
         user = firebase_admin_auth.get_user_by_email(email.replace(" ", ""))
-    except:
-        return create_response(data={"isHave": False, "isVerified": isVerified})
+        response_data["inFirebase"] = True
+    except Exception as e:
+        logger.error(e)
+        logger.warning(f"{email} is not verified in Firebase")
+        msg = "No firebase user currently exist with this email " + email
+        return create_response(message=msg, data=response_data)
 
     try:
-        if role == Account.MENTOR:
-            application = MentorProfile.objects.get(email=email)
-        if role == Account.MENTEE:
-            application = MenteeProfile.objects.get(email=email)
-        if role == Account.PARTNER:
-            application = PartnerProfile.objects.get(email=email)
-
-    except:
-        msg = "No application currently exist with this email " + email
+        get_profile_model(role).objects.only("email").get(email=email)
+        response_data["profileExists"] = True
+    except Exception as e:
+        logger.error(e)
+        msg = "No profile currently exist with this email " + email
         logger.info(msg)
         return create_response(
-            data={
-                "isHaveProfile": False,
-                "isHave": True,
-                "message": msg,
-                "isVerified": isVerified,
-            }
+            message=msg,
+            data=response_data,
         )
 
-    return create_response(
-        data={"isHave": True, "isHaveProfile": True, "isVerified": isVerified}
-    )
+    return create_response(data=response_data)
 
 
 ############################################################################################
 
 
-@apply.route("/checkConfirm/<email>/<role>", methods=["GET"])
-def get_application_by_email(email, role):
+@apply.route("/status/<email>/<role>", methods=["GET"])
+def get_application_status(email, role):
     role = int(role)
-    application = null
+    application = None
     try:
         if role == Account.MENTOR:
             try:
@@ -150,75 +159,111 @@ def get_application_by_email(email, role):
             application = MenteeApplication.objects.get(email=email)
         if role == Account.PARTNER:
             application = PartnerApplication.objects.get(email=email)
-        if application is null:
+        if application is None:
             return create_response(
+                message="No application currently exist with this email " + email,
                 data={
-                    "state": "",
-                    "message": "no application found",
+                    "state": None,
                     "type": role == Account.MENTOR,
                     "role": role,
                     "role2": Account.MENTOR,
-                }
+                },
             )
     except:
         msg = "No application currently exist with this email " + email
         logger.info(msg)
-        return create_response(data={"state": "", "message": msg})
+        return create_response(message=msg, data={"state": None})
 
-    return create_response(data={"state": application.application_state})
+    return create_response(
+        data={"state": application.application_state, "application_data": application}
+    )
 
 
-@apply.route("/isHaveProfile/<email>/<role>", methods=["GET"])
-def isHaveprofile_existing_account(email, role):
+@apply.route("/profile/exists/<email>/<role>", methods=["GET"])
+def check_profile_exists(email, role):
     role = int(role)
-    application = null
-
+    profile_exists = False
     try:
-        if role == Account.MENTOR:
-            application = MentorProfile.objects.get(email=email)
-        if role == Account.MENTEE:
-            application = MenteeProfile.objects.get(email=email)
-        if role == Account.PARTNER:
-            application = PartnerProfile.objects.get(email=email)
-
+        # test if the email is in mongodb
+        get_profile_model(role).objects.only("email").get(email=email)
+        profile_exists = True
     except:
+        # Get the correct role for the email
+        msg = "Email contains a different role: " + email
         try:
-            application = MentorProfile.objects.get(email=email)
+            MentorProfile.objects.get(email=email)
             rightRole = Account.MENTOR
             return create_response(
-                data={"isHaveProfile": False, "rightRole": rightRole.value}
+                message=msg,
+                data={"profileExists": profile_exists, "rightRole": rightRole.value},
             )
-
         except:
             try:
-                application = MenteeProfile.objects.get(email=email)
+                MenteeProfile.objects.get(email=email)
                 rightRole = Account.MENTEE
                 return create_response(
-                    data={"isHaveProfile": False, "rightRole": rightRole.value}
+                    message=msg,
+                    data={
+                        "profileExists": profile_exists,
+                        "rightRole": rightRole.value,
+                    },
                 )
-
             except:
                 try:
-                    application = PartnerProfile.objects.get(email=email)
+                    PartnerProfile.objects.get(email=email)
                     rightRole = Account.PARTNER
                     return create_response(
-                        data={"isHaveProfile": False, "rightRole": rightRole.value}
+                        message=msg,
+                        data={
+                            "profileExists": profile_exists,
+                            "rightRole": rightRole.value,
+                        },
                     )
-
                 except:
                     msg = "No application currently exist with this email " + email
                     logger.info(msg)
                     return create_response(
-                        data={"isHaveProfile": False, "message": msg}
+                        message=msg,
+                        data={
+                            "profileExists": profile_exists,
+                        },
                     )
 
-    return create_response(data={"isHaveProfile": True})
+    return create_response(data={"profileExists": profile_exists})
+
+
+@apply.route("/changeStateTraining", methods=["POST"])
+def change_state_traing_status():
+    data = request.get_json()
+    role = data.get("role")
+    role = int(role)
+    id = data.get("id")
+    traing_status = data.get("traing_status")
+
+    if role == Account.MENTOR:
+        try:
+            application = NewMentorApplication.objects.get(id=id)
+        except:
+            application = MentorApplication.objects.get(id=id)
+    if role == Account.MENTEE:
+        application = MenteeApplication.objects.get(id=id)
+        if application.language is not None:
+            if isinstance(application.language, str):
+                application.language = [application.language]
+    if role == Account.PARTNER:
+        application = PartnerApplication.objects.get(id=id)
+    application["traingStatus"] = traing_status
+    application.save()
+    return create_response(data={"state": "ok"})
 
 
 @apply.route("/changeStateBuildProfile/<email>/<role>", methods=["GET"])
-def changestatetobuildprofile(email, role):
+def change_state_to_build_profile(email, role):
+    admin_data = Admin.objects()
+
     application = null
     role = int(role)
+
     try:
         if role == Account.MENTOR:
             try:
@@ -236,11 +281,55 @@ def changestatetobuildprofile(email, role):
     if application["application_state"] == NEW_APPLICATION_STATUS["APPROVED"]:
         application["application_state"] = NEW_APPLICATION_STATUS["BUILDPROFILE"]
         application.save()
+        target_url = ""
+        n50_url = ""
+        if (
+            application["partner"] == N50_ID_DEV
+            or application["partner"] == N50_ID_PROD
+        ):
+            n50_url = "n50/"
+        if "front_url" in request.args:
+            front_url = request.args["front_url"]
+            target_url = (
+                front_url
+                + n50_url
+                + "build-profile?role="
+                + str(role)
+                + "&email="
+                + urllib.parse.quote(application["email"])
+            )
+
+        preferred_language = request.args.get("preferred_language", "en-US")
+        if preferred_language not in TRANSLATIONS:
+            preferred_language = "en-US"
         success, msg = send_email(
             recipient=application["email"],
-            subject="Congratulation for completing training",
+            data={
+                "link": target_url,
+                preferred_language: True,
+                "subject": TRANSLATIONS[preferred_language]["training_complete"],
+            },
             template_id=TRAINING_COMPLETED,
         )
+        for admin in admin_data:
+            txt_role = "Mentor"
+            txt_name = application.name
+            if role == Account.MENTEE:
+                txt_role = "Mentee"
+            if role == Account.PARTNER:
+                txt_role = "Partner"
+                txt_name = application.organization
+            success, msg = send_email(
+                recipient=admin.email,
+                template_id=ALERT_TO_ADMINS,
+                data={
+                    "name": txt_name,
+                    "email": application.email,
+                    "role": txt_role,
+                    "action": "completed training",
+                    preferred_language: True,
+                },
+            )
         if not success:
             logger.info(msg)
 
@@ -249,19 +338,27 @@ def changestatetobuildprofile(email, role):
         return create_response(data={"state": application.application_state})
 
 
-# DELETE request for mentor application by object ID
-@apply.route("/<id>", methods=["DELETE"])
+@apply.route("/<id>/<role>", methods=["DELETE"])
 @admin_only
-def delete_application(id):
-    try:
+def delete_application(id, role):
+    role = int(role)
+    if role == Account.MENTOR:
         try:
-            application = NewMentorApplication.objects.get(id=id)
+            try:
+                application = NewMentorApplication.objects.get(id=id)
+            except:
+                application = MentorApplication.objects.get(id=id)
         except:
-            application = MentorApplication.objects.get(id=id)
-    except:
-        msg = "The application you attempted to delete was not found"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
+            msg = "The application you attempted to delete was not found"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+    elif role == Account.MENTEE:
+        try:
+            application = MenteeApplication.objects.get(id=id)
+        except:
+            msg = "The application you attempted to delete was not found"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
 
     application.delete()
     return create_response(status=200, message=f"Success")
@@ -271,7 +368,12 @@ def delete_application(id):
 @apply.route("/<id>/<role>", methods=["PUT"])
 @admin_only
 def edit_application(id, role):
+    admin_data = Admin.objects()
+
     data = request.get_json()
+    preferred_language = data.get("preferred_language", "en-US")
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
     role = int(role)
     logger.info(data)
     # Try to retrieve Mentor application from database
@@ -305,23 +407,46 @@ def edit_application(id, role):
             mentor_email = application.email
             success, msg = send_email(
                 recipient=mentor_email,
-                subject="MENTEE Application has been approved",
                 template_id=MENTOR_APP_SUBMITTED,
+                data={
+                    preferred_language: True,
+                    "subject": TRANSLATIONS[preferred_language]["app_approved"],
+                },
             )
         if role == Account.MENTEE:
             mentor_email = application.email
             success, msg = send_email(
                 recipient=mentor_email,
-                subject="MENTEE Application has been approved",
                 template_id=MENTEE_APP_SUBMITTED,
+                data={
+                    preferred_language: True,
+                    "subject": TRANSLATIONS[preferred_language]["app_approved"],
+                },
             )
+
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["APPROVED"]:
+        front_url = data.get("front_url", "")
+        n50_url = ""
+        if application.partner == N50_ID_DEV or application.partner == N50_ID_PROD:
+            n50_url = "n50/"
+        target_url = (
+            front_url
+            + n50_url
+            + "application-training?role="
+            + str(role)
+            + "&email="
+            + urllib.parse.quote(application.email)
+        )
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
-            subject="MENTEE Application has been approved",
+            data={
+                "link": target_url,
+                preferred_language: True,
+                "subject": TRANSLATIONS[preferred_language]["app_approved"],
+            },
             template_id=APP_APROVED,
         )
         if not success:
@@ -334,25 +459,73 @@ def edit_application(id, role):
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
-            subject="Thank you for your interest in Mentee, " + application.name,
             template_id=MENTOR_APP_REJECTED,
+            data={
+                preferred_language: True,
+                "subject": TRANSLATIONS[preferred_language]["app_rejected"],
+            },
         )
     if application.application_state == NEW_APPLICATION_STATUS["COMPLETED"]:
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
-            subject="Your account have been successfully Created " + application.name,
             template_id=PROFILE_COMPLETED,
+            data={
+                preferred_language: True,
+                "subject": TRANSLATIONS[preferred_language]["profile_completed"],
+            },
         )
+        for admin in admin_data:
+            txt_role = "Mentor"
+            if role == Account.MENTEE:
+                txt_role = "Mentee"
+            success, msg = send_email(
+                recipient=admin.email,
+                template_id=ALERT_TO_ADMINS,
+                data={
+                    "name": application.name,
+                    "email": application.email,
+                    "role": txt_role,
+                    "action": "completed profile",
+                    preferred_language: True,
+                },
+            )
         if not success:
             logger.info(msg)
     if application.application_state == NEW_APPLICATION_STATUS["BUILDPROFILE"]:
+        front_url = data.get("front_url", "")
+        target_url = (
+            front_url
+            + "build-profile?role="
+            + str(role)
+            + "&email="
+            + urllib.parse.quote(application.email)
+        )
         mentor_email = application.email
         success, msg = send_email(
             recipient=mentor_email,
-            subject="Congratulation for completing training",
+            data={
+                "link": target_url,
+                preferred_language: True,
+                "subject": TRANSLATIONS[preferred_language]["training_complete"],
+            },
             template_id=TRAINING_COMPLETED,
         )
+        for admin in admin_data:
+            txt_role = "Mentor"
+            if role == Account.MENTEE:
+                txt_role = "Mentee"
+            success, msg = send_email(
+                recipient=admin.email,
+                template_id=ALERT_TO_ADMINS,
+                data={
+                    "name": application.name,
+                    "email": application.email,
+                    "role": txt_role,
+                    "action": "completed training",
+                    preferred_language: True,
+                },
+            )
         if not success:
             logger.info(msg)
 
@@ -362,7 +535,14 @@ def edit_application(id, role):
 # POST request for Mentee Appointment
 @apply.route("/new", methods=["POST"])
 def create_application():
+    admin_data = Admin.objects()
+
     data = request.get_json()
+    preferred_language = data.get("preferred_language", "en-US")
+    print("preferred_language!!!!", preferred_language)
+    if preferred_language not in TRANSLATIONS:
+        preferred_language = "en-US"
+
     role = data.get("role")
 
     if role == Account.MENTOR:
@@ -375,64 +555,111 @@ def create_application():
     if is_invalid:
         return create_response(status=422, message=msg)
     if role == Account.MENTOR:
-        new_application = NewMentorApplication(
-            name=data.get("name"),
-            email=data.get("email"),
-            cell_number=data.get("cell_number"),
-            hear_about_us=data.get("hear_about_us"),
-            offer_donation=data.get("offer_donation"),
-            employer_name=data.get("employer_name"),
-            role_description=data.get("role_description"),
-            immigrant_status=data.get("immigrant_status"),
-            languages=data.get("languages"),
-            referral=data.get("referral"),
-            knowledge_location=data.get("knowledge_location"),
-            isColorPerson=data.get("isColorPerson"),
-            isMarginalized=data.get("isMarginalized"),
-            isFamilyNative=data.get("isFamilyNative"),
-            isEconomically=data.get("isEconomically"),
-            identify=data.get("identify"),
-            pastLiveLocation=data.get("pastLiveLocation"),
-            date_submitted=data.get("date_submitted"),
-            companyTime=data.get("companyTime"),
-            specialistTime=data.get("specialistTime"),
-            application_state="PENDING",
-        )
+        applications = NewMentorApplication.objects(email=data.get("email"))
+        if len(applications) > 0 and applications is not None:
+            return create_response(
+                status=422, message="This user is already registered"
+            )
+        else:
+            partner = data.get("partner")
+            if partner == 0:
+                partner = None
+            new_application = NewMentorApplication(
+                name=data.get("name"),
+                email=data.get("email"),
+                cell_number=data.get("cell_number"),
+                hear_about_us=data.get("hear_about_us"),
+                employer_name=data.get("employer_name"),
+                role_description=data.get("role_description"),
+                immigrant_status=data.get("immigrant_status"),
+                languages=data.get("languages"),
+                referral=data.get("referral"),
+                knowledge_location=data.get("knowledge_location"),
+                isColorPerson=data.get("isColorPerson"),
+                isMarginalized=data.get("isMarginalized"),
+                isFamilyNative=data.get("isFamilyNative"),
+                isEconomically=data.get("isEconomically"),
+                identify=data.get("identify"),
+                pastLiveLocation=data.get("pastLiveLocation"),
+                date_submitted=data.get("date_submitted"),
+                companyTime=data.get("companyTime"),
+                specialistTime=data.get("specialistTime"),
+                application_state="PENDING",
+                specializations=data.get("specializations"),
+                partner=partner,
+            )
 
     if role == Account.MENTEE:
-        new_application = MenteeApplication(
-            email=data.get("email"),
-            name=data.get("name"),
-            age=data.get("age"),
-            immigrant_status=data.get("immigrant_status"),
-            Country=data.get("Country", ""),
-            identify=data.get("identify"),
-            language=data.get("language"),
-            topics=data.get("topics"),
-            workstate=data.get("workstate"),
-            isSocial=data.get("isSocial"),
-            questions=data.get("questions", ""),
-            application_state="PENDING",
-            date_submitted=data.get("date_submitted"),
-        )
+        applications = MenteeApplication.objects(email=data.get("email"))
+        if len(applications) > 0 and applications is not None:
+            return create_response(
+                status=422, message="This user is already registered"
+            )
+        else:
+            partner = data.get("partner")
+            if partner == 0:
+                partner = None
+            new_application = MenteeApplication(
+                email=data.get("email"),
+                name=data.get("name"),
+                age=data.get("age"),
+                immigrant_status=data.get("immigrant_status"),
+                Country=data.get("country", ""),
+                identify=data.get("identify"),
+                language=data.get("language"),
+                topics=data.get("topics"),
+                workstate=data.get("workstate"),
+                isSocial=data.get("isSocial"),
+                questions=data.get("questions", ""),
+                partner=partner,
+                application_state="PENDING",
+                date_submitted=data.get("date_submitted"),
+            )
     new_application.save()
 
     mentor_email = new_application.email
     if role == Account.MENTOR:
         success, msg = send_email(
             recipient=mentor_email,
-            subject="MENTEE Application Recieved!",
+            data={
+                preferred_language: True,
+                "subject": TRANSLATIONS[preferred_language]["mentor_app_submit"],
+            },
             template_id=MENTOR_APP_SUBMITTED,
         )
     if role == Account.MENTEE:
         success, msg = send_email(
             recipient=mentor_email,
-            subject="MENTEE Application Recieved!",
+            data={
+                preferred_language: True,
+                "subject": TRANSLATIONS[preferred_language]["mentee_app_submit"],
+            },
             template_id=MENTEE_APP_SUBMITTED,
+        )
+    admin_data = Admin.objects()
+    for admin in admin_data:
+        txt_role = "Mentor"
+        txt_name = new_application.name
+        if role == Account.MENTEE:
+            txt_role = "Mentee"
+        if role == Account.PARTNER:
+            txt_role = "Partner"
+            txt_name = new_application.organization
+        success, msg = send_email(
+            recipient=admin.email,
+            template_id=ALERT_TO_ADMINS,
+            data={
+                "name": txt_name,
+                "email": new_application.email,
+                "role": txt_role,
+                "action": "applied",
+                preferred_language: True,
+            },
         )
     if not success:
         logger.info(msg)
 
     return create_response(
-        message=f"Successfully created application with name {new_application.email}"
+        status=200,
+        message=f"Successfully created application with name {new_application.email}",
     )

@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { Avatar, Typography, Button, Rate, Tooltip } from "antd";
+import React, { useState } from "react";
+import { NavLink, useHistory } from "react-router-dom";
+import { Avatar, Typography, Button, Rate, Tooltip, theme } from "antd";
 import {
-  LinkOutlined,
-  LinkedinOutlined,
   StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
@@ -11,14 +9,16 @@ import {
   YoutubeOutlined,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
-import useAuth from "../utils/hooks/useAuth";
-
-import MenteeButton from "./MenteeButton";
+import { useAuth } from "../utils/hooks/useAuth";
 
 import "./css/Gallery.scss";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
+import { useTranslation } from "react-i18next";
+import { css } from "@emotion/css";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "features/userSlice";
 
-const { Title, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 const styles = {
   title: {
@@ -42,8 +42,16 @@ const styles = {
 };
 
 function MentorCard(props) {
-  const { isAdmin, isMentor, isMentee } = useAuth();
+  const {
+    token: { colorPrimary, colorPrimaryBg },
+  } = theme.useToken();
+  const { t } = useTranslation();
+  const { isMentee, resetRoleState, role } = useAuth();
   const [favorite, setFavorite] = useState(props.favorite);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { user } = useSelector((state) => state.user);
+
   function getImage(image) {
     if (!image) {
       return <UserOutlined />;
@@ -65,8 +73,35 @@ function MentorCard(props) {
     );
   }
 
+  function loginOtherUser(e, user_data) {
+    localStorage.setItem("support_user_id", user._id.$oid);
+    localStorage.setItem("role", ACCOUNT_TYPE.MENTOR);
+    localStorage.setItem("profileId", user_data.id);
+    resetRoleState(user_data.id, ACCOUNT_TYPE.MENTOR);
+    dispatch(
+      fetchUser({
+        id: user_data.id,
+        role: ACCOUNT_TYPE.MENTOR,
+      })
+    );
+    history.push(REDIRECTS[ACCOUNT_TYPE.MENTOR]);
+  }
+
   return (
-    <div className="gallery-partner-card">
+    <div
+      className={css`
+        background-color: white;
+        border: 2px solid ${colorPrimaryBg};
+        border-radius: 8px;
+        position: relative;
+        height: 37em;
+        padding: 20px;
+        padding-top: 0px;
+        :hover {
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        }
+      `}
+    >
       <div className="gallery-card-body">
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
@@ -78,7 +113,7 @@ function MentorCard(props) {
               {truncate(props.professional_title, 35)}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
-              Speaks: {truncate(props.languages.join(", "), 20)}
+              {t("gallery.speaks")} {truncate(props.languages.join(", "), 20)}
             </Title>
           </div>
           {isMentee && (
@@ -92,54 +127,35 @@ function MentorCard(props) {
             </div>
           )}
         </div>
-        <h3 className="gallery-lesson-types">
-          <span className="gallery-dot" />
-          {props.lesson_types}
-        </h3>
+        <h3 className="gallery-lesson-types">{props.lesson_types}</h3>
         {props.location && (
-          <div className="gallery-info-section">
-            <h3 className="gallery-headers">
-              <EnvironmentOutlined style={styles.icon} />
-              Location:
-            </h3>
-            <Text className="gallery-list-items">
-              {truncate(props.location, 30)}
-            </Text>
-          </div>
-        )}
-        <h3 className="gallery-headers">
-          <StarOutlined style={styles.icon} />
-          Specializations:
-        </h3>
-        <Text className="gallery-list-items">
-          {truncate(props.specializations.join(", "), 60)}
-        </Text>
-        {props.website && (
-          <h4 className="gallery-info-section">
-            <LinkOutlined style={styles.icon} />
-            <a
-              className="gallery-links"
-              href={formatLinkForHref(props.website)}
-              target="_blank"
-              rel="noopener noreferrer"
+          <Typography>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
             >
-              {props.website}
-            </a>
-          </h4>
+              {t("commonProfile.location")} <EnvironmentOutlined />
+            </Title>
+            <Paragraph>{props.location}</Paragraph>
+          </Typography>
         )}
-        {props.linkedin && (
-          <h4 className="gallery-info-section">
-            <LinkedinOutlined style={styles.icon} />
-            <a
-              className="gallery-links"
-              href={formatLinkForHref(props.linkedin)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              linkedin
-            </a>
-          </h4>
-        )}
+        <Typography>
+          <Title
+            level={5}
+            className={css`
+              margin-top: 0;
+              color: ${colorPrimary} !important;
+            `}
+          >
+            {t("common.specializations")} <StarOutlined />
+          </Title>
+          <Paragraph>
+            {truncate(props.specializations.join(", "), 60)}
+          </Paragraph>
+        </Typography>
         {props.video && props.video.url && (
           <h4 className="gallery-info-section">
             <YoutubeOutlined style={styles.icon} />
@@ -153,13 +169,50 @@ function MentorCard(props) {
             </a>
           </h4>
         )}
+        {props.pair_partner && props.pair_partner.email && (
+          <Typography>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
+            >
+              {t("common.partner")}
+            </Title>
+            <Paragraph>
+              <Avatar
+                src={props.pair_partner.image && props.pair_partner.image.url}
+                icon={<UserOutlined />}
+              />{" "}
+              {props.pair_partner.organization}
+            </Paragraph>
+          </Typography>
+        )}
       </div>
-      <div className="gallery-card-footer">
-        <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
-          <div className="gallery-button">
-            <MenteeButton content="View Profile" />
-          </div>
-        </NavLink>
+      <div
+        className={css`
+          border-top: 3px solid ${colorPrimary};
+          position: absolute;
+          bottom: -5px;
+          width: 90%;
+        `}
+      >
+        {props.isSupport ? (
+          <>
+            <div className="gallery-button">
+              <Button onClick={(e) => loginOtherUser(e, props)} type="primary">
+                {t("common.impersonate")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <NavLink to={`/gallery/${ACCOUNT_TYPE.MENTOR}/${props.id}`}>
+            <div className="gallery-button">
+              <Button type="primary">{t("gallery.viewProfile")}</Button>
+            </div>
+          </NavLink>
+        )}
       </div>
     </div>
   );

@@ -1,113 +1,59 @@
-import React, { useState } from "react";
-import { withRouter } from "react-router-dom";
-import LoginVerificationModal from "../LoginVerificationModal";
+import React from "react";
+import { UserOutlined, UsergroupAddOutlined } from "@ant-design/icons";
+import { useHistory, withRouter } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { css } from "@emotion/css";
+import { Space } from "antd";
+import SelectCard from "components/SelectCard";
 import "../css/Home.scss";
-import loginimg from "../../resources/login.png";
-import { isLoggedIn } from "../../utils/auth.service";
 
-import Applyimg from "../../resources/apply.png";
-import useAuth from "../../utils/hooks/useAuth";
-import { MENTEE_GALLERY_PAGE, MENTOR_GALLERY_PAGE } from "../../utils/consts";
-import { logout } from "utils/auth.service";
-import { resetUser } from "features/userSlice";
-import { useDispatch } from "react-redux";
+const SelectCardsStyle = css`
+  width: 100%;
+  flex: 1;
+  justify-content: center;
+  @media (max-width: 991px) {
+    flex: 0;
+    margin-top: 5em;
+  }
+`;
 
-function Home({ history }) {
-  const { isMentor, isMentee, isPartner, resetRoleState, isAdmin } = useAuth();
-  const dispatch = useDispatch();
+function Home({ location }) {
+  const { t } = useTranslation();
+  const history = useHistory();
 
-  const logoutUser = () => {
-    logout().then(() => {
-      resetRoleState();
-      dispatch(resetUser());
-      history.push("/");
-    });
-  };
   return (
-    <div className="home-background">
-      <div className="home-content">
-        <div className="home-text-container">
-          <h1 className="home-header2">
-            Welcome to <span>MENTEE!</span>
-          </h1>
-          {isLoggedIn() ? (
-            ""
-          ) : (
-            <p className="home-text2">
-              {/** Homepage Tagline placeholder */}
-              Are you a new or existing user?
-            </p>
-          )}
-
-          <br />
-          <LoginVerificationModal
-            content={
-              (isMentor && <b>Find a Mentee</b>) ||
-              (isMentee && <b>Find a Mentor</b>)
+    <>
+      <Space direction="vertical" className={SelectCardsStyle} size="middle">
+        <SelectCard
+          avatar={<UserOutlined />}
+          title={t("homepage.existingAccountTitle")}
+          description={t("homepage.existingAccountDesc")}
+          onClick={() => {
+            if (location && location.pathname.includes("n50")) {
+              history.push("/n50/login");
+            } else {
+              history.push("/login");
             }
-            theme="dark"
-            onVerified={() => {
-              let redirect = MENTOR_GALLERY_PAGE;
-              if (isMentor) {
-                redirect = MENTEE_GALLERY_PAGE;
-              }
+          }}
+        />
+        <SelectCard
+          avatar={<UsergroupAddOutlined />}
+          title={t("homepage.newAccountTitle")}
+          description={t("homepage.newAccountDesc")}
+          onClick={() => {
+            if (location && location.pathname.includes("n50")) {
               history.push({
-                pathname: redirect,
-                state: { verified: true },
+                pathname: "/n50/apply",
               });
-            }}
-          />
-        </div>
-        <div className="buttons-container">
-          {isMentee || isMentor || isPartner || isAdmin ? (
-            <></>
-          ) : (
-            <div>
-              <h1 className="home-header2" style={{ textAlign: "center" }}>
-                <span>NEW</span>
-                <div
-                  className="applyCon"
-                  onClick={() => {
-                    history.push({
-                      pathname: "/application-page",
-                    });
-                  }}
-                >
-                  <img className="applyImage" src={Applyimg} alt="apply" />
-
-                  <div className="loginText">APPLY - TRAIN - BUILD</div>
-                </div>
-              </h1>
-            </div>
-          )}
-          {!isLoggedIn() ? (
-            <>
-              <h1 className="home-header2" style={{ textAlign: "center" }}>
-                <span>EXISTING</span>
-                <div
-                  className="loginCon"
-                  onClick={() => {
-                    let redirect = "/login";
-                    history.push({
-                      pathname: redirect,
-                    });
-                  }}
-                >
-                  <img className="applyImage" src={loginimg} alt="login" />
-                  <div className="loginText">PLATFORM LOGIN</div>
-                </div>
-              </h1>
-            </>
-          ) : (
-            <div className="loginCon" onClick={logoutUser}>
-              <img className="applyImage" src={loginimg} alt="login" />
-
-              <div className="loginText">LOGOUT</div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+            } else {
+              history.push({
+                pathname: "/apply",
+              });
+            }
+          }}
+        />
+      </Space>
+    </>
   );
 }
 

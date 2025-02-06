@@ -76,18 +76,25 @@ function MenteeVerificationModal(props) {
 
   return (
     <span className={props.className}>
-      <MenteeButton
-        theme={props.theme}
-        content={props.content}
-        onClick={handleViewPermission}
-        width={props.width}
-        height={props.height}
-        style={props.style}
-        loading={props.loading}
-      />
+      {props.btn_title ? (
+        <div className="link-book-availability" onClick={handleViewPermission}>
+          {props.btn_title}
+        </div>
+      ) : (
+        <MenteeButton
+          theme={props.theme}
+          content={props.content}
+          onClick={handleViewPermission}
+          width={props.width}
+          height={props.height}
+          style={props.style}
+          loading={props.loading}
+        />
+      )}
+
       <Modal
         title="Verify your email"
-        visible={isVisible}
+        open={isVisible}
         className="verification-modal"
         onCancel={() => {
           setIsVisible(false);

@@ -1,126 +1,151 @@
-.home-background {
-	min-height: 936px;
-	height: 100%;
-	background: #ffdb6f;
-	width: 100%;
-}
 .home-content {
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	justify-content: flex-start;
-	position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+  height: 100vh;
+  background: #ffdb6f;
 }
 
 .home-text-container {
-	position: absolute;
-	height: 73px;
-	top: 0px;
-	text-align: center;
-	margin: auto;
-	margin-top: 10px;
+  position: absolute;
+  height: 73px;
+  top: 0px;
+  text-align: center;
+  margin: auto;
+  margin-top: 10px;
 }
 
 .home-header2 {
-	font-family: "Abel";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 48px;
-	line-height: 61px;
-	color: #ffffff;
+  font-family: "Abel";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 61px;
+  color: #ffffff;
+  margin-bottom: 4px;
 }
 
 .home-header2 span {
-	color: #644a0a;
+  color: #644a0a;
+  margin-left: 40px;
 }
 .home-text2 {
-	font-family: "Abel";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 48px;
-	line-height: 61px;
-	color: #ffffff;
+  font-family: "Abel";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 61px;
+  color: #ffffff;
+  margin-top: 0vh;
 }
 .buttons-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	position: absolute;
-	top: 35vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  top: 30vh;
 }
 .applyCon {
-	background-color: white;
-	text-align: center;
-	color: #a58123;
-	cursor: pointer;
-	border-radius: 10px;
-	width: 262px;
-	height: 262px;
-	position: relative;
-	margin-right: 40px;
+  background-color: white;
+  text-align: center;
+  color: #a58123;
+  cursor: pointer;
+  border-radius: 10px;
+  width: 262px;
+  height: 262px;
+  position: relative;
+  margin-left: 40px;
 }
 .loginCon {
-	background-color: white;
-	text-align: center;
-	color: #a58123;
-	cursor: pointer;
-	border-radius: 10px;
-	width: 262px;
-	height: 262px;
-	position: relative;
+  background-color: white;
+  text-align: center;
+  color: #a58123;
+  cursor: pointer;
+  border-radius: 10px;
+  width: 262px;
+  height: 262px;
+  position: relative;
+  margin-left: 40px;
 }
 .applyImage {
-	position: absolute;
-	left: 25.87%;
-	right: 26.13%;
-	top: 16%;
-	bottom: 36%;
+  position: absolute;
+  left: 25.87%;
+  right: 26.13%;
+  top: 16%;
+  bottom: 36%;
 }
 
 .loginText {
-	left: 0%;
-	right: 0%;
-	top: 83.73%;
-	bottom: 2.93%;
-	position: absolute;
-	font-family: "Abel";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 30px;
-	line-height: 38px;
-	text-align: center;
+  left: 0%;
+  right: 0%;
+  top: 83.73%;
+  bottom: 2.93%;
+  position: absolute;
+  text-transform: uppercase;
+  font-family: "Abel";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 38px;
+  text-align: center;
 
-	color: #a58123;
+  color: #a58123;
 }
 
 @media (max-width: 600px) {
-	.buttons-container {
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
+  .buttons-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+  }
+  .home-header2 span {
+    margin-left: 0px;
+  }
 
-	.applyCon {
-		position: relative;
-		left: 0;
-		margin-bottom: 20px;
-		margin-right: 0px;
-	}
-	.loginCon {
-		position: relative;
-		left: 0;
-	}
-	.home-background {
-		height: 1090px;
-	}
+  .applyCon {
+    position: relative;
+    left: 0;
+    margin-bottom: 20px;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+  .loginCon {
+    position: relative;
+    left: 0;
+    margin-left: 0px;
+  }
+  .home-background {
+    height: 1090px;
+  }
 }
 .btn-d {
-	width: 300px;
-	margin: 10px;
+  width: 300px;
+  margin: 10px;
 }
 .btn-dc {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.ant-card-meta-description {
+  font-weight: bold !important;
+}
+
+.ant-table-content {
+  overflow: auto;
+}
+
+@media (max-width: 600px) {
+  .btn-d {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .btn-dc {
+    flex-direction: column;
+    padding: 0 10px;
+  }
 }

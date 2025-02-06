@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { Modal, Select, Table, Button } from "antd";
-import { ExclamationCircleOutlined, DownloadOutlined } from "@ant-design/icons";
+import { Modal, Select, Table, Button, Popconfirm } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 import {
   fetchApplications,
   updateApplicationById,
   getApplicationById,
   downloadMentorsApps,
   downloadMenteeApps,
+  deleteApplication,
 } from "../../utils/api";
-import MentorApplicationView from "../MentorApplicationView";
-import { APP_STATUS, NEW_APPLICATION_STATUS } from "../../utils/consts";
-import useAuth from "utils/hooks/useAuth";
-import ModalInput from "../ModalInput";
+import MentorApplicationView from "components/MentorApplicationView";
+import { getAppStatusOptions } from "utils/consts";
+import { useAuth } from "utils/hooks/useAuth";
+import ModalInput from "components/ModalInput";
 
-import { EditOutlined } from "@ant-design/icons";
-const { confirm } = Modal;
-const { Option } = Select;
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 function ApplicationOrganizer({ isMentor }) {
   const { onAuthStateChanged } = useAuth();
@@ -57,20 +55,13 @@ function ApplicationOrganizer({ isMentor }) {
             type="dropdown-single"
             title={""}
             onChange={async (e) => {
-              console.log(record, id);
               const dataa = {
                 application_state: e,
               };
               await updateApplicationById(dataa, id, isMentor);
               await updateApps();
             }}
-            options={[
-              NEW_APPLICATION_STATUS.PENDING,
-              NEW_APPLICATION_STATUS.APPROVED,
-              NEW_APPLICATION_STATUS.BUILDPROFILE,
-              NEW_APPLICATION_STATUS.COMPLETED,
-              NEW_APPLICATION_STATUS.REJECTED,
-            ]}
+            options={getAppStatusOptions()}
             value={record.application_state}
             handleClick={() => {}}
           />
@@ -96,6 +87,21 @@ function ApplicationOrganizer({ isMentor }) {
               setVisible(true);
             }}
           />
+          <Popconfirm
+            title={`Are you sure you want to delete?`}
+            onConfirm={async () => {
+              await deleteApplication(id, isMentor);
+              await updateApps();
+            }}
+            onCancel={() => {}}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined
+              className="delete-user-btn"
+              style={{ marginLeft: "10px" }}
+            />
+          </Popconfirm>
         </>
       ),
 
@@ -136,7 +142,7 @@ function ApplicationOrganizer({ isMentor }) {
           };
         }
       );
-      if (appState != "all") {
+      if (appState !== "all") {
         setApplicationData(newApplications);
         setFilterdData(filterApplications(newApplications, appState));
       } else {
@@ -149,7 +155,7 @@ function ApplicationOrganizer({ isMentor }) {
    * Filters application by application state and items stored in the corresponding named columns
    */
   function filterApplications(data, appStatee) {
-    if (appStatee == "all") {
+    if (appStatee === "all") {
       return data;
     } else {
       return data
@@ -180,6 +186,7 @@ function ApplicationOrganizer({ isMentor }) {
     >
       <div className="btn-dc">
         <Button
+          id="mentorapplications"
           className="btn-d"
           icon={<DownloadOutlined />}
           onClick={async () => {
@@ -189,6 +196,7 @@ function ApplicationOrganizer({ isMentor }) {
           Mentor Appications
         </Button>
         <Button
+          id="menteeapplications"
           className="btn-d"
           icon={<DownloadOutlined />}
           onClick={async () => {
@@ -198,11 +206,15 @@ function ApplicationOrganizer({ isMentor }) {
           Mentee Appications
         </Button>
       </div>
-      <div style={{ fontSize: 20, fontWeight: 400, padding: 10 }}>
+      <div
+        id="applicactionstate"
+        style={{ fontSize: 20, fontWeight: 400, padding: 10 }}
+      >
         Applications State
       </div>
 
       <Select
+        id="applicationssort"
         style={{ width: 160, height: 50, padding: 10 }}
         onChange={(value) => {
           setAppstate(value);
@@ -210,19 +222,19 @@ function ApplicationOrganizer({ isMentor }) {
         }}
         placeholder="Role"
         value={appState}
-      >
-        {" "}
-        {Object.keys(NEW_APPLICATION_STATUS).map((state) => {
-          return <Option value={state}>{state}</Option>;
-        })}
-        <Option value={"all"}>All</Option>
-      </Select>
+        options={[...getAppStatusOptions(), { value: "all", label: "All" }]}
+      />
       <div style={{ margin: 10 }}>
-        <Table columns={columns} dataSource={filterdData} />;
+        <Table
+          id="applicationstable"
+          columns={columns}
+          dataSource={filterdData}
+        />
+        ;
       </div>
       {selectedID && (
         <Modal
-          visible={visible}
+          open={visible}
           footer={null}
           className="app-modal"
           onCancel={() => handleModalClose()}
@@ -233,7 +245,7 @@ function ApplicationOrganizer({ isMentor }) {
             isNew={applicationData
               .filter((item) => item.id == selectedID)
               .hasOwnProperty("identify")}
-            visible={visible}
+            open={visible}
             appInfo={appInfo}
           />
         </Modal>

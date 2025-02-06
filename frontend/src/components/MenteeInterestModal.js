@@ -1,26 +1,22 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
+import { useTranslation } from "react-i18next";
 import ModalInput from "./ModalInput";
-import { SPECIALIZATIONS } from "../utils/consts";
-import { editMenteeProfile } from "../utils/api";
-import { getMenteeID } from "../utils/auth.service";
+import { editMenteeProfile } from "utils/api";
+import { useAuth } from "utils/hooks/useAuth";
 import { useHistory } from "react-router";
 import "./css/MenteeAppointments.scss";
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
 
 function MenteeProfileModal(props) {
   const history = useHistory();
+  const { profileId } = useAuth();
+  const { t } = useTranslation();
+  const options = useSelector((state) => state.options);
   const [modalVisible, setModalVisible] = useState(true);
   const [error, setError] = useState(false);
   const [specializations, setSpecializations] = useState([]);
-  const [specMasters, setSpecMasters] = useState([]);
-
-  useEffect(() => {
-    async function getMasters() {
-      setSpecMasters(await SPECIALIZATIONS());
-    }
-    getMasters();
-  }, []);
 
   function handleSpecializationsChange(e) {
     let specializationsSelected = [];
@@ -29,7 +25,7 @@ function MenteeProfileModal(props) {
   }
   const handleSaveEdits = () => {
     async function saveEdits(data) {
-      const menteeID = await getMenteeID();
+      const menteeID = profileId;
       await editMenteeProfile(data, menteeID);
       setModalVisible(false);
     }
@@ -41,15 +37,15 @@ function MenteeProfileModal(props) {
       specializations: specializations,
     };
     saveEdits(updatedProfile).then(() => {
-      history.go(0);
+      history.push(REDIRECTS[ACCOUNT_TYPE.MENTEE]);
     });
   };
 
   return (
     <span>
       <Modal
-        title="Please Update your interests"
-        visible={modalVisible}
+        title={t("menteeInterestsModal.title")}
+        open={modalVisible}
         onCancel={() => {}}
         style={{ overflow: "hidden" }}
         bodyStyle={{ height: "30vh !important" }}
@@ -57,9 +53,7 @@ function MenteeProfileModal(props) {
         footer={
           <div>
             {error && (
-              <b style={styles.alertToast}>
-                Please Choose one interest at least
-              </b>
+              <b style={styles.alertToast}>{t("menteeInterestsModal.error")}</b>
             )}
             <Button
               type="default"
@@ -67,7 +61,7 @@ function MenteeProfileModal(props) {
               style={styles.footer}
               onClick={handleSaveEdits}
             >
-              Save
+              {t("common.save")}
             </Button>
           </div>
         }
@@ -79,10 +73,10 @@ function MenteeProfileModal(props) {
               <ModalInput
                 style={styles.modalInput}
                 type="dropdown-multiple"
-                title="Areas of interest"
+                title={t("menteeInterestsModal.interestsTitle")}
                 index={99}
                 onChange={handleSpecializationsChange}
-                options={specMasters}
+                options={options.specializations}
                 value={specializations}
                 handleClick={() => {}}
               />
@@ -102,9 +96,11 @@ const styles = {
     paddingTop: 6,
   },
   footer: {
-    borderRadius: 13,
+    borderRadius: 6,
     marginRight: 15,
-    backgroundColor: "#E4BB4F",
+    // backgroundColor: "#E4BB4F",
+    color: "#fff",
+    backgroundColor: "#800020",
   },
   alertToast: {
     color: "#FF0000",

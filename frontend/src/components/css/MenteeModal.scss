@@ -6,6 +6,7 @@
 
 .appointment-info-modal {
   width: 30% !important;
+  top: 25px;
 }
 
 .modal-container {
@@ -266,22 +267,6 @@
   font-weight: bold;
 }
 
-.ant-picker-calendar-date-value:hover,
-.ant-picker-calendar-date-value:active,
-.ant-picker-calendar-date-value:focus,
-.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
-  color: white;
-  background: $theme-orange;
-}
-
-.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
-  border-color: $theme-orange;
-}
-
-.ant-switch-checked {
-  background: $theme-orange;
-}
-
 .no-appointments-section {
   display: flex;
   flex-direction: column;
@@ -296,8 +281,6 @@
 }
 
 .contact-me-submit-button {
-  background-color: #203150;
-  color: white;
   border: none;
   padding: 5px 27px;
   font-size: 12px;
@@ -335,5 +318,10 @@
   }
   .flex {
     flex-direction: column;
+  }
+}
+.selected-slot {
+  button {
+    border: 1px solid;
   }
 }

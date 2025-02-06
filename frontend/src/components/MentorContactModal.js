@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { Modal, Radio, Space, Form, Select, Input, Button } from "antd";
 import { sendMenteeMentorEmail } from "../utils/api";
-import MenteeButton from "./MenteeButton";
 import thankYouImage from "../resources/thankYou.png";
 
-import "./css/AntDesign.scss";
 import "./css/Modal.scss";
 import "./css/MenteeModal.scss";
+import { useTranslation } from "react-i18next";
 
 function MentorContactModal({
   mentorId,
@@ -14,20 +13,18 @@ function MentorContactModal({
   mentorName,
   mentorSpecializations,
 }) {
-  const [modalVisible, setModalVisible] = useState(false);
+  const { t } = useTranslation();
+  const [openModal, setOpenModal] = useState(false);
   const [message, setMessage] = useState("");
-  const [responseEmail, setResponseEmail] = useState("");
   const [interestAreas, setInterestAreas] = useState([]);
-  const [communicationMethod, setCommunicationMethod] = useState("");
   const [error, setError] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
 
   const closeModal = () => {
-    setModalVisible(false);
+    setOpenModal(false);
     setMessage(null);
     setError(false);
     setInterestAreas([]);
-    setCommunicationMethod(null);
   };
 
   const addInterestArea = (e) => {
@@ -39,19 +36,18 @@ function MentorContactModal({
 
   return (
     <span>
-      <MenteeButton
-        content={<b>Contact Me</b>}
-        borderOnClick
+      <Button
+        type="primary"
         onClick={() => {
-          setModalVisible(true);
+          setOpenModal(true);
         }}
-        width="120px"
-        style={{ marginRight: "6px" }}
-      />
+        style={{ width: "120px" }}
+      >
+        {t("common.contactMe")}
+      </Button>
       <Modal
         forceRender
-        title="        " // Uses Unicode spaces to get desired heading
-        visible={modalVisible}
+        open={openModal}
         onCancel={() => closeModal()}
         className="contact-me-modal"
         style={{ overflow: "hidden" }}
@@ -64,9 +60,7 @@ function MentorContactModal({
             const res = await sendMenteeMentorEmail(
               mentorId,
               menteeId,
-              responseEmail,
               interestAreas,
-              communicationMethod,
               message
             );
             if (!res) {
@@ -79,19 +73,22 @@ function MentorContactModal({
         >
           <Form.Item>
             <h1 className="modal-mentee-appointment-contact-header">
-              Reach Out to {mentorName}
+              {t("mentorContactModal.reachOutTo", { mentorName: mentorName })}
             </h1>
           </Form.Item>
           <Form.Item>
             <h3 className="modal-mentee-appointment-contact-description">
-              Your name and email will be sent to this mentor
+              {t("mentorContactModal.basicInfoNotice")}
             </h3>
           </Form.Item>
           <Form.Item
-            label="Choose Interest Areas"
             name="Choose Interest Areas"
+            label={t("mentorContactModal.areaInterest")}
             rules={[
-              { required: true, message: "Please select an interest area!" },
+              {
+                required: true,
+                message: t("mentorContactModal.areaInterstValidate"),
+              },
             ]}
           >
             <Select
@@ -108,38 +105,19 @@ function MentorContactModal({
             </Select>
           </Form.Item>
           <Form.Item
-            label="Preferred communication method"
-            name="What is your preferred communication method?"
+            label={t("mentorContactModal.introPrompt")}
+            name="Custom Message"
             style={{ paddingTop: "12px" }}
             rules={[
               {
                 required: true,
-                message: "Please select communication method!",
+                message: t("mentorContactModal.introPromptValidate"),
               },
-            ]}
-          >
-            <Radio.Group
-              onChange={(e) => setCommunicationMethod(e.target.value)}
-            >
-              <Space direction="vertical">
-                <Radio value={"Email"}>Email</Radio>
-                <Radio value={"Phone"}>Phone</Radio>
-                <Radio value={"WhatsApp"}>WhatsApp</Radio>
-                <Radio value={"Other"}>Other</Radio>
-              </Space>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item
-            label="Briefly introduce yourself and what you are looking to gain from a Mentor."
-            name="Custom Message"
-            style={{ paddingTop: "12px" }}
-            rules={[
-              { required: true, message: "Please write an introduction!" },
             ]}
           >
             <div className="message-modal-container">
               <Input.TextArea
-                placeholder="Hi Jim! I’m a junior at Oxford University studying Economics. I saw that you’re knowledgeable in Personal Finance, which is something I’m interested in, and I’d love to learn more about your experiences. Thank you for your time!"
+                placeholder={t("mentorContactModal.introExample")}
                 onChange={(e) => setMessage(e.target.value)}
                 value={message}
                 handleClick={() => {}}
@@ -155,14 +133,14 @@ function MentorContactModal({
               htmlType="submit"
               className="contact-me-submit-button"
             >
-              Submit
+              {t("common.submit")}
             </Button>
           </Form.Item>
         </Form>
       </Modal>
       <Modal
         forceRender
-        visible={confirmationModal}
+        open={confirmationModal}
         onCancel={() => setConfirmationModal(false)}
         className="modal-mentee-confirmation-modal"
         style={{ overflow: "hidden" }}
@@ -176,11 +154,10 @@ function MentorContactModal({
           <div className="modal-mentee-confirmation-modal-text">
             <div className="modal-mentee-confirmation-modal-title">
               {" "}
-              Thank you!{" "}
+              {t("mentorContactModal.thankYou")}{" "}
             </div>
             <div className="modal-mentee-confirmation-modal-body">
-              Your mentor will be getting back to you soon! Feel free to browse
-              the mentor page and reach out to other mentors.
+              {t("mentorContactModal.confirmationText")}
             </div>
           </div>
         </div>

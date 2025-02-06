@@ -1,6 +1,7 @@
 import axios from "axios";
-import firebase from "firebase";
+import fireauth from "./fireauth";
 import { AUTH_URL, REGISTRATION_STAGE, ACCOUNT_TYPE } from "utils/consts";
+import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
@@ -34,7 +35,7 @@ export const register = async (email, password, role) =>
   }).then(async (data) => {
     if (data && data.success) {
       const result = data.result;
-      await firebase
+      await fireauth
         .auth()
         .signInWithCustomToken(result.token)
         .then((userCredential) => {})
@@ -47,7 +48,7 @@ export const newRegister = async (data) =>
   await post("/newRegister", data).then(async (data) => {
     if (data && data.success) {
       const result = data.result;
-      await firebase
+      await fireauth
         .auth()
         .signInWithCustomToken(result.token)
         .then((userCredential) => {})
@@ -59,40 +60,54 @@ export const newRegister = async (data) =>
 export const sendVerificationEmail = (email) => {
   return post("/verifyEmail", {
     email,
+    preferred_language: i18n.language,
   });
 };
 
 export const sendPasswordResetEmail = (email) => {
-  return post("/forgotPassword", { email });
+  return post("/forgotPassword", { email, preferred_language: i18n.language });
 };
 
-export const login = async (email, password, role) =>
+export const login = async (email, password, role, path = undefined) =>
   await post("/login", {
     email: email && email.trim(),
     password: password && password.trim(),
     role: String(role) && String(role).trim(),
+    path: path,
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
-      await firebase
+      localStorage.setItem("role", role);
+      if (path && role == ACCOUNT_TYPE.HUB) {
+        localStorage.setItem("login_path", path);
+      }
+      await fireauth
         .auth()
         .signInWithCustomToken(data.result.token)
-        .catch((error) => {});
+        .catch((error) => {
+          console.error(error);
+        });
     }
 
     return data;
   });
 
-export const logout = async () =>
-  await firebase
+export const logout = async () => {
+  localStorage.removeItem("role");
+  localStorage.removeItem("login_path");
+  localStorage.removeItem("support_user_id");
+  localStorage.removeItem("profileId");
+  localStorage.removeItem("direct_path");
+  await fireauth
     .auth()
     .signOut()
     .catch((error) => {
-      const code = error.code;
       const message = error.message;
 
       console.error(message);
       return false;
     });
+  localStorage.removeItem("login_path");
+};
 
 export const refreshToken = async () => {
   // need initial token from registration
@@ -102,10 +117,10 @@ export const refreshToken = async () => {
       .then(async (idToken) => {
         const token = await post("/refreshToken", {
           token: idToken,
-          role: await getRole(),
+          role: getRole(),
         }).then((data) => data && data.result.token);
 
-        await firebase.auth().signInWithCustomToken(token);
+        await fireauth.auth().signInWithCustomToken(token);
 
         return token;
       });
@@ -113,7 +128,7 @@ export const refreshToken = async () => {
 };
 
 export const getCurrentUser = () => {
-  return firebase.auth().currentUser;
+  return fireauth.auth().currentUser;
 };
 
 export const isUserAdmin = async () => {
@@ -151,52 +166,15 @@ export const isUserPartner = async () => {
   } else return false;
 };
 
-export const getRole = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then(
-      (idTokenResult) => idTokenResult.claims.role
-    );
-  }
+export const getRole = () => {
+  return localStorage.getItem("role");
+};
+export const getLoginPath = () => {
+  return localStorage.getItem("login_path");
 };
 
-export const getMentorID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role == ACCOUNT_TYPE.MENTOR) {
-        console.log("yes role", idTokenResult.claims);
-        return idTokenResult.claims.profileId;
-      }
-    });
-  }
-};
-
-export const getMenteeID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role == ACCOUNT_TYPE.MENTEE) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  }
-};
-
-export const getAdminID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role == ACCOUNT_TYPE.ADMIN) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  } else return false;
-};
-export const getPartnerID = async () => {
-  if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
-      if (idTokenResult.claims.role == ACCOUNT_TYPE.PARTNER) {
-        return idTokenResult.claims.profileId;
-      }
-    });
-  } else return false;
+export const getProfileId = () => {
+  return localStorage.getItem("profileId");
 };
 
 export const isLoggedIn = () => {
@@ -206,15 +184,14 @@ export const isLoggedIn = () => {
 export const isUserVerified = async () => {
   if (isLoggedIn()) {
     return await getIdTokenResult().then((idTokenResult) => {
-      console.log(idTokenResult.claims);
       return idTokenResult.claims.email_verified;
     });
   }
 };
 
-export const getUserEmail = async () => {
+export const getUserEmail = () => {
   if (isLoggedIn()) {
-    return await getIdTokenResult().then((idTokenResult) => {
+    return getIdTokenResult().then((idTokenResult) => {
       return idTokenResult.claims.email;
     });
   }
@@ -225,6 +202,8 @@ export const getUserIdToken = async () => {
     return await getIdToken().then((idToken) => {
       return idToken;
     });
+  } else {
+    return null;
   }
 };
 

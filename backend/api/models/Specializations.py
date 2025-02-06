@@ -5,9 +5,10 @@ from mongoengine import *
 
 
 class Specializations(Document, Mixin):
-    """Model for mentor application."""
+    """Model for Specializations."""
 
     name = StringField(required=True)
+    translations = DictField()
     updated_at = DateTimeField(required=True)
 
     def __repr__(self):

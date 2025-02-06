@@ -1,146 +1,138 @@
-.page-one-column-container input[type="text"],
-textarea {
-	background-color: #fcf6e8 !important;
-}
+// .page-one-column-container input[type="text"],
+// textarea {
+//   background-color: #fcf6e8 !important;
+// }
+
 .background {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	border-radius: 10px;
-	border: 2px solid white;
-	padding: 10px;
-	background-color: white;
-	border-radius: 10px;
-	height: 3600px;
-	position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  border: 2px solid white;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+  height: 3600px;
+  position: relative;
 }
 .background2 {
-	height: 1800px !important;
+  height: 1800px !important;
 }
 
 .welcome-page {
-	position: absolute;
-	left: 46px;
-	top: 24px;
-	height: 44px;
-	font-family: "Roboto";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 22px;
-	line-height: 22px;
-	/* or 110% */
-	color: #e4bb4f;
+  position: absolute;
+  left: 46px;
+  top: 24px;
+  height: 44px;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 22px;
+  /* or 110% */
+  color: #e4bb4f;
 }
 .para-1 {
-	position: absolute;
-	height: 858px;
-	left: 5%;
-	width: 90%;
-	top: 69px;
-	font-family: "Roboto";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 20px;
-	line-height: 22px;
-	/* or 110% */
+  position: absolute;
+  height: 858px;
+  left: 5%;
+  width: 90%;
+  top: 69px;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 22px;
+  /* or 110% */
 
-	/* Character/Title .85 */
+  /* Character/Title .85 */
 
-	color: rgba(0, 0, 0, 0.85);
+  color: rgba(0, 0, 0, 0.85);
 }
 .page-one-column-container {
-	width: 90%;
-	left: 5%;
-	top: 217px;
-	position: absolute;
+  width: 90%;
+  left: 5%;
+  top: 217px;
+  position: absolute;
 }
 .page-one-column-container form {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: flex-start;
-	width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
 }
 .page-one-column-container form > div {
-	font-family: "Roboto";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 22px;
-	line-height: 22px;
-	/* or 110% */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 22px;
+  /* or 110% */
 
-	/* Character/Title .85 */
+  /* Character/Title .85 */
 
-	color: rgba(0, 0, 0, 0.85);
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .donation-question {
-	overflow-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .donation-question {
-	overflow-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .input-form {
-	font-size: 1.4rem;
-	width: 761px;
-	margin: 54px 0;
-	overflow: auto;
+  font-size: 1.4rem;
+  width: 761px;
+  margin: 54px 0;
+  overflow: auto;
 }
 
-.ant-steps-item-wait
-	.ant-steps-item-icon
-	> .ant-steps-icon
-	.ant-steps-icon-dot {
-	background: #ffecbd;
-}
-
-.ant-steps-item-finish
-	.ant-steps-item-icon
-	> .ant-steps-icon
-	.ant-steps-icon-dot {
-	background-color: #ffecbd;
-}
-
-.ant-steps ant-steps-horizontal ant-steps-label-vertical ant-steps-dot {
-	display: flex;
-	justify-content: flex-end;
-}
 .submit-button {
-	position: absolute;
-	left: 67.5%;
-	right: 27.43%;
-	bottom: 2.98%;
+  position: absolute;
+  left: 67.5%;
+  right: 27.43%;
+  bottom: 2.98%;
 
-	font-family: "Roboto";
-	font-style: normal;
-	font-weight: 400;
-	font-size: 23px;
-	line-height: 27px;
-	/* identical to box height */
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 23px;
+  line-height: 27px;
+  /* identical to box height */
 
-	color: #ffffff;
+  color: #ffffff;
 }
 .sbtn {
-	bottom: 7% !important;
+  bottom: 7% !important;
 }
 
 // mobile
 @media (max-width: 800px) {
-	.page-one-column-container {
-		flex-direction: column;
-	}
+  .page-one-column-container {
+    flex-direction: column;
+    top: 330px;
+  }
 
-	.page-one-column-container form > div {
-		width: 100%;
-	}
+  .page-one-column-container form > div {
+    width: 100%;
+  }
+  .input-form {
+    margin: 30px 0px;
+  }
+  .submit-button {
+    left: auto;
+    right: 25%;
+    bottom: 1%;
+  }
 }
 .error {
-	color: red;
-	text-align: center;
-	font-size: medium;
-	font-weight: 400;
-	opacity: 70%;
-	font-family: Arial, Helvetica, sans-serif;
+  color: red;
+  text-align: center;
+  font-size: medium;
+  font-weight: 400;
+  opacity: 70%;
+  font-family: Arial, Helvetica, sans-serif;
 }

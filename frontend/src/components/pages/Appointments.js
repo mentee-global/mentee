@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { Button, Col, Row, Result, Switch, Badge, Checkbox } from "antd";
+import {
+  Form,
+  Button,
+  Result,
+  Checkbox,
+  Spin,
+  theme,
+  Tabs,
+  Card,
+  Typography,
+  Divider,
+  Switch,
+  Space,
+} from "antd";
 import {
   ClockCircleOutlined,
   InfoCircleFilled,
@@ -14,52 +26,58 @@ import {
   acceptAppointment,
   fetchAppointmentsByMentorId,
   deleteAppointment,
-  fetchMenteeByID,
-  editMentorProfile,
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
-import { getIdTokenResult, getMenteeID, getMentorID } from "utils/auth.service";
 import AppointmentInfo from "../AppointmentInfo";
 import MenteeButton from "../MenteeButton.js";
-import useAuth from "utils/hooks/useAuth";
-import { fetchUser } from "features/userSlice";
+import { useAuth } from "utils/hooks/useAuth";
+import { updateAndFetchUser } from "features/userSlice";
+import { useTranslation } from "react-i18next";
+import { getTranslatedOptions } from "utils/translations";
+import { useMediaQuery } from "react-responsive";
+import i18n from "utils/i18n";
+import AddAppointmentModal from "components/AddAppointmentModal";
 
-const Tabs = Object.freeze({
-  upcoming: {
-    title: "All Upcoming",
-    key: "upcoming",
-  },
-  pending: {
-    title: "All Pending",
-    key: "pending",
-  },
-  past: {
-    title: "All Past",
-    key: "past",
-  },
-  availability: {
-    title: "Availability",
-    key: "availability",
-  },
+const TabKeys = Object.freeze({
+  upcoming: "upcoming",
+  past: "past",
+  availability: "availability",
 });
+
 function Appointments() {
-  const [currentTab, setCurrentTab] = useState(Tabs.upcoming);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const {
+    token: { colorPrimary },
+  } = theme.useToken();
+  const { t } = useTranslation();
+  const user = useSelector((state) => state.user.user);
+  const options = useSelector((state) => state.options);
+  const [isLoading, setIsLoading] = useState(true);
   const [appointments, setAppointments] = useState({});
   const [appointmentClick, setAppointmentClick] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const user = useSelector((state) => state.user.user);
   const [modalAppointment, setModalAppointment] = useState({});
   const { onAuthStateChanged, role, profileId } = useAuth();
-  const [pendingAppointmentCount, setPendingAppointmentCount] = useState(0);
   const [takeAppoinment, setTakeappoinment] = useState(
     user?.taking_appointments
   );
+  const [manualModalvisible, setManualModalvisible] = useState(false);
+  const [currentTab, setCurrentTab] = useState("upcoming");
   const dispatch = useDispatch();
+
+  const tabLabels = {
+    upcoming: t("mentorAppointmentPage.upcoming"),
+    past: t("mentorAppointmentPage.past"),
+    availability: t("mentorAppointmentPage.availability"),
+  };
 
   useEffect(() => {
     async function getAppointments() {
-      await getIdTokenResult();
-      const mentorID = await getMentorID();
+      if (!profileId) return;
+
+      setIsLoading(true);
+
+      const mentorID = profileId;
       const appointmentsResponse = await fetchAppointmentsByMentorId(mentorID);
 
       const formattedAppointments = formatAppointments(
@@ -69,31 +87,22 @@ function Appointments() {
       if (formattedAppointments) {
         setAppointments(formattedAppointments);
         if (formattedAppointments["pending"][0]) {
-          setPendingAppointmentCount(
-            formattedAppointments["pending"][0]["appointments"].length
-          );
         }
       }
+      setIsLoading(false);
     }
 
     onAuthStateChanged(getAppointments);
-  }, [appointmentClick]);
+  }, [appointmentClick, profileId, onAuthStateChanged, i18n.language]);
 
   useEffect(() => {
-    async function addTakingAppointments() {
-      if (user && user.taking_appointments === undefined) {
-        const new_user = { ...user, taking_appointments: false };
-        await editMentorProfile(new_user, profileId);
-        dispatch(fetchUser({ id: profileId, role }));
-      }
-    }
-    addTakingAppointments();
+    if (!user) return;
+    setTakeappoinment(user.taking_appointments);
   }, [user]);
 
   async function handleTakeAppointments(e) {
-    const new_user = { taking_appointments: e };
-    await editMentorProfile(new_user, profileId);
-    dispatch(fetchUser({ id: profileId, role }));
+    const data = { taking_appointments: e };
+    dispatch(updateAndFetchUser({ data, id: profileId, role }));
   }
 
   async function handleAppointmentClick(id, didAccept) {
@@ -105,66 +114,22 @@ function Appointments() {
     setAppointmentClick(!appointmentClick);
     setModalVisible(false);
   }
-  const getButtonStyle = (tab) => {
-    const active = "#E4BB4F";
-    const inactive = "#FFECBD";
-    return {
-      borderRadius: 13,
-      marginRight: 15,
-      borderWidth: 0,
-      backgroundColor: currentTab === tab ? active : inactive,
-    };
-  };
-  const getButtonTextStyle = (tab) => {
-    const active = "#FFF7E2";
-    const inactive = "#A58123";
-    return {
-      fontWeight: 700,
-      color: currentTab === tab ? active : inactive,
-    };
-  };
-  const Tab = (props) => {
-    if (props.text == "All Pending") {
-      return (
-        <Button
-          type="default"
-          shape="round"
-          style={getButtonStyle(props.tab)}
-          onClick={() => setCurrentTab(props.tab)}
-        >
-          <Badge count={pendingAppointmentCount ?? 0} size="small">
-            <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-          </Badge>
-        </Button>
-      );
-    } else {
-      return (
-        <Button
-          type="default"
-          shape="round"
-          style={getButtonStyle(props.tab)}
-          onClick={() => setCurrentTab(props.tab)}
-        >
-          <div style={getButtonTextStyle(props.tab)}>{props.text}</div>
-        </Button>
-      );
-    }
-  };
+
   const getAppointmentButton = (tab, info) => {
-    if (tab === Tabs.upcoming) {
+    if (tab === TabKeys.upcoming) {
       return (
         <Button
           className="appointment-more-details"
           icon={
             <InfoCircleFilled
-              style={{ ...styles.appointment_buttons, color: "#A58123" }}
+              style={{ ...styles.appointmentButtons, color: colorPrimary }}
             />
           }
           type="text"
           onClick={() => ViewAppointmentDetails(info)}
         ></Button>
       );
-    } else if (tab === Tabs.pending) {
+    } else if (tab === TabKeys.pending) {
       return (
         <MenteeButton
           content={<b>Review</b>}
@@ -183,7 +148,9 @@ function Appointments() {
           <div className="appointment-time">
             <ClockCircleOutlined /> {info.time}
           </div>
-          <div className="appointment-description">{info.topic}</div>
+          <div className="appointment-description">
+            {getTranslatedOptions(info.topic, options.specializations)}
+          </div>
         </div>
         {getAppointmentButton(currentTab, info)}
       </div>
@@ -199,41 +166,35 @@ function Appointments() {
   };
   const AvailabilityTab = ({ data }) => {
     return (
-      <div>
-        <div className="availability-container"></div>
-        <div
-          className="availability-container"
-          style={{
-            opacity: user?.taking_appointments ? 1 : 0.25,
-            pointerEvents: user?.taking_appointments ? "initial" : "none",
-          }}
-        >
-          <div className="calendar-header">
-            Set available hours by specific date
-          </div>
-          <div className="calendar-container">
-            <AvailabilityCalendar appointmentdata={data} />
-          </div>
-        </div>
-      </div>
+      <Card>
+        <Typography.Paragraph>
+          <Space>
+            {t("mentorAppointmentPage.takingAppointments")}
+            <Switch
+              onClick={() => {
+                handleTakeAppointments(!takeAppoinment);
+                setTakeappoinment((state) => !state);
+              }}
+              checked={takeAppoinment}
+            />
+          </Space>
+        </Typography.Paragraph>
+        <Typography.Title level={5}>{t("availability.title")}</Typography.Title>
+        <Divider />
+        <AvailabilityCalendar appointmentdata={data} />
+      </Card>
     );
   };
   const Appointments = ({ data }) => {
-    if (!data || !data.length) {
-      return (
-        <div className="empty-appointments-list appointments-background">
-          <Result
-            icon={<SmileOutlined style={{ color: "#A58123" }} />}
-            title="There are currently no appointments"
-          />
-        </div>
-      );
-    }
     return (
-      <div>
-        <b className="appointment-tabs-title">{currentTab.title}</b>
-        <div className="appointments-background">
-          {data.map((appointmentsObject, index) => (
+      <Card>
+        {!data?.length ? (
+          <Result
+            icon={<SmileOutlined style={{ color: colorPrimary }} />}
+            title={t("mentorAppointmentPage.noAppointments")}
+          />
+        ) : (
+          data.map((appointmentsObject, index) => (
             <div key={index} className="appointments-date-block">
               <div className="appointments-date-text-block">
                 <h1 className="appointments-date-number">
@@ -248,59 +209,75 @@ function Appointments() {
                 ))}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          ))
+        )}
+      </Card>
     );
   };
-  function renderTab(tab) {
-    switch (tab) {
-      case Tabs.upcoming: // Fall through
-      case Tabs.pending: // Fall through
-      case Tabs.past:
-        return <Appointments data={appointments[currentTab.key]} />;
-      case Tabs.availability:
-        return <AvailabilityTab data={appointments["upcoming"]} />;
-      default:
-        return <div />;
-    }
-  }
+
+  const tabItems = [
+    {
+      key: TabKeys.upcoming,
+      label: tabLabels.upcoming,
+      children: <Appointments data={appointments[TabKeys.upcoming]} />,
+    },
+    {
+      key: TabKeys.past,
+      label: tabLabels.past,
+      children: <Appointments data={appointments[TabKeys.past]} />,
+    },
+    {
+      key: TabKeys.availability,
+      label: tabLabels.availability,
+      children: <AvailabilityTab data={appointments[TabKeys.upcoming]} />,
+    },
+  ];
 
   return (
     <div>
       <AppointmentInfo
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
-        needButtons={currentTab == Tabs.pending}
+        current_tab={currentTab}
         handleAppointmentClick={handleAppointmentClick}
         modalAppointment={modalAppointment}
       />
-
-      <Row>
-        <Col span={18} className="appointments-column">
-          <div className="appointments-welcome-box">
-            <div className="appointments-welcome-text">
-              Welcome, {user?.name}
-            </div>
-            <Checkbox
-              className="modal-availability-checkbox-text t-a-c-b"
-              onChange={(e) => {
-                setTakeappoinment(e.target.checked);
-                handleTakeAppointments(e.target.checked);
+      <div className="appointments-column">
+        <div className="appointments-welcome-box">
+          <Typography.Title level={2}>
+            {t("mentorAppointmentPage.welcome", { name: user?.name })}
+          </Typography.Title>
+          <div
+            style={{
+              marginTop: "12px",
+            }}
+          >
+            <Button
+              style={{ marginBottom: "10px" }}
+              type="primary"
+              onClick={() => {
+                setManualModalvisible(true);
               }}
-              checked={takeAppoinment}
             >
-              taking appointments
-            </Checkbox>
-            <div className="appointments-tabs">
-              {Object.values(Tabs).map((tab, index) => (
-                <Tab tab={tab} text={tab.title} key={index} />
-              ))}
-            </div>
+              {t("mentorAppointmentPage.addAppointment")}
+            </Button>
+            <AddAppointmentModal
+              open={manualModalvisible}
+              appointmentClick={appointmentClick}
+              setAppointmentClick={setAppointmentClick}
+              setOpen={setManualModalvisible}
+            />
+            <Spin spinning={isLoading}>
+              <Tabs
+                items={tabItems}
+                rootClassName="appointments-tabs-view"
+                defaultActiveKey="upcoming"
+                onChange={(tab) => setCurrentTab(tab)}
+              />
+            </Spin>
           </div>
-          {renderTab(currentTab)}
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 }
@@ -308,7 +285,7 @@ const styles = {
   calendar: {
     borderLeft: "3px solid #E5E5E5",
   },
-  appointment_buttons: {
+  appointmentButtons: {
     fontSize: "24px",
   },
 };

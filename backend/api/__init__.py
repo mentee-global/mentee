@@ -5,10 +5,9 @@ import firebase_admin
 from flask import Flask, request
 from flask_cors import CORS
 from flask_migrate import Migrate
-from flask_mongoengine import MongoEngine
 from flask_socketio import SocketIO
 
-from api.core import all_exception_handler, logger
+from api.core import all_exception_handler
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -42,6 +41,7 @@ def create_app():
     formatter = RequestFormatter(
         "%(asctime)s %(remote_addr)s: requested %(url)s: %(levelname)s in [%(module)s: %(lineno)d]: %(message)s"
     )
+    app.config["LOG_FILE"] = "app.log"
     if app.config.get("LOG_FILE"):
         fh = logging.FileHandler(app.config.get("LOG_FILE"))
         fh.setLevel(logging.DEBUG)
@@ -65,7 +65,11 @@ def create_app():
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-
+    # app.config["MONGODB_SETTINGS"] = {
+    #     "db": "mentee",
+    #     "host": "localhost",
+    #     "port": 27017,
+    # }
     # firebase
     if not firebase_admin._apps:
         firebase_admin.initialize_app()
@@ -93,6 +97,10 @@ def create_app():
         training,
         admin_notifications,
         masters,
+        translation,
+        events,
+        announcement,
+        meeting,
     )
 
     # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
@@ -112,7 +120,12 @@ def create_app():
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")
     app.register_blueprint(messages.messages, url_prefix="/api/messages")
     app.register_blueprint(notifications.notifications, url_prefix="/api/notifications")
+    app.register_blueprint(meeting.meeting, url_prefix="/api/meeting")
     app.register_blueprint(masters.masters, url_prefix="/api/masters")
+    app.register_blueprint(translation.translation, url_prefix="/api/translation")
+
+    app.register_blueprint(events.event, url_prefix="/api")
+    app.register_blueprint(announcement.announcement, url_prefix="/api")
 
     app.register_error_handler(Exception, all_exception_handler)
 

@@ -1,28 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MentorImage from "resources/mentor-login-logo.png";
 import MenteeLogin from "resources/mentee-login-logo.png";
 import AdminImage from "resources/admin-login-logo.png";
+import loginimg from "resources/login.png";
 import PartnerImage from "resources/partner.png";
 import "components/css/SelectLogin.scss";
-import { isLoggedIn } from "utils/auth.service";
+import { useTranslation } from "react-i18next";
 
 function SelectLogin({
   displaySelect,
   handleSelect,
   handleDisplayImages,
   isAdmin,
+  isGuest,
 }) {
-  console.log("l", isLoggedIn());
+  const { t } = useTranslation();
+
   return (
     <div className="select-login-page">
       <div
         className="select-login-header"
         style={{ visibility: displaySelect ? "visible" : "hidden" }}
       >
-        Please click on your role to continue on.
+        {t("login.clickLoginPrompt")}
       </div>
 
-      {!isAdmin ? (
+      {!isAdmin && !isGuest ? (
         <div
           className="select-login-container"
           style={{ visibility: displaySelect ? "visible" : "hidden" }}
@@ -35,10 +38,10 @@ function SelectLogin({
           >
             <img
               src={MenteeLogin}
-              alt="Mentee Image"
+              alt={t("common.mentee")}
               className="select-image mentee-image"
             />
-            <div className="select-text">Mentee</div>
+            <div className="select-text">{t("common.mentee")}</div>
           </div>
           <div
             className="select-login-elem"
@@ -48,10 +51,10 @@ function SelectLogin({
           >
             <img
               src={MentorImage}
-              alt="Mentor Image"
+              alt={t("common.mentor")}
               className="mentor-image"
             />
-            <div className="select-text">Mentor</div>
+            <div className="select-text">{t("common.mentor")}</div>
           </div>
           <div
             className="select-login-elem"
@@ -61,11 +64,11 @@ function SelectLogin({
           >
             <img
               src={PartnerImage}
-              alt="Partner Image"
+              alt={t("common.partner")}
               className="select-image partner-image"
               onLoad={handleDisplayImages}
             />
-            <div className="select-text">Partner</div>
+            <div className="select-text">{t("common.partner")}</div>
           </div>
         </div>
       ) : (
@@ -76,16 +79,17 @@ function SelectLogin({
           <div
             className="select-login-elem"
             onClick={() => {
-              handleSelect("admin");
+              isAdmin ? handleSelect("admin") : handleSelect("guest");
             }}
           >
             <img
-              src={AdminImage}
-              alt="Admin Image"
+              src={isAdmin ? AdminImage : loginimg}
+              alt={t("common.admin")}
               className="select-image partner-image"
               onLoad={handleDisplayImages}
+              style={{ left: "21.53%" }}
             />
-            <div className="select-text">Admin</div>
+            <div className="select-text"> {isAdmin ? "Admin" : "Login"}</div>
           </div>
         </div>
       )}

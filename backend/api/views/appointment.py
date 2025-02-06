@@ -1,8 +1,7 @@
-from datetime import datetime
-import json
-from flask import Blueprint, request, jsonify
+from datetime import datetime, timezone, timedelta
+from flask import Blueprint, request
 from api.models import AppointmentRequest, Availability, MentorProfile, MenteeProfile
-from api.core import create_response, serialize_list, logger
+from api.core import create_response, logger
 from api.utils.request_utils import (
     ApppointmentForm,
     is_invalid_form,
@@ -12,18 +11,21 @@ from api.utils.request_utils import (
 from api.utils.constants import (
     MENTOR_APPT_TEMPLATE,
     MENTEE_APPT_TEMPLATE,
+    SEND_INVITE_TEMPLATE,
     APPT_TIME_FORMAT,
     Account,
     APPT_STATUS,
+    TRANSLATIONS,
 )
-from api.utils.require_auth import admin_only
+from api.utils.require_auth import admin_only, all_users, mentor_only
+import re
 
 appointment = Blueprint("appointment", __name__)
 
+
 # GET request for appointments by account id
-
-
 @appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
+@all_users
 def get_requests_by_id(account_type, id):
     account = None
     try:
@@ -85,7 +87,71 @@ def get_requests_by_id(account_type, id):
 
 
 # POST request for Mentee Appointment
+@appointment.route("/send_invite_email", methods=["POST"])
+@all_users
+def send_invite_email():
+    data = request.get_json()
+    mentee_id = data.get("recipient_id")
+    mentor_id = data.get("sener_id")
+    availabes_in_future = data.get("availabes_in_future")
+    try:
+        mentee = MenteeProfile.objects.get(id=mentee_id)
+        mentor = MentorProfile.objects.get(id=mentor_id)
+    except:
+        msg = "No mentee found with that id"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+    avail_htmls = []
+    for avail_item in availabes_in_future:
+        start_date_object = datetime.strptime(
+            avail_item["start_time"]["$date"], "%Y-%m-%dT%H:%M:%S%z"
+        )
+        end_date_object = datetime.strptime(
+            avail_item["end_time"]["$date"], "%Y-%m-%dT%H:%M:%S%z"
+        )
+        start_time = start_date_object.strftime("%m-%d-%Y %I:%M%p %Z")
+        end_time = end_date_object.strftime("%I:%M%p %Z")
+        avail_htmls.append(start_time + " ~ " + end_time)
+
+        if mentee.timezone:
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                avail_htmls.append(
+                    start_date_object.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
+                    + " ~ "
+                    + start_date_object.astimezone(offset).strftime(
+                        "%m-%d-%Y %I:%M%p %Z"
+                    )
+                )
+
+    if len(avail_htmls) > 0 and mentee.email_notifications:
+        res, res_msg = (
+            send_email(
+                recipient=mentee.email,
+                template_id=SEND_INVITE_TEMPLATE,
+                data={
+                    "future_availability": avail_htmls,
+                    "name": mentor.name,
+                    mentee.preferred_language: True,
+                    "subject": TRANSLATIONS[mentee.preferred_language]["send_invite"],
+                },
+            ),
+        )
+        if not res:
+            msg = "Failed to send mentee email " + res_msg
+            logger.info(msg)
+
+    return create_response(status=200, message="send mail successfully")
+
+
+# POST request for Mentee Appointment
 @appointment.route("/", methods=["POST"])
+@all_users
 def create_appointment():
     data = request.get_json()
     validate_data = ApppointmentForm.from_json(data)
@@ -127,20 +193,66 @@ def create_appointment():
 
     date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
+    if mentee.timezone:
+        match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+        if match:
+            hours_offset = int(match.group(1))
+            minutes_offset = int(match.group(2))
+            # Create a timezone with the parsed offset
+            offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+            # Convert the datetime to the target timezone
+            converted_date = date_object.astimezone(offset)
+            start_time_local_timezone = converted_date.strftime(
+                APPT_TIME_FORMAT + " %Z"
+            )
+        else:
+            start_time_local_timezone = start_time
+    else:
+        start_time_local_timezone = start_time
 
     if mentee.email_notifications:
         res, res_msg = send_email(
             recipient=mentee.email,
             template_id=MENTEE_APPT_TEMPLATE,
-            data={"confirmation": True, "name": mentor.name, "date": start_time},
+            data={
+                "confirmation": True,
+                "name": mentor.name,
+                "date": start_time_local_timezone,
+                mentee.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
+            },
         )
         if not res:
             msg = "Failed to send mentee email " + res_msg
             logger.info(msg)
 
     if mentor.email_notifications:
+        if mentor.timezone:
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentor.timezone)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                converted_date = date_object.astimezone(offset)
+                start_time_local_timezone = converted_date.strftime(
+                    APPT_TIME_FORMAT + " %Z"
+                )
+            else:
+                start_time_local_timezone = start_time
+        else:
+            start_time_local_timezone = start_time
+
         res, res_msg = send_email(
-            recipient=mentor.email, template_id=MENTOR_APPT_TEMPLATE
+            recipient=mentor.email,
+            template_id=MENTOR_APPT_TEMPLATE,
+            data={
+                "name": mentee.name,
+                "date": start_time_local_timezone,
+                mentor.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentor_appt"],
+            },
         )
 
         if not res:
@@ -165,6 +277,7 @@ def create_appointment():
 
 
 @appointment.route("/accept/<id>", methods=["PUT"])
+@mentor_only
 def put_appointment(id):
     try:
         appointment = AppointmentRequest.objects.get(id=id)
@@ -184,10 +297,32 @@ def put_appointment(id):
 
     if mentee.email_notifications:
         start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
+        if mentee.timezone:
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                converted_date = appointment.timeslot.start_time.astimezone(offset)
+                start_time_local_timezone = converted_date.strftime(
+                    APPT_TIME_FORMAT + " %Z"
+                )
+            else:
+                start_time_local_timezone = start_time
+        else:
+            start_time_local_timezone = start_time
+
         res_email = send_email(
             recipient=mentee.email,
-            subject="Mentee Appointment Notification",
-            data={"name": mentor.name, "date": start_time, "approved": True},
+            data={
+                "name": mentor.name,
+                "date": start_time_local_timezone,
+                "approved": True,
+                mentee.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
+            },
             template_id=MENTEE_APPT_TEMPLATE,
         )
         if not res_email:
@@ -201,28 +336,54 @@ def put_appointment(id):
 
 # DELETE request for appointment by appointment id
 @appointment.route("/<string:appointment_id>", methods=["DELETE"])
+@mentor_only
 def delete_request(appointment_id):
     try:
         request = AppointmentRequest.objects.get(id=appointment_id)
         mentor = MentorProfile.objects.get(id=request.mentor_id)
-        mentee = MenteeProfile.objects.get(id=appointment.mentee_id)
+        mentee = MenteeProfile.objects.get(id=request.mentee_id)
     except:
         msg = "No appointment or account found with that id"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
     if mentee.email_notifications:
-        start_time = appointment.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
+        start_time = request.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
+
+        if mentee.timezone:
+            print("timezone", mentee.timezone)
+            match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
+            print("match", match)
+            if match:
+                hours_offset = int(match.group(1))
+                minutes_offset = int(match.group(2))
+                # Create a timezone with the parsed offset
+                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
+                # Convert the datetime to the target timezone
+                converted_date = request.timeslot.start_time.astimezone(offset)
+                start_time_local_timezone = converted_date.strftime(
+                    APPT_TIME_FORMAT + " %Z"
+                )
+            else:
+                start_time_local_timezone = start_time
+        else:
+            start_time_local_timezone = start_time
+
         res_email = send_email(
             recipient=mentee.email,
-            subject="Mentee Appointment Notification",
-            data={"name": mentor.name, "date": start_time, "approved": False},
+            data={
+                "name": mentor.name,
+                "date": start_time,
+                "approved": False,
+                mentee.preferred_language: True,
+                "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
+            },
             template_id=MENTEE_APPT_TEMPLATE,
         )
         if not res_email:
             logger.info("Failed to send email")
 
-    request.status = APPT_STATUS["REJECTED"]
+    request.status = APPT_STATUS["DENIED"]
     request.save()
     return create_response(status=200, message=f"Success")
 
@@ -244,7 +405,9 @@ def get_mentors_appointments():
         data.append(
             {
                 "name": mentor.name,
+                "email": mentor.email,
                 "id": str(mentor.id),
+                "image": mentor.image,
                 "appointments": mentor_appts,
                 "numOfAppointments": len(mentor_appts),
                 "appointmentsAvailable": "Yes"

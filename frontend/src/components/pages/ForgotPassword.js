@@ -1,94 +1,116 @@
-import React, { useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
-import { Input, Button } from "antd";
+import React, { useState } from "react";
+import { withRouter, Link } from "react-router-dom";
+import { Input, Button, message, Form, Typography, Space } from "antd";
+import { useTranslation } from "react-i18next";
 import { sendPasswordResetEmail } from "utils/auth.service";
-import MenteeButton from "../MenteeButton";
-import { REGISTRATION_STAGE } from "utils/consts";
+import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
 
-import "../css/Home.scss";
-import "../css/Login.scss";
-import "../css/Register.scss";
+function ForgotPassword({ location, history }) {
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
 
-function ForgotPassword({ history }) {
-  const [email, setEmail] = useState();
-  const [error, setError] = useState(false);
-  const [resent, setResent] = useState(false);
-  const [inputFocus, setInputFocus] = useState(false);
-  const [sendingLink, setSendingLink] = useState(false);
-  const [sentLink, setSentLink] = useState(false);
-
-  const handleInputFocus = () => setInputFocus(true);
-  const handleInputBlur = () => setInputFocus(false);
-
-  const sendEmail = async (onSuccess) => {
-    setError(false);
-
+  const onFinish = async ({ email }) => {
+    setLoading(true);
+    setEmail(email);
     const res = await sendPasswordResetEmail(email);
-    if (res && res.success) {
-      onSuccess();
+    if (res && res?.success) {
+      if (emailSent) {
+        messageApi.success(t("forgotPassword.emailResent"));
+      } else {
+        messageApi.success(t("forgotPassword.sent"));
+        setEmailSent(true);
+      }
     } else {
-      setError(true);
+      messageApi.error({
+        content: t("forgotPassword.error"),
+        duration: 0,
+        key: "forgotPassword.error",
+        onClick: () => messageApi.destroy("forgotPassword.error"),
+      });
     }
+    setLoading(false);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.error("Failed:", errorInfo);
+    messageApi.error({
+      content: t("forgotPassword.error"),
+      duration: 0,
+      key: "forgotPassword.error",
+      onClick: () => messageApi.destroy("forgotPassword.error"),
+    });
   };
 
   return (
-    <div className="home-background">
-      <div className="login-content">
-        <div className="verify-container">
-          <div className="verify-header-container">
-            <div className="verify-header-text">
-              <h1 className="login-text">Forgot Password</h1>
-              {error && (
-                <div className="register-error">Error, please try again!</div>
-              )}
-              {resent && <div> Email resent! </div>}
-              <br />
-              <t className="verify-header-text-description">
-                Please enter email for the password reset link to be sent to.
-              </t>
-            </div>
-          </div>
-          <div
-            className={`login-input-container${inputFocus ? "__clicked" : ""}`}
+    <div
+      className={css`
+        display: flex;
+        width: 100%;
+        flex: 1;
+        justify-content: center;
+        flex-direction: column;
+
+        @media (max-width: 991px) {
+          flex: 0;
+        }
+      `}
+    >
+      {contextHolder}
+      <Link
+        to={{
+          pathname: "/login",
+          state: { role: location.state?.role },
+        }}
+      >
+        <Space>
+          <ArrowLeftOutlined />
+          {t("common.login")}
+        </Space>
+      </Link>
+      <Typography.Title level={2}>{t("forgotPassword.title")}</Typography.Title>
+      <Form
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+        layout="vertical"
+        size="large"
+        style={{ width: "100%" }}
+        onValuesChange={() => setEmailSent(false)}
+      >
+        <Form.Item
+          name="email"
+          label={t("common.email")}
+          rules={[
+            {
+              required: true,
+              type: "email",
+              message: t("loginErrors.emailError"),
+            },
+          ]}
+        >
+          <Input prefix={<UserOutlined />} autoFocus />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: "100%" }}
+            loading={loading}
+            disabled={emailSent}
           >
-            <Input
-              className="forgot_email"
-              onFocus={() => handleInputFocus()}
-              onBlur={() => handleInputBlur()}
-              onChange={(e) => setEmail(e.target.value)}
-              bordered={false}
-              placeholder="Email"
-            />
-          </div>
-          <div className="login-button">
-            <MenteeButton
-              content={<b>{sentLink ? "Sent!" : "Send Link"}</b>}
-              loading={sendingLink}
-              disabled={sentLink}
-              width={"50%"}
-              height={"125%"}
-              onClick={async () => {
-                setSendingLink(true);
-                sendEmail(() => setSentLink(true));
-                setSendingLink(false);
-              }}
-            />
-          </div>
-          <div className="login-register-container">
-            Didn&#39;t receive an email?
-            <Button
-              type="link"
-              className="verify-resend-link"
-              onClick={async () => {
-                // TODO: error handling for resend?
-                sendEmail(() => setResent(true));
-              }}
-            >
-              <u>Resend</u>
-            </Button>
-          </div>
-        </div>
-      </div>
+            {emailSent
+              ? t("forgotPassword.sent")
+              : t("forgotPassword.sendLink")}
+          </Button>
+          <a onClick={() => onFinish({ email })}>
+            {t("forgotPassword.notReceiveEmail")}
+          </a>
+        </Form.Item>
+      </Form>
     </div>
   );
 }

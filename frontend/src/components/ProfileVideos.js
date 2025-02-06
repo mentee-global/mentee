@@ -3,8 +3,11 @@ import { Row, Col } from "antd";
 import ReactPlayer from "react-player";
 
 import "./css/PublicProfile.scss";
+import { useTranslation } from "react-i18next";
 
 function ProfileVideos(props) {
+  const { t } = useTranslation();
+
   const renderVideoGrid = () => {
     if (!props.videos || props.videos.length <= 1) return;
 
@@ -45,7 +48,7 @@ function ProfileVideos(props) {
   return (
     <div>
       <h1>
-        <b>Videos</b>
+        <b>{t("commonProfile.videos")}</b>
       </h1>
       <hr className="mentor-profile-videos-divider" />
       <Row>

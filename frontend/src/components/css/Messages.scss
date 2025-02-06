@@ -5,7 +5,9 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  max-height: 100vh;
+  max-height: 100%;
+  overflow: hidden;
+  // height: calc(100% - 50px);
 }
 
 .messages-sidebar-background {
@@ -15,9 +17,9 @@
 
 .messages-sidebar {
   overflow: auto;
-  width: 100%;
-  height: 80%;
+  height: calc(100vh - 113px - 90px);
   padding-bottom: 2%;
+  margin: 0 20px;
 }
 
 .messages-chat-area-header {
@@ -50,40 +52,10 @@
 
 .messages-sidebar-header {
   background-color: white;
-  overflow-y: auto;
-  padding-left: 10%;
-  padding-top: 5%;
+  overflow-y: hidden;
+  padding-left: 20px;
   font-size: 3ch;
-}
-
-.message-card {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 3%;
-  border: 1px solid #e8e8e8;
-  box-sizing: border-box;
-  border-radius: 7px;
-}
-
-.message-card:hover {
-  background-color: #e8e8e8;
-  cursor: pointer;
-}
-
-.message-active-card {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 3%;
-  background: rgba(249, 220, 132, 0.3);
-  border: 1px solid #f9dc84;
-  box-sizing: border-box;
-  border-radius: 7px;
-}
-
-.message-card-description {
-  color: #707c97;
+  height: 89px;
 }
 
 .messages-search-input {
@@ -96,8 +68,8 @@
 }
 
 .header-divider {
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .chat-area-header {
@@ -133,24 +105,31 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   padding: 12px;
-  position: fixed;
-  bottom: 0;
-  width: calc(100vw - var(--messages-sidebar));
+  position: relative;
+  bottom: 0px;
+  width: 100%;
+  z-index: 2;
 }
 
 .conversation-container {
   display: flex;
   flex-direction: column;
-  padding-bottom: 60px; // synced with --chat-footer-height, for some reason var() doesn't work
-  height: calc(100vh - #{$nav-header-height});
+  // padding-bottom: 60px; // synced with --chat-footer-height, for some reason var() doesn't work
+  // height: calc(100vh - #{($nav-header-height + $footer-gap)});
 }
 
 .conversation-content {
   background-color: white;
   overflow-y: auto;
+  flex: 1;
   padding: 12px;
-  max-height: calc(100vh - #{$nav-header-height} - var(--chat-header-height));
+  max-height: calc(100vh - #{($nav-header-height + $footer-gap)} - 90px);
+  min-height: calc(100vh - #{($nav-header-height + $footer-gap)} - 90px);
+}
+.group-conversation-content {
+  max-height: calc(100vh - #{($nav-header-height + $footer-gap)} - 40px);
 }
 
 .no-messages {
@@ -165,43 +144,37 @@
   font-size: larger;
 }
 
-.bubble-received {
-  background-color: #f4f5f9;
-  color: #323e4a;
-  padding: 5px 15px;
-  border-radius: 5px;
-  max-width: 300px;
-  margin-left: 8px;
-  width: fit-content;
-  float: left;
-  clear: left;
-  overflow-wrap: break-word;
+.chatRight__items {
+  margin-bottom: 1rem;
+}
+
+.chatRight__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .convo {
-  max-width: 300px;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.bubble-received {
+  background-color: #f4f5f9;
+  float: none;
+  clear: none;
 }
 
 .bubble-sent {
-  background-color: rgba(228, 187, 79, 0.4);
-  color: #323e4a;
-  padding: 5px 15px;
-  border-radius: 5px;
-  max-width: 300px;
-  float: right;
-  width: fit-content;
-  clear: right;
-  overflow-wrap: break-word;
+  background-color: #f4f5f9;
+  float: none;
+  clear: none;
 }
 
 .chatRight__items > .chatRight__inner {
   display: flex;
   align-items: flex-end;
-}
-
-.chatRight__inner {
-  margin-bottom: 6px;
 }
 
 .chatRight__inner span img {
@@ -226,25 +199,6 @@
   padding-left: 10px;
 }
 
-.send-message-button,
-.send-message-button:focus,
-.send-message-button-focus {
-  background: $mentee-button-regular;
-  border-color: $mentee-button-regular;
-  color: white;
-  margin-left: 12px;
-}
-
-.send-message-button:hover,
-.send-message-button:active,
-.send-message-button-focus:focus,
-.send-message-button-focus:hover,
-.send-message-button-focus:active {
-  background: $mentee-button-regular;
-  border-color: white;
-  color: white;
-  margin-left: 12px;
-}
 .search-mentor-input {
   width: 300px;
   border-radius: 5px;
@@ -255,5 +209,106 @@
   padding: 20px 30px;
   justify-content: space-between;
 }
-.messages-date-range {
+.calendar-modal {
+  top: 30px;
+  width: 770px !important;
+}
+.link-book-availability {
+  cursor: pointer;
+  text-decoration: underline;
+  color: blue;
+}
+
+.reply-message-container {
+  width: 100%;
+  display: flex;
+  align-items: end;
+  padding-left: 50px;
+  position: relative;
+  min-width: 500px;
+
+  .reply-message-textarea {
+    width: 100%;
+  }
+
+  .reply-message-send-button {
+    margin-left: 0.5em;
+  }
+  .ant-btn-icon {
+    margin-bottom: 0;
+  }
+}
+.emoji-icon {
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  height: 20px;
+  margin-bottom: 5px;
+}
+.emoji-container {
+  position: absolute;
+  right: 30px;
+  max-width: 450px;
+}
+.emoji-container.down {
+  top: 50px;
+}
+.emoji-container.up {
+  bottom: 50px;
+}
+.conversation-footer {
+  .emoji-icon {
+    height: 20px;
+    margin-top: 5px;
+  }
+}
+@media (max-width: 761px) {
+  .messages-sidebar-background {
+    width: 100% !important;
+    max-width: 761px !important;
+    min-width: auto !important;
+    flex-basis: auto !important;
+  }
+  .conversation-footer {
+    width: 100vw;
+  }
+  .no-messages {
+    display: none !important;
+  }
+}
+
+/* Add styles for powered by container */
+.powered-by-container {
+  position: absolute;
+  right: 10px;
+  bottom: -30px;
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  z-index: 1;
+}
+
+/* Add specific margin to the image if needed */
+.powered-by-container img {
+  margin-left: 30px;
+}
+
+/* Target the powered by text and logo directly */
+[class*="powered-by"],
+[class*="powered_by"],
+[class*="poweredBy"] {
+  position: absolute !important;
+  right: 10px !important;
+  bottom: -30px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 100px !important; /* Much larger gap */
+  z-index: 1 !important;
+}
+
+/* Target any image inside powered by container */
+[class*="powered-by"] img,
+[class*="powered_by"] img,
+[class*="poweredBy"] img {
+  margin-left: 50px !important; /* Much larger margin */
 }

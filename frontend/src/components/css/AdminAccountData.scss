@@ -1,38 +1,139 @@
 @import "_app";
 
 .account-data-body {
-	padding: 22px;
-	margin-bottom: 50px;
+  padding: 22px;
+  margin-bottom: 50px;
+  overflow-x: auto;
 }
 
 .table-search {
-	width: 18em;
-	margin-top: 66px;
-	margin-bottom: 36px;
+  width: 18em;
+  margin-top: 66px;
+  margin-bottom: 36px;
+}
+.table-search #search {
+  min-width: 10rem;
 }
 
 .table-header {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }
 
 .table-title {
-	font-size: 18px;
-	font-weight: bold;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .table-button-group > .table-button {
-	margin: 0px 4px;
-	color: black;
+  margin: 0px 4px;
+  color: black;
+}
+.hub-drop-down {
+  min-width: 5rem;
+  margin-left: 1rem !important;
+  margin-bottom: 0 !important;
+  margin-right: 0 !important;
+  line-height: 30px;
 }
 
 .table-appt-view {
-	color: $theme-orange;
-	text-decoration: underline;
+  color: $theme-orange;
+  text-decoration: underline;
 }
 
 .delete-user-btn {
-	color: $theme-orange;
-	font-size: 20px;
+  color: $theme-orange;
+  font-size: 20px;
+}
+
+.disabled-user-btn {
+  color: gray;
+  font-size: 20px;
+}
+
+.disabled-user-btn:hover {
+  cursor: not-allowed;
+}
+
+.link-td {
+  max-width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.link-span {
+  cursor: pointer;
+  color: #1890ff;
+}
+.assign-user-modal {
+  padding: 30px;
+  overflow-y: auto;
+  min-height: 200px;
+  max-height: 600px;
+  .assign-header-modal {
+    display: flex;
+    .org-area {
+      text-align: center;
+    }
+    .restricted-area {
+      font-size: 20px;
+      padding-top: 20px;
+      padding-left: 30%;
+      label {
+        margin-right: 10px;
+      }
+    }
+  }
+  .main-body {
+    display: flex;
+    width: 100%;
+
+    .w-50 {
+      width: 50%;
+      padding: 20px;
+    }
+    .sub-title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .add-btn {
+      height: 38px;
+      color: white;
+      background-color: #e4bb4f;
+    }
+    .mentors-area {
+      border-right: 1px solid lightgray;
+    }
+    .list {
+      margin-top: 45px;
+      background-color: white;
+    }
+    .record {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 10px;
+    }
+    .record:hover {
+      background-color: rgb(242, 242, 242);
+    }
+    .odd {
+      background-color: #fafafa;
+    }
+  }
+}
+
+.table-header {
+  flex-direction: row;
+}
+
+@media (max-width: 600px) {
+  .table-header {
+    flex-direction: column;
+  }
+
+  .table-search {
+    width: 100% !important;
+  }
 }

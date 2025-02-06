@@ -1,7 +1,5 @@
 import pandas as pd
 from api.models.PartnerProfile import PartnerProfile
-import xlsxwriter
-from datetime import datetime
 from io import BytesIO
 from api.core import create_response, logger
 from api.models import (
@@ -11,11 +9,11 @@ from api.models import (
     MenteeProfile,
     NewMentorApplication,
     MenteeApplication,
+    Hub,
 )
 from flask import send_file, Blueprint, request
 from api.utils.require_auth import admin_only
-from firebase_admin import auth as firebase_admin_auth
-from api.utils.constants import Account
+from api.utils.constants import Account, EDUCATION_LEVEL
 
 download = Blueprint("download", __name__)
 
@@ -84,18 +82,41 @@ def download_appointments():
 def download_accounts_info():
     data = request.args
     account_type = int(data.get("account_type", 0))
+    hub_user_id = data.get("hub_user_id")
+
     accounts = None
 
     try:
         admins = Admin.objects()
         admin_ids = [admin.firebase_uid for admin in admins]
 
+        partner_object = {}
+
         if account_type == Account.MENTOR:
             accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
         elif account_type == Account.MENTEE:
             accounts = MenteeProfile.objects(firebase_uid__nin=admin_ids)
+            partner_data = PartnerProfile.objects(firebase_uid__nin=admin_ids)
+            for partner_item in partner_data:
+                partner_object[str(partner_item.id)] = partner_item.organization
         elif account_type == Account.PARTNER:
-            accounts = PartnerProfile.objects(firebase_uid__nin=admin_ids)
+            if hub_user_id is not None:
+                accounts = PartnerProfile.objects.filter(
+                    firebase_uid__nin=admin_ids, hub_id=hub_user_id
+                )
+            else:
+                accounts = PartnerProfile.objects(firebase_uid__nin=admin_ids)
+
+            Hub_users = Hub.objects()
+            Hub_user_names_object = {}
+            for hub_user in Hub_users:
+                Hub_user_names_object[str(hub_user.id)] = hub_user.name
+            temp = []
+            for account in accounts:
+                if account.hub_id is not None:
+                    account.hub_user_name = Hub_user_names_object[str(account.hub_id)]
+                temp.append(account)
+            accounts = temp
 
     except:
         msg = "Failed to get accounts"
@@ -105,7 +126,7 @@ def download_accounts_info():
     if account_type == Account.MENTOR:
         return download_mentor_accounts(accounts)
     elif account_type == Account.MENTEE:
-        return download_mentee_accounts(accounts)
+        return download_mentee_accounts(accounts, partner_object)
     elif account_type == Account.PARTNER:
         return download_partner_accounts(accounts)
 
@@ -121,11 +142,15 @@ def download_apps_info():
     account_type = int(data.get("account_type", 0))
     apps = None
 
+    partner_object = {}
     try:
         if account_type == Account.MENTOR:
             apps = NewMentorApplication.objects
         elif account_type == Account.MENTEE:
             apps = MenteeApplication.objects
+            partner_data = PartnerProfile.objects
+            for partner_item in partner_data:
+                partner_object[str(partner_item.id)] = partner_item.organization
 
     except:
         msg = "Failed to get accounts"
@@ -135,7 +160,7 @@ def download_apps_info():
     if account_type == Account.MENTOR:
         return download_mentor_apps(apps)
     elif account_type == Account.MENTEE:
-        return download_mentee_apps(apps)
+        return download_mentee_apps(apps, partner_object)
 
     msg = "Invalid input"
     logger.info(msg)
@@ -157,6 +182,7 @@ def download_mentor_apps(apps):
                 acct.role_description,
                 "Yes" if acct.immigrant_status else "No",
                 acct.languages,
+                ",".join(acct.specializations) if acct.specializations else "",
                 acct.referral,
                 acct.companyTime,
                 acct.specialistTime,
@@ -181,6 +207,7 @@ def download_mentor_apps(apps):
         "role description",
         "immigrant status",
         "Languages",
+        "Specializations",
         "referral",
         "company experience years",
         "commit as special period",
@@ -197,7 +224,7 @@ def download_mentor_apps(apps):
     return generate_sheet("accounts", accts, columns)
 
 
-def download_mentee_apps(apps):
+def download_mentee_apps(apps, partner_object):
     accts = []
 
     for acct in apps:
@@ -205,23 +232,27 @@ def download_mentee_apps(apps):
             [
                 acct.name,
                 acct.email,
-                acct.age,
                 ",".join(acct.immigrant_status),
                 acct.Country,
                 acct.identify,
-                acct.language,
+                acct.language
+                if isinstance(acct.language, str)
+                else ",".join(acct.language),
                 ",".join(acct.topics),
                 ",".join(acct.workstate),
                 acct.isSocial,
                 acct.questions,
                 acct.application_state,
                 acct.notes,
+                partner_object[acct.partner]
+                if acct.partner in partner_object
+                else acct.partner,
             ]
         )
     columns = [
         " Full Name",
         "email",
-        "age",
+        # "age",
         "immigrant status",
         "Country",
         "identify",
@@ -232,6 +263,7 @@ def download_mentee_apps(apps):
         "questions",
         "application state",
         "notes",
+        "Organization Affiliation",
     ]
     return generate_sheet("accounts", accts, columns)
 
@@ -308,6 +340,7 @@ def download_partner_accounts(accounts):
                 ",".join(acct.regions),
                 acct.intro,
                 acct.website,
+                acct.hub_user_name,
                 acct.linkedin,
                 acct.sdgs,
                 acct.topics,
@@ -328,6 +361,7 @@ def download_partner_accounts(accounts):
         "Regions Work In",
         "Brief Introduction",
         "Website",
+        "Hub",
         "LinkedIn",
         "SDGS",
         "Project Topics",
@@ -338,7 +372,7 @@ def download_partner_accounts(accounts):
     return generate_sheet("accounts", accts, columns)
 
 
-def download_mentee_accounts(accounts):
+def download_mentee_accounts(accounts, partner_object):
     accts = []
 
     for acct in accounts:
@@ -352,6 +386,8 @@ def download_mentee_accounts(accounts):
                     edu.graduation_year,
                 )
             )
+        if acct.education_level is not None:
+            educations.append(EDUCATION_LEVEL[acct.education_level])
         accts.append(
             [
                 acct.name,
@@ -365,7 +401,9 @@ def download_mentee_accounts(accounts):
                 ",".join(acct.languages),
                 "|".join(acct.specializations),
                 acct.biography,
-                acct.organization,
+                partner_object[acct.organization]
+                if acct.organization in partner_object
+                else acct.organization,
                 "Yes" if acct.image and acct.image.url else "No",
                 "Yes" if acct.video else "No",
                 int(acct.text_notifications)

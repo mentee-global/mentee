@@ -12,13 +12,55 @@ from api.models import (
     MenteeApplication,
     NewMentorApplication,
 )
-from api.utils.require_auth import admin_only
+from api.utils.require_auth import admin_only, all_users
 from pymongo import collation
+from api.utils.translate import get_all_translations, get_translation
 
 masters = Blueprint("masters", __name__)
 
+# IGNORE is found in backend/user_options.json
+# This function is used to populate the Languages and Specializations collections
+# with the data from user_options.json
+# It is only used once, when the database is first created
+# @masters.route("/google-translate", methods=["GET"])
+# def google_translate():
+#     mapping = {"languages": Languages, "specializations": Specializations}
+
+#     for database in IGNORE:
+#         for item in IGNORE[database]:
+#             try:
+#                 record = mapping[database].objects.get(name=item["name"])
+#             except:
+#                 logger.info(f"Could not find {item['name']}")
+#                 record = mapping[database](
+#                     name=item["name"],
+#                     updated_at=datetime.now()
+#                 )
+#                 logger.info("Creating new record")
+#             record.translations = item["translations"]
+#             record.save()
+
+#     return create_response(data={"result": "success"})
+
+# @masters.route("/translate", methods=["PUT"])
+# @admin_only
+# def translate():
+#     mapping = {"languages": Languages, "specializations": Specializations}
+#     optionType = request.form["optionType"]
+#     selectId = request.form["selectId"]
+
+#     try:
+#         record = mapping[optionType].objects.get(id=selectId)
+#     except:
+#         return create_response(status=422, message="Record not found")
+#     record.translations = get_all_translations(record.name)
+#     record.save()
+
+#     return create_response(data={"result": "success", "record": record})
+
 
 @masters.route("/languages", methods=["GET"])
+# @all_users
 def getLanguages():
     try:
         languages = Languages.objects.order_by("name").collation(
@@ -68,10 +110,10 @@ def delete_language(id):
     return create_response(status=200, message="Successful deletion")
 
 
+# TODO: Add translations to this as well in case of typos
 @masters.route("/languages/<string:id>", methods=["PUT"])
 @admin_only
 def edit_language_by_id(id):
-    # try:
     record = Languages.objects.get(id=id)
     lang_name = record.name
     mentors = MentorProfile.objects(languages__in=[lang_name])
@@ -81,6 +123,8 @@ def edit_language_by_id(id):
             map(lambda x: x.replace(lang_name, request.form["name"]), new_langs)
         )
         mentor.languages = new_langs
+        if "taking_appointments" not in mentor:
+            mentor.taking_appointments = False
         mentor.save()
     mentees = MenteeProfile.objects(languages__in=[lang_name])
     for mentee in mentees:
@@ -103,8 +147,6 @@ def edit_language_by_id(id):
     record.name = request.form["name"]
     record.updated_at = datetime.now()
     record.save()
-    # except:
-    #   return create_response(status=422, message="training not found")
 
     return create_response(status=200, data={"result": record})
 
@@ -113,13 +155,11 @@ def edit_language_by_id(id):
 @masters.route("/languages", methods=["POST"])
 @admin_only
 def new_language():
-    # try:
     name = request.form["name"]
     record = Languages(name=name, updated_at=datetime.now())
+    record.translations = get_all_translations(name)
 
     record.save()
-    # except:
-    #    return create_response(status=401, message="missing parameters")
 
     return create_response(status=200, data={"result": record})
 
@@ -181,10 +221,10 @@ def delete_specializations(id):
     return create_response(status=200, message="Successful deletion")
 
 
+# TODO: Add translations to this as well in case of typos
 @masters.route("/specializations/<string:id>", methods=["PUT"])
 @admin_only
 def edit_specialization_by_id(id):
-    # try:
     record = Specializations.objects.get(id=id)
     prev_name = record.name
     mentors = MentorProfile.objects(specializations__in=[prev_name])
@@ -194,6 +234,8 @@ def edit_specialization_by_id(id):
             map(lambda x: x.replace(prev_name, request.form["name"]), new_specs)
         )
         mentor.specializations = new_specs
+        if "taking_appointments" not in mentor:
+            mentor.taking_appointments = False
         mentor.save()
     mentees = MenteeProfile.objects(specializations__in=[prev_name])
     for mentee in mentees:
@@ -216,8 +258,6 @@ def edit_specialization_by_id(id):
     record.updated_at = datetime.now()
 
     record.save()
-    # except:
-    #   return create_response(status=422, message="training not found")
 
     return create_response(status=200, data={"result": record})
 
@@ -226,12 +266,10 @@ def edit_specialization_by_id(id):
 @masters.route("/specializations", methods=["POST"])
 @admin_only
 def new_specailization():
-    # try:
     name = request.form["name"]
     record = Specializations(name=name, updated_at=datetime.now())
+    record.translations = get_all_translations(name)
 
     record.save()
-    # except:
-    #    return create_response(status=401, message="missing parameters")
 
     return create_response(status=200, data={"result": record})

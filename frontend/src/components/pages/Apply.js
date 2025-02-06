@@ -1,345 +1,261 @@
-import React, { useEffect, useState } from "react";
-import "../../components/css/Apply.scss";
-import { Steps, Form, Input, Radio, Checkbox, LeftOutlined } from "antd";
-import { ACCOUNT_TYPE } from "utils/consts";
-import ApplyStep from "../../resources/applystep.png";
-import ApplyStep2 from "../../resources/applystep2.png";
+import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
 import {
-  getAppState,
-  fetchApplications,
-  isHaveAccount,
-  changeStateBuildProfile,
-  isHaveProfilee,
-} from "../../utils/api";
-import ProfileStep from "../../resources/profilestep.png";
-import ProfileStep2 from "../../resources/profilestep2.png";
-import TrianStep from "../../resources/trainstep.png";
-import TrianStep2 from "../../resources/trainstep2.png";
-import MentorApplication from "./MentorApplication";
-import MenteeApplication from "./MenteeApplication";
-import PartnerApplication from "./PartnerApplication";
-import TrainingList from "components/TrainingList";
-import MentorProfileForm from "./MentorProfileForm";
-import MenteeProfileForm from "./MenteeProfileForm";
-import { useHistory } from "react-router";
-import { useLocation } from "react-router-dom";
-import { AccountBookFilled } from "@ant-design/icons";
-import PartnerProfileForm from "components/PartnerProfileForm";
-import { validate } from "email-validator";
+  Button,
+  Form,
+  Input,
+  Select,
+  Space,
+  Steps,
+  Typography,
+  message,
+} from "antd";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, withRouter } from "react-router-dom";
+import { getApplicationStatus, checkStatusByEmail } from "utils/api";
+import { ACCOUNT_TYPE, NEW_APPLICATION_STATUS } from "utils/consts";
+import useQuery from "utils/hooks/useQuery";
 
-const Apply = () => {
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState(null);
-  const [isapply, setIsApply] = useState(true);
-  const [confirmApply, setConfirmApply] = useState(false);
-  const [approveApply, setApproveApply] = useState(false);
-  const [approveTrainning, setApproveTrainning] = useState(false);
-  const [istrain, setIstrain] = useState(false);
-  const [isbuild, setIsBuild] = useState(false);
-  const [err, seterr] = useState(false);
-  const [err2, seterr2] = useState(false);
-  const [ishavee, setishavee] = useState(false);
-  const [isProfile, setIsprofile] = useState(false);
-  const [isVerify, setIsVerify] = useState(null);
-  const history = useHistory();
-  const location = useLocation();
+const { Option } = Select;
 
-  const submitHandler = () => {
-    setConfirmApply(true);
+function Apply({ history, location }) {
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [currentState, setCurrentState] = useState();
+  const [hasApplied, setHasApplied] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [applicationData, setApplicationData] = useState(null);
+  const query = useQuery();
+  const [form] = Form.useForm();
+  var n50_flag = false;
+  if (location && location.pathname.includes("n50")) {
+    n50_flag = true;
+  }
+
+  const stateItems = [
+    {
+      title: t("common.apply"),
+      key: "apply",
+      redirect: n50_flag ? "/n50/application-form" : "/application-form",
+    },
+    {
+      title: t("apply.training"),
+      key: "training",
+      redirect: n50_flag
+        ? "/n50/application-training"
+        : "/application-training",
+    },
+    {
+      title: t("apply.buildProfile"),
+      key: "buildProfile",
+      redirect: n50_flag ? "/n50/build-profile" : "/build-profile",
+    },
+  ];
+
+  const stepNumeration = {
+    apply: 0,
+    training: 1,
+    buildProfile: 2,
   };
-  useEffect(() => {
-    if (location.state) {
-      if (location.state.email) {
-        setEmail(location.state.email);
-      }
-      if (location.state.role) {
-        setRole(location.state.role);
+
+  const onFinish = async ({ email, role }) => {
+    // if currentState set then this is a confirm to redirect
+    if (currentState !== undefined) {
+      history.push({
+        pathname: stateItems[currentState].redirect,
+        state: { email, role, ignoreHomeLayout: true, applicationData },
+      });
+    }
+
+    setLoading(true);
+    email = email.toLowerCase();
+    const { inFirebase, profileExists, isVerified } = await checkStatusByEmail(
+      email,
+      role
+    ).catch((err) => {
+      setLoading(false);
+      messageApi.error({
+        content: `${err}`,
+        duration: 0,
+        key: "error_msg",
+        onClick: () => messageApi.destroy("error_msg"),
+      });
+    });
+
+    if (inFirebase && profileExists) {
+      // Redirect to login page
+      messageApi.info({
+        content: t("apply.message.haveAccount"),
+        duration: 0,
+        key: "haveAccount",
+        onClick: () => messageApi.destroy("haveAccount"),
+      });
+      setTimeout(() => {
+        history.push({
+          pathname: "/login",
+          state: { email, role },
+        });
+      }, 2000);
+    } else if (
+      (inFirebase && !profileExists) ||
+      (role === ACCOUNT_TYPE.PARTNER && isVerified) ||
+      (role !== ACCOUNT_TYPE.PARTNER && isVerified)
+    ) {
+      setCurrentState(stepNumeration.buildProfile);
+    } else if (role === ACCOUNT_TYPE.PARTNER && !isVerified) {
+      // Partner's email needs to be verified by admin first
+      messageApi.error({
+        content: t("apply.partnerVerify"),
+        duration: 0,
+        key: "partnerVerify",
+        onClick: () => messageApi.destroy("partnerVerify"),
+      });
+    } else {
+      const { state, application_data } = await getApplicationStatus(
+        email,
+        role
+      );
+      switch (state) {
+        case NEW_APPLICATION_STATUS.PENDING:
+          messageApi.info(t("apply.confirmation"));
+          setHasApplied(true);
+          setCurrentState(stepNumeration.apply);
+          setApplicationData(application_data);
+          break;
+        case NEW_APPLICATION_STATUS.APPROVED:
+          setCurrentState(stepNumeration.training);
+          setApplicationData(application_data);
+          break;
+        case NEW_APPLICATION_STATUS.BUILDPROFILE:
+          setCurrentState(stepNumeration.buildProfile);
+          break;
+        default:
+          setCurrentState(stepNumeration.apply);
+          setApplicationData(application_data);
+          break;
       }
     }
-  }, []);
+    setLoading(false);
+  };
 
-  useEffect(() => {
-    async function checkConfirmation() {
-      if (validate(email)) {
-        if (role) {
-          const { isHave, isHaveProfile, isVerified } = await isHaveAccount(
-            email,
-            role
-          );
-          setIsVerify(isVerified);
-          setishavee(isHave);
-          if (isHave == true && isHaveProfile == true) {
-            setIsprofile(true);
-            setishavee(true);
-            setTimeout(() => {
-              history.push("/login");
-            }, 2000);
-            return;
-          } else if (isHave == true && isHaveProfile == false) {
-            if (location.state) {
-              setIsprofile(false);
-              setishavee(true);
-              setIsApply(false);
-              setIstrain(false);
-              setIsBuild(true);
-              setApproveTrainning(true);
-              return;
-            }
-          }
-          if (role == ACCOUNT_TYPE.PARTNER && isVerified) {
-            setIsApply(false);
-            setIstrain(false);
-            setIsBuild(true);
-            setApproveTrainning(true);
-            return;
-          } else if (role == ACCOUNT_TYPE.PARTNER && !isVerified) {
-            setIsApply(false);
-            setIstrain(false);
-            setIsBuild(false);
-            return;
-          } else if (role != ACCOUNT_TYPE.PARTNER && isVerified) {
-            setIsApply(false);
-            setIstrain(false);
-            setIsBuild(true);
-            return;
-          } else {
-            const state = await getAppState(email, role);
-            console.log(state, "here");
-            console.log(state === "APPROVED");
-            if (state === "PENDING") {
-              setConfirmApply(true);
-              setApproveApply(false);
-            } else if (state == "APPROVED") {
-              console.log("wal3");
-              setApproveApply(true);
-              setConfirmApply(false);
-              setIsApply(false);
-              setIstrain(true);
-            } else if (state == "BuildProfile") {
-              setIsApply(false);
-              setIstrain(false);
-              setIsBuild(true);
-              setApproveTrainning(true);
-            } else {
-              console.log("here");
-              setConfirmApply(false);
-              setApproveApply(false);
-              setIsApply(true);
-              setIsBuild(false);
-              setIstrain(false);
-            }
-
-            return state;
-          }
-        }
-      }
-    }
-    //check this email already send application and pending
-    checkConfirmation();
-  }, [role, email]);
+  const onFinishFailed = (errorInfo) => {
+    console.error("Failed:", errorInfo);
+    messageApi.error({
+      content: t("forgotPassword.error"),
+      duration: 0,
+      key: "forgotPassword",
+      onClick: () => messageApi.destroy("forgotPassword"),
+    });
+  };
 
   return (
-    <div className="container2">
-      <h1 className="home-header">
-        Welcome to <span>MENTEE!</span>
-      </h1>
-      <p className="home-text">
-        Please enter your email to start the application process.
-      </p>
-      <div className="emailPart">
-        <p>Email:</p>
-        <Input
-          type="email"
-          className="emailIn"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            seterr(false);
-          }}
-        />
-      </div>
-      {ishavee && isProfile == true && (
-        <p className="error">
-          You Already have account you will be redirect to login page
-        </p>
-      )}
-      <Radio.Group
-        className="roleGroup"
-        onChange={(e) => setRole(e.target.value)}
-        value={role}
-        disabled={!validate(email)}
-      >
-        <Radio className="role" value={ACCOUNT_TYPE.MENTEE}>
-          Mentee
-        </Radio>
-        <Radio className="role" value={ACCOUNT_TYPE.MENTOR}>
-          Mentor
-        </Radio>
-        <Radio className="role" value={ACCOUNT_TYPE.PARTNER}>
-          Partner
-        </Radio>
-      </Radio.Group>
-      <div className="steps">
-        <img
-          src={isapply ? ApplyStep : ApplyStep2}
-          className="step0"
-          alt="apply"
-          onClick={() => {
-            if (!isbuild && istrain) {
-              setIsApply(true);
-              setIsBuild(false);
-              setIstrain(false);
-            }
-          }}
-        />
-        <img
-          src={istrain ? TrianStep2 : TrianStep}
-          className="step1"
-          alt="trainning"
-          onClick={() => {
-            if (approveApply) {
-              setIsApply(false);
-              setIsBuild(false);
-              setIstrain(true);
-            }
-          }}
-        />
-        <img
-          src={isbuild ? ProfileStep2 : ProfileStep}
-          className="step2"
-          alt="profile"
-          onClick={() => {
-            if (approveTrainning) {
-              setIsApply(false);
-              setIsBuild(true);
-              setIstrain(false);
-            }
-          }}
-        />
-      </div>
-      {err ? <p className="error">Email Required</p> : ""}
-      {role == ACCOUNT_TYPE.PARTNER && !isVerify ? (
-        <h1 className="applymessage">
-          Your email is not pre-registered as a Partner. Please contact an
-          administrator admin@menteeglobal.org
-        </h1>
-      ) : (
-        ""
-      )}
+    <div
+      className={css`
+        display: flex;
+        width: 100%;
+        flex: 1;
+        justify-content: center;
+        flex-direction: column;
 
-      <div
-        className={
-          (isapply && (confirmApply || approveApply)) ||
-          !role ||
-          (role == ACCOUNT_TYPE.PARTNER && !isVerify)
-            ? ""
-            : "formsPart"
+        @media (max-width: 991px) {
+          flex: 0;
         }
+      `}
+    >
+      {contextHolder}
+      <Link to={"/"} id="back">
+        <Space>
+          <ArrowLeftOutlined />
+          {t("common.back")}
+        </Space>
+      </Link>
+      <Typography.Title level={2}>{t("common.apply")}</Typography.Title>
+      <Form
+        form={form}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+        layout="vertical"
+        style={{ width: "100%" }}
+        size="large"
+        onValuesChange={() => {
+          setCurrentState(undefined);
+          setHasApplied(false);
+        }}
+        initialValues={{
+          email: query.get("email"),
+          role: query.get("role") && parseInt(query.get("role")),
+        }}
       >
-        {isapply && role ? (
-          <div className="applypart">
-            {!approveApply && confirmApply ? (
-              <h1 className="applymessage">
-                Thank you for applying! Your application will be reviewed and
-                you will be contacted shortly.
-              </h1>
-            ) : (
-              <>
-                {approveApply ? (
-                  <h1 className="applymessage">
-                    Your application has been approved continue to training
-                  </h1>
-                ) : (
-                  ""
-                )}
-                {!approveApply && role === ACCOUNT_TYPE.MENTOR ? (
-                  <MentorApplication
-                    submitHandler={submitHandler}
-                    role={ACCOUNT_TYPE.MENTOR}
-                    headEmail={email}
-                  ></MentorApplication>
-                ) : (
-                  ""
-                )}
-                {!approveApply && role === ACCOUNT_TYPE.MENTEE ? (
-                  <MenteeApplication
-                    submitHandler={submitHandler}
-                    role={ACCOUNT_TYPE.MENTEE}
-                    headEmail={email}
-                  ></MenteeApplication>
-                ) : (
-                  ""
-                )}
-              </>
-            )}
-          </div>
-        ) : (
-          ""
-        )}
-        {istrain ? (
-          <div className="trainpart">
-            {" "}
-            <TrainingList role={role} />
-          </div>
-        ) : (
-          ""
-        )}
-        {isbuild ? (
-          <div className="buildpart">
-            {role === ACCOUNT_TYPE.PARTNER && isVerify ? (
-              <PartnerProfileForm
-                role={role}
-                headEmail={email}
-                isHave={ishavee}
-              />
-            ) : (
-              ""
-            )}
-            {role === ACCOUNT_TYPE.MENTOR ? (
-              <MentorProfileForm
-                headEmail={email}
-                role={role}
-                isHave={ishavee}
-              ></MentorProfileForm>
-            ) : (
-              ""
-            )}
-            {role === ACCOUNT_TYPE.MENTEE ? (
-              <MenteeProfileForm
-                headEmail={email}
-                role={role}
-                isHave={ishavee}
-              ></MenteeProfileForm>
-            ) : (
-              ""
-            )}
-          </div>
-        ) : (
-          ""
-        )}
-
-        <div className="btnContainer">
-          <div
-            className={`applySubmit2 ${istrain ? "" : " hide"}`}
-            onClick={async () => {
-              let state = await changeStateBuildProfile(email, role);
-              if (state == "BuildProfile") {
-                setIsApply(false);
-                setIsBuild(true);
-                setIstrain(false);
-              } else {
-                seterr2(true);
-              }
+        <Form.Item
+          name="email"
+          label={t("common.email")}
+          rules={[
+            {
+              required: true,
+              type: "email",
+              message: t("loginErrors.emailError"),
+            },
+          ]}
+        >
+          <Input
+            prefix={<UserOutlined />}
+            autoFocus
+            onChange={(e) => {
+              form.setFieldsValue({ email: e.target.value.toLowerCase() });
             }}
+          />
+        </Form.Item>
+        <Form.Item
+          name="role"
+          label={t("common.role")}
+          rules={[
+            {
+              required: true,
+              message: t("apply.error.role"),
+            },
+          ]}
+        >
+          <Select>
+            <Option id="select_mentor" value={ACCOUNT_TYPE.MENTOR}>
+              {t("common.mentor")}
+            </Option>
+            <Option id="select_mentee" value={ACCOUNT_TYPE.MENTEE}>
+              {t("common.mentee")}
+            </Option>
+            <Option id="select_partner" value={ACCOUNT_TYPE.PARTNER}>
+              {t("common.partner")}
+            </Option>
+          </Select>
+        </Form.Item>
+        {currentState !== undefined && (
+          <Form.Item>
+            <Steps
+              current={currentState}
+              responsive
+              size="small"
+              items={stateItems}
+            />
+          </Form.Item>
+        )}
+        <Form.Item>
+          <Button
+            type="primary"
+            id="submit"
+            htmlType="submit"
+            style={{ width: "100%" }}
+            loading={loading}
+            disabled={hasApplied}
           >
-            I confirm I have completed all trainings
-          </div>
-          {err2 && <p>Something went wrong check your internet connection</p>}
-        </div>
-      </div>
+            {currentState === undefined
+              ? t("common.submit")
+              : t("common.continue")}
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
-};
+}
 
-export default Apply;
+export default withRouter(Apply);

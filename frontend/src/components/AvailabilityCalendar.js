@@ -1,21 +1,26 @@
 import React, { useState, useEffect, Fragment } from "react";
+import { useMediaQuery } from "react-responsive";
 import moment from "moment";
-import { Calendar, Modal, Badge, TimePicker } from "antd";
+import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
+import { Calendar, Modal, Badge, TimePicker, Button, Typography } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import TextField from "@material-ui/core/TextField";
-import { Input } from "antd";
 
 import MenteeButton from "./MenteeButton.js";
-import "./css/AvailabilityCalendar.scss";
-import { getMentorID } from "utils/auth.service";
+import { useAuth } from "utils/hooks/useAuth";
 import { fetchAvailability, editAvailability } from "../utils/api";
+
+import "./css/AvailabilityCalendar.scss";
 
 /**
  * Moment.js documentation: {@link https://momentjs.com/docs/}
  */
 function AvailabilityCalendar(props) {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const { t } = useTranslation();
+  const { profileId } = useAuth();
   const [saved, setSaved] = useState({}); //  Days with set appointments
-  const [value, setValue] = useState(moment());
+  const [value, setValue] = useState(dayjs());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
   const [lockmodal, setLockModal] = useState(false); // Locks modal when panel changes
@@ -32,26 +37,28 @@ function AvailabilityCalendar(props) {
    */
   useEffect(() => {
     async function getSetDays() {
-      const mentorID = await getMentorID();
+      const mentorID = profileId;
       const availability_data = await fetchAvailability(mentorID);
       const set = [];
 
       if (appointmentdata) {
-        {
-          appointmentdata.map((appointmentsObject, index) => {
-            if (
-              !saved.hasOwnProperty(
-                moment.parseZone(appointmentsObject.date)
-              ) &&
-              !set.hasOwnProperty(appointmentsObject.date)
-            ) {
-              // .format strips data to find just year, month, and day
-              set[
-                moment.parseZone(appointmentsObject.date).format("YYYY-MM-DD")
-              ] = true;
-            }
-          });
-        }
+        appointmentdata.map((appointmentsObject, index) => {
+          if (
+            !saved.hasOwnProperty(
+              moment.parseZone(appointmentsObject.date).local()
+            ) &&
+            !set.hasOwnProperty(appointmentsObject.date)
+          ) {
+            // .format strips data to find just year, month, and day
+            set[
+              moment
+                .parseZone(appointmentsObject.date)
+                .local()
+                .format("YYYY-MM-DD")
+            ] = true;
+          }
+          return false;
+        });
       }
       setSaved(set);
 
@@ -60,12 +67,17 @@ function AvailabilityCalendar(props) {
         availability.forEach((time) => {
           // Checking if saved or set have date already
           if (
-            !saved.hasOwnProperty(moment.parseZone(time.start_time.$date)) &&
+            !saved.hasOwnProperty(
+              moment.parseZone(time.start_time.$date).local()
+            ) &&
             !set.hasOwnProperty(time.start_time.$date)
           ) {
             // .format strips data to find just year, month, and day
             set[
-              moment.parseZone(time.start_time.$date).format("YYYY-MM-DD")
+              moment
+                .parseZone(time.start_time.$date)
+                .local()
+                .format("YYYY-MM-DD")
             ] = true;
           }
         });
@@ -73,13 +85,32 @@ function AvailabilityCalendar(props) {
       setSaved(set);
     }
     getSetDays();
-  }, [trigger]);
+    getAvailability();
+  }, [trigger, profileId]);
+
+  function getBookedAppointments() {
+    if (!appointmentdata) return;
+
+    const bookedTimes = [];
+    appointmentdata.map((appointmentsObject) => {
+      const appointments = appointmentsObject.appointments;
+      appointments.forEach((element) => {
+        bookedTimes.push([
+          moment.parseZone(element.timeslot.start_time.$date).local(),
+          moment.parseZone(element.timeslot.end_time.$date).local(),
+        ]);
+      });
+      return false;
+    });
+
+    setBookedTimeSlots(bookedTimes);
+  }
 
   /**
    * Gets availability from backend and changes clientside timeslots
    */
   async function getAvailability() {
-    const mentorID = await getMentorID();
+    const mentorID = profileId;
     const availability_data = await fetchAvailability(mentorID);
 
     if (availability_data) {
@@ -87,27 +118,14 @@ function AvailabilityCalendar(props) {
       const availability = availability_data.availability;
       availability.forEach((element) => {
         times.push([
-          moment.parseZone(element.start_time.$date),
-          moment.parseZone(element.end_time.$date),
+          dayjs(element.start_time.$date),
+          dayjs(element.end_time.$date),
         ]);
       });
       setTimeSlots(times);
     }
-    if (appointmentdata) {
-      const bookedTimes = [];
-      {
-        appointmentdata.map((appointmentsObject, index) => {
-          const appointments = appointmentsObject.appointments;
-          appointments.forEach((element) => {
-            bookedTimes.push([
-              moment.parseZone(element.timeslot.start_time.$date),
-              moment.parseZone(element.timeslot.end_time.$date),
-            ]);
-          });
-        });
-      }
-      setBookedTimeSlots(bookedTimes);
-    }
+
+    getBookedAppointments();
   }
 
   /**
@@ -118,9 +136,7 @@ function AvailabilityCalendar(props) {
    */
   const handleTimeChange = (index, value, timeslot) => {
     let times = [...timeSlots];
-    times[index][timeslot] = moment(value);
-
-    //date.format("YYYY-MM-DD") + " " + value
+    times[index][timeslot] = dayjs(value);
     setTimeSlots(times);
   };
 
@@ -131,23 +147,19 @@ function AvailabilityCalendar(props) {
     if (today_time_slots.length === 0) {
       if (today_booked_slots.length === 0) {
         times.push([
-          moment(date.format("YYYY-MM-DD")),
-          moment(date.format("YYYY-MM-DD")),
+          dayjs(date.format("YYYY-MM-DD")),
+          dayjs(date.format("YYYY-MM-DD")),
         ]);
       } else {
         times.push([
-          moment(
-            today_booked_slots[today_booked_slots.length - 1][0][1]
-          ).local(),
-          moment(
-            today_booked_slots[today_booked_slots.length - 1][0][1]
-          ).local(),
+          dayjs(today_booked_slots[today_booked_slots.length - 1][0][1]),
+          dayjs(today_booked_slots[today_booked_slots.length - 1][0][1]),
         ]);
       }
     } else {
       times.push([
-        moment(today_time_slots[today_time_slots.length - 1][0][1]).local(),
-        moment(today_time_slots[today_time_slots.length - 1][0][1]).local(),
+        dayjs(today_time_slots[today_time_slots.length - 1][0][1]),
+        dayjs(today_time_slots[today_time_slots.length - 1][0][1]),
       ]);
     }
 
@@ -173,7 +185,7 @@ function AvailabilityCalendar(props) {
     // Workaround that prevents modal from popping up when
     // panels are changed by checking state value of lockmodal
     setLockModal((state) => {
-      setDate(value);
+      setDate(moment(value.format()));
       setValue(value);
       getAvailability();
       if (!state) {
@@ -253,7 +265,7 @@ function AvailabilityCalendar(props) {
     );
 
     // Sends toSend to backend to update availability
-    const mentorID = await getMentorID();
+    const mentorID = profileId;
     await editAvailability(toSend, mentorID);
 
     // Change trigger to update green dots on calendar
@@ -312,106 +324,61 @@ function AvailabilityCalendar(props) {
    * @param {moment} value
    * @returns {*} Content of the cell
    */
-  const dateCellRender = (value) => {
-    const listData = getListData(value);
-    return (
-      <ul className="status">
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge status="success" />
-          </li>
-        ))}
-      </ul>
-    );
+  const cellRender = (current, info) => {
+    if (info.type === "date") {
+      const listData = getListData(current);
+      return (
+        <ul className="status">
+          {listData.map((item) => (
+            <li key={item.content}>
+              <Badge status="success" />
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    return info.originNode;
   };
 
-  // const disabledHours = (prev_time = null, after_time = null, cur_index) => {
-  //   const hours = [];
-  //   if (prev_time != null){
-  //     for(var i = 0;i < moment(prev_time).local().hours();i++){
-  //       hours.push(i);
-  //     }
-  //   }
-  //   if (after_time != null){
-  //     for (i = moment(after_time).local().hours() + 1; i<=23;i++){
-  //       hours.push(i);
-  //     }
-  //   }
-  //   var booked_times = getBookedTimeSlots(date.format("YYYY-MM-DD"));
-  //   var time_slots = getTimeSlots(date.format("YYYY-MM-DD"));
-  //   booked_times.map((time_slot) => {
-  //     var start_hour = moment(time_slot[0][0]).local().hours();
-  //     var end_hour = moment(time_slot[0][1]).local().hours();
-  //     for (var i = start_hour + 1; i < end_hour; i++){
-  //       hours.push(i);
-  //     }
-  //     return true;
-  //   })
-  //   time_slots.map((time_slot, index) => {
-  //     if (cur_index !== index){
-  //       var start_hour = moment(time_slot[0][0]).local().hours();
-  //       var end_hour = moment(time_slot[0][1]).local().hours();
-  //       for (var i = start_hour + 1; i < end_hour; i++){
-  //         hours.push(i);
-  //       }
-  //     }
-  //     return true;
-  //   })
-  //   return hours;
-  // }
-  // const disabledMinutes = (selectedHour) => {
-  //   const minutes = [];
-  //   return minutes;
-  // }
   return (
     <>
       <Calendar
         value={value}
         onPanelChange={onPanelChange}
         onSelect={onSelect}
-        dateCellRender={dateCellRender}
+        // cellRender={cellRender}
+        fullscreen={!isMobile}
       />
       <Modal
-        title="Select times for each available session per day"
-        visible={visible}
+        title={t("availability.title")}
+        open={visible}
         onCancel={() => setVisible(false)}
         footer={[
-          <MenteeButton
-            key="clear"
-            type="back"
-            onClick={handleClear}
-            content="Clear all"
-          />,
-          <MenteeButton
-            key="save"
-            type="primary"
-            onClick={handleOk}
-            content="Save"
-          />,
+          <Button key="clear" onClick={handleClear}>
+            {t("common.clearAll")}
+          </Button>,
+          <Button key="save" type="primary" onClick={handleOk}>
+            {t("common.save")}
+          </Button>,
         ]}
       >
-        <h3 className="hours">
-          <b>Hours </b> | <i>{tz.replace("_", " ")}</i>
-        </h3>
-        <br></br>
-        <div className="date-header">
-          <h2 className="date">{date && date.format("MM/DD")} </h2>
-          <h5 className="date">{date.format("dddd")}</h5>
-        </div>
+        <Typography.Title level={5}>
+          {date && date.format("MM/DD")} | <i>{tz.replace("_", " ")}</i>
+        </Typography.Title>
         <div className="all-timeslots-wrapper">
           {getBookedTimeSlots(date.format("YYYY-MM-DD")).map(
             (bookedTimeSlot, index) => (
               <Fragment key={`${index}`}>
-                <div className="timeslot-wrapper">
+                <div>
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][0], "HH:mm").local()}
+                    value={dayjs(bookedTimeSlot[0][0], "HH:mm")}
                     disabled={true}
                   />
-                  <h1 className="timeslot"> - </h1>
+                  <div className="timeslot"> - </div>
                   <TimePicker
                     format="h:mm A"
-                    value={moment(bookedTimeSlot[0][1]).local()}
+                    value={dayjs(bookedTimeSlot[0][1])}
                     disabled={true}
                   />
                 </div>
@@ -420,20 +387,20 @@ function AvailabilityCalendar(props) {
           )}
           {getTimeSlots(date.format("YYYY-MM-DD")).map((timeSlot, index) => (
             <Fragment key={`${index}`}>
-              <div className="timeslot-wrapper">
+              <div>
                 <TimePicker
                   use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][0], "HH:mm").local()}
+                  value={dayjs(timeSlot[0][0], "HH:mm")}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 0)}
                   // disabledHours={() => disabledHours(null, timeSlot[0][1], index)}
                   // disabledMinutes={() => disabledMinutes()}
                 />
-                <h1 className="timeslot"> - </h1>
+                <div className="timeslot"> - </div>
                 <TimePicker
                   use12Hours={false}
                   format="h:mm A"
-                  value={moment(timeSlot[0][1]).local()}
+                  value={dayjs(timeSlot[0][1])}
                   onChange={(event) => handleTimeChange(timeSlot[1], event, 1)}
                   // disabledHours={() => disabledHours(timeSlot[0][0], null, index)}
                   // disabledMinutes={() => disabledMinutes()}
@@ -448,9 +415,12 @@ function AvailabilityCalendar(props) {
         </div>
         <div className="add-times">
           <p id="error" className="error">
-            Invalid Times.Please select times correctly
+            {t("availability.errorInvalid")}
           </p>
-          <MenteeButton onClick={addTimeSlots} content="Add hours" />
+          <MenteeButton
+            onClick={addTimeSlots}
+            content={t("availability.addHours")}
+          />
         </div>
       </Modal>
     </>

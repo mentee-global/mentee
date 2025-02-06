@@ -9,12 +9,12 @@ class MenteeApplication(Document, Mixin):
 
     email = StringField(required=True)
     name = StringField(required=True)
-    age = StringField(required=True)
+    age = StringField(required=False)
     organization = StringField()
     immigrant_status = ListField(StringField(), required=True)
     Country = StringField()
     identify = StringField(required=True)
-    language = StringField(required=True)
+    language = ListField(StringField())
     topics = ListField(StringField(), required=True)
     workstate = ListField(StringField(), required=True)
     isSocial = StringField(required=True)
@@ -22,6 +22,8 @@ class MenteeApplication(Document, Mixin):
     application_state = StringField(required=True)
     date_submitted = DateTimeField(required=True)
     notes = StringField()
+    traingStatus = DictField(required=False)
+    partner = StringField()
 
     def __repr__(self):
         return f"""Mentee Application email: {self.email}

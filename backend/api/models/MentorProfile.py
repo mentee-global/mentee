@@ -22,14 +22,20 @@ class MentorProfile(Document, Mixin):
     languages = ListField(StringField(), required=True)
     specializations = ListField(StringField(), required=True)
     biography = StringField(required=False)
-    offers_in_person = BooleanField(required=True)
-    offers_group_appointments = BooleanField(required=True)
+    offers_in_person = BooleanField(required=False, default=False)
+    offers_group_appointments = BooleanField(required=False, default=False)
     videos = ListField(EmbeddedDocumentField(Video))
     video = EmbeddedDocumentField(Video)
     availability = ListField(EmbeddedDocumentField(Availability))
-    taking_appointments = BooleanField(required=True)
+    taking_appointments = BooleanField(required=False)
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)
+    pair_partner = DictField(required=False)
+    preferred_language = StringField(required=False, default="en-US")
+    roomName = StringField(required=False)
+    organization = StringField(required=False)
+    timezone = StringField(required=True)
+    mentorMentee = StringField(required=False)
 
     def __repr__(self):
         return f"""<MentorProfile firebase_id: {self.firebase_uid} 

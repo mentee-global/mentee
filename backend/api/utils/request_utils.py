@@ -1,4 +1,5 @@
 import os
+from typing import List, Optional, Union
 from wtforms import Form
 from wtforms.fields import StringField, BooleanField, FieldList, IntegerField, FormField
 
@@ -15,12 +16,15 @@ from api.models import (
     MentorProfile,
     MenteeProfile,
     Admin,
+    Guest,
     PartnerProfile,
     MenteeApplication,
     NewMentorApplication,
     PartnerApplication,
+    Support,
+    Hub,
 )
-from api.utils.constants import Account
+from api.utils.constants import Account, TARGET_LANGS
 
 wtforms_json.init()
 
@@ -66,7 +70,6 @@ class MenteeForm(Form):
     age = StringField(validators=[InputRequired()])
     gender = StringField(validators=[InputRequired()])
     languages = FieldList(StringField(), validators=[validators.DataRequired()])
-    organization = StringField(validators=[InputRequired()])
 
 
 class PartnerForm(Form):
@@ -116,7 +119,6 @@ class MentorApplicationForm(Form):
     name = StringField(validators=[InputRequired()])
     cell_number = StringField(validators=[InputRequired()])
     hear_about_us = StringField(validators=[InputRequired()])
-    offer_donation = StringField(validators=[InputRequired()])
     employer_name = StringField(validators=[InputRequired()])
     role_description = StringField(validators=[InputRequired()])
     languages = StringField(validators=[InputRequired()])
@@ -130,7 +132,6 @@ class MentorApplicationForm(Form):
 class MenteeApplicationForm(Form):
     email = StringField(validators=[InputRequired()])
     name = StringField(validators=[InputRequired()])
-    age = StringField(validators=[InputRequired()])
     immigrant_status = FieldList(StringField(), validators=[validators.DataRequired()])
     identify = StringField(validators=[InputRequired()])
     language = StringField(validators=[InputRequired()])
@@ -163,7 +164,10 @@ def is_invalid_form(form_data) -> Tuple[str, bool]:
 
 
 def send_email(
-    recipient: str = "", subject: str = "", data: dict = None, template_id: str = ""
+    recipient: Optional[Union[str, List[str]]],
+    subject: str = "",
+    data: dict = None,
+    template_id: str = "",
 ) -> Tuple[bool, str]:
     """Sends an email to a specific email address from the official MENTEE email
     :param recipient - a single recipient's email address
@@ -201,7 +205,12 @@ def send_email(
         message.template_id = template_id
 
     if data:
+        # Set default language to English if no language is specified
+        if len(TARGET_LANGS.intersection(data.keys())) == 0:
+            data["en-US"] = True
         message.dynamic_template_data = data
+    else:
+        message.dynamic_template_data = {"en-US": True}
 
     try:
         sg = SendGridAPIClient(sendgrid_key)
@@ -261,6 +270,14 @@ def get_profile_model(role):
         return Admin
     elif role == Account.PARTNER:
         return PartnerProfile
+    elif role == Account.GUEST:
+        return Guest
+    elif role == Account.SUPPORT:
+        return Support
+    elif role == Account.HUB:
+        return Hub
+    else:
+        raise ValueError("Invalid role")
 
 
 def application_model(role):
@@ -272,3 +289,5 @@ def application_model(role):
         return Admin
     elif role == Account.PARTNER:
         return PartnerApplication
+    else:
+        raise ValueError("Invalid role")

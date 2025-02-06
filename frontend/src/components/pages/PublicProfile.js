@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
+import { withRouter } from "react-router-dom";
 
-import ProfileContent from "../ProfileContent";
-import ProfileVideos from "../ProfileVideos";
-import { fetchAccountById, getMenteePrivateStatus } from "../../utils/api";
+import ProfileContent from "components/ProfileContent";
+import ProfileVideos from "components/ProfileVideos";
+import { fetchAccountById } from "utils/api";
 
 import "../css/PublicProfile.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
 import MenteeVideo from "components/MenteeVideo";
 
-function PublicProfile({ accountType, id }) {
+function PublicProfile({ match }) {
+  const accountType = match.params.type;
+  const id = match.params.id;
   const [account, setAccount] = useState({});
   const [updateContent, setUpdateContent] = useState(false);
   const [isMentor, setIsMentor] = useState(accountType == ACCOUNT_TYPE.MENTOR);
@@ -48,10 +51,10 @@ function PublicProfile({ accountType, id }) {
             mentor={account}
             id={id}
             handleUpdateAccount={handleUpdateAccount}
-            accountType={accountType}
+            accountType={parseInt(accountType)}
           />
         </div>
-        {accountType != ACCOUNT_TYPE.PARTNER && (
+        {accountType == ACCOUNT_TYPE.MENTEE && account.video && (
           <MenteeVideo video={account.video} />
         )}
       </div>
@@ -64,4 +67,4 @@ function PublicProfile({ accountType, id }) {
   );
 }
 
-export default PublicProfile;
+export default withRouter(PublicProfile);

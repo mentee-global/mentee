@@ -1,607 +1,356 @@
 import React, { useEffect, useState } from "react";
-import { withRouter, useHistory } from "react-router-dom";
-import { Checkbox, Button, message, Upload, Avatar } from "antd";
-import ModalInput from "./ModalInput";
+import { withRouter } from "react-router-dom";
+import { Button, Upload, Avatar, Form, Select, Input, Radio } from "antd";
+import { useTranslation } from "react-i18next";
 import {
-  createPartnerProfile,
-  getAppState,
-  isHaveAccount,
-  uploadPartnerImage,
-} from "../utils/api";
-import {
-  REGIONS,
-  REGISTRATION_STAGE,
-  MENTEE_DEFAULT_VIDEO_NAME,
-  SDGS,
   ACCOUNT_TYPE,
+  getRegions,
+  getSDGs,
+  TIMEZONE_OPTIONS,
 } from "../utils/consts";
-import { sendVerificationEmail } from "utils/auth.service";
-
-import "./css/AntDesign.scss";
-import "./css/Modal.scss";
-import "./css/RegisterForm.scss";
-import "./css/MenteeButton.scss";
-import { validateUrl } from "../utils/misc";
-import moment from "moment";
+import { urlRegex } from "../utils/misc";
 import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
-function RegisterForm(props) {
-  const history = useHistory();
-  const numInputs = 14;
-  const [inputClicked, setInputClicked] = useState(
-    new Array(numInputs).fill(false)
-  ); // each index represents an input box, respectively
-  const [isValid, setIsValid] = useState(new Array(numInputs).fill(true));
-  const [validate, setValidate] = useState(false);
-  const [error, setError] = useState(false);
-  const [organization, setOrganizaton] = useState(null);
-  const [location, setLocation] = useState(null);
-  const [person_name, setrPersonName] = useState(null);
-  const [regions, setRegions] = useState([]);
-  const [intro, setIntro] = useState(null);
-  const [website, setWebsite] = useState(null);
-  const [linkedin, setLinkedin] = useState(null);
-  const [sdgs, setSdgs] = useState([]);
-  const [topics, setTopics] = useState(null);
-  const [open_grants, setOpenGrants] = useState(false);
-  const [open_projects, setOpenProjects] = useState(false);
+import { css } from "@emotion/css";
+
+const styles = {
+  formGroup: css`
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    width: 100%;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0;
+    }
+  `,
+  formGroupItem: css`
+    flex: 1;
+  `,
+};
+
+function PartnerProfileForm({
+  email,
+  newProfile,
+  loading,
+  onSubmit,
+  profileData,
+  resetFields,
+  hub_user,
+}) {
+  const { t, i18n } = useTranslation();
   const [image, setImage] = useState(null);
   const [changedImage, setChangedImage] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [password, setPassword] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState(null);
-  const [err, setErr] = useState(false);
-  const [sdgErr, setSdgErr] = useState(false);
-  const [localProfile, setLocalProfile] = useState({});
+  const [edited, setEdited] = useState(false);
+  const [finishFlag, setFinishFlag] = useState(false);
+  const [form] = Form.useForm();
 
-  const info = (msg) => {
-    message.success(msg);
-  };
-
-  function handleClick(index) {
-    // Sets only the clicked input box to true to change color, else false
-    let newClickedInput = new Array(numInputs).fill(false);
-    newClickedInput[index] = true;
-    setInputClicked(newClickedInput);
-  }
-
-  function validateNotEmpty(arr, index) {
-    let tempValid = isValid;
-    tempValid[index] = arr.length > 0;
-    setIsValid(tempValid);
-  }
-
-  function handleOrganizationChange(e) {
-    const organization = e.target.value;
-
-    if (organization.length <= 50) {
-      let newValid = [...isValid];
-
-      newValid[0] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[0] = false;
-      setIsValid(newValid);
+  useEffect(() => {
+    if (profileData) {
+      form.setFieldsValue(profileData);
+      form.setFieldValue("video", profileData.video?.url);
+      setImage(profileData.image);
     }
-    setOrganizaton(organization);
-    let newLocalProfile = { ...localProfile, organization: organization };
-    updateLocalStorage(newLocalProfile);
-  }
-  function handlePassChange(e) {
-    const pass = e.target.value;
+  }, [profileData, form, resetFields]);
 
-    if (pass.length >= 8) {
-      let newValid = [...isValid];
-
-      newValid[30] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[30] = false;
-      setIsValid(newValid);
+  const onFinish = async (values) => {
+    setFinishFlag(true);
+    let newData = values;
+    if (email) {
+      newData.email = email;
     }
-    setPassword(pass);
-  }
-  function handlePassConfirmChange(e) {
-    const pass = e.target.value;
-
-    if (pass === password) {
-      let newValid = [...isValid];
-
-      newValid[31] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[31] = false;
-      setIsValid(newValid);
+    newData.role = ACCOUNT_TYPE.PARTNER;
+    newData.preferred_language = i18n.language;
+    newData.image = image;
+    newData.changedImage = changedImage;
+    newData.edited = edited;
+    if (hub_user) {
+      newData.hub_id = hub_user._id.$oid;
     }
-    setConfirmPassword(pass);
-    let newLocalProfile = { ...localProfile, password: pass };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handlepersonNameChange(e) {
-    const person_name = e.target.value;
-
-    if (person_name.length <= 80) {
-      let newValid = [...isValid];
-
-      newValid[1] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[1] = false;
-      setIsValid(newValid);
-    }
-    setrPersonName(person_name);
-    let newLocalProfile = { ...localProfile, person_name: person_name };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleIntroChange(e) {
-    const intro = e.target.value;
-
-    if (intro.length <= 1002) {
-      let newValid = [...isValid];
-
-      newValid[8] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[8] = false;
-      setIsValid(newValid);
-    }
-
-    setIntro(intro);
-    let newLocalProfile = { ...localProfile, intro: intro };
-    updateLocalStorage(newLocalProfile);
-  }
-  function handleTopicsChange(e) {
-    const topics = e.target.value;
-
-    if (topics.length <= 1002) {
-      let newValid = [...isValid];
-
-      newValid[8] = true;
-
-      setIsValid(newValid);
-    } else {
-      let newValid = [...isValid];
-      newValid[8] = false;
-      setIsValid(newValid);
-    }
-
-    setTopics(topics);
-    let newLocalProfile = { ...localProfile, topics: topics };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleWebsiteChange(e) {
-    const website = e.target.value;
-    if (website != "" && website != null) {
-      if (validateUrl(website)) {
-        let newValid = [...isValid];
-
-        newValid[3] = true;
-
-        setIsValid(newValid);
-      } else {
-        let newValid = [...isValid];
-        newValid[3] = false;
-        setIsValid(newValid);
-      }
-    } else {
-      let newValid = [...isValid];
-      newValid[2] = true;
-      setIsValid(newValid);
-    }
-    setWebsite(website);
-    let newLocalProfile = { ...localProfile, website: website };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleLinkedinChange(e) {
-    const linkedin = e.target.value;
-    if (linkedin != "" && linkedin != null) {
-      if (validateUrl(linkedin)) {
-        let newValid = [...isValid];
-
-        newValid[2] = true;
-
-        setIsValid(newValid);
-      } else {
-        let newValid = [...isValid];
-        newValid[2] = false;
-        setIsValid(newValid);
-      }
-    } else {
-      let newValid = [...isValid];
-      newValid[2] = true;
-      setIsValid(newValid);
-    }
-    setLinkedin(linkedin);
-    let newLocalProfile = { ...localProfile, linkedin: linkedin };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleLocationChange(e) {
-    const location = e.target.value;
-    setLocation(location);
-    let newLocalProfile = { ...localProfile, location: location };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleOpenProjects(e) {
-    setOpenProjects(e.target.checked);
-    let newLocalProfile = {
-      ...localProfile,
-      open_projects: e.target.checked,
-    };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function handleOpenGrants(e) {
-    setOpenGrants(e.target.checked);
-    let newLocalProfile = {
-      ...localProfile,
-      open_grants: e.target.checked,
-    };
-    updateLocalStorage(newLocalProfile);
-  }
-
-  function updateLocalStorage(newLocalProfile) {
-    setLocalProfile(newLocalProfile);
-    localStorage.setItem("partner", JSON.stringify(newLocalProfile));
-  }
-
-  const handleSaveEdits = async () => {
-    async function saveEdits(data) {
-      const res = await createPartnerProfile(data, props.isHave);
-      const mentorId =
-        res && res.data && res.data.result ? res.data.result.mentorId : false;
-
-      setSaving(false);
-      setValidate(false);
-      if (mentorId) {
-        if (changedImage) {
-          await uploadPartnerImage(image, mentorId);
-        }
-
-        setError(false);
-        setIsValid([...isValid].fill(true));
-        info("Your account has been created now you can login to Mentee");
-        await sendVerificationEmail(props.headEmail);
-        history.push("/login");
-      } else {
-        setError(true);
-      }
-    }
-
-    if (isValid.includes(false)) {
-      setValidate(true);
-      return;
-    }
-
-    const newProfile = {
-      email: props.headEmail,
-      password: password,
-      organization: organization,
-      location: location,
-      person_name: person_name,
-      regions: regions,
-      intro: intro,
-      linkedin: linkedin,
-      website: website,
-      sdgs: sdgs,
-      topics: topics,
-      open_grants: open_grants,
-      open_projects: open_projects,
-    };
-    if (sdgs.length == 0) {
-      setSdgErr(true);
-      return;
-    } else {
-      setSdgErr(false);
-    }
-    if (!isValid.includes(false)) {
-      setSaving(true);
-      await saveEdits(newProfile);
-    }
+    onSubmit(newData);
+    setChangedImage(false);
+    setEdited(false);
   };
 
   return (
-    <div className="register-content">
-      <div className="register-header">
-        <h2>Welcome. Tell us about yourself.</h2>
-        {error && (
-          <div className="register-error">
-            Error or missing fields, try again.
-          </div>
-        )}
-        {err && <p>Please complete apply and training steps first</p>}
-      </div>
-      <div className="modal-profile-container2">
-        <Avatar
-          size={120}
-          icon={<UserOutlined />}
-          className="modal-profile-icon"
-          src={
-            changedImage
-              ? image && URL.createObjectURL(image)
-              : image && image.urls
-          }
-        />
-        <ImgCrop rotate aspect={5 / 3}>
+    <Form
+      form={form}
+      onFinish={onFinish}
+      layout="vertical"
+      style={{ width: "100%", marginTop: "1em" }}
+      onValuesChange={() => setEdited(true)}
+    >
+      <Form.Item>
+        <ImgCrop rotate aspect={1} minZoom={0.2}>
           <Upload
             onChange={async (file) => {
               setImage(file.file.originFileObj);
               setChangedImage(true);
+              setEdited(true);
             }}
             accept=".png,.jpg,.jpeg"
             showUploadList={false}
           >
+            <Avatar
+              size={120}
+              icon={<UserOutlined />}
+              src={
+                changedImage
+                  ? image && URL.createObjectURL(image)
+                  : image && image.url
+              }
+            />
             <Button
               shape="circle"
               icon={<EditFilled />}
-              className="modal-profile-icon-edit"
+              className={css`
+                position: absolute;
+                top: 0;
+                left: 0;
+              `}
             />
           </Upload>
         </ImgCrop>
-      </div>
-      <div className="modal-inner-container">
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Organization/Institution/Corporation Full Name *"
-            clicked={inputClicked[0]}
-            index={0}
-            handleClick={handleClick}
-            onChange={handleOrganizationChange}
-            value={organization}
-            valid={isValid[0]}
-            validate={validate}
-            errorPresent={organization && organization.length > 50}
-            errorMessage="organization field is too long."
-          />
-        </div>
-
-        {!props.isHave ? (
-          <div className="modal-input-container">
-            <ModalInput
-              style={styles.modalInput}
-              type="password"
-              title="Password *"
-              clicked={inputClicked[30]}
-              index={30}
-              handleClick={handleClick}
-              onChange={handlePassChange}
-              value={password}
-              valid={isValid[30]}
-              validate={validate}
-              errorPresent={password && password.length > 50}
-              errorMessage="password field is too long."
-            />
-            <ModalInput
-              style={styles.modalInput}
-              type="password"
-              title="Confirm Password *"
-              clicked={inputClicked[31]}
-              index={31}
-              handleClick={handleClick}
-              onChange={handlePassConfirmChange}
-              value={confirmPassword}
-              valid={isValid[31]}
-              validate={validate}
-              errorPresent={password != confirmPassword}
-              errorMessage="password not match."
-            />
+        {!image && finishFlag && (
+          <div
+            class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
+            role="alert"
+          >
+            <div class="ant-form-item-explain-error">
+              {t("common.requiredAvatar")}
+            </div>
           </div>
-        ) : (
-          ""
         )}
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Headquarters Location (City, Country) *"
-            clicked={inputClicked[5]}
-            index={5}
-            handleClick={handleClick}
-            onChange={handleLocationChange}
-            value={location}
-          />
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Contact Person's Full Name (First Last)"
-            clicked={inputClicked[1]}
-            index={1}
-            handleClick={handleClick}
-            onChange={handlepersonNameChange}
-            errorPresent={person_name && person_name.length > 80}
-            errorMessage="person name field is too long."
-            value={person_name}
-            valid={isValid[1]}
-            validate={validate}
-          />
-        </div>
-
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="dropdown-multiple"
-            title="Regions Work In *"
-            clicked={inputClicked[9]}
-            index={9}
-            handleClick={handleClick}
-            onChange={(e) => {
-              setRegions(e);
-              validateNotEmpty(e, 9);
-
-              let newLocalProfile = { ...localProfile, regions: e };
-              updateLocalStorage(newLocalProfile);
-            }}
-            options={REGIONS}
-            value={regions}
-            valid={isValid[9]}
-            validate={validate}
-          />
-        </div>
-
-        <div className="modal-input-container Bio">
-          <ModalInput
-            style={styles.modalInput}
-            type="textarea"
-            maxRows={3}
-            hasBorder={false}
-            title="Brief Introduction to Your Org/Inst/Corp *"
-            clicked={inputClicked[2]}
-            index={2}
-            handleClick={handleClick}
-            onChange={handleIntroChange}
-            value={intro}
-            valid={isValid[8]}
-            validate={validate}
-            errorPresent={intro && intro.length > 1002}
-            errorMessage="inro field is too long."
-          />
-        </div>
-        <div className="modal-input-container">
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="Website"
-            clicked={inputClicked[6]}
-            index={6}
-            handleClick={handleClick}
-            onChange={handleWebsiteChange}
-            value={website}
-            errorPresent={website && !validateUrl(website)}
-            errorMessage="Invalid URL."
-            valid={isValid[3]}
-            validate={validate}
-          />
-
-          <ModalInput
-            style={styles.modalInput}
-            type="text"
-            title="LinkedIn"
-            clicked={inputClicked[8]}
-            index={8}
-            handleClick={handleClick}
-            onChange={handleLinkedinChange}
-            value={linkedin}
-            errorPresent={linkedin && !validateUrl(linkedin)}
-            errorMessage="Invalid URL."
-            valid={isValid[2]}
-            validate={validate}
-          />
-        </div>
-        <div className="modal-input-container sdgs">
-          <p className="sdgtext">
-            Sustainable Development Goals Your Work Supports *
-          </p>
-
-          {sdgErr && <p>Please input cell</p>}
-          <Checkbox.Group
-            options={SDGS}
-            value={sdgs}
-            onChange={(checkedValues) => {
-              let optionsSelected = [];
-              checkedValues.forEach((value) => {
-                optionsSelected.push(value);
-              });
-              setSdgs(optionsSelected);
-              let newLocalProfile = { ...localProfile, sdgs: optionsSelected };
-              updateLocalStorage(newLocalProfile);
-            }}
-          />
-        </div>
-      </div>
-      <div className="modal-input-container Bio">
-        <ModalInput
-          style={styles.modalInput}
-          type="textarea"
-          maxRows={3}
-          hasBorder={false}
-          title="Current & Upcoming Project Topics *"
-          clicked={inputClicked[88]}
-          index={88}
-          handleClick={handleClick}
-          onChange={handleTopicsChange}
-          value={topics}
-          valid={isValid[88]}
-          validate={validate}
-          errorPresent={topics && topics.length > 1002}
-          errorMessage="inro field is too long."
-        />
-      </div>
-      <div className="divider" />
-      <div className="modal-availability-checkbox">
-        <Checkbox
-          className="modal-availability-checkbox-text"
-          clicked={inputClicked[3]}
-          index={3}
-          handleClick={handleClick}
-          onChange={handleOpenGrants}
-          checked={open_grants}
+      </Form.Item>
+      {hub_user && (
+        <Form.Item
+          label={"Email"}
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Please input Email.",
+            },
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
+            },
+          ]}
         >
-          Open to Collaboration on Grants
-        </Checkbox>
-        <div></div>
-        <Checkbox
-          className="modal-availability-checkbox-text"
-          clicked={inputClicked[4]}
-          index={4}
-          handleClick={handleClick}
-          onChange={handleOpenProjects}
-          checked={open_projects}
+          <Input />
+        </Form.Item>
+      )}
+      <Form.Item
+        label={t("partnerProfile.organizationName")}
+        name="organization"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredFullName"),
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      {newProfile ? (
+        <div className={styles.formGroup}>
+          <Form.Item
+            label={t("common.password")}
+            name="password"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: t("common.requiredPassword"),
+              },
+            ]}
+            className={styles.formGroupItem}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label={t("commonProfile.confirmPassword")}
+            name="confirmPassword"
+            dependencies={["password"]}
+            hasFeedback
+            required
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(t("commonProfile.passwordMismatch"))
+                  );
+                },
+              }),
+            ]}
+            className={styles.formGroupItem}
+          >
+            <Input.Password />
+          </Form.Item>
+        </div>
+      ) : null}
+      <Form.Item
+        label={t("partnerProfile.location")}
+        name="location"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredKnowledgeLocation"),
+          },
+        ]}
+        className={styles.formGroupItem}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label={t("partnerProfile.contactFullName")}
+        name="person_name"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredFullName"),
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label={t("partnerProfile.regionsWork")}
+        name="regions"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredRegion"),
+          },
+        ]}
+      >
+        <Select mode="multiple" options={getRegions(t)} />
+      </Form.Item>
+      <Form.Item
+        label={t("partnerProfile.briefIntro")}
+        name="intro"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredBriefIntro"),
+          },
+        ]}
+      >
+        <Input.TextArea rows={3} />
+      </Form.Item>
+      <div className={styles.formGroup}>
+        <Form.Item
+          className={styles.formGroupItem}
+          label={t("commonProfile.website")}
+          name="website"
+          rules={[
+            {
+              pattern: new RegExp(urlRegex),
+              message: t("common.invalidUrl"),
+            },
+          ]}
         >
-          Open to Collaboration on Projects
-        </Checkbox>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          className={styles.formGroupItem}
+          label={t("commonProfile.linkedin")}
+          name="linkedin"
+          rules={[
+            {
+              pattern: new RegExp(urlRegex),
+              message: t("common.invalidUrl"),
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
       </div>
-      <div className="btn-r2">
-        {validate && <b style={styles.alertToast}>Error or Missing Fields</b>}
-        <Button
-          type="default"
-          shape="round"
-          className="regular-button"
-          onClick={handleSaveEdits}
-          loading={saving}
+      <Form.Item
+        label={t("common.timezone")}
+        name="timezone"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredTimezone"),
+          },
+        ]}
+        className={styles.formGroupItem}
+      >
+        <Select options={[...TIMEZONE_OPTIONS]} />
+      </Form.Item>
+      <Form.Item
+        label={t("partnerProfile.developmentGoals")}
+        name="sdgs"
+        rules={[
+          {
+            required: true,
+            message: t("common.requiredDevelopmentGoals"),
+          },
+        ]}
+      >
+        <Select mode="multiple" options={getSDGs(t)} />
+      </Form.Item>
+      <Form.Item
+        label={
+          hub_user && hub_user.url === "GSRFoundation"
+            ? t("partnerProfile.projectNames_GSR")
+            : t("partnerProfile.projectNames")
+        }
+        name="topics"
+      >
+        <Input.TextArea rows={3} />
+      </Form.Item>
+      {hub_user && hub_user.url === "GSRFoundation" && (
+        <Form.Item label={t("partnerProfile.success_GSR")} name="success">
+          <Input.TextArea rows={3} />
+        </Form.Item>
+      )}
+      <div className={styles.formGroup}>
+        <Form.Item
+          label={t("partnerProfile.collaborationGrants")}
+          name="open_grants"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredCheckbox"),
+            },
+          ]}
+          className={styles.formGroupItem}
         >
-          Save
+          <Radio.Group>
+            <Radio value={true}>{t("common.yes")}</Radio>
+            <Radio value={false}>{t("common.no")}</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          label={t("partnerProfile.collaborationProjects")}
+          name="open_projects"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredCheckbox"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Radio.Group>
+            <Radio value={true}>{t("common.yes")}</Radio>
+            <Radio value={false}>{t("common.no")}</Radio>
+          </Radio.Group>
+        </Form.Item>
+      </div>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" block loading={loading}>
+          {t("common.save")}
         </Button>
-      </div>
-    </div>
+      </Form.Item>
+    </Form>
   );
 }
 
-const styles = {
-  modalInput: {
-    height: 65,
-    margin: 18,
-    padding: 4,
-    paddingTop: 6,
-    marginBottom: "40px",
-  },
-  alertToast: {
-    color: "#FF0000",
-    display: "inline-block",
-    marginRight: 10,
-  },
-  saveButton: {
-    position: "relative",
-    top: "60em",
-  },
-};
-
-export default withRouter(RegisterForm);
+export default withRouter(PartnerProfileForm);

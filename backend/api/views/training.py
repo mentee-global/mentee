@@ -170,6 +170,7 @@ def get_trainings(role):
 
     return create_response(data={"trainings": result})
 
+
 @training.route("/update_multiple", methods=["PATCH"])
 def update_multiple_trainings():
     data = request.json.get("trainings", [])
@@ -195,7 +196,9 @@ def update_multiple_trainings():
 
         train = Training.objects(id=training_id).first()
         if not train:
-            failed_updates.append({"error": f"Training with ID {training_id} not found"})
+            failed_updates.append(
+                {"error": f"Training with ID {training_id} not found"}
+            )
             continue
 
         train_data = train.to_mongo().to_dict()
@@ -213,9 +216,11 @@ def update_multiple_trainings():
         )
 
         if not other_fields_match:
-            failed_updates.append({
-                "error": f"Only sort_order can be updated. Mismatched fields for ID {training_id}"
-            })
+            failed_updates.append(
+                {
+                    "error": f"Only sort_order can be updated. Mismatched fields for ID {training_id}"
+                }
+            )
             continue
 
         # Update sort_order if it's different
@@ -223,9 +228,9 @@ def update_multiple_trainings():
             train.update(sort_order=updated_sort_order)
             updated_trainings.append(train.reload())
         else:
-            failed_updates.append({
-                "error": f"No changes in sort_order for ID {training_id}"
-            })
+            failed_updates.append(
+                {"error": f"No changes in sort_order for ID {training_id}"}
+            )
 
     result = {
         "updated_trainings": [json.loads(t.to_json()) for t in updated_trainings],
@@ -233,7 +238,6 @@ def update_multiple_trainings():
     }
 
     return create_response(data=result)
-
 
 
 @training.route("/update_multiple", methods=["PATCH"])

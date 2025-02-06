@@ -312,3 +312,22 @@
 [class*="poweredBy"] img {
   margin-left: 50px !important; /* Much larger margin */
 }
+
+.admin-training-container {
+  position: relative;
+  overflow: hidden;  // Prevent scroll jumps
+  min-height: 100vh;
+  padding-bottom: 100px;  // Add padding at bottom for dragging space
+
+  .draggable-item {
+    position: relative;
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    
+    &.is-dragging {
+      background: #fafafa;
+    }
+  }
+}

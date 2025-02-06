@@ -114,7 +114,6 @@ function GroupMessageChatArea(props) {
       parent_message_id: null,
       time: dateTime,
     };
-
     // Clear inputs immediately
     setMessageTitle("");
     setMessageText("");

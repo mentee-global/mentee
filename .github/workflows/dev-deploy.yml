@@ -71,3 +71,4 @@ jobs:
           heroku_app_name: "mentee-dev"
           heroku_email: "h4i.mentee.auth@gmail.com"
           branch: dev
+          dontuseforce: false  # This allows force pushing to Heroku

@@ -92,7 +92,10 @@ function PartnerGallery(props) {
         (partner.hub_id && partner.hub_id == searchHub);
 
       let matchestopics = false;
-      if (user && user.hub_user && user.hub_user.name === "GSRFoundation") {
+      if (
+        (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
+        (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+      ) {
         matchestopics =
           !query2 ||
           (partner.topics &&
@@ -118,6 +121,8 @@ function PartnerGallery(props) {
         matchHub
       );
     });
+
+  console.log("uuu", user);
 
   const getFilterForm = () => (
     <>
@@ -149,7 +154,8 @@ function PartnerGallery(props) {
         maxTagCount="responsive"
       />
       <Title level={4}>
-        {user && user.hub_user && user.hub_user.name === "GSRFoundation"
+        {(user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
+        (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
           ? t("gallery.projectTopicsPlaceholder_GSR")
           : t("gallery.projectTopics")}
       </Title>
@@ -158,7 +164,8 @@ function PartnerGallery(props) {
           width: 100%;
         `}
         placeholder={
-          user && user.hub_user && user.hub_user.name === "GSRFoundation"
+          (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
+          (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
             ? t("gallery.projectTopicsPlaceholder_GSR")
             : t("gallery.projectTopicsPlaceholder")
         }

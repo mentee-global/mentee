@@ -32,6 +32,7 @@ function GroupMessageChatArea(props) {
   const [emojiUp, setEmojiUp] = useState(false);
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(true);
+  const [expandedMessages, setExpandedMessages] = useState({});
 
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
@@ -41,6 +42,7 @@ function GroupMessageChatArea(props) {
       });
     }
   };
+
   function sortParentChild(items) {
     const map = new Map();
 
@@ -69,6 +71,7 @@ function GroupMessageChatArea(props) {
 
     return sortedArray;
   }
+
   useEffect(() => {
     if (shouldScroll) {
       scrollToBottom();
@@ -89,9 +92,13 @@ function GroupMessageChatArea(props) {
     }
   }, []);
 
-  /*
-    To do: Load user on opening. Read from mongo and also connect to socket.
-  */
+  const toggleExpand = (id) => {
+    setExpandedMessages((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   const linkify = (text) => {
     const urlPattern =
       /(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|]/gi;
@@ -187,7 +194,7 @@ function GroupMessageChatArea(props) {
 
     // Add to local state
     props.addMyMessage(displayMsg);
-    setShouldScroll(true);
+    //setShouldScroll(true);
 
     // Send notifications
     if (particiants?.length > 0) {
@@ -211,6 +218,28 @@ function GroupMessageChatArea(props) {
       float: left;
       clear: left;
       background-color: #f4f5f9;
+    `,
+    parentMessageContainer: css`
+      border: 1px solid rgb(228, 227, 227); // Border for the entire parent message
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color:rgb(255, 255, 255); // Background color for the container
+    `,
+    parentMessage: css`
+      padding: 10px 15px;
+      border-radius: 8px;
+      background-color: #e6f7ff; // Example background color
+      border: 1px solid #91d5ff; // Example border color
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Example shadow
+    `,
+    title: css`
+      padding: 10px 10px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      background-color: #FFBB91; // Updated background color for title
+      font-weight: bold;
+      color: #000; // Example text color
     `,
   };
 
@@ -274,8 +303,11 @@ function GroupMessageChatArea(props) {
       let sender_user = particiants.find(
         (x) => x._id.$oid === block.sender_id.$oid
       );
+
+      const isParent = !block.parent_message_id;
+
       return (
-        <>
+        <div className={isParent ? styles.parentMessageContainer : ""}>
           <div
             style={{ marginLeft: 50 * depth + "px" }}
             className="chatRight__items you-received"
@@ -293,150 +325,125 @@ function GroupMessageChatArea(props) {
                         : ACCOUNT_TYPE.HUB
                     }/${block.sender_id.$oid}`}
                   >
-                    <div style={{ width: "50px", textAlign: "center" }}>
+                    <div style={{ width: "60px", textAlign: "center" }}>
                       <Avatar
                         src={sender_user?.image?.url}
-                        style={{ cursor: "pointer" }}
-                      />
-                      <div
                         style={{
                           cursor: "pointer",
-                          fontSize: "11px",
-                          textAlign: "left",
-                          width: "50px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
+                          width: "60px",
+                          height: "60px",
+                          border: "1.5px solid rgb(198, 204, 208)",
+                          borderRadius: "50%",
                         }}
-                      >
-                        {sender_user?.name
-                          ? sender_user.name
-                          : sender_user?.organization}
-                      </div>
+                      />
                     </div>
                   </NavLink>
                 </span>
-                <div className="convo">
+                <div className="convo" style={{ flex: 1, marginLeft: "10px" }}>
                   {block.title && (
-                    <div
-                      className={css`
-                        padding: 5px 15px;
-                        border-radius: 5px;
-                        margin-left: 8px;
-                        width: fit-content;
-                        font-weight: bold;
-                        margin-bottom: 4px;
-                        background-color: ${
-                          block.sender_id.$oid === profileId
-                            ? colorPrimaryBg // Your messages - use theme color
-                            : "#f4f5f9" // Other messages - keep original color
-                        };
-                      `}
-                    >
+                    <div className={styles.title}>
                       {block.title}
                     </div>
                   )}
                   <div
                     className={css`
-                      padding: 5px 15px;
-                      border-radius: 5px;
-                      margin-left: 8px;
-                      width: fit-content;
-                      white-space: pre-wrap;
-                      background-color: ${
-                        block.sender_id.$oid === profileId
-                          ? colorPrimaryBg // Your messages - use theme color
-                          : "#f4f5f9" // Other messages - keep original color
-                      };
+                      ${styles.parentMessage} // Apply new parent message styles
                     `}
                   >
                     <HtmlContent content={linkify(block.body)} />
                   </div>
-                </div>
-                {block.sender_id.$oid !== profileId && sender_user && (
-                  <div>
-                    <Dropdown
-                      menu={{
-                        items: getDropdownMenuItems(block),
-                      }}
-                      onOpenChange={() => changeDropdown(block._id.$oid)}
-                      open={dotMenuFlags[block._id.$oid]}
-                      placement="bottom"
+                  <span style={{ opacity: "40%", display: "block", marginTop: "12px"}}>
+                    <NavLink
+                      to={`/gallery/${
+                        sender_user?.hub_user_id
+                          ? ACCOUNT_TYPE.PARTNER
+                          : ACCOUNT_TYPE.HUB
+                      }/${block.sender_id.$oid}`}
+                      style={{ color: 'inherit', textDecoration: 'none', fontWeight: 'bold' }}
                     >
-                      <div style={{ paddingLeft: "10px", cursor: "pointer" }}>
-                        ⋮
-                      </div>
-                    </Dropdown>
-                  </div>
-                )}
-              </div>
-
-              <span style={{ opacity: "40%" }}>
-                {block.time
-                  ? block.time
-                  : moment.utc(block.created_at.$date).local().format("LLL")}
-              </span>
-              {block.sender_id.$oid !== profileId &&
-                sender_user &&
-                replyInputFlags[block._id.$oid] && (
-                  <div className="reply-message-container">
-                    <TextArea
-                      className="reply-message-textarea"
-                      value={replyMessageText}
-                      onChange={(e) => setReplyMessageText(e.target.value)}
-                      autoSize={{ minRows: 1, maxRows: 3 }}
-                    />
-                    <img
-                      alt=""
-                      className="emoji-icon"
-                      src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-                      onClick={(e) => {
-                        console.log(
-                          "eee",
-                          e,
-                          e.target.getBoundingClientRect(),
-                          window.innerHeight
-                        );
-                        if (
-                          e.target.getBoundingClientRect().y <
-                          window.innerHeight / 2
-                        ) {
-                          setEmojiUp(false);
-                        } else {
-                          setEmojiUp(true);
-                        }
-                        setShowEmojiPicker((val) => !val);
-                      }}
-                    />
-                    {showEmojiPicker && (
-                      <div
-                        className={
-                          emojiUp
-                            ? "up emoji-container"
-                            : "down emoji-container"
-                        }
-                      >
-                        <EmojiPicker
-                          onEmojiClick={(e) => onEmojiClick(e, "reply")}
-                        />
-                      </div>
-                    )}
+                      {sender_user?.name || sender_user?.organization}
+                    </NavLink>
+                  </span>
+                  <span style={{ opacity: "40%", display: "block", marginTop: "4px" }}>
+                    {block.time
+                      ? block.time
+                      : moment.utc(block.created_at.$date).local().format("LLL")}
+                  </span>
+                  <div style={{ display: "flex", alignItems: "center", marginTop: "4px" }}>
                     <Button
-                      onClick={() => sendReplyMessage(block._id.$oid)}
-                      className="reply-message-send-button"
-                      shape="circle"
-                      type="primary"
-                      icon={<SendOutlined rotate={315} />}
-                      size={32}
-                    />
+                      onClick={() => {
+                        setReplyInputFlags((prevFlags) => ({
+                          ...prevFlags,
+                          [block._id.$oid]: true,
+                        }));
+                        setReplyMessageText("");
+                      }}
+                      className="reply-button"
+                      type="link"
+                      style={{ padding: 0 }}
+                    >
+                      Reply
+                    </Button>
+                    {block.children && block.children.length > 0 && (
+                      <Button
+                        type="link"
+                        onClick={() => toggleExpand(block._id.$oid)}
+                        style={{ padding: 0, marginLeft: "10px" }}
+                      >
+                        {expandedMessages[block._id.$oid] ? "-" : `+ (${block.children.length})`}
+                      </Button>
+                    )}
                   </div>
-                )}
+                  {replyInputFlags[block._id.$oid] && (
+                    <div className="reply-message-container" style={{ marginLeft: "-50px" }}>
+                      <TextArea
+                        className="reply-message-textarea"
+                        value={replyMessageText}
+                        onChange={(e) => setReplyMessageText(e.target.value)}
+                        autoSize={{ minRows: 1, maxRows: 3 }}
+                      />
+                      <img
+                        alt=""
+                        className="emoji-icon"
+                        src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
+                        onClick={() => {
+                          setShowReplyEmojiPicker((val) => !val);
+                          setShowEmojiPicker(false); // Ensure only one picker is open
+                        }}
+                      />
+                      {showReplyEmojiPicker && (
+                        <div
+                          className={
+                            emojiUp
+                              ? "up emoji-container"
+                              : "down emoji-container"
+                          }
+                        >
+                          <EmojiPicker
+                            onEmojiClick={(e) => onEmojiClick(e, "reply")}
+                          />
+                        </div>
+                      )}
+                      <Button
+                        onClick={() => sendReplyMessage(block._id.$oid)}
+                        className="reply-message-send-button"
+                        shape="circle"
+                        type="primary"
+                        icon={<SendOutlined rotate={315} />}
+                        size={32}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-          {block.children && block.children.length > 0 && (
-            <>{renderMessages(block.children, depth + 1)}</>
+          {block.children && block.children.length > 0 && expandedMessages[block._id.$oid] && (
+            <div style={{ marginLeft: "20px" }}>
+              {renderMessages(block.children, depth + 1)}
+            </div>
           )}
-        </>
+        </div>
       );
     });
   };
@@ -486,7 +493,10 @@ function GroupMessageChatArea(props) {
               alt=""
               className="emoji-icon"
               src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-              onClick={() => setShowReplyEmojiPicker((val) => !val)}
+              onClick={() => {
+                setShowEmojiPicker((val) => !val);
+                setShowReplyEmojiPicker(false); // Ensure only one picker is open
+              }}
             />
             <Button
               id="sendMessagebtn"
@@ -503,7 +513,7 @@ function GroupMessageChatArea(props) {
           </div>
         </div>
 
-        {showReplyEmojiPicker && (
+        {showEmojiPicker && (
           <div className="emoji-container">
             <EmojiPicker onEmojiClick={(e) => onEmojiClick(e, "main")} />
           </div>

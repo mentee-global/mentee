@@ -1,6 +1,7 @@
 from re import S
 from flask import Blueprint, request
 import json
+from h11 import Data
 from werkzeug.utils import secure_filename
 from api.core import create_response, logger
 from bson import ObjectId
@@ -13,6 +14,7 @@ from api.models import (
     PartnerProfile,
     Translations,
     SignOrigin,
+    CommunityLibrary,
 )
 from datetime import datetime
 from PyPDF2 import PdfReader
@@ -73,6 +75,13 @@ def getSignedData(role):
     else:
         data = SignedDocs.objects(role=str(role))
     return create_response(data={"signed": data})
+
+
+@training.route("/community_libraries", methods=["GET"])
+def getCommunityLibraries():
+    hub_id = request.args.get("hub_id", None)
+    data = CommunityLibrary.objects(hub_id=hub_id)
+    return create_response(data={"library": data})
 
 
 @training.route("/<role>", methods=["GET"])
@@ -239,6 +248,18 @@ def update_multiple_trainings():
 
     return create_response(data=result)
 
+
+@training.route("/library/<string:id>", methods=["DELETE"])
+def delete_library(id):
+    try:
+        data = CommunityLibrary.objects.get(id=id)
+        data.delete()
+    except:
+        return create_response(status=422, message="library not found")
+
+    return create_response(status=200, message="Successful deletion")
+
+
 @training.route("/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_train(id):
@@ -249,6 +270,17 @@ def delete_train(id):
         return create_response(status=422, message="training not found")
 
     return create_response(status=200, message="Successful deletion")
+
+
+@training.route("/library/<string:id>", methods=["GET"])
+def get_library(id):
+    try:
+        library = CommunityLibrary.objects.get(id=id)
+
+    except:
+        return create_response(status=422, message="Data not found")
+
+    return create_response(status=200, data={"library": library})
 
 
 ################################################################################
@@ -273,6 +305,28 @@ def get_train(id):
     return create_response(status=200, data={"train": train})
 
 
+@training.route("/libraryFile/<string:id>", methods=["GET"])
+def get_library_file(id):
+    lang = request.args.get("lang", "en-US")
+    try:
+        data = CommunityLibrary.objects.get(id=id)
+    except:
+        return create_response(status=422, message="library not found")
+
+    if lang in TARGET_LANGS:
+        document = get_translation_document(data.translations, lang)
+    else:
+        document = data.filee.read()
+
+    content_type = data.filee.content_type
+
+    if not document:
+        return create_response(status=422, message="No file found")
+    return send_file(
+        BytesIO(document), download_name=data.file_name, mimetype=content_type
+    )
+
+
 ##################################################################################
 @training.route("/trainVideo/<string:id>", methods=["GET"])
 # @all_users
@@ -295,6 +349,38 @@ def get_train_file(id):
     return send_file(
         BytesIO(document), download_name=train.file_name, mimetype=content_type
     )
+
+
+@training.route("/library/<string:id>", methods=["PUT"])
+def edit_library_by_id(id):
+    try:
+        data = CommunityLibrary.objects.get(id=id)
+    except Exception as e:
+        return create_response(status=422, message=f"Failed to get library: {e}")
+
+    new_name = request.form.get("name", data.name)
+    new_description = request.form.get("description", data.description)
+
+    if data.name != new_name:
+        data.name = new_name
+        data.nameTranslated = get_all_translations(new_name)
+    if data.description != new_description:
+        data.description = new_description
+        data.descriptionTranslated = get_all_translations(new_description)
+
+    file = request.files.get("file", None)
+    if not file:
+        return create_response(status=400, message="Missing file")
+    file_name = secure_filename(file.filename)
+    if file_name == "":
+        return create_response(status=400, message="Missing file name")
+
+    data.filee.replace(file, filename=file_name)
+    data.file_name = file_name
+
+    data.save()
+
+    return create_response(status=200, data={"library": data})
 
 
 #############################################################################
@@ -428,6 +514,46 @@ def new_policy(role):
         return create_response(status=400, message=f"missing parameters {e}")
 
     return create_response(status=200, data={"signOrigin": signOrigin})
+
+
+@training.route("/new_library", methods=["POST"])
+def new_library():
+    try:
+        name = request.form["name"]
+        nameTranslated = get_all_translations(request.form["description"])
+        description = request.form["description"]
+        descriptionTranslated = get_all_translations(request.form["description"])
+        user_id = request.form["user_id"]
+        hub_id = request.form["hub_id"]
+        user_name = request.form["user_name"]
+
+        new_data = CommunityLibrary(
+            name=name,
+            nameTranslated=nameTranslated,
+            description=description,
+            descriptionTranslated=descriptionTranslated,
+            date_submitted=datetime.now(),
+            hub_id=hub_id,
+            user_id=user_id,
+            user_name=user_name,
+        )
+
+        file = request.files.get("file", None)
+        if not file:
+            return create_response(status=400, message="Missing file")
+
+        file_name = secure_filename(file.filename)
+        if file_name == "":
+            return create_response(status=400, message="Missing file name")
+
+        new_data.file_name = file_name
+        new_data.filee.put(file, filename=file_name)
+
+        new_data.save()
+    except Exception as e:
+        return create_response(status=400, message=f"missing parameters {e}")
+
+    return create_response(status=200, data={"library": new_data})
 
 
 ######################################################################

@@ -51,6 +51,7 @@ function EditProfileModal({ profileData, onSave, role }) {
             loading={saving}
             profileData={profileData}
             resetFields={resetFields}
+            hub_user={profileData.hub_user}
           />
         );
       case ACCOUNT_TYPE.HUB:
@@ -63,6 +64,7 @@ function EditProfileModal({ profileData, onSave, role }) {
               loading={saving}
               profileData={profileData}
               resetFields={resetFields}
+              hub_user={profileData.hub_user}
             />
           );
         } else {

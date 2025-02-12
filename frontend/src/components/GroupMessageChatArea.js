@@ -224,7 +224,11 @@ function GroupMessageChatArea(props) {
       border-radius: 8px;
       padding: 10px;
       margin-bottom: 10px;
-      background-color:rgb(255, 255, 255); // Background color for the container
+      background-color: rgb(
+        255,
+        255,
+        255
+      ); // Background color for the container
     `,
     parentMessage: css`
       padding: 10px 15px;
@@ -237,7 +241,7 @@ function GroupMessageChatArea(props) {
       padding: 10px 10px;
       border-radius: 8px;
       margin-bottom: 4px;
-      background-color: #FFBB91; // Updated background color for title
+      background-color: #ffbb91; // Updated background color for title
       font-weight: bold;
       color: #000; // Example text color
     `,
@@ -341,35 +345,58 @@ function GroupMessageChatArea(props) {
                 </span>
                 <div className="convo" style={{ flex: 1, marginLeft: "10px" }}>
                   {block.title && (
-                    <div className={styles.title}>
-                      {block.title}
-                    </div>
+                    <div className={styles.title}>{block.title}</div>
                   )}
                   <div
                     className={css`
-                      ${styles.parentMessage} // Apply new parent message styles
+                      ${styles.parentMessage}// Apply new parent message styles
                     `}
                   >
                     <HtmlContent content={linkify(block.body)} />
                   </div>
-                  <span style={{ opacity: "40%", display: "block", marginTop: "12px"}}>
+                  <span
+                    style={{
+                      opacity: "40%",
+                      display: "block",
+                      marginTop: "12px",
+                    }}
+                  >
                     <NavLink
                       to={`/gallery/${
                         sender_user?.hub_user_id
                           ? ACCOUNT_TYPE.PARTNER
                           : ACCOUNT_TYPE.HUB
                       }/${block.sender_id.$oid}`}
-                      style={{ color: 'inherit', textDecoration: 'none', fontWeight: 'bold' }}
+                      style={{
+                        color: "inherit",
+                        textDecoration: "none",
+                        fontWeight: "bold",
+                      }}
                     >
                       {sender_user?.name || sender_user?.organization}
                     </NavLink>
                   </span>
-                  <span style={{ opacity: "40%", display: "block", marginTop: "4px" }}>
+                  <span
+                    style={{
+                      opacity: "40%",
+                      display: "block",
+                      marginTop: "4px",
+                    }}
+                  >
                     {block.time
                       ? block.time
-                      : moment.utc(block.created_at.$date).local().format("LLL")}
+                      : moment
+                          .utc(block.created_at.$date)
+                          .local()
+                          .format("LLL")}
                   </span>
-                  <div style={{ display: "flex", alignItems: "center", marginTop: "4px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginTop: "4px",
+                    }}
+                  >
                     <Button
                       onClick={() => {
                         setReplyInputFlags((prevFlags) => ({
@@ -390,12 +417,17 @@ function GroupMessageChatArea(props) {
                         onClick={() => toggleExpand(block._id.$oid)}
                         style={{ padding: 0, marginLeft: "10px" }}
                       >
-                        {expandedMessages[block._id.$oid] ? "-" : `+ (${block.children.length})`}
+                        {expandedMessages[block._id.$oid]
+                          ? "-"
+                          : `+ (${block.children.length})`}
                       </Button>
                     )}
                   </div>
                   {replyInputFlags[block._id.$oid] && (
-                    <div className="reply-message-container" style={{ marginLeft: "-50px" }}>
+                    <div
+                      className="reply-message-container"
+                      style={{ marginLeft: "-50px" }}
+                    >
                       <TextArea
                         className="reply-message-textarea"
                         value={replyMessageText}
@@ -438,11 +470,13 @@ function GroupMessageChatArea(props) {
               </div>
             </div>
           </div>
-          {block.children && block.children.length > 0 && expandedMessages[block._id.$oid] && (
-            <div style={{ marginLeft: "20px" }}>
-              {renderMessages(block.children, depth + 1)}
-            </div>
-          )}
+          {block.children &&
+            block.children.length > 0 &&
+            expandedMessages[block._id.$oid] && (
+              <div style={{ marginLeft: "20px" }}>
+                {renderMessages(block.children, depth + 1)}
+              </div>
+            )}
         </div>
       );
     });

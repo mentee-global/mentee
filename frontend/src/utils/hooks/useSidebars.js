@@ -251,6 +251,11 @@ export default function useSidebars(userType, user, t) {
       icon: <MessageOutlined />,
     },
     {
+      label: t("common.community"),
+      key: url_prefix_hub + `/community`,
+      icon: <DatabaseOutlined />,
+    },
+    {
       label: "Explore",
       key: "galleries",
       icon: <SearchOutlined />,

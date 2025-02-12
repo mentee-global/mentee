@@ -34,6 +34,7 @@ from .Support import Support
 from .SignOrigin import SignOrigin
 from .SignedDocs import SignedDocs
 from .Announcement import Announcement
+from .CommunityLibrary import CommunityLibrary
 
 __all__ = [
     "db",
@@ -69,6 +70,7 @@ __all__ = [
     "GroupMessage",
     "PartnerGroupMessage",
     "Announcement",
+    "CommunityLibrary",
 ]
 
 # You must import all of the new Models you create to this page

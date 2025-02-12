@@ -275,14 +275,8 @@ export const newLibraryCreate = async (values, user) => {
     formData.append(key, value);
   });
   formData.append("user_id", user._id.$oid);
-  formData.append(
-    "user_name",
-    user.role == ACCOUNT_TYPE.HUB ? user.name : user.person_name
-  );
-  formData.append(
-    "hub_id",
-    user.role == ACCOUNT_TYPE.HUB ? user._id.$oid : user.hub_id
-  );
+  formData.append("user_name", !user.hub_id ? user.name : user.person_name);
+  formData.append("hub_id", !user.hub_id ? user._id.$oid : user.hub_id);
   let response = await authPost(requestExtension, formData).catch((err) => {
     console.error(err);
   });
@@ -293,7 +287,7 @@ export const getCommunityLibraries = async (user) => {
   const requestExtension = `/training/community_libraries`;
   const res = await authGet(requestExtension, {
     params: {
-      hub_id: user.role == ACCOUNT_TYPE.HUB ? user._id.$oid : user.hub_id,
+      hub_id: !user.hub_id ? user._id.$oid : user.hub_id,
     },
   }).catch(console.error);
   const data = res.data.result.library;

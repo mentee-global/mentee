@@ -152,7 +152,7 @@ def update_unread_count():
 
 
 @notifications.route("/weeklyemails", methods=["GET"])
-#@all_users -- Commented as it was failing to send emails due to JWT token issues
+# @all_users -- Commented as it was failing to send emails due to JWT token issues
 def send_weekly_emails():
     try:
         mentee_users = MenteeProfile.objects()

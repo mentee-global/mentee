@@ -23,6 +23,7 @@ import GroupMessages from "components/pages/GroupMessages";
 import ApplicationForm from "components/pages/ApplicationForm";
 import SocketComponent from "components/SocketComponent";
 import AdminTraining from "components/pages/AdminTraining";
+import CommunityLibrary from "components/pages/CommunityLibrary";
 import AdminAnnouncement from "components/pages/AdminAnnouncement";
 import AdminSign from "components/pages/AdminSign";
 import TrainingData from "components/pages/TrainingData";
@@ -428,6 +429,9 @@ function App() {
                           path={hub_url + "/group_messages/:hub_user_id"}
                         >
                           <GroupMessages />
+                        </PrivateRoute>
+                        <PrivateRoute path={hub_url + "/community"}>
+                          <CommunityLibrary />
                         </PrivateRoute>
                         <PrivateRoute
                           path={hub_url + "/new_training/:type/:id"}

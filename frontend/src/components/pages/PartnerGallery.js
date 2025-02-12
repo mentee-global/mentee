@@ -122,8 +122,6 @@ function PartnerGallery(props) {
       );
     });
 
-  console.log("uuu", user);
-
   const getFilterForm = () => (
     <>
       <Title

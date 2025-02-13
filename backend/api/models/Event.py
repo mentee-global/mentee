@@ -19,6 +19,7 @@ class Event(Document, Mixin):
     image_file = EmbeddedDocumentField(Image, required=False)
     date_submitted = DateTimeField(required=True)
     hub_id = StringField(required=False)
+    partner_ids = ListField(StringField(), required=False)
 
     def __repr__(self):
         return f"""<Event  : {self.title}

@@ -66,7 +66,7 @@ function PartnerProfileForm({
     newData.changedImage = changedImage;
     newData.edited = edited;
     if (hub_user) {
-      newData.hub_id = hub_user._id.$oid;
+      newData.hub_id = hub_user._id ? hub_user._id.$oid : hub_user.id;
     }
     onSubmit(newData);
     setChangedImage(false);

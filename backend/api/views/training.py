@@ -35,7 +35,7 @@ from api.utils.constants import (
     TARGET_LANGS,
     TRANSLATION_COST_PER_PAGE,
 )
-from api.utils.request_utils import send_email
+from api.utils.request_utils import send_email, imgur_client
 import pytz
 from mongoengine.queryset.visitor import Q
 
@@ -369,14 +369,12 @@ def edit_library_by_id(id):
         data.descriptionTranslated = get_all_translations(new_description)
 
     file = request.files.get("file", None)
-    if not file:
-        return create_response(status=400, message="Missing file")
-    file_name = secure_filename(file.filename)
-    if file_name == "":
-        return create_response(status=400, message="Missing file name")
-
-    data.filee.replace(file, filename=file_name)
-    data.file_name = file_name
+    if file:
+        file_name = secure_filename(file.filename)
+        if file_name == "":
+            return create_response(status=400, message="Missing file name")
+        data.filee.replace(file, filename=file_name)
+        data.file_name = file_name
 
     data.save()
 

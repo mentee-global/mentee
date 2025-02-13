@@ -12,6 +12,8 @@ import {
   fetchAppointmentsByMentorId,
   fetchAppointmentsByMenteeId,
   fetchAvailability,
+  downloadBlob,
+  getLibraryFile,
 } from "utils/api";
 import { formatAppointments } from "utils/dateFormatting";
 import MenteeAppointmentModal from "./MenteeAppointmentModal";
@@ -374,8 +376,29 @@ function MessagesChatArea(props) {
   };
 
   const HtmlContent = ({ content }) => {
+    const handleDownload = async (id, file_name) => {
+      let response = await getLibraryFile(id);
+      downloadBlob(response, file_name);
+    };
+    const downloadFile = (message_body) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(message_body, "text/html");
+
+      // Get the <a> element
+      const link = doc.querySelector("a");
+      if (link) {
+        const altValue = link.getAttribute("alt"); // "Example Link"
+        const file_name = link.textContent; // "Click here"
+
+        if (altValue.includes("download_file_")) {
+          let file_id = altValue.replace("download_file_", "");
+          handleDownload(file_id, file_name);
+        }
+      }
+    };
     return (
       <div
+        onClick={() => downloadFile(content)}
         style={{
           wordBreak: isMobile ? "break-word" : "normal",
           fontSize: "15px",

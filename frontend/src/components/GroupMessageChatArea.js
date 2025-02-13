@@ -5,7 +5,11 @@ import moment from "moment-timezone";
 import { SendOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import { useAuth } from "utils/hooks/useAuth";
-import { sendNotifyUnreadMessage } from "utils/api";
+import {
+  sendNotifyUnreadMessage,
+  downloadBlob,
+  getLibraryFile,
+} from "utils/api";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -289,7 +293,33 @@ function GroupMessageChatArea(props) {
   };
 
   const HtmlContent = ({ content }) => {
-    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+    const handleDownload = async (id, file_name) => {
+      let response = await getLibraryFile(id);
+      downloadBlob(response, file_name);
+    };
+    const downloadFile = (message_body) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(message_body, "text/html");
+
+      // Get the <a> element
+      const link = doc.querySelector("a");
+      if (link) {
+        const altValue = link.getAttribute("alt"); // "Example Link"
+        const file_name = link.textContent; // "Click here"
+
+        if (altValue.includes("download_file_")) {
+          let file_id = altValue.replace("download_file_", "");
+          handleDownload(file_id, file_name);
+        }
+      }
+    };
+
+    return (
+      <div
+        onClick={() => downloadFile(content)}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
   };
 
   const onEmojiClick = (event, kind = "main") => {

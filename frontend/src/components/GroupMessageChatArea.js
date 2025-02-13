@@ -33,6 +33,12 @@ function GroupMessageChatArea(props) {
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(true);
   const [expandedMessages, setExpandedMessages] = useState({});
+  const [groupUsers, setGroupUsers] = useState([]);
+  const [showUserList, setShowUserList] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [cursorPosition, setCursorPosition] = useState(null);
+  const [activeInput, setActiveInput] = useState(null);
+  const textAreaRef = useRef(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
@@ -91,6 +97,21 @@ function GroupMessageChatArea(props) {
       return () => content.removeEventListener("scroll", handleScroll);
     }
   }, []);
+
+  useEffect(() => {
+    if (particiants) {
+      // Ensure each participant has a name property before filtering
+      const filteredUsers = particiants
+        .filter(user => user && user._id && user._id.$oid !== profileId)
+        .filter(user => user.name) // Only include users with a name property
+        || [];
+      setGroupUsers(filteredUsers);
+    }
+  }, [particiants, profileId]);
+
+  useEffect(() => {
+    console.log('Participants:', particiants); // Debug log
+  }, [particiants]);
 
   const toggleExpand = (id) => {
     setExpandedMessages((prev) => ({
@@ -302,6 +323,91 @@ function GroupMessageChatArea(props) {
     setShowReplyEmojiPicker(false);
   };
 
+  const handleInputChange = (e, type = 'main') => {
+    const value = e.target.value;
+    
+    if (type === 'main') {
+      setMessageText(value);
+    } else {
+      setReplyMessageText(value);
+    }
+
+    // Check for @ symbol
+    if (value.endsWith('@')) {
+      console.log('@ detected, showing user list');
+      setActiveInput(type);
+      setShowUserList(true);
+      // Filter out users with undefined names and current user
+      setFilteredUsers(particiants?.filter(user => 
+        user && 
+        user._id && 
+        user._id.$oid !== profileId &&
+        (user.name || user.person_name) // Check for both name fields
+      ) || []);
+    } 
+    else if (showUserList) {
+      const lastAtIndex = value.lastIndexOf('@');
+      if (lastAtIndex !== -1) {
+        const searchTerm = value.slice(lastAtIndex + 1).toLowerCase();
+        const filtered = particiants?.filter(user => 
+          user && 
+          user._id && 
+          user._id.$oid !== profileId &&
+          (user.name || user.person_name) && // Check for both name fields
+          (user.name?.toLowerCase().includes(searchTerm) || 
+           user.person_name?.toLowerCase().includes(searchTerm))
+        ) || [];
+        setFilteredUsers(filtered);
+      } else {
+        setShowUserList(false);
+      }
+    }
+  };
+
+  const handleUserSelect = (user, type) => {
+    // Get the appropriate name, fallback to person_name if name is not available
+    const userName = user.name || user.person_name;
+    if (!userName) return; // Don't proceed if no valid name is found
+
+    const currentText = type === 'main' ? messageText : replyMessageText;
+    const lastAtIndex = currentText.lastIndexOf('@');
+    const newText = currentText.slice(0, lastAtIndex) + '@' + userName + ' ';
+    
+    if (type === 'main') {
+      setMessageText(newText);
+    } else {
+      setReplyMessageText(newText);
+    }
+    
+    setShowUserList(false);
+  };
+
+  const formatMessageText = (text) => {
+    if (!text) return text;
+    
+    // First find all participants' names to match against
+    const participantNames = particiants?.map(user => ({
+      name: user.name || user.person_name,
+      id: user._id.$oid
+    })).filter(user => user.name) || [];
+
+    // Sort names by length (longest first) to handle cases where one name contains another
+    participantNames.sort((a, b) => b.name.length - a.name.length);
+
+    let formattedText = text;
+    
+    // Replace each @mention with styled span
+    participantNames.forEach(participant => {
+      const mentionText = `@${participant.name}`;
+      const regex = new RegExp(mentionText, 'g');
+      formattedText = formattedText.replace(regex, 
+        `<span class="tagged-user">${mentionText}</span>`
+      );
+    });
+
+    return formattedText;
+  };
+
   const renderMessages = (data, depth = 0) => {
     return data.map((block) => {
       let sender_user = particiants.find(
@@ -352,7 +458,12 @@ function GroupMessageChatArea(props) {
                       ${styles.parentMessage}// Apply new parent message styles
                     `}
                   >
-                    <HtmlContent content={linkify(block.body)} />
+                    <div 
+                      className="message-text"
+                      dangerouslySetInnerHTML={{ 
+                        __html: formatMessageText(block.body) 
+                      }} 
+                    />
                   </div>
                   <span
                     style={{
@@ -424,16 +535,14 @@ function GroupMessageChatArea(props) {
                     )}
                   </div>
                   {replyInputFlags[block._id.$oid] && (
-                    <div
-                      className="reply-message-container"
-                      style={{ marginLeft: "-50px" }}
-                    >
+                    <div className="reply-message-container" style={{ position: 'relative' }}>
                       <TextArea
                         className="reply-message-textarea"
                         value={replyMessageText}
-                        onChange={(e) => setReplyMessageText(e.target.value)}
+                        onChange={(e) => handleInputChange(e, 'reply')}
                         autoSize={{ minRows: 1, maxRows: 3 }}
                       />
+                      {renderUserList('reply')}
                       <img
                         alt=""
                         className="emoji-icon"
@@ -482,6 +591,39 @@ function GroupMessageChatArea(props) {
     });
   };
 
+  const renderUserList = (type) => {
+    if (!showUserList || activeInput !== type || !filteredUsers.length) return null;
+    
+    return (
+      <div 
+        className="user-list-dropdown"
+        style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          zIndex: 1050
+        }}
+      >
+        {filteredUsers.map(user => {
+          const userName = user.name || user.person_name;
+          if (!userName) return null; // Skip users without a valid name
+
+          return (
+            <div 
+              key={user._id.$oid} 
+              className="user-option"
+              onClick={() => handleUserSelect(user, type)}
+            >
+              <Avatar size="small" src={user.image?.url} />
+              <span>{userName}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="conversation-container">
       <div className="conversation-content group-conversation-content">
@@ -490,60 +632,52 @@ function GroupMessageChatArea(props) {
         </Spin>
         <div ref={messagesEndRef} />
       </div>
-      <div
-        className="conversation-footer"
-        style={{ justifyContent: "flex-start" }}
-      >
-        <div
-          style={{
-            width: "80%",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            marginLeft: "20px",
-          }}
-        >
+      <div className="conversation-footer">
+        <div className="message-input-container">
           {/* Title input */}
-          <TextArea
-            className="message-input"
-            placeholder={t("messages.titlePlaceholder")}
-            value={messageTitle}
-            onChange={(e) => setMessageTitle(e.target.value)}
-            autoSize={{ minRows: 1, maxRows: 1 }}
-            style={{ textAlign: "left" }}
-          />
-
-          {/* Message input container */}
-          <div style={{ display: "flex", alignItems: "flex-start" }}>
+          <div className="title-container">
             <TextArea
+              className="message-input title-input"
+              placeholder={t("messages.titlePlaceholder")}
+              value={messageTitle}
+              onChange={(e) => setMessageTitle(e.target.value)}
+              autoSize={{ minRows: 1, maxRows: 1 }}
+              style={{ textAlign: "left" }}
+            />
+          </div>
+
+          {/* Message input with icons */}
+          <div className="message-with-icons">
+            <TextArea
+              ref={textAreaRef}
               className="message-input"
               placeholder={t("messages.sendMessagePlaceholder")}
               value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
+              onChange={(e) => handleInputChange(e, 'main')}
               autoSize={{ minRows: 1, maxRows: 3 }}
               style={{ textAlign: "left" }}
             />
-            <img
-              alt=""
-              className="emoji-icon"
-              src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-              onClick={() => {
-                setShowEmojiPicker((val) => !val);
-                setShowReplyEmojiPicker(false); // Ensure only one picker is open
-              }}
-            />
-            <Button
-              id="sendMessagebtn"
-              onClick={sendMessage}
-              className={css`
-                margin-left: 0.5em;
-              `}
-              shape="circle"
-              type="primary"
-              ref={buttonRef}
-              icon={<SendOutlined rotate={315} />}
-              size={48}
-            />
+            
+            <div className="message-icons">
+              <img
+                alt=""
+                className="emoji-icon"
+                src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
+                onClick={() => {
+                  setShowEmojiPicker((val) => !val);
+                  setShowReplyEmojiPicker(false);
+                }}
+              />
+              
+              <Button
+                onClick={sendMessage}
+                className="send-button"
+                shape="circle"
+                type="primary"
+                icon={<SendOutlined rotate={315} />}
+                size={32}
+              />
+            </div>
           </div>
         </div>
 

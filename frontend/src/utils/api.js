@@ -1358,3 +1358,13 @@ export const fetchMentorsAppointments = async () =>
 
 export const fetchMenteesAppointments = async () =>
   await fetchAppointmentsByType(PLURAL_TYPE.MENTEES);
+
+export const getGroupParticipants = (hubId) => {
+  const requestExtension = `/messages/group/participants/${hubId}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.participants,
+    (err) => {
+      console.error(err);
+    }
+  );
+};

@@ -168,6 +168,7 @@ const CommunityLibrary = () => {
     navigator.clipboard.writeText(copied_link);
     message.success("Copied");
   };
+
   const handleTrainingDownload = async (record, lang) => {
     let response = await getLibraryFile(record.id, lang);
     if (!response) {

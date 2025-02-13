@@ -82,11 +82,16 @@ export const fetchEventById = (id) => {
   );
 };
 
-export const fetchEvents = async (type, hub_user_id = null) => {
+export const fetchEvents = async (
+  type,
+  hub_user_id = null,
+  partner_id = null
+) => {
   const requestExtension = `/events/${type}`;
   return authGet(requestExtension, {
     params: {
       hub_user_id: hub_user_id,
+      partner_id: partner_id,
     },
   }).then(
     (response) => response.data.result.events,

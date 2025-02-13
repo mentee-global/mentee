@@ -105,16 +105,17 @@ function GroupMessageChatArea(props) {
   useEffect(() => {
     if (particiants) {
       // Ensure each participant has a name property before filtering
-      const filteredUsers = particiants
-        .filter(user => user && user._id && user._id.$oid !== profileId)
-        .filter(user => user.name) // Only include users with a name property
-        || [];
+      const filteredUsers =
+        particiants
+          .filter((user) => user && user._id && user._id.$oid !== profileId)
+          .filter((user) => user.name) || // Only include users with a name property
+        [];
       setGroupUsers(filteredUsers);
     }
   }, [particiants, profileId]);
 
   useEffect(() => {
-    console.log('Participants:', particiants); // Debug log
+    console.log("Participants:", particiants); // Debug log
   }, [particiants]);
 
   const toggleExpand = (id) => {
@@ -313,28 +314,28 @@ function GroupMessageChatArea(props) {
     ];
   };
 
-  const HtmlContent = ({ content }) => {
-    const handleDownload = async (id, file_name) => {
-      let response = await getLibraryFile(id);
-      downloadBlob(response, file_name);
-    };
-    const downloadFile = (message_body) => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(message_body, "text/html");
+  const handleDownload = async (id, file_name) => {
+    let response = await getLibraryFile(id);
+    downloadBlob(response, file_name);
+  };
+  const downloadFile = (message_body) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(message_body, "text/html");
 
-      // Get the <a> element
-      const link = doc.querySelector("a");
-      if (link) {
-        const altValue = link.getAttribute("alt"); // "Example Link"
-        const file_name = link.textContent; // "Click here"
+    // Get the <a> element
+    const link = doc.querySelector("a");
+    if (link) {
+      const altValue = link.getAttribute("alt"); // "Example Link"
+      const file_name = link.textContent; // "Click here"
 
-        if (altValue.includes("download_file_")) {
-          let file_id = altValue.replace("download_file_", "");
-          handleDownload(file_id, file_name);
-        }
+      if (altValue.includes("download_file_")) {
+        let file_id = altValue.replace("download_file_", "");
+        handleDownload(file_id, file_name);
       }
-    };
+    }
+  };
 
+  const HtmlContent = ({ content }) => {
     return (
       <div
         onClick={() => downloadFile(content)}
@@ -353,40 +354,44 @@ function GroupMessageChatArea(props) {
     setShowReplyEmojiPicker(false);
   };
 
-  const handleInputChange = (e, type = 'main') => {
+  const handleInputChange = (e, type = "main") => {
     const value = e.target.value;
-    
-    if (type === 'main') {
+
+    if (type === "main") {
       setMessageText(value);
     } else {
       setReplyMessageText(value);
     }
 
     // Check for @ symbol
-    if (value.endsWith('@')) {
-      console.log('@ detected, showing user list');
+    if (value.endsWith("@")) {
+      console.log("@ detected, showing user list");
       setActiveInput(type);
       setShowUserList(true);
       // Filter out users with undefined names and current user
-      setFilteredUsers(particiants?.filter(user => 
-        user && 
-        user._id && 
-        user._id.$oid !== profileId &&
-        (user.name || user.person_name) // Check for both name fields
-      ) || []);
-    } 
-    else if (showUserList) {
-      const lastAtIndex = value.lastIndexOf('@');
+      setFilteredUsers(
+        particiants?.filter(
+          (user) =>
+            user &&
+            user._id &&
+            user._id.$oid !== profileId &&
+            (user.name || user.person_name) // Check for both name fields
+        ) || []
+      );
+    } else if (showUserList) {
+      const lastAtIndex = value.lastIndexOf("@");
       if (lastAtIndex !== -1) {
         const searchTerm = value.slice(lastAtIndex + 1).toLowerCase();
-        const filtered = particiants?.filter(user => 
-          user && 
-          user._id && 
-          user._id.$oid !== profileId &&
-          (user.name || user.person_name) && // Check for both name fields
-          (user.name?.toLowerCase().includes(searchTerm) || 
-           user.person_name?.toLowerCase().includes(searchTerm))
-        ) || [];
+        const filtered =
+          particiants?.filter(
+            (user) =>
+              user &&
+              user._id &&
+              user._id.$oid !== profileId &&
+              (user.name || user.person_name) && // Check for both name fields
+              (user.name?.toLowerCase().includes(searchTerm) ||
+                user.person_name?.toLowerCase().includes(searchTerm))
+          ) || [];
         setFilteredUsers(filtered);
       } else {
         setShowUserList(false);
@@ -399,38 +404,42 @@ function GroupMessageChatArea(props) {
     const userName = user.name || user.person_name;
     if (!userName) return; // Don't proceed if no valid name is found
 
-    const currentText = type === 'main' ? messageText : replyMessageText;
-    const lastAtIndex = currentText.lastIndexOf('@');
-    const newText = currentText.slice(0, lastAtIndex) + '@' + userName + ' ';
-    
-    if (type === 'main') {
+    const currentText = type === "main" ? messageText : replyMessageText;
+    const lastAtIndex = currentText.lastIndexOf("@");
+    const newText = currentText.slice(0, lastAtIndex) + "@" + userName + " ";
+
+    if (type === "main") {
       setMessageText(newText);
     } else {
       setReplyMessageText(newText);
     }
-    
+
     setShowUserList(false);
   };
 
   const formatMessageText = (text) => {
     if (!text) return text;
-    
+
     // First find all participants' names to match against
-    const participantNames = particiants?.map(user => ({
-      name: user.name || user.person_name,
-      id: user._id.$oid
-    })).filter(user => user.name) || [];
+    const participantNames =
+      particiants
+        ?.map((user) => ({
+          name: user.name || user.person_name,
+          id: user._id.$oid,
+        }))
+        .filter((user) => user.name) || [];
 
     // Sort names by length (longest first) to handle cases where one name contains another
     participantNames.sort((a, b) => b.name.length - a.name.length);
 
     let formattedText = text;
-    
+
     // Replace each @mention with styled span
-    participantNames.forEach(participant => {
+    participantNames.forEach((participant) => {
       const mentionText = `@${participant.name}`;
-      const regex = new RegExp(mentionText, 'g');
-      formattedText = formattedText.replace(regex, 
+      const regex = new RegExp(mentionText, "g");
+      formattedText = formattedText.replace(
+        regex,
         `<span class="tagged-user">${mentionText}</span>`
       );
     });
@@ -488,11 +497,12 @@ function GroupMessageChatArea(props) {
                       ${styles.parentMessage}// Apply new parent message styles
                     `}
                   >
-                    <div 
+                    <div
+                      onClick={() => downloadFile(block.body)}
                       className="message-text"
-                      dangerouslySetInnerHTML={{ 
-                        __html: formatMessageText(block.body) 
-                      }} 
+                      dangerouslySetInnerHTML={{
+                        __html: formatMessageText(block.body),
+                      }}
                     />
                   </div>
                   <span
@@ -565,14 +575,17 @@ function GroupMessageChatArea(props) {
                     )}
                   </div>
                   {replyInputFlags[block._id.$oid] && (
-                    <div className="reply-message-container" style={{ position: 'relative' }}>
+                    <div
+                      className="reply-message-container"
+                      style={{ position: "relative" }}
+                    >
                       <TextArea
                         className="reply-message-textarea"
                         value={replyMessageText}
-                        onChange={(e) => handleInputChange(e, 'reply')}
+                        onChange={(e) => handleInputChange(e, "reply")}
                         autoSize={{ minRows: 1, maxRows: 3 }}
                       />
-                      {renderUserList('reply')}
+                      {renderUserList("reply")}
                       <img
                         alt=""
                         className="emoji-icon"
@@ -622,26 +635,27 @@ function GroupMessageChatArea(props) {
   };
 
   const renderUserList = (type) => {
-    if (!showUserList || activeInput !== type || !filteredUsers.length) return null;
-    
+    if (!showUserList || activeInput !== type || !filteredUsers.length)
+      return null;
+
     return (
-      <div 
+      <div
         className="user-list-dropdown"
         style={{
-          position: 'absolute',
-          top: '100%',
+          position: "absolute",
+          top: "100%",
           left: 0,
           right: 0,
-          zIndex: 1050
+          zIndex: 1050,
         }}
       >
-        {filteredUsers.map(user => {
+        {filteredUsers.map((user) => {
           const userName = user.name || user.person_name;
           if (!userName) return null; // Skip users without a valid name
 
           return (
-            <div 
-              key={user._id.$oid} 
+            <div
+              key={user._id.$oid}
               className="user-option"
               onClick={() => handleUserSelect(user, type)}
             >
@@ -683,11 +697,11 @@ function GroupMessageChatArea(props) {
               className="message-input"
               placeholder={t("messages.sendMessagePlaceholder")}
               value={messageText}
-              onChange={(e) => handleInputChange(e, 'main')}
+              onChange={(e) => handleInputChange(e, "main")}
               autoSize={{ minRows: 1, maxRows: 3 }}
               style={{ textAlign: "left" }}
             />
-            
+
             <div className="message-icons">
               <img
                 alt=""
@@ -698,7 +712,7 @@ function GroupMessageChatArea(props) {
                   setShowReplyEmojiPicker(false);
                 }}
               />
-              
+
               <Button
                 onClick={sendMessage}
                 className="send-button"

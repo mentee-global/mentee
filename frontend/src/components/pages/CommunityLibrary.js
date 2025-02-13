@@ -7,8 +7,9 @@ import {
   newLibraryCreate,
   getLibraryById,
   getCommunityLibraries,
+  fetchPartners,
 } from "utils/api";
-import { I18N_LANGUAGES } from "utils/consts";
+import { I18N_LANGUAGES, ACCOUNT_TYPE } from "utils/consts";
 import {
   Table,
   Popconfirm,
@@ -17,16 +18,17 @@ import {
   notification,
   Spin,
   Skeleton,
+  Avatar,
 } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
   PlusCircleOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
-import { withRouter } from "react-router-dom";
+import { withRouter, NavLink } from "react-router-dom";
 
 import "components/css/Training.scss";
-import AdminDownloadDropdown from "../AdminDownloadDropdown";
 import UpdateCommunityLibraryModal from "../UpdateCommunityLibraryModal";
 import {
   SortableContext,
@@ -85,14 +87,23 @@ const CommunityLibrary = () => {
   const [currentData, setCurrentData] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.user);
+  const [hubData, setHubData] = useState([]);
+
+  useEffect(() => {
+    async function getUsers(hub_id) {
+      let data = await fetchPartners(undefined, hub_id);
+      setHubData(data);
+    }
+    if (user) {
+      getUsers(!user.hub_id ? user._id.$oid : user.hub_id);
+    }
+  }, [user]);
 
   const onCancelTrainingForm = () => {
     setSelectedId(null);
     setCurrentData(null);
     setOpenUpdateData(false);
   };
-
-  useEffect(() => {}, []);
 
   const onFinishTrainingForm = async (values, isNewTraining) => {
     setLoading(true);
@@ -145,6 +156,17 @@ const CommunityLibrary = () => {
       setCurrentData(null);
       setOpenUpdateData(true);
     }
+  };
+
+  const copyDownLink = async (record, lang) => {
+    let copied_link =
+      "<a href='#' alt='download_file_" +
+      record.id +
+      "'>" +
+      record.file_name +
+      "</a>";
+    navigator.clipboard.writeText(copied_link);
+    message.success("Copied");
   };
 
   const handleTrainingDownload = async (record, lang) => {
@@ -219,7 +241,62 @@ const CommunityLibrary = () => {
       title: "User",
       dataIndex: "user_name",
       key: "user_name",
-      render: (user_name) => <>{user_name}</>,
+      render: (user_name, record) => {
+        let user_data = hubData.find((x) => x._id.$oid == record.user_id);
+        if (user_data) {
+          return (
+            <NavLink
+              to={`/gallery/${ACCOUNT_TYPE.PARTNER}/${user_data._id.$oid}`}
+            >
+              <div style={{ display: "flex" }}>
+                <div style={{ width: "50px", textAlign: "center" }}>
+                  <Avatar
+                    src={user_data?.image?.url}
+                    style={{
+                      cursor: "pointer",
+                      width: "50px",
+                      height: "50px",
+                      border: "1.5px solid rgb(198, 204, 208)",
+                      borderRadius: "50%",
+                    }}
+                  />
+                </div>
+                <div style={{ marginLeft: "10px", paddingTop: "10px" }}>
+                  {user_name}
+                </div>
+              </div>
+            </NavLink>
+          );
+        } else {
+          return (
+            <NavLink to={`/gallery/${ACCOUNT_TYPE.HUB}/${record.user_id}`}>
+              <div style={{ display: "flex" }}>
+                <div style={{ width: "50px", textAlign: "center" }}>
+                  <Avatar
+                    src={
+                      user
+                        ? user.hub_user
+                          ? user.hub_user.image?.url
+                          : user.image?.url
+                        : ""
+                    }
+                    style={{
+                      cursor: "pointer",
+                      width: "50px",
+                      height: "50px",
+                      border: "1.5px solid rgb(198, 204, 208)",
+                      borderRadius: "50%",
+                    }}
+                  />
+                </div>
+                <div style={{ marginLeft: "10px", paddingTop: "10px" }}>
+                  {user_name}
+                </div>
+              </div>
+            </NavLink>
+          );
+        }
+      },
     },
     {
       title: "File",
@@ -227,11 +304,20 @@ const CommunityLibrary = () => {
       key: "file",
       render: (file, record) => {
         return (
-          <AdminDownloadDropdown
-            options={getAvailableLangs(record)}
-            title="Download File"
-            onClick={(lang) => handleTrainingDownload(record, lang)}
-          />
+          <div style={{ display: "flex" }}>
+            <a
+              href="#"
+              onClick={(lang) => handleTrainingDownload(record, lang)}
+            >
+              {record.file_name}
+            </a>
+            <Button
+              type="link"
+              icon={<CopyOutlined />}
+              onClick={(lang) => copyDownLink(record, lang)}
+              style={{ marginLeft: "8px", paddingTop: "0px" }}
+            />
+          </div>
         );
       },
     },

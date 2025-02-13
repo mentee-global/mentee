@@ -15,7 +15,6 @@ from api.models import (
     Translations,
     SignOrigin,
     CommunityLibrary,
-    Image,
 )
 from datetime import datetime
 from PyPDF2 import PdfReader

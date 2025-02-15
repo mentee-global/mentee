@@ -40,15 +40,19 @@ def get_events(role):
             role__in=[role], hub_id=str(hub_user_id)
         ).order_by("-start_datetime")
         temp = []
-        if (partner_id):
+        if partner_id:
             for event in events:
-                if (event.partner_ids is None) or (len(event.partner_ids) == 0) or (partner_id in event.partner_ids):
+                if (
+                    (event.partner_ids is None)
+                    or (len(event.partner_ids) == 0)
+                    or (partner_id in event.partner_ids)
+                ):
                     temp.append(event)
-            if (user_id):
-                print('usss', user_id)
+            if user_id:
+                print("usss", user_id)
                 for event in events:
-                    print('eeeee', event.user_id, str(event.user_id) == user_id)
-                    if (str(event.user_id) == user_id):
+                    print("eeeee", event.user_id, str(event.user_id) == user_id)
+                    if str(event.user_id) == user_id:
                         temp.append(event)
             events = temp
     else:
@@ -95,7 +99,7 @@ def send_mail_for_event(
     recipients, role_name, title, eventdate, target_url, start_datetime, end_datetime
 ):
     for recipient in recipients:
-        if 'timezone' in recipient and recipient.timezone:
+        if "timezone" in recipient and recipient.timezone:
             match = re.match(r"UTC([+-]\d{2}):(\d{2})", recipient.timezone)
             if match:
                 hours_offset = int(match.group(1))
@@ -239,11 +243,11 @@ def new_event():
                 )
             if hub_id is not None:
                 role_name = "Hub"
-                if (partner_ids):
+                if partner_ids:
                     partners = PartnerProfile.objects.filter(id__in=partner_ids).only(
                         "email", "preferred_language"
                     )
-                else :
+                else:
                     partners = PartnerProfile.objects.filter(hub_id=hub_id).only(
                         "email", "preferred_language"
                     )
@@ -258,7 +262,15 @@ def new_event():
                     )
                 for partner_user in partners:
                     recipients.append(partner_user)
-                send_mail_for_event(recipients, role_name, title, eventdate, target_url, start_datetime, end_datetime)
+                send_mail_for_event(
+                    recipients,
+                    role_name,
+                    title,
+                    eventdate,
+                    target_url,
+                    start_datetime,
+                    end_datetime,
+                )
         else:
             event = Event.objects.get(id=event_id)
             event.user_id = user_id

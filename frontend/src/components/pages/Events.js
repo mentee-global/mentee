@@ -56,14 +56,19 @@ function Events() {
   const role = getRole();
   useEffect(() => {
     async function getAllEvents(hub_user_id, partner_id, user_id) {
-      const all_evnet_data = await fetchEvents(role, hub_user_id, partner_id, user_id);
+      const all_evnet_data = await fetchEvents(
+        role,
+        hub_user_id,
+        partner_id,
+        user_id
+      );
       setAllEvents(all_evnet_data);
       setPageLoaded(true);
     }
     var hub_user_id = null;
     var partner_id = null;
     var user_id = null;
-    if (user){
+    if (user) {
       user_id = user._id.$oid;
     }
     if (role == ACCOUNT_TYPE.HUB && user) {

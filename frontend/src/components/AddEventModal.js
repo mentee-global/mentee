@@ -47,7 +47,6 @@ function AddEventModal({
   const [changedImage, setChangedImage] = useState(false);
   const user = useSelector((state) => state.user.user);
   const [userRole, setUserRole] = useState([]);
-  const [partnerIDs, setPartnerIDs] = useState([]);
 
   // TODO: clean up this useEffect and its useState
   useEffect(() => {
@@ -70,7 +69,6 @@ function AddEventModal({
       }
       if (event_item.partner_ids) {
         form.setFieldValue("partner_ids", event_item.partner_ids);
-        setPartnerIDs(event_item.partner_ids);
       }
 
       if (event_item.start_datetime) {
@@ -207,13 +205,7 @@ function AddEventModal({
     setOpen(false);
   };
 
-  const handleMultiSelectChange = (values) => {
-    setPartnerIDs(values);
-  };
-
-  console.log('pppp', partnerIDs);
-
-    const EventForm = (event_item) => (
+  const EventForm = (event_item) => (
     <Form form={form} layout="vertical">
       {isAdmin && (
         <>
@@ -494,7 +486,7 @@ function AddEventModal({
       {isHub && partnerData && partnerData.length > 0 && (
         <>
           <Form.Item
-            style={{marginTop:'20px'}}
+            style={{ marginTop: "20px" }}
             name="partner_ids"
             label="Partner"
             rules={[
@@ -503,11 +495,7 @@ function AddEventModal({
               },
             ]}
           >
-            <Select 
-              mode="multiple"
-              onChange={handleMultiSelectChange}
-              allowClear
-            >
+            <Select mode="multiple" allowClear>
               {partnerData.map((item) => {
                 return (
                   <Option
@@ -524,6 +512,10 @@ function AddEventModal({
                 );
               })}
             </Select>
+            <p>
+              *if blank (no users selected) the event will be visible by all the
+              users in the hub
+            </p>
           </Form.Item>
         </>
       )}

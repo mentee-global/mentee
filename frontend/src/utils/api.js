@@ -86,14 +86,14 @@ export const fetchEvents = async (
   type,
   hub_user_id = null,
   partner_id = null,
-  user_id = null,
+  user_id = null
 ) => {
   const requestExtension = `/events/${type}`;
   return authGet(requestExtension, {
     params: {
       hub_user_id: hub_user_id,
       partner_id: partner_id,
-      user_id: user_id
+      user_id: user_id,
     },
   }).then(
     (response) => response.data.result.events,

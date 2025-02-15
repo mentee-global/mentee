@@ -329,37 +329,6 @@ function AddEventModal({
               maxTagCount="responsive"
             />
           </Form.Item>
-          {!user.hub_id && partnerData && partnerData.length > 0 && (
-            <>
-              <Form.Item
-                name="partner_ids"
-                label="Partner"
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
-              >
-                <Select mode="multiple">
-                  {partnerData.map((item) => {
-                    return (
-                      <Option
-                        value={
-                          item._id
-                            ? item._id.$oid
-                            : item.id.$oid
-                            ? item.id.$oid
-                            : item.id
-                        }
-                      >
-                        {item.person_name}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </>
-          )}
         </>
       )}
       {isHub && (
@@ -513,6 +482,42 @@ function AddEventModal({
               : image && image.url
           }
         />
+      )}
+      {isHub && partnerData && partnerData.length > 0 && (
+        <>
+          <Form.Item
+            style={{ marginTop: "20px" }}
+            name="partner_ids"
+            label="Partner"
+            rules={[
+              {
+                required: false,
+              },
+            ]}
+          >
+            <Select mode="multiple" allowClear>
+              {partnerData.map((item) => {
+                return (
+                  <Option
+                    value={
+                      item._id
+                        ? item._id.$oid
+                        : item.id.$oid
+                        ? item.id.$oid
+                        : item.id
+                    }
+                  >
+                    {item.person_name}
+                  </Option>
+                );
+              })}
+            </Select>
+            <p>
+              *if blank (no users selected) the event will be visible by all the
+              users in the hub
+            </p>
+          </Form.Item>
+        </>
       )}
     </Form>
   );

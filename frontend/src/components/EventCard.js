@@ -241,6 +241,7 @@ function EventCard(props) {
           event_item={event_item}
           refresh={() => props.refresh()}
           reloading={() => props.reloading()}
+          partnerData={props.partnerData}
         />
       </div>
     </div>

@@ -55,13 +55,17 @@ function Events() {
   const { user } = useSelector((state) => state.user);
   const role = getRole();
   useEffect(() => {
-    async function getAllEvents(hub_user_id, partner_id) {
-      const all_evnet_data = await fetchEvents(role, hub_user_id, partner_id);
+    async function getAllEvents(hub_user_id, partner_id, user_id) {
+      const all_evnet_data = await fetchEvents(role, hub_user_id, partner_id, user_id);
       setAllEvents(all_evnet_data);
       setPageLoaded(true);
     }
     var hub_user_id = null;
     var partner_id = null;
+    var user_id = null;
+    if (user){
+      user_id = user._id.$oid;
+    }
     if (role == ACCOUNT_TYPE.HUB && user) {
       if (user.hub_id) {
         hub_user_id = user.hub_id;
@@ -74,7 +78,7 @@ function Events() {
         setHubUrl("/" + user.url);
       }
     }
-    getAllEvents(hub_user_id, partner_id);
+    getAllEvents(hub_user_id, partner_id, user_id);
 
     async function getAllUsersData(hub_user_id) {
       const admin_data = await fetchAccounts(ACCOUNT_TYPE.ADMIN);
@@ -361,6 +365,7 @@ function Events() {
                   hubOptions={hubOptions}
                   refresh={() => setReload(!reload)}
                   reloading={() => setPageLoaded(false)}
+                  partnerData={hubPartners}
                 />
               );
             })}

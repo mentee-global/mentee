@@ -47,6 +47,7 @@ function AddEventModal({
   const [changedImage, setChangedImage] = useState(false);
   const user = useSelector((state) => state.user.user);
   const [userRole, setUserRole] = useState([]);
+  const [partnerIDs, setPartnerIDs] = useState([]);
 
   // TODO: clean up this useEffect and its useState
   useEffect(() => {
@@ -69,6 +70,7 @@ function AddEventModal({
       }
       if (event_item.partner_ids) {
         form.setFieldValue("partner_ids", event_item.partner_ids);
+        setPartnerIDs(event_item.partner_ids);
       }
 
       if (event_item.start_datetime) {
@@ -205,7 +207,13 @@ function AddEventModal({
     setOpen(false);
   };
 
-  const EventForm = (event_item) => (
+  const handleMultiSelectChange = (values) => {
+    setPartnerIDs(values);
+  };
+
+  console.log('pppp', partnerIDs);
+
+    const EventForm = (event_item) => (
     <Form form={form} layout="vertical">
       {isAdmin && (
         <>
@@ -329,37 +337,6 @@ function AddEventModal({
               maxTagCount="responsive"
             />
           </Form.Item>
-          {!user.hub_id && partnerData && partnerData.length > 0 && (
-            <>
-              <Form.Item
-                name="partner_ids"
-                label="Partner"
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
-              >
-                <Select mode="multiple">
-                  {partnerData.map((item) => {
-                    return (
-                      <Option
-                        value={
-                          item._id
-                            ? item._id.$oid
-                            : item.id.$oid
-                            ? item.id.$oid
-                            : item.id
-                        }
-                      >
-                        {item.person_name}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </>
-          )}
         </>
       )}
       {isHub && (
@@ -513,6 +490,42 @@ function AddEventModal({
               : image && image.url
           }
         />
+      )}
+      {isHub && partnerData && partnerData.length > 0 && (
+        <>
+          <Form.Item
+            style={{marginTop:'20px'}}
+            name="partner_ids"
+            label="Partner"
+            rules={[
+              {
+                required: false,
+              },
+            ]}
+          >
+            <Select 
+              mode="multiple"
+              onChange={handleMultiSelectChange}
+              allowClear
+            >
+              {partnerData.map((item) => {
+                return (
+                  <Option
+                    value={
+                      item._id
+                        ? item._id.$oid
+                        : item.id.$oid
+                        ? item.id.$oid
+                        : item.id
+                    }
+                  >
+                    {item.person_name}
+                  </Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+        </>
       )}
     </Form>
   );

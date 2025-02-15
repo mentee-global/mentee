@@ -32,6 +32,7 @@ def get_events(role):
     lang = request.args.get("lang", "en-US")
     hub_user_id = request.args.get("hub_user_id", None)
     partner_id = request.args.get("partner_id", None)
+    user_id = request.args.get("user_id", None)
     if int(role) == Account.ADMIN:
         events = Event.objects().order_by("-start_datetime")
     elif int(role) == Account.HUB:
@@ -43,6 +44,12 @@ def get_events(role):
             for event in events:
                 if (event.partner_ids is None) or (len(event.partner_ids) == 0) or (partner_id in event.partner_ids):
                     temp.append(event)
+            if (user_id):
+                print('usss', user_id)
+                for event in events:
+                    print('eeeee', event.user_id, str(event.user_id) == user_id)
+                    if (str(event.user_id) == user_id):
+                        temp.append(event)
             events = temp
     else:
         events = Event.objects(role__in=[role]).order_by("-start_datetime")

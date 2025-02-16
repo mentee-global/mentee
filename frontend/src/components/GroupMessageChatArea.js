@@ -40,8 +40,9 @@ function GroupMessageChatArea(props) {
   const [groupUsers, setGroupUsers] = useState([]);
   const [showUserList, setShowUserList] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [cursorPosition, setCursorPosition] = useState(null);
   const [activeInput, setActiveInput] = useState(null);
+  const [tagUsers, setTagUsers] = useState([]);
+
   const textAreaRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -167,15 +168,26 @@ function GroupMessageChatArea(props) {
     setShouldScroll(true);
 
     // Simple notification
-    if (particiants?.length > 0) {
-      setTimeout(() => {
-        particiants.forEach((user) => {
-          if (user._id.$oid !== profileId) {
-            sendNotifyUnreadMessage(user._id.$oid);
-          }
-        });
-      }, 0);
+    if (tagUsers.length == 0) {
+      if (particiants?.length > 0) {
+        setTimeout(() => {
+          particiants.forEach((user) => {
+            if (user._id.$oid !== profileId) {
+              sendNotifyUnreadMessage(user._id.$oid);
+            }
+          });
+        }, 0);
+      }
+    } else {
+      tagUsers.map((tag_id) => {
+        if (tag_id !== profileId) {
+          sendNotifyUnreadMessage(tag_id);
+        }
+        return false;
+      });
     }
+
+    setTagUsers([]);
   };
 
   const sendReplyMessage = (block_id) => {
@@ -185,6 +197,15 @@ function GroupMessageChatArea(props) {
       temp[block_id] = false;
       setReplyInputFlags(temp);
       setRefreshFlag(!refreshFlag);
+      setTagUsers([]);
+      if (tagUsers.length > 0) {
+        tagUsers.map((tag_id) => {
+          if (tag_id !== profileId) {
+            sendNotifyUnreadMessage(tag_id);
+          }
+          return false;
+        });
+      }
       return;
     }
 
@@ -402,6 +423,11 @@ function GroupMessageChatArea(props) {
   const handleUserSelect = (user, type) => {
     // Get the appropriate name, fallback to person_name if name is not available
     const userName = user.name || user.person_name;
+    let temp = tagUsers;
+    if (!temp.includes(user._id.$oid)) {
+      temp.push(user._id.$oid);
+    }
+    setTagUsers(temp);
     if (!userName) return; // Don't proceed if no valid name is found
 
     const currentText = type === "main" ? messageText : replyMessageText;
@@ -548,20 +574,22 @@ function GroupMessageChatArea(props) {
                       marginTop: "4px",
                     }}
                   >
-                    <Button
-                      onClick={() => {
-                        setReplyInputFlags((prevFlags) => ({
-                          ...prevFlags,
-                          [block._id.$oid]: true,
-                        }));
-                        setReplyMessageText("");
-                      }}
-                      className="reply-button"
-                      type="link"
-                      style={{ padding: 0 }}
-                    >
-                      Reply
-                    </Button>
+                    {profileId !== block.sender_id.$oid && (
+                      <Button
+                        onClick={() => {
+                          setReplyInputFlags((prevFlags) => ({
+                            ...prevFlags,
+                            [block._id.$oid]: true,
+                          }));
+                          setReplyMessageText("");
+                        }}
+                        className="reply-button"
+                        type="link"
+                        style={{ padding: 0 }}
+                      >
+                        Reply
+                      </Button>
+                    )}
                     {block.children && block.children.length > 0 && (
                       <Button
                         type="link"
@@ -643,7 +671,7 @@ function GroupMessageChatArea(props) {
         className="user-list-dropdown"
         style={{
           position: "absolute",
-          top: "100%",
+          top: type === "main" ? "-170px" : "100%",
           left: 0,
           right: 0,
           zIndex: 1050,
@@ -722,6 +750,7 @@ function GroupMessageChatArea(props) {
                 size={32}
               />
             </div>
+            {renderUserList("main")}
           </div>
         </div>
 

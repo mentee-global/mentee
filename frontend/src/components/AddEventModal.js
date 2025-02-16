@@ -495,7 +495,7 @@ function AddEventModal({
               },
             ]}
           >
-            <Select mode="multiple" allowClear>
+            <Select mode="multiple">
               {partnerData.map((item) => {
                 return (
                   <Option
@@ -512,11 +512,11 @@ function AddEventModal({
                 );
               })}
             </Select>
-            <p>
-              *if blank (no users selected) the event will be visible by all the
-              users in the hub
-            </p>
           </Form.Item>
+          <p>
+            *if blank (no users selected) the event will be visible by all the
+            users in the hub
+          </p>
         </>
       )}
     </Form>

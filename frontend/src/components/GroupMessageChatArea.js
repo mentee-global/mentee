@@ -192,20 +192,11 @@ function GroupMessageChatArea(props) {
 
   const sendReplyMessage = (block_id) => {
     let currentMessage = replyMessageText;
-    if (!currentMessage.trim().length) {
+    if (!currentMessage.trim().length > 0) {
       let temp = replyInputFlags;
       temp[block_id] = false;
       setReplyInputFlags(temp);
       setRefreshFlag(!refreshFlag);
-      setTagUsers([]);
-      if (tagUsers.length > 0) {
-        tagUsers.map((tag_id) => {
-          if (tag_id !== profileId) {
-            sendNotifyUnreadMessage(tag_id);
-          }
-          return false;
-        });
-      }
       return;
     }
 
@@ -244,15 +235,25 @@ function GroupMessageChatArea(props) {
     //setShouldScroll(true);
 
     // Send notifications
-    if (particiants?.length > 0) {
-      setTimeout(() => {
-        particiants.forEach((user) => {
-          if (user._id.$oid !== profileId) {
-            sendNotifyUnreadMessage(user._id.$oid);
-          }
-        });
-      }, 0);
+    if (tagUsers.length > 0) {
+      tagUsers.map((tag_id) => {
+        if (tag_id !== profileId) {
+          sendNotifyUnreadMessage(tag_id);
+        }
+        return false;
+      });
+    } else {
+      if (particiants?.length > 0) {
+        setTimeout(() => {
+          particiants.forEach((user) => {
+            if (user._id.$oid !== profileId) {
+              sendNotifyUnreadMessage(user._id.$oid);
+            }
+          });
+        }, 0);
+      }
     }
+    setTagUsers([]);
   };
 
   const styles = {

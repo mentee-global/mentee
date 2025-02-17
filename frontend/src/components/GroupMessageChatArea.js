@@ -197,6 +197,15 @@ function GroupMessageChatArea(props) {
       temp[block_id] = false;
       setReplyInputFlags(temp);
       setRefreshFlag(!refreshFlag);
+      setTagUsers([]);
+      if (tagUsers.length > 0) {
+        tagUsers.map((tag_id) => {
+          if (tag_id !== profileId) {
+            sendNotifyUnreadMessage(tag_id);
+          }
+          return false;
+        });
+      }
       return;
     }
 

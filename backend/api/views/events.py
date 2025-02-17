@@ -256,6 +256,7 @@ def new_event():
                 )
                 recipients = []
                 for hub_user in hub_users:
+                    role_name = hub_user.name
                     recipients.append(hub_user)
                     target_url = (
                         front_url + hub_user.url + "/event/" + str(new_event_id)

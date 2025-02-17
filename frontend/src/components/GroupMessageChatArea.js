@@ -6,7 +6,7 @@ import { SendOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import { useAuth } from "utils/hooks/useAuth";
 import {
-  sendNotifyUnreadMessage,
+  sendNotifyGroupMessage,
   downloadBlob,
   getLibraryFile,
 } from "utils/api";
@@ -173,7 +173,7 @@ function GroupMessageChatArea(props) {
         setTimeout(() => {
           particiants.forEach((user) => {
             if (user._id.$oid !== profileId) {
-              sendNotifyUnreadMessage(user._id.$oid);
+              // sendNotifyGroupMessage(user._id.$oid, false);
             }
           });
         }, 0);
@@ -181,7 +181,7 @@ function GroupMessageChatArea(props) {
     } else {
       tagUsers.map((tag_id) => {
         if (tag_id !== profileId) {
-          sendNotifyUnreadMessage(tag_id);
+          sendNotifyGroupMessage(tag_id, true);
         }
         return false;
       });
@@ -197,15 +197,6 @@ function GroupMessageChatArea(props) {
       temp[block_id] = false;
       setReplyInputFlags(temp);
       setRefreshFlag(!refreshFlag);
-      setTagUsers([]);
-      if (tagUsers.length > 0) {
-        tagUsers.map((tag_id) => {
-          if (tag_id !== profileId) {
-            sendNotifyUnreadMessage(tag_id);
-          }
-          return false;
-        });
-      }
       return;
     }
 
@@ -247,7 +238,7 @@ function GroupMessageChatArea(props) {
     if (tagUsers.length > 0) {
       tagUsers.map((tag_id) => {
         if (tag_id !== profileId) {
-          sendNotifyUnreadMessage(tag_id);
+          sendNotifyGroupMessage(tag_id, true);
         }
         return false;
       });
@@ -256,7 +247,7 @@ function GroupMessageChatArea(props) {
         setTimeout(() => {
           particiants.forEach((user) => {
             if (user._id.$oid !== profileId) {
-              sendNotifyUnreadMessage(user._id.$oid);
+              // sendNotifyGroupMessage(user._id.$oid, false);
             }
           });
         }, 0);

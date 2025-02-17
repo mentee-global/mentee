@@ -65,6 +65,39 @@ def get_unread_dm_count(id):
     return create_response(data={"notifications": unread_message_number})
 
 
+@notifications.route("/unread_alert_group/<id>", methods=["GET"])
+def send_unread_alert_group(id):
+    try:
+        email = None
+        user_record = PartnerProfile.objects(Q(id=id)).first()
+        if user_record is not None:
+            email = user_record.email
+        else:
+            user_record = Hub.objects(Q(id=id)).first()
+            if user_record is not None:
+                email = user_record.email
+        if (user_record is not None) and user_record.email_notifications:
+            res, res_msg = send_email(
+                recipient=email,
+                data={
+                    "number_unread": "1",
+                    user_record.preferred_language: True,
+                    "subject": TRANSLATIONS[user_record.preferred_language][
+                        "unread_message"
+                    ],
+                },
+                template_id=GROUPCHAT_TAGGED_MESSAGE_TEMPLATE,
+            )
+            if not res:
+                msg = "Failed to send unread message alert email " + res_msg
+                logger.info(msg)
+    except Exception as e:
+        logger.info(e)
+        return create_response(status=422, message="failed")
+
+    return create_response(status=200, message="Success")
+
+
 @notifications.route("/unread_alert/<id>", methods=["GET"])
 # @all_users
 def send_unread_alert(id):
@@ -103,7 +136,7 @@ def send_unread_alert(id):
                                 "unread_message"
                             ],
                         },
-                        template_id=GROUPCHAT_TAGGED_MESSAGE_TEMPLATE,
+                        template_id=UNREAD_MESSAGE_TEMPLATE,
                     )
                     if not res:
                         msg = "Failed to send unread message alert email " + res_msg

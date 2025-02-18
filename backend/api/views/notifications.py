@@ -136,7 +136,7 @@ def send_unread_alert(id):
                                 "unread_message"
                             ],
                         },
-                        template_id=UNREAD_MESSAGE_TEMPLATE,
+                        template_id=GROUPCHAT_TAGGED_MESSAGE_TEMPLATE,
                     )
                     if not res:
                         msg = "Failed to send unread message alert email " + res_msg

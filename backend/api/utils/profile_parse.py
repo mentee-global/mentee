@@ -59,6 +59,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
 
         new_profile.website = data.get("website")
         new_profile.linkedin = data.get("linkedin")
+        new_profile.video = data.get("video")
 
         if "videos" in data:
             video_data = data.get("videos")

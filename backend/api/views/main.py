@@ -366,10 +366,12 @@ def create_mentor_profile():
     if not new_account:
         msg = "Could not parse Account Data"
         logger.info(msg)
-        create_response(status=400, message=msg)
+        return create_response(status=400, message=msg)
     firebase_user, error_http_response = create_firebase_user(email, password)
     if error_http_response:
-        return error_http_response
+        firebase_user = firebase_admin_auth.get_user_by_email(email)
+        if not firebase_user:
+            return error_http_response
 
     firebase_uid = firebase_user.uid
     data["firebase_uid"] = firebase_uid

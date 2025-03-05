@@ -23,10 +23,12 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
   const { user } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [form] = Form.useForm();
 
   const onFinish = async ({ email, password }) => {
     if (role == null) return;
     setLoading(true);
+    email = email.toLowerCase();
 
     // Non-admin checking for status of account
     if (
@@ -187,7 +189,13 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
             },
           ]}
         >
-          <Input prefix={<UserOutlined />} autoFocus />
+          <Input
+            onChange={(e) => {
+              form.setFieldsValue({ email: e.target.value.toLowerCase() });
+            }}
+            prefix={<UserOutlined />}
+            autoFocus
+          />
         </Form.Item>
         <div style={{ position: "relative" }}>
           <Form.Item

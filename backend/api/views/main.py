@@ -325,7 +325,7 @@ def create_mentor_profile():
                 logger.info(msg)
                 return create_response(status=422, message=msg)
 
-    elif data.get("videos", False) and account_type == Account.MENTEE:
+    elif data.get("video", False) and account_type == Account.MENTEE:
         validate_video = VideoForm.from_json(data["video"])
 
         msg, is_invalid = is_invalid_form(validate_video)
@@ -339,7 +339,7 @@ def create_mentor_profile():
             tag=video_data.get("tag"),
             date_uploaded=video_data.get("date_uploaded"),
         )
-    if data.get("videos", False) and account_type == Account.MENTOR:
+    if data.get("video", False) and account_type == Account.MENTOR:
         validate_video = VideoForm.from_json(data["video"])
 
         msg, is_invalid = is_invalid_form(validate_video)
@@ -376,6 +376,7 @@ def create_mentor_profile():
     firebase_uid = firebase_user.uid
     data["firebase_uid"] = firebase_uid
     new_account.firebase_uid = firebase_uid
+
     new_account.save()
     if account_type == Account.MENTOR:
         mentor_partenr_id = data.get("organization")

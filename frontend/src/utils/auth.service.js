@@ -70,7 +70,7 @@ export const sendPasswordResetEmail = (email) => {
 
 export const login = async (email, password, role, path = undefined) =>
   await post("/login", {
-    email: email && email.trim(),
+    email: email && email.trim().toLowerCase(),
     password: password && password.trim(),
     role: String(role) && String(role).trim(),
     path: path,

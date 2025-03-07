@@ -37,6 +37,29 @@ function GroupMessages(props) {
     }
   }
 
+  const editMessageListner = (data) => {
+    if (hub_user_id) {
+      if (
+        data?.hub_user_id?.$oid === activeMessageId &&
+        data?.sender_id?.$oid !== profileId
+      ) {
+        var temp = messages;
+        temp = temp.map((item) =>
+          item._id.$oid === data._id.$oid ? data : item
+        );
+        setMessages(temp);
+      }
+    } else {
+      if (data?.sender_id?.$oid !== profileId) {
+        temp = messages;
+        temp = temp.map((item) =>
+          item._id.$oid === data._id.$oid ? data : item
+        );
+        setMessages(temp);
+      }
+    }
+  };
+
   const messageListener = (data) => {
     if (hub_user_id) {
       if (
@@ -93,13 +116,17 @@ function GroupMessages(props) {
     if (socket) {
       if (hub_user_id) {
         socket.on(hub_user_id, messageListener);
+        socket.on(hub_user_id + "-edited", editMessageListner);
         return () => {
           socket.off(hub_user_id, messageListener);
+          socket.off(hub_user_id + "-edited", editMessageListner);
         };
       } else {
         socket.on("group-partner", messageListener);
+        socket.on("group-partner-edited", editMessageListner);
         return () => {
           socket.off("group-partner", messageListener);
+          socket.off("group-partner-edited", editMessageListner);
         };
       }
     }
@@ -137,6 +164,12 @@ function GroupMessages(props) {
     getData(hub_user_id);
   }, [activeMessageId]);
 
+  const editMessage = (msg, block_id) => {
+    var temp = messages;
+    temp = temp.map((item) => (item._id.$oid === block_id ? msg : item));
+    setMessages(temp);
+  };
+
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
   };
@@ -151,6 +184,7 @@ function GroupMessages(props) {
           messages={messages}
           socket={socket}
           addMyMessage={addMyMessage}
+          editMessage={editMessage}
           loading={loading}
           user={user}
           particiants={particiants}

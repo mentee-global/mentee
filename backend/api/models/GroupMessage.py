@@ -9,6 +9,7 @@ class GroupMessage(Document, Mixin):
     title = StringField(required=False)
     body = StringField(required=True)
     message_read = BooleanField(required=True)
+    message_edited = BooleanField(required=False)
     sender_id = ObjectIdField(required=True)
     hub_user_id = ObjectIdField(required=True)
     created_at = DateTimeField(required=True)

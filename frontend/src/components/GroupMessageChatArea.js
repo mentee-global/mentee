@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Avatar, Input, Button, Spin, theme, Dropdown } from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import moment from "moment-timezone";
-import { SendOutlined } from "@ant-design/icons";
+import { SendOutlined, EditOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import { useAuth } from "utils/hooks/useAuth";
 import {
@@ -24,13 +24,13 @@ function GroupMessageChatArea(props) {
   const { profileId } = useAuth();
   const [messageText, setMessageText] = useState("");
   const [replyMessageText, setReplyMessageText] = useState("");
+  const [editMessageText, setEditMessageText] = useState("");
   const [messageTitle, setMessageTitle] = useState("");
 
   const { messages, loading, hub_user_id, particiants } = props;
   const messagesEndRef = useRef(null);
-  const buttonRef = useRef(null);
-  const [dotMenuFlags, setDotMenuFlags] = useState({});
   const [replyInputFlags, setReplyInputFlags] = useState({});
+  const [editInputFlags, setEditInputFlags] = useState({});
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiUp, setEmojiUp] = useState(false);
@@ -115,10 +115,6 @@ function GroupMessageChatArea(props) {
     }
   }, [particiants, profileId]);
 
-  useEffect(() => {
-    console.log("Participants:", particiants); // Debug log
-  }, [particiants]);
-
   const toggleExpand = (id) => {
     setExpandedMessages((prev) => ({
       ...prev,
@@ -190,6 +186,28 @@ function GroupMessageChatArea(props) {
     setTagUsers([]);
   };
 
+  const editMessage = (block_id) => {
+    let currentMessage = editMessageText;
+    if (!currentMessage.trim().length > 0) {
+      setEditInputFlags({});
+      setRefreshFlag(!refreshFlag);
+      return;
+    }
+
+    let msg = messages.find((x) => x._id.$oid === block_id);
+
+    if (msg) {
+      msg.body = currentMessage;
+      msg.message_edited = true;
+
+      props.editMessage(msg, block_id);
+      socket.emit("editGroupMessage", block_id, hub_user_id, currentMessage);
+    }
+
+    setEditMessageText("");
+    setEditInputFlags({});
+  };
+
   const sendReplyMessage = (block_id) => {
     let currentMessage = replyMessageText;
     if (!currentMessage.trim().length > 0) {
@@ -212,10 +230,7 @@ function GroupMessageChatArea(props) {
 
     // Clear input and close reply box
     setReplyMessageText("");
-    setReplyInputFlags((prevFlags) => ({
-      ...prevFlags,
-      [block_id]: false,
-    }));
+    setReplyInputFlags({});
 
     // Emit to the same channel as regular messages
     socket.emit("sendGroup", msg);
@@ -284,6 +299,7 @@ function GroupMessageChatArea(props) {
       background-color: #e6f7ff; // Example background color
       border: 1px solid #91d5ff; // Example border color
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Example shadow
+      display: flex;
     `,
     title: css`
       padding: 10px 10px;
@@ -293,47 +309,6 @@ function GroupMessageChatArea(props) {
       font-weight: bold;
       color: #000; // Example text color
     `,
-  };
-
-  const changeDropdown = (block_id) => {
-    setDotMenuFlags((prevFlags) => ({
-      ...prevFlags,
-      [block_id]: !prevFlags[block_id],
-    }));
-    setRefreshFlag(!refreshFlag);
-  };
-
-  const getDropdownMenuItems = (block) => {
-    return [
-      {
-        key: "reply",
-        label: (
-          <span
-            onClick={() => {
-              setReplyInputFlags((prevFlags) => {
-                const newFlags = { ...prevFlags };
-                // Reset all flags to false
-                Object.keys(newFlags).forEach((key) => {
-                  newFlags[key] = false;
-                });
-                // Set current message's reply flag to true
-                newFlags[block._id.$oid] = true;
-                return newFlags;
-              });
-              setDotMenuFlags((prevFlags) => ({
-                ...prevFlags,
-                [block._id.$oid]: false,
-              }));
-              setReplyMessageText("");
-              setShowEmojiPicker(false);
-              setRefreshFlag(!refreshFlag);
-            }}
-          >
-            {t("messages.reply")}
-          </span>
-        ),
-      },
-    ];
   };
 
   const handleDownload = async (id, file_name) => {
@@ -357,20 +332,13 @@ function GroupMessageChatArea(props) {
     }
   };
 
-  const HtmlContent = ({ content }) => {
-    return (
-      <div
-        onClick={() => downloadFile(content)}
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
-    );
-  };
-
   const onEmojiClick = (event, kind = "main") => {
     if (kind === "main") {
       setMessageText((messageText) => messageText + event.emoji);
-    } else {
+    } else if (kind === "reply") {
       setReplyMessageText((replyMessageText) => replyMessageText + event.emoji);
+    } else if (kind === "edit") {
+      setEditMessageText((editMessageText) => editMessageText + event.emoji);
     }
     setShowEmojiPicker(false); // Hide picker after selection
     setShowReplyEmojiPicker(false);
@@ -381,8 +349,10 @@ function GroupMessageChatArea(props) {
 
     if (type === "main") {
       setMessageText(value);
-    } else {
+    } else if (type === "reply") {
       setReplyMessageText(value);
+    } else if (type === "edit") {
+      setEditMessageText(value);
     }
 
     // Check for @ symbol
@@ -431,20 +401,27 @@ function GroupMessageChatArea(props) {
     setTagUsers(temp);
     if (!userName) return; // Don't proceed if no valid name is found
 
-    const currentText = type === "main" ? messageText : replyMessageText;
+    const currentText =
+      type === "main"
+        ? messageText
+        : type === "reply"
+        ? replyMessageText
+        : editMessageText;
     const lastAtIndex = currentText.lastIndexOf("@");
     const newText = currentText.slice(0, lastAtIndex) + "@" + userName + " ";
 
     if (type === "main") {
       setMessageText(newText);
-    } else {
+    } else if (type === "reply") {
       setReplyMessageText(newText);
+    } else if (type === "edit") {
+      setEditMessageText(newText);
     }
 
     setShowUserList(false);
   };
 
-  const formatMessageText = (text) => {
+  const formatMessageText = (text, message_edited) => {
     if (!text) return text;
 
     // First find all participants' names to match against
@@ -470,6 +447,10 @@ function GroupMessageChatArea(props) {
         `<span class="tagged-user">${mentionText}</span>`
       );
     });
+
+    if (message_edited) {
+      formattedText += ' <span style="opacity:0.5">(edited)</span>';
+    }
 
     return formattedText;
   };
@@ -519,19 +500,95 @@ function GroupMessageChatArea(props) {
                   {block.title && (
                     <div className={styles.title}>{block.title}</div>
                   )}
-                  <div
-                    className={css`
-                      ${styles.parentMessage}// Apply new parent message styles
-                    `}
-                  >
-                    <div
-                      onClick={() => downloadFile(block.body)}
-                      className="message-text"
-                      dangerouslySetInnerHTML={{
-                        __html: formatMessageText(block.body),
-                      }}
-                    />
-                  </div>
+                  {editInputFlags[block._id.$oid] ? (
+                    <>
+                      <div
+                        className="reply-message-container"
+                        style={{ paddingLeft: 0 }}
+                      >
+                        <TextArea
+                          className="reply-message-textarea"
+                          defaultValue={block.body}
+                          onChange={(e) => handleInputChange(e, "edit")}
+                          autoSize={{ minRows: 1, maxRows: 3 }}
+                        />
+                        {renderUserList("edit")}
+                        <img
+                          alt=""
+                          className="emoji-icon"
+                          src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
+                          onClick={(e) => {
+                            if (
+                              e.target.getBoundingClientRect().y <
+                              window.innerHeight / 2
+                            ) {
+                              setEmojiUp(false);
+                            } else {
+                              setEmojiUp(true);
+                            }
+                            setShowReplyEmojiPicker((val) => !val);
+                            setShowEmojiPicker(false); // Ensure only one picker is open
+                          }}
+                        />
+                        {showReplyEmojiPicker && (
+                          <div
+                            className={
+                              emojiUp
+                                ? "up emoji-container"
+                                : "down emoji-container"
+                            }
+                          >
+                            <EmojiPicker
+                              onEmojiClick={(e) => onEmojiClick(e, "edit")}
+                            />
+                          </div>
+                        )}
+                        <Button
+                          onClick={() => editMessage(block._id.$oid)}
+                          className="reply-message-send-button"
+                          shape="circle"
+                          type="primary"
+                          icon={<SendOutlined rotate={315} />}
+                          size={32}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        className={css`
+                          ${styles.parentMessage}// Apply new parent message styles
+                        `}
+                      >
+                        <div
+                          onClick={() => downloadFile(block.body)}
+                          className="message-text"
+                          dangerouslySetInnerHTML={{
+                            __html: formatMessageText(
+                              block.body,
+                              block.message_edited
+                            ),
+                          }}
+                        />
+                        {profileId === block.sender_id.$oid && (
+                          <EditOutlined
+                            style={{
+                              marginLeft: "20px",
+                              marginTop: "3px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              var temp = {};
+                              temp[block._id.$oid] = true;
+                              setEditInputFlags(temp);
+                              setReplyInputFlags({});
+                            }}
+                          />
+                        )}
+                      </div>
+                    </>
+                  )}
+
                   <span
                     style={{
                       opacity: "40%",
@@ -575,22 +632,20 @@ function GroupMessageChatArea(props) {
                       marginTop: "4px",
                     }}
                   >
-                    {profileId !== block.sender_id.$oid && (
-                      <Button
-                        onClick={() => {
-                          setReplyInputFlags((prevFlags) => ({
-                            ...prevFlags,
-                            [block._id.$oid]: true,
-                          }));
-                          setReplyMessageText("");
-                        }}
-                        className="reply-button"
-                        type="link"
-                        style={{ padding: 0 }}
-                      >
-                        Reply
-                      </Button>
-                    )}
+                    <Button
+                      onClick={() => {
+                        var temp = {};
+                        temp[block._id.$oid] = true;
+                        setReplyInputFlags(temp);
+                        setEditInputFlags({});
+                        setReplyMessageText("");
+                      }}
+                      className="reply-button"
+                      type="link"
+                      style={{ padding: 0 }}
+                    >
+                      Reply
+                    </Button>
                     {block.children && block.children.length > 0 && (
                       <Button
                         type="link"
@@ -619,7 +674,15 @@ function GroupMessageChatArea(props) {
                         alt=""
                         className="emoji-icon"
                         src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-                        onClick={() => {
+                        onClick={(e) => {
+                          if (
+                            e.target.getBoundingClientRect().y <
+                            window.innerHeight / 2
+                          ) {
+                            setEmojiUp(false);
+                          } else {
+                            setEmojiUp(true);
+                          }
                           setShowReplyEmojiPicker((val) => !val);
                           setShowEmojiPicker(false); // Ensure only one picker is open
                         }}

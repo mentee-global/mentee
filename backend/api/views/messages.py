@@ -428,6 +428,37 @@ def get_direct_messages():
     return create_response(data={"Messages": messages}, status=200, message=msg)
 
 
+@socketio.on("editGroupMessage")
+def editGroupMessage(id, hub_user_id, message_body, methods=["POST"]):
+    try:
+        if hub_user_id is not None:
+            message = GroupMessage.objects.get(id=id)
+            message.body = message_body
+            message.message_edited = True
+
+        else:
+            message = PartnerGroupMessage.objects.get(id=id)
+            message.body = message_body
+            message.message_edited = True
+
+    except Exception as e:
+        logger.info(e)
+        return create_response(status=500, message="Failed to edit message")
+
+    try:
+        message.save()
+        if hub_user_id is not None:
+            socketio.emit(hub_user_id + "-edited", json.loads(message.to_json()))
+        else:
+            socketio.emit("group-partner-edited", json.loads(message.to_json()))
+        msg = "successfully message edited"
+    except:
+        msg = "Error in meessage"
+        logger.info(msg)
+        return create_response(status=500, message="Failed to edit message")
+    return create_response(status=200, message="successfully message edited")
+
+
 @socketio.on("sendGroup")
 def chatGroup(msg, methods=["POST"]):
     try:

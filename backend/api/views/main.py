@@ -108,9 +108,9 @@ def get_accounts(account_type):
             if partner_account.assign_mentees:
                 for mentee_item in partner_account.assign_mentees:
                     if "id" in mentee_item:
-                        partners_by_assign_mentee[
-                            str(mentee_item["id"])
-                        ] = partner_account
+                        partners_by_assign_mentee[str(mentee_item["id"])] = (
+                            partner_account
+                        )
         for account in mentees_data:
             if str(account.id) in partners_by_assign_mentee:
                 pair_partner = partners_by_assign_mentee[str(account.id)]
@@ -464,11 +464,13 @@ def create_mentor_profile():
         )
 
     notify = Notifications(
-        message="New Mentor with name(" + new_account.name + ") has created profile"
-        if account_type != Account.PARTNER
-        else "New Partner with name("
-        + new_account.person_name
-        + ") has created profile",
+        message=(
+            "New Mentor with name(" + new_account.name + ") has created profile"
+            if account_type != Account.PARTNER
+            else "New Partner with name("
+            + new_account.person_name
+            + ") has created profile"
+        ),
         mentorId=str(new_account.id),
         readed=False,
         date_submitted=datetime.now(),

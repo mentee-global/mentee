@@ -76,7 +76,7 @@ def send_unread_alert_group(id):
             user_record = Hub.objects(Q(id=id)).first()
             if user_record is not None:
                 email = user_record.email
-        if (user_record is not None) and user_record.email_notifications:
+        if user_record is not None:
             res, res_msg = send_email(
                 recipient=email,
                 data={
@@ -126,7 +126,7 @@ def send_unread_alert(id):
                         if "phone_number" in user_record:
                             phone_number = user_record.phone_number
             if user_record is not None:
-                if email is not None and user_record.email_notifications:
+                if email is not None:
                     res, res_msg = send_email(
                         recipient=email,
                         data={
@@ -142,7 +142,7 @@ def send_unread_alert(id):
                         msg = "Failed to send unread message alert email " + res_msg
                         logger.info(msg)
 
-                if phone_number is not None and user_record.text_notifications:
+                if phone_number is not None:
                     res, res_msg = send_sms(
                         text="You have received a new message on your Mentee Portal!\nYou have "
                         + str(notifications_count)

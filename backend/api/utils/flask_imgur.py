@@ -10,6 +10,7 @@ IBILITY OF SUCH DAMAGE.
 FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT sha THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE G)
 
 """
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -19,7 +20,6 @@ import urllib
 
 
 class Imgur(object):
-
     """
     Simple class for handling Imgur image upload, and deletion
     """

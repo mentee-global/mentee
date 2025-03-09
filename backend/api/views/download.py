@@ -235,18 +235,22 @@ def download_mentee_apps(apps, partner_object):
                 ",".join(acct.immigrant_status),
                 acct.Country,
                 acct.identify,
-                acct.language
-                if isinstance(acct.language, str)
-                else ",".join(acct.language),
+                (
+                    acct.language
+                    if isinstance(acct.language, str)
+                    else ",".join(acct.language)
+                ),
                 ",".join(acct.topics),
                 ",".join(acct.workstate),
                 acct.isSocial,
                 acct.questions,
                 acct.application_state,
                 acct.notes,
-                partner_object[acct.partner]
-                if acct.partner in partner_object
-                else acct.partner,
+                (
+                    partner_object[acct.partner]
+                    if acct.partner in partner_object
+                    else acct.partner
+                ),
             ]
         )
     columns = [
@@ -345,12 +349,16 @@ def download_partner_accounts(accounts):
                 acct.sdgs,
                 acct.topics,
                 acct.image.url if acct.image else "None",
-                int(acct.text_notifications)
-                if acct.text_notifications != None
-                else "N/A",
-                int(acct.email_notifications)
-                if acct.email_notifications != None
-                else "N/A",
+                (
+                    int(acct.text_notifications)
+                    if acct.text_notifications != None
+                    else "N/A"
+                ),
+                (
+                    int(acct.email_notifications)
+                    if acct.email_notifications != None
+                    else "N/A"
+                ),
             ]
         )
     columns = [
@@ -401,17 +409,23 @@ def download_mentee_accounts(accounts, partner_object):
                 ",".join(acct.languages),
                 "|".join(acct.specializations),
                 acct.biography,
-                partner_object[acct.organization]
-                if acct.organization in partner_object
-                else acct.organization,
+                (
+                    partner_object[acct.organization]
+                    if acct.organization in partner_object
+                    else acct.organization
+                ),
                 "Yes" if acct.image and acct.image.url else "No",
                 "Yes" if acct.video else "No",
-                int(acct.text_notifications)
-                if acct.text_notifications != None
-                else "N/A",
-                int(acct.email_notifications)
-                if acct.email_notifications != None
-                else "N/A",
+                (
+                    int(acct.text_notifications)
+                    if acct.text_notifications != None
+                    else "N/A"
+                ),
+                (
+                    int(acct.email_notifications)
+                    if acct.email_notifications != None
+                    else "N/A"
+                ),
                 int(acct.is_private) if acct.is_private != None else "N/A",
                 acct.video.url if acct.video else "None",
                 ",".join(acct.favorite_mentors_ids),

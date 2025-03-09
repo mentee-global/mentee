@@ -315,6 +315,7 @@ function GroupMessageChatArea(props) {
     let response = await getLibraryFile(id);
     downloadBlob(response, file_name);
   };
+
   const downloadFile = (message_body) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(message_body, "text/html");

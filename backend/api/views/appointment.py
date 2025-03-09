@@ -210,7 +210,6 @@ def create_appointment():
     else:
         start_time_local_timezone = start_time
 
-
     res, res_msg = send_email(
         recipient=mentee.email,
         template_id=MENTEE_APPT_TEMPLATE,

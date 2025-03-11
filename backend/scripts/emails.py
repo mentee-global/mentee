@@ -8,7 +8,7 @@ sched = BlockingScheduler()
 def scheduled_job():
     # python requests
     # r = requests.get("localhost:5000/api/notifications/weeklyemails")
-    r = requests.get("app.menteeglobal.org/api/notifications/weeklyemails")
+    r = requests.get("https://app.menteeglobal.org/api/notifications/weeklyemails")
     print(r.status_code)
 
 

@@ -11,5 +11,4 @@ def scheduled_job():
     r = requests.get("https://app.menteeglobal.org/api/notifications/weeklyemails")
     print(r.status_code)
 
-
 sched.start()

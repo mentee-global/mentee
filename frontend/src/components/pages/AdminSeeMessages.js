@@ -40,10 +40,10 @@ export const AdminMessages = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [pageNumber, setpageNumber] = useState(1);
   const [startDate, setStartDate] = useState(
-    moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z"),
+    moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z")
   );
   const [endDate, setEndDate] = useState(
-    moment().format("YYYY-MM-DDT23:59:59.999Z"),
+    moment().format("YYYY-MM-DDT23:59:59.999Z")
   );
   const [selectedPartner, setSelectedPartner] = useState("no-affiliation");
   const [partners, setPartners] = useState([]);
@@ -65,7 +65,7 @@ export const AdminMessages = () => {
         const partnersData = await api.fetchPartners();
         console.log(
           "Raw partners data:",
-          JSON.stringify(partnersData, null, 2),
+          JSON.stringify(partnersData, null, 2)
         );
 
         if (Array.isArray(partnersData) && partnersData.length > 0) {
@@ -100,7 +100,7 @@ export const AdminMessages = () => {
 
     try {
       const existingPartner = partners.find(
-        (partner) => partner._id.$oid === partnerId,
+        (partner) => partner._id.$oid === partnerId
       );
 
       if (existingPartner) {
@@ -112,7 +112,7 @@ export const AdminMessages = () => {
           setPartners(partnersData);
 
           const selectedPartner = partnersData.find(
-            (partner) => partner._id.$oid === partnerId,
+            (partner) => partner._id.$oid === partnerId
           );
 
           if (selectedPartner) {
@@ -221,7 +221,7 @@ export const AdminMessages = () => {
           endDate,
           apiPartnerId,
           VIEW_MODE,
-          showOnlyUnanswered,
+          showOnlyUnanswered
         )) || { data: [], total_length: 0 };
 
         if (newData) {
@@ -232,7 +232,7 @@ export const AdminMessages = () => {
                 try {
                   const messages = await getMessageDataWithFlags(
                     item.user._id.$oid,
-                    item.otherId,
+                    item.otherId
                   );
                   if (Array.isArray(messages)) {
                     newData[i].numberOfMessages = messages.length;
@@ -308,7 +308,7 @@ export const AdminMessages = () => {
 
     getMessageDataWithFlags(
       data[rowIndex].user._id.$oid,
-      data[rowIndex].otherId,
+      data[rowIndex].otherId
     )
       .then((messages) => {
         // Sort messages in reverse chronological order (newest first)
@@ -366,7 +366,7 @@ export const AdminMessages = () => {
     setSearchTerm("");
     setSelectedPartner("no-affiliation");
     setStartDate(
-      moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z"),
+      moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z")
     );
     setEndDate(moment().format("YYYY-MM-DDT23:59:59.999Z"));
     setShowOnlyUnanswered(false);
@@ -583,7 +583,7 @@ export const AdminMessages = () => {
                     setStartDate(
                       moment()
                         .subtract(6, "months")
-                        .format("YYYY-MM-DDT00:00:00.000Z"),
+                        .format("YYYY-MM-DDT00:00:00.000Z")
                     );
                   } else {
                     setStartDate(dateString[0]);
@@ -778,7 +778,7 @@ export const AdminMessages = () => {
                 if (!value.trim()) {
                   getMessageDataWithFlags(
                     selectedRow.user._id.$oid,
-                    selectedRow.otherId,
+                    selectedRow.otherId
                   ).then((messages) => {
                     const sortedMessages = Array.isArray(messages)
                       ? [...messages].sort((a, b) => {
@@ -804,7 +804,7 @@ export const AdminMessages = () => {
                   if (!Array.isArray(prevData)) return [];
 
                   return prevData.filter((message) =>
-                    message?.body?.toLowerCase().includes(searchTerm),
+                    message?.body?.toLowerCase().includes(searchTerm)
                   );
                 });
               }}
@@ -846,7 +846,7 @@ export const AdminMessages = () => {
                       ? new Date(msg.created_at.$date)
                       : new Date(0);
                     return msgDate > currentMessageDate;
-                  },
+                  }
                 );
 
                 // Show unanswered tag only if:
@@ -875,7 +875,11 @@ export const AdminMessages = () => {
                 return (
                   <div
                     key={index}
-                    className={`message-bubble ${isMenteeSender ? "message-bubble-mentee" : "message-bubble-mentor"}`}
+                    className={`message-bubble ${
+                      isMenteeSender
+                        ? "message-bubble-mentee"
+                        : "message-bubble-mentor"
+                    }`}
                   >
                     <div className="message-bubble-content">{message.body}</div>
                     <div className="message-bubble-footer">

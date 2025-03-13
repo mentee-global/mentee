@@ -137,7 +137,7 @@ def send_unread_alert(id):
                             ],
                         },
                         template_id=UNREAD_MESSAGE_TEMPLATE,
-                    ) 
+                    )
                     if not res:
                         msg = "Failed to send unread message alert email " + res_msg
                         logger.info(msg)

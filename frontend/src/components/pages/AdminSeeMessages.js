@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Input, 
-  Table, 
-  Select, 
-  Tag, 
-  Modal, 
-  Avatar, 
+import {
+  Input,
+  Table,
+  Select,
+  Tag,
+  Modal,
+  Avatar,
   Spin,
   Typography,
   Alert,
@@ -15,17 +15,17 @@ import {
   DatePicker,
   Button,
   Badge,
-  Switch
+  Switch,
 } from "antd";
-import { 
-  UserOutlined, 
+import {
+  UserOutlined,
   FilterOutlined,
   ReloadOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import * as api from "../../utils/api";
 import { getUserIdToken } from "../../utils/auth.service";
-import moment from 'moment';
+import moment from "moment";
 import "../css/AdminMessages.scss";
 
 export const AdminMessages = () => {
@@ -39,8 +39,12 @@ export const AdminMessages = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [pageNumber, setpageNumber] = useState(1);
-  const [startDate, setStartDate] = useState(moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z"));
-  const [endDate, setEndDate] = useState(moment().format("YYYY-MM-DDT23:59:59.999Z"));
+  const [startDate, setStartDate] = useState(
+    moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z"),
+  );
+  const [endDate, setEndDate] = useState(
+    moment().format("YYYY-MM-DDT23:59:59.999Z"),
+  );
   const [selectedPartner, setSelectedPartner] = useState("no-affiliation");
   const [partners, setPartners] = useState([]);
   const [selectedPartnerData, setSelectedPartnerData] = useState(null);
@@ -48,10 +52,10 @@ export const AdminMessages = () => {
   const [showOnlyUnanswered, setShowOnlyUnanswered] = useState(false);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState("newest");
-  const [modalMessageFilter, setModalMessageFilter] = useState("all"); 
-  
+  const [modalMessageFilter, setModalMessageFilter] = useState("all");
+
   const pageSize = 20;
-  
+
   // Fetch partners list and their assigned mentors/mentees
   const fetchPartners = async () => {
     try {
@@ -59,8 +63,11 @@ export const AdminMessages = () => {
       if (partners.length === 0) {
         console.log("Fetching partners data...");
         const partnersData = await api.fetchPartners();
-        console.log("Raw partners data:", JSON.stringify(partnersData, null, 2));
-        
+        console.log(
+          "Raw partners data:",
+          JSON.stringify(partnersData, null, 2),
+        );
+
         if (Array.isArray(partnersData) && partnersData.length > 0) {
           partnersData.forEach((partner, index) => {
             console.log(`Partner ${index} data:`, {
@@ -68,10 +75,10 @@ export const AdminMessages = () => {
               name: partner.name,
               email: partner.email,
               organization: partner.organization,
-              keys: Object.keys(partner)
+              keys: Object.keys(partner),
             });
           });
-          
+
           setPartners(partnersData);
         } else {
           setPartners([]);
@@ -92,21 +99,22 @@ export const AdminMessages = () => {
     }
 
     try {
-      
-      const existingPartner = partners.find(partner => partner._id.$oid === partnerId);
-      
+      const existingPartner = partners.find(
+        (partner) => partner._id.$oid === partnerId,
+      );
+
       if (existingPartner) {
         setSelectedPartnerData(existingPartner);
       } else {
         const partnersData = await api.fetchPartners();
-        
+
         if (Array.isArray(partnersData) && partnersData.length > 0) {
           setPartners(partnersData);
-          
+
           const selectedPartner = partnersData.find(
-            partner => partner._id.$oid === partnerId
+            (partner) => partner._id.$oid === partnerId,
           );
-          
+
           if (selectedPartner) {
             setSelectedPartnerData(selectedPartner);
           } else {
@@ -127,43 +135,50 @@ export const AdminMessages = () => {
       return data;
     }
 
-    const assignMentors = Array.isArray(partnerData.assign_mentors) ? partnerData.assign_mentors : [];
-    const assignMentees = Array.isArray(partnerData.assign_mentees) ? partnerData.assign_mentees : [];
+    const assignMentors = Array.isArray(partnerData.assign_mentors)
+      ? partnerData.assign_mentors
+      : [];
+    const assignMentees = Array.isArray(partnerData.assign_mentees)
+      ? partnerData.assign_mentees
+      : [];
 
-    const mentorIds = assignMentors.map(mentor => {
-      if (!mentor || !mentor.id) return null;
-      
-      if (typeof mentor.id === 'string') {
-        return mentor.id;
-      } else if (mentor.id && mentor.id.$oid) {
-        return mentor.id.$oid;
-      } else {
-        return mentor.id;
-      }
-    }).filter(id => id !== null);
-    
-    const menteeIds = assignMentees.map(mentee => {
-      if (!mentee || !mentee.id) return null;
-      
-      if (typeof mentee.id === 'string') {
-        return mentee.id;
-      } else if (mentee.id && mentee.id.$oid) {
-        return mentee.id.$oid;
-      } else {
-        return mentee.id;
-      }
-    }).filter(id => id !== null);
+    const mentorIds = assignMentors
+      .map((mentor) => {
+        if (!mentor || !mentor.id) return null;
 
+        if (typeof mentor.id === "string") {
+          return mentor.id;
+        } else if (mentor.id && mentor.id.$oid) {
+          return mentor.id.$oid;
+        } else {
+          return mentor.id;
+        }
+      })
+      .filter((id) => id !== null);
 
-    return data.filter(item => {
+    const menteeIds = assignMentees
+      .map((mentee) => {
+        if (!mentee || !mentee.id) return null;
+
+        if (typeof mentee.id === "string") {
+          return mentee.id;
+        } else if (mentee.id && mentee.id.$oid) {
+          return mentee.id.$oid;
+        } else {
+          return mentee.id;
+        }
+      })
+      .filter((id) => id !== null);
+
+    return data.filter((item) => {
       if (!item || !item.user || !item.user._id) return false;
-      
+
       const mentorId = item.user._id.$oid || item.user._id;
       const menteeId = item.otherId;
-      
+
       const isMentorAssigned = mentorIds.includes(mentorId);
       const isMenteeAssigned = menteeIds.includes(menteeId);
-      
+
       return isMentorAssigned || isMenteeAssigned;
     });
   };
@@ -186,19 +201,19 @@ export const AdminMessages = () => {
       try {
         setLoading(true);
         setError(null);
-      
+
         await getUserIdToken();
         await fetchPartners();
 
         let apiPartnerId;
-        
+
         if (selectedPartner === "no-affiliation") {
           apiPartnerId = "no-affiliation";
         } else {
           apiPartnerId = "all";
         }
-        
-        let { data: newData, total_length } = await api.getDetailMessages(
+
+        let { data: newData, total_length } = (await api.getDetailMessages(
           pageNumber,
           pageSize,
           searchTerm,
@@ -206,9 +221,9 @@ export const AdminMessages = () => {
           endDate,
           apiPartnerId,
           VIEW_MODE,
-          showOnlyUnanswered
-        ) || { data: [], total_length: 0 };
-        
+          showOnlyUnanswered,
+        )) || { data: [], total_length: 0 };
+
         if (newData) {
           if (Array.isArray(newData)) {
             for (let i = 0; i < newData.length; i++) {
@@ -217,7 +232,7 @@ export const AdminMessages = () => {
                 try {
                   const messages = await getMessageDataWithFlags(
                     item.user._id.$oid,
-                    item.otherId
+                    item.otherId,
                   );
                   if (Array.isArray(messages)) {
                     newData[i].numberOfMessages = messages.length;
@@ -228,24 +243,28 @@ export const AdminMessages = () => {
               }
             }
           }
-          newData = newData.map(item => {
+          newData = newData.map((item) => {
             return {
               ...item,
-              status: item.hasUnansweredMessages ? "unanswered" : "answered"
+              status: item.hasUnansweredMessages ? "unanswered" : "answered",
             };
           });
-          
-          if (selectedPartner !== "all" && selectedPartner !== "no-affiliation" && selectedPartnerData) {
+
+          if (
+            selectedPartner !== "all" &&
+            selectedPartner !== "no-affiliation" &&
+            selectedPartnerData
+          ) {
             newData = filterDataByPartner(newData, selectedPartnerData);
             total_length = newData.length;
             console.log("Filtered data by partner:", newData);
           }
-          
+
           if (showOnlyUnanswered) {
-            newData = newData.filter(item => item.hasUnansweredMessages);
+            newData = newData.filter((item) => item.hasUnansweredMessages);
             total_length = newData.length;
           }
-          
+
           setTotalLength(total_length);
           setData(newData);
         } else {
@@ -264,7 +283,16 @@ export const AdminMessages = () => {
 
     initializeData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPartner, selectedPartnerData, showOnlyUnanswered, pageNumber, pageSize, startDate, endDate, searchTerm]);
+  }, [
+    selectedPartner,
+    selectedPartnerData,
+    showOnlyUnanswered,
+    pageNumber,
+    pageSize,
+    startDate,
+    endDate,
+    searchTerm,
+  ]);
 
   const handleViewDetail = (rowIndex) => {
     if (!data || rowIndex < 0 || rowIndex >= data.length) {
@@ -272,42 +300,49 @@ export const AdminMessages = () => {
       setError("Cannot view message details. Please try again.");
       return;
     }
-    
+
     setSelectedRow(data[rowIndex]);
     setShowModal(true);
     setSortOrder("newest"); // Reset sort order to newest when opening modal
     setModalMessageFilter("all"); // Reset message filter to show all messages
-    
+
     getMessageDataWithFlags(
       data[rowIndex].user._id.$oid,
-      data[rowIndex].otherId
-    ).then((messages) => {
-      // Sort messages in reverse chronological order (newest first)
-      const sortedMessages = Array.isArray(messages) ? 
-        [...messages].sort((a, b) => {
-          const dateA = a?.created_at?.$date ? new Date(a.created_at.$date) : new Date(0);
-          const dateB = b?.created_at?.$date ? new Date(b.created_at.$date) : new Date(0);
-          return dateB - dateA; // Descending order (newest first)
-        }) : [];
-      
-      setModalData(sortedMessages || []);
-    }).catch(error => {
-      console.error("Error fetching message details:", error);
-      setError("Failed to load message details");
-      setModalData([]);
-    });
+      data[rowIndex].otherId,
+    )
+      .then((messages) => {
+        // Sort messages in reverse chronological order (newest first)
+        const sortedMessages = Array.isArray(messages)
+          ? [...messages].sort((a, b) => {
+              const dateA = a?.created_at?.$date
+                ? new Date(a.created_at.$date)
+                : new Date(0);
+              const dateB = b?.created_at?.$date
+                ? new Date(b.created_at.$date)
+                : new Date(0);
+              return dateB - dateA; // Descending order (newest first)
+            })
+          : [];
+
+        setModalData(sortedMessages || []);
+      })
+      .catch((error) => {
+        console.error("Error fetching message details:", error);
+        setError("Failed to load message details");
+        setModalData([]);
+      });
   };
-  
+
   const getFilteredModalMessages = () => {
     if (!modalData || !Array.isArray(modalData)) return [];
-    
+
     if (modalMessageFilter === "all") {
       return modalData;
     }
-    
-    return modalData.filter(message => {
+
+    return modalData.filter((message) => {
       const messageSenderId = message.sender_id?.$oid || message.sender_id;
-      
+
       if (modalMessageFilter === "from_mentors" && selectedRow) {
         const mentorId = selectedRow.user._id.$oid || selectedRow.user.id;
         return messageSenderId === mentorId;
@@ -319,7 +354,7 @@ export const AdminMessages = () => {
   };
 
   const { Search } = Input;
-  
+
   const handlePartnerChange = async (value) => {
     console.log("Selected partner:", value);
     setSelectedPartner(value);
@@ -330,12 +365,14 @@ export const AdminMessages = () => {
   const handleRefresh = () => {
     setSearchTerm("");
     setSelectedPartner("no-affiliation");
-    setStartDate(moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z"));
+    setStartDate(
+      moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z"),
+    );
     setEndDate(moment().format("YYYY-MM-DDT23:59:59.999Z"));
     setShowOnlyUnanswered(false);
     setpageNumber(1);
   };
-  
+
   const onRowHandler = (record, rowIndex) => {
     return {
       onClick: (event) => {
@@ -346,10 +383,10 @@ export const AdminMessages = () => {
 
   const renderPartnerTag = (partner) => {
     if (!partner) return null;
-    
+
     return (
-      <Tag color="purple" style={{ marginTop: '4px' }}>
-        {partner.email || partner.organization || 'Partner'}
+      <Tag color="purple" style={{ marginTop: "4px" }}>
+        {partner.email || partner.organization || "Partner"}
       </Tag>
     );
   };
@@ -410,19 +447,22 @@ export const AdminMessages = () => {
       key: "latestMessage",
       render: (value, row) => (
         <div className="message-cell">
-          <Badge 
-            status={row.status === "unanswered" ? "warning" : "success"} 
-            style={{ marginRight: 8 }} 
+          <Badge
+            status={row.status === "unanswered" ? "warning" : "success"}
+            style={{ marginRight: 8 }}
           />
-          <span className="message-body-text">{value && value.body ? value.body : value}</span>
+          <span className="message-body-text">
+            {value && value.body ? value.body : value}
+          </span>
         </div>
       ),
-      width: '20%',
+      width: "20%",
     },
     {
       title: "Date",
       sorter: (a, b) =>
-        new Date(a.latestMessage.created_at.$date) - new Date(b.latestMessage.created_at.$date),
+        new Date(a.latestMessage.created_at.$date) -
+        new Date(b.latestMessage.created_at.$date),
       dataIndex: "latestMessage",
       key: "date",
       render: (value) => (
@@ -434,15 +474,16 @@ export const AdminMessages = () => {
       dataIndex: "sender",
       key: "sender",
       render: (value, row) => {
-        const fromMentee = row.latestMessage.recipient_id.$oid === row.user._id.$oid;
-        
+        const fromMentee =
+          row.latestMessage.recipient_id.$oid === row.user._id.$oid;
+
         return (
           <Tag color={fromMentee ? "green" : "blue"}>
             {fromMentee ? "Mentee" : "Mentor"}
           </Tag>
         );
       },
-      width: '15%',
+      width: "15%",
     },
   ];
 
@@ -453,19 +494,19 @@ export const AdminMessages = () => {
           <Title level={4} className="filter-title">
             <FilterOutlined /> Message Filters
           </Title>
-          
+
           {error && (
-            <Alert 
-              message="Error" 
-              description={error} 
-              type="error" 
-              showIcon 
-              style={{ marginBottom: '16px' }}
+            <Alert
+              message="Error"
+              description={error}
+              type="error"
+              showIcon
+              style={{ marginBottom: "16px" }}
               closable
               onClose={() => setError(null)}
             />
           )}
-          
+
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={24} md={12} lg={6} xl={6}>
               <Search
@@ -478,7 +519,7 @@ export const AdminMessages = () => {
                 allowClear
               />
             </Col>
-            
+
             <Col xs={24} sm={24} md={12} lg={6} xl={6}>
               <div className="partner-filter-container">
                 <Select
@@ -487,42 +528,63 @@ export const AdminMessages = () => {
                   value={selectedPartner}
                   onChange={handlePartnerChange}
                 >
-                  <Select.Option value="no-affiliation">No Affiliation</Select.Option>
+                  <Select.Option value="no-affiliation">
+                    No Affiliation
+                  </Select.Option>
                   <Select.Option value="all">All Partners</Select.Option>
-                  {Array.isArray(partners) && partners.map(partner => {
-                    // Skip partners with no assigned mentors or mentees
-                    const hasMentors = Array.isArray(partner.assign_mentors) && partner.assign_mentors.length > 0;
-                    const hasMentees = Array.isArray(partner.assign_mentees) && partner.assign_mentees.length > 0;
-                    
-                    if (!hasMentors && !hasMentees) {
-                      return null;
-                    }
-                    
-                    const displayName = partner.email || 
-                      (partner.organization ? `${partner.organization} Partner` : 'Partner');
-                    
-                    return (
-                      <Select.Option key={partner._id.$oid} value={partner._id.$oid}>
-                        {displayName} ({(hasMentors ? partner.assign_mentors.length : 0) + 
-                         (hasMentees ? partner.assign_mentees.length : 0)} assigned)
-                      </Select.Option>
-                    );
-                  })}
+                  {Array.isArray(partners) &&
+                    partners.map((partner) => {
+                      // Skip partners with no assigned mentors or mentees
+                      const hasMentors =
+                        Array.isArray(partner.assign_mentors) &&
+                        partner.assign_mentors.length > 0;
+                      const hasMentees =
+                        Array.isArray(partner.assign_mentees) &&
+                        partner.assign_mentees.length > 0;
+
+                      if (!hasMentors && !hasMentees) {
+                        return null;
+                      }
+
+                      const displayName =
+                        partner.email ||
+                        (partner.organization
+                          ? `${partner.organization} Partner`
+                          : "Partner");
+
+                      return (
+                        <Select.Option
+                          key={partner._id.$oid}
+                          value={partner._id.$oid}
+                        >
+                          {displayName} (
+                          {(hasMentors ? partner.assign_mentors.length : 0) +
+                            (hasMentees
+                              ? partner.assign_mentees.length
+                              : 0)}{" "}
+                          assigned)
+                        </Select.Option>
+                      );
+                    })}
                 </Select>
-                <Button 
-                  icon={<ReloadOutlined />} 
+                <Button
+                  icon={<ReloadOutlined />}
                   onClick={handleRefresh}
                   title="Reset all filters"
                 />
               </div>
             </Col>
-            
+
             <Col xs={24} sm={24} md={12} lg={6} xl={6}>
               <RangePicker
                 onChange={(date, dateString) => {
                   if (dateString[0] === "" && dateString[1] === "") {
                     setEndDate(moment().format("YYYY-MM-DDT23:59:59.999Z"));
-                    setStartDate(moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z"));
+                    setStartDate(
+                      moment()
+                        .subtract(6, "months")
+                        .format("YYYY-MM-DDT00:00:00.000Z"),
+                    );
                   } else {
                     setStartDate(dateString[0]);
                     setEndDate(dateString[1]);
@@ -532,10 +594,10 @@ export const AdminMessages = () => {
                 className="messages-date-range date-range-picker"
               />
             </Col>
-            
+
             <Col xs={24} sm={24} md={12} lg={6} xl={6} className="flex-center">
               <div className="unanswered-toggle">
-                <Switch 
+                <Switch
                   checked={showOnlyUnanswered}
                   onChange={(checked) => {
                     setShowOnlyUnanswered(checked);
@@ -555,7 +617,7 @@ export const AdminMessages = () => {
           </Row>
         </div>
       </div>
-      
+
       {loading ? (
         <div className="loading-container">
           <Spin size="large" />
@@ -587,14 +649,14 @@ export const AdminMessages = () => {
                 responsive: true,
                 showSizeChanger: false,
               }}
-              scroll={{ x: 'max-content' }}
+              scroll={{ x: "max-content" }}
               rowKey={(record) => `${record.user._id.$oid}-${record.otherId}`}
               className="responsive-table"
             />
           )}
         </div>
       )}
-      
+
       <Modal
         title="Message Details"
         open={showModal}
@@ -617,14 +679,21 @@ export const AdminMessages = () => {
                     size={50}
                     icon={<UserOutlined />}
                     className="modal-profile-icon2"
-                    src={selectedRow?.user.image ? selectedRow?.user.image.url : ""}
+                    src={
+                      selectedRow?.user.image ? selectedRow?.user.image.url : ""
+                    }
                   />
                   <div className="message-profile-info">
-                    <p className="message-profile-name">{selectedRow?.user.name}</p>
+                    <p className="message-profile-name">
+                      {selectedRow?.user.name}
+                    </p>
                     <p className="message-profile-role">Mentor</p>
-                    {selectedRow?.user.pair_partner && selectedRow?.user.pair_partner.organization && (
-                      <Tag color="blue">{selectedRow?.user.pair_partner.organization}</Tag>
-                    )}
+                    {selectedRow?.user.pair_partner &&
+                      selectedRow?.user.pair_partner.organization && (
+                        <Tag color="blue">
+                          {selectedRow?.user.pair_partner.organization}
+                        </Tag>
+                      )}
                   </div>
                 </div>
               </Col>
@@ -634,38 +703,55 @@ export const AdminMessages = () => {
                     size={50}
                     icon={<UserOutlined />}
                     className="modal-profile-icon2"
-                    src={selectedRow?.otherUser.image ? selectedRow?.otherUser.image : ""}
+                    src={
+                      selectedRow?.otherUser.image
+                        ? selectedRow?.otherUser.image
+                        : ""
+                    }
                   />
                   <div className="message-profile-info">
-                    <p className="message-profile-name">{selectedRow?.otherUser.name}</p>
+                    <p className="message-profile-name">
+                      {selectedRow?.otherUser.name}
+                    </p>
                     <p className="message-profile-role">Mentee</p>
-                    {selectedRow?.otherUser.pair_partner && selectedRow?.otherUser.pair_partner.organization && (
-                      <Tag color="green">{selectedRow?.otherUser.pair_partner.organization}</Tag>
-                    )}
+                    {selectedRow?.otherUser.pair_partner &&
+                      selectedRow?.otherUser.pair_partner.organization && (
+                        <Tag color="green">
+                          {selectedRow?.otherUser.pair_partner.organization}
+                        </Tag>
+                      )}
                   </div>
                 </div>
               </Col>
             </Row>
           </div>
-          
-          <Title level={4} className="modal-title">Conversation</Title>
-          
+
+          <Title level={4} className="modal-title">
+            Conversation
+          </Title>
+
           <div className="message-navigation">
             <div className="message-navigation-controls">
-              <Radio.Group 
+              <Radio.Group
                 value={sortOrder}
-                buttonStyle="solid" 
+                buttonStyle="solid"
                 onChange={(e) => {
                   const newSortOrder = e.target.value;
                   setSortOrder(newSortOrder);
-                  
-                  setModalData(prevData => {
+
+                  setModalData((prevData) => {
                     if (!Array.isArray(prevData)) return [];
-                    
+
                     return [...prevData].sort((a, b) => {
-                      const dateA = a?.created_at?.$date ? new Date(a.created_at.$date) : new Date(0);
-                      const dateB = b?.created_at?.$date ? new Date(b.created_at.$date) : new Date(0);
-                      return newSortOrder === "newest" ? dateB - dateA : dateA - dateB;
+                      const dateA = a?.created_at?.$date
+                        ? new Date(a.created_at.$date)
+                        : new Date(0);
+                      const dateB = b?.created_at?.$date
+                        ? new Date(b.created_at.$date)
+                        : new Date(0);
+                      return newSortOrder === "newest"
+                        ? dateB - dateA
+                        : dateA - dateB;
                     });
                   });
                 }}
@@ -673,10 +759,10 @@ export const AdminMessages = () => {
                 <Radio.Button value="newest">Newest First</Radio.Button>
                 <Radio.Button value="oldest">Oldest First</Radio.Button>
               </Radio.Group>
-              
-              <Radio.Group 
+
+              <Radio.Group
                 value={modalMessageFilter}
-                buttonStyle="solid" 
+                buttonStyle="solid"
                 onChange={(e) => setModalMessageFilter(e.target.value)}
               >
                 <Radio.Button value="all">All Messages</Radio.Button>
@@ -684,93 +770,114 @@ export const AdminMessages = () => {
                 <Radio.Button value="from_mentees">From Mentee</Radio.Button>
               </Radio.Group>
             </div>
-            
-            <Input.Search 
-              placeholder="Search in conversation" 
+
+            <Input.Search
+              placeholder="Search in conversation"
               className="conversation-search"
               onSearch={(value) => {
                 if (!value.trim()) {
                   getMessageDataWithFlags(
                     selectedRow.user._id.$oid,
-                    selectedRow.otherId
+                    selectedRow.otherId,
                   ).then((messages) => {
-                    const sortedMessages = Array.isArray(messages) ? 
-                      [...messages].sort((a, b) => {
-                        const dateA = a?.created_at?.$date ? new Date(a.created_at.$date) : new Date(0);
-                        const dateB = b?.created_at?.$date ? new Date(b.created_at.$date) : new Date(0);
-                        return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
-                      }) : [];
-                    
+                    const sortedMessages = Array.isArray(messages)
+                      ? [...messages].sort((a, b) => {
+                          const dateA = a?.created_at?.$date
+                            ? new Date(a.created_at.$date)
+                            : new Date(0);
+                          const dateB = b?.created_at?.$date
+                            ? new Date(b.created_at.$date)
+                            : new Date(0);
+                          return sortOrder === "newest"
+                            ? dateB - dateA
+                            : dateA - dateB;
+                        })
+                      : [];
+
                     setModalData(sortedMessages || []);
                   });
                   return;
                 }
-                
+
                 const searchTerm = value.toLowerCase();
-                setModalData(prevData => {
+                setModalData((prevData) => {
                   if (!Array.isArray(prevData)) return [];
-                  
-                  return prevData.filter(message => 
-                    message?.body?.toLowerCase().includes(searchTerm)
+
+                  return prevData.filter((message) =>
+                    message?.body?.toLowerCase().includes(searchTerm),
                   );
                 });
               }}
               allowClear
             />
           </div>
-          
+
           <div className="message-count">
             <Typography.Text type="secondary">
-              Showing {getFilteredModalMessages().length} message{getFilteredModalMessages().length !== 1 ? 's' : ''}
-              {getFilteredModalMessages().length > 20 && " (scroll to view all)"}
+              Showing {getFilteredModalMessages().length} message
+              {getFilteredModalMessages().length !== 1 ? "s" : ""}
+              {getFilteredModalMessages().length > 20 &&
+                " (scroll to view all)"}
             </Typography.Text>
           </div>
-          
+
           <div className="message-bubble-container">
-            {Array.isArray(getFilteredModalMessages()) && getFilteredModalMessages().length > 0 ? (
+            {Array.isArray(getFilteredModalMessages()) &&
+            getFilteredModalMessages().length > 0 ? (
               getFilteredModalMessages().map((message, index) => {
                 const menteeId = selectedRow?.otherId;
                 const senderId = message.sender_id?.$oid || message.sender_id;
                 const isMenteeSender = senderId === menteeId;
-                
+
                 const date = new Date(message.created_at.$date);
 
-                const currentMessageDate = message.created_at?.$date ? new Date(message.created_at.$date) : new Date(0);
-                
-                const hasNewerMentorResponse = getFilteredModalMessages().some(msg => {
-                  const msgSenderId = msg.sender_id?.$oid || msg.sender_id;
-                  const isMentorMessage = msgSenderId !== menteeId;
-                  
-                  if (!isMentorMessage) return false;
-                  
-                  const msgDate = msg.created_at?.$date ? new Date(msg.created_at.$date) : new Date(0);
-                  return msgDate > currentMessageDate;
-                });
-                
+                const currentMessageDate = message.created_at?.$date
+                  ? new Date(message.created_at.$date)
+                  : new Date(0);
+
+                const hasNewerMentorResponse = getFilteredModalMessages().some(
+                  (msg) => {
+                    const msgSenderId = msg.sender_id?.$oid || msg.sender_id;
+                    const isMentorMessage = msgSenderId !== menteeId;
+
+                    if (!isMentorMessage) return false;
+
+                    const msgDate = msg.created_at?.$date
+                      ? new Date(msg.created_at.$date)
+                      : new Date(0);
+                    return msgDate > currentMessageDate;
+                  },
+                );
+
                 // Show unanswered tag only if:
                 // 1. It's a mentee message
                 // 2. There are no newer mentor responses
                 // 3. It's the newest mentee message
-                const isNewestMenteeMessage = isMenteeSender && !getFilteredModalMessages().some(msg => {
-                  const msgSenderId = msg.sender_id?.$oid || msg.sender_id;
-                  const isMsgFromMentee = msgSenderId === menteeId;
-                  
-                  if (!isMsgFromMentee) return false;
-                  
-                  const msgDate = msg.created_at?.$date ? new Date(msg.created_at.$date) : new Date(0);
-                  return msgDate > currentMessageDate;
-                });
-                
-                const showUnansweredTag = isMenteeSender && !hasNewerMentorResponse && isNewestMenteeMessage;
-                
+                const isNewestMenteeMessage =
+                  isMenteeSender &&
+                  !getFilteredModalMessages().some((msg) => {
+                    const msgSenderId = msg.sender_id?.$oid || msg.sender_id;
+                    const isMsgFromMentee = msgSenderId === menteeId;
+
+                    if (!isMsgFromMentee) return false;
+
+                    const msgDate = msg.created_at?.$date
+                      ? new Date(msg.created_at.$date)
+                      : new Date(0);
+                    return msgDate > currentMessageDate;
+                  });
+
+                const showUnansweredTag =
+                  isMenteeSender &&
+                  !hasNewerMentorResponse &&
+                  isNewestMenteeMessage;
+
                 return (
-                  <div 
-                    key={index} 
-                    className={`message-bubble ${isMenteeSender ? 'message-bubble-mentee' : 'message-bubble-mentor'}`}
+                  <div
+                    key={index}
+                    className={`message-bubble ${isMenteeSender ? "message-bubble-mentee" : "message-bubble-mentor"}`}
                   >
-                    <div className="message-bubble-content">
-                      {message.body}
-                    </div>
+                    <div className="message-bubble-content">{message.body}</div>
                     <div className="message-bubble-footer">
                       <span className="message-date">
                         {date.toLocaleString()}
@@ -780,7 +887,10 @@ export const AdminMessages = () => {
                           {isMenteeSender ? "Mentee" : "Mentor"}
                         </Tag>
                         {showUnansweredTag && (
-                          <Tag color="orange" icon={<ExclamationCircleOutlined />}>
+                          <Tag
+                            color="orange"
+                            icon={<ExclamationCircleOutlined />}
+                          >
                             Unanswered
                           </Tag>
                         )}
@@ -789,7 +899,9 @@ export const AdminMessages = () => {
                   </div>
                 );
               })
-            ) : <div className="no-messages">No messages to display</div>}
+            ) : (
+              <div className="no-messages">No messages to display</div>
+            )}
           </div>
         </div>
       </Modal>

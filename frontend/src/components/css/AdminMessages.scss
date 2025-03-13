@@ -1,0 +1,404 @@
+@import "_app";
+
+$spacing-sm: 8px;
+$spacing-md: 10px;
+$spacing-base: 16px;
+$spacing-lg: 20px;
+$border-radius-sm: 4px;
+$border-radius-lg: 12px;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+}
+
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+// Main styles
+.trainTable {
+  width: 100% !important;
+  overflow-x: auto;
+  
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  @include mobile {
+    .ant-table {
+      font-size: 14px;
+      
+      .ant-table-thead > tr > th,
+      .ant-table-tbody > tr > td {
+        padding: 8px 4px;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+
+.responsive-table {
+  @include mobile {
+    .ant-table-content {
+      overflow-x: auto;
+    }
+    
+    .ant-table-cell {
+      min-width: 100px;
+    }
+  }
+}
+
+.message-body-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+  
+  @include mobile {
+    max-width: 150px;
+  }
+}
+
+.message-cell {
+  @include flex-center;
+  
+  .ant-badge {
+    flex-shrink: 0;
+  }
+}
+
+.filter-section {
+  padding: $spacing-lg; 
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: $spacing-base;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  
+  @include mobile {
+    padding: $spacing-base;
+  }
+}
+
+.filter-title {
+  display: flex;
+  margin: 0;
+  align-items: center;
+
+  .anticon {
+    margin-right: $spacing-sm;
+  }
+}
+
+.view-mode-radios {
+  .ant-radio-button-wrapper {
+    margin-right: 0;
+  }
+}
+
+.partner-filter-select {
+  width: 100%;
+  
+  .ant-select-selector {
+    border-color: #d9d9d9 !important;
+    
+    &:hover {
+      border-color: #40a9ff !important;
+    }
+  }
+  
+  &.ant-select-focused .ant-select-selector {
+    border-color: #40a9ff !important;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  }
+  
+  @include mobile {
+    .ant-select-selection-item {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
+.unanswered-toggle {
+  margin-top: $spacing-base;
+  @include flex-center;
+  height: 100%;
+  justify-content: flex-start;
+  
+  .ant-switch {
+    margin-right: $spacing-md;
+    width: 40px;
+    min-width: unset;
+  }
+  
+  @media (min-width: 992px) {
+    margin-top: 0;
+    height: 32px;
+  }
+}
+
+.message-count {
+  margin-bottom: $spacing-md;
+  
+  .ant-typography {
+    font-size: 14px;
+  }
+}
+
+.no-messages {
+  text-align: center;
+  padding: $spacing-lg;
+  color: #888;
+  font-style: italic;
+}
+
+.message-details-modal {
+  .ant-modal-content {
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+  }
+  
+  .ant-modal-header {
+    padding: $spacing-md $spacing-lg;
+    
+    .ant-modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+  
+  .ant-modal-body {
+    padding: $spacing-lg;
+    
+    @include mobile {
+      padding: 12px;
+    }
+  }
+  
+  .modal-content {
+    padding: 0;
+    
+    @include mobile {
+      padding: 0;
+    }
+  }
+}
+
+.message-details-header {
+  background-color: #f8f9fa;
+  padding: $spacing-lg;
+  border-bottom: 1px solid #eee;
+  margin-top: -20px;
+  
+  @include mobile {
+    margin: -10px -10px $spacing-base;
+    padding: $spacing-sm;
+  }
+}
+
+.message-profile {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md;
+  border-radius: 8px;
+  transition: all 0.3s;
+  margin-bottom: $spacing-md;
+  
+  &:hover {
+    background-color: $theme-orange-pastel;
+  }
+  
+  &-info {
+    margin-left: $spacing-md;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  &-name {
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: $spacing-sm / 2;
+    font-size: 16px;
+  }
+  
+  &-role {
+    color: #888;
+    margin: 0;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.modal-title {
+  margin: $spacing-lg 0 $spacing-md !important;
+  font-size: 18px !important;
+}
+
+.message-navigation {
+  margin-bottom: $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  &-controls {
+    display: flex;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+  }
+}
+
+.message-bubble-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  max-height: 500px;
+  overflow-y: auto;
+  margin-top: $spacing-lg;
+  
+  @include mobile {
+    max-height: 350px;
+    gap: $spacing-sm;
+  }
+}
+
+.message-bubble {
+  padding: 12px;
+  border-radius: 8px;
+  max-width: 80%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  
+  &-mentee {
+    align-self: flex-end;
+    background-color: #f6ffed;
+    border-right: 4px solid #52c41a;
+  }
+  
+  &-mentor {
+    align-self: flex-start;
+    background-color: #e6f7ff;
+    border-left: 4px solid #1890ff;
+  }
+  
+  &-content {
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  
+  &-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+  }
+  
+  @include mobile {
+    max-width: 90%;
+  }
+}
+
+.message-date {
+  margin-right: $spacing-sm;
+  
+  @include mobile {
+    margin-right: 0;
+    font-size: 11px;
+  }
+}
+
+@include mobile {
+  .mobile-full-width {
+    width: 100% !important;
+    margin-bottom: $spacing-base;
+  }
+  
+  .view-mode-radios {
+    margin-bottom: $spacing-base;
+  }
+}
+
+.search-input {
+  width: 100%;
+}
+
+.partner-filter-container {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.date-range-picker {
+  width: 100%;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.pagination-style {
+  margin-bottom: 60px;
+}
+
+.modal-container {
+  max-width: 1000px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.message-navigation {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  &-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
+
+.conversation-search {
+  width: 250px;
+  
+  @include mobile {
+    width: 100%;
+    margin-top: $spacing-sm;
+  }
+}
+
+.unanswered-label {
+  margin-left: 8px;
+}
+
+@include mobile {
+  .message-navigation {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    
+    &-controls {
+      width: 100%;
+    }
+  }
+  
+  .conversation-search {
+    width: 100%;
+  }
+}

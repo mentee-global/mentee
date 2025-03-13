@@ -1090,9 +1090,12 @@ export const getDetailMessages = (
   pageSize,
   searchTerm,
   startDate,
-  endDate
+  endDate,
+  partner_id = "no-affiliation",
+  view_mode = "mentee-to-mentor",
+  showOnlyUnanswered = false
 ) => {
-  const requestExtension = `/messages/contacts/mentors/${pageNumber}?searchTerm=${searchTerm}&startDate=${startDate}&endDate=${endDate}&pageSize=${pageSize}`;
+  const requestExtension = `/messages/contacts/mentors/${pageNumber}?searchTerm=${searchTerm}&startDate=${startDate}&endDate=${endDate}&pageSize=${pageSize}&partner_id=${partner_id}&view_mode=${view_mode}&unanswered_only=${showOnlyUnanswered}`;
   return authGet(requestExtension).then(
     (response) => {
       return {

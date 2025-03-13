@@ -7,7 +7,10 @@ export const fetchOptions = createAsyncThunk(
     try {
       const specializations = await getDisplaySpecializations();
       const languages = await getDisplayLanguages();
-      return { specializations: specializations || [], languages: languages || [] };
+      return {
+        specializations: specializations || [],
+        languages: languages || [],
+      };
     } catch (error) {
       console.error(error);
       return rejectWithValue(error.message);
@@ -21,7 +24,7 @@ export const optionsSlice = createSlice({
     specializations: [],
     languages: [],
     status: "idle",
-    error: null
+    error: null,
   },
   reducers: {
     resetOptions(state) {

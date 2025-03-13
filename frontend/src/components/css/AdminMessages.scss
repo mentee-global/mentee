@@ -22,15 +22,15 @@ $border-radius-lg: 12px;
 .trainTable {
   width: 100% !important;
   overflow-x: auto;
-  
+
   .ant-table-wrapper {
     overflow-x: auto;
   }
-  
+
   @include mobile {
     .ant-table {
       font-size: 14px;
-      
+
       .ant-table-thead > tr > th,
       .ant-table-tbody > tr > td {
         padding: 8px 4px;
@@ -40,13 +40,12 @@ $border-radius-lg: 12px;
   }
 }
 
-
 .responsive-table {
   @include mobile {
     .ant-table-content {
       overflow-x: auto;
     }
-    
+
     .ant-table-cell {
       min-width: 100px;
     }
@@ -61,7 +60,7 @@ $border-radius-lg: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 300px;
-  
+
   @include mobile {
     max-width: 150px;
   }
@@ -69,20 +68,20 @@ $border-radius-lg: 12px;
 
 .message-cell {
   @include flex-center;
-  
+
   .ant-badge {
     flex-shrink: 0;
   }
 }
 
 .filter-section {
-  padding: $spacing-lg; 
+  padding: $spacing-lg;
   background-color: #f9f9f9;
   border-radius: 8px;
   margin-bottom: $spacing-base;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   width: 100%;
-  
+
   @include mobile {
     padding: $spacing-base;
   }
@@ -106,20 +105,20 @@ $border-radius-lg: 12px;
 
 .partner-filter-select {
   width: 100%;
-  
+
   .ant-select-selector {
     border-color: #d9d9d9 !important;
-    
+
     &:hover {
       border-color: #40a9ff !important;
     }
   }
-  
+
   &.ant-select-focused .ant-select-selector {
     border-color: #40a9ff !important;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
   }
-  
+
   @include mobile {
     .ant-select-selection-item {
       font-size: 14px;
@@ -133,13 +132,13 @@ $border-radius-lg: 12px;
   @include flex-center;
   height: 100%;
   justify-content: flex-start;
-  
+
   .ant-switch {
     margin-right: $spacing-md;
     width: 40px;
     min-width: unset;
   }
-  
+
   @media (min-width: 992px) {
     margin-top: 0;
     height: 32px;
@@ -148,7 +147,7 @@ $border-radius-lg: 12px;
 
 .message-count {
   margin-bottom: $spacing-md;
-  
+
   .ant-typography {
     font-size: 14px;
   }
@@ -166,27 +165,27 @@ $border-radius-lg: 12px;
     border-radius: $border-radius-lg;
     overflow: hidden;
   }
-  
+
   .ant-modal-header {
     padding: $spacing-md $spacing-lg;
-    
+
     .ant-modal-title {
       font-size: 18px;
       font-weight: 600;
     }
   }
-  
+
   .ant-modal-body {
     padding: $spacing-lg;
-    
+
     @include mobile {
       padding: 12px;
     }
   }
-  
+
   .modal-content {
     padding: 0;
-    
+
     @include mobile {
       padding: 0;
     }
@@ -198,7 +197,7 @@ $border-radius-lg: 12px;
   padding: $spacing-lg;
   border-bottom: 1px solid #eee;
   margin-top: -20px;
-  
+
   @include mobile {
     margin: -10px -10px $spacing-base;
     padding: $spacing-sm;
@@ -212,24 +211,24 @@ $border-radius-lg: 12px;
   border-radius: 8px;
   transition: all 0.3s;
   margin-bottom: $spacing-md;
-  
+
   &:hover {
     background-color: $theme-orange-pastel;
   }
-  
+
   &-info {
     margin-left: $spacing-md;
     flex: 1;
     overflow: hidden;
   }
-  
+
   &-name {
     font-weight: bold;
     margin: 0;
     margin-bottom: $spacing-sm / 2;
     font-size: 16px;
   }
-  
+
   &-role {
     color: #888;
     margin: 0;
@@ -247,7 +246,7 @@ $border-radius-lg: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   &-controls {
     display: flex;
     gap: $spacing-md;
@@ -265,7 +264,7 @@ $border-radius-lg: 12px;
   max-height: 500px;
   overflow-y: auto;
   margin-top: $spacing-lg;
-  
+
   @include mobile {
     max-height: 350px;
     gap: $spacing-sm;
@@ -277,25 +276,25 @@ $border-radius-lg: 12px;
   border-radius: 8px;
   max-width: 80%;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  
+
   &-mentee {
     align-self: flex-end;
     background-color: #f6ffed;
     border-right: 4px solid #52c41a;
   }
-  
+
   &-mentor {
     align-self: flex-start;
     background-color: #e6f7ff;
     border-left: 4px solid #1890ff;
   }
-  
+
   &-content {
     margin-bottom: 8px;
     white-space: pre-wrap;
     word-break: break-word;
   }
-  
+
   &-footer {
     display: flex;
     justify-content: space-between;
@@ -303,7 +302,7 @@ $border-radius-lg: 12px;
     font-size: 12px;
     color: #888;
   }
-  
+
   @include mobile {
     max-width: 90%;
   }
@@ -311,7 +310,7 @@ $border-radius-lg: 12px;
 
 .message-date {
   margin-right: $spacing-sm;
-  
+
   @include mobile {
     margin-right: 0;
     font-size: 11px;
@@ -323,7 +322,7 @@ $border-radius-lg: 12px;
     width: 100% !important;
     margin-bottom: $spacing-base;
   }
-  
+
   .view-mode-radios {
     margin-bottom: $spacing-base;
   }
@@ -366,7 +365,7 @@ $border-radius-lg: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   &-controls {
     display: flex;
     gap: 10px;
@@ -376,7 +375,7 @@ $border-radius-lg: 12px;
 
 .conversation-search {
   width: 250px;
-  
+
   @include mobile {
     width: 100%;
     margin-top: $spacing-sm;
@@ -392,12 +391,12 @@ $border-radius-lg: 12px;
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    
+
     &-controls {
       width: 100%;
     }
   }
-  
+
   .conversation-search {
     width: 100%;
   }

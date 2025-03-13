@@ -283,16 +283,18 @@ def get_sidebar_mentors(pageNumber):
 
     startRecord = pageSize * (pageNumber - 1)
     endRecord = pageSize * pageNumber
-    
+
     # Get all mentors based on partner affiliation
     if partner_id == "all":
         mentors = MentorProfile.objects()
     elif partner_id == "no-affiliation":
-        mentors = MentorProfile.objects(Q(pair_partner__exists=False) | Q(pair_partner=None))
+        mentors = MentorProfile.objects(
+            Q(pair_partner__exists=False) | Q(pair_partner=None)
+        )
     else:
         # Filter mentors by partner_id
         mentors = MentorProfile.objects(Q(pair_partner__partner_id=partner_id))
-    
+
     detailMessages = []
 
     allMessages = DirectMessage.objects.filter(
@@ -313,11 +315,13 @@ def get_sidebar_mentors(pageNumber):
     if partner_id == "all":
         allMentees = MenteeProfile.objects()
     elif partner_id == "no-affiliation":
-        allMentees = MenteeProfile.objects(Q(pair_partner__exists=False) | Q(pair_partner=None))
+        allMentees = MenteeProfile.objects(
+            Q(pair_partner__exists=False) | Q(pair_partner=None)
+        )
     else:
         # Filter mentees by partner_id
         allMentees = MenteeProfile.objects(Q(pair_partner__partner_id=partner_id))
-    
+
     mentees_by_id = {}
     for mentee_item in allMentees:
         mentees_by_id[mentee_item.id] = mentee_item
@@ -353,7 +357,7 @@ def get_sidebar_mentors(pageNumber):
                 otherUserObj["image"] = otherUser["image"]["url"]
             else:
                 otherUserObj["image"] = ""
-            
+
             if "pair_partner" in otherUser:
                 otherUserObj["pair_partner"] = otherUser["pair_partner"]
 
@@ -365,73 +369,93 @@ def get_sidebar_mentors(pageNumber):
                     or messagee["sender_id"] == contactId
                 )
             ]
-            
+
             if len(conversation_messages) == 0:
                 continue
 
-            conversation_messages.sort(
-                key=lambda x: x["created_at"], reverse=True
-            )
-            
+            conversation_messages.sort(key=lambda x: x["created_at"], reverse=True)
+
             latestMessage = conversation_messages[0]
-            
+
             has_unanswered_messages = False
             if view_mode in ["mentee-to-mentor", "mentees", "all"]:
                 latest_mentee_message = next(
-                    (msg for msg in conversation_messages if msg["sender_id"] == contactId),
-                    None
+                    (
+                        msg
+                        for msg in conversation_messages
+                        if msg["sender_id"] == contactId
+                    ),
+                    None,
                 )
-                
+
                 if latest_mentee_message:
                     latest_mentee_date = latest_mentee_message["created_at"]
                     mentor_responses = [
-                        msg for msg in conversation_messages 
-                        if msg["sender_id"] == str(user_id) and msg["created_at"] > latest_mentee_date
+                        msg
+                        for msg in conversation_messages
+                        if msg["sender_id"] == str(user_id)
+                        and msg["created_at"] > latest_mentee_date
                     ]
-                    
+
                     has_unanswered_messages = len(mentor_responses) == 0
-            
+
             skip_conversation = False
-            
+
             if view_mode == "mentee-to-mentor":
-                mentee_messages = [msg for msg in conversation_messages if msg["sender_id"] == contactId]
+                mentee_messages = [
+                    msg
+                    for msg in conversation_messages
+                    if msg["sender_id"] == contactId
+                ]
                 if not mentee_messages:
                     skip_conversation = True
                 else:
                     latestMessage = mentee_messages[0]
-                    
+
             elif view_mode == "mentor-to-mentee":
-                mentor_messages = [msg for msg in conversation_messages if msg["sender_id"] == str(user_id)]
+                mentor_messages = [
+                    msg
+                    for msg in conversation_messages
+                    if msg["sender_id"] == str(user_id)
+                ]
                 if not mentor_messages:
                     skip_conversation = True
                 else:
                     latestMessage = mentor_messages[0]
-                    
+
             elif view_mode == "mentors":
                 # For mentors only, ensure the latest message is from mentor
-                mentor_messages = [msg for msg in conversation_messages if msg["sender_id"] == str(user_id)]
+                mentor_messages = [
+                    msg
+                    for msg in conversation_messages
+                    if msg["sender_id"] == str(user_id)
+                ]
                 if not mentor_messages:
                     skip_conversation = True
                 else:
                     latestMessage = mentor_messages[0]
-                    
+
             elif view_mode == "mentees":
-                mentee_messages = [msg for msg in conversation_messages if msg["sender_id"] == contactId]
+                mentee_messages = [
+                    msg
+                    for msg in conversation_messages
+                    if msg["sender_id"] == contactId
+                ]
                 if not mentee_messages:
                     skip_conversation = True
                 else:
                     latestMessage = mentee_messages[0]
-            
+
             if skip_conversation:
                 continue
-            
+
             sidebarObject = {
                 "otherId": str(contactId),
                 "numberOfMessages": len(conversation_messages),
                 "otherUser": otherUserObj,
                 "latestMessage": json.loads(latestMessage.to_json()),
                 "user": mentor_user,
-                "hasUnansweredMessages": has_unanswered_messages
+                "hasUnansweredMessages": has_unanswered_messages,
             }
 
             detailMessages.append(sidebarObject)

@@ -16,7 +16,7 @@ from api.utils.require_auth import all_users
 from api.utils.translate import get_translated_options
 from api.core import create_response, logger
 import json
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from api import socketio
 from mongoengine.queryset.visitor import Q
 from urllib.parse import unquote
@@ -271,18 +271,18 @@ def get_sidebar(user_id):
         return create_response(status=422, message=str(e))
 
 
-@messages.route("/contacts/mentors/<int:pageNumber>", methods=["GET"])
+@messages.route("/contacts/mentors/<int:page_number>", methods=["GET"])
 @all_users
-def get_sidebar_mentors(pageNumber):
+def get_sidebar_mentors(page_number):
     partner_id = request.args.get("partner_id", "no-affiliation")
     view_mode = request.args.get("view_mode", "all")
-    searchTerm = request.args.get("searchTerm", "")
-    startDate = request.args.get("startDate", "")
-    endDate = request.args.get("endDate", "")
-    pageSize = request.args.get("pageSize", 20, type=int)
+    search_term = request.args.get("searchTerm", "")
+    start_date = request.args.get("startDate", "")
+    end_date = request.args.get("endDate", "")
+    page_size = request.args.get("pageSize", 20, type=int)
 
-    startRecord = pageSize * (pageNumber - 1)
-    endRecord = pageSize * pageNumber
+    start_record = page_size * (page_number - 1)
+    end_record = page_size * page_number
 
     # Get all mentors based on partner affiliation
     if partner_id == "all":
@@ -295,15 +295,15 @@ def get_sidebar_mentors(pageNumber):
         # Filter mentors by partner_id
         mentors = MentorProfile.objects(Q(pair_partner__partner_id=partner_id))
 
-    detailMessages = []
+    detail_messages = []
 
-    allMessages = DirectMessage.objects.filter(
-        created_at__gte=datetime.fromisoformat(startDate),
-        created_at__lte=datetime.fromisoformat(endDate),
+    all_messages = DirectMessage.objects.filter(
+        created_at__gte=datetime.fromisoformat(start_date),
+        created_at__lte=datetime.fromisoformat(end_date),
     ).order_by("-created_at")
     messages_by_sender_or_recipient = {}
 
-    for message_item in allMessages:
+    for message_item in all_messages:
         if message_item.sender_id not in messages_by_sender_or_recipient:
             messages_by_sender_or_recipient[message_item.sender_id] = []
         messages_by_sender_or_recipient[message_item.sender_id].append(message_item)
@@ -313,91 +313,100 @@ def get_sidebar_mentors(pageNumber):
 
     # Get all mentees based on partner affiliation
     if partner_id == "all":
-        allMentees = MenteeProfile.objects()
+        all_mentees = MenteeProfile.objects()
     elif partner_id == "no-affiliation":
-        allMentees = MenteeProfile.objects(
+        all_mentees = MenteeProfile.objects(
             Q(pair_partner__exists=False) | Q(pair_partner=None)
         )
     else:
         # Filter mentees by partner_id
-        allMentees = MenteeProfile.objects(Q(pair_partner__partner_id=partner_id))
+        all_mentees = MenteeProfile.objects(Q(pair_partner__partner_id=partner_id))
 
     mentees_by_id = {}
-    for mentee_item in allMentees:
+    for mentee_item in all_mentees:
         mentees_by_id[mentee_item.id] = mentee_item
+
+    current_time = datetime.now(timezone.utc)
+    hours_72 = timedelta(hours=72)
 
     for mentor in list(mentors):
         user_id = mentor.id
         mentor_user = json.loads(mentor.to_json())
         try:
-            sentMessages = ()
+            sent_messages = ()
             if user_id in messages_by_sender_or_recipient:
-                sentMessages = messages_by_sender_or_recipient[user_id]
+                sent_messages = messages_by_sender_or_recipient[user_id]
         except:
             continue
-        if len(sentMessages) == 0:
+        if len(sent_messages) == 0:
             continue
         contacts = []
-        for message in sentMessages:
+        for message in sent_messages:
             if str(user_id) == message["recipient_id"]:
                 contacts.append(message["sender_id"])
             else:
                 contacts.append(message["recipient_id"])
         contacts = list(dict.fromkeys(contacts))
-        for contactId in contacts:
+        for contact_id in contacts:
             try:
-                otherUser = mentees_by_id[contactId]
+                other_user = mentees_by_id[contact_id]
             except:
                 continue
-            otherUserObj = {
-                "name": otherUser["name"],
+            other_user_obj = {
+                "name": other_user["name"],
                 "user_type": Account.MENTEE.value,
             }
-            if "image" in otherUser:
-                otherUserObj["image"] = otherUser["image"]["url"]
+            if "image" in other_user:
+                other_user_obj["image"] = other_user["image"]["url"]
             else:
-                otherUserObj["image"] = ""
+                other_user_obj["image"] = ""
 
-            if "pair_partner" in otherUser:
-                otherUserObj["pair_partner"] = otherUser["pair_partner"]
+            if "pair_partner" in other_user:
+                other_user_obj["pair_partner"] = other_user["pair_partner"]
 
             conversation_messages = [
                 messagee
-                for messagee in sentMessages
+                for messagee in sent_messages
                 if (
-                    messagee["recipient_id"] == contactId
-                    or messagee["sender_id"] == contactId
+                    messagee["recipient_id"] == contact_id
+                    or messagee["sender_id"] == contact_id
                 )
             ]
 
             if len(conversation_messages) == 0:
                 continue
 
+            # Sort messages by creation time (newest first)
             conversation_messages.sort(key=lambda x: x["created_at"], reverse=True)
 
-            latestMessage = conversation_messages[0]
-
+            latest_message = conversation_messages[0]
+            
+            # Parse the datetime from the message
+            try:
+                if isinstance(latest_message["created_at"], dict) and "$date" in latest_message["created_at"]:
+                    date_str = latest_message["created_at"]["$date"]
+                    if isinstance(date_str, int):
+                        latest_message_date = datetime.fromtimestamp(date_str / 1000, tz=timezone.utc)
+                    else:
+                        if 'Z' in date_str:
+                            date_str = date_str.replace('Z', '+00:00')
+                        latest_message_date = datetime.fromisoformat(date_str)
+                else:
+                    latest_message_date = latest_message["created_at"]
+                    if not latest_message_date.tzinfo:
+                        latest_message_date = latest_message_date.replace(tzinfo=timezone.utc)
+            except Exception as e:
+                logger.error(f"Error parsing date: {e}")
+                # Default to current time if parsing fails
+                latest_message_date = current_time
+                has_unanswered_messages = False
+                continue
+                
             has_unanswered_messages = False
-            if view_mode in ["mentee-to-mentor", "mentees", "all"]:
-                latest_mentee_message = next(
-                    (
-                        msg
-                        for msg in conversation_messages
-                        if msg["sender_id"] == contactId
-                    ),
-                    None,
-                )
 
-                if latest_mentee_message:
-                    latest_mentee_date = latest_mentee_message["created_at"]
-                    mentor_responses = [
-                        msg
-                        for msg in conversation_messages
-                        if msg["sender_id"] == str(user_id)
-                        and msg["created_at"] > latest_mentee_date
-                    ]
-
-                    has_unanswered_messages = len(mentor_responses) == 0
+            time_difference = current_time - latest_message_date
+            
+            has_unanswered_messages = time_difference > hours_72
 
             skip_conversation = False
 
@@ -405,12 +414,12 @@ def get_sidebar_mentors(pageNumber):
                 mentee_messages = [
                     msg
                     for msg in conversation_messages
-                    if msg["sender_id"] == contactId
+                    if msg["sender_id"] == contact_id
                 ]
                 if not mentee_messages:
                     skip_conversation = True
                 else:
-                    latestMessage = mentee_messages[0]
+                    latest_message = mentee_messages[0]
 
             elif view_mode == "mentor-to-mentee":
                 mentor_messages = [
@@ -421,7 +430,7 @@ def get_sidebar_mentors(pageNumber):
                 if not mentor_messages:
                     skip_conversation = True
                 else:
-                    latestMessage = mentor_messages[0]
+                    latest_message = mentor_messages[0]
 
             elif view_mode == "mentors":
                 # For mentors only, ensure the latest message is from mentor
@@ -433,50 +442,50 @@ def get_sidebar_mentors(pageNumber):
                 if not mentor_messages:
                     skip_conversation = True
                 else:
-                    latestMessage = mentor_messages[0]
+                    latest_message = mentor_messages[0]
 
             elif view_mode == "mentees":
                 mentee_messages = [
                     msg
                     for msg in conversation_messages
-                    if msg["sender_id"] == contactId
+                    if msg["sender_id"] == contact_id
                 ]
                 if not mentee_messages:
                     skip_conversation = True
                 else:
-                    latestMessage = mentee_messages[0]
+                    latest_message = mentee_messages[0]
 
             if skip_conversation:
                 continue
 
-            sidebarObject = {
-                "otherId": str(contactId),
+            sidebar_object = {
+                "otherId": str(contact_id),
                 "numberOfMessages": len(conversation_messages),
-                "otherUser": otherUserObj,
-                "latestMessage": json.loads(latestMessage.to_json()),
+                "otherUser": other_user_obj,
+                "latestMessage": json.loads(latest_message.to_json()),
                 "user": mentor_user,
                 "hasUnansweredMessages": has_unanswered_messages,
             }
 
-            detailMessages.append(sidebarObject)
+            detail_messages.append(sidebar_object)
 
-    FormattedData = []
-    for subitem in detailMessages:
-        menteeName = subitem["otherUser"]["name"].lower()
-        mentorName = subitem["user"]["name"].lower()
-        if searchTerm.lower() in mentorName or searchTerm.lower() in menteeName:
-            FormattedData.append(subitem)
+    formatted_data = []
+    for subitem in detail_messages:
+        mentee_name = subitem["otherUser"]["name"].lower()
+        mentor_name = subitem["user"]["name"].lower()
+        if search_term.lower() in mentor_name or search_term.lower() in mentee_name:
+            formatted_data.append(subitem)
 
-    sortedData = sorted(
-        FormattedData,
+    sorted_data = sorted(
+        formatted_data,
         key=lambda x: x["latestMessage"]["created_at"]["$date"],
         reverse=True,
     )
 
-    sortedData = sortedData[startRecord:endRecord]
-    total_length = len(FormattedData)
+    sorted_data = sorted_data[start_record:end_record]
+    total_length = len(formatted_data)
     return create_response(
-        data={"data": sortedData, "total_length": total_length},
+        data={"data": sorted_data, "total_length": total_length},
         status=200,
         message="res",
     )

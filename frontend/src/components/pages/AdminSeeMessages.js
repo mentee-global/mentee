@@ -38,13 +38,10 @@ export const AdminMessages = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [pageNumber, setpageNumber] = useState(1);
-  const [startDate, setStartDate] = useState(
-    moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z")
-  );
-  const [endDate, setEndDate] = useState(
-    moment().format("YYYY-MM-DDT23:59:59.999Z")
-  );
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [selectedPartner, setSelectedPartner] = useState("no-affiliation");
   const [partners, setPartners] = useState([]);
   const [selectedPartnerData, setSelectedPartnerData] = useState(null);
@@ -211,7 +208,7 @@ export const AdminMessages = () => {
         let { data: newData, total_length } = (await api.getDetailMessages(
           pageNumber,
           pageSize,
-          searchTerm,
+          searchQuery,
           startDate,
           endDate,
           apiPartnerId,
@@ -270,7 +267,7 @@ export const AdminMessages = () => {
     pageSize,
     startDate,
     endDate,
-    searchTerm,
+    searchQuery,
   ]);
 
   const handleViewDetail = (rowIndex) => {
@@ -341,12 +338,12 @@ export const AdminMessages = () => {
   };
 
   const handleRefresh = () => {
+    // Reset all state values to empty
     setSearchTerm("");
+    setSearchQuery("");
     setSelectedPartner("no-affiliation");
-    setStartDate(
-      moment().subtract(6, "months").format("YYYY-MM-DDT00:00:00.000Z")
-    );
-    setEndDate(moment().format("YYYY-MM-DDT23:59:59.999Z"));
+    setStartDate("");
+    setEndDate("");
     setShowOnlyUnanswered(false);
     setpageNumber(1);
   };
@@ -491,10 +488,15 @@ export const AdminMessages = () => {
                 placeholder="Search by name"
                 onSearch={(value) => {
                   setSearchTerm(value);
+                  setSearchQuery(value);
                   setpageNumber(1);
                 }}
                 className="search-mentor-input search-input"
                 allowClear
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                }}
               />
             </Col>
 
@@ -559,13 +561,9 @@ export const AdminMessages = () => {
             <Col xs={24} sm={24} md={12} lg={6} xl={6}>
               <RangePicker
                 onChange={(date, dateString) => {
-                  if (dateString[0] === "" && dateString[1] === "") {
-                    setEndDate(moment().format("YYYY-MM-DDT23:59:59.999Z"));
-                    setStartDate(
-                      moment()
-                        .subtract(6, "months")
-                        .format("YYYY-MM-DDT00:00:00.000Z")
-                    );
+                  if (!date || (dateString[0] === "" && dateString[1] === "")) {
+                    setStartDate("");
+                    setEndDate("");
                   } else {
                     setStartDate(dateString[0]);
                     setEndDate(dateString[1]);
@@ -573,6 +571,10 @@ export const AdminMessages = () => {
                   setpageNumber(1);
                 }}
                 className="messages-date-range date-range-picker"
+                value={[
+                  startDate ? moment(startDate) : null,
+                  endDate ? moment(endDate) : null
+                ]}
               />
             </Col>
 

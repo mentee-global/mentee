@@ -103,68 +103,102 @@ $border-radius-lg: 12px;
   }
 }
 
-.partner-filter-select {
+.partner-filter-container {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
   width: 100%;
-
-  .ant-select-selector {
-    border-color: #d9d9d9 !important;
-
-    &:hover {
-      border-color: #40a9ff !important;
+  position: relative;
+  
+  .ant-select {
+    flex: 1;
+    max-width: calc(100% - 40px);
+    
+    .ant-select-selector {
+      .ant-select-selection-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+      }
     }
   }
-
-  &.ant-select-focused .ant-select-selector {
-    border-color: #40a9ff !important;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  
+  .ant-btn {
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
+}
+
+.date-range-picker {
+  width: 100%;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.pagination-style {
+  margin-bottom: 60px;
+}
+
+.modal-container {
+  max-width: 1000px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.message-navigation {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
+
+.conversation-search {
+  width: 250px;
 
   @include mobile {
-    .ant-select-selection-item {
-      font-size: 14px;
-      font-weight: 500;
+    width: 100%;
+    margin-top: $spacing-sm;
+  }
+}
+
+.unanswered-label {
+  margin-left: 8px;
+}
+
+@include mobile {
+  .message-navigation {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    &-controls {
+      width: 100%;
     }
   }
-}
 
-.unanswered-toggle {
-  margin-top: $spacing-base;
-  @include flex-center;
-  height: 100%;
-  justify-content: flex-start;
-
-  .ant-switch {
-    margin-right: $spacing-md;
-    width: 40px;
-    min-width: unset;
+  .conversation-search {
+    width: 100%;
   }
-
-  @media (min-width: 992px) {
-    margin-top: 0;
-    height: 32px;
-  }
-}
-
-.message-count {
-  margin-bottom: $spacing-md;
-
-  .ant-typography {
-    font-size: 14px;
-  }
-}
-
-.no-messages {
-  text-align: center;
-  padding: $spacing-lg;
-  color: #888;
-  font-style: italic;
 }
 
 .message-details-modal {
-  .ant-modal-content {
-    border-radius: $border-radius-lg;
-    overflow: hidden;
-  }
+  border-radius: $border-radius-lg;
+
+
 
   .ant-modal-header {
     padding: $spacing-md $spacing-lg;
@@ -332,72 +366,35 @@ $border-radius-lg: 12px;
   width: 100%;
 }
 
-.partner-filter-container {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-}
+.unanswered-toggle {
+  margin-top: $spacing-base;
+  @include flex-center;
+  height: 100%;
+  justify-content: flex-start;
 
-.date-range-picker {
-  width: 100%;
-}
+  .ant-switch {
+    margin-right: $spacing-md;
+    width: 40px;
+    min-width: unset;
+  }
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-}
-
-.pagination-style {
-  margin-bottom: 60px;
-}
-
-.modal-container {
-  max-width: 1000px;
-}
-
-.modal-content {
-  padding: 20px;
-}
-
-.message-navigation {
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  &-controls {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+  @media (min-width: 992px) {
+    margin-top: 0;
+    height: 32px;
   }
 }
 
-.conversation-search {
-  width: 250px;
+.message-count {
+  margin-bottom: $spacing-md;
 
-  @include mobile {
-    width: 100%;
-    margin-top: $spacing-sm;
+  .ant-typography {
+    font-size: 14px;
   }
 }
 
-.unanswered-label {
-  margin-left: 8px;
-}
-
-@include mobile {
-  .message-navigation {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-
-    &-controls {
-      width: 100%;
-    }
-  }
-
-  .conversation-search {
-    width: 100%;
-  }
+.no-messages {
+  text-align: center;
+  padding: $spacing-lg;
+  color: #888;
+  font-style: italic;
 }

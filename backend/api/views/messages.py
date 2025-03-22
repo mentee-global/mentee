@@ -284,16 +284,42 @@ def get_sidebar_mentors(page_number):
     start_record = page_size * (page_number - 1)
     end_record = page_size * page_number
 
-    # Get all mentors based on partner affiliation
     if partner_id == "all":
         mentors = MentorProfile.objects()
+    elif partner_id == "all-partners":
+        all_partners = PartnerProfile.objects()
+        mentor_ids = set()
+        
+        for partner in all_partners:
+            if partner.assign_mentors:
+                for mentor_data in partner.assign_mentors:
+                    mentor_ids.add(mentor_data['id'])
+        
+        if mentor_ids:
+            mentors = MentorProfile.objects(id__in=list(mentor_ids))
+        else:
+            mentors = MentorProfile.objects(id=None)
     elif partner_id == "no-affiliation":
-        mentors = MentorProfile.objects(
-            Q(pair_partner__exists=False) | Q(pair_partner=None)
-        )
+        all_partners = PartnerProfile.objects()
+        mentor_ids = set()
+        
+        for partner in all_partners:
+            if partner.assign_mentors:
+                for mentor_data in partner.assign_mentors:
+                    mentor_ids.add(mentor_data['id'])
+        
+        if mentor_ids:
+            mentors = MentorProfile.objects(id__nin=list(mentor_ids))
+        else:
+            mentors = MentorProfile.objects()
     else:
-        # Filter mentors by partner_id
-        mentors = MentorProfile.objects(Q(pair_partner__partner_id=partner_id))
+        partner = PartnerProfile.objects(id=partner_id).first()
+        if partner and partner.assign_mentors:
+            mentor_ids = [mentor_data['id'] for mentor_data in partner.assign_mentors]
+            mentors = MentorProfile.objects(id__in=mentor_ids)
+        else:
+            mentors = MentorProfile.objects(id=None)
+        
 
     detail_messages = []
 
@@ -311,16 +337,42 @@ def get_sidebar_mentors(page_number):
             messages_by_sender_or_recipient[message_item.recipient_id] = []
         messages_by_sender_or_recipient[message_item.recipient_id].append(message_item)
 
-    # Get all mentees based on partner affiliation
     if partner_id == "all":
         all_mentees = MenteeProfile.objects()
+    elif partner_id == "all-partners":
+        all_partners = PartnerProfile.objects()
+        mentee_ids = set()
+        
+        for partner in all_partners:
+            if partner.assign_mentees:
+                for mentee_data in partner.assign_mentees:
+                    mentee_ids.add(mentee_data['id'])
+        
+        if mentee_ids:
+            all_mentees = MenteeProfile.objects(id__in=list(mentee_ids))
+        else:
+            all_mentees = MenteeProfile.objects(id=None)
     elif partner_id == "no-affiliation":
-        all_mentees = MenteeProfile.objects(
-            Q(pair_partner__exists=False) | Q(pair_partner=None)
-        )
+        all_partners = PartnerProfile.objects()
+        mentee_ids = set()
+        
+        for partner in all_partners:
+            if partner.assign_mentees:
+                for mentee_data in partner.assign_mentees:
+                    mentee_ids.add(mentee_data['id'])
+        
+        if mentee_ids:
+            all_mentees = MenteeProfile.objects(id__nin=list(mentee_ids))
+        else:
+            all_mentees = MenteeProfile.objects()
     else:
-        # Filter mentees by partner_id
-        all_mentees = MenteeProfile.objects(Q(pair_partner__partner_id=partner_id))
+        partner = PartnerProfile.objects(id=partner_id).first()
+        if partner and partner.assign_mentees:
+            mentee_ids = [mentee_data['id'] for mentee_data in partner.assign_mentees]
+            all_mentees = MenteeProfile.objects(id__in=mentee_ids)
+        else:
+            all_mentees = MenteeProfile.objects(id=None)
+        
 
     mentees_by_id = {}
     for mentee_item in all_mentees:

@@ -61,23 +61,11 @@ export const AdminMessages = () => {
     try {
       // Only fetch if we don't already have partners data
       if (partners.length === 0) {
-        console.log("Fetching partners data...");
+
         const partnersData = await api.fetchPartners();
-        console.log(
-          "Raw partners data:",
-          JSON.stringify(partnersData, null, 2)
-        );
 
         if (Array.isArray(partnersData) && partnersData.length > 0) {
-          partnersData.forEach((partner, index) => {
-            console.log(`Partner ${index} data:`, {
-              id: partner._id,
-              name: partner.name,
-              email: partner.email,
-              organization: partner.organization,
-              keys: Object.keys(partner),
-            });
-          });
+
 
           setPartners(partnersData);
         } else {
@@ -102,6 +90,7 @@ export const AdminMessages = () => {
       const existingPartner = partners.find(
         (partner) => partner._id.$oid === partnerId
       );
+
 
       if (existingPartner) {
         setSelectedPartnerData(existingPartner);
@@ -141,6 +130,7 @@ export const AdminMessages = () => {
     const assignMentees = Array.isArray(partnerData.assign_mentees)
       ? partnerData.assign_mentees
       : [];
+    
 
     const mentorIds = assignMentors
       .map((mentor) => {
@@ -209,9 +199,14 @@ export const AdminMessages = () => {
 
         if (selectedPartner === "no-affiliation") {
           apiPartnerId = "no-affiliation";
-        } else {
+        } else if (selectedPartner === "all-partners") {
+          apiPartnerId = "all-partners";
+        } else if (selectedPartner === "all") {
           apiPartnerId = "all";
+        } else {
+          apiPartnerId = selectedPartner;
         }
+
 
         let { data: newData, total_length } = (await api.getDetailMessages(
           pageNumber,
@@ -223,26 +218,10 @@ export const AdminMessages = () => {
           VIEW_MODE,
           showOnlyUnanswered
         )) || { data: [], total_length: 0 };
+        
 
         if (newData) {
-          if (Array.isArray(newData)) {
-            for (let i = 0; i < newData.length; i++) {
-              const item = newData[i];
-              if (item && item.user && item.user._id && item.otherId) {
-                try {
-                  const messages = await getMessageDataWithFlags(
-                    item.user._id.$oid,
-                    item.otherId
-                  );
-                  if (Array.isArray(messages)) {
-                    newData[i].numberOfMessages = messages.length;
-                  }
-                } catch (err) {
-                  console.error("Error fetching message count:", err);
-                }
-              }
-            }
-          }
+
           newData = newData.map((item) => {
             return {
               ...item,
@@ -257,7 +236,7 @@ export const AdminMessages = () => {
           ) {
             newData = filterDataByPartner(newData, selectedPartnerData);
             total_length = newData.length;
-            console.log("Filtered data by partner:", newData);
+
           }
 
           if (showOnlyUnanswered) {
@@ -356,7 +335,6 @@ export const AdminMessages = () => {
   const { Search } = Input;
 
   const handlePartnerChange = async (value) => {
-    console.log("Selected partner:", value);
     setSelectedPartner(value);
     await getSelectedPartnerData(value);
     setpageNumber(1);
@@ -531,7 +509,10 @@ export const AdminMessages = () => {
                   <Select.Option value="no-affiliation">
                     No Affiliation
                   </Select.Option>
-                  <Select.Option value="all">All Partners</Select.Option>
+                  <Select.Option value="all-partners">
+                    All Partners
+                  </Select.Option>
+                  <Select.Option value="all">All</Select.Option>
                   {Array.isArray(partners) &&
                     partners.map((partner) => {
                       // Skip partners with no assigned mentors or mentees
@@ -830,47 +811,8 @@ export const AdminMessages = () => {
                 const isMenteeSender = senderId === menteeId;
 
                 const date = new Date(message.created_at.$date);
-
-                const currentMessageDate = message.created_at?.$date
-                  ? new Date(message.created_at.$date)
-                  : new Date(0);
-
-                const hasNewerMentorResponse = getFilteredModalMessages().some(
-                  (msg) => {
-                    const msgSenderId = msg.sender_id?.$oid || msg.sender_id;
-                    const isMentorMessage = msgSenderId !== menteeId;
-
-                    if (!isMentorMessage) return false;
-
-                    const msgDate = msg.created_at?.$date
-                      ? new Date(msg.created_at.$date)
-                      : new Date(0);
-                    return msgDate > currentMessageDate;
-                  }
-                );
-
-                // Show unanswered tag only if:
-                // 1. It's a mentee message
-                // 2. There are no newer mentor responses
-                // 3. It's the newest mentee message
-                const isNewestMenteeMessage =
-                  isMenteeSender &&
-                  !getFilteredModalMessages().some((msg) => {
-                    const msgSenderId = msg.sender_id?.$oid || msg.sender_id;
-                    const isMsgFromMentee = msgSenderId === menteeId;
-
-                    if (!isMsgFromMentee) return false;
-
-                    const msgDate = msg.created_at?.$date
-                      ? new Date(msg.created_at.$date)
-                      : new Date(0);
-                    return msgDate > currentMessageDate;
-                  });
-
-                const showUnansweredTag =
-                  isMenteeSender &&
-                  !hasNewerMentorResponse &&
-                  isNewestMenteeMessage;
+                
+                const showUnansweredTag = selectedRow?.hasUnansweredMessages && isMenteeSender && index === 0;
 
                 return (
                   <div

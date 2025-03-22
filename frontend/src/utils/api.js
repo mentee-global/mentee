@@ -1095,10 +1095,8 @@ export const getDetailMessages = (
   view_mode = "mentee-to-mentor",
   showOnlyUnanswered = false
 ) => {
-  // Build query parameters, only including those that are set
   let queryParams = new URLSearchParams();
   
-  // Only add parameters that have values
   if (searchTerm) queryParams.append("searchTerm", searchTerm);
   if (startDate) queryParams.append("startDate", startDate);
   if (endDate) queryParams.append("endDate", endDate);

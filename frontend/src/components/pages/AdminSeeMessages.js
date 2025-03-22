@@ -38,6 +38,7 @@ export const AdminMessages = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [pageNumber, setpageNumber] = useState(1);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -207,7 +208,7 @@ export const AdminMessages = () => {
         let { data: newData, total_length } = (await api.getDetailMessages(
           pageNumber,
           pageSize,
-          searchTerm,
+          searchQuery,
           startDate,
           endDate,
           apiPartnerId,
@@ -266,7 +267,7 @@ export const AdminMessages = () => {
     pageSize,
     startDate,
     endDate,
-    searchTerm,
+    searchQuery,
   ]);
 
   const handleViewDetail = (rowIndex) => {
@@ -486,16 +487,15 @@ export const AdminMessages = () => {
                 placeholder="Search by name"
                 onSearch={(value) => {
                   setSearchTerm(value);
+                  setSearchQuery(value);
                   setpageNumber(1);
                 }}
                 className="search-mentor-input search-input"
                 allowClear
                 value={searchTerm}
                 onChange={(e) => {
-                  // Only update the local input value, don't trigger search
                   setSearchTerm(e.target.value);
                 }}
-                enterButton
               />
             </Col>
 

@@ -340,6 +340,7 @@ export const AdminMessages = () => {
   const handleRefresh = () => {
     // Reset all state values to empty
     setSearchTerm("");
+    setSearchQuery("");
     setSelectedPartner("no-affiliation");
     setStartDate("");
     setEndDate("");

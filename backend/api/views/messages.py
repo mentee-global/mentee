@@ -289,12 +289,12 @@ def get_sidebar_mentors(page_number):
     elif partner_id == "all-partners":
         all_partners = PartnerProfile.objects()
         mentor_ids = set()
-        
+
         for partner in all_partners:
             if partner.assign_mentors:
                 for mentor_data in partner.assign_mentors:
-                    mentor_ids.add(mentor_data['id'])
-        
+                    mentor_ids.add(mentor_data["id"])
+
         if mentor_ids:
             mentors = MentorProfile.objects(id__in=list(mentor_ids))
         else:
@@ -302,12 +302,12 @@ def get_sidebar_mentors(page_number):
     elif partner_id == "no-affiliation":
         all_partners = PartnerProfile.objects()
         mentor_ids = set()
-        
+
         for partner in all_partners:
             if partner.assign_mentors:
                 for mentor_data in partner.assign_mentors:
-                    mentor_ids.add(mentor_data['id'])
-        
+                    mentor_ids.add(mentor_data["id"])
+
         if mentor_ids:
             mentors = MentorProfile.objects(id__nin=list(mentor_ids))
         else:
@@ -315,11 +315,10 @@ def get_sidebar_mentors(page_number):
     else:
         partner = PartnerProfile.objects(id=partner_id).first()
         if partner and partner.assign_mentors:
-            mentor_ids = [mentor_data['id'] for mentor_data in partner.assign_mentors]
+            mentor_ids = [mentor_data["id"] for mentor_data in partner.assign_mentors]
             mentors = MentorProfile.objects(id__in=mentor_ids)
         else:
             mentors = MentorProfile.objects(id=None)
-        
 
     detail_messages = []
 
@@ -342,12 +341,12 @@ def get_sidebar_mentors(page_number):
     elif partner_id == "all-partners":
         all_partners = PartnerProfile.objects()
         mentee_ids = set()
-        
+
         for partner in all_partners:
             if partner.assign_mentees:
                 for mentee_data in partner.assign_mentees:
-                    mentee_ids.add(mentee_data['id'])
-        
+                    mentee_ids.add(mentee_data["id"])
+
         if mentee_ids:
             all_mentees = MenteeProfile.objects(id__in=list(mentee_ids))
         else:
@@ -355,12 +354,12 @@ def get_sidebar_mentors(page_number):
     elif partner_id == "no-affiliation":
         all_partners = PartnerProfile.objects()
         mentee_ids = set()
-        
+
         for partner in all_partners:
             if partner.assign_mentees:
                 for mentee_data in partner.assign_mentees:
-                    mentee_ids.add(mentee_data['id'])
-        
+                    mentee_ids.add(mentee_data["id"])
+
         if mentee_ids:
             all_mentees = MenteeProfile.objects(id__nin=list(mentee_ids))
         else:
@@ -368,11 +367,10 @@ def get_sidebar_mentors(page_number):
     else:
         partner = PartnerProfile.objects(id=partner_id).first()
         if partner and partner.assign_mentees:
-            mentee_ids = [mentee_data['id'] for mentee_data in partner.assign_mentees]
+            mentee_ids = [mentee_data["id"] for mentee_data in partner.assign_mentees]
             all_mentees = MenteeProfile.objects(id__in=mentee_ids)
         else:
             all_mentees = MenteeProfile.objects(id=None)
-        
 
     mentees_by_id = {}
     for mentee_item in all_mentees:
@@ -432,32 +430,39 @@ def get_sidebar_mentors(page_number):
             conversation_messages.sort(key=lambda x: x["created_at"], reverse=True)
 
             latest_message = conversation_messages[0]
-            
+
             # Parse the datetime from the message
             try:
-                if isinstance(latest_message["created_at"], dict) and "$date" in latest_message["created_at"]:
+                if (
+                    isinstance(latest_message["created_at"], dict)
+                    and "$date" in latest_message["created_at"]
+                ):
                     date_str = latest_message["created_at"]["$date"]
                     if isinstance(date_str, int):
-                        latest_message_date = datetime.fromtimestamp(date_str / 1000, tz=timezone.utc)
+                        latest_message_date = datetime.fromtimestamp(
+                            date_str / 1000, tz=timezone.utc
+                        )
                     else:
-                        if 'Z' in date_str:
-                            date_str = date_str.replace('Z', '+00:00')
+                        if "Z" in date_str:
+                            date_str = date_str.replace("Z", "+00:00")
                         latest_message_date = datetime.fromisoformat(date_str)
                 else:
                     latest_message_date = latest_message["created_at"]
                     if not latest_message_date.tzinfo:
-                        latest_message_date = latest_message_date.replace(tzinfo=timezone.utc)
+                        latest_message_date = latest_message_date.replace(
+                            tzinfo=timezone.utc
+                        )
             except Exception as e:
                 logger.error(f"Error parsing date: {e}")
                 # Default to current time if parsing fails
                 latest_message_date = current_time
                 has_unanswered_messages = False
                 continue
-                
+
             has_unanswered_messages = False
 
             time_difference = current_time - latest_message_date
-            
+
             has_unanswered_messages = time_difference > hours_72
 
             skip_conversation = False

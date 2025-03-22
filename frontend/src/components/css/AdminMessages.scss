@@ -109,11 +109,11 @@ $border-radius-lg: 12px;
   justify-content: space-between;
   width: 100%;
   position: relative;
-  
+
   .ant-select {
     flex: 1;
     max-width: calc(100% - 40px);
-    
+
     .ant-select-selector {
       .ant-select-selection-item {
         white-space: nowrap;
@@ -123,7 +123,7 @@ $border-radius-lg: 12px;
       }
     }
   }
-  
+
   .ant-btn {
     flex-shrink: 0;
     position: relative;
@@ -197,8 +197,6 @@ $border-radius-lg: 12px;
 
 .message-details-modal {
   border-radius: $border-radius-lg;
-
-
 
   .ant-modal-header {
     padding: $spacing-md $spacing-lg;

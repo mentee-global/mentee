@@ -322,10 +322,21 @@ def get_sidebar_mentors(page_number):
 
     detail_messages = []
 
-    all_messages = DirectMessage.objects.filter(
-        created_at__gte=datetime.fromisoformat(start_date),
-        created_at__lte=datetime.fromisoformat(end_date),
-    ).order_by("-created_at")
+    # Build message filter based on provided date parameters
+    message_filter = {}
+    if start_date and end_date:
+        try:
+            message_filter = {
+                "created_at__gte": datetime.fromisoformat(start_date.replace("Z", "+00:00")),
+                "created_at__lte": datetime.fromisoformat(end_date.replace("Z", "+00:00"))
+            }
+        except (ValueError, TypeError):
+            # If date parsing fails, don't apply date filter
+            pass
+    
+    # Apply filters only if they exist
+    all_messages = DirectMessage.objects.filter(**message_filter).order_by("-created_at")
+    
     messages_by_sender_or_recipient = {}
 
     for message_item in all_messages:

@@ -1095,7 +1095,20 @@ export const getDetailMessages = (
   view_mode = "mentee-to-mentor",
   showOnlyUnanswered = false
 ) => {
-  const requestExtension = `/messages/contacts/mentors/${pageNumber}?searchTerm=${searchTerm}&startDate=${startDate}&endDate=${endDate}&pageSize=${pageSize}&partner_id=${partner_id}&view_mode=${view_mode}&unanswered_only=${showOnlyUnanswered}`;
+  // Build query parameters, only including those that are set
+  let queryParams = new URLSearchParams();
+  
+  // Only add parameters that have values
+  if (searchTerm) queryParams.append("searchTerm", searchTerm);
+  if (startDate) queryParams.append("startDate", startDate);
+  if (endDate) queryParams.append("endDate", endDate);
+  if (pageSize) queryParams.append("pageSize", pageSize);
+  if (partner_id) queryParams.append("partner_id", partner_id);
+  if (view_mode) queryParams.append("view_mode", view_mode);
+  queryParams.append("unanswered_only", showOnlyUnanswered);
+  
+  const requestExtension = `/messages/contacts/mentors/${pageNumber}?${queryParams.toString()}`;
+  
   return authGet(requestExtension).then(
     (response) => {
       return {

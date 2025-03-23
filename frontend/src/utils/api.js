@@ -1096,7 +1096,7 @@ export const getDetailMessages = (
   showOnlyUnanswered = false
 ) => {
   let queryParams = new URLSearchParams();
-  
+
   if (searchTerm) queryParams.append("searchTerm", searchTerm);
   if (startDate) queryParams.append("startDate", startDate);
   if (endDate) queryParams.append("endDate", endDate);
@@ -1104,9 +1104,9 @@ export const getDetailMessages = (
   if (partner_id) queryParams.append("partner_id", partner_id);
   if (view_mode) queryParams.append("view_mode", view_mode);
   queryParams.append("unanswered_only", showOnlyUnanswered);
-  
+
   const requestExtension = `/messages/contacts/mentors/${pageNumber}?${queryParams.toString()}`;
-  
+
   return authGet(requestExtension).then(
     (response) => {
       return {

@@ -58,11 +58,9 @@ export const AdminMessages = () => {
     try {
       // Only fetch if we don't already have partners data
       if (partners.length === 0) {
-
         const partnersData = await api.fetchPartners();
 
         if (Array.isArray(partnersData) && partnersData.length > 0) {
-
           setPartners(partnersData);
         } else {
           setPartners([]);
@@ -125,7 +123,7 @@ export const AdminMessages = () => {
     const assignMentees = Array.isArray(partnerData.assign_mentees)
       ? partnerData.assign_mentees
       : [];
-    
+
     const mentorIds = assignMentors
       .map((mentor) => {
         if (!mentor || !mentor.id) return null;
@@ -201,7 +199,6 @@ export const AdminMessages = () => {
           apiPartnerId = selectedPartner;
         }
 
-
         let { data: newData, total_length } = (await api.getDetailMessages(
           pageNumber,
           pageSize,
@@ -214,7 +211,6 @@ export const AdminMessages = () => {
         )) || { data: [], total_length: 0 };
 
         if (newData) {
-
           newData = newData.map((item) => {
             return {
               ...item,
@@ -568,7 +564,7 @@ export const AdminMessages = () => {
                 className="messages-date-range date-range-picker"
                 value={[
                   startDate ? moment(startDate) : null,
-                  endDate ? moment(endDate) : null
+                  endDate ? moment(endDate) : null,
                 ]}
               />
             </Col>
@@ -808,8 +804,11 @@ export const AdminMessages = () => {
                 const isMenteeSender = senderId === menteeId;
 
                 const date = new Date(message.created_at.$date);
-                
-                const showUnansweredTag = selectedRow?.hasUnansweredMessages && isMenteeSender && index === 0;
+
+                const showUnansweredTag =
+                  selectedRow?.hasUnansweredMessages &&
+                  isMenteeSender &&
+                  index === 0;
                 return (
                   <div
                     key={index}

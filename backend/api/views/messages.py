@@ -555,6 +555,7 @@ def get_sidebar_mentors(page_number):
 
     sorted_data = sorted_data[start_record:end_record]
     total_length = len(formatted_data)
+
     return create_response(
         data={"data": sorted_data, "total_length": total_length},
         status=200,

@@ -63,7 +63,6 @@ export const AdminMessages = () => {
 
         if (Array.isArray(partnersData) && partnersData.length > 0) {
 
-
           setPartners(partnersData);
         } else {
           setPartners([]);
@@ -87,7 +86,6 @@ export const AdminMessages = () => {
       const existingPartner = partners.find(
         (partner) => partner._id.$oid === partnerId
       );
-
 
       if (existingPartner) {
         setSelectedPartnerData(existingPartner);
@@ -128,7 +126,6 @@ export const AdminMessages = () => {
       ? partnerData.assign_mentees
       : [];
     
-
     const mentorIds = assignMentors
       .map((mentor) => {
         if (!mentor || !mentor.id) return null;
@@ -215,7 +212,6 @@ export const AdminMessages = () => {
           VIEW_MODE,
           showOnlyUnanswered
         )) || { data: [], total_length: 0 };
-        
 
         if (newData) {
 
@@ -233,7 +229,6 @@ export const AdminMessages = () => {
           ) {
             newData = filterDataByPartner(newData, selectedPartnerData);
             total_length = newData.length;
-
           }
 
           if (showOnlyUnanswered) {
@@ -815,7 +810,6 @@ export const AdminMessages = () => {
                 const date = new Date(message.created_at.$date);
                 
                 const showUnansweredTag = selectedRow?.hasUnansweredMessages && isMenteeSender && index === 0;
-
                 return (
                   <div
                     key={index}

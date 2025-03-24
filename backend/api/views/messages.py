@@ -284,7 +284,6 @@ def get_sidebar_mentors(page_number):
     start_record = page_size * (page_number - 1)
     end_record = page_size * page_number
 
-    # Get all mentors based on partner affiliation
     if partner_id == "all":
         mentors = MentorProfile.objects()
     elif partner_id == "all-partners":

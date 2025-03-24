@@ -19,6 +19,7 @@ from api.models import (
     MentorApplication,
     MentorProfile,
     MenteeProfile,
+    Moderator,
     Support,
     Users,
     Image,
@@ -108,9 +109,9 @@ def get_accounts(account_type):
             if partner_account.assign_mentees:
                 for mentee_item in partner_account.assign_mentees:
                     if "id" in mentee_item:
-                        partners_by_assign_mentee[str(mentee_item["id"])] = (
-                            partner_account
-                        )
+                        partners_by_assign_mentee[
+                            str(mentee_item["id"])
+                        ] = partner_account
         for account in mentees_data:
             if str(account.id) in partners_by_assign_mentee:
                 pair_partner = partners_by_assign_mentee[str(account.id)]
@@ -184,6 +185,8 @@ def get_accounts(account_type):
         accounts = Guest.objects()
     elif account_type == Account.SUPPORT:
         accounts = Support.objects()
+    elif account_type == Account.MODERATOR:
+        accounts = Moderator.objects()
     elif account_type == Account.HUB:
         accounts = Hub.objects()
     elif account_type == Account.ADMIN:
@@ -228,6 +231,8 @@ def get_account(id):
             account = Guest.objects.get(id=id)
         elif account_type == Account.SUPPORT:
             account = Support.objects.get(id=id)
+        elif account_type == Account.MODERATOR:
+            account = Moderator.objects.get(id=id)
         elif account_type == Account.HUB:
             account = Hub.objects.get(id=id)
         else:

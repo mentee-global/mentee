@@ -234,6 +234,14 @@ export default function useSidebars(userType, user, t) {
       icon: <ToolOutlined />,
     },
   ];
+
+  const moderatorSidebar = [
+    {
+      label: t("common.group_message"),
+      key: `/moderator/admin_group_messages`,
+      icon: <MessageOutlined />,
+    },
+  ];
   const hubSidebar = [
     {
       label: t("common.messages"),
@@ -303,6 +311,11 @@ export default function useSidebars(userType, user, t) {
     }
   }
   const adminSidebar = [
+    {
+      label: t("common.group_message"),
+      key: `admin_group_messages`,
+      icon: <MessageOutlined />,
+    },
     {
       label: "Explore",
       key: "galleries",
@@ -413,6 +426,8 @@ export default function useSidebars(userType, user, t) {
       return guestSidebar;
     case ACCOUNT_TYPE.SUPPORT:
       return supportSidebar;
+    case ACCOUNT_TYPE.MODERATOR:
+      return moderatorSidebar;
     case ACCOUNT_TYPE.ADMIN:
       return adminSidebar;
     case ACCOUNT_TYPE.HUB:

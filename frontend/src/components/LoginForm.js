@@ -34,6 +34,7 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
     if (
       role !== ACCOUNT_TYPE.ADMIN &&
       role !== ACCOUNT_TYPE.SUPPORT &&
+      role !== ACCOUNT_TYPE.MODERATOR &&
       role !== ACCOUNT_TYPE.HUB
     ) {
       const { profileExists, rightRole } = await checkProfileExists(

@@ -1,3 +1,4 @@
+from api.models.Moderator import Moderator
 from api.views.messages import invite
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
@@ -226,7 +227,7 @@ def upload_account_emailText():
     messageText = request.form["messageText"]
     password = request.form["password"]
     name = request.form["name"]
-    if role == Account.GUEST or role == Account.SUPPORT:
+    if role == Account.GUEST or role == Account.SUPPORT or role == Account.MODERATOR:
         email = messageText
         email = email.replace(" ", "")
         duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
@@ -247,9 +248,12 @@ def upload_account_emailText():
             if role == Account.GUEST:
                 guest = Guest(email=email, name=name, firebase_uid=firebase_uid)
                 guest.save()
-            else:
+            elif role == Account.SUPPORT:
                 support = Support(email=email, name=name, firebase_uid=firebase_uid)
                 support.save()
+            elif role == Account.MODERATOR:
+                moderator = Moderator(email=email, name=name, firebase_uid=firebase_uid)
+                moderator.save()
 
             verified_email = VerifiedEmail(email=email, role=str(role), password="")
             verified_email.save()
@@ -357,6 +361,11 @@ def editEmailPassword():
                 ex_item.email = email
                 ex_item.save()
         ex_data = Support.objects.filter(email=ex_email)
+        if len(ex_data) > 0:
+            for ex_item in ex_data:
+                ex_item.email = email
+                ex_item.save()
+        ex_data = Moderator.objects.filter(email=ex_email)
         if len(ex_data) > 0:
             for ex_item in ex_data:
                 ex_item.email = email

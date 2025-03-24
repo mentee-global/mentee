@@ -181,6 +181,9 @@ function App() {
                 <PublicRoute path="/support">
                   <SupportLogin role={ACCOUNT_TYPE.SUPPORT} />
                 </PublicRoute>
+                <PublicRoute path="/moderator">
+                  <SupportLogin role={ACCOUNT_TYPE.MODERATOR} />
+                </PublicRoute>
                 <PublicRoute path="/apply">
                   <Apply />
                 </PublicRoute>
@@ -281,6 +284,21 @@ function App() {
                   <PrivateRoute path="/support/all-hubs">
                     {role == ACCOUNT_TYPE.SUPPORT ? (
                       <HubGallery isSupport={true} />
+                    ) : (
+                      <>
+                        {cur_time - startPathTime > 100 && (
+                          <Result
+                            status="403"
+                            title="403"
+                            subTitle={t("gallery.unauthorizedAccess")}
+                          />
+                        )}
+                      </>
+                    )}
+                  </PrivateRoute>
+                  <PrivateRoute path={"/moderator/admin_group_messages"}>
+                    {role == ACCOUNT_TYPE.MODERATOR ? (
+                      <GroupMessages />
                     ) : (
                       <>
                         {cur_time - startPathTime > 100 && (
@@ -485,6 +503,21 @@ function App() {
                     <NewTrainingConfirm />
                   </PrivateRoute>
 
+                  <PrivateRoute path="/admin_group_messages">
+                    {role == ACCOUNT_TYPE.ADMIN ? (
+                      <GroupMessages />
+                    ) : (
+                      <>
+                        {cur_time - startPathTime > 100 && (
+                          <Result
+                            status="403"
+                            title="403"
+                            subTitle={t("gallery.unauthorizedAccess")}
+                          />
+                        )}
+                      </>
+                    )}
+                  </PrivateRoute>
                   <PrivateRoute path="/organizer">
                     {role == ACCOUNT_TYPE.ADMIN ? (
                       <ApplicationOrganizer isMentor={true} />

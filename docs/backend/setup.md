@@ -4,7 +4,6 @@
 Make sure you have [Python3](https://realpython.com/installing-python/) and [Poetry](https://python-poetry.org/) installed.
 
 Install packages:
-
 ```
 $ poetry install
 ```

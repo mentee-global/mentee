@@ -68,6 +68,10 @@ export function MenteeMentorDropdown(props) {
       key: 5,
       text: "Supporters",
     },
+    MODERATOR: {
+      key: 7,
+      text: "Moderators",
+    },
     // ALL: {
     //   key: 3,
     //   text: "All",
@@ -101,6 +105,9 @@ export function MenteeMentorDropdown(props) {
       </Menu.Item>
       <Menu.Item>
         <a onClick={() => handleClick(options.SUPPORT)}>Supporters</a>
+      </Menu.Item>
+      <Menu.Item>
+        <a onClick={() => handleClick(options.MODERATOR)}>Moderators</a>
       </Menu.Item>
       {/* <Menu.Item>
         <a onClick={() => handleClick(options.ALL)}>All</a>

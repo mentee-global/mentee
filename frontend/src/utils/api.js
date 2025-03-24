@@ -751,6 +751,16 @@ export const sendNotifyGroupMessage = (recipient_id, tagged = false) => {
   );
 };
 
+export const deleteGroupMessage = (message_id) => {
+  const requestExtension = `/messages/group_delete/${message_id}`;
+  return authDelete(requestExtension).then(
+    (response) => response.message,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const sendNotifyUnreadMessage = (recipient_id) => {
   const requestExtension = `/notifications/unread_alert/${recipient_id}`;
   return authGet(requestExtension).then(

@@ -67,6 +67,7 @@
   "common": {
     "admin": "Administrador",
     "support": "Seguidor",
+    "moderator": "Moderador",
     "hub": "Socio central",
     "powered_by":"impulsado por",
     "apply": "Aplicar",

@@ -34,6 +34,7 @@ const keys = {
   // ALL: 3,
   GUEST: 4,
   SUPPORT: 5,
+  MODERATOR: 7,
   ASCENDING: 0,
   DESCENDING: 1,
 };
@@ -126,6 +127,11 @@ function AdminAccountData() {
 
           setDisplayData(Supporters);
           setFilterData(Supporters);
+          break;
+        case keys.MODERATOR:
+          const Moderator = await fetchAccounts(ACCOUNT_TYPE.MODERATOR);
+          setDisplayData(Moderator);
+          setFilterData(Moderator);
           break;
         default:
           break;
@@ -282,6 +288,8 @@ function AdminAccountData() {
             ? "Guests"
             : displayOption === keys.SUPPORT
             ? "Supporters"
+            : displayOption === keys.MODERATOR
+            ? "Moderators"
             : "All"}
         </div>
         <div className="table-button-group">
@@ -299,11 +307,12 @@ function AdminAccountData() {
             icon={<PlusOutlined />}
             onClick={() => handleAddGuest()}
           >
-            Add New Guest/Support
+            Add New Guest/Support/Moderator
           </Button>
           <AddGuestModal
             setGuestModalVisible={setGuestModalVisible}
             guestModalVisible={guestModalVisible}
+            refresh={() => setReload(!reload)}
           />
           <Button
             className="table-button"
@@ -360,6 +369,7 @@ function AdminAccountData() {
           isPartner={displayOption === keys.PARTNER}
           isGuest={displayOption === keys.GUEST}
           isSupport={displayOption === keys.SUPPORT}
+          isModerator={displayOption === keys.MODERATOR}
         />
       </Spin>
     </div>

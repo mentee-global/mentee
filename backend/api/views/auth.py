@@ -246,6 +246,7 @@ def login():
             role != Account.ADMIN
             and role != Account.GUEST
             and role != Account.SUPPORT
+            and role != Account.MODERATOR
             and role != Account.HUB
         ):
             # user failed to create profile during registration phase

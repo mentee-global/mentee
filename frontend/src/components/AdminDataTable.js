@@ -60,6 +60,7 @@ function AdminDataTable({
   isPartner,
   isGuest,
   isSupport,
+  isModerator,
   refresh,
 }) {
   if (isPartner && !data[0]?.id) {
@@ -421,6 +422,7 @@ function AdminDataTable({
   const success = () => {
     message.success("Successfully Edited");
     handleEditClose();
+    refresh();
   };
 
   const onFinish = useCallback((valuesChanged, _selected_record) => {
@@ -571,7 +573,7 @@ function AdminDataTable({
         {!isPartner && (
           <>
             <Column title="Name" dataIndex="name" key="name" />
-            {!isGuest && !isSupport && (
+            {!isGuest && !isSupport && !isModerator && (
               <Column
                 title="No. of Appointments"
                 dataIndex="numOfAppointments"
@@ -579,7 +581,7 @@ function AdminDataTable({
                 align="center"
               />
             )}
-            {(isGuest || isSupport) && (
+            {(isGuest || isSupport || isModerator) && (
               <Column
                 title="Email"
                 dataIndex="email"
@@ -587,7 +589,7 @@ function AdminDataTable({
                 align="center"
               />
             )}
-            {!isMentee && !isGuest && !isSupport && (
+            {!isMentee && !isGuest && !isSupport && !isModerator && (
               <>
                 <Column
                   title="Appointments Available?"
@@ -627,6 +629,8 @@ function AdminDataTable({
                         ? ACCOUNT_TYPE.GUEST
                         : isSupport
                         ? ACCOUNT_TYPE.SUPPORT
+                        : isModerator
+                        ? ACCOUNT_TYPE.MODERATOR
                         : data.isMentee
                         ? ACCOUNT_TYPE.MENTEE
                         : ACCOUNT_TYPE.MENTOR,
@@ -644,7 +648,7 @@ function AdminDataTable({
               )}
               align="center"
             />
-            {!isGuest && !isSupport && (
+            {!isGuest && !isSupport && !isModerator && (
               <Column
                 title="Link to Profile"
                 dataIndex="id"
@@ -790,7 +794,7 @@ function AdminDataTable({
               )}
               align="center"
             />
-            {!isGuest && !isSupport && (
+            {!isGuest && !isSupport && !isModerator && (
               <Column
                 title="Link to Profile"
                 className="link-td"
@@ -817,7 +821,7 @@ function AdminDataTable({
             )}
           </>
         )}
-        {!isGuest && !isSupport && (
+        {!isGuest && !isSupport && !isModerator && (
           <Column
             title="Profile Picture"
             dataIndex="id"

@@ -45,6 +45,7 @@ export const ACCOUNT_TYPE = {
   GUEST: 4,
   SUPPORT: 5,
   HUB: 6,
+  MODERATOR: 7,
 };
 
 export const ACCOUNT_TYPE_LABELS = {
@@ -55,6 +56,7 @@ export const ACCOUNT_TYPE_LABELS = {
   [ACCOUNT_TYPE.GUEST]: "guest",
   [ACCOUNT_TYPE.SUPPORT]: "support",
   [ACCOUNT_TYPE.HUB]: "hub",
+  [ACCOUNT_TYPE.MODERATOR]: "moderator",
 };
 
 export const REDIRECTS = {
@@ -65,6 +67,7 @@ export const REDIRECTS = {
   [ACCOUNT_TYPE.GUEST]: "/gallery",
   [ACCOUNT_TYPE.SUPPORT]: "/support/all-mentors",
   [ACCOUNT_TYPE.HUB]: "/partner-gallery",
+  [ACCOUNT_TYPE.MODERATOR]: "/moderator/admin_group_messages",
 };
 
 export const PLURAL_TYPE = {

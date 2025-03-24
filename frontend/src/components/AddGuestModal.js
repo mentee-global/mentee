@@ -5,7 +5,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
 
-const { Title } = Typography;
+// const { Title } = Typography;
 function AddGuestModal(props) {
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -46,6 +46,9 @@ function AddGuestModal(props) {
   const success = () => {
     message.success("Successfully added user!");
     props.setGuestModalVisible(false);
+    setTimeout(() => {
+      props.refresh();
+    }, 500);
   };
 
   const handleValuesChange = () => {
@@ -77,7 +80,7 @@ function AddGuestModal(props) {
       onCancel={() => props.setGuestModalVisible(false)}
     >
       <div className="dragdrops">
-        <Title>Add Guest/Support User</Title>
+        <h2>Add Guest/Support/Moderator User</h2>
         <Radio.Group
           style={{ marginBottom: "15px" }}
           onChange={onChangeRole}
@@ -85,6 +88,7 @@ function AddGuestModal(props) {
         >
           <Radio value={ACCOUNT_TYPE.GUEST}>Guest</Radio>
           <Radio value={ACCOUNT_TYPE.SUPPORT}>Support</Radio>
+          <Radio value={ACCOUNT_TYPE.MODERATOR}>Moderator</Radio>
         </Radio.Group>
         <div>
           <Form

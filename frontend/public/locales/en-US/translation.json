@@ -67,6 +67,7 @@
   "common": {
     "admin": "Admin",
     "support": "Supporter",
+    "moderator": "Moderator",
     "hub": "Hub Partner",
     "powered_by":"powered by",
     "apply": "Apply",

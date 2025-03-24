@@ -31,6 +31,7 @@ from .Countries import Countries
 from .Specializations import Specializations
 from .Guest import Guest
 from .Support import Support
+from .Moderator import Moderator
 from .SignOrigin import SignOrigin
 from .SignedDocs import SignedDocs
 from .Announcement import Announcement
@@ -65,6 +66,7 @@ __all__ = [
     "Specializations",
     "Guest",
     "Support",
+    "Moderator",
     "SignOrigin",
     "SignedDocs",
     "GroupMessage",

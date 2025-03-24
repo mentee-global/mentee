@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Avatar, Input, Button, Spin, theme, Dropdown } from "antd";
+import { Avatar, Input, Button, Spin, theme, Dropdown, Popconfirm } from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import moment from "moment-timezone";
-import { SendOutlined, EditOutlined } from "@ant-design/icons";
+import { SendOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import { useAuth } from "utils/hooks/useAuth";
 import {
   sendNotifyGroupMessage,
   downloadBlob,
   getLibraryFile,
+  deleteGroupMessage,
 } from "utils/api";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
@@ -25,6 +26,7 @@ function GroupMessageChatArea(props) {
   const [messageText, setMessageText] = useState("");
   const [replyMessageText, setReplyMessageText] = useState("");
   const [editMessageText, setEditMessageText] = useState("");
+  const [editTitle, setEditTtile] = useState("");
   const [messageTitle, setMessageTitle] = useState("");
 
   const { messages, loading, hub_user_id, particiants } = props;
@@ -187,8 +189,7 @@ function GroupMessageChatArea(props) {
   };
 
   const editMessage = (block_id) => {
-    let currentMessage = editMessageText;
-    if (!currentMessage.trim().length > 0) {
+    if (!editMessageText.trim().length > 0 && !editTitle.trim().length > 0) {
       setEditInputFlags({});
       setRefreshFlag(!refreshFlag);
       return;
@@ -197,14 +198,22 @@ function GroupMessageChatArea(props) {
     let msg = messages.find((x) => x._id.$oid === block_id);
 
     if (msg) {
-      msg.body = currentMessage;
+      msg.title = editTitle ? editTitle : msg.title;
+      msg.body = editMessageText ? editMessageText : msg.body;
       msg.message_edited = true;
 
       props.editMessage(msg, block_id);
-      socket.emit("editGroupMessage", block_id, hub_user_id, currentMessage);
+      socket.emit(
+        "editGroupMessage",
+        block_id,
+        hub_user_id,
+        msg.title,
+        msg.body
+      );
     }
 
     setEditMessageText("");
+    setEditTtile("");
     setEditInputFlags({});
   };
 
@@ -499,9 +508,50 @@ function GroupMessageChatArea(props) {
                 </span>
                 <div className="convo" style={{ flex: 1, marginLeft: "10px" }}>
                   {block.title && (
-                    <div className={styles.title}>{block.title}</div>
+                    <>
+                      {editInputFlags[block._id.$oid] ? (
+                        <div>
+                          <TextArea
+                            className="message-input"
+                            placeholder={t("messages.titlePlaceholder")}
+                            defaultValue={block.title}
+                            onChange={(e) => setEditTtile(e.target.value)}
+                            autoSize={{ minRows: 1, maxRows: 1 }}
+                            style={{ textAlign: "left", marginBottom: "3px" }}
+                          />
+                        </div>
+                      ) : (
+                        <div className={styles.title}>
+                          {block.title}
+                          <>
+                            {block.message_edited ? (
+                              <span style={{ opacity: 0.5 }}> (edited)</span>
+                            ) : (
+                              ""
+                            )}
+                          </>
+                          {profileId === block.sender_id.$oid && (
+                            <EditOutlined
+                              style={{
+                                marginLeft: "20px",
+                                marginTop: "3px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                var temp = {};
+                                temp[block._id.$oid] = true;
+                                setEditInputFlags(temp);
+                                setReplyInputFlags({});
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
-                  {editInputFlags[block._id.$oid] ? (
+                  {props.role != ACCOUNT_TYPE.ADMIN &&
+                  props.role != ACCOUNT_TYPE.MODERATOR &&
+                  editInputFlags[block._id.$oid] ? (
                     <>
                       <div
                         className="reply-message-container"
@@ -571,6 +621,35 @@ function GroupMessageChatArea(props) {
                             ),
                           }}
                         />
+                        {(props.role == ACCOUNT_TYPE.ADMIN ||
+                          props.role == ACCOUNT_TYPE.MODERATOR) && (
+                          <Popconfirm
+                            title={`Are you sure you want to delete this message?`}
+                            onConfirm={async () => {
+                              await deleteGroupMessage(block._id.$oid);
+                              props.refresh();
+                            }}
+                            onCancel={() => {}}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <DeleteOutlined
+                              className="delete-user-btn"
+                              style={{
+                                marginLeft: "20px",
+                                marginTop: "3px",
+                                cursor: "pointer",
+                                fontSize: "15px",
+                              }}
+                              onClick={() => {
+                                var temp = {};
+                                temp[block._id.$oid] = true;
+                                setEditInputFlags(temp);
+                                setReplyInputFlags({});
+                              }}
+                            />
+                          </Popconfirm>
+                        )}
                         {profileId === block.sender_id.$oid && (
                           <EditOutlined
                             style={{
@@ -633,20 +712,24 @@ function GroupMessageChatArea(props) {
                       marginTop: "4px",
                     }}
                   >
-                    <Button
-                      onClick={() => {
-                        var temp = {};
-                        temp[block._id.$oid] = true;
-                        setReplyInputFlags(temp);
-                        setEditInputFlags({});
-                        setReplyMessageText("");
-                      }}
-                      className="reply-button"
-                      type="link"
-                      style={{ padding: 0 }}
-                    >
-                      Reply
-                    </Button>
+                    {props.role != ACCOUNT_TYPE.ADMIN &&
+                      props.role != ACCOUNT_TYPE.MODERATOR && (
+                        <Button
+                          onClick={() => {
+                            var temp = {};
+                            temp[block._id.$oid] = true;
+                            setReplyInputFlags(temp);
+                            setEditInputFlags({});
+                            setReplyMessageText("");
+                          }}
+                          className="reply-button"
+                          type="link"
+                          style={{ padding: 0 }}
+                        >
+                          Reply
+                        </Button>
+                      )}
+
                     {block.children && block.children.length > 0 && (
                       <Button
                         type="link"
@@ -659,58 +742,60 @@ function GroupMessageChatArea(props) {
                       </Button>
                     )}
                   </div>
-                  {replyInputFlags[block._id.$oid] && (
-                    <div
-                      className="reply-message-container"
-                      style={{ position: "relative" }}
-                    >
-                      <TextArea
-                        className="reply-message-textarea"
-                        value={replyMessageText}
-                        onChange={(e) => handleInputChange(e, "reply")}
-                        autoSize={{ minRows: 1, maxRows: 3 }}
-                      />
-                      {renderUserList("reply")}
-                      <img
-                        alt=""
-                        className="emoji-icon"
-                        src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-                        onClick={(e) => {
-                          if (
-                            e.target.getBoundingClientRect().y <
-                            window.innerHeight / 2
-                          ) {
-                            setEmojiUp(false);
-                          } else {
-                            setEmojiUp(true);
-                          }
-                          setShowReplyEmojiPicker((val) => !val);
-                          setShowEmojiPicker(false); // Ensure only one picker is open
-                        }}
-                      />
-                      {showReplyEmojiPicker && (
-                        <div
-                          className={
-                            emojiUp
-                              ? "up emoji-container"
-                              : "down emoji-container"
-                          }
-                        >
-                          <EmojiPicker
-                            onEmojiClick={(e) => onEmojiClick(e, "reply")}
-                          />
-                        </div>
-                      )}
-                      <Button
-                        onClick={() => sendReplyMessage(block._id.$oid)}
-                        className="reply-message-send-button"
-                        shape="circle"
-                        type="primary"
-                        icon={<SendOutlined rotate={315} />}
-                        size={32}
-                      />
-                    </div>
-                  )}
+                  {props.role != ACCOUNT_TYPE.ADMIN &&
+                    props.role != ACCOUNT_TYPE.MODERATOR &&
+                    replyInputFlags[block._id.$oid] && (
+                      <div
+                        className="reply-message-container"
+                        style={{ position: "relative" }}
+                      >
+                        <TextArea
+                          className="reply-message-textarea"
+                          value={replyMessageText}
+                          onChange={(e) => handleInputChange(e, "reply")}
+                          autoSize={{ minRows: 1, maxRows: 3 }}
+                        />
+                        {renderUserList("reply")}
+                        <img
+                          alt=""
+                          className="emoji-icon"
+                          src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
+                          onClick={(e) => {
+                            if (
+                              e.target.getBoundingClientRect().y <
+                              window.innerHeight / 2
+                            ) {
+                              setEmojiUp(false);
+                            } else {
+                              setEmojiUp(true);
+                            }
+                            setShowReplyEmojiPicker((val) => !val);
+                            setShowEmojiPicker(false); // Ensure only one picker is open
+                          }}
+                        />
+                        {showReplyEmojiPicker && (
+                          <div
+                            className={
+                              emojiUp
+                                ? "up emoji-container"
+                                : "down emoji-container"
+                            }
+                          >
+                            <EmojiPicker
+                              onEmojiClick={(e) => onEmojiClick(e, "reply")}
+                            />
+                          </div>
+                        )}
+                        <Button
+                          onClick={() => sendReplyMessage(block._id.$oid)}
+                          className="reply-message-send-button"
+                          shape="circle"
+                          type="primary"
+                          icon={<SendOutlined rotate={315} />}
+                          size={32}
+                        />
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
@@ -769,62 +854,65 @@ function GroupMessageChatArea(props) {
         </Spin>
         <div ref={messagesEndRef} />
       </div>
-      <div className="conversation-footer">
-        <div className="message-input-container">
-          {/* Title input */}
-          <div className="title-container">
-            <TextArea
-              className="message-input title-input"
-              placeholder={t("messages.titlePlaceholder")}
-              value={messageTitle}
-              onChange={(e) => setMessageTitle(e.target.value)}
-              autoSize={{ minRows: 1, maxRows: 1 }}
-              style={{ textAlign: "left" }}
-            />
-          </div>
+      {props.role != ACCOUNT_TYPE.ADMIN &&
+        props.role != ACCOUNT_TYPE.MODERATOR && (
+          <div className="conversation-footer">
+            <div className="message-input-container">
+              {/* Title input */}
+              <div className="title-container">
+                <TextArea
+                  className="message-input title-input"
+                  placeholder={t("messages.titlePlaceholder")}
+                  value={messageTitle}
+                  onChange={(e) => setMessageTitle(e.target.value)}
+                  autoSize={{ minRows: 1, maxRows: 1 }}
+                  style={{ textAlign: "left" }}
+                />
+              </div>
 
-          {/* Message input with icons */}
-          <div className="message-with-icons">
-            <TextArea
-              ref={textAreaRef}
-              className="message-input"
-              placeholder={t("messages.sendMessagePlaceholder")}
-              value={messageText}
-              onChange={(e) => handleInputChange(e, "main")}
-              autoSize={{ minRows: 1, maxRows: 3 }}
-              style={{ textAlign: "left" }}
-            />
+              {/* Message input with icons */}
+              <div className="message-with-icons">
+                <TextArea
+                  ref={textAreaRef}
+                  className="message-input"
+                  placeholder={t("messages.sendMessagePlaceholder")}
+                  value={messageText}
+                  onChange={(e) => handleInputChange(e, "main")}
+                  autoSize={{ minRows: 1, maxRows: 3 }}
+                  style={{ textAlign: "left" }}
+                />
 
-            <div className="message-icons">
-              <img
-                alt=""
-                className="emoji-icon"
-                src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
-                onClick={() => {
-                  setShowEmojiPicker((val) => !val);
-                  setShowReplyEmojiPicker(false);
-                }}
-              />
+                <div className="message-icons">
+                  <img
+                    alt=""
+                    className="emoji-icon"
+                    src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
+                    onClick={() => {
+                      setShowEmojiPicker((val) => !val);
+                      setShowReplyEmojiPicker(false);
+                    }}
+                  />
 
-              <Button
-                onClick={sendMessage}
-                className="send-button"
-                shape="circle"
-                type="primary"
-                icon={<SendOutlined rotate={315} />}
-                size={32}
-              />
+                  <Button
+                    onClick={sendMessage}
+                    className="send-button"
+                    shape="circle"
+                    type="primary"
+                    icon={<SendOutlined rotate={315} />}
+                    size={32}
+                  />
+                </div>
+                {renderUserList("main")}
+              </div>
             </div>
-            {renderUserList("main")}
-          </div>
-        </div>
 
-        {showEmojiPicker && (
-          <div className="emoji-container">
-            <EmojiPicker onEmojiClick={(e) => onEmojiClick(e, "main")} />
+            {showEmojiPicker && (
+              <div className="emoji-container">
+                <EmojiPicker onEmojiClick={(e) => onEmojiClick(e, "main")} />
+              </div>
+            )}
           </div>
         )}
-      </div>
     </div>
   );
 }

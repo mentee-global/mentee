@@ -17,6 +17,7 @@ from api.models import (
     MenteeProfile,
     Admin,
     Guest,
+    Moderator,
     PartnerProfile,
     MenteeApplication,
     NewMentorApplication,
@@ -274,6 +275,8 @@ def get_profile_model(role):
         return Guest
     elif role == Account.SUPPORT:
         return Support
+    elif role == Account.MODERATOR:
+        return Moderator
     elif role == Account.HUB:
         return Hub
     else:

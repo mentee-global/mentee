@@ -8,8 +8,11 @@ import {
   getGroupMessageData,
   fetchPartners,
   fetchAccountById,
+  fetchAccounts,
 } from "utils/api";
 import socket from "utils/socket";
+
+import { HubsDropdown } from "../AdminDropdowns";
 
 import "../css/Messages.scss";
 import { setActiveMessageId } from "features/messagesSlice";
@@ -25,9 +28,13 @@ function GroupMessages(props) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [particiants, setParticiants] = useState([]);
+  const [hubOptions, setHubOptions] = useState([]);
+  const [selectedHubid, setSelectedHubid] = useState("");
+
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
   const user = useSelector((state) => state.user.user);
   const role = getRole();
+
   var hub_user_id = null;
   if (role == ACCOUNT_TYPE.HUB && user) {
     if (user.hub_id) {
@@ -161,8 +168,36 @@ function GroupMessages(props) {
         setLoading(false);
       }
     }
-    getData(hub_user_id);
+    if (role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.MODERATOR) {
+      if (hub_user_id) {
+        getData(hub_user_id);
+      }
+    } else {
+      getData(hub_user_id);
+    }
   }, [activeMessageId]);
+
+  useEffect(() => {
+    if (role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.MODERATOR) {
+      async function getHubData() {
+        var temp = [];
+        const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
+        hub_data.map((hub_item) => {
+          temp.push({ label: hub_item.name, value: hub_item._id.$oid });
+          return true;
+        });
+        setHubOptions(temp);
+      }
+      getHubData();
+    }
+  }, [role]);
+
+  const searchbyHub = async (key) => {
+    setSelectedHubid(key);
+    setLoading(true);
+    setMessages(await getGroupMessageData(key));
+    setLoading(false);
+  };
 
   const editMessage = (msg, block_id) => {
     var temp = messages;
@@ -179,6 +214,16 @@ function GroupMessages(props) {
   // when the layout changes
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
+      {(role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.MODERATOR) && (
+        <div style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
+          <HubsDropdown
+            className="table-button hub-drop-down"
+            options={hubOptions}
+            onChange={(key) => searchbyHub(key)}
+            // onReset={resetFilters}
+          />
+        </div>
+      )}
       <Layout style={{ backgroundColor: "white" }}>
         <GroupMessageChatArea
           messages={messages}
@@ -189,6 +234,12 @@ function GroupMessages(props) {
           user={user}
           particiants={particiants}
           hub_user_id={hub_user_id}
+          role={role}
+          refresh={async () => {
+            setLoading(true);
+            setMessages(await getGroupMessageData(selectedHubid));
+            setLoading(false);
+          }}
         />
       </Layout>
     </Layout>

@@ -29,10 +29,9 @@ function Messages(props) {
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
   const user = useSelector((state) => state.user.user);
   const [sidebarLoading, setSidebarLoading] = useState(false);
-  // Add cache state for messages
   const [messagesCache, setMessagesCache] = useState({});
-  // Add state to track if initial data has been loaded
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+  const [currentPath, setCurrentPath] = useState(props.location.pathname);
 
   const messageListener = (data) => {
     async function fetchLatest() {
@@ -64,6 +63,10 @@ function Messages(props) {
   };
 
   useEffect(() => {
+    setCurrentPath(props.location.pathname);
+  }, [props.location.pathname]);
+
+  useEffect(() => {
     if (socket && profileId) {
       socket.on(profileId, messageListener);
       return () => {
@@ -72,6 +75,30 @@ function Messages(props) {
     }
   }, [socket, profileId, activeMessageId]);
 
+  const loadConversation = useCallback(async (conversationId) => {
+    if (!conversationId || !profileId) return;
+    
+    if (messagesCache[conversationId]) {
+      setMessages(messagesCache[conversationId]);
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const messageData = await getMessageData(profileId, conversationId);
+      setMessages(messageData || []);
+      
+      setMessagesCache(prevCache => ({
+        ...prevCache,
+        [conversationId]: messageData || []
+      }));
+    } catch (error) {
+      console.error("Error loading conversation:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [profileId, messagesCache]);
+  
   // Memoized function to fetch data
   const fetchData = useCallback(async () => {
     if (!profileId || initialDataLoaded) return;
@@ -92,8 +119,14 @@ function Messages(props) {
       setInitialDataLoaded(true);
       
       if (messagesResponse && messagesResponse?.data?.length) {
+        const firstConversation = messagesResponse.data[0];
+        
+
+        dispatch(setActiveMessageId(firstConversation.otherId));
+        loadConversation(firstConversation.otherId);
+        
         let unread_message_senders = [];
-        messagesResponse?.data.forEach((message_item) => {
+        messagesResponse.data.forEach((message_item) => {
           if (
             message_item.message_read === false &&
             !unread_message_senders.includes(message_item.otherId)
@@ -108,82 +141,79 @@ function Messages(props) {
           }
         });
 
-        // Only redirect if the user is still on the messages page
-        const currentPath = props.location.pathname;
-        if (currentPath === "/messages" || currentPath === "/messages/") {
-          history.push(
-            `/messages/${messagesResponse?.data[0].otherId}?user_type=${messagesResponse?.data[0].otherUser.user_type}`
-          );
+        if (props.location.pathname === "/messages" || props.location.pathname === "/messages/") {
+          if (props.location.pathname === currentPath) {
+            history.replace(
+              `/messages/${firstConversation.otherId}?user_type=${firstConversation.otherUser.user_type}`
+            );
+          }
         }
       } else {
-        // Only redirect if the user is still on the messages page
-        const currentPath = props.location.pathname;
-        if (currentPath === "/messages" || currentPath === "/messages/") {
-          history.push("/messages/3");
+        if ((props.location.pathname === "/messages" || props.location.pathname === "/messages/") && 
+            props.location.pathname === currentPath) {
+          history.replace("/messages/3");
         }
       }
     } catch (error) {
       console.error("Error fetching initial data:", error);
+      message.error("Failed to load messages.");
     } finally {
       setSidebarLoading(false);
       setLoading(false);
     }
-  }, [profileId, initialDataLoaded, props.location.pathname, history, dispatch]);
+  }, [profileId, initialDataLoaded, props.location.pathname, currentPath, history, dispatch, loadConversation]);
+
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   useEffect(() => {
-    var user_type = new URLSearchParams(props.location.search).get("user_type");
-    dispatch(
-      setActiveMessageId(props.match ? props.match.params.receiverId : null)
-    );
-    setUserType(user_type);
-  }, [props.location.search, props.match, dispatch]);
-
-  // Optimized message loading with caching
-  useEffect(() => {
-    async function getMessageDetails() {
-      if (!activeMessageId || !profileId) return;
+    if (!profileId) return;
+    
+    const receiverId = props.match?.params?.receiverId;
+    const user_type = new URLSearchParams(props.location.search).get("user_type");
+    
+    const isUserType = receiverId && ['1', '2', '3', '4', '5'].includes(receiverId);
+    
+    if (receiverId && !isUserType) {
+      dispatch(setActiveMessageId(receiverId));
+      if (user_type) setUserType(user_type);
       
-      // Check if we already have these messages in cache
-      if (messagesCache[activeMessageId]) {
-        setMessages(messagesCache[activeMessageId]);
-        return;
-      }
+    } else if (isUserType && latestConvos.length > 0) {
+      const firstConvo = latestConvos[0];
+      dispatch(setActiveMessageId(firstConvo.otherId));
+      setUserType(firstConvo.otherUser.user_type);
       
-      setLoading(true);
-      try {
-        const messageData = await getMessageData(profileId, activeMessageId);
-        setMessages(messageData || []);
-        
-        // Cache the fetched messages
-        setMessagesCache(prevCache => ({
-          ...prevCache,
-          [activeMessageId]: messageData || []
-        }));
-      } catch (error) {
-        console.error("Error fetching message details:", error);
-      } finally {
-        setLoading(false);
+      const isStillOnMessagesPage = currentPath.startsWith('/messages') && 
+                                   props.location.pathname.startsWith('/messages');
+      if (isStillOnMessagesPage) {
+        history.replace(`/messages/${firstConvo.otherId}?user_type=${firstConvo.otherUser.user_type}`);
       }
     }
+  }, [props.location.search, props.match, profileId, dispatch, latestConvos, history, currentPath]);
+
+  useEffect(() => {
+    if (!props.location.pathname.startsWith('/messages')) return;
     
-    getMessageDetails();
-  }, [activeMessageId, profileId, messagesCache]);
+    const isStillOnMessagesPage = props.location.pathname === currentPath;
+    if (!isStillOnMessagesPage) return;
+    
+    if (activeMessageId && profileId) {
+      loadConversation(activeMessageId);
+    } else {
+      setMessages([]);
+    }
+  }, [activeMessageId, profileId, loadConversation, props.location.pathname, currentPath]);
 
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
     setAllMessages((prevMessages) => [...prevMessages, msg]);
-    
-    // Update cache when sending a new message
     setMessagesCache(prevCache => ({
       ...prevCache,
       [activeMessageId]: [...(prevCache[activeMessageId] || []), msg]
     }));
     
-    // Debounce the sidebar refresh to avoid unnecessary API calls
     setTimeout(() => {
       async function fetchLatest() {
         const { data } = await getLatestMessages(profileId);
@@ -193,7 +223,6 @@ function Messages(props) {
     }, 500);
   };
 
-  // Memoize sidebar data to avoid unnecessary re-renders
   const sidebarData = useMemo(() => {
     return {
       latestConvos,

@@ -340,6 +340,25 @@ function MessagesChatArea(props) {
     setMessageText("");
     return;
   };
+  if (loading) {
+    return (
+      <div className="no-messages" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        {isMobile && (
+          <div
+            onClick={showSideBar}
+            style={{ cursor: "pointer", width: "20px", fontSize: "16px", position: 'absolute', top: '15px', left: '15px' }}
+          >
+            <ArrowLeftOutlined />
+          </div>
+        )}
+        <Spin size="large" />
+        <div style={{ marginTop: '20px', fontSize: '16px', color: 'rgba(0, 0, 0, 0.65)' }}>
+          Loading conversation...
+        </div>
+      </div>
+    );
+  }
+  
   if (!activeMessageId || !messages || !messages.length) {
     return (
       <div className="no-messages">
@@ -485,7 +504,6 @@ function MessagesChatArea(props) {
         <div></div>
       )}
       <div className="conversation-content">
-        <Spin spinning={loading}>
           {accountData &&
             messages.map((block, index) => {
               return (
@@ -602,8 +620,7 @@ function MessagesChatArea(props) {
                 </div>
               );
             })}
-        </Spin>
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
       </div>
       <div className="conversation-footer">
         {accountData && (

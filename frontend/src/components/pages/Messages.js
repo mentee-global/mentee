@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -29,6 +29,10 @@ function Messages(props) {
   const profileId = useSelector((state) => state.user.user?._id?.$oid);
   const user = useSelector((state) => state.user.user);
   const [sidebarLoading, setSidebarLoading] = useState(false);
+  // Add cache state for messages
+  const [messagesCache, setMessagesCache] = useState({});
+  // Add state to track if initial data has been loaded
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   const messageListener = (data) => {
     async function fetchLatest() {
@@ -45,6 +49,11 @@ function Messages(props) {
     }
     if (data?.sender_id?.$oid === activeMessageId) {
       setMessages((prevMessages) => [...prevMessages, data]);
+      // Update cache when new message arrives
+      setMessagesCache(prevCache => ({
+        ...prevCache,
+        [activeMessageId]: [...(prevCache[activeMessageId] || []), data]
+      }));
       dispatch(
         updateNotificationsCount({
           recipient: profileId,
@@ -63,18 +72,28 @@ function Messages(props) {
     }
   }, [socket, profileId, activeMessageId]);
 
-  useEffect(() => {
-    async function getData() {
-      setSidebarLoading(true);
-      const data = await getLatestMessages(profileId);
-      const restricted_partners = await fetchPartners(true, null);
-      setLatestConvos(data?.data);
-      setAllMessages(data?.allMessages);
-      setSidebarLoading(false);
-      setRestrictedPartners(restricted_partners);
-      if (data && data?.data?.length) {
+  // Memoized function to fetch data
+  const fetchData = useCallback(async () => {
+    if (!profileId || initialDataLoaded) return;
+    
+    setSidebarLoading(true);
+    setLoading(true);
+    
+    try {
+      // Fetch data in parallel
+      const [messagesResponse, partnersResponse] = await Promise.all([
+        getLatestMessages(profileId),
+        fetchPartners(true, null)
+      ]);
+      
+      setLatestConvos(messagesResponse?.data || []);
+      setAllMessages(messagesResponse?.allMessages || []);
+      setRestrictedPartners(partnersResponse || []);
+      setInitialDataLoaded(true);
+      
+      if (messagesResponse && messagesResponse?.data?.length) {
         let unread_message_senders = [];
-        data?.data.map((message_item) => {
+        messagesResponse?.data.forEach((message_item) => {
           if (
             message_item.message_read === false &&
             !unread_message_senders.includes(message_item.otherId)
@@ -89,18 +108,31 @@ function Messages(props) {
           }
         });
 
-        history.push(
-          `/messages/${data?.data[0].otherId}?user_type=${data?.data[0].otherUser.user_type}`
-        );
+        // Only redirect if the user is still on the messages page
+        const currentPath = props.location.pathname;
+        if (currentPath === "/messages" || currentPath === "/messages/") {
+          history.push(
+            `/messages/${messagesResponse?.data[0].otherId}?user_type=${messagesResponse?.data[0].otherUser.user_type}`
+          );
+        }
       } else {
-        history.push("/messages/3");
+        // Only redirect if the user is still on the messages page
+        const currentPath = props.location.pathname;
+        if (currentPath === "/messages" || currentPath === "/messages/") {
+          history.push("/messages/3");
+        }
       }
+    } catch (error) {
+      console.error("Error fetching initial data:", error);
+    } finally {
+      setSidebarLoading(false);
+      setLoading(false);
     }
+  }, [profileId, initialDataLoaded, props.location.pathname, history, dispatch]);
 
-    if (profileId) {
-      getData();
-    }
-  }, [profileId]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     var user_type = new URLSearchParams(props.location.search).get("user_type");
@@ -108,30 +140,50 @@ function Messages(props) {
       setActiveMessageId(props.match ? props.match.params.receiverId : null)
     );
     setUserType(user_type);
-  });
+  }, [props.location.search, props.match, dispatch]);
 
+  // Optimized message loading with caching
   useEffect(() => {
-    async function getData() {
-      var user_type = new URLSearchParams(props.location.search).get(
-        "user_type"
-      );
-      dispatch(
-        setActiveMessageId(props.match ? props.match.params.receiverId : null)
-      );
-      setUserType(user_type);
-
-      if (activeMessageId && profileId) {
-        setLoading(true);
-        setMessages(await getMessageData(profileId, activeMessageId));
+    async function getMessageDetails() {
+      if (!activeMessageId || !profileId) return;
+      
+      // Check if we already have these messages in cache
+      if (messagesCache[activeMessageId]) {
+        setMessages(messagesCache[activeMessageId]);
+        return;
+      }
+      
+      setLoading(true);
+      try {
+        const messageData = await getMessageData(profileId, activeMessageId);
+        setMessages(messageData || []);
+        
+        // Cache the fetched messages
+        setMessagesCache(prevCache => ({
+          ...prevCache,
+          [activeMessageId]: messageData || []
+        }));
+      } catch (error) {
+        console.error("Error fetching message details:", error);
+      } finally {
         setLoading(false);
       }
     }
-    getData();
-  }, [activeMessageId]);
+    
+    getMessageDetails();
+  }, [activeMessageId, profileId, messagesCache]);
 
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
     setAllMessages((prevMessages) => [...prevMessages, msg]);
+    
+    // Update cache when sending a new message
+    setMessagesCache(prevCache => ({
+      ...prevCache,
+      [activeMessageId]: [...(prevCache[activeMessageId] || []), msg]
+    }));
+    
+    // Debounce the sidebar refresh to avoid unnecessary API calls
     setTimeout(() => {
       async function fetchLatest() {
         const { data } = await getLatestMessages(profileId);
@@ -141,18 +193,22 @@ function Messages(props) {
     }, 500);
   };
 
-  // BUG: If we swap between breakpoints of mobile/desktop, the sidebar will not update
-  // This is because the sidebar is not a child of the layout, so it does not get re-rendered
-  // when the layout changes
+  // Memoize sidebar data to avoid unnecessary re-renders
+  const sidebarData = useMemo(() => {
+    return {
+      latestConvos,
+      activeMessageId,
+      restrictedPartners,
+      allMessages,
+      user,
+      loading: sidebarLoading
+    };
+  }, [latestConvos, activeMessageId, restrictedPartners, allMessages, user, sidebarLoading]);
+
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
       <MessagesSidebar
-        latestConvos={latestConvos}
-        activeMessageId={activeMessageId}
-        restrictedPartners={restrictedPartners}
-        allMessages={allMessages}
-        user={user}
-        loading={sidebarLoading}
+        {...sidebarData}
       />
       <Layout style={{ backgroundColor: "white" }}>
         <MessagesChatArea

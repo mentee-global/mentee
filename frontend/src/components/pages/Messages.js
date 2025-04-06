@@ -37,6 +37,7 @@ function Messages(props) {
     async function fetchLatest() {
       setSidebarLoading(true);
       const { data, allMessages } = await getLatestMessages(profileId);
+      console.log("getLatestMessages: ", data);
       setLatestConvos(data);
       setAllMessages(allMessages);
       setSidebarLoading(false);
@@ -86,6 +87,7 @@ function Messages(props) {
     setLoading(true);
     try {
       const messageData = await getMessageData(profileId, conversationId);
+      console.log("getMessageData: ", messageData);
       setMessages(messageData || []);
       
       setMessagesCache(prevCache => ({
@@ -112,6 +114,8 @@ function Messages(props) {
         getLatestMessages(profileId),
         fetchPartners(true, null)
       ]);
+      console.log("getLatestMessages: ", messagesResponse);
+      console.log("fetchPartners: ", partnersResponse);
       
       setLatestConvos(messagesResponse?.data || []);
       setAllMessages(messagesResponse?.allMessages || []);
@@ -217,6 +221,8 @@ function Messages(props) {
     setTimeout(() => {
       async function fetchLatest() {
         const { data } = await getLatestMessages(profileId);
+        console.log("getLatestMessages: ", data);
+        
         setLatestConvos(data);
       }
       fetchLatest();

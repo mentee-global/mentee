@@ -1093,37 +1093,42 @@ export const getLatestMessages = (user_id) => {
       const result = response.data.result || {};
       if (!result.data) {
         result.data = [];
-        
-        if (result.allMessages && Array.isArray(result.allMessages) && result.allMessages.length > 0) {
+
+        if (
+          result.allMessages &&
+          Array.isArray(result.allMessages) &&
+          result.allMessages.length > 0
+        ) {
           const processedContacts = new Set();
-          
-          result.allMessages.forEach(message => {
+
+          result.allMessages.forEach((message) => {
             const senderId = message.sender_id?.$oid || message.sender_id;
-            const recipientId = message.recipient_id?.$oid || message.recipient_id;
-            
+            const recipientId =
+              message.recipient_id?.$oid || message.recipient_id;
+
             const otherId = senderId === user_id ? recipientId : senderId;
-            
+
             if (!processedContacts.has(otherId)) {
               processedContacts.add(otherId);
-              
+
               result.data.push({
                 otherId: otherId,
                 message_read: message.message_read,
                 latestMessage: message,
                 otherUser: {
                   name: "User",
-                  user_type: "1"
-                }
+                  user_type: "1",
+                },
               });
             }
           });
         }
       }
-      
+
       if (!result.allMessages) {
         result.allMessages = [];
       }
-      
+
       return result;
     },
     (err) => {
@@ -1418,15 +1423,15 @@ export const fetchPartners = async (
 ) => {
   const requestExtension = `/messages/partners/`;
   let params = {};
-  
+
   if (restricted !== undefined) {
     params.restricted = restricted.toString();
   }
-  
+
   if (hub_user_id) {
     params.hub_user_id = hub_user_id;
   }
-  
+
   return authGet(requestExtension, { params }).then(
     (response) => {
       return response.data.result.accounts;

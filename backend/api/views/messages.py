@@ -192,10 +192,10 @@ def get_sidebar(user_id):
         ).order_by("-created_at")
 
         allMessages = [json.loads(message.to_json()) for message in sentMessages]
-        
+
         contacts = []
         sidebarContacts = set()
-        
+
         for message in sentMessages:
             otherId = message["recipient_id"]
             message_read = message["message_read"]
@@ -223,7 +223,7 @@ def get_sidebar(user_id):
                         msg = "Could not find mentor or mentee for given ids"
                         logger.info(msg)
                         continue
-                        
+
                 otherUser = json.loads(otherUser.to_json())
                 if user_type == Account.PARTNER.value:
                     otherUserObj = {
@@ -242,11 +242,15 @@ def get_sidebar(user_id):
                 # Count messages for this contact
                 message_count = len(
                     [
-                        msg for msg in sentMessages
-                        if (msg["recipient_id"] == otherId or msg["sender_id"] == otherId)
+                        msg
+                        for msg in sentMessages
+                        if (
+                            msg["recipient_id"] == otherId
+                            or msg["sender_id"] == otherId
+                        )
                     ]
                 )
-                
+
                 # Create the sidebar object
                 sidebarObject = {
                     "otherId": str(otherId),
@@ -258,7 +262,7 @@ def get_sidebar(user_id):
 
                 contacts.append(sidebarObject)
                 sidebarContacts.add(otherId)
-        
+
         # Return in the exact format expected by frontend
         return create_response(
             data={
@@ -613,21 +617,21 @@ def get_direct_messages():
     try:
         sender_id = request.args.get("sender_id")
         recipient_id = request.args.get("recipient_id")
-        
+
         messages = DirectMessage.objects(
-            Q(sender_id=sender_id) & Q(recipient_id=recipient_id) |
-            Q(sender_id=recipient_id) & Q(recipient_id=sender_id)
+            Q(sender_id=sender_id) & Q(recipient_id=recipient_id)
+            | Q(sender_id=recipient_id) & Q(recipient_id=sender_id)
         )
-        
+
         if sender_id == request.args.get("viewer_id", sender_id):
             DirectMessage.objects(
-                sender_id=recipient_id,
-                recipient_id=sender_id,
-                message_read=False
+                sender_id=recipient_id, recipient_id=sender_id, message_read=False
             ).update(message_read=True)
-        
-        return create_response(data={"Messages": messages}, status=200, message="Success")
-        
+
+        return create_response(
+            data={"Messages": messages}, status=200, message="Success"
+        )
+
     except Exception as e:
         msg = f"Error retrieving messages: {str(e)}"
         logger.info(msg)
@@ -642,58 +646,77 @@ def get_message_details():
         page = int(request.args.get("page", 1))
         limit = int(request.args.get("limit", 20))
         skip = (page - 1) * limit
-        
+
         sender_id = request.args.get("sender_id")
         recipient_id = request.args.get("recipient_id")
         conversation_id = request.args.get("conversation_id")
-        
+
         match_condition = {}
-        
+
         if conversation_id:
             conversation_pipeline = [
                 {"$match": {"_id": ObjectId(conversation_id)}},
-                {"$project": {"participants": 1}}
+                {"$project": {"participants": 1}},
             ]
             conversation = list(DirectMessage.objects.aggregate(*conversation_pipeline))
             if conversation:
                 participants = conversation[0].get("participants", [])
                 if len(participants) == 2:
                     user1, user2 = participants
-                    match_condition = {"$or": [
-                        {"$and": [{"sender_id": user1}, {"recipient_id": user2}]},
-                        {"$and": [{"sender_id": user2}, {"recipient_id": user1}]}
-                    ]}
+                    match_condition = {
+                        "$or": [
+                            {"$and": [{"sender_id": user1}, {"recipient_id": user2}]},
+                            {"$and": [{"sender_id": user2}, {"recipient_id": user1}]},
+                        ]
+                    }
         elif sender_id and recipient_id:
-            match_condition = {"$or": [
-                {"$and": [{"sender_id": sender_id}, {"recipient_id": recipient_id}]},
-                {"$and": [{"sender_id": recipient_id}, {"recipient_id": sender_id}]}
-            ]}
-        
+            match_condition = {
+                "$or": [
+                    {
+                        "$and": [
+                            {"sender_id": sender_id},
+                            {"recipient_id": recipient_id},
+                        ]
+                    },
+                    {
+                        "$and": [
+                            {"sender_id": recipient_id},
+                            {"recipient_id": sender_id},
+                        ]
+                    },
+                ]
+            }
+
         if not match_condition:
             return create_response(
-                data={"Messages": [], "pagination": {"total": 0, "page": page, "limit": limit, "pages": 0}},
+                data={
+                    "Messages": [],
+                    "pagination": {
+                        "total": 0,
+                        "page": page,
+                        "limit": limit,
+                        "pages": 0,
+                    },
+                },
                 status=200,
-                message="No valid filter provided"
+                message="No valid filter provided",
             )
-        
+
         pipeline = [
             {"$match": match_condition},
             {"$sort": {"created_at": 1}},
             {"$skip": skip},
-            {"$limit": limit}
+            {"$limit": limit},
         ]
-        
+
         messages = list(DirectMessage.objects.aggregate(*pipeline))
-        
+
         # Get total count for pagination
-        count_pipeline = [
-            {"$match": match_condition},
-            {"$count": "total"}
-        ]
-        
+        count_pipeline = [{"$match": match_condition}, {"$count": "total"}]
+
         count_result = list(DirectMessage.objects.aggregate(*count_pipeline))
         total_count = count_result[0]["total"] if count_result else 0
-        
+
         # Convert ObjectIds to strings for JSON serialization
         for msg in messages:
             if "_id" in msg:
@@ -702,7 +725,7 @@ def get_message_details():
                 msg["sender_id"] = str(msg["sender_id"])
             if "recipient_id" in msg:
                 msg["recipient_id"] = str(msg["recipient_id"])
-        
+
         return create_response(
             data={
                 "Messages": messages,
@@ -710,11 +733,11 @@ def get_message_details():
                     "total": total_count,
                     "page": page,
                     "limit": limit,
-                    "pages": (total_count + limit - 1) // limit
-                }
+                    "pages": (total_count + limit - 1) // limit,
+                },
             },
             status=200,
-            message="Success"
+            message="Success",
         )
     except Exception as e:
         msg = f"Error retrieving message details: {str(e)}"
@@ -868,22 +891,22 @@ def get_partners():
         # Get filter parameters
         restricted = request.args.get("restricted")
         hub_user_id = request.args.get("hub_user_id")
-        
+
         # Build query based on filters
         query = {}
         if restricted == "true":
             query["restricted"] = True
         elif restricted == "false":
             query["restricted"] = False
-            
+
         if hub_user_id:
             query["hub_user_id"] = hub_user_id
-            
+
         # Use projection to limit fields returned (optimization)
         partners = PartnerProfile.objects(**query).only(
             "id", "organization", "image", "restricted", "hub_user_id", "email"
         )
-        
+
         # Convert to list of dictionaries with minimal required data
         partner_data = []
         for partner in partners:
@@ -891,24 +914,24 @@ def get_partners():
                 "id": str(partner.id),
                 "organization": partner.organization,
                 "email": partner.email,
-                "role": Account.PARTNER.value
+                "role": Account.PARTNER.value,
             }
-            
+
             if partner.image and hasattr(partner.image, "url"):
                 partner_dict["image"] = {"url": partner.image.url}
-                
+
             if hasattr(partner, "restricted"):
                 partner_dict["restricted"] = partner.restricted
-                
+
             if hasattr(partner, "hub_user_id"):
                 partner_dict["hub_user_id"] = partner.hub_user_id
-                
+
             partner_data.append(partner_dict)
-        
+
         return create_response(
             data={"accounts": partner_data},  # Match the structure of fetchAccounts
             status=200,
-            message="Success"
+            message="Success",
         )
     except Exception as e:
         msg = f"Error retrieving partners: {str(e)}"

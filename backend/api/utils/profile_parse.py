@@ -25,7 +25,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
             organization=data.get("organization"),
             title=data.get("title"),
             location=data.get("location"),
-            regions=data["regions"],
+            regions=data.get("regions"),
             intro=data["intro"],
             open_grants=data.get("open_grants"),
             open_projects=data.get("open_projects"),

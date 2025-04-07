@@ -906,11 +906,11 @@ def get_partners():
             query["restricted"] = False
 
         if hub_user_id:
-            query["hub_user_id"] = hub_user_id
+            query["hub_id"] = hub_user_id  # Using hub_id field instead of hub_user_id
 
         # Use projection to limit fields returned (optimization)
         partners = PartnerProfile.objects(**query).only(
-            "id", "organization", "image", "restricted", "hub_user_id", "email"
+            "id", "organization", "image", "restricted", "hub_id", "hub_user", "email"
         )
 
         # Convert to list of dictionaries with minimal required data
@@ -929,7 +929,10 @@ def get_partners():
             if hasattr(partner, "restricted"):
                 partner_dict["restricted"] = partner.restricted
 
-            if hasattr(partner, "hub_user_id"):
+            # Check for both hub_id and hub_user_id to maintain compatibility
+            if hasattr(partner, "hub_id"):
+                partner_dict["hub_user_id"] = partner.hub_id  # Map hub_id to hub_user_id for frontend compatibility
+            elif hasattr(partner, "hub_user_id"):
                 partner_dict["hub_user_id"] = partner.hub_user_id
 
             partner_data.append(partner_dict)

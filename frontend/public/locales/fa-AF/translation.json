@@ -550,6 +550,10 @@
   },
   "partnerProfile": {
     "briefIntro": "معرفی مختصر به سازمان/اینست/شرکت شما",
+    "AUAFbriefIntro":"معرفی مختصری از خودتان",
+    "AUAFcontactFullName":"نام کامل خود را وارد کنید",
+    "title":"عنوان خود را وارد کنید",
+    "requiredTitle":"لطفا عنوان را وارد کنید",
     "collaborationGrants": "برای همکاری در زمینه کمک هزینه ها باز است",
     "collaborationProjects": "برای همکاری در پروژه ها باز است",
     "contactFullName": "نام کامل شخص تماس (نام خانوادگی)",

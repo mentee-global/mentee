@@ -72,15 +72,19 @@ function ProfileContent(props) {
   }
 
   const getTitle = (name, age) => {
-    if (accountType === ACCOUNT_TYPE.HUB && name) {
-      return name;
+    if (accountType === ACCOUNT_TYPE.HUB) {
+      if (name) {
+        return name;
+      } else {
+        return account.organization ? account.organization : account.title;
+      }
     }
     if (accountType === ACCOUNT_TYPE.MENTOR && name) {
       return name;
     } else if (name && age) {
       return name + ", " + age;
     } else if (accountType === ACCOUNT_TYPE.PARTNER) {
-      return account.organization;
+      return account.organization ? account.organization : account.title;
     }
   };
 
@@ -304,7 +308,13 @@ function ProfileContent(props) {
         <>
           {" "}
           <div className="mentor-profile-heading">
-            <b>{t("partnerProfile.briefIntro")}</b>
+            {props.mentor &&
+            props.mentor.hub_user &&
+            props.mentor.hub_user.url.includes("AUAF") ? (
+              <b>{t("partnerProfile.AUAFbriefIntro")}</b>
+            ) : (
+              <b>{t("partnerProfile.briefIntro")}</b>
+            )}
           </div>
           <div className="mentor-profile-about">{account.intro}</div>
         </>
@@ -389,21 +399,35 @@ function ProfileContent(props) {
         (accountType === ACCOUNT_TYPE.HUB && props.mentor.hub_id)) && (
         <>
           <div className="mentor-profile-heading">
-            <b>{t("partnerProfile.contactFullName")}</b>
+            {props.mentor &&
+            props.mentor.hub_user &&
+            props.mentor.hub_user.url.includes("AUAF") ? (
+              <b>{t("partnerProfile.contactFullName")}</b>
+            ) : (
+              <b>{t("partnerProfile.contactFullName")}</b>
+            )}
           </div>
           <div className="mentor-profile-about">{account.person_name}</div>
           <br /> <br />
-          <div className="mentor-profile-heading">
-            {props.mentor &&
-            props.mentor.hub_user &&
-            props.mentor.hub_user.url === "GSRFoundation" ? (
-              <b>How we’re deploying funding from the GSR Foundation</b>
-            ) : (
-              <b>{t("partnerProfile.projectNames")} </b>
-            )}
-          </div>
-          <div className="mentor-profile-about">{account.topics}</div>
-          <br /> <br />
+          {props.mentor &&
+          props.mentor.hub_user &&
+          props.mentor.hub_user.url.includes("AUAF") ? (
+            <></>
+          ) : (
+            <>
+              <div className="mentor-profile-heading">
+                {props.mentor &&
+                props.mentor.hub_user &&
+                props.mentor.hub_user.url === "GSRFoundation" ? (
+                  <b>How we’re deploying funding from the GSR Foundation</b>
+                ) : (
+                  <b>{t("partnerProfile.projectNames")} </b>
+                )}
+              </div>
+              <div className="mentor-profile-about">{account.topics}</div>
+              <br /> <br />
+            </>
+          )}
           {props.mentor &&
             props.mentor.hub_user &&
             props.mentor.hub_user.url === "GSRFoundation" &&
@@ -421,19 +445,27 @@ function ProfileContent(props) {
           </div>
           <div className="mentor-profile-about">{account.sdgs}</div>
           <br /> <br />
-          <div className="mentor-profile-heading">
-            <b>{t("partnerProfile.collaborationGrants")}</b>
-          </div>
-          <div className="mentor-profile-about">
-            {account.open_grants ? "Yes" : "No"}
-          </div>
-          <br /> <br />
-          <div className="mentor-profile-heading">
-            <b>{t("partnerProfile.collaborationProjects")}</b>
-          </div>
-          <div className="mentor-profile-about">
-            {account.open_projects ? "Yes" : "No"}
-          </div>
+          {props.mentor &&
+          props.mentor.hub_user &&
+          props.mentor.hub_user.url.includes("AUAF") ? (
+            <></>
+          ) : (
+            <>
+              <div className="mentor-profile-heading">
+                <b>{t("partnerProfile.collaborationGrants")}</b>
+              </div>
+              <div className="mentor-profile-about">
+                {account.open_grants ? "Yes" : "No"}
+              </div>
+              <br /> <br />
+              <div className="mentor-profile-heading">
+                <b>{t("partnerProfile.collaborationProjects")}</b>
+              </div>
+              <div className="mentor-profile-about">
+                {account.open_projects ? "Yes" : "No"}
+              </div>
+            </>
+          )}
         </>
       )}
       {props.mentor.video && (

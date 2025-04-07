@@ -141,18 +141,20 @@ function PartnerProfileForm({
           <Input />
         </Form.Item>
       )}
-      <Form.Item
-        label={t("partnerProfile.organizationName")}
-        name="organization"
-        rules={[
-          {
-            required: true,
-            message: t("common.requiredFullName"),
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
+      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+        <Form.Item
+          label={t("partnerProfile.organizationName")}
+          name="organization"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredFullName"),
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      )}
       {newProfile ? (
         <div className={styles.formGroup}>
           <Form.Item
@@ -193,21 +195,42 @@ function PartnerProfileForm({
           </Form.Item>
         </div>
       ) : null}
+      {hub_user && hub_user.url.includes("AUAF") && (
+        <Form.Item
+          label={t("partnerProfile.title")}
+          name="title"
+          rules={[
+            {
+              required: true,
+              message: t("partnerProfile.requiredTitle"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Input />
+        </Form.Item>
+      )}
+      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+        <Form.Item
+          label={t("partnerProfile.location")}
+          name="location"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredKnowledgeLocation"),
+            },
+          ]}
+          className={styles.formGroupItem}
+        >
+          <Input />
+        </Form.Item>
+      )}
       <Form.Item
-        label={t("partnerProfile.location")}
-        name="location"
-        rules={[
-          {
-            required: true,
-            message: t("common.requiredKnowledgeLocation"),
-          },
-        ]}
-        className={styles.formGroupItem}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label={t("partnerProfile.contactFullName")}
+        label={
+          hub_user && hub_user.url.includes("AUAF")
+            ? t("partnerProfile.AUAFcontactFullName")
+            : t("partnerProfile.contactFullName")
+        }
         name="person_name"
         rules={[
           {
@@ -231,7 +254,11 @@ function PartnerProfileForm({
         <Select mode="multiple" options={getRegions(t)} />
       </Form.Item>
       <Form.Item
-        label={t("partnerProfile.briefIntro")}
+        label={
+          hub_user && hub_user.url.includes("AUAF")
+            ? t("partnerProfile.AUAFbriefIntro")
+            : t("partnerProfile.briefIntro")
+        }
         name="intro"
         rules={[
           {
@@ -242,22 +269,37 @@ function PartnerProfileForm({
       >
         <Input.TextArea rows={3} />
       </Form.Item>
-      <div className={styles.formGroup}>
+      {!hub_user || !hub_user.url.includes("AUAF") ? (
+        <div className={styles.formGroup}>
+          <Form.Item
+            className={styles.formGroupItem}
+            label={t("commonProfile.website")}
+            name="website"
+            rules={[
+              {
+                pattern: new RegExp(urlRegex),
+                message: t("common.invalidUrl"),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            className={styles.formGroupItem}
+            label={t("commonProfile.linkedin")}
+            name="linkedin"
+            rules={[
+              {
+                pattern: new RegExp(urlRegex),
+                message: t("common.invalidUrl"),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </div>
+      ) : (
         <Form.Item
-          className={styles.formGroupItem}
-          label={t("commonProfile.website")}
-          name="website"
-          rules={[
-            {
-              pattern: new RegExp(urlRegex),
-              message: t("common.invalidUrl"),
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          className={styles.formGroupItem}
           label={t("commonProfile.linkedin")}
           name="linkedin"
           rules={[
@@ -269,7 +311,8 @@ function PartnerProfileForm({
         >
           <Input />
         </Form.Item>
-      </div>
+      )}
+
       <Form.Item
         label={t("common.timezone")}
         name="timezone"
@@ -295,55 +338,61 @@ function PartnerProfileForm({
       >
         <Select mode="multiple" options={getSDGs(t)} />
       </Form.Item>
-      <Form.Item
-        label={
-          hub_user && hub_user.url === "GSRFoundation"
-            ? t("partnerProfile.projectNames_GSR")
-            : t("partnerProfile.projectNames")
-        }
-        name="topics"
-      >
-        <Input.TextArea rows={3} />
-      </Form.Item>
+      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+        <Form.Item
+          label={
+            hub_user && hub_user.url === "GSRFoundation"
+              ? t("partnerProfile.projectNames_GSR")
+              : t("partnerProfile.projectNames")
+          }
+          name="topics"
+        >
+          <Input.TextArea rows={3} />
+        </Form.Item>
+      )}
+
       {hub_user && hub_user.url === "GSRFoundation" && (
         <Form.Item label={t("partnerProfile.success_GSR")} name="success">
           <Input.TextArea rows={3} />
         </Form.Item>
       )}
-      <div className={styles.formGroup}>
-        <Form.Item
-          label={t("partnerProfile.collaborationGrants")}
-          name="open_grants"
-          rules={[
-            {
-              required: true,
-              message: t("common.requiredCheckbox"),
-            },
-          ]}
-          className={styles.formGroupItem}
-        >
-          <Radio.Group>
-            <Radio value={true}>{t("common.yes")}</Radio>
-            <Radio value={false}>{t("common.no")}</Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item
-          label={t("partnerProfile.collaborationProjects")}
-          name="open_projects"
-          rules={[
-            {
-              required: true,
-              message: t("common.requiredCheckbox"),
-            },
-          ]}
-          className={styles.formGroupItem}
-        >
-          <Radio.Group>
-            <Radio value={true}>{t("common.yes")}</Radio>
-            <Radio value={false}>{t("common.no")}</Radio>
-          </Radio.Group>
-        </Form.Item>
-      </div>
+      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+        <div className={styles.formGroup}>
+          <Form.Item
+            label={t("partnerProfile.collaborationGrants")}
+            name="open_grants"
+            rules={[
+              {
+                required: true,
+                message: t("common.requiredCheckbox"),
+              },
+            ]}
+            className={styles.formGroupItem}
+          >
+            <Radio.Group>
+              <Radio value={true}>{t("common.yes")}</Radio>
+              <Radio value={false}>{t("common.no")}</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label={t("partnerProfile.collaborationProjects")}
+            name="open_projects"
+            rules={[
+              {
+                required: true,
+                message: t("common.requiredCheckbox"),
+              },
+            ]}
+            className={styles.formGroupItem}
+          >
+            <Radio.Group>
+              <Radio value={true}>{t("common.yes")}</Radio>
+              <Radio value={false}>{t("common.no")}</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </div>
+      )}
+
       <Form.Item>
         <Button type="primary" htmlType="submit" block loading={loading}>
           {t("common.save")}

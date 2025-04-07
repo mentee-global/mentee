@@ -550,9 +550,13 @@
   },
   "partnerProfile": {
     "briefIntro": "Breve introducción a su organización/institución/corporación",
+    "AUAFbriefIntro":"Breve presentación personal",
     "collaborationGrants": "Abierto a la colaboración en subvenciones",
     "collaborationProjects": "Abierto a la colaboración en proyectos",
     "contactFullName": "Nombre completo de la persona de contacto (nombre y apellido)",
+    "AUAFcontactFullName":"Ingrese su nombre completo",
+    "title":"Ingrese su título",
+    "requiredTitle":"Por favor, ingrese el título",
     "developmentGoals": "Objetivos de desarrollo sostenible que apoya su trabajo",
     "location": "Ubicación de la sede (ciudad, país)",
     "organizationName": "Organización/Institución/Corporación Nombre Completo",

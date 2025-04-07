@@ -550,9 +550,13 @@
   },
   "partnerProfile": {
     "briefIntro": "مقدمة موجزة عن منظمتك / مؤسستك / شركتك",
+    "AUAFbriefIntro":"نبذة مختصرة عن نفسك",
     "collaborationGrants": "منفتح على التعاون في المنح",
     "collaborationProjects": "مفتوح للتعاون في المشاريع",
     "contactFullName": "الاسم الكامل لجهة الاتصال (الاسم واللقب)",
+    "AUAFcontactFullName":"أدخل اسمك الكامل",
+    "title":"أدخل عنوانك",
+    "requiredTitle":"يرجى إدخال العنوان",
     "developmentGoals": "أهداف التنمية المستدامة التي يدعمها عملك",
     "location": "موقع المقر (المدينة ، الدولة)",
     "organizationName": "اسم المنظمة / المؤسسة / الشركة بالكامل",

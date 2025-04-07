@@ -76,8 +76,8 @@ class MenteeForm(Form):
 class PartnerForm(Form):
     firebase_uid = StringField(validators=[InputRequired()])
     email = StringField(validators=[InputRequired()])
-    organization = StringField(validators=[InputRequired()])
-    location = StringField(validators=[InputRequired()])
+    # organization = StringField(validators=[InputRequired()])
+    # location = StringField(validators=[InputRequired()])
     intro = StringField(validators=[InputRequired()])
     regions = FieldList(StringField(), validators=[validators.DataRequired()])
     sdgs = FieldList(StringField(), validators=[validators.DataRequired()])

@@ -552,9 +552,13 @@
   },
   "partnerProfile": {
     "briefIntro": "Brief Introduction to Your Org/Inst/Corp",
+    "AUAFbriefIntro":"Brief Introduction of Yourself",
     "collaborationGrants": "Open to Collaboration on Grants",
     "collaborationProjects": "Open to Collaboration on Projects",
     "contactFullName": "Contact Person's Full Name (First Last)",
+    "AUAFcontactFullName":"Enter your Full Name",
+    "title":"Enter your Title",
+    "requiredTitle":"Please input title",
     "developmentGoals": "Sustainable Development Goals Your Work Supports",
     "location": "Headquarters Location (City, Country)",
     "organizationName": "Organization/Institution/Corporation Full Name",

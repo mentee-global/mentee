@@ -550,6 +550,10 @@
   },
   "partnerProfile": {
     "briefIntro": "Breve introdução à sua Organização/Instituição/Corporação",
+    "AUAFbriefIntro":"Breve apresentação de você mesmo",
+    "AUAFcontactFullName":"Insira seu título",
+    "title":"Por favor, insira o título",
+    "requiredTitle":"Please input title",
     "collaborationGrants": "Aberto à colaboração em subsídios",
     "collaborationProjects": "Aberto à colaboração em projetos",
     "contactFullName": "Nome completo da pessoa para contato ",

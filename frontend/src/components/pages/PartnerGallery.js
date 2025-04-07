@@ -288,6 +288,7 @@ function PartnerGallery(props) {
               <PartnerCard
                 key={key}
                 organization={partner.organization}
+                title={partner.title}
                 email={partner.email}
                 location={partner.location}
                 regions={partner.regions}

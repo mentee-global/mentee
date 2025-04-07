@@ -551,6 +551,10 @@
   },
   "partnerProfile": {
     "briefIntro": "ستاسو د موسسې/ سازمان/ شرکت لنډه پیژنده",
+    "AUAFbriefIntro":"د ځان لنډه پیژندنه",
+    "AUAFcontactFullName":"خپل بشپړ نوم ولیکئ",
+    "title":"خپل سرلیک ولیکئ",
+    "requiredTitle":"مهرباني وکړئ سرلیک دننه کړئ",
     "collaborationGrants": "د مرستې په اړه د همکارۍ لپاره چمتو\n",
     "collaborationProjects": "د پروژو همکاری لپاره چمتو",
     "contactFullName": "د اړیکی نیونکی مکمل نوم ( لمړی نوم)",

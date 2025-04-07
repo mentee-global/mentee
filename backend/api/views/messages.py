@@ -931,7 +931,9 @@ def get_partners():
 
             # Check for both hub_id and hub_user_id to maintain compatibility
             if hasattr(partner, "hub_id"):
-                partner_dict["hub_user_id"] = partner.hub_id  # Map hub_id to hub_user_id for frontend compatibility
+                partner_dict["hub_user_id"] = (
+                    partner.hub_id
+                )  # Map hub_id to hub_user_id for frontend compatibility
             elif hasattr(partner, "hub_user_id"):
                 partner_dict["hub_user_id"] = partner.hub_user_id
 

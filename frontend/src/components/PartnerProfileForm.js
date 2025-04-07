@@ -241,18 +241,20 @@ function PartnerProfileForm({
       >
         <Input />
       </Form.Item>
-      <Form.Item
-        label={t("partnerProfile.regionsWork")}
-        name="regions"
-        rules={[
-          {
-            required: true,
-            message: t("common.requiredRegion"),
-          },
-        ]}
-      >
-        <Select mode="multiple" options={getRegions(t)} />
-      </Form.Item>
+      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+        <Form.Item
+          label={t("partnerProfile.regionsWork")}
+          name="regions"
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredRegion"),
+            },
+          ]}
+        >
+          <Select mode="multiple" options={getRegions(t)} />
+        </Form.Item>
+      )}
       <Form.Item
         label={
           hub_user && hub_user.url.includes("AUAF")

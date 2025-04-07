@@ -16,7 +16,7 @@ class PartnerProfile(Document, Mixin):
     title = StringField(required=False)
     location = StringField(required=False)
     person_name = StringField()
-    regions = ListField(StringField(), required=True)
+    regions = ListField(StringField(), required=False)
     intro = StringField(required=True)
     website = StringField()
     linkedin = StringField()

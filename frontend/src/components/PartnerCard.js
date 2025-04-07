@@ -60,6 +60,9 @@ function PartnerCard(props) {
   }
 
   function truncate(str, maxLength) {
+    if (!str) {
+      return "";
+    }
     return str.length > maxLength ? (
       <Tooltip title={str}> {str.substring(0, maxLength - 3) + "..."} </Tooltip>
     ) : (
@@ -117,13 +120,32 @@ function PartnerCard(props) {
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">
             <Title style={styles.title} className="gallery-title-text">
-              {truncate(props.organization, 14)}
+              {truncate(
+                props.organization ? props.organization : props.title,
+                14
+              )}
             </Title>
             <Title style={styles.subTitle} type="secondary" level={5}>
               {truncate(props.email, 35)}
             </Title>
           </div>
         </div>
+        {props.person_name && (
+          <div className="gallery-info-section">
+            <Typography>
+              <Title
+                level={5}
+                className={css`
+                  margin-top: 0;
+                  color: ${colorPrimary} !important;
+                `}
+              >
+                {t("common.name")}{" "}
+              </Title>
+              <Paragraph>{props.person_name}</Paragraph>
+            </Typography>
+          </div>
+        )}
         {props.location && (
           <div className="gallery-info-section">
             <Typography>
@@ -141,23 +163,26 @@ function PartnerCard(props) {
             </Typography>
           </div>
         )}
-        <Typography>
-          <Title
-            level={5}
-            className={css`
-              margin-top: 0;
-              color: ${colorPrimary} !important;
-            `}
-          >
-            {t("gallery.regions")} <EnvironmentOutlined />
-          </Title>
-          <Paragraph>
-            {truncate(
-              getTranslatedOptions(props.regions, getRegions(t)).join(", "),
-              37
-            )}
-          </Paragraph>
-        </Typography>
+        {!(props.hub_user && props.hub_user.url.includes("AUAF")) && (
+          <Typography>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
+            >
+              {t("gallery.regions")} <EnvironmentOutlined />
+            </Title>
+            <Paragraph>
+              {truncate(
+                getTranslatedOptions(props.regions, getRegions(t)).join(", "),
+                37
+              )}
+            </Paragraph>
+          </Typography>
+        )}
+
         {props.website && (
           <Paragraph>
             <LinkOutlined style={styles.icon} />

@@ -453,7 +453,10 @@ def create_mentor_profile():
             txt_role = "Mentee"
         if account_type == Account.PARTNER:
             txt_role = "Partner"
-            txt_name = data["organization"]
+            if "organization" in data:
+                txt_name = data["organization"]
+            else:
+                txt_name = data["title"]
         else:
             txt_name = data["name"]
         success, msg = send_email(
@@ -589,7 +592,10 @@ def create_profile_existing_account():
             txt_role = "Mentee"
         if account_type == Account.PARTNER:
             txt_role = "Partner"
-            txt_name = data["organization"]
+            if "organization" in data:
+                txt_name = data["organization"]
+            else:
+                txt_name = data["title"]
         else:
             txt_name = data["name"]
         success, msg = send_email(

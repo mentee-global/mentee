@@ -22,9 +22,10 @@ def new_profile(data: dict = {}, profile_type: int = -1):
         new_profile = PartnerProfile(
             firebase_uid=data["firebase_uid"],
             email=data["email"],
-            organization=data["organization"],
-            location=data["location"],
-            regions=data["regions"],
+            organization=data.get("organization"),
+            title=data.get("title"),
+            location=data.get("location"),
+            regions=data.get("regions"),
             intro=data["intro"],
             open_grants=data.get("open_grants"),
             open_projects=data.get("open_projects"),
@@ -153,6 +154,7 @@ def edit_profile(data: dict = {}, profile: object = None):
     if isinstance(profile, PartnerProfile):
         # Edit fields or keep original data if no added data
         profile.organization = data.get("organization", profile.organization)
+        profile.title = data.get("title", profile.title)
         profile.location = data.get("location", profile.location)
         profile.email = data.get("email", profile.email)
         profile.regions = data.get("regions", profile.regions)

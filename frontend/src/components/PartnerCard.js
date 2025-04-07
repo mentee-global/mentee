@@ -130,6 +130,22 @@ function PartnerCard(props) {
             </Title>
           </div>
         </div>
+        {props.person_name && (
+          <div className="gallery-info-section">
+            <Typography>
+              <Title
+                level={5}
+                className={css`
+                  margin-top: 0;
+                  color: ${colorPrimary} !important;
+                `}
+              >
+                {t("common.name")}{" "}
+              </Title>
+              <Paragraph>{props.person_name}</Paragraph>
+            </Typography>
+          </div>
+        )}
         {props.location && (
           <div className="gallery-info-section">
             <Typography>
@@ -147,23 +163,26 @@ function PartnerCard(props) {
             </Typography>
           </div>
         )}
-        <Typography>
-          <Title
-            level={5}
-            className={css`
-              margin-top: 0;
-              color: ${colorPrimary} !important;
-            `}
-          >
-            {t("gallery.regions")} <EnvironmentOutlined />
-          </Title>
-          <Paragraph>
-            {truncate(
-              getTranslatedOptions(props.regions, getRegions(t)).join(", "),
-              37
-            )}
-          </Paragraph>
-        </Typography>
+        {!(props.hub_user && props.hub_user.url.includes("AUAF")) && (
+          <Typography>
+            <Title
+              level={5}
+              className={css`
+                margin-top: 0;
+                color: ${colorPrimary} !important;
+              `}
+            >
+              {t("gallery.regions")} <EnvironmentOutlined />
+            </Title>
+            <Paragraph>
+              {truncate(
+                getTranslatedOptions(props.regions, getRegions(t)).join(", "),
+                37
+              )}
+            </Paragraph>
+          </Typography>
+        )}
+
         {props.website && (
           <Paragraph>
             <LinkOutlined style={styles.icon} />

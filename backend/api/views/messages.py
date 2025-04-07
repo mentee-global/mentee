@@ -221,10 +221,16 @@ def get_sidebar(user_id):
                         continue
                 otherUser = json.loads(otherUser.to_json())
                 if user_type == Account.PARTNER.value:
-                    otherUserObj = {
-                        "name": otherUser["organization"],
-                        "user_type": user_type,
-                    }
+                    if "organization" in otherUser:
+                        otherUserObj = {
+                            "name": otherUser["organization"],
+                            "user_type": user_type,
+                        }
+                    else:
+                        otherUserObj = {
+                            "name": otherUser["title"],
+                            "user_type": user_type,
+                        }
                 else:
                     otherUserObj = {
                         "name": otherUser["name"],

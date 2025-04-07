@@ -79,7 +79,7 @@ class PartnerForm(Form):
     # organization = StringField(validators=[InputRequired()])
     # location = StringField(validators=[InputRequired()])
     intro = StringField(validators=[InputRequired()])
-    regions = FieldList(StringField(), validators=[validators.DataRequired()])
+    # regions = FieldList(StringField(), validators=[validators.DataRequired()])
     sdgs = FieldList(StringField(), validators=[validators.DataRequired()])
 
 

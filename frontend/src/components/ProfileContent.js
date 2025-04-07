@@ -336,8 +336,16 @@ function ProfileContent(props) {
       )}
 
       <br />
-      {displayTags()}
-      <br />
+      {props.mentor &&
+      props.mentor.hub_user &&
+      props.mentor.hub_user.url.includes("AUAF") ? (
+        <></>
+      ) : (
+        <>
+          {displayTags()}
+          <br />
+        </>
+      )}
       {accountType !== ACCOUNT_TYPE.PARTNER &&
         accountType !== ACCOUNT_TYPE.HUB && (
           <>

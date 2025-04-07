@@ -36,6 +36,7 @@ function PartnerGallery(props) {
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const [query2, setQuery2] = useState();
+  const [queryName, setQueryName] = useState();
   const [sdgs, setSdgs] = useState([]);
   const [searchHub, setSearchHub] = useState(null);
   const { user } = useSelector((state) => state.user);
@@ -109,9 +110,19 @@ function PartnerGallery(props) {
             partner.topics.toUpperCase().includes(query2.toUpperCase()));
       }
 
-      const matchesName =
-        !query ||
-        partner.organization.toUpperCase().includes(query.toUpperCase());
+      let matchesName = false;
+      if (
+        (user && user.hub_user && user.hub_user.url.includes("AUAF")) ||
+        (user.role === ACCOUNT_TYPE.HUB && user.url.includes("AUAF"))
+      ) {
+        matchesName =
+          !queryName ||
+          partner.person_name.toUpperCase().includes(queryName.toUpperCase());
+      } else {
+        matchesName =
+          !query ||
+          partner.organization.toUpperCase().includes(query.toUpperCase());
+      }
 
       return (
         matchesSpecializations &&
@@ -124,53 +135,76 @@ function PartnerGallery(props) {
 
   const getFilterForm = () => (
     <>
-      <Title
-        level={4}
-        className={css`
-          margin-top: 0;
-        `}
-      >
-        {t("gallery.organization")}
-      </Title>
-      <Input
-        placeholder={t("gallery.organizationPlaceholder")}
-        prefix={<SearchOutlined />}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <Title level={4}>{t("gallery.regions")}</Title>
-      <Select
-        placeholder={t("gallery.regions")}
-        onChange={(value) => {
-          setRegions(value);
-        }}
-        options={getRegions(t)}
-        className={css`
-          width: 100%;
-        `}
-        allowClear
-        mode="multiple"
-        maxTagCount="responsive"
-      />
-      <Title level={4}>
-        {(user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
-        (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
-          ? t("gallery.projectTopicsPlaceholder_GSR")
-          : t("gallery.projectTopics")}
-      </Title>
-      <Input
-        className={css`
-          width: 100%;
-        `}
-        placeholder={
-          (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
-          (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
-            ? t("gallery.projectTopicsPlaceholder_GSR")
-            : t("gallery.projectTopicsPlaceholder")
-        }
-        allowClear
-        onChange={(e) => setQuery2(e.target.value)}
-        prefix={<SearchOutlined />}
-      />
+      {(user && user.hub_user && user.hub_user.url.includes("AUAF")) ||
+      (user.role === ACCOUNT_TYPE.HUB && user.url.includes("AUAF")) ? (
+        <>
+          <Title
+            level={4}
+            className={css`
+              margin-top: 0;
+            `}
+          >
+            {t("common.name")}
+          </Title>
+          <Input
+            placeholder={t("common.requiredFullName")}
+            prefix={<SearchOutlined />}
+            onChange={(e) => setQueryName(e.target.value)}
+          />
+        </>
+      ) : (
+        <>
+          <Title
+            level={4}
+            className={css`
+              margin-top: 0;
+            `}
+          >
+            {t("gallery.organization")}
+          </Title>
+          <Input
+            placeholder={t("gallery.organizationPlaceholder")}
+            prefix={<SearchOutlined />}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <Title level={4}>{t("gallery.regions")}</Title>
+          <Select
+            placeholder={t("gallery.regions")}
+            onChange={(value) => {
+              setRegions(value);
+            }}
+            options={getRegions(t)}
+            className={css`
+              width: 100%;
+            `}
+            allowClear
+            mode="multiple"
+            maxTagCount="responsive"
+          />
+          <Title level={4}>
+            {(user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
+            (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+              ? t("gallery.projectTopicsPlaceholder_GSR")
+              : t("gallery.projectTopics")}
+          </Title>
+          <Input
+            className={css`
+              width: 100%;
+            `}
+            placeholder={
+              (user &&
+                user.hub_user &&
+                user.hub_user.url === "GSRFoundation") ||
+              (user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
+                ? t("gallery.projectTopicsPlaceholder_GSR")
+                : t("gallery.projectTopicsPlaceholder")
+            }
+            allowClear
+            onChange={(e) => setQuery2(e.target.value)}
+            prefix={<SearchOutlined />}
+          />
+        </>
+      )}
       <Title level={4}>{t("gallery.sdgs")}</Title>
       <Select
         className={css`
@@ -241,6 +275,7 @@ function PartnerGallery(props) {
               setMobileFilterVisible(false);
               setRegions([]);
               setQuery("");
+              setQueryName("");
             }}
           >
             {t("common.cancel")}
@@ -288,6 +323,7 @@ function PartnerGallery(props) {
               <PartnerCard
                 key={key}
                 organization={partner.organization}
+                person_name={partner.person_name}
                 title={partner.title}
                 email={partner.email}
                 location={partner.location}

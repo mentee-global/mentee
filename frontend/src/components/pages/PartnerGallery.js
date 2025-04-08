@@ -113,7 +113,9 @@ function PartnerGallery(props) {
       let matchesName = false;
       if (
         (user && user.hub_user && user.hub_user.url.includes("AUAF")) ||
-        (user.role === ACCOUNT_TYPE.HUB && user.url.includes("AUAF"))
+        (user.role === ACCOUNT_TYPE.HUB &&
+          user.url &&
+          user.url.includes("AUAF"))
       ) {
         matchesName =
           !queryName ||
@@ -136,7 +138,9 @@ function PartnerGallery(props) {
   const getFilterForm = () => (
     <>
       {(user && user.hub_user && user.hub_user.url.includes("AUAF")) ||
-      (user.role === ACCOUNT_TYPE.HUB && user.url.includes("AUAF")) ? (
+      (user.role === ACCOUNT_TYPE.HUB &&
+        user.url &&
+        user.url.includes("AUAF")) ? (
         <>
           <Title
             level={4}
@@ -331,7 +335,7 @@ function PartnerGallery(props) {
                 website={partner.website}
                 linkedin={partner.linkedin}
                 video={partner.video}
-                id={partner._id["$oid"]}
+                id={partner.id ? partner.id : partner._id["$oid"]}
                 firebase_uid={partner.firebase_uid}
                 image={partner.image}
                 isSupport={props.isSupport}

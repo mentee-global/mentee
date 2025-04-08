@@ -116,7 +116,6 @@ function PartnerGallery(props) {
         (user.role === ACCOUNT_TYPE.HUB &&
           user.url &&
           user.url.includes("AUAF"))
-
       ) {
         matchesName =
           !queryName ||

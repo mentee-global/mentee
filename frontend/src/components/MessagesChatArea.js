@@ -340,47 +340,6 @@ function MessagesChatArea(props) {
     setMessageText("");
     return;
   };
-  if (loading) {
-    return (
-      <div
-        className="no-messages"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-        }}
-      >
-        {isMobile && (
-          <div
-            onClick={showSideBar}
-            style={{
-              cursor: "pointer",
-              width: "20px",
-              fontSize: "16px",
-              position: "absolute",
-              top: "15px",
-              left: "15px",
-            }}
-          >
-            <ArrowLeftOutlined />
-          </div>
-        )}
-        <Spin size="large" />
-        <div
-          style={{
-            marginTop: "20px",
-            fontSize: "16px",
-            color: "rgba(0, 0, 0, 0.65)",
-          }}
-        >
-          Loading conversation...
-        </div>
-      </div>
-    );
-  }
-
   if (!activeMessageId || !messages || !messages.length) {
     return (
       <div className="no-messages">
@@ -526,116 +485,124 @@ function MessagesChatArea(props) {
         <div></div>
       )}
       <div className="conversation-content">
-        {accountData &&
-          messages.map((block, index) => {
-            return (
-              <div
-                className={`chatRight__items you-${
-                  block.sender_id.$oid === profileId ? "sent" : "received"
-                }`}
-                id={block?._id?.$oid || index}
-              >
+        <Spin spinning={loading}>
+          {accountData &&
+            messages.map((block, index) => {
+              return (
                 <div
-                  className={`chatRight__inner  message-area ${
-                    block.sender_id.$oid !== profileId
-                      ? "flex-start"
-                      : "flex-end"
+                  className={`chatRight__items you-${
+                    block.sender_id.$oid === profileId ? "sent" : "received"
                   }`}
-                  data-chat="person1"
+                  id={block?._id?.$oid || index}
                 >
-                  <div className="flex">
-                    {block.sender_id.$oid !== profileId && (
-                      <span>
-                        <Avatar src={accountData.image?.url} />{" "}
-                      </span>
-                    )}
-                    <div className="convo">
-                      <div
-                        className={css`
-                          padding: 5px 15px;
-                          border-radius: 5px;
-                          margin-left: 8px;
-                          width: fit-content;
-                          white-space: pre-wrap;
-                          ${block.sender_id.$oid === profileId
-                            ? styles.bubbleSent
-                            : styles.bubbleReceived}
-                        `}
-                      >
-                        <HtmlContent content={linkify(block.body)} />
-                        {block.availabes_in_future !== undefined &&
-                          block.availabes_in_future !== null &&
-                          block.availabes_in_future.length > 0 &&
-                          block.availabes_in_future.map((available_item) => {
-                            total_index++;
-                            return (
-                              <>
-                                {block.sender_id.$oid === profileId ||
-                                bookedData.hasOwnProperty(
-                                  moment
-                                    .parseZone(available_item.start_time.$date)
-                                    .local()
-                                    .format("YY-MM-DD H:mm")
-                                ) ? (
-                                  <div>
-                                    {moment
+                  <div
+                    className={`chatRight__inner  message-area ${
+                      block.sender_id.$oid !== profileId
+                        ? "flex-start"
+                        : "flex-end"
+                    }`}
+                    data-chat="person1"
+                  >
+                    <div className="flex">
+                      {block.sender_id.$oid !== profileId && (
+                        <span>
+                          <Avatar src={accountData.image?.url} />{" "}
+                        </span>
+                      )}
+                      <div className="convo">
+                        <div
+                          className={css`
+                            padding: 5px 15px;
+                            border-radius: 5px;
+                            margin-left: 8px;
+                            width: fit-content;
+                            white-space: pre-wrap;
+                            ${block.sender_id.$oid === profileId
+                              ? styles.bubbleSent
+                              : styles.bubbleReceived}
+                          `}
+                        >
+                          <HtmlContent content={linkify(block.body)} />
+                          {block.availabes_in_future !== undefined &&
+                            block.availabes_in_future !== null &&
+                            block.availabes_in_future.length > 0 &&
+                            block.availabes_in_future.map((available_item) => {
+                              total_index++;
+                              return (
+                                <>
+                                  {block.sender_id.$oid === profileId ||
+                                  bookedData.hasOwnProperty(
+                                    moment
                                       .parseZone(
                                         available_item.start_time.$date
                                       )
                                       .local()
-                                      .format("LLL")}{" "}
-                                    ~{" "}
-                                    {moment
-                                      .parseZone(available_item.end_time.$date)
-                                      .local()
-                                      .format("LT")}
-                                  </div>
-                                ) : (
-                                  <MenteeAppointmentModal
-                                    mentor_name={accountData.name}
-                                    availability={block.availabes_in_future}
-                                    selected_availability={available_item}
-                                    mentor_id={otherId}
-                                    mentee_id={profileId}
-                                    handleUpdateMentor={handleUpdateAccount}
-                                    handleSuccessBooking={handleSuccessBooking}
-                                    btn_title={
-                                      moment
+                                      .format("YY-MM-DD H:mm")
+                                  ) ? (
+                                    <div>
+                                      {moment
                                         .parseZone(
                                           available_item.start_time.$date
                                         )
                                         .local()
-                                        .format("LLL") +
-                                      " ~ " +
-                                      moment
+                                        .format("LLL")}{" "}
+                                      ~{" "}
+                                      {moment
                                         .parseZone(
                                           available_item.end_time.$date
                                         )
                                         .local()
-                                        .format("LTS")
-                                    }
-                                    index={total_index}
-                                  />
-                                )}
-                              </>
-                            );
-                          })}
+                                        .format("LT")}
+                                    </div>
+                                  ) : (
+                                    <MenteeAppointmentModal
+                                      mentor_name={accountData.name}
+                                      availability={block.availabes_in_future}
+                                      selected_availability={available_item}
+                                      mentor_id={otherId}
+                                      mentee_id={profileId}
+                                      handleUpdateMentor={handleUpdateAccount}
+                                      handleSuccessBooking={
+                                        handleSuccessBooking
+                                      }
+                                      btn_title={
+                                        moment
+                                          .parseZone(
+                                            available_item.start_time.$date
+                                          )
+                                          .local()
+                                          .format("LLL") +
+                                        " ~ " +
+                                        moment
+                                          .parseZone(
+                                            available_item.end_time.$date
+                                          )
+                                          .local()
+                                          .format("LTS")
+                                      }
+                                      index={total_index}
+                                    />
+                                  )}
+                                </>
+                              );
+                            })}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <span style={{ opacity: "40%" }}>
-                    {block.time
-                      ? block.time
-                      : moment
-                          .utc(block.created_at.$date)
-                          .local()
-                          .format("LLL")}
-                  </span>
+                    <span style={{ opacity: "40%" }}>
+                      {block.time
+                        ? block.time
+                        : moment
+                            .utc(block.created_at.$date)
+                            .local()
+                            .format("LLL")}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+        </Spin>
         <div ref={messagesEndRef} />
       </div>
       <div className="conversation-footer">

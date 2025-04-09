@@ -67,7 +67,7 @@ function EventCard(props) {
   }
 
   function getCreaterData(user_id) {
-    return props.users.find((x) => x._id.$oid === user_id.$oid);
+    return props.users.find((x) => (x.id ? x.id : x._id.$oid === user_id.$oid));
   }
 
   const event_item = props.event_item;

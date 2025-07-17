@@ -7,7 +7,7 @@ from api.models import (
 from api.core import create_response, logger
 from api.utils.constants import Account
 
-translation = Blueprint("translation", __name__)  # initialize blueprint
+translation = Blueprint("translation", __name__)  
 
 
 @translation.route("/", methods=["GET"])

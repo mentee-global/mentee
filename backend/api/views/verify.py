@@ -5,7 +5,7 @@ from api.models import (
 from api.core import create_response
 from api.utils.require_auth import admin_only
 
-verify = Blueprint("verify", __name__)  # initialize blueprint
+verify = Blueprint("verify", __name__)  
 
 
 @verify.route("/verifyEmail", methods=["GET"])

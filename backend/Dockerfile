@@ -1,4 +1,4 @@
-# this dockerfile is used for product deployments
+
 FROM python:3.9
 LABEL maintainer "Kelley Chau <kelleyc2@illinois.edu>"
 
@@ -14,4 +14,3 @@ WORKDIR /app
 ENTRYPOINT [ "python" ]
 
 CMD [ "manage.py", "runserver" ]
-# CMD [ "manage.py", "runprod" ]

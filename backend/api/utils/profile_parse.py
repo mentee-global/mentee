@@ -15,15 +15,7 @@ from mongoengine.queryset.visitor import Q
 
 
 def new_profile(data: dict = {}, profile_type: int = -1):
-    """Parses data given by POST request
-
-    Args:
-        data (dict): POST Data. Defaults to {}.
-        profile_type (int): Type of account parsing. Defaults to -1
-
-    Returns:
-        MongoDB Model: Depending on type it returns the respective model object
-    """
+  
     if not data or profile_type == -1:
         return None
 
@@ -87,7 +79,6 @@ def new_profile(data: dict = {}, profile_type: int = -1):
         new_profile = MenteeProfile(
             firebase_uid=data["firebase_uid"],
             name=data["name"],
-            # TODO: Change this to the actual email and remove default
             email=data.get("email", "email@gmail.com"),
             email_notifications=data.get("email_notifications", True),
             text_notifications=data.get("text_notifications", False),
@@ -113,7 +104,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
                 date_uploaded=video_data["date_uploaded"],
             )
     else:
-        # There is not match with mentee/mentor
+        
         return None
 
     new_profile.languages = data["languages"]
@@ -138,15 +129,7 @@ def new_profile(data: dict = {}, profile_type: int = -1):
 
 
 def edit_profile(data: dict = {}, profile: object = None):
-    """PUT Request Parsing
-
-    Args:
-        data (dict, optional): PUT Request data. Defaults to {}.
-        profile (MongoDB Model, optional): Edits the model in place. Defaults to None.
-
-    Returns:
-        Boolean: True if successful otherwise false
-    """
+    
     if not data or not profile:
         return False
     if isinstance(profile, Admin):
@@ -162,7 +145,7 @@ def edit_profile(data: dict = {}, profile: object = None):
 
         return True
     if isinstance(profile, PartnerProfile):
-        # Edit fields or keep original data if no added data
+        
         profile.organization = data.get("organization", profile.organization)
         profile.title = data.get("title", profile.title)
         profile.location = data.get("location", profile.location)
@@ -197,7 +180,7 @@ def edit_profile(data: dict = {}, profile: object = None):
     if isinstance(profile, MentorProfile):
         ex_organization = profile.organization
         profile.organization = data.get("organization", profile.organization)
-        # Edit fields or keep original data if no added data
+       
         profile.professional_title = data.get(
             "professional_title", profile.professional_title
         )
@@ -296,7 +279,7 @@ def edit_profile(data: dict = {}, profile: object = None):
                     print(e)
 
         if ex_organization != profile.organization:
-            # for old data---------------------------------
+            
             pair_partner_data = PartnerProfile.objects(
                 assign_mentors__in=[{"id": str(profile.id), "name": profile.name}]
             )
@@ -311,7 +294,7 @@ def edit_profile(data: dict = {}, profile: object = None):
 
                 wrong_partner_item.assign_mentors = assign_mentors
                 wrong_partner_item.save()
-            # -------------------------------------------------------------------------
+           
             if profile.organization is not None and profile.organization != 0:
                 partenr_account = PartnerProfile.objects.get(id=profile.organization)
                 if partenr_account is not None:
@@ -344,7 +327,7 @@ def edit_profile(data: dict = {}, profile: object = None):
                 profile.video = None
                 if profile.videos:
                     profile.videos = profile.videos[1:]
-        # Create video objects for each item in list
+       
         if "videos" in data:
             video_data = data.get("videos")
             if video_data:
@@ -377,7 +360,7 @@ def edit_profile(data: dict = {}, profile: object = None):
             "immigrant_status", profile.immigrant_status
         )
         if ex_organization != profile.organization:
-            # for old data---------------------------------
+            
             pair_partner_data = PartnerProfile.objects(
                 assign_mentees__in=[{"id": str(profile.id), "name": profile.name}]
             )
@@ -392,7 +375,7 @@ def edit_profile(data: dict = {}, profile: object = None):
 
                 wrong_partner_item.assign_mentees = assign_mentees
                 wrong_partner_item.save()
-            # -------------------------------------------------------------------------
+           
             if profile.organization is not None and profile.organization != 0:
                 partenr_account = PartnerProfile.objects.get(id=profile.organization)
                 if partenr_account is not None:
@@ -437,7 +420,7 @@ def edit_profile(data: dict = {}, profile: object = None):
     )
     profile.roomName = data.get("roomName", profile.roomName)
 
-    # Create education object
+    
     if "education" in data:
         education_data = data.get("education")
         if education_data is not None:

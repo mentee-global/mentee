@@ -8,7 +8,7 @@ BUCKET = "app-mentee-global-images"
 
 
 def upload_image_to_storage(image, filename):
-    """Upload image to Google Cloud Storage"""
+   
     bucket = client.get_bucket(BUCKET)
     blob = bucket.blob(filename)
     blob.upload_from_string(image.read(), content_type="application/jpg")
@@ -16,7 +16,7 @@ def upload_image_to_storage(image, filename):
 
 
 def delete_image_from_storage(filename):
-    """Delete image from Google Cloud Storage"""
+    
     bucket = client.get_bucket(BUCKET)
     blob = bucket.blob(filename)
     blob.delete()
@@ -24,21 +24,21 @@ def delete_image_from_storage(filename):
 
 
 def get_image_from_storage(filename):
-    """Get image from Google Cloud Storage and use it to create a signed URL"""
+    
     bucket = client.get_bucket(BUCKET)
     blob = bucket.blob(filename)
     url = blob.generate_signed_url(
         version="v4",
-        # This URL is valid for 15 minutes
+        
         expiration=datetime.timedelta(minutes=15),
-        # Allow GET requests using this URL.
+        
         method="GET",
     )
     return url
 
 
 def compress_image(image):
-    """Compress image to reduce size"""
+    
     image = Image.open(image)
     image = image.convert("RGB")
     image.thumbnail((500, 500))

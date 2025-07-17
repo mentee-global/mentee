@@ -43,8 +43,6 @@ import urllib
 
 apply = Blueprint("apply", __name__)
 
-# GET request for all mentor applications
-
 
 @apply.route("/", methods=["GET"])
 @admin_only
@@ -63,7 +61,7 @@ def get_mentee_applications():
     return create_response(data={"mentor_applications": application})
 
 
-# GET request for mentor applications for by id
+
 @apply.route("/<id>", methods=["GET"])
 @admin_only
 def get_application_by_id(id):
@@ -83,7 +81,7 @@ def get_application_by_id(id):
     return create_response(data={"mentor_application": application, "type": "new"})
 
 
-# GET request for mentee applications for by id
+
 @apply.route("/mentee/<id>", methods=["GET"])
 @admin_only
 def get_application_mentee_by_id(id):
@@ -142,8 +140,6 @@ def get_email_status_by_role(email, role):
     return create_response(data=response_data)
 
 
-############################################################################################
-
 
 @apply.route("/status/<email>/<role>", methods=["GET"])
 def get_application_status(email, role):
@@ -184,11 +180,11 @@ def check_profile_exists(email, role):
     role = int(role)
     profile_exists = False
     try:
-        # test if the email is in mongodb
+        
         get_profile_model(role).objects.only("email").get(email=email)
         profile_exists = True
     except:
-        # Get the correct role for the email
+        
         msg = "Email contains a different role: " + email
         try:
             MentorProfile.objects.get(email=email)
@@ -364,7 +360,7 @@ def delete_application(id, role):
     return create_response(status=200, message=f"Success")
 
 
-# PUT requests for /application by object ID
+
 @apply.route("/<id>/<role>", methods=["PUT"])
 @admin_only
 def edit_application(id, role):
@@ -376,7 +372,7 @@ def edit_application(id, role):
         preferred_language = "en-US"
     role = int(role)
     logger.info(data)
-    # Try to retrieve Mentor application from database
+   
     if role == Account.MENTOR:
         try:
             try:
@@ -401,7 +397,7 @@ def edit_application(id, role):
     application.notes = data.get("notes", application.notes)
     application.save()
 
-    # Send a notification email
+   
     if application.application_state == NEW_APPLICATION_STATUS["PENDING"]:
         if role == Account.MENTOR:
             mentor_email = application.email
@@ -452,9 +448,7 @@ def edit_application(id, role):
         if not success:
             logger.info(msg)
 
-        # Add to verified emails
-
-    # send out rejection emails when put in rejected column
+        
     if application.application_state == NEW_APPLICATION_STATUS["REJECTED"]:
         mentor_email = application.email
         success, msg = send_email(
@@ -532,7 +526,7 @@ def edit_application(id, role):
     return create_response(status=200, message=f"Success")
 
 
-# POST request for Mentee Appointment
+
 @apply.route("/new", methods=["POST"])
 def create_application():
     admin_data = Admin.objects()

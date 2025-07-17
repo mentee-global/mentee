@@ -30,7 +30,6 @@ import re
 appointment = Blueprint("appointment", __name__)
 
 
-# GET request for appointments by account id
 @appointment.route("/<int:account_type>/<string:id>", methods=["GET"])
 @all_users
 def get_requests_by_id(account_type, id):
@@ -45,7 +44,6 @@ def get_requests_by_id(account_type, id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # Update appointment requests that don't have a mentee id
     if account_type == Account.MENTEE:
         by_email = AppointmentRequest.objects(email=account.email).filter(
             mentee_id__not__exists=True
@@ -67,7 +65,6 @@ def get_requests_by_id(account_type, id):
             appointment.mentee_id = mentee.id
             appointment.save()
 
-    # Update appointment requests that don't have a mentor_name
     if account_type == Account.MENTEE:
         missing_name = AppointmentRequest.objects(mentee_id=id).filter(
             mentor_name__not__exists=True
@@ -87,18 +84,15 @@ def get_requests_by_id(account_type, id):
                 logger.info(msg)
                 continue
 
-    # Fetch appointments by respective mentee/mentor id
     res = None
     if account_type == Account.MENTEE:
         res = AppointmentRequest.objects(mentee_id=id)
     elif account_type == Account.MENTOR:
         res = AppointmentRequest.objects(mentor_id=id)
 
-    # Includes mentor name because appointments page does not fetch all mentor info
     return create_response(data={"name": account.name, "requests": res})
 
 
-# POST request for Mentee Appointment
 @appointment.route("/send_invite_email", methods=["POST"])
 @all_users
 def send_invite_email():
@@ -130,9 +124,7 @@ def send_invite_email():
             if match:
                 hours_offset = int(match.group(1))
                 minutes_offset = int(match.group(2))
-                # Create a timezone with the parsed offset
                 offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
-                # Convert the datetime to the target timezone
                 avail_htmls.append(
                     start_date_object.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
                     + " ~ "
@@ -161,7 +153,6 @@ def send_invite_email():
     return create_response(status=200, message="send mail successfully")
 
 
-# POST request for Mentee Appointment
 @appointment.route("/", methods=["POST"])
 @all_users
 def create_appointment():
@@ -171,7 +162,6 @@ def create_appointment():
     if is_invalid:
         return create_response(status=422, message=msg)
 
-    # Gets mentor's and mentee's email and sends a notification to them about the appointment
     try:
         mentor = MentorProfile.objects.get(id=data.get("mentor_id"))
     except:
@@ -210,9 +200,7 @@ def create_appointment():
         if match:
             hours_offset = int(match.group(1))
             minutes_offset = int(match.group(2))
-            # Create a timezone with the parsed offset
             offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
-            # Convert the datetime to the target timezone
             converted_date = date_object.astimezone(offset)
             start_time_local_timezone = converted_date.strftime(
                 APPT_TIME_FORMAT + " %Z"
@@ -242,9 +230,7 @@ def create_appointment():
         if match:
             hours_offset = int(match.group(1))
             minutes_offset = int(match.group(2))
-            # Create a timezone with the parsed offset
             offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
-            # Convert the datetime to the target timezone
             converted_date = date_object.astimezone(offset)
             start_time_local_timezone = converted_date.strftime(
                 APPT_TIME_FORMAT + " %Z"
@@ -269,7 +255,6 @@ def create_appointment():
         msg = "Failed to send an email " + res_msg
         logger.info(msg)
 
-    # Always send SMS if phone number exists
     if mentor.phone_number:
         res, res_msg = send_sms(
             text="You received a new appointment request!\nCheckout https://app.menteeglobal.org/",
@@ -306,16 +291,13 @@ def put_appointment(id):
             mentor.availability.remove(timeslot)
             break
 
-    # Always send email regardless of notification settings
     start_time = appointment.timeslot.start_time.strftime(APPT_TIME_FORMAT + " GMT")
     if mentee.timezone:
         match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
         if match:
             hours_offset = int(match.group(1))
             minutes_offset = int(match.group(2))
-            # Create a timezone with the parsed offset
             offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
-            # Convert the datetime to the target timezone
             converted_date = appointment.timeslot.start_time.astimezone(offset)
             start_time_local_timezone = converted_date.strftime(
                 APPT_TIME_FORMAT + " %Z"
@@ -345,7 +327,6 @@ def put_appointment(id):
     return create_response(status=200, message=f"Success")
 
 
-# DELETE request for appointment by appointment id
 @appointment.route("/<string:appointment_id>", methods=["DELETE"])
 @mentor_only
 def delete_request(appointment_id):
@@ -358,7 +339,6 @@ def delete_request(appointment_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    # Always send email regardless of notification settings
     start_time = request.timeslot.start_time.strftime(f"{APPT_TIME_FORMAT} GMT")
 
     if mentee.timezone:
@@ -368,9 +348,7 @@ def delete_request(appointment_id):
         if match:
             hours_offset = int(match.group(1))
             minutes_offset = int(match.group(2))
-            # Create a timezone with the parsed offset
             offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
-            # Convert the datetime to the target timezone
             converted_date = request.timeslot.start_time.astimezone(offset)
             start_time_local_timezone = converted_date.strftime(
                 APPT_TIME_FORMAT + " %Z"
@@ -399,12 +377,10 @@ def delete_request(appointment_id):
     return create_response(status=200, message=f"Success")
 
 
-# GET all appointments per mentor
 @appointment.route("/mentors", methods=["GET"])
 @admin_only
 def get_mentors_appointments():
     mentors = MentorProfile.objects()
-    # appointments = AppointmentRequest.objects()
     messages = DirectMessage.objects()
 
     all_partners = PartnerProfile.objects()
@@ -416,11 +392,6 @@ def get_mentors_appointments():
 
     data = []
     for mentor in mentors:
-        # mentor_appts = [
-        #     appointment
-        #     for appointment in appointments
-        #     if appointment.mentor_id == mentor.id
-        # ]
         sent_messages = [
             message for message in messages if message.sender_id == mentor.id
         ]
@@ -437,8 +408,6 @@ def get_mentors_appointments():
                 "partner": partner,
                 "id": str(mentor.id),
                 "image": mentor.image,
-                # "appointments": mentor_appts,
-                # "numOfAppointments": len(mentor_appts),
                 "total_sent_messages": len(sent_messages),
                 "total_received_messages": len(receive_messages),
                 "paused_flag": mentor.paused_flag,
@@ -459,7 +428,6 @@ def get_mentors_appointments():
     return create_response(data={"mentorData": data}, status=200, message="Success")
 
 
-# GET all appointments per mentor
 @appointment.route("/mentees", methods=["GET"])
 @admin_only
 def get_mentees_appointments():
@@ -473,7 +441,6 @@ def get_mentees_appointments():
                 partners_by_assign_mentee[str(mentee_item["id"])] = partner_account
     data = []
     for mentee in mentees:
-        # mentee_appts = AppointmentRequest.objects(mentee_id=mentee.id)
         sent_messages = [
             message for message in messages if message.sender_id == mentee.id
         ]
@@ -489,7 +456,6 @@ def get_mentees_appointments():
         data.append(
             {
                 **mentee,
-                # "numOfAppointments": len(mentee_appts),
                 "total_sent_messages": len(sent_messages),
                 "total_received_messages": len(receive_messages),
                 "partner": partner,
@@ -505,7 +471,6 @@ def get_appointments():
     appointments = AppointmentRequest.objects()
     mentors = MentorProfile.objects().only("name", "id")
 
-    # TODO: Fix this.. It is too slow :(((
     mentor_by_id = {}
 
     for mentor in mentors:

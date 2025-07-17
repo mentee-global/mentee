@@ -12,18 +12,48 @@ from api.models import (
     Hub,
     DirectMessage,
 )
-from flask import send_file, Blueprint, request
+from flask import send_file, Blueprint, request, g
 from api.utils.require_auth import admin_only
 from api.utils.constants import Account, EDUCATION_LEVEL
+from api.utils.secure_access_control import (
+    require_data_access_level, require_export_permission, log_sensitive_data_access,
+    DataAccessLevel, secure_access_control, data_export_controller
+)
+from api.utils.data_protection import data_protection_manager
 
 download = Blueprint("download", __name__)
 
 
 @download.route("/appointments/all", methods=["GET"])
 @admin_only
+@require_data_access_level(DataAccessLevel.RESTRICTED)
+@require_export_permission("basic")
+@log_sensitive_data_access("appointments", ["email", "name", "phone_number"])
 def download_appointments():
     try:
+        headers = request.headers
+        token = headers.get("Authorization")
+        if token and token.startswith('Bearer '):
+            token = token[7:]
+            from firebase_admin import auth as firebase_admin_auth
+            claims = firebase_admin_auth.verify_id_token(token, check_revoked=True)
+            g.user_role = int(claims.get("role", Account.MENTEE))
+            g.user_id = claims.get("uid")
+        
+        user_role = getattr(g, 'user_role', Account.ADMIN)
+        
         appointments = AppointmentRequest.objects()
+        
+        is_valid, message = secure_access_control.validate_bulk_access(user_role, len(appointments))
+        if not is_valid:
+            return create_response(status=403, message=message)
+        
+        data_protection_manager.access_logger.log_bulk_export(
+            export_type="appointments",
+            record_count=len(appointments),
+            export_level="basic",
+            user_id=getattr(g, 'user_id', 'unknown')
+        )
     except:
         msg = "Failed to get appointments"
         logger.info(msg)
@@ -80,14 +110,32 @@ def download_appointments():
 
 @download.route("/accounts/all", methods=["GET"])
 @admin_only
+@require_data_access_level(DataAccessLevel.CONFIDENTIAL)
+@require_export_permission("full")
+@log_sensitive_data_access("user_accounts", ["email", "phone_number", "address", "personal_info"])
 def download_accounts_info():
-    data = request.args
-    account_type = int(data.get("account_type", 0))
-    hub_user_id = data.get("hub_user_id")
-
-    accounts = None
-
     try:
+        headers = request.headers
+        token = headers.get("Authorization")
+        if token and token.startswith('Bearer '):
+            token = token[7:]
+            from firebase_admin import auth as firebase_admin_auth
+            claims = firebase_admin_auth.verify_id_token(token, check_revoked=True)
+            g.user_role = int(claims.get("role", Account.ADMIN))
+            g.user_id = claims.get("uid")
+        
+        user_role = getattr(g, 'user_role', Account.ADMIN)
+        
+        data = request.args
+        account_type = int(data.get("account_type", 0))
+        hub_user_id = data.get("hub_user_id")
+        export_level = data.get("export_level", "basic")
+
+        if not secure_access_control.can_export_data(user_role, export_level):
+            return create_response(status=403, message="Export not permitted for your role")
+
+        accounts = None
+
         admins = Admin.objects()
         admin_ids = [admin.firebase_uid for admin in admins]
 
@@ -118,6 +166,17 @@ def download_accounts_info():
                     account.hub_user_name = Hub_user_names_object[str(account.hub_id)]
                 temp.append(account)
             accounts = temp
+        
+        is_valid, message = secure_access_control.validate_bulk_access(user_role, len(accounts))
+        if not is_valid:
+            return create_response(status=403, message=message)
+        
+        data_protection_manager.access_logger.log_bulk_export(
+            export_type=f"accounts_{account_type}",
+            record_count=len(accounts),
+            export_level=export_level,
+            user_id=getattr(g, 'user_id', 'unknown')
+        )
 
     except:
         msg = "Failed to get accounts"

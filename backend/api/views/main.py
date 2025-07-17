@@ -52,12 +52,12 @@ from api.utils.require_auth import all_users, mentee_only, verify_user
 from firebase_admin import auth as firebase_admin_auth
 
 
-main = Blueprint("main", __name__)  # initialize blueprint
+main = Blueprint("main", __name__)  
 
 
-# GET request for /accounts/<type>
+
 @main.route("/accounts/<int:account_type>", methods=["GET"])
-# @all_users
+
 def get_accounts(account_type):
     accounts = None
     if account_type == Account.MENTOR:
@@ -214,9 +214,9 @@ def get_accounts(account_type):
     return create_response(data={"accounts": accounts})
 
 
-# GET request for specific account based on id
+id
 @main.route("/account/<string:id>", methods=["GET"])
-# @all_users
+
 def get_account(id):
     try:
         account_type = request.args["account_type"]
@@ -472,9 +472,9 @@ def get_account(id):
     return create_response(data={"account": account})
 
 
-# POST request for a new account profile
+
 @main.route("/account", methods=["POST"])
-# @all_users
+
 def create_mentor_profile():
     data = request.json
     email = data.get("email")
@@ -607,11 +607,7 @@ def create_mentor_profile():
         if app_data is not None:
             app_data.application_state = "COMPLETED"
             app_data.save()
-    # if account_type == Account.MENTOR:
-    #     app_data = MentorApplication.objects.get(email=email)
-    #     if app_data is not None:
-    #         app_data.application_state = "COMPLETED"
-    #         app_data.save()
+    
 
     if account_type != Account.PARTNER:
         try:
@@ -621,7 +617,7 @@ def create_mentor_profile():
             exist_application.save()
         except:
             pass
-    ########
+    
     success, msg = send_email(
         recipient=email,
         data={
@@ -684,7 +680,7 @@ def create_mentor_profile():
 
 
 @main.route("/accountProfile", methods=["POST"])
-# @all_users
+
 def create_profile_existing_account():
     data = request.json
     email = data.get("email")
@@ -806,9 +802,9 @@ def create_profile_existing_account():
     )
 
 
-# PUT requests for /account
+
 @main.route("/account/<id>", methods=["PUT"])
-# @all_users
+
 def edit_mentor(id):
     data = request.get_json()
     try:
@@ -817,7 +813,7 @@ def edit_mentor(id):
         msg = "Level param doesn't exist or isn't an int"
         return create_response(status=422, message=msg)
 
-    # Try to retrieve account profile from database
+   
     account = None
     try:
         token = request.headers.get("Authorization")
@@ -868,7 +864,7 @@ def edit_mentor(id):
 
 
 @main.route("/account/<id>/image", methods=["PUT"])
-# @all_users
+
 def uploadImage(id):
     image = request.files["image"]
     try:
@@ -952,7 +948,7 @@ def uploadImage(id):
     return create_response(status=200, message=f"Success")
 
 
-# GET request for /account/<id>/private
+
 @main.route("/account/<id>/private", methods=["GET"])
 @mentee_only
 def is_mentee_account_private(id):
@@ -967,7 +963,7 @@ def is_mentee_account_private(id):
 
 
 @main.route("/countries", methods=["GET"])
-# @all_users
+
 def getAllCountries():
     try:
         countries = Countries.objects()

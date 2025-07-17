@@ -40,7 +40,7 @@ import pytz
 from mongoengine.queryset.visitor import Q
 
 
-training = Blueprint("training", __name__)  # initialize blueprint
+training = Blueprint("training", __name__) 
 
 
 @training.route("/getSignedDocfile/<id>/<role>", methods=["GET"])
@@ -212,12 +212,12 @@ def update_multiple_trainings():
 
         train_data = train.to_mongo().to_dict()
 
-        # Exclude `_id` and `sort_order` for comparison
+        
         train_data.pop("_id", None)
         existing_sort_order = train_data.pop("sort_order", None)
         updated_sort_order = update_data.get("sort_order")
 
-        # Compare all fields except `sort_order`
+        
         other_fields_match = all(
             train_data.get(key) == value
             for key, value in update_data.items()
@@ -232,7 +232,7 @@ def update_multiple_trainings():
             )
             continue
 
-        # Update sort_order if it's different
+        
         if updated_sort_order != existing_sort_order:
             train.update(sort_order=updated_sort_order)
             updated_trainings.append(train.reload())
@@ -283,9 +283,9 @@ def get_library(id):
     return create_response(status=200, data={"library": library})
 
 
-################################################################################
+
 @training.route("/train/<string:id>", methods=["GET"])
-# @admin_only
+
 def get_train(id):
     try:
         user_email = request.args.get("user_email", None)
@@ -327,9 +327,9 @@ def get_library_file(id):
     )
 
 
-##################################################################################
+
 @training.route("/trainVideo/<string:id>", methods=["GET"])
-# @all_users
+
 def get_train_file(id):
     lang = request.args.get("lang", "en-US")
     try:
@@ -383,7 +383,7 @@ def edit_library_by_id(id):
     return create_response(status=200, data={"library": data})
 
 
-#############################################################################
+
 @training.route("/<string:id>", methods=["PUT"])
 @admin_only
 def get_train_id_edit(id):
@@ -556,7 +556,7 @@ def new_library():
     return create_response(status=200, data={"library": new_data})
 
 
-######################################################################
+
 @training.route("/<role>", methods=["POST"])
 @admin_only
 def new_train(role):
@@ -623,7 +623,7 @@ def new_train(role):
 
         train.save()
 
-        # TODO: Remove this so that it is a job in the background
+        
         if send_notification == True:
             new_train_id = train.id
             hub_url = ""
@@ -734,30 +734,6 @@ def new_train(role):
         return create_response(status=400, message=f"missing parameters {e}")
 
     return create_response(status=200, data={"train": train})
-
-
-# TODO: Find a way to optimize this
-# @training.route("/translateCost/<string:id>", methods=["GET"])
-# @admin_only
-# def get_translation_cost(id):
-#     try:
-#         training = Training.objects.get(id=id)
-#     except Exception as e:
-#         return create_response(
-#             status=400, message=f"Could not find training object {e}"
-#         )
-
-#     try:
-#         document = training.filee
-#         reader = PdfReader(document)
-#         pages = len(reader.pages)
-#         cost = pages * TRANSLATION_COST_PER_PAGE * len(TARGET_LANGS)
-#     except Exception as e:
-#         return create_response(
-#             status=500, message=f"Failed to calculate translation cost {e}"
-#         )
-
-#     return create_response(status=200, data={"cost": cost})
 
 
 @training.route("/translate/<string:id>", methods=["PUT"])

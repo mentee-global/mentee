@@ -8,37 +8,39 @@ from flask_migrate import Migrate
 from flask_socketio import SocketIO
 
 from api.core import all_exception_handler
+from api.utils.simple_secure_logging import SecureLogFilter, sanitize_for_logging, get_sanitized_request_info
 from dotenv import load_dotenv
 
 load_dotenv()
 socketio = SocketIO(cors_allowed_origins="*")
 
 
-class RequestFormatter(logging.Formatter):
+class SecureRequestFormatter(logging.Formatter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.filter = SecureLogFilter()
+    
     def format(self, record):
-        record.url = request.url
-        record.remote_addr = request.remote_addr
+        try:
+            req_info = get_sanitized_request_info()
+            record.url = req_info['url']
+            record.remote_addr = req_info['remote_addr']
+        except Exception:
+            record.url = 'unknown'
+            record.remote_addr = 'unknown'
+        
+        if hasattr(record, 'msg') and record.msg:
+            record.msg = sanitize_for_logging(record.msg)
+        
         return super().format(record)
 
 
-# why we use application factories http://flask.pocoo.org/docs/1.0/patterns/appfactories/#app-factories
 def create_app():
-    """
-    The flask application factory. To run the app somewhere else you can:
-    ```
-    from api import create_app
-    app = create_app()
-
-    if __main__ == "__name__":
-        app.run()
-    """
-
     app = Flask(__name__, static_folder="../../frontend/artifacts", static_url_path="")
 
-    CORS(app)  # add CORS
+    CORS(app)
 
-    # logging
-    formatter = RequestFormatter(
+    formatter = SecureRequestFormatter(
         "%(asctime)s %(remote_addr)s: requested %(url)s: %(levelname)s in [%(module)s: %(lineno)d]: %(message)s"
     )
     app.config["LOG_FILE"] = "app.log"
@@ -65,22 +67,15 @@ def create_app():
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
     app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
-    # app.config["MONGODB_SETTINGS"] = {
-    #     "db": "mentee",
-    #     "host": "localhost",
-    #     "port": 27017,
-    # }
-    # firebase
+    
     if not firebase_admin._apps:
         firebase_admin.initialize_app()
 
-    # register mongoengine to this app
     from api.models import db
 
-    db.init_app(app)  # initialize Flask MongoEngine with this flask app
+    db.init_app(app)
     Migrate(app, db)
 
-    # import and register blueprints
     from api.views import (
         app_blueprint,
         main,
@@ -101,9 +96,9 @@ def create_app():
         events,
         announcement,
         meeting,
+        auth_management,
     )
 
-    # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
     app.register_blueprint(app_blueprint.app_blueprint)
     app.register_blueprint(main.main, url_prefix="/api")
     app.register_blueprint(auth.auth, url_prefix="/auth")
@@ -126,6 +121,11 @@ def create_app():
 
     app.register_blueprint(events.event, url_prefix="/api")
     app.register_blueprint(announcement.announcement, url_prefix="/api")
+    app.register_blueprint(auth_management.auth_bp, url_prefix="/api/auth-management")
+
+    from api.utils.security_middleware import security_middleware
+    
+    security_middleware(app)
 
     app.register_error_handler(Exception, all_exception_handler)
 

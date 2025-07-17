@@ -12,7 +12,7 @@ from api.utils.constants import (
 from api.utils.request_utils import send_email, get_profile_model
 from api.utils.firebase import client as firebase_client
 
-auth = Blueprint("auth", __name__)  # initialize blueprint
+auth = Blueprint("auth", __name__)
 
 
 @auth.route("/verifyEmail", methods=["POST"])
@@ -25,7 +25,6 @@ def verify_email():
     verification_link = None
 
     try:
-        # TODO: Add ActionCodeSetting for custom link/redirection back to main page
         verification_link = firebase_admin_auth.generate_email_verification_link(email)
     except ValueError:
         msg = "Invalid email"
@@ -82,7 +81,6 @@ def register():
     role = data.get("role")
     admin_user = None
 
-    # if whitelisted, set to admin
     if Admin.objects(email=email):
         admin_user = Admin.objects.get(email=email)
     elif role == Account.ADMIN:
@@ -95,7 +93,6 @@ def register():
     if error_http_response:
         return error_http_response
 
-    # account created
     firebase_uid = firebase_user.uid
 
     if admin_user:
@@ -124,10 +121,7 @@ def newregister():
     date_submitted = data.get("date_submitted")
 
     firebase_user, error_http_response = create_firebase_user(email, password)
-    # if error_http_response:
-    #    return error_http_response
-
-    # account created
+    
     firebase_uid = firebase_user.uid
     profile = PartnerProfile(
         name=name,
@@ -187,12 +181,10 @@ def login():
 
         except:
             if Users.objects(email=email) or profile:
-                # old account, need to create a firebase account
-                # no password -> no sign-in methods -> forced to reset password
+                
                 firebase_user, error_http_response = create_firebase_user(email, None)
 
-            # user.delete()
-            # send password reset email
+            
             error = send_forgot_password_email(email)
 
             msg = "Created new Firebase account for existing user"
@@ -249,8 +241,7 @@ def login():
             and role != Account.MODERATOR
             and role != Account.HUB
         ):
-            # user failed to create profile during registration phase
-            # prompt frontend to return user to appropriate phase
+            
 
             return create_response(
                 message="Logged in",
@@ -265,7 +256,7 @@ def login():
                     "firebase_user": firebase_user,
                 },
             )
-            # pass
+            
 
         msg = "Couldn't find profile with these credentials"
         logger.info(msg)
@@ -291,7 +282,7 @@ def send_forgot_password_email(email, preferred_language="en-US"):
         preferred_language = "en-US"
 
     try:
-        # TODO: Add ActionCodeSetting for custom link/redirection back to main page
+        
         reset_link = firebase_admin_auth.generate_password_reset_link(email)
     except ValueError:
         msg = "Invalid email"

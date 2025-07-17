@@ -1,0 +1,53 @@
+{
+  "audit_timestamp": "2025-07-14T22:06:34.943309",
+  "security_status": "MODERATE_RISK",
+  "security_score": 85,
+  "summary": {
+    "total_dependencies": 55,
+    "total_vulnerabilities": 1,
+    "total_outdated_packages": 0,
+    "files_scanned": 2
+  },
+  "file_results": [
+    {
+      "file": "requirements.txt",
+      "total_dependencies": 54,
+      "vulnerabilities_found": 1,
+      "vulnerabilities": [
+        {
+          "package": "pillow",
+          "installed_version": "10.1.0",
+          "vulnerable_version": "10.1.0",
+          "cves": [
+            "CVE-2023-4863"
+          ],
+          "severity": "HIGH",
+          "secure_version": "10.1.0",
+          "recommendation": "Update pillow to 10.1.0"
+        }
+      ],
+      "outdated_packages_count": 0,
+      "outdated_packages": [],
+      "scan_timestamp": "2025-07-14T22:06:34.943309"
+    },
+    {
+      "file": "requirements-dev.txt",
+      "total_dependencies": 1,
+      "vulnerabilities_found": 0,
+      "vulnerabilities": [],
+      "outdated_packages_count": 0,
+      "outdated_packages": [],
+      "scan_timestamp": "2025-07-14T22:06:34.943309"
+    }
+  ],
+  "recommendations": [
+    "\ud83d\udcca MODERATE RISK: Plan updates for outdated packages",
+    "\ud83d\udd04 Schedule regular dependency updates",
+    "\ud83d\udea8 Address 1 known vulnerabilities",
+    "\ud83d\udee1\ufe0f Implement automated dependency scanning",
+    "\ud83d\udccb Use dependency pinning for stability",
+    "\ud83d\udd04 Schedule regular security audits",
+    "\ud83d\udcca Monitor security advisories for dependencies"
+  ],
+  "action_required": false
+}

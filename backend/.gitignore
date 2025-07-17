@@ -1,4 +1,4 @@
-# Backend .gitignore
+
 myenv/
 venv/
 env/
@@ -18,3 +18,12 @@ creds.ini
 firebase_service_key.json
 app.log
 translate-dev.json
+
+# Security-related files that should not be committed
+encryption_key.key
+*.log
+logs/
+instance/
+security_events.log
+app_secure.log
+security_test.log

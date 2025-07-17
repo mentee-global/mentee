@@ -26,22 +26,12 @@ import io
 from api.views.auth import create_firebase_user
 from numpy import imag
 
-admin = Blueprint("admin", __name__)  # initialize blueprint
+admin = Blueprint("admin", __name__)
 
 
 @admin.route("/account/<int:role>/<string:id>", methods=["DELETE"])
 @admin_only
 def delete_account(role, id):
-    """Allows for the deletion of a specific account from the
-    Mentee/Mentor documents
-
-    Args:
-        role (Account): Specifies role of account
-        id (int): The _id of the specific account document
-
-    Returns:
-        HTTP Response
-    """
     try:
         account = get_profile_model(role).objects.get(id=id)
     except:
@@ -54,7 +44,6 @@ def delete_account(role, id):
     login = None
 
     if not firebase_uid:
-        # MenteeProfile does not contain user_id field
         if role == Account.MENTEE:
             account.delete()
             return create_response(status=200, message="Successful deletion")
@@ -92,11 +81,6 @@ def delete_account(role, id):
 @admin.route("/upload/accounts", methods=["POST"])
 @admin_only
 def upload_account_emails():
-    """Upload account emails to permit registering
-
-    Returns:
-        HTTP Response
-    """
     f = request.files["fileupload"]
     password = request.form["pass"]
     isMentor = request.form["mentorOrMentee"] == "true"
@@ -216,12 +200,6 @@ def create_hub_account():
 @admin.route("/upload/accountsEmails", methods=["POST"])
 @admin_only
 def upload_account_emailText():
-    """Upload account emails to permit registering
-
-    Returns:
-        HTTP Response
-    """
-
     role = request.form["role"]
     role = int(role)
     messageText = request.form["messageText"]
@@ -274,16 +252,6 @@ def upload_account_emailText():
 
 @admin.route("/admin/<id>", methods=["GET"])
 def get_admin(id):
-    # return create_response(data={"admin": {"_id":{"$oid":"60765e9289899aeee51a8b27"},"email":"klhester3@gmail.com","firebase_uid":"xsW41z9Hc6Y9r6Te0JAcXhlYneA2","name":"candle"}})
-
-    """Get admin account info
-
-    Args:
-        id (int): ObjectId of Admin
-
-    Returns:
-        HTTP Response
-    """
     try:
         admin = Admin.objects.get(id=id)
         return create_response(data={"admin": admin})

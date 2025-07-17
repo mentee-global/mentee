@@ -1,0 +1,153 @@
+{
+  "audit_timestamp": "2025-07-14T22:06:35.305168",
+  "overall_security_status": "POOR",
+  "overall_security_score": 61.0,
+  "critical_issues_count": 1,
+  "component_scores": {
+    "dependencies": 85,
+    "secrets": 0,
+    "environment": 90
+  },
+  "dependency_audit": {
+    "audit_timestamp": "2025-07-14T22:06:34.943309",
+    "security_status": "MODERATE_RISK",
+    "security_score": 85,
+    "summary": {
+      "total_dependencies": 55,
+      "total_vulnerabilities": 1,
+      "total_outdated_packages": 0,
+      "files_scanned": 2
+    },
+    "file_results": [
+      {
+        "file": "requirements.txt",
+        "total_dependencies": 54,
+        "vulnerabilities_found": 1,
+        "vulnerabilities": [
+          {
+            "package": "pillow",
+            "installed_version": "10.1.0",
+            "vulnerable_version": "10.1.0",
+            "cves": [
+              "CVE-2023-4863"
+            ],
+            "severity": "HIGH",
+            "secure_version": "10.1.0",
+            "recommendation": "Update pillow to 10.1.0"
+          }
+        ],
+        "outdated_packages_count": 0,
+        "outdated_packages": [],
+        "scan_timestamp": "2025-07-14T22:06:34.943309"
+      },
+      {
+        "file": "requirements-dev.txt",
+        "total_dependencies": 1,
+        "vulnerabilities_found": 0,
+        "vulnerabilities": [],
+        "outdated_packages_count": 0,
+        "outdated_packages": [],
+        "scan_timestamp": "2025-07-14T22:06:34.943309"
+      }
+    ],
+    "recommendations": [
+      "\ud83d\udcca MODERATE RISK: Plan updates for outdated packages",
+      "\ud83d\udd04 Schedule regular dependency updates",
+      "\ud83d\udea8 Address 1 known vulnerabilities",
+      "\ud83d\udee1\ufe0f Implement automated dependency scanning",
+      "\ud83d\udccb Use dependency pinning for stability",
+      "\ud83d\udd04 Schedule regular security audits",
+      "\ud83d\udcca Monitor security advisories for dependencies"
+    ],
+    "action_required": false
+  },
+  "hardcoded_secrets": {
+    "count": 7,
+    "secrets": [
+      {
+        "file": "final_security_audit.py",
+        "line": 67,
+        "type": "mongodb_connection",
+        "context": "(r'mongodb://[^\"\\'\\\\s]+', 'mongodb_connection'),",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "final_security_audit.py",
+        "line": 68,
+        "type": "postgres_connection",
+        "context": "(r'postgres://[^\"\\'\\\\s]+', 'postgres_connection'),",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "final_security_audit.py",
+        "line": 69,
+        "type": "mysql_connection",
+        "context": "(r'mysql://[^\"\\'\\\\s]+', 'mysql_connection'),",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "final_security_audit.py",
+        "line": 137,
+        "type": "password",
+        "context": "'password=', 'secret=', 'api_key=', 'token='",
+        "severity": "HIGH"
+      },
+      {
+        "file": "final_security_audit.py",
+        "line": 137,
+        "type": "secret",
+        "context": "'password=', 'secret=', 'api_key=', 'token='",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "final_security_audit.py",
+        "line": 137,
+        "type": "api_key",
+        "context": "'password=', 'secret=', 'api_key=', 'token='",
+        "severity": "MEDIUM"
+      },
+      {
+        "file": "api\\utils\\secret_manager.py",
+        "line": 96,
+        "type": "mongodb_connection",
+        "context": "validation_errors.append(\"MONGODB_URI must start with mongodb:// or mongodb+srv://\")",
+        "severity": "MEDIUM"
+      }
+    ]
+  },
+  "environment_validation": {
+    "status": "warning",
+    "errors": [],
+    "warnings": [
+      "Found 3 .env files - ensure they're not committed to version control"
+    ],
+    "recommendations": [
+      "Implement security headers (X-Frame-Options, X-Content-Type-Options, etc.)",
+      "Implement CSRF protection"
+    ],
+    "security_headers": false,
+    "csrf_protection": false
+  },
+  "recommendations": [
+    "\ud83d\udd10 Remove hardcoded secrets and use environment variables",
+    "\ud83d\udee1\ufe0f Implement automated security scanning in CI/CD",
+    "\ud83d\udccb Schedule regular security audits",
+    "\ud83d\udd04 Keep all dependencies updated",
+    "\ud83c\udfd7\ufe0f Follow secure coding best practices",
+    "\ud83d\udcca Monitor security advisories",
+    "\ud83d\udd12 Use secrets management systems",
+    "\ud83d\udee1\ufe0f Implement comprehensive logging and monitoring"
+  ],
+  "vulnerabilities_patched": [
+    "Input Validation & Sanitization",
+    "Authentication & Authorization",
+    "Session Management",
+    "Cross-Site Scripting (XSS)",
+    "Cross-Site Request Forgery (CSRF)",
+    "SQL Injection",
+    "Insecure Direct Object References",
+    "Logging and Monitoring",
+    "Dependency Management"
+  ],
+  "action_required": true
+}

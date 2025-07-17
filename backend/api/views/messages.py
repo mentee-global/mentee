@@ -18,6 +18,8 @@ from api.utils.constants import (
     UNREAD_MESSAGE_TEMPLATE,
 )
 from api.utils.require_auth import all_users
+from api.utils.validation_schemas import validate_json_schema, MessageSchema
+from api.utils.secure_queries import sanitize_query, validate_object_id
 from api.utils.translate import get_translated_options
 from api.core import create_response, logger
 import json
@@ -91,32 +93,53 @@ def update_message(message_id):
 
 @messages.route("/", methods=["POST"])
 @all_users
-def create_message():
-    data = request.get_json()
-    availabes_in_future = None
-    if "availabes_in_future" in data:
-        availabes_in_future = data.get("availabes_in_future")
+@validate_json_schema(MessageSchema)
+def create_message(validated_data):
+    """Create a new direct message with comprehensive validation."""
     try:
+        # Validate recipient and sender IDs
+        sender_id = validate_object_id(validated_data["sender_id"])
+        recipient_id = validate_object_id(validated_data["recipient_id"])
+        
+        if not sender_id or not recipient_id:
+            return create_response(status=400, message="Invalid sender or recipient ID")
+        
+        # Additional business logic validation
+        if str(sender_id) == str(recipient_id):
+            return create_response(status=400, message="Cannot send message to yourself")
+        
+        # Create message with validated data
         message = DirectMessage(
-            body=data["message"],
+            body=validated_data["body"],
             message_read=False,
-            sender_id=data["user_id"],
-            recipient_id=data["recipient_id"],
-            created_at=data.get("time"),
-            availabes_in_future=availabes_in_future,
+            sender_id=str(sender_id),
+            recipient_id=str(recipient_id),
+            created_at=validated_data.get("created_at"),
+            availabes_in_future=validated_data.get("availabes_in_future"),
         )
-    except Exception as e:
-        msg = "Invalid parameter provided"
-        logger.info(e)
-        return create_response(status=422, message=msg)
-    try:
+        
+        # Save message
         message.save()
-    except:
-        msg = "Failed to save message"
-        logger.info(msg)
-        return create_response(status=422, message=msg)
-
-    socketio.emit(data["recipient_id"], json.loads(message.to_json()))
+        
+        # Emit socket event with sanitized data
+        sanitized_data = {
+            "body": message.body,
+            "sender_id": str(message.sender_id),
+            "recipient_id": str(message.recipient_id),
+            "created_at": message.created_at,
+            "message_read": message.message_read
+        }
+        socketio.emit(str(recipient_id), sanitized_data)
+        
+        logger.info(f"Message created successfully from {sender_id} to {recipient_id}")
+        return create_response(
+            data={"message": sanitized_data},
+            message="Message sent successfully"
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to create message: {str(e)}")
+        return create_response(status=500, message="Failed to send message")
 
     email_sent_status = ""
     try:

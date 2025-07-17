@@ -24,8 +24,7 @@ from api.utils.constants import (
 )
 from api.utils.request_utils import send_email, imgur_client
 
-event = Blueprint("event", __name__)  # initialize blueprint
-
+event = Blueprint("event", __name__)  
 
 @event.route("events/<role>", methods=["GET"])
 def get_events(role):
@@ -94,7 +93,6 @@ def delete_train(id):
     return create_response(status=200, message="Successful deletion")
 
 
-######################################################################
 def send_mail_for_event(
     recipients, role_name, title, eventdate, target_url, start_datetime, end_datetime
 ):
@@ -104,9 +102,7 @@ def send_mail_for_event(
             if match:
                 hours_offset = int(match.group(1))
                 minutes_offset = int(match.group(2))
-                # Create a timezone with the parsed offset
                 offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
-                # Convert the datetime to the target timezone
 
                 eventdate = (
                     datetime.strptime(

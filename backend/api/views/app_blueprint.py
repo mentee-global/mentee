@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, send_from_directory
 
-app_blueprint = Blueprint("app_blueprint", __name__)  # initialize blueprint
+app_blueprint = Blueprint("app_blueprint", __name__)  
 
 
 @app_blueprint.route("/")

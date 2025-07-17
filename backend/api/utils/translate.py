@@ -18,7 +18,6 @@ parent = f"projects/{project_id}/locations/{location}"
 
 
 def get_all_translations(text: str) -> dict:
-    """Get all translations for a given text."""
     translations = {language: text for language in TARGET_LANGS}
 
     for language in translations:
@@ -32,12 +31,10 @@ def get_all_translations(text: str) -> dict:
 
 
 def get_translation(text: str, language: str) -> dict:
-    """Get translation for a given text and language."""
     return client.translate(text, language)
 
 
 def document_translate_all_languages(source_file, file_name) -> dict:
-    """Get all translations for a given document"""
     source_file.seek(0)
     document_content = source_file.read()
     translations = {language: source_file for language in TARGET_LANGS}
@@ -51,17 +48,6 @@ def document_translate_all_languages(source_file, file_name) -> dict:
             logger.exception(f"Error translating {file_name} in {target_lang}")
             continue
 
-        # TODO: Figure out the correct way to get the translated document
-        # # In case nothing works, this is the code to save the file locally
-        # logger.info(f"Saving translated document to {target_lang}_{file_name}")
-        # f = open(
-        #     f"/Users/leonardogalindo/Code/mentee/backend/{target_lang}_{file_name}",
-        #     "wb",
-        # )
-        # f.write(result.document_translation.byte_stream_outputs[0])
-        # f.close()
-        # with open(f'/Users/leonardogalindo/Code/mentee/backend/{target_lang}_{source_file.filename}', 'rb') as f:
-        #     translations[target_lang] = BytesIO(f.read())
         translations[target_lang] = BytesIO(
             result.document_translation.byte_stream_outputs[0]
         )
@@ -70,8 +56,7 @@ def document_translate_all_languages(source_file, file_name) -> dict:
 
 def translate_document(
     target_language: str, source_file, document_content
-) -> client_v3:
-    """Translates a document"""
+):
     document_input_config = {
         "content": document_content,
         "mime_type": "application/pdf",
@@ -88,7 +73,6 @@ def translate_document(
 
 
 def populate_translation_field(mongo_document, translations, file_name):
-    """Populates the translations field of a document"""
     for lang in translations:
         if lang == "es-US":
             mongo_document.es_US.put(translations[lang], filename=file_name)
@@ -102,7 +86,6 @@ def populate_translation_field(mongo_document, translations, file_name):
 
 
 def get_translation_document(mongo_document, target_lang):
-    """Gets the translation field of a document"""
     if mongo_document is None:
         return None
 
@@ -121,7 +104,6 @@ def get_translation_document(mongo_document, target_lang):
 def get_translated_options(
     target_lang: str, selected_options: List[str], options: Document
 ):
-    """Gets the translated options for a given language"""
     if target_lang == "en-US":
         return selected_options
 

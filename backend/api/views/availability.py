@@ -6,7 +6,7 @@ from api.utils.require_auth import all_users
 availability = Blueprint("availability", __name__)
 
 
-# Get request for avalability for a specific mentor
+
 @availability.route("/<id>", methods=["GET"])
 @all_users
 def get_availability(id):
@@ -20,7 +20,7 @@ def get_availability(id):
     return create_response(data={"availability": availability})
 
 
-# Put request to edit availability for a specific mentor
+
 @availability.route("/<id>", methods=["PUT"])
 @all_users
 def edit_availability(id):

@@ -1,7 +1,5 @@
 from enum import Enum
 
-# Template ID that can be created through sendgrid's UI
-# https://sendgrid.com/docs/ui/sending-email/how-to-send-an-email-with-dynamic-transactional-templates/
 MENTOR_APPT_TEMPLATE = "d-3a2b51466e6541ffa052a197ced08c18"
 MENTEE_APPT_TEMPLATE = "d-2ce963b36c91457c89c916a111d658bd"
 USER_VERIFICATION_TEMPLATE = "d-7bd09ab8f8484cee9227a9a25ad527ec"
@@ -26,16 +24,16 @@ NEW_GROUPCHAT_TEMPLATE = "d-6edceb23368244a2951b99624920a0bf"
 REPLY_GROUPCHAT_TEMPLATE = "d-4027a86a55384ed696a3b812e11f7316"
 
 
-# This lacks timezone so you'll need to add that according to whatever code you're working with
+
 APPT_TIME_FORMAT = "%m-%d-%Y at %I:%M%p"
 
-# legacy roles (moved to Account Enum)
+
 MENTOR_ROLE = "mentor"
 MENTEE_ROLE = "mentee"
 ADMIN_ROLE = "admin"
 PARTNER_ROLE = "partner"
 
-# Account types
+
 NEW_APPLICATION_STATUS = {
     "PENDING": "PENDING",
     "APPROVED": "APPROVED",
@@ -44,7 +42,7 @@ NEW_APPLICATION_STATUS = {
     "REJECTED": "REJECTED",
 }
 
-# Education Level
+
 EDUCATION_LEVEL = {
     "elementary": "Elementary school",
     "high": "High school",
@@ -77,7 +75,7 @@ class Account(Enum):
         return hash(self.value)
 
 
-# Mentor Application Status
+
 MENTOR_APP_STATES = {
     "PENDING": "Pending",
     "REVIEWED": "Reviewed",
@@ -85,7 +83,7 @@ MENTOR_APP_STATES = {
     "OFFER_MADE": "Offer Made",
 }
 TRAINING_TYPE = {"LINK": "LINK", "VIDEO": "VIDEO", "DOCUMENT": "DOCUMENT"}
-# Appointment Status
+
 APPT_STATUS = {
     "PENDING": "pending",
     "DENIED": "denied",

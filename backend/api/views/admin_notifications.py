@@ -5,7 +5,7 @@ from datetime import datetime
 from api.utils.require_auth import admin_only
 from datetime import datetime
 
-admin_notifications = Blueprint("admin_notifications", __name__)  # initialize blueprint
+admin_notifications = Blueprint("admin_notifications", __name__)  
 
 
 @admin_notifications.route("/", methods=["GET"])
@@ -16,7 +16,7 @@ def get_notifys():
     return create_response(data={"notifys": notifys})
 
 
-#############################################################################
+
 @admin_notifications.route("/<id>", methods=["GET"])
 @admin_only
 def read_notify(id):
@@ -30,7 +30,6 @@ def read_notify(id):
     return create_response(data={"notify": notify})
 
 
-################################################################################
 @admin_notifications.route("/newNotify", methods=["POST"])
 @admin_only
 def new_notify():

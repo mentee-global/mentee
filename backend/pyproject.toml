@@ -121,6 +121,9 @@ zope-interface = "5.5.2"
 google-cloud-translate = "^3.11.1"
 pypdf2 = "^3.0.1"
 pillow = "^10.0.0"
+marshmallow = "3.21.3"
+bleach = "6.1.0"
+python-magic = "0.4.27"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.812"

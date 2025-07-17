@@ -1,0 +1,287 @@
+{
+  "timestamp": "2025-07-14T22:01:30.251231",
+  "dependency_management_status": "IMPLEMENTED",
+  "security_features": {
+    "vulnerability_scanning": true,
+    "package_vetting": true,
+    "automated_monitoring": true,
+    "secure_requirements": true,
+    "update_management": true
+  },
+  "audit_results": {
+    "audit_timestamp": "2025-07-14T22:01:30.188337",
+    "security_status": "CRITICAL",
+    "security_score": 0,
+    "summary": {
+      "total_dependencies": 122,
+      "total_vulnerabilities": 7,
+      "total_outdated_packages": 18,
+      "files_scanned": 2
+    },
+    "file_results": [
+      {
+        "file": "requirements.txt",
+        "total_dependencies": 121,
+        "vulnerabilities_found": 7,
+        "vulnerabilities": [
+          {
+            "package": "cryptography",
+            "installed_version": "39.0.2",
+            "vulnerable_version": "39.0.2",
+            "cves": [
+              "CVE-2023-23931"
+            ],
+            "severity": "HIGH",
+            "secure_version": "41.0.7",
+            "recommendation": "Update cryptography to 41.0.7"
+          },
+          {
+            "package": "flask",
+            "installed_version": "2.2.3",
+            "vulnerable_version": "2.2.3",
+            "cves": [
+              "CVE-2023-30861"
+            ],
+            "severity": "HIGH",
+            "secure_version": "2.3.3",
+            "recommendation": "Update flask to 2.3.3"
+          },
+          {
+            "package": "pillow",
+            "installed_version": "10.4.0",
+            "vulnerable_version": "10.4.0",
+            "cves": [
+              "CVE-2023-50447"
+            ],
+            "severity": "HIGH",
+            "secure_version": "10.1.0",
+            "recommendation": "Update pillow to 10.1.0"
+          },
+          {
+            "package": "requests",
+            "installed_version": "2.28.2",
+            "vulnerable_version": "2.28.2",
+            "cves": [
+              "CVE-2023-32681"
+            ],
+            "severity": "HIGH",
+            "secure_version": "2.31.0",
+            "recommendation": "Update requests to 2.31.0"
+          },
+          {
+            "package": "sqlalchemy",
+            "installed_version": "2.0.4",
+            "vulnerable_version": "2.0.4",
+            "cves": [
+              "CVE-2024-83018"
+            ],
+            "severity": "HIGH",
+            "secure_version": "2.0.23",
+            "recommendation": "Update sqlalchemy to 2.0.23"
+          },
+          {
+            "package": "urllib3",
+            "installed_version": "1.26.14",
+            "vulnerable_version": "1.26.14",
+            "cves": [
+              "CVE-2023-43804"
+            ],
+            "severity": "HIGH",
+            "secure_version": "2.1.0",
+            "recommendation": "Update urllib3 to 2.1.0"
+          },
+          {
+            "package": "werkzeug",
+            "installed_version": "2.2.3",
+            "vulnerable_version": "2.2.3",
+            "cves": [
+              "CVE-2023-25577"
+            ],
+            "severity": "HIGH",
+            "secure_version": "2.3.7",
+            "recommendation": "Update werkzeug to 2.3.7"
+          }
+        ],
+        "outdated_packages_count": 18,
+        "outdated_packages": [
+          {
+            "package": "cryptography",
+            "current_version": "39.0.2",
+            "latest_secure_version": "41.0.7",
+            "update_type": "major",
+            "recommendation": "Update to 41.0.7"
+          },
+          {
+            "package": "eventlet",
+            "current_version": "0.30.2",
+            "latest_secure_version": "0.33.3",
+            "update_type": "minor",
+            "recommendation": "Update to 0.33.3"
+          },
+          {
+            "package": "firebase-admin",
+            "current_version": "6.1.0",
+            "latest_secure_version": "6.2.0",
+            "update_type": "minor",
+            "recommendation": "Update to 6.2.0"
+          },
+          {
+            "package": "flask-cors",
+            "current_version": "3.0.10",
+            "latest_secure_version": "4.0.0",
+            "update_type": "major",
+            "recommendation": "Update to 4.0.0"
+          },
+          {
+            "package": "flask-migrate",
+            "current_version": "4.0.4",
+            "latest_secure_version": "4.0.5",
+            "update_type": "patch",
+            "recommendation": "Update to 4.0.5"
+          },
+          {
+            "package": "flask-sqlalchemy",
+            "current_version": "3.0.3",
+            "latest_secure_version": "3.1.1",
+            "update_type": "minor",
+            "recommendation": "Update to 3.1.1"
+          },
+          {
+            "package": "flask",
+            "current_version": "2.2.3",
+            "latest_secure_version": "2.3.3",
+            "update_type": "minor",
+            "recommendation": "Update to 2.3.3"
+          },
+          {
+            "package": "gevent",
+            "current_version": "22.10.2",
+            "latest_secure_version": "23.9.1",
+            "update_type": "major",
+            "recommendation": "Update to 23.9.1"
+          },
+          {
+            "package": "gunicorn",
+            "current_version": "20.1.0",
+            "latest_secure_version": "21.2.0",
+            "update_type": "major",
+            "recommendation": "Update to 21.2.0"
+          },
+          {
+            "package": "mongoengine",
+            "current_version": "0.26.0",
+            "latest_secure_version": "0.27.0",
+            "update_type": "minor",
+            "recommendation": "Update to 0.27.0"
+          },
+          {
+            "package": "numpy",
+            "current_version": "1.24.2",
+            "latest_secure_version": "1.25.2",
+            "update_type": "minor",
+            "recommendation": "Update to 1.25.2"
+          },
+          {
+            "package": "pandas",
+            "current_version": "1.5.3",
+            "latest_secure_version": "2.1.4",
+            "update_type": "major",
+            "recommendation": "Update to 2.1.4"
+          },
+          {
+            "package": "pillow",
+            "current_version": "10.4.0",
+            "latest_secure_version": "10.1.0",
+            "update_type": "minor",
+            "recommendation": "Update to 10.1.0"
+          },
+          {
+            "package": "requests",
+            "current_version": "2.28.2",
+            "latest_secure_version": "2.31.0",
+            "update_type": "minor",
+            "recommendation": "Update to 2.31.0"
+          },
+          {
+            "package": "sqlalchemy",
+            "current_version": "2.0.4",
+            "latest_secure_version": "2.0.23",
+            "update_type": "patch",
+            "recommendation": "Update to 2.0.23"
+          },
+          {
+            "package": "urllib3",
+            "current_version": "1.26.14",
+            "latest_secure_version": "2.1.0",
+            "update_type": "major",
+            "recommendation": "Update to 2.1.0"
+          },
+          {
+            "package": "werkzeug",
+            "current_version": "2.2.3",
+            "latest_secure_version": "2.3.7",
+            "update_type": "minor",
+            "recommendation": "Update to 2.3.7"
+          },
+          {
+            "package": "wtforms",
+            "current_version": "3.0.1",
+            "latest_secure_version": "3.1.1",
+            "update_type": "minor",
+            "recommendation": "Update to 3.1.1"
+          }
+        ],
+        "scan_timestamp": "2025-07-14T22:01:30.188337"
+      },
+      {
+        "file": "requirements-dev.txt",
+        "total_dependencies": 1,
+        "vulnerabilities_found": 0,
+        "vulnerabilities": [],
+        "outdated_packages_count": 0,
+        "outdated_packages": [],
+        "scan_timestamp": "2025-07-14T22:01:30.188337"
+      }
+    ],
+    "recommendations": [
+      "\ud83d\udea8 CRITICAL: Immediate action required",
+      "\ud83d\udd0d Review and update all vulnerable packages",
+      "\u26a0\ufe0f Do not deploy to production",
+      "\ud83d\udee1\ufe0f Apply security patches immediately",
+      "\ud83d\udea8 Address 7 known vulnerabilities",
+      "\ud83d\udcc5 Consider updating 18 outdated packages",
+      "\ud83d\udee1\ufe0f Implement automated dependency scanning",
+      "\ud83d\udccb Use dependency pinning for stability",
+      "\ud83d\udd04 Schedule regular security audits",
+      "\ud83d\udcca Monitor security advisories for dependencies"
+    ],
+    "action_required": true
+  },
+  "recommendations": [
+    "Apply secure requirements immediately",
+    "Install updated dependencies",
+    "Set up automated monitoring",
+    "Schedule regular security audits",
+    "Implement dependency pinning",
+    "Use virtual environments",
+    "Monitor security advisories"
+  ],
+  "files_created": [
+    "api/utils/dependency_security.py",
+    "api/utils/dependency_monitoring.py",
+    "api/utils/secure_requirements.py",
+    "dependency_audit.py",
+    "requirements_secure.txt",
+    "dependency_management.py"
+  ],
+  "security_score_before": 0,
+  "vulnerabilities_before": 7,
+  "action_plan": [
+    "1. Backup current requirements",
+    "2. Update to secure requirements",
+    "3. Install secure dependencies",
+    "4. Verify security improvements",
+    "5. Set up monitoring automation",
+    "6. Schedule regular audits"
+  ]
+}

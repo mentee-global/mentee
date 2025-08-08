@@ -9,6 +9,7 @@ AUTHORIZED = True
 UNAUTHORIZED = False
 ALL_USERS = True
 
+
 def _safe_float(x, default=0.0):
     try:
         return float(x)
@@ -56,7 +57,11 @@ def verify_user(required_role):
 
     try:
         auth_header = headers.get("Authorization", "")
-        token = auth_header.split(" ", 1)[1] if auth_header.startswith("Bearer ") else auth_header
+        token = (
+            auth_header.split(" ", 1)[1]
+            if auth_header.startswith("Bearer ")
+            else auth_header
+        )
         if not token:
             raise ValueError("Missing Authorization token")
 

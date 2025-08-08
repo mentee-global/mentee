@@ -19,7 +19,7 @@ from api.utils.web_security import WebSecurityMiddleware, XSSProtection
 from dotenv import load_dotenv
 
 load_dotenv()
-socketio = SocketIO(cors_allowed_origins="*")
+socketio = SocketIO(async_mode="gevent", cors_allowed_origins="*")
 
 
 class RequestFormatter(logging.Formatter):

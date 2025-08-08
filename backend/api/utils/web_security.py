@@ -160,7 +160,10 @@ class RateLimiter:
             @wraps(f)
             def decorated_function(*args, **kwargs):
                 is_limited, message = self.is_rate_limited(
-                    max_requests, window_seconds, endpoint
+                    client_id=None,
+                    max_requests=max_requests,
+                    window_seconds=window_seconds,
+                    endpoint=endpoint,
                 )
                 if is_limited:
                     return (

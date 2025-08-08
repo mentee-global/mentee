@@ -9,45 +9,44 @@ AUTHORIZED = True
 UNAUTHORIZED = False
 ALL_USERS = True
 
+def _safe_float(x, default=0.0):
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return default
+
 
 def verify_token_with_expiry(token):
     try:
-        # Verify the token with Firebase Admin SDK
+        # Verify token (checks revocation)
         claims = firebase_admin_auth.verify_id_token(token, check_revoked=True)
 
-        current_time = int(time.time())
-        token_exp = claims.get("exp", 0)
-        token_iat = claims.get("iat", 0)  # issued at time
+        now = time.time()  # float
+        token_exp = _safe_float(claims.get("exp"), 0.0)
+        token_iat = _safe_float(claims.get("iat"), 0.0)  # issued at
 
-        # Add clock skew tolerance of 60 seconds for 'iat' (issued at) validation
-        # This helps with small clock differences between client and server
-        if token_iat > current_time + 60:
+        # 60s skew tolerance for 'iat'
+        if token_iat > now + 60.0:
             raise Exception("Token used too early - clock skew detected")
 
-        if current_time >= token_exp:
+        if now >= token_exp:
             raise Exception("Token has expired")
 
         return claims
+
     except Exception as e:
-        # If it's a Firebase error about token being used too early,
-        # we can be more lenient in development
-        error_msg = str(e)
-        if "Token used too early" in error_msg or "Clock skew" in error_msg:
+        # Be lenient on skew in dev: retry without revocation check
+        err = str(e)
+        if "Token used too early" in err or "Clock skew" in err:
             try:
-                # Try verifying without revocation check as a fallback
                 claims = firebase_admin_auth.verify_id_token(token, check_revoked=False)
-
-                current_time = int(time.time())
-                token_exp = claims.get("exp", 0)
-
-                # Still check expiration
-                if current_time >= token_exp:
+                now = time.time()
+                token_exp = _safe_float(claims.get("exp"), 0.0)
+                if now >= token_exp:
                     raise Exception("Token has expired")
-
                 return claims
-            except:
-                pass  # If this also fails, raise the original error
-
+            except Exception:
+                pass
         raise e
 
 
@@ -56,7 +55,11 @@ def verify_user(required_role):
     role = None
 
     try:
-        token = headers.get("Authorization")
+        auth_header = headers.get("Authorization", "")
+        token = auth_header.split(" ", 1)[1] if auth_header.startswith("Bearer ") else auth_header
+        if not token:
+            raise ValueError("Missing Authorization token")
+
         claims = verify_token_with_expiry(token)
         role = claims.get("role")
     except Exception as e:

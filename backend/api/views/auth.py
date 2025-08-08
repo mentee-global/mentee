@@ -251,6 +251,11 @@ def login():
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
         )
+        if "expiresIn" in firebase_user:
+            try:
+                firebase_user["expiresIn"] = float(firebase_user["expiresIn"])
+            except (ValueError, TypeError):
+                firebase_user["expiresIn"] = 3600
         firebase_uid = firebase_user["localId"]
 
     except Exception as e:

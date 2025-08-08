@@ -104,41 +104,45 @@ def get_application_mentee_by_id(id):
 
 @apply.route("/email/status/<email>/<role>", methods=["GET"])
 def get_email_status_by_role(email, role):
-    role = int(role)
-    email = email.lower()
+    email = (email or "").lower().strip().replace(" ", "")
+    try:
+        role = int(role)
+    except (TypeError, ValueError):
+        return create_response(status=422, message="Invalid role")
+
     response_data = {
         "inFirebase": False,
         "isVerified": False,
         "profileExists": False,
     }
 
-    try:
-        VerifiedEmail.objects.get(email=email, role=str(role))
+    # 1) DB verified email check (no exceptions for not found)
+    rec = VerifiedEmail.objects(email=email, role=str(role)).only("email").first()
+    if rec:
         response_data["isVerified"] = True
-    except Exception as e:
-        logger.error(e)
-        logger.info(f"{email} is not verified in VerifiedEmail Model")
+    else:
+        logger.info(f"{email} is not verified in VerifiedEmail model")
 
+    # 2) Firebase check (no recursion, no internal HTTP)
     try:
-        user = firebase_admin_auth.get_user_by_email(email.replace(" ", ""))
+        fb_user = firebase_admin_auth.get_user_by_email(email)
         response_data["inFirebase"] = True
+        # if you want to reflect Firebase’s flag:
+        # response_data["isVerified"] = response_data["isVerified"] or bool(fb_user.email_verified)
+    except firebase_admin_auth.UserNotFoundError:
+        logger.info(f"{email} not found in Firebase")
+        # return early with what we know so far
+        return create_response(message="Firebase user not found", data=response_data)
     except Exception as e:
-        logger.error(e)
-        logger.warning(f"{email} is not verified in Firebase")
-        msg = "No firebase user currently exist with this email " + email
-        return create_response(message=msg, data=response_data)
+        logger.warning(f"Firebase lookup failed for {email}: {e}")
+        return create_response(message="Firebase lookup failed", data=response_data)
 
-    try:
-        get_profile_model(role).objects.only("email").get(email=email)
+    # 3) Profile existence (no exceptions for not found)
+    prof = get_profile_model(role).objects(email=email).only("id").first()
+    if prof:
         response_data["profileExists"] = True
-    except Exception as e:
-        logger.error(e)
-        msg = "No profile currently exist with this email " + email
-        logger.info(msg)
-        return create_response(
-            message=msg,
-            data=response_data,
-        )
+    else:
+        logger.info(f"No profile exists for {email}")
 
     return create_response(data=response_data)
 

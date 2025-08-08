@@ -4,7 +4,12 @@ import click
 import os
 from api import create_app, socketio
 from flask import request
+from gevent import monkey
+monkey.patch_all(ssl=False)
 
+import sys, faulthandler
+faulthandler.enable()
+sys.setrecursionlimit(2000)
 
 # sets up the app
 app = create_app()

@@ -17,7 +17,14 @@ from api.utils.constants import (
     TRANSLATIONS,
     UNREAD_MESSAGE_TEMPLATE,
 )
-from api.utils.require_auth import all_users
+from api.utils.require_auth import all_users, admin_only, mentor_only, mentee_only
+from api.utils.input_validation import (
+    validate_json_data,
+    validate_object_id,
+    sanitize_text,
+    validate_string_length,
+)
+from api.utils.web_security import api_rate_limit, CSRFProtection, XSSProtection
 from api.utils.translate import get_translated_options
 from api.core import create_response, logger
 import json
@@ -25,7 +32,7 @@ from datetime import datetime, timedelta, timezone
 from api import socketio
 from mongoengine.queryset.visitor import Q
 from urllib.parse import unquote
-
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 
 messages = Blueprint("messages", __name__)
 
@@ -47,6 +54,8 @@ def get_messages():
 
 @messages.route("/<string:message_id>", methods=["DELETE"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -67,6 +76,8 @@ def delete_message(message_id):
 
 @messages.route("/<string:message_id>", methods=["PUT"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def update_message(message_id):
     try:
         message = Message.objects.get(id=message_id)
@@ -91,18 +102,42 @@ def update_message(message_id):
 
 @messages.route("/", methods=["POST"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def create_message():
     data = request.get_json()
+
+    valid, error_msg = validate_json_data(data, ["message", "user_id", "recipient_id"])
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    message_text = sanitize_text(data.get("message"))
+    user_id = sanitize_text(data.get("user_id"))
+    recipient_id = sanitize_text(data.get("recipient_id"))
+    time_data = data.get("time")
+
+    valid, error_msg = validate_string_length(message_text, 5000, "Message")
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    valid, error_msg = validate_object_id(user_id)
+    if not valid:
+        return create_response(status=422, message="Invalid sender ID")
+
+    valid, error_msg = validate_object_id(recipient_id)
+    if not valid:
+        return create_response(status=422, message="Invalid recipient ID")
+
     availabes_in_future = None
     if "availabes_in_future" in data:
         availabes_in_future = data.get("availabes_in_future")
     try:
         message = DirectMessage(
-            body=data["message"],
+            body=message_text,
             message_read=False,
-            sender_id=data["user_id"],
-            recipient_id=data["recipient_id"],
-            created_at=data.get("time"),
+            sender_id=user_id,
+            recipient_id=recipient_id,
+            created_at=time_data,
             availabes_in_future=availabes_in_future,
         )
     except Exception as e:
@@ -144,6 +179,8 @@ def create_message():
 
 @messages.route("/mentor/<string:mentor_id>", methods=["POST"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def contact_mentor(mentor_id):
     data = request.get_json()
     if "mentee_id" not in data:
@@ -601,6 +638,8 @@ def get_sidebar_mentors(page_number):
 
 @messages.route("/group_delete/<string:message_id>", methods=["DELETE"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_group_message(message_id):
     try:
         message = GroupMessage.objects.get(id=message_id)

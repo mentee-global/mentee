@@ -1,5 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from flask import Blueprint, request
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 from api.models import (
     AppointmentRequest,
     Availability,
@@ -101,6 +102,8 @@ def get_requests_by_id(account_type, id):
 # POST request for Mentee Appointment
 @appointment.route("/send_invite_email", methods=["POST"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def send_invite_email():
     data = request.get_json()
     mentee_id = data.get("recipient_id")
@@ -164,6 +167,8 @@ def send_invite_email():
 # POST request for Mentee Appointment
 @appointment.route("/", methods=["POST"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def create_appointment():
     data = request.get_json()
     validate_data = ApppointmentForm.from_json(data)
@@ -289,6 +294,8 @@ def create_appointment():
 
 @appointment.route("/accept/<id>", methods=["PUT"])
 @mentor_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def put_appointment(id):
     try:
         appointment = AppointmentRequest.objects.get(id=id)
@@ -347,6 +354,8 @@ def put_appointment(id):
 
 # DELETE request for appointment by appointment id
 @appointment.route("/<string:appointment_id>", methods=["DELETE"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 @mentor_only
 def delete_request(appointment_id):
     try:

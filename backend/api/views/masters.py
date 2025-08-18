@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 from flask.globals import request
 from api.core import create_response, logger
 from flask import Blueprint
@@ -44,6 +44,8 @@ masters = Blueprint("masters", __name__)
 
 # @masters.route("/translate", methods=["PUT"])
 # @admin_only
+# @api_rate_limit
+# @CSRFProtection.csrf_protect
 # def translate():
 #     mapping = {"languages": Languages, "specializations": Specializations}
 #     optionType = request.form["optionType"]
@@ -87,6 +89,8 @@ def get_language(id):
 
 @masters.route("/languages/<string:id>", methods=["DELETE"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_language(id):
     try:
         language = Languages.objects.get(id=id)
@@ -113,6 +117,8 @@ def delete_language(id):
 # TODO: Add translations to this as well in case of typos
 @masters.route("/languages/<string:id>", methods=["PUT"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def edit_language_by_id(id):
     record = Languages.objects.get(id=id)
     lang_name = record.name
@@ -154,6 +160,8 @@ def edit_language_by_id(id):
 ######################################################################
 @masters.route("/languages", methods=["POST"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def new_language():
     name = request.form["name"]
     record = Languages(name=name, updated_at=datetime.now())
@@ -191,6 +199,8 @@ def get_specialization(id):
 
 @masters.route("specializations/<string:id>", methods=["DELETE"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_specializations(id):
     try:
         specializations = Specializations.objects.get(id=id)
@@ -224,6 +234,8 @@ def delete_specializations(id):
 # TODO: Add translations to this as well in case of typos
 @masters.route("/specializations/<string:id>", methods=["PUT"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def edit_specialization_by_id(id):
     record = Specializations.objects.get(id=id)
     prev_name = record.name
@@ -265,6 +277,8 @@ def edit_specialization_by_id(id):
 ######################################################################
 @masters.route("/specializations", methods=["POST"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def new_specailization():
     name = request.form["name"]
     record = Specializations(name=name, updated_at=datetime.now())

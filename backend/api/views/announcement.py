@@ -1,8 +1,14 @@
 from flask import Blueprint, request
 import json
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 from numpy import imag
 from werkzeug.utils import secure_filename
 from api.core import create_response, logger
+from api.utils.input_validation import (
+    validate_file_upload,
+    sanitize_text,
+    secure_filename_enhanced,
+)
 from api.models import (
     Announcement,
     Event,
@@ -91,6 +97,8 @@ def get_announcements(role):
 
 
 @announcement.route("announcement/register/<role>", methods=["POST"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def new_announce(role):
     try:
         name = request.form["name"]
@@ -135,7 +143,15 @@ def new_announce(role):
 
         document = request.files.get("document", None)
         if document:
-            file_name = secure_filename(document.filename)
+            valid, error_msg = validate_file_upload(
+                document,
+                allowed_extensions={"pdf", "doc", "docx", "txt"},
+                max_size_mb=10,
+            )
+            if not valid:
+                return create_response(status=400, message=error_msg)
+
+            file_name = secure_filename_enhanced(document.filename)
             if file_name == "":
                 return create_response(status=400, message="Missing file name")
             announce.file_name = file_name
@@ -238,6 +254,8 @@ def new_announce(role):
 
 
 @announcement.route("announcement/edit/<string:id>", methods=["PUT"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def edit(id):
     try:
         announcement = Announcement.objects.get(id=id)
@@ -270,7 +288,13 @@ def edit(id):
 
     document = request.files.get("document", None)
     if document:
-        file_name = secure_filename(document.filename)
+        valid, error_msg = validate_file_upload(
+            document, allowed_extensions={"pdf", "doc", "docx", "txt"}, max_size_mb=10
+        )
+        if not valid:
+            return create_response(status=400, message=error_msg)
+
+        file_name = secure_filename_enhanced(document.filename)
         if file_name == "":
             return create_response(status=400, message="Missing file name")
 
@@ -283,6 +307,8 @@ def edit(id):
 
 
 @announcement.route("announcement/upload/<string:id>/image", methods=["PUT"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def uploadImage(id):
     announcement = Announcement.objects.get(id=id)
     if announcement:
@@ -343,6 +369,8 @@ def get_announce_by_id(id):
 
 
 @announcement.route("announcement/delete/<string:id>", methods=["DELETE"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete(id):
     try:
         announcement = Announcement.objects.get(id=id)

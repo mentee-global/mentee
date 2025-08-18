@@ -5,14 +5,23 @@ services:
     container_name: mentee-frontend
     build: ./frontend
     ports:
-      - '3000:3000'
+      - '127.0.0.1:3000:3000'  # Bind to localhost only
     environment:
       - NODE_ENV=development
+    networks:
+      - mentee-network
 
   backend:
     container_name: mentee-backend
     build: ./backend
     ports:
-      - '8000:8000'
+      - '127.0.0.1:8000:8000'  # Bind to localhost only
     env_file:
-    - ./backend/.env
+      - ./backend/.env
+    networks:
+      - mentee-network
+
+# Create isolated network for services
+networks:
+  mentee-network:
+    driver: bridge

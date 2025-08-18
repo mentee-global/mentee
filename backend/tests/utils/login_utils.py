@@ -2,6 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 import json
+from api.utils.secure_env import SecureEnvironmentManager
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -14,7 +15,7 @@ with open(consts_path, "r") as f:
 
 # get access token from refresh token
 def get_access_token(refresh_token):
-    firebase_api_key = os.environ.get("FIREBASE_API_KEY")
+    firebase_api_key = SecureEnvironmentManager.get_required_env("FIREBASE_API_KEY")
 
     url = f"https://securetoken.googleapis.com/v1/token?key={firebase_api_key}"
 
@@ -86,7 +87,7 @@ def login_partner(client):
 
 # use the first token and get the refresh token
 def get_refresh_token(first_token):
-    firebase_api_key = os.environ.get("FIREBASE_API_KEY")
+    firebase_api_key = SecureEnvironmentManager.get_required_env("FIREBASE_API_KEY")
 
     headers = {
         "Content-Type": "application/json",

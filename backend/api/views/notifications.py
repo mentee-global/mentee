@@ -14,6 +14,7 @@ from api.utils.constants import (
     TRANSLATIONS,
 )
 from api.utils.require_auth import all_users
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 
 notifications = Blueprint("notifications", __name__)
 
@@ -201,6 +202,8 @@ def send_unread_alert(id):
 
 @notifications.route("/update", methods=["PUT"])
 @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def update_unread_count():
     data = request.get_json()
     if not data:

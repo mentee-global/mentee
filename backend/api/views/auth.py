@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
+from api.utils.require_auth import verify_token_with_expiry
 from firebase_admin.exceptions import FirebaseError
 from api.models import db, Users, MentorProfile, Admin, PartnerProfile, Hub
 from api.core import create_response, logger
@@ -11,15 +12,35 @@ from api.utils.constants import (
 )
 from api.utils.request_utils import send_email, get_profile_model
 from api.utils.firebase import client as firebase_client
+from api.utils.input_validation import (
+    validate_email_format,
+    validate_password,
+    validate_role,
+    validate_json_data,
+    sanitize_text,
+)
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
 
 @auth.route("/verifyEmail", methods=["POST"])
+@auth_rate_limit
+@CSRFProtection.csrf_protect
 def verify_email():
     data = request.json
-    email = data.get("email")
-    preferred_language = data.get("preferred_language", "en-US")
+
+    valid, error_msg = validate_json_data(data, ["email"])
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    email = sanitize_text(data.get("email"))
+    preferred_language = sanitize_text(data.get("preferred_language", "en-US"))
+
+    valid, error_msg = validate_email_format(email)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
     if preferred_language not in TRANSLATIONS:
         preferred_language = "en-US"
     verification_link = None
@@ -75,11 +96,31 @@ def create_firebase_user(email, password):
 
 
 @auth.route("/register", methods=["POST"])
+@auth_rate_limit
+@CSRFProtection.csrf_protect
 def register():
     data = request.json
-    email = data.get("email")
+
+    valid, error_msg = validate_json_data(data, ["email", "password", "role"])
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    email = sanitize_text(data.get("email"))
     password = data.get("password")
     role = data.get("role")
+
+    valid, error_msg = validate_email_format(email)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    valid, error_msg = validate_password(password)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    valid, error_msg = validate_role(role)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
     admin_user = None
 
     # if whitelisted, set to admin
@@ -113,15 +154,34 @@ def register():
 
 
 @auth.route("/newRegister", methods=["POST"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def newregister():
     data = request.json
-    name = data.get("name")
-    email = data.get("email")
+
+    valid, error_msg = validate_json_data(data, ["name", "email", "password", "role"])
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    name = sanitize_text(data.get("name"))
+    email = sanitize_text(data.get("email"))
     password = data.get("password")
     role = data.get("role")
-    video_url = data.get("video_url")
-    phone_number = data.get("phone_number")
+    video_url = sanitize_text(data.get("video_url", ""))
+    phone_number = sanitize_text(data.get("phone_number", ""))
     date_submitted = data.get("date_submitted")
+
+    valid, error_msg = validate_email_format(email)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    valid, error_msg = validate_password(password)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    valid, error_msg = validate_role(role)
+    if not valid:
+        return create_response(status=422, message=error_msg)
 
     firebase_user, error_http_response = create_firebase_user(email, password)
     # if error_http_response:
@@ -157,12 +217,27 @@ def newregister():
 
 
 @auth.route("/login", methods=["POST"])
+@auth_rate_limit
+@CSRFProtection.csrf_protect
 def login():
     data = request.json
-    email = data.get("email")
+
+    valid, error_msg = validate_json_data(data, ["email", "password", "role"])
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    email = sanitize_text(data.get("email"))
     password = data.get("password")
     role = int(data.get("role"))
-    path = data.get("path", None)
+    path = sanitize_text(data.get("path", ""))
+
+    valid, error_msg = validate_email_format(email)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    valid, error_msg = validate_role(role)
+    if not valid:
+        return create_response(status=422, message=error_msg)
 
     firebase_user = None
     profile_model = get_profile_model(role)
@@ -176,6 +251,11 @@ def login():
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
         )
+        if "expiresIn" in firebase_user:
+            try:
+                firebase_user["expiresIn"] = float(firebase_user["expiresIn"])
+            except (ValueError, TypeError):
+                firebase_user["expiresIn"] = 3600
         firebase_uid = firebase_user["localId"]
 
     except Exception as e:
@@ -318,10 +398,21 @@ def send_forgot_password_email(email, preferred_language="en-US"):
 
 
 @auth.route("/forgotPassword", methods=["POST"])
+@auth_rate_limit
+@CSRFProtection.csrf_protect
 def forgot_password():
     data = request.json
-    email = data.get("email", "")
-    preferred_language = data.get("preferred_language", "en-US")
+
+    valid, error_msg = validate_json_data(data, ["email"])
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    email = sanitize_text(data.get("email"))
+    preferred_language = sanitize_text(data.get("preferred_language", "en-US"))
+
+    valid, error_msg = validate_email_format(email)
+    if not valid:
+        return create_response(status=422, message=error_msg)
 
     error = send_forgot_password_email(email, preferred_language)
 
@@ -331,11 +422,13 @@ def forgot_password():
 
 
 @auth.route("/refreshToken", methods=["POST"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def refresh_token():
     data = request.json
     token = data.get("token")
 
-    claims = firebase_admin_auth.verify_id_token(token)
+    claims = verify_token_with_expiry(token)
     firebase_uid = claims.get("uid")
     role = int(claims.get("role"))
 

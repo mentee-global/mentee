@@ -8,13 +8,14 @@ from google.oauth2 import service_account
 from io import BytesIO
 import json
 import os
+from api.utils.secure_env import SecureEnvironmentManager
 
 client = translate_v2.Client()
 client_v3 = translate_v3.TranslationServiceClient()
 
 location = "us-central1"
-project_id = os.environ.get("GOOGLE_PROJECT_ID")
-parent = f"projects/{project_id}/locations/{location}"
+project_id = SecureEnvironmentManager.get_optional_env("GOOGLE_PROJECT_ID")
+parent = f"projects/{project_id}/locations/{location}" if project_id else None
 
 
 def get_all_translations(text: str) -> dict:

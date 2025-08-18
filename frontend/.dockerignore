@@ -1,0 +1,25 @@
+# Exclude everything by default
+*
+
+# Include only necessary files for build
+!public/
+!src/
+!package.json
+!yarn.lock
+!jsconfig.json
+
+# Explicitly exclude sensitive and unnecessary files
+node_modules/
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
+.git/
+.gitignore
+build/
+coverage/
+*.key
+*.pem
+.vscode/
+.idea/

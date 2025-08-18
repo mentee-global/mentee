@@ -14,4 +14,3 @@ pyproject.toml000
 app.log
 backend/app.log
 tests/.env
-tests/cypress/screenshots/

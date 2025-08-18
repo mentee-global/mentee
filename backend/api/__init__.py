@@ -1,23 +1,122 @@
 import os
 import logging
 import firebase_admin
+import re
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 
 from api.core import all_exception_handler
+from api.utils.secure_env import (
+    initialize_secure_environment,
+    get_mongo_connection_string,
+    SecureEnvironmentManager,
+)
+from api.utils.web_security import WebSecurityMiddleware, XSSProtection
 from dotenv import load_dotenv
 
 load_dotenv()
-socketio = SocketIO(cors_allowed_origins="*")
+socketio = SocketIO(async_mode="gevent", cors_allowed_origins="*")
 
 
 class RequestFormatter(logging.Formatter):
+    """Secure logging formatter that sanitizes URLs and IP addresses"""
+
+    # Sensitive query parameters that should be redacted
+    SENSITIVE_PARAMS = {
+        "token",
+        "password",
+        "secret",
+        "key",
+        "api_key",
+        "access_token",
+        "refresh_token",
+        "session_id",
+        "auth",
+        "authorization",
+        "csrf_token",
+        "reset_token",
+        "verification_token",
+        "invite_token",
+        "temp_password",
+    }
+
+    def sanitize_url(self, url):
+        """Sanitize URL by removing or redacting sensitive query parameters"""
+        try:
+            parsed = urlparse(url)
+            if not parsed.query:
+                return url
+
+            # Parse query parameters
+            query_params = parse_qs(parsed.query, keep_blank_values=True)
+            sanitized_params = {}
+
+            for key, values in query_params.items():
+                # Check if parameter name contains sensitive keywords
+                key_lower = key.lower()
+                is_sensitive = any(
+                    sensitive in key_lower for sensitive in self.SENSITIVE_PARAMS
+                )
+
+                if is_sensitive:
+                    # Redact sensitive parameters
+                    sanitized_params[key] = ["[REDACTED]"] * len(values)
+                else:
+                    sanitized_params[key] = values
+
+            # Reconstruct URL with sanitized parameters (don't encode REDACTED)
+            sanitized_query_parts = []
+            for key, values in sanitized_params.items():
+                for value in values:
+                    if value == "[REDACTED]":
+                        sanitized_query_parts.append(f"{key}=[REDACTED]")
+                    else:
+                        sanitized_query_parts.append(f"{key}={value}")
+
+            sanitized_query = "&".join(sanitized_query_parts)
+            sanitized_parsed = parsed._replace(query=sanitized_query)
+            return urlunparse(sanitized_parsed)
+
+        except Exception:
+            # If URL parsing fails, return a safe fallback
+            return "[URL_PARSE_ERROR]"
+
+    def anonymize_ip(self, ip_addr):
+        """Anonymize IP address for privacy compliance"""
+        try:
+            # For IPv4, mask the last octet
+            if "." in ip_addr and ip_addr.count(".") == 3:
+                parts = ip_addr.split(".")
+                return f"{parts[0]}.{parts[1]}.{parts[2]}.xxx"
+            # For IPv6, mask the last 4 segments
+            elif ":" in ip_addr:
+                parts = ip_addr.split(":")
+                if len(parts) >= 4:
+                    return ":".join(parts[:-4]) + ":xxxx:xxxx:xxxx:xxxx"
+            return ip_addr
+        except Exception:
+            return "[IP_ANONYMIZED]"
+
     def format(self, record):
-        record.url = request.url
-        record.remote_addr = request.remote_addr
+        """Format log record with sanitized URL and anonymized IP"""
+        try:
+            # Sanitize URL to remove sensitive query parameters
+            record.url = self.sanitize_url(request.url)
+            # Anonymize IP address for privacy
+            record.remote_addr = self.anonymize_ip(request.remote_addr)
+        except RuntimeError:
+            # Outside of request context
+            record.url = "[NO_REQUEST_CONTEXT]"
+            record.remote_addr = "[NO_REQUEST_CONTEXT]"
+        except Exception:
+            # Any other error
+            record.url = "[URL_ERROR]"
+            record.remote_addr = "[IP_ERROR]"
+
         return super().format(record)
 
 
@@ -33,9 +132,78 @@ def create_app():
         app.run()
     """
 
+    initialize_secure_environment()
+
     app = Flask(__name__, static_folder="../../frontend/artifacts", static_url_path="")
 
-    CORS(app)  # add CORS
+    # Security Configuration
+    app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
+
+    # Session Configuration for CSRF protection
+    app.config["SECRET_KEY"] = (
+        SecureEnvironmentManager.get_required_env("SECRET_KEY")
+        if os.environ.get("SECRET_KEY")
+        else os.urandom(32).hex()
+    )
+
+    # HTTPS and Security Settings
+    app.config["PREFERRED_URL_SCHEME"] = "https"
+    # Only use secure cookies in production
+    is_production = os.environ.get("FLASK_ENV") == "production"
+    app.config["SESSION_COOKIE_SECURE"] = is_production
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    app.config["PERMANENT_SESSION_LIFETIME"] = 3600  # 1 hour
+
+    # Force HTTPS in production
+    if os.environ.get("FLASK_ENV") == "production":
+        app.config["FORCE_HTTPS"] = True
+
+    @app.errorhandler(413)
+    def request_entity_too_large(error):
+        return {"message": "File too large (max 50MB)", "status": 413}, 413
+
+    # Configure CORS with credentials support for CSRF tokens
+    CORS(
+        app,
+        supports_credentials=True,
+        origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    )
+
+    # Initialize Web Security Middleware
+    security_middleware = WebSecurityMiddleware(app)
+
+    # HTTPS Redirect Middleware
+    @app.before_request
+    def force_https():
+        if app.config.get("FORCE_HTTPS") and not request.is_secure:
+            if request.url.startswith("http://"):
+                url = request.url.replace("http://", "https://", 1)
+                return redirect(url, code=301)
+
+    # Enhanced Security Headers with XSS Protection
+    @app.after_request
+    def add_security_headers(response):
+        if app.config.get("FORCE_HTTPS"):
+            response.headers[
+                "Strict-Transport-Security"
+            ] = "max-age=31536000; includeSubDomains"
+            response.headers["X-Content-Type-Options"] = "nosniff"
+            response.headers["X-Frame-Options"] = "DENY"
+            response.headers["X-XSS-Protection"] = "1; mode=block"
+            response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+        # Apply XSS protection to JSON responses
+        if response.is_json and hasattr(response, "json"):
+            try:
+                json_data = response.get_json()
+                if json_data:
+                    protected_data = XSSProtection.escape_html_output(json_data)
+                    response.set_data(app.json.dumps(protected_data))
+            except:
+                pass  # Skip if JSON parsing fails
+
+        return response
 
     # logging
     formatter = RequestFormatter(
@@ -60,11 +228,17 @@ def create_app():
     root = logging.getLogger("core")
     root.addHandler(strm)
 
-    user = os.environ.get("MONGO_USER")
-    password = os.environ.get("MONGO_PASSWORD")
-    db = os.environ.get("MONGO_DB")
-    host = os.environ.get("MONGO_HOST")
-    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    # Get MongoDB configuration securely
+    try:
+        user = SecureEnvironmentManager.get_required_env("MONGO_USER")
+        password = SecureEnvironmentManager.get_required_env("MONGO_PASSWORD")
+        db = SecureEnvironmentManager.get_required_env("MONGO_DB")
+        host = SecureEnvironmentManager.get_required_env("MONGO_HOST")
+    except ValueError as e:
+        raise ValueError(f"MongoDB configuration error: {e}")
+
+    mongo_uri = get_mongo_connection_string()
+    app.config["MONGODB_SETTINGS"] = {"db": db, "host": mongo_uri}
     # app.config["MONGODB_SETTINGS"] = {
     #     "db": "mentee",
     #     "host": "localhost",

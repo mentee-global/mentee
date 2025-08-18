@@ -13,7 +13,7 @@ from api.utils.google_storage import (
 from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
 from mongoengine.queryset.visitor import Q
-
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 from api.models import (
     Admin,
     DirectMessage,
@@ -48,7 +48,22 @@ from api.utils.request_utils import (
 from api.utils.constants import NEW_APPLICATION_STATUS
 from api.utils.profile_parse import new_profile, edit_profile
 from api.utils.constants import Account
-from api.utils.require_auth import all_users, mentee_only, verify_user
+from api.utils.require_auth import (
+    all_users,
+    mentee_only,
+    verify_user,
+    verify_token_with_expiry,
+)
+from api.utils.input_validation import (
+    validate_email_format,
+    validate_password,
+    validate_json_data,
+    sanitize_text,
+    validate_file_upload,
+    validate_object_id,
+    secure_filename_enhanced,
+)
+from api.utils.web_security import api_rate_limit, CSRFProtection, upload_rate_limit
 from firebase_admin import auth as firebase_admin_auth
 
 
@@ -474,11 +489,27 @@ def get_account(id):
 
 # POST request for a new account profile
 @main.route("/account", methods=["POST"])
-# @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def create_mentor_profile():
     data = request.json
-    email = data.get("email")
+
+    valid, error_msg = validate_json_data(data)
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    email = sanitize_text(data.get("email"))
     password = data.get("password")
+
+    if email:
+        valid, error_msg = validate_email_format(email)
+        if not valid:
+            return create_response(status=422, message=error_msg)
+
+    if password:
+        valid, error_msg = validate_password(password)
+        if not valid:
+            return create_response(status=422, message=error_msg)
     try:
         account_type = int(data["account_type"])
     except:
@@ -685,6 +716,8 @@ def create_mentor_profile():
 
 @main.route("/accountProfile", methods=["POST"])
 # @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def create_profile_existing_account():
     data = request.json
     email = data.get("email")
@@ -809,6 +842,8 @@ def create_profile_existing_account():
 # PUT requests for /account
 @main.route("/account/<id>", methods=["PUT"])
 # @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def edit_mentor(id):
     data = request.get_json()
     try:
@@ -821,16 +856,20 @@ def edit_mentor(id):
     account = None
     try:
         token = request.headers.get("Authorization")
-        claims = firebase_admin_auth.verify_id_token(token)
+        claims = verify_token_with_expiry(token)
         login_user_role = claims.get("role")
 
         authorized, response = verify_user(account_type)
-        if (
-            not authorized
-            and int(login_user_role) != Account.ADMIN
-            and int(login_user_role) != Account.SUPPORT
-            and int(login_user_role) != Account.HUB
-        ):
+        admin_support_access = (
+            int(login_user_role) == Account.ADMIN
+            or int(login_user_role) == Account.HUB
+            or (
+                int(login_user_role) == Account.SUPPORT
+                and account_type in [Account.MENTEE, Account.MENTOR]
+            )
+        )
+
+        if not authorized and not admin_support_access:
             return response
 
         if account_type == Account.MENTEE:
@@ -868,14 +907,29 @@ def edit_mentor(id):
 
 
 @main.route("/account/<id>/image", methods=["PUT"])
-# @all_users
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def uploadImage(id):
+    valid, error_msg = validate_object_id(id)
+    if not valid:
+        return create_response(status=422, message="Invalid account ID")
+
+    if "image" not in request.files:
+        return create_response(status=422, message="No image file provided")
+
     image = request.files["image"]
+
+    valid, error_msg = validate_file_upload(
+        image, allowed_extensions={"jpg", "jpeg", "png", "gif"}, max_size_mb=5
+    )
+    if not valid:
+        return create_response(status=422, message=error_msg)
     try:
-        account_type = request.form["account_type"]
-        if isinstance(account_type, str):
-            account_type = int(account_type)
-    except:
+        account_type_str = sanitize_text(request.form.get("account_type", ""))
+        if not account_type_str:
+            return create_response(status=422, message="Account type is required")
+        account_type = int(account_type_str)
+    except ValueError:
         msg = "Level param doesn't exist or isn't an int"
         return create_response(status=422, message=msg)
 
@@ -894,16 +948,20 @@ def uploadImage(id):
                 msg = "Level param doesn't match existing account types"
                 return create_response(status=422, message=msg)
         else:
-            claims = firebase_admin_auth.verify_id_token(token)
+            claims = verify_token_with_expiry(token)
             login_user_role = claims.get("role")
 
             authorized, response = verify_user(account_type)
-            if (
-                not authorized
-                and int(login_user_role) != Account.ADMIN
-                and int(login_user_role) != Account.SUPPORT
-                and int(login_user_role) != Account.HUB
-            ):
+            admin_support_access = (
+                int(login_user_role) == Account.ADMIN
+                or int(login_user_role) == Account.HUB
+                or (
+                    int(login_user_role) == Account.SUPPORT
+                    and account_type in [Account.MENTEE, Account.MENTOR]
+                )
+            )
+
+            if not authorized and not admin_support_access:
                 return response
             if account_type == Account.MENTEE:
                 account = MenteeProfile.objects.get(id=id)

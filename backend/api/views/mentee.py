@@ -3,12 +3,15 @@ from api.models import MentorProfile, MenteeProfile
 from flask import Blueprint, request
 from api.utils.constants import Account
 from api.utils.require_auth import mentee_only
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 
 mentee = Blueprint("mentee", __name__)
 
 
 @mentee.route("/editFavMentor", methods=["PUT"])
 @mentee_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def edit_fav_mentor():
     try:
         data = request.get_json()

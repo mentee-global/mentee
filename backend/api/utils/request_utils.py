@@ -12,6 +12,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
+import html
 from api.models import (
     MentorProfile,
     MenteeProfile,
@@ -26,18 +27,19 @@ from api.models import (
     Hub,
 )
 from api.utils.constants import Account, TARGET_LANGS
+from api.utils.secure_env import SecureEnvironmentManager
 
 wtforms_json.init()
 
-imgur_key = os.environ.get("IMGUR_KEY")
-imgur_client = Imgur(client_id=imgur_key)
+imgur_key = SecureEnvironmentManager.get_optional_env("IMGUR_KEY")
+imgur_client = Imgur(client_id=imgur_key) if imgur_key else None
 
-sendgrid_key = os.environ.get("SENDGRID_API_KEY")
-sender_email = os.environ.get("SENDER_EMAIL")
+sendgrid_key = SecureEnvironmentManager.get_required_env("SENDGRID_API_KEY")
+sender_email = SecureEnvironmentManager.get_required_env("SENDER_EMAIL")
 
-twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID")
-twilio_token = os.environ.get("TWILIO_AUTH_TOKEN")
-twilio_phone = os.environ.get("TWILIO_PHONE")
+twilio_sid = SecureEnvironmentManager.get_required_env("TWILIO_ACCOUNT_SID")
+twilio_token = SecureEnvironmentManager.get_required_env("TWILIO_AUTH_TOKEN")
+twilio_phone = SecureEnvironmentManager.get_required_env("TWILIO_PHONE")
 twilio_client = TwilioClient(twilio_sid, twilio_token)
 
 
@@ -206,10 +208,16 @@ def send_email(
         message.template_id = template_id
 
     if data:
-        # Set default language to English if no language is specified
-        if len(TARGET_LANGS.intersection(data.keys())) == 0:
-            data["en-US"] = True
-        message.dynamic_template_data = data
+        sanitized_data = {}
+        for key, value in data.items():
+            if isinstance(value, str):
+                sanitized_data[key] = html.escape(value)
+            else:
+                sanitized_data[key] = value
+
+        if len(TARGET_LANGS.intersection(sanitized_data.keys())) == 0:
+            sanitized_data["en-US"] = True
+        message.dynamic_template_data = sanitized_data
     else:
         message.dynamic_template_data = {"en-US": True}
 

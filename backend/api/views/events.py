@@ -1,8 +1,10 @@
 from flask import Blueprint, request
 import json
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 from numpy import imag
 from werkzeug.utils import secure_filename
 from api.core import create_response, logger
+from api.utils.input_validation import validate_file_upload, secure_filename_enhanced
 from api.models import (
     Event,
     Hub,
@@ -89,6 +91,8 @@ def get_event_by_id(id):
 
 
 @event.route("events/delete/<string:id>", methods=["DELETE"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_train(id):
     try:
         event = Event.objects.get(id=id)
@@ -145,6 +149,8 @@ def send_mail_for_event(
 
 
 @event.route("event_register", methods=["POST"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def new_event():
     try:
         data = request.get_json()
@@ -299,6 +305,8 @@ def new_event():
 
 
 @event.route("event_register/<string:id>/image", methods=["PUT"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def uploadImage(id):
     event = Event.objects.get(id=id)
     if event:
@@ -307,6 +315,13 @@ def uploadImage(id):
                 image_response = imgur_client.delete_image(event.image_file.image_hash)
 
             image = request.files["image"]
+
+            valid, error_msg = validate_file_upload(
+                image, allowed_extensions={"jpg", "jpeg", "png", "gif"}, max_size_mb=5
+            )
+            if not valid:
+                return create_response(status=400, message=error_msg)
+
             image_response = imgur_client.send_image(image)
             new_image = Image(
                 url=image_response["data"]["link"],

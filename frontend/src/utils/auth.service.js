@@ -5,7 +5,24 @@ import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
+  withCredentials: true,
 });
+
+// Function to get CSRF token
+const getCsrfToken = async () => {
+  try {
+    const response = await axios.get(
+      `${AUTH_URL.replace("auth/", "api/csrf-token")}`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data.csrf_token;
+  } catch (error) {
+    console.error("Failed to get CSRF token:", error);
+    return null;
+  }
+};
 
 const get = (url, params) =>
   instance
@@ -13,14 +30,29 @@ const get = (url, params) =>
     .then((res) => res.data)
     .catch((err) => console.error(err));
 
-const post = (url, data, params) =>
-  instance
-    .post(url, data, params)
-    .then((res) => res.data)
-    .catch((err) => {
-      console.error(err);
-      return err?.response;
+const post = async (url, data, params) => {
+  try {
+    // Get CSRF token for POST requests
+    const csrfToken = await getCsrfToken();
+    const headers = {
+      ...(params?.headers || {}),
+    };
+
+    if (csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+
+    const response = await instance.post(url, data, {
+      ...params,
+      headers,
+      withCredentials: true,
     });
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return err?.response;
+  }
+};
 
 const getIdToken = (forceRefresh) => getCurrentUser().getIdToken(forceRefresh);
 export const getIdTokenResult = (forceRefresh) =>

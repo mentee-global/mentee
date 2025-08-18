@@ -2,14 +2,12 @@
 FROM python:3.9
 LABEL maintainer "Kelley Chau <kelleyc2@illinois.edu>"
 
-COPY requirements.txt requirements.txt
-RUN apt-get update -y && \
-    apt-get install -y python3-dev python3-pkg-resources python3-setuptools python3-wheel python3-pip 
+WORKDIR /app
 
-RUN pip install -r requirements.txt
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
-WORKDIR /app
 
 ENTRYPOINT [ "python" ]
 

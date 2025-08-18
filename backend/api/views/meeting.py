@@ -8,34 +8,50 @@ import sys, os
 import base64
 
 from api.utils.jaas_jwt_builder import JaaSJwtBuilder
+from api.utils.secure_env import SecureEnvironmentManager
 
 
 meeting = Blueprint("meeting", __name__)
 
-API_KEY = os.environ.get("EIGHT_X_EIGHT_API_KEY")
-APP_ID = os.environ.get("EIGHT_X_EIGHT_APP_ID")
-ENCODED_PRIVATE_KEY = os.environ.get("EIGHT_X_EIGHT_ENCODED_PRIVATE_KEY")
+
+def get_eight_x_eight_config():
+    """Get 8x8 configuration securely"""
+    return {
+        "api_key": SecureEnvironmentManager.get_optional_env("EIGHT_X_EIGHT_API_KEY"),
+        "app_id": SecureEnvironmentManager.get_optional_env("EIGHT_X_EIGHT_APP_ID"),
+        "private_key": SecureEnvironmentManager.get_optional_env(
+            "EIGHT_X_EIGHT_ENCODED_PRIVATE_KEY"
+        ),
+    }
 
 
 @meeting.route("/generateToken", methods=["GET"])
 def generateToken():
     try:
-        print(ENCODED_PRIVATE_KEY)
-        PRIVATE_KEY = base64.b64decode(ENCODED_PRIVATE_KEY)
-        print(PRIVATE_KEY)
+        config = get_eight_x_eight_config()
+
+        if not all([config["api_key"], config["app_id"], config["private_key"]]):
+            return create_response(
+                status=500, message="8x8 configuration not available"
+            )
+
+        private_key = base64.b64decode(config["private_key"])
+
         jaasJwt = JaaSJwtBuilder()
         token = (
             jaasJwt.withDefaults()
-            .withApiKey(API_KEY)
+            .withApiKey(config["api_key"])
             .withUserName("User Name")
             .withUserEmail("email_address@email.com")
             .withModerator(False)
-            .withAppID(APP_ID)
+            .withAppID(config["app_id"])
             .withUserAvatar("https://asda.com/avatar")
-            .signWith(PRIVATE_KEY)
+            .signWith(private_key)
         )
 
-        return create_response(data={"token": token.decode("utf-8"), "appID": APP_ID})
+        return create_response(
+            data={"token": token.decode("utf-8"), "appID": config["app_id"]}
+        )
 
     except Exception as error:
         print(error)

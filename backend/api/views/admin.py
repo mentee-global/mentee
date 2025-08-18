@@ -18,9 +18,16 @@ from api.models import (
     Hub,
     Image,
 )
-from api.utils.require_auth import admin_only
+from api.utils.require_auth import admin_only, all_users
+from api.utils.input_validation import (
+    validate_file_upload,
+    sanitize_text,
+    validate_email_format,
+    secure_filename_enhanced,
+)
 from api.utils.request_utils import get_profile_model, imgur_client
 from api.utils.constants import Account
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 import csv
 import io
 from api.views.auth import create_firebase_user
@@ -31,6 +38,8 @@ admin = Blueprint("admin", __name__)  # initialize blueprint
 
 @admin.route("/account/<int:role>/<string:id>", methods=["DELETE"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_account(role, id):
     """Allows for the deletion of a specific account from the
     Mentee/Mentor documents
@@ -91,39 +100,72 @@ def delete_account(role, id):
 
 @admin.route("/upload/accounts", methods=["POST"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def upload_account_emails():
     """Upload account emails to permit registering
 
     Returns:
         HTTP Response
     """
+    if "fileupload" not in request.files:
+        return create_response(status=422, message="No file provided")
+
     f = request.files["fileupload"]
-    password = request.form["pass"]
-    isMentor = request.form["mentorOrMentee"] == "true"
+
+    valid, error_msg = validate_file_upload(
+        f, allowed_extensions={"csv"}, max_size_mb=5
+    )
+    if not valid:
+        return create_response(status=422, message=error_msg)
+
+    password = sanitize_text(request.form.get("pass", ""))
+    isMentor = request.form.get("mentorOrMentee") == "true"
+
+    if not password:
+        return create_response(status=422, message="Password is required")
 
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
         for line in reader:
-            duplicates = VerifiedEmail.objects(
-                email=line[0], is_mentor=isMentor, password=password
-            )
-            if not duplicates:
-                email = VerifiedEmail(
-                    email=line[0], is_mentor=isMentor, password=password
+            if line and len(line) > 0:
+                email = sanitize_text(line[0])
+
+                valid, error_msg = validate_email_format(email)
+                if not valid:
+                    continue
+
+                duplicates = VerifiedEmail.objects(
+                    email=email, is_mentor=isMentor, password=password
                 )
-                email.save()
+                if not duplicates:
+                    email_obj = VerifiedEmail(
+                        email=email, is_mentor=isMentor, password=password
+                    )
+                    email_obj.save()
     return create_response(status=200, message="success")
 
 
 @admin.route("hub_register", methods=["PUT"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def create_hub_account():
-    id = request.form["id"]
-    email = request.form["email"]
-    password = request.form["password"]
-    name = request.form["name"]
-    url = request.form["url"]
-    invite_key = request.form["invite_key"]
+    id = sanitize_text(request.form.get("id", ""))
+    email = sanitize_text(request.form.get("email", ""))
+    password = sanitize_text(request.form.get("password", ""))
+    name = sanitize_text(request.form.get("name", ""))
+    url = sanitize_text(request.form.get("url", ""))
+    invite_key = sanitize_text(request.form.get("invite_key", ""))
+
+    if not email or not password or not name:
+        return create_response(
+            status=400, message="Email, password, and name are required"
+        )
+
+    if not validate_email_format(email):
+        return create_response(status=400, message="Invalid email format")
+
     image = None
     if "image" in request.files:
         image = request.files["image"]
@@ -215,6 +257,8 @@ def create_hub_account():
 
 @admin.route("/upload/accountsEmails", methods=["POST"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def upload_account_emailText():
     """Upload account emails to permit registering
 
@@ -222,11 +266,19 @@ def upload_account_emailText():
         HTTP Response
     """
 
-    role = request.form["role"]
-    role = int(role)
-    messageText = request.form["messageText"]
-    password = request.form["password"]
-    name = request.form["name"]
+    role_str = sanitize_text(request.form.get("role", ""))
+    messageText = sanitize_text(request.form.get("messageText", ""))
+    password = sanitize_text(request.form.get("password", ""))
+    name = sanitize_text(request.form.get("name", ""))
+
+    if not role_str or not messageText or not password or not name:
+        return create_response(status=400, message="All fields are required")
+
+    try:
+        role = int(role_str)
+    except ValueError:
+        return create_response(status=400, message="Invalid role format")
+
     if role == Account.GUEST or role == Account.SUPPORT or role == Account.MODERATOR:
         email = messageText
         email = email.replace(" ", "")
@@ -296,6 +348,8 @@ def get_admin(id):
 
 @admin.route("edit_email_password", methods=["POST"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def editEmailPassword():
     data = request.get_json()
     email = data["email"]

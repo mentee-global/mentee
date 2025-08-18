@@ -3,6 +3,12 @@ from flask import Blueprint, request
 import json
 from h11 import Data
 from werkzeug.utils import secure_filename
+from api.utils.input_validation import (
+    validate_file_upload,
+    sanitize_text,
+    secure_filename_enhanced,
+)
+from api.utils.web_security import upload_rate_limit, CSRFProtection, api_rate_limit
 from api.core import create_response, logger
 from bson import ObjectId
 from api.models import (
@@ -250,6 +256,8 @@ def update_multiple_trainings():
 
 
 @training.route("/library/<string:id>", methods=["DELETE"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_library(id):
     try:
         data = CommunityLibrary.objects.get(id=id)
@@ -262,6 +270,8 @@ def delete_library(id):
 
 @training.route("/<string:id>", methods=["DELETE"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def delete_train(id):
     try:
         train = Training.objects.get(id=id)
@@ -354,14 +364,16 @@ def get_train_file(id):
 
 
 @training.route("/library/<string:id>", methods=["PUT"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def edit_library_by_id(id):
     try:
         data = CommunityLibrary.objects.get(id=id)
     except Exception as e:
         return create_response(status=422, message=f"Failed to get library: {e}")
 
-    new_name = request.form.get("name", data.name)
-    new_description = request.form.get("description", data.description)
+    new_name = sanitize_text(request.form.get("name", data.name))
+    new_description = sanitize_text(request.form.get("description", data.description))
 
     if data.name != new_name:
         data.name = new_name
@@ -372,7 +384,13 @@ def edit_library_by_id(id):
 
     file = request.files.get("file", None)
     if file:
-        file_name = secure_filename(file.filename)
+        valid, error_msg = validate_file_upload(
+            file, allowed_extensions={"pdf", "doc", "docx", "txt"}, max_size_mb=25
+        )
+        if not valid:
+            return create_response(status=400, message=error_msg)
+
+        file_name = secure_filename_enhanced(file.filename)
         if file_name == "":
             return create_response(status=400, message="Missing file name")
         data.filee.replace(file, filename=file_name)
@@ -386,6 +404,8 @@ def edit_library_by_id(id):
 #############################################################################
 @training.route("/<string:id>", methods=["PUT"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def get_train_id_edit(id):
     isVideo = True if request.form["isVideo"] == "true" else False
 
@@ -394,12 +414,12 @@ def get_train_id_edit(id):
     except Exception as e:
         return create_response(status=422, message=f"Failed to get training: {e}")
 
-    new_name = request.form.get("name", train.name)
-    new_description = request.form.get("description", train.description)
+    new_name = sanitize_text(request.form.get("name", train.name))
+    new_description = sanitize_text(request.form.get("description", train.description))
 
     hub_id = None
     if "hub_id" in request.form:
-        hub_id = request.form["hub_id"]
+        hub_id = sanitize_text(request.form["hub_id"])
     train.hub_id = hub_id
 
     if train.name != new_name:
@@ -409,15 +429,15 @@ def get_train_id_edit(id):
         train.description = new_description
         train.descriptionTranslated = get_all_translations(new_description)
 
-    train.role = str(request.form.get("role", train.role))
-    train.typee = request.form.get("typee", train.typee)
+    train.role = str(sanitize_text(request.form.get("role", train.role)))
+    train.typee = sanitize_text(request.form.get("typee", train.typee))
     train.isVideo = isVideo
     requried_sign = False
     if "requried_sign" in request.form and request.form["requried_sign"] == "true":
         requried_sign = True
     train.requried_sign = requried_sign
 
-    train.partner_id = request.form.get("partner_id", train.partner_id)
+    train.partner_id = sanitize_text(request.form.get("partner_id", train.partner_id))
     if "mentor_id" in request.form and request.form["mentor_id"] is not None:
         train.mentor_id = list(json.loads(request.form["mentor_id"]))
 
@@ -428,14 +448,21 @@ def get_train_id_edit(id):
         document = request.files.get("document", None)
         if not document:
             return create_response(status=400, message="Missing file")
-        file_name = secure_filename(document.filename)
+
+        valid, error_msg = validate_file_upload(
+            document, allowed_extensions={"pdf", "doc", "docx"}, max_size_mb=25
+        )
+        if not valid:
+            return create_response(status=400, message=error_msg)
+
+        file_name = secure_filename_enhanced(document.filename)
         if file_name == "":
             return create_response(status=400, message="Missing file name")
 
         train.filee.replace(document, filename=file_name)
         train.file_name = file_name
     else:
-        train.url = request.form.get("url", train.url)
+        train.url = sanitize_text(request.form.get("url", train.url))
 
     train.save()
 
@@ -443,12 +470,27 @@ def get_train_id_edit(id):
 
 
 @training.route("/saveSignedDoc", methods=["POST"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def saveSignedDoc():
     try:
         signedPdf = request.files.get("signedPdf")
-        user_email = request.form["user_email"]
-        role = request.form["role"]
-        train_id = request.form["train_id"]
+        if not signedPdf:
+            return create_response(status=400, message="No signed PDF provided")
+
+        valid, error_msg = validate_file_upload(
+            signedPdf, allowed_extensions={"pdf"}, max_size_mb=10
+        )
+        if not valid:
+            return create_response(status=400, message=error_msg)
+
+        user_email = sanitize_text(request.form.get("user_email", ""))
+        role = sanitize_text(request.form.get("role", ""))
+        train_id = sanitize_text(request.form.get("train_id", ""))
+
+        if not user_email or not role or not train_id:
+            return create_response(status=400, message="Missing required fields")
+
         ex_signed_doc = (
             SignedDocs.objects()
             .filter(user_email=user_email)
@@ -476,16 +518,24 @@ def saveSignedDoc():
 
 @training.route("/add_policy/<role>", methods=["POST"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def new_policy(role):
     try:
-        name = request.form["name"]
-        nameTranslated = get_all_translations(request.form["description"])
-        description = request.form["description"]
-        descriptionTranslated = get_all_translations(request.form["description"])
+        name = sanitize_text(request.form.get("name", ""))
+        description = sanitize_text(request.form.get("description", ""))
+
+        if not name or not description:
+            return create_response(
+                status=400, message="Name and description are required"
+            )
+
+        nameTranslated = get_all_translations(description)
+        descriptionTranslated = get_all_translations(description)
         hub_id = None
 
         if "hub_id" in request.form:
-            hub_id = request.form["hub_id"]
+            hub_id = sanitize_text(request.form["hub_id"])
 
         signOrigin = SignOrigin(
             name=name,
@@ -501,9 +551,15 @@ def new_policy(role):
         if not document:
             return create_response(status=400, message="Missing file")
 
-        file_name = secure_filename(document.filename)
+        file_name = secure_filename_enhanced(document.filename)
         if file_name == "":
             return create_response(status=400, message="Missing file name")
+
+        valid, error_msg = validate_file_upload(
+            document, allowed_extensions={"pdf", "doc", "docx"}, max_size_mb=25
+        )
+        if not valid:
+            return create_response(status=400, message=error_msg)
 
         signOrigin.file_name = file_name
         signOrigin.filee.put(document, filename=file_name)
@@ -517,15 +573,21 @@ def new_policy(role):
 
 
 @training.route("/new_library", methods=["POST"])
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def new_library():
     try:
-        name = request.form["name"]
-        nameTranslated = get_all_translations(request.form["description"])
-        description = request.form["description"]
-        descriptionTranslated = get_all_translations(request.form["description"])
-        user_id = request.form["user_id"]
-        hub_id = request.form["hub_id"]
-        user_name = request.form["user_name"]
+        name = sanitize_text(request.form.get("name", ""))
+        description = sanitize_text(request.form.get("description", ""))
+        user_id = sanitize_text(request.form.get("user_id", ""))
+        hub_id = sanitize_text(request.form.get("hub_id", ""))
+        user_name = sanitize_text(request.form.get("user_name", ""))
+
+        if not name or not description or not user_id or not hub_id or not user_name:
+            return create_response(status=400, message="All fields are required")
+
+        nameTranslated = get_all_translations(name)
+        descriptionTranslated = get_all_translations(description)
 
         new_data = CommunityLibrary(
             name=name,
@@ -542,9 +604,15 @@ def new_library():
         if not file:
             return create_response(status=400, message="Missing file")
 
-        file_name = secure_filename(file.filename)
+        file_name = secure_filename_enhanced(file.filename)
         if file_name == "":
             return create_response(status=400, message="Missing file name")
+
+        valid, error_msg = validate_file_upload(
+            file, allowed_extensions={"pdf", "doc", "docx", "txt"}, max_size_mb=25
+        )
+        if not valid:
+            return create_response(status=400, message=error_msg)
 
         new_data.file_name = file_name
         new_data.filee.put(file, filename=file_name)
@@ -559,17 +627,25 @@ def new_library():
 ######################################################################
 @training.route("/<role>", methods=["POST"])
 @admin_only
+@upload_rate_limit
+@CSRFProtection.csrf_protect
 def new_train(role):
     try:
         send_notification = (
-            True if request.form["send_notification"] == "true" else False
+            True if request.form.get("send_notification", "false") == "true" else False
         )
-        name = request.form["name"]
-        nameTranslated = get_all_translations(request.form["description"])
-        description = request.form["description"]
-        descriptionTranslated = get_all_translations(request.form["description"])
-        typee = request.form["typee"]
-        isVideo = True if request.form["isVideo"] == "true" else False
+        name = sanitize_text(request.form.get("name", ""))
+        description = sanitize_text(request.form.get("description", ""))
+
+        if not name or not description:
+            return create_response(
+                status=400, message="Name and description are required"
+            )
+
+        nameTranslated = get_all_translations(name)
+        descriptionTranslated = get_all_translations(description)
+        typee = sanitize_text(request.form.get("typee", ""))
+        isVideo = True if request.form.get("isVideo", "false") == "true" else False
         requried_sign = False
         if "requried_sign" in request.form and request.form["requried_sign"] == "true":
             requried_sign = True
@@ -577,20 +653,28 @@ def new_train(role):
         hub_id = None
 
         if "hub_id" in request.form:
-            hub_id = request.form["hub_id"]
+            hub_id = sanitize_text(request.form["hub_id"])
         partner_id = None
         if (
             "partner_id" in request.form
             and request.form["partner_id"] is not None
             and request.form["partner_id"] != ""
         ):
-            partner_id = request.form["partner_id"]
+            partner_id = sanitize_text(request.form["partner_id"])
         mentor_id = None
         if "mentor_id" in request.form and request.form["mentor_id"] is not None:
-            mentor_id = list(json.loads(request.form["mentor_id"]))
+            mentor_id_str = sanitize_text(request.form["mentor_id"])
+            try:
+                mentor_id = list(json.loads(mentor_id_str))
+            except:
+                return create_response(status=400, message="Invalid mentor_id format")
         mentee_id = None
         if "mentee_id" in request.form and request.form["mentee_id"] is not None:
-            mentee_id = list(json.loads(request.form["mentee_id"]))
+            mentee_id_str = sanitize_text(request.form["mentee_id"])
+            try:
+                mentee_id = list(json.loads(mentee_id_str))
+            except:
+                return create_response(status=400, message="Invalid mentee_id format")
 
         train = Training(
             name=name,
@@ -612,14 +696,22 @@ def new_train(role):
             if not document:
                 return create_response(status=400, message="Missing file")
 
-            file_name = secure_filename(document.filename)
+            file_name = secure_filename_enhanced(document.filename)
             if file_name == "":
                 return create_response(status=400, message="Missing file name")
+
+            valid, error_msg = validate_file_upload(
+                document,
+                allowed_extensions={"pdf", "doc", "docx", "txt"},
+                max_size_mb=25,
+            )
+            if not valid:
+                return create_response(status=400, message=error_msg)
 
             train.file_name = file_name
             train.filee.put(document, filename=file_name)
         else:
-            train.url = request.form["url"]
+            train.url = sanitize_text(request.form.get("url", ""))
 
         train.save()
 
@@ -691,7 +783,7 @@ def new_train(role):
                         hub_url = hub_user.url + "/"
                 for partner_user in partners:
                     recipients.append(partner_user)
-            front_url = request.form["front_url"]
+            front_url = sanitize_text(request.form.get("front_url", ""))
             target_url = (
                 front_url + hub_url + "new_training/" + role + "/" + str(new_train_id)
             )
@@ -762,6 +854,8 @@ def new_train(role):
 
 @training.route("/translate/<string:id>", methods=["PUT"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def translate_training(id):
     try:
         training = Training.objects.get(id=id)

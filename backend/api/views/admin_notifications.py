@@ -4,6 +4,7 @@ from api.models import Notifications
 from datetime import datetime
 from api.utils.require_auth import admin_only
 from datetime import datetime
+from api.utils.web_security import auth_rate_limit, CSRFProtection, api_rate_limit
 
 admin_notifications = Blueprint("admin_notifications", __name__)  # initialize blueprint
 
@@ -33,6 +34,8 @@ def read_notify(id):
 ################################################################################
 @admin_notifications.route("/newNotify", methods=["POST"])
 @admin_only
+@api_rate_limit
+@CSRFProtection.csrf_protect
 def new_notify():
     try:
         message = request.form["message"]

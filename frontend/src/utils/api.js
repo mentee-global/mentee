@@ -10,37 +10,98 @@ import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
 });
+
+// Function to get CSRF token
+const getCsrfToken = async () => {
+  try {
+    const response = await axios.get(`${API_URL}csrf-token`, {
+      withCredentials: true,
+    });
+    return response.data.csrf_token;
+  } catch (error) {
+    console.error("Failed to get CSRF token:", error);
+    return null;
+  }
+};
 
 const authGet = async (url, config) =>
   instance.get(url, {
     ...config,
-    headers: { Authorization: await getUserIdToken() },
+    headers: {
+      Authorization: await getUserIdToken(),
+      ...(config?.headers || {}),
+    },
   });
 
-const authPost = async (url, data, config) =>
-  instance.post(url, data, {
-    ...config,
-    headers: { Authorization: await getUserIdToken() },
-  });
+const authPost = async (url, data, config) => {
+  const csrfToken = await getCsrfToken();
+  const headers = {
+    Authorization: await getUserIdToken(),
+    ...(config?.headers || {}),
+  };
 
-const authPut = async (url, data, config) =>
-  instance.put(url, data, {
-    ...config,
-    headers: { Authorization: await getUserIdToken() },
-  });
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
 
-const authPatch = async (url, data, config) =>
-  instance.patch(url, data, {
+  return instance.post(url, data, {
     ...config,
-    headers: { Authorization: await getUserIdToken() },
+    headers,
   });
+};
 
-const authDelete = async (url, config) =>
-  instance.delete(url, {
+const authPut = async (url, data, config) => {
+  const csrfToken = await getCsrfToken();
+  const headers = {
+    Authorization: await getUserIdToken(),
+    ...(config?.headers || {}),
+  };
+
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+
+  return instance.put(url, data, {
     ...config,
-    headers: { Authorization: await getUserIdToken() },
+    headers,
   });
+};
+
+const authPatch = async (url, data, config) => {
+  const csrfToken = await getCsrfToken();
+  const headers = {
+    Authorization: await getUserIdToken(),
+    ...(config?.headers || {}),
+  };
+
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+
+  return instance.patch(url, data, {
+    ...config,
+    headers,
+  });
+};
+
+const authDelete = async (url, config) => {
+  const csrfToken = await getCsrfToken();
+  const headers = {
+    Authorization: await getUserIdToken(),
+    ...(config?.headers || {}),
+  };
+
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+
+  return instance.delete(url, {
+    ...config,
+    headers,
+  });
+};
 
 export const getAllcountries = () => {
   const requestExtension = "/countries";

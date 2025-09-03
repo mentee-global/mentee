@@ -21,21 +21,27 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
     setAppstate(appInfo.application_state);
     setNote(appInfo.notes);
   }, [appInfo]);
-  const handleApplicationStateChange = useCallback(async (e) => {
-    const dataa = {
-      application_state: e,
-    };
-    await updateApplicationById(dataa, id, isMentor);
-    setAppstate(e);
-  }, [id, isMentor]);
+  const handleApplicationStateChange = useCallback(
+    async (e) => {
+      const dataa = {
+        application_state: e,
+      };
+      await updateApplicationById(dataa, id, isMentor);
+      setAppstate(e);
+    },
+    [id, isMentor]
+  );
 
-  const handleNoteChange = useCallback(async (value) => {
-    const noteUpdate = {
-      notes: value,
-    };
-    setNote(value);
-    await updateApplicationById(noteUpdate, id, isMentor);
-  }, [id, isMentor]);
+  const handleNoteChange = useCallback(
+    async (value) => {
+      const noteUpdate = {
+        notes: value,
+      };
+      setNote(value);
+      await updateApplicationById(noteUpdate, id, isMentor);
+    },
+    [id, isMentor]
+  );
 
   const NotesContainer = useMemo(() => {
     return (
@@ -73,9 +79,7 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
         {isNew && isMentor && <NewMentorAppInfo info={appInfo} />}
         {!isNew && isMentor && <MentorAppInfo info={appInfo} />}
 
-        <div className="status-container">
-          {NotesContainer}
-        </div>
+        <div className="status-container">{NotesContainer}</div>
       </div>
     </div>
   );

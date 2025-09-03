@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Typography } from "antd";
 import MentorAppInfo from "./MentorAppInfo";
 import MentorAppProgress from "./MentorAppProgress";
@@ -21,7 +21,23 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
     setAppstate(appInfo.application_state);
     setNote(appInfo.notes);
   }, [appInfo]);
-  const NotesContainer = () => {
+  const handleApplicationStateChange = useCallback(async (e) => {
+    const dataa = {
+      application_state: e,
+    };
+    await updateApplicationById(dataa, id, isMentor);
+    setAppstate(e);
+  }, [id, isMentor]);
+
+  const handleNoteChange = useCallback(async (value) => {
+    const noteUpdate = {
+      notes: value,
+    };
+    setNote(value);
+    await updateApplicationById(noteUpdate, id, isMentor);
+  }, [id, isMentor]);
+
+  const NotesContainer = useMemo(() => {
     return (
       <div className="notes-container">
         <MentorAppProgress progress={appstate} />
@@ -29,13 +45,7 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
           style={styles.modalInput}
           type="dropdown-single"
           title={""}
-          onChange={async (e) => {
-            const dataa = {
-              application_state: e,
-            };
-            await updateApplicationById(dataa, id, isMentor);
-            setAppstate(e);
-          }}
+          onChange={handleApplicationStateChange}
           options={getAppStatusOptions()}
           value={appstate}
           handleClick={() => {}}
@@ -45,13 +55,7 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
           <Text
             style={{ fontWeight: "bold" }}
             editable={{
-              onChange: async (value) => {
-                const noteUpdate = {
-                  notes: value,
-                };
-                setNote(value);
-                await updateApplicationById(noteUpdate, id, isMentor);
-              },
+              onChange: handleNoteChange,
               tooltip: "Click to edit note",
             }}
           >
@@ -60,7 +64,7 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
         </div>
       </div>
     );
-  };
+  }, [appstate, handleApplicationStateChange, handleNoteChange, note]);
 
   return (
     <div>
@@ -70,7 +74,7 @@ function MentorApplicationView({ id, isMentor, isNew, appInfo }) {
         {!isNew && isMentor && <MentorAppInfo info={appInfo} />}
 
         <div className="status-container">
-          <NotesContainer />
+          {NotesContainer}
         </div>
       </div>
     </div>
@@ -85,4 +89,4 @@ const styles = {
     marginBottom: "40px",
   },
 };
-export default MentorApplicationView;
+export default React.memo(MentorApplicationView);

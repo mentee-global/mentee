@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Modal, Select, Table, Button, Popconfirm } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import {
@@ -24,19 +24,85 @@ function ApplicationOrganizer({ isMentor }) {
   const [visible, setVisible] = useState(false);
   const [selectedID, setSelectedID] = useState(null);
   const [appInfo, setAppInfo] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const columns = [
+  const filterApplications = useCallback((data, appStatee) => {
+    if (appStatee === "all") {
+      return data;
+    } else {
+      return data
+        .filter(
+          (state) =>
+            state.application_state &&
+            state.application_state.toLowerCase() === appStatee.toLowerCase()
+        )
+        .map((application) => ({
+          id: application._id.$oid,
+          ...application,
+        }));
+    }
+  }, []);
+
+  const updateApps = useCallback(async () => {
+    try {
+      const applications = await fetchApplications(isMentor);
+      if (applications) {
+        const newApplications = applications.mentor_applications.map(
+          (app, index) => {
+            return {
+              ...app,
+              index: index,
+              id: app._id["$oid"],
+            };
+          }
+        );
+        if (appState !== "all") {
+          setApplicationData(newApplications);
+          setFilterdData(filterApplications(newApplications, appState));
+        } else {
+          setApplicationData(newApplications);
+          setFilterdData(newApplications);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating applications:', error);
+    }
+  }, [isMentor, appState, filterApplications]);
+
+  const handleApplicationStateChange = useCallback(async (e, id) => {
+    const dataa = {
+      application_state: e,
+    };
+    await updateApplicationById(dataa, id, isMentor);
+    await updateApps();
+  }, [isMentor, updateApps]);
+
+  const handleViewApplication = useCallback(async (id) => {
+    setSelectedID(id);
+    const info = await getApplicationById(id, isMentor);
+    if (info) {
+      setAppInfo(info);
+    }
+    setVisible(true);
+  }, [isMentor]);
+
+  const handleDeleteApplication = useCallback(async (id) => {
+    await deleteApplication(id, isMentor);
+    await updateApps();
+  }, [isMentor, updateApps]);
+
+  const columns = useMemo(() => [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (name) => <a>{name}</a>,
+      render: (name) => <span>{name}</span>,
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      render: (email) => <a>{email}</a>,
+      render: (email) => <span>{email}</span>,
     },
     {
       title: "Affiliation",
@@ -53,7 +119,7 @@ function ApplicationOrganizer({ isMentor }) {
       title: "Notes",
       dataIndex: "notes",
       key: "notes",
-      render: (notes) => <a>{notes}</a>,
+      render: (notes) => <span>{notes}</span>,
     },
     {
       title: "Application State",
@@ -65,13 +131,7 @@ function ApplicationOrganizer({ isMentor }) {
             style={styles.modalInput}
             type="dropdown-single"
             title={""}
-            onChange={async (e) => {
-              const dataa = {
-                application_state: e,
-              };
-              await updateApplicationById(dataa, id, isMentor);
-              await updateApps();
-            }}
+            onChange={(e) => handleApplicationStateChange(e, id)}
             options={getAppStatusOptions()}
             value={record.application_state}
             handleClick={() => {}}
@@ -87,22 +147,11 @@ function ApplicationOrganizer({ isMentor }) {
         <>
           <EditOutlined
             className="delete-user-btn"
-            onClick={async () => {
-              setSelectedID(id);
-              const info = await getApplicationById(id, isMentor);
-              if (info) {
-                setAppInfo(info);
-                //setAppstate(info.application_state);
-              }
-              setVisible(true);
-            }}
+            onClick={() => handleViewApplication(id)}
           />
           <Popconfirm
             title={`Are you sure you want to delete?`}
-            onConfirm={async () => {
-              await deleteApplication(id, isMentor);
-              await updateApps();
-            }}
+            onConfirm={() => handleDeleteApplication(id)}
             onCancel={() => {}}
             okText="Yes"
             cancelText="No"
@@ -114,13 +163,13 @@ function ApplicationOrganizer({ isMentor }) {
           </Popconfirm>
         </>
       ),
-
       align: "center",
     },
-  ];
+  ], [handleApplicationStateChange, handleViewApplication, handleDeleteApplication]);
 
-  useEffect(() => {
-    const getAllApplications = async () => {
+  const getAllApplications = useCallback(async () => {
+    setLoading(true);
+    try {
       const applications = await fetchApplications(isMentor);
       if (applications) {
         const newApplications = applications.mentor_applications.map(
@@ -135,55 +184,23 @@ function ApplicationOrganizer({ isMentor }) {
         setApplicationData(newApplications);
         setFilterdData(newApplications);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  }, [isMentor]);
 
+  useEffect(() => {
     onAuthStateChanged(getAllApplications);
-  }, []);
+  }, [getAllApplications, onAuthStateChanged]);
 
-  const updateApps = async () => {
-    const applications = await fetchApplications(isMentor);
-    if (applications) {
-      const newApplications = applications.mentor_applications.map(
-        (app, index) => {
-          return {
-            ...app,
-            index: index,
-            id: app._id["$oid"],
-          };
-        }
-      );
-      if (appState !== "all") {
-        setApplicationData(newApplications);
-        setFilterdData(filterApplications(newApplications, appState));
-      } else {
-        setApplicationData(newApplications);
-        setFilterdData(newApplications);
-      }
-    }
-  };
-  /**
-   * Filters application by application state and items stored in the corresponding named columns
-   */
-  function filterApplications(data, appStatee) {
-    if (appStatee === "all") {
-      return data;
-    } else {
-      return data
-        .filter(
-          (state) =>
-            state.application_state &&
-            state.application_state.toLowerCase() === appStatee.toLowerCase()
-        )
-        .map((application) => ({
-          id: application._id.$oid,
-          ...application,
-        }));
-    }
-  }
-  const handleModalClose = async () => {
+  const handleModalClose = useCallback(async () => {
     await updateApps();
     setVisible(false);
-  };
+  }, [updateApps]);
+
+  const appStatusOptions = useMemo(() => {
+    return [...getAppStatusOptions(), { value: "all", label: "All" }];
+  }, []);
 
   return (
     <div
@@ -232,13 +249,16 @@ function ApplicationOrganizer({ isMentor }) {
         }}
         placeholder="Role"
         value={appState}
-        options={[...getAppStatusOptions(), { value: "all", label: "All" }]}
+        options={appStatusOptions}
       />
       <div style={{ margin: 10 }}>
         <Table
           id="applicationstable"
           columns={columns}
           dataSource={filterdData}
+          pagination={{ pageSize: 50, showSizeChanger: true, pageSizeOptions: ['20', '50', '100'] }}
+          rowKey="id"
+          loading={loading}
         />
         ;
       </div>
@@ -253,7 +273,7 @@ function ApplicationOrganizer({ isMentor }) {
             id={selectedID}
             isMentor={isMentor}
             isNew={applicationData
-              .filter((item) => item.id == selectedID)
+              .filter((item) => item.id === selectedID)
               .hasOwnProperty("identify")}
             open={visible}
             appInfo={appInfo}
@@ -273,4 +293,4 @@ const styles = {
   },
 };
 
-export default ApplicationOrganizer;
+export default React.memo(ApplicationOrganizer);

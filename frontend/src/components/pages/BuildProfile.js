@@ -215,31 +215,47 @@ function BuildProfile({ location, history, hub_user }) {
       {contextHolder}
       <div
         className={css`
-          min-width: 400px;
           width: 70%;
+          max-width: 800px;
           background: #fff;
           border-radius: 2em;
           padding: 2em;
-          margin: 4em 0;
+          margin: 4em auto;
           box-shadow: 0 1px 4px rgba(5, 145, 255, 0.1);
 
           @media (max-width: 991px) {
             width: 90%;
-            margin: 2em 0;
+            margin: 2em auto;
+            padding: 1.5em;
+          }
+
+          @media (max-width: 768px) {
+            width: 95%;
+            padding: 1.5em;
+            margin: 1em auto;
           }
 
           @media (max-width: 575px) {
             width: 100%;
-            margin: 0;
+            margin: 0 auto;
+            padding: 1em;
             border-radius: 0;
           }
         `}
       >
         <div
           className={css`
+            width: 100%;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             flex-direction: row;
+            margin-bottom: 1em;
+
+            @media (max-width: 575px) {
+              flex-wrap: wrap;
+              gap: 0.5em;
+            }
           `}
         >
           <Link to={"/"} id="back">
@@ -250,8 +266,26 @@ function BuildProfile({ location, history, hub_user }) {
           </Link>
           <LanguageDropdown size="large" />
         </div>
-        <Typography.Title level={2}>{t("apply.buildProfile")}</Typography.Title>
-        <Typography.Title level={3}>
+        <Typography.Title 
+          level={2}
+          style={{ textAlign: 'center', width: '100%' }}
+          className={css`
+            @media (max-width: 575px) {
+              font-size: 1.5em !important;
+            }
+          `}
+        >
+          {t("apply.buildProfile")}
+        </Typography.Title>
+        <Typography.Title 
+          level={3}
+          style={{ textAlign: 'center', width: '100%' }}
+          className={css`
+            @media (max-width: 575px) {
+              font-size: 1.2em !important;
+            }
+          `}
+        >
           {t("commonProfile.welcome")}
         </Typography.Title>
         {getProfileForm()}

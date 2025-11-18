@@ -172,7 +172,12 @@
     "requiredTimezone":"Por favor, introduzca la zona horaria",
     "requiredAvatar":"Por favor sube una imagen de perfil",
     "birthday" : "Fecha de nacimiento",
-    "requiredBirthday":"Por favor, introduzca la fecha de nacimiento"
+    "requiredBirthday":"Por favor, introduzca la fecha de nacimiento",
+    "mustBeAtLeast18":"Debes tener al menos 18 años",
+    "birthdayHelp":"Su rango de edad se calculará automáticamente a partir de su fecha de nacimiento",
+    "ageAutoCalculated":"El rango de edad se calcula automáticamente a partir de su fecha de nacimiento",
+    "autoCalculated":"Auto-calculado",
+    "ageValidRange":"La edad válida es a partir de 18 años"
   },
   "commonApplication": {
     "no-affiliation":"sin afiliación",

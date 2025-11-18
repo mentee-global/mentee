@@ -172,7 +172,12 @@
     "requiredTimezone":"الرجاء إدخال المنطقة الزمنية",
     "requiredAvatar":"الرجاء تحميل صورة الملف الشخصي",
     "birthday" : "تاريخ الميلاد",
-    "requiredBirthday":"الرجاء إدخال تاريخ الميلاد"
+    "requiredBirthday":"الرجاء إدخال تاريخ الميلاد",
+    "mustBeAtLeast18":"يجب أن يكون عمرك 18 عامًا على الأقل",
+    "birthdayHelp":"سيتم حساب الفئة العمرية تلقائيًا من تاريخ ميلادك",
+    "ageAutoCalculated":"يتم حساب الفئة العمرية تلقائيًا من تاريخ ميلادك",
+    "autoCalculated":"محسوب تلقائيًا",
+    "ageValidRange":"العمر الصالح هو من 18 عامًا فما فوق"
   },
   "commonApplication": {
     "no-affiliation":"عدم الانتماء",

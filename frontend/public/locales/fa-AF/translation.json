@@ -172,7 +172,12 @@
     "requiredTimezone":"لطفا منطقه زمانی را وارد کنید",
     "requiredAvatar":"لطفا تصویر نمایه را آپلود کنید",
     "birthday" : "تاریخ تولد",
-    "requiredBirthday":"لطفا تاریخ تولد را وارد کنید"
+    "requiredBirthday":"لطفا تاریخ تولد را وارد کنید",
+    "mustBeAtLeast18":"شما باید حداقل 18 سال سن داشته باشید",
+    "birthdayHelp":"محدوده سنی شما به طور خودکار از تاریخ تولدتان محاسبه می شود",
+    "ageAutoCalculated":"محدوده سنی به طور خودکار از تاریخ تولد شما محاسبه می شود",
+    "autoCalculated":"محاسبه خودکار",
+    "ageValidRange":"سن معتبر از 18 سال به بالا است"
   },
   "commonApplication": {
     "no-affiliation":"عدم وابستگی",

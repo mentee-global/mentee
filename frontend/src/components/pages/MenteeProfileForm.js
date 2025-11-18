@@ -40,6 +40,11 @@ const styles = {
   `,
   formGroupItem: css`
     flex: 1;
+    min-width: 0; // Prevents flex items from overflowing
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
   `,
 };
 
@@ -63,8 +68,8 @@ function MenteeProfileForm({
   const [countryOptions, setCountryOptions] = useState([]);
   const [flag, setFlag] = useState(false);
   const [finishFlag, setFinishFlag] = useState(false);
-  const [refresh, setRefresh] = useState(false);
   var n50_user = localStorage.getItem("n50_user");
+
 
   const immigrantOptions = [
     {
@@ -255,7 +260,7 @@ function MenteeProfileForm({
         res = "50s";
       } else if (age >= 61 && age < 70) {
         res = "60s";
-      } else if (age > 70) {
+      } else if (age >= 70) {
         res = "70s";
       }
     }
@@ -266,7 +271,19 @@ function MenteeProfileForm({
     let birthday = form.getFieldValue("birthday");
     let age_range = getAgeRange(birthday);
     form.setFieldValue("age", age_range);
-    setRefresh(!refresh);
+  };
+
+  const validateBirthday = (_, value) => {
+    if (!value) {
+      return Promise.resolve();
+    }
+    // Calculate age from birth date
+    const birthYear = value.format("YYYY");
+    const age = new Date().getFullYear() - birthYear;
+    if (age < 18) {
+      return Promise.reject(new Error(t("common.mustBeAtLeast18")));
+    }
+    return Promise.resolve();
   };
 
   return (
@@ -277,7 +294,12 @@ function MenteeProfileForm({
       style={{ width: "100%", marginTop: "1em" }}
       onValuesChange={() => setEdited(true)}
     >
-      <Form.Item>
+      <Form.Item
+        className={css`
+          display: flex;
+          justify-content: center;
+        `}
+      >
         <ImgCrop rotate aspect={1} minZoom={0.2}>
           <Upload
             onChange={async (file) => {
@@ -288,45 +310,46 @@ function MenteeProfileForm({
             accept=".png,.jpg,.jpeg"
             showUploadList={false}
           >
-            <Avatar
-              size={120}
-              icon={<UserOutlined />}
-              src={
-                changedImage
-                  ? image && URL.createObjectURL(image)
-                  : image && image.url
-              }
-            />
-            <Button
-              shape="circle"
-              icon={<EditFilled />}
+            <div
               className={css`
-                position: absolute;
-                top: 0;
-                left: 0;
+                position: relative;
+                display: inline-block;
               `}
-            />
+            >
+              <Avatar
+                size={120}
+                icon={<UserOutlined />}
+                src={
+                  changedImage
+                    ? image && URL.createObjectURL(image)
+                    : image && image.url
+                }
+              />
+              <Button
+                shape="circle"
+                icon={<EditFilled />}
+                className={css`
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                `}
+              />
+            </div>
           </Upload>
         </ImgCrop>
-        {!image && finishFlag && (
-          <div
-            class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
-            role="alert"
-          >
-            <div class="ant-form-item-explain-error">
-              {t("common.requiredAvatar")}
-            </div>
-          </div>
-        )}
       </Form.Item>
-      <div
-        class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
-        role="alert"
-      >
-        <div class="ant-form-item-explain-error">
-          Please upload profile image
+      {!image && finishFlag && (
+        <div
+          className={css`
+            text-align: center;
+            color: #ff4d4f;
+            margin-top: -1em;
+            margin-bottom: 1em;
+          `}
+        >
+          {t("common.requiredAvatar")}
         </div>
-      </div>
+      )}
       <Form.Item label={"Email"}>
         <Input value={email} readOnly />
       </Form.Item>
@@ -383,24 +406,57 @@ function MenteeProfileForm({
         </div>
       ) : null}
 
-      <Form.Item
-        name="birthday"
-        label={t("common.birthday")}
-        rules={[
-          {
-            required: false,
-            message: t("common.requiredBirthday"),
-          },
-        ]}
-        style={{
-          display: "inline-block",
-        }}
-      >
+      <div className={styles.formGroup}>
+        <Form.Item
+          name="birthday"
+          label={t("common.birthday")}
+          rules={[
+            {
+              required: true,
+              message: t("common.requiredBirthday"),
+            },
+            {
+              validator: validateBirthday,
+            },
+          ]}
+          className={styles.formGroupItem}
+          extra={t("common.birthdayHelp")}
+        >
         <DatePicker
           placeholder={t("common.birthday")}
           onChange={() => changeBirthday()}
+          style={{ width: '100%' }}
         />
-      </Form.Item>
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) => prevValues.birthday !== currentValues.birthday}
+        >
+          {({ getFieldValue }) => {
+            const hasBirthday = getFieldValue("birthday");
+            return (
+              <Form.Item
+                label={t("menteeProfile.age")}
+                name="age"
+                rules={[
+                  {
+                    required: true,
+                    message: t("common.requiredAge"),
+                  },
+                ]}
+                className={styles.formGroupItem}
+                extra={hasBirthday ? t("common.ageAutoCalculated") : t("common.ageValidRange")}
+              >
+                <Select
+                  options={getAgeRanges(t)}
+                  disabled={hasBirthday ? true : false}
+                  placeholder={hasBirthday ? t("common.autoCalculated") : t("common.pleaseSelect")}
+                />
+              </Form.Item>
+            );
+          }}
+        </Form.Item>
+      </div>
 
       <Form.Item label={t("commonProfile.biography")} name="biography">
         <Input.TextArea rows={3} />
@@ -430,22 +486,6 @@ function MenteeProfileForm({
         </Form.Item>
       </div>
       <div className={styles.formGroup}>
-        <Form.Item
-          label={t("menteeProfile.age")}
-          name="age"
-          rules={[
-            {
-              required: true,
-              message: t("common.requiredAge"),
-            },
-          ]}
-          className={styles.formGroupItem}
-        >
-          <Select
-            options={getAgeRanges(t)}
-            disabled={form.getFieldValue("birthday") ? true : false}
-          />
-        </Form.Item>
         <Form.Item
           label={t("menteeApplication.preferredLanguage")}
           name="languages"

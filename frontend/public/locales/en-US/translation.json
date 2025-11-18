@@ -173,7 +173,12 @@
     "requiredTimezone":"Please enter time zone",
     "requiredAvatar":"Please upload profile image",
     "birthday" : "Birth Date",
-    "requiredBirthday":"Please enter Birth Date"
+    "requiredBirthday":"Please enter Birth Date",
+    "mustBeAtLeast18":"You must be at least 18 years old",
+    "birthdayHelp":"Your age range will be automatically calculated from your birth date",
+    "ageAutoCalculated":"Age range is automatically calculated from your birth date",
+    "autoCalculated":"Auto-calculated",
+    "ageValidRange":"Valid age is from 18 years old and above"
   },
   "commonApplication": {
     "no-affiliation":"no-affiliation",

@@ -172,7 +172,12 @@
     "requiredTimezone":"Por favor, insira o fuso horário",
     "requiredAvatar":"Por favor, carregue a imagem do perfil",
     "birthday" : "Data de Nascimento",
-    "requiredBirthday":"Por favor, insira a Data de Nascimento"
+    "requiredBirthday":"Por favor, insira a Data de Nascimento",
+    "mustBeAtLeast18":"Você deve ter pelo menos 18 anos",
+    "birthdayHelp":"Sua faixa etária será calculada automaticamente a partir da sua data de nascimento",
+    "ageAutoCalculated":"A faixa etária é calculada automaticamente a partir da sua data de nascimento",
+    "autoCalculated":"Auto-calculado",
+    "ageValidRange":"A idade válida é a partir de 18 anos"
   },
   "commonApplication": {
     "no-affiliation":"sem afiliação",

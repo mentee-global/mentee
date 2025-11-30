@@ -70,7 +70,6 @@ function MenteeProfileForm({
   const [finishFlag, setFinishFlag] = useState(false);
   var n50_user = localStorage.getItem("n50_user");
 
-
   const immigrantOptions = [
     {
       value: "I am a refugee",
@@ -422,15 +421,17 @@ function MenteeProfileForm({
           className={styles.formGroupItem}
           extra={t("common.birthdayHelp")}
         >
-        <DatePicker
-          placeholder={t("common.birthday")}
-          onChange={() => changeBirthday()}
-          style={{ width: '100%' }}
-        />
+          <DatePicker
+            placeholder={t("common.birthday")}
+            onChange={() => changeBirthday()}
+            style={{ width: "100%" }}
+          />
         </Form.Item>
         <Form.Item
           noStyle
-          shouldUpdate={(prevValues, currentValues) => prevValues.birthday !== currentValues.birthday}
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.birthday !== currentValues.birthday
+          }
         >
           {({ getFieldValue }) => {
             const hasBirthday = getFieldValue("birthday");
@@ -445,12 +446,20 @@ function MenteeProfileForm({
                   },
                 ]}
                 className={styles.formGroupItem}
-                extra={hasBirthday ? t("common.ageAutoCalculated") : t("common.ageValidRange")}
+                extra={
+                  hasBirthday
+                    ? t("common.ageAutoCalculated")
+                    : t("common.ageValidRange")
+                }
               >
                 <Select
                   options={getAgeRanges(t)}
                   disabled={hasBirthday ? true : false}
-                  placeholder={hasBirthday ? t("common.autoCalculated") : t("common.pleaseSelect")}
+                  placeholder={
+                    hasBirthday
+                      ? t("common.autoCalculated")
+                      : t("common.pleaseSelect")
+                  }
                 />
               </Form.Item>
             );

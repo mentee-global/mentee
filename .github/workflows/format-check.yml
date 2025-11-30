@@ -5,10 +5,6 @@ on:
     branches:
       - main
       - dev
-  pull_request:
-    branches:
-      - main
-      - dev
 
 jobs:
   backend-format:
@@ -50,7 +46,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'yarn'
-          cache-dependency-path: frontend/yarn.lock
+          cache-dependency-path: '**/yarn.lock'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile

@@ -1,0 +1,43 @@
+name: Code Format Check
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  backend-format:
+    name: Backend Format Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run Black format check
+        run: black . --check
+
+  frontend-format:
+    name: Frontend Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run format check
+        run: npx prettier@2.8.4 --check "frontend/src/**/*.js"
+

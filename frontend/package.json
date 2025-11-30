@@ -53,9 +53,9 @@
     "build": "react-scripts build && compress-cra",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "pretty-quick --staged {src,test}/**/*.{js,jsx,json,scss}",
-    "format:all": "prettier --write {src,test}/**/*.{js,jsx,json,scss}",
-    "format:check": "prettier --list-different {src,test}/**/*.js"
+    "format": "pretty-quick --staged \"src/**/*.{js,json,scss}\"",
+    "format:all": "prettier --write \"src/**/*.{js,json,scss}\"",
+    "format:check": "prettier --check \"src/**/*.js\""
   },
   "eslintConfig": {
     "extends": "react-app"

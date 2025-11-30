@@ -266,9 +266,9 @@ function BuildProfile({ location, history, hub_user }) {
           </Link>
           <LanguageDropdown size="large" />
         </div>
-        <Typography.Title 
+        <Typography.Title
           level={2}
-          style={{ textAlign: 'center', width: '100%' }}
+          style={{ textAlign: "center", width: "100%" }}
           className={css`
             @media (max-width: 575px) {
               font-size: 1.5em !important;
@@ -277,9 +277,9 @@ function BuildProfile({ location, history, hub_user }) {
         >
           {t("apply.buildProfile")}
         </Typography.Title>
-        <Typography.Title 
+        <Typography.Title
           level={3}
-          style={{ textAlign: 'center', width: '100%' }}
+          style={{ textAlign: "center", width: "100%" }}
           className={css`
             @media (max-width: 575px) {
               font-size: 1.2em !important;

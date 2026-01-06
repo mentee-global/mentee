@@ -202,9 +202,7 @@ def download_mentor_apps(apps, partner_object):
                 (
                     partner_object[acct.partner]
                     if acct.partner and acct.partner in partner_object
-                    else acct.organization
-                    if acct.organization
-                    else ""
+                    else acct.organization if acct.organization else ""
                 ),
             ]
         )
@@ -627,7 +625,9 @@ def download_partner_accounts_data(partner_id):
 def download_partner_mentor_accounts(partner, messages, file_format="xlsx"):
     """Download mentors assigned to a partner with activity status."""
     if not partner.assign_mentors:
-        return generate_file("partner_mentors", [], get_mentor_columns_with_activity(), file_format)
+        return generate_file(
+            "partner_mentors", [], get_mentor_columns_with_activity(), file_format
+        )
 
     accts = []
 
@@ -642,8 +642,12 @@ def download_partner_mentor_accounts(partner, messages, file_format="xlsx"):
             continue
 
         # Count messages
-        sent_messages = [msg for msg in messages if str(msg.sender_id) == str(mentor.id)]
-        received_messages = [msg for msg in messages if str(msg.recipient_id) == str(mentor.id)]
+        sent_messages = [
+            msg for msg in messages if str(msg.sender_id) == str(mentor.id)
+        ]
+        received_messages = [
+            msg for msg in messages if str(msg.recipient_id) == str(mentor.id)
+        ]
 
         # Determine activity status
         total_sent = len(sent_messages)
@@ -677,7 +681,11 @@ def download_partner_mentor_accounts(partner, messages, file_format="xlsx"):
                 mentor.website,
                 "Yes" if mentor.image and mentor.image.url else "No",
                 mentor.image.url if mentor.image else "",
-                mentor.videos[0].url if mentor.videos and len(mentor.videos) > 0 else "",
+                (
+                    mentor.videos[0].url
+                    if mentor.videos and len(mentor.videos) > 0
+                    else ""
+                ),
                 "Yes" if mentor.videos and len(mentor.videos) > 0 else "No",
                 "|".join(educations),
                 ",".join(mentor.languages) if mentor.languages else "",
@@ -696,13 +704,17 @@ def download_partner_mentor_accounts(partner, messages, file_format="xlsx"):
             ]
         )
 
-    return generate_file("partner_mentors", accts, get_mentor_columns_with_activity(), file_format)
+    return generate_file(
+        "partner_mentors", accts, get_mentor_columns_with_activity(), file_format
+    )
 
 
 def download_partner_mentee_accounts(partner, messages, file_format="xlsx"):
     """Download mentees assigned to a partner with activity status."""
     if not partner.assign_mentees:
-        return generate_file("partner_mentees", [], get_mentee_columns_with_activity(), file_format)
+        return generate_file(
+            "partner_mentees", [], get_mentee_columns_with_activity(), file_format
+        )
 
     accts = []
 
@@ -717,8 +729,12 @@ def download_partner_mentee_accounts(partner, messages, file_format="xlsx"):
             continue
 
         # Count messages
-        sent_messages = [msg for msg in messages if str(msg.sender_id) == str(mentee.id)]
-        received_messages = [msg for msg in messages if str(msg.recipient_id) == str(mentee.id)]
+        sent_messages = [
+            msg for msg in messages if str(msg.sender_id) == str(mentee.id)
+        ]
+        received_messages = [
+            msg for msg in messages if str(msg.recipient_id) == str(mentee.id)
+        ]
 
         # Determine activity status
         total_sent = len(sent_messages)
@@ -743,7 +759,9 @@ def download_partner_mentee_accounts(partner, messages, file_format="xlsx"):
                 )
             )
         if mentee.education_level and not educations:
-            educations.append(EDUCATION_LEVEL.get(mentee.education_level, mentee.education_level))
+            educations.append(
+                EDUCATION_LEVEL.get(mentee.education_level, mentee.education_level)
+            )
 
         accts.append(
             [
@@ -765,7 +783,11 @@ def download_partner_mentee_accounts(partner, messages, file_format="xlsx"):
                 1 if mentee.email_notifications else 0,
                 1 if mentee.is_private else 0,
                 mentee.video.url if mentee.video else "",
-                ",".join(mentee.favorite_mentors_ids) if mentee.favorite_mentors_ids else "",
+                (
+                    ",".join(mentee.favorite_mentors_ids)
+                    if mentee.favorite_mentors_ids
+                    else ""
+                ),
                 total_sent,
                 total_received,
                 partner.organization if partner.organization else "",
@@ -774,7 +796,9 @@ def download_partner_mentee_accounts(partner, messages, file_format="xlsx"):
             ]
         )
 
-    return generate_file("partner_mentees", accts, get_mentee_columns_with_activity(), file_format)
+    return generate_file(
+        "partner_mentees", accts, get_mentee_columns_with_activity(), file_format
+    )
 
 
 def get_mentor_columns_with_activity():

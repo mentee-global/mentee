@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { fetchAccounts, fetchAccountById } from "utils/api";
+import {
+  fetchAccounts,
+  fetchAccountById,
+  downloadPartnerMentorsData,
+  downloadPartnerMenteesData,
+} from "utils/api";
 import Meta from "antd/lib/card/Meta";
 import {
   Table,
   Input,
   Dropdown,
-  Menu,
   message,
   Avatar,
   Layout,
@@ -21,12 +25,22 @@ import {
   Typography,
   Tag,
   Button,
+  Tooltip,
+  Space,
+  Segmented,
+  Badge,
 } from "antd";
 import {
   UserOutlined,
   SearchOutlined,
   DownOutlined,
   ExclamationCircleOutlined,
+  DownloadOutlined,
+  TeamOutlined,
+  CheckCircleOutlined,
+  MessageOutlined,
+  FileExcelOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { HubsDropdown } from "../components/AdminDropdowns";
 
@@ -138,27 +152,130 @@ export const AdminPartnerData = () => {
     setModalData(sortedMessages || []);
   };
 
-  const overlay = (
-    <Menu>
-      <Menu.Item>
-        <a onClick={() => setOption(options.MENTORS)}>Mentors</a>
-      </Menu.Item>
-      <Menu.Item>
-        <a onClick={() => setOption(options.MENTEES)}>Mentees</a>
-      </Menu.Item>
-    </Menu>
-  );
+  // Collapsible message list component for the table
+  const MessageListCell = ({ message_receive_data, record }) => {
+    const [expanded, setExpanded] = useState(false);
+    const activeMessages = message_receive_data?.filter(
+      (item) => item.numberOfMessages > 0
+    );
+
+    if (!activeMessages || activeMessages.length === 0) {
+      return (
+        <Typography.Text type="secondary" italic>
+          No messages
+        </Typography.Text>
+      );
+    }
+
+    const displayCount = expanded ? activeMessages.length : 3;
+    const visibleItems = activeMessages.slice(0, displayCount);
+    const remainingCount = activeMessages.length - 3;
+
+    return (
+      <div
+        className={css`
+          max-height: ${expanded ? "300px" : "140px"};
+          overflow-y: auto;
+          padding-right: 4px;
+
+          &::-webkit-scrollbar {
+            width: 4px;
+          }
+          &::-webkit-scrollbar-thumb {
+            background-color: ${colorPrimaryBorder};
+            border-radius: 4px;
+          }
+        `}
+      >
+        {visibleItems.map((item, index) => (
+          <div
+            key={index}
+            className={css`
+              display: flex;
+              align-items: center;
+              padding: 6px 8px;
+              margin-bottom: 4px;
+              background: ${colorPrimaryBg};
+              border-radius: 6px;
+              cursor: pointer;
+              transition: all 0.2s ease;
+
+              &:hover {
+                background: ${colorPrimaryBorder};
+              }
+            `}
+            onClick={() => showDetailModal(item, record)}
+          >
+            <Avatar
+              size={24}
+              icon={<UserOutlined />}
+              src={item.image ? item.image.url : ""}
+              className={css`
+                flex-shrink: 0;
+              `}
+            />
+            <div
+              className={css`
+                margin-left: 8px;
+                flex: 1;
+                min-width: 0;
+              `}
+            >
+              <Typography.Text
+                ellipsis
+                className={css`
+                  display: block;
+                  font-size: 13px;
+                `}
+              >
+                {item.receiver_name}
+              </Typography.Text>
+            </div>
+            <Badge
+              count={item.numberOfMessages}
+              style={{
+                backgroundColor: colorPrimary,
+                fontSize: "11px",
+              }}
+            />
+          </div>
+        ))}
+
+        {activeMessages.length > 3 && (
+          <Button
+            type="link"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpanded(!expanded);
+            }}
+            className={css`
+              padding: 4px 0;
+              height: auto;
+            `}
+          >
+            {expanded
+              ? "Show less"
+              : `Show ${remainingCount} more conversation${
+                  remainingCount > 1 ? "s" : ""
+                }`}
+          </Button>
+        )}
+      </div>
+    );
+  };
 
   const columns = [
     {
       title: "Logo",
       dataIndex: "image",
       key: "image",
+      width: 60,
       render: (image) => {
         return (
           <div className="flex flex-center">
             <Avatar
-              size={30}
+              size={36}
               icon={<UserOutlined />}
               className="modal-profile-icon2"
               src={image ? image.url : ""}
@@ -171,55 +288,37 @@ export const AdminPartnerData = () => {
       title: "Name",
       dataIndex: "name",
       key: "organization",
-      render: (organization) => <span>{organization}</span>,
+      width: 180,
+      render: (organization) => (
+        <Typography.Text strong>{organization}</Typography.Text>
+      ),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      render: (email) => <span>{email}</span>,
+      width: 220,
+      render: (email) => (
+        <Typography.Text copyable={{ text: email }}>{email}</Typography.Text>
+      ),
     },
     {
-      title:
-        option.key === ACCOUNT_TYPE.MENTEE
-          ? "Receiver(Count of Messages)"
-          : "Sender(Count of Messages)",
+      title: (
+        <Space>
+          <MessageOutlined />
+          {option.key === ACCOUNT_TYPE.MENTEE
+            ? "Conversations with Mentors"
+            : "Conversations with Mentees"}
+        </Space>
+      ),
       dataIndex: "message_receive_data",
       key: "message_receive_data",
-      render: (message_receive_data, record) => {
-        return (
-          <>
-            {message_receive_data &&
-              message_receive_data.length > 0 &&
-              message_receive_data.map((item) => {
-                if (item.numberOfMessages > 0) {
-                  return (
-                    <div style={{ display: "flex", lineHeight: "40px" }}>
-                      <Avatar
-                        size={18}
-                        icon={<UserOutlined />}
-                        className="modal-profile-icon2"
-                        src={item.image ? item.image.url : ""}
-                      />
-                      <div
-                        onClick={() => showDetailModal(item, record)}
-                        style={{
-                          cursor: "pointer",
-                          textDecoration: "underline",
-                        }}
-                      >
-                        {item.receiver_name}&nbsp;&nbsp;({item.numberOfMessages}
-                        )
-                      </div>
-                    </div>
-                  );
-                } else {
-                  return <></>;
-                }
-              })}
-          </>
-        );
-      },
+      render: (message_receive_data, record) => (
+        <MessageListCell
+          message_receive_data={message_receive_data}
+          record={record}
+        />
+      ),
     },
   ];
   useEffect(() => {
@@ -511,24 +610,317 @@ export const AdminPartnerData = () => {
             paddingRight: "2rem",
           }}
         >
-          <div style={{ marginBottom: "1rem" }}>
-            <Dropdown
-              overlay={overlay}
-              className={"table-button"}
-              trigger={["click"]}
-            >
-              <a>
-                {option.text} <DownOutlined />
-              </a>
-            </Dropdown>
+          {/* Header Controls */}
+          <div
+            className={css`
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 1.5rem;
+              flex-wrap: wrap;
+              gap: 16px;
+            `}
+          >
+            {/* Left side: View toggle and Active filter */}
+            <Space size="large" wrap>
+              {/* Mentors/Mentees Segmented Control */}
+              <div
+                className={css`
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                `}
+              >
+                <TeamOutlined style={{ color: colorPrimary, fontSize: 18 }} />
+                <Segmented
+                  value={option.key}
+                  onChange={(value) => {
+                    setOption(
+                      value === ACCOUNT_TYPE.MENTOR
+                        ? options.MENTORS
+                        : options.MENTEES
+                    );
+                  }}
+                  options={[
+                    {
+                      label: (
+                        <span>
+                          <UserOutlined style={{ marginRight: 4 }} />
+                          Mentees
+                        </span>
+                      ),
+                      value: ACCOUNT_TYPE.MENTEE,
+                    },
+                    {
+                      label: (
+                        <span>
+                          <UserOutlined style={{ marginRight: 4 }} />
+                          Mentors
+                        </span>
+                      ),
+                      value: ACCOUNT_TYPE.MENTOR,
+                    },
+                  ]}
+                />
+              </div>
 
-            <Switch
-              onChange={(e) => setSelectActived(e)}
-              style={{ marginLeft: "2rem", marginRight: "0.5rem" }}
-              checked={selectActived}
-            />
-            <span style={{ color: "#1677ff" }}>{"Active"}</span>
+              {/* Active Toggle with Tooltip */}
+              <Tooltip
+                title={
+                  <div>
+                    <strong>What is an Active User?</strong>
+                    <p style={{ margin: "8px 0 0 0", fontSize: 12 }}>
+                      An active user is someone who has exchanged at least one
+                      message with another user (mentor or mentee). This filter
+                      shows only users who have active conversations.
+                    </p>
+                  </div>
+                }
+                placement="bottom"
+                overlayStyle={{ maxWidth: 300 }}
+              >
+                <div
+                  className={css`
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 6px 12px;
+                    background: ${selectActived ? colorPrimaryBg : "#f5f5f5"};
+                    border: 1px solid
+                      ${selectActived ? colorPrimaryBorder : "#d9d9d9"};
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                      border-color: ${colorPrimary};
+                    }
+                  `}
+                  onClick={() => setSelectActived(!selectActived)}
+                >
+                  <Switch
+                    size="small"
+                    checked={selectActived}
+                    onChange={(e) => setSelectActived(e)}
+                  />
+                  <CheckCircleOutlined
+                    style={{
+                      color: selectActived ? colorPrimary : "#999",
+                    }}
+                  />
+                  <Typography.Text
+                    style={{
+                      color: selectActived ? colorPrimary : "#666",
+                      fontWeight: selectActived ? 600 : 400,
+                    }}
+                  >
+                    Active Only
+                  </Typography.Text>
+                  <Typography.Text
+                    type="secondary"
+                    style={{ fontSize: 11, marginLeft: 4 }}
+                  >
+                    (?)
+                  </Typography.Text>
+                </div>
+              </Tooltip>
+            </Space>
+
+            {/* Right side: Export Button */}
+            {selectedPartner && (
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "mentees",
+                      label: (
+                        <Space>
+                          <UserOutlined />
+                          Export Mentees Data
+                        </Space>
+                      ),
+                      children: [
+                        {
+                          key: "mentees-xlsx",
+                          label: (
+                            <Space>
+                              <FileExcelOutlined />
+                              Excel (.xlsx)
+                            </Space>
+                          ),
+                          onClick: () => {
+                            messageApi.loading(
+                              "Preparing mentees Excel export..."
+                            );
+                            downloadPartnerMenteesData(
+                              selectedPartner._id.$oid,
+                              "xlsx"
+                            )
+                              .then(() => {
+                                messageApi.success("Mentees Excel downloaded!");
+                              })
+                              .catch(() => {
+                                messageApi.error(
+                                  "Failed to export mentees data"
+                                );
+                              });
+                          },
+                        },
+                        {
+                          key: "mentees-csv",
+                          label: (
+                            <Space>
+                              <FileTextOutlined />
+                              CSV (.csv)
+                            </Space>
+                          ),
+                          onClick: () => {
+                            messageApi.loading(
+                              "Preparing mentees CSV export..."
+                            );
+                            downloadPartnerMenteesData(
+                              selectedPartner._id.$oid,
+                              "csv"
+                            )
+                              .then(() => {
+                                messageApi.success("Mentees CSV downloaded!");
+                              })
+                              .catch(() => {
+                                messageApi.error(
+                                  "Failed to export mentees data"
+                                );
+                              });
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      key: "mentors",
+                      label: (
+                        <Space>
+                          <UserOutlined />
+                          Export Mentors Data
+                        </Space>
+                      ),
+                      children: [
+                        {
+                          key: "mentors-xlsx",
+                          label: (
+                            <Space>
+                              <FileExcelOutlined />
+                              Excel (.xlsx)
+                            </Space>
+                          ),
+                          onClick: () => {
+                            messageApi.loading(
+                              "Preparing mentors Excel export..."
+                            );
+                            downloadPartnerMentorsData(
+                              selectedPartner._id.$oid,
+                              "xlsx"
+                            )
+                              .then(() => {
+                                messageApi.success("Mentors Excel downloaded!");
+                              })
+                              .catch(() => {
+                                messageApi.error(
+                                  "Failed to export mentors data"
+                                );
+                              });
+                          },
+                        },
+                        {
+                          key: "mentors-csv",
+                          label: (
+                            <Space>
+                              <FileTextOutlined />
+                              CSV (.csv)
+                            </Space>
+                          ),
+                          onClick: () => {
+                            messageApi.loading(
+                              "Preparing mentors CSV export..."
+                            );
+                            downloadPartnerMentorsData(
+                              selectedPartner._id.$oid,
+                              "csv"
+                            )
+                              .then(() => {
+                                messageApi.success("Mentors CSV downloaded!");
+                              })
+                              .catch(() => {
+                                messageApi.error(
+                                  "Failed to export mentors data"
+                                );
+                              });
+                          },
+                        },
+                      ],
+                    },
+                    {
+                      type: "divider",
+                    },
+                    {
+                      key: "info",
+                      label: (
+                        <Typography.Text
+                          type="secondary"
+                          style={{ fontSize: 11 }}
+                        >
+                          Exports include activity status
+                        </Typography.Text>
+                      ),
+                      disabled: true,
+                    },
+                  ],
+                }}
+                trigger={["click"]}
+              >
+                <Button type="primary" icon={<DownloadOutlined />}>
+                  Export Data <DownOutlined />
+                </Button>
+              </Dropdown>
+            )}
           </div>
+
+          {/* Partner Info Banner */}
+          {selectedPartner && (
+            <div
+              className={css`
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                background: linear-gradient(
+                  135deg,
+                  ${colorPrimaryBg} 0%,
+                  #fff 100%
+                );
+                border: 1px solid ${colorPrimaryBorder};
+                border-radius: 8px;
+                margin-bottom: 16px;
+              `}
+            >
+              <Avatar
+                size={40}
+                icon={<UserOutlined />}
+                src={selectedPartner.image ? selectedPartner.image.url : null}
+              />
+              <div>
+                <Typography.Text strong style={{ fontSize: 16 }}>
+                  {selectedPartner.name || selectedPartner.organization}
+                </Typography.Text>
+                <div>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    Showing {tableData?.length || 0} {option.text.toLowerCase()}
+                    {selectActived ? " with active conversations" : ""}
+                  </Typography.Text>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Table */}
           <div style={{ width: "100%" }}>
             <Spin
               wrapperClassName={css`
@@ -536,7 +928,55 @@ export const AdminPartnerData = () => {
               `}
               spinning={subLoading}
             >
-              <Table columns={columns} dataSource={tableData} />
+              <Table
+                columns={columns}
+                dataSource={tableData}
+                rowKey={(record) => record.id?.$oid || record.email}
+                pagination={{
+                  pageSize: 10,
+                  showSizeChanger: true,
+                  showTotal: (total, range) =>
+                    `${range[0]}-${
+                      range[1]
+                    } of ${total} ${option.text.toLowerCase()}`,
+                }}
+                locale={{
+                  emptyText: selectedPartner ? (
+                    <div style={{ padding: "40px 0" }}>
+                      <UserOutlined
+                        style={{
+                          fontSize: 48,
+                          color: "#ccc",
+                          marginBottom: 16,
+                        }}
+                      />
+                      <div>
+                        <Typography.Text type="secondary">
+                          {selectActived
+                            ? `No active ${option.text.toLowerCase()} found for this partner`
+                            : `No ${option.text.toLowerCase()} assigned to this partner`}
+                        </Typography.Text>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ padding: "40px 0" }}>
+                      <TeamOutlined
+                        style={{
+                          fontSize: 48,
+                          color: "#ccc",
+                          marginBottom: 16,
+                        }}
+                      />
+                      <div>
+                        <Typography.Text type="secondary">
+                          Select a partner from the sidebar to view their{" "}
+                          {option.text.toLowerCase()}
+                        </Typography.Text>
+                      </div>
+                    </div>
+                  ),
+                }}
+              />
             </Spin>
           </div>
         </div>

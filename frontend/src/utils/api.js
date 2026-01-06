@@ -1421,3 +1421,35 @@ export const getGroupParticipants = (hubId) => {
     }
   );
 };
+
+export const downloadPartnerMentorsData = async (partnerId, format = "xlsx") => {
+  const requestExtension = `/download/partner/${partnerId}/accounts`;
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTOR,
+      format: format,
+    },
+  }).catch(console.error);
+
+  if (response) {
+    const extension = format === "csv" ? "csv" : "xlsx";
+    downloadBlob(response, `partner_mentors.${extension}`);
+  }
+};
+
+export const downloadPartnerMenteesData = async (partnerId, format = "xlsx") => {
+  const requestExtension = `/download/partner/${partnerId}/accounts`;
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MENTEE,
+      format: format,
+    },
+  }).catch(console.error);
+
+  if (response) {
+    const extension = format === "csv" ? "csv" : "xlsx";
+    downloadBlob(response, `partner_mentees.${extension}`);
+  }
+};

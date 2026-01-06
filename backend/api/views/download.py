@@ -202,7 +202,9 @@ def download_mentor_apps(apps, partner_object):
                 (
                     partner_object[acct.partner]
                     if acct.partner and acct.partner in partner_object
-                    else acct.organization if acct.organization else ""
+                    else acct.organization
+                    if acct.organization
+                    else ""
                 ),
             ]
         )

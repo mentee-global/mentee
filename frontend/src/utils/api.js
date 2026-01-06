@@ -1422,7 +1422,10 @@ export const getGroupParticipants = (hubId) => {
   );
 };
 
-export const downloadPartnerMentorsData = async (partnerId, format = "xlsx") => {
+export const downloadPartnerMentorsData = async (
+  partnerId,
+  format = "xlsx"
+) => {
   const requestExtension = `/download/partner/${partnerId}/accounts`;
   let response = await authGet(requestExtension, {
     responseType: "blob",
@@ -1438,7 +1441,10 @@ export const downloadPartnerMentorsData = async (partnerId, format = "xlsx") => 
   }
 };
 
-export const downloadPartnerMenteesData = async (partnerId, format = "xlsx") => {
+export const downloadPartnerMenteesData = async (
+  partnerId,
+  format = "xlsx"
+) => {
   const requestExtension = `/download/partner/${partnerId}/accounts`;
   let response = await authGet(requestExtension, {
     responseType: "blob",

@@ -152,7 +152,6 @@ export const AdminPartnerData = () => {
     setModalData(sortedMessages || []);
   };
 
-
   // Collapsible message list component for the table
   const MessageListCell = ({ message_receive_data, record }) => {
     const [expanded, setExpanded] = useState(false);
@@ -750,13 +749,20 @@ export const AdminPartnerData = () => {
                             </Space>
                           ),
                           onClick: () => {
-                            messageApi.loading("Preparing mentees Excel export...");
-                            downloadPartnerMenteesData(selectedPartner._id.$oid, "xlsx")
+                            messageApi.loading(
+                              "Preparing mentees Excel export..."
+                            );
+                            downloadPartnerMenteesData(
+                              selectedPartner._id.$oid,
+                              "xlsx"
+                            )
                               .then(() => {
                                 messageApi.success("Mentees Excel downloaded!");
                               })
                               .catch(() => {
-                                messageApi.error("Failed to export mentees data");
+                                messageApi.error(
+                                  "Failed to export mentees data"
+                                );
                               });
                           },
                         },
@@ -769,13 +775,20 @@ export const AdminPartnerData = () => {
                             </Space>
                           ),
                           onClick: () => {
-                            messageApi.loading("Preparing mentees CSV export...");
-                            downloadPartnerMenteesData(selectedPartner._id.$oid, "csv")
+                            messageApi.loading(
+                              "Preparing mentees CSV export..."
+                            );
+                            downloadPartnerMenteesData(
+                              selectedPartner._id.$oid,
+                              "csv"
+                            )
                               .then(() => {
                                 messageApi.success("Mentees CSV downloaded!");
                               })
                               .catch(() => {
-                                messageApi.error("Failed to export mentees data");
+                                messageApi.error(
+                                  "Failed to export mentees data"
+                                );
                               });
                           },
                         },
@@ -799,13 +812,20 @@ export const AdminPartnerData = () => {
                             </Space>
                           ),
                           onClick: () => {
-                            messageApi.loading("Preparing mentors Excel export...");
-                            downloadPartnerMentorsData(selectedPartner._id.$oid, "xlsx")
+                            messageApi.loading(
+                              "Preparing mentors Excel export..."
+                            );
+                            downloadPartnerMentorsData(
+                              selectedPartner._id.$oid,
+                              "xlsx"
+                            )
                               .then(() => {
                                 messageApi.success("Mentors Excel downloaded!");
                               })
                               .catch(() => {
-                                messageApi.error("Failed to export mentors data");
+                                messageApi.error(
+                                  "Failed to export mentors data"
+                                );
                               });
                           },
                         },
@@ -818,13 +838,20 @@ export const AdminPartnerData = () => {
                             </Space>
                           ),
                           onClick: () => {
-                            messageApi.loading("Preparing mentors CSV export...");
-                            downloadPartnerMentorsData(selectedPartner._id.$oid, "csv")
+                            messageApi.loading(
+                              "Preparing mentors CSV export..."
+                            );
+                            downloadPartnerMentorsData(
+                              selectedPartner._id.$oid,
+                              "csv"
+                            )
                               .then(() => {
                                 messageApi.success("Mentors CSV downloaded!");
                               })
                               .catch(() => {
-                                messageApi.error("Failed to export mentors data");
+                                messageApi.error(
+                                  "Failed to export mentors data"
+                                );
                               });
                           },
                         },
@@ -909,13 +936,19 @@ export const AdminPartnerData = () => {
                   pageSize: 10,
                   showSizeChanger: true,
                   showTotal: (total, range) =>
-                    `${range[0]}-${range[1]} of ${total} ${option.text.toLowerCase()}`,
+                    `${range[0]}-${
+                      range[1]
+                    } of ${total} ${option.text.toLowerCase()}`,
                 }}
                 locale={{
                   emptyText: selectedPartner ? (
                     <div style={{ padding: "40px 0" }}>
                       <UserOutlined
-                        style={{ fontSize: 48, color: "#ccc", marginBottom: 16 }}
+                        style={{
+                          fontSize: 48,
+                          color: "#ccc",
+                          marginBottom: 16,
+                        }}
                       />
                       <div>
                         <Typography.Text type="secondary">
@@ -928,7 +961,11 @@ export const AdminPartnerData = () => {
                   ) : (
                     <div style={{ padding: "40px 0" }}>
                       <TeamOutlined
-                        style={{ fontSize: 48, color: "#ccc", marginBottom: 16 }}
+                        style={{
+                          fontSize: 48,
+                          color: "#ccc",
+                          marginBottom: 16,
+                        }}
                       />
                       <div>
                         <Typography.Text type="secondary">

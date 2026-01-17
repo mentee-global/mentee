@@ -1459,3 +1459,14 @@ export const downloadPartnerMenteesData = async (
     downloadBlob(response, `partner_mentees.${extension}`);
   }
 };
+
+export const submitBugReport = async (bugReportData) => {
+  const requestExtension = `/bug-report`;
+  return instance.post(requestExtension, bugReportData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return err;
+    }
+  );
+};

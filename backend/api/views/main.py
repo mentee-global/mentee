@@ -1017,3 +1017,159 @@ def getAllCountries():
         return create_response(status=422, message=msg)
 
     return create_response(data={"countries": countries})
+
+
+@main.route("/bug-report", methods=["POST"])
+def submit_bug_report():
+    """Endpoint to receive bug reports and send email notifications with attachments"""
+    import os
+    import base64
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+    from api.utils.request_utils import sendgrid_key, sender_email
+    
+    # Get JSON data with size limit check
+    try:
+        data = request.get_json()
+    except Exception as e:
+        logger.error(f"Failed to parse request JSON: {e}")
+        return create_response(status=400, message="Invalid request data")
+    
+    # Extract data from request
+    description = data.get("description", "")
+    user_name = data.get("user_name", "Not provided")
+    user_email = data.get("user_email", "Not provided")
+    role = data.get("role", "unknown")
+    context = data.get("context", "app")
+    page_url = data.get("page_url", "Not provided")
+    file_attachments = data.get("attachments", [])
+    
+    # Limit number of attachments
+    if len(file_attachments) > 3:
+        return create_response(status=400, message="Too many attachments. Maximum 3 files allowed.")
+    
+    # Validate required fields
+    if not description:
+        return create_response(status=400, message="Description is required")
+    
+    # Recipients list - currently just one, but structured for multiple in the future
+    recipients = ["juan@menteeglobal.org"]
+    
+    # Build HTML email content
+    attachments_html = ""
+    if file_attachments:
+        attachments_count = len(file_attachments)
+        attachments_html = f"""
+        <p><strong>Attachments:</strong> {attachments_count} file(s) attached</p>
+        """
+    
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            <h2 style="color: #d32f2f;">Bug Report</h2>
+            <hr style="border: 1px solid #ddd;" />
+            
+            <p><strong>Description:</strong></p>
+            <p style="background-color: #f5f5f5; padding: 10px; border-left: 4px solid #d32f2f;">
+                {description.replace(chr(10), '<br>')}
+            </p>
+            
+            <h3 style="color: #666;">User Information</h3>
+            <p><strong>Name:</strong> {user_name}</p>
+            <p><strong>Email:</strong> {user_email}</p>
+            <p><strong>Role:</strong> {role}</p>
+            
+            <h3 style="color: #666;">Context</h3>
+            <p><strong>Context:</strong> {context}</p>
+            <p><strong>Page URL:</strong> <a href="{page_url}">{page_url}</a></p>
+            
+            {attachments_html}
+            
+            <hr style="border: 1px solid #ddd; margin-top: 20px;" />
+            <p style="font-size: 12px; color: #999;">
+                This bug report was submitted via the MENTEE platform.
+            </p>
+        </body>
+    </html>
+    """
+    
+    # Check if SendGrid is properly configured
+    if not sendgrid_key:
+        logger.warning("SENDGRID_API_KEY not found - using development mode")
+        logger.info(f"Bug report received from {user_name} ({user_email})")
+        logger.info(f"Would send to: {', '.join(recipients)}")
+        if file_attachments:
+            logger.info(f"Attachments: {len(file_attachments)} file(s)")
+        
+        return create_response(
+            status=200,
+            message="Bug report submitted successfully (development mode)"
+        )
+    
+    if not sender_email:
+        logger.error("SENDER_EMAIL environment variable not set!")
+        return create_response(
+            status=500,
+            message="Email configuration error: SENDER_EMAIL not set"
+        )
+    
+    # Send emails with attachments
+    success_count = 0
+    failed_recipients = []
+    
+    for recipient in recipients:
+        try:
+            message = Mail(
+                from_email=sender_email,
+                to_emails=recipient,
+                subject="Bug Report - MENTEE Platform",
+                html_content=html_content
+            )
+            
+            # Add file attachments
+            for file_data in file_attachments:
+                try:
+                    # Extract file info
+                    file_name = file_data.get("name", "attachment")
+                    file_content_base64 = file_data.get("content", "")
+                    file_type = file_data.get("type", "application/octet-stream")
+                    
+                    if file_content_base64:
+                        # Create SendGrid attachment
+                        attached_file = Attachment(
+                            FileContent(file_content_base64),
+                            FileName(file_name),
+                            FileType(file_type),
+                            Disposition('attachment')
+                        )
+                        message.add_attachment(attached_file)
+                        logger.info(f"Added attachment: {file_name}")
+                except Exception as attach_error:
+                    logger.warning(f"Failed to attach file {file_data.get('name', 'unknown')}: {attach_error}")
+            
+            # Send email
+            sg = SendGridAPIClient(sendgrid_key)
+            response = sg.send(message)
+            
+            success_count += 1
+            logger.info(f"Bug report email sent successfully to {recipient}")
+            
+        except Exception as e:
+            failed_recipients.append(recipient)
+            logger.error(f"Failed to send bug report email to {recipient}: {str(e)}")
+    
+    if success_count == 0:
+        return create_response(
+            status=500, 
+            message=f"Failed to send bug report emails: {', '.join(failed_recipients)}"
+        )
+    elif failed_recipients:
+        return create_response(
+            status=207,  # Multi-Status
+            message=f"Bug report sent to {success_count} recipient(s), but failed for: {', '.join(failed_recipients)}"
+        )
+    
+    return create_response(
+        status=200,
+        message="Bug report submitted successfully"
+    )

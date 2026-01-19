@@ -1,5 +1,5 @@
 # this dockerfile is used for product deployments
-FROM python:3.9
+FROM python:3.10
 LABEL maintainer "Kelley Chau <kelleyc2@illinois.edu>"
 
 COPY requirements.txt requirements.txt

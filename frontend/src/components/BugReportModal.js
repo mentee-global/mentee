@@ -112,7 +112,15 @@ function BugReportModal({ open, onClose, contextLabel }) {
       message.destroy('upload');
 
       if (response && response.status === 200) {
-        message.success("Bug report submitted successfully!");
+        const bugReportId = response.data?.result?.bug_report_id;
+        if (bugReportId) {
+          message.success({
+            content: `Bug report submitted successfully! Reference ID: ${bugReportId.slice(-8)}`,
+            duration: 5,
+          });
+        } else {
+          message.success("Bug report submitted successfully!");
+        }
         form.resetFields();
         setFileList([]);
         onClose();

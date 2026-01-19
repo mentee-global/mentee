@@ -36,6 +36,7 @@ from .SignOrigin import SignOrigin
 from .SignedDocs import SignedDocs
 from .Announcement import Announcement
 from .CommunityLibrary import CommunityLibrary
+from .BugReport import BugReport
 
 __all__ = [
     "db",
@@ -73,6 +74,7 @@ __all__ = [
     "PartnerGroupMessage",
     "Announcement",
     "CommunityLibrary",
+    "BugReport",
 ]
 
 # You must import all of the new Models you create to this page

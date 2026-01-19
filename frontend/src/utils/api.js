@@ -1459,3 +1459,56 @@ export const downloadPartnerMenteesData = async (
     downloadBlob(response, `partner_mentees.${extension}`);
   }
 };
+
+export const submitBugReport = async (bugReportData) => {
+  const requestExtension = `/bug-report`;
+  return instance.post(requestExtension, bugReportData).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return err;
+    }
+  );
+};
+
+// Admin - Bug Reports Management
+export const fetchBugReports = async (filters = {}) => {
+  const requestExtension = `/admin/bug-reports`;
+  return authGet(requestExtension, { params: filters }).then(
+    (response) => response.data.result.bug_reports,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const fetchBugReportById = async (id) => {
+  const requestExtension = `/admin/bug-reports/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.bug_report,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const updateBugReport = async (id, data) => {
+  const requestExtension = `/admin/bug-reports/${id}`;
+  return authPut(requestExtension, data).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const deleteBugReportById = async (id) => {
+  const requestExtension = `/admin/bug-reports/${id}`;
+  return authDelete(requestExtension).then(
+    (response) => response,
+    (err) => {
+      console.error(err);
+      return false;
+    }
+  );
+};

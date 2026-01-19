@@ -1017,3 +1017,250 @@ def getAllCountries():
         return create_response(status=422, message=msg)
 
     return create_response(data={"countries": countries})
+
+
+@main.route("/bug-report", methods=["POST"])
+def submit_bug_report():
+    """Endpoint to receive bug reports and send email notifications with attachments"""
+    import os
+    import base64
+    from datetime import datetime
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+    from api.utils.request_utils import sendgrid_key, sender_email
+    from api.utils.google_storage import upload_bug_report_attachment
+    from api.models import BugReport, Users
+    
+    # Get JSON data with size limit check
+    try:
+        data = request.get_json()
+    except Exception as e:
+        logger.error(f"Failed to parse request JSON: {e}")
+        return create_response(status=400, message="Invalid request data")
+    
+    # Extract data from request
+    description = data.get("description", "")
+    user_name = data.get("user_name", "Not provided")
+    user_email = data.get("user_email", "Not provided")
+    role = data.get("role", "unknown")
+    context = data.get("context", "app")
+    page_url = data.get("page_url", "Not provided")
+    file_attachments = data.get("attachments", [])
+    
+    # Limit number of attachments
+    if len(file_attachments) > 3:
+        return create_response(status=400, message="Too many attachments. Maximum 3 files allowed.")
+    
+    # Validate required fields
+    if not description:
+        return create_response(status=400, message="Description is required")
+    
+    # Try to find user_id if user is logged in (by email)
+    user_id = None
+    try:
+        if user_email and user_email != "Not provided":
+            user_obj = Users.objects(email=user_email).first()
+            if user_obj:
+                user_id = user_obj.id
+    except Exception as e:
+        logger.warning(f"Could not find user by email {user_email}: {e}")
+    
+    # Upload attachments to Google Cloud Storage
+    uploaded_attachments = []
+    for file_data in file_attachments:
+        try:
+            file_name = file_data.get("name", "attachment")
+            file_content_base64 = file_data.get("content", "")
+            file_type = file_data.get("type", "application/octet-stream")
+            
+            if file_content_base64:
+                # Upload to GCS
+                public_url, gcs_filename = upload_bug_report_attachment(
+                    file_content_base64,
+                    file_name,
+                    file_type
+                )
+                
+                uploaded_attachments.append({
+                    "original_name": file_name,
+                    "gcs_filename": gcs_filename,
+                    "url": public_url,
+                    "content_type": file_type
+                })
+                logger.info(f"Uploaded attachment to GCS: {file_name}")
+        except Exception as e:
+            logger.error(f"Failed to upload attachment {file_data.get('name', 'unknown')}: {e}")
+            # Continue with other attachments
+    
+    # Create BugReport document
+    try:
+        bug_report = BugReport(
+            description=description,
+            user_name=user_name,
+            user_email=user_email,
+            user_id=user_id,
+            role=role,
+            context=context,
+            page_url=page_url,
+            attachments=uploaded_attachments,
+            date_submitted=datetime.utcnow(),
+            status="new",
+            email_sent=False
+        )
+        bug_report.save()
+        logger.info(f"Bug report saved to database: {bug_report.id}")
+    except Exception as e:
+        logger.error(f"Failed to save bug report to database: {e}")
+        return create_response(status=500, message="Failed to save bug report")
+    
+    # Recipients list - currently just one, but structured for multiple in the future
+    recipients = ["juan@menteeglobal.org"]
+    
+    # Build HTML email content with attachment links
+    attachments_html = ""
+    if uploaded_attachments:
+        attachments_list = "<br>".join([
+            f"- <a href='{att['url']}'>{att['original_name']}</a>"
+            for att in uploaded_attachments
+        ])
+        attachments_html = f"""
+        <p><strong>Attachments:</strong><br>{attachments_list}</p>
+        """
+    
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            <h2 style="color: #d32f2f;">Bug Report #{str(bug_report.id)}</h2>
+            <hr style="border: 1px solid #ddd;" />
+            
+            <p><strong>Description:</strong></p>
+            <p style="background-color: #f5f5f5; padding: 10px; border-left: 4px solid #d32f2f;">
+                {description.replace(chr(10), '<br>')}
+            </p>
+            
+            <h3 style="color: #666;">User Information</h3>
+            <p><strong>Name:</strong> {user_name}</p>
+            <p><strong>Email:</strong> {user_email}</p>
+            <p><strong>Role:</strong> {role}</p>
+            <p><strong>User ID:</strong> {user_id if user_id else 'Not logged in'}</p>
+            
+            <h3 style="color: #666;">Context</h3>
+            <p><strong>Context:</strong> {context}</p>
+            <p><strong>Page URL:</strong> <a href="{page_url}">{page_url}</a></p>
+            <p><strong>Date Submitted:</strong> {bug_report.date_submitted.strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+            
+            {attachments_html}
+            
+            <hr style="border: 1px solid #ddd; margin-top: 20px;" />
+            <p style="font-size: 12px; color: #999;">
+                This bug report was submitted via the MENTEE platform.<br>
+                Bug Report ID: {str(bug_report.id)}
+            </p>
+        </body>
+    </html>
+    """
+    
+    # Check if SendGrid is properly configured
+    if not sendgrid_key:
+        logger.warning("SENDGRID_API_KEY not found - using development mode")
+        logger.info(f"Bug report #{bug_report.id} received from {user_name} ({user_email})")
+        logger.info(f"Would send to: {', '.join(recipients)}")
+        if uploaded_attachments:
+            logger.info(f"Attachments: {len(uploaded_attachments)} file(s) uploaded to GCS")
+        
+        bug_report.email_sent = False
+        bug_report.email_error = "Development mode - email not sent"
+        bug_report.save()
+        
+        return create_response(
+            status=200,
+            message="Bug report submitted successfully (development mode)",
+            data={"bug_report_id": str(bug_report.id)}
+        )
+    
+    if not sender_email:
+        logger.error("SENDER_EMAIL environment variable not set!")
+        bug_report.email_sent = False
+        bug_report.email_error = "SENDER_EMAIL not configured"
+        bug_report.save()
+        
+        return create_response(
+            status=500,
+            message="Email configuration error: SENDER_EMAIL not set"
+        )
+    
+    # Send emails with attachments
+    success_count = 0
+    failed_recipients = []
+    email_error_msg = None
+    
+    for recipient in recipients:
+        try:
+            message = Mail(
+                from_email=sender_email,
+                to_emails=recipient,
+                subject=f"Bug Report #{str(bug_report.id)} - MENTEE Platform",
+                html_content=html_content
+            )
+            
+            # Add file attachments from the original data (for email convenience)
+            for file_data in file_attachments:
+                try:
+                    file_name = file_data.get("name", "attachment")
+                    file_content_base64 = file_data.get("content", "")
+                    file_type = file_data.get("type", "application/octet-stream")
+                    
+                    if file_content_base64:
+                        attached_file = Attachment(
+                            FileContent(file_content_base64),
+                            FileName(file_name),
+                            FileType(file_type),
+                            Disposition('attachment')
+                        )
+                        message.add_attachment(attached_file)
+                except Exception as attach_error:
+                    logger.warning(f"Failed to attach file {file_data.get('name', 'unknown')} to email: {attach_error}")
+            
+            # Send email
+            sg = SendGridAPIClient(sendgrid_key)
+            response = sg.send(message)
+            
+            success_count += 1
+            logger.info(f"Bug report #{bug_report.id} email sent successfully to {recipient}")
+            
+        except Exception as e:
+            failed_recipients.append(recipient)
+            error_msg = str(e)
+            email_error_msg = error_msg
+            logger.error(f"Failed to send bug report email to {recipient}: {error_msg}")
+    
+    # Update bug report with email status
+    if success_count > 0:
+        bug_report.email_sent = True
+        if failed_recipients:
+            bug_report.email_error = f"Partial failure: {', '.join(failed_recipients)}"
+    else:
+        bug_report.email_sent = False
+        bug_report.email_error = email_error_msg or "Unknown error"
+    
+    bug_report.save()
+    
+    # Return appropriate response
+    if success_count == 0:
+        return create_response(
+            status=500, 
+            message=f"Bug report saved but failed to send emails: {', '.join(failed_recipients)}",
+            data={"bug_report_id": str(bug_report.id)}
+        )
+    elif failed_recipients:
+        return create_response(
+            status=207,  # Multi-Status
+            message=f"Bug report sent to {success_count} recipient(s), but failed for: {', '.join(failed_recipients)}",
+            data={"bug_report_id": str(bug_report.id)}
+        )
+    
+    return create_response(
+        status=200,
+        message="Bug report submitted successfully",
+        data={"bug_report_id": str(bug_report.id)}
+    )

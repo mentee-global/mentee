@@ -6,6 +6,7 @@ import { useMediaQuery } from "react-responsive";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationBell from "components/NotificationBell";
+import BugReportModal from "components/BugReportModal";
 import LanguageDropdown from "components/LanguageDropdown";
 import { getLoginPath, logout } from "utils/auth.service";
 import { useAuth } from "utils/hooks/useAuth";
@@ -35,6 +36,7 @@ function NavigationHeader() {
   const { user, role } = useSelector((state) => state.user);
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [isBugReportOpen, setIsBugReportOpen] = useState(false);
   const supportUserID = localStorage.getItem("support_user_id");
 
   const logoutUser = () => {
@@ -225,11 +227,14 @@ function NavigationHeader() {
         </Dropdown>
         {role !== ACCOUNT_TYPE.ADMIN && <LanguageDropdown />}
         <Tooltip title={t("common.bug")}>
-          <FormOutlined
-            onClick={() => window.open("https://forms.gle/DCCFR6du9YckbnhY8")}
-          />
+          <FormOutlined onClick={() => setIsBugReportOpen(true)} />
         </Tooltip>
       </Space>
+      <BugReportModal
+        open={isBugReportOpen}
+        onClose={() => setIsBugReportOpen(false)}
+        contextLabel="navigation-header"
+      />
     </Header>
   );
 }

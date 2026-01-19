@@ -375,6 +375,10 @@ export default function useSidebars(userType, user, t) {
           label: "Messages",
           key: "messages-details",
         },
+        {
+          label: "Bug Reports",
+          key: "bug-reports",
+        },
       ],
     },
     {

@@ -18,6 +18,15 @@ import "dayjs/locale/pt";
 import i18n from "utils/i18n";
 import { ProvideAuth } from "utils/hooks/useAuth";
 
+// Suppress ResizeObserver loop error (harmless browser/React warning)
+const resizeObserverErr = window.onerror;
+window.onerror = (message, ...args) => {
+  if (message?.includes?.("ResizeObserver loop")) {
+    return true; // Suppress this specific error
+  }
+  return resizeObserverErr?.(message, ...args);
+};
+
 moment.locale(i18n.language);
 dayjs.locale(i18n.language);
 

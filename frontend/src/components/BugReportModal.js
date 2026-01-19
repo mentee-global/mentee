@@ -21,14 +21,14 @@ function BugReportModal({ open, onClose, contextLabel }) {
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           let width = img.width;
           let height = img.height;
-          
+
           // Max dimensions to keep file size reasonable
           const MAX_WIDTH = 1920;
           const MAX_HEIGHT = 1080;
-          
+
           if (width > height) {
             if (width > MAX_WIDTH) {
               height *= MAX_WIDTH / width;
@@ -40,18 +40,20 @@ function BugReportModal({ open, onClose, contextLabel }) {
               height = MAX_HEIGHT;
             }
           }
-          
+
           canvas.width = width;
           canvas.height = height;
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
-          
+
           // Convert to base64 with quality setting
-          const base64Content = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+          const base64Content = canvas
+            .toDataURL("image/jpeg", 0.8)
+            .split(",")[1];
           resolve({
-            name: file.name.replace(/\.\w+$/, '.jpg'), // Change extension to jpg
+            name: file.name.replace(/\.\w+$/, ".jpg"), // Change extension to jpg
             content: base64Content,
-            type: 'image/jpeg',
+            type: "image/jpeg",
           });
         };
         img.onerror = reject;
@@ -69,15 +71,15 @@ function BugReportModal({ open, onClose, contextLabel }) {
       // Convert and compress files to base64
       const attachmentsPromises = fileList.map((file) => {
         // If it's an image, compress it
-        if (file.type && file.type.startsWith('image/')) {
+        if (file.type && file.type.startsWith("image/")) {
           return compressImage(file.originFileObj);
         }
-        
+
         // For non-images (like PDFs), just convert to base64
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => {
-            const base64Content = reader.result.split(',')[1];
+            const base64Content = reader.result.split(",")[1];
             resolve({
               name: file.name,
               content: base64Content,
@@ -93,7 +95,11 @@ function BugReportModal({ open, onClose, contextLabel }) {
 
       // Show uploading message if there are attachments
       if (attachments.length > 0) {
-        message.loading({ content: `Uploading ${attachments.length} file(s)...`, key: 'upload', duration: 0 });
+        message.loading({
+          content: `Uploading ${attachments.length} file(s)...`,
+          key: "upload",
+          duration: 0,
+        });
       }
 
       const bugReportData = {
@@ -107,15 +113,17 @@ function BugReportModal({ open, onClose, contextLabel }) {
       };
 
       const response = await submitBugReport(bugReportData);
-      
+
       // Dismiss loading message
-      message.destroy('upload');
+      message.destroy("upload");
 
       if (response && response.status === 200) {
         const bugReportId = response.data?.result?.bug_report_id;
         if (bugReportId) {
           message.success({
-            content: `Bug report submitted successfully! Reference ID: ${bugReportId.slice(-8)}`,
+            content: `Bug report submitted successfully! Reference ID: ${bugReportId.slice(
+              -8
+            )}`,
             duration: 5,
           });
         } else {
@@ -132,7 +140,7 @@ function BugReportModal({ open, onClose, contextLabel }) {
       }
     } catch (error) {
       console.error("Error submitting bug report:", error);
-      message.destroy('upload');
+      message.destroy("upload");
       message.error("Failed to submit bug report. Please try again.");
     } finally {
       setSubmitting(false);

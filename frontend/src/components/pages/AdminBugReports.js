@@ -166,9 +166,7 @@ function AdminBugReports() {
       dataIndex: "date_submitted",
       key: "date_submitted",
       width: 150,
-      render: (date) => (
-        <span>{formatDateTime(new Date(date.$date))}</span>
-      ),
+      render: (date) => <span>{formatDateTime(new Date(date.$date))}</span>,
       sorter: (a, b) =>
         new Date(a.date_submitted.$date) - new Date(b.date_submitted.$date),
     },
@@ -232,9 +230,7 @@ function AdminBugReports() {
       dataIndex: "attachments",
       key: "attachments",
       width: 100,
-      render: (attachments) => (
-        <span>{attachments?.length || 0} file(s)</span>
-      ),
+      render: (attachments) => <span>{attachments?.length || 0} file(s)</span>,
     },
     {
       title: "Actions",
@@ -307,9 +303,17 @@ function AdminBugReports() {
           />
 
           <div style={{ marginLeft: "auto" }}>
-            <Tag color="red">New: {bugReports.filter(b => b.status === "new").length}</Tag>
-            <Tag color="blue">In Progress: {bugReports.filter(b => b.status === "in_progress").length}</Tag>
-            <Tag color="green">Resolved: {bugReports.filter(b => b.status === "resolved").length}</Tag>
+            <Tag color="red">
+              New: {bugReports.filter((b) => b.status === "new").length}
+            </Tag>
+            <Tag color="blue">
+              In Progress:{" "}
+              {bugReports.filter((b) => b.status === "in_progress").length}
+            </Tag>
+            <Tag color="green">
+              Resolved:{" "}
+              {bugReports.filter((b) => b.status === "resolved").length}
+            </Tag>
           </div>
         </Space>
       </div>
@@ -349,7 +353,15 @@ function AdminBugReports() {
           <div>
             <p>
               <strong>Full ID:</strong>{" "}
-              <span style={{ fontFamily: "monospace", fontSize: "12px", background: "#f5f5f5", padding: "2px 6px", borderRadius: "3px" }}>
+              <span
+                style={{
+                  fontFamily: "monospace",
+                  fontSize: "12px",
+                  background: "#f5f5f5",
+                  padding: "2px 6px",
+                  borderRadius: "3px",
+                }}
+              >
                 {selectedBug._id.$oid}
               </span>
             </p>
@@ -367,20 +379,36 @@ function AdminBugReports() {
             <h3 style={{ marginTop: "20px" }}>Bug Details</h3>
             <p>
               <strong>Status:</strong>{" "}
-              <Tag color={STATUS_OPTIONS.find(s => s.value === selectedBug.status)?.color}>
+              <Tag
+                color={
+                  STATUS_OPTIONS.find((s) => s.value === selectedBug.status)
+                    ?.color
+                }
+              >
                 {selectedBug.status}
               </Tag>
             </p>
             <p>
               <strong>Priority:</strong>{" "}
-              <Tag color={PRIORITY_OPTIONS.find(p => p.value === selectedBug.priority)?.color}>
+              <Tag
+                color={
+                  PRIORITY_OPTIONS.find((p) => p.value === selectedBug.priority)
+                    ?.color
+                }
+              >
                 {selectedBug.priority}
               </Tag>
             </p>
             <p>
               <strong>Description:</strong>
             </p>
-            <div style={{ background: "#f5f5f5", padding: "10px", borderRadius: "4px" }}>
+            <div
+              style={{
+                background: "#f5f5f5",
+                padding: "10px",
+                borderRadius: "4px",
+              }}
+            >
               {selectedBug.description}
             </div>
 
@@ -390,7 +418,11 @@ function AdminBugReports() {
             </p>
             <p>
               <strong>Page URL:</strong>{" "}
-              <a href={selectedBug.page_url} target="_blank" rel="noopener noreferrer">
+              <a
+                href={selectedBug.page_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {selectedBug.page_url}
               </a>
             </p>
@@ -405,7 +437,11 @@ function AdminBugReports() {
                 <Space direction="vertical">
                   {selectedBug.attachments.map((att, index) => (
                     <div key={index}>
-                      <a href={att.url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={att.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {att.original_name}
                       </a>
                       {att.content_type.startsWith("image/") && (
@@ -426,7 +462,13 @@ function AdminBugReports() {
             {selectedBug.notes && (
               <>
                 <h3 style={{ marginTop: "20px" }}>Admin Notes</h3>
-                <div style={{ background: "#f5f5f5", padding: "10px", borderRadius: "4px" }}>
+                <div
+                  style={{
+                    background: "#f5f5f5",
+                    padding: "10px",
+                    borderRadius: "4px",
+                  }}
+                >
                   {selectedBug.notes}
                 </div>
               </>

@@ -1125,7 +1125,7 @@ def submit_bug_report():
         return create_response(status=500, message="Failed to save bug report")
 
     # Recipients list - currently just one, but structured for multiple in the future
-    recipients = ["juan@menteeglobal.org"]
+    recipients = ["juan@menteeglobal.org", "letitia@menteeglobal.org"]
 
     # Build HTML email content with attachment links
     attachments_html = ""

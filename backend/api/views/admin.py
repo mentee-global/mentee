@@ -278,7 +278,7 @@ def upload_account_emailText():
 @admin_only
 def get_bug_reports():
     """Get all bug reports with optional filtering
-    
+
     Query params:
         status: Filter by status (new, in_progress, resolved, closed)
         priority: Filter by priority (low, medium, high, critical)
@@ -291,7 +291,7 @@ def get_bug_reports():
         priority = request.args.get("priority")
         user_email = request.args.get("user_email")
         limit = int(request.args.get("limit", 100))
-        
+
         # Build query
         query = {}
         if status:
@@ -300,15 +300,17 @@ def get_bug_reports():
             query["priority"] = priority
         if user_email:
             query["user_email"] = user_email
-        
+
         # Fetch bug reports, sorted by date (newest first)
         if query:
-            bug_reports = BugReport.objects(**query).order_by("-date_submitted").limit(limit)
+            bug_reports = (
+                BugReport.objects(**query).order_by("-date_submitted").limit(limit)
+            )
         else:
             bug_reports = BugReport.objects().order_by("-date_submitted").limit(limit)
-        
+
         return create_response(data={"bug_reports": bug_reports})
-        
+
     except Exception as e:
         logger.error(f"Failed to fetch bug reports: {e}")
         return create_response(status=500, message=str(e))
@@ -331,7 +333,7 @@ def get_bug_report(id):
 @admin_only
 def update_bug_report(id):
     """Update bug report status, priority, or notes
-    
+
     Request body:
         status: new, in_progress, resolved, closed
         priority: low, medium, high, critical
@@ -341,31 +343,31 @@ def update_bug_report(id):
     try:
         bug_report = BugReport.objects.get(id=id)
         data = request.get_json()
-        
+
         if "status" in data:
             bug_report.status = data["status"]
             # If marking as resolved, add timestamp
             if data["status"] == "resolved" and not bug_report.resolved_date:
                 from datetime import datetime
+
                 bug_report.resolved_date = datetime.utcnow()
-        
+
         if "priority" in data:
             bug_report.priority = data["priority"]
-        
+
         if "notes" in data:
             bug_report.notes = data["notes"]
-        
+
         if "resolved_by" in data:
             bug_report.resolved_by = data["resolved_by"]
-        
+
         bug_report.save()
         logger.info(f"Bug report {id} updated")
-        
+
         return create_response(
-            data={"bug_report": bug_report},
-            message="Bug report updated successfully"
+            data={"bug_report": bug_report}, message="Bug report updated successfully"
         )
-        
+
     except Exception as e:
         logger.error(f"Failed to update bug report {id}: {e}")
         return create_response(status=500, message=str(e))
@@ -379,9 +381,9 @@ def delete_bug_report(id):
         bug_report = BugReport.objects.get(id=id)
         bug_report.delete()
         logger.info(f"Bug report {id} deleted")
-        
+
         return create_response(message="Bug report deleted successfully")
-        
+
     except:
         msg = "Bug report not found"
         logger.info(msg)

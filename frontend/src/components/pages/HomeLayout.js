@@ -3,6 +3,7 @@ import { Col, Row, Space, Tooltip } from "antd";
 import { useHistory, withRouter } from "react-router-dom";
 import { css } from "@emotion/css";
 import LanguageDropdown from "components/LanguageDropdown";
+import BugReportModal from "components/BugReportModal";
 import BigLogoImage from "resources/Mentee_logo_letter.png";
 import N50Logo from "resources/N50_logo.png";
 import { useMediaQuery } from "react-responsive";
@@ -14,6 +15,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
   const isTablet = useMediaQuery({ query: `(max-width: 991px)` });
   const history = useHistory();
   const [checkFlagInviteLink, setCheckFlagInviteLink] = useState(false);
+  const [isBugReportOpen, setIsBugReportOpen] = useState(false);
 
   useEffect(() => {
     setCheckFlagInviteLink(false);
@@ -187,7 +189,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
               className={css`
                 font-size: large;
               `}
-              onClick={() => window.open("https://forms.gle/DCCFR6du9YckbnhY8")}
+              onClick={() => setIsBugReportOpen(true)}
             />
           </Tooltip>
           <LanguageDropdown size="large" />
@@ -387,6 +389,11 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
           </div>
         </Col>
       )}
+      <BugReportModal
+        open={isBugReportOpen}
+        onClose={() => setIsBugReportOpen(false)}
+        contextLabel="home-layout"
+      />
     </Row>
   );
 }

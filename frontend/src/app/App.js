@@ -17,6 +17,7 @@ import ForgotPassword from "components/pages/ForgotPassword";
 import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
+import AdminBugReports from "components/pages/AdminBugReports";
 import MenteeGallery from "components/pages/MenteeGallery";
 import Messages from "components/pages/Messages";
 import GroupMessages from "components/pages/GroupMessages";
@@ -220,7 +221,7 @@ function App() {
                 </PublicRoute>
                 {Object.keys(allHubData).map((hub_url) => {
                   return (
-                    <>
+                    <React.Fragment key={hub_url}>
                       <PublicRoute exact path={hub_url}>
                         <SupportLogin role={ACCOUNT_TYPE.HUB} />
                       </PublicRoute>
@@ -231,7 +232,7 @@ function App() {
                           <BuildProfile hub_user={allHubData[hub_url]} />
                         </PublicRoute>
                       )}
-                    </>
+                    </React.Fragment>
                   );
                 })}
                 <PublicRoute path="/forgot-password">
@@ -579,6 +580,21 @@ function App() {
                 <PrivateRoute path="/account-data">
                   {role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.HUB ? (
                     <AdminAccountData />
+                  ) : (
+                    <>
+                      {cur_time - startPathTime > 100 && (
+                        <Result
+                          status="403"
+                          title="403"
+                          subTitle={t("gallery.unauthorizedAccess")}
+                        />
+                      )}
+                    </>
+                  )}
+                </PrivateRoute>
+                <PrivateRoute path="/bug-reports">
+                  {role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.HUB ? (
+                    <AdminBugReports />
                   ) : (
                     <>
                       {cur_time - startPathTime > 100 && (

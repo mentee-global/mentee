@@ -17,6 +17,7 @@ from api.models import (
     Guest,
     Hub,
     Image,
+    BugReport,
 )
 from api.utils.require_auth import admin_only
 from api.utils.request_utils import get_profile_model, imgur_client
@@ -270,6 +271,123 @@ def upload_account_emailText():
                 email.save()
 
     return create_response(status=200, message="Add users successfully")
+
+
+# Bug Reports Management - MUST come before /admin/<id> route
+@admin.route("/admin/bug-reports", methods=["GET"])
+@admin_only
+def get_bug_reports():
+    """Get all bug reports with optional filtering
+
+    Query params:
+        status: Filter by status (new, in_progress, resolved, closed)
+        priority: Filter by priority (low, medium, high, critical)
+        user_email: Filter by user email
+        limit: Number of results (default 100)
+    """
+    try:
+        # Get query parameters
+        status = request.args.get("status")
+        priority = request.args.get("priority")
+        user_email = request.args.get("user_email")
+        limit = int(request.args.get("limit", 100))
+
+        # Build query
+        query = {}
+        if status:
+            query["status"] = status
+        if priority:
+            query["priority"] = priority
+        if user_email:
+            query["user_email"] = user_email
+
+        # Fetch bug reports, sorted by date (newest first)
+        if query:
+            bug_reports = (
+                BugReport.objects(**query).order_by("-date_submitted").limit(limit)
+            )
+        else:
+            bug_reports = BugReport.objects().order_by("-date_submitted").limit(limit)
+
+        return create_response(data={"bug_reports": bug_reports})
+
+    except Exception as e:
+        logger.error(f"Failed to fetch bug reports: {e}")
+        return create_response(status=500, message=str(e))
+
+
+@admin.route("/admin/bug-reports/<string:id>", methods=["GET"])
+@admin_only
+def get_bug_report(id):
+    """Get a specific bug report by ID"""
+    try:
+        bug_report = BugReport.objects.get(id=id)
+        return create_response(data={"bug_report": bug_report})
+    except:
+        msg = "Bug report not found"
+        logger.info(msg)
+        return create_response(status=404, message=msg)
+
+
+@admin.route("/admin/bug-reports/<string:id>", methods=["PUT"])
+@admin_only
+def update_bug_report(id):
+    """Update bug report status, priority, or notes
+
+    Request body:
+        status: new, in_progress, resolved, closed
+        priority: low, medium, high, critical
+        notes: Admin notes
+        resolved_by: Admin name who resolved it
+    """
+    try:
+        bug_report = BugReport.objects.get(id=id)
+        data = request.get_json()
+
+        if "status" in data:
+            bug_report.status = data["status"]
+            # If marking as resolved, add timestamp
+            if data["status"] == "resolved" and not bug_report.resolved_date:
+                from datetime import datetime
+
+                bug_report.resolved_date = datetime.utcnow()
+
+        if "priority" in data:
+            bug_report.priority = data["priority"]
+
+        if "notes" in data:
+            bug_report.notes = data["notes"]
+
+        if "resolved_by" in data:
+            bug_report.resolved_by = data["resolved_by"]
+
+        bug_report.save()
+        logger.info(f"Bug report {id} updated")
+
+        return create_response(
+            data={"bug_report": bug_report}, message="Bug report updated successfully"
+        )
+
+    except Exception as e:
+        logger.error(f"Failed to update bug report {id}: {e}")
+        return create_response(status=500, message=str(e))
+
+
+@admin.route("/admin/bug-reports/<string:id>", methods=["DELETE"])
+@admin_only
+def delete_bug_report(id):
+    """Delete a bug report"""
+    try:
+        bug_report = BugReport.objects.get(id=id)
+        bug_report.delete()
+        logger.info(f"Bug report {id} deleted")
+
+        return create_response(message="Bug report deleted successfully")
+
+    except:
+        msg = "Bug report not found"
+        logger.info(msg)
+        return create_response(status=404, message=msg)
 
 
 @admin.route("/admin/<id>", methods=["GET"])

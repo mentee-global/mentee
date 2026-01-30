@@ -11,6 +11,9 @@ from api.models import (
     MenteeApplication,
     Hub,
     DirectMessage,
+    Guest,
+    Support,
+    Moderator,
 )
 from flask import send_file, Blueprint, request
 from api.utils.require_auth import admin_only
@@ -101,12 +104,22 @@ def download_accounts_info():
             for partner_item in partner_data:
                 partner_object[str(partner_item.id)] = partner_item.organization
         elif account_type == Account.PARTNER:
+            # Check if we should include Hub accounts in Partners view
+            include_hubs = data.get("include_hubs", "false").lower() == "true"
+            
             if hub_user_id is not None:
                 accounts = PartnerProfile.objects.filter(
                     firebase_uid__nin=admin_ids, hub_id=hub_user_id
                 )
             else:
-                accounts = PartnerProfile.objects(firebase_uid__nin=admin_ids)
+                # Filter by include_hubs parameter
+                if include_hubs:
+                    accounts = PartnerProfile.objects(firebase_uid__nin=admin_ids)
+                else:
+                    # Only get Partners WITHOUT a hub_id (pure partners, not hubs)
+                    accounts = PartnerProfile.objects(
+                        firebase_uid__nin=admin_ids, hub_id=None
+                    )
 
             Hub_users = Hub.objects()
             Hub_user_names_object = {}
@@ -118,9 +131,43 @@ def download_accounts_info():
                     account.hub_user_name = Hub_user_names_object[str(account.hub_id)]
                 temp.append(account)
             accounts = temp
+        elif account_type == Account.HUB:
+            # Get only Hub accounts (represented as PartnerProfile with hub_id)
+            if hub_user_id is not None:
+                accounts = PartnerProfile.objects.filter(
+                    firebase_uid__nin=admin_ids, hub_id=hub_user_id
+                )
+            else:
+                accounts = PartnerProfile.objects(
+                    firebase_uid__nin=admin_ids, hub_id__ne=None
+                )
 
-    except:
-        msg = "Failed to get accounts"
+            # Get Hub user details for enrichment
+            Hub_users = Hub.objects()
+            Hub_user_names_object = {}
+            Hub_user_details_object = {}
+            for hub_user in Hub_users:
+                Hub_user_names_object[str(hub_user.id)] = hub_user.name
+                Hub_user_details_object[str(hub_user.id)] = hub_user
+            temp = []
+            for account in accounts:
+                if account.hub_id is not None:
+                    account.hub_user_name = Hub_user_names_object.get(str(account.hub_id), "")
+                    hub_details = Hub_user_details_object.get(str(account.hub_id))
+                    if hub_details:
+                        account.hub_email = hub_details.email
+                        account.hub_url = hub_details.url
+                temp.append(account)
+            accounts = temp
+        elif account_type == Account.GUEST:
+            accounts = Guest.objects(firebase_uid__nin=admin_ids)
+        elif account_type == Account.SUPPORT:
+            accounts = Support.objects(firebase_uid__nin=admin_ids)
+        elif account_type == Account.MODERATOR:
+            accounts = Moderator.objects(firebase_uid__nin=admin_ids)
+
+    except Exception as e:
+        msg = f"Failed to get accounts: {str(e)}"
         logger.info(msg)
         return create_response(status=422, message=msg)
 
@@ -130,6 +177,14 @@ def download_accounts_info():
         return download_mentee_accounts(accounts, partner_object)
     elif account_type == Account.PARTNER:
         return download_partner_accounts(accounts)
+    elif account_type == Account.HUB:
+        return download_hub_accounts(accounts)
+    elif account_type == Account.GUEST:
+        return download_guest_accounts(accounts)
+    elif account_type == Account.SUPPORT:
+        return download_support_accounts(accounts)
+    elif account_type == Account.MODERATOR:
+        return download_moderator_accounts(accounts)
 
     msg = "Invalid input"
     logger.info(msg)
@@ -233,7 +288,7 @@ def download_mentor_apps(apps, partner_object):
         "notes",
         "Organization Affiliation",
     ]
-    return generate_sheet("accounts", accts, columns)
+    return generate_sheet("mentor_applications", accts, columns)
 
 
 def download_mentee_apps(apps, partner_object):
@@ -281,7 +336,7 @@ def download_mentee_apps(apps, partner_object):
         "notes",
         "Organization Affiliation",
     ]
-    return generate_sheet("accounts", accts, columns)
+    return generate_sheet("mentee_applications", accts, columns)
 
 
 def download_mentor_accounts(accounts):
@@ -365,7 +420,7 @@ def download_mentor_accounts(accounts):
         "total_sent_messages",
         "Affiliated",
     ]
-    return generate_sheet("accounts", accts, columns)
+    return generate_sheet("mentor_accounts", accts, columns)
 
 
 def download_partner_accounts(accounts):
@@ -381,7 +436,7 @@ def download_partner_accounts(accounts):
                 ",".join(acct.regions),
                 acct.intro,
                 acct.website,
-                acct.hub_user_name,
+                acct.hub_user_name if hasattr(acct, 'hub_user_name') else "",
                 acct.linkedin,
                 acct.sdgs,
                 acct.topics,
@@ -414,7 +469,144 @@ def download_partner_accounts(accounts):
         "text_notifications",
         "email_notifications",
     ]
-    return generate_sheet("accounts", accts, columns)
+    return generate_sheet("partner_accounts", accts, columns)
+
+
+def download_hub_accounts(accounts):
+    """Download Hub accounts separately from Partners.
+    
+    Hubs are represented as PartnerProfile documents with a hub_id field.
+    This function exports Hub-specific data.
+    """
+    accts = []
+
+    for acct in accounts:
+        accts.append(
+            [
+                acct.email,
+                acct.organization,
+                acct.location,
+                acct.person_name,
+                ",".join(acct.regions) if hasattr(acct, 'regions') and acct.regions else "",
+                acct.intro if hasattr(acct, 'intro') else "",
+                acct.website,
+                acct.hub_user_name if hasattr(acct, 'hub_user_name') else "",
+                acct.hub_email if hasattr(acct, 'hub_email') else "",
+                acct.hub_url if hasattr(acct, 'hub_url') else "",
+                acct.linkedin if hasattr(acct, 'linkedin') else "",
+                acct.sdgs if hasattr(acct, 'sdgs') else "",
+                acct.topics if hasattr(acct, 'topics') else "",
+                acct.image.url if acct.image else "None",
+                len(acct.assign_mentors) if hasattr(acct, 'assign_mentors') and acct.assign_mentors else 0,
+                len(acct.assign_mentees) if hasattr(acct, 'assign_mentees') and acct.assign_mentees else 0,
+                (
+                    int(acct.text_notifications)
+                    if acct.text_notifications != None
+                    else "N/A"
+                ),
+                (
+                    int(acct.email_notifications)
+                    if acct.email_notifications != None
+                    else "N/A"
+                ),
+            ]
+        )
+    columns = [
+        "Email",
+        "Organization/Institution/Corporation Full Name",
+        "Headquarters Location",
+        "Contact Person's Full Name",
+        "Regions Work In",
+        "Brief Introduction",
+        "Website",
+        "Hub Name",
+        "Hub Email",
+        "Hub URL",
+        "LinkedIn",
+        "SDGS",
+        "Project Topics",
+        "Image Url",
+        "Number of Assigned Mentors",
+        "Number of Assigned Mentees",
+        "text_notifications",
+        "email_notifications",
+    ]
+    return generate_sheet("hub_accounts", accts, columns)
+
+
+def download_guest_accounts(accounts):
+    """Download Guest accounts.
+    
+    Guests have basic information: firebase_uid, email, name, and roomName.
+    """
+    accts = []
+
+    for acct in accounts:
+        accts.append(
+            [
+                acct.name,
+                acct.email,
+                acct.firebase_uid,
+                acct.roomName if hasattr(acct, 'roomName') and acct.roomName else "",
+            ]
+        )
+    columns = [
+        "Name",
+        "Email",
+        "Firebase UID",
+        "Room Name",
+    ]
+    return generate_sheet("guest_accounts", accts, columns)
+
+
+def download_support_accounts(accounts):
+    """Download Support accounts.
+    
+    Support accounts have basic information: firebase_uid, email, name, and roomName.
+    """
+    accts = []
+
+    for acct in accounts:
+        accts.append(
+            [
+                acct.name,
+                acct.email,
+                acct.firebase_uid,
+                acct.roomName if hasattr(acct, 'roomName') and acct.roomName else "",
+            ]
+        )
+    columns = [
+        "Name",
+        "Email",
+        "Firebase UID",
+        "Room Name",
+    ]
+    return generate_sheet("support_accounts", accts, columns)
+
+
+def download_moderator_accounts(accounts):
+    """Download Moderator accounts.
+    
+    Moderator accounts have basic information: firebase_uid, email, name, and roomName.
+    """
+    accts = []
+
+    for acct in accounts:
+        accts.append(
+            [
+                acct.name,
+                acct.email,
+                acct.firebase_uid,
+                acct.roomName if hasattr(acct, 'roomName') and acct.roomName else "",
+            ]
+        )
+    columns = [
+        "Name",
+        "Email",
+        "Firebase UID",
+        "Room Name",
+    ]
+    return generate_sheet("moderator_accounts", accts, columns)
 
 
 def download_mentee_accounts(accounts, partner_object):
@@ -513,7 +705,7 @@ def download_mentee_accounts(accounts, partner_object):
         "total_sent_messages",
         "Affiliated",
     ]
-    return generate_sheet("accounts", accts, columns)
+    return generate_sheet("mentee_accounts", accts, columns)
 
 
 def generate_sheet(sheet_name, row_data, columns):
@@ -552,26 +744,11 @@ def generate_file(file_name, row_data, columns, file_format="xlsx"):
     output = BytesIO()
 
     if file_format == "csv":
-        # Generate CSV
-        csv_data = df.to_csv(index=False)
-        output.write(csv_data.encode("utf-8"))
-        output.seek(0)
-
-        try:
-            return send_file(
-                output,
-                mimetype="text/csv",
-                download_name="{0}.csv".format(file_name),
-                as_attachment=True,
-            )
-        except FileNotFoundError:
-            msg = "Downloads failed"
-            logger.info(msg)
-            return create_response(status=422, message=msg)
+        df.to_csv(output, index=False)
+        mimetype = "text/csv"
+        download_name = f"{file_name}.csv"
     else:
-        # Generate Excel (default)
         writer = pd.ExcelWriter(output, engine="xlsxwriter")
-
         df.to_excel(
             writer, startrow=0, merge_cells=False, sheet_name=file_name, index=False
         )
@@ -579,282 +756,21 @@ def generate_file(file_name, row_data, columns, file_format="xlsx"):
         worksheet = writer.sheets[file_name]
         format = workbook.add_format()
         format.set_bg_color("#eeeeee")
-        worksheet.set_column(0, len(row_data[0]) if row_data else 0, 28)
-
+        worksheet.set_column(0, len(columns), 28)
         writer.close()
-        output.seek(0)
+        mimetype = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        download_name = f"{file_name}.xlsx"
 
-        try:
-            return send_file(
-                output,
-                mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                download_name="{0}.xlsx".format(file_name),
-                as_attachment=True,
-            )
-        except FileNotFoundError:
-            msg = "Downloads failed"
-            logger.info(msg)
-            return create_response(status=422, message=msg)
-
-
-@download.route("/partner/<partner_id>/accounts", methods=["GET"])
-@admin_only
-def download_partner_accounts_data(partner_id):
-    """Download mentors or mentees assigned to a specific partner with activity status."""
-    data = request.args
-    account_type = int(data.get("account_type", 0))
-    file_format = data.get("format", "xlsx")  # 'xlsx' or 'csv'
+    output.seek(0)
 
     try:
-        partner = PartnerProfile.objects.get(id=partner_id)
-    except:
-        msg = "Partner not found"
+        return send_file(
+            output,
+            mimetype=mimetype,
+            download_name=download_name,
+            as_attachment=True,
+        )
+    except FileNotFoundError:
+        msg = "Downloads failed"
         logger.info(msg)
         return create_response(status=422, message=msg)
-
-    messages = DirectMessage.objects()
-
-    if account_type == Account.MENTOR:
-        return download_partner_mentor_accounts(partner, messages, file_format)
-    elif account_type == Account.MENTEE:
-        return download_partner_mentee_accounts(partner, messages, file_format)
-
-    msg = "Invalid account type"
-    logger.info(msg)
-    return create_response(status=422, message=msg)
-
-
-def download_partner_mentor_accounts(partner, messages, file_format="xlsx"):
-    """Download mentors assigned to a partner with activity status."""
-    if not partner.assign_mentors:
-        return generate_file(
-            "partner_mentors", [], get_mentor_columns_with_activity(), file_format
-        )
-
-    accts = []
-
-    for mentor_ref in partner.assign_mentors:
-        mentor_id = mentor_ref.get("id")
-        if not mentor_id:
-            continue
-
-        try:
-            mentor = MentorProfile.objects.get(id=mentor_id)
-        except:
-            continue
-
-        # Count messages
-        sent_messages = [
-            msg for msg in messages if str(msg.sender_id) == str(mentor.id)
-        ]
-        received_messages = [
-            msg for msg in messages if str(msg.recipient_id) == str(mentor.id)
-        ]
-
-        # Determine activity status
-        total_sent = len(sent_messages)
-        total_received = len(received_messages)
-        has_messages = total_sent > 0 or total_received > 0
-
-        if has_messages:
-            is_active = "Yes"
-            activity_reason = f"Sent: {total_sent}, Received: {total_received} messages"
-        else:
-            is_active = "No"
-            activity_reason = "No messages sent or received"
-
-        # Format educations
-        educations = []
-        for edu in mentor.education:
-            educations.append(
-                "{0} from {1} ({2})".format(
-                    edu.education_level if edu.education_level else "",
-                    edu.school if edu.school else "",
-                    edu.graduation_year if edu.graduation_year else "",
-                )
-            )
-
-        accts.append(
-            [
-                mentor.name,
-                mentor.email,
-                mentor.professional_title,
-                mentor.linkedin,
-                mentor.website,
-                "Yes" if mentor.image and mentor.image.url else "No",
-                mentor.image.url if mentor.image else "",
-                (
-                    mentor.videos[0].url
-                    if mentor.videos and len(mentor.videos) > 0
-                    else ""
-                ),
-                "Yes" if mentor.videos and len(mentor.videos) > 0 else "No",
-                "|".join(educations),
-                ",".join(mentor.languages) if mentor.languages else "",
-                ",".join(mentor.specializations) if mentor.specializations else "",
-                mentor.biography,
-                "Yes" if mentor.taking_appointments else "No",
-                "Yes" if mentor.offers_in_person else "No",
-                "Yes" if mentor.offers_group_appointments else "No",
-                "Yes" if mentor.text_notifications else "No",
-                "Yes" if mentor.email_notifications else "No",
-                total_received,
-                total_sent,
-                partner.organization if partner.organization else "",
-                is_active,
-                activity_reason,
-            ]
-        )
-
-    return generate_file(
-        "partner_mentors", accts, get_mentor_columns_with_activity(), file_format
-    )
-
-
-def download_partner_mentee_accounts(partner, messages, file_format="xlsx"):
-    """Download mentees assigned to a partner with activity status."""
-    if not partner.assign_mentees:
-        return generate_file(
-            "partner_mentees", [], get_mentee_columns_with_activity(), file_format
-        )
-
-    accts = []
-
-    for mentee_ref in partner.assign_mentees:
-        mentee_id = mentee_ref.get("id")
-        if not mentee_id:
-            continue
-
-        try:
-            mentee = MenteeProfile.objects.get(id=mentee_id)
-        except:
-            continue
-
-        # Count messages
-        sent_messages = [
-            msg for msg in messages if str(msg.sender_id) == str(mentee.id)
-        ]
-        received_messages = [
-            msg for msg in messages if str(msg.recipient_id) == str(mentee.id)
-        ]
-
-        # Determine activity status
-        total_sent = len(sent_messages)
-        total_received = len(received_messages)
-        has_messages = total_sent > 0 or total_received > 0
-
-        if has_messages:
-            is_active = "Yes"
-            activity_reason = f"Sent: {total_sent}, Received: {total_received} messages"
-        else:
-            is_active = "No"
-            activity_reason = "No messages sent or received"
-
-        # Format educations
-        educations = []
-        for edu in mentee.education:
-            educations.append(
-                "{0} from {1} ({2})".format(
-                    edu.education_level if edu.education_level else "",
-                    edu.school if edu.school else "",
-                    edu.graduation_year if edu.graduation_year else "",
-                )
-            )
-        if mentee.education_level and not educations:
-            educations.append(
-                EDUCATION_LEVEL.get(mentee.education_level, mentee.education_level)
-            )
-
-        accts.append(
-            [
-                mentee.name,
-                mentee.gender,
-                mentee.location,
-                mentee.age,
-                mentee.email,
-                mentee.phone_number,
-                mentee.image.url if mentee.image else "",
-                "|".join(educations),
-                ",".join(mentee.languages) if mentee.languages else "",
-                "|".join(mentee.specializations) if mentee.specializations else "",
-                mentee.biography,
-                partner.organization if partner.organization else "",
-                "Yes" if mentee.image and mentee.image.url else "No",
-                "Yes" if mentee.video and mentee.video.url else "No",
-                1 if mentee.text_notifications else 0,
-                1 if mentee.email_notifications else 0,
-                1 if mentee.is_private else 0,
-                mentee.video.url if mentee.video else "",
-                (
-                    ",".join(mentee.favorite_mentors_ids)
-                    if mentee.favorite_mentors_ids
-                    else ""
-                ),
-                total_sent,
-                total_received,
-                partner.organization if partner.organization else "",
-                is_active,
-                activity_reason,
-            ]
-        )
-
-    return generate_file(
-        "partner_mentees", accts, get_mentee_columns_with_activity(), file_format
-    )
-
-
-def get_mentor_columns_with_activity():
-    return [
-        "mentor Full Name",
-        "email",
-        "professional_title",
-        "linkedin",
-        "website",
-        "profile pic up",
-        "image url",
-        "video url",
-        "video(s) up",
-        "educations",
-        "languages",
-        "specializations",
-        "biography",
-        "taking_appointments",
-        "offers_in_person",
-        "offers_group_appointments",
-        "text_notifications",
-        "email_notifications",
-        "total_received_messages",
-        "total_sent_messages",
-        "Affiliated",
-        "is_active",
-        "activity_reason",
-    ]
-
-
-def get_mentee_columns_with_activity():
-    return [
-        "mentee name",
-        "gender",
-        "location",
-        "age",
-        "email",
-        "phone number",
-        "image url",
-        "educations",
-        "languages",
-        "Areas of interest",
-        "biography",
-        "Organization Affiliation",
-        "profile pic up",
-        "video(s) up",
-        "text_notifications",
-        "email_notifications",
-        "private account",
-        "video url",
-        "favorite_mentor_ids",
-        "total_sent_messages",
-        "total_received_messages",
-        "Affiliated",
-        "is_active",
-        "activity_reason",
-    ]

@@ -106,13 +106,15 @@ export const fetchEvents = async (
 export const fetchAccounts = (
   type,
   restricted = undefined,
-  hub_user_id = ""
+  hub_user_id = "",
+  include_hubs = false
 ) => {
   const requestExtension = `/accounts/${type}`;
   return authGet(requestExtension, {
     params: {
       restricted: restricted,
       hub_user_id: hub_user_id,
+      include_hubs: include_hubs,
     },
   }).then(
     (response) => {
@@ -883,7 +885,7 @@ export const downloadMentorsData = async () => {
     },
   }).catch(console.error);
 
-  downloadBlob(response, "mentee_data.xlsx");
+  downloadBlob(response, "mentor_accounts.xlsx");
 };
 export const downloadMentorsApps = async () => {
   const requestExtension = "/download/apps/all";
@@ -919,18 +921,69 @@ export const downloadMenteesData = async () => {
 
   downloadBlob(response, "mentee_data.xlsx");
 };
-export const downloadPartnersData = async (searchHubUserId = null) => {
+export const downloadPartnersData = async (searchHubUserId = null, includeHubs = false) => {
   const requestExtension = "/download/accounts/all";
   let response = await authGet(requestExtension, {
     responseType: "blob",
     params: {
       account_type: ACCOUNT_TYPE.PARTNER,
       hub_user_id: searchHubUserId,
+      include_hubs: includeHubs,
     },
   }).catch(console.error);
 
-  downloadBlob(response, "mentee_data.xlsx");
+  downloadBlob(response, "partner_accounts.xlsx");
 };
+
+export const downloadHubsData = async (searchHubUserId = null) => {
+  const requestExtension = "/download/accounts/all";
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.HUB,
+      hub_user_id: searchHubUserId,
+    },
+  }).catch(console.error);
+
+  downloadBlob(response, "hub_accounts.xlsx");
+};
+
+export const downloadGuestsData = async () => {
+  const requestExtension = "/download/accounts/all";
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.GUEST,
+    },
+  }).catch(console.error);
+
+  downloadBlob(response, "guest_accounts.xlsx");
+};
+
+export const downloadSupportersData = async () => {
+  const requestExtension = "/download/accounts/all";
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.SUPPORT,
+    },
+  }).catch(console.error);
+
+  downloadBlob(response, "support_accounts.xlsx");
+};
+
+export const downloadModeratorsData = async () => {
+  const requestExtension = "/download/accounts/all";
+  let response = await authGet(requestExtension, {
+    responseType: "blob",
+    params: {
+      account_type: ACCOUNT_TYPE.MODERATOR,
+    },
+  }).catch(console.error);
+
+  downloadBlob(response, "moderator_accounts.xlsx");
+};
+
 export const downloadAllApplicationData = async () => {
   const requestExtension = "/download/appointments/all";
   return authGet(requestExtension, {

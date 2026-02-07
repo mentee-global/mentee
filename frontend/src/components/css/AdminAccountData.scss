@@ -1,35 +1,332 @@
 @import "_app";
 
 .account-data-body {
-  padding: 22px;
+  padding: 24px 32px;
   margin-bottom: 50px;
   overflow-x: auto;
+  background-color: #fafbfc;
+  min-height: 100vh;
 }
 
-.table-search {
-  width: 18em;
-  margin-top: 66px;
-  margin-bottom: 36px;
-}
-.table-search #search {
-  min-width: 10rem;
+// Breadcrumb styling
+.account-data-body .ant-breadcrumb {
+  margin-bottom: 8px;
+  font-size: 14px;
+  
+  a {
+    color: #6b7280;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: #1890ff;
+    }
+  }
+  
+  .ant-breadcrumb-separator {
+    color: #d1d5db;
+    margin: 0 8px;
+  }
+  
+  .ant-breadcrumb-link {
+    color: #374151;
+    font-weight: 500;
+  }
 }
 
-.table-header {
+// Filters Section - Clean Card Design
+.filters-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px 0 24px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-search {
+  width: 280px;
+  
+  .ant-input {
+    border-radius: 8px;
+    border-color: #d1d5db;
+    transition: all 0.2s ease;
+    
+    &:hover, &:focus {
+      border-color: #1890ff;
+      box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+    }
+  }
+}
+
+.filter-dropdown {
+  .ant-btn {
+    border-radius: 8px;
+    border-color: #d1d5db;
+    background: #f9fafb;
+    color: #374151;
+    font-weight: 500;
+    min-width: 140px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+      background: #f0f9ff;
+    }
+  }
+}
+
+.filter-clear-btn {
+  height: 36px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #6b7280;
+  border-color: #d1d5db;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #dc2626;
+    border-color: #dc2626;
+    background: #fef2f2;
+  }
+}
+
+// Table Header Section
+.table-header-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .table-title {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.5px;
 }
 
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+// Action Buttons
+.action-btn {
+  height: 38px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  
+  &.ant-btn-default {
+    border-color: #d1d5db;
+    color: #374151;
+    background: #ffffff;
+    
+    &:hover {
+      border-color: #1890ff;
+      color: #1890ff;
+      background: #f0f9ff;
+    }
+  }
+}
+
+// Download Section - Combined Design
+.download-section {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #1890ff;
+  background: #ffffff;
+}
+
+.download-dropdown {
+  .ant-btn {
+    border: none;
+    border-radius: 0;
+    background: #f0f9ff;
+    color: #096dd9;
+    font-weight: 500;
+    height: 36px;
+    padding: 0 16px;
+    border-right: 1px solid #1890ff;
+    
+    &:hover {
+      background: #e6f7ff;
+    }
+  }
+}
+
+.download-btn {
+  border: none !important;
+  border-radius: 8px !important;
+  background: $theme-orange !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  height: 38px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:hover {
+    background: $theme-orange-dark !important;
+  }
+  
+  &:active {
+    background: $theme-orange-dark !important;
+  }
+  
+  .anticon {
+    font-size: 16px;
+  }
+}
+
+// Refresh Button
+.refresh-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: #d1d5db;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: #1890ff;
+    color: #1890ff;
+    background: #f0f9ff;
+    transform: rotate(180deg);
+  }
+}
+
+// Table Container
+.table-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+// Account Type Tabs
+.account-tabs {
+  display: flex;
+  gap: 4px;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+.account-tab {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+  
+  &.active {
+    background: #1890ff;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(24, 144, 255, 0.2);
+  }
+}
+
+// Legacy classes for backward compatibility
+.table-search {
+  display: none; // Hide old search, using new filters-section
+}
+
+.table-header {
+  display: none; // Hide old header, using new table-header-section
+}
+
+// Table styling improvements
+.ant-table {
+  .ant-table-thead > tr > th {
+    background: #f9fafb;
+    color: #374151;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 16px;
+  }
+  
+  .ant-table-tbody > tr > td {
+    padding: 16px;
+    color: #4b5563;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  .ant-table-tbody > tr:hover > td {
+    background: #f0f9ff;
+  }
+}
+
+// Button group legacy support
 .table-button-group > .table-button {
   margin: 0px 4px;
   color: black;
 }
+
 .hub-drop-down {
   min-width: 5rem;
   margin-left: 1rem !important;
@@ -63,29 +360,36 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
 .link-span {
   cursor: pointer;
   color: #1890ff;
 }
+
 .assign-user-modal {
   padding: 30px;
   overflow-y: auto;
   min-height: 200px;
   max-height: 600px;
+  
   .assign-header-modal {
     display: flex;
+    
     .org-area {
       text-align: center;
     }
+    
     .restricted-area {
       font-size: 20px;
       padding-top: 20px;
       padding-left: 30%;
+      
       label {
         margin-right: 10px;
       }
     }
   }
+  
   .main-body {
     display: flex;
     width: 100%;
@@ -94,46 +398,97 @@
       width: 50%;
       padding: 20px;
     }
+    
     .sub-title {
       font-weight: bold;
       font-size: 18px;
     }
+    
     .add-btn {
       height: 38px;
       color: white;
       background-color: #e4bb4f;
     }
+    
     .mentors-area {
       border-right: 1px solid lightgray;
     }
+    
     .list {
       margin-top: 45px;
       background-color: white;
     }
+    
     .record {
       display: flex;
       justify-content: space-between;
       padding: 8px 10px;
     }
+    
     .record:hover {
       background-color: rgb(242, 242, 242);
     }
+    
     .odd {
       background-color: #fafafa;
     }
   }
 }
 
-.table-header {
-  flex-direction: row;
+.hub-indicator {
+  font-size: 13px;
+  color: #1890ff;
+  font-weight: 500;
+  margin-left: 8px;
+  background: #f0f9ff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid #bae7ff;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .account-data-body {
+    padding: 16px;
+  }
+  
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-search {
+    width: 100%;
+  }
+  
+  .table-header-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .table-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .download-section {
+    width: 100%;
+    
+    .download-dropdown .ant-btn,
+    .download-btn {
+      flex: 1;
+    }
+  }
 }
 
 @media (max-width: 600px) {
-  .table-header {
+  .table-button-group {
     flex-direction: column;
-  }
-
-  .table-search {
-    width: 100% !important;
+    width: 100%;
+    
+    > .table-button {
+      margin: 4px 0;
+      width: 100%;
+    }
   }
 }

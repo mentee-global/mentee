@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Dropdown } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { Menu, Dropdown, Button } from "antd";
+import { DownOutlined, SortAscendingOutlined } from "@ant-design/icons";
 import { getDisplaySpecializations } from "utils/api";
 
 export function SortByApptDropdown(props) {
   const options = {
     ASCENDING: {
       key: 0,
-      text: "Greatest to least",
+      text: "Most appointments",
     },
     DESCENDING: {
       key: 1,
-      text: "Least to greatest",
+      text: "Least appointments",
     },
   };
 
@@ -28,20 +28,22 @@ export function SortByApptDropdown(props) {
 
   const overlay = (
     <Menu>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.ASCENDING)}>Greatest to least</a>
+      <Menu.Item onClick={() => handleClick(options.ASCENDING)}>
+        <span style={{ fontWeight: 500 }}>Most appointments</span>
       </Menu.Item>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.DESCENDING)}>Least to greatest</a>
+      <Menu.Item onClick={() => handleClick(options.DESCENDING)}>
+        <span style={{ fontWeight: 500 }}>Least appointments</span>
       </Menu.Item>
     </Menu>
   );
 
   return (
     <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
-      <a>
-        {option ? option.text : "Sort Order"} <DownOutlined />
-      </a>
+      <Button style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <SortAscendingOutlined />
+        <span style={{ fontWeight: 500 }}>{option ? option.text : "Sort by"}</span>
+        <DownOutlined style={{ fontSize: 12 }} />
+      </Button>
     </Dropdown>
   );
 }
@@ -91,34 +93,32 @@ export function MenteeMentorDropdown(props) {
 
   const overlay = (
     <Menu>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.MENTORS)}>Mentors</a>
+      <Menu.Item onClick={() => handleClick(options.MENTORS)}>
+        <span style={{ fontWeight: 500 }}>Mentors</span>
       </Menu.Item>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.MENTEES)}>Mentees</a>
+      <Menu.Item onClick={() => handleClick(options.MENTEES)}>
+        <span style={{ fontWeight: 500 }}>Mentees</span>
       </Menu.Item>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.PARTNERS)}>Partners</a>
+      <Menu.Item onClick={() => handleClick(options.PARTNERS)}>
+        <span style={{ fontWeight: 500 }}>Partners</span>
       </Menu.Item>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.GUESTS)}>Guests</a>
+      <Menu.Item onClick={() => handleClick(options.GUESTS)}>
+        <span style={{ fontWeight: 500 }}>Guests</span>
       </Menu.Item>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.SUPPORT)}>Supporters</a>
+      <Menu.Item onClick={() => handleClick(options.SUPPORT)}>
+        <span style={{ fontWeight: 500 }}>Supporters</span>
       </Menu.Item>
-      <Menu.Item>
-        <a onClick={() => handleClick(options.MODERATOR)}>Moderators</a>
+      <Menu.Item onClick={() => handleClick(options.MODERATOR)}>
+        <span style={{ fontWeight: 500 }}>Moderators</span>
       </Menu.Item>
-      {/* <Menu.Item>
-        <a onClick={() => handleClick(options.ALL)}>All</a>
-      </Menu.Item> */}
     </Menu>
   );
   return (
     <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
-      <a>
-        {option.text} <DownOutlined />
-      </a>
+      <Button style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontWeight: 500 }}>{option.text}</span>
+        <DownOutlined style={{ fontSize: 12 }} />
+      </Button>
     </Dropdown>
   );
 }
@@ -226,11 +226,11 @@ export function SortByDateDropdown(props) {
 }
 
 export function HubsDropdown(props) {
-  const [option, setOption] = useState("Filter by");
+  const [option, setOption] = useState("All Hubs");
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
-    setOption("Filter by");
+    setOption("All Hubs");
   }, [props.onReset]);
 
   const handleClick = (newOption, text) => {
@@ -243,16 +243,19 @@ export function HubsDropdown(props) {
 
   const overlay = (
     <Menu>
+      <Menu.Item onClick={() => handleClick(null, "All Hubs")}>
+        <span style={{ fontWeight: 500 }}>All Hubs</span>
+      </Menu.Item>
       {props.options &&
         props.options.map((element, i) => {
           return (
-            <Menu.Item>
-              <a
-                onClick={() => handleClick(element.value, element.label)}
-                style={{ color: selected.includes(i) ? "red" : "black" }}
-              >
+            <Menu.Item 
+              key={element.value}
+              onClick={() => handleClick(element.value, element.label)}
+            >
+              <span style={{ fontWeight: selected.includes(i) ? 600 : 400 }}>
                 {element.label}
-              </a>
+              </span>
             </Menu.Item>
           );
         })}
@@ -264,11 +267,12 @@ export function HubsDropdown(props) {
       overlay={overlay}
       className={props.className}
       trigger={["click"]}
-      overlayStyle={{ overflowY: "auto", height: "auto" }}
+      overlayStyle={{ overflowY: "auto", maxHeight: 300 }}
     >
-      <a>
-        {option} <DownOutlined />
-      </a>
+      <Button style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 140 }}>
+        <span style={{ fontWeight: 500 }}>{option}</span>
+        <DownOutlined style={{ fontSize: 12 }} />
+      </Button>
     </Dropdown>
   );
 }

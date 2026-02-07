@@ -156,6 +156,10 @@ def get_accounts(account_type):
                 "email": hub_user.email,
                 "image": hub_user.image,
             }
+        
+        # Check if we should include Hub accounts in Partners view
+        include_hubs = request.args.get("include_hubs", "false").lower() == "true"
+        
         if "restricted" in request.args:
             if request.args["restricted"] == "true":
                 if "hub_user_id" in request.args:
@@ -164,11 +168,21 @@ def get_accounts(account_type):
                             restricted=True, hub_id=request.args["hub_user_id"]
                         )
                     else:
-                        accounts = PartnerProfile.objects(restricted=True)
+                        # Filter by include_hubs parameter
+                        if include_hubs:
+                            accounts = PartnerProfile.objects(restricted=True)
+                        else:
+                            accounts = PartnerProfile.objects.filter(
+                                restricted=True, hub_id=None
+                            )
                 else:
-                    accounts = PartnerProfile.objects.filter(
-                        restricted=True, hub_id=None
-                    )
+                    # Filter by include_hubs parameter
+                    if include_hubs:
+                        accounts = PartnerProfile.objects(restricted=True)
+                    else:
+                        accounts = PartnerProfile.objects.filter(
+                            restricted=True, hub_id=None
+                        )
             else:
                 if "hub_user_id" in request.args:
                     if request.args["hub_user_id"] != "":
@@ -176,11 +190,21 @@ def get_accounts(account_type):
                             restricted__ne=True, hub_id=request.args["hub_user_id"]
                         )
                     else:
-                        accounts = PartnerProfile.objects.filter(restricted__ne=True)
+                        # Filter by include_hubs parameter
+                        if include_hubs:
+                            accounts = PartnerProfile.objects.filter(restricted__ne=True)
+                        else:
+                            accounts = PartnerProfile.objects.filter(
+                                restricted__ne=True, hub_id=None
+                            )
                 else:
-                    accounts = PartnerProfile.objects.filter(
-                        restricted__ne=True, hub_id=None
-                    )
+                    # Filter by include_hubs parameter
+                    if include_hubs:
+                        accounts = PartnerProfile.objects.filter(restricted__ne=True)
+                    else:
+                        accounts = PartnerProfile.objects.filter(
+                            restricted__ne=True, hub_id=None
+                        )
         else:
             if "hub_user_id" in request.args:
                 if request.args["hub_user_id"] != "":
@@ -188,9 +212,17 @@ def get_accounts(account_type):
                         hub_id=request.args["hub_user_id"]
                     )
                 else:
-                    accounts = PartnerProfile.objects()
+                    # Filter by include_hubs parameter
+                    if include_hubs:
+                        accounts = PartnerProfile.objects()
+                    else:
+                        accounts = PartnerProfile.objects(hub_id=None)
             else:
-                accounts = PartnerProfile.objects(hub_id=None)
+                # Filter by include_hubs parameter
+                if include_hubs:
+                    accounts = PartnerProfile.objects()
+                else:
+                    accounts = PartnerProfile.objects(hub_id=None)
         temp = []
         for account in accounts:
             if account.hub_id is not None:
@@ -1125,7 +1157,7 @@ def submit_bug_report():
         return create_response(status=500, message="Failed to save bug report")
 
     # Recipients list - currently just one, but structured for multiple in the future
-    recipients = ["juan@menteeglobal.org"]
+    recipients = ["juan@menteeglobal.org", "letitia@menteeglobal.org"]
 
     # Build HTML email content with attachment links
     attachments_html = ""

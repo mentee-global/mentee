@@ -141,7 +141,7 @@ function PartnerProfileForm({
           <Input />
         </Form.Item>
       )}
-      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+      {(!hub_user || !hub_user.url?.includes("AUAF")) && (
         <Form.Item
           label={t("partnerProfile.organizationName")}
           name="organization"
@@ -195,7 +195,7 @@ function PartnerProfileForm({
           </Form.Item>
         </div>
       ) : null}
-      {hub_user && hub_user.url.includes("AUAF") && (
+      {hub_user && hub_user.url?.includes("AUAF") && (
         <Form.Item
           label={t("partnerProfile.title")}
           name="title"
@@ -210,7 +210,7 @@ function PartnerProfileForm({
           <Input />
         </Form.Item>
       )}
-      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+      {(!hub_user || !hub_user.url?.includes("AUAF")) && (
         <Form.Item
           label={t("partnerProfile.location")}
           name="location"
@@ -227,7 +227,7 @@ function PartnerProfileForm({
       )}
       <Form.Item
         label={
-          hub_user && hub_user.url.includes("AUAF")
+          hub_user && hub_user.url?.includes("AUAF")
             ? t("partnerProfile.AUAFcontactFullName")
             : t("partnerProfile.contactFullName")
         }
@@ -241,7 +241,7 @@ function PartnerProfileForm({
       >
         <Input />
       </Form.Item>
-      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+      {(!hub_user || !hub_user.url?.includes("AUAF")) && (
         <Form.Item
           label={t("partnerProfile.regionsWork")}
           name="regions"
@@ -257,7 +257,7 @@ function PartnerProfileForm({
       )}
       <Form.Item
         label={
-          hub_user && hub_user.url.includes("AUAF")
+          hub_user && hub_user.url?.includes("AUAF")
             ? t("partnerProfile.AUAFbriefIntro")
             : t("partnerProfile.briefIntro")
         }
@@ -271,7 +271,7 @@ function PartnerProfileForm({
       >
         <Input.TextArea rows={3} />
       </Form.Item>
-      {!hub_user || !hub_user.url.includes("AUAF") ? (
+      {!hub_user || !hub_user.url?.includes("AUAF") ? (
         <div className={styles.formGroup}>
           <Form.Item
             className={styles.formGroupItem}
@@ -340,10 +340,10 @@ function PartnerProfileForm({
       >
         <Select mode="multiple" options={getSDGs(t)} />
       </Form.Item>
-      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+      {(!hub_user || !hub_user.url?.includes("AUAF")) && (
         <Form.Item
           label={
-            hub_user && hub_user.url === "GSRFoundation"
+            hub_user && hub_user.url?.includes("GSRFoundation")
               ? t("partnerProfile.projectNames_GSR")
               : t("partnerProfile.projectNames")
           }
@@ -353,12 +353,12 @@ function PartnerProfileForm({
         </Form.Item>
       )}
 
-      {hub_user && hub_user.url === "GSRFoundation" && (
+      {hub_user && hub_user.url?.includes("GSRFoundation") && (
         <Form.Item label={t("partnerProfile.success_GSR")} name="success">
           <Input.TextArea rows={3} />
         </Form.Item>
       )}
-      {(!hub_user || !hub_user.url.includes("AUAF")) && (
+      {(!hub_user || !hub_user.url?.includes("AUAF")) && (
         <div className={styles.formGroup}>
           <Form.Item
             label={t("partnerProfile.collaborationGrants")}

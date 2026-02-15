@@ -25,6 +25,7 @@ function ApplicationOrganizer({ isMentor }) {
   const [selectedID, setSelectedID] = useState(null);
   const [appInfo, setAppInfo] = useState({});
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleApplicationStateChange = useCallback(
     async (id, newState) => {
@@ -275,6 +276,7 @@ function ApplicationOrganizer({ isMentor }) {
         onChange={(value) => {
           setAppstate(value);
           setFilterdData(filterApplications(applicationData, value));
+          setCurrentPage(1);
         }}
         placeholder="Role"
         value={appState}
@@ -297,6 +299,10 @@ function ApplicationOrganizer({ isMentor }) {
             id="applicationstable"
             columns={columns}
             dataSource={filterdData}
+            pagination={{
+              current: currentPage,
+              onChange: (page) => setCurrentPage(page),
+            }}
           />
         )}
       </div>

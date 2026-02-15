@@ -304,7 +304,10 @@
     "reregisterAccount": "Por favor, registre sua conta novamente.",
     "resetPassword": "Por favor, redefina a senha. Um link de redefinição de senha foi enviado para o seu e-mail.",
     "serverError": "Algo deu errado.",
-    "wrongRole": "Por favor, selecione corretamente o tipo de conta."
+    "wrongRole": "Por favor, selecione corretamente o tipo de conta.",
+    "roleMismatch": "This email belongs to a {{role}} account. Please log in as {{role}}.",
+    "profileIncomplete": "We found your {{role}} account, but your profile isn’t complete yet. Please finish your profile.",
+    "noAccountForRole": "No {{role}} account found for this email. Please check your role or apply."
   },
   "menteeApplication": {
     "ageAnswer1": "Eu tenho entre 18 e 22 anos",

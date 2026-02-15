@@ -306,7 +306,10 @@
     "reregisterAccount": "Please re-register your account.",
     "resetPassword": "Please reset password. A link to reset your password has been sent to your email.",
     "serverError": "Something went wrong.",
-    "wrongRole": "Wrong role please choose account right role"
+    "wrongRole": "Wrong role please choose account right role",
+    "roleMismatch": "This email belongs to a {{role}} account. Please log in as {{role}}.",
+    "profileIncomplete": "We found your {{role}} account, but your profile isn’t complete yet. Please finish your profile.",
+    "noAccountForRole": "No {{role}} account found for this email. Please check your role or apply."
   },
   "menteeApplication": {
     "ageAnswer1": "I am 18-22",

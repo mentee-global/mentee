@@ -304,7 +304,10 @@
     "reregisterAccount": "Vuelva a registrar su cuenta.",
     "resetPassword": "Por favor, restablezca la contraseña. ",
     "serverError": "Algo salió mal.",
-    "wrongRole": "Rol incorrecto, elija el rol correcto de la cuenta"
+    "wrongRole": "Rol incorrecto, elija el rol correcto de la cuenta",
+    "roleMismatch": "This email belongs to a {{role}} account. Please log in as {{role}}.",
+    "profileIncomplete": "We found your {{role}} account, but your profile isn’t complete yet. Please finish your profile.",
+    "noAccountForRole": "No {{role}} account found for this email. Please check your role or apply."
   },
   "menteeApplication": {
     "ageAnswer1": "",

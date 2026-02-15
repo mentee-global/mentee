@@ -24,6 +24,7 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
+  const roleLabel = t(`common.${ACCOUNT_TYPE_LABELS[role]}`);
 
   const onFinish = async ({ email, password }) => {
     if (role == null) return;
@@ -43,10 +44,12 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
       );
       if (rightRole && parseInt(rightRole) !== role) {
         messageApi.error({
-          content: t("loginErrors.wrongRole"),
+          content: t("loginErrors.roleMismatch", {
+            role: t(`common.${ACCOUNT_TYPE_LABELS[parseInt(rightRole)]}`),
+          }),
           duration: 0,
-          key: "loginErrors.wrongRole",
-          onClick: () => messageApi.destroy("loginErrors.wrongRole"),
+          key: "loginErrors.roleMismatch",
+          onClick: () => messageApi.destroy("loginErrors.roleMismatch"),
         });
         setLoading(false);
         return;
@@ -55,16 +58,24 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
       const { inFirebase } = await checkStatusByEmail(email, role);
       if (profileExists === false && inFirebase === true) {
         //redirect to apply with role and email passed
+        messageApi.info({
+          content: t("loginErrors.profileIncomplete", { role: roleLabel }),
+          duration: 0,
+          key: "loginErrors.profileIncomplete",
+          onClick: () => messageApi.destroy("loginErrors.profileIncomplete"),
+        });
         history.push({
-          pathname: "/application-page",
+          pathname: n50_flag ? "/n50/build-profile" : "/build-profile",
           state: { email, role },
         });
+        setLoading(false);
+        return;
       } else if (profileExists === false && inFirebase === false) {
         messageApi.error({
-          content: t("loginErrors.incorrectCredentials"),
+          content: t("loginErrors.noAccountForRole", { role: roleLabel }),
           duration: 0,
-          key: "loginErrors.incorrectCredentials",
-          onClick: () => messageApi.destroy("loginErrors.incorrectCredentials"),
+          key: "loginErrors.noAccountForRole",
+          onClick: () => messageApi.destroy("loginErrors.noAccountForRole"),
         });
         setLoading(false);
         return;
@@ -84,6 +95,14 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           duration: 0,
           key: "loginErrors.existingEmail",
           onClick: () => messageApi.destroy("loginErrors.existingEmail"),
+        });
+        setLoading(false);
+      } else if (res?.data?.message) {
+        messageApi.error({
+          content: res.data.message,
+          duration: 0,
+          key: "loginErrors.serverMessage",
+          onClick: () => messageApi.destroy("loginErrors.serverMessage"),
         });
         setLoading(false);
       } else {
@@ -111,7 +130,7 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
         key: "loginErrors.reregisterAccount",
         onClick: () => messageApi.destroy("loginErrors.reregisterAccount"),
       });
-      history.push("/application-page");
+      history.push("/apply");
     }
     const unsubscribe = fireauth.auth().onAuthStateChanged(async (user) => {
       unsubscribe();

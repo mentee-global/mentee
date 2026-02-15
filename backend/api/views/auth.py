@@ -159,7 +159,7 @@ def newregister():
 @auth.route("/login", methods=["POST"])
 def login():
     data = request.json
-    email = data.get("email")
+    email = (data.get("email") or "").strip().lower()
     password = data.get("password")
     role = int(data.get("role"))
     path = data.get("path", None)
@@ -170,7 +170,7 @@ def login():
         if not profile_model.objects(email=email):
             profile_model = get_profile_model(Account.PARTNER)
 
-    profile = profile_model.objects.get(email=email)
+    profile = profile_model.objects(email=email).first()
 
     try:
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(

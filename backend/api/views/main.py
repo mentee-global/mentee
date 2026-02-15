@@ -47,6 +47,7 @@ from api.utils.request_utils import (
 )
 from api.utils.constants import NEW_APPLICATION_STATUS
 from api.utils.profile_parse import new_profile, edit_profile
+from api.utils.email_sync import update_email_across_models
 from api.utils.constants import Account
 from api.utils.require_auth import all_users, mentee_only, verify_user
 from firebase_admin import auth as firebase_admin_auth
@@ -931,9 +932,27 @@ def edit_mentor(id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    old_email = account.email.strip().lower() if account.email else account.email
+
     if not edit_profile(data, account):
         msg = "Couldn't update profile"
         return create_response(status=500, message=msg)
+    new_email = account.email.strip().lower() if account.email else account.email
+    if new_email and old_email and new_email != old_email:
+        try:
+            if account.firebase_uid:
+                firebase_admin_auth.update_user(account.firebase_uid, email=new_email)
+            else:
+                firebase_user = firebase_admin_auth.get_user_by_email(old_email)
+                firebase_admin_auth.update_user(firebase_user.uid, email=new_email)
+        except Exception as exc:
+            logger.error(
+                f"Failed to update Firebase email {old_email} -> {new_email}: {exc}"
+            )
+            return create_response(status=422, message="Email update failed")
+
+        update_email_across_models(old_email, new_email)
+        account.email = new_email
 
     account.save()
 

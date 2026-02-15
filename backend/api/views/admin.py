@@ -22,6 +22,7 @@ from api.models import (
 from api.utils.require_auth import admin_only
 from api.utils.request_utils import get_profile_model, imgur_client
 from api.utils.constants import Account
+from api.utils.email_sync import update_email_across_models
 import csv
 import io
 from api.views.auth import create_firebase_user
@@ -433,60 +434,6 @@ def editEmailPassword():
             email=email,
         )
     if email != ex_email:
-        ex_data = MenteeApplication.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = MentorApplication.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = MenteeProfile.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = MentorProfile.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = NewMentorApplication.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = PartnerProfile.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = Users.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = VerifiedEmail.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = Guest.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = Support.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
-        ex_data = Moderator.objects.filter(email=ex_email)
-        if len(ex_data) > 0:
-            for ex_item in ex_data:
-                ex_item.email = email
-                ex_item.save()
+        update_email_across_models(ex_email, email)
 
     return create_response(status=200, message="successful edited")

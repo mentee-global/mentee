@@ -39,9 +39,11 @@ export function SortByApptDropdown(props) {
 
   return (
     <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
-      <Button style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <Button style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <SortAscendingOutlined />
-        <span style={{ fontWeight: 500 }}>{option ? option.text : "Sort by"}</span>
+        <span style={{ fontWeight: 500 }}>
+          {option ? option.text : "Sort by"}
+        </span>
         <DownOutlined style={{ fontSize: 12 }} />
       </Button>
     </Dropdown>
@@ -115,7 +117,7 @@ export function MenteeMentorDropdown(props) {
   );
   return (
     <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
-      <Button style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <Button style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span style={{ fontWeight: 500 }}>{option.text}</span>
         <DownOutlined style={{ fontSize: 12 }} />
       </Button>
@@ -249,7 +251,7 @@ export function HubsDropdown(props) {
       {props.options &&
         props.options.map((element, i) => {
           return (
-            <Menu.Item 
+            <Menu.Item
               key={element.value}
               onClick={() => handleClick(element.value, element.label)}
             >
@@ -269,7 +271,9 @@ export function HubsDropdown(props) {
       trigger={["click"]}
       overlayStyle={{ overflowY: "auto", maxHeight: 300 }}
     >
-      <Button style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 140 }}>
+      <Button
+        style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 140 }}
+      >
         <span style={{ fontWeight: 500 }}>{option}</span>
         <DownOutlined style={{ fontSize: 12 }} />
       </Button>

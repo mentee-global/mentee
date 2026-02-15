@@ -921,7 +921,10 @@ export const downloadMenteesData = async () => {
 
   downloadBlob(response, "mentee_data.xlsx");
 };
-export const downloadPartnersData = async (searchHubUserId = null, includeHubs = false) => {
+export const downloadPartnersData = async (
+  searchHubUserId = null,
+  includeHubs = false
+) => {
   const requestExtension = "/download/accounts/all";
   let response = await authGet(requestExtension, {
     responseType: "blob",

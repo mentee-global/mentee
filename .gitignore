@@ -16,4 +16,10 @@ backend/app.log
 tests/.env
 tests/cypress/screenshots/
 
+# Agents
 .cursor
+.factory
+.kilocode
+.claude
+.agents
+.agent

@@ -106,7 +106,7 @@ def download_accounts_info():
         elif account_type == Account.PARTNER:
             # Check if we should include Hub accounts in Partners view
             include_hubs = data.get("include_hubs", "false").lower() == "true"
-            
+
             if hub_user_id is not None:
                 accounts = PartnerProfile.objects.filter(
                     firebase_uid__nin=admin_ids, hub_id=hub_user_id
@@ -152,7 +152,9 @@ def download_accounts_info():
             temp = []
             for account in accounts:
                 if account.hub_id is not None:
-                    account.hub_user_name = Hub_user_names_object.get(str(account.hub_id), "")
+                    account.hub_user_name = Hub_user_names_object.get(
+                        str(account.hub_id), ""
+                    )
                     hub_details = Hub_user_details_object.get(str(account.hub_id))
                     if hub_details:
                         account.hub_email = hub_details.email
@@ -436,7 +438,7 @@ def download_partner_accounts(accounts):
                 ",".join(acct.regions),
                 acct.intro,
                 acct.website,
-                acct.hub_user_name if hasattr(acct, 'hub_user_name') else "",
+                acct.hub_user_name if hasattr(acct, "hub_user_name") else "",
                 acct.linkedin,
                 acct.sdgs,
                 acct.topics,
@@ -474,7 +476,7 @@ def download_partner_accounts(accounts):
 
 def download_hub_accounts(accounts):
     """Download Hub accounts separately from Partners.
-    
+
     Hubs are represented as PartnerProfile documents with a hub_id field.
     This function exports Hub-specific data.
     """
@@ -487,18 +489,30 @@ def download_hub_accounts(accounts):
                 acct.organization,
                 acct.location,
                 acct.person_name,
-                ",".join(acct.regions) if hasattr(acct, 'regions') and acct.regions else "",
-                acct.intro if hasattr(acct, 'intro') else "",
+                (
+                    ",".join(acct.regions)
+                    if hasattr(acct, "regions") and acct.regions
+                    else ""
+                ),
+                acct.intro if hasattr(acct, "intro") else "",
                 acct.website,
-                acct.hub_user_name if hasattr(acct, 'hub_user_name') else "",
-                acct.hub_email if hasattr(acct, 'hub_email') else "",
-                acct.hub_url if hasattr(acct, 'hub_url') else "",
-                acct.linkedin if hasattr(acct, 'linkedin') else "",
-                acct.sdgs if hasattr(acct, 'sdgs') else "",
-                acct.topics if hasattr(acct, 'topics') else "",
+                acct.hub_user_name if hasattr(acct, "hub_user_name") else "",
+                acct.hub_email if hasattr(acct, "hub_email") else "",
+                acct.hub_url if hasattr(acct, "hub_url") else "",
+                acct.linkedin if hasattr(acct, "linkedin") else "",
+                acct.sdgs if hasattr(acct, "sdgs") else "",
+                acct.topics if hasattr(acct, "topics") else "",
                 acct.image.url if acct.image else "None",
-                len(acct.assign_mentors) if hasattr(acct, 'assign_mentors') and acct.assign_mentors else 0,
-                len(acct.assign_mentees) if hasattr(acct, 'assign_mentees') and acct.assign_mentees else 0,
+                (
+                    len(acct.assign_mentors)
+                    if hasattr(acct, "assign_mentors") and acct.assign_mentors
+                    else 0
+                ),
+                (
+                    len(acct.assign_mentees)
+                    if hasattr(acct, "assign_mentees") and acct.assign_mentees
+                    else 0
+                ),
                 (
                     int(acct.text_notifications)
                     if acct.text_notifications != None
@@ -536,7 +550,7 @@ def download_hub_accounts(accounts):
 
 def download_guest_accounts(accounts):
     """Download Guest accounts.
-    
+
     Guests have basic information: firebase_uid, email, name, and roomName.
     """
     accts = []
@@ -547,7 +561,7 @@ def download_guest_accounts(accounts):
                 acct.name,
                 acct.email,
                 acct.firebase_uid,
-                acct.roomName if hasattr(acct, 'roomName') and acct.roomName else "",
+                acct.roomName if hasattr(acct, "roomName") and acct.roomName else "",
             ]
         )
     columns = [
@@ -561,7 +575,7 @@ def download_guest_accounts(accounts):
 
 def download_support_accounts(accounts):
     """Download Support accounts.
-    
+
     Support accounts have basic information: firebase_uid, email, name, and roomName.
     """
     accts = []
@@ -572,7 +586,7 @@ def download_support_accounts(accounts):
                 acct.name,
                 acct.email,
                 acct.firebase_uid,
-                acct.roomName if hasattr(acct, 'roomName') and acct.roomName else "",
+                acct.roomName if hasattr(acct, "roomName") and acct.roomName else "",
             ]
         )
     columns = [
@@ -586,7 +600,7 @@ def download_support_accounts(accounts):
 
 def download_moderator_accounts(accounts):
     """Download Moderator accounts.
-    
+
     Moderator accounts have basic information: firebase_uid, email, name, and roomName.
     """
     accts = []
@@ -597,7 +611,7 @@ def download_moderator_accounts(accounts):
                 acct.name,
                 acct.email,
                 acct.firebase_uid,
-                acct.roomName if hasattr(acct, 'roomName') and acct.roomName else "",
+                acct.roomName if hasattr(acct, "roomName") and acct.roomName else "",
             ]
         )
     columns = [

@@ -4,7 +4,6 @@ import click
 from api import create_app, socketio
 from flask import request
 
-
 # sets up the app
 app = create_app()
 

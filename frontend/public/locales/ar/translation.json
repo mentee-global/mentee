@@ -304,7 +304,10 @@
     "reregisterAccount": "يرجى إعادة تسجيل حسابك.",
     "resetPassword": " يرجى إعادة تعيين كلمة المرور. تم إرسال رابط لإعادة تعيين كلمة المرور الخاصة بك إلى بريدك الإلكتروني. ",
     "serverError": "هناك خطأ ما.",
-    "wrongRole": "دور خاطئ الرجاء اختيار الدور الصحيح للحساب"
+    "wrongRole": "دور خاطئ الرجاء اختيار الدور الصحيح للحساب",
+    "roleMismatch": "This email belongs to a {{role}} account. Please log in as {{role}}.",
+    "profileIncomplete": "We found your {{role}} account, but your profile isn’t complete yet. Please finish your profile.",
+    "noAccountForRole": "No {{role}} account found for this email. Please check your role or apply."
   },
   "menteeApplication": {
     "ageAnswer1": "عمري 18-22",

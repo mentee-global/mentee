@@ -337,7 +337,10 @@
     "reregisterAccount": "مهربانی وکړی خپل اکونت بیا راجستر کړی",
     "resetPassword": "مهربانی وکړی خپل پاسورد بیا جوړ کړی. د پاسورد بیا جوړولو لپاره لنک ستاسو بریښنالیک ته درولیږل شوو.",
     "serverError": "څه ناسم دی",
-    "wrongRole": "ناسمه ونده مهربانی وکړی سمه ونده وټاکی"
+    "wrongRole": "ناسمه ونده مهربانی وکړی سمه ونده وټاکی",
+    "roleMismatch": "This email belongs to a {{role}} account. Please log in as {{role}}.",
+    "profileIncomplete": "We found your {{role}} account, but your profile isn’t complete yet. Please finish your profile.",
+    "noAccountForRole": "No {{role}} account found for this email. Please check your role or apply."
   },
   "menteeApplication": {
     "ageAnswer1": "زه د ۱۸ - ۲۲ یم",

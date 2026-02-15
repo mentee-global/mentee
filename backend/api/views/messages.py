@@ -26,7 +26,6 @@ from api import socketio
 from mongoengine.queryset.visitor import Q
 from urllib.parse import unquote
 
-
 messages = Blueprint("messages", __name__)
 
 

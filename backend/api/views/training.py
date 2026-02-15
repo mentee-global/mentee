@@ -39,7 +39,6 @@ from api.utils.request_utils import send_email, imgur_client
 import pytz
 from mongoengine.queryset.visitor import Q
 
-
 training = Blueprint("training", __name__)  # initialize blueprint
 
 

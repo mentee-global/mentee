@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Button, Breadcrumb, Input, Spin, message, Tooltip, Badge, Switch } from "antd";
+import {
+  Button,
+  Breadcrumb,
+  Input,
+  Spin,
+  message,
+  Tooltip,
+  Badge,
+  Switch,
+} from "antd";
 import {
   DownloadOutlined,
   ReloadOutlined,
@@ -24,10 +33,7 @@ import {
   downloadSupportersData,
   downloadModeratorsData,
 } from "../../utils/api";
-import {
-  SortByApptDropdown,
-  HubsDropdown,
-} from "../AdminDropdowns";
+import { SortByApptDropdown, HubsDropdown } from "../AdminDropdowns";
 import UploadEmails from "../UploadEmails";
 import AddGuestModal from "../AddGuestModal";
 import AdminDataTable from "../AdminDataTable";
@@ -49,14 +55,22 @@ const keys = {
 // Get display name for current view
 const getViewTitle = (displayOption) => {
   switch (displayOption) {
-    case keys.MENTORS: return "Mentors";
-    case keys.MENTEES: return "Mentees";
-    case keys.PARTNER: return "Partners";
-    case keys.GUEST: return "Guests";
-    case keys.SUPPORT: return "Supporters";
-    case keys.HUB: return "Hubs";
-    case keys.MODERATOR: return "Moderators";
-    default: return "All Accounts";
+    case keys.MENTORS:
+      return "Mentors";
+    case keys.MENTEES:
+      return "Mentees";
+    case keys.PARTNER:
+      return "Partners";
+    case keys.GUEST:
+      return "Guests";
+    case keys.SUPPORT:
+      return "Supporters";
+    case keys.HUB:
+      return "Hubs";
+    case keys.MODERATOR:
+      return "Moderators";
+    default:
+      return "All Accounts";
   }
 };
 
@@ -68,7 +82,11 @@ const ACCOUNT_TABS = [
   { key: keys.HUB, label: "Hubs", accountType: ACCOUNT_TYPE.HUB },
   { key: keys.GUEST, label: "Guests", accountType: ACCOUNT_TYPE.GUEST },
   { key: keys.SUPPORT, label: "Supporters", accountType: ACCOUNT_TYPE.SUPPORT },
-  { key: keys.MODERATOR, label: "Moderators", accountType: ACCOUNT_TYPE.MODERATOR },
+  {
+    key: keys.MODERATOR,
+    label: "Moderators",
+    accountType: ACCOUNT_TYPE.MODERATOR,
+  },
 ];
 
 function AdminAccountData() {
@@ -87,7 +105,7 @@ function AdminAccountData() {
   const [searchHubUserId, setSearchHubUserId] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [partnerSearchText, setPartnerSearchText] = useState("");
-  
+
   // Include Hub Accounts toggle (only for Partners view)
   const [includeHubAccounts, setIncludeHubAccounts] = useState(false);
 
@@ -95,7 +113,15 @@ function AdminAccountData() {
   const hasActiveFilters = searchText || partnerSearchText || searchHubUserId;
 
   // Check if current tab supports download
-  const canDownload = [keys.MENTORS, keys.MENTEES, keys.PARTNER, keys.HUB, keys.GUEST, keys.SUPPORT, keys.MODERATOR].includes(displayOption);
+  const canDownload = [
+    keys.MENTORS,
+    keys.MENTEES,
+    keys.PARTNER,
+    keys.HUB,
+    keys.GUEST,
+    keys.SUPPORT,
+    keys.MODERATOR,
+  ].includes(displayOption);
 
   useEffect(() => {
     async function getHubData() {
@@ -139,7 +165,12 @@ function AdminAccountData() {
           break;
         case keys.PARTNER:
           // Fetch Partners with optional Hub accounts inclusion
-          const Partners = await fetchAccounts(ACCOUNT_TYPE.PARTNER, undefined, "", includeHubAccounts);
+          const Partners = await fetchAccounts(
+            ACCOUNT_TYPE.PARTNER,
+            undefined,
+            "",
+            includeHubAccounts
+          );
           var partners_data = [];
           if (Partners) {
             Partners.map((item) => {
@@ -244,7 +275,9 @@ function AdminAccountData() {
         default:
           break;
       }
-      message.success(`Downloaded ${getViewTitle(displayOption)} data successfully`);
+      message.success(
+        `Downloaded ${getViewTitle(displayOption)} data successfully`
+      );
     } catch (error) {
       message.error(`Failed to download data`);
       console.error(error);
@@ -339,7 +372,7 @@ function AdminAccountData() {
       <div style={{ display: "none" }}>
         <iframe src={downloadFile} title="download" />
       </div>
-      
+
       {/* Breadcrumb Navigation */}
       <Breadcrumb>
         <Breadcrumb.Item>User Reports</Breadcrumb.Item>
@@ -359,12 +392,16 @@ function AdminAccountData() {
             </span>
             <Input.Search
               className="filter-search"
-              placeholder={displayOption === keys.PARTNER ? "Search by organization" : "Search by name"}
+              placeholder={
+                displayOption === keys.PARTNER
+                  ? "Search by organization"
+                  : "Search by name"
+              }
               value={searchText}
               allowClear
               onChange={(e) => handleSearchAccount(e.target.value)}
               onSearch={handleSearchAccount}
-              prefix={<UserOutlined style={{ color: '#9ca3af' }} />}
+              prefix={<UserOutlined style={{ color: "#9ca3af" }} />}
             />
           </div>
 
@@ -386,7 +423,8 @@ function AdminAccountData() {
           )}
 
           {/* Partner Affiliation Search - Only for Mentors/Mentees */}
-          {(displayOption === keys.MENTORS || displayOption === keys.MENTEES) && (
+          {(displayOption === keys.MENTORS ||
+            displayOption === keys.MENTEES) && (
             <div className="filter-group">
               <span className="filter-label">
                 <FilterOutlined style={{ marginRight: 6 }} />
@@ -442,7 +480,9 @@ function AdminAccountData() {
         {ACCOUNT_TABS.map((tab) => (
           <button
             key={tab.key}
-            className={`account-tab ${displayOption === tab.key ? 'active' : ''}`}
+            className={`account-tab ${
+              displayOption === tab.key ? "active" : ""
+            }`}
             onClick={() => handleAccountDisplay(tab.key)}
           >
             {tab.label}
@@ -454,23 +494,21 @@ function AdminAccountData() {
       <div className="table-header-section">
         <div className="table-title">
           {getViewTitle(displayOption)}
-          <Badge 
-            count={filterData.length} 
-            style={{ 
-              backgroundColor: '#e5e7eb', 
-              color: '#374151',
+          <Badge
+            count={filterData.length}
+            style={{
+              backgroundColor: "#e5e7eb",
+              color: "#374151",
               marginLeft: 12,
               fontSize: 12,
-              fontWeight: 600
-            }} 
+              fontWeight: 600,
+            }}
           />
           {displayOption === keys.PARTNER && includeHubAccounts && (
-            <span className="hub-indicator">
-              (including Hub accounts)
-            </span>
+            <span className="hub-indicator">(including Hub accounts)</span>
           )}
         </div>
-        
+
         <div className="table-actions">
           {/* Sort Dropdown */}
           <SortByApptDropdown
@@ -478,7 +516,7 @@ function AdminAccountData() {
             onChange={handleSortData}
             onChangeData={displayData}
           />
-          
+
           {/* Add Guest/Support/Moderator */}
           <Button
             className="action-btn"
@@ -492,7 +530,7 @@ function AdminAccountData() {
             guestModalVisible={guestModalVisible}
             refresh={() => setReload(!reload)}
           />
-          
+
           {/* Add New Account */}
           <Button
             className="action-btn"
@@ -505,7 +543,7 @@ function AdminAccountData() {
             setUploadModalVisible={setUploadModalVisible}
             uploadModalVisible={uploadModalVisible}
           />
-          
+
           {/* Download Button - Uses current active tab */}
           {canDownload && (
             <Button

@@ -9,7 +9,6 @@ import base64
 
 from api.utils.jaas_jwt_builder import JaaSJwtBuilder
 
-
 meeting = Blueprint("meeting", __name__)
 
 API_KEY = os.environ.get("EIGHT_X_EIGHT_API_KEY")

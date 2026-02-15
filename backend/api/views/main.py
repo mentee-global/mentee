@@ -51,7 +51,6 @@ from api.utils.constants import Account
 from api.utils.require_auth import all_users, mentee_only, verify_user
 from firebase_admin import auth as firebase_admin_auth
 
-
 main = Blueprint("main", __name__)  # initialize blueprint
 
 
@@ -125,9 +124,9 @@ def get_accounts(account_type):
             if partner_account.assign_mentees:
                 for mentee_item in partner_account.assign_mentees:
                     if "id" in mentee_item:
-                        partners_by_assign_mentee[
-                            str(mentee_item["id"])
-                        ] = partner_account
+                        partners_by_assign_mentee[str(mentee_item["id"])] = (
+                            partner_account
+                        )
         for account in mentees_data:
             if str(account.id) in partners_by_assign_mentee:
                 pair_partner = partners_by_assign_mentee[str(account.id)]
@@ -156,10 +155,10 @@ def get_accounts(account_type):
                 "email": hub_user.email,
                 "image": hub_user.image,
             }
-        
+
         # Check if we should include Hub accounts in Partners view
         include_hubs = request.args.get("include_hubs", "false").lower() == "true"
-        
+
         if "restricted" in request.args:
             if request.args["restricted"] == "true":
                 if "hub_user_id" in request.args:
@@ -192,7 +191,9 @@ def get_accounts(account_type):
                     else:
                         # Filter by include_hubs parameter
                         if include_hubs:
-                            accounts = PartnerProfile.objects.filter(restricted__ne=True)
+                            accounts = PartnerProfile.objects.filter(
+                                restricted__ne=True
+                            )
                         else:
                             accounts = PartnerProfile.objects.filter(
                                 restricted__ne=True, hub_id=None

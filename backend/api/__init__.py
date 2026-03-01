@@ -76,6 +76,24 @@ def create_app():
             username=parsed.username,
             password=parsed.password,
         )
+
+        # eventlet creates sockets with SOCK_NONBLOCK (type | 0x80000) which
+        # pysocks rejects. Strip non-standard flags before pysocks validates.
+        _original_socksocket_init = socks.socksocket.__init__
+
+        def _patched_socksocket_init(
+            self,
+            family=socket.AF_INET,
+            type=socket.SOCK_STREAM,
+            proto=0,
+            *args,
+            **kwargs
+        ):
+            type = type & ~0x80000  # strip SOCK_NONBLOCK
+            type = type & ~0x40000  # strip SOCK_CLOEXEC
+            _original_socksocket_init(self, family, type, proto, *args, **kwargs)
+
+        socks.socksocket.__init__ = _patched_socksocket_init
         socket.socket = socks.socksocket
 
     user = os.environ.get("MONGO_USER")

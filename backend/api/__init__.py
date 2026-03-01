@@ -65,14 +65,14 @@ def create_app():
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    mongodb_settings = {"db": db, "host": host % (user, password, db)}
+    connection_string = host % (user, password, db)
 
     fixie_url = os.environ.get("FIXIE_SOCKS_HOST")
     if fixie_url:
         if "://" not in fixie_url:
             fixie_url = "socks5://" + fixie_url
         parsed = urllib.parse.urlparse(fixie_url)
-        mongodb_settings.update(
+        proxy_params = urllib.parse.urlencode(
             {
                 "proxyHost": parsed.hostname,
                 "proxyPort": parsed.port,
@@ -80,8 +80,9 @@ def create_app():
                 "proxyPassword": parsed.password,
             }
         )
+        connection_string = f"{connection_string}&{proxy_params}"
 
-    app.config["MONGODB_SETTINGS"] = mongodb_settings
+    app.config["MONGODB_SETTINGS"] = {"db": db, "host": connection_string}
     # app.config["MONGODB_SETTINGS"] = {
     #     "db": "mentee",
     #     "host": "localhost",

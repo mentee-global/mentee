@@ -322,6 +322,9 @@ pyjwt==2.6.0
 pymongo==4.6.0
     # via
     #   backend (pyproject.toml)
+pysocks==1.7.1
+    # via
+    #   backend (pyproject.toml)
     #   mongoengine
 pyparsing==3.0.9
     # via

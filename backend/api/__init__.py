@@ -1,5 +1,6 @@
 import os
 import logging
+import urllib.parse
 import firebase_admin
 
 from flask import Flask, request
@@ -64,7 +65,21 @@ def create_app():
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    mongodb_settings = {"db": db, "host": host % (user, password, db)}
+
+    fixie_url = os.environ.get("FIXIE_SOCKS_HOST")
+    if fixie_url:
+        if "://" not in fixie_url:
+            fixie_url = "socks5://" + fixie_url
+        parsed = urllib.parse.urlparse(fixie_url)
+        mongodb_settings.update({
+            "proxyHost": parsed.hostname,
+            "proxyPort": parsed.port,
+            "proxyUsername": parsed.username,
+            "proxyPassword": parsed.password,
+        })
+
+    app.config["MONGODB_SETTINGS"] = mongodb_settings
     # app.config["MONGODB_SETTINGS"] = {
     #     "db": "mentee",
     #     "host": "localhost",

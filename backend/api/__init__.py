@@ -72,12 +72,14 @@ def create_app():
         if "://" not in fixie_url:
             fixie_url = "socks5://" + fixie_url
         parsed = urllib.parse.urlparse(fixie_url)
-        mongodb_settings.update({
-            "proxyHost": parsed.hostname,
-            "proxyPort": parsed.port,
-            "proxyUsername": parsed.username,
-            "proxyPassword": parsed.password,
-        })
+        mongodb_settings.update(
+            {
+                "proxyHost": parsed.hostname,
+                "proxyPort": parsed.port,
+                "proxyUsername": parsed.username,
+                "proxyPassword": parsed.password,
+            }
+        )
 
     app.config["MONGODB_SETTINGS"] = mongodb_settings
     # app.config["MONGODB_SETTINGS"] = {

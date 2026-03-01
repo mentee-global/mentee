@@ -61,28 +61,28 @@ def create_app():
     root = logging.getLogger("core")
     root.addHandler(strm)
 
+    fixie_url = os.environ.get("FIXIE_SOCKS_HOST")
+    if fixie_url:
+        import socks
+        import socket
+
+        if "://" not in fixie_url:
+            fixie_url = "socks5://" + fixie_url
+        parsed = urllib.parse.urlparse(fixie_url)
+        socks.set_default_proxy(
+            socks.SOCKS5,
+            parsed.hostname,
+            parsed.port,
+            username=parsed.username,
+            password=parsed.password,
+        )
+        socket.socket = socks.socksocket
+
     user = os.environ.get("MONGO_USER")
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    connection_string = host % (user, password, db)
-
-    fixie_url = os.environ.get("FIXIE_SOCKS_HOST")
-    if fixie_url:
-        if "://" not in fixie_url:
-            fixie_url = "socks5://" + fixie_url
-        parsed = urllib.parse.urlparse(fixie_url)
-        proxy_params = urllib.parse.urlencode(
-            {
-                "proxyHost": parsed.hostname,
-                "proxyPort": parsed.port,
-                "proxyUsername": parsed.username,
-                "proxyPassword": parsed.password,
-            }
-        )
-        connection_string = f"{connection_string}&{proxy_params}"
-
-    app.config["MONGODB_SETTINGS"] = {"db": db, "host": connection_string}
+    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
     # app.config["MONGODB_SETTINGS"] = {
     #     "db": "mentee",
     #     "host": "localhost",

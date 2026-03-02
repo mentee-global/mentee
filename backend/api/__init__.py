@@ -94,7 +94,23 @@ def create_app():
             _original_socksocket_init(self, family, type, proto, *args, **kwargs)
 
         socks.socksocket.__init__ = _patched_socksocket_init
-        socket.socket = socks.socksocket
+
+        # Only route MongoDB traffic (port 27017) through the Fixie SOCKS5
+        # proxy. Routing all traffic causes RecursionError in eventlet when
+        # pyrebase4/requests makes HTTPS connections via SSL.
+        class _MongoSOCKS5Socket(socks.socksocket):
+            def connect(self, dest_pair):
+                port = (
+                    dest_pair[1]
+                    if isinstance(dest_pair, (tuple, list)) and len(dest_pair) >= 2
+                    else None
+                )
+                if port == 27017:
+                    return super().connect(dest_pair)
+                # Non-MongoDB: bypass pysocks, connect directly via GreenSocket.
+                return super(socks.socksocket, self).connect(dest_pair)
+
+        socket.socket = _MongoSOCKS5Socket
 
     user = os.environ.get("MONGO_USER")
     password = os.environ.get("MONGO_PASSWORD")

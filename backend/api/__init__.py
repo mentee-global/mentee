@@ -94,6 +94,20 @@ def create_app():
             _original_socksocket_init(self, family, type, proto, *args, **kwargs)
 
         socks.socksocket.__init__ = _patched_socksocket_init
+
+        # Serialize SOCKS5 handshakes to avoid concurrent auth failures on
+        # Fixie's free plan when MongoDB connects to all 3 replica set members
+        # simultaneously at startup.
+        import threading
+
+        _socks5_lock = threading.Lock()
+        _original_socks_connect = socks.socksocket.connect
+
+        def _serialized_socks_connect(self, dest_pair):
+            with _socks5_lock:
+                return _original_socks_connect(self, dest_pair)
+
+        socks.socksocket.connect = _serialized_socks_connect
         socket.socket = socks.socksocket
 
     user = os.environ.get("MONGO_USER")

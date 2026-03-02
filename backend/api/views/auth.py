@@ -179,6 +179,7 @@ def login():
         firebase_uid = firebase_user["localId"]
 
     except Exception as e:
+        logger.info(f"Firebase sign-in failed: {type(e).__name__}: {e}")
         try:
             user = firebase_admin_auth.get_user_by_email(email)
             msg = "Could not login"

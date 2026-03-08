@@ -1,6 +1,5 @@
 import os
 import logging
-import urllib.parse
 import firebase_admin
 
 from flask import Flask, request
@@ -60,55 +59,6 @@ def create_app():
 
     root = logging.getLogger("core")
     root.addHandler(strm)
-
-    fixie_url = os.environ.get("FIXIE_SOCKS_HOST")
-    if fixie_url:
-        import socks
-        import socket
-
-        if "://" not in fixie_url:
-            fixie_url = "socks5://" + fixie_url
-        parsed = urllib.parse.urlparse(fixie_url)
-        socks.set_default_proxy(
-            socks.SOCKS5,
-            parsed.hostname,
-            parsed.port,
-            username=parsed.username,
-            password=parsed.password,
-        )
-
-        # eventlet creates sockets with SOCK_NONBLOCK (type | 0x80000) which
-        # pysocks rejects. Strip non-standard flags before pysocks validates.
-        _original_socksocket_init = socks.socksocket.__init__
-
-        def _patched_socksocket_init(
-            self,
-            family=socket.AF_INET,
-            type=socket.SOCK_STREAM,
-            proto=0,
-            *args,
-            **kwargs
-        ):
-            type = type & ~0x80000  # strip SOCK_NONBLOCK
-            type = type & ~0x40000  # strip SOCK_CLOEXEC
-            _original_socksocket_init(self, family, type, proto, *args, **kwargs)
-
-        socks.socksocket.__init__ = _patched_socksocket_init
-
-        # Patch ONLY PyMongo's socket creation to use SOCKS5 proxy.
-        # Do NOT replace global socket.socket — pysocks' __init__ resolves
-        # socket.socket at runtime, causing infinite recursion with eventlet.
-        import pymongo.pool
-
-        class _ProxiedSocketModule:
-            """Makes pymongo.pool create socks.socksocket instead of socket.socket."""
-
-            def __getattr__(self, name):
-                if name == "socket":
-                    return socks.socksocket
-                return getattr(socket, name)
-
-        pymongo.pool.socket = _ProxiedSocketModule()
 
     user = os.environ.get("MONGO_USER")
     password = os.environ.get("MONGO_PASSWORD")

@@ -34,7 +34,7 @@ function PartnerGallery(props) {
     token: { colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isAdmin, isPartner, isGuest, isHub } = useAuth();
+  const { isAdmin } = useAuth();
   const [partners, setPartners] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -303,7 +303,14 @@ function PartnerGallery(props) {
   );
 
   // Add some kind of error 403 code
-  return !props.isSupport && !isPartner && !isAdmin && !isGuest && !isHub ? (
+  const hasAccess =
+    props.isSupport ||
+    role == ACCOUNT_TYPE.PARTNER ||
+    role == ACCOUNT_TYPE.ADMIN ||
+    role == ACCOUNT_TYPE.GUEST ||
+    role == ACCOUNT_TYPE.HUB;
+
+  return !hasAccess ? (
     <Result
       status="403"
       title="403"

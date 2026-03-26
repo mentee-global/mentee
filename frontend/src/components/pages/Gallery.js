@@ -25,6 +25,8 @@ import {
   editFavMentorById,
 } from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
+import { getRole } from "utils/auth.service";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { useDebounce } from "utils/hooks/useDebounce";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -351,7 +353,14 @@ function Gallery(props) {
     </>
   );
 
-  return !(props.isSupport || isAdmin || isMentee || isGuest) ? (
+  const role = getRole();
+  const hasAccess =
+    props.isSupport ||
+    role == ACCOUNT_TYPE.ADMIN ||
+    role == ACCOUNT_TYPE.MENTEE ||
+    role == ACCOUNT_TYPE.GUEST;
+
+  return !hasAccess ? (
     <Result
       status="403"
       title="403"

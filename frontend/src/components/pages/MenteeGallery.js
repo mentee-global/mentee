@@ -20,6 +20,8 @@ import {
 import { SearchOutlined } from "@ant-design/icons";
 import "../css/Gallery.scss";
 import { useLocation } from "react-router";
+import { getRole } from "utils/auth.service";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { useAuth } from "../../utils/hooks/useAuth";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -36,7 +38,7 @@ function Gallery(props) {
   } = theme.useToken();
   const { t } = useTranslation();
   const options = useSelector((state) => state.options);
-  const { isAdmin, isPartner } = useAuth();
+  const { isAdmin } = useAuth();
   const [mentees, setMentees] = useState([]);
   const [total, setTotal] = useState(0);
   const [languages, setLanguages] = useState([]);
@@ -330,7 +332,8 @@ function Gallery(props) {
   );
 
   // Add some kind of error 403 code
-  return isPartner ? (
+  const role = getRole();
+  return role == ACCOUNT_TYPE.PARTNER ? (
     <Result
       status="403"
       title="403"

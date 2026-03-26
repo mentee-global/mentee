@@ -1,10 +1,11 @@
 import React from "react";
 import { NavLink, useHistory } from "react-router-dom";
-import { Avatar, Typography, Button, Tooltip, theme } from "antd";
+import { Avatar, Typography, Button, Tooltip, theme, Tag } from "antd";
 import {
   EnvironmentOutlined,
   UserOutlined,
   GlobalOutlined,
+  EyeInvisibleOutlined,
 } from "@ant-design/icons";
 
 import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
@@ -94,6 +95,20 @@ function MenteeCard(props) {
       `}
     >
       <div className="gallery-card-body">
+        {props.showAdminBadges && props.isPrivate && (
+          <Tag
+            icon={<EyeInvisibleOutlined />}
+            color="orange"
+            className={css`
+              position: absolute;
+              top: 8px;
+              right: 8px;
+              margin: 0;
+            `}
+          >
+            Private
+          </Tag>
+        )}
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">

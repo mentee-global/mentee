@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { NavLink, useHistory } from "react-router-dom";
-import { Avatar, Typography, Button, Rate, Tooltip, theme } from "antd";
+import { Avatar, Typography, Button, Rate, Tooltip, theme, Tag } from "antd";
 import {
   StarOutlined,
   EnvironmentOutlined,
   UserOutlined,
   StarFilled,
   YoutubeOutlined,
+  PauseCircleOutlined,
 } from "@ant-design/icons";
 import { formatLinkForHref } from "utils/misc";
 import { useAuth } from "../utils/hooks/useAuth";
@@ -103,6 +104,20 @@ function MentorCard(props) {
       `}
     >
       <div className="gallery-card-body">
+        {props.showAdminBadges && props.isPaused && (
+          <Tag
+            icon={<PauseCircleOutlined />}
+            color="red"
+            className={css`
+              position: absolute;
+              top: 8px;
+              right: 8px;
+              margin: 0;
+            `}
+          >
+            Paused
+          </Tag>
+        )}
         <div className="gallery-card-header">
           <Avatar size={90} icon={getImage(props.image && props.image.url)} />
           <div className="gallery-header-text gallery-info-section">

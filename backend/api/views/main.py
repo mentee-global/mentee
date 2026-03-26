@@ -2,6 +2,7 @@ from ast import Not
 from flask import Blueprint, request
 from sqlalchemy import true
 from datetime import datetime
+import math
 import requests
 from io import BytesIO
 from uuid import uuid4
@@ -60,20 +61,37 @@ main = Blueprint("main", __name__)  # initialize blueprint
 # @all_users
 def get_accounts(account_type):
     accounts = None
+    show_all = request.args.get("all", "false").lower() == "true"
     if account_type == Account.MENTOR:
         if "restricted" in request.args and request.args["restricted"] == "true":
-            mentors_data = MentorProfile.objects.filter(paused_flag__ne=True).exclude(
-                "availability",
-                "videos",
-                "firebase_uid",
-                "linkedin",
-                "website",
-                "education",
-                "biography",
-                "taking_appointments",
-                "text_notifications",
-                "email_notifications",
-            )
+            if show_all:
+                mentors_data = MentorProfile.objects().exclude(
+                    "availability",
+                    "videos",
+                    "firebase_uid",
+                    "linkedin",
+                    "website",
+                    "education",
+                    "biography",
+                    "taking_appointments",
+                    "text_notifications",
+                    "email_notifications",
+                )
+            else:
+                mentors_data = MentorProfile.objects.filter(
+                    paused_flag__ne=True
+                ).exclude(
+                    "availability",
+                    "videos",
+                    "firebase_uid",
+                    "linkedin",
+                    "website",
+                    "education",
+                    "biography",
+                    "taking_appointments",
+                    "text_notifications",
+                    "email_notifications",
+                )
         else:
             mentors_data = MentorProfile.objects().exclude(
                 "availability",
@@ -113,7 +131,7 @@ def get_accounts(account_type):
                 accounts = []
             accounts.append(account)
     elif account_type == Account.MENTEE:
-        if "restricted" in request.args:
+        if show_all or "restricted" in request.args:
             mentees_data = MenteeProfile.objects().exclude("video", "phone_number")
         else:
             mentees_data = MenteeProfile.objects(is_private=False).exclude(
@@ -246,6 +264,281 @@ def get_accounts(account_type):
         return create_response(status=422, message=msg)
 
     return create_response(data={"accounts": accounts})
+
+
+def _build_partner_lookup(all_partners, field):
+    """Build a lookup dict mapping assigned mentor/mentee ID -> partner."""
+    lookup = {}
+    for partner in all_partners:
+        items = getattr(partner, field, None)
+        if items:
+            for item in items:
+                item_id = item.get("id") if isinstance(item, dict) else None
+                if item_id:
+                    lookup[str(item_id)] = partner
+    return lookup
+
+
+def _partner_to_dict(partner):
+    return {
+        "id": str(partner.id),
+        "email": partner.email,
+        "organization": partner.organization,
+        "person_name": partner.person_name,
+        "website": partner.website,
+        "image": partner.image,
+        "restricted": partner.restricted,
+        "assign_mentors": partner.assign_mentors,
+        "assign_mentees": partner.assign_mentees,
+    }
+
+
+def _enrich_with_partners(accounts, lookup):
+    """Attach pair_partner data to accounts using lookup."""
+    for account in accounts:
+        partner = lookup.get(str(account.id))
+        if partner:
+            account.pair_partner = _partner_to_dict(partner)
+
+
+@main.route("/accounts/<int:account_type>/search", methods=["GET"])
+def search_accounts(account_type):
+    try:
+        page = max(1, int(request.args.get("page", 1)))
+        page_size = max(1, min(int(request.args.get("page_size", 24)), 100))
+    except (ValueError, TypeError):
+        page = 1
+        page_size = 24
+    show_all = request.args.get("all", "false").lower() == "true"
+    search = request.args.get("search", "").strip()
+    location = request.args.get("location", "").strip()
+
+    if account_type == Account.MENTOR:
+        query = Q()
+
+        if search:
+            query &= Q(name__icontains=search) | Q(email__icontains=search)
+        if location:
+            query &= Q(location__icontains=location)
+
+        languages = request.args.get("languages", "")
+        if languages:
+            query &= Q(languages__in=languages.split(","))
+
+        specializations = request.args.get("specializations", "")
+        if specializations:
+            query &= Q(specializations__in=specializations.split(","))
+
+        show_paused = request.args.get("show_paused", "false").lower() == "true"
+        if not show_all and not show_paused:
+            query &= Q(paused_flag__ne=True)
+
+        # Filter by partner assignment
+        partner_ids = request.args.get("partner_ids", "")
+        if partner_ids:
+            pid_list = partner_ids.split(",")
+            partners = PartnerProfile.objects(id__in=pid_list)
+            mentor_ids = set()
+            for p in partners:
+                if p.assign_mentors:
+                    for m in p.assign_mentors:
+                        if "id" in m:
+                            mentor_ids.add(m["id"])
+            query &= Q(id__in=list(mentor_ids))
+
+        # Restricted partner user: only see assigned mentors
+        restricted_partner_id = request.args.get("restricted_partner_id", "")
+        if restricted_partner_id:
+            try:
+                rp = PartnerProfile.objects.get(id=restricted_partner_id)
+                allowed_ids = []
+                if rp.assign_mentors:
+                    for m in rp.assign_mentors:
+                        if "id" in m:
+                            allowed_ids.append(m["id"])
+                query &= Q(id__in=allowed_ids)
+            except PartnerProfile.DoesNotExist:
+                pass
+
+        # Exclude mentors assigned to restricted partners
+        exclude_restricted = (
+            request.args.get("exclude_restricted", "false").lower() == "true"
+        )
+        if exclude_restricted:
+            restricted_partners = PartnerProfile.objects(restricted=True)
+            excluded_ids = set()
+            for rp in restricted_partners:
+                if rp.assign_mentors:
+                    for m in rp.assign_mentors:
+                        if "id" in m:
+                            excluded_ids.add(m["id"])
+            if excluded_ids:
+                query &= Q(id__nin=list(excluded_ids))
+
+        queryset = MentorProfile.objects.filter(query).exclude(
+            "availability",
+            "videos",
+            "firebase_uid",
+            "linkedin",
+            "website",
+            "education",
+            "biography",
+            "taking_appointments",
+            "text_notifications",
+            "email_notifications",
+        )
+        total = queryset.count()
+        offset = (page - 1) * page_size
+        accounts = list(queryset.skip(offset).limit(page_size))
+
+        all_partners = PartnerProfile.objects()
+        lookup = _build_partner_lookup(all_partners, "assign_mentors")
+        _enrich_with_partners(accounts, lookup)
+
+    elif account_type == Account.MENTEE:
+        query = Q()
+
+        if search:
+            query &= Q(name__icontains=search) | Q(email__icontains=search)
+        if location:
+            query &= Q(location__icontains=location)
+
+        languages = request.args.get("languages", "")
+        if languages:
+            query &= Q(languages__in=languages.split(","))
+
+        specializations = request.args.get("specializations", "")
+        if specializations:
+            query &= Q(specializations__in=specializations.split(","))
+
+        gender = request.args.get("gender", "").strip()
+        if gender:
+            query &= Q(gender__iexact=gender)
+
+        show_private = request.args.get("show_private", "false").lower() == "true"
+        if not show_all and not show_private:
+            query &= Q(is_private=False)
+
+        partner_ids = request.args.get("partner_ids", "")
+        if partner_ids:
+            pid_list = partner_ids.split(",")
+            partners = PartnerProfile.objects(id__in=pid_list)
+            mentee_ids = set()
+            for p in partners:
+                if p.assign_mentees:
+                    for m in p.assign_mentees:
+                        if "id" in m:
+                            mentee_ids.add(m["id"])
+            query &= Q(id__in=list(mentee_ids))
+
+        restricted_partner_id = request.args.get("restricted_partner_id", "")
+        if restricted_partner_id:
+            try:
+                rp = PartnerProfile.objects.get(id=restricted_partner_id)
+                allowed_ids = []
+                if rp.assign_mentees:
+                    for m in rp.assign_mentees:
+                        if "id" in m:
+                            allowed_ids.append(m["id"])
+                query &= Q(id__in=allowed_ids)
+            except PartnerProfile.DoesNotExist:
+                pass
+
+        exclude_restricted = (
+            request.args.get("exclude_restricted", "false").lower() == "true"
+        )
+        if exclude_restricted:
+            restricted_partners = PartnerProfile.objects(restricted=True)
+            excluded_ids = set()
+            for rp in restricted_partners:
+                if rp.assign_mentees:
+                    for m in rp.assign_mentees:
+                        if "id" in m:
+                            excluded_ids.add(m["id"])
+            if excluded_ids:
+                query &= Q(id__nin=list(excluded_ids))
+
+        queryset = MenteeProfile.objects.filter(query).exclude("video", "phone_number")
+        total = queryset.count()
+        offset = (page - 1) * page_size
+        accounts = list(queryset.skip(offset).limit(page_size))
+
+        all_partners = PartnerProfile.objects()
+        lookup = _build_partner_lookup(all_partners, "assign_mentees")
+        _enrich_with_partners(accounts, lookup)
+
+    elif account_type == Account.PARTNER:
+        query = Q()
+
+        if search:
+            query &= Q(organization__icontains=search) | Q(email__icontains=search)
+
+        search_name = request.args.get("search_name", "").strip()
+        if search_name:
+            query &= Q(person_name__icontains=search_name) | Q(
+                email__icontains=search_name
+            )
+
+        topics = request.args.get("topics", "").strip()
+        if topics:
+            query &= Q(topics__icontains=topics)
+
+        regions = request.args.get("regions", "")
+        if regions:
+            query &= Q(regions__in=regions.split(","))
+
+        sdgs = request.args.get("sdgs", "")
+        if sdgs:
+            query &= Q(sdgs__in=sdgs.split(","))
+
+        hub_id = request.args.get("hub_id", "").strip()
+        if hub_id:
+            query &= Q(hub_id=hub_id)
+        else:
+            include_hubs = request.args.get("include_hubs", "false").lower() == "true"
+            if not include_hubs:
+                query &= Q(hub_id=None)
+
+        if "restricted" in request.args:
+            if request.args["restricted"] == "true":
+                query &= Q(restricted=True)
+            else:
+                query &= Q(restricted__ne=True)
+
+        queryset = PartnerProfile.objects.filter(query)
+        total = queryset.count()
+        offset = (page - 1) * page_size
+        accounts = list(queryset.skip(offset).limit(page_size))
+
+        Hub_users = Hub.objects()
+        Hub_users_object = {}
+        for hub_user in Hub_users:
+            Hub_users_object[str(hub_user.id)] = {
+                "name": hub_user.name,
+                "url": hub_user.url,
+                "email": hub_user.email,
+                "image": hub_user.image,
+            }
+        for account in accounts:
+            if account.hub_id is not None:
+                hub_data = Hub_users_object.get(str(account.hub_id))
+                if hub_data:
+                    account.hub_user = hub_data
+    else:
+        return create_response(
+            status=422,
+            message="Search not supported for this account type",
+        )
+
+    return create_response(
+        data={
+            "accounts": accounts,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": math.ceil(total / page_size) if page_size > 0 else 0,
+        }
+    )
 
 
 # GET request for specific account based on id

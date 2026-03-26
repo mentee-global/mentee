@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { fetchPartners, fetchAccounts } from "../../utils/api";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { searchPartners, fetchAccounts } from "../../utils/api";
 import {
   Input,
   Modal,
@@ -11,10 +11,13 @@ import {
   Typography,
   theme,
   Button,
+  Pagination,
+  Empty,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import "../css/Gallery.scss";
 import { useAuth } from "../../utils/hooks/useAuth";
+import { useDebounce } from "../../utils/hooks/useDebounce";
 import PartnerCard from "../PartnerCard";
 import { ACCOUNT_TYPE, getRegions, getSDGs } from "utils/consts";
 import { useTranslation } from "react-i18next";
@@ -22,7 +25,9 @@ import { css } from "@emotion/css";
 import { useSelector } from "react-redux";
 import { getRole } from "utils/auth.service";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+
+const PAGE_SIZE = 24;
 
 function PartnerGallery(props) {
   const {
@@ -31,6 +36,8 @@ function PartnerGallery(props) {
   const { t } = useTranslation();
   const { isAdmin, isPartner, isGuest, isHub } = useAuth();
   const [partners, setPartners] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [regions, setRegions] = useState([]);
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
@@ -41,17 +48,15 @@ function PartnerGallery(props) {
   const [searchHub, setSearchHub] = useState(null);
   const { user } = useSelector((state) => state.user);
   const [hubOptions, setHubOptions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const role = getRole();
 
-  useEffect(() => {
-    async function getPartners(hub_user_id) {
-      const Partner_data = await fetchPartners(undefined, hub_user_id);
-      if (Partner_data) {
-        setPartners(Partner_data);
-      }
-      setPageLoaded(true);
-    }
+  const debouncedQuery = useDebounce(query, 300);
+  const debouncedQuery2 = useDebounce(query2, 300);
+  const debouncedQueryName = useDebounce(queryName, 300);
 
+  // Fetch hub options for the dropdown (SUPPORT role)
+  useEffect(() => {
     async function getHubData() {
       var temp = [];
       const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
@@ -62,82 +67,111 @@ function PartnerGallery(props) {
       setHubOptions(temp);
     }
 
-    var hub_user_id = null;
-    if (role == ACCOUNT_TYPE.HUB && user) {
-      if (user.hub_id) {
-        hub_user_id = user.hub_id;
-      } else {
-        hub_user_id = user._id.$oid;
-      }
-    }
-    if (role == ACCOUNT_TYPE.SUPPORT) {
-      hub_user_id = "";
-    }
     if (user) {
-      getPartners(hub_user_id);
       getHubData();
     }
   }, [user]);
 
-  const getFilterdPartners = () =>
-    partners.filter((partner) => {
-      // matches<Property> is true if no options selected, or if partner has AT LEAST one of the selected options
-      const matchesSpecializations =
-        regions.length === 0 ||
-        regions.some((s) => partner.regions.indexOf(s) >= 0);
-      const matchSdgs =
-        sdgs.length === 0 || sdgs.some((s) => partner.sdgs.indexOf(s) >= 0);
-      const matchHub =
-        !(role == ACCOUNT_TYPE.SUPPORT) ||
-        !searchHub ||
-        (partner.hub_id && partner.hub_id == searchHub);
+  // Race condition guard
+  const requestIdRef = useRef(0);
 
-      let matchestopics = false;
-      if (
-        (user && user.hub_user && user.hub_user.url === "GSRFoundation") ||
-        (user && user.role === ACCOUNT_TYPE.HUB && user.url === "GSRFoundation")
-      ) {
-        matchestopics =
-          !query2 ||
-          (partner.topics &&
-            partner.topics.toUpperCase().includes(query2.toUpperCase())) ||
-          (partner.success &&
-            partner.success.toUpperCase().includes(query2.toUpperCase()));
-      } else {
-        matchestopics =
-          !query2 ||
-          (partner.topics &&
-            partner.topics.toUpperCase().includes(query2.toUpperCase()));
+  const fetchPage = useCallback(
+    async (page) => {
+      if (!user) return;
+
+      const requestId = ++requestIdRef.current;
+      setLoading(true);
+
+      const params = {
+        page: page,
+        page_size: PAGE_SIZE,
+      };
+
+      if (debouncedQuery) {
+        params.search = debouncedQuery;
+      }
+      if (debouncedQueryName) {
+        params.search_name = debouncedQueryName;
+      }
+      if (debouncedQuery2) {
+        params.topics = debouncedQuery2;
+      }
+      if (regions.length > 0) {
+        params.regions = regions.join(",");
+      }
+      if (sdgs.length > 0) {
+        params.sdgs = sdgs.join(",");
       }
 
-      let matchesName = false;
-      if (
-        (user &&
-          user.hub_user &&
-          user.hub_user.url &&
-          user.hub_user.url.includes("AUAF")) ||
-        (user &&
-          user.role === ACCOUNT_TYPE.HUB &&
-          user.url &&
-          user.url.includes("AUAF"))
-      ) {
-        matchesName =
-          !queryName ||
-          partner.person_name.toUpperCase().includes(queryName.toUpperCase());
-      } else {
-        matchesName =
-          !query ||
-          partner.organization.toUpperCase().includes(query.toUpperCase());
+      if (role == ACCOUNT_TYPE.HUB) {
+        if (user.hub_id) {
+          params.hub_id = user.hub_id;
+        } else {
+          params.hub_id = user._id.$oid;
+        }
+      } else if (role == ACCOUNT_TYPE.SUPPORT) {
+        if (searchHub) {
+          params.hub_id = searchHub;
+        } else {
+          params.include_hubs = true;
+        }
       }
 
-      return (
-        matchesSpecializations &&
-        matchesName &&
-        matchestopics &&
-        matchSdgs &&
-        matchHub
-      );
-    });
+      try {
+        const result = await searchPartners(params);
+        if (requestId !== requestIdRef.current) return;
+        if (result) {
+          setPartners(result.accounts || []);
+          setTotal(result.total || 0);
+        } else {
+          setPartners([]);
+          setTotal(0);
+        }
+      } catch (err) {
+        if (requestId !== requestIdRef.current) return;
+        console.error(err);
+        setPartners([]);
+        setTotal(0);
+      } finally {
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+          setPageLoaded(true);
+        }
+      }
+    },
+    [
+      user,
+      debouncedQuery,
+      debouncedQueryName,
+      debouncedQuery2,
+      regions,
+      sdgs,
+      searchHub,
+      role,
+    ]
+  );
+
+  // When filters change, reset to page 1 and fetch
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchPage(1);
+  }, [fetchPage]);
+
+  // When only page changes (user clicks pagination), fetch that page
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleClearFilters = () => {
+    setQuery(undefined);
+    setQuery2(undefined);
+    setQueryName(undefined);
+    setRegions([]);
+    setSdgs([]);
+    setSearchHub(null);
+  };
 
   const getFilterForm = () => (
     <>
@@ -161,7 +195,9 @@ function PartnerGallery(props) {
           <Input
             placeholder={t("common.requiredFullName")}
             prefix={<SearchOutlined />}
+            value={queryName}
             onChange={(e) => setQueryName(e.target.value)}
+            allowClear
           />
         </>
       ) : (
@@ -177,7 +213,9 @@ function PartnerGallery(props) {
           <Input
             placeholder={t("gallery.organizationPlaceholder")}
             prefix={<SearchOutlined />}
+            value={query}
             onChange={(e) => setQuery(e.target.value)}
+            allowClear
           />
           <Title level={4}>{t("gallery.regions")}</Title>
           <Select
@@ -185,6 +223,7 @@ function PartnerGallery(props) {
             onChange={(value) => {
               setRegions(value);
             }}
+            value={regions}
             options={getRegions(t)}
             className={css`
               width: 100%;
@@ -216,6 +255,7 @@ function PartnerGallery(props) {
                 : t("gallery.projectTopicsPlaceholder")
             }
             allowClear
+            value={query2}
             onChange={(e) => setQuery2(e.target.value)}
             prefix={<SearchOutlined />}
           />
@@ -229,6 +269,7 @@ function PartnerGallery(props) {
         placeholder={t("gallery.sdgs")}
         allowClear
         mode="multiple"
+        value={sdgs}
         options={getSDGs(t)}
         onChange={(selected) => setSdgs(selected)}
         maxTagCount="responsive"
@@ -242,13 +283,22 @@ function PartnerGallery(props) {
             `}
             placeholder={"HUB"}
             allowClear
-            // mode="multiple"
+            value={searchHub}
             options={hubOptions}
             onChange={(selected) => setSearchHub(selected)}
             maxTagCount="responsive"
           />
         </>
       )}
+      <Button
+        onClick={handleClearFilters}
+        className={css`
+          margin-top: 12px;
+          width: 100%;
+        `}
+      >
+        {t("gallery.clearFilters", "Clear Filters")}
+      </Button>
     </>
   );
 
@@ -289,9 +339,7 @@ function PartnerGallery(props) {
           <Button
             onClick={() => {
               setMobileFilterVisible(false);
-              setRegions([]);
-              setQuery("");
-              setQueryName("");
+              handleClearFilters();
             }}
           >
             {t("common.cancel")}
@@ -334,26 +382,83 @@ function PartnerGallery(props) {
             <Spin size="large" loading />
           </div>
         ) : (
-          <div className="gallery-mentor-container">
-            {getFilterdPartners().map((partner, key) => (
-              <PartnerCard
-                key={key}
-                organization={partner.organization}
-                person_name={partner.person_name}
-                title={partner.title}
-                email={partner.email}
-                location={partner.location}
-                regions={partner.regions}
-                website={partner.website}
-                linkedin={partner.linkedin}
-                video={partner.video}
-                id={partner.id ? partner.id : partner._id["$oid"]}
-                firebase_uid={partner.firebase_uid}
-                image={partner.image}
-                isSupport={props.isSupport}
-                hub_user={partner.hub_user}
+          <div
+            className={css`
+              flex: 5;
+              display: flex;
+              flex-direction: column;
+            `}
+          >
+            <div
+              className={css`
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                padding: 0 4px;
+              `}
+            >
+              <Text type="secondary">
+                {t("gallery.showingResults", {
+                  defaultValue: "Showing {{from}}-{{to}} of {{total}} results",
+                  from: total === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1,
+                  to: Math.min(currentPage * PAGE_SIZE, total),
+                  total: total,
+                })}
+              </Text>
+              {loading && <Spin size="small" />}
+            </div>
+            {partners.length === 0 && !loading ? (
+              <Empty
+                description={t(
+                  "gallery.noResults",
+                  "No results found. Try adjusting your filters."
+                )}
+                className={css`
+                  margin-top: 80px;
+                `}
               />
-            ))}
+            ) : (
+              <div className="gallery-mentor-container">
+                {partners.map((partner) => (
+                  <PartnerCard
+                    key={partner.id ? partner.id : partner._id["$oid"]}
+                    organization={partner.organization}
+                    person_name={partner.person_name}
+                    title={partner.title}
+                    email={partner.email}
+                    location={partner.location}
+                    regions={partner.regions}
+                    website={partner.website}
+                    linkedin={partner.linkedin}
+                    video={partner.video}
+                    id={partner.id ? partner.id : partner._id["$oid"]}
+                    firebase_uid={partner.firebase_uid}
+                    image={partner.image}
+                    isSupport={props.isSupport}
+                    hub_user={partner.hub_user}
+                  />
+                ))}
+              </div>
+            )}
+            {total > PAGE_SIZE && (
+              <div
+                className={css`
+                  display: flex;
+                  justify-content: center;
+                  margin: 24px 0 75px;
+                `}
+              >
+                <Pagination
+                  current={currentPage}
+                  total={total}
+                  pageSize={PAGE_SIZE}
+                  onChange={handlePageChange}
+                  showSizeChanger={false}
+                  showQuickJumper={total > PAGE_SIZE * 5}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

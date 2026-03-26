@@ -107,7 +107,8 @@ export const fetchAccounts = (
   type,
   restricted = undefined,
   hub_user_id = "",
-  include_hubs = false
+  include_hubs = false,
+  all = false
 ) => {
   const requestExtension = `/accounts/${type}`;
   return authGet(requestExtension, {
@@ -115,6 +116,7 @@ export const fetchAccounts = (
       restricted: restricted,
       hub_user_id: hub_user_id,
       include_hubs: include_hubs,
+      all: all ? "true" : undefined,
     },
   }).then(
     (response) => {
@@ -1440,8 +1442,8 @@ export const fetchMenteeByID = async (id) => {
   return await fetchAccountById(id, ACCOUNT_TYPE.MENTEE);
 };
 
-export const fetchMentors = async (restricted = undefined) => {
-  return await fetchAccounts(ACCOUNT_TYPE.MENTOR, restricted);
+export const fetchMentors = async (restricted = undefined, all = false) => {
+  return await fetchAccounts(ACCOUNT_TYPE.MENTOR, restricted, "", false, all);
 };
 export const fetchPartners = async (
   restricted = undefined,
@@ -1450,9 +1452,41 @@ export const fetchPartners = async (
   return await fetchAccounts(ACCOUNT_TYPE.PARTNER, restricted, hub_user_id);
 };
 
-export const fetchMentees = async (from_suppport_user = undefined) => {
-  return await fetchAccounts(ACCOUNT_TYPE.MENTEE, from_suppport_user);
+export const fetchMentees = async (
+  from_suppport_user = undefined,
+  all = false
+) => {
+  return await fetchAccounts(
+    ACCOUNT_TYPE.MENTEE,
+    from_suppport_user,
+    "",
+    false,
+    all
+  );
 };
+
+export const searchAccounts = (type, params = {}) => {
+  const requestExtension = `/accounts/${type}/search`;
+  return authGet(requestExtension, { params }).then(
+    (response) => {
+      const result = response.data.result;
+      result.accounts.forEach((a) => {
+        a.role = type;
+      });
+      return result;
+    },
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const searchMentors = (params) =>
+  searchAccounts(ACCOUNT_TYPE.MENTOR, params);
+export const searchMentees = (params) =>
+  searchAccounts(ACCOUNT_TYPE.MENTEE, params);
+export const searchPartners = (params) =>
+  searchAccounts(ACCOUNT_TYPE.PARTNER, params);
 
 export const fetchAppointmentsByMenteeId = async (id) => {
   return await fetchAppointmentsById(id, ACCOUNT_TYPE.MENTEE);

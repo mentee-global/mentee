@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { fetchPartners, fetchMentees } from "utils/api";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { searchMentees, fetchPartners } from "utils/api";
+import { useDebounce } from "utils/hooks/useDebounce";
 import MenteeCard from "../MenteeCard";
 import {
   Input,
-  Checkbox,
   Modal,
   Result,
   Spin,
@@ -13,6 +13,9 @@ import {
   Affix,
   Button,
   FloatButton,
+  Pagination,
+  Switch,
+  Empty,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import "../css/Gallery.scss";
@@ -23,7 +26,9 @@ import { useTranslation } from "react-i18next";
 import { getTranslatedOptions } from "utils/translations";
 import { css } from "@emotion/css";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+
+const PAGE_SIZE = 24;
 
 function Gallery(props) {
   const {
@@ -33,69 +38,39 @@ function Gallery(props) {
   const options = useSelector((state) => state.options);
   const { isAdmin, isPartner } = useAuth();
   const [mentees, setMentees] = useState([]);
+  const [total, setTotal] = useState(0);
   const [languages, setLanguages] = useState([]);
   const [interests, setInterests] = useState([]);
   const [query, setQuery] = useState();
+  const [locationQuery, setLocationQuery] = useState();
+  const [gender, setGender] = useState(undefined);
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const location = useLocation();
   const [pageLoaded, setPageLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [allPartners, setAllPartners] = useState([]);
   const [selectedPartnerOrg, setSelectedPartnerOrg] = useState(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showPrivate, setShowPrivate] = useState(false);
   const verified = location.state && location.state.verified;
   const user = useSelector((state) => state.user.user);
+  const isAdminView = isAdmin || props.isSupport;
+
+  const debouncedQuery = useDebounce(query, 300);
+  const debouncedLocationQuery = useDebounce(locationQuery, 300);
+
+  const genderOptions = [
+    { value: "woman", label: t("common.woman", "Woman") },
+    { value: "man", label: t("common.man", "Man") },
+    { value: "non-binary", label: t("common.nonBinary", "Non-binary") },
+    {
+      value: "prefer not to say",
+      label: t("common.preferNotToSay", "Prefer not to say"),
+    },
+  ];
+
+  // Fetch partner dropdown options (unchanged)
   useEffect(() => {
-    async function getMentees() {
-      const mentee_data = await fetchMentees(props.isSupport);
-      if (mentee_data) {
-        if (user && user.pair_partner && user.pair_partner.restricted) {
-          if (user.pair_partner.assign_mentees) {
-            var temp = [];
-            mentee_data.map((mentee_item) => {
-              var check_exist = user.pair_partner.assign_mentees.find(
-                (x) => x.id === mentee_item._id.$oid
-              );
-              if (check_exist) {
-                temp.push(mentee_item);
-              }
-              return false;
-            });
-            setMentees(temp);
-          }
-        } else {
-          var restricted_partners = await fetchPartners(true, null);
-          if (
-            !isAdmin &&
-            restricted_partners &&
-            restricted_partners.length > 0
-          ) {
-            var assigned_mentee_ids = [];
-            restricted_partners.map((partner_item) => {
-              if (partner_item.assign_mentees) {
-                partner_item.assign_mentees.map((assign_item) => {
-                  assigned_mentee_ids.push(assign_item.id);
-                  return false;
-                });
-              }
-              return false;
-            });
-            temp = [];
-            mentee_data.map((mentee_item) => {
-              if (!assigned_mentee_ids.includes(mentee_item._id.$oid)) {
-                temp.push(mentee_item);
-              }
-              return false;
-            });
-            setMentees(temp);
-          } else {
-            setMentees(mentee_data);
-          }
-        }
-      }
-      setPageLoaded(true);
-    }
-
-    getMentees();
-
     async function getAllPartners() {
       var all_data = [];
       if (isAdmin) {
@@ -110,7 +85,6 @@ function Gallery(props) {
       var temp = [];
       all_data.map((item) => {
         temp.push({
-          // value: item.id ? item.id : item._id["$oid"],
           value:
             item.organization + "_" + (item.id ? item.id : item._id["$oid"]),
           label: item.organization,
@@ -122,27 +96,115 @@ function Gallery(props) {
     getAllPartners();
   }, []);
 
-  const getFilteredMentees = () => {
-    return mentees.filter((mentee) => {
-      // matches<Property> is true if no options selected, or if mentor has AT LEAST one of the selected options
-      const matchesLanguages =
-        languages.length === 0 ||
-        languages.some((l) => mentee.languages.indexOf(l) >= 0);
-      const matchesName =
-        !query || mentee.name.toUpperCase().includes(query.toUpperCase());
-      let specializs = mentee.specializations ? mentee.specializations : [];
-      const matchInterests =
-        interests.length === 0 ||
-        interests.some((l) => specializs.indexOf(l) >= 0);
-      const matchPartner =
-        !selectedPartnerOrg ||
-        selectedPartnerOrg.length === 0 ||
-        (mentee.pair_partner &&
-          selectedPartnerOrg.includes(
-            mentee.pair_partner.organization + "_" + mentee.pair_partner.id
-          ));
-      return matchesLanguages && matchesName && matchInterests && matchPartner;
-    });
+  // Race condition guard
+  const requestIdRef = useRef(0);
+
+  // Server-side data fetch
+  const fetchPage = useCallback(
+    async (page) => {
+      const requestId = ++requestIdRef.current;
+      setLoading(true);
+
+      const params = {
+        page: page,
+        page_size: PAGE_SIZE,
+      };
+
+      if (debouncedQuery) {
+        params.search = debouncedQuery;
+      }
+      if (debouncedLocationQuery) {
+        params.location = debouncedLocationQuery;
+      }
+      if (languages.length > 0) {
+        params.languages = languages.join(",");
+      }
+      if (interests.length > 0) {
+        params.specializations = interests.join(",");
+      }
+      if (gender) {
+        params.gender = gender;
+      }
+      if (selectedPartnerOrg && selectedPartnerOrg.length > 0) {
+        const partnerIds = selectedPartnerOrg.map((org) => {
+          const parts = org.split("_");
+          return parts[parts.length - 1];
+        });
+        params.partner_ids = partnerIds.join(",");
+      }
+      if (isAdminView) {
+        params.all = "true";
+      }
+      if (showPrivate) {
+        params.show_private = "true";
+      }
+      if (user && user.pair_partner && user.pair_partner.restricted) {
+        const partnerId =
+          user.pair_partner.id || user.pair_partner._id?.["$oid"];
+        if (partnerId) {
+          params.restricted_partner_id = partnerId;
+        }
+      } else if (!isAdmin) {
+        params.exclude_restricted = "true";
+      }
+
+      try {
+        const result = await searchMentees(params);
+        if (requestId !== requestIdRef.current) return; // stale response
+        if (result) {
+          setMentees(result.accounts || []);
+          setTotal(result.total || 0);
+        } else {
+          setMentees([]);
+          setTotal(0);
+        }
+      } catch (err) {
+        if (requestId !== requestIdRef.current) return;
+        console.error("Failed to fetch mentees:", err);
+        setMentees([]);
+        setTotal(0);
+      } finally {
+        if (requestId === requestIdRef.current) {
+          setPageLoaded(true);
+          setLoading(false);
+        }
+      }
+    },
+    [
+      debouncedQuery,
+      debouncedLocationQuery,
+      languages,
+      interests,
+      gender,
+      selectedPartnerOrg,
+      isAdminView,
+      showPrivate,
+      isAdmin,
+      user,
+    ]
+  );
+
+  // When filters change, reset to page 1 and fetch
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchPage(1);
+  }, [fetchPage]);
+
+  // When only page changes (user clicks pagination), fetch that page
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleClearFilters = () => {
+    setQuery(undefined);
+    setLanguages([]);
+    setInterests([]);
+    setSelectedPartnerOrg(undefined);
+    setLocationQuery(undefined);
+    setGender(undefined);
+    setShowPrivate(false);
   };
 
   const getFilterForm = () => (
@@ -156,10 +218,22 @@ function Gallery(props) {
         {t("gallery.filterBy")}
       </Title>
       <Input
-        placeholder={t("gallery.searchByName")}
+        placeholder={t(
+          "gallery.searchByNameOrEmail",
+          "Search by name or email"
+        )}
         prefix={<SearchOutlined />}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        allowClear
+      />
+      <Title level={4}>{t("commonProfile.location", "Location")}</Title>
+      <Input
+        placeholder={t("gallery.searchByLocation", "Search by location")}
+        prefix={<SearchOutlined />}
+        value={locationQuery}
+        onChange={(e) => setLocationQuery(e.target.value)}
+        allowClear
       />
       <Title
         level={4}
@@ -173,6 +247,7 @@ function Gallery(props) {
         onChange={(value) => {
           setSelectedPartnerOrg(value);
         }}
+        value={selectedPartnerOrg}
         placeholder={t("common.partner")}
         options={allPartners}
         suffixIcon={<SearchOutlined />}
@@ -189,7 +264,7 @@ function Gallery(props) {
           width: 100%;
         `}
         allowClear
-        defaultValue={languages}
+        value={languages}
         mode="multiple"
         placeholder={t("common.languages")}
         options={options.languages}
@@ -202,13 +277,55 @@ function Gallery(props) {
           width: 100%;
         `}
         allowClear
-        defaultValue={interests}
+        value={interests}
         mode="multiple"
         placeholder={t("gallery.menteeInterests")}
         options={options.specializations}
         onChange={(selected) => setInterests(selected)}
         maxTagCount="responsive"
       />
+      <Title level={4}>{t("common.gender", "Gender")}</Title>
+      <Select
+        className={css`
+          width: 100%;
+        `}
+        allowClear
+        value={gender}
+        placeholder={t("common.gender", "Gender")}
+        options={genderOptions}
+        onChange={(selected) => setGender(selected)}
+      />
+      {isAdminView && (
+        <div
+          className={css`
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding: 8px;
+            background: ${colorPrimaryBg};
+            border-radius: 6px;
+          `}
+        >
+          <Text>
+            {t("gallery.showPrivateProfiles", "Show private profiles")}
+          </Text>
+          <Switch
+            checked={showPrivate}
+            onChange={(checked) => setShowPrivate(checked)}
+            size="small"
+          />
+        </div>
+      )}
+      <Button
+        onClick={handleClearFilters}
+        className={css`
+          margin-top: 12px;
+          width: 100%;
+        `}
+      >
+        {t("gallery.clearFilters", "Clear Filters")}
+      </Button>
     </>
   );
 
@@ -249,8 +366,7 @@ function Gallery(props) {
           <Button
             onClick={() => {
               setMobileFilterVisible(false);
-              setQuery("");
-              setLanguages([]);
+              handleClearFilters();
             }}
           >
             {t("common.cancel")}
@@ -295,28 +411,87 @@ function Gallery(props) {
             <Spin size="large" spinning />
           </div>
         ) : (
-          <div className="gallery-mentor-container">
-            {getFilteredMentees().map((mentee, key) => {
-              return (
-                <MenteeCard
-                  key={key}
-                  name={mentee.name}
-                  languages={getTranslatedOptions(
-                    mentee.languages,
-                    options.languages
-                  )}
-                  location={mentee.location}
-                  gender={mentee.gender}
-                  organization={mentee.organization}
-                  image={mentee.image}
-                  video={mentee.video}
-                  age={mentee.age}
-                  id={mentee._id["$oid"]}
-                  pair_partner={mentee.pair_partner}
-                  isSupport={props.isSupport}
+          <div
+            className={css`
+              flex: 5;
+              display: flex;
+              flex-direction: column;
+            `}
+          >
+            <div
+              className={css`
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                padding: 0 4px;
+              `}
+            >
+              <Text type="secondary">
+                {t("gallery.showingResults", {
+                  defaultValue: "Showing {{from}}-{{to}} of {{total}} results",
+                  from: total === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1,
+                  to: Math.min(currentPage * PAGE_SIZE, total),
+                  total: total,
+                })}
+              </Text>
+              {loading && <Spin size="small" />}
+            </div>
+            {mentees.length === 0 && !loading ? (
+              <Empty
+                description={t(
+                  "gallery.noResults",
+                  "No results found. Try adjusting your filters."
+                )}
+                className={css`
+                  margin-top: 80px;
+                `}
+              />
+            ) : (
+              <div className="gallery-mentor-container">
+                {mentees.map((mentee, key) => {
+                  return (
+                    <MenteeCard
+                      key={mentee._id["$oid"]}
+                      name={mentee.name}
+                      languages={getTranslatedOptions(
+                        mentee.languages,
+                        options.languages
+                      )}
+                      location={mentee.location}
+                      gender={mentee.gender}
+                      organization={mentee.organization}
+                      image={mentee.image}
+                      video={mentee.video}
+                      age={mentee.age}
+                      id={mentee._id["$oid"]}
+                      pair_partner={mentee.pair_partner}
+                      isSupport={props.isSupport}
+                      isPrivate={mentee.is_private}
+                      showAdminBadges={isAdmin || props.isSupport}
+                    />
+                  );
+                })}
+              </div>
+            )}
+            {total > PAGE_SIZE && (
+              <div
+                className={css`
+                  display: flex;
+                  justify-content: center;
+                  margin: 24px 0 75px;
+                `}
+              >
+                <Pagination
+                  current={currentPage}
+                  total={total}
+                  pageSize={PAGE_SIZE}
+                  onChange={handlePageChange}
+                  showSizeChanger={false}
+                  showQuickJumper={total > PAGE_SIZE * 5}
                 />
-              );
-            })}
+              </div>
+            )}
           </div>
         )}
       </div>

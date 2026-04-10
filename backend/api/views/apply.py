@@ -1,7 +1,9 @@
+import math
 from os import name
 from bson import is_valid
 from flask import Blueprint, request
 from sqlalchemy import null
+from mongoengine.queryset.visitor import Q
 from api.models import (
     Admin,
     NewMentorApplication,
@@ -63,6 +65,124 @@ def get_mentee_applications():
     applications = list(MenteeApplication.objects.all())
     applications = get_organizations_by_applications(applications)
     return create_response(data={"mentor_applications": applications})
+
+
+def _enrich_applications_with_orgs(applications):
+    """Lightweight org enrichment — only fetches the organization field from partners.
+
+    Uses getattr for safe access because MentorApplication (old model) has no
+    partner/organization fields, unlike NewMentorApplication and MenteeApplication.
+    """
+    partner_ids = set()
+    for app in applications:
+        pid = getattr(app, "partner", None)
+        if pid:
+            partner_ids.add(pid)
+    if not partner_ids:
+        return applications
+
+    partners = PartnerProfile.objects.filter(id__in=partner_ids).only("organization")
+    partner_dict = {str(p.id): p.organization for p in partners}
+    for app in applications:
+        pid = getattr(app, "partner", None)
+        if pid and pid in partner_dict:
+            app.organization = partner_dict[pid]
+    return applications
+
+
+# Fields the table actually displays — split by model because
+# MentorApplication (old) has no partner/organization fields.
+_TABLE_FIELDS_BASE = ("name", "email", "notes", "application_state")
+_TABLE_FIELDS_WITH_PARTNER = _TABLE_FIELDS_BASE + ("partner",)
+
+
+@apply.route("/search", methods=["GET"])
+@admin_only
+def search_mentor_applications():
+    """Server-side paginated + filtered mentor applications (NewMentorApplication + MentorApplication)."""
+    try:
+        page = max(1, int(request.args.get("page", 1)))
+        page_size = max(1, min(int(request.args.get("page_size", 20)), 100))
+    except (ValueError, TypeError):
+        page = 1
+        page_size = 20
+
+    search = request.args.get("search", "").strip()
+    application_state = request.args.get("application_state", "").strip()
+
+    query = Q()
+    if search:
+        query &= Q(name__icontains=search) | Q(email__icontains=search)
+    if application_state:
+        query &= Q(application_state=application_state)
+
+    new_qs = NewMentorApplication.objects.filter(query).only(
+        *_TABLE_FIELDS_WITH_PARTNER
+    )
+    old_qs = MentorApplication.objects.filter(query).only(*_TABLE_FIELDS_BASE)
+    total_new = new_qs.count()
+    total_old = old_qs.count()
+    total = total_new + total_old
+    offset = (page - 1) * page_size
+
+    records = []
+    if offset < total_new:
+        take_from_new = min(page_size, total_new - offset)
+        records = list(new_qs.skip(offset).limit(take_from_new))
+        if len(records) < page_size:
+            remaining = page_size - len(records)
+            records += list(old_qs.skip(0).limit(remaining))
+    else:
+        old_offset = offset - total_new
+        records = list(old_qs.skip(old_offset).limit(page_size))
+
+    records = _enrich_applications_with_orgs(records)
+    return create_response(
+        data={
+            "applications": records,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": math.ceil(total / page_size) if page_size > 0 else 0,
+        }
+    )
+
+
+@apply.route("/menteeApps/search", methods=["GET"])
+@admin_only
+def search_mentee_applications():
+    """Server-side paginated + filtered mentee applications."""
+    try:
+        page = max(1, int(request.args.get("page", 1)))
+        page_size = max(1, min(int(request.args.get("page_size", 20)), 100))
+    except (ValueError, TypeError):
+        page = 1
+        page_size = 20
+
+    search = request.args.get("search", "").strip()
+    application_state = request.args.get("application_state", "").strip()
+
+    query = Q()
+    if search:
+        query &= Q(name__icontains=search) | Q(email__icontains=search)
+    if application_state:
+        query &= Q(application_state=application_state)
+
+    queryset = MenteeApplication.objects.filter(query).only(*_TABLE_FIELDS_WITH_PARTNER)
+    total = queryset.count()
+    offset = (page - 1) * page_size
+    records = list(queryset.skip(offset).limit(page_size))
+    records = _enrich_applications_with_orgs(records)
+
+    return create_response(
+        data={
+            "applications": records,
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": math.ceil(total / page_size) if page_size > 0 else 0,
+        }
+    )
 
 
 # GET request for mentor applications for by id

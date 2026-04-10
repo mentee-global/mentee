@@ -6,6 +6,10 @@ from mongoengine import *
 class MentorApplication(Document, Mixin):
     """Model for mentor application."""
 
+    meta = {
+        "indexes": ["application_state"],
+    }
+
     email = StringField(required=True)
     name = StringField(required=True)
     cell_number = StringField(required=True)

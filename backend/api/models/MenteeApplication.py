@@ -7,6 +7,10 @@ from mongoengine import *
 class MenteeApplication(Document, Mixin):
     """Model for Mentee application."""
 
+    meta = {
+        "indexes": ["application_state"],
+    }
+
     email = StringField(required=True)
     name = StringField(required=True)
     age = StringField(required=False)

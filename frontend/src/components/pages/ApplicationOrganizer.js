@@ -1,8 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Modal, Select, Table, Button, Popconfirm, Spin, Empty } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
-  fetchApplications,
+  Modal,
+  Select,
+  Table,
+  Button,
+  Popconfirm,
+  Spin,
+  Empty,
+  Input,
+} from "antd";
+import {
+  DownloadOutlined,
+  SearchOutlined,
+  ClearOutlined,
+} from "@ant-design/icons";
+import {
+  fetchApplicationsSearch,
   updateApplicationById,
   getApplicationById,
   downloadMentorsApps,
@@ -16,30 +29,122 @@ import ModalInput from "components/ModalInput";
 
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
+const PAGE_SIZE = 20;
+
 function ApplicationOrganizer({ isMentor }) {
   const { onAuthStateChanged } = useAuth();
-  const [applicationData, setApplicationData] = useState([]);
-  const [filterdData, setFilterdData] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [appState, setAppstate] = useState("all");
+  const [searchText, setSearchText] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [visible, setVisible] = useState(false);
   const [selectedID, setSelectedID] = useState(null);
   const [appInfo, setAppInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const debounceRef = useRef(null);
+  const requestIdRef = useRef(0);
+
+  // Refs that always hold the latest filter values so debounce
+  // callbacks and event handlers never read stale closures.
+  const appStateRef = useRef(appState);
+  const searchTextRef = useRef(searchText);
+
+  const fetchPage = useCallback(
+    async (page, search, state) => {
+      const thisRequest = ++requestIdRef.current;
+      setLoading(true);
+      try {
+        const result = await fetchApplicationsSearch(isMentor, {
+          page,
+          pageSize: PAGE_SIZE,
+          search,
+          applicationState: state,
+        });
+        if (thisRequest !== requestIdRef.current) return;
+        if (result) {
+          const mapped = result.applications.map((app, index) => ({
+            ...app,
+            index: (page - 1) * PAGE_SIZE + index,
+            id: app._id["$oid"],
+          }));
+          setApplications(mapped);
+          setTotal(result.total);
+        } else {
+          setApplications([]);
+          setTotal(0);
+        }
+      } catch (error) {
+        if (thisRequest !== requestIdRef.current) return;
+        console.error("Error fetching applications:", error);
+        setApplications([]);
+        setTotal(0);
+      } finally {
+        if (thisRequest === requestIdRef.current) {
+          setLoading(false);
+        }
+      }
+    },
+    [isMentor]
+  );
+
+  useEffect(() => {
+    onAuthStateChanged(() => {
+      fetchPage(1, "", "all");
+    });
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSearchInput = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+    searchTextRef.current = value;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setSearchText(value);
+      setCurrentPage(1);
+      fetchPage(1, value, appStateRef.current);
+    }, 400);
+  };
+
+  const handleStateChange = (value) => {
+    appStateRef.current = value;
+    setAppstate(value);
+    // Cancel any pending search debounce and commit current input immediately
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const currentSearch = searchTextRef.current;
+    setSearchText(currentSearch);
+    setCurrentPage(1);
+    fetchPage(1, currentSearch, value);
+  };
+
+  const handleClearFilters = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    searchTextRef.current = "";
+    appStateRef.current = "all";
+    setInputValue("");
+    setSearchText("");
+    setAppstate("all");
+    setCurrentPage(1);
+    fetchPage(1, "", "all");
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchPage(page, searchTextRef.current, appStateRef.current);
+  };
 
   const handleApplicationStateChange = useCallback(
     async (id, newState) => {
-      const updatedData = applicationData.map((app) =>
-        app.id === id ? { ...app, application_state: newState } : app
+      setApplications((prev) =>
+        prev.map((app) =>
+          app.id === id ? { ...app, application_state: newState } : app
+        )
       );
-      setApplicationData(updatedData);
-
-      if (appState !== "all") {
-        setFilterdData(filterApplications(updatedData, appState));
-      } else {
-        setFilterdData(updatedData);
-      }
-
       try {
         await updateApplicationById(
           { application_state: newState },
@@ -48,11 +153,16 @@ function ApplicationOrganizer({ isMentor }) {
         );
       } catch (error) {
         console.error("Update failed:", error);
-        await updateApps();
+        fetchPage(currentPage, searchTextRef.current, appStateRef.current);
       }
     },
-    [applicationData, appState, isMentor]
+    [isMentor, currentPage, fetchPage]
   );
+
+  const handleModalClose = async () => {
+    await fetchPage(currentPage, searchTextRef.current, appStateRef.current);
+    setVisible(false);
+  };
 
   const columns = [
     {
@@ -89,23 +199,22 @@ function ApplicationOrganizer({ isMentor }) {
       dataIndex: "id",
       key: "application_state",
       render: (id, record) => (
-        <>
-          <ModalInput
-            style={styles.modalInput}
-            type="dropdown-single"
-            title={""}
-            onChange={(e) => handleApplicationStateChange(id, e)}
-            options={getAppStatusOptions()}
-            value={record.application_state}
-            handleClick={() => {}}
-          />
-        </>
+        <ModalInput
+          style={styles.modalInput}
+          type="dropdown-single"
+          title={""}
+          onChange={(e) => handleApplicationStateChange(id, e)}
+          options={getAppStatusOptions()}
+          value={record.application_state}
+          handleClick={() => {}}
+        />
       ),
     },
     {
       title: "Full Application",
       dataIndex: "id",
       key: "id",
+      align: "center",
       render: (id) => (
         <>
           <EditOutlined
@@ -115,7 +224,6 @@ function ApplicationOrganizer({ isMentor }) {
               const info = await getApplicationById(id, isMentor);
               if (info) {
                 setAppInfo(info);
-                //setAppstate(info.application_state);
               }
               setVisible(true);
             }}
@@ -124,7 +232,11 @@ function ApplicationOrganizer({ isMentor }) {
             title={`Are you sure you want to delete?`}
             onConfirm={async () => {
               await deleteApplication(id, isMentor);
-              await updateApps();
+              fetchPage(
+                currentPage,
+                searchTextRef.current,
+                appStateRef.current
+              );
             }}
             onCancel={() => {}}
             okText="Yes"
@@ -137,100 +249,10 @@ function ApplicationOrganizer({ isMentor }) {
           </Popconfirm>
         </>
       ),
-
-      align: "center",
     },
   ];
 
-  useEffect(() => {
-    const getAllApplications = async () => {
-      setLoading(true);
-      try {
-        const applications = await fetchApplications(isMentor);
-        if (applications) {
-          const newApplications = applications.mentor_applications.map(
-            (app, index) => {
-              return {
-                ...app,
-                index: index,
-                id: app._id["$oid"],
-              };
-            }
-          );
-          setApplicationData(newApplications);
-          setFilterdData(newApplications);
-        } else {
-          setApplicationData([]);
-          setFilterdData([]);
-        }
-      } catch (error) {
-        console.error("Error fetching applications:", error);
-        setApplicationData([]);
-        setFilterdData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    onAuthStateChanged(getAllApplications);
-  }, []);
-
-  const updateApps = async () => {
-    setLoading(true);
-    try {
-      const applications = await fetchApplications(isMentor);
-      if (applications) {
-        const newApplications = applications.mentor_applications.map(
-          (app, index) => {
-            return {
-              ...app,
-              index: index,
-              id: app._id["$oid"],
-            };
-          }
-        );
-        if (appState !== "all") {
-          setApplicationData(newApplications);
-          setFilterdData(filterApplications(newApplications, appState));
-        } else {
-          setApplicationData(newApplications);
-          setFilterdData(newApplications);
-        }
-      } else {
-        setApplicationData([]);
-        setFilterdData([]);
-      }
-    } catch (error) {
-      console.error("Error updating applications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * Filters application by application state and items stored in the corresponding named columns
-   */
-  function filterApplications(data, appStatee) {
-    if (appStatee === "all") {
-      return data;
-    } else {
-      return data
-        .filter(
-          (state) =>
-            state.application_state &&
-            state.application_state.toLowerCase() === appStatee.toLowerCase()
-        )
-        .map((application) => ({
-          id: application._id.$oid,
-          ...application,
-        }));
-    }
-  }
-
-  const handleModalClose = async () => {
-    await updateApps();
-    setVisible(false);
-  };
+  const hasActiveFilters = searchText || appState !== "all";
 
   return (
     <div
@@ -263,25 +285,59 @@ function ApplicationOrganizer({ isMentor }) {
           Mentee Appications
         </Button>
       </div>
-      <div
-        id="applicactionstate"
-        style={{ fontSize: 20, fontWeight: 400, padding: 10 }}
-      >
-        Applications State
-      </div>
 
-      <Select
-        id="applicationssort"
-        style={{ width: 160, height: 50, padding: 10 }}
-        onChange={(value) => {
-          setAppstate(value);
-          setFilterdData(filterApplications(applicationData, value));
-          setCurrentPage(1);
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: 10,
+          flexWrap: "wrap",
         }}
-        placeholder="Role"
-        value={appState}
-        options={[...getAppStatusOptions(), { value: "all", label: "All" }]}
-      />
+      >
+        <Input
+          id="applicationsearch"
+          placeholder="Search by name or email"
+          prefix={<SearchOutlined />}
+          value={inputValue}
+          onChange={handleSearchInput}
+          style={{ width: 260 }}
+          allowClear
+          onClear={() => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+            searchTextRef.current = "";
+            setInputValue("");
+            setSearchText("");
+            setCurrentPage(1);
+            fetchPage(1, "", appStateRef.current);
+          }}
+        />
+
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 14, fontWeight: 400 }}>State:</span>
+          <Select
+            id="applicationssort"
+            style={{ width: 160 }}
+            onChange={handleStateChange}
+            value={appState}
+            options={[{ value: "all", label: "All" }, ...getAppStatusOptions()]}
+          />
+        </div>
+
+        {hasActiveFilters && (
+          <Button
+            icon={<ClearOutlined />}
+            onClick={handleClearFilters}
+            size="small"
+          >
+            Clear filters
+          </Button>
+        )}
+
+        <span style={{ fontSize: 13, color: "#888", marginLeft: "auto" }}>
+          {total} application{total !== 1 ? "s" : ""}
+        </span>
+      </div>
 
       <div style={{ margin: 10 }}>
         {loading ? (
@@ -289,7 +345,7 @@ function ApplicationOrganizer({ isMentor }) {
             <Spin size="large" />
             <p>Loading applications...</p>
           </div>
-        ) : filterdData.length === 0 ? (
+        ) : applications.length === 0 ? (
           <Empty
             description="No applications found"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -298,10 +354,15 @@ function ApplicationOrganizer({ isMentor }) {
           <Table
             id="applicationstable"
             columns={columns}
-            dataSource={filterdData}
+            dataSource={applications}
+            rowKey="id"
             pagination={{
               current: currentPage,
-              onChange: (page) => setCurrentPage(page),
+              pageSize: PAGE_SIZE,
+              total,
+              showSizeChanger: false,
+              showTotal: (t) => `${t} total`,
+              onChange: handlePageChange,
             }}
           />
         )}
@@ -317,8 +378,8 @@ function ApplicationOrganizer({ isMentor }) {
           <MentorApplicationView
             id={selectedID}
             isMentor={isMentor}
-            isNew={applicationData
-              .filter((item) => item.id == selectedID)
+            isNew={applications
+              .filter((item) => item.id === selectedID)
               .hasOwnProperty("identify")}
             open={visible}
             appInfo={appInfo}

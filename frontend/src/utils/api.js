@@ -188,6 +188,27 @@ export const fetchApplications = async (isMentor) => {
   );
 };
 
+export const fetchApplicationsSearch = async (
+  isMentor,
+  { page = 1, pageSize = 20, search = "", applicationState = "" } = {}
+) => {
+  const params = new URLSearchParams({ page, page_size: pageSize });
+  if (search) params.set("search", search);
+  if (applicationState && applicationState !== "all")
+    params.set("application_state", applicationState);
+
+  const base = isMentor
+    ? "/application/search"
+    : "/application/menteeApps/search";
+
+  return authGet(`${base}?${params.toString()}`).then(
+    (response) => response && response.data.result,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
 export const createApplication = (application) => {
   const requestExtension = `/application/new`;
   application.preferred_language = i18n.language;

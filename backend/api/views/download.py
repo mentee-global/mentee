@@ -16,6 +16,7 @@ from api.models import (
     Moderator,
 )
 from flask import send_file, Blueprint, request
+from mongoengine.queryset.visitor import Q
 from api.utils.require_auth import admin_only
 from api.utils.constants import Account, EDUCATION_LEVEL
 
@@ -193,6 +194,44 @@ def download_accounts_info():
     return create_response(status=422, message=msg)
 
 
+@download.route("/partner/<string:partner_id>/accounts", methods=["GET"])
+@admin_only
+def download_partner_member_accounts(partner_id):
+    """Download accounts (mentors or mentees) assigned to a specific partner."""
+    data = request.args
+    account_type = int(data.get("account_type", 0))
+
+    try:
+        partner = PartnerProfile.objects.get(id=partner_id)
+    except Exception:
+        msg = "Partner not found"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    if account_type == Account.MENTOR:
+        if not partner.assign_mentors:
+            return create_response(
+                status=422, message="No mentors assigned to this partner"
+            )
+        mentor_ids = [m["id"] for m in partner.assign_mentors if "id" in m]
+        accounts = MentorProfile.objects.filter(id__in=mentor_ids)
+        return download_mentor_accounts(accounts)
+
+    elif account_type == Account.MENTEE:
+        if not partner.assign_mentees:
+            return create_response(
+                status=422, message="No mentees assigned to this partner"
+            )
+        mentee_ids = [m["id"] for m in partner.assign_mentees if "id" in m]
+        accounts = MenteeProfile.objects.filter(id__in=mentee_ids)
+        partner_object = {str(partner.id): partner.organization}
+        return download_mentee_accounts(accounts, partner_object)
+
+    msg = "Invalid account_type for partner download"
+    logger.info(msg)
+    return create_response(status=422, message=msg)
+
+
 @download.route("/apps/all", methods=["GET"])
 @admin_only
 def download_apps_info():
@@ -342,7 +381,19 @@ def download_mentee_apps(apps, partner_object):
 
 
 def download_mentor_accounts(accounts):
-    messages = DirectMessage.objects()
+    accounts = list(accounts)
+    account_ids = [acct.id for acct in accounts]
+
+    # Count sent/received messages per account in one pass,
+    # only loading messages that involve these accounts.
+    sent_count = {}
+    received_count = {}
+    for msg in DirectMessage.objects.filter(
+        Q(sender_id__in=account_ids) | Q(recipient_id__in=account_ids)
+    ).only("sender_id", "recipient_id"):
+        sid, rid = str(msg.sender_id), str(msg.recipient_id)
+        sent_count[sid] = sent_count.get(sid, 0) + 1
+        received_count[rid] = received_count.get(rid, 0) + 1
 
     all_partners = PartnerProfile.objects()
     partners_by_assign_mentor = {}
@@ -354,15 +405,10 @@ def download_mentor_accounts(accounts):
     accts = []
 
     for acct in accounts:
-        sent_messages = [
-            message for message in messages if message.sender_id == acct.id
-        ]
-        receive_messages = [
-            message for message in messages if message.recipient_id == acct.id
-        ]
+        acct_id = str(acct.id)
         partner = ""
-        if str(acct.id) in partners_by_assign_mentor:
-            partner = partners_by_assign_mentor[str(acct.id)].organization
+        if acct_id in partners_by_assign_mentor:
+            partner = partners_by_assign_mentor[acct_id].organization
 
         educations = []
         for edu in acct.education:
@@ -394,8 +440,8 @@ def download_mentor_accounts(accounts):
                 "Yes" if acct.offers_group_appointments else "No",
                 "Yes" if acct.text_notifications else "No",
                 "Yes" if acct.email_notifications else "No",
-                len(receive_messages),
-                len(sent_messages),
+                received_count.get(acct_id, 0),
+                sent_count.get(acct_id, 0),
                 partner,
             ]
         )
@@ -624,7 +670,20 @@ def download_moderator_accounts(accounts):
 
 
 def download_mentee_accounts(accounts, partner_object):
-    messages = DirectMessage.objects()
+    accounts = list(accounts)
+    account_ids = [acct.id for acct in accounts]
+
+    # Count sent/received messages per account in one pass,
+    # only loading messages that involve these accounts.
+    sent_count = {}
+    received_count = {}
+    for msg in DirectMessage.objects.filter(
+        Q(sender_id__in=account_ids) | Q(recipient_id__in=account_ids)
+    ).only("sender_id", "recipient_id"):
+        sid, rid = str(msg.sender_id), str(msg.recipient_id)
+        sent_count[sid] = sent_count.get(sid, 0) + 1
+        received_count[rid] = received_count.get(rid, 0) + 1
+
     all_partners = PartnerProfile.objects()
     partners_by_assign_mentee = {}
     for partner_account in all_partners:
@@ -635,15 +694,10 @@ def download_mentee_accounts(accounts, partner_object):
     accts = []
 
     for acct in accounts:
-        sent_messages = [
-            message for message in messages if message.sender_id == acct.id
-        ]
-        receive_messages = [
-            message for message in messages if message.recipient_id == acct.id
-        ]
+        acct_id = str(acct.id)
         partner = ""
-        if str(acct.id) in partners_by_assign_mentee:
-            partner = partners_by_assign_mentee[str(acct.id)].organization
+        if acct_id in partners_by_assign_mentee:
+            partner = partners_by_assign_mentee[acct_id].organization
 
         educations = []
         for edu in acct.education:
@@ -690,8 +744,8 @@ def download_mentee_accounts(accounts, partner_object):
                 int(acct.is_private) if acct.is_private != None else "N/A",
                 acct.video.url if acct.video else "None",
                 ",".join(acct.favorite_mentors_ids),
-                len(receive_messages),
-                len(sent_messages),
+                received_count.get(acct_id, 0),
+                sent_count.get(acct_id, 0),
                 partner,
             ]
         )

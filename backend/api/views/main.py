@@ -573,77 +573,68 @@ def get_account(id):
                 }
                 account.hub_user = hub_user
             if account.assign_mentees is not None and len(account.assign_mentees) > 0:
-                mentee_ids = []
-                for mentee in account.assign_mentees:
-                    mentee_ids.append(mentee["id"])
+                mentee_ids = [
+                    mentee["id"]
+                    for mentee in account.assign_mentees
+                    if "id" in mentee
+                ]
+                mentee_ids_set = {str(mid) for mid in mentee_ids}
 
-                mentees = MenteeProfile.objects.filter(id__in=mentee_ids).all()
-                send_messages = DirectMessage.objects.filter(
-                    Q(sender_id__in=mentee_ids) | Q(recipient_id__in=mentee_ids)
-                ).all()
+                mentees = list(MenteeProfile.objects.filter(id__in=mentee_ids))
+                send_messages = list(
+                    DirectMessage.objects.filter(
+                        Q(sender_id__in=mentee_ids) | Q(recipient_id__in=mentee_ids)
+                    )
+                )
 
-                received_mentor_contacts = {}
-                received_mentor_ids = []
-                for send_message in send_messages:
-                    if send_message.recipient_id not in received_mentor_ids:
-                        received_mentor_ids.append(send_message.recipient_id)
-
-                    if str(send_message.sender_id) not in received_mentor_contacts:
-                        received_mentor_contacts[str(send_message.sender_id)] = {}
-                        received_mentor_contacts[str(send_message.sender_id)][
-                            str(send_message.recipient_id)
-                        ] = {}
+                # Build (mentee_id, mentor_id) → [messages] lookup in a single pass
+                # to avoid the O(mentees × mentors × messages) nested loop.
+                messages_by_mentee_mentor = {}
+                mentor_ids_seen = set()
+                mentees_who_sent = set()
+                for msg in send_messages:
+                    sid, rid = str(msg.sender_id), str(msg.recipient_id)
+                    if sid in mentee_ids_set:
+                        mentee_id, mentor_id = sid, rid
+                        mentees_who_sent.add(sid)
                     else:
-                        if (
-                            str(send_message.recipient_id)
-                            not in received_mentor_contacts[str(send_message.sender_id)]
-                        ):
-                            received_mentor_contacts[str(send_message.sender_id)][
-                                str(send_message.recipient_id)
-                            ] = {}
+                        mentee_id, mentor_id = rid, sid
+                    mentor_ids_seen.add(mentor_id)
+                    key = (mentee_id, mentor_id)
+                    if key not in messages_by_mentee_mentor:
+                        messages_by_mentee_mentor[key] = []
+                    messages_by_mentee_mentor[key].append(msg)
 
-                received_mentor_data = MentorProfile.objects.filter(
-                    id__in=received_mentor_ids
-                ).all()
-                mentor_data_objects = {}
-                for received_mentor in received_mentor_data:
-                    mentor_data_objects[str(received_mentor.id)] = received_mentor
+                received_mentor_data = list(
+                    MentorProfile.objects.filter(id__in=list(mentor_ids_seen))
+                )
+                mentor_data_objects = {
+                    str(m.id): m for m in received_mentor_data
+                }
 
                 temp = []
                 for mentee in mentees:
+                    mentee_id = str(mentee.id)
                     message_receive_data = []
-                    if str(mentee.id) in received_mentor_contacts:
+                    if mentee_id in mentees_who_sent:
                         for received_mentor in received_mentor_data:
-                            if str(received_mentor.id) in mentor_data_objects:
-                                message_data = [
-                                    messagee.to_mongo()
-                                    for messagee in send_messages
-                                    if (
-                                        (
-                                            messagee["recipient_id"]
-                                            == received_mentor.id
-                                            and messagee["sender_id"] == mentee.id
-                                        )
-                                        or (
-                                            messagee["recipient_id"] == mentee.id
-                                            and messagee["sender_id"]
-                                            == received_mentor.id
-                                        )
-                                    )
-                                ]
-                                message_receive_data.append(
-                                    {
-                                        "id": received_mentor.id,
-                                        "image": mentor_data_objects[
-                                            str(received_mentor.id)
-                                        ].image,
-                                        "receiver_name": mentor_data_objects[
-                                            str(received_mentor.id)
-                                        ].name,
-                                        "message_data": message_data,
-                                        "numberOfMessages": len(message_data),
-                                    }
-                                )
+                            mentor_id = str(received_mentor.id)
+                            msgs = messages_by_mentee_mentor.get(
+                                (mentee_id, mentor_id), []
+                            )
+                            message_receive_data.append(
+                                {
+                                    "id": received_mentor.id,
+                                    "image": mentor_data_objects[mentor_id].image,
+                                    "receiver_name": mentor_data_objects[
+                                        mentor_id
+                                    ].name,
+                                    "message_data": [
+                                        m.to_mongo() for m in msgs
+                                    ],
+                                    "numberOfMessages": len(msgs),
+                                }
+                            )
                     temp.append(
                         {
                             "id": mentee.id,
@@ -656,78 +647,66 @@ def get_account(id):
                 account.assign_mentees = temp
 
             if account.assign_mentors is not None and len(account.assign_mentors) > 0:
-                mentor_ids = []
-                for mentor in account.assign_mentors:
-                    mentor_ids.append(mentor["id"])
+                mentor_ids = [
+                    mentor["id"]
+                    for mentor in account.assign_mentors
+                    if "id" in mentor
+                ]
+                mentor_ids_set = {str(mid) for mid in mentor_ids}
 
-                mentors = MentorProfile.objects.filter(id__in=mentor_ids).all()
-                received_messages = DirectMessage.objects.filter(
-                    Q(recipient_id__in=mentor_ids) | Q(sender_id__in=mentor_ids)
-                ).all()
-                sent_mentee_contacts = {}
-                sent_mentee_ids = []
-                for received_message in received_messages:
-                    if received_message.sender_id not in sent_mentee_ids:
-                        sent_mentee_ids.append(received_message.sender_id)
+                mentors = list(MentorProfile.objects.filter(id__in=mentor_ids))
+                received_messages = list(
+                    DirectMessage.objects.filter(
+                        Q(recipient_id__in=mentor_ids) | Q(sender_id__in=mentor_ids)
+                    )
+                )
 
-                    if str(received_message.recipient_id) not in sent_mentee_contacts:
-                        sent_mentee_contacts[str(received_message.recipient_id)] = {}
-                        sent_mentee_contacts[str(received_message.recipient_id)][
-                            str(received_message.sender_id)
-                        ] = {}
+                # Build (mentor_id, other_id) → [messages] lookup in a single pass
+                # to avoid the O(mentors × mentees × messages) nested loop.
+                messages_by_mentor_other = {}
+                other_ids_seen = set()
+                mentors_who_received = set()
+                for msg in received_messages:
+                    sid, rid = str(msg.sender_id), str(msg.recipient_id)
+                    if rid in mentor_ids_set:
+                        mentor_id, other_id = rid, sid
+                        mentors_who_received.add(rid)
                     else:
-                        if (
-                            str(received_message.sender_id)
-                            not in sent_mentee_contacts[
-                                str(received_message.recipient_id)
-                            ]
-                        ):
-                            sent_mentee_contacts[str(received_message.recipient_id)][
-                                str(received_message.sender_id)
-                            ] = {}
+                        mentor_id, other_id = sid, rid
+                    other_ids_seen.add(other_id)
+                    key = (mentor_id, other_id)
+                    if key not in messages_by_mentor_other:
+                        messages_by_mentor_other[key] = []
+                    messages_by_mentor_other[key].append(msg)
 
-                sent_mentee_data = MenteeProfile.objects.filter(
-                    id__in=sent_mentee_ids
-                ).all()
-                mentee_data_objects = {}
-                for sent_mentee in sent_mentee_data:
-                    mentee_data_objects[str(sent_mentee.id)] = sent_mentee
+                sent_mentee_data = list(
+                    MenteeProfile.objects.filter(id__in=list(other_ids_seen))
+                )
+                mentee_data_objects = {str(m.id): m for m in sent_mentee_data}
 
                 temp = []
                 for mentor in mentors:
+                    mentor_id = str(mentor.id)
                     message_receive_data = []
-                    if str(mentor.id) in sent_mentee_contacts:
+                    if mentor_id in mentors_who_received:
                         for sent_mentee in sent_mentee_data:
-                            if str(sent_mentee.id) in mentee_data_objects:
-                                message_data = [
-                                    messagee.to_mongo()
-                                    for messagee in received_messages
-                                    if (
-                                        (
-                                            messagee["sender_id"] == sent_mentee.id
-                                            and messagee["recipient_id"] == mentor.id
-                                        )
-                                        or (
-                                            messagee["sender_id"] == mentor.id
-                                            and messagee["recipient_id"]
-                                            == sent_mentee.id
-                                        )
-                                    )
-                                ]
-                                message_receive_data.append(
-                                    {
-                                        "id": sent_mentee.id,
-                                        "image": mentee_data_objects[
-                                            str(sent_mentee.id)
-                                        ].image,
-                                        "receiver_name": mentee_data_objects[
-                                            str(sent_mentee.id)
-                                        ].name,
-                                        "message_data": message_data,
-                                        "numberOfMessages": len(message_data),
-                                    }
-                                )
-
+                            mentee_id = str(sent_mentee.id)
+                            msgs = messages_by_mentor_other.get(
+                                (mentor_id, mentee_id), []
+                            )
+                            message_receive_data.append(
+                                {
+                                    "id": sent_mentee.id,
+                                    "image": mentee_data_objects[mentee_id].image,
+                                    "receiver_name": mentee_data_objects[
+                                        mentee_id
+                                    ].name,
+                                    "message_data": [
+                                        m.to_mongo() for m in msgs
+                                    ],
+                                    "numberOfMessages": len(msgs),
+                                }
+                            )
                     temp.append(
                         {
                             "id": mentor.id,

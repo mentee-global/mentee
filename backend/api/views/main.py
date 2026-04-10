@@ -574,9 +574,7 @@ def get_account(id):
                 account.hub_user = hub_user
             if account.assign_mentees is not None and len(account.assign_mentees) > 0:
                 mentee_ids = [
-                    mentee["id"]
-                    for mentee in account.assign_mentees
-                    if "id" in mentee
+                    mentee["id"] for mentee in account.assign_mentees if "id" in mentee
                 ]
                 mentee_ids_set = {str(mid) for mid in mentee_ids}
 
@@ -608,9 +606,7 @@ def get_account(id):
                 received_mentor_data = list(
                     MentorProfile.objects.filter(id__in=list(mentor_ids_seen))
                 )
-                mentor_data_objects = {
-                    str(m.id): m for m in received_mentor_data
-                }
+                mentor_data_objects = {str(m.id): m for m in received_mentor_data}
 
                 temp = []
                 for mentee in mentees:
@@ -629,9 +625,7 @@ def get_account(id):
                                     "receiver_name": mentor_data_objects[
                                         mentor_id
                                     ].name,
-                                    "message_data": [
-                                        m.to_mongo() for m in msgs
-                                    ],
+                                    "message_data": [m.to_mongo() for m in msgs],
                                     "numberOfMessages": len(msgs),
                                 }
                             )
@@ -648,9 +642,7 @@ def get_account(id):
 
             if account.assign_mentors is not None and len(account.assign_mentors) > 0:
                 mentor_ids = [
-                    mentor["id"]
-                    for mentor in account.assign_mentors
-                    if "id" in mentor
+                    mentor["id"] for mentor in account.assign_mentors if "id" in mentor
                 ]
                 mentor_ids_set = {str(mid) for mid in mentor_ids}
 
@@ -701,9 +693,7 @@ def get_account(id):
                                     "receiver_name": mentee_data_objects[
                                         mentee_id
                                     ].name,
-                                    "message_data": [
-                                        m.to_mongo() for m in msgs
-                                    ],
+                                    "message_data": [m.to_mongo() for m in msgs],
                                     "numberOfMessages": len(msgs),
                                 }
                             )

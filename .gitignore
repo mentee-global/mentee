@@ -24,3 +24,6 @@ tests/cypress/screenshots/
 .agents
 .agent
 CLAUDE.md
+
+# Git
+.worktreeinclude

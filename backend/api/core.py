@@ -68,6 +68,17 @@ def all_exception_handler(error: Exception) -> Tuple[Response, int]:
     :param Exception
     :returns Tuple of a Flask Response and int
     """
+    # Preserve the original status code and headers on HTTPException — callers
+    # such as Authlib's ResourceProtector rely on WWW-Authenticate being returned
+    # intact rather than collapsed into a generic 500.
+    from werkzeug.exceptions import HTTPException
+
+    if isinstance(error, HTTPException):
+        response = error.get_response()
+        if response is not None:
+            return response
+        return create_response(message=str(error), status=error.code or 500)
+
     return create_response(message=str(error), status=500)
 
 

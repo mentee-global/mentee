@@ -1,6 +1,7 @@
 import os
 import logging
 import firebase_admin
+from datetime import timedelta
 
 from flask import Flask, request
 from flask_cors import CORS
@@ -12,6 +13,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 socketio = SocketIO(cors_allowed_origins="*")
+
+
+def _oauth_enabled() -> bool:
+    return os.environ.get("OAUTH_ENABLED", "false").lower() == "true"
+
+
+def _cors_origins() -> list:
+    raw = os.environ.get("CORS_ORIGINS", "http://localhost:3000")
+    return [o.strip() for o in raw.split(",") if o.strip()]
 
 
 class RequestFormatter(logging.Formatter):
@@ -35,7 +45,41 @@ def create_app():
 
     app = Flask(__name__, static_folder="../../frontend/artifacts", static_url_path="")
 
-    CORS(app)  # add CORS
+    secret_key = os.environ.get("FLASK_SECRET_KEY")
+    if _oauth_enabled() and not secret_key:
+        raise RuntimeError("FLASK_SECRET_KEY must be set when OAUTH_ENABLED=true.")
+    app.config["SECRET_KEY"] = secret_key or "dev-insecure-secret-oauth-disabled"
+    app.config["SESSION_COOKIE_NAME"] = "mentee_web_session"
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    app.config["SESSION_COOKIE_SECURE"] = os.environ.get("ENVIRONMENT") == "production"
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=14)
+
+    # Per-route CORS: cookie-bearing endpoints get the configured origins +
+    # credentials; OAuth bearer endpoints get wildcard since security comes
+    # from the access token itself (no cookie sent cross-origin to them).
+    cors_origins = _cors_origins()
+    CORS(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": cors_origins,
+                "supports_credentials": True,
+            },
+            r"/auth/*": {
+                "origins": cors_origins,
+                "supports_credentials": True,
+            },
+            r"/oauth/consent-request": {
+                "origins": cors_origins,
+                "supports_credentials": True,
+            },
+            r"/oauth/token": {"origins": "*"},
+            r"/oauth/userinfo": {"origins": "*"},
+            r"/oauth/revoke": {"origins": "*"},
+            r"/.well-known/*": {"origins": "*"},
+        },
+    )
 
     # logging
     formatter = RequestFormatter(
@@ -126,6 +170,14 @@ def create_app():
 
     app.register_blueprint(events.event, url_prefix="/api")
     app.register_blueprint(announcement.announcement, url_prefix="/api")
+
+    if _oauth_enabled():
+        from api.views import oauth as oauth_views
+        from api.utils.oauth_server import init_authorization_server
+
+        app.register_blueprint(oauth_views.oauth_bp, url_prefix="/oauth")
+        app.register_blueprint(oauth_views.wellknown_bp)
+        init_authorization_server(app)
 
     app.register_error_handler(Exception, all_exception_handler)
 

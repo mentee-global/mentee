@@ -1,7 +1,18 @@
-from flask import Blueprint, request
+import os
+
+from flask import Blueprint, request, session
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
-from api.models import db, Users, MentorProfile, Admin, PartnerProfile, Hub
+from api.models import (
+    db,
+    Users,
+    MentorProfile,
+    Admin,
+    PartnerProfile,
+    Hub,
+    OAuthAccessToken,
+    OAuthRefreshToken,
+)
 from api.core import create_response, logger
 from api.utils.constants import (
     USER_VERIFICATION_TEMPLATE,
@@ -11,6 +22,7 @@ from api.utils.constants import (
 )
 from api.utils.request_utils import send_email, get_profile_model
 from api.utils.firebase import client as firebase_client
+from api.utils.web_session import install_session_for_user
 
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
@@ -203,14 +215,18 @@ def login():
 
     firebase_admin_user = firebase_admin_auth.get_user(firebase_uid)
     profile_id = None
-    if not Users.objects(email=email):
-        user = Users(
+    user_doc = Users.objects(email=email).first()
+    if user_doc is None:
+        user_doc = Users(
             firebase_uid=firebase_uid,
             email=email,
             role="{}".format(role),
             verified=firebase_admin_user.email_verified,
         )
-        user.save()
+        user_doc.save()
+
+    if os.environ.get("OAUTH_ENABLED", "false").lower() == "true":
+        install_session_for_user(user_doc)
 
     try:
         if profile is None:
@@ -317,17 +333,40 @@ def send_forgot_password_email(email, preferred_language="en-US"):
         return create_response(status=500, message=msg)
 
 
+def _revoke_all_user_oauth_tokens(user_id: str) -> None:
+    OAuthRefreshToken.objects(user_id=user_id, revoked=False).update(set__revoked=True)
+    OAuthAccessToken.objects(user_id=user_id, revoked=False).update(set__revoked=True)
+
+
+def _bump_token_version_and_cascade(email: str) -> None:
+    user = Users.objects(email=email).first()
+    if not user:
+        return
+    user.token_version = (user.token_version or 0) + 1
+    user.save()
+    _revoke_all_user_oauth_tokens(str(user.id))
+
+
 @auth.route("/forgotPassword", methods=["POST"])
 def forgot_password():
     data = request.json
-    email = data.get("email", "")
+    email = (data.get("email") or "").strip().lower()
     preferred_language = data.get("preferred_language", "en-US")
 
     error = send_forgot_password_email(email, preferred_language)
 
+    if not error:
+        _bump_token_version_and_cascade(email)
+
     return (
         error and error or create_response(message="Sent password reset link to email")
     )
+
+
+@auth.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return create_response(message="Logged out")
 
 
 @auth.route("/refreshToken", methods=["POST"])

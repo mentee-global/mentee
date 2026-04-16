@@ -37,6 +37,11 @@ from .SignedDocs import SignedDocs
 from .Announcement import Announcement
 from .CommunityLibrary import CommunityLibrary
 from .BugReport import BugReport
+from .OAuthClient import OAuthClient
+from .OAuthAuthorizationCode import OAuthAuthorizationCode
+from .OAuthAccessToken import OAuthAccessToken
+from .OAuthRefreshToken import OAuthRefreshToken
+from .OAuthConsent import OAuthConsent
 
 __all__ = [
     "db",
@@ -75,6 +80,11 @@ __all__ = [
     "Announcement",
     "CommunityLibrary",
     "BugReport",
+    "OAuthClient",
+    "OAuthAuthorizationCode",
+    "OAuthAccessToken",
+    "OAuthRefreshToken",
+    "OAuthConsent",
 ]
 
 # You must import all of the new Models you create to this page

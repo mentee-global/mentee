@@ -19,5 +19,8 @@ class Users(Document, Mixin):
     expiration = DateTimeField()
     verified = BooleanField(required=True)
 
+    # OAuth: bumped on password reset to cascade-invalidate sessions + tokens
+    token_version = IntField(default=0)
+
     def __repr__(self):
         return f"<User id:{self.id} \n email:{self.email}>"

@@ -157,6 +157,13 @@ def _resolve_user_display(user_doc):
     return name or (user_doc.email.split("@")[0] if user_doc.email else "")
 
 
+def _resolve_user_picture(user_doc):
+    profile = _resolve_profile(user_doc)
+    if profile is None:
+        return None
+    return _picture_url(getattr(profile, "image", None))
+
+
 def _redirect_error_to_client(client, error, description, state):
     redirect_uri = request.args.get("redirect_uri")
     if not redirect_uri or not client or not client.check_redirect_uri(redirect_uri):
@@ -325,6 +332,7 @@ def consent_request():
                 "user": {
                     "name": _resolve_user_display(user_doc),
                     "email": user_doc.email,
+                    "picture": _resolve_user_picture(user_doc),
                 },
             }
         }

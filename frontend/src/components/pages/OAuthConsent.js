@@ -12,10 +12,26 @@ import axios from "axios";
 import { BASE_URL } from "utils/consts";
 
 const SCOPE_META = {
-  openid: { icon: <SafetyOutlined />, key: "consent.scope.openid" },
-  email: { icon: <MailOutlined />, key: "consent.scope.email" },
-  profile: { icon: <UserOutlined />, key: "consent.scope.profile" },
-  "mentee.role": { icon: <IdcardOutlined />, key: "consent.scope.role" },
+  openid: {
+    icon: <SafetyOutlined />,
+    key: "consent.scope.openid",
+    descriptionKey: "consent.scope.openid_description",
+  },
+  email: {
+    icon: <MailOutlined />,
+    key: "consent.scope.email",
+    descriptionKey: "consent.scope.email_description",
+  },
+  profile: {
+    icon: <UserOutlined />,
+    key: "consent.scope.profile",
+    descriptionKey: "consent.scope.profile_description",
+  },
+  "mentee.role": {
+    icon: <IdcardOutlined />,
+    key: "consent.scope.role",
+    descriptionKey: "consent.scope.role_description",
+  },
 };
 
 function OAuthConsent() {
@@ -71,12 +87,27 @@ function OAuthConsent() {
           <Typography.Title level={3} style={{ marginTop: 12 }}>
             {t("consent.title", { clientName: data.client_name })}
           </Typography.Title>
-          <Typography.Paragraph type="secondary">
-            {t("consent.signing_in_as", {
-              name: data.user?.name,
-              email: data.user?.email,
-            })}
-          </Typography.Paragraph>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              marginTop: 4,
+            }}
+          >
+            <Avatar
+              src={data.user?.picture || undefined}
+              icon={!data.user?.picture ? <UserOutlined /> : undefined}
+              size={32}
+            />
+            <Typography.Text type="secondary">
+              {t("consent.signing_in_as", {
+                name: data.user?.name,
+                email: data.user?.email,
+              })}
+            </Typography.Text>
+          </div>
         </div>
 
         <List
@@ -88,16 +119,22 @@ function OAuthConsent() {
             </strong>
           }
           dataSource={data.scopes || []}
-          renderItem={(s) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={SCOPE_META[s]?.icon ?? <SafetyOutlined />}
-                title={t(SCOPE_META[s]?.key ?? "consent.scope.custom", {
-                  scope: s,
-                })}
-              />
-            </List.Item>
-          )}
+          renderItem={(s) => {
+            const meta = SCOPE_META[s];
+            const descriptionKey = meta?.descriptionKey;
+            const description = descriptionKey
+              ? t(descriptionKey, { defaultValue: "" })
+              : "";
+            return (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={meta?.icon ?? <SafetyOutlined />}
+                  title={t(meta?.key ?? "consent.scope.custom", { scope: s })}
+                  description={description || undefined}
+                />
+              </List.Item>
+            );
+          }}
         />
 
         {/* Native HTML form so the browser follows the backend 303 → 302

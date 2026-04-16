@@ -638,5 +638,32 @@
     "generateToken": "غير قادر على توليد رمز",
     "joinPersonalMeeting":"الانضمام إلى اجتماع شخصي",
     "joinMeeting": "الانضمام إلى الاجتماع"
-  }  
+  },
+  "consent": {
+    "title": "{{clientName}} wants to access your Mentee account",
+    "signing_in_as": "Signing in as {{name}} ({{email}})",
+    "permissions_header": "This will give {{clientName}} permission to:",
+    "scope": {
+      "openid": "Verify your identity",
+      "email": "See your email address",
+      "profile": "See your name, photo, language, and time zone",
+      "role": "See your role on Mentee (mentee, mentor, etc.)",
+      "custom": "Access: {{scope}}"
+    },
+    "approve": "Approve",
+    "deny": "Deny",
+    "error": {
+      "missing_token": "This link is missing information. Please return to the app that sent you here.",
+      "invalid_token": "This sign-in link is invalid. Please start again from the app.",
+      "expired_token": "This sign-in link expired. Please start again from the app.",
+      "user_mismatch": "This link is tied to a different account. Log out and try again with the right account.",
+      "invalid_client": "The app that sent you here is no longer registered with Mentee.",
+      "login_required": "Please log in to continue."
+    }
+  },
+  "oauth_error": {
+    "title": "Something went wrong",
+    "body": "We couldn't complete the sign-in. Please try again or contact support.",
+    "back": "Back to Mentee"
+  }
 }

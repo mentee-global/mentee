@@ -638,5 +638,32 @@
     "generateToken": "No se puede generar el token",
     "joinPersonalMeeting":"Unirse a la reunión personal",
     "joinMeeting": "Unirse a la Reunión"
+  },
+  "consent": {
+    "title": "{{clientName}} quiere acceder a tu cuenta de Mentee",
+    "signing_in_as": "Iniciando sesión como {{name}} ({{email}})",
+    "permissions_header": "Esto le dará a {{clientName}} permiso para:",
+    "scope": {
+      "openid": "Verificar tu identidad",
+      "email": "Ver tu dirección de correo electrónico",
+      "profile": "Ver tu nombre, foto, idioma y zona horaria",
+      "role": "Ver tu rol en Mentee (mentee, mentor, etc.)",
+      "custom": "Acceso: {{scope}}"
+    },
+    "approve": "Aprobar",
+    "deny": "Denegar",
+    "error": {
+      "missing_token": "A este enlace le falta información. Vuelve a la aplicación que te envió aquí.",
+      "invalid_token": "Este enlace de inicio de sesión no es válido. Comienza de nuevo desde la aplicación.",
+      "expired_token": "Este enlace de inicio de sesión expiró. Comienza de nuevo desde la aplicación.",
+      "user_mismatch": "Este enlace está vinculado a otra cuenta. Cierra sesión e inténtalo con la cuenta correcta.",
+      "invalid_client": "La aplicación que te envió aquí ya no está registrada con Mentee.",
+      "login_required": "Por favor inicia sesión para continuar."
+    }
+  },
+  "oauth_error": {
+    "title": "Algo salió mal",
+    "body": "No pudimos completar el inicio de sesión. Inténtalo de nuevo o contacta a soporte.",
+    "back": "Volver a Mentee"
   }
 }

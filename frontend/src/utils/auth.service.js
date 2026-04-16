@@ -5,7 +5,20 @@ import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: AUTH_URL,
+  withCredentials: true,
 });
+
+export const isSafeOAuthNext = (next) =>
+  typeof next === "string" && next.startsWith("/oauth/");
+
+export const consumeNextParam = () => {
+  try {
+    const next = new URLSearchParams(window.location.search).get("next");
+    return isSafeOAuthNext(next) ? next : null;
+  } catch (_) {
+    return null;
+  }
+};
 
 const get = (url, params) =>
   instance
@@ -97,6 +110,11 @@ export const logout = async () => {
   localStorage.removeItem("support_user_id");
   localStorage.removeItem("profileId");
   localStorage.removeItem("direct_path");
+  try {
+    await instance.post("/logout");
+  } catch (err) {
+    // best-effort; Firebase signOut is the primary auth state change
+  }
   await fireauth
     .auth()
     .signOut()

@@ -10,6 +10,7 @@ import i18n from "./i18n";
 
 const instance = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
 });
 
 const authGet = async (url, config) =>

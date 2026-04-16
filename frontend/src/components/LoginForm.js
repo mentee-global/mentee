@@ -6,7 +6,11 @@ import { useTranslation } from "react-i18next";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
 import { checkProfileExists, checkStatusByEmail } from "utils/api";
-import { login, sendVerificationEmail } from "utils/auth.service";
+import {
+  consumeNextParam,
+  login,
+  sendVerificationEmail,
+} from "utils/auth.service";
 import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS, REDIRECTS } from "utils/consts";
 import fireauth from "utils/fireauth";
 import { fetchUser } from "features/userSlice";
@@ -145,6 +149,11 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           role,
         })
       );
+      const oauthNext = consumeNextParam();
+      if (oauthNext) {
+        window.location.href = oauthNext;
+        return;
+      }
       let direct_path = localStorage.getItem("direct_path");
       if (n50_flag) {
         localStorage.setItem("n50_user", true);

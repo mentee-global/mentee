@@ -173,10 +173,16 @@ def create_app():
 
     if _oauth_enabled():
         from api.views import oauth as oauth_views
+        from api.views import admin_oauth as admin_oauth_views
+        from api.views import connected_apps as connected_apps_views
         from api.utils.oauth_server import init_authorization_server
 
         app.register_blueprint(oauth_views.oauth_bp, url_prefix="/oauth")
         app.register_blueprint(oauth_views.wellknown_bp)
+        app.register_blueprint(admin_oauth_views.admin_oauth, url_prefix="/api/admin")
+        app.register_blueprint(
+            connected_apps_views.connected_apps, url_prefix="/api/user"
+        )
         init_authorization_server(app)
 
     app.register_error_handler(Exception, all_exception_handler)

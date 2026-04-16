@@ -4,6 +4,8 @@ import notificationsReducer from "features/notificationsSlice";
 import messagesReducer from "features/messagesSlice";
 import optionsReducer from "features/optionsSlice";
 import meetingPanelReducer from "features/meetingPanelSlice";
+import adminOauthClientsReducer from "features/adminOauthClientsSlice";
+import connectedAppsReducer from "features/connectedAppsSlice";
 
 export default configureStore({
   reducer: {
@@ -12,5 +14,7 @@ export default configureStore({
     messages: messagesReducer,
     options: optionsReducer,
     meetingPanel: meetingPanelReducer,
+    adminOauthClients: adminOauthClientsReducer,
+    connectedApps: connectedAppsReducer,
   },
 });

@@ -54,6 +54,10 @@ import AnnouncementDetail from "components/pages/AnnouncementDetail";
 import HubInviteLink from "components/pages/HubInviteLink";
 import OAuthConsent from "components/pages/OAuthConsent";
 import OAuthError from "components/pages/OAuthError";
+import AdminOAuthClients from "components/pages/AdminOAuthClients";
+import AdminOAuthClientDetail from "components/pages/AdminOAuthClientDetail";
+import ConnectedApps from "components/pages/ConnectedApps";
+import AdminRoute from "components/AdminRoute";
 import { useSelector } from "react-redux";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { fetchAccounts } from "utils/api";
@@ -791,6 +795,15 @@ function App() {
                 </PrivateRoute>
                 <PrivateRoute path="/createmeetinglink">
                   <CreateMeetingLink />
+                </PrivateRoute>
+                <AdminRoute path="/admin/oauth-clients" exact>
+                  <AdminOAuthClients />
+                </AdminRoute>
+                <AdminRoute path="/admin/oauth-clients/:clientId" exact>
+                  <AdminOAuthClientDetail />
+                </AdminRoute>
+                <PrivateRoute path="/settings/connected-apps" exact>
+                  <ConnectedApps />
                 </PrivateRoute>
                 {role == ACCOUNT_TYPE.HUB && <HubFooter />}
                 {n50Flag && <HubFooter />}

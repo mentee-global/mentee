@@ -1624,3 +1624,51 @@ export const deleteBugReportById = async (id) => {
     }
   );
 };
+
+// Admin - OAuth Clients
+export const fetchOAuthClients = async () => {
+  const res = await authGet("/admin/oauth-clients");
+  return res?.data?.result?.clients ?? [];
+};
+
+export const fetchOAuthClient = async (clientId) => {
+  const res = await authGet(`/admin/oauth-clients/${clientId}`);
+  return res?.data?.result?.client ?? null;
+};
+
+export const createOAuthClient = async (payload) => {
+  const res = await authPost("/admin/oauth-clients", payload);
+  return res?.data?.result ?? null;
+};
+
+export const updateOAuthClient = async (clientId, payload) => {
+  const res = await authPatch(`/admin/oauth-clients/${clientId}`, payload);
+  return res?.data?.result?.client ?? null;
+};
+
+export const rotateOAuthClientSecret = async (clientId) => {
+  const res = await authPost(
+    `/admin/oauth-clients/${clientId}/rotate-secret`,
+    {}
+  );
+  return res?.data?.result ?? null;
+};
+
+export const revokeOAuthClientTokens = async (clientId) => {
+  const res = await authPost(
+    `/admin/oauth-clients/${clientId}/revoke-all-tokens`,
+    {}
+  );
+  return res?.data?.result ?? null;
+};
+
+// User - Connected Apps (self-service)
+export const fetchConnectedApps = async () => {
+  const res = await authGet("/user/connected-apps");
+  return res?.data?.result?.connected_apps ?? [];
+};
+
+export const revokeConnectedApp = async (clientId) => {
+  const res = await authDelete(`/user/connected-apps/${clientId}`);
+  return res?.data?.result ?? null;
+};

@@ -14,6 +14,8 @@ import {
   LaptopOutlined,
   LinkOutlined,
   FileOutlined,
+  AppstoreOutlined,
+  SafetyCertificateOutlined,
 } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getLoginPath } from "utils/auth.service";
@@ -90,6 +92,11 @@ export default function useSidebars(userType, user, t) {
       key: "profile",
       icon: <UserOutlined />,
     },
+    {
+      label: t("connected_apps.title"),
+      key: "settings/connected-apps",
+      icon: <AppstoreOutlined />,
+    },
   ];
 
   const menteeSidebar = [
@@ -143,6 +150,11 @@ export default function useSidebars(userType, user, t) {
       key: "profile",
       icon: <UserOutlined />,
     },
+    {
+      label: t("connected_apps.title"),
+      key: "settings/connected-apps",
+      icon: <AppstoreOutlined />,
+    },
   ];
 
   const partnerSidebar = [
@@ -191,6 +203,11 @@ export default function useSidebars(userType, user, t) {
       label: t("sidebars.profile"),
       key: "profile",
       icon: <UserOutlined />,
+    },
+    {
+      label: t("connected_apps.title"),
+      key: "settings/connected-apps",
+      icon: <AppstoreOutlined />,
     },
   ];
 
@@ -410,6 +427,11 @@ export default function useSidebars(userType, user, t) {
       label: "Sign Docs",
       key: "admin-sign",
       icon: <FileOutlined />,
+    },
+    {
+      label: "OAuth Clients",
+      key: "admin/oauth-clients",
+      icon: <SafetyCertificateOutlined />,
     },
     {
       label: "Resources",

@@ -645,9 +645,13 @@
     "permissions_header": "Esto le dará a {{clientName}} permiso para:",
     "scope": {
       "openid": "Verificar tu identidad",
+      "openid_description": "Confirma quién eres para que la aplicación sepa que realmente eres tú.",
       "email": "Ver tu dirección de correo electrónico",
+      "email_description": "Usa tu correo para identificar tu cuenta en la aplicación.",
       "profile": "Ver tu nombre, foto, idioma y zona horaria",
+      "profile_description": "Personaliza la aplicación con tu nombre, avatar e idioma de Mentee.",
       "role": "Ver tu rol en Mentee (mentee, mentor, etc.)",
+      "role_description": "Saber si estás iniciando sesión como mentee, mentor, partner, etc., para mostrar la experiencia adecuada.",
       "custom": "Acceso: {{scope}}"
     },
     "approve": "Aprobar",
@@ -665,5 +669,85 @@
     "title": "Algo salió mal",
     "body": "No pudimos completar el inicio de sesión. Inténtalo de nuevo o contacta a soporte.",
     "back": "Volver a Mentee"
+  },
+  "admin_oauth": {
+    "title": "Clientes OAuth",
+    "new_client": "Nuevo cliente",
+    "refresh": "Actualizar",
+    "table": {
+      "name": "Nombre",
+      "client_id": "ID de cliente",
+      "redirect_uris": "URIs de redirección",
+      "scopes": "Permisos",
+      "status": "Estado",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "actions": "Acciones",
+      "first_party": "Primera parte",
+      "first_party_tip": "Los clientes de primera parte omiten la pantalla de consentimiento en autorizaciones repetidas."
+    },
+    "form": {
+      "client_id": "ID de cliente",
+      "client_id_required": "El ID de cliente es obligatorio",
+      "client_id_pattern": "Usa solo letras, números, '-', '_' o '.'",
+      "name": "Nombre visible",
+      "name_required": "El nombre es obligatorio",
+      "logo_url": "URL del logo",
+      "redirect_uris": "URIs de redirección",
+      "redirect_uris_required": "Agrega al menos una URI de redirección",
+      "redirect_uri_required": "La URI de redirección es obligatoria",
+      "redirect_uri_pattern": "Debe comenzar con http:// o https://",
+      "add_redirect_uri": "Agregar URI de redirección",
+      "allowed_scopes": "Permisos permitidos",
+      "allowed_scopes_required": "Agrega al menos un permiso",
+      "is_first_party": "Cliente de primera parte",
+      "is_active": "Activo",
+      "create": "Crear cliente",
+      "save": "Guardar cambios"
+    },
+    "detail": {
+      "back": "Volver a clientes",
+      "edit": "Editar",
+      "rotate_secret": "Rotar secreto",
+      "revoke_all_tokens": "Revocar todos los tokens",
+      "deactivate": "Desactivar",
+      "reactivate": "Reactivar",
+      "confirm_rotate": "Esto invalidará el secreto actual. Las aplicaciones desplegadas con el secreto anterior dejarán de funcionar hasta que se vuelvan a desplegar.",
+      "confirm_revoke_all": "Esto cerrará la sesión de cada usuario de {{clientName}}. Tendrán que iniciar sesión de nuevo.",
+      "confirm_deactivate": "Desactivar impide nuevos inicios de sesión. Las sesiones existentes continúan hasta que expiren.",
+      "token_auth_method": "Método de autenticación del endpoint de tokens",
+      "created_at": "Creado",
+      "updated_at": "Última actualización"
+    },
+    "secret_modal": {
+      "title": "Nuevo secreto de cliente",
+      "body": "Copia este secreto ahora. No podrás verlo de nuevo.",
+      "copy": "Copiar",
+      "copy_success": "Copiado al portapapeles",
+      "copy_error": "No se pudo copiar al portapapeles",
+      "confirm": "Lo he copiado",
+      "done": "Hecho"
+    },
+    "messages": {
+      "create_failed": "No se pudo crear el cliente.",
+      "saved": "Cambios guardados.",
+      "save_failed": "No se pudieron guardar los cambios.",
+      "rotate_failed": "No se pudo rotar el secreto.",
+      "revoke_failed": "No se pudieron revocar los tokens.",
+      "tokens_revoked": "Se revocaron {{count}} tokens."
+    }
+  },
+  "connected_apps": {
+    "title": "Aplicaciones conectadas",
+    "empty": "Aún no has conectado ninguna aplicación.",
+    "granted_on": "Conectado el {{date}}",
+    "last_used": "Usado por última vez {{date}}",
+    "scopes_label": "Permisos",
+    "revoke": "Revocar acceso",
+    "confirm_revoke": "{{clientName}} perderá el acceso a tu cuenta inmediatamente.",
+    "messages": {
+      "revoked": "Acceso revocado para {{clientName}}.",
+      "revoke_failed": "No se pudo revocar el acceso."
+    }
   }
 }

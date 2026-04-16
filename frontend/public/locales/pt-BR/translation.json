@@ -645,9 +645,13 @@
     "permissions_header": "Isto dará a {{clientName}} permissão para:",
     "scope": {
       "openid": "Verificar sua identidade",
+      "openid_description": "Confirma quem você é para que o aplicativo saiba que é realmente você.",
       "email": "Ver seu endereço de e-mail",
+      "email_description": "Use seu e-mail para identificar sua conta no aplicativo.",
       "profile": "Ver seu nome, foto, idioma e fuso horário",
+      "profile_description": "Personalize o aplicativo com seu nome, avatar e idioma do Mentee.",
       "role": "Ver seu papel no Mentee (mentee, mentor, etc.)",
+      "role_description": "Saber se você está entrando como mentee, mentor, partner, etc., para mostrar a experiência certa.",
       "custom": "Acesso: {{scope}}"
     },
     "approve": "Aprovar",
@@ -665,5 +669,85 @@
     "title": "Algo deu errado",
     "body": "Não conseguimos completar o login. Tente novamente ou contate o suporte.",
     "back": "Voltar ao Mentee"
+  },
+  "admin_oauth": {
+    "title": "Clientes OAuth",
+    "new_client": "Novo cliente",
+    "refresh": "Atualizar",
+    "table": {
+      "name": "Nome",
+      "client_id": "ID do cliente",
+      "redirect_uris": "URIs de redirecionamento",
+      "scopes": "Permissões",
+      "status": "Status",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "actions": "Ações",
+      "first_party": "Primeira parte",
+      "first_party_tip": "Clientes de primeira parte pulam a tela de consentimento em autorizações repetidas."
+    },
+    "form": {
+      "client_id": "ID do cliente",
+      "client_id_required": "O ID do cliente é obrigatório",
+      "client_id_pattern": "Use apenas letras, números, '-', '_' ou '.'",
+      "name": "Nome exibido",
+      "name_required": "O nome é obrigatório",
+      "logo_url": "URL do logo",
+      "redirect_uris": "URIs de redirecionamento",
+      "redirect_uris_required": "Adicione pelo menos uma URI de redirecionamento",
+      "redirect_uri_required": "A URI de redirecionamento é obrigatória",
+      "redirect_uri_pattern": "Deve começar com http:// ou https://",
+      "add_redirect_uri": "Adicionar URI de redirecionamento",
+      "allowed_scopes": "Permissões permitidas",
+      "allowed_scopes_required": "Adicione pelo menos uma permissão",
+      "is_first_party": "Cliente de primeira parte",
+      "is_active": "Ativo",
+      "create": "Criar cliente",
+      "save": "Salvar alterações"
+    },
+    "detail": {
+      "back": "Voltar aos clientes",
+      "edit": "Editar",
+      "rotate_secret": "Girar segredo",
+      "revoke_all_tokens": "Revogar todos os tokens",
+      "deactivate": "Desativar",
+      "reactivate": "Reativar",
+      "confirm_rotate": "Isto invalidará o segredo atual. Aplicativos implantados com o segredo antigo deixarão de funcionar até serem reimplantados.",
+      "confirm_revoke_all": "Isto desconectará todos os usuários de {{clientName}}. Eles terão que entrar novamente.",
+      "confirm_deactivate": "Desativar impede novos logins. Sessões existentes continuam até expirarem.",
+      "token_auth_method": "Método de autenticação do endpoint de token",
+      "created_at": "Criado",
+      "updated_at": "Última atualização"
+    },
+    "secret_modal": {
+      "title": "Novo segredo do cliente",
+      "body": "Copie este segredo agora. Você não poderá vê-lo novamente.",
+      "copy": "Copiar",
+      "copy_success": "Copiado para a área de transferência",
+      "copy_error": "Não foi possível copiar",
+      "confirm": "Eu copiei",
+      "done": "Concluído"
+    },
+    "messages": {
+      "create_failed": "Não foi possível criar o cliente.",
+      "saved": "Alterações salvas.",
+      "save_failed": "Não foi possível salvar as alterações.",
+      "rotate_failed": "Não foi possível girar o segredo.",
+      "revoke_failed": "Não foi possível revogar os tokens.",
+      "tokens_revoked": "{{count}} tokens revogados."
+    }
+  },
+  "connected_apps": {
+    "title": "Aplicativos conectados",
+    "empty": "Você ainda não conectou nenhum aplicativo.",
+    "granted_on": "Conectado em {{date}}",
+    "last_used": "Usado por último em {{date}}",
+    "scopes_label": "Permissões",
+    "revoke": "Revogar acesso",
+    "confirm_revoke": "{{clientName}} perderá o acesso à sua conta imediatamente.",
+    "messages": {
+      "revoked": "Acesso revogado para {{clientName}}.",
+      "revoke_failed": "Não foi possível revogar o acesso."
+    }
   }
 }

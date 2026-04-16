@@ -647,9 +647,13 @@
     "permissions_header": "This will give {{clientName}} permission to:",
     "scope": {
       "openid": "Verify your identity",
+      "openid_description": "Confirm who you are so the app knows it's really you.",
       "email": "See your email address",
+      "email_description": "Use your email to identify your account in the app.",
       "profile": "See your name, photo, language, and time zone",
+      "profile_description": "Personalize the app with your Mentee display name, avatar, and locale preferences.",
       "role": "See your role on Mentee (mentee, mentor, etc.)",
+      "role_description": "Know whether you're signing in as a mentee, mentor, partner, etc., to show the right experience.",
       "custom": "Access: {{scope}}"
     },
     "approve": "Approve",
@@ -667,5 +671,85 @@
     "title": "Something went wrong",
     "body": "We couldn't complete the sign-in. Please try again or contact support.",
     "back": "Back to Mentee"
+  },
+  "admin_oauth": {
+    "title": "OAuth clients",
+    "new_client": "New client",
+    "refresh": "Refresh",
+    "table": {
+      "name": "Name",
+      "client_id": "Client ID",
+      "redirect_uris": "Redirect URIs",
+      "scopes": "Scopes",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "actions": "Actions",
+      "first_party": "First-party",
+      "first_party_tip": "First-party clients skip the consent screen on repeat authorizations."
+    },
+    "form": {
+      "client_id": "Client ID",
+      "client_id_required": "Client ID is required",
+      "client_id_pattern": "Use letters, numbers, '-', '_', or '.' only",
+      "name": "Display name",
+      "name_required": "Name is required",
+      "logo_url": "Logo URL",
+      "redirect_uris": "Redirect URIs",
+      "redirect_uris_required": "Add at least one redirect URI",
+      "redirect_uri_required": "Redirect URI is required",
+      "redirect_uri_pattern": "Must start with http:// or https://",
+      "add_redirect_uri": "Add redirect URI",
+      "allowed_scopes": "Allowed scopes",
+      "allowed_scopes_required": "Add at least one allowed scope",
+      "is_first_party": "First-party client",
+      "is_active": "Active",
+      "create": "Create client",
+      "save": "Save changes"
+    },
+    "detail": {
+      "back": "Back to clients",
+      "edit": "Edit",
+      "rotate_secret": "Rotate secret",
+      "revoke_all_tokens": "Revoke all tokens",
+      "deactivate": "Deactivate",
+      "reactivate": "Reactivate",
+      "confirm_rotate": "This will invalidate the current secret. Deployed apps using the old secret will stop working until redeployed.",
+      "confirm_revoke_all": "This will log out every user of {{clientName}}. They'll need to sign in again.",
+      "confirm_deactivate": "Deactivating prevents new logins. Existing sessions continue until they expire.",
+      "token_auth_method": "Token endpoint auth method",
+      "created_at": "Created",
+      "updated_at": "Last updated"
+    },
+    "secret_modal": {
+      "title": "New client secret",
+      "body": "Copy this secret now. You won't be able to see it again.",
+      "copy": "Copy",
+      "copy_success": "Copied to clipboard",
+      "copy_error": "Could not copy to clipboard",
+      "confirm": "I've copied it",
+      "done": "Done"
+    },
+    "messages": {
+      "create_failed": "Could not create client.",
+      "saved": "Changes saved.",
+      "save_failed": "Could not save changes.",
+      "rotate_failed": "Could not rotate secret.",
+      "revoke_failed": "Could not revoke tokens.",
+      "tokens_revoked": "Revoked {{count}} tokens."
+    }
+  },
+  "connected_apps": {
+    "title": "Connected apps",
+    "empty": "You haven't connected any apps yet.",
+    "granted_on": "Connected on {{date}}",
+    "last_used": "Last used {{date}}",
+    "scopes_label": "Permissions",
+    "revoke": "Revoke access",
+    "confirm_revoke": "{{clientName}} will immediately lose access to your account.",
+    "messages": {
+      "revoked": "Access for {{clientName}} revoked.",
+      "revoke_failed": "Could not revoke access."
+    }
   }
 }

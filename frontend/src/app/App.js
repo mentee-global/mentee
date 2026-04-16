@@ -52,6 +52,8 @@ import Events from "components/pages/Events";
 import Announcements from "components/pages/Announcements";
 import AnnouncementDetail from "components/pages/AnnouncementDetail";
 import HubInviteLink from "components/pages/HubInviteLink";
+import OAuthConsent from "components/pages/OAuthConsent";
+import OAuthError from "components/pages/OAuthError";
 import { useSelector } from "react-redux";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { fetchAccounts } from "utils/api";
@@ -148,7 +150,14 @@ function App() {
           <Initiator />
           <Layout hasSider style={{ position: "relative", height: "100%" }}>
             {role && <NavigationSider />}
-            <Content style={{ display: role && "none" }}>
+            <Content
+              style={{
+                display:
+                  role &&
+                  !window.location.pathname.startsWith("/oauth/") &&
+                  "none",
+              }}
+            >
               <HomeLayout ignoreHomeLayout={role} allHubData={allHubData}>
                 <PublicRoute exact path="/">
                   <Home />
@@ -237,6 +246,12 @@ function App() {
                 })}
                 <PublicRoute path="/forgot-password">
                   <ForgotPassword />
+                </PublicRoute>
+                <PublicRoute path="/oauth/consent" exact>
+                  <OAuthConsent />
+                </PublicRoute>
+                <PublicRoute path="/oauth/error" exact>
+                  <OAuthError />
                 </PublicRoute>
               </HomeLayout>
             </Content>

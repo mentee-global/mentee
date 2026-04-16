@@ -11,16 +11,20 @@ function PublicRoute({ children, ...rest }) {
     if (!login_path) login_path = "";
   }
   var announcement_detail_flag = false;
+  var oauth_flag = false;
   var path = rest.path;
   if (path.indexOf("/announcement/") > -1) {
     announcement_detail_flag = true;
+  }
+  if (path.indexOf("/oauth/") > -1) {
+    oauth_flag = true;
   }
 
   return (
     <Route
       {...rest}
       render={() =>
-        !role || announcement_detail_flag ? (
+        !role || announcement_detail_flag || oauth_flag ? (
           children
         ) : (
           <Redirect

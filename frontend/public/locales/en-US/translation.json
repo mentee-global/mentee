@@ -729,7 +729,23 @@
       "whitelist_open": "Open to all logged-in users",
       "whitelist_no_users": "No specific users whitelisted",
       "created_at": "Created",
-      "updated_at": "Last updated"
+      "updated_at": "Last updated",
+      "delete": "Delete client",
+      "delete_tip": "Permanently delete this client and all its tokens, codes, and consents.",
+      "delete_disabled_tip": "Deactivate the client before you can delete it.",
+      "delete_step1_title": "Delete this client?",
+      "delete_step1_description": "This is permanent. You'll confirm once more on the next screen.",
+      "delete_step1_ok": "Continue",
+      "delete_step1_cancel": "Cancel",
+      "delete_modal_title": "Delete {{clientName}} — this cannot be undone",
+      "delete_modal_warning_title": "You are about to permanently delete this OAuth client.",
+      "delete_modal_warning_1": "Every deployed app using this client_id will stop working immediately.",
+      "delete_modal_warning_2": "All access tokens, refresh tokens, authorization codes, and user consents for this client will be deleted from the database.",
+      "delete_modal_warning_3": "Users who connected through this client will no longer see it in their Connected Apps page, but their existing sessions from other apps stay intact.",
+      "delete_modal_warning_4": "Recreating a client with the same client_id is allowed, but the client secret will be different and existing deployments will still be broken until redeployed.",
+      "delete_modal_type_prompt": "Type the client_id to confirm:",
+      "delete_modal_ok": "Delete permanently",
+      "delete_modal_cancel": "Keep client"
     },
     "secret_modal": {
       "title": "New client secret",
@@ -746,7 +762,9 @@
       "save_failed": "Could not save changes.",
       "rotate_failed": "Could not rotate secret.",
       "revoke_failed": "Could not revoke tokens.",
-      "tokens_revoked": "Revoked {{count}} tokens."
+      "tokens_revoked": "Revoked {{count}} tokens.",
+      "client_deleted": "Client {{clientId}} deleted along with {{count}} related records.",
+      "delete_failed": "Could not delete client."
     }
   },
   "connected_apps": {

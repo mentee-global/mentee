@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
   Card,
   Descriptions,
   Form,
+  Input,
   Modal,
   Popconfirm,
   Space,
@@ -15,7 +17,9 @@ import {
 } from "antd";
 import {
   ArrowLeftOutlined,
+  DeleteOutlined,
   EditOutlined,
+  ExclamationCircleFilled,
   ReloadOutlined,
   StopOutlined,
   CheckCircleOutlined,
@@ -27,6 +31,7 @@ import { useTranslation } from "react-i18next";
 
 import {
   clearLastCreatedSecret,
+  deleteClient,
   fetchOne,
   revokeAllTokens,
   rotateSecret,
@@ -50,6 +55,9 @@ function AdminOAuthClientDetail() {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [whitelistUserDetails, setWhitelistUserDetails] = useState([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
   const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
@@ -138,6 +146,35 @@ function AdminOAuthClientDetail() {
     }
   };
 
+  const openDeleteModal = () => {
+    setDeleteConfirmText("");
+    setDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await dispatch(deleteClient(clientId)).unwrap();
+      const total =
+        (res?.access_tokens_deleted || 0) +
+        (res?.refresh_tokens_deleted || 0) +
+        (res?.authorization_codes_deleted || 0) +
+        (res?.consents_deleted || 0);
+      messageApi.success(
+        t("admin_oauth.messages.client_deleted", {
+          clientId,
+          count: total,
+        })
+      );
+      setDeleteModalOpen(false);
+      history.push("/admin/oauth-clients");
+    } catch (err) {
+      messageApi.error(err?.message || t("admin_oauth.messages.delete_failed"));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleToggleActive = async () => {
     try {
       await dispatch(
@@ -221,6 +258,31 @@ function AdminOAuthClientDetail() {
                 {t("admin_oauth.detail.reactivate")}
               </Button>
             )}
+            <Tooltip
+              title={
+                client.is_active
+                  ? t("admin_oauth.detail.delete_disabled_tip")
+                  : t("admin_oauth.detail.delete_tip")
+              }
+            >
+              <Popconfirm
+                title={t("admin_oauth.detail.delete_step1_title")}
+                description={t("admin_oauth.detail.delete_step1_description")}
+                onConfirm={openDeleteModal}
+                okText={t("admin_oauth.detail.delete_step1_ok")}
+                okButtonProps={{ danger: true }}
+                cancelText={t("admin_oauth.detail.delete_step1_cancel")}
+                disabled={client.is_active}
+              >
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  disabled={client.is_active}
+                >
+                  {t("admin_oauth.detail.delete")}
+                </Button>
+              </Popconfirm>
+            </Tooltip>
           </Space>
         }
       >
@@ -325,6 +387,60 @@ function AdminOAuthClientDetail() {
         clientName={client.client_name}
         onClose={() => dispatch(clearLastCreatedSecret())}
       />
+
+      <Modal
+        open={deleteModalOpen}
+        onCancel={() => (deleting ? null : setDeleteModalOpen(false))}
+        title={
+          <Space>
+            <ExclamationCircleFilled style={{ color: "#ff4d4f" }} />
+            <span>
+              {t("admin_oauth.detail.delete_modal_title", {
+                clientName: client.client_name,
+              })}
+            </span>
+          </Space>
+        }
+        okText={t("admin_oauth.detail.delete_modal_ok")}
+        cancelText={t("admin_oauth.detail.delete_modal_cancel")}
+        okButtonProps={{
+          danger: true,
+          disabled: deleteConfirmText !== client.client_id || deleting,
+          loading: deleting,
+        }}
+        cancelButtonProps={{ disabled: deleting }}
+        onOk={handleDelete}
+        maskClosable={false}
+        closable={!deleting}
+        destroyOnClose
+      >
+        <Space direction="vertical" size={12} style={{ width: "100%" }}>
+          <Alert
+            type="error"
+            showIcon
+            message={t("admin_oauth.detail.delete_modal_warning_title")}
+            description={
+              <ul style={{ margin: 0, paddingLeft: 20 }}>
+                <li>{t("admin_oauth.detail.delete_modal_warning_1")}</li>
+                <li>{t("admin_oauth.detail.delete_modal_warning_2")}</li>
+                <li>{t("admin_oauth.detail.delete_modal_warning_3")}</li>
+                <li>{t("admin_oauth.detail.delete_modal_warning_4")}</li>
+              </ul>
+            }
+          />
+          <Typography.Text>
+            {t("admin_oauth.detail.delete_modal_type_prompt")}{" "}
+            <Typography.Text code>{client.client_id}</Typography.Text>
+          </Typography.Text>
+          <Input
+            placeholder={client.client_id}
+            value={deleteConfirmText}
+            onChange={(e) => setDeleteConfirmText(e.target.value)}
+            disabled={deleting}
+            autoComplete="off"
+          />
+        </Space>
+      </Modal>
     </div>
   );
 }

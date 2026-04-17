@@ -16,7 +16,9 @@ from api.models import (
     MenteeProfile,
     MentorProfile,
     OAuthAccessToken,
+    OAuthAuthorizationCode,
     OAuthClient,
+    OAuthConsent,
     OAuthRefreshToken,
     PartnerProfile,
     Users,
@@ -344,6 +346,66 @@ def revoke_all_oauth_client_tokens(client_id):
         data={
             "access_tokens_revoked": int(access_updated or 0),
             "refresh_tokens_revoked": int(refresh_updated or 0),
+        }
+    )
+
+
+@admin_oauth.route("/oauth-clients/<string:client_id>", methods=["DELETE"])
+@admin_only
+def delete_oauth_client_route(client_id):
+    """Hard-delete a client plus all its grant/consent/token records.
+
+    Guardrails:
+    - Client must be `is_active=false` first. Forces admins to deactivate
+      (and notice the blast radius in real traffic) before destroying.
+    - Admin must echo the `client_id` in the request body as
+      `{"confirm_client_id": "<id>"}` to confirm intent.
+    - All dependent documents are removed in a best-effort cascade; counts
+      are returned for audit.
+    """
+    client = OAuthClient.objects(client_id=client_id).first()
+    if not client:
+        return create_response(status=404, message="client not found")
+
+    if client.is_active:
+        return create_response(
+            status=409,
+            message=(
+                "Client must be deactivated before deletion. "
+                "Set is_active=false first."
+            ),
+        )
+
+    data = request.get_json(silent=True) or {}
+    confirm = (data.get("confirm_client_id") or "").strip()
+    if confirm != client_id:
+        return create_response(
+            status=400,
+            message=(
+                "confirm_client_id must match the client_id being deleted. "
+                "This is a destructive action."
+            ),
+        )
+
+    access_deleted = OAuthAccessToken.objects(client_id=client_id).delete()
+    refresh_deleted = OAuthRefreshToken.objects(client_id=client_id).delete()
+    codes_deleted = OAuthAuthorizationCode.objects(client_id=client_id).delete()
+    consents_deleted = OAuthConsent.objects(client_id=client_id).delete()
+    client.delete()
+
+    logger.info(
+        f"Deleted OAuth client {client_id} "
+        f"(access={access_deleted} refresh={refresh_deleted} "
+        f"codes={codes_deleted} consents={consents_deleted})"
+    )
+    return create_response(
+        data={
+            "deleted": True,
+            "client_id": client_id,
+            "access_tokens_deleted": int(access_deleted or 0),
+            "refresh_tokens_deleted": int(refresh_deleted or 0),
+            "authorization_codes_deleted": int(codes_deleted or 0),
+            "consents_deleted": int(consents_deleted or 0),
         }
     )
 

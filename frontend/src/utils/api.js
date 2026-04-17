@@ -1662,6 +1662,13 @@ export const revokeOAuthClientTokens = async (clientId) => {
   return res?.data?.result ?? null;
 };
 
+export const deleteOAuthClient = async (clientId) => {
+  const res = await authDelete(`/admin/oauth-clients/${clientId}`, {
+    data: { confirm_client_id: clientId },
+  });
+  return res?.data?.result ?? null;
+};
+
 // Admin - User search (whitelist picker)
 export const fetchAdminUserSearch = async ({ q, limit = 20 } = {}) => {
   const query = new URLSearchParams();

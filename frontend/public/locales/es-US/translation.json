@@ -727,7 +727,23 @@
       "whitelist_open": "Abierto a todos los usuarios autenticados",
       "whitelist_no_users": "Sin usuarios específicos en la lista",
       "created_at": "Creado",
-      "updated_at": "Última actualización"
+      "updated_at": "Última actualización",
+      "delete": "Eliminar cliente",
+      "delete_tip": "Elimina permanentemente este cliente y todos sus tokens, códigos y consentimientos.",
+      "delete_disabled_tip": "Desactiva el cliente antes de poder eliminarlo.",
+      "delete_step1_title": "¿Eliminar este cliente?",
+      "delete_step1_description": "Esta acción es permanente. Tendrás que confirmar una vez más en la siguiente pantalla.",
+      "delete_step1_ok": "Continuar",
+      "delete_step1_cancel": "Cancelar",
+      "delete_modal_title": "Eliminar {{clientName}} — esta acción es irreversible",
+      "delete_modal_warning_title": "Estás a punto de eliminar permanentemente este cliente OAuth.",
+      "delete_modal_warning_1": "Toda aplicación desplegada que use este client_id dejará de funcionar inmediatamente.",
+      "delete_modal_warning_2": "Se eliminarán de la base de datos todos los tokens de acceso, tokens de refresh, códigos de autorización y consentimientos de usuario de este cliente.",
+      "delete_modal_warning_3": "Los usuarios que conectaron con este cliente ya no lo verán en su página de Aplicaciones Conectadas, pero sus sesiones activas en otras aplicaciones no se ven afectadas.",
+      "delete_modal_warning_4": "Puedes recrear un cliente con el mismo client_id, pero el secreto será distinto y los despliegues existentes seguirán rotos hasta redesplegarlos.",
+      "delete_modal_type_prompt": "Escribe el client_id para confirmar:",
+      "delete_modal_ok": "Eliminar permanentemente",
+      "delete_modal_cancel": "Conservar cliente"
     },
     "secret_modal": {
       "title": "Nuevo secreto de cliente",
@@ -744,7 +760,9 @@
       "save_failed": "No se pudieron guardar los cambios.",
       "rotate_failed": "No se pudo rotar el secreto.",
       "revoke_failed": "No se pudieron revocar los tokens.",
-      "tokens_revoked": "Se revocaron {{count}} tokens."
+      "tokens_revoked": "Se revocaron {{count}} tokens.",
+      "client_deleted": "Cliente {{clientId}} eliminado junto con {{count}} registros relacionados.",
+      "delete_failed": "No se pudo eliminar el cliente."
     }
   },
   "connected_apps": {

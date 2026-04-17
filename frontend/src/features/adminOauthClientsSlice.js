@@ -6,6 +6,7 @@ import {
   updateOAuthClient,
   rotateOAuthClientSecret,
   revokeOAuthClientTokens,
+  deleteOAuthClient,
 } from "utils/api";
 
 export const fetchAll = createAsyncThunk(
@@ -41,6 +42,14 @@ export const revokeAllTokens = createAsyncThunk(
   async (clientId) => {
     const res = await revokeOAuthClientTokens(clientId);
     return { clientId, ...res };
+  }
+);
+
+export const deleteClient = createAsyncThunk(
+  "adminOauthClients/delete",
+  async (clientId) => {
+    const res = await deleteOAuthClient(clientId);
+    return { clientId, ...(res || {}) };
   }
 );
 
@@ -136,6 +145,12 @@ const adminOauthClientsSlice = createSlice({
       .addCase(revokeAllTokens.fulfilled, () => {
         // No state change; tokens live in backend. Caller may show a
         // toast based on the fulfilled action.
+      })
+      .addCase(deleteClient.fulfilled, (state, action) => {
+        const clientId = action.payload?.clientId;
+        if (!clientId) return;
+        state.list = state.list.filter((c) => c.client_id !== clientId);
+        delete state.byId[clientId];
       });
   },
 });

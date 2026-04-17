@@ -38,6 +38,11 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
   const onFinish = async ({ email, password }) => {
     if (role == null) return;
     setLoading(true);
+    // Capture ?next= BEFORE any async work. Once login() sets
+    // localStorage.role, PublicRoute on this /login route redirects to
+    // REDIRECTS[role], which strips the query string before our
+    // post-login onAuthStateChanged callback can read it.
+    const oauthNextCaptured = consumeNextParam();
     email = email.toLowerCase();
 
     // Non-admin checking for status of account
@@ -154,12 +159,8 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           role,
         })
       );
-      const oauthNext = consumeNextParam();
-      if (oauthNext) {
-        // oauthNext is a path like /oauth/authorize?... — send to the
-        // backend origin. In prod backend + frontend share an origin
-        // so BASE_URL just prepends the scheme+host.
-        window.location.href = BASE_URL.replace(/\/$/, "") + oauthNext;
+      if (oauthNextCaptured) {
+        window.location.href = BASE_URL.replace(/\/$/, "") + oauthNextCaptured;
         return;
       }
       let direct_path = localStorage.getItem("direct_path");

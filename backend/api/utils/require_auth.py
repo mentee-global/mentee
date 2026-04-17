@@ -13,15 +13,20 @@ def verify_user(required_role):
     headers = request.headers
     role = None
 
+    token = headers.get("Authorization")
+    if not token:
+        return UNAUTHORIZED, create_response(
+            status=401, message="Missing Authorization header"
+        )
     try:
-        token = headers.get("Authorization")
         claims = firebase_admin_auth.verify_id_token(token)
         role = claims.get("role")
     except Exception as e:
-        msg = "Error parsing JWT token -- not included in header or invalid token"
-        logger.info(msg)
-        logger.info(e)
-        return UNAUTHORIZED, create_response(status=500, message=msg)
+        # A bad/expired/revoked token is a client auth failure, not a server
+        # fault. Returning 401 lets clients trigger their refresh-and-retry
+        # flow instead of showing a red-alert 500.
+        logger.info(f"Rejected auth: {e}")
+        return UNAUTHORIZED, create_response(status=401, message="Invalid token")
 
     if (
         required_role == ALL_USERS

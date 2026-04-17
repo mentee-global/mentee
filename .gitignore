@@ -31,3 +31,9 @@ CLAUDE.md
 
 # Git
 .worktreeinclude
+
+# Playwright
+playwright-report/
+test-results/
+.playwright/
+.playwright-mcp/

@@ -221,17 +221,22 @@ class S256OnlyCodeChallenge(CodeChallenge):
     # and the method, leaving PKCE effectively optional. Reject any request
     # without a challenge; restricting SUPPORTED_CODE_CHALLENGE_METHOD to
     # ["S256"] makes the parent reject any other method.
+    #
+    # Variadic signature keeps us compatible across Authlib versions: 1.3
+    # calls `validate_code_challenge(grant)` while 1.6+ passes an additional
+    # argument. Forwarding *args to super handles both without pinning.
 
     DEFAULT_CODE_CHALLENGE_METHOD = "S256"
     SUPPORTED_CODE_CHALLENGE_METHOD = ["S256"]
 
-    def validate_code_challenge(self, grant):
+    def validate_code_challenge(self, *args, **kwargs):
         from authlib.oauth2.rfc6749.errors import InvalidRequestError
 
-        challenge = grant.request.data.get("code_challenge")
+        grant = args[0] if args else kwargs.get("grant")
+        challenge = grant.request.data.get("code_challenge") if grant else None
         if self.required and not challenge:
             raise InvalidRequestError("Missing 'code_challenge'")
-        super().validate_code_challenge(grant)
+        super().validate_code_challenge(*args, **kwargs)
 
 
 authorization = AuthorizationServer(

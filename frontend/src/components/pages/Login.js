@@ -80,32 +80,22 @@ function Login({ location }) {
   `;
 
   const onClickRole = (role) => {
-    // setRole(role);
-    // setCurrent(StepNumeration.login);
+    // Preserve the current query string (notably ?next=/oauth/... for the
+    // OAuth login flow) when picking a role.
+    const search = location?.search || "";
+    const go = (path) => history.push(`${path}${search}`);
     switch (role) {
       case ACCOUNT_TYPE.MENTOR:
-        if (n50_flag) {
-          history.push("/n50/mentor/login");
-        } else {
-          history.push("/mentor/login");
-        }
+        go(n50_flag ? "/n50/mentor/login" : "/mentor/login");
         break;
       case ACCOUNT_TYPE.MENTEE:
-        if (n50_flag) {
-          history.push("/n50/mentee/login");
-        } else {
-          history.push("/mentee/login");
-        }
+        go(n50_flag ? "/n50/mentee/login" : "/mentee/login");
         break;
       case ACCOUNT_TYPE.PARTNER:
-        if (n50_flag) {
-          history.push("/n50/partner/login");
-        } else {
-          history.push("/partner/login");
-        }
+        go(n50_flag ? "/n50/partner/login" : "/partner/login");
         break;
       case ACCOUNT_TYPE.GUEST:
-        history.push("/readonly/login");
+        go("/readonly/login");
         break;
       default:
         break;
@@ -124,11 +114,8 @@ function Login({ location }) {
     } else if (newStep !== StepNumeration.login) {
       setCurrent(newStep);
       setRole(null);
-      if (n50_flag) {
-        history.push("/n50/login");
-      } else {
-        history.push("/login");
-      }
+      const search = location?.search || "";
+      history.push(`${n50_flag ? "/n50/login" : "/login"}${search}`);
     }
   };
 

@@ -19,7 +19,6 @@ function Profile() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
-  const [onEdit, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm();
@@ -50,35 +49,6 @@ function Profile() {
     addTakingAppointments();
   }, [user]);
 
-  function renderContactInfo() {
-    return (
-      <div>
-        {user.email && (
-          <div>
-            <MailOutlined className="mentor-profile-contact-icon" />
-            {user.email}
-            <br />
-          </div>
-        )}
-        {user.phone_number && !isPartner && (
-          <div>
-            <PhoneOutlined className="mentor-profile-contact-icon" />
-            {user.phone_number}
-            <br />
-          </div>
-        )}
-        <br />
-        <a
-          href="#"
-          onClick={() => setEditing(true)}
-          className="mentor-profile-contact-edit"
-        >
-          {t("profile.edit")}
-        </a>
-      </div>
-    );
-  }
-
   const validateMessages = {
     types: {
       email: t("profile.validateEmail"),
@@ -99,7 +69,6 @@ function Profile() {
       handleSaveEdits();
     }
 
-    setEditing(false);
     saveEdits();
   };
 
@@ -108,7 +77,7 @@ function Profile() {
       <Form
         form={form}
         name="nest-messages"
-        layout="inline"
+        layout="vertical"
         onFinish={onFinish}
         validateMessages={validateMessages}
         initialValues={{
@@ -117,18 +86,16 @@ function Profile() {
           email_notifications: user.email_notifications,
           text_notifications: user.text_notifications,
         }}
+        className="profile-contact-form"
       >
         <div className="mentor-profile-input">
           <MailOutlined className="mentor-profile-contact-icon" />
           <Form.Item
             name="email"
-            rules={[
-              {
-                type: "email",
-              },
-            ]}
+            rules={[{ type: "email" }]}
+            className="profile-contact-field"
           >
-            <Input />
+            <Input placeholder={t("common.email")} />
           </Form.Item>
         </div>
         {!isPartner && (
@@ -136,13 +103,10 @@ function Profile() {
             <PhoneOutlined className="mentor-profile-contact-icon" />
             <Form.Item
               name="phone"
-              rules={[
-                {
-                  min: 10,
-                },
-              ]}
+              rules={[{ min: 10 }]}
+              className="profile-contact-field"
             >
-              <Input />
+              <Input placeholder={t("common.phoneNumber")} />
             </Form.Item>
           </div>
         )}
@@ -153,25 +117,22 @@ function Profile() {
               <div className="modal-mentee-availability-switch-text">
                 {t("profile.emailNotifications")}
               </div>
-              <Form.Item name="email_notifications">
-                <Switch
-                  size="small"
-                  defaultChecked={user.email_notifications}
-                />
+              <Form.Item name="email_notifications" valuePropName="checked">
+                <Switch size="small" />
               </Form.Item>
             </div>
             <div className="modal-mentee-availability-switch">
               <div className="modal-mentee-availability-switch-text">
                 {t("profile.textNotifications")}
               </div>
-              <Form.Item name="text_notifications">
-                <Switch size="small" defaultChecked={user.text_notifications} />
+              <Form.Item name="text_notifications" valuePropName="checked">
+                <Switch size="small" />
               </Form.Item>
             </div>
           </div>
           <div className="mentor-profile-save-container">
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" block>
                 {t("common.save")}
               </Button>
             </Form.Item>
@@ -190,23 +151,24 @@ function Profile() {
       ) : (
         <div className="background-color-strip">
           <div className="mentor-profile-content">
-            <Avatar
-              size={120}
-              src={user.image && user.image.url}
-              icon={<UserOutlined />}
-            />
-            {isMentor && (
-              <>
-                <Switch
-                  style={{ marginLeft: "5%", marginRight: "10px" }}
-                  size="small"
-                  checked={user.paused_flag}
-                  // handleClick={handleClick}
-                  onChange={(e) => changePausedFlag(e)}
-                />
-                <label>Paused</label>
-              </>
-            )}
+            <div className="profile-header-card">
+              <Avatar
+                className="profile-header-avatar"
+                size={120}
+                src={user.image && user.image.url}
+                icon={<UserOutlined />}
+              />
+              {isMentor && (
+                <div className="profile-header-pause">
+                  <Switch
+                    size="small"
+                    checked={user.paused_flag}
+                    onChange={(e) => changePausedFlag(e)}
+                  />
+                  <label className="profile-header-pause-label">Paused</label>
+                </div>
+              )}
+            </div>
             <div className="mentor-profile-content-flexbox">
               <div className="mentor-profile-info">
                 <ProfileContent
@@ -227,7 +189,7 @@ function Profile() {
                 <div className="mentor-profile-contact-header">
                   {t("profile.contactInfo")}
                 </div>
-                {onEdit ? renderEditInfo() : renderContactInfo()}
+                {renderEditInfo()}
               </div>
             </div>
           </div>

@@ -1,24 +1,157 @@
 @import "_app";
 
-.mentor-profile-content-flexbox {
-  display: flex;
-  flex-direction: column;
-  padding: 2%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-// TODO: Fix this. It is currently a temp fix for hidden edit
-.mentor-profile-contact {
-  margin-bottom: 3.5em;
+.background-color-strip {
+  min-height: 100vh;
+  padding: 16px 0 48px;
 }
 
 .profile-loading {
   display: flex;
   height: 100%;
+  min-height: 60vh;
   align-items: center;
   justify-content: center;
 }
+
+.mentor-profile-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.profile-header-card {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.profile-header-avatar {
+  border: 4px solid #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background-color: $theme-orange-light;
+  color: $theme-orange-dark;
+}
+
+.profile-header-pause {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: $theme-orange-light;
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+
+.profile-header-pause-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: $theme-orange-dark;
+  margin: 0;
+}
+
+.mentor-profile-content-flexbox {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mentor-profile-info {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+}
+
+.mentor-profile-contact {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  align-self: flex-start;
+}
+
+.mentor-profile-contact-header {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 2px solid $theme-orange-light;
+}
+
+.mentor-profile-contact-icon {
+  color: $theme-orange-dark;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.profile-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-contact-field {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.mentor-profile-input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mentor-profile-editing-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.mentor-profile-notifications-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mentor-profile-save-container {
+  display: flex;
+  width: 100%;
+
+  .ant-form-item {
+    width: 100%;
+    margin-bottom: 0;
+  }
+}
+
+.modal-mentee-availability-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+}
+
+.modal-mentee-availability-switch-text {
+  font-size: 14px;
+  color: #495057;
+}
+
+// ProfileContent shared classes
 .mentor-profile-about {
   word-wrap: break-word;
   line-height: 1.6;
@@ -26,7 +159,7 @@
 }
 
 .mentor-profile-heading {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #212529;
   margin: 16px 0 8px 0;
@@ -36,237 +169,196 @@
   width: fit-content;
 }
 
-.mentor-profile-contact-icon {
-  margin-top: 6px;
-  margin-right: 2%;
+.mentor-profile-name {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 22px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
+.mentor-profile-decorations {
+  display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-@media (max-width: 768px) {
-  .mentor-profile-content-flexbox {
-    padding: 1rem;
-  }
+.mentor-profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-  .mentor-profile-contact {
-    margin-top: 4px;
-  }
+.mentor-profile-book-appt-btn,
+.mentor-profile-send-msg-btn {
+  display: flex;
+}
 
-  .mentor-profile-button {
-    margin-top: 1rem;
-  }
+.mentor-profile-button {
+  display: flex;
+}
 
-  .mentor-profile-heading {
-    margin: 12px 0 6px 0;
-    font-size: 16px;
-  }
+.mentor-profile-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
 
-  .mentor-profile-name {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    font-size: 20px;
-  }
+.mentor-profile-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 0;
+  background-color: transparent;
+  border: none;
+  color: #495057;
+  font-size: 14px;
+}
 
-  .mentor-profile-decorations {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+.mentor-profile-tag-icon {
+  margin-right: 8px;
+  color: #6c757d;
+}
 
-  .mentor-profile-actions {
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-  }
+.mentor-specialization-tag {
+  background-color: #800020;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-weight: 500;
+  font-size: 12px;
+  display: inline-block;
+  text-align: center;
+  padding: 6px 12px;
+  margin: 3px 6px 3px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
 
-  .mentor-profile-tags-container {
-    flex-direction: column;
-    gap: 8px;
-  }
+.mentor-plain-tag {
+  color: #333;
+  font-weight: normal;
+  font-size: 14px;
+  display: inline-block;
+  margin: 2px 12px 2px 0;
 
-  .mentor-profile-tag {
-    margin: 2px 0;
-  }
-
-  .mentor-specialization-tag {
-    margin: 2px 6px 2px 0;
-    font-size: 11px;
-    display: inline-block;
-    width: auto;
-    min-width: fit-content;
-
-    &:not(:last-child)::after {
-      content: " • ";
-      color: #666;
-      margin-left: 6px;
-      font-weight: normal;
-    }
+  &:not(:last-child)::after {
+    content: " • ";
+    color: #999;
+    margin-left: 8px;
   }
 }
 
+.mentor-lock-symbol {
+  margin-left: 0.5em;
+}
+
+.mentor-lock-symbol svg {
+  color: $theme-orange-dark;
+  font-size: 0.9em;
+}
+
+.yellow-dot {
+  color: $yellow-dot-color;
+}
+
+.favorite-button-profile {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+// Tablet
 @media (min-width: 768px) {
-  //For desktop
+  .background-color-strip {
+    padding: 32px 0 64px;
+  }
 
   .mentor-profile-content {
-    padding-top: 80px;
-    padding-left: 40px;
+    padding: 24px 32px;
   }
 
-  .mentor-profile-content-flexbox {
-    display: flex;
+  .profile-header-card {
     flex-direction: row;
-    padding: 0;
+    justify-content: flex-start;
+    padding: 24px 32px;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .profile-header-pause {
+    margin-left: auto;
   }
 
   .mentor-profile-info {
-    width: 70%;
-  }
-
-  .mentor-profile-name {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    font-weight: bold;
-    font-size: 24px;
-    margin-bottom: 6px;
-    padding-bottom: 4px;
-    border-bottom: 2px solid #f0f0f0;
-  }
-
-  .mentor-profile-decorations {
-    display: flex;
-    align-items: center;
-  }
-
-  .mentor-profile-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-right: 1em;
-  }
-
-  .mentor-profile-book-appt-btn {
-    margin-right: 1em;
-  }
-
-  .mentor-lock-symbol {
-    margin-left: 0.5em;
-  }
-
-  .mentor-lock-symbol svg {
-    color: #a58123;
-    font-size: 0.9em;
-  }
-
-  .yellow-dot {
-    color: $yellow-dot-color;
-  }
-
-  .mentor-profile-tags-container {
-    display: flex;
-  }
-
-  .mentor-profile-tag {
-    padding: 4px 0;
-    margin: 2px 16px 2px 0;
-    background-color: transparent;
-    border: none;
-  }
-
-  .mentor-profile-tag-icon {
-    margin-right: 8px;
-    color: #6c757d;
-  }
-
-  .mentor-profile-about {
-    width: 90%;
-  }
-
-  .mentor-specialization-tag {
-    background-color: #800020;
-    color: white;
-    border: none;
-    border-radius: 16px;
-    font-weight: 500;
-    font-size: 12px;
-    display: inline-block;
-    text-align: center;
-    padding: 6px 12px;
-    margin: 3px 6px 3px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .mentor-plain-tag {
-    color: #333;
-    font-weight: normal;
-    font-size: 14px;
-    display: inline-block;
-    margin: 2px 12px 2px 0;
-
-    &:not(:last-child)::after {
-      content: " • ";
-      color: #999;
-      margin-left: 8px;
-    }
+    padding: 28px;
   }
 
   .mentor-profile-contact {
-    border: 1px solid #efefef;
-    border-radius: 8px;
-    width: 25%;
-    height: 30%;
-    padding: 1%;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.244974);
+    padding: 24px;
   }
 
-  .mentor-profile-contact-header {
-    font-size: 20px;
-    font-weight: bold;
-    height: 36px;
-  }
-
-  .mentor-profile-contact-icon {
-    align-self: flex-start;
-    margin-top: 3.5%;
-    margin-right: 5%;
-  }
-
-  .mentor-profile-contact-edit {
-    font-weight: bold;
-    font-size: 12px;
-    text-decoration: underline;
-    color: $edit-contact-color;
-  }
-
-  .mentor-profile-button {
-    margin-right: 2vw;
-  }
-
-  .mentor-profile-input {
-    display: flex;
+  .mentor-profile-name {
     flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 2%;
+    font-size: 24px;
+    flex-wrap: wrap;
   }
 
   .mentor-profile-editing-footer {
-    display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
   }
 
   .mentor-profile-notifications-container {
-    flex: 0.7;
+    flex: 1;
   }
 
   .mentor-profile-save-container {
-    display: flex;
-    flex: 0.3;
+    width: auto;
+    min-width: 120px;
+  }
+}
+
+// Desktop — sidebar layout
+@media (min-width: 992px) {
+  .mentor-profile-content-flexbox {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 24px;
+    align-items: start;
   }
 
-  .favorite-button-profile {
-    display: flex;
-    align-items: center;
-    margin-left: 12px;
+  .mentor-profile-contact {
+    position: sticky;
+    top: 24px;
+  }
+}
+
+// Mobile refinements
+@media (max-width: 767px) {
+  .mentor-profile-heading {
+    font-size: 15px;
+    margin: 12px 0 6px 0;
+  }
+
+  .mentor-profile-name {
+    font-size: 20px;
+  }
+
+  .mentor-profile-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .mentor-specialization-tag {
+    font-size: 11px;
+    padding: 5px 10px;
   }
 }

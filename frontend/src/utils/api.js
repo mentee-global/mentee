@@ -1662,6 +1662,22 @@ export const revokeOAuthClientTokens = async (clientId) => {
   return res?.data?.result ?? null;
 };
 
+// Admin - User search (whitelist picker)
+export const fetchAdminUserSearch = async ({ q, limit = 20 } = {}) => {
+  const query = new URLSearchParams();
+  if (q) query.set("q", q);
+  if (limit) query.set("limit", String(limit));
+  const res = await authGet(`/admin/users/search?${query.toString()}`);
+  return res?.data?.result?.results ?? [];
+};
+
+export const fetchAdminUsersByIds = async (ids = []) => {
+  if (!ids.length) return [];
+  const query = new URLSearchParams({ ids: ids.join(",") });
+  const res = await authGet(`/admin/users?${query.toString()}`);
+  return res?.data?.result?.results ?? [];
+};
+
 // User - Connected Apps (self-service)
 export const fetchConnectedApps = async () => {
   const res = await authGet("/user/connected-apps");
@@ -1671,4 +1687,9 @@ export const fetchConnectedApps = async () => {
 export const revokeConnectedApp = async (clientId) => {
   const res = await authDelete(`/user/connected-apps/${clientId}`);
   return res?.data?.result ?? null;
+};
+
+export const fetchOAuthHasAny = async () => {
+  const res = await authGet("/user/oauth-access/has-any");
+  return Boolean(res?.data?.result?.has_any);
 };

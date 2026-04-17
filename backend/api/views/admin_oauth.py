@@ -7,10 +7,21 @@ import datetime
 import secrets
 
 import bcrypt
+from bson import ObjectId
+from bson.errors import InvalidId
 from flask import Blueprint, request
 
 from api.core import create_response, logger
-from api.models import OAuthAccessToken, OAuthClient, OAuthRefreshToken
+from api.models import (
+    MenteeProfile,
+    MentorProfile,
+    OAuthAccessToken,
+    OAuthClient,
+    OAuthRefreshToken,
+    PartnerProfile,
+    Users,
+)
+from api.utils.constants import Account
 from api.utils.require_auth import admin_only
 
 
@@ -18,6 +29,13 @@ admin_oauth = Blueprint("admin_oauth", __name__)
 
 
 RESERVED_SCOPE_PREFIX = "mentee.api"
+
+MAX_WHITELIST_ROLES = 10
+MAX_WHITELIST_USERS = 500
+MAX_USER_SEARCH_LIMIT = 50
+DEFAULT_USER_SEARCH_LIMIT = 20
+
+VALID_WHITELIST_ROLES = {str(r.value) for r in Account}
 
 
 def _serialize_client(client: OAuthClient) -> dict:
@@ -32,6 +50,8 @@ def _serialize_client(client: OAuthClient) -> dict:
         "token_endpoint_auth_method": client.token_endpoint_auth_method,
         "is_first_party": bool(client.is_first_party),
         "is_active": bool(client.is_active),
+        "whitelist_roles": list(client.whitelist_roles or []),
+        "whitelist_user_ids": list(client.whitelist_user_ids or []),
         "created_at": client.created_at.isoformat() if client.created_at else None,
         "updated_at": client.updated_at.isoformat() if client.updated_at else None,
         "created_by": client.created_by,
@@ -50,6 +70,66 @@ def _validate_scopes(scopes, allow_reserved: bool = False):
                 f"reserved-scope access."
             )
     return None
+
+
+def _validate_whitelist(roles, user_ids):
+    """Validate whitelist_roles and whitelist_user_ids; mutate-return clean lists.
+
+    Returns either (error_message, None, None) on failure
+    or (None, deduped_roles, deduped_user_ids) on success.
+    """
+    if roles is None:
+        roles = []
+    if user_ids is None:
+        user_ids = []
+    if not isinstance(roles, list):
+        return "whitelist_roles must be a list", None, None
+    if not isinstance(user_ids, list):
+        return "whitelist_user_ids must be a list", None, None
+
+    clean_roles = []
+    seen_roles = set()
+    for r in roles:
+        if not isinstance(r, (str, int)):
+            return "whitelist_roles entries must be strings or ints", None, None
+        s = str(r)
+        if s not in VALID_WHITELIST_ROLES:
+            return f"whitelist_roles contains invalid role '{s}'", None, None
+        if s not in seen_roles:
+            seen_roles.add(s)
+            clean_roles.append(s)
+    if len(clean_roles) > MAX_WHITELIST_ROLES:
+        return (
+            f"whitelist_roles may not exceed {MAX_WHITELIST_ROLES} entries",
+            None,
+            None,
+        )
+
+    clean_user_ids = []
+    seen_users = set()
+    for uid in user_ids:
+        if not isinstance(uid, str) or not uid.strip():
+            return "whitelist_user_ids entries must be non-empty strings", None, None
+        s = uid.strip()
+        try:
+            ObjectId(s)
+        except (InvalidId, TypeError):
+            return f"whitelist_user_ids contains invalid id '{s}'", None, None
+        if s not in seen_users:
+            seen_users.add(s)
+            clean_user_ids.append(s)
+    if len(clean_user_ids) > MAX_WHITELIST_USERS:
+        return (
+            f"whitelist_user_ids may not exceed {MAX_WHITELIST_USERS} entries",
+            None,
+            None,
+        )
+    if clean_user_ids:
+        existing = Users.objects(id__in=clean_user_ids).only("id").count()
+        if existing != len(clean_user_ids):
+            return "whitelist_user_ids contains ids that do not exist", None, None
+
+    return None, clean_roles, clean_user_ids
 
 
 def _validate_redirect_uris(uris):
@@ -82,6 +162,8 @@ def create_oauth_client_route():
     allowed_scopes = data.get("allowed_scopes") or []
     is_first_party = bool(data.get("is_first_party", False))
     allow_reserved = bool(data.get("allow_reserved", False))
+    whitelist_roles_in = data.get("whitelist_roles", []) or []
+    whitelist_user_ids_in = data.get("whitelist_user_ids", []) or []
 
     if not client_id or len(client_id) > 128:
         return create_response(
@@ -97,6 +179,12 @@ def create_oauth_client_route():
         return create_response(status=400, message=err)
 
     err = _validate_scopes(allowed_scopes, allow_reserved=allow_reserved)
+    if err:
+        return create_response(status=400, message=err)
+
+    err, wl_roles, wl_user_ids = _validate_whitelist(
+        whitelist_roles_in, whitelist_user_ids_in
+    )
     if err:
         return create_response(status=400, message=err)
 
@@ -122,6 +210,8 @@ def create_oauth_client_route():
         token_endpoint_auth_method="client_secret_basic",
         is_first_party=is_first_party,
         is_active=True,
+        whitelist_roles=wl_roles,
+        whitelist_user_ids=wl_user_ids,
     )
     client.save()
 
@@ -184,6 +274,23 @@ def update_oauth_client_route(client_id):
     if "is_active" in data:
         client.is_active = bool(data["is_active"])
 
+    if "whitelist_roles" in data or "whitelist_user_ids" in data:
+        roles_in = (
+            data["whitelist_roles"]
+            if "whitelist_roles" in data
+            else list(client.whitelist_roles or [])
+        )
+        users_in = (
+            data["whitelist_user_ids"]
+            if "whitelist_user_ids" in data
+            else list(client.whitelist_user_ids or [])
+        )
+        err, wl_roles, wl_user_ids = _validate_whitelist(roles_in, users_in)
+        if err:
+            return create_response(status=400, message=err)
+        client.whitelist_roles = wl_roles
+        client.whitelist_user_ids = wl_user_ids
+
     client.updated_at = datetime.datetime.utcnow()
     client.save()
 
@@ -239,3 +346,122 @@ def revoke_all_oauth_client_tokens(client_id):
             "refresh_tokens_revoked": int(refresh_updated or 0),
         }
     )
+
+
+def _profile_display_name(firebase_uid, role):
+    """Resolve a profile's display name by role; return None if no profile."""
+    profile = None
+    try:
+        role_int = int(role) if role is not None else None
+    except (TypeError, ValueError):
+        role_int = None
+    if role_int == Account.MENTOR.value:
+        profile = MentorProfile.objects(firebase_uid=firebase_uid).first()
+    elif role_int == Account.MENTEE.value:
+        profile = MenteeProfile.objects(firebase_uid=firebase_uid).first()
+    elif role_int == Account.PARTNER.value:
+        profile = PartnerProfile.objects(firebase_uid=firebase_uid).first()
+    if not profile:
+        return None
+    return getattr(profile, "name", None) or getattr(profile, "person_name", None)
+
+
+def _user_result(user):
+    return {
+        "id": str(user.id),
+        "email": user.email,
+        "role": str(user.role) if user.role is not None else None,
+        "name": _profile_display_name(user.firebase_uid, user.role),
+    }
+
+
+@admin_oauth.route("/users/search", methods=["GET"])
+@admin_only
+def admin_user_search():
+    """Search users by email or profile name (icontains) for whitelist UI."""
+    q = (request.args.get("q") or "").strip()
+    try:
+        limit = int(request.args.get("limit", DEFAULT_USER_SEARCH_LIMIT))
+    except (TypeError, ValueError):
+        limit = DEFAULT_USER_SEARCH_LIMIT
+    limit = max(1, min(limit, MAX_USER_SEARCH_LIMIT))
+
+    if not q:
+        return create_response(data={"results": []})
+
+    results = []
+    seen_ids = set()
+
+    # Phase 1: email substring match on Users.
+    email_hits = (
+        Users.objects(email__icontains=q)
+        .only("id", "email", "role", "firebase_uid")
+        .limit(limit)
+    )
+    for u in email_hits:
+        uid = str(u.id)
+        if uid in seen_ids:
+            continue
+        seen_ids.add(uid)
+        results.append(_user_result(u))
+        if len(results) >= limit:
+            break
+
+    # Phase 2: profile-name substring match (mentor/mentee/partner), resolving
+    # back to Users via firebase_uid. Only runs if we still have room.
+    if len(results) < limit:
+        remaining = limit - len(results)
+        firebase_uids = set()
+        profile_queries = [
+            (MentorProfile, "name__icontains"),
+            (MenteeProfile, "name__icontains"),
+            (PartnerProfile, "person_name__icontains"),
+        ]
+        for ProfileModel, field in profile_queries:
+            for p in (
+                ProfileModel.objects(**{field: q})
+                .only("firebase_uid")
+                .limit(remaining * 2)
+            ):
+                if getattr(p, "firebase_uid", None):
+                    firebase_uids.add(p.firebase_uid)
+            if len(firebase_uids) >= remaining * 2:
+                break
+        if firebase_uids:
+            name_hits = (
+                Users.objects(firebase_uid__in=list(firebase_uids))
+                .only("id", "email", "role", "firebase_uid")
+                .limit(remaining * 2)
+            )
+            for u in name_hits:
+                uid = str(u.id)
+                if uid in seen_ids:
+                    continue
+                seen_ids.add(uid)
+                results.append(_user_result(u))
+                if len(results) >= limit:
+                    break
+
+    return create_response(data={"results": results})
+
+
+@admin_oauth.route("/users", methods=["GET"])
+@admin_only
+def admin_user_lookup():
+    """Bulk-resolve users by id (for hydrating selected labels in the form)."""
+    ids_raw = (request.args.get("ids") or "").strip()
+    if not ids_raw:
+        return create_response(data={"results": []})
+    ids = [i.strip() for i in ids_raw.split(",") if i.strip()]
+    ids = ids[:MAX_WHITELIST_USERS]
+    valid_ids = []
+    for i in ids:
+        try:
+            ObjectId(i)
+            valid_ids.append(i)
+        except (InvalidId, TypeError):
+            continue
+    if not valid_ids:
+        return create_response(data={"results": []})
+    users = Users.objects(id__in=valid_ids).only("id", "email", "role", "firebase_uid")
+    return create_response(data={"results": [_user_result(u) for u in users]})

@@ -35,6 +35,8 @@ import {
 import OAuthClientForm from "components/oauth/OAuthClientForm";
 import SecretOnceModal from "components/oauth/SecretOnceModal";
 import { useAuth } from "utils/hooks/useAuth";
+import { ACCOUNT_TYPE_LABELS } from "utils/consts";
+import { fetchAdminUsersByIds } from "utils/api";
 
 function AdminOAuthClientDetail() {
   const { t } = useTranslation();
@@ -47,6 +49,7 @@ function AdminOAuthClientDetail() {
   const [saving, setSaving] = useState(false);
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const [whitelistUserDetails, setWhitelistUserDetails] = useState([]);
   const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
@@ -57,6 +60,22 @@ function AdminOAuthClientDetail() {
       dispatch(clearLastCreatedSecret());
     };
   }, [clientId, dispatch, onAuthStateChanged]);
+
+  useEffect(() => {
+    const ids = client?.whitelist_user_ids || [];
+    if (!ids.length) {
+      setWhitelistUserDetails([]);
+      return undefined;
+    }
+    let cancelled = false;
+    (async () => {
+      const users = await fetchAdminUsersByIds(ids);
+      if (!cancelled) setWhitelistUserDetails(users);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [client?.whitelist_user_ids]);
 
   if (!client) {
     return (
@@ -74,6 +93,8 @@ function AdminOAuthClientDetail() {
       allowed_scopes: client.allowed_scopes || [],
       is_first_party: !!client.is_first_party,
       is_active: !!client.is_active,
+      whitelist_roles: client.whitelist_roles || [],
+      whitelist_user_ids: client.whitelist_user_ids || [],
     });
     setEditOpen(true);
   };
@@ -232,6 +253,45 @@ function AdminOAuthClientDetail() {
             <Typography.Text code>
               {client.token_endpoint_auth_method || "—"}
             </Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label={t("admin_oauth.form.whitelist_roles")}>
+            {(client.whitelist_roles || []).length === 0 ? (
+              <Typography.Text type="secondary">
+                {t("admin_oauth.detail.whitelist_open")}
+              </Typography.Text>
+            ) : (
+              <Space wrap>
+                {(client.whitelist_roles || []).map((r) => (
+                  <Tag key={r}>{ACCOUNT_TYPE_LABELS[Number(r)] || r}</Tag>
+                ))}
+              </Space>
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("admin_oauth.form.whitelist_users")}>
+            {(client.whitelist_user_ids || []).length === 0 ? (
+              <Typography.Text type="secondary">
+                {t("admin_oauth.detail.whitelist_no_users")}
+              </Typography.Text>
+            ) : (
+              <Space direction="vertical" size={2}>
+                {(client.whitelist_user_ids || []).map((id) => {
+                  const u = whitelistUserDetails.find((x) => x.id === id);
+                  if (!u) {
+                    return (
+                      <Typography.Text key={id} code>
+                        {id}
+                      </Typography.Text>
+                    );
+                  }
+                  const name = u.name || (u.email || "").split("@")[0];
+                  return (
+                    <Typography.Text key={id}>
+                      {name} &lt;{u.email}&gt;
+                    </Typography.Text>
+                  );
+                })}
+              </Space>
+            )}
           </Descriptions.Item>
           <Descriptions.Item label={t("admin_oauth.detail.created_at")}>
             {client.created_at || "—"}

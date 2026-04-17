@@ -13,6 +13,7 @@ from api.utils.oauth_server import (
     issuer,
     require_oauth,
 )
+from api.utils.oauth_whitelist import user_is_whitelisted
 from api.utils.oidc_keys import public_jwks
 
 oauth_bp = Blueprint("oauth", __name__)
@@ -214,6 +215,28 @@ def authorize():
     scopes = (grant.request.scope or "").split()
     user_id = session["user_id"]
 
+    # Whitelist gate: must run BEFORE first-party auto-consent so first-party
+    # clients still honor per-client access restrictions.
+    current_user = _current_user()
+    if not user_is_whitelisted(client, current_user):
+        err_redirect = _redirect_error_to_client(
+            client,
+            "access_denied",
+            "user not permitted to authorize this client",
+            request.args.get("state"),
+        )
+        if err_redirect is not None:
+            return err_redirect
+        return (
+            jsonify(
+                {
+                    "error": "access_denied",
+                    "error_description": "user not permitted to authorize this client",
+                }
+            ),
+            403,
+        )
+
     allowed = set(client.allowed_scopes or [])
     unknown = [s for s in scopes if s not in allowed]
     if unknown:
@@ -282,6 +305,15 @@ def authorize_decision():
     scopes = (payload.get("scope") or "").split()
     state = payload.get("state")
 
+    # Defense in depth: re-check whitelist on POST in case the admin tightened
+    # it while the user was on the consent screen.
+    if not user_is_whitelisted(client, _current_user()):
+        sep = "&" if "?" in redirect_uri else "?"
+        loc = f"{redirect_uri}{sep}error=access_denied"
+        if state:
+            loc += f"&state={quote_plus(state)}"
+        return redirect(loc)
+
     if decision == "approve":
         _persist_consent(session["user_id"], client.client_id, scopes)
     else:
@@ -329,6 +361,9 @@ def consent_request():
     user_doc = _current_user()
     if not user_doc:
         return jsonify({"error": "login_required"}), 401
+
+    if not user_is_whitelisted(client, user_doc):
+        return jsonify({"error": "access_denied"}), 403
 
     return jsonify(
         {

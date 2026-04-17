@@ -7,6 +7,7 @@ import datetime
 
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
+from mongoengine import Q
 
 from api.core import create_response, logger
 from api.models import (
@@ -109,3 +110,41 @@ def revoke_connected_app(client_id):
 
     logger.info(f"User {user_id} revoked connected app {client_id}")
     return create_response(data={"revoked": True}, status=200)
+
+
+@connected_apps.route("/oauth-access/has-any", methods=["GET"])
+@all_users
+def has_any_oauth_access():
+    """Answers: should this user see the Connected Apps nav tab?
+
+    True when:
+      1. They have any active OAuthConsent (so they can revoke), OR
+      2. There's any active open client (empty whitelist), OR
+      3. Any active client whitelists their role or user id.
+    """
+    user_id = _current_user_id()
+    if not user_id:
+        return create_response(status=401, message="Unauthorized")
+
+    # 1. Existing consents keep the nav visible regardless of whitelist.
+    if OAuthConsent.objects(user_id=user_id, revoked_at=None).first():
+        return create_response(data={"has_any": True})
+
+    # 2. Any fully-open active client.
+    if OAuthClient.objects(
+        is_active=True, whitelist_roles=[], whitelist_user_ids=[]
+    ).first():
+        return create_response(data={"has_any": True})
+
+    # 3. Role- or user-specific whitelisting.
+    user = Users.objects(id=user_id).first()
+    if not user:
+        return create_response(data={"has_any": False})
+    role_str = str(user.role) if user.role is not None else ""
+    q = Q(is_active=True) & (
+        Q(whitelist_roles=role_str) | Q(whitelist_user_ids=str(user.id))
+    )
+    if OAuthClient.objects(q).first():
+        return create_response(data={"has_any": True})
+
+    return create_response(data={"has_any": False})

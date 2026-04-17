@@ -1,7 +1,18 @@
 import React from "react";
-import { Form, Input, Select, Switch, Button, Space } from "antd";
+import {
+  Alert,
+  Form,
+  Input,
+  Select,
+  Switch,
+  Button,
+  Divider,
+  Space,
+} from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import UserSearchSelect from "components/oauth/UserSearchSelect";
+import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS } from "utils/consts";
 
 const SCOPE_PRESETS = [
   { value: "openid", label: "openid" },
@@ -9,6 +20,21 @@ const SCOPE_PRESETS = [
   { value: "profile", label: "profile" },
   { value: "mentee.role", label: "mentee.role" },
 ];
+
+// Roles an admin can whitelist a client for. Excludes ADMIN and SUPPORT
+// (they don't authorize OAuth flows today) and stores string values to match
+// the backend `Users.role` storage format.
+const WHITELIST_ROLE_OPTIONS = [
+  ACCOUNT_TYPE.MENTOR,
+  ACCOUNT_TYPE.MENTEE,
+  ACCOUNT_TYPE.PARTNER,
+  ACCOUNT_TYPE.HUB,
+  ACCOUNT_TYPE.MODERATOR,
+  ACCOUNT_TYPE.GUEST,
+].map((value) => ({
+  value: String(value),
+  label: ACCOUNT_TYPE_LABELS[value] || String(value),
+}));
 
 function OAuthClientForm({
   form,
@@ -30,6 +56,8 @@ function OAuthClientForm({
         allowed_scopes: ["openid", "email", "profile", "mentee.role"],
         is_first_party: false,
         is_active: true,
+        whitelist_roles: [],
+        whitelist_user_ids: [],
         ...initialValues,
       }}
       onFinish={onFinish}
@@ -167,6 +195,43 @@ function OAuthClientForm({
         >
           <Switch />
         </Form.Item>
+      )}
+
+      <Divider>{t("admin_oauth.form.whitelist_section")}</Divider>
+
+      <Alert
+        type="info"
+        showIcon
+        style={{ marginBottom: 16 }}
+        message={t("admin_oauth.form.whitelist_hint")}
+      />
+
+      <Form.Item
+        name="whitelist_roles"
+        label={t("admin_oauth.form.whitelist_roles")}
+      >
+        <Select
+          mode="multiple"
+          allowClear
+          placeholder={t("admin_oauth.form.whitelist_roles_placeholder")}
+          options={WHITELIST_ROLE_OPTIONS}
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="whitelist_user_ids"
+        label={t("admin_oauth.form.whitelist_users")}
+      >
+        <UserSearchSelect />
+      </Form.Item>
+
+      {isEdit && (
+        <Alert
+          type="warning"
+          showIcon
+          style={{ marginBottom: 16 }}
+          message={t("admin_oauth.form.whitelist_changes_tokens_note")}
+        />
       )}
 
       <Form.Item>

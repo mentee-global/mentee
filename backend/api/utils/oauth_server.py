@@ -17,6 +17,7 @@ from api.models import (
     OAuthAccessToken,
     OAuthRefreshToken,
 )
+from api.utils.oauth_whitelist import user_is_whitelisted
 from api.utils.oidc_keys import private_pem_bytes
 
 
@@ -81,7 +82,22 @@ class MenteeAuthorizationCodeGrant(_grants.AuthorizationCodeGrant):
     def authenticate_user(self, authorization_code):
         from api.models import Users
 
-        return Users.objects(id=authorization_code.user_id).first()
+        user = Users.objects(id=authorization_code.user_id).first()
+        # Re-check the whitelist at token-exchange time: the admin may have
+        # de-whitelisted or deactivated the client after the code was issued.
+        # Returning None maps to Authlib's invalid_grant error.
+        client = OAuthClient.objects(
+            client_id=authorization_code.client_id, is_active=True
+        ).first()
+        if not client:
+            return None
+        if not user_is_whitelisted(client, user):
+            return None
+        # TODO(oauth-whitelist): MenteeRefreshTokenGrant is not yet registered
+        # (see backend/docs/oauth/operations.md). When it lands, its
+        # authenticate_user must perform the same whitelist + is_active check
+        # so refresh flows can't outlive a tightened whitelist.
+        return user
 
 
 def _revoke_chain_for_code(code: str):

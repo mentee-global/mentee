@@ -6,6 +6,7 @@ import optionsReducer from "features/optionsSlice";
 import meetingPanelReducer from "features/meetingPanelSlice";
 import adminOauthClientsReducer from "features/adminOauthClientsSlice";
 import connectedAppsReducer from "features/connectedAppsSlice";
+import oauthAccessReducer from "features/oauthAccessSlice";
 
 export default configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export default configureStore({
     meetingPanel: meetingPanelReducer,
     adminOauthClients: adminOauthClientsReducer,
     connectedApps: connectedAppsReducer,
+    oauthAccess: oauthAccessReducer,
   },
 });

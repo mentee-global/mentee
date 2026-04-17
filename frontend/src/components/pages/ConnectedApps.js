@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -13,7 +14,11 @@ import {
   Typography,
   message,
 } from "antd";
-import { AppstoreOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  InfoCircleOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -160,6 +165,23 @@ function ConnectedApps() {
           </Button>
         }
       >
+        <Alert
+          type="info"
+          showIcon
+          icon={<InfoCircleOutlined />}
+          style={{ marginBottom: 16 }}
+          message={t("connected_apps.intro_title")}
+          description={
+            <Space direction="vertical" size={4}>
+              <Typography.Text>
+                {t("connected_apps.intro_body")}
+              </Typography.Text>
+              <Typography.Text type="secondary">
+                {t("connected_apps.intro_revoke_hint")}
+              </Typography.Text>
+            </Space>
+          }
+        />
         {content()}
       </Card>
     </div>

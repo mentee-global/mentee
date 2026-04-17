@@ -13,7 +13,11 @@ from mongoengine import (
 class OAuthClient(Document):
     meta = {
         "collection": "oauth_clients",
-        "indexes": [{"fields": ["client_id"], "unique": True}],
+        "indexes": [
+            {"fields": ["client_id"], "unique": True},
+            {"fields": ["is_active", "whitelist_roles"]},
+            {"fields": ["is_active", "whitelist_user_ids"]},
+        ],
     }
 
     client_id = StringField(required=True, unique=True, max_length=128)
@@ -32,6 +36,10 @@ class OAuthClient(Document):
     )
     is_first_party = BooleanField(default=False)
     is_active = BooleanField(default=True)
+    # Empty whitelist lists => client is open to every logged-in user (union
+    # semantics apply only when at least one list is non-empty).
+    whitelist_roles = ListField(StringField(), default=list)
+    whitelist_user_ids = ListField(StringField(), default=list)
     created_at = DateTimeField(default=datetime.datetime.utcnow)
     created_by = StringField()
     updated_at = DateTimeField(default=datetime.datetime.utcnow)

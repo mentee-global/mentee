@@ -705,6 +705,13 @@
       "is_first_party": "First-party client",
       "is_first_party_tooltip": "Skip the consent prompt — scopes are auto-approved when a Mentee user signs in. Turn this on only for apps Mentee owns.",
       "is_active": "Active",
+      "whitelist_section": "Access restrictions",
+      "whitelist_hint": "Leave both empty to allow all logged-in users. When set, access is granted if ANY rule matches (role OR user).",
+      "whitelist_roles": "Restrict to roles",
+      "whitelist_roles_placeholder": "Any role",
+      "whitelist_users": "Restrict to specific users",
+      "whitelist_users_placeholder": "Search by email or name",
+      "whitelist_changes_tokens_note": "Whitelist changes do not revoke active sessions — use 'Revoke all tokens' to force sign-out.",
       "create": "Create client",
       "save": "Save changes"
     },
@@ -719,6 +726,8 @@
       "confirm_revoke_all": "This will log out every user of {{clientName}}. They'll need to sign in again.",
       "confirm_deactivate": "Deactivating prevents new logins. Existing sessions continue until they expire.",
       "token_auth_method": "Token endpoint auth method",
+      "whitelist_open": "Open to all logged-in users",
+      "whitelist_no_users": "No specific users whitelisted",
       "created_at": "Created",
       "updated_at": "Last updated"
     },
@@ -742,6 +751,9 @@
   },
   "connected_apps": {
     "title": "Connected apps",
+    "intro_title": "What are connected apps?",
+    "intro_body": "These are third-party tools and Mentee-built integrations you've allowed to sign in with your Mentee account. They see only the information you approved on the consent screen — never your password.",
+    "intro_revoke_hint": "You can revoke access at any time. The app will be signed out immediately and will need your permission again before it can connect.",
     "first_party_tooltip": "This app is built by Mentee. It was granted access automatically when you signed in.",
     "empty": "You haven't connected any apps yet.",
     "granted_on": "Connected on {{date}}",

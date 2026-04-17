@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { useAuth } from "utils/hooks/useAuth";
 import {
   ClockCircleOutlined,
   CompassOutlined,
@@ -19,12 +23,46 @@ import {
 } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getLoginPath } from "utils/auth.service";
+import { fetchHasOauthAccess } from "features/oauthAccessSlice";
+
+const CONNECTED_APPS_ROLES = new Set([
+  ACCOUNT_TYPE.MENTOR,
+  ACCOUNT_TYPE.MENTEE,
+  ACCOUNT_TYPE.PARTNER,
+]);
+
 /**
  * @param {ACCOUNT_TYPE} userType constant for user type
  * @param {Function} t translation function
  * @returns Sidebar for user type
  */
 export default function useSidebars(userType, user, t) {
+  // Connected Apps nav entry is gated per-client whitelist. Dispatch the
+  // check through `onAuthStateChanged` so we don't race Firebase's auth
+  // hydration on first mount (which would send Authorization: null and
+  // permanently poison the cached value with `hasAny=false`). Re-runs on
+  // every pathname change so returning from the OAuth consent flow — which
+  // creates a consent record off-SPA — unhides the entry.
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const { onAuthStateChanged } = useAuth();
+  const userTypeInt = parseInt(userType);
+  const connectedAppsRelevant = CONNECTED_APPS_ROLES.has(userTypeInt);
+  const hasOAuthAccess = useSelector(
+    (state) => state.oauthAccess?.hasAny ?? false
+  );
+
+  useEffect(() => {
+    if (!connectedAppsRelevant) return undefined;
+    const unsubscribe = onAuthStateChanged(() =>
+      dispatch(fetchHasOauthAccess())
+    );
+    return () => {
+      if (typeof unsubscribe === "function") unsubscribe();
+    };
+  }, [dispatch, onAuthStateChanged, connectedAppsRelevant, location.pathname]);
+
+  const showConnectedApps = connectedAppsRelevant && hasOAuthAccess;
   var url_prefix_hub = "";
   var hub_user_id = null;
   if (parseInt(userType) == ACCOUNT_TYPE.HUB) {
@@ -92,11 +130,6 @@ export default function useSidebars(userType, user, t) {
       key: "profile",
       icon: <UserOutlined />,
     },
-    {
-      label: t("connected_apps.title"),
-      key: "settings/connected-apps",
-      icon: <AppstoreOutlined />,
-    },
   ];
 
   const menteeSidebar = [
@@ -150,11 +183,6 @@ export default function useSidebars(userType, user, t) {
       key: "profile",
       icon: <UserOutlined />,
     },
-    {
-      label: t("connected_apps.title"),
-      key: "settings/connected-apps",
-      icon: <AppstoreOutlined />,
-    },
   ];
 
   const partnerSidebar = [
@@ -203,11 +231,6 @@ export default function useSidebars(userType, user, t) {
       label: t("sidebars.profile"),
       key: "profile",
       icon: <UserOutlined />,
-    },
-    {
-      label: t("connected_apps.title"),
-      key: "settings/connected-apps",
-      icon: <AppstoreOutlined />,
     },
   ];
 
@@ -450,7 +473,18 @@ export default function useSidebars(userType, user, t) {
     },
   ];
 
-  switch (parseInt(userType)) {
+  if (showConnectedApps) {
+    const connectedAppsItem = {
+      label: t("connected_apps.title"),
+      key: "settings/connected-apps",
+      icon: <AppstoreOutlined />,
+    };
+    mentorSidebar.push(connectedAppsItem);
+    menteeSidebar.push(connectedAppsItem);
+    partnerSidebar.push(connectedAppsItem);
+  }
+
+  switch (userTypeInt) {
     case ACCOUNT_TYPE.MENTOR:
       return mentorSidebar;
     case ACCOUNT_TYPE.MENTEE:

@@ -703,6 +703,13 @@
       "is_first_party": "Cliente de primera parte",
       "is_first_party_tooltip": "Omite la pantalla de consentimiento — los permisos se aprueban automáticamente cuando un usuario de Mentee inicia sesión. Actívalo solo para aplicaciones propias de Mentee.",
       "is_active": "Activo",
+      "whitelist_section": "Restricciones de acceso",
+      "whitelist_hint": "Deja ambos vacíos para permitir a todos los usuarios autenticados. Cuando se usan, el acceso se concede si CUALQUIER regla coincide (rol o usuario).",
+      "whitelist_roles": "Restringir por roles",
+      "whitelist_roles_placeholder": "Cualquier rol",
+      "whitelist_users": "Restringir a usuarios específicos",
+      "whitelist_users_placeholder": "Buscar por correo o nombre",
+      "whitelist_changes_tokens_note": "Los cambios en la lista no revocan las sesiones activas — usa 'Revocar todos los tokens' para forzar el cierre de sesión.",
       "create": "Crear cliente",
       "save": "Guardar cambios"
     },
@@ -717,6 +724,8 @@
       "confirm_revoke_all": "Esto cerrará la sesión de cada usuario de {{clientName}}. Tendrán que iniciar sesión de nuevo.",
       "confirm_deactivate": "Desactivar impide nuevos inicios de sesión. Las sesiones existentes continúan hasta que expiren.",
       "token_auth_method": "Método de autenticación del endpoint de tokens",
+      "whitelist_open": "Abierto a todos los usuarios autenticados",
+      "whitelist_no_users": "Sin usuarios específicos en la lista",
       "created_at": "Creado",
       "updated_at": "Última actualización"
     },
@@ -740,6 +749,9 @@
   },
   "connected_apps": {
     "title": "Aplicaciones conectadas",
+    "intro_title": "¿Qué son las aplicaciones conectadas?",
+    "intro_body": "Son herramientas de terceros e integraciones de Mentee a las que has permitido iniciar sesión con tu cuenta de Mentee. Solo ven la información que aprobaste en la pantalla de consentimiento — nunca tu contraseña.",
+    "intro_revoke_hint": "Puedes revocar el acceso en cualquier momento. La aplicación perderá la sesión al instante y tendrá que pedirte permiso otra vez para volver a conectarse.",
     "first_party_tooltip": "Esta aplicación es creada por Mentee. Recibió acceso automáticamente cuando iniciaste sesión.",
     "empty": "Aún no has conectado ninguna aplicación.",
     "granted_on": "Conectado el {{date}}",

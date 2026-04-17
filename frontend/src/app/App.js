@@ -196,7 +196,7 @@ function App() {
                 <PublicRoute path="/readonly/login">
                   <Login />
                 </PublicRoute>
-                <PublicRoute path="/admin">
+                <PublicRoute path="/admin" exact>
                   <AdminLogin />
                 </PublicRoute>
                 <PublicRoute path="/support">

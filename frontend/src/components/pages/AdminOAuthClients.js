@@ -22,6 +22,7 @@ import {
 } from "features/adminOauthClientsSlice";
 import OAuthClientForm from "components/oauth/OAuthClientForm";
 import SecretOnceModal from "components/oauth/SecretOnceModal";
+import { useAuth } from "utils/hooks/useAuth";
 
 function AdminOAuthClients() {
   const { t } = useTranslation();
@@ -33,10 +34,11 @@ function AdminOAuthClients() {
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    dispatch(fetchAll());
-  }, [dispatch]);
+    onAuthStateChanged(() => dispatch(fetchAll()));
+  }, [dispatch, onAuthStateChanged]);
 
   const handleCreate = async (values) => {
     setSubmitting(true);

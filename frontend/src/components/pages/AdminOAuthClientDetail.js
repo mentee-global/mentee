@@ -33,6 +33,7 @@ import {
 } from "features/adminOauthClientsSlice";
 import OAuthClientForm from "components/oauth/OAuthClientForm";
 import SecretOnceModal from "components/oauth/SecretOnceModal";
+import { useAuth } from "utils/hooks/useAuth";
 
 function AdminOAuthClientDetail() {
   const { t } = useTranslation();
@@ -45,15 +46,16 @@ function AdminOAuthClientDetail() {
   const [saving, setSaving] = useState(false);
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    dispatch(fetchOne(clientId));
+    onAuthStateChanged(() => dispatch(fetchOne(clientId)));
     // Clear any stale secret on mount/navigation so we never accidentally
     // re-display a secret from a prior screen.
     return () => {
       dispatch(clearLastCreatedSecret());
     };
-  }, [clientId, dispatch]);
+  }, [clientId, dispatch, onAuthStateChanged]);
 
   if (!client) {
     return (

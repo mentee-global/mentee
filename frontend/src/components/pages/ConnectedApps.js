@@ -21,6 +21,7 @@ import {
   optimisticRemove,
   revokeApp,
 } from "features/connectedAppsSlice";
+import { useAuth } from "utils/hooks/useAuth";
 
 function formatDate(iso) {
   if (!iso) return "";
@@ -36,10 +37,14 @@ function ConnectedApps() {
   const dispatch = useDispatch();
   const { list, loading } = useSelector((state) => state.connectedApps);
   const [messageApi, contextHolder] = message.useMessage();
+  const { onAuthStateChanged } = useAuth();
 
   useEffect(() => {
-    dispatch(fetchAllConnectedApps());
-  }, [dispatch]);
+    // Wait for Firebase to hydrate the auth state before hitting the API —
+    // on a hard navigation to /settings/connected-apps the page can mount
+    // before the ID token is ready.
+    onAuthStateChanged(() => dispatch(fetchAllConnectedApps()));
+  }, [dispatch, onAuthStateChanged]);
 
   const handleRevoke = async (clientId, clientName) => {
     dispatch(optimisticRemove(clientId));

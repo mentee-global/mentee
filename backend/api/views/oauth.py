@@ -240,6 +240,14 @@ def authorize():
     if already_consented:
         return authorization.create_authorization_response(grant_user=_current_user())
 
+    # First-party clients are owned by Mentee and trusted implicitly, so
+    # we skip the interactive consent prompt and auto-persist the grant.
+    # Admins must only flag `is_first_party=true` on clients Mentee itself
+    # ships — never on third-party integrations.
+    if client.is_first_party:
+        _persist_consent(user_id, client.client_id, scopes)
+        return authorization.create_authorization_response(grant_user=_current_user())
+
     authorize_token = _mint_authorize_token(client, scopes, user_id)
     return redirect(
         f"{_frontend_url()}/oauth/consent?authorize_token={quote_plus(authorize_token)}"

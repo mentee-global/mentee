@@ -33,7 +33,7 @@ cd backend && .venv/bin/python scripts/register_oauth_client.py \
   --first-party
 ```
 
-(`--first-party` skips the consent screen on repeat authorizations. Omit for third-party clients.)
+(`--first-party` skips the consent screen entirely — scopes are auto-approved on every authorization. Use only for Mentee-owned clients. Omit for third-party clients so users see the consent prompt on first visit.)
 
 The plaintext secret is printed **once**. Copy immediately.
 

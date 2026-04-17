@@ -67,7 +67,8 @@ All tokens are opaque + SHA-256 hashed at rest. `id_token` is the only JWT and i
 3. Errors: `invalid_client` and any PKCE error → `400 JSON` in-band (never hand details to an attacker-controlled `redirect_uri`). Other errors → redirect to `redirect_uri` with `error=...&error_description=...&state=...` only if the uri is registered.
 4. Scope must be a subset of `OAuthClient.allowed_scopes` → otherwise `400 invalid_scope`.
 5. Consent lookup: `OAuthConsent` keyed on `(user_id, client_id, revoked_at=None)`. If requested scopes ⊆ granted scopes → call `create_authorization_response`.
-6. Otherwise mint an itsdangerous-signed **authorize_token** (5-min TTL, jti replay guard, bound to `user_id`) and `302` to `${FRONTEND_URL}/oauth/consent?authorize_token=...`.
+6. If `client.is_first_party=True` → auto-persist an `OAuthConsent` covering the requested scopes and call `create_authorization_response` (trusted Mentee-owned apps skip the interactive prompt).
+7. Otherwise mint an itsdangerous-signed **authorize_token** (5-min TTL, jti replay guard, bound to `user_id`) and `302` to `${FRONTEND_URL}/oauth/consent?authorize_token=...`.
 
 ## `/oauth/consent-request` GET — [`oauth.py:299`](../../api/views/oauth.py)
 

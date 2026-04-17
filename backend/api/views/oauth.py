@@ -181,7 +181,7 @@ def _redirect_error_to_client(client, error, description, state):
 @oauth_bp.route("/authorize", methods=["GET"])
 def authorize():
     if not session.get("user_id"):
-        return redirect(f"/login?next={quote_plus(request.full_path)}")
+        return redirect(f"{_frontend_url()}/login?next={quote_plus(request.full_path)}")
 
     try:
         grant = authorization.get_consent_grant(end_user=_current_user())

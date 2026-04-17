@@ -11,7 +11,12 @@ import {
   login,
   sendVerificationEmail,
 } from "utils/auth.service";
-import { ACCOUNT_TYPE, ACCOUNT_TYPE_LABELS, REDIRECTS } from "utils/consts";
+import {
+  ACCOUNT_TYPE,
+  ACCOUNT_TYPE_LABELS,
+  BASE_URL,
+  REDIRECTS,
+} from "utils/consts";
 import fireauth from "utils/fireauth";
 import { fetchUser } from "features/userSlice";
 
@@ -151,7 +156,10 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
       );
       const oauthNext = consumeNextParam();
       if (oauthNext) {
-        window.location.href = oauthNext;
+        // oauthNext is a path like /oauth/authorize?... — send to the
+        // backend origin. In prod backend + frontend share an origin
+        // so BASE_URL just prepends the scheme+host.
+        window.location.href = BASE_URL.replace(/\/$/, "") + oauthNext;
         return;
       }
       let direct_path = localStorage.getItem("direct_path");

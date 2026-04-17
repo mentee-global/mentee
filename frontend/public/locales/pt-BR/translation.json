@@ -684,7 +684,7 @@
       "inactive": "Inativo",
       "actions": "Ações",
       "first_party": "Primeira parte",
-      "first_party_tip": "Clientes de primeira parte pulam a tela de consentimento em autorizações repetidas."
+      "first_party_tip": "Clientes de primeira parte pertencem ao Mentee e pulam completamente a tela de consentimento — as permissões são aprovadas automaticamente quando os usuários entram. Use apenas para aplicativos que o próprio Mentee publica."
     },
     "form": {
       "client_id": "ID do cliente",
@@ -701,6 +701,7 @@
       "allowed_scopes": "Permissões permitidas",
       "allowed_scopes_required": "Adicione pelo menos uma permissão",
       "is_first_party": "Cliente de primeira parte",
+      "is_first_party_tooltip": "Pula a tela de consentimento — as permissões são aprovadas automaticamente quando um usuário do Mentee entra. Ative apenas para aplicativos do próprio Mentee.",
       "is_active": "Ativo",
       "create": "Criar cliente",
       "save": "Salvar alterações"
@@ -739,6 +740,7 @@
   },
   "connected_apps": {
     "title": "Aplicativos conectados",
+    "first_party_tooltip": "Este aplicativo é desenvolvido pelo Mentee. Ele recebeu acesso automaticamente quando você entrou.",
     "empty": "Você ainda não conectou nenhum aplicativo.",
     "granted_on": "Conectado em {{date}}",
     "last_used": "Usado por último em {{date}}",

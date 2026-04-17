@@ -9,6 +9,7 @@ import {
   Space,
   Spin,
   Tag,
+  Tooltip,
   Typography,
   message,
 } from "antd";
@@ -151,7 +152,9 @@ function AdminOAuthClientDetail() {
                 : t("admin_oauth.table.inactive")}
             </Tag>
             {client.is_first_party && (
-              <Tag color="blue">{t("admin_oauth.table.first_party")}</Tag>
+              <Tooltip title={t("admin_oauth.table.first_party_tip")}>
+                <Tag color="blue">{t("admin_oauth.table.first_party")}</Tag>
+              </Tooltip>
             )}
           </Space>
         }

@@ -9,6 +9,7 @@ import {
   Space,
   Spin,
   Tag,
+  Tooltip,
   Typography,
   message,
 } from "antd";
@@ -105,7 +106,11 @@ function ConnectedApps() {
                 <Space>
                   <Typography.Text strong>{app.client_name}</Typography.Text>
                   {app.is_first_party && (
-                    <Tag color="blue">{t("admin_oauth.table.first_party")}</Tag>
+                    <Tooltip title={t("connected_apps.first_party_tooltip")}>
+                      <Tag color="blue">
+                        {t("admin_oauth.table.first_party")}
+                      </Tag>
+                    </Tooltip>
                   )}
                 </Space>
               }

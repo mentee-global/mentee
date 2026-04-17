@@ -683,7 +683,7 @@
       "inactive": "Inactive",
       "actions": "Actions",
       "first_party": "First-party",
-      "first_party_tip": "First-party clients skip the consent screen on repeat authorizations."
+      "first_party_tip": "First-party clients are owned by Mentee and skip the consent prompt entirely — scopes are auto-approved when users sign in. Use only for apps Mentee itself ships."
     },
     "form": {
       "client_id": "Client ID",
@@ -702,7 +702,8 @@
       "is_first_party": "First-party client",
       "is_active": "Active",
       "create": "Create client",
-      "save": "Save changes"
+      "save": "Save changes",
+      "is_first_party_tooltip": "Skip the consent prompt — scopes are auto-approved when a Mentee user signs in. Turn this on only for apps Mentee owns."
     },
     "detail": {
       "back": "Back to clients",
@@ -747,6 +748,7 @@
     "messages": {
       "revoked": "Access for {{clientName}} revoked.",
       "revoke_failed": "Could not revoke access."
-    }
+    },
+    "first_party_tooltip": "This app is built by Mentee. It was granted access automatically when you signed in."
   }
 }

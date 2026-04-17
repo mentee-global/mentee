@@ -154,6 +154,7 @@ function OAuthClientForm({
         name="is_first_party"
         label={t("admin_oauth.form.is_first_party")}
         valuePropName="checked"
+        tooltip={t("admin_oauth.form.is_first_party_tooltip")}
       >
         <Switch />
       </Form.Item>

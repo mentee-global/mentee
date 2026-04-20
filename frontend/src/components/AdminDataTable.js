@@ -11,6 +11,8 @@ import {
   Switch,
   Form,
   Input,
+  Tag,
+  Tooltip,
 } from "antd";
 import {
   LinkOutlined,
@@ -31,6 +33,9 @@ import {
   MENTOR_PROFILE,
   ACCOUNT_TYPE,
   PARTNER_PROFILE,
+  EFFECTIVE_STAGE_COLORS,
+  EFFECTIVE_STAGE_LABELS,
+  EFFECTIVE_STAGE_DESCRIPTIONS,
 } from "utils/consts";
 import ImgCrop from "antd-img-crop";
 import {
@@ -550,6 +555,13 @@ function AdminDataTable({
           rowExpandable: (account) => account.is_private,
         }}
         rowKey={(account) => account.id}
+        pagination={{
+          defaultPageSize: 20,
+          pageSizeOptions: ["10", "20", "50", "100"],
+          showSizeChanger: true,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total.toLocaleString()}`,
+        }}
       >
         <Column
           title="Edit"
@@ -587,6 +599,32 @@ function AdminDataTable({
                   dataIndex="partner"
                   key="partner"
                   align="center"
+                />
+                <Column
+                  title="Stage"
+                  dataIndex="effective_stage"
+                  key="effective_stage"
+                  align="center"
+                  render={(stage, record) =>
+                    stage ? (
+                      <Tooltip
+                        title={EFFECTIVE_STAGE_DESCRIPTIONS[stage]}
+                        placement="top"
+                        overlayStyle={{ maxWidth: 320 }}
+                      >
+                        <Tag
+                          color={EFFECTIVE_STAGE_COLORS[stage] || "default"}
+                          style={{ cursor: "help" }}
+                        >
+                          {record.effective_stage_label ||
+                            EFFECTIVE_STAGE_LABELS[stage] ||
+                            stage}
+                        </Tag>
+                      </Tooltip>
+                    ) : (
+                      <span style={{ color: "#888" }}>—</span>
+                    )
+                  }
                 />
                 <Column
                   title="Total messages sent"

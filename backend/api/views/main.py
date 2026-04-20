@@ -20,6 +20,7 @@ from api.models import (
     DirectMessage,
     MenteeApplication,
     MentorApplication,
+    NewMentorApplication,
     MentorProfile,
     MenteeProfile,
     Moderator,
@@ -54,6 +55,21 @@ from api.utils.require_auth import all_users, mentee_only, verify_user
 from firebase_admin import auth as firebase_admin_auth
 
 main = Blueprint("main", __name__)  # initialize blueprint
+
+
+def _verified_emails_for_user_role(user_role):
+    return {
+        (u.email or "").lower()
+        for u in Users.objects(role=user_role, verified=True).only("email")
+        if u.email
+    }
+
+
+def _stage_for_profile(email, verified_emails):
+    normalized = (email or "").lower()
+    if normalized and normalized in verified_emails:
+        return ("active", "Active")
+    return ("active_unverified", "Profile — email unverified")
 
 
 # GET request for /accounts/<type>
@@ -578,6 +594,7 @@ def get_account(id):
                 ]
                 mentee_ids_set = {str(mid) for mid in mentee_ids}
 
+                mentee_verified_emails = _verified_emails_for_user_role("2")
                 mentees = list(MenteeProfile.objects.filter(id__in=mentee_ids))
                 send_messages = list(
                     DirectMessage.objects.filter(
@@ -629,6 +646,9 @@ def get_account(id):
                                     "numberOfMessages": len(msgs),
                                 }
                             )
+                    stage_id, stage_label = _stage_for_profile(
+                        mentee.email, mentee_verified_emails
+                    )
                     temp.append(
                         {
                             "id": mentee.id,
@@ -636,6 +656,8 @@ def get_account(id):
                             "email": mentee.email,
                             "image": mentee.image,
                             "message_receive_data": message_receive_data,
+                            "effective_stage": stage_id,
+                            "effective_stage_label": stage_label,
                         }
                     )
                 account.assign_mentees = temp
@@ -646,6 +668,7 @@ def get_account(id):
                 ]
                 mentor_ids_set = {str(mid) for mid in mentor_ids}
 
+                mentor_verified_emails = _verified_emails_for_user_role("1")
                 mentors = list(MentorProfile.objects.filter(id__in=mentor_ids))
                 received_messages = list(
                     DirectMessage.objects.filter(
@@ -697,6 +720,9 @@ def get_account(id):
                                     "numberOfMessages": len(msgs),
                                 }
                             )
+                    stage_id, stage_label = _stage_for_profile(
+                        mentor.email, mentor_verified_emails
+                    )
                     temp.append(
                         {
                             "id": mentor.id,
@@ -704,9 +730,104 @@ def get_account(id):
                             "email": mentor.email,
                             "image": mentor.image,
                             "message_receive_data": message_receive_data,
+                            "effective_stage": stage_id,
+                            "effective_stage_label": stage_label,
                         }
                     )
                 account.assign_mentors = temp
+
+            # Pipeline: merge in mid-funnel applicants (PENDING / APPROVED /
+            # BuildProfile / REJECTED) who named this partner on their
+            # application. Without this, /partner-data only shows people who
+            # already finished profile-build; partners can't see their
+            # in-progress pipeline.
+            from api.views.apply import (
+                _compute_effective_stage,
+                _STAGE_LABELS,
+                _days_since,
+            )
+
+            partner_id_str = str(account.id)
+
+            existing_mentees = list(account.assign_mentees or [])
+            existing_mentee_emails = {
+                (m.get("email") or "").lower()
+                for m in existing_mentees
+                if isinstance(m, dict)
+            }
+            mentee_profile_emails = {
+                (e or "").lower() for e in MenteeProfile.objects.distinct("email") if e
+            }
+            mentee_verified_pipeline = _verified_emails_for_user_role("2")
+            mentee_applicants = []
+            for app in MenteeApplication.objects(
+                partner=partner_id_str,
+                application_state__ne="COMPLETED",
+            ):
+                email_lower = (app.email or "").lower()
+                if email_lower in existing_mentee_emails:
+                    continue  # already listed as a completed profile
+                stage_id = _compute_effective_stage(
+                    app.application_state,
+                    email_lower,
+                    mentee_profile_emails,
+                    mentee_verified_pipeline,
+                )
+                mentee_applicants.append(
+                    {
+                        "id": app.id,
+                        "name": app.name,
+                        "email": app.email,
+                        "image": None,
+                        "message_receive_data": [],
+                        "effective_stage": stage_id,
+                        "effective_stage_label": _STAGE_LABELS[stage_id],
+                        "application_state": app.application_state,
+                        "days_since_submit": _days_since(app.date_submitted),
+                        "is_applicant": True,
+                    }
+                )
+            account.assign_mentees = existing_mentees + mentee_applicants
+
+            existing_mentors = list(account.assign_mentors or [])
+            existing_mentor_emails = {
+                (m.get("email") or "").lower()
+                for m in existing_mentors
+                if isinstance(m, dict)
+            }
+            mentor_profile_emails = {
+                (e or "").lower() for e in MentorProfile.objects.distinct("email") if e
+            }
+            mentor_verified_pipeline = _verified_emails_for_user_role("1")
+            mentor_applicants = []
+            for app in NewMentorApplication.objects(
+                partner=partner_id_str,
+                application_state__ne="COMPLETED",
+            ):
+                email_lower = (app.email or "").lower()
+                if email_lower in existing_mentor_emails:
+                    continue
+                stage_id = _compute_effective_stage(
+                    app.application_state,
+                    email_lower,
+                    mentor_profile_emails,
+                    mentor_verified_pipeline,
+                )
+                mentor_applicants.append(
+                    {
+                        "id": app.id,
+                        "name": app.name,
+                        "email": app.email,
+                        "image": None,
+                        "message_receive_data": [],
+                        "effective_stage": stage_id,
+                        "effective_stage_label": _STAGE_LABELS[stage_id],
+                        "application_state": app.application_state,
+                        "days_since_submit": _days_since(app.date_submitted),
+                        "is_applicant": True,
+                    }
+                )
+            account.assign_mentors = existing_mentors + mentor_applicants
 
         elif account_type == Account.GUEST:
             account = Guest.objects.get(id=id)

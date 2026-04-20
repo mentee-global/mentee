@@ -14,6 +14,7 @@ from api.models import (
     Guest,
     Support,
     Moderator,
+    Users,
 )
 from flask import send_file, Blueprint, request
 from mongoengine.queryset.visitor import Q
@@ -21,6 +22,24 @@ from api.utils.require_auth import admin_only
 from api.utils.constants import Account, EDUCATION_LEVEL
 
 download = Blueprint("download", __name__)
+
+
+def _verified_email_set(user_role):
+    """Lowercased emails of Firebase-verified users for the given role."""
+    return {
+        (u.email or "").lower()
+        for u in Users.objects(role=user_role, verified=True).only("email")
+        if u.email
+    }
+
+
+def _profile_stage_label(email, verified_emails):
+    """Profile rows are always past COMPLETED, so the only remaining signal
+    is whether the Firebase email verification link was ever clicked."""
+    normalized = (email or "").lower()
+    if normalized and normalized in verified_emails:
+        return "Active"
+    return "Profile — email unverified"
 
 
 @download.route("/appointments/all", methods=["GET"])
@@ -89,6 +108,11 @@ def download_accounts_info():
     account_type = int(data.get("account_type", 0))
     hub_user_id = data.get("hub_user_id")
 
+    # Optional CSV list of profile IDs. When set, only those rows are exported
+    # — this is how /account-data's client-side filters flow into the export.
+    raw_ids = (data.get("ids") or "").strip()
+    filter_ids = [s for s in raw_ids.split(",") if s]
+
     accounts = None
 
     try:
@@ -98,9 +122,15 @@ def download_accounts_info():
         partner_object = {}
 
         if account_type == Account.MENTOR:
-            accounts = MentorProfile.objects(firebase_uid__nin=admin_ids)
+            qs = MentorProfile.objects(firebase_uid__nin=admin_ids)
+            if filter_ids:
+                qs = qs.filter(id__in=filter_ids)
+            accounts = qs
         elif account_type == Account.MENTEE:
-            accounts = MenteeProfile.objects(firebase_uid__nin=admin_ids)
+            qs = MenteeProfile.objects(firebase_uid__nin=admin_ids)
+            if filter_ids:
+                qs = qs.filter(id__in=filter_ids)
+            accounts = qs
             partner_data = PartnerProfile.objects(firebase_uid__nin=admin_ids)
             for partner_item in partner_data:
                 partner_object[str(partner_item.id)] = partner_item.organization
@@ -197,9 +227,21 @@ def download_accounts_info():
 @download.route("/partner/<string:partner_id>/accounts", methods=["GET"])
 @admin_only
 def download_partner_member_accounts(partner_id):
-    """Download accounts (mentors or mentees) assigned to a specific partner."""
+    """Download accounts (mentors or mentees) assigned to a specific partner.
+
+    Honors the same filter knobs exposed on /partner-data:
+      - include_applicants (bool, default true): mid-funnel applicants who
+        named this partner, in addition to completed profiles.
+      - effective_stage (optional): keep only rows matching this stage id.
+      - format (xlsx|csv): output format.
+    """
     data = request.args
     account_type = int(data.get("account_type", 0))
+    file_format = (data.get("format") or "xlsx").lower()
+    if file_format not in ("xlsx", "csv"):
+        file_format = "xlsx"
+    include_applicants = (data.get("include_applicants") or "true").lower() == "true"
+    effective_stage_filter = (data.get("effective_stage") or "").strip()
 
     try:
         partner = PartnerProfile.objects.get(id=partner_id)
@@ -208,24 +250,99 @@ def download_partner_member_accounts(partner_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    if account_type == Account.MENTOR:
-        if not partner.assign_mentors:
-            return create_response(
-                status=422, message="No mentors assigned to this partner"
+    from api.views.apply import (
+        _compute_effective_stage,
+        _STAGE_LABELS,
+        _days_since,
+    )
+
+    partner_id_str = str(partner.id)
+    partner_org = partner.organization or ""
+
+    def _build_applicants(app_model, role_key):
+        if not include_applicants:
+            return []
+        from api.views.apply import _build_lookup_sets
+
+        profile_emails, verified_emails = _build_lookup_sets(role_key)
+        out = []
+        for app in app_model.objects(
+            partner=partner_id_str,
+            application_state__ne="COMPLETED",
+        ):
+            email_lower = (app.email or "").lower()
+            stage_id = _compute_effective_stage(
+                app.application_state,
+                email_lower,
+                profile_emails,
+                verified_emails,
             )
-        mentor_ids = [m["id"] for m in partner.assign_mentors if "id" in m]
-        accounts = MentorProfile.objects.filter(id__in=mentor_ids)
-        return download_mentor_accounts(accounts)
+            if effective_stage_filter and stage_id != effective_stage_filter:
+                continue
+            out.append(
+                {
+                    "name": app.name,
+                    "email": app.email,
+                    "organization": partner_org,
+                    "stage_label": _STAGE_LABELS[stage_id],
+                    "days_since_submit": _days_since(app.date_submitted),
+                    "application_state": app.application_state,
+                }
+            )
+        return out
+
+    if account_type == Account.MENTOR:
+        mentor_ids = [m["id"] for m in (partner.assign_mentors or []) if "id" in m]
+        accounts = list(MentorProfile.objects.filter(id__in=mentor_ids))
+        if effective_stage_filter:
+            verified_emails = _verified_email_set("1")
+            accounts = [
+                a
+                for a in accounts
+                if (
+                    (
+                        "active"
+                        if (a.email or "").lower() in verified_emails
+                        else "active_unverified"
+                    )
+                    == effective_stage_filter
+                )
+            ]
+        applicants = _build_applicants(NewMentorApplication, "mentor")
+        if not accounts and not applicants:
+            return create_response(
+                status=422,
+                message="No mentors match this partner + filter combination",
+            )
+        return download_mentor_accounts(accounts, file_format, applicants)
 
     elif account_type == Account.MENTEE:
-        if not partner.assign_mentees:
+        mentee_ids = [m["id"] for m in (partner.assign_mentees or []) if "id" in m]
+        accounts = list(MenteeProfile.objects.filter(id__in=mentee_ids))
+        if effective_stage_filter:
+            verified_emails = _verified_email_set("2")
+            accounts = [
+                a
+                for a in accounts
+                if (
+                    (
+                        "active"
+                        if (a.email or "").lower() in verified_emails
+                        else "active_unverified"
+                    )
+                    == effective_stage_filter
+                )
+            ]
+        applicants = _build_applicants(MenteeApplication, "mentee")
+        if not accounts and not applicants:
             return create_response(
-                status=422, message="No mentees assigned to this partner"
+                status=422,
+                message="No mentees match this partner + filter combination",
             )
-        mentee_ids = [m["id"] for m in partner.assign_mentees if "id" in m]
-        accounts = MenteeProfile.objects.filter(id__in=mentee_ids)
         partner_object = {str(partner.id): partner.organization}
-        return download_mentee_accounts(accounts, partner_object)
+        return download_mentee_accounts(
+            accounts, partner_object, file_format, applicants
+        )
 
     msg = "Invalid account_type for partner download"
     logger.info(msg)
@@ -235,19 +352,35 @@ def download_partner_member_accounts(partner_id):
 @download.route("/apps/all", methods=["GET"])
 @admin_only
 def download_apps_info():
+    """Export applications. Mirrors the /menteeOrganizer UI filters so the
+    file matches what the admin has on screen."""
+    from mongoengine.queryset.visitor import Q
+
     data = request.args
     account_type = int(data.get("account_type", 0))
+    partner_id = (data.get("partner_id") or "").strip()
+    search = (data.get("search") or "").strip()
+    application_state = (data.get("application_state") or "").strip()
+    effective_stage = (data.get("effective_stage") or "").strip()
     apps = None
+
+    query = Q()
+    if search:
+        query &= Q(name__icontains=search) | Q(email__icontains=search)
+    if application_state and application_state != "all":
+        query &= Q(application_state=application_state)
+    if partner_id:
+        query &= Q(partner=partner_id)
 
     partner_object = {}
     try:
         if account_type == Account.MENTOR:
-            apps = NewMentorApplication.objects()
+            apps = list(NewMentorApplication.objects.filter(query))
             partner_data = PartnerProfile.objects()
             for partner_item in partner_data:
                 partner_object[str(partner_item.id)] = partner_item.organization
         elif account_type == Account.MENTEE:
-            apps = MenteeApplication.objects()
+            apps = list(MenteeApplication.objects.filter(query))
             partner_data = PartnerProfile.objects()
             for partner_item in partner_data:
                 partner_object[str(partner_item.id)] = partner_item.organization
@@ -257,20 +390,58 @@ def download_apps_info():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    # Stage lookup sets mirror apply.py — compute once per export.
+    from api.views.apply import (
+        _build_lookup_sets,
+        _compute_effective_stage,
+        _STAGE_LABELS,
+        _days_since,
+    )
+
+    role = "mentor" if account_type == Account.MENTOR else "mentee"
+    profile_emails, verified_emails = _build_lookup_sets(role)
+
+    if effective_stage and effective_stage != "all":
+        apps = [
+            a
+            for a in apps
+            if _compute_effective_stage(
+                getattr(a, "application_state", None),
+                (getattr(a, "email", "") or "").lower(),
+                profile_emails,
+                verified_emails,
+            )
+            == effective_stage
+        ]
+
+    def stage_info(acct):
+        email = (getattr(acct, "email", "") or "").lower()
+        stage_id = _compute_effective_stage(
+            getattr(acct, "application_state", None),
+            email,
+            profile_emails,
+            verified_emails,
+        )
+        return (
+            _STAGE_LABELS.get(stage_id, stage_id),
+            _days_since(getattr(acct, "date_submitted", None)),
+        )
+
     if account_type == Account.MENTOR:
-        return download_mentor_apps(apps, partner_object)
+        return download_mentor_apps(apps, partner_object, stage_info)
     elif account_type == Account.MENTEE:
-        return download_mentee_apps(apps, partner_object)
+        return download_mentee_apps(apps, partner_object, stage_info)
 
     msg = "Invalid input"
     logger.info(msg)
     return create_response(status=422, message=msg)
 
 
-def download_mentor_apps(apps, partner_object):
+def download_mentor_apps(apps, partner_object, stage_info):
     accts = []
 
     for acct in apps:
+        stage_label, days = stage_info(acct)
         accts.append(
             [
                 acct.name,
@@ -294,6 +465,8 @@ def download_mentor_apps(apps, partner_object):
                 acct.identify,
                 acct.pastLiveLocation,
                 acct.application_state,
+                stage_label,
+                days,
                 acct.notes,
                 (
                     partner_object[acct.partner]
@@ -326,16 +499,19 @@ def download_mentor_apps(apps, partner_object):
         "identify",
         "past live location",
         "application state",
+        "effective stage",
+        "days since submit",
         "notes",
         "Organization Affiliation",
     ]
     return generate_sheet("mentor_applications", accts, columns)
 
 
-def download_mentee_apps(apps, partner_object):
+def download_mentee_apps(apps, partner_object, stage_info):
     accts = []
 
     for acct in apps:
+        stage_label, days = stage_info(acct)
         accts.append(
             [
                 acct.name,
@@ -353,6 +529,8 @@ def download_mentee_apps(apps, partner_object):
                 acct.isSocial,
                 acct.questions,
                 acct.application_state,
+                stage_label,
+                days,
                 acct.notes,
                 (
                     partner_object[acct.partner]
@@ -374,13 +552,19 @@ def download_mentee_apps(apps, partner_object):
         "is social ",
         "questions",
         "application state",
+        "effective stage",
+        "days since submit",
         "notes",
         "Organization Affiliation",
     ]
     return generate_sheet("mentee_applications", accts, columns)
 
 
-def download_mentor_accounts(accounts):
+def download_mentor_accounts(accounts, file_format="xlsx", applicants=None):
+    """Export completed mentor profiles, optionally augmented with mid-funnel
+    applicants. Each applicant dict should have: name, email, stage_label,
+    organization, days_since_submit, application_state.
+    """
     accounts = list(accounts)
     account_ids = [acct.id for acct in accounts]
 
@@ -401,6 +585,8 @@ def download_mentor_accounts(accounts):
         if partner_account.assign_mentors:
             for mentor_item in partner_account.assign_mentors:
                 partners_by_assign_mentor[str(mentor_item["id"])] = partner_account
+
+    verified_emails = _verified_email_set("1")
 
     accts = []
 
@@ -443,6 +629,7 @@ def download_mentor_accounts(accounts):
                 received_count.get(acct_id, 0),
                 sent_count.get(acct_id, 0),
                 partner,
+                _profile_stage_label(acct.email, verified_emails),
             ]
         )
     columns = [
@@ -467,8 +654,36 @@ def download_mentor_accounts(accounts):
         "total_received_messages",
         "total_sent_messages",
         "Affiliated",
+        "effective stage",
+        "days since submit",
+        "application state",
     ]
-    return generate_sheet("mentor_accounts", accts, columns)
+
+    # Profile rows don't have application-lifecycle timestamps; the last two
+    # columns are blank for them. Applicant rows below invert that shape.
+    for i, row in enumerate(accts):
+        row.extend(["", ""])
+
+    for ap in applicants or []:
+        blanks = [""] * 18  # everything before total_received_messages
+        accts.append(
+            blanks
+            + [
+                "",  # total_received_messages
+                "",  # total_sent_messages
+                ap.get("organization") or "",  # Affiliated
+                ap.get("stage_label") or "",  # effective stage
+                ap.get("days_since_submit")
+                if ap.get("days_since_submit") is not None
+                else "",
+                ap.get("application_state") or "",
+            ]
+        )
+        # Override the name + email + professional_title with applicant data.
+        accts[-1][0] = ap.get("name") or ""
+        accts[-1][1] = ap.get("email") or ""
+
+    return generate_sheet("mentor_accounts", accts, columns, file_format)
 
 
 def download_partner_accounts(accounts):
@@ -669,7 +884,13 @@ def download_moderator_accounts(accounts):
     return generate_sheet("moderator_accounts", accts, columns)
 
 
-def download_mentee_accounts(accounts, partner_object):
+def download_mentee_accounts(
+    accounts, partner_object, file_format="xlsx", applicants=None
+):
+    """Export completed mentee profiles, optionally augmented with mid-funnel
+    applicants. Each applicant dict should have: name, email, stage_label,
+    organization, days_since_submit, application_state.
+    """
     accounts = list(accounts)
     account_ids = [acct.id for acct in accounts]
 
@@ -690,6 +911,8 @@ def download_mentee_accounts(accounts, partner_object):
         if partner_account.assign_mentees:
             for mentee_item in partner_account.assign_mentees:
                 partners_by_assign_mentee[str(mentee_item["id"])] = partner_account
+
+    verified_emails = _verified_email_set("2")
 
     accts = []
 
@@ -747,6 +970,7 @@ def download_mentee_accounts(accounts, partner_object):
                 received_count.get(acct_id, 0),
                 sent_count.get(acct_id, 0),
                 partner,
+                _profile_stage_label(acct.email, verified_emails),
             ]
         )
     columns = [
@@ -772,12 +996,56 @@ def download_mentee_accounts(accounts, partner_object):
         "total_received_messages",
         "total_sent_messages",
         "Affiliated",
+        "effective stage",
+        "days since submit",
+        "application state",
     ]
-    return generate_sheet("mentee_accounts", accts, columns)
+
+    for row in accts:
+        row.extend(["", ""])
+
+    for ap in applicants or []:
+        blanks = [""] * 19  # all profile-only columns up to total_sent_messages
+        accts.append(
+            blanks
+            + [
+                ap.get("organization") or "",  # Affiliated
+                ap.get("stage_label") or "",  # effective stage
+                ap.get("days_since_submit")
+                if ap.get("days_since_submit") is not None
+                else "",
+                ap.get("application_state") or "",
+            ]
+        )
+        accts[-1][0] = ap.get("name") or ""  # mentee name
+        accts[-1][4] = ap.get("email") or ""  # email
+
+    return generate_sheet("mentee_accounts", accts, columns, file_format)
 
 
-def generate_sheet(sheet_name, row_data, columns):
+def generate_sheet(sheet_name, row_data, columns, file_format="xlsx"):
+    """Serialize row_data to XLSX (default) or CSV and return as a Flask file.
+
+    `file_format`: "xlsx" | "csv". Anything else falls back to XLSX.
+    """
     df = pd.DataFrame(row_data, columns=columns)
+
+    if file_format == "csv":
+        output = BytesIO()
+        df.to_csv(output, index=False)
+        output.seek(0)
+        try:
+            return send_file(
+                output,
+                mimetype="text/csv",
+                download_name="{0}.csv".format(sheet_name),
+                as_attachment=True,
+            )
+        except FileNotFoundError:
+            msg = "Downloads failed"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine="xlsxwriter")
 

@@ -8,11 +8,14 @@ import {
   Spin,
   Empty,
   Input,
+  Tag,
+  Tooltip,
 } from "antd";
 import {
   DownloadOutlined,
   SearchOutlined,
   ClearOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import {
   fetchApplicationsSearch,
@@ -23,7 +26,13 @@ import {
   deleteApplication,
 } from "../../utils/api";
 import MentorApplicationView from "components/MentorApplicationView";
-import { getAppStatusOptions } from "utils/consts";
+import {
+  getAppStatusOptions,
+  getEffectiveStageOptions,
+  EFFECTIVE_STAGE_COLORS,
+  EFFECTIVE_STAGE_LABELS,
+  EFFECTIVE_STAGE_DESCRIPTIONS,
+} from "utils/consts";
 import { useAuth } from "utils/hooks/useAuth";
 import ModalInput from "components/ModalInput";
 
@@ -31,10 +40,21 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const PAGE_SIZE = 20;
 
-function ApplicationOrganizer({ isMentor }) {
+const DAYS_STUCK_WARN = 14;
+const DAYS_STUCK_CRIT = 30;
+
+function daysStuckColor(days) {
+  if (days == null) return "#888";
+  if (days >= DAYS_STUCK_CRIT) return "#c0392b";
+  if (days >= DAYS_STUCK_WARN) return "#d4a017";
+  return "#333";
+}
+
+function ApplicationOrganizer({ isMentor, partnerId }) {
   const { onAuthStateChanged } = useAuth();
   const [applications, setApplications] = useState([]);
   const [appState, setAppstate] = useState("all");
+  const [effectiveStage, setEffectiveStage] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [visible, setVisible] = useState(false);
@@ -50,9 +70,10 @@ function ApplicationOrganizer({ isMentor }) {
   // callbacks and event handlers never read stale closures.
   const appStateRef = useRef(appState);
   const searchTextRef = useRef(searchText);
+  const effectiveStageRef = useRef(effectiveStage);
 
   const fetchPage = useCallback(
-    async (page, search, state) => {
+    async (page, search, state, stage = effectiveStageRef.current) => {
       const thisRequest = ++requestIdRef.current;
       setLoading(true);
       try {
@@ -61,6 +82,8 @@ function ApplicationOrganizer({ isMentor }) {
           pageSize: PAGE_SIZE,
           search,
           applicationState: state,
+          partnerId,
+          effectiveStage: stage,
         });
         if (thisRequest !== requestIdRef.current) return;
         if (result) {
@@ -86,18 +109,18 @@ function ApplicationOrganizer({ isMentor }) {
         }
       }
     },
-    [isMentor]
+    [isMentor, partnerId]
   );
 
   useEffect(() => {
     onAuthStateChanged(() => {
-      fetchPage(1, "", "all");
+      fetchPage(1, "", "all", "all");
     });
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [partnerId]);
 
   const handleSearchInput = (e) => {
     const value = e.target.value;
@@ -107,7 +130,7 @@ function ApplicationOrganizer({ isMentor }) {
     debounceRef.current = setTimeout(() => {
       setSearchText(value);
       setCurrentPage(1);
-      fetchPage(1, value, appStateRef.current);
+      fetchPage(1, value, appStateRef.current, effectiveStageRef.current);
     }, 400);
   };
 
@@ -119,23 +142,40 @@ function ApplicationOrganizer({ isMentor }) {
     const currentSearch = searchTextRef.current;
     setSearchText(currentSearch);
     setCurrentPage(1);
-    fetchPage(1, currentSearch, value);
+    fetchPage(1, currentSearch, value, effectiveStageRef.current);
+  };
+
+  const handleEffectiveStageChange = (value) => {
+    effectiveStageRef.current = value;
+    setEffectiveStage(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const currentSearch = searchTextRef.current;
+    setSearchText(currentSearch);
+    setCurrentPage(1);
+    fetchPage(1, currentSearch, appStateRef.current, value);
   };
 
   const handleClearFilters = () => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     searchTextRef.current = "";
     appStateRef.current = "all";
+    effectiveStageRef.current = "all";
     setInputValue("");
     setSearchText("");
     setAppstate("all");
+    setEffectiveStage("all");
     setCurrentPage(1);
-    fetchPage(1, "", "all");
+    fetchPage(1, "", "all", "all");
   };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    fetchPage(page, searchTextRef.current, appStateRef.current);
+    fetchPage(
+      page,
+      searchTextRef.current,
+      appStateRef.current,
+      effectiveStageRef.current
+    );
   };
 
   const handleApplicationStateChange = useCallback(
@@ -153,14 +193,24 @@ function ApplicationOrganizer({ isMentor }) {
         );
       } catch (error) {
         console.error("Update failed:", error);
-        fetchPage(currentPage, searchTextRef.current, appStateRef.current);
+        fetchPage(
+          currentPage,
+          searchTextRef.current,
+          appStateRef.current,
+          effectiveStageRef.current
+        );
       }
     },
     [isMentor, currentPage, fetchPage]
   );
 
   const handleModalClose = async () => {
-    await fetchPage(currentPage, searchTextRef.current, appStateRef.current);
+    await fetchPage(
+      currentPage,
+      searchTextRef.current,
+      appStateRef.current,
+      effectiveStageRef.current
+    );
     setVisible(false);
   };
 
@@ -211,6 +261,59 @@ function ApplicationOrganizer({ isMentor }) {
       ),
     },
     {
+      title: "Effective Stage",
+      dataIndex: "effective_stage",
+      key: "effective_stage",
+      render: (stage) =>
+        stage ? (
+          <Tooltip
+            title={EFFECTIVE_STAGE_DESCRIPTIONS[stage]}
+            placement="top"
+            overlayStyle={{ maxWidth: 320 }}
+          >
+            <Tag
+              color={EFFECTIVE_STAGE_COLORS[stage] || "default"}
+              style={{ cursor: "help" }}
+            >
+              {EFFECTIVE_STAGE_LABELS[stage] || stage}
+            </Tag>
+          </Tooltip>
+        ) : (
+          <span style={{ color: "#888" }}>—</span>
+        ),
+    },
+    {
+      title: (
+        <Tooltip
+          title="Days elapsed since the applicant first submitted. This is a ceiling on 'days stuck at current stage' because we don't yet record each state transition's timestamp."
+          placement="top"
+          overlayStyle={{ maxWidth: 320 }}
+        >
+          <span style={{ cursor: "help" }}>
+            Days since submit <InfoCircleOutlined style={{ fontSize: 12 }} />
+          </span>
+        </Tooltip>
+      ),
+      dataIndex: "days_since_submit",
+      key: "days_since_submit",
+      align: "right",
+      sorter: (a, b) =>
+        (a.days_since_submit ?? -1) - (b.days_since_submit ?? -1),
+      render: (days) =>
+        days == null ? (
+          <span style={{ color: "#888" }}>—</span>
+        ) : (
+          <span
+            style={{
+              color: daysStuckColor(days),
+              fontVariantNumeric: "tabular-nums",
+            }}
+          >
+            {days}d
+          </span>
+        ),
+    },
+    {
       title: "Full Application",
       dataIndex: "id",
       key: "id",
@@ -235,7 +338,8 @@ function ApplicationOrganizer({ isMentor }) {
               fetchPage(
                 currentPage,
                 searchTextRef.current,
-                appStateRef.current
+                appStateRef.current,
+                effectiveStageRef.current
               );
             }}
             onCancel={() => {}}
@@ -252,7 +356,8 @@ function ApplicationOrganizer({ isMentor }) {
     },
   ];
 
-  const hasActiveFilters = searchText || appState !== "all";
+  const hasActiveFilters =
+    searchText || appState !== "all" || effectiveStage !== "all";
 
   return (
     <div
@@ -264,26 +369,53 @@ function ApplicationOrganizer({ isMentor }) {
       }}
     >
       <div className="btn-dc">
-        <Button
-          id="mentorapplications"
-          className="btn-d"
-          icon={<DownloadOutlined />}
-          onClick={async () => {
-            await downloadMentorsApps();
-          }}
-        >
-          Mentor Appications
-        </Button>
-        <Button
-          id="menteeapplications"
-          className="btn-d"
-          icon={<DownloadOutlined />}
-          onClick={async () => {
-            await downloadMenteeApps();
-          }}
-        >
-          Mentee Appications
-        </Button>
+        {isMentor ? (
+          <Button
+            id="mentorapplications"
+            className="btn-d"
+            icon={<DownloadOutlined />}
+            onClick={async () => {
+              await downloadMentorsApps(partnerId || "", {
+                search: searchText,
+                applicationState: appState,
+                effectiveStage,
+              });
+            }}
+          >
+            {partnerId
+              ? "Download Mentor Pipeline (this partner)"
+              : "Download Mentor Applications"}
+          </Button>
+        ) : (
+          <Button
+            id="menteeapplications"
+            className="btn-d"
+            icon={<DownloadOutlined />}
+            onClick={async () => {
+              await downloadMenteeApps(partnerId || "", {
+                search: searchText,
+                applicationState: appState,
+                effectiveStage,
+              });
+            }}
+          >
+            {partnerId
+              ? "Download Mentee Pipeline (this partner)"
+              : "Download Mentee Applications"}
+          </Button>
+        )}
+        {hasActiveFilters && (
+          <span
+            style={{
+              marginLeft: 10,
+              fontSize: 12,
+              color: "#666",
+              alignSelf: "center",
+            }}
+          >
+            (export matches your active filters)
+          </span>
+        )}
       </div>
 
       <div
@@ -321,6 +453,41 @@ function ApplicationOrganizer({ isMentor }) {
             onChange={handleStateChange}
             value={appState}
             options={[{ value: "all", label: "All" }, ...getAppStatusOptions()]}
+          />
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 14, fontWeight: 400 }}>Stage:</span>
+          <Tooltip
+            title={
+              <div style={{ lineHeight: 1.5 }}>
+                <div style={{ fontWeight: 600, marginBottom: 6 }}>
+                  What each stage means
+                </div>
+                {getEffectiveStageOptions().map((opt) => (
+                  <div key={opt.value} style={{ marginBottom: 6 }}>
+                    <strong>{opt.label}:</strong>{" "}
+                    {EFFECTIVE_STAGE_DESCRIPTIONS[opt.value]}
+                  </div>
+                ))}
+              </div>
+            }
+            placement="bottomLeft"
+            overlayStyle={{ maxWidth: 420 }}
+          >
+            <InfoCircleOutlined
+              style={{ color: "#8c8c8c", cursor: "help", fontSize: 13 }}
+            />
+          </Tooltip>
+          <Select
+            id="effectivestagefilter"
+            style={{ width: 220 }}
+            onChange={handleEffectiveStageChange}
+            value={effectiveStage}
+            options={[
+              { value: "all", label: "All stages" },
+              ...getEffectiveStageOptions(),
+            ]}
           />
         </div>
 

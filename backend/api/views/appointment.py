@@ -7,6 +7,7 @@ from api.models import (
     MentorProfile,
     MenteeProfile,
     PartnerProfile,
+    Users,
 )
 from api.core import create_response, logger
 from api.utils.request_utils import (
@@ -28,6 +29,27 @@ from api.utils.require_auth import admin_only, all_users, mentor_only
 import re
 
 appointment = Blueprint("appointment", __name__)
+
+
+def _verified_emails_for_role(user_role):
+    """Lowercased emails of Users with role=<user_role> AND verified=True."""
+    return {
+        (u.email or "").lower()
+        for u in Users.objects(role=user_role, verified=True).only("email")
+        if u.email
+    }
+
+
+def _profile_stage(email, verified_emails):
+    """Stage for a row that comes from the completed-profile collection.
+
+    The profile exists by construction, so the only remaining signal is
+    whether the Firebase user has verified their email.
+    """
+    normalized = (email or "").lower()
+    if normalized and normalized in verified_emails:
+        return ("active", "Active")
+    return ("active_unverified", "Profile — email unverified")
 
 
 # GET request for appointments by account id
@@ -414,13 +436,10 @@ def get_mentors_appointments():
             for mentor_item in partner_account.assign_mentors:
                 partners_by_assign_mentor[str(mentor_item["id"])] = partner_account
 
+    verified_emails = _verified_emails_for_role("1")
+
     data = []
     for mentor in mentors:
-        # mentor_appts = [
-        #     appointment
-        #     for appointment in appointments
-        #     if appointment.mentor_id == mentor.id
-        # ]
         sent_messages = [
             message for message in messages if message.sender_id == mentor.id
         ]
@@ -430,6 +449,7 @@ def get_mentors_appointments():
         partner = ""
         if str(mentor.id) in partners_by_assign_mentor:
             partner = partners_by_assign_mentor[str(mentor.id)].organization
+        stage_id, stage_label = _profile_stage(mentor.email, verified_emails)
         data.append(
             {
                 "name": mentor.name,
@@ -437,8 +457,6 @@ def get_mentors_appointments():
                 "partner": partner,
                 "id": str(mentor.id),
                 "image": mentor.image,
-                # "appointments": mentor_appts,
-                # "numOfAppointments": len(mentor_appts),
                 "total_sent_messages": len(sent_messages),
                 "total_received_messages": len(receive_messages),
                 "paused_flag": mentor.paused_flag,
@@ -453,6 +471,8 @@ def get_mentors_appointments():
                 ),
                 "profilePicUp": "Yes" if mentor.image else "No",
                 "videosUp": "Yes" if mentor.videos else "No",
+                "effective_stage": stage_id,
+                "effective_stage_label": stage_label,
             }
         )
 
@@ -471,9 +491,11 @@ def get_mentees_appointments():
         if partner_account.assign_mentees:
             for mentee_item in partner_account.assign_mentees:
                 partners_by_assign_mentee[str(mentee_item["id"])] = partner_account
+
+    verified_emails = _verified_emails_for_role("2")
+
     data = []
     for mentee in mentees:
-        # mentee_appts = AppointmentRequest.objects(mentee_id=mentee.id)
         sent_messages = [
             message for message in messages if message.sender_id == mentee.id
         ]
@@ -483,16 +505,18 @@ def get_mentees_appointments():
         partner = ""
         if str(mentee.id) in partners_by_assign_mentee:
             partner = partners_by_assign_mentee[str(mentee.id)].organization
+        stage_id, stage_label = _profile_stage(mentee.email, verified_emails)
         mentee = mentee.to_mongo()
         mentee["id"] = str(mentee.pop("_id", None))
 
         data.append(
             {
                 **mentee,
-                # "numOfAppointments": len(mentee_appts),
                 "total_sent_messages": len(sent_messages),
                 "total_received_messages": len(receive_messages),
                 "partner": partner,
+                "effective_stage": stage_id,
+                "effective_stage_label": stage_label,
             }
         )
 

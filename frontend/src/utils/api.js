@@ -191,12 +191,22 @@ export const fetchApplications = async (isMentor) => {
 
 export const fetchApplicationsSearch = async (
   isMentor,
-  { page = 1, pageSize = 20, search = "", applicationState = "" } = {}
+  {
+    page = 1,
+    pageSize = 20,
+    search = "",
+    applicationState = "",
+    partnerId = "",
+    effectiveStage = "",
+  } = {}
 ) => {
   const params = new URLSearchParams({ page, page_size: pageSize });
   if (search) params.set("search", search);
   if (applicationState && applicationState !== "all")
     params.set("application_state", applicationState);
+  if (partnerId) params.set("partner_id", partnerId);
+  if (effectiveStage && effectiveStage !== "all")
+    params.set("effective_stage", effectiveStage);
 
   const base = isMentor
     ? "/application/search"
@@ -900,47 +910,75 @@ export const downloadBlob = (response, filename) => {
   URL.revokeObjectURL(url);
 };
 
-export const downloadMentorsData = async () => {
+export const downloadMentorsData = async ({ ids } = {}) => {
   const requestExtension = "/download/accounts/all";
+  const params = { account_type: ACCOUNT_TYPE.MENTOR };
+  if (ids && ids.length > 0) params.ids = ids.join(",");
   let response = await authGet(requestExtension, {
     responseType: "blob",
-    params: {
-      account_type: ACCOUNT_TYPE.MENTOR,
-    },
+    params,
   }).catch(console.error);
 
   downloadBlob(response, "mentor_accounts.xlsx");
 };
-export const downloadMentorsApps = async () => {
+export const downloadMentorsApps = async (
+  partnerId = "",
+  { search = "", applicationState = "", effectiveStage = "" } = {}
+) => {
   const requestExtension = "/download/apps/all";
+  const params = { account_type: ACCOUNT_TYPE.MENTOR };
+  if (partnerId) params.partner_id = partnerId;
+  if (search) params.search = search;
+  if (applicationState && applicationState !== "all")
+    params.application_state = applicationState;
+  if (effectiveStage && effectiveStage !== "all")
+    params.effective_stage = effectiveStage;
+
   let response = await authGet(requestExtension, {
     responseType: "blob",
-    params: {
-      account_type: ACCOUNT_TYPE.MENTOR,
-    },
+    params,
   }).catch(console.error);
 
-  downloadBlob(response, "mentor_applications.xlsx");
+  downloadBlob(
+    response,
+    partnerId
+      ? `mentor_applications_${partnerId}.xlsx`
+      : "mentor_applications.xlsx"
+  );
 };
-export const downloadMenteeApps = async () => {
+export const downloadMenteeApps = async (
+  partnerId = "",
+  { search = "", applicationState = "", effectiveStage = "" } = {}
+) => {
   const requestExtension = "/download/apps/all";
+  const params = { account_type: ACCOUNT_TYPE.MENTEE };
+  if (partnerId) params.partner_id = partnerId;
+  if (search) params.search = search;
+  if (applicationState && applicationState !== "all")
+    params.application_state = applicationState;
+  if (effectiveStage && effectiveStage !== "all")
+    params.effective_stage = effectiveStage;
+
   let response = await authGet(requestExtension, {
     responseType: "blob",
-    params: {
-      account_type: ACCOUNT_TYPE.MENTEE,
-    },
+    params,
   }).catch(console.error);
 
-  downloadBlob(response, "mentee_applications.xlsx");
+  downloadBlob(
+    response,
+    partnerId
+      ? `mentee_applications_${partnerId}.xlsx`
+      : "mentee_applications.xlsx"
+  );
 };
 
-export const downloadMenteesData = async () => {
+export const downloadMenteesData = async ({ ids } = {}) => {
   const requestExtension = "/download/accounts/all";
+  const params = { account_type: ACCOUNT_TYPE.MENTEE };
+  if (ids && ids.length > 0) params.ids = ids.join(",");
   let response = await authGet(requestExtension, {
     responseType: "blob",
-    params: {
-      account_type: ACCOUNT_TYPE.MENTEE,
-    },
+    params,
   }).catch(console.error);
 
   downloadBlob(response, "mentee_data.xlsx");
@@ -1536,15 +1574,21 @@ export const getGroupParticipants = (hubId) => {
 
 export const downloadPartnerMentorsData = async (
   partnerId,
-  format = "xlsx"
+  format = "xlsx",
+  { includeApplicants = true, effectiveStage = "" } = {}
 ) => {
   const requestExtension = `/download/partner/${partnerId}/accounts`;
+  const params = {
+    account_type: ACCOUNT_TYPE.MENTOR,
+    format: format,
+    include_applicants: includeApplicants ? "true" : "false",
+  };
+  if (effectiveStage && effectiveStage !== "all")
+    params.effective_stage = effectiveStage;
+
   let response = await authGet(requestExtension, {
     responseType: "blob",
-    params: {
-      account_type: ACCOUNT_TYPE.MENTOR,
-      format: format,
-    },
+    params,
   }).catch(console.error);
 
   if (response) {
@@ -1555,15 +1599,21 @@ export const downloadPartnerMentorsData = async (
 
 export const downloadPartnerMenteesData = async (
   partnerId,
-  format = "xlsx"
+  format = "xlsx",
+  { includeApplicants = true, effectiveStage = "" } = {}
 ) => {
   const requestExtension = `/download/partner/${partnerId}/accounts`;
+  const params = {
+    account_type: ACCOUNT_TYPE.MENTEE,
+    format: format,
+    include_applicants: includeApplicants ? "true" : "false",
+  };
+  if (effectiveStage && effectiveStage !== "all")
+    params.effective_stage = effectiveStage;
+
   let response = await authGet(requestExtension, {
     responseType: "blob",
-    params: {
-      account_type: ACCOUNT_TYPE.MENTEE,
-      format: format,
-    },
+    params,
   }).catch(console.error);
 
   if (response) {

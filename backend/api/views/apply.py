@@ -1,4 +1,5 @@
 import math
+from datetime import datetime, timezone
 from os import name
 from bson import is_valid
 from flask import Blueprint, request
@@ -92,8 +93,110 @@ def _enrich_applications_with_orgs(applications):
 
 # Fields the table actually displays — split by model because
 # MentorApplication (old) has no partner/organization fields.
-_TABLE_FIELDS_BASE = ("name", "email", "notes", "application_state")
-_TABLE_FIELDS_WITH_PARTNER = _TABLE_FIELDS_BASE + ("partner",)
+_TABLE_FIELDS_BASE = ("name", "email", "notes", "application_state", "date_submitted")
+_TABLE_FIELDS_WITH_PARTNER = _TABLE_FIELDS_BASE + ("partner", "organization")
+
+
+# Effective-stage ids — stable keys for the frontend. Labels are human-facing
+# but the id is what filters and exports should key off.
+STAGE_APPLIED = "applied"  # PENDING
+STAGE_TRAINING = "training"  # APPROVED, awaiting/doing training
+STAGE_PROFILE = "profile"  # BuildProfile, training done, profile in progress
+STAGE_UNVERIFIED = "active_unverified"  # profile created, email not verified
+STAGE_ACTIVE = "active"  # fully onboarded
+STAGE_REJECTED = "rejected"
+STAGE_ORPHAN = "completed_no_profile"  # state=COMPLETED but no profile row
+
+_STAGE_LABELS = {
+    STAGE_APPLIED: "Applied",
+    STAGE_TRAINING: "Approved — in training",
+    STAGE_PROFILE: "Training done — building profile",
+    STAGE_UNVERIFIED: "Profile created — email unverified",
+    STAGE_ACTIVE: "Active",
+    STAGE_REJECTED: "Rejected",
+    STAGE_ORPHAN: "Completed (profile missing)",
+}
+
+
+def _compute_effective_stage(app_state, email, profile_emails, verified_emails):
+    """Map raw application_state + profile/verification presence to a stable stage id."""
+    if app_state == "REJECTED":
+        return STAGE_REJECTED
+    if app_state == "PENDING":
+        return STAGE_APPLIED
+    if app_state == "APPROVED":
+        return STAGE_TRAINING
+    if app_state == "BuildProfile":
+        return STAGE_PROFILE
+    if app_state == "COMPLETED":
+        if email not in profile_emails:
+            return STAGE_ORPHAN
+        return STAGE_ACTIVE if email in verified_emails else STAGE_UNVERIFIED
+    return STAGE_APPLIED
+
+
+def _days_since(dt):
+    if not dt:
+        return None
+    now = datetime.now(timezone.utc)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return max(0, (now - dt).days)
+
+
+def _serialize_application(app, profile_emails, verified_emails):
+    """Build the dict the frontend table consumes — existing fields + stage metadata."""
+    email = (getattr(app, "email", "") or "").lower()
+    stage_id = _compute_effective_stage(
+        getattr(app, "application_state", None),
+        email,
+        profile_emails,
+        verified_emails,
+    )
+    return {
+        "_id": {"$oid": str(app.id)},
+        "name": getattr(app, "name", None),
+        "email": getattr(app, "email", None),
+        "notes": getattr(app, "notes", None),
+        "application_state": getattr(app, "application_state", None),
+        "partner": getattr(app, "partner", None),
+        "organization": getattr(app, "organization", None),
+        "date_submitted": (
+            getattr(app, "date_submitted").isoformat()
+            if getattr(app, "date_submitted", None)
+            else None
+        ),
+        "effective_stage": stage_id,
+        "effective_stage_label": _STAGE_LABELS[stage_id],
+        "days_since_submit": _days_since(getattr(app, "date_submitted", None)),
+    }
+
+
+def _build_lookup_sets(role):
+    """One query each for profiles and verified users, keyed by lowercased email."""
+    if role == "mentee":
+        profile_model = MenteeProfile
+        user_role = "2"
+    else:
+        profile_model = MentorProfile
+        user_role = "1"
+
+    profile_emails = {
+        (e or "").lower() for e in profile_model.objects.distinct("email") if e
+    }
+    verified_emails = {
+        (u.email or "").lower()
+        for u in Users.objects(role=user_role, verified=True).only("email")
+        if u.email
+    }
+    return profile_emails, verified_emails
+
+
+def _enrich_applications_with_stage(applications, role):
+    profile_emails, verified_emails = _build_lookup_sets(role)
+    return [
+        _serialize_application(a, profile_emails, verified_emails) for a in applications
+    ]
 
 
 @apply.route("/search", methods=["GET"])
@@ -109,37 +212,62 @@ def search_mentor_applications():
 
     search = request.args.get("search", "").strip()
     application_state = request.args.get("application_state", "").strip()
+    partner_id = request.args.get("partner_id", "").strip()
+    effective_stage = request.args.get("effective_stage", "").strip()
 
     query = Q()
+    partner_query = Q()
     if search:
         query &= Q(name__icontains=search) | Q(email__icontains=search)
     if application_state:
         query &= Q(application_state=application_state)
+    if partner_id:
+        # Partner filter only applies to the new-model collection;
+        # MentorApplication (legacy) has no partner field.
+        partner_query = Q(partner=partner_id)
 
-    new_qs = NewMentorApplication.objects.filter(query).only(
+    new_qs = NewMentorApplication.objects.filter(query & partner_query).only(
         *_TABLE_FIELDS_WITH_PARTNER
     )
-    old_qs = MentorApplication.objects.filter(query).only(*_TABLE_FIELDS_BASE)
-    total_new = new_qs.count()
-    total_old = old_qs.count()
-    total = total_new + total_old
-    offset = (page - 1) * page_size
-
-    records = []
-    if offset < total_new:
-        take_from_new = min(page_size, total_new - offset)
-        records = list(new_qs.skip(offset).limit(take_from_new))
-        if len(records) < page_size:
-            remaining = page_size - len(records)
-            records += list(old_qs.skip(0).limit(remaining))
+    # Legacy collection is skipped entirely when a partner filter is active.
+    if partner_id:
+        old_qs = MentorApplication.objects.none()
     else:
-        old_offset = offset - total_new
-        records = list(old_qs.skip(old_offset).limit(page_size))
+        old_qs = MentorApplication.objects.filter(query).only(*_TABLE_FIELDS_BASE)
 
-    records = _enrich_applications_with_orgs(records)
+    if effective_stage:
+        # Stage filtering must happen on the full filtered set because the
+        # stage is computed post-query by joining profile + user collections.
+        # Admin-scoped data is small enough to enrich in-memory.
+        all_records = _enrich_applications_with_orgs(list(new_qs) + list(old_qs))
+        serialized = _enrich_applications_with_stage(all_records, role="mentor")
+        serialized = [r for r in serialized if r["effective_stage"] == effective_stage]
+        total = len(serialized)
+        offset = (page - 1) * page_size
+        serialized = serialized[offset : offset + page_size]
+    else:
+        total_new = new_qs.count()
+        total_old = old_qs.count()
+        total = total_new + total_old
+        offset = (page - 1) * page_size
+
+        records = []
+        if offset < total_new:
+            take_from_new = min(page_size, total_new - offset)
+            records = list(new_qs.skip(offset).limit(take_from_new))
+            if len(records) < page_size:
+                remaining = page_size - len(records)
+                records += list(old_qs.skip(0).limit(remaining))
+        else:
+            old_offset = offset - total_new
+            records = list(old_qs.skip(old_offset).limit(page_size))
+
+        records = _enrich_applications_with_orgs(records)
+        serialized = _enrich_applications_with_stage(records, role="mentor")
+
     return create_response(
         data={
-            "applications": records,
+            "applications": serialized,
             "total": total,
             "page": page,
             "page_size": page_size,
@@ -161,22 +289,38 @@ def search_mentee_applications():
 
     search = request.args.get("search", "").strip()
     application_state = request.args.get("application_state", "").strip()
+    partner_id = request.args.get("partner_id", "").strip()
+    effective_stage = request.args.get("effective_stage", "").strip()
 
     query = Q()
     if search:
         query &= Q(name__icontains=search) | Q(email__icontains=search)
     if application_state:
         query &= Q(application_state=application_state)
+    if partner_id:
+        query &= Q(partner=partner_id)
 
     queryset = MenteeApplication.objects.filter(query).only(*_TABLE_FIELDS_WITH_PARTNER)
-    total = queryset.count()
-    offset = (page - 1) * page_size
-    records = list(queryset.skip(offset).limit(page_size))
-    records = _enrich_applications_with_orgs(records)
+
+    if effective_stage:
+        # Same approach as the mentor search: stage is computed post-query,
+        # so filter-then-paginate in-memory to keep pages consistent.
+        all_records = _enrich_applications_with_orgs(list(queryset))
+        serialized = _enrich_applications_with_stage(all_records, role="mentee")
+        serialized = [r for r in serialized if r["effective_stage"] == effective_stage]
+        total = len(serialized)
+        offset = (page - 1) * page_size
+        serialized = serialized[offset : offset + page_size]
+    else:
+        total = queryset.count()
+        offset = (page - 1) * page_size
+        records = list(queryset.skip(offset).limit(page_size))
+        records = _enrich_applications_with_orgs(records)
+        serialized = _enrich_applications_with_stage(records, role="mentee")
 
     return create_response(
         data={
-            "applications": records,
+            "applications": serialized,
             "total": total,
             "page": page,
             "page_size": page_size,

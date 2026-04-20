@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Button,
   Breadcrumb,
@@ -6,8 +6,9 @@ import {
   Spin,
   message,
   Tooltip,
-  Badge,
+  Typography,
   Switch,
+  Select,
 } from "antd";
 import {
   DownloadOutlined,
@@ -18,6 +19,7 @@ import {
   ClearOutlined,
   SearchOutlined,
   ClusterOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import "../css/AdminAccountData.scss";
 import {
@@ -38,7 +40,12 @@ import UploadEmails from "../UploadEmails";
 import AddGuestModal from "../AddGuestModal";
 import AdminDataTable from "../AdminDataTable";
 import { useAuth } from "utils/hooks/useAuth";
-import { ACCOUNT_TYPE } from "utils/consts";
+import {
+  ACCOUNT_TYPE,
+  EFFECTIVE_STAGE,
+  EFFECTIVE_STAGE_LABELS,
+  EFFECTIVE_STAGE_DESCRIPTIONS,
+} from "utils/consts";
 
 const keys = {
   MENTORS: 0,
@@ -95,7 +102,6 @@ function AdminAccountData() {
   const [reload, setReload] = useState(true);
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
-  const [filterData, setFilterData] = useState([]);
   const [downloadFile, setDownloadFile] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [guestModalVisible, setGuestModalVisible] = useState(false);
@@ -106,11 +112,99 @@ function AdminAccountData() {
   const [searchText, setSearchText] = useState("");
   const [partnerSearchText, setPartnerSearchText] = useState("");
 
+  // Extra filters (all default to "all"). These compose AND-wise with the
+  // existing search filters via the filterData useMemo below.
+  const [stageFilter, setStageFilter] = useState("all");
+  const [hasPictureFilter, setHasPictureFilter] = useState("all");
+  const [hasVideoFilter, setHasVideoFilter] = useState("all");
+  const [takingAppointmentsFilter, setTakingAppointmentsFilter] =
+    useState("all");
+  const [pausedFilter, setPausedFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState(null);
+
   // Include Hub Accounts toggle (only for Partners view)
   const [includeHubAccounts, setIncludeHubAccounts] = useState(false);
 
   // Track active filters for UI feedback
-  const hasActiveFilters = searchText || partnerSearchText || searchHubUserId;
+  const hasActiveFilters =
+    searchText ||
+    partnerSearchText ||
+    searchHubUserId ||
+    stageFilter !== "all" ||
+    hasPictureFilter !== "all" ||
+    hasVideoFilter !== "all" ||
+    takingAppointmentsFilter !== "all" ||
+    pausedFilter !== "all";
+
+  // Compose every active filter into one derived array. Keeping this in a
+  // useMemo means the individual handlers below just update state — they
+  // never overwrite one another's results like the old setFilterData calls.
+  const filterData = useMemo(() => {
+    let out = displayData;
+
+    if (searchText) {
+      const re = new RegExp(searchText, "i");
+      out = out.filter((acc) =>
+        displayOption === keys.PARTNER
+          ? acc.organization?.match(re)
+          : acc.name?.match(re)
+      );
+    }
+    if (partnerSearchText) {
+      const re = new RegExp(partnerSearchText, "i");
+      out = out.filter((acc) => acc.partner?.match(re));
+    }
+    if (searchHubUserId && displayOption === keys.PARTNER) {
+      out = out.filter((acc) => acc.hub_id === searchHubUserId);
+    }
+    if (stageFilter !== "all") {
+      out = out.filter((acc) => acc.effective_stage === stageFilter);
+    }
+    if (hasPictureFilter !== "all") {
+      const want = hasPictureFilter === "yes" ? "Yes" : "No";
+      out = out.filter((acc) => acc.profilePicUp === want);
+    }
+    if (hasVideoFilter !== "all") {
+      const want = hasVideoFilter === "yes" ? "Yes" : "No";
+      out = out.filter((acc) => acc.videosUp === want);
+    }
+    if (takingAppointmentsFilter !== "all") {
+      const want = takingAppointmentsFilter === "yes";
+      out = out.filter((acc) => Boolean(acc.taking_appointments) === want);
+    }
+    if (pausedFilter !== "all") {
+      const want = pausedFilter === "yes";
+      out = out.filter((acc) => Boolean(acc.paused_flag) === want);
+    }
+
+    if (sortOrder === keys.ASCENDING || sortOrder === keys.DESCENDING) {
+      const asc = sortOrder === keys.ASCENDING;
+      out = [...out].sort((a, b) => {
+        if (a.appointments && b.appointments) {
+          return asc
+            ? b.appointments.length - a.appointments.length
+            : a.appointments.length - b.appointments.length;
+        }
+        return asc
+          ? (b.numOfAppointments || 0) - (a.numOfAppointments || 0)
+          : (a.numOfAppointments || 0) - (b.numOfAppointments || 0);
+      });
+    }
+
+    return out;
+  }, [
+    displayData,
+    displayOption,
+    searchText,
+    partnerSearchText,
+    searchHubUserId,
+    stageFilter,
+    hasPictureFilter,
+    hasVideoFilter,
+    takingAppointmentsFilter,
+    pausedFilter,
+    sortOrder,
+  ]);
 
   // Check if current tab supports download
   const canDownload = [
@@ -149,7 +243,6 @@ function AdminAccountData() {
               isMentee: true,
             }));
             setDisplayData(newMenteeData);
-            setFilterData(newMenteeData);
           } else {
             message.error("Could not fetch account data");
           }
@@ -158,7 +251,6 @@ function AdminAccountData() {
           const mentorRes = await fetchMentorsAppointments();
           if (mentorRes) {
             setDisplayData(mentorRes.mentorData);
-            setFilterData(mentorRes.mentorData);
           } else {
             message.error("Could not fetch account data");
           }
@@ -187,27 +279,22 @@ function AdminAccountData() {
           }
 
           setDisplayData(partners_data);
-          setFilterData(partners_data);
           break;
         case keys.HUB:
           const Hubs = await fetchAccounts(ACCOUNT_TYPE.HUB);
           setDisplayData(Hubs);
-          setFilterData(Hubs);
           break;
         case keys.GUEST:
           const Guests = await fetchAccounts(ACCOUNT_TYPE.GUEST);
           setDisplayData(Guests);
-          setFilterData(Guests);
           break;
         case keys.SUPPORT:
           const Supporters = await fetchAccounts(ACCOUNT_TYPE.SUPPORT);
           setDisplayData(Supporters);
-          setFilterData(Supporters);
           break;
         case keys.MODERATOR:
           const Moderator = await fetchAccounts(ACCOUNT_TYPE.MODERATOR);
           setDisplayData(Moderator);
-          setFilterData(Moderator);
           break;
         default:
           break;
@@ -216,6 +303,7 @@ function AdminAccountData() {
     }
 
     onAuthStateChanged(getData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload, displayOption, includeHubAccounts]);
 
   const handleDeleteAccount = async (id, accountType, name) => {
@@ -249,12 +337,18 @@ function AdminAccountData() {
 
     setIsDownloading(true);
     try {
+      // When filters are active on a Mentor/Mentee tab, send only the IDs
+      // that are currently visible so the export matches the view.
+      const filteredIds = hasActiveFilters
+        ? filterData.map((r) => r._id?.$oid || r.id).filter(Boolean)
+        : null;
+
       switch (displayOption) {
         case keys.MENTORS:
-          await downloadMentorsData();
+          await downloadMentorsData(filteredIds ? { ids: filteredIds } : {});
           break;
         case keys.MENTEES:
-          await downloadMenteesData();
+          await downloadMenteesData(filteredIds ? { ids: filteredIds } : {});
           break;
         case keys.PARTNER:
           // Pass includeHubAccounts to download function
@@ -285,21 +379,10 @@ function AdminAccountData() {
     setIsDownloading(false);
   };
 
+  // Sort order, search text, and every other filter state feed the
+  // filterData useMemo above, so these handlers only update state.
   const handleSortData = (key) => {
-    const newData = [...filterData];
-    const isAscending = key === keys.ASCENDING;
-    newData.sort((a, b) => {
-      if (a.appointments && b.appointments) {
-        return isAscending
-          ? b.appointments.length - a.appointments.length
-          : a.appointments.length - b.appointments.length;
-      } else {
-        return isAscending
-          ? b.numOfAppointments - a.numOfAppointments
-          : a.numOfAppointments - b.numOfAppointments;
-      }
-    });
-    setFilterData(newData);
+    setSortOrder(key);
   };
 
   const handleAccountDisplay = (key) => {
@@ -309,48 +392,15 @@ function AdminAccountData() {
   };
 
   const searchbyHub = (key) => {
-    if (!key || displayOption !== keys.PARTNER) {
-      setFilterData(displayData);
-      setSearchHubUserId(null);
-      return;
-    }
-    setSearchHubUserId(key);
-    let newFiltered = displayData.filter((account) => account.hub_id === key);
-    setFilterData(newFiltered);
+    setSearchHubUserId(key || null);
   };
 
   const handleSearchByPartner = (partner_name) => {
     setPartnerSearchText(partner_name);
-    if (!partner_name) {
-      setFilterData(displayData);
-      return;
-    }
-    let newFiltered = [];
-    if (displayOption === keys.MENTORS || displayOption === keys.MENTEES) {
-      newFiltered = displayData.filter((account) => {
-        return account.partner?.match(new RegExp(partner_name, "i"));
-      });
-      setFilterData(newFiltered);
-    }
   };
 
   const handleSearchAccount = (name) => {
     setSearchText(name);
-    if (!name) {
-      setFilterData(displayData);
-      return;
-    }
-    let newFiltered = [];
-    if (displayOption !== keys.PARTNER) {
-      newFiltered = displayData.filter((account) => {
-        return account.name?.match(new RegExp(name, "i"));
-      });
-    } else {
-      newFiltered = displayData.filter((account) => {
-        return account.organization?.match(new RegExp(name, "i"));
-      });
-    }
-    setFilterData(newFiltered);
   };
 
   const handleResetFilters = () => {
@@ -358,7 +408,12 @@ function AdminAccountData() {
     setSearchHubUserId(null);
     setSearchText("");
     setPartnerSearchText("");
-    setFilterData(displayData);
+    setStageFilter("all");
+    setHasPictureFilter("all");
+    setHasVideoFilter("all");
+    setTakingAppointmentsFilter("all");
+    setPausedFilter("all");
+    setSortOrder(null);
   };
 
   // Handle Include Hub Accounts toggle
@@ -460,6 +515,145 @@ function AdminAccountData() {
             </div>
           )}
 
+          {/* Stage Filter - Mentors/Mentees only */}
+          {(displayOption === keys.MENTORS ||
+            displayOption === keys.MENTEES) && (
+            <div className="filter-group">
+              <span className="filter-label">
+                <FilterOutlined style={{ marginRight: 6 }} />
+                Stage{" "}
+                <Tooltip
+                  placement="bottomLeft"
+                  overlayStyle={{ maxWidth: 420 }}
+                  title={
+                    <div style={{ lineHeight: 1.5 }}>
+                      <div style={{ fontWeight: 600, marginBottom: 6 }}>
+                        What each stage means
+                      </div>
+                      <div style={{ marginBottom: 6 }}>
+                        <strong>
+                          {EFFECTIVE_STAGE_LABELS[EFFECTIVE_STAGE.ACTIVE]}:
+                        </strong>{" "}
+                        {EFFECTIVE_STAGE_DESCRIPTIONS[EFFECTIVE_STAGE.ACTIVE]}
+                      </div>
+                      <div>
+                        <strong>
+                          {EFFECTIVE_STAGE_LABELS[EFFECTIVE_STAGE.UNVERIFIED]}:
+                        </strong>{" "}
+                        {
+                          EFFECTIVE_STAGE_DESCRIPTIONS[
+                            EFFECTIVE_STAGE.UNVERIFIED
+                          ]
+                        }
+                      </div>
+                    </div>
+                  }
+                >
+                  <InfoCircleOutlined
+                    style={{ color: "#8c8c8c", marginLeft: 4, fontSize: 12 }}
+                  />
+                </Tooltip>
+              </span>
+              <Select
+                value={stageFilter}
+                onChange={setStageFilter}
+                style={{ width: 220 }}
+                options={[
+                  { value: "all", label: "All stages" },
+                  {
+                    value: EFFECTIVE_STAGE.ACTIVE,
+                    label: EFFECTIVE_STAGE_LABELS[EFFECTIVE_STAGE.ACTIVE],
+                  },
+                  {
+                    value: EFFECTIVE_STAGE.UNVERIFIED,
+                    label: EFFECTIVE_STAGE_LABELS[EFFECTIVE_STAGE.UNVERIFIED],
+                  },
+                ]}
+              />
+            </div>
+          )}
+
+          {/* Profile picture - Mentors/Mentees only */}
+          {(displayOption === keys.MENTORS ||
+            displayOption === keys.MENTEES) && (
+            <div className="filter-group">
+              <span className="filter-label">
+                <FilterOutlined style={{ marginRight: 6 }} />
+                Profile pic
+              </span>
+              <Select
+                value={hasPictureFilter}
+                onChange={setHasPictureFilter}
+                style={{ width: 140 }}
+                options={[
+                  { value: "all", label: "All" },
+                  { value: "yes", label: "Uploaded" },
+                  { value: "no", label: "Missing" },
+                ]}
+              />
+            </div>
+          )}
+
+          {/* Video uploaded - Mentors only */}
+          {displayOption === keys.MENTORS && (
+            <div className="filter-group">
+              <span className="filter-label">
+                <FilterOutlined style={{ marginRight: 6 }} />
+                Video
+              </span>
+              <Select
+                value={hasVideoFilter}
+                onChange={setHasVideoFilter}
+                style={{ width: 140 }}
+                options={[
+                  { value: "all", label: "All" },
+                  { value: "yes", label: "Uploaded" },
+                  { value: "no", label: "Missing" },
+                ]}
+              />
+            </div>
+          )}
+
+          {/* Taking appointments - Mentors only */}
+          {displayOption === keys.MENTORS && (
+            <div className="filter-group">
+              <span className="filter-label">
+                <FilterOutlined style={{ marginRight: 6 }} />
+                Appointments
+              </span>
+              <Select
+                value={takingAppointmentsFilter}
+                onChange={setTakingAppointmentsFilter}
+                style={{ width: 170 }}
+                options={[
+                  { value: "all", label: "All" },
+                  { value: "yes", label: "Taking" },
+                  { value: "no", label: "Not taking" },
+                ]}
+              />
+            </div>
+          )}
+
+          {/* Paused - Mentors only */}
+          {displayOption === keys.MENTORS && (
+            <div className="filter-group">
+              <span className="filter-label">
+                <FilterOutlined style={{ marginRight: 6 }} />
+                Paused
+              </span>
+              <Select
+                value={pausedFilter}
+                onChange={setPausedFilter}
+                style={{ width: 130 }}
+                options={[
+                  { value: "all", label: "All" },
+                  { value: "yes", label: "Paused" },
+                  { value: "no", label: "Active" },
+                ]}
+              />
+            </div>
+          )}
+
           {/* Clear Filters Button */}
           {hasActiveFilters && (
             <Tooltip title="Clear all filters">
@@ -494,16 +688,14 @@ function AdminAccountData() {
       <div className="table-header-section">
         <div className="table-title">
           {getViewTitle(displayOption)}
-          <Badge
-            count={filterData.length}
-            style={{
-              backgroundColor: "#e5e7eb",
-              color: "#374151",
-              marginLeft: 12,
-              fontSize: 12,
-              fontWeight: 600,
-            }}
-          />
+          <Typography.Text
+            type="secondary"
+            style={{ marginLeft: 12, fontSize: 13, fontWeight: 500 }}
+          >
+            {hasActiveFilters
+              ? `${filterData.length.toLocaleString()} of ${displayData.length.toLocaleString()}`
+              : `${displayData.length.toLocaleString()} total`}
+          </Typography.Text>
           {displayOption === keys.PARTNER && includeHubAccounts && (
             <span className="hub-indicator">(including Hub accounts)</span>
           )}
@@ -544,17 +736,38 @@ function AdminAccountData() {
             uploadModalVisible={uploadModalVisible}
           />
 
-          {/* Download Button - Uses current active tab */}
+          {/* Download Button - Uses current active tab. When the UI has
+              active filters for Mentors/Mentees, the export mirrors the
+              filtered view via an id list; otherwise exports everything. */}
           {canDownload && (
-            <Button
-              className="download-btn"
-              type="primary"
-              icon={<DownloadOutlined />}
-              onClick={handleDownload}
-              loading={isDownloading}
+            <Tooltip
+              title={
+                hasActiveFilters &&
+                (displayOption === keys.MENTORS ||
+                  displayOption === keys.MENTEES)
+                  ? `Exports the ${filterData.length} filtered ${getViewTitle(
+                      displayOption
+                    ).toLowerCase()} currently visible`
+                  : `Exports all ${displayData.length} ${getViewTitle(
+                      displayOption
+                    ).toLowerCase()}`
+              }
+              placement="bottomRight"
             >
-              Download {getViewTitle(displayOption)}
-            </Button>
+              <Button
+                className="download-btn"
+                type="primary"
+                icon={<DownloadOutlined />}
+                onClick={handleDownload}
+                loading={isDownloading}
+              >
+                Download {getViewTitle(displayOption)}
+                {hasActiveFilters &&
+                  (displayOption === keys.MENTORS ||
+                    displayOption === keys.MENTEES) &&
+                  ` (${filterData.length})`}
+              </Button>
+            </Tooltip>
           )}
 
           {/* Refresh Button */}

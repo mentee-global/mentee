@@ -202,6 +202,63 @@ export const getAppStatusOptions = () => {
   });
 };
 
+// Effective-stage ids mirror backend/api/views/apply.py. Keep in sync.
+export const EFFECTIVE_STAGE = {
+  APPLIED: "applied",
+  TRAINING: "training",
+  PROFILE: "profile",
+  UNVERIFIED: "active_unverified",
+  ACTIVE: "active",
+  REJECTED: "rejected",
+  ORPHAN: "completed_no_profile",
+};
+
+export const EFFECTIVE_STAGE_LABELS = {
+  [EFFECTIVE_STAGE.APPLIED]: "Applied",
+  [EFFECTIVE_STAGE.TRAINING]: "In training",
+  [EFFECTIVE_STAGE.PROFILE]: "Building profile",
+  [EFFECTIVE_STAGE.UNVERIFIED]: "Profile — email unverified",
+  [EFFECTIVE_STAGE.ACTIVE]: "Active",
+  [EFFECTIVE_STAGE.REJECTED]: "Rejected",
+  [EFFECTIVE_STAGE.ORPHAN]: "Completed (profile missing)",
+};
+
+export const EFFECTIVE_STAGE_COLORS = {
+  [EFFECTIVE_STAGE.APPLIED]: "blue",
+  [EFFECTIVE_STAGE.TRAINING]: "orange",
+  [EFFECTIVE_STAGE.PROFILE]: "gold",
+  [EFFECTIVE_STAGE.UNVERIFIED]: "volcano",
+  [EFFECTIVE_STAGE.ACTIVE]: "green",
+  [EFFECTIVE_STAGE.REJECTED]: "default",
+  [EFFECTIVE_STAGE.ORPHAN]: "red",
+};
+
+// Plain-language explanation shown in tooltips so admins know what each
+// stage means and what (if anything) they should do about it.
+export const EFFECTIVE_STAGE_DESCRIPTIONS = {
+  [EFFECTIVE_STAGE.APPLIED]:
+    "Application submitted. Waiting for an admin to approve or reject it — no action required from the applicant yet.",
+  [EFFECTIVE_STAGE.TRAINING]:
+    "Admin approved the application. The applicant should now complete the required training materials before they can build their profile. If they've been stuck here for a while, consider a reminder.",
+  [EFFECTIVE_STAGE.PROFILE]:
+    "Training is complete. The applicant is filling out their profile (bio, photo, video, etc.). They are not yet visible to other users.",
+  [EFFECTIVE_STAGE.UNVERIFIED]:
+    "Profile was created but the Firebase email verification link was never clicked. The user can log in, but hasn't fully completed onboarding.",
+  [EFFECTIVE_STAGE.ACTIVE]:
+    "Fully onboarded: profile created AND email verified. Unrestricted access to the platform.",
+  [EFFECTIVE_STAGE.REJECTED]:
+    "Admin rejected the application. Terminal state — no further transitions expected.",
+  [EFFECTIVE_STAGE.ORPHAN]:
+    "Application state is COMPLETED but no profile document exists. Usually a data inconsistency worth investigating manually.",
+};
+
+export const getEffectiveStageOptions = () => {
+  return Object.entries(EFFECTIVE_STAGE_LABELS).map(([value, label]) => ({
+    value,
+    label,
+  }));
+};
+
 export const formatDate = (time_object) => {
   const month = time_object.getMonth() + 1; // Adding 1 because months are 0-indexed
   const day = time_object.getDate();

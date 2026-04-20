@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   fetchAccounts,
   fetchAccountById,
@@ -29,6 +29,7 @@ import {
   Space,
   Segmented,
   Badge,
+  Select,
 } from "antd";
 import {
   UserOutlined,
@@ -41,11 +42,18 @@ import {
   MessageOutlined,
   FileExcelOutlined,
   FileTextOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { HubsDropdown } from "../components/AdminDropdowns";
 
 import "./css/Training.scss";
-import { ACCOUNT_TYPE } from "utils/consts";
+import {
+  ACCOUNT_TYPE,
+  EFFECTIVE_STAGE,
+  EFFECTIVE_STAGE_COLORS,
+  EFFECTIVE_STAGE_LABELS,
+  EFFECTIVE_STAGE_DESCRIPTIONS,
+} from "utils/consts";
 import { css } from "@emotion/css";
 
 export const AdminPartnerData = () => {
@@ -95,7 +103,53 @@ export const AdminPartnerData = () => {
   const [option, setOption] = useState(options.MENTEES);
   const [selectActived, setSelectActived] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [includeApplicants, setIncludeApplicants] = useState(true);
+  const [stageFilter, setStageFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
+
+  // Stages that completed profiles can actually occupy.
+  const PROFILE_ONLY_STAGES = useMemo(
+    () => [EFFECTIVE_STAGE.ACTIVE, EFFECTIVE_STAGE.UNVERIFIED],
+    []
+  );
+
+  // Stage dropdown options adjust based on Include applicants — if the
+  // toggle is OFF, the other 5 stages would match zero rows and just
+  // confuse the admin, so we hide them.
+  const stageOptions = useMemo(() => {
+    const base = [{ value: "all", label: "All stages" }];
+    const stageIds = includeApplicants
+      ? Object.keys(EFFECTIVE_STAGE_LABELS)
+      : PROFILE_ONLY_STAGES;
+    return base.concat(
+      stageIds.map((id) => ({ value: id, label: EFFECTIVE_STAGE_LABELS[id] }))
+    );
+  }, [includeApplicants, PROFILE_ONLY_STAGES]);
+
+  // When Include applicants flips OFF, make sure the selected stage is still
+  // one of the profile-only stages. Otherwise silently filtering to zero rows.
+  useEffect(() => {
+    if (
+      !includeApplicants &&
+      stageFilter !== "all" &&
+      !PROFILE_ONLY_STAGES.includes(stageFilter)
+    ) {
+      setStageFilter("all");
+    }
+  }, [includeApplicants, stageFilter, PROFILE_ONLY_STAGES]);
+
+  // The backend now returns completed profiles AND mid-funnel applicants
+  // (is_applicant=true). Client-side filters decide which ones to show.
+  const visibleTableData = useMemo(() => {
+    let rows = tableData || [];
+    if (!includeApplicants) {
+      rows = rows.filter((r) => !r.is_applicant);
+    }
+    if (stageFilter !== "all") {
+      rows = rows.filter((r) => r.effective_stage === stageFilter);
+    }
+    return rows;
+  }, [tableData, includeApplicants, stageFilter]);
   const [modalMessageFilter, setModalMessageFilter] = useState("all");
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedReceiver, setSelectedReceiver] = useState(null);
@@ -301,6 +355,31 @@ export const AdminPartnerData = () => {
       render: (email) => (
         <Typography.Text copyable={{ text: email }}>{email}</Typography.Text>
       ),
+    },
+    {
+      title: "Stage",
+      dataIndex: "effective_stage",
+      key: "effective_stage",
+      width: 180,
+      render: (stage, record) =>
+        stage ? (
+          <Tooltip
+            title={EFFECTIVE_STAGE_DESCRIPTIONS[stage]}
+            placement="top"
+            overlayStyle={{ maxWidth: 320 }}
+          >
+            <Tag
+              color={EFFECTIVE_STAGE_COLORS[stage] || "default"}
+              style={{ cursor: "help" }}
+            >
+              {record.effective_stage_label ||
+                EFFECTIVE_STAGE_LABELS[stage] ||
+                stage}
+            </Tag>
+          </Tooltip>
+        ) : (
+          <span style={{ color: "#888" }}>—</span>
+        ),
     },
     {
       title: (
@@ -724,6 +803,105 @@ export const AdminPartnerData = () => {
                   </Typography.Text>
                 </div>
               </Tooltip>
+
+              {/* Include applicants toggle */}
+              <Tooltip
+                title="When ON, shows both completed profiles and mid-funnel applicants (Applied / In training / Building profile). When OFF, only completed profiles — the original view."
+                placement="bottom"
+                overlayStyle={{ maxWidth: 320 }}
+              >
+                <div
+                  className={css`
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 6px 12px;
+                    background: ${includeApplicants
+                      ? colorPrimaryBg
+                      : "#f5f5f5"};
+                    border: 1px solid
+                      ${includeApplicants ? colorPrimaryBorder : "#d9d9d9"};
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    &:hover {
+                      border-color: ${colorPrimary};
+                    }
+                  `}
+                  onClick={() => setIncludeApplicants(!includeApplicants)}
+                >
+                  <Switch
+                    size="small"
+                    checked={includeApplicants}
+                    onChange={(e) => setIncludeApplicants(e)}
+                  />
+                  <Typography.Text
+                    style={{
+                      color: includeApplicants ? colorPrimary : "#666",
+                      fontWeight: includeApplicants ? 600 : 400,
+                    }}
+                  >
+                    Include applicants in progress
+                  </Typography.Text>
+                </div>
+              </Tooltip>
+
+              {/* Stage filter */}
+              <div
+                className={css`
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                `}
+              >
+                <Typography.Text style={{ fontSize: 13 }}>
+                  Stage:
+                </Typography.Text>
+                <Tooltip
+                  title={
+                    <div style={{ lineHeight: 1.5 }}>
+                      <div style={{ fontWeight: 600, marginBottom: 6 }}>
+                        What each stage means
+                      </div>
+                      {stageOptions
+                        .filter((o) => o.value !== "all")
+                        .map((opt) => (
+                          <div key={opt.value} style={{ marginBottom: 6 }}>
+                            <strong>{opt.label}:</strong>{" "}
+                            {EFFECTIVE_STAGE_DESCRIPTIONS[opt.value]}
+                          </div>
+                        ))}
+                      {!includeApplicants && (
+                        <div
+                          style={{
+                            marginTop: 8,
+                            paddingTop: 8,
+                            borderTop: "1px solid rgba(255,255,255,0.2)",
+                            fontSize: 11,
+                            opacity: 0.85,
+                          }}
+                        >
+                          Only completed-profile stages shown. Turn on "Include
+                          applicants in progress" to filter by earlier funnel
+                          stages.
+                        </div>
+                      )}
+                    </div>
+                  }
+                  placement="bottomLeft"
+                  overlayStyle={{ maxWidth: 420 }}
+                >
+                  <InfoCircleOutlined
+                    style={{ color: "#8c8c8c", fontSize: 13, cursor: "help" }}
+                  />
+                </Tooltip>
+                <Select
+                  value={stageFilter}
+                  onChange={setStageFilter}
+                  style={{ width: 220 }}
+                  options={stageOptions}
+                />
+              </div>
             </Space>
 
             {/* Right side: Export Button */}
@@ -754,7 +932,11 @@ export const AdminPartnerData = () => {
                             );
                             downloadPartnerMenteesData(
                               selectedPartner._id.$oid,
-                              "xlsx"
+                              "xlsx",
+                              {
+                                includeApplicants,
+                                effectiveStage: stageFilter,
+                              }
                             )
                               .then(() => {
                                 messageApi.success("Mentees Excel downloaded!");
@@ -780,7 +962,11 @@ export const AdminPartnerData = () => {
                             );
                             downloadPartnerMenteesData(
                               selectedPartner._id.$oid,
-                              "csv"
+                              "csv",
+                              {
+                                includeApplicants,
+                                effectiveStage: stageFilter,
+                              }
                             )
                               .then(() => {
                                 messageApi.success("Mentees CSV downloaded!");
@@ -817,7 +1003,11 @@ export const AdminPartnerData = () => {
                             );
                             downloadPartnerMentorsData(
                               selectedPartner._id.$oid,
-                              "xlsx"
+                              "xlsx",
+                              {
+                                includeApplicants,
+                                effectiveStage: stageFilter,
+                              }
                             )
                               .then(() => {
                                 messageApi.success("Mentors Excel downloaded!");
@@ -843,7 +1033,11 @@ export const AdminPartnerData = () => {
                             );
                             downloadPartnerMentorsData(
                               selectedPartner._id.$oid,
-                              "csv"
+                              "csv",
+                              {
+                                includeApplicants,
+                                effectiveStage: stageFilter,
+                              }
                             )
                               .then(() => {
                                 messageApi.success("Mentors CSV downloaded!");
@@ -867,7 +1061,14 @@ export const AdminPartnerData = () => {
                           type="secondary"
                           style={{ fontSize: 11 }}
                         >
-                          Exports include activity status
+                          Export matches current filters (
+                          {includeApplicants
+                            ? "incl. applicants"
+                            : "profiles only"}
+                          {stageFilter !== "all"
+                            ? `, stage: ${stageFilter}`
+                            : ""}
+                          )
                         </Typography.Text>
                       ),
                       disabled: true,
@@ -912,7 +1113,8 @@ export const AdminPartnerData = () => {
                 </Typography.Text>
                 <div>
                   <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                    Showing {tableData?.length || 0} {option.text.toLowerCase()}
+                    Showing {visibleTableData.length} of{" "}
+                    {tableData?.length || 0} {option.text.toLowerCase()}
                     {selectActived ? " with active conversations" : ""}
                   </Typography.Text>
                 </div>
@@ -930,15 +1132,16 @@ export const AdminPartnerData = () => {
             >
               <Table
                 columns={columns}
-                dataSource={tableData}
+                dataSource={visibleTableData}
                 rowKey={(record) => record.id?.$oid || record.email}
                 pagination={{
-                  pageSize: 10,
+                  defaultPageSize: 20,
+                  pageSizeOptions: ["10", "20", "50", "100"],
                   showSizeChanger: true,
                   showTotal: (total, range) =>
                     `${range[0]}-${
                       range[1]
-                    } of ${total} ${option.text.toLowerCase()}`,
+                    } of ${total.toLocaleString()} ${option.text.toLowerCase()}`,
                 }}
                 locale={{
                   emptyText: selectedPartner ? (

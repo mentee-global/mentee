@@ -8,6 +8,7 @@ from api.models import (
     MentorProfile,
     MenteeProfile,
     NewMentorApplication,
+    MentorApplication,
     MenteeApplication,
     Hub,
     DirectMessage,
@@ -259,7 +260,12 @@ def download_partner_member_accounts(partner_id):
     partner_id_str = str(partner.id)
     partner_org = partner.organization or ""
 
-    def _build_applicants(app_model, role_key):
+    def _build_applicants(app_model, role_key, dedup_emails):
+        """Build applicant rows for the export, skipping any whose email
+        already appears in this partner's completed profile roster. Matches
+        the dedup that /api/accounts/<partner_id> does so UI row count and
+        export row count agree.
+        """
         if not include_applicants:
             return []
         from api.views.apply import _build_lookup_sets
@@ -271,6 +277,8 @@ def download_partner_member_accounts(partner_id):
             application_state__ne="COMPLETED",
         ):
             email_lower = (app.email or "").lower()
+            if email_lower and email_lower in dedup_emails:
+                continue
             stage_id = _compute_effective_stage(
                 app.application_state,
                 email_lower,
@@ -308,7 +316,8 @@ def download_partner_member_accounts(partner_id):
                     == effective_stage_filter
                 )
             ]
-        applicants = _build_applicants(NewMentorApplication, "mentor")
+        dedup = {(a.email or "").lower() for a in accounts if a.email}
+        applicants = _build_applicants(NewMentorApplication, "mentor", dedup)
         if not accounts and not applicants:
             return create_response(
                 status=422,
@@ -333,7 +342,8 @@ def download_partner_member_accounts(partner_id):
                     == effective_stage_filter
                 )
             ]
-        applicants = _build_applicants(MenteeApplication, "mentee")
+        dedup = {(a.email or "").lower() for a in accounts if a.email}
+        applicants = _build_applicants(MenteeApplication, "mentee", dedup)
         if not accounts and not applicants:
             return create_response(
                 status=422,
@@ -376,6 +386,22 @@ def download_apps_info():
     try:
         if account_type == Account.MENTOR:
             apps = list(NewMentorApplication.objects.filter(query))
+            # The admin search endpoint unions the legacy MentorApplication
+            # collection too; keep parity so UI row count == export row count.
+            # Legacy rows have no `partner` field, so skip them when that
+            # filter is active.
+            if not partner_id:
+                # Legacy-collection row filters (reuse the same query but
+                # without the partner clause, which doesn't exist on this
+                # model).
+                legacy_query = Q()
+                if search:
+                    legacy_query &= Q(name__icontains=search) | Q(
+                        email__icontains=search
+                    )
+                if application_state and application_state != "all":
+                    legacy_query &= Q(application_state=application_state)
+                apps += list(MentorApplication.objects.filter(legacy_query))
             partner_data = PartnerProfile.objects()
             for partner_item in partner_data:
                 partner_object[str(partner_item.id)] = partner_item.organization
@@ -438,43 +464,59 @@ def download_apps_info():
 
 
 def download_mentor_apps(apps, partner_object, stage_info):
+    """Emit one row per application. Uses getattr because legacy
+    MentorApplication docs don't share the same schema as NewMentorApplication
+    — missing fields just come out as empty cells.
+    """
     accts = []
+
+    def _yn(v):
+        """Render booleans as Yes/No; pass strings through unchanged so
+        legacy MentorApplication's string immigrant_status still makes sense
+        in the sheet."""
+        if v is None or v == "":
+            return ""
+        if isinstance(v, bool):
+            return "Yes" if v else "No"
+        return str(v)
 
     for acct in apps:
         stage_label, days = stage_info(acct)
+        partner_field = getattr(acct, "partner", None)
+        org_field = getattr(acct, "organization", None)
+        affiliated = (
+            partner_object[partner_field]
+            if partner_field and partner_field in partner_object
+            else org_field or ""
+        )
+        specs = getattr(acct, "specializations", None)
         accts.append(
             [
-                acct.name,
-                acct.email,
-                acct.cell_number,
-                acct.hear_about_us,
-                acct.offer_donation,
-                acct.employer_name,
-                acct.role_description,
-                "Yes" if acct.immigrant_status else "No",
-                acct.languages,
-                ",".join(acct.specializations) if acct.specializations else "",
-                acct.referral,
-                acct.companyTime,
-                acct.specialistTime,
-                acct.knowledge_location,
-                "Yes" if acct.isColorPerson else "No",
-                "Yes" if acct.isMarginalized else "No",
-                "Yes" if acct.isFamilyNative else "No",
-                "Yes" if acct.isEconomically else "No",
-                acct.identify,
-                acct.pastLiveLocation,
-                acct.application_state,
+                getattr(acct, "name", ""),
+                getattr(acct, "email", ""),
+                getattr(acct, "cell_number", ""),
+                getattr(acct, "hear_about_us", ""),
+                getattr(acct, "offer_donation", ""),
+                getattr(acct, "employer_name", ""),
+                getattr(acct, "role_description", ""),
+                _yn(getattr(acct, "immigrant_status", None)),
+                getattr(acct, "languages", ""),
+                ",".join(specs) if specs else "",
+                getattr(acct, "referral", ""),
+                getattr(acct, "companyTime", ""),
+                getattr(acct, "specialistTime", ""),
+                getattr(acct, "knowledge_location", ""),
+                _yn(getattr(acct, "isColorPerson", None)),
+                _yn(getattr(acct, "isMarginalized", None)),
+                _yn(getattr(acct, "isFamilyNative", None)),
+                _yn(getattr(acct, "isEconomically", None)),
+                getattr(acct, "identify", ""),
+                getattr(acct, "pastLiveLocation", ""),
+                getattr(acct, "application_state", ""),
                 stage_label,
                 days,
-                acct.notes,
-                (
-                    partner_object[acct.partner]
-                    if acct.partner and acct.partner in partner_object
-                    else acct.organization
-                    if acct.organization
-                    else ""
-                ),
+                getattr(acct, "notes", ""),
+                affiliated,
             ]
         )
     columns = [
@@ -1005,7 +1047,10 @@ def download_mentee_accounts(
         row.extend(["", ""])
 
     for ap in applicants or []:
-        blanks = [""] * 19  # all profile-only columns up to total_sent_messages
+        # 21 blanks cover columns 0..20 (name through total_sent_messages).
+        # The 4 real values then land in the last 4 columns: Affiliated,
+        # effective stage, days since submit, application state.
+        blanks = [""] * 21
         accts.append(
             blanks
             + [

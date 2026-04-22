@@ -58,6 +58,7 @@ function OAuthClientForm({
         is_active: true,
         whitelist_roles: [],
         whitelist_user_ids: [],
+        bypass_admin: false,
         ...initialValues,
       }}
       onFinish={onFinish}
@@ -223,6 +224,15 @@ function OAuthClientForm({
         label={t("admin_oauth.form.whitelist_users")}
       >
         <UserSearchSelect />
+      </Form.Item>
+
+      <Form.Item
+        name="bypass_admin"
+        label={t("admin_oauth.form.bypass_admin")}
+        valuePropName="checked"
+        tooltip={t("admin_oauth.form.bypass_admin_tooltip")}
+      >
+        <Switch />
       </Form.Item>
 
       {isEdit && (

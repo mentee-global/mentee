@@ -54,6 +54,7 @@ def _serialize_client(client: OAuthClient) -> dict:
         "is_active": bool(client.is_active),
         "whitelist_roles": list(client.whitelist_roles or []),
         "whitelist_user_ids": list(client.whitelist_user_ids or []),
+        "bypass_admin": bool(client.bypass_admin),
         "created_at": client.created_at.isoformat() if client.created_at else None,
         "updated_at": client.updated_at.isoformat() if client.updated_at else None,
         "created_by": client.created_by,
@@ -166,6 +167,7 @@ def create_oauth_client_route():
     allow_reserved = bool(data.get("allow_reserved", False))
     whitelist_roles_in = data.get("whitelist_roles", []) or []
     whitelist_user_ids_in = data.get("whitelist_user_ids", []) or []
+    bypass_admin = bool(data.get("bypass_admin", False))
 
     if not client_id or len(client_id) > 128:
         return create_response(
@@ -214,6 +216,7 @@ def create_oauth_client_route():
         is_active=True,
         whitelist_roles=wl_roles,
         whitelist_user_ids=wl_user_ids,
+        bypass_admin=bypass_admin,
     )
     client.save()
 
@@ -292,6 +295,9 @@ def update_oauth_client_route(client_id):
             return create_response(status=400, message=err)
         client.whitelist_roles = wl_roles
         client.whitelist_user_ids = wl_user_ids
+
+    if "bypass_admin" in data:
+        client.bypass_admin = bool(data["bypass_admin"])
 
     client.updated_at = datetime.datetime.utcnow()
     client.save()

@@ -7,8 +7,18 @@ in their mutual dependencies.
 Semantics:
 - Both lists empty => open client, anyone logged in is allowed.
 - Non-empty => user passes iff role OR user-id matches (union).
+- When the client has `bypass_admin=True`, admins pass regardless of the
+  whitelist contents.
 - `is_active=false` and missing users are handled by callers.
 """
+
+import logging
+
+from api.utils.constants import Account
+
+logger = logging.getLogger(__name__)
+
+_ADMIN_ROLE = str(Account.ADMIN.value)
 
 
 def user_is_whitelisted(client, user_doc) -> bool:
@@ -18,9 +28,20 @@ def user_is_whitelisted(client, user_doc) -> bool:
         return True
     if user_doc is None:
         return False
+    role_val = getattr(user_doc, "role", None)
+    if (
+        getattr(client, "bypass_admin", False)
+        and role_val is not None
+        and str(role_val) == _ADMIN_ROLE
+    ):
+        logger.info(
+            "oauth.whitelist_admin_bypass client_id=%s user_id=%s",
+            getattr(client, "client_id", None),
+            getattr(user_doc, "id", None),
+        )
+        return True
     if str(user_doc.id) in user_ids:
         return True
-    role_val = getattr(user_doc, "role", None)
     if role_val is not None and str(role_val) in roles:
         return True
     return False

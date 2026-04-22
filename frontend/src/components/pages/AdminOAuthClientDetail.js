@@ -103,6 +103,7 @@ function AdminOAuthClientDetail() {
       is_active: !!client.is_active,
       whitelist_roles: client.whitelist_roles || [],
       whitelist_user_ids: client.whitelist_user_ids || [],
+      bypass_admin: !!client.bypass_admin,
     });
     setEditOpen(true);
   };
@@ -354,6 +355,13 @@ function AdminOAuthClientDetail() {
                 })}
               </Space>
             )}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("admin_oauth.form.bypass_admin")}>
+            <Tag color={client.bypass_admin ? "green" : "default"}>
+              {client.bypass_admin
+                ? t("admin_oauth.detail.bypass_admin_on")
+                : t("admin_oauth.detail.bypass_admin_off")}
+            </Tag>
           </Descriptions.Item>
           <Descriptions.Item label={t("admin_oauth.detail.created_at")}>
             {client.created_at || "—"}

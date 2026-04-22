@@ -40,6 +40,9 @@ class OAuthClient(Document):
     # semantics apply only when at least one list is non-empty).
     whitelist_roles = ListField(StringField(), default=list)
     whitelist_user_ids = ListField(StringField(), default=list)
+    # When true, admins bypass the whitelist on this client regardless of
+    # whitelist_roles / whitelist_user_ids contents.
+    bypass_admin = BooleanField(default=False)
     created_at = DateTimeField(default=datetime.datetime.utcnow)
     created_by = StringField()
     updated_at = DateTimeField(default=datetime.datetime.utcnow)

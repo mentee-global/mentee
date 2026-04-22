@@ -293,7 +293,9 @@
     "forgotPassword": "¿Has olvidado tu contraseña?",
     "noAccount": "¿No tienes una cuenta?",
     "passwordPlaceholder": "Contraseña",
-    "resetPassword": "Restablecer la contraseña"
+    "resetPassword": "Restablecer la contraseña",
+    "oauthRedirecting": "Completando el inicio de sesión…",
+    "oauthRedirectingBody": "Por favor, no cierre ni recargue esta pestaña — estamos conectando su cuenta de forma segura."
   },
   "loginErrors": {
     "emailError": "Por favor ingrese el correo electrónico",
@@ -710,6 +712,8 @@
       "whitelist_users": "Restringir a usuarios específicos",
       "whitelist_users_placeholder": "Buscar por correo o nombre",
       "whitelist_changes_tokens_note": "Los cambios en la lista no revocan las sesiones activas — usa 'Revocar todos los tokens' para forzar el cierre de sesión.",
+      "bypass_admin": "Permitir siempre a los administradores",
+      "bypass_admin_tooltip": "Cuando está activado, los usuarios con rol de Administrador pueden autorizar este cliente aunque su rol o ID de usuario no esté en la lista anterior.",
       "create": "Crear cliente",
       "save": "Guardar cambios"
     },
@@ -726,6 +730,8 @@
       "token_auth_method": "Método de autenticación del endpoint de tokens",
       "whitelist_open": "Abierto a todos los usuarios autenticados",
       "whitelist_no_users": "Sin usuarios específicos en la lista",
+      "bypass_admin_on": "Administradores siempre permitidos",
+      "bypass_admin_off": "Administradores siguen la lista",
       "created_at": "Creado",
       "updated_at": "Última actualización",
       "delete": "Eliminar cliente",

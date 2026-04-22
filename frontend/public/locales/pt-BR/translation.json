@@ -293,7 +293,9 @@
     "forgotPassword": "Esqueceu sua senha?",
     "noAccount": "Não tem uma conta?",
     "passwordPlaceholder": "Senha",
-    "resetPassword": "Reiniciar"
+    "resetPassword": "Reiniciar",
+    "oauthRedirecting": "Concluindo o login…",
+    "oauthRedirectingBody": "Por favor, não feche nem recarregue esta aba — estamos conectando sua conta com segurança."
   },
   "loginErrors": {
     "emailError": "Por favor, digite o e-mail",
@@ -703,6 +705,8 @@
       "is_first_party": "Cliente de primeira parte",
       "is_first_party_tooltip": "Pula a tela de consentimento — as permissões são aprovadas automaticamente quando um usuário do Mentee entra. Ative apenas para aplicativos do próprio Mentee.",
       "is_active": "Ativo",
+      "bypass_admin": "Sempre permitir administradores",
+      "bypass_admin_tooltip": "Quando ativado, usuários com o papel de Administrador podem autorizar este cliente mesmo que o papel ou ID do usuário não esteja na lista acima.",
       "create": "Criar cliente",
       "save": "Salvar alterações"
     },
@@ -717,6 +721,8 @@
       "confirm_revoke_all": "Isto desconectará todos os usuários de {{clientName}}. Eles terão que entrar novamente.",
       "confirm_deactivate": "Desativar impede novos logins. Sessões existentes continuam até expirarem.",
       "token_auth_method": "Método de autenticação do endpoint de token",
+      "bypass_admin_on": "Administradores sempre permitidos",
+      "bypass_admin_off": "Administradores seguem a lista",
       "created_at": "Criado",
       "updated_at": "Última atualização"
     },

@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, request, session
+from flask import Blueprint, current_app, request, session
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
 from api.models import (
@@ -366,7 +366,15 @@ def forgot_password():
 @auth.route("/logout", methods=["POST"])
 def logout():
     session.clear()
-    return create_response(message="Logged out")
+    response, status = create_response(message="Logged out")
+    response.delete_cookie(
+        current_app.config["SESSION_COOKIE_NAME"],
+        path="/",
+        samesite=current_app.config.get("SESSION_COOKIE_SAMESITE"),
+        secure=current_app.config.get("SESSION_COOKIE_SECURE", False),
+        httponly=current_app.config.get("SESSION_COOKIE_HTTPONLY", True),
+    )
+    return response, status
 
 
 @auth.route("/refreshToken", methods=["POST"])

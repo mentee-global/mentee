@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Form, Input, Button, message, Typography } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Form, Input, Button, message, Typography, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { css } from "@emotion/css";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,8 @@ import { Link, useHistory } from "react-router-dom";
 import { checkProfileExists, checkStatusByEmail } from "utils/api";
 import {
   consumeNextParam,
+  setPendingOAuthRedirect,
+  clearPendingOAuthRedirect,
   login,
   sendVerificationEmail,
 } from "utils/auth.service";
@@ -31,18 +33,34 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
+  const [isOAuthRedirecting, setIsOAuthRedirecting] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
   const roleLabel = t(`common.${ACCOUNT_TYPE_LABELS[role]}`);
 
+  // Lock the OAuth next param at first render so it stays stable across
+  // re-renders (useRef initializer runs exactly once per mount).
+  const oauthNextCapturedRef = useRef(consumeNextParam());
+  const oauthNextCaptured = oauthNextCapturedRef.current;
+
+  // Arm the PublicRoute redirect gate synchronously on first render — a
+  // useEffect would leave a one-commit window where login() could flip
+  // localStorage.role before the gate is set, letting PublicRoute redirect
+  // us off the login form. Cleared on unmount (covers both success and
+  // error paths).
+  if (oauthNextCaptured) setPendingOAuthRedirect();
+  useEffect(() => clearPendingOAuthRedirect, []);
+
+  // Perform the hard navigation only after React has painted the redirecting
+  // overlay, so the user never sees the private dashboard.
+  useEffect(() => {
+    if (!isOAuthRedirecting || !oauthNextCaptured) return;
+    window.location.href = BASE_URL.replace(/\/$/, "") + oauthNextCaptured;
+  }, [isOAuthRedirecting]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const onFinish = async ({ email, password }) => {
     if (role == null) return;
     setLoading(true);
-    // Capture ?next= BEFORE any async work. Once login() sets
-    // localStorage.role, PublicRoute on this /login route redirects to
-    // REDIRECTS[role], which strips the query string before our
-    // post-login onAuthStateChanged callback can read it.
-    const oauthNextCaptured = consumeNextParam();
     email = email.toLowerCase();
 
     // Non-admin checking for status of account
@@ -153,16 +171,20 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
         message.info(t("verifyEmail.body"));
         await sendVerificationEmail(email);
       }
+      if (oauthNextCaptured) {
+        // Show the redirecting overlay first; actual navigation fires in the
+        // useEffect above so React paints before the page unloads. We also
+        // skip fetchUser to avoid triggering a Redux re-render that would
+        // briefly flash the private dashboard.
+        setIsOAuthRedirecting(true);
+        return;
+      }
       dispatch(
         fetchUser({
           id: res.result.profileId,
           role,
         })
       );
-      if (oauthNextCaptured) {
-        window.location.href = BASE_URL.replace(/\/$/, "") + oauthNextCaptured;
-        return;
-      }
       let direct_path = localStorage.getItem("direct_path");
       if (n50_flag) {
         localStorage.setItem("n50_user", true);
@@ -187,6 +209,36 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
   const onFinishFailed = (errorInfo) => {
     // console.log("Failed:", errorInfo);
   };
+
+  if (isOAuthRedirecting) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 9999,
+          background: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 16,
+          padding: "0 24px",
+        }}
+      >
+        <Spin size="large" />
+        <Typography.Title level={4} style={{ margin: 0, textAlign: "center" }}>
+          {t("login.oauthRedirecting")}
+        </Typography.Title>
+        <Typography.Paragraph
+          type="secondary"
+          style={{ margin: 0, maxWidth: 420, textAlign: "center" }}
+        >
+          {t("login.oauthRedirectingBody")}
+        </Typography.Paragraph>
+      </div>
+    );
+  }
 
   return (
     <div

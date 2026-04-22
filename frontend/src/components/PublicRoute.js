@@ -1,6 +1,10 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
-import { getRole, getLoginPath } from "utils/auth.service";
+import {
+  getRole,
+  getLoginPath,
+  hasPendingOAuthRedirect,
+} from "utils/auth.service";
 import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
 
 function PublicRoute({ children, ...rest }) {
@@ -24,7 +28,10 @@ function PublicRoute({ children, ...rest }) {
     <Route
       {...rest}
       render={() =>
-        !role || announcement_detail_flag || oauth_flag ? (
+        !role ||
+        announcement_detail_flag ||
+        oauth_flag ||
+        hasPendingOAuthRedirect() ? (
           children
         ) : (
           <Redirect

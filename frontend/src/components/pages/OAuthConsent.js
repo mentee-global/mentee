@@ -40,6 +40,7 @@ function OAuthConsent() {
   const authorizeToken = new URLSearchParams(search).get("authorize_token");
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!authorizeToken) {
@@ -71,8 +72,38 @@ function OAuthConsent() {
     );
   }
 
-  if (!data) {
-    return <Spin style={{ display: "block", margin: 80 }} />;
+  // Shared overlay for two blocking waits: initial fetch of consent
+  // metadata, and the post-decision round-trip through the backend 303 → 302
+  // chain to the client's redirect_uri. Matches the LoginForm overlay so
+  // the whole OAuth handoff feels continuous across page transitions.
+  if (!data || submitting) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 9999,
+          background: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 16,
+          padding: "0 24px",
+        }}
+      >
+        <Spin size="large" />
+        <Typography.Title level={4} style={{ margin: 0, textAlign: "center" }}>
+          {t("login.oauthRedirecting")}
+        </Typography.Title>
+        <Typography.Paragraph
+          type="secondary"
+          style={{ margin: 0, maxWidth: 420, textAlign: "center" }}
+        >
+          {t("login.oauthRedirectingBody")}
+        </Typography.Paragraph>
+      </div>
+    );
   }
 
   const postUrl = `${BASE_URL}oauth/authorize`;
@@ -139,10 +170,14 @@ function OAuthConsent() {
 
         {/* Native HTML form so the browser follows the backend 303 → 302
             to the client's redirect_uri. Axios would swallow the
-            cross-origin redirect. */}
+            cross-origin redirect. The onSubmit handler flips to the
+            redirecting overlay without preventDefault, so the native POST
+            still fires — the spinner replaces the buttons before the
+            server round-trip returns, preventing double-clicks. */}
         <form
           action={postUrl}
           method="POST"
+          onSubmit={() => setSubmitting(true)}
           style={{
             marginTop: 24,
             display: "flex",

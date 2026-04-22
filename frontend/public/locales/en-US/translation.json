@@ -295,7 +295,9 @@
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
     "passwordPlaceholder": "Enter your password",
-    "resetPassword": "Reset it"
+    "resetPassword": "Reset it",
+    "oauthRedirecting": "Completing sign-in…",
+    "oauthRedirectingBody": "Please don't close or reload this tab — we're securely connecting your account."
   },
   "loginErrors": {
     "emailError": "Please enter email",
@@ -712,6 +714,8 @@
       "whitelist_users": "Restrict to specific users",
       "whitelist_users_placeholder": "Search by email or name",
       "whitelist_changes_tokens_note": "Whitelist changes do not revoke active sessions — use 'Revoke all tokens' to force sign-out.",
+      "bypass_admin": "Always allow admins",
+      "bypass_admin_tooltip": "When on, users with the Admin role can authorize this client even if their role or user ID is not in the whitelist above.",
       "create": "Create client",
       "save": "Save changes"
     },
@@ -728,6 +732,8 @@
       "token_auth_method": "Token endpoint auth method",
       "whitelist_open": "Open to all logged-in users",
       "whitelist_no_users": "No specific users whitelisted",
+      "bypass_admin_on": "Admins always allowed",
+      "bypass_admin_off": "Admins follow whitelist",
       "created_at": "Created",
       "updated_at": "Last updated",
       "delete": "Delete client",

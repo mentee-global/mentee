@@ -20,6 +20,19 @@ export const consumeNextParam = () => {
   }
 };
 
+// In-memory flag: true while an OAuth redirect is in flight after login.
+// Prevents PublicRoute from bouncing the user to private routes during the
+// brief window between Firebase sign-in and window.location.href navigation.
+// Resets to false on every fresh page load (module re-evaluation).
+let _pendingOAuthRedirect = false;
+export const setPendingOAuthRedirect = () => {
+  _pendingOAuthRedirect = true;
+};
+export const clearPendingOAuthRedirect = () => {
+  _pendingOAuthRedirect = false;
+};
+export const hasPendingOAuthRedirect = () => _pendingOAuthRedirect;
+
 const get = (url, params) =>
   instance
     .get(url, params)
@@ -110,6 +123,8 @@ export const logout = async () => {
   localStorage.removeItem("support_user_id");
   localStorage.removeItem("profileId");
   localStorage.removeItem("direct_path");
+  localStorage.removeItem("n50_user");
+  clearPendingOAuthRedirect();
   try {
     await instance.post("/logout");
   } catch (err) {
@@ -124,7 +139,6 @@ export const logout = async () => {
       console.error(message);
       return false;
     });
-  localStorage.removeItem("login_path");
 };
 
 export const refreshToken = async () => {

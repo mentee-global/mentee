@@ -325,7 +325,9 @@
     "forgotPassword": "پاسورد مو هیر شوی؟",
     "noAccount": "اکونت نلری؟",
     "passwordPlaceholder": "خپل پاسورد ولیکی",
-    "resetPassword": "بیایی جوړ کړی"
+    "resetPassword": "بیایی جوړ کړی",
+    "oauthRedirecting": "د ننوتلو بشپړول…",
+    "oauthRedirectingBody": "مهرباني وکړئ دا پاڼه مه بندوئ او بیا مه پورته کوئ — موږ ستاسو حساب په خوندي ډول نښلوو."
   },
   "loginErrors": {
     "emailError": "مهربانی وکړی بریښنالیک مو ولیکی",

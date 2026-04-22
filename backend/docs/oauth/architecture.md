@@ -62,13 +62,31 @@ All tokens are opaque + SHA-256 hashed at rest. `id_token` is the only JWT and i
 
 ## `/oauth/authorize` GET — [`oauth.py:174`](../../api/views/oauth.py)
 
-1. No `session["user_id"]` → `302 /login?next=<original>`.
+1. No `session["user_id"]` → `302 <login_path>?next=<original>`, where `<login_path>` is selected by the optional `mentee_login_role` query param (see below).
 2. `authorization.get_consent_grant()` runs Authlib validation (client, redirect_uri, PKCE S256 required).
 3. Errors: `invalid_client` and any PKCE error → `400 JSON` in-band (never hand details to an attacker-controlled `redirect_uri`). Other errors → redirect to `redirect_uri` with `error=...&error_description=...&state=...` only if the uri is registered.
 4. Scope must be a subset of `OAuthClient.allowed_scopes` → otherwise `400 invalid_scope`.
 5. Consent lookup: `OAuthConsent` keyed on `(user_id, client_id, revoked_at=None)`. If requested scopes ⊆ granted scopes → call `create_authorization_response`.
 6. If `client.is_first_party=True` → auto-persist an `OAuthConsent` covering the requested scopes and call `create_authorization_response` (trusted Mentee-owned apps skip the interactive prompt).
 7. Otherwise mint an itsdangerous-signed **authorize_token** (5-min TTL, jti replay guard, bound to `user_id`) and `302` to `${FRONTEND_URL}/oauth/consent?authorize_token=...`.
+
+### `mentee_login_role` hint (optional)
+
+Advisory-only query param sibling OAuth clients can append to `/oauth/authorize` so Mentee bounces unauthenticated users to the matching role-scoped login form instead of the generic `/login`.
+
+| Value | Redirected to |
+|---|---|
+| `admin` | `/admin` |
+| `support` | `/support` |
+| `moderator` | `/moderator` |
+| `mentor` | `/mentor/login` |
+| `mentee` | `/mentee/login` |
+| `partner` | `/partner/login` |
+| missing / unknown | `/login` |
+
+`hub` is intentionally not supported — hub users sign in through a path-prefixed flow with no standalone landing route.
+
+The hint only picks a frontend path from a closed allowlist in [`oauth.py`](../../api/views/oauth.py) (`_LOGIN_ROLE_TO_PATH`); no substring of the query value is ever interpolated into the response. Safe for untrusted callers to pass — the worst case is a fallback to `/login`.
 
 ## `/oauth/consent-request` GET — [`oauth.py:299`](../../api/views/oauth.py)
 
@@ -155,7 +173,9 @@ TTL indexes (`expireAfterSeconds: 0`) are created by MongoEngine on first write.
 - **`state`** is echoed unchanged — client is responsible for generating + verifying it to defeat CSRF on its callback.
 - **Session cookie** is HMAC-signed with `FLASK_SECRET_KEY` — users cannot tamper with `user_id`.
 - **Password-reset cascade.** `POST /auth/forgotPassword` ([`auth.py:350`](../../api/views/auth.py)) bumps `user.token_version` and sets `revoked=True` on every `OAuthAccessToken` + `OAuthRefreshToken` for that user. Next session check via `require_web_session` sees a stale `token_version` and clears the cookie.
+- **Logout does not cascade.** `POST /auth/logout` clears the Mentee session cookie only; OAuth access and refresh tokens already issued to sibling clients keep working until their natural expiry or explicit `/oauth/revoke`. This matches RFC 6749 (session ≠ token lifetime). If you need "sign out everywhere," use the password-reset flow or add a dedicated user-triggered global revocation (see the Connected Apps API gap in `operations.md`).
 - **Pre-redirect errors stay in-band.** `invalid_client` and PKCE failures return JSON `400`s — never redirect error details to an unvalidated `redirect_uri`.
+- **Clickjacking defense.** `init_authorization_server` installs an `after_request` hook that stamps `X-Frame-Options: DENY` and `Content-Security-Policy: frame-ancestors 'none'` on every `/oauth/*` response — covers both the JSON endpoints and the catch-all-served React consent HTML.
 - **CORS is per-route** ([`api/__init__.py:62`](../../api/__init__.py)). `/api/*`, `/auth/*`, `/oauth/consent-request` → configured origins + credentials. `/oauth/{token,userinfo,revoke}` + `/.well-known/*` → wildcard (bearer auth, no cookies).
 
 ---

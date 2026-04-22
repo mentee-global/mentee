@@ -1,3 +1,4 @@
+import datetime
 import os
 import secrets
 import time
@@ -6,6 +7,7 @@ from urllib.parse import quote_plus, urlencode
 from flask import Blueprint, current_app, jsonify, request, redirect, session
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 
+from api.core import logger
 from api.models import Users, OAuthClient, OAuthConsent, MentorProfile, MenteeProfile
 from api.models import PartnerProfile
 from api.utils.oauth_server import (
@@ -29,6 +31,23 @@ ROLE_NAMES = {
     5: "support",
     6: "hub",
     7: "moderator",
+}
+
+
+# Advisory-only hint sent by sibling OAuth clients so Mentee can route
+# unauthenticated users to the matching role-scoped login form instead of
+# the generic /login. Keep these paths in sync with the routes registered
+# in frontend/src/app/App.js. `hub` is intentionally omitted — hub users
+# sign in through a path-prefixed flow (REDIRECTS[ACCOUNT_TYPE.HUB]) with
+# no standalone landing route; add it here only alongside a matching
+# frontend PublicRoute.
+_LOGIN_ROLE_TO_PATH = {
+    "admin": "/admin",
+    "support": "/support",
+    "moderator": "/moderator",
+    "mentor": "/mentor/login",
+    "mentee": "/mentee/login",
+    "partner": "/partner/login",
 }
 
 
@@ -182,7 +201,11 @@ def _redirect_error_to_client(client, error, description, state):
 @oauth_bp.route("/authorize", methods=["GET"])
 def authorize():
     if not session.get("user_id"):
-        return redirect(f"{_frontend_url()}/login?next={quote_plus(request.full_path)}")
+        hint = (request.args.get("mentee_login_role") or "").lower()
+        login_path = _LOGIN_ROLE_TO_PATH.get(hint, "/login")
+        return redirect(
+            f"{_frontend_url()}{login_path}?next={quote_plus(request.full_path)}"
+        )
 
     try:
         grant = authorization.get_consent_grant(end_user=_current_user())
@@ -212,13 +235,27 @@ def authorize():
         return jsonify({"error": error, "error_description": description}), status
 
     client = grant.client
-    scopes = (grant.request.scope or "").split()
+    # Dedupe while preserving first-occurrence order. OAuth 2.0 scopes are
+    # case-sensitive (RFC 6749 §3.3), so no lowercasing — but a client that
+    # requests "openid openid email" shouldn't inflate the signed authorize
+    # token or the stored consent.
+    _seen = set()
+    scopes = [
+        s
+        for s in (grant.request.scope or "").split()
+        if not (s in _seen or _seen.add(s))
+    ]
     user_id = session["user_id"]
 
     # Whitelist gate: must run BEFORE first-party auto-consent so first-party
     # clients still honor per-client access restrictions.
     current_user = _current_user()
     if not user_is_whitelisted(client, current_user):
+        logger.info(
+            "oauth.whitelist_denied client_id=%s user_id=%s",
+            client.client_id,
+            user_id,
+        )
         err_redirect = _redirect_error_to_client(
             client,
             "access_denied",
@@ -269,6 +306,12 @@ def authorize():
     # ships — never on third-party integrations.
     if client.is_first_party:
         _persist_consent(user_id, client.client_id, scopes)
+        logger.info(
+            "oauth.consent_granted client_id=%s user_id=%s scopes=%s first_party=true",
+            client.client_id,
+            user_id,
+            " ".join(scopes),
+        )
         return authorization.create_authorization_response(grant_user=_current_user())
 
     authorize_token = _mint_authorize_token(client, scopes, user_id)
@@ -308,6 +351,11 @@ def authorize_decision():
     # Defense in depth: re-check whitelist on POST in case the admin tightened
     # it while the user was on the consent screen.
     if not user_is_whitelisted(client, _current_user()):
+        logger.info(
+            "oauth.whitelist_denied_on_decision client_id=%s user_id=%s",
+            client.client_id,
+            session["user_id"],
+        )
         sep = "&" if "?" in redirect_uri else "?"
         loc = f"{redirect_uri}{sep}error=access_denied"
         if state:
@@ -316,7 +364,18 @@ def authorize_decision():
 
     if decision == "approve":
         _persist_consent(session["user_id"], client.client_id, scopes)
+        logger.info(
+            "oauth.consent_granted client_id=%s user_id=%s scopes=%s first_party=false",
+            client.client_id,
+            session["user_id"],
+            " ".join(scopes),
+        )
     else:
+        logger.info(
+            "oauth.consent_denied client_id=%s user_id=%s",
+            client.client_id,
+            session["user_id"],
+        )
         sep = "&" if "?" in redirect_uri else "?"
         loc = f"{redirect_uri}{sep}error=access_denied"
         if state:
@@ -383,17 +442,19 @@ def consent_request():
 
 
 def _persist_consent(user_id, client_id, scopes):
-    existing = OAuthConsent.objects(user_id=user_id, client_id=client_id).first()
-    if existing:
-        existing.granted_scopes = sorted(set((existing.granted_scopes or []) + scopes))
-        existing.revoked_at = None
-        existing.save()
-        return
-    OAuthConsent(
-        user_id=user_id,
-        client_id=client_id,
-        granted_scopes=sorted(set(scopes)),
-    ).save()
+    # Atomic upsert avoids a check-then-insert race: two concurrent /authorize
+    # requests for the same (user, client) can't trip the unique index or
+    # clobber each other's scope list. MongoEngine's add_to_set with a list
+    # compiles to $addToSet + $each, so scopes are unioned — re-granting a
+    # subset never drops previously granted scopes. unset__revoked_at
+    # re-activates a previously revoked consent.
+    unique_scopes = sorted(set(scopes or []))
+    OAuthConsent.objects(user_id=user_id, client_id=client_id).update_one(
+        add_to_set__granted_scopes=unique_scopes,
+        set__granted_at=datetime.datetime.utcnow(),
+        unset__revoked_at=1,
+        upsert=True,
+    )
 
 
 @oauth_bp.route("/token", methods=["POST"])
@@ -435,7 +496,17 @@ def userinfo():
 
     user_doc = Users.objects(id=user_id).first()
     if not user_doc:
-        return jsonify({"error": "invalid_token"}), 401
+        # RFC 6750 §3: a bearer error response must include WWW-Authenticate.
+        # Authlib sets this automatically via InvalidTokenError; mirror that
+        # here so clients that only inspect the header see a consistent
+        # failure mode even on this (rare) user-deleted-after-issuance edge.
+        resp = jsonify({"error": "invalid_token"})
+        resp.status_code = 401
+        resp.headers["WWW-Authenticate"] = (
+            'Bearer error="invalid_token", '
+            'error_description="The access token is invalid"'
+        )
+        return resp
 
     claims = {"sub": str(user_doc.id)}
     if "email" in scopes:

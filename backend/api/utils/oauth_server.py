@@ -11,6 +11,7 @@ from authlib.oauth2.rfc7636 import CodeChallenge
 from authlib.oidc.core import UserInfo
 from authlib.oidc.core import grants as _oidc_grants
 
+from api.core import logger
 from api.models import (
     OAuthClient,
     OAuthAuthorizationCode,
@@ -161,8 +162,9 @@ def _save_token(token_data, request):
     refresh_plain = token_data.get("refresh_token")
     expires_in = int(token_data.get("expires_in") or 3600)
 
+    access_doc = None
     if access_plain:
-        OAuthAccessToken(
+        access_doc = OAuthAccessToken(
             token_hash=sha256_hex(access_plain),
             client_id=client.client_id,
             user_id=user_id,
@@ -170,18 +172,39 @@ def _save_token(token_data, request):
             parent_refresh_token_id=(f"code:{code_hint}" if code_hint else None),
             created_at=now,
             expires_at=now + datetime.timedelta(seconds=expires_in),
-        ).save()
+        )
+        access_doc.save()
 
     if refresh_plain:
-        OAuthRefreshToken(
-            token_hash=sha256_hex(refresh_plain),
-            client_id=client.client_id,
-            user_id=user_id,
-            scope=scope,
-            rotated_from=(f"code:{code_hint}" if code_hint else None),
-            created_at=now,
-            expires_at=now + datetime.timedelta(days=30),
-        ).save()
+        try:
+            OAuthRefreshToken(
+                token_hash=sha256_hex(refresh_plain),
+                client_id=client.client_id,
+                user_id=user_id,
+                scope=scope,
+                rotated_from=(f"code:{code_hint}" if code_hint else None),
+                created_at=now,
+                expires_at=now + datetime.timedelta(days=30),
+            ).save()
+        except Exception:
+            # Mongo isn't transactional here, so a failed refresh save
+            # leaves a live access token whose refresh we can't find later.
+            # Revoke the access token we just created so the client is
+            # forced to restart the flow instead of inheriting a dangling
+            # bearer that can't be refreshed.
+            if access_doc is not None:
+                access_doc.revoked = True
+                access_doc.save()
+            raise
+
+    logger.info(
+        "oauth.token_issued client_id=%s user_id=%s scope=%s access=%s refresh=%s",
+        client.client_id,
+        user_id,
+        scope,
+        bool(access_plain),
+        bool(refresh_plain),
+    )
 
 
 class MenteeBearerTokenValidator(BearerTokenValidator):
@@ -210,9 +233,24 @@ class MenteeRevocationEndpoint(RevocationEndpoint):
             return
         token.revoked = True
         token.save()
+        logger.info(
+            "oauth.token_revoked client_id=%s user_id=%s kind=%s",
+            token.client_id,
+            token.user_id,
+            type(token).__name__,
+        )
         if isinstance(token, OAuthRefreshToken):
+            # Cascade to any access tokens spawned from this refresh. The
+            # parent linkage is recorded two ways: refresh-grant rotations
+            # store `str(refresh.id)`, and the initial auth-code pair stores
+            # `code:<code>` on both the access token's parent_refresh_token_id
+            # and this refresh's rotated_from. Match both so the sibling
+            # access token from the original code doesn't outlive its refresh.
+            parent_ids = [str(token.id)]
+            if token.rotated_from:
+                parent_ids.append(token.rotated_from)
             OAuthAccessToken.objects(
-                parent_refresh_token_id=str(token.id), revoked=False
+                parent_refresh_token_id__in=parent_ids, revoked=False
             ).update(set__revoked=True)
 
 
@@ -274,3 +312,19 @@ def init_authorization_server(app):
         expires_generator=_token_expires_in,
     )
     authorization.register_token_generator("default", bearer_generator)
+
+    # Clickjacking defense. /oauth/consent is rendered by the React bundle
+    # served from this Flask app's catch-all in production (same origin as
+    # the OAuth endpoints), so an attacker framing it could harvest consent
+    # clicks. SameSite=Lax on mentee_web_session is not sufficient against
+    # same-site framing. Deny framing on anything under /oauth/*.
+    from flask import request
+
+    @app.after_request
+    def _oauth_frame_guard(response):
+        if request.path.startswith("/oauth/"):
+            response.headers.setdefault("X-Frame-Options", "DENY")
+            response.headers.setdefault(
+                "Content-Security-Policy", "frame-ancestors 'none'"
+            )
+        return response

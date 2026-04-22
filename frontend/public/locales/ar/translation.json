@@ -292,7 +292,9 @@
     "forgotPassword": "هل نسيت كلمة السر؟",
     "noAccount": "ليس لديك حساب؟",
     "passwordPlaceholder": "كلمة المرور",
-    "resetPassword": " إعادة تعيين كلمة المرور "
+    "resetPassword": " إعادة تعيين كلمة المرور ",
+    "oauthRedirecting": "جارٍ إكمال تسجيل الدخول…",
+    "oauthRedirectingBody": "يرجى عدم إغلاق هذه النافذة أو إعادة تحميلها — نقوم بربط حسابك بأمان."
   },
   "loginErrors": {
     "emailError": "الرجاء إدخال البريد الإلكتروني",

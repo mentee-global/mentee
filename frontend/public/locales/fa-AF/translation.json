@@ -292,7 +292,9 @@
     "forgotPassword": "آیا رمز عبور را فراموش کرده اید؟",
     "noAccount": "حساب کاربری ندارید؟",
     "passwordPlaceholder": "رمز عبور",
-    "resetPassword": "تغییر رمز عبود"
+    "resetPassword": "تغییر رمز عبود",
+    "oauthRedirecting": "در حال تکمیل ورود…",
+    "oauthRedirectingBody": "لطفاً این برگه را نبندید و بارگذاری مجدد نکنید — در حال اتصال ایمن حساب شما هستیم."
   },
   "loginErrors": {
     "emailError": "لطفاً ایمیل را وارد کنید",

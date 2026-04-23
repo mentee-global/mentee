@@ -94,10 +94,6 @@ class MenteeAuthorizationCodeGrant(_grants.AuthorizationCodeGrant):
             return None
         if not user_is_whitelisted(client, user):
             return None
-        # TODO(oauth-whitelist): MenteeRefreshTokenGrant is not yet registered
-        # (see backend/docs/oauth/operations.md). When it lands, its
-        # authenticate_user must perform the same whitelist + is_active check
-        # so refresh flows can't outlive a tightened whitelist.
         return user
 
 
@@ -108,6 +104,112 @@ def _revoke_chain_for_code(code: str):
     OAuthRefreshToken.objects(rotated_from=f"code:{code}", revoked=False).update(
         set__revoked=True
     )
+
+
+def _revoke_refresh_family(refresh_token):
+    """Walk the rotation family of a refresh token in both directions and revoke
+    every member plus their derived access tokens. Used when a revoked refresh
+    is re-presented: either we're seeing a theft replay or a client bug, and in
+    both cases the safe response is to nuke the whole chain."""
+    family_ids = {str(refresh_token.id)}
+
+    ancestor_key = refresh_token.rotated_from
+    while ancestor_key and not ancestor_key.startswith("code:"):
+        ancestor = OAuthRefreshToken.objects(id=ancestor_key).first()
+        if not ancestor or str(ancestor.id) in family_ids:
+            break
+        family_ids.add(str(ancestor.id))
+        ancestor_key = ancestor.rotated_from
+
+    frontier = {str(refresh_token.id)}
+    while frontier:
+        children = OAuthRefreshToken.objects(rotated_from__in=list(frontier))
+        next_frontier = set()
+        for child in children:
+            cid = str(child.id)
+            if cid not in family_ids:
+                family_ids.add(cid)
+                next_frontier.add(cid)
+        frontier = next_frontier
+
+    OAuthRefreshToken.objects(id__in=list(family_ids), revoked=False).update(
+        set__revoked=True
+    )
+    OAuthAccessToken.objects(
+        parent_refresh_token_id__in=list(family_ids), revoked=False
+    ).update(set__revoked=True)
+
+    root = refresh_token.rotated_from
+    if root and root.startswith("code:"):
+        _revoke_chain_for_code(root[len("code:") :])
+
+
+class MenteeRefreshTokenGrant(_grants.RefreshTokenGrant):
+    TOKEN_ENDPOINT_AUTH_METHODS = [
+        "client_secret_basic",
+        "client_secret_post",
+    ]
+    INCLUDE_NEW_REFRESH_TOKEN = True
+
+    def authenticate_refresh_token(self, refresh_token):
+        token = OAuthRefreshToken.objects(token_hash=sha256_hex(refresh_token)).first()
+        if not token:
+            return None
+        if token.revoked:
+            # Replay of a rotated-out credential. Burn the rest of the family
+            # so any descendant issued from this chain stops working.
+            _revoke_refresh_family(token)
+            logger.warning(
+                "oauth.refresh_replay_detected client_id=%s user_id=%s token_id=%s",
+                token.client_id,
+                token.user_id,
+                str(token.id),
+            )
+            return None
+        if token.is_expired():
+            return None
+        return token
+
+    def authenticate_user(self, credential):
+        from authlib.oauth2.rfc6749.errors import InvalidGrantError
+        from api.models import Users
+
+        user = Users.objects(id=credential.user_id).first()
+        if not user:
+            raise InvalidGrantError()
+
+        client = OAuthClient.objects(
+            client_id=credential.client_id, is_active=True
+        ).first()
+        if not client:
+            raise InvalidGrantError()
+        if not user_is_whitelisted(client, user):
+            raise InvalidGrantError()
+
+        stamped = (
+            credential.token_version if credential.token_version is not None else 0
+        )
+        current = int(getattr(user, "token_version", 0) or 0)
+        if stamped != current:
+            raise InvalidGrantError()
+
+        return user
+
+    def revoke_old_credential(self, credential):
+        credential.revoked = True
+        credential.save()
+        parent_ids = [str(credential.id)]
+        if credential.rotated_from:
+            parent_ids.append(credential.rotated_from)
+        OAuthAccessToken.objects(
+            parent_refresh_token_id__in=parent_ids, revoked=False
+        ).update(set__revoked=True)
+        logger.info(
+            "oauth.refresh_rotated client_id=%s user_id=%s token_id=%s",
+            credential.client_id,
+            credential.user_id,
+            str(credential.id),
+        )
 
 
 class MenteeOpenIDCode(_oidc_grants.OpenIDCode):
@@ -151,6 +253,8 @@ def _save_token(token_data, request):
     scope = token_data.get("scope") or request.scope or ""
     now = datetime.datetime.utcnow()
 
+    parent_refresh = getattr(request, "refresh_token", None)
+
     code_hint = getattr(request, "_mentee_auth_code", None)
     if not code_hint:
         try:
@@ -158,9 +262,25 @@ def _save_token(token_data, request):
         except Exception:
             code_hint = None
 
+    if parent_refresh is not None:
+        # Refresh-grant rotation: the new access + new refresh are siblings
+        # under the old refresh. The new access's parent is the NEW refresh
+        # (set after we save it below) so that revoking the old refresh does
+        # not sweep the newly-issued access back out.
+        rotated_from = str(parent_refresh.id)
+        initial_access_parent = None
+    elif code_hint:
+        rotated_from = f"code:{code_hint}"
+        initial_access_parent = f"code:{code_hint}"
+    else:
+        rotated_from = None
+        initial_access_parent = None
+
     access_plain = token_data.get("access_token")
     refresh_plain = token_data.get("refresh_token")
     expires_in = int(token_data.get("expires_in") or 3600)
+
+    token_version = int(getattr(user, "token_version", 0) or 0)
 
     access_doc = None
     if access_plain:
@@ -169,7 +289,7 @@ def _save_token(token_data, request):
             client_id=client.client_id,
             user_id=user_id,
             scope=scope,
-            parent_refresh_token_id=(f"code:{code_hint}" if code_hint else None),
+            parent_refresh_token_id=initial_access_parent,
             created_at=now,
             expires_at=now + datetime.timedelta(seconds=expires_in),
         )
@@ -177,15 +297,20 @@ def _save_token(token_data, request):
 
     if refresh_plain:
         try:
-            OAuthRefreshToken(
+            new_refresh = OAuthRefreshToken(
                 token_hash=sha256_hex(refresh_plain),
                 client_id=client.client_id,
                 user_id=user_id,
                 scope=scope,
-                rotated_from=(f"code:{code_hint}" if code_hint else None),
+                rotated_from=rotated_from,
+                token_version=token_version,
                 created_at=now,
                 expires_at=now + datetime.timedelta(days=30),
-            ).save()
+            )
+            new_refresh.save()
+            if parent_refresh is not None and access_doc is not None:
+                access_doc.parent_refresh_token_id = str(new_refresh.id)
+                access_doc.save()
         except Exception:
             # Mongo isn't transactional here, so a failed refresh save
             # leaves a live access token whose refresh we can't find later.
@@ -304,6 +429,7 @@ def init_authorization_server(app):
         MenteeAuthorizationCodeGrant,
         [S256OnlyCodeChallenge(required=True), MenteeOpenIDCode(require_nonce=False)],
     )
+    authorization.register_grant(MenteeRefreshTokenGrant)
     authorization.register_endpoint(MenteeRevocationEndpoint)
 
     bearer_generator = BearerTokenGenerator(

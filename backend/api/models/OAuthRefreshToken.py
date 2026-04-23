@@ -37,3 +37,6 @@ class OAuthRefreshToken(Document):
 
     def check_client(self, client):
         return self.client_id == client.client_id
+
+    def get_scope(self):
+        return self.scope or ""

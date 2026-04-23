@@ -19,6 +19,7 @@ const SCOPE_PRESETS = [
   { value: "email", label: "email" },
   { value: "profile", label: "profile" },
   { value: "mentee.role", label: "mentee.role" },
+  { value: "mentee.api.profile.read", label: "mentee.api.profile.read" },
 ];
 
 // Roles an admin can whitelist a client for. Excludes ADMIN and SUPPORT
@@ -47,6 +48,12 @@ function OAuthClientForm({
   const { t } = useTranslation();
   const isEdit = mode === "edit";
 
+  // Admins are the only callers of this form, and we want them to be able
+  // to assign any scope — including reserved `mentee.api.*` scopes. The
+  // backend gates those behind `allow_reserved=true`, so always send it.
+  const handleFinish = (values) =>
+    onFinish({ ...values, allow_reserved: true });
+
   return (
     <Form
       form={form}
@@ -61,7 +68,7 @@ function OAuthClientForm({
         bypass_admin: false,
         ...initialValues,
       }}
-      onFinish={onFinish}
+      onFinish={handleFinish}
     >
       {!isEdit && (
         <Form.Item

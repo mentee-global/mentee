@@ -190,7 +190,7 @@ function AdminOAuthClientDetail() {
   };
 
   return (
-    <div style={{ padding: 24, maxWidth: 900 }}>
+    <div style={{ padding: 24 }}>
       {contextHolder}
       <Space style={{ marginBottom: 16 }}>
         <Button
@@ -201,10 +201,21 @@ function AdminOAuthClientDetail() {
         </Button>
       </Space>
 
-      <Card
-        title={
-          <Space>
-            <Typography.Text strong>{client.client_name}</Typography.Text>
+      <Card bodyStyle={{ padding: 24 }}>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            marginBottom: 24,
+          }}
+        >
+          <Space wrap size={[8, 8]} style={{ minWidth: 0 }}>
+            <Typography.Title level={4} style={{ margin: 0 }}>
+              {client.client_name}
+            </Typography.Title>
             <Tag color={client.is_active ? "green" : "red"}>
               {client.is_active
                 ? t("admin_oauth.table.active")
@@ -216,9 +227,7 @@ function AdminOAuthClientDetail() {
               </Tooltip>
             )}
           </Space>
-        }
-        extra={
-          <Space wrap>
+          <Space wrap size={[8, 8]}>
             <Button icon={<EditOutlined />} onClick={handleEdit}>
               {t("admin_oauth.detail.edit")}
             </Button>
@@ -285,9 +294,14 @@ function AdminOAuthClientDetail() {
               </Popconfirm>
             </Tooltip>
           </Space>
-        }
-      >
-        <Descriptions column={1} bordered size="small">
+        </div>
+
+        <Descriptions
+          column={1}
+          bordered
+          size="small"
+          labelStyle={{ width: 260, fontWeight: 500 }}
+        >
           <Descriptions.Item label="client_id">
             <Typography.Text code copyable>
               {client.client_id}

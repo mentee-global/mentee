@@ -37,6 +37,25 @@ cd backend && .venv/bin/python scripts/register_oauth_client.py \
 
 The plaintext secret is printed **once**. Copy immediately.
 
+### Grant an additional scope to a registered client
+
+`mentee.api.*` scopes are reserved and not granted at registration. To grant
+one (e.g. to enable `/oauth/profile` for the Bot):
+
+```bash
+cd backend && .venv/bin/python scripts/grant_oauth_scope.py \
+  --client-id mentee-bot-local \
+  --scope mentee.api.profile.read \
+  --allow-reserved
+```
+
+### `/oauth/profile`
+
+`GET /oauth/profile` returns the curated mentee DTO (`{"version": 1, "data": {...}}`).
+Requires a bearer access token whose scope includes `mentee.api.profile.read`. The
+DTO omits empty/null fields and never exposes Firebase UIDs, raw ObjectIds, phone
+numbers, or internal settings.
+
 ### End-to-end smoke test (curl)
 
 ```bash

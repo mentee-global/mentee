@@ -136,7 +136,13 @@ def openid_configuration():
                 "client_secret_post",
             ],
             "code_challenge_methods_supported": ["S256"],
-            "scopes_supported": ["openid", "email", "profile", "mentee.role"],
+            "scopes_supported": [
+                "openid",
+                "email",
+                "profile",
+                "mentee.role",
+                "mentee.api.profile.read",
+            ],
             "claims_supported": [
                 "sub",
                 "email",
@@ -540,6 +546,19 @@ def userinfo():
             pass
 
     return jsonify(claims)
+
+
+@oauth_bp.route("/profile", methods=["GET"])
+@require_oauth("mentee.api.profile.read")
+def profile():
+    from authlib.integrations.flask_oauth2 import current_token
+    from api.utils.oauth_profile import assemble_profile_dto, ProfileNotFound
+
+    try:
+        data = assemble_profile_dto(current_token.user_id)
+    except ProfileNotFound:
+        return jsonify({"error": "profile_not_found"}), 404
+    return jsonify({"version": 1, "data": data}), 200
 
 
 @oauth_bp.route("/revoke", methods=["POST"])

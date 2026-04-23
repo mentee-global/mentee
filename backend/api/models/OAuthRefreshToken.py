@@ -1,7 +1,7 @@
 import datetime
 
 from flask_mongoengine import Document
-from mongoengine import StringField, DateTimeField, BooleanField
+from mongoengine import StringField, DateTimeField, BooleanField, IntField
 
 
 class OAuthRefreshToken(Document):
@@ -19,6 +19,10 @@ class OAuthRefreshToken(Document):
     scope = StringField(required=True)
     rotated_from = StringField()
     revoked = BooleanField(default=False)
+    # Snapshot of Users.token_version at issuance. A password-reset bumps the
+    # user-level counter; the refresh-token grant compares against it and
+    # rejects tokens issued before the bump.
+    token_version = IntField(default=0)
     created_at = DateTimeField(default=datetime.datetime.utcnow)
     expires_at = DateTimeField(required=True)
     last_used_at = DateTimeField()

@@ -183,7 +183,6 @@ Invalidates every `mentee_web_session` cookie — all active OAuth sessions requ
 
 ## Known gaps
 
-- **Refresh-token grant** — refresh tokens are *issued* but `MenteeRefreshTokenGrant` isn't registered, so `grant_type=refresh_token` at `/oauth/token` fails. Needed for silent re-auth past the 1 h access-token TTL. Rotation + family-replay detection required.
 - **Admin REST API** — client CRUD + secret rotation currently only via `scripts/register_oauth_client.py`. Plan calls for `/api/admin/oauth-clients` + admin React UI.
 - **Connected Apps API** — `/api/user/connected-apps` (list + revoke) not yet implemented.
 - **Rate limiting** — no `flask-limiter` yet. Budget: `/oauth/token` 20/min/IP, `/oauth/authorize` 60/min/IP, `/oauth/userinfo` 120/min/token, `/oauth/revoke` 20/min/IP.

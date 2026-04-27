@@ -112,9 +112,9 @@ def test_assembler_happy_path(mentee_user):
         firebase_uid=f"mentor-{uuid.uuid4().hex[:8]}",
         name="Dr. Kim",
         email="drkim@example.test",
-        professional_title="Advisor",
-        languages=["English"],
-        specializations=["career"],
+        professional_title="Senior Research Advisor",
+        languages=["English", "Korean"],
+        specializations=["scholarships", "graduate_admissions"],
         text_notifications=False,
         email_notifications=False,
     )
@@ -129,6 +129,7 @@ def test_assembler_happy_path(mentee_user):
         person_name="Partner Admin",
         intro="Supporting mentees.",
         sdgs=["SDG4"],
+        topics="Education access in LATAM",
         timezone="UTC",
     )
     partner.save()
@@ -162,11 +163,23 @@ def test_assembler_happy_path(mentee_user):
         }
     ]
     assert data["interests"] == ["scholarships_EU", "AI"]
+    assert data["topics"] == ["scholarships_EU", "AI"]
+    assert data["identify"] == "She/Her"
     assert data["biography"] == "First-gen student interested in EU grad programs."
     assert data["work_state"] == ["studying", "part_time"]
     assert data["immigrant_status"] == ["first_gen"]
-    assert data["organization"] == {"id": str(partner.id), "name": "Partner Foundation"}
-    assert data["mentor"] == {"id": str(mentor.id), "name": "Dr. Kim"}
+    assert data["organization"] == {
+        "id": str(partner.id),
+        "name": "Partner Foundation",
+        "topics": "Education access in LATAM",
+    }
+    assert data["mentor"] == {
+        "id": str(mentor.id),
+        "name": "Dr. Kim",
+        "professional_title": "Senior Research Advisor",
+        "specializations": ["scholarships", "graduate_admissions"],
+        "languages": ["en", "ko"],
+    }
     assert data["socially_engaged"] is True
     assert (
         data["application_notes"]
@@ -188,7 +201,12 @@ def test_assembler_happy_path(mentee_user):
 def test_assembler_without_profile_still_returns_application_fields(mentee_user):
     _build_application(mentee_user, Country="CO", isSocial="No", questions=None)
     data = assemble_profile_dto(str(mentee_user.id))
-    assert data == {"country": "CO", "socially_engaged": False}
+    assert data == {
+        "country": "CO",
+        "socially_engaged": False,
+        "identify": "She/Her",
+        "topics": ["scholarships_EU", "AI"],
+    }
 
 
 def test_assembler_non_mentee_raises(client):
@@ -222,6 +240,62 @@ def test_assembler_mentor_pointing_at_deleted_doc(mentee_user):
     )
     data = assemble_profile_dto(str(mentee_user.id))
     assert "mentor" not in data
+
+
+def test_assembler_mentor_minimal_fields_omits_optional_subkeys(mentee_user):
+    """Mentor with only `name` should yield `{id, name}` with no errors and
+    no empty optional keys. Missing professional_title / specializations /
+    languages must omit those keys, not return null."""
+    _build_application(mentee_user)
+    mentor = MentorProfile(
+        firebase_uid=f"mentor-{uuid.uuid4().hex[:8]}",
+        name="Just A Name",
+        email="just-a-name@example.test",
+        professional_title="",
+        languages=[],
+        specializations=[],
+        text_notifications=False,
+        email_notifications=False,
+    )
+    mentor.save()
+    _build_profile(mentee_user, mentorMentee=str(mentor.id))
+    try:
+        data = assemble_profile_dto(str(mentee_user.id))
+    finally:
+        MentorProfile.objects(id=mentor.id).delete()
+
+    assert data["mentor"] == {"id": str(mentor.id), "name": "Just A Name"}
+    for k in ("professional_title", "specializations", "languages"):
+        assert k not in data["mentor"]
+
+
+def test_assembler_organization_fk_without_topics_omits_topics(mentee_user):
+    """Partner with no topics field must yield `{id, name}` only —
+    `topics` key must be absent, not null."""
+    _build_application(mentee_user)
+    partner = PartnerProfile(
+        firebase_uid=f"partner-{uuid.uuid4().hex[:8]}",
+        email="partner-no-topics@example.test",
+        text_notifications=False,
+        email_notifications=False,
+        organization="Quiet Foundation",
+        person_name="Partner Admin",
+        intro="Supporting mentees.",
+        sdgs=["SDG4"],
+        timezone="UTC",
+    )
+    partner.save()
+    _build_profile(mentee_user, organization=str(partner.id))
+    try:
+        data = assemble_profile_dto(str(mentee_user.id))
+    finally:
+        PartnerProfile.objects(id=partner.id).delete()
+
+    assert data["organization"] == {
+        "id": str(partner.id),
+        "name": "Quiet Foundation",
+    }
+    assert "topics" not in data["organization"]
 
 
 def test_assembler_country_comes_from_application(mentee_user):

@@ -78,7 +78,11 @@ def _resolve_organization(raw):
                 partner, "person_name", None
             )
             if name:
-                return {"id": str(partner.id), "name": name}
+                out = {"id": str(partner.id), "name": name}
+                topics = getattr(partner, "topics", None)
+                if isinstance(topics, str) and topics.strip():
+                    out["topics"] = topics.strip()
+                return out
     if isinstance(raw, str) and raw.strip():
         return {"name": raw.strip()}
     return None
@@ -93,7 +97,28 @@ def _resolve_mentor(raw):
     name = getattr(mentor, "name", None)
     if not name:
         return None
-    return {"id": str(mentor.id), "name": name}
+    out = {"id": str(mentor.id), "name": name}
+    title = getattr(mentor, "professional_title", None)
+    if isinstance(title, str) and title.strip():
+        out["professional_title"] = title.strip()
+    specializations = [
+        s
+        for s in (getattr(mentor, "specializations", None) or [])
+        if isinstance(s, str) and s
+    ]
+    if specializations:
+        out["specializations"] = specializations
+    languages = [
+        normalized
+        for normalized in (
+            _normalize_language(lang)
+            for lang in (getattr(mentor, "languages", None) or [])
+        )
+        if normalized
+    ]
+    if languages:
+        out["languages"] = languages
+    return out
 
 
 def _education_entries(raw_list):
@@ -166,6 +191,13 @@ def assemble_profile_dto(user_id: str) -> dict:
         elif is_social == "No":
             data["socially_engaged"] = False
         _put_if(data, "application_notes", getattr(application, "questions", None))
+        _put_if(data, "identify", getattr(application, "identify", None))
+        topics = [
+            t
+            for t in (getattr(application, "topics", None) or [])
+            if isinstance(t, str) and t
+        ]
+        _put_if(data, "topics", topics)
 
     if profile is None:
         return data

@@ -26,6 +26,7 @@ import { getLoginPath } from "utils/auth.service";
 import { fetchHasOauthAccess } from "features/oauthAccessSlice";
 
 const CONNECTED_APPS_ROLES = new Set([
+  ACCOUNT_TYPE.ADMIN,
   ACCOUNT_TYPE.MENTOR,
   ACCOUNT_TYPE.MENTEE,
   ACCOUNT_TYPE.PARTNER,
@@ -350,6 +351,12 @@ export default function useSidebars(userType, user, t) {
       });
     }
   }
+  const adminOAuthChildren = [
+    {
+      label: "Manage Clients",
+      key: "admin/oauth-clients",
+    },
+  ];
   const adminSidebar = [
     {
       label: "Dashboard",
@@ -452,9 +459,10 @@ export default function useSidebars(userType, user, t) {
       icon: <FileOutlined />,
     },
     {
-      label: "OAuth Clients",
-      key: "admin/oauth-clients",
+      label: "OAuth",
+      key: "oauth",
       icon: <SafetyCertificateOutlined />,
+      children: adminOAuthChildren,
     },
     {
       label: "Resources",
@@ -482,6 +490,10 @@ export default function useSidebars(userType, user, t) {
     mentorSidebar.push(connectedAppsItem);
     menteeSidebar.push(connectedAppsItem);
     partnerSidebar.push(connectedAppsItem);
+    adminOAuthChildren.push({
+      label: t("connected_apps.title"),
+      key: "settings/connected-apps",
+    });
   }
 
   switch (userTypeInt) {

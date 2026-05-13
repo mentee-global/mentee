@@ -12,6 +12,7 @@ class Admin(Document, Mixin):
     name = StringField(required=True)
     image = EmbeddedDocumentField(Image)
     roomName = StringField(required=False)
+    receive_error_alerts = BooleanField(default=False)
 
     def __repr__(self):
         return f"""<User id:{self.id} 

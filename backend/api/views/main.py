@@ -1719,3 +1719,56 @@ def submit_bug_report():
         message="Bug report submitted successfully",
         data={"bug_report_id": str(bug_report.id)},
     )
+
+
+# Public, rate-limited frontend error report endpoint.
+# Errors are persisted to ErrorLog and may trigger a dev alert email.
+_FE_ERROR_BUCKETS = {}  # ip -> (window_start_epoch, count)
+_FE_ERROR_MAX_PER_MIN = 20
+
+
+def _fe_rate_limited(ip: str) -> bool:
+    import time
+
+    now = int(time.time())
+    window, count = _FE_ERROR_BUCKETS.get(ip, (now, 0))
+    if now - window >= 60:
+        _FE_ERROR_BUCKETS[ip] = (now, 1)
+        return False
+    if count >= _FE_ERROR_MAX_PER_MIN:
+        return True
+    _FE_ERROR_BUCKETS[ip] = (window, count + 1)
+    return False
+
+
+class _FrontendError(Exception):
+    """Synthesized exception used to feed record_error from FE-reported errors."""
+
+    pass
+
+
+@main.route("/error/report", methods=["POST"])
+def report_frontend_error():
+    fwd = request.headers.get("X-Forwarded-For", "") or ""
+    ip = (fwd.split(",")[0].strip() if fwd else request.remote_addr) or ""
+    if _fe_rate_limited(ip):
+        return create_response(status=429, message="Rate limited")
+
+    data = request.get_json(silent=True) or {}
+    message = data.get("message") or "Unknown frontend error"
+    exc = _FrontendError(str(message)[:1024])
+
+    extra = {
+        "endpoint": data.get("endpoint") or data.get("url") or "frontend",
+        "user_email": data.get("user_email"),
+        "user_role": data.get("user_role"),
+        "traceback": (data.get("stack") or "")[:8192],
+        "user_agent": data.get("user_agent") or request.headers.get("User-Agent"),
+    }
+
+    from api.utils.error_reporting import record_error, maybe_notify_dev
+
+    log_id = record_error("error", "frontend", exc, request_obj=request, extra=extra)
+    if log_id:
+        maybe_notify_dev(log_id)
+    return create_response(message="ok")

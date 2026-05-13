@@ -18,6 +18,7 @@ from api.models import (
     Hub,
     Image,
     BugReport,
+    ErrorLog,
 )
 from api.utils.require_auth import admin_only
 from api.utils.request_utils import get_profile_model, imgur_client
@@ -437,3 +438,153 @@ def editEmailPassword():
         update_email_across_models(ex_email, email)
 
     return create_response(status=200, message="successful edited")
+
+
+@admin.route("/admin/error-logs", methods=["GET"])
+@admin_only
+def list_error_logs():
+    """List recent error logs with optional filters.
+
+    Query params:
+        severity: 'error' | 'warning'
+        source: 'backend' | 'frontend'
+        exception_type: exact match
+        user_email: exact match
+        limit: int, default 100, max 500
+        before: ISO 8601 timestamp cursor (returns logs strictly older than this)
+    """
+    from datetime import datetime as _dt
+
+    try:
+        severity = request.args.get("severity")
+        source = request.args.get("source")
+        exception_type = request.args.get("exception_type")
+        user_email = request.args.get("user_email")
+        before = request.args.get("before")
+
+        try:
+            limit = int(request.args.get("limit", 100))
+        except (TypeError, ValueError):
+            limit = 100
+        limit = max(1, min(limit, 500))
+
+        query = {}
+        if severity:
+            query["severity"] = severity
+        if source:
+            query["source"] = source
+        if exception_type:
+            query["exception_type"] = exception_type
+        if user_email:
+            query["user_email"] = user_email
+        if before:
+            try:
+                query["timestamp__lt"] = _dt.fromisoformat(before.replace("Z", ""))
+            except ValueError:
+                pass
+
+        logs = ErrorLog.objects(**query).order_by("-timestamp").limit(limit)
+
+        items = []
+        for log in logs:
+            items.append(
+                {
+                    "id": str(log.id),
+                    "timestamp": log.timestamp.isoformat() if log.timestamp else None,
+                    "severity": log.severity,
+                    "source": log.source,
+                    "endpoint": log.endpoint,
+                    "exception_type": log.exception_type,
+                    "exception_message": log.exception_message,
+                    "user_email": log.user_email,
+                    "user_role": log.user_role,
+                    "notified": bool(log.notified),
+                }
+            )
+
+        next_before = items[-1]["timestamp"] if len(items) == limit else None
+        return create_response(
+            data={"items": items, "next_before": next_before, "count": len(items)}
+        )
+    except Exception as e:
+        logger.exception("Failed to fetch error logs")
+        return create_response(status=500, message=str(e))
+
+
+@admin.route("/admin/error-logs/recipients", methods=["GET"])
+@admin_only
+def list_error_alert_recipients():
+    """List all admins with their error-alert opt-in state."""
+    try:
+        admins = Admin.objects().only("id", "email", "name", "receive_error_alerts")
+        items = [
+            {
+                "id": str(a.id),
+                "name": a.name,
+                "email": a.email,
+                "receive_error_alerts": bool(a.receive_error_alerts),
+            }
+            for a in admins
+        ]
+        return create_response(data={"admins": items})
+    except Exception as e:
+        logger.exception("Failed to list error-alert recipients")
+        return create_response(status=500, message=str(e))
+
+
+@admin.route("/admin/error-logs/recipients", methods=["PUT"])
+@admin_only
+def set_error_alert_recipients():
+    """Set the full opt-in list. Body: {admin_ids: [str, ...]}.
+
+    Selected admins get receive_error_alerts=True; everyone else is cleared.
+    """
+    try:
+        data = request.get_json(silent=True) or {}
+        selected = data.get("admin_ids") or []
+        if not isinstance(selected, list):
+            return create_response(status=422, message="admin_ids must be a list")
+        selected_ids = [str(x) for x in selected if x]
+
+        # Set opt-in on the selected admins; clear it on everyone else.
+        if selected_ids:
+            Admin.objects(id__in=selected_ids).update(set__receive_error_alerts=True)
+            Admin.objects(id__nin=selected_ids).update(set__receive_error_alerts=False)
+        else:
+            Admin.objects().update(set__receive_error_alerts=False)
+
+        return create_response(message="ok")
+    except Exception as e:
+        logger.exception("Failed to update error-alert recipients")
+        return create_response(status=500, message=str(e))
+
+
+@admin.route("/admin/error-logs/<string:id>", methods=["GET"])
+@admin_only
+def get_error_log(id):
+    """Return a single ErrorLog with full traceback and sanitized payload."""
+    try:
+        log = ErrorLog.objects.get(id=id)
+    except Exception:
+        return create_response(status=404, message="Error log not found")
+
+    return create_response(
+        data={
+            "error_log": {
+                "id": str(log.id),
+                "timestamp": log.timestamp.isoformat() if log.timestamp else None,
+                "severity": log.severity,
+                "source": log.source,
+                "endpoint": log.endpoint,
+                "exception_type": log.exception_type,
+                "exception_message": log.exception_message,
+                "traceback": log.traceback,
+                "request_payload": log.request_payload,
+                "user_email": log.user_email,
+                "user_role": log.user_role,
+                "user_agent": log.user_agent,
+                "ip": log.ip,
+                "notified": bool(log.notified),
+            }
+        }
+    )

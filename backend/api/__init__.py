@@ -54,6 +54,7 @@ def create_app():
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
     app.config["SESSION_COOKIE_SECURE"] = os.environ.get("ENVIRONMENT") == "production"
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=14)
+    app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB upload cap
 
     # Per-route CORS: cookie-bearing endpoints get the configured origins +
     # credentials; OAuth bearer endpoints get wildcard since security comes
@@ -185,7 +186,31 @@ def create_app():
         )
         init_authorization_server(app)
 
-    app.register_error_handler(Exception, all_exception_handler)
+    from werkzeug.exceptions import HTTPException
+    from api.core import create_response as _create_response
+    from api.utils.error_reporting import record_error, maybe_notify_dev
+
+    @app.errorhandler(413)
+    def _file_too_large(e):
+        return _create_response(
+            status=413,
+            message="Upload too large. Please use an image smaller than 10MB.",
+        )
+
+    @app.errorhandler(Exception)
+    def _handle_uncaught(e):
+        # HTTPException keeps its original response/status — Authlib and other
+        # libraries rely on WWW-Authenticate and similar being preserved.
+        if isinstance(e, HTTPException):
+            return all_exception_handler(e)
+        try:
+            log_id = record_error("error", "backend", e, request_obj=request)
+            if log_id:
+                maybe_notify_dev(log_id)
+        except Exception:
+            pass
+        app.logger.exception("Unhandled exception")
+        return all_exception_handler(e)
 
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")

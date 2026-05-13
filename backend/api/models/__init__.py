@@ -37,6 +37,7 @@ from .SignedDocs import SignedDocs
 from .Announcement import Announcement
 from .CommunityLibrary import CommunityLibrary
 from .BugReport import BugReport
+from .ErrorLog import ErrorLog
 from .OAuthClient import OAuthClient
 from .OAuthAuthorizationCode import OAuthAuthorizationCode
 from .OAuthAccessToken import OAuthAccessToken
@@ -80,6 +81,7 @@ __all__ = [
     "Announcement",
     "CommunityLibrary",
     "BugReport",
+    "ErrorLog",
     "OAuthClient",
     "OAuthAuthorizationCode",
     "OAuthAccessToken",

@@ -44,7 +44,7 @@ def verify_email():
         logger.info(msg)
         return create_response(status=422, message=msg)
     except FirebaseError as e:
-        msg = e.message
+        msg = str(e)
         logger.info(msg)
         return create_response(status=422, message=msg)
 
@@ -314,7 +314,7 @@ def send_forgot_password_email(email, preferred_language="en-US"):
         logger.info(msg)
         return create_response(status=422, message=msg)
     except FirebaseError as e:
-        msg = e.message
+        msg = str(e)
         logger.info(msg)
         return create_response(status=422, message=msg)
 

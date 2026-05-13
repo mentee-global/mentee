@@ -80,6 +80,10 @@ function MessagesChatArea(props) {
   }
 
   useEffect(() => {
+    // fetchAccount needs userType (the counterparty's role) and otherId.
+    // Skip until both are set — otherwise we'd hit /account/<id> without
+    // account_type and the backend returns 422.
+    if (userType == null || !otherId) return;
     async function fetchAccount() {
       var account = null;
       if (user && user.pair_partner && user.pair_partner.restricted) {
@@ -167,6 +171,7 @@ function MessagesChatArea(props) {
       setRefresh(!refresh);
     }
     fetchAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateContent, otherId, messages]);
 
   useEffect(() => {
@@ -232,6 +237,8 @@ function MessagesChatArea(props) {
     }
   }
   async function getAvailableInFuture() {
+    // Availability is a mentor-only concept; mentees don't have one to fetch.
+    if (!isMentor) return;
     const availability_data = await fetchAvailability(profileId);
     const now = moment();
 
@@ -258,11 +265,13 @@ function MessagesChatArea(props) {
   }
 
   useEffect(() => {
+    if (!profileId) return;
     if (isOpenCalendarModal === false) {
       getAppointments();
       getAvailableInFuture();
     }
-  }, [isOpenCalendarModal]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpenCalendarModal, profileId]);
 
   const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
@@ -388,7 +397,7 @@ function MessagesChatArea(props) {
 
   const linkify = (text) => {
     const urlPattern =
-      /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+      /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
     return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
   };
 
@@ -507,6 +516,7 @@ function MessagesChatArea(props) {
             messages.map((block, index) => {
               return (
                 <div
+                  key={block?._id?.$oid || index}
                   className={`chatRight__items you-${
                     block.sender_id.$oid === profileId ? "sent" : "received"
                   }`}
@@ -546,7 +556,7 @@ function MessagesChatArea(props) {
                             block.availabes_in_future.map((available_item) => {
                               total_index++;
                               return (
-                                <>
+                                <React.Fragment key={total_index}>
                                   {block.sender_id.$oid === profileId ||
                                   bookedData.hasOwnProperty(
                                     moment
@@ -600,7 +610,7 @@ function MessagesChatArea(props) {
                                       index={total_index}
                                     />
                                   )}
-                                </>
+                                </React.Fragment>
                               );
                             })}
                         </div>

@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
-import { JaaSMeeting, JitsiMeeting } from "@jitsi/react-sdk";
-import React, { useRef, useState } from "react";
-import { setPanel, removePanel } from "features/meetingPanelSlice";
+import { JaaSMeeting } from "@jitsi/react-sdk";
+import { removePanel } from "features/meetingPanelSlice";
 
 const MeetingPanel = () => {
   const dispatch = useDispatch();

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  Form,
   Button,
   Result,
-  Checkbox,
   Spin,
   theme,
   Tabs,
@@ -45,6 +43,7 @@ const TabKeys = Object.freeze({
 });
 
 function Appointments() {
+  // eslint-disable-next-line no-unused-vars
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const {
     token: { colorPrimary },
@@ -93,6 +92,7 @@ function Appointments() {
     }
 
     onAuthStateChanged(getAppointments);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appointmentClick, profileId, onAuthStateChanged, i18n.language]);
 
   useEffect(() => {

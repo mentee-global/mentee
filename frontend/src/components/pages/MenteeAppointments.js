@@ -82,6 +82,7 @@ function MenteeAppointments() {
   }
 
   useEffect(() => {
+    if (!profileId) return;
     async function getData() {
       const appointmentsResponse = await fetchAppointmentsByMenteeId(profileId);
       setisLoading(true);
@@ -104,6 +105,7 @@ function MenteeAppointments() {
       }
     }
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileId, i18n.language]);
 
   const handleOverlayChange = (newSelect) => {
@@ -120,7 +122,7 @@ function MenteeAppointments() {
       message.error(`Failed to unfavorite mentor ${name}`, 3);
     } else {
       message.success(`Successfully unfavorite mentor ${name}`, 3);
-      const newFav = favMentors.filter((mentor) => mentor.id != mentorId);
+      const newFav = favMentors.filter((mentor) => mentor.id !== mentorId);
       setFavMentors(newFav);
     }
   };

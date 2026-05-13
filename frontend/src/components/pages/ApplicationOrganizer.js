@@ -219,12 +219,14 @@ function ApplicationOrganizer({ isMentor, partnerId }) {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      // eslint-disable-next-line jsx-a11y/anchor-is-valid
       render: (name) => <a>{name}</a>,
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      // eslint-disable-next-line jsx-a11y/anchor-is-valid
       render: (email) => <a>{email}</a>,
     },
     {
@@ -242,6 +244,7 @@ function ApplicationOrganizer({ isMentor, partnerId }) {
       title: "Notes",
       dataIndex: "notes",
       key: "notes",
+      // eslint-disable-next-line jsx-a11y/anchor-is-valid
       render: (notes) => <a>{notes}</a>,
     },
     {

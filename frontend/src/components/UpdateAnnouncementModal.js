@@ -78,17 +78,17 @@ function UpdateAnnouncementModal({
       setImage(
         currentAnnounce && currentAnnounce.image ? currentAnnounce.image : null
       );
-      if (currentAnnounce.role == ACCOUNT_TYPE.MENTOR) {
+      if (currentAnnounce.role === ACCOUNT_TYPE.MENTOR) {
         if (currentAnnounce.mentor_id && currentAnnounce.mentor_id.length > 0) {
           setMentors(mentorOptions);
         }
       }
-      if (currentAnnounce.role == ACCOUNT_TYPE.MENTEE) {
+      if (currentAnnounce.role === ACCOUNT_TYPE.MENTEE) {
         if (currentAnnounce.mentee_id && currentAnnounce.mentee_id.length > 0) {
           setMentees(menteeOptions);
         }
       }
-      if (currentAnnounce.role == ACCOUNT_TYPE.PARTNER) {
+      if (currentAnnounce.role === ACCOUNT_TYPE.PARTNER) {
         if (currentAnnounce.partner_id) {
           var partner_data = partnerOptions.find(
             (x) => x.value === currentAnnounce.partner_id
@@ -105,6 +105,7 @@ function UpdateAnnouncementModal({
       setMentees([]);
       setMentors([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, currentAnnounce]);
 
   const setMentorMentees = (partner_id) => {

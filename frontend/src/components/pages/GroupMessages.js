@@ -36,7 +36,7 @@ function GroupMessages(props) {
   const role = getRole();
 
   var hub_user_id = null;
-  if (role == ACCOUNT_TYPE.HUB && user) {
+  if (role === ACCOUNT_TYPE.HUB && user) {
     if (user.hub_id) {
       hub_user_id = user.hub_id;
     } else {
@@ -137,6 +137,7 @@ function GroupMessages(props) {
         };
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, hub_user_id, profileId, activeMessageId]);
 
   useEffect(() => {
@@ -168,17 +169,18 @@ function GroupMessages(props) {
         setLoading(false);
       }
     }
-    if (role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.MODERATOR) {
+    if (role === ACCOUNT_TYPE.ADMIN || role === ACCOUNT_TYPE.MODERATOR) {
       if (hub_user_id) {
         getData(hub_user_id);
       }
     } else {
       getData(hub_user_id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMessageId, profileId, hub_user_id]);
 
   useEffect(() => {
-    if (role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.MODERATOR) {
+    if (role === ACCOUNT_TYPE.ADMIN || role === ACCOUNT_TYPE.MODERATOR) {
       async function getHubData() {
         var temp = [];
         const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
@@ -214,7 +216,7 @@ function GroupMessages(props) {
   // when the layout changes
   return (
     <Layout className="messages-container" style={{ backgroundColor: "white" }}>
-      {(role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.MODERATOR) && (
+      {(role === ACCOUNT_TYPE.ADMIN || role === ACCOUNT_TYPE.MODERATOR) && (
         <div style={{ padding: "10px", borderBottom: "1px solid #ddd" }}>
           <HubsDropdown
             className="table-button hub-drop-down"

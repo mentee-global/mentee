@@ -10,7 +10,7 @@ import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
 function PublicRoute({ children, ...rest }) {
   var role = getRole();
   var login_path = "";
-  if (role == ACCOUNT_TYPE.HUB) {
+  if (role === ACCOUNT_TYPE.HUB) {
     login_path = getLoginPath();
     if (!login_path) login_path = "";
   }
@@ -28,7 +28,7 @@ function PublicRoute({ children, ...rest }) {
     <Route
       {...rest}
       render={() =>
-        !role ||
+        role == null ||
         announcement_detail_flag ||
         oauth_flag ||
         hasPendingOAuthRedirect() ? (
@@ -36,7 +36,7 @@ function PublicRoute({ children, ...rest }) {
         ) : (
           <Redirect
             to={
-              role == ACCOUNT_TYPE.HUB
+              role === ACCOUNT_TYPE.HUB
                 ? login_path + REDIRECTS[role]
                 : REDIRECTS[role]
             }

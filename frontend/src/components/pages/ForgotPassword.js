@@ -106,6 +106,7 @@ function ForgotPassword({ location, history }) {
               ? t("forgotPassword.sent")
               : t("forgotPassword.sendLink")}
           </Button>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a onClick={() => onFinish({ email })}>
             {t("forgotPassword.notReceiveEmail")}
           </a>

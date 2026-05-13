@@ -19,7 +19,7 @@ function PrivateRoute({ children, ...rest }) {
     <Route
       {...rest}
       render={({ location }) =>
-        getRole() ? (
+        getRole() != null ? (
           children
         ) : (
           <Redirect

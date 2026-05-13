@@ -32,6 +32,7 @@ function NewTrainingConfirm({ match }) {
       }
     }
     getNewTraining();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, reload]);
   return (
     <div className="">

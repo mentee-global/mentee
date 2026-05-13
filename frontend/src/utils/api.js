@@ -134,18 +134,22 @@ export const fetchAccounts = (
   );
 };
 
+const _surfacedError = (err) => {
+  console.error(err);
+  return {
+    ok: false,
+    error: err?.response?.data?.message || err?.message || "Network error",
+    status: err?.response?.status,
+  };
+};
+
 export const editAccountProfile = (profile, id, type) => {
   const requestExtension = `/account/${id}`;
   return authPut(requestExtension, profile, {
     params: {
       account_type: type,
     },
-  }).then(
-    (response) => response,
-    (err) => {
-      console.error(err);
-    }
-  );
+  }).then((response) => response, _surfacedError);
 };
 
 export const uploadAccountImage = (data, id, type) => {
@@ -155,9 +159,7 @@ export const uploadAccountImage = (data, id, type) => {
   const requestExtension = `/account/${id}/image`;
   return authPut(requestExtension, formData).then(
     (response) => response,
-    (err) => {
-      console.error(err);
-    }
+    _surfacedError
   );
 };
 
@@ -170,9 +172,7 @@ export const createAccountProfile = async (profile, type, inFirebase) => {
 
   return authPost(requestExtension, profile).then(
     (response) => response,
-    (err) => {
-      console.error(err);
-    }
+    _surfacedError
   );
 };
 
@@ -1671,6 +1671,53 @@ export const deleteBugReportById = async (id) => {
     (err) => {
       console.error(err);
       return false;
+    }
+  );
+};
+
+// Admin - Error Logs
+export const fetchErrorLogs = async (filters = {}) => {
+  const requestExtension = `/admin/error-logs`;
+  return authGet(requestExtension, { params: filters }).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return { items: [], next_before: null, count: 0 };
+    }
+  );
+};
+
+export const fetchErrorLogById = async (id) => {
+  const requestExtension = `/admin/error-logs/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.error_log,
+    (err) => {
+      console.error(err);
+    }
+  );
+};
+
+export const fetchErrorAlertRecipients = async () => {
+  const requestExtension = `/admin/error-logs/recipients`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.admins,
+    (err) => {
+      console.error(err);
+      return [];
+    }
+  );
+};
+
+export const setErrorAlertRecipients = async (adminIds) => {
+  const requestExtension = `/admin/error-logs/recipients`;
+  return authPut(requestExtension, { admin_ids: adminIds }).then(
+    (response) => ({ ok: true, response }),
+    (err) => {
+      console.error(err);
+      return {
+        ok: false,
+        error: err?.response?.data?.message || err?.message || "Network error",
+      };
     }
   );
 };

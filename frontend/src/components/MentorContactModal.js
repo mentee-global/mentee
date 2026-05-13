@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Radio, Space, Form, Select, Input, Button } from "antd";
+import { Modal, Form, Select, Input, Button } from "antd";
 import { sendMenteeMentorEmail } from "../utils/api";
 import thankYouImage from "../resources/thankYou.png";
 
@@ -17,7 +17,7 @@ function MentorContactModal({
   const [openModal, setOpenModal] = useState(false);
   const [message, setMessage] = useState("");
   const [interestAreas, setInterestAreas] = useState([]);
-  const [error, setError] = useState(false);
+  const [, setError] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
 
   const closeModal = () => {
@@ -150,6 +150,7 @@ function MentorContactModal({
           <img
             className="modal-mentee-confirmation-modal-art"
             src={thankYouImage}
+            alt=""
           />
           <div className="modal-mentee-confirmation-modal-text">
             <div className="modal-mentee-confirmation-modal-title">

@@ -21,10 +21,10 @@ import {
 
 import { urlRegex } from "utils/misc";
 import moment from "moment";
-import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { fetchPartners } from "utils/api";
+import { resizeImage } from "utils/imageResize";
 
 const styles = {
   formGroup: css`
@@ -61,7 +61,7 @@ function MentorProfileForm({
   const [form] = Form.useForm();
   const [partnerOptions, setPartnerOptions] = useState([]);
   const [flag, setFlag] = useState(false);
-  const [finishFlag, setFinishFlag] = useState(false);
+  const [, setFinishFlag] = useState(false);
   var n50_user = localStorage.getItem("n50_user");
 
   useEffect(() => {
@@ -85,6 +85,7 @@ function MentorProfileForm({
     }
 
     getPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -92,8 +93,9 @@ function MentorProfileForm({
       form.setFieldsValue(profileData);
       form.setFieldValue("video", profileData.video?.url);
       setImage(profileData.image);
+      setChangedImage(false);
 
-      if (profileData.organization == 0) {
+      if (profileData.organization === 0) {
         form.setFieldValue("organization", null);
       }
     }
@@ -251,46 +253,44 @@ function MentorProfileForm({
       onValuesChange={() => setEdited(true)}
     >
       <Form.Item>
-        <ImgCrop rotate aspect={1} minZoom={0.2}>
-          <Upload
-            onChange={async (file) => {
-              setImage(file.file.originFileObj);
-              setChangedImage(true);
-              setEdited(true);
-            }}
-            accept=".png,.jpg,.jpeg"
-            showUploadList={false}
-          >
-            <Avatar
-              size={120}
-              icon={<UserOutlined />}
-              src={
-                changedImage
-                  ? image && URL.createObjectURL(image)
-                  : image && image.url
-              }
-            />
-            <Button
-              shape="circle"
-              icon={<EditFilled />}
-              className={css`
-                position: absolute;
-                top: 0;
-                left: 0;
-              `}
-            />
-          </Upload>
-        </ImgCrop>
-        {!image && finishFlag && (
-          <div
-            class="ant-form-item-explain ant-form-item-explain-connected css-dev-only-do-not-override-1klw9xr"
-            role="alert"
-          >
-            <div class="ant-form-item-explain-error">
-              {t("common.requiredAvatar")}
-            </div>
-          </div>
-        )}
+        <Upload
+          beforeUpload={() => false}
+          onChange={async (info) => {
+            const file = info?.file?.originFileObj || info?.file;
+            if (!file) return;
+            let next = file;
+            try {
+              next = await resizeImage(file);
+            } catch (_) {
+              next = file;
+            }
+            setImage(next);
+            setChangedImage(true);
+            setEdited(true);
+          }}
+          accept=".png,.jpg,.jpeg"
+          showUploadList={false}
+          maxCount={1}
+        >
+          <Avatar
+            size={120}
+            icon={<UserOutlined />}
+            src={
+              image instanceof Blob
+                ? URL.createObjectURL(image)
+                : image && image.url
+            }
+          />
+          <Button
+            shape="circle"
+            icon={<EditFilled />}
+            className={css`
+              position: absolute;
+              top: 0;
+              left: 0;
+            `}
+          />
+        </Upload>
       </Form.Item>
       <div className={styles.formGroup}>
         <Form.Item

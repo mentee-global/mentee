@@ -216,6 +216,7 @@ const AdminAnnouncement = () => {
       setLoading(false);
     };
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, reload]);
 
   const columns = [
@@ -300,7 +301,7 @@ const AdminAnnouncement = () => {
 
   const searchbyHub = (hub_id) => {
     if (role === ACCOUNT_TYPE.HUB) {
-      setAnnounceData(allData.filter((x) => x.hub_id == hub_id));
+      setAnnounceData(allData.filter((x) => x.hub_id === hub_id));
     }
   };
 

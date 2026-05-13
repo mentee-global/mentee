@@ -176,7 +176,7 @@ function AdminOAuthClients() {
           form.resetFields();
           setDrawerOpen(false);
         }}
-        destroyOnClose
+        destroyOnHidden
       >
         <OAuthClientForm
           form={form}

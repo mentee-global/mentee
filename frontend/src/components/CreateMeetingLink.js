@@ -17,7 +17,7 @@ function Meeting() {
   const [urlModalVisible, setUrlModalVisible] = useState(true);
   const { user } = useSelector((state) => state.user);
   const [RoomName, setRoomName] = useState("");
-  const [Token, setToken] = useState("");
+  const [, setToken] = useState("");
   const [AppID, setAppID] = useState("");
   const history = useHistory();
   const dispatch = useDispatch();
@@ -46,6 +46,7 @@ function Meeting() {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const copyDefaultToClipboard = async (room_id) => {
@@ -90,6 +91,7 @@ function Meeting() {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getRoomName = () => {
     try {
       const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -160,7 +162,7 @@ function Meeting() {
     <>
       <Modal
         title={t("meeting.title")}
-        visible={urlModalVisible}
+        open={urlModalVisible}
         onCancel={handleCancel}
         footer={[
           <div

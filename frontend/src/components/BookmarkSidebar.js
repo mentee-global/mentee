@@ -47,7 +47,7 @@ function BookmarkSidebar({ bookmarks, unfavorite, isLoading }) {
           align-items: center;
         `}
       >
-        <img src={BookmarkImage} />
+        <img src={BookmarkImage} alt="" />
         <MenteeButton
           content={t("bookmarkSidebar.addMentors")}
           radius="6px"

@@ -86,6 +86,7 @@ export function MenteeMentorDropdown(props) {
 
   useEffect(() => {
     setOption(options.MENTORS);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.onReset]);
 
   const handleClick = (newOption) => {
@@ -154,6 +155,7 @@ export function SpecializationsDropdown(props) {
       {specMasters.map((element, i) => {
         return (
           <Menu.Item>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a
               onClick={() => handleClick(i, element.label)}
               style={{ color: selected.includes(i) ? "red" : "black" }}
@@ -173,6 +175,7 @@ export function SpecializationsDropdown(props) {
       trigger={["click"]}
       overlayStyle={{ overflowY: "scroll", height: "20em" }}
     >
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <a>
         {option} <DownOutlined />
       </a>
@@ -206,11 +209,13 @@ export function SortByDateDropdown(props) {
   const overlay = (
     <Menu>
       <Menu.Item>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a onClick={() => handleClick(options.ASCENDING)}>
           {options.ASCENDING.text}
         </a>
       </Menu.Item>
       <Menu.Item>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a onClick={() => handleClick(options.DESCENDING)}>
           {options.DESCENDING.text}
         </a>
@@ -220,6 +225,7 @@ export function SortByDateDropdown(props) {
 
   return (
     <Dropdown overlay={overlay} className={props.className} trigger={["click"]}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <a>
         {option ? option.text : "Sort Order"} <DownOutlined />
       </a>

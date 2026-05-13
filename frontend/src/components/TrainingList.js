@@ -123,7 +123,12 @@ const TrainingList = (props) => {
         case TRAINING_TYPE.LINK:
           return (
             <>
-              <a className="external-link" href={training.url} target="_blank">
+              <a
+                className="external-link"
+                href={training.url}
+                target="_blank"
+                rel="noreferrer"
+              >
                 {training.url}
               </a>
               <br />
@@ -196,7 +201,7 @@ const TrainingList = (props) => {
       user ? user._id.$oid : null
     )
       .then((trains) => {
-        if (props.role == ACCOUNT_TYPE.HUB && user) {
+        if (props.role === ACCOUNT_TYPE.HUB && user) {
           var hub_user_id = null;
           if (user.hub_id) {
             hub_user_id = user.hub_id;
@@ -206,7 +211,7 @@ const TrainingList = (props) => {
           setTrainingData(
             trains
               .sort((a, b) => a.sort_order - b.sort_order)
-              .filter((x) => x.hub_id == hub_user_id)
+              .filter((x) => x.hub_id === hub_user_id)
           );
         } else {
           setTrainingData(trains.sort((a, b) => a.sort_order - b.sort_order));
@@ -215,6 +220,7 @@ const TrainingList = (props) => {
         setFlag(!flag);
       })
       .catch((e) => console.error(e));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language, user, reload]);
 
   useEffect(() => {

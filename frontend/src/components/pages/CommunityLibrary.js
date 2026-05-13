@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   downloadBlob,
   getLibraryFile,
@@ -197,6 +197,7 @@ const CommunityLibrary = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getAvailableLangs = (record) => {
     if (!record?.translations) return [I18N_LANGUAGES[0]];
     let items = I18N_LANGUAGES.filter((lang) => {
@@ -228,6 +229,7 @@ const CommunityLibrary = () => {
     if (user) {
       getData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, reload]);
 
   const columns = [
@@ -242,7 +244,7 @@ const CommunityLibrary = () => {
       dataIndex: "user_name",
       key: "user_name",
       render: (user_name, record) => {
-        let user_data = hubData.find((x) => x._id.$oid == record.user_id);
+        let user_data = hubData.find((x) => x._id.$oid === record.user_id);
         if (user_data) {
           return (
             <NavLink
@@ -305,6 +307,7 @@ const CommunityLibrary = () => {
       render: (file, record) => {
         return (
           <div style={{ display: "flex" }}>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a
               href="#"
               onClick={(lang) => handleTrainingDownload(record, lang)}

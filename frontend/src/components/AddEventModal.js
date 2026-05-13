@@ -89,10 +89,11 @@ function AddEventModal({
         setImage(event_item.image_file);
       }
     } else {
-      if (role == ACCOUNT_TYPE.HUB) {
+      if (role === ACCOUNT_TYPE.HUB) {
         form.setFieldValue("user_role", [ACCOUNT_TYPE.HUB]);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   async function handleSave(values) {
@@ -116,7 +117,7 @@ function AddEventModal({
     );
 
     var hub_user_id = null;
-    if (role == ACCOUNT_TYPE.HUB && user) {
+    if (role === ACCOUNT_TYPE.HUB && user) {
       if (user.hub_id) {
         hub_user_id = user.hub_id;
       } else {
@@ -524,6 +525,7 @@ function AddEventModal({
       title={t("events.addEvent")}
       open={open}
       onClose={onCancel}
+      forceRender
     >
       {EventForm(event_item)}
       <br />
@@ -541,6 +543,7 @@ function AddEventModal({
       onCancel={onCancel}
       onOk={onOk}
       okText={t("common.save")}
+      forceRender
     >
       {EventForm(event_item)}
     </Modal>

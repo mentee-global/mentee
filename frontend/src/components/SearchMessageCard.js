@@ -102,6 +102,7 @@ const SearchMessageCard = ({
                 active={chat.otherId === activeMessageId}
               />
             );
+          return null;
         })}
       </TabPane>
       <TabPane tab="Message" key="message">

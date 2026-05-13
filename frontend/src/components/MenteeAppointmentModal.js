@@ -29,6 +29,7 @@ const ERROR = "error";
 
 // Form validateMessages sends values here
 const validationMessage = {
+  // eslint-disable-next-line no-template-curly-in-string
   required: "Please enter your ${name}",
   types: {
     email: "Not a valid email",

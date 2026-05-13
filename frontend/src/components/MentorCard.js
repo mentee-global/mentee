@@ -47,7 +47,7 @@ function MentorCard(props) {
     token: { colorPrimary, colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isMentee, resetRoleState, role } = useAuth();
+  const { isMentee, resetRoleState } = useAuth();
   const [favorite, setFavorite] = useState(props.favorite);
   const dispatch = useDispatch();
   const history = useHistory();

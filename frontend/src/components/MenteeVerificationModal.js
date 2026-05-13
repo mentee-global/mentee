@@ -16,7 +16,7 @@ import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 function MenteeVerificationModal(props) {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [password] = useState();
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState(false);
   const [verified, setVerified] = useState(false);

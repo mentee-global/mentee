@@ -22,7 +22,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
     Object.keys(allHubData).map((hub_url) => {
       if (allHubData[hub_url].invite_key) {
         if (
-          location.pathname ==
+          location.pathname ===
           hub_url + "/" + allHubData[hub_url].invite_key
         ) {
           setCheckFlagInviteLink(true);

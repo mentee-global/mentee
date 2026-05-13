@@ -34,7 +34,7 @@ function PartnerGallery(props) {
     token: { colorPrimaryBg },
   } = theme.useToken();
   const { t } = useTranslation();
-  const { isAdmin } = useAuth();
+  useAuth();
   const [partners, setPartners] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -103,13 +103,13 @@ function PartnerGallery(props) {
         params.sdgs = sdgs.join(",");
       }
 
-      if (role == ACCOUNT_TYPE.HUB) {
+      if (role === ACCOUNT_TYPE.HUB) {
         if (user.hub_id) {
           params.hub_id = user.hub_id;
         } else {
           params.hub_id = user._id.$oid;
         }
-      } else if (role == ACCOUNT_TYPE.SUPPORT) {
+      } else if (role === ACCOUNT_TYPE.SUPPORT) {
         if (searchHub) {
           params.hub_id = searchHub;
         } else {
@@ -274,7 +274,7 @@ function PartnerGallery(props) {
         onChange={(selected) => setSdgs(selected)}
         maxTagCount="responsive"
       />
-      {role == ACCOUNT_TYPE.SUPPORT && (
+      {role === ACCOUNT_TYPE.SUPPORT && (
         <>
           <Title level={4}>HUB</Title>
           <Select
@@ -305,10 +305,10 @@ function PartnerGallery(props) {
   // Add some kind of error 403 code
   const hasAccess =
     props.isSupport ||
-    role == ACCOUNT_TYPE.PARTNER ||
-    role == ACCOUNT_TYPE.ADMIN ||
-    role == ACCOUNT_TYPE.GUEST ||
-    role == ACCOUNT_TYPE.HUB;
+    role === ACCOUNT_TYPE.PARTNER ||
+    role === ACCOUNT_TYPE.ADMIN ||
+    role === ACCOUNT_TYPE.GUEST ||
+    role === ACCOUNT_TYPE.HUB;
 
   return !hasAccess ? (
     <Result

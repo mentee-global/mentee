@@ -3,16 +3,6 @@ import { Button } from "antd";
 import "./css/MenteeButton.scss";
 
 function MenteeButton(props) {
-  const getButtonClass = (theme, focus) => {
-    let style = "";
-    if (theme === "dark") style = "dark-button";
-    else if (theme === "light") style = "light-button";
-    else style = "regular-button";
-
-    if (focus) style += "-focus";
-    return style;
-  };
-
   return (
     <Button
       className={`${props.className}`}

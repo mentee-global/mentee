@@ -54,6 +54,7 @@ function Gallery(props) {
   const [selectedPartnerOrg, setSelectedPartnerOrg] = useState(undefined);
   const [currentPage, setCurrentPage] = useState(1);
   const [showPrivate, setShowPrivate] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const verified = location.state && location.state.verified;
   const user = useSelector((state) => state.user.user);
   const isAdminView = isAdmin || props.isSupport;
@@ -96,6 +97,7 @@ function Gallery(props) {
       setAllPartners(temp);
     }
     getAllPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Race condition guard
@@ -333,7 +335,7 @@ function Gallery(props) {
 
   // Add some kind of error 403 code
   const role = getRole();
-  return role == ACCOUNT_TYPE.PARTNER ? (
+  return role === ACCOUNT_TYPE.PARTNER ? (
     <Result
       status="403"
       title="403"
@@ -375,8 +377,10 @@ function Gallery(props) {
             {t("common.cancel")}
           </Button>,
         ]}
-        bodyStyle={{
-          padding: "1rem",
+        styles={{
+          body: {
+            padding: "1rem",
+          },
         }}
       >
         {getFilterForm()}

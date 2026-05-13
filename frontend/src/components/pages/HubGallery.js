@@ -7,7 +7,6 @@ import {
   Spin,
   FloatButton,
   Affix,
-  Select,
   Typography,
   theme,
   Button,
@@ -16,11 +15,10 @@ import { SearchOutlined } from "@ant-design/icons";
 import "../css/Gallery.scss";
 import { useAuth } from "../../utils/hooks/useAuth";
 import HubCard from "../HubCard";
-import { ACCOUNT_TYPE, getRegions, getSDGs } from "utils/consts";
+import { ACCOUNT_TYPE } from "utils/consts";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
 import { useSelector } from "react-redux";
-import { getRole } from "utils/auth.service";
 
 const { Title } = Typography;
 
@@ -31,11 +29,13 @@ function HubGallery(props) {
   const { t } = useTranslation();
   const { isAdmin, isPartner, isGuest, isHub } = useAuth();
   const [hubs, setHubs] = useState([]);
-  const [regions, setRegions] = useState([]);
+  const [, setRegions] = useState([]);
   const [query, setQuery] = useState();
   const [mobileFilterVisible, setMobileFilterVisible] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [query2, setQuery2] = useState();
+  // eslint-disable-next-line no-unused-vars
   const [sdgs, setSdgs] = useState([]);
   const { user } = useSelector((state) => state.user);
 

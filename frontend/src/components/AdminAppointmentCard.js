@@ -49,6 +49,7 @@ function AdminAppointmentCard({ data, render, onClick }) {
         icon: <QuestionCircleTwoTone twoToneColor="#F8D15B" />,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [render]);
 
   return (

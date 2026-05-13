@@ -66,9 +66,9 @@ export default function useSidebars(userType, user, t) {
   const showConnectedApps = connectedAppsRelevant && hasOAuthAccess;
   var url_prefix_hub = "";
   var hub_user_id = null;
-  if (parseInt(userType) == ACCOUNT_TYPE.HUB) {
+  if (parseInt(userType) === ACCOUNT_TYPE.HUB) {
     url_prefix_hub = getLoginPath();
-    if (url_prefix_hub && url_prefix_hub.charAt(0) == "/") {
+    if (url_prefix_hub && url_prefix_hub.charAt(0) === "/") {
       url_prefix_hub = url_prefix_hub.slice(1);
     }
     if (user) {
@@ -342,7 +342,7 @@ export default function useSidebars(userType, user, t) {
       icon: <UserOutlined />,
     },
   ];
-  if (parseInt(userType) == ACCOUNT_TYPE.HUB) {
+  if (parseInt(userType) === ACCOUNT_TYPE.HUB) {
     if (user && !user.hub_id) {
       hubSidebar.push({
         label: t("sidebars.invite_link"),
@@ -425,6 +425,10 @@ export default function useSidebars(userType, user, t) {
         {
           label: "Bug Reports",
           key: "bug-reports",
+        },
+        {
+          label: "Error Logs",
+          key: "admin/error-logs",
         },
       ],
     },

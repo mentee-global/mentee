@@ -5,7 +5,6 @@ import {
   getSpecializationById,
   fetchAdminSpecializations,
   newSpecializationCreate,
-  translateOption,
 } from "utils/api";
 import { useDispatch } from "react-redux";
 import { fetchOptions } from "features/optionsSlice";
@@ -18,7 +17,6 @@ import {
 } from "@ant-design/icons";
 
 import "./css/Training.scss";
-import { OPTION_TYPE } from "utils/consts";
 import { css } from "@emotion/css";
 
 export const Specializations = () => {

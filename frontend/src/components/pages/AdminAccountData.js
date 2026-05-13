@@ -102,7 +102,7 @@ function AdminAccountData() {
   const [reload, setReload] = useState(true);
   const [displayData, setDisplayData] = useState([]);
   const [displayOption, setDisplayOption] = useState(keys.MENTORS);
-  const [downloadFile, setDownloadFile] = useState(null);
+  const [downloadFile] = useState(null);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [guestModalVisible, setGuestModalVisible] = useState(false);
   const { onAuthStateChanged } = useAuth();

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { Modal, Form, Input, Button, message, Typography, Radio } from "antd";
+import { Modal, Form, Input, Button, message, Radio } from "antd";
 import { adminUploadEmailsText, checkStatusByEmail } from "utils/api";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -16,6 +16,7 @@ function AddGuestModal(props) {
   useEffect(() => {
     form.resetFields();
     setValuesChanged(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.guestModalVisible]);
 
   const onFinish = useCallback((valuesChanged, user_role) => {
@@ -41,6 +42,7 @@ function AddGuestModal(props) {
     } else {
       props.setGuestModalVisible(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const success = () => {

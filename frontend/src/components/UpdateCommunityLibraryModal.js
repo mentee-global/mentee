@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { TRAINING_TYPE } from "utils/consts";
 import "components/css/Training.scss";
 
 const normFile = (e) => {
@@ -60,6 +59,7 @@ function UpdateCommunityLibraryModal({
         },
       ]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, currentData]);
 
   return (

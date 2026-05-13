@@ -23,7 +23,7 @@ function AvailabilityCalendar(props) {
   const [value, setValue] = useState(dayjs());
   const [date, setDate] = useState(moment());
   const [visible, setVisible] = useState(false);
-  const [lockmodal, setLockModal] = useState(false); // Locks modal when panel changes
+  const [, setLockModal] = useState(false); // Locks modal when panel changes
   const [timeSlots, setTimeSlots] = useState([]);
   const [bookedTimeSlots, setBookedTimeSlots] = useState([]);
   const [trigger, setTrigger] = useState(false); // Trigger for getSetdays UseEffect
@@ -86,6 +86,7 @@ function AvailabilityCalendar(props) {
     }
     getSetDays();
     getAvailability();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger, profileId]);
 
   function getBookedAppointments() {
@@ -319,11 +320,7 @@ function AvailabilityCalendar(props) {
     return returnSlots;
   };
 
-  /**
-   * Renders each cell of calendar
-   * @param {moment} value
-   * @returns {*} Content of the cell
-   */
+  // eslint-disable-next-line no-unused-vars
   const cellRender = (current, info) => {
     if (info.type === "date") {
       const listData = getListData(current);

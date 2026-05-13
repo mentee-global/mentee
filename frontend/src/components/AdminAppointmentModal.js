@@ -63,7 +63,9 @@ function AdminAppointmentModal({ data, visible, dateFormat, status, onClose }) {
                 {data ? getContactPermissions() : ""} <br />
                 {data && data.appointment.phone_number}
                 <br />
-                <a>{data?.appointment.email}</a>
+                <a href={`mailto:${data?.appointment.email}`}>
+                  {data?.appointment.email}
+                </a>
                 <br />
               </div>
             </div>

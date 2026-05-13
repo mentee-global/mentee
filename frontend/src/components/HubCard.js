@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Avatar, Typography, Tooltip, theme, Button } from "antd";
 import { LinkOutlined, UserOutlined } from "@ant-design/icons";
 import "./css/Gallery.scss";
@@ -31,7 +31,7 @@ const styles = {
   },
 };
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 function HubCard(props) {
   const {

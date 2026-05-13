@@ -72,7 +72,7 @@ function NavigationSider() {
       closable={false}
       title={
         <>
-          {role == ACCOUNT_TYPE.HUB ? (
+          {role === ACCOUNT_TYPE.HUB ? (
             <img
               src={
                 user
@@ -106,12 +106,14 @@ function NavigationSider() {
           )}
         </>
       }
-      headerStyle={{
-        padding: ".5em",
-        paddingLeft: "1em",
-      }}
-      bodyStyle={{
-        padding: 0,
+      styles={{
+        header: {
+          padding: ".5em",
+          paddingLeft: "1em",
+        },
+        body: {
+          padding: 0,
+        },
       }}
       children={
         <Menu
@@ -150,7 +152,7 @@ function NavigationSider() {
         {/* TODO: Add a smooth transition of logo change */}
         {!collapsed ? (
           <>
-            {role == ACCOUNT_TYPE.HUB ? (
+            {role === ACCOUNT_TYPE.HUB ? (
               <img
                 src={
                   user
@@ -188,7 +190,7 @@ function NavigationSider() {
           </>
         ) : (
           <>
-            {role == ACCOUNT_TYPE.HUB ? (
+            {role === ACCOUNT_TYPE.HUB ? (
               <img
                 src={
                   user

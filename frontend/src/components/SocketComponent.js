@@ -30,10 +30,12 @@ function SocketComponent() {
     return () => {
       socket.offAny();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileId, activeMessageId]);
 
   useEffect(() => {
     dispatch(setActiveMessageId(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
   return <div></div>;
 }

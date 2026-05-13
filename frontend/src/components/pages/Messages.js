@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import MessagesSidebar from "components/MessagesSidebar";
-import { Layout, message } from "antd";
+import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
 import { getLatestMessages, getMessageData, fetchPartners } from "utils/api";
 import socket from "utils/socket";
@@ -66,6 +66,7 @@ function Messages(props) {
         socket.off(profileId, messageListener);
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, profileId, activeMessageId]);
 
   useEffect(() => {
@@ -79,7 +80,7 @@ function Messages(props) {
       setRestrictedPartners(restricted_partners);
       if (data && data?.data?.length) {
         let unread_message_senders = [];
-        data?.data.map((message_item) => {
+        data?.data.forEach((message_item) => {
           if (
             message_item.message_read === false &&
             !unread_message_senders.includes(message_item.otherId)
@@ -109,8 +110,10 @@ function Messages(props) {
     if (profileId) {
       getData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileId]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     var user_type = new URLSearchParams(props.location.search).get("user_type");
     dispatch(
@@ -136,6 +139,7 @@ function Messages(props) {
       }
     }
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMessageId]);
 
   const addMyMessage = (msg) => {

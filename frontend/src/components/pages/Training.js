@@ -44,6 +44,7 @@ function Training({ location, history }) {
     if (!applicationData) {
       getApplicationData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onCompleteTraining = async () => {

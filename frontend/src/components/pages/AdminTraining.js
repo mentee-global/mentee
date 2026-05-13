@@ -17,7 +17,6 @@ import {
   Table,
   Popconfirm,
   message,
-  Radio,
   Button,
   notification,
   Spin,
@@ -105,7 +104,7 @@ const AdminTraining = () => {
   const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
   const [trainingData, setTrainingData] = useState([]);
   const [reload, setReload] = useState(true);
-  const [translateLoading, setTranslateLoading] = useState(false);
+  const [translateLoading] = useState(false);
   const [translateOpen, setTranslateOpen] = useState(false);
   // const [documentCost, setDocumentCost] = useState(null);
   const [trainingId, setTrainingId] = useState(null);
@@ -316,6 +315,7 @@ const AdminTraining = () => {
       setLoading(false);
     };
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, reload]);
 
   const columns = [
@@ -338,7 +338,7 @@ const AdminTraining = () => {
       render: (url, record) => {
         if (record.typee !== TRAINING_TYPE.DOCUMENT) {
           return (
-            <a href={url} target="_blank">
+            <a href={url} target="_blank" rel="noreferrer">
               {url}
             </a>
           );
@@ -436,7 +436,7 @@ const AdminTraining = () => {
       setTrainingData(
         allData
           .sort((a, b) => a.sort_order - b.sort_order)
-          .filter((x) => x.hub_id == hub_id)
+          .filter((x) => x.hub_id === hub_id)
       );
     }
   };

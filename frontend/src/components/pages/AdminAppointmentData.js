@@ -50,6 +50,7 @@ function AdminAppointmentData() {
       {numbers_in_page_options.map((option_item) => {
         return (
           <Menu.Item>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a href="#" onClick={() => setNumbersInPage(option_item.value)}>
               {option_item.value}
             </a>
@@ -80,6 +81,7 @@ function AdminAppointmentData() {
       setSpecMasters(await getDisplaySpecializations());
     }
     getMasters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -236,7 +238,7 @@ function AdminAppointmentData() {
         />
       )}
       <div style={{ display: "none" }}>
-        <iframe src={downloadFile} />
+        <iframe src={downloadFile} title="download" />
       </div>
       <Breadcrumb>
         <Breadcrumb.Item>User Reports</Breadcrumb.Item>
@@ -258,6 +260,7 @@ function AdminAppointmentData() {
         <div style={{ lineHeight: "30px" }}>
           <label style={{ marginRight: "10px" }}>Numbers of Display</label>
           <Dropdown overlay={overlay} className={""} trigger={["click"]}>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a href="#" style={{ color: "black" }}>
               {numbersInPage} <DownOutlined />
             </a>
@@ -302,6 +305,7 @@ function AdminAppointmentData() {
                     (pageNum === index ? "ant-pagination-item-active" : "")
                   }
                 >
+                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                   <a
                     href="#"
                     onClick={() => {

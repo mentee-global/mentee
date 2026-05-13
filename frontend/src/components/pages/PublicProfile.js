@@ -16,7 +16,7 @@ function PublicProfile({ match }) {
   const id = match.params.id;
   const [account, setAccount] = useState({});
   const [updateContent, setUpdateContent] = useState(false);
-  const [isMentor, setIsMentor] = useState(accountType == ACCOUNT_TYPE.MENTOR);
+  const [isMentor] = useState(accountType === ACCOUNT_TYPE.MENTOR);
 
   useEffect(() => {
     async function getAccount() {
@@ -26,6 +26,7 @@ function PublicProfile({ match }) {
       }
     }
     getAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateContent, id]);
 
   const handleUpdateAccount = () => {
@@ -54,7 +55,7 @@ function PublicProfile({ match }) {
             accountType={parseInt(accountType)}
           />
         </div>
-        {accountType == ACCOUNT_TYPE.MENTEE && account.video && (
+        {accountType === ACCOUNT_TYPE.MENTEE && account.video && (
           <MenteeVideo video={account.video} />
         )}
       </div>

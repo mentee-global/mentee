@@ -78,6 +78,7 @@ function AdminBugReports() {
     }
     // Wait for auth before fetching data
     onAuthStateChanged(getData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
 
   const handleSearch = (value) => {

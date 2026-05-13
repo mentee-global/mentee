@@ -201,7 +201,7 @@ function AdminOAuthClientDetail() {
         </Button>
       </Space>
 
-      <Card bodyStyle={{ padding: 24 }}>
+      <Card styles={{ body: { padding: 24 } }}>
         <div
           style={{
             display: "flex",
@@ -391,7 +391,7 @@ function AdminOAuthClientDetail() {
         open={editOpen}
         onCancel={() => setEditOpen(false)}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
         width={640}
       >
         <OAuthClientForm
@@ -434,7 +434,7 @@ function AdminOAuthClientDetail() {
         onOk={handleDelete}
         maskClosable={false}
         closable={!deleting}
-        destroyOnClose
+        destroyOnHidden
       >
         <Space direction="vertical" size={12} style={{ width: "100%" }}>
           <Alert

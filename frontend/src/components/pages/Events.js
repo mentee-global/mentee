@@ -71,7 +71,7 @@ function Events() {
     if (user) {
       user_id = user._id.$oid;
     }
-    if (role == ACCOUNT_TYPE.HUB && user) {
+    if (role === ACCOUNT_TYPE.HUB && user) {
       if (user.hub_id) {
         hub_user_id = user.hub_id;
         partner_id = user._id.$oid;
@@ -119,6 +119,7 @@ function Events() {
     if (isAdmin) {
       getAllHubUsers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
 
   const getFilteredEvents = () => {
@@ -146,7 +147,7 @@ function Events() {
         parseInt(item.role) === searchRole ||
         item.role.includes(searchRole);
 
-      const matchHub = searchHub == "" || item.hub_id == searchHub;
+      const matchHub = searchHub === "" || item.hub_id === searchHub;
 
       return (
         matchesText && matchesUpcoming && matchesPast && matchRole && matchHub
@@ -193,7 +194,7 @@ function Events() {
             }}
             maxTagCount="responsive"
           />
-          {searchRole == ACCOUNT_TYPE.HUB && (
+          {searchRole === ACCOUNT_TYPE.HUB && (
             <Select
               className={css`
                 width: 100%;
@@ -295,8 +296,10 @@ function Events() {
             {t("common.cancel")}
           </Button>,
         ]}
-        bodyStyle={{
-          padding: "1rem",
+        styles={{
+          body: {
+            padding: "1rem",
+          },
         }}
       >
         {getFilterForm()}
@@ -304,45 +307,47 @@ function Events() {
       <div className="gallery-container">
         <FloatButton.BackTop />
         <Affix offsetTop={50}>
-          <Button
-            className={css`
-              margin-top: 10px;
-              margin-bottom: 10px;
-              @media only screen and (max-width: 640px) {
-                display: none;
-              }
-            `}
-            type="primary"
-            onClick={() => {
-              setEventModalvisible(true);
-            }}
-          >
-            {t("events.addEvent")}
-          </Button>
-          <AddEventModal
-            role={role}
-            open={eventModalvisible}
-            hubOptions={hubOptions}
-            setOpen={setEventModalvisible}
-            refresh={() => setReload(!reload)}
-            reloading={() => setPageLoaded(false)}
-            partnerData={hubPartners}
-          />
-          <div
-            className={css`
-              margin-right: 1em;
-              width: 15rem;
-              padding: 1em;
-              border-radius: 8px;
-              height: fit-content;
-              border: 2px solid ${colorPrimaryBg};
+          <div>
+            <Button
+              className={css`
+                margin-top: 10px;
+                margin-bottom: 10px;
+                @media only screen and (max-width: 640px) {
+                  display: none;
+                }
+              `}
+              type="primary"
+              onClick={() => {
+                setEventModalvisible(true);
+              }}
+            >
+              {t("events.addEvent")}
+            </Button>
+            <AddEventModal
+              role={role}
+              open={eventModalvisible}
+              hubOptions={hubOptions}
+              setOpen={setEventModalvisible}
+              refresh={() => setReload(!reload)}
+              reloading={() => setPageLoaded(false)}
+              partnerData={hubPartners}
+            />
+            <div
+              className={css`
+                margin-right: 1em;
+                width: 15rem;
+                padding: 1em;
+                border-radius: 8px;
+                height: fit-content;
+                border: 2px solid ${colorPrimaryBg};
 
-              @media only screen and (max-width: 640px) {
-                display: none;
-              }
-            `}
-          >
-            {getFilterForm()}
+                @media only screen and (max-width: 640px) {
+                  display: none;
+                }
+              `}
+            >
+              {getFilterForm()}
+            </div>
           </div>
         </Affix>
 

@@ -7,7 +7,6 @@ import {
   getLanguageById,
   fetchAdminLanguages,
   newLanguageCreate,
-  translateOption,
 } from "utils/api";
 import { Input, Form, Button } from "antd";
 import { Table, Popconfirm, message, Modal } from "antd";
@@ -18,7 +17,6 @@ import {
 } from "@ant-design/icons";
 
 import "./css/Training.scss";
-import { OPTION_TYPE } from "utils/consts";
 import { css } from "@emotion/css";
 
 export const Languages = () => {

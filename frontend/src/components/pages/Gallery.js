@@ -188,6 +188,7 @@ function Gallery(props) {
       setAllPartners(temp);
     }
     getAllPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch mentee data for favorites
@@ -202,6 +203,7 @@ function Gallery(props) {
     if (isMentee && !mentee) {
       getMentee();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMentee]);
 
   useEffect(() => {
@@ -215,6 +217,7 @@ function Gallery(props) {
     if (isMentee && mentee) {
       initializeFavorites();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mentee]);
 
   function onEditFav(mentor_id, favorite) {
@@ -356,9 +359,9 @@ function Gallery(props) {
   const role = getRole();
   const hasAccess =
     props.isSupport ||
-    role == ACCOUNT_TYPE.ADMIN ||
-    role == ACCOUNT_TYPE.MENTEE ||
-    role == ACCOUNT_TYPE.GUEST;
+    role === ACCOUNT_TYPE.ADMIN ||
+    role === ACCOUNT_TYPE.MENTEE ||
+    role === ACCOUNT_TYPE.GUEST;
 
   return !hasAccess ? (
     <Result
@@ -402,8 +405,10 @@ function Gallery(props) {
             {t("common.cancel")}
           </Button>,
         ]}
-        bodyStyle={{
-          padding: "1rem",
+        styles={{
+          body: {
+            padding: "1rem",
+          },
         }}
       >
         {getFilterForm()}

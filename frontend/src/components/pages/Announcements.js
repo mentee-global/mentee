@@ -9,7 +9,6 @@ import {
   Affix,
   Button,
   FloatButton,
-  Tooltip,
   notification,
   Table,
 } from "antd";
@@ -48,7 +47,7 @@ function Announcements() {
       setPageLoaded(true);
     }
     var hub_user_id = null;
-    if (role == ACCOUNT_TYPE.HUB && user) {
+    if (role === ACCOUNT_TYPE.HUB && user) {
       if (user.hub_id) {
         hub_user_id = user.hub_id;
         if (user.hub_user) {
@@ -60,6 +59,7 @@ function Announcements() {
       }
     }
     getData(hub_user_id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getFilteredData = () => {
@@ -213,8 +213,10 @@ function Announcements() {
             {t("common.cancel")}
           </Button>,
         ]}
-        bodyStyle={{
-          padding: "1rem",
+        styles={{
+          body: {
+            padding: "1rem",
+          },
         }}
       >
         {getFilterForm()}

@@ -1,17 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  Avatar,
-  Input,
-  Button,
-  Spin,
-  theme,
-  Dropdown,
-  Popconfirm,
-  Grid,
-} from "antd";
+import { Avatar, Input, Button, Spin, theme, Popconfirm, Grid } from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import moment from "moment-timezone";
-import { SendOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { SendOutlined } from "@ant-design/icons";
 import EmojiPicker from "emoji-picker-react";
 import { useAuth } from "utils/hooks/useAuth";
 import {
@@ -50,7 +41,7 @@ function GroupMessageChatArea(props) {
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(true);
   const [expandedMessages, setExpandedMessages] = useState({});
-  const [groupUsers, setGroupUsers] = useState([]);
+  const [, setGroupUsers] = useState([]);
   const [showUserList, setShowUserList] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [activeInput, setActiveInput] = useState(null);
@@ -183,7 +174,7 @@ function GroupMessageChatArea(props) {
     setShouldScroll(true);
 
     // Simple notification
-    if (tagUsers.length == 0) {
+    if (tagUsers.length === 0) {
       if (particiants?.length > 0) {
         setTimeout(() => {
           particiants.forEach((user) => {
@@ -523,6 +514,7 @@ function GroupMessageChatArea(props) {
                     >
                       <img
                         src={sender_user?.image?.url}
+                        alt=""
                         style={{
                           cursor: "pointer",
                           width: "40px",
@@ -574,8 +566,8 @@ function GroupMessageChatArea(props) {
                       )}
                     </>
                   )}
-                  {props.role != ACCOUNT_TYPE.ADMIN &&
-                  props.role != ACCOUNT_TYPE.MODERATOR &&
+                  {props.role !== ACCOUNT_TYPE.ADMIN &&
+                  props.role !== ACCOUNT_TYPE.MODERATOR &&
                   editInputFlags[block._id.$oid] ? (
                     <>
                       <div
@@ -646,8 +638,8 @@ function GroupMessageChatArea(props) {
                             ),
                           }}
                         />
-                        {(props.role == ACCOUNT_TYPE.ADMIN ||
-                          props.role == ACCOUNT_TYPE.MODERATOR) && (
+                        {(props.role === ACCOUNT_TYPE.ADMIN ||
+                          props.role === ACCOUNT_TYPE.MODERATOR) && (
                           <Popconfirm
                             title={`Are you sure you want to delete this message?`}
                             onConfirm={async () => {
@@ -700,8 +692,8 @@ function GroupMessageChatArea(props) {
                       marginTop: "4px",
                     }}
                   >
-                    {props.role != ACCOUNT_TYPE.ADMIN &&
-                      props.role != ACCOUNT_TYPE.MODERATOR && (
+                    {props.role !== ACCOUNT_TYPE.ADMIN &&
+                      props.role !== ACCOUNT_TYPE.MODERATOR && (
                         <Button
                           onClick={() => {
                             var temp = {};
@@ -730,8 +722,8 @@ function GroupMessageChatArea(props) {
                       </Button>
                     )}
                   </div>
-                  {props.role != ACCOUNT_TYPE.ADMIN &&
-                    props.role != ACCOUNT_TYPE.MODERATOR &&
+                  {props.role !== ACCOUNT_TYPE.ADMIN &&
+                    props.role !== ACCOUNT_TYPE.MODERATOR &&
                     replyInputFlags[block._id.$oid] && (
                       <div
                         className="reply-message-container"
@@ -848,8 +840,8 @@ function GroupMessageChatArea(props) {
         </Spin>
         <div ref={messagesEndRef} />
       </div>
-      {props.role != ACCOUNT_TYPE.ADMIN &&
-        props.role != ACCOUNT_TYPE.MODERATOR && (
+      {props.role !== ACCOUNT_TYPE.ADMIN &&
+        props.role !== ACCOUNT_TYPE.MODERATOR && (
           <div className="conversation-footer">
             <div className="message-input-container">
               {/* Title input */}

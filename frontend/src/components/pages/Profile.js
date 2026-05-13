@@ -23,8 +23,7 @@ function Profile() {
 
   const [form] = Form.useForm();
 
-  const { onAuthStateChanged, isMentor, profileId, isMentee, role, isPartner } =
-    useAuth();
+  const { isMentor, profileId, isMentee, role, isPartner } = useAuth();
 
   const handleSaveEdits = () => {
     dispatch(fetchUser({ id: profileId, role }));
@@ -47,6 +46,7 @@ function Profile() {
       }
     }
     addTakingAppointments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const validateMessages = {

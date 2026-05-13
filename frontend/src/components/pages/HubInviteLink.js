@@ -10,9 +10,7 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import { useDispatch, useSelector } from "react-redux";
 
 function HubInviteLink() {
-  const {
-    token: { colorPrimaryBg },
-  } = theme.useToken();
+  theme.useToken();
   const { t } = useTranslation();
   const [inviteLink, setInviteLink] = useState(null);
   const dispatch = useDispatch();
@@ -28,6 +26,7 @@ function HubInviteLink() {
         );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const copyInviteLink = () => {

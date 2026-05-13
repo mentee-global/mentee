@@ -18,6 +18,7 @@ import ApplicationOrganizer from "components/pages/ApplicationOrganizer";
 import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminBugReports from "components/pages/AdminBugReports";
+import AdminErrorLogs from "components/pages/AdminErrorLogs";
 import MenteeGallery from "components/pages/MenteeGallery";
 import Messages from "components/pages/Messages";
 import GroupMessages from "components/pages/GroupMessages";
@@ -112,23 +113,24 @@ function App() {
       }
     }, 500);
     if (path.indexOf("/event") > 0) {
-      if (!role) {
+      if (role == null) {
         let direct_path = "event" + path.split("/event")[1];
         localStorage.setItem("direct_path", direct_path);
       }
     }
     if (path.indexOf("/new_training") > 0) {
-      if (!role) {
+      if (role == null) {
         let direct_path = "new_training" + path.split("/new_training")[1];
         localStorage.setItem("direct_path", direct_path);
       }
     }
     if (path.indexOf("/group_messages") > 0) {
-      if (!role) {
+      if (role == null) {
         let direct_path = "group_messages" + path.split("/group_messages")[1];
         localStorage.setItem("direct_path", direct_path);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
 
   useEffect(() => {
@@ -153,16 +155,19 @@ function App() {
           <SocketComponent />
           <Initiator />
           <Layout hasSider style={{ position: "relative", height: "100%" }}>
-            {role && <NavigationSider />}
+            {role != null && <NavigationSider />}
             <Content
               style={{
                 display:
-                  role &&
+                  role != null &&
                   !window.location.pathname.startsWith("/oauth/") &&
                   "none",
               }}
             >
-              <HomeLayout ignoreHomeLayout={role} allHubData={allHubData}>
+              <HomeLayout
+                ignoreHomeLayout={role != null}
+                allHubData={allHubData}
+              >
                 <PublicRoute exact path="/">
                   <Home />
                 </PublicRoute>
@@ -261,10 +266,10 @@ function App() {
             </Content>
 
             <Content style={{ height: "100vh", overflow: "hidden" }}>
-              {role && <NavigationHeader />}
+              {role != null && <NavigationHeader />}
               <div style={{ height: "calc(100vh - 48px)", overflow: "auto" }}>
                 <PrivateRoute path="/support/all-mentors">
-                  {role == ACCOUNT_TYPE.SUPPORT ? (
+                  {role === ACCOUNT_TYPE.SUPPORT ? (
                     <Gallery isSupport={true} />
                   ) : (
                     <>
@@ -279,7 +284,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/dashboard">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <div style={{ padding: "40px", fontSize: "20px" }}>
                       <a
                         href="https://lookerstudio.google.com/u/0/reporting/c11362c3-fec0-4e34-bff7-cb302caf762d/page/p1iHF?s=u2xKH-NSqII"
@@ -302,7 +307,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/support/all-mentees">
-                  {role == ACCOUNT_TYPE.SUPPORT ? (
+                  {role === ACCOUNT_TYPE.SUPPORT ? (
                     <MenteeGallery isSupport={true} />
                   ) : (
                     <>
@@ -317,7 +322,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/support/all-partners">
-                  {role == ACCOUNT_TYPE.SUPPORT ? (
+                  {role === ACCOUNT_TYPE.SUPPORT ? (
                     <PartnerGallery isSupport={true} />
                   ) : (
                     <>
@@ -332,7 +337,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/support/all-hubs">
-                  {role == ACCOUNT_TYPE.SUPPORT ? (
+                  {role === ACCOUNT_TYPE.SUPPORT ? (
                     <HubGallery isSupport={true} />
                   ) : (
                     <>
@@ -347,7 +352,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path={"/moderator/admin_group_messages"}>
-                  {role == ACCOUNT_TYPE.MODERATOR ? (
+                  {role === ACCOUNT_TYPE.MODERATOR ? (
                     <GroupMessages />
                   ) : (
                     <>
@@ -362,7 +367,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/appointments">
-                  {role == ACCOUNT_TYPE.MENTOR ? (
+                  {role === ACCOUNT_TYPE.MENTOR ? (
                     <Appointments />
                   ) : (
                     <>
@@ -377,7 +382,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/mentor/training">
-                  {role == ACCOUNT_TYPE.MENTOR ? (
+                  {role === ACCOUNT_TYPE.MENTOR ? (
                     <TrainingData role={ACCOUNT_TYPE.MENTOR} />
                   ) : (
                     <>
@@ -392,7 +397,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/videos">
-                  {role == ACCOUNT_TYPE.MENTOR ? (
+                  {role === ACCOUNT_TYPE.MENTOR ? (
                     <Videos />
                   ) : (
                     <>
@@ -408,7 +413,7 @@ function App() {
                 </PrivateRoute>
 
                 <PrivateRoute path="/mentee-appointments">
-                  {role == ACCOUNT_TYPE.MENTEE ? (
+                  {role === ACCOUNT_TYPE.MENTEE ? (
                     <MenteeAppointments />
                   ) : (
                     <>
@@ -423,7 +428,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/mentee/training">
-                  {role == ACCOUNT_TYPE.MENTEE ? (
+                  {role === ACCOUNT_TYPE.MENTEE ? (
                     <TrainingData role={ACCOUNT_TYPE.MENTEE} />
                   ) : (
                     <>
@@ -438,9 +443,9 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/profile">
-                  {role == ACCOUNT_TYPE.MENTOR ||
-                  role == ACCOUNT_TYPE.MENTEE ||
-                  role == ACCOUNT_TYPE.PARTNER ? (
+                  {role === ACCOUNT_TYPE.MENTOR ||
+                  role === ACCOUNT_TYPE.MENTEE ||
+                  role === ACCOUNT_TYPE.PARTNER ? (
                     <Profile />
                   ) : (
                     <>
@@ -456,9 +461,9 @@ function App() {
                 </PrivateRoute>
 
                 <PrivateRoute path="/gallery" exact>
-                  {role == ACCOUNT_TYPE.MENTEE ||
-                  role == ACCOUNT_TYPE.GUEST ||
-                  role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.MENTEE ||
+                  role === ACCOUNT_TYPE.GUEST ||
+                  role === ACCOUNT_TYPE.ADMIN ? (
                     <Gallery />
                   ) : (
                     <>
@@ -474,7 +479,7 @@ function App() {
                 </PrivateRoute>
                 {Object.keys(allHubData).map((hub_url) => {
                   return (
-                    <>
+                    <React.Fragment key={hub_url}>
                       <PrivateRoute path={hub_url + "/partner-gallery"}>
                         <PartnerGallery />
                       </PrivateRoute>
@@ -504,14 +509,14 @@ function App() {
                       <PrivateRoute path={hub_url + "/new_training/:type/:id"}>
                         <NewTrainingConfirm />
                       </PrivateRoute>
-                    </>
+                    </React.Fragment>
                   );
                 })}
                 <PrivateRoute path="/partner-gallery" exact>
-                  {role == ACCOUNT_TYPE.PARTNER ||
-                  role == ACCOUNT_TYPE.GUEST ||
-                  role == ACCOUNT_TYPE.HUB ||
-                  role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.PARTNER ||
+                  role === ACCOUNT_TYPE.GUEST ||
+                  role === ACCOUNT_TYPE.HUB ||
+                  role === ACCOUNT_TYPE.ADMIN ? (
                     <PartnerGallery />
                   ) : (
                     <>
@@ -526,10 +531,10 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/mentee-gallery" exact>
-                  {role == ACCOUNT_TYPE.MENTOR ||
-                  role == ACCOUNT_TYPE.MENTEE ||
-                  role == ACCOUNT_TYPE.GUEST ||
-                  role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.MENTOR ||
+                  role === ACCOUNT_TYPE.MENTEE ||
+                  role === ACCOUNT_TYPE.GUEST ||
+                  role === ACCOUNT_TYPE.ADMIN ? (
                     <MenteeGallery />
                   ) : (
                     <>
@@ -552,7 +557,7 @@ function App() {
                 </PrivateRoute>
 
                 <PrivateRoute path="/admin_group_messages">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <GroupMessages />
                   ) : (
                     <>
@@ -567,7 +572,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/organizer">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <ApplicationOrganizer isMentor={true} />
                   ) : (
                     <>
@@ -582,7 +587,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/menteeOrganizer">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <ApplicationOrganizer isMentor={false} />
                   ) : (
                     <>
@@ -597,7 +602,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/account-data">
-                  {role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.HUB ? (
+                  {role === ACCOUNT_TYPE.ADMIN || role === ACCOUNT_TYPE.HUB ? (
                     <AdminAccountData />
                   ) : (
                     <>
@@ -612,7 +617,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/bug-reports">
-                  {role == ACCOUNT_TYPE.ADMIN || role == ACCOUNT_TYPE.HUB ? (
+                  {role === ACCOUNT_TYPE.ADMIN || role === ACCOUNT_TYPE.HUB ? (
                     <AdminBugReports />
                   ) : (
                     <>
@@ -627,7 +632,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/hub-data">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <Hubs />
                   ) : (
                     <>
@@ -642,7 +647,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/partner-data">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <AdminPartnerData />
                   ) : (
                     <>
@@ -657,7 +662,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/all-appointments">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <AdminAppointmentData />
                   ) : (
                     <>
@@ -672,7 +677,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/admin-announcement">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <AdminAnnouncement />
                   ) : (
                     <>
@@ -687,7 +692,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/admin-training">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <AdminTraining />
                   ) : (
                     <>
@@ -702,7 +707,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/admin-sign">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <AdminSign />
                   ) : (
                     <>
@@ -717,7 +722,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/languages">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <Languages />
                   ) : (
                     <>
@@ -732,7 +737,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/specializations">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <Specializations />
                   ) : (
                     <>
@@ -747,7 +752,7 @@ function App() {
                   )}
                 </PrivateRoute>
                 <PrivateRoute path="/messages-details">
-                  {role == ACCOUNT_TYPE.ADMIN ? (
+                  {role === ACCOUNT_TYPE.ADMIN ? (
                     <AdminMessages />
                   ) : (
                     <>
@@ -763,7 +768,8 @@ function App() {
                 </PrivateRoute>
 
                 <PrivateRoute path="/partner/training">
-                  {role == ACCOUNT_TYPE.PARTNER || role == ACCOUNT_TYPE.HUB ? (
+                  {role === ACCOUNT_TYPE.PARTNER ||
+                  role === ACCOUNT_TYPE.HUB ? (
                     <TrainingData role={ACCOUNT_TYPE.PARTNER} />
                   ) : (
                     <>
@@ -802,10 +808,13 @@ function App() {
                 <AdminRoute path="/admin/oauth-clients/:clientId" exact>
                   <AdminOAuthClientDetail />
                 </AdminRoute>
+                <AdminRoute path="/admin/error-logs" exact>
+                  <AdminErrorLogs />
+                </AdminRoute>
                 <PrivateRoute path="/settings/connected-apps" exact>
                   <ConnectedApps />
                 </PrivateRoute>
-                {role == ACCOUNT_TYPE.HUB && <HubFooter />}
+                {role === ACCOUNT_TYPE.HUB && <HubFooter />}
                 {n50Flag && <HubFooter />}
               </div>
             </Content>

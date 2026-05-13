@@ -64,17 +64,10 @@ function BuildProfile({ location, history, hub_user }) {
     }
 
     getUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSubmit = async (profileData, image, changedImage) => {
-    if (!profileData.image) {
-      messageApi.error({
-        content: t("common.requiredAvatar"),
-        duration: 0,
-        key: "requiredAvatar",
-      });
-      return;
-    }
     setLoading(true);
     if (!inFirebase && role !== ACCOUNT_TYPE.PARTNER) {
       if (userState !== NEW_APPLICATION_STATUS.BUILDPROFILE && !isVerified) {
@@ -145,7 +138,7 @@ function BuildProfile({ location, history, hub_user }) {
       }
     } else {
       messageApi.error({
-        content: t("commonProfile.error.save"),
+        content: res?.error || t("commonProfile.error.save"),
         duration: 0,
         key: "commonProfile.error.save",
         onClick: () => messageApi.destroy("commonProfile.error.save"),

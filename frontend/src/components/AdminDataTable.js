@@ -119,6 +119,7 @@ function AdminDataTable({
         })
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -159,6 +160,7 @@ function AdminDataTable({
       });
       setMenteeArr(temp);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPartner, allMentors, allMentees, isChanged]);
 
   const showModal = (item) => {
@@ -424,7 +426,7 @@ function AdminDataTable({
 
   const validatePassword = (_, value) => {
     const passwordFieldValue = form.getFieldValue("password");
-    if (passwordFieldValue != value) {
+    if (passwordFieldValue !== value) {
       return Promise.reject(new Error("The passwords do not match"));
     }
 
@@ -465,6 +467,7 @@ function AdminDataTable({
     } else {
       handleEditClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const EditEmailForm = () => (

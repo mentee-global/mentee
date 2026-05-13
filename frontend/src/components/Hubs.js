@@ -30,7 +30,7 @@ export const Hubs = () => {
   const [reload, setReload] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisible2, setIsModalVisible2] = useState(false);
-  const [errMessage, setErrorMessage] = useState(null);
+  const [errMessage] = useState(null);
   const [selectedID, setSelectedID] = useState("");
 
   const [form] = Form.useForm();
@@ -126,6 +126,7 @@ export const Hubs = () => {
         handleCancel();
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

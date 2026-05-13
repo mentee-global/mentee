@@ -37,6 +37,7 @@ function UploadEmails(props) {
     setMessageText("");
     setRole(null);
     success();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const success = () => {

@@ -49,7 +49,7 @@ function SecretOnceModal({ open, secret, onClose }) {
           {t("admin_oauth.secret_modal.done")}
         </Button>,
       ]}
-      destroyOnClose
+      destroyOnHidden
     >
       {contextHolder}
       <Space direction="vertical" style={{ width: "100%" }} size="middle">

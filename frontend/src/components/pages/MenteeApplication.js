@@ -58,7 +58,7 @@ function MenteeApplication({
         );
         // Sort country names in ascending order
         const sortedCountryNames = countryNames.sort();
-        sortedCountryNames.map((country_name) => {
+        sortedCountryNames.forEach((country_name) => {
           temp_countires.push({
             label: country_name,
             value: country_name,
@@ -69,6 +69,7 @@ function MenteeApplication({
     }
     getAllCountries();
     getPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // TODO: Clean this and MentorApplication.js up with the constants

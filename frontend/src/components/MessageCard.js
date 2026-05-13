@@ -23,7 +23,7 @@ function MessageCard(props) {
   const history = useHistory();
   const dispatch = useDispatch();
   const thisUserId = useSelector((state) => state.user.user?._id?.$oid);
-  const { latestMessage, otherName, otherId, otherUser } = props.chat;
+  const { latestMessage, otherId, otherUser } = props.chat;
   const [accountData, setAccountData] = useState({});
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
 
@@ -50,7 +50,8 @@ function MessageCard(props) {
   useEffect(() => {
     async function fetchAccount() {
       var otherType = otherUser.user_type;
-      var account = await fetchAccountById(otherId, otherType);
+      var account =
+        otherType == null ? null : await fetchAccountById(otherId, otherType);
       if (account) {
         setAccountData(account);
       } else {
@@ -79,6 +80,7 @@ function MessageCard(props) {
         }
       }, 500);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const activeCardStyle = css`
@@ -121,12 +123,13 @@ function MessageCard(props) {
       {otherUser ? (
         <div
           className={
-            active &&
-            css`
-              div {
-                color: ${colorPrimary} !important;
-              }
-            `
+            active
+              ? css`
+                  div {
+                    color: ${colorPrimary} !important;
+                  }
+                `
+              : undefined
           }
         >
           <Meta

@@ -33,6 +33,7 @@ function AnnouncementDetail({ match }) {
       }
     }
     getData(hub_user_id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const getAvailableLangs = (record) => {

@@ -40,9 +40,7 @@ function useProvideAuth() {
   });
 
   const [profileId, setProfileId] = useState();
-  const [onAuthUpdate, setOnAuthUpdate] = useState(
-    new Promise((resolve) => resolve)
-  );
+  const [onAuthUpdate] = useState(new Promise((resolve) => resolve));
 
   const resetRoleState = (profile_id = null, role = null) => {
     if (profile_id) {
@@ -85,7 +83,7 @@ function useProvideAuth() {
           const supportUserID = localStorage.getItem("support_user_id");
           const cur_role = localStorage.getItem("role");
           const cur_user_id = localStorage.getItem("profileId");
-          if (!(role == ACCOUNT_TYPE.SUPPORT && supportUserID)) {
+          if (!(role === ACCOUNT_TYPE.SUPPORT && supportUserID)) {
             setProfileId(profileId);
             localStorage.setItem("profileId", profileId);
             setRoleState({
@@ -116,6 +114,7 @@ function useProvideAuth() {
     });
     // Cleanup subscription on unmount
     return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // Return the user object and auth methods
   return {

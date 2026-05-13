@@ -13,7 +13,7 @@ export const fetchNotificationsCount = createAsyncThunk(
 export const updateNotificationsCount = createAsyncThunk(
   "updateNotificationsCount",
   async ({ recipient, sender }, thunkAPI) => {
-    const res = await updateUnreadDMCount(recipient, sender);
+    await updateUnreadDMCount(recipient, sender);
     thunkAPI.dispatch(fetchNotificationsCount({ id: recipient }));
     return;
   }

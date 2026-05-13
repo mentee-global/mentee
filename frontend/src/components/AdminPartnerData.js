@@ -426,7 +426,7 @@ export const AdminPartnerData = () => {
         if (selectedPartner.assign_mentees) {
           if (selectActived) {
             let temp = [];
-            selectedPartner.assign_mentees.map((item) => {
+            selectedPartner.assign_mentees.forEach((item) => {
               if (
                 item.message_receive_data &&
                 item.message_receive_data.length > 0
@@ -449,7 +449,7 @@ export const AdminPartnerData = () => {
         if (selectedPartner.assign_mentors) {
           if (selectActived) {
             let temp = [];
-            selectedPartner.assign_mentors.map((item) => {
+            selectedPartner.assign_mentors.forEach((item) => {
               if (
                 item.message_receive_data &&
                 item.message_receive_data.length > 0
@@ -470,6 +470,7 @@ export const AdminPartnerData = () => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [option, selectActived]);
 
   const handleSearchMessages = (search_word) => {
@@ -488,7 +489,7 @@ export const AdminPartnerData = () => {
         if (partner_data.assign_mentees) {
           if (selectActived) {
             let temp = [];
-            partner_data.assign_mentees.map((item) => {
+            partner_data.assign_mentees.forEach((item) => {
               if (
                 item.message_receive_data &&
                 item.message_receive_data.length > 0
@@ -511,7 +512,7 @@ export const AdminPartnerData = () => {
         if (partner_data.assign_mentors) {
           if (selectActived) {
             let temp = [];
-            partner_data.assign_mentors.map((item) => {
+            partner_data.assign_mentors.forEach((item) => {
               if (
                 item.message_receive_data &&
                 item.message_receive_data.length > 0
@@ -549,7 +550,7 @@ export const AdminPartnerData = () => {
       data.filter((x) => {
         let matchHub = false;
         if (searchHubUserId) {
-          matchHub = x.hub_id == searchHubUserId;
+          matchHub = x.hub_id === searchHubUserId;
         } else {
           matchHub = !x.hub_id;
         }
@@ -647,14 +648,14 @@ export const AdminPartnerData = () => {
                         }
 
                         ${selectedPartner &&
-                        selectedPartner._id.$oid == partner._id.$oid &&
+                        selectedPartner._id.$oid === partner._id.$oid &&
                         activeCardStyle}
                       `}
                     >
                       <div
                         className={
                           selectedPartner &&
-                          selectedPartner._id.$oid == partner._id.$oid &&
+                          selectedPartner._id.$oid === partner._id.$oid &&
                           css`
                             div {
                               color: ${colorPrimary} !important;

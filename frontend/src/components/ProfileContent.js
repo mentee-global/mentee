@@ -30,8 +30,8 @@ function ProfileContent(props) {
   const { accountType, account } = props;
   const profileId = getProfileId();
   const role = getRole();
-  const isMentee = role == ACCOUNT_TYPE.MENTEE;
-  const isGuest = role == ACCOUNT_TYPE.GUEST;
+  const isMentee = role === ACCOUNT_TYPE.MENTEE;
+  const isGuest = role === ACCOUNT_TYPE.GUEST;
   const [mentee, setMentee] = useState();
   const [favorite, setFavorite] = useState(false);
   const [favoriteMentorIds, setFavoriteMentorIds] = useState(new Set());
@@ -47,6 +47,7 @@ function ProfileContent(props) {
     if (isMentee) {
       getMentee();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMentee]);
 
   useEffect(() => {
@@ -61,6 +62,7 @@ function ProfileContent(props) {
     if (isMentee && mentee) {
       initializeFavorites();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mentee]);
 
   function onEditFav(mentor_id, favorite) {
@@ -123,7 +125,7 @@ function ProfileContent(props) {
   };
 
   const displayTags = () => {
-    if (accountType == ACCOUNT_TYPE.HUB) {
+    if (accountType === ACCOUNT_TYPE.HUB) {
       return <></>;
     }
     let tags = account?.specializations ?? account?.regions ?? [];
@@ -336,13 +338,13 @@ function ProfileContent(props) {
         <>
           <div className="mentor-profile-heading">
             <b>
-              {accountType == ACCOUNT_TYPE.HUB
+              {accountType === ACCOUNT_TYPE.HUB
                 ? "URL"
                 : t("commonProfile.biography")}
             </b>
           </div>
           <div className="mentor-profile-about">
-            {accountType == ACCOUNT_TYPE.HUB
+            {accountType === ACCOUNT_TYPE.HUB
               ? props.mentor.url
               : props.mentor.biography}
           </div>
@@ -368,7 +370,7 @@ function ProfileContent(props) {
               <b>{t("commonProfile.education")}</b>
             </div>
             <div>{getEducations(props.mentor.education)}</div>
-            {accountType == ACCOUNT_TYPE.MENTEE && (
+            {accountType === ACCOUNT_TYPE.MENTEE && (
               <>
                 <div>
                   {props.mentor.education_level &&
@@ -388,7 +390,7 @@ function ProfileContent(props) {
           <br />
         </>
       )}
-      {accountType == ACCOUNT_TYPE.MENTEE && (
+      {accountType === ACCOUNT_TYPE.MENTEE && (
         <>
           {props.mentor.languages && (
             <>

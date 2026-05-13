@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ImgCrop from "antd-img-crop";
 import { Avatar, Layout, theme, Dropdown, Space, Tooltip, Upload } from "antd";
 import { withRouter, useHistory } from "react-router-dom";
@@ -20,7 +20,6 @@ import {
 } from "@ant-design/icons";
 import { fetchUser } from "features/userSlice";
 import { uploadAccountImage } from "utils/api";
-import Profile from "./pages/Profile";
 
 const { Header } = Layout;
 
@@ -49,7 +48,7 @@ function NavigationHeader() {
       resetRoleState();
       dispatch(resetUser());
       localStorage.removeItem("n50_user");
-      if (login_path && login_path != "") {
+      if (login_path && login_path !== "") {
         // window.location.href = login_path;
         history.push(login_path);
       } else {

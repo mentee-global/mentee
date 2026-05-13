@@ -48,7 +48,7 @@ function UpdateTrainingModal({
   const [trainingType, setTrainingType] = useState("");
   const [isNewDocument, setIsNewDocument] = useState(false);
   const [valuesChanged, setValuesChanged] = useState(false);
-  const [role, setRole] = useState(null);
+  const [, setRole] = useState(null);
   const [mentors, setMentors] = useState([]);
   const [mentees, setMentees] = useState([]);
   const newTraining = !currentTraining;
@@ -94,17 +94,17 @@ function UpdateTrainingModal({
       setTrainingType(currentTraining.typee);
       currentTraining.role = parseInt(currentTraining.role);
       form.setFieldsValue(currentTraining);
-      if (currentTraining.role == ACCOUNT_TYPE.MENTOR) {
+      if (currentTraining.role === ACCOUNT_TYPE.MENTOR) {
         if (currentTraining.mentor_id && currentTraining.mentor_id.length > 0) {
           setMentors(mentorOptions);
         }
       }
-      if (currentTraining.role == ACCOUNT_TYPE.MENTEE) {
+      if (currentTraining.role === ACCOUNT_TYPE.MENTEE) {
         if (currentTraining.mentee_id && currentTraining.mentee_id.length > 0) {
           setMentees(menteeOptions);
         }
       }
-      if (currentTraining.role == ACCOUNT_TYPE.PARTNER) {
+      if (currentTraining.role === ACCOUNT_TYPE.PARTNER) {
         if (currentTraining.partner_id) {
           var partner_data = partnerOptions.find(
             (x) => x.value === currentTraining.partner_id
@@ -127,6 +127,7 @@ function UpdateTrainingModal({
       setMentors([]);
       setMentees([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, currentTraining]);
 
   const setMentorMentees = (partner_id) => {

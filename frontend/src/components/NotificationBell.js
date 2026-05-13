@@ -17,7 +17,9 @@ function NotificationBell() {
   const profileID = useSelector((state) => state.user.user?._id?.$oid);
 
   useEffect(() => {
+    if (!profileID) return;
     dispatch(fetchNotificationsCount({ id: profileID }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileID]);
 
   return (

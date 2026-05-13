@@ -4,18 +4,9 @@ import {
   getSignedData,
   getSignedDocfile,
   fetchAccounts,
-  newPolicyCreate,
 } from "utils/api";
 import { ACCOUNT_TYPE } from "utils/consts";
-import {
-  Table,
-  message,
-  Button,
-  notification,
-  Spin,
-  Tabs,
-  Skeleton,
-} from "antd";
+import { Table, Button, notification, Spin, Tabs, Skeleton } from "antd";
 import { withRouter } from "react-router-dom";
 
 import "components/css/Training.scss";
@@ -23,10 +14,10 @@ import "components/css/Training.scss";
 const AdminSign = () => {
   const [role, setRole] = useState(ACCOUNT_TYPE.MENTEE);
   const [signedData, setSignedData] = useState([]);
-  const [reload, setReload] = useState(true);
-  const [translateLoading, setTranslateLoading] = useState(false);
+  const [reload] = useState(true);
+  const [translateLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [hubOptions, setHubOptions] = useState([]);
+  const [, setHubOptions] = useState([]);
   const [resetFilters, setResetFilters] = useState(false);
 
   useEffect(() => {
@@ -73,6 +64,7 @@ const AdminSign = () => {
       setLoading(false);
     };
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, reload]);
 
   const columns = [

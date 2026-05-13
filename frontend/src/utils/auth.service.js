@@ -33,12 +33,6 @@ export const clearPendingOAuthRedirect = () => {
 };
 export const hasPendingOAuthRedirect = () => _pendingOAuthRedirect;
 
-const get = (url, params) =>
-  instance
-    .get(url, params)
-    .then((res) => res.data)
-    .catch((err) => console.error(err));
-
 const post = (url, data, params) =>
   instance
     .post(url, data, params)
@@ -103,7 +97,7 @@ export const login = async (email, password, role, path = undefined) =>
   }).then(async (data) => {
     if (data && data.success && data.result.token) {
       localStorage.setItem("role", role);
-      if (path && role == ACCOUNT_TYPE.HUB) {
+      if (path && role === ACCOUNT_TYPE.HUB) {
         localStorage.setItem("login_path", path);
       }
       await fireauth
@@ -199,7 +193,8 @@ export const isUserPartner = async () => {
 };
 
 export const getRole = () => {
-  return localStorage.getItem("role");
+  const role = localStorage.getItem("role");
+  return role == null ? role : Number(role);
 };
 export const getLoginPath = () => {
   return localStorage.getItem("login_path");

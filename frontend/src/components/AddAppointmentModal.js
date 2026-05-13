@@ -9,7 +9,6 @@ import {
   Input,
   Drawer,
   Button,
-  Row,
   Space,
 } from "antd";
 import moment from "moment";
@@ -90,6 +89,7 @@ function AddAppointmentModal({
     }
 
     getMentees();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleSave(values) {

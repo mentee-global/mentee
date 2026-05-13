@@ -48,7 +48,7 @@ function MenteeProfileModal(props) {
         open={modalVisible}
         onCancel={() => {}}
         style={{ overflow: "hidden" }}
-        bodyStyle={{ height: "30vh !important" }}
+        styles={{ body: { height: "30vh !important" } }}
         closable={false}
         footer={
           <div>

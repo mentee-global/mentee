@@ -32,6 +32,7 @@ function LanguageDropdown({
   useEffect(() => {
     if (user && role !== ACCOUNT_TYPE.ADMIN)
       i18n.changeLanguage(user.preferred_language);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handleLanguageChange = (language) => {

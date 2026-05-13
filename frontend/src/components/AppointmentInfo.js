@@ -9,26 +9,6 @@ import { getTranslatedOptions } from "utils/translations";
 import "./css/Appointments.scss";
 import { useTranslation } from "react-i18next";
 
-// TODO: Remove this and all of the dependent variables
-const Tabs = Object.freeze({
-  upcoming: {
-    title: "All Upcoming",
-    key: "upcoming",
-  },
-  pending: {
-    title: "All Pending",
-    key: "pending",
-  },
-  past: {
-    title: "All Past",
-    key: "past",
-  },
-  availability: {
-    title: "Availability",
-    key: "availability",
-  },
-});
-
 function AppointmentInfo(props) {
   const { t } = useTranslation();
   const [mentee, setMentee] = useState({});

@@ -39,7 +39,7 @@ const styles = {
   },
 };
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 function PartnerCard(props) {
   const {

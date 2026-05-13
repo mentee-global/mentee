@@ -20,11 +20,11 @@ import {
   TIMEZONE_OPTIONS,
 } from "utils/consts";
 import moment from "moment";
-import ImgCrop from "antd-img-crop";
 import { UserOutlined, EditFilled } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { phoneRegex, urlRegex } from "utils/misc";
 import { fetchPartners, getAllcountries } from "utils/api";
+import { resizeImage } from "utils/imageResize";
 
 const styles = {
   formGroup: css`
@@ -67,7 +67,7 @@ function MenteeProfileForm({
   const [partnerOptions, setPartnerOptions] = useState([]);
   const [countryOptions, setCountryOptions] = useState([]);
   const [flag, setFlag] = useState(false);
-  const [finishFlag, setFinishFlag] = useState(false);
+  const [, setFinishFlag] = useState(false);
   var n50_user = localStorage.getItem("n50_user");
 
   const immigrantOptions = [
@@ -147,10 +147,11 @@ function MenteeProfileForm({
     if (profileData) {
       form.setFieldsValue(profileData);
       form.setFieldValue("video", profileData.video?.url);
-      if (profileData.organization == 0) {
+      if (profileData.organization === 0) {
         form.setFieldValue("organization", null);
       }
       setImage(profileData.image);
+      setChangedImage(false);
       if (profileData.birthday) {
         form.setFieldValue("birthday", moment(profileData.birthday.$date));
       }
@@ -206,7 +207,7 @@ function MenteeProfileForm({
         );
         // Sort country names in ascending order
         const sortedCountryNames = countryNames.sort();
-        sortedCountryNames.map((country_name) => {
+        sortedCountryNames.forEach((country_name) => {
           temp_countires.push({
             label: country_name,
             value: country_name,
@@ -217,6 +218,7 @@ function MenteeProfileForm({
     }
     getAllCountries();
     getPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onFinish = async (values) => {
@@ -299,56 +301,52 @@ function MenteeProfileForm({
           justify-content: center;
         `}
       >
-        <ImgCrop rotate aspect={1} minZoom={0.2}>
-          <Upload
-            onChange={async (file) => {
-              setImage(file.file.originFileObj);
-              setChangedImage(true);
-              setEdited(true);
-            }}
-            accept=".png,.jpg,.jpeg"
-            showUploadList={false}
-          >
-            <div
-              className={css`
-                position: relative;
-                display: inline-block;
-              `}
-            >
-              <Avatar
-                size={120}
-                icon={<UserOutlined />}
-                src={
-                  changedImage
-                    ? image && URL.createObjectURL(image)
-                    : image && image.url
-                }
-              />
-              <Button
-                shape="circle"
-                icon={<EditFilled />}
-                className={css`
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                `}
-              />
-            </div>
-          </Upload>
-        </ImgCrop>
-      </Form.Item>
-      {!image && finishFlag && (
-        <div
-          className={css`
-            text-align: center;
-            color: #ff4d4f;
-            margin-top: -1em;
-            margin-bottom: 1em;
-          `}
+        <Upload
+          beforeUpload={() => false}
+          onChange={async (info) => {
+            const file = info?.file?.originFileObj || info?.file;
+            if (!file) return;
+            let next = file;
+            try {
+              next = await resizeImage(file);
+            } catch (_) {
+              next = file;
+            }
+            setImage(next);
+            setChangedImage(true);
+            setEdited(true);
+          }}
+          accept=".png,.jpg,.jpeg"
+          showUploadList={false}
+          maxCount={1}
         >
-          {t("common.requiredAvatar")}
-        </div>
-      )}
+          <div
+            className={css`
+              position: relative;
+              display: inline-block;
+            `}
+          >
+            <Avatar
+              size={120}
+              icon={<UserOutlined />}
+              src={
+                image instanceof Blob
+                  ? URL.createObjectURL(image)
+                  : image && image.url
+              }
+            />
+            <Button
+              shape="circle"
+              icon={<EditFilled />}
+              className={css`
+                position: absolute;
+                top: 0;
+                left: 0;
+              `}
+            />
+          </div>
+        </Upload>
+      </Form.Item>
       <Form.Item label={"Email"}>
         <Input value={email} readOnly />
       </Form.Item>

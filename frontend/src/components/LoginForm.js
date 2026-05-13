@@ -31,7 +31,7 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
   const history = useHistory();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
+  useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [isOAuthRedirecting, setIsOAuthRedirecting] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -197,7 +197,7 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           localStorage.removeItem("direct_path");
         }, 2000);
       } else {
-        if (role == ACCOUNT_TYPE.HUB) {
+        if (role === ACCOUNT_TYPE.HUB) {
           history.push(location.pathname + REDIRECTS[role]);
         } else {
           history.push(REDIRECTS[role]);

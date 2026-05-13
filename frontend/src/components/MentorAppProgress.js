@@ -26,6 +26,7 @@ function MentorAppProgress({ progress }) {
     }
     newStatus["text"] = progress;
     setStatus(newStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

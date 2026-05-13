@@ -159,7 +159,7 @@ function BugReportModal({ open, onClose, contextLabel }) {
       open={open}
       onCancel={handleCancel}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}

@@ -51,6 +51,7 @@ function MentorApplication({
       setloading(false);
     }
     getPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onFinish = async (values) => {

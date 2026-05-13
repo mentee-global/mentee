@@ -91,9 +91,6 @@ function EditProfileModal({ profileData, onSave, role }) {
   };
 
   const onSubmit = async (newData) => {
-    if (!newData.image) {
-      return;
-    }
     setSaving(true);
     if (!newData.edited && !newData.changedImage) {
       setOpen(false);
@@ -103,7 +100,7 @@ function EditProfileModal({ profileData, onSave, role }) {
 
     const menteeID = profileId;
     var user_role = role;
-    if (role == ACCOUNT_TYPE.HUB && profileData.hub_id) {
+    if (role === ACCOUNT_TYPE.HUB && profileData.hub_id) {
       user_role = ACCOUNT_TYPE.PARTNER;
     }
     await editAccountProfile(newData, menteeID, user_role);

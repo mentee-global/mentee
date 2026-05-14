@@ -202,6 +202,9 @@ function Apply({ history, location }) {
           <Input
             prefix={<UserOutlined />}
             autoFocus
+            type="email"
+            inputMode="email"
+            autoComplete="email"
             onChange={(e) => {
               form.setFieldsValue({ email: e.target.value.toLowerCase() });
             }}

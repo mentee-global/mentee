@@ -216,20 +216,11 @@ function MenteeApplication({
 
     const res = await createApplication(data);
     setLoading(false);
-    if (res && res.status === 200) {
+    if (res?.ok) {
       clearDraft(draftKey);
       onSubmitSuccess();
     } else {
-      if (
-        res &&
-        res.response &&
-        res.response.data &&
-        res.response.data.message
-      ) {
-        onSubmitFailure(res.response.data.message);
-      } else {
-        onSubmitFailure();
-      }
+      onSubmitFailure(res?.error);
     }
   };
 
@@ -251,7 +242,13 @@ function MenteeApplication({
           </Typography>
         </Form.Item>
         <Form.Item label={"Email"}>
-          <Input value={email} readOnly />
+          <Input
+            value={email}
+            readOnly
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+          />
         </Form.Item>
         <Form.Item
           label={t("common.firstName")}

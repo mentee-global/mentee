@@ -97,11 +97,11 @@ function MentorApplication({
     };
     const res = await createApplication(data);
     setloading(false);
-    if (res) {
+    if (res?.ok) {
       clearDraft(draftKey);
       onSubmitSuccess();
     } else {
-      onSubmitFailure();
+      onSubmitFailure(res?.error);
     }
   };
 
@@ -162,7 +162,12 @@ function MentorApplication({
             },
           ]}
         >
-          <Input type="tel" placeholder={t("common.phoneNumber")} />
+          <Input
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder={t("common.phoneNumber")}
+          />
         </Form.Item>
         <Form.Item
           label={t("mentorApplication.hearAboutUs")}

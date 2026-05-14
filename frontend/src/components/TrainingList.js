@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { List, Button, Skeleton, Checkbox, Spin, message } from "antd";
+import { List, Button, Skeleton, Checkbox, Spin, message, Result } from "antd";
 import {
   getTrainings,
   downloadBlob,
@@ -44,6 +44,7 @@ const TrainingList = (props) => {
   );
   const [flag, setFlag] = useState(false);
   const [savingIds, setSavingIds] = useState(new Set());
+  const [loadError, setLoadError] = useState(null);
   const { user } = useSelector((state) => state.user);
 
   const computeAllChecked = (statusMap) => {
@@ -237,32 +238,43 @@ const TrainingList = (props) => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    getTrainings(
-      props.role,
-      user ? user.email : props.user_email,
-      user ? user._id.$oid : null
-    )
-      .then((trains) => {
-        if (props.role === ACCOUNT_TYPE.HUB && user) {
-          var hub_user_id = null;
-          if (user.hub_id) {
-            hub_user_id = user.hub_id;
-          } else {
-            hub_user_id = user._id.$oid;
-          }
-          setTrainingData(
-            trains
-              .sort((a, b) => a.sort_order - b.sort_order)
-              .filter((x) => x.hub_id === hub_user_id)
-          );
-        } else {
-          setTrainingData(trains.sort((a, b) => a.sort_order - b.sort_order));
-        }
+    async function loadTrainings() {
+      setLoading(true);
+      setLoadError(null);
+      const res = await getTrainings(
+        props.role,
+        user ? user.email : props.user_email,
+        user ? user._id.$oid : null
+      );
+      if (!res || !res.ok) {
+        setLoadError(
+          (res && res.error) ||
+            t("training.loadFailed") ||
+            "Could not load trainings. Please try again."
+        );
         setLoading(false);
-        setFlag(!flag);
-      })
-      .catch((e) => console.error(e));
+        return;
+      }
+      const trains = res.trainings || [];
+      if (props.role === ACCOUNT_TYPE.HUB && user) {
+        var hub_user_id = null;
+        if (user.hub_id) {
+          hub_user_id = user.hub_id;
+        } else {
+          hub_user_id = user._id.$oid;
+        }
+        setTrainingData(
+          trains
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .filter((x) => x.hub_id === hub_user_id)
+        );
+      } else {
+        setTrainingData(trains.sort((a, b) => a.sort_order - b.sort_order));
+      }
+      setLoading(false);
+      setFlag((f) => !f);
+    }
+    loadTrainings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language, user, reload]);
 
@@ -275,6 +287,20 @@ const TrainingList = (props) => {
       );
     }, 1500);
   }, [props.applicationData]);
+
+  if (loadError && !loading) {
+    return (
+      <Result
+        status="warning"
+        title={loadError}
+        extra={
+          <Button type="primary" onClick={() => setReload((r) => !r)}>
+            {t("common.retry") || "Retry"}
+          </Button>
+        }
+      />
+    );
+  }
 
   return (
     <>

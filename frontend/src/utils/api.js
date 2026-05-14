@@ -232,11 +232,8 @@ export const createApplication = (application) => {
   const requestExtension = `/application/new`;
   application.preferred_language = i18n.language;
   return instance.post(requestExtension, application).then(
-    (response) => response,
-    (err) => {
-      console.error(err);
-      return err;
-    }
+    (response) => ({ ok: true, response, status: response.status }),
+    (err) => ({ ..._surfacedError(err), response: err?.response })
   );
 };
 
@@ -364,25 +361,29 @@ export const getTrainings = async (
   lang = i18n.language
 ) => {
   const requestExtension = `/training/${role}`;
-  const res = await authGet(requestExtension, {
-    params: {
-      lang: lang,
-      user_email: user_email,
-      user_id: user_id,
-    },
-  }).catch(console.error);
-  const trains = res.data.result.trainings;
-  let newTrain = [];
-  let seenOids = new Set();
-  for (let train of trains) {
-    const oid = train._id["$oid"];
-    if (!seenOids.has(oid)) {
-      train.id = oid;
-      newTrain.push(train);
-      seenOids.add(oid);
+  try {
+    const res = await authGet(requestExtension, {
+      params: {
+        lang: lang,
+        user_email: user_email,
+        user_id: user_id,
+      },
+    });
+    const trains = res.data.result.trainings;
+    const newTrain = [];
+    const seenOids = new Set();
+    for (let train of trains) {
+      const oid = train._id["$oid"];
+      if (!seenOids.has(oid)) {
+        train.id = oid;
+        newTrain.push(train);
+        seenOids.add(oid);
+      }
     }
+    return { ok: true, trainings: newTrain };
+  } catch (err) {
+    return _surfacedError(err);
   }
-  return newTrain;
 };
 
 export const updateTrainings = async (data) => {

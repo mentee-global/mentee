@@ -280,6 +280,9 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
           ]}
         >
           <Input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
             onChange={(e) => {
               form.setFieldsValue({ email: e.target.value.toLowerCase() });
             }}

@@ -92,7 +92,13 @@ function ForgotPassword({ location, history }) {
             },
           ]}
         >
-          <Input prefix={<UserOutlined />} autoFocus />
+          <Input
+            prefix={<UserOutlined />}
+            autoFocus
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+          />
         </Form.Item>
         <Form.Item>
           <Button

@@ -76,7 +76,7 @@ function MentorProfileForm({
           return true;
         });
         partnerOptions.push({
-          value: null,
+          value: 0,
           label: t("commonApplication.no-affiliation"),
         });
         setPartnerOptions(partnerOptions);
@@ -95,8 +95,8 @@ function MentorProfileForm({
       setImage(profileData.image);
       setChangedImage(false);
 
-      if (profileData.organization === 0) {
-        form.setFieldValue("organization", null);
+      if (profileData.organization == null) {
+        form.setFieldValue("organization", 0);
       }
     }
     if (applicationData) {
@@ -418,7 +418,7 @@ function MentorProfileForm({
           ]}
           className={styles.formGroupItem}
         >
-          <Input addonBefore="URL" />
+          <Input placeholder="https://youtube.com/..." />
         </Form.Item>
       </div>
       <div className={styles.formGroup}>
@@ -450,7 +450,7 @@ function MentorProfileForm({
           ]}
           className={styles.formGroupItem}
         >
-          <Input addonBefore="URL" />
+          <Input placeholder="https://youtube.com/..." />
         </Form.Item>
       </div>
       <Form.Item
@@ -516,7 +516,7 @@ function MentorProfileForm({
           },
         ]}
       >
-        <Input addonBefore="URL" />
+        <Input placeholder="https://youtube.com/..." />
       </Form.Item>
       <Form.Item>
         <Button

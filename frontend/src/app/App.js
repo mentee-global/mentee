@@ -265,7 +265,13 @@ function App() {
               </HomeLayout>
             </Content>
 
-            <Content style={{ height: "100vh", overflow: "hidden" }}>
+            <Content
+              style={{
+                height: "100vh",
+                overflow: "hidden",
+                display: role == null ? "none" : undefined,
+              }}
+            >
               {role != null && <NavigationHeader />}
               <div style={{ height: "calc(100vh - 48px)", overflow: "auto" }}>
                 <PrivateRoute path="/support/all-mentors">

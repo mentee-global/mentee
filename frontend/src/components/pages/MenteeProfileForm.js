@@ -147,8 +147,8 @@ function MenteeProfileForm({
     if (profileData) {
       form.setFieldsValue(profileData);
       form.setFieldValue("video", profileData.video?.url);
-      if (profileData.organization === 0) {
-        form.setFieldValue("organization", null);
+      if (profileData.organization == null) {
+        form.setFieldValue("organization", 0);
       }
       setImage(profileData.image);
       setChangedImage(false);
@@ -189,7 +189,7 @@ function MenteeProfileForm({
           return true;
         });
         partnerOptions.push({
-          value: null,
+          value: 0,
           label: t("commonApplication.no-affiliation"),
         });
         setPartnerOptions(partnerOptions);
@@ -681,7 +681,7 @@ function MenteeProfileForm({
           },
         ]}
       >
-        <Input addonBefore="URL" />
+        <Input placeholder="https://youtube.com/..." />
       </Form.Item>
       <Typography.Title level={4}>
         {t("menteeProfile.accountPrivacy")}

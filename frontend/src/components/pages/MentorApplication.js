@@ -27,7 +27,7 @@ function MentorApplication({
 
   useEffect(() => {
     if (initialDraft) {
-      message.info(t("draft.restored") || "Draft restored");
+      message.info(t("draft.restored", { defaultValue: "Draft restored" }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -54,7 +54,7 @@ function MentorApplication({
       });
       if (!n50_flag) {
         temp_partner_options.push({
-          value: null,
+          value: "",
           label: t("commonApplication.no-affiliation"),
         });
       }
@@ -92,7 +92,7 @@ function MentorApplication({
       date_submitted: new Date(),
       specializations: values.specializations,
       organization: values.organization,
-      partner: values.partner,
+      partner: values.partner === "" ? null : values.partner,
       role,
     };
     const res = await createApplication(data);
@@ -112,7 +112,9 @@ function MentorApplication({
         onFinish={onFinish}
         layout="vertical"
         style={{ width: "100%" }}
-        initialValues={initialDraft || undefined}
+        initialValues={
+          initialDraft || (n50_flag ? { partner: N50_ID } : undefined)
+        }
         onValuesChange={(_, all) => draftKey && saveDraft(draftKey, all)}
         scrollToFirstError
       >
@@ -460,7 +462,6 @@ function MentorApplication({
             filterOption={(input, option) =>
               (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
             }
-            defaultValue={n50_flag ? N50_ID : null}
             disabled={n50_flag}
             options={[...partnerOptions]}
           />

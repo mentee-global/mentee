@@ -29,10 +29,10 @@ const OfflineBanner = () => {
       type="warning"
       banner
       showIcon
-      message={
-        t("offline.banner") ||
-        "You are offline. Changes may not save until your connection returns."
-      }
+      message={t("offline.banner", {
+        defaultValue:
+          "You are offline. Changes may not save until your connection returns.",
+      })}
       style={{ position: "sticky", top: 0, zIndex: 9999 }}
     />
   );

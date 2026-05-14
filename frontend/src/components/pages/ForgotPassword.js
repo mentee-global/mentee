@@ -25,8 +25,10 @@ function ForgotPassword({ location, history }) {
         setEmailSent(true);
       }
     } else {
+      const backendMessage =
+        res?.data?.message || res?.message || t("forgotPassword.error");
       messageApi.error({
-        content: t("forgotPassword.error"),
+        content: backendMessage,
         duration: 0,
         key: "forgotPassword.error",
         onClick: () => messageApi.destroy("forgotPassword.error"),
@@ -113,10 +115,12 @@ function ForgotPassword({ location, history }) {
               ? t("forgotPassword.sent")
               : t("forgotPassword.sendLink")}
           </Button>
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => onFinish({ email })}>
-            {t("forgotPassword.notReceiveEmail")}
-          </a>
+          {emailSent && (
+            // eslint-disable-next-line jsx-a11y/anchor-is-valid
+            <a onClick={() => onFinish({ email })}>
+              {t("forgotPassword.notReceiveEmail")}
+            </a>
+          )}
         </Form.Item>
       </Form>
     </div>

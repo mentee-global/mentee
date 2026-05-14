@@ -97,8 +97,9 @@ const TrainingList = (props) => {
       setFlag((f) => !f);
       message.error(
         (res && res.error) ||
-          t("training.saveFailed") ||
-          "Could not save your progress. Please try again."
+          t("training.saveFailed", {
+            defaultValue: "Could not save your progress. Please try again.",
+          })
       );
     }
   };
@@ -249,8 +250,9 @@ const TrainingList = (props) => {
       if (!res || !res.ok) {
         setLoadError(
           (res && res.error) ||
-            t("training.loadFailed") ||
-            "Could not load trainings. Please try again."
+            t("training.loadFailed", {
+              defaultValue: "Could not load trainings. Please try again.",
+            })
         );
         setLoading(false);
         return;
@@ -295,7 +297,7 @@ const TrainingList = (props) => {
         title={loadError}
         extra={
           <Button type="primary" onClick={() => setReload((r) => !r)}>
-            {t("common.retry") || "Retry"}
+            {t("common.retry", { defaultValue: "Retry" })}
           </Button>
         }
       />

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Button, Form, Input, Radio, Typography, Select } from "antd";
+import React, { useState, useEffect, useMemo } from "react";
+import { Button, Form, Input, Radio, Typography, Select, message } from "antd";
 import { useTranslation } from "react-i18next";
 import { createApplication, fetchPartners } from "utils/api";
+import { loadDraft, saveDraft, clearDraft } from "utils/formDraft";
 import { phoneRegex } from "utils/misc";
 import { useSelector } from "react-redux";
 import { N50_ID } from "utils/consts";
@@ -20,6 +21,16 @@ function MentorApplication({
   const [loading, setloading] = useState(false);
   const options = useSelector((state) => state.options);
   const [partnerOptions, setPartnerOptions] = useState([]);
+  const [form] = Form.useForm();
+  const draftKey = email ? `mentor:${email}` : null;
+  const initialDraft = useMemo(() => loadDraft(draftKey), [draftKey]);
+
+  useEffect(() => {
+    if (initialDraft) {
+      message.info(t("draft.restored") || "Draft restored");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     async function getPartners() {
@@ -87,6 +98,7 @@ function MentorApplication({
     const res = await createApplication(data);
     setloading(false);
     if (res) {
+      clearDraft(draftKey);
       onSubmitSuccess();
     } else {
       onSubmitFailure();
@@ -95,7 +107,14 @@ function MentorApplication({
 
   return (
     <div>
-      <Form onFinish={onFinish} layout="vertical" style={{ width: "100%" }}>
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+        style={{ width: "100%" }}
+        initialValues={initialDraft || undefined}
+        onValuesChange={(_, all) => draftKey && saveDraft(draftKey, all)}
+      >
         <Form.Item>
           <Typography>
             <Paragraph id="mentorIntroduction">

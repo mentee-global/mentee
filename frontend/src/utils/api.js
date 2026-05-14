@@ -11,6 +11,9 @@ import i18n from "./i18n";
 const instance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  // 30s default. Slow 3G uploads still fit; truly stalled requests bail
+  // with a clear timeout error instead of spinning forever.
+  timeout: 30000,
 });
 
 const authGet = async (url, config) =>
@@ -136,9 +139,14 @@ export const fetchAccounts = (
 
 const _surfacedError = (err) => {
   console.error(err);
+  const isTimeout =
+    err?.code === "ECONNABORTED" ||
+    (typeof err?.message === "string" && err.message.startsWith("timeout of"));
   return {
     ok: false,
-    error: err?.response?.data?.message || err?.message || "Network error",
+    error: isTimeout
+      ? "Request timed out. Please check your connection and try again."
+      : err?.response?.data?.message || err?.message || "Network error",
     status: err?.response?.status,
   };
 };
@@ -250,8 +258,10 @@ export const checkProfileExists = async (email, role) => {
 
 export const changeStateTraining = async (id, role, traing_status) => {
   const requestExtension = `/application/changeStateTraining`;
-  await authPost(requestExtension, { id, role, traing_status });
-  return true;
+  return authPost(requestExtension, { id, role, traing_status }).then(
+    (response) => ({ ok: true, response }),
+    _surfacedError
+  );
 };
 
 export const changeStateBuildProfile = async ({ email, role }) => {

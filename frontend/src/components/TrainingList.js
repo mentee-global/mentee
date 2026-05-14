@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { List, Button, Skeleton, Checkbox } from "antd";
+import { List, Button, Skeleton, Checkbox, Spin, message } from "antd";
 import {
   getTrainings,
   downloadBlob,
@@ -43,32 +43,63 @@ const TrainingList = (props) => {
       : {}
   );
   const [flag, setFlag] = useState(false);
+  const [savingIds, setSavingIds] = useState(new Set());
   const { user } = useSelector((state) => state.user);
 
-  const changeTraingStatus = (id, value) => {
+  const computeAllChecked = (statusMap) => {
+    if (!trainingData) return false;
+    let all = true;
+    trainingData.forEach((item) => {
+      if (statusMap[item.id] !== true) all = false;
+    });
+    return all;
+  };
+
+  const changeTraingStatus = async (id, value) => {
     if (
       props.applicationData.application_state === "BuildProfile" ||
       props.applicationData.application_state === "COMPLETED"
     ) {
       return;
     }
-    let traing_status = traingStatus;
-    let all_checked_flag = true;
-    traing_status[id] = value;
-    trainingData.map((training_item) => {
-      if (traing_status[training_item.id] !== true) {
-        all_checked_flag = false;
-      }
-      return true;
+    if (savingIds.has(id)) return;
+
+    const prevStatus = { ...traingStatus };
+    const nextStatus = { ...traingStatus, [id]: value };
+
+    // Optimistic update + lock this row
+    setTrainingStatus(nextStatus);
+    props.allChecked(computeAllChecked(nextStatus));
+    setFlag((f) => !f);
+    setSavingIds((s) => {
+      const copy = new Set(s);
+      copy.add(id);
+      return copy;
     });
-    changeStateTraining(
+
+    const res = await changeStateTraining(
       props.applicationData._id.$oid,
       props.role,
-      traing_status
+      nextStatus
     );
-    props.allChecked(all_checked_flag);
-    setTrainingStatus(traing_status);
-    setFlag(!flag);
+
+    setSavingIds((s) => {
+      const copy = new Set(s);
+      copy.delete(id);
+      return copy;
+    });
+
+    if (!res || !res.ok) {
+      // Revert
+      setTrainingStatus(prevStatus);
+      props.allChecked(computeAllChecked(prevStatus));
+      setFlag((f) => !f);
+      message.error(
+        (res && res.error) ||
+          t("training.saveFailed") ||
+          "Could not save your progress. Please try again."
+      );
+    }
   };
 
   const getTrainingComponent = (training) => {
@@ -106,6 +137,7 @@ const TrainingList = (props) => {
                 <Checkbox
                   style={{ marginTop: "12px" }}
                   className=""
+                  disabled={savingIds.has(training.id)}
                   onChange={(e) => {
                     changeTraingStatus(training.id, e.target.checked);
                   }}
@@ -116,6 +148,9 @@ const TrainingList = (props) => {
                   }
                 >
                   {t("traing.completed")}
+                  {savingIds.has(training.id) && (
+                    <Spin size="small" style={{ marginLeft: 8 }} />
+                  )}
                 </Checkbox>
               )}
             </>
@@ -136,6 +171,7 @@ const TrainingList = (props) => {
                 <Checkbox
                   style={{ marginTop: "12px" }}
                   className=""
+                  disabled={savingIds.has(training.id)}
                   onChange={(e) => {
                     changeTraingStatus(training.id, e.target.checked);
                   }}
@@ -146,6 +182,9 @@ const TrainingList = (props) => {
                   }
                 >
                   {t("traing.completed")}
+                  {savingIds.has(training.id) && (
+                    <Spin size="small" style={{ marginLeft: 8 }} />
+                  )}
                 </Checkbox>
               )}
             </>
@@ -173,6 +212,7 @@ const TrainingList = (props) => {
                 <Checkbox
                   style={{ marginTop: "12px" }}
                   className=""
+                  disabled={savingIds.has(training.id)}
                   onChange={(e) => {
                     changeTraingStatus(training.id, e.target.checked);
                   }}
@@ -183,6 +223,9 @@ const TrainingList = (props) => {
                   }
                 >
                   {t("traing.completed")}
+                  {savingIds.has(training.id) && (
+                    <Spin size="small" style={{ marginLeft: 8 }} />
+                  )}
                 </Checkbox>
               )}
             </>

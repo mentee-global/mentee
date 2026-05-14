@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Form, Input, Radio, Typography, Select, Button } from "antd";
+import { Form, Input, Radio, Typography, Select, Button, message } from "antd";
 import { useTranslation } from "react-i18next";
 import { createApplication, fetchPartners, getAllcountries } from "utils/api";
+import { loadDraft, saveDraft, clearDraft } from "utils/formDraft";
 import "components/css/MentorApplicationPage.scss";
 import { N50_ID } from "utils/consts";
 
@@ -19,6 +20,16 @@ function MenteeApplication({
   const [loading, setLoading] = useState();
   const [partnerOptions, setPartnerOptions] = useState([]);
   const [countryOptions, setCountryOptions] = useState([]);
+  const [form] = Form.useForm();
+  const draftKey = email ? `mentee:${email}` : null;
+  const initialDraft = useMemo(() => loadDraft(draftKey), [draftKey]);
+
+  useEffect(() => {
+    if (initialDraft) {
+      message.info(t("draft.restored") || "Draft restored");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     async function getPartners() {
       const partenr_data = await fetchPartners(undefined, null);
@@ -206,6 +217,7 @@ function MenteeApplication({
     const res = await createApplication(data);
     setLoading(false);
     if (res && res.status === 200) {
+      clearDraft(draftKey);
       onSubmitSuccess();
     } else {
       if (
@@ -223,7 +235,14 @@ function MenteeApplication({
 
   return (
     <div>
-      <Form onFinish={onFinish} layout="vertical" style={{ width: "100%" }}>
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+        style={{ width: "100%" }}
+        initialValues={initialDraft || undefined}
+        onValuesChange={(_, all) => draftKey && saveDraft(draftKey, all)}
+      >
         <Form.Item>
           <Typography>
             <Paragraph id="introduction">

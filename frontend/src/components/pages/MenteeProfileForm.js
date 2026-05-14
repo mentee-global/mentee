@@ -294,6 +294,7 @@ function MenteeProfileForm({
       layout="vertical"
       style={{ width: "100%", marginTop: "1em" }}
       onValuesChange={() => setEdited(true)}
+      scrollToFirstError
     >
       <Form.Item
         className={css`
@@ -699,6 +700,7 @@ function MenteeProfileForm({
           htmlType="submit"
           block
           loading={loading}
+          disabled={loading}
         >
           {t("common.save")}
         </Button>

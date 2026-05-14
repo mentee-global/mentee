@@ -251,6 +251,7 @@ function MentorProfileForm({
       layout="vertical"
       style={{ width: "100%", marginTop: "1em" }}
       onValuesChange={() => setEdited(true)}
+      scrollToFirstError
     >
       <Form.Item>
         <Upload
@@ -525,6 +526,7 @@ function MentorProfileForm({
           htmlType="submit"
           block
           loading={loading}
+          disabled={loading}
         >
           {t("common.save")}
         </Button>

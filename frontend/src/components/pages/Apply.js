@@ -179,6 +179,7 @@ function Apply({ history, location }) {
         layout="vertical"
         style={{ width: "100%" }}
         size="large"
+        scrollToFirstError
         onValuesChange={() => {
           setCurrentState(undefined);
           setHasApplied(false);
@@ -249,7 +250,7 @@ function Apply({ history, location }) {
             htmlType="submit"
             style={{ width: "100%" }}
             loading={loading}
-            disabled={hasApplied}
+            disabled={hasApplied || loading}
           >
             {currentState === undefined
               ? t("common.submit")

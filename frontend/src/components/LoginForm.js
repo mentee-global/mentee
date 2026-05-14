@@ -321,6 +321,7 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
             htmlType="submit"
             style={{ width: "100%" }}
             loading={loading}
+            disabled={loading}
           >
             {t("common.login")}
           </Button>

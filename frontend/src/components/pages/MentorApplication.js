@@ -114,6 +114,7 @@ function MentorApplication({
         style={{ width: "100%" }}
         initialValues={initialDraft || undefined}
         onValuesChange={(_, all) => draftKey && saveDraft(draftKey, all)}
+        scrollToFirstError
       >
         <Form.Item>
           <Typography>
@@ -471,6 +472,7 @@ function MentorApplication({
             htmlType="submit"
             block
             loading={loading}
+            disabled={loading}
           >
             {t("common.submit")}
           </Button>

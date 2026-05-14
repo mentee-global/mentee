@@ -81,6 +81,7 @@ function PartnerProfileForm({
       layout="vertical"
       style={{ width: "100%", marginTop: "1em" }}
       onValuesChange={() => setEdited(true)}
+      scrollToFirstError
     >
       <Form.Item>
         <Upload
@@ -395,7 +396,13 @@ function PartnerProfileForm({
       )}
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" block loading={loading}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          block
+          loading={loading}
+          disabled={loading}
+        >
           {t("common.save")}
         </Button>
       </Form.Item>

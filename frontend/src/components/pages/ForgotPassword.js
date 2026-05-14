@@ -80,6 +80,7 @@ function ForgotPassword({ location, history }) {
         size="large"
         style={{ width: "100%" }}
         onValuesChange={() => setEmailSent(false)}
+        scrollToFirstError
       >
         <Form.Item
           name="email"
@@ -106,7 +107,7 @@ function ForgotPassword({ location, history }) {
             htmlType="submit"
             style={{ width: "100%" }}
             loading={loading}
-            disabled={emailSent}
+            disabled={emailSent || loading}
           >
             {emailSent
               ? t("forgotPassword.sent")

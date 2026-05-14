@@ -18,6 +18,7 @@ import "dayjs/locale/pt";
 import i18n from "utils/i18n";
 import { ProvideAuth } from "utils/hooks/useAuth";
 import ErrorBoundary from "components/ErrorBoundary";
+import OfflineBanner from "components/OfflineBanner";
 import { reportClientError } from "utils/errorReport";
 
 // Suppress ResizeObserver loop error (harmless browser/React warning) and
@@ -62,6 +63,7 @@ root.render(
       <ProvideAuth>
         <Suspense>
           <ErrorBoundary>
+            <OfflineBanner />
             <App />
           </ErrorBoundary>
         </Suspense>

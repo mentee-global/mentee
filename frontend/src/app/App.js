@@ -49,6 +49,7 @@ import { getRole } from "utils/auth.service";
 import PublicRoute from "components/PublicRoute";
 import Training from "components/pages/Training";
 import BuildProfile from "components/pages/BuildProfile";
+import Verify from "components/pages/Verify";
 import Events from "components/pages/Events";
 import Announcements from "components/pages/Announcements";
 import AnnouncementDetail from "components/pages/AnnouncementDetail";
@@ -233,6 +234,12 @@ function App() {
                 </PublicRoute>
                 <PublicRoute path="/n50/build-profile">
                   <BuildProfile />
+                </PublicRoute>
+                <PublicRoute path="/verify">
+                  <Verify />
+                </PublicRoute>
+                <PublicRoute path="/n50/verify">
+                  <Verify />
                 </PublicRoute>
                 <PublicRoute path="/announcement/:id">
                   <AnnouncementDetail />

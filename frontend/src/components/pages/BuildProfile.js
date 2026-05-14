@@ -54,12 +54,11 @@ function BuildProfile({ location, history, hub_user }) {
       setInFirebase(in_firebase);
       setIsVerified(is_verified);
       if (!in_firebase) {
-        const { state, application_data } = await getApplicationStatus(
-          email,
-          role
-        );
-        setUserState(state);
-        setApplicationData(application_data);
+        const res = await getApplicationStatus(email, role);
+        if (res?.ok) {
+          setUserState(res.state);
+          setApplicationData(res.application_data);
+        }
       }
     }
 
@@ -112,27 +111,17 @@ function BuildProfile({ location, history, hub_user }) {
         }
       }
       messageApi.info(t("commonProfile.accountCreated"));
-      let path = "";
-      if (role === ACCOUNT_TYPE.MENTOR) {
-        path = n50_flag ? "/n50/mentor" : "/mentor";
-      }
-      if (role === ACCOUNT_TYPE.MENTEE) {
-        path = n50_flag ? "/n50/mentee" : "/mentee";
-      }
-      if (role === ACCOUNT_TYPE.PARTNER) {
-        path = "/partner";
-      }
-      if (role === ACCOUNT_TYPE.GUEST) {
-        path = "/readonly";
-      }
       if (hub_user) {
         history.push({
           pathname: "/" + hub_user.url,
           state: { email: email_new_registered, role },
         });
       } else {
+        // Land on the verification interstitial so the user knows to check
+        // their inbox before logging in. Verify.js then redirects to the
+        // role dashboard once isUserVerified() returns true.
         history.push({
-          pathname: path + "/login",
+          pathname: n50_flag ? "/n50/verify" : "/verify",
           state: { email: email_new_registered, role },
         });
       }

@@ -112,10 +112,21 @@ function Apply({ history, location }) {
         onClick: () => messageApi.destroy("partnerVerify"),
       });
     } else {
-      const { state, application_data } = await getApplicationStatus(
-        email,
-        role
-      );
+      const res = await getApplicationStatus(email, role);
+      if (!res?.ok) {
+        messageApi.error({
+          content:
+            res?.error ||
+            t("apply.errorConnection") ||
+            "Could not check your application status. Please try again.",
+          duration: 0,
+          key: "applicationStatus",
+          onClick: () => messageApi.destroy("applicationStatus"),
+        });
+        setLoading(false);
+        return;
+      }
+      const { state, application_data } = res;
       switch (state) {
         case NEW_APPLICATION_STATUS.PENDING:
           messageApi.info(t("apply.confirmation"));

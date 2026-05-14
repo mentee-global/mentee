@@ -31,15 +31,24 @@ function Training({ location, history }) {
 
   useEffect(() => {
     async function getApplicationData() {
-      var result = await getApplicationStatus(email, role);
+      const result = await getApplicationStatus(email, role);
+      if (!result?.ok) {
+        messageApi.error({
+          content:
+            result?.error ||
+            t("apply.errorConnection") ||
+            "Could not load your application. Please try again.",
+          duration: 0,
+          key: "applicationStatus",
+          onClick: () => messageApi.destroy("applicationStatus"),
+        });
+        return;
+      }
       setApplicationData(result.application_data);
-      if (
-        result.application_state === "BuildProfile" ||
-        result.application_state === "COMPLETED"
-      ) {
+      if (result.state === "BuildProfile" || result.state === "COMPLETED") {
         setButtonFlag(false);
       }
-      setFlag(!flag);
+      setFlag((f) => !f);
     }
     if (!applicationData) {
       getApplicationData();
@@ -57,33 +66,28 @@ function Training({ location, history }) {
       });
 
     setLoading(true);
-    let state = await changeStateBuildProfile({
+    const res = await changeStateBuildProfile({
       email,
       role,
       preferred_language: i18n.language,
-    }).catch((err) => {
-      console.error(err);
-      messageApi.error({
-        content: t("apply.errorConnection"),
-        duration: 0,
-        key: "apply.errorConnection",
-        onClick: () => messageApi.destroy("apply.errorConnection"),
-      });
     });
-    if (state === NEW_APPLICATION_STATUS.BUILDPROFILE) {
+    setLoading(false);
+    if (res?.ok && res.state === NEW_APPLICATION_STATUS.BUILDPROFILE) {
       history.push({
         pathname: n50_flag ? "/n50/build-profile" : "/build-profile",
         state: { email, role },
       });
-    } else {
-      messageApi.error({
-        content: "Application status could not be changed to BuildProfile",
-        duration: 0,
-        key: "BuildProfile",
-        onClick: () => messageApi.destroy("BuildProfile"),
-      });
+      return;
     }
-    setLoading(false);
+    messageApi.error({
+      content:
+        res?.error ||
+        t("apply.errorConnection") ||
+        "Could not advance to Build Profile. Please try again.",
+      duration: 0,
+      key: "BuildProfile",
+      onClick: () => messageApi.destroy("BuildProfile"),
+    });
   };
 
   const allChecked = (value) => {
@@ -161,7 +165,7 @@ function Training({ location, history }) {
           style={{ width: "100%" }}
           loading={loading}
           onClick={onCompleteTraining}
-          disabled={!buttonFlag}
+          disabled={!buttonFlag || loading}
         >
           {t("apply.completeTrainings")}
         </Button>

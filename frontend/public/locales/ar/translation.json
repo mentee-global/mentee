@@ -176,7 +176,8 @@
     "birthdayHelp": "سيتم حساب الفئة العمرية تلقائيًا من تاريخ ميلادك",
     "ageAutoCalculated": "يتم حساب الفئة العمرية تلقائيًا من تاريخ ميلادك",
     "autoCalculated": "محسوب تلقائيًا",
-    "ageValidRange": "العمر الصالح هو من 18 عامًا فما فوق"
+    "ageValidRange": "العمر الصالح هو من 18 عامًا فما فوق",
+    "retry": "إعادة المحاولة"
   },
   "commonApplication": {
     "no-affiliation": "عدم الانتماء",
@@ -752,5 +753,15 @@
       "revoke_failed": "Could not revoke access."
     },
     "first_party_tooltip": "This app is built by Mentee. It was granted access automatically when you signed in."
+  },
+  "training": {
+    "saveFailed": "تعذّر حفظ تقدّمك. يُرجى المحاولة مرة أخرى.",
+    "loadFailed": "تعذّر تحميل التدريبات. يُرجى المحاولة مرة أخرى."
+  },
+  "draft": {
+    "restored": "تمت استعادة المسودّة"
+  },
+  "offline": {
+    "banner": "أنت غير متّصل بالإنترنت. قد لا يتم حفظ التغييرات حتى تعود الاتصال."
   }
 }

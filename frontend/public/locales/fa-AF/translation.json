@@ -176,7 +176,8 @@
     "birthdayHelp": "محدوده سنی شما به طور خودکار از تاریخ تولدتان محاسبه می شود",
     "ageAutoCalculated": "محدوده سنی به طور خودکار از تاریخ تولد شما محاسبه می شود",
     "autoCalculated": "محاسبه خودکار",
-    "ageValidRange": "سن معتبر از 18 سال به بالا است"
+    "ageValidRange": "سن معتبر از 18 سال به بالا است",
+    "retry": "تلاش دوباره"
   },
   "commonApplication": {
     "no-affiliation": "عدم وابستگی",
@@ -752,5 +753,15 @@
       "revoke_failed": "Could not revoke access."
     },
     "first_party_tooltip": "This app is built by Mentee. It was granted access automatically when you signed in."
+  },
+  "training": {
+    "saveFailed": "نتوانست پیشرفت شما را ذخیره کند. لطفاً دوباره امتحان کنید.",
+    "loadFailed": "نتوانست آموزش‌ها را بارگذاری کند. لطفاً دوباره امتحان کنید."
+  },
+  "draft": {
+    "restored": "پیش‌نویس بازیابی شد"
+  },
+  "offline": {
+    "banner": "شما آفلاین هستید. تا زمانی که اتصال بازنگردد، ممکن است تغییرات ذخیره نشوند."
   }
 }

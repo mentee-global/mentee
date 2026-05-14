@@ -177,7 +177,8 @@
     "birthdayHelp": "ستاسو د عمر حد به په اتوماتيک ډول ستاسو د زیږون نیټې څخه محاسبه شي",
     "ageAutoCalculated": "د عمر حد په اتوماتيک ډول ستاسو د زیږون نیټې څخه محاسبه کیږي",
     "autoCalculated": "اتوماتيک محاسبه شوی",
-    "ageValidRange": "د اعتبار عمر له 18 کالو او له هغې نه پورته دی"
+    "ageValidRange": "د اعتبار عمر له 18 کالو او له هغې نه پورته دی",
+    "retry": "Retry"
   },
   "commonApplication": {
     "no-affiliation": "بې تړاو",
@@ -753,5 +754,15 @@
       "revoke_failed": "Could not revoke access."
     },
     "first_party_tooltip": "This app is built by Mentee. It was granted access automatically when you signed in."
+  },
+  "training": {
+    "saveFailed": "Could not save your progress. Please try again.",
+    "loadFailed": "Could not load trainings. Please try again."
+  },
+  "draft": {
+    "restored": "Draft restored"
+  },
+  "offline": {
+    "banner": "You are offline. Changes may not save until your connection returns."
   }
 }

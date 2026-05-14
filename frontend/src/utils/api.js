@@ -239,10 +239,16 @@ export const createApplication = (application) => {
 
 export const getApplicationStatus = async (email, role) => {
   const requestExtension = `/application/status/${email}/${role}`;
-  const res = await instance.get(requestExtension);
-  let state = res.data?.result?.state;
-  let application_data = res.data?.result?.application_data;
-  return { state, application_data };
+  try {
+    const res = await instance.get(requestExtension);
+    return {
+      ok: true,
+      state: res.data?.result?.state,
+      application_data: res.data?.result?.application_data,
+    };
+  } catch (err) {
+    return _surfacedError(err);
+  }
 };
 
 export const checkProfileExists = async (email, role) => {
@@ -263,14 +269,17 @@ export const changeStateTraining = async (id, role, traing_status) => {
 
 export const changeStateBuildProfile = async ({ email, role }) => {
   const requestExtension = `/application/changeStateBuildProfile/${email}/${role}`;
-  const res = await authGet(requestExtension, {
-    params: {
-      front_url: FRONT_BASE_URL,
-      preferred_language: i18n.language,
-    },
-  });
-  let state = res.data?.result?.state;
-  return state;
+  try {
+    const res = await authGet(requestExtension, {
+      params: {
+        front_url: FRONT_BASE_URL,
+        preferred_language: i18n.language,
+      },
+    });
+    return { ok: true, state: res?.data?.result?.state };
+  } catch (err) {
+    return _surfacedError(err);
+  }
 };
 
 export const checkStatusByEmail = async (email, role) => {

@@ -23,7 +23,7 @@ const POLL_INTERVAL_MS = 3000;
 
 function readPersistedState() {
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (_) {
     return null;
@@ -32,13 +32,13 @@ function readPersistedState() {
 
 function persistState(email, role) {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ email, role }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, role }));
   } catch (_) {}
 }
 
 function clearPersistedState() {
   try {
-    sessionStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
   } catch (_) {}
 }
 
@@ -64,12 +64,15 @@ function Verify({ location, history }) {
 
   const redirectIfPossible = useCallback(() => {
     if (redirectedRef.current) return;
-    const target = role != null ? REDIRECTS[role] : null;
-    if (target) {
-      redirectedRef.current = true;
-      clearPersistedState();
-      history.push(target);
-    }
+    // If we know the role, send the user to their dashboard.
+    // If we don't (e.g. they verified in email then re-opened /verify in
+    // a fresh tab, losing localStorage), send them to /login — the
+    // backend's redirectToVerify flag will be false now, so login lands
+    // them on the dashboard normally.
+    const target = role != null ? REDIRECTS[role] : "/login";
+    redirectedRef.current = true;
+    clearPersistedState();
+    history.push(target);
   }, [history, role]);
 
   const checkVerified = useCallback(async () => {

@@ -614,13 +614,19 @@
     "meeting": "Enlace de reunión"
   },
   "verifyEmail": {
-    "body": "¡Gracias por registrarte!  Por favor, compruebe su correo electrónico para verificar su cuenta.",
-    "emailResent": "¡Correo electrónico reenviado!",
-    "error": "Algo salió mal: revisa tu correo electrónico en la parte superior",
-    "header": "Verificar correo electrónico",
-    "noEmail": "No recibió un correo electrónico?",
-    "refresh": "Actualizar",
-    "resend": "Reenviar correo electrónico"
+    "body": "Te enviamos un enlace de verificación a tu correo. Haz clic en él para verificar tu cuenta — esta página continuará automáticamente.",
+    "checkNow": "Ya verifiqué — comprobar ahora",
+    "checking": "Comprobando el estado de verificación…",
+    "emailResent": "¡Correo de verificación reenviado!",
+    "error": "No se pudo enviar el correo de verificación. Inténtalo de nuevo.",
+    "header": "Verifica tu correo",
+    "noEmail": "¿No recibiste el correo?",
+    "notYet": "Aún no verificado — haz clic en el enlace de tu correo.",
+    "redirecting": "¡Correo verificado! Redirigiéndote a tu panel…",
+    "refresh": "Actualiza esta página si ya verificaste tu correo",
+    "resend": "Reenviar",
+    "verified": "¡Todo listo!",
+    "waiting": "Esperando a que hagas clic en el enlace…"
   },
   "meeting": {
     "title": "Crear/Unirse a la Reunión",

@@ -37,9 +37,11 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
     "/application-training",
     "/build-profile",
     "/digital-sign",
+    "/verify",
     "/n50/application-form",
     "/n50/application-training",
     "/n50/build-profile",
+    "/n50/verify",
   ];
 
   const N50Path = [

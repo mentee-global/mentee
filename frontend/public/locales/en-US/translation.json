@@ -616,13 +616,19 @@
     "meeting": "Meeting Link"
   },
   "verifyEmail": {
-    "body": "A verification email has been sent to your email. Please click the link contained inside to verify your account.",
-    "emailResent": "Email resent!",
-    "error": "Error verifying email, please try again!",
-    "header": "Account Verification",
+    "body": "We sent a verification link to your email. Click it to verify your account — this page will continue automatically.",
+    "checkNow": "I've verified — check now",
+    "checking": "Checking verification status…",
+    "emailResent": "Verification email resent!",
+    "error": "Could not send verification email. Please try again.",
+    "header": "Verify your email",
     "noEmail": "Didn't receive an email?",
+    "notYet": "Still not verified — please click the link in your email.",
+    "redirecting": "Email verified! Redirecting you to your dashboard…",
     "refresh": "(Refresh this page if you verified your email)",
-    "resend": "Resend"
+    "resend": "Resend",
+    "verified": "You're all set!",
+    "waiting": "Waiting for you to click the link…"
   },
   "meeting": {
     "title": "Create/Join Meeting",

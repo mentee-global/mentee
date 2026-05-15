@@ -390,36 +390,6 @@ def logout():
     return response, status
 
 
-@auth.route("/verificationStatus", methods=["POST"])
-def verification_status():
-    """Definitive email-verification check via Firebase Admin SDK.
-
-    The Firebase JS SDK's currentUser.reload() and getIdTokenResult(true)
-    can return stale email_verified for users signed in via custom token
-    (which is our registration flow). This endpoint bypasses the client
-    cache by querying the Firebase user record directly server-side.
-    """
-    data = request.json or {}
-    token = data.get("token")
-    if not token:
-        return create_response(status=400, message="Missing token")
-
-    try:
-        claims = firebase_admin_auth.verify_id_token(token)
-        firebase_uid = claims.get("uid")
-        user = firebase_admin_auth.get_user(firebase_uid)
-        return create_response(
-            status=200,
-            data={"email_verified": bool(user.email_verified)},
-        )
-    except FirebaseError as e:
-        logger.info(f"verificationStatus failed: {e}")
-        return create_response(status=401, message="Invalid token")
-    except Exception as e:
-        logger.info(f"verificationStatus unexpected error: {e}")
-        return create_response(status=500, message="Server error")
-
-
 @auth.route("/refreshToken", methods=["POST"])
 def refresh_token():
     data = request.json

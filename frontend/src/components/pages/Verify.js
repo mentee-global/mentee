@@ -1,213 +1,23 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState } from "react";
 import { withRouter, Link } from "react-router-dom";
-import { Button, Card, Spin, Typography, message } from "antd";
-import {
-  ArrowLeftOutlined,
-  MailOutlined,
-  CheckCircleFilled,
-} from "@ant-design/icons";
+import { Button, Card, Typography, message } from "antd";
+import { ArrowLeftOutlined, MailOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { useTranslation } from "react-i18next";
 
-import fireauth from "utils/fireauth";
-import {
-  sendVerificationEmail,
-  checkEmailVerifiedServerSide,
-} from "utils/auth.service";
-import { REDIRECTS } from "utils/consts";
+import { sendVerificationEmail } from "utils/auth.service";
 import LanguageDropdown from "components/LanguageDropdown";
 
 import "../css/Home.scss";
 import "../css/Login.scss";
 import "../css/Register.scss";
 
-const STORAGE_KEY = "verify_pending";
-const POLL_INTERVAL_MS = 3000;
-
-function readPersistedState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (_) {
-    return null;
-  }
-}
-
-function persistState(email, role) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ email, role }));
-  } catch (_) {}
-}
-
-function clearPersistedState() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (_) {}
-}
-
 function Verify({ location, history }) {
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
-
-  const persisted = readPersistedState();
-  const role = location.state?.role ?? persisted?.role;
-  const email = location.state?.email ?? persisted?.email;
-
-  const [checking, setChecking] = useState(true);
-  const [verified, setVerified] = useState(false);
   const [resending, setResending] = useState(false);
-  const [linkError, setLinkError] = useState(false);
-  const pollRef = useRef(null);
-  const redirectedRef = useRef(false);
-  const oobAppliedRef = useRef(false);
 
-  useEffect(() => {
-    if (email != null && role != null) {
-      persistState(email, role);
-    }
-  }, [email, role]);
-
-  const redirectIfPossible = useCallback(() => {
-    if (redirectedRef.current) return;
-    // If we know the role, send the user to their dashboard.
-    // If we don't (e.g. they verified in email then re-opened /verify in
-    // a fresh tab, losing localStorage), send them to /login — the
-    // backend's redirectToVerify flag will be false now, so login lands
-    // them on the dashboard normally.
-    const target = role != null ? REDIRECTS[role] : "/login";
-    redirectedRef.current = true;
-    clearPersistedState();
-    history.push(target);
-  }, [history, role]);
-
-  const checkVerified = useCallback(async () => {
-    const user = fireauth.auth().currentUser;
-    if (!user) return false;
-    // Best-effort refresh from client SDK (works for password sign-in users).
-    try {
-      await user.reload();
-    } catch (e) {
-      console.warn("[verify] user.reload() failed", e);
-    }
-    let claimVerified = false;
-    try {
-      const idTokenResult = await user.getIdTokenResult(true);
-      claimVerified = idTokenResult.claims.email_verified === true;
-    } catch (e) {
-      console.warn("[verify] getIdTokenResult(true) failed", e);
-    }
-    const refreshed = fireauth.auth().currentUser;
-    let isVerified = !!refreshed?.emailVerified || claimVerified;
-    // Authoritative check via Firebase Admin SDK on the backend — bypasses
-    // any client-side cache staleness for custom-token sessions.
-    if (!isVerified) {
-      isVerified = await checkEmailVerifiedServerSide();
-    }
-    if (isVerified) {
-      setVerified(true);
-      redirectIfPossible();
-    }
-    return isVerified;
-  }, [redirectIfPossible]);
-
-  // When the user clicks the link in their email, Firebase generates a
-  // deep link to /verify?mode=verifyEmail&oobCode=...&apiKey=... (see
-  // backend auth.py ActionCodeSettings). applyActionCode confirms the
-  // verification server-side — this works even when the user isn't
-  // signed in in this browser (e.g. they opened the email on a phone).
-  useEffect(() => {
-    if (oobAppliedRef.current) return;
-    const params = new URLSearchParams(location.search);
-    const mode = params.get("mode");
-    const oobCode = params.get("oobCode");
-    if (mode !== "verifyEmail" || !oobCode) return;
-    oobAppliedRef.current = true;
-
-    let cancelled = false;
-    (async () => {
-      try {
-        await fireauth.auth().applyActionCode(oobCode);
-        if (cancelled) return;
-        const user = fireauth.auth().currentUser;
-        if (user) {
-          try {
-            await user.reload();
-          } catch (_) {}
-        }
-        setVerified(true);
-        setChecking(false);
-        redirectIfPossible();
-      } catch (e) {
-        if (!cancelled) {
-          setLinkError(true);
-          setChecking(false);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [location.search, redirectIfPossible]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const unsubscribe = fireauth.auth().onAuthStateChanged(async () => {
-      if (cancelled) return;
-      setChecking(true);
-      await checkVerified();
-      if (!cancelled) setChecking(false);
-    });
-
-    pollRef.current = setInterval(() => {
-      checkVerified();
-    }, POLL_INTERVAL_MS);
-
-    return () => {
-      cancelled = true;
-      unsubscribe();
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
-  }, [checkVerified]);
-
-  // If Firebase can't restore a session in this browser within a short
-  // grace period, we have no identity to check against — route to /login
-  // and let the normal login flow take over. Skips when an oobCode is
-  // present (applyActionCode runs without needing a session).
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("oobCode")) return;
-    const timer = setTimeout(() => {
-      if (redirectedRef.current) return;
-      if (!fireauth.auth().currentUser) {
-        redirectedRef.current = true;
-        clearPersistedState();
-        history.push("/login");
-      }
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [location.search, history]);
-
-  const handleManualCheck = async () => {
-    setChecking(true);
-    // No Firebase session in this browser context (e.g. user verified in
-    // a different browser, or came back via Firebase's CONTINUE redirect
-    // before the SDK could restore the session). Route to /login — the
-    // backend will see email_verified=true and land them on their
-    // dashboard normally.
-    if (!fireauth.auth().currentUser) {
-      setChecking(false);
-      clearPersistedState();
-      history.push("/login");
-      return;
-    }
-    const ok = await checkVerified();
-    setChecking(false);
-    if (!ok) {
-      messageApi.error(t("verifyEmail.notYet"));
-    }
-  };
+  const email = location.state?.email;
 
   const handleResend = async () => {
     if (!email) {
@@ -290,123 +100,72 @@ function Verify({ location, history }) {
               margin-bottom: 1em;
             `}
           >
-            {verified ? (
-              <CheckCircleFilled
+            <div
+              className={css`
+                width: 88px;
+                height: 88px;
+                border-radius: 50%;
+                background: #e6f4ff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              `}
+            >
+              <MailOutlined
                 className={css`
-                  font-size: 56px;
-                  color: #52c41a;
+                  font-size: 40px;
+                  color: #1677ff;
                 `}
               />
-            ) : (
-              <div
-                className={css`
-                  width: 88px;
-                  height: 88px;
-                  border-radius: 50%;
-                  background: #e6f4ff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                `}
-              >
-                <MailOutlined
-                  className={css`
-                    font-size: 40px;
-                    color: #1677ff;
-                  `}
-                />
-              </div>
-            )}
+            </div>
           </div>
 
           <Typography.Title level={3} style={{ marginBottom: "0.4em" }}>
-            {verified ? t("verifyEmail.verified") : t("verifyEmail.header")}
+            {t("verifyEmail.header")}
           </Typography.Title>
 
           <Typography.Paragraph
             type="secondary"
             style={{ marginBottom: "0.4em" }}
           >
-            {verified ? t("verifyEmail.redirecting") : t("verifyEmail.body")}
+            {t("verifyEmail.body")}
           </Typography.Paragraph>
 
-          {email && !verified && (
+          {email && (
             <Typography.Paragraph strong style={{ marginBottom: "1.5em" }}>
               {email}
             </Typography.Paragraph>
           )}
 
-          {linkError && !verified && (
-            <Typography.Paragraph type="danger" style={{ marginBottom: "1em" }}>
-              {t("verifyEmail.linkExpired")}
-            </Typography.Paragraph>
-          )}
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => history.push("/login")}
+            className={css`
+              min-width: 200px;
+              border-radius: 999px;
+              height: 44px;
+            `}
+          >
+            {t("verifyEmail.logIn")}
+          </Button>
 
-          {!verified && (
-            <>
-              <div
-                className={css`
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  gap: 0.6em;
-                  margin-bottom: 1.5em;
-                  min-height: 24px;
-                  color: #888;
-                  font-size: 0.9em;
-                `}
-              >
-                {checking ? (
-                  <>
-                    <Spin size="small" />
-                    <span>{t("verifyEmail.checking")}</span>
-                  </>
-                ) : (
-                  <span>{t("verifyEmail.waiting")}</span>
-                )}
-              </div>
-
-              <Button
-                type="primary"
-                size="large"
-                loading={checking}
-                onClick={handleManualCheck}
-                className={css`
-                  min-width: 200px;
-                  border-radius: 999px;
-                  height: 44px;
-                `}
-              >
-                {t("verifyEmail.checkNow")}
-              </Button>
-
-              <div
-                className={css`
-                  margin-top: 1.75em;
-                  padding-top: 1.25em;
-                  border-top: 1px solid #f0f0f0;
-                  color: #666;
-                `}
-              >
-                <Typography.Text>{t("verifyEmail.noEmail")}</Typography.Text>{" "}
-                <Typography.Link
-                  disabled={resending || !email}
-                  onClick={handleResend}
-                >
-                  {t("verifyEmail.resend")}
-                </Typography.Link>
-              </div>
-            </>
-          )}
-
-          {verified && (
-            <Spin
-              size="large"
-              className={css`
-                margin-top: 1em;
-              `}
-            />
-          )}
+          <div
+            className={css`
+              margin-top: 1.75em;
+              padding-top: 1.25em;
+              border-top: 1px solid #f0f0f0;
+              color: #666;
+            `}
+          >
+            <Typography.Text>{t("verifyEmail.noEmail")}</Typography.Text>{" "}
+            <Typography.Link
+              disabled={resending || !email}
+              onClick={handleResend}
+            >
+              {t("verifyEmail.resend")}
+            </Typography.Link>
+          </div>
         </Card>
       </div>
     </div>

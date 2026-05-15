@@ -135,21 +135,6 @@ export const logout = async () => {
     });
 };
 
-// Definitive verification check via backend Firebase Admin SDK.
-// Bypasses the client SDK's stale email_verified state for users signed
-// in via custom token (registration flow).
-export const checkEmailVerifiedServerSide = async () => {
-  const user = getCurrentUser();
-  if (!user) return false;
-  try {
-    const idToken = await user.getIdToken(false);
-    const data = await post("/verificationStatus", { token: idToken });
-    return !!(data && data.success && data.result?.email_verified);
-  } catch (_) {
-    return false;
-  }
-};
-
 export const refreshToken = async () => {
   // need initial token from registration
   if (isLoggedIn()) {

@@ -10,7 +10,10 @@ import { css } from "@emotion/css";
 import { useTranslation } from "react-i18next";
 
 import fireauth from "utils/fireauth";
-import { sendVerificationEmail } from "utils/auth.service";
+import {
+  sendVerificationEmail,
+  checkEmailVerifiedServerSide,
+} from "utils/auth.service";
 import { REDIRECTS } from "utils/consts";
 import LanguageDropdown from "components/LanguageDropdown";
 
@@ -80,12 +83,7 @@ function Verify({ location, history }) {
   const checkVerified = useCallback(async () => {
     const user = fireauth.auth().currentUser;
     if (!user) return false;
-    // Best-effort refresh from both sources. reload() updates the User
-    // object's emailVerified from the server; getIdTokenResult(true) forces
-    // a fresh ID token claim. Custom-token sign-ins (used by registration)
-    // have no refresh token, so getIdTokenResult(true) can throw — but
-    // reload() still works. Treat each step independently and accept
-    // verification from either signal.
+    // Best-effort refresh from client SDK (works for password sign-in users).
     try {
       await user.reload();
     } catch (e) {
@@ -99,7 +97,12 @@ function Verify({ location, history }) {
       console.warn("[verify] getIdTokenResult(true) failed", e);
     }
     const refreshed = fireauth.auth().currentUser;
-    const isVerified = !!refreshed?.emailVerified || claimVerified;
+    let isVerified = !!refreshed?.emailVerified || claimVerified;
+    // Authoritative check via Firebase Admin SDK on the backend — bypasses
+    // any client-side cache staleness for custom-token sessions.
+    if (!isVerified) {
+      isVerified = await checkEmailVerifiedServerSide();
+    }
     if (isVerified) {
       setVerified(true);
       redirectIfPossible();

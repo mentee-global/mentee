@@ -171,8 +171,37 @@ function Verify({ location, history }) {
     };
   }, [checkVerified]);
 
+  // If Firebase can't restore a session in this browser within a short
+  // grace period, we have no identity to check against — route to /login
+  // and let the normal login flow take over. Skips when an oobCode is
+  // present (applyActionCode runs without needing a session).
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("oobCode")) return;
+    const timer = setTimeout(() => {
+      if (redirectedRef.current) return;
+      if (!fireauth.auth().currentUser) {
+        redirectedRef.current = true;
+        clearPersistedState();
+        history.push("/login");
+      }
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [location.search, history]);
+
   const handleManualCheck = async () => {
     setChecking(true);
+    // No Firebase session in this browser context (e.g. user verified in
+    // a different browser, or came back via Firebase's CONTINUE redirect
+    // before the SDK could restore the session). Route to /login — the
+    // backend will see email_verified=true and land them on their
+    // dashboard normally.
+    if (!fireauth.auth().currentUser) {
+      setChecking(false);
+      clearPersistedState();
+      history.push("/login");
+      return;
+    }
     const ok = await checkVerified();
     setChecking(false);
     if (!ok) {

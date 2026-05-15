@@ -128,12 +128,27 @@ const TrainingList = (props) => {
         case TRAINING_TYPE.VIDEO:
           return (
             <>
-              <ReactPlayer
-                className="react-player"
-                width={isMobile ? 340 : 400}
-                height={300}
-                url={training.url}
-              />
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: 720,
+                  margin: "0 auto",
+                  aspectRatio: "16 / 9",
+                  background: "#000",
+                  borderRadius: 8,
+                  overflow: "hidden",
+                }}
+              >
+                <ReactPlayer
+                  className="react-player"
+                  url={training.url}
+                  width="100%"
+                  height="100%"
+                  style={{ position: "absolute", inset: 0 }}
+                  config={{ youtube: { playerVars: { rel: 0 } } }}
+                />
+              </div>
               <br />
               {props.applicationData && (
                 <Checkbox

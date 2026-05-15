@@ -622,6 +622,7 @@
     "emailResent": "Verification email resent!",
     "error": "Could not send verification email. Please try again.",
     "header": "Verify your email",
+    "linkExpired": "This verification link has expired or has already been used. Please request a new one below.",
     "noEmail": "Didn't receive an email?",
     "notYet": "Still not verified — please click the link in your email.",
     "redirecting": "Email verified! Redirecting you to your dashboard…",

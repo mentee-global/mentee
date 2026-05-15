@@ -53,8 +53,10 @@ function Verify({ location, history }) {
   const [checking, setChecking] = useState(true);
   const [verified, setVerified] = useState(false);
   const [resending, setResending] = useState(false);
+  const [linkError, setLinkError] = useState(false);
   const pollRef = useRef(null);
   const redirectedRef = useRef(false);
+  const oobAppliedRef = useRef(false);
 
   useEffect(() => {
     if (email != null && role != null) {
@@ -90,6 +92,46 @@ function Verify({ location, history }) {
     }
     return isVerified;
   }, [redirectIfPossible]);
+
+  // When the user clicks the link in their email, Firebase generates a
+  // deep link to /verify?mode=verifyEmail&oobCode=...&apiKey=... (see
+  // backend auth.py ActionCodeSettings). applyActionCode confirms the
+  // verification server-side — this works even when the user isn't
+  // signed in in this browser (e.g. they opened the email on a phone).
+  useEffect(() => {
+    if (oobAppliedRef.current) return;
+    const params = new URLSearchParams(location.search);
+    const mode = params.get("mode");
+    const oobCode = params.get("oobCode");
+    if (mode !== "verifyEmail" || !oobCode) return;
+    oobAppliedRef.current = true;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        await fireauth.auth().applyActionCode(oobCode);
+        if (cancelled) return;
+        const user = fireauth.auth().currentUser;
+        if (user) {
+          try {
+            await user.reload();
+          } catch (_) {}
+        }
+        setVerified(true);
+        setChecking(false);
+        redirectIfPossible();
+      } catch (e) {
+        if (!cancelled) {
+          setLinkError(true);
+          setChecking(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location.search, redirectIfPossible]);
 
   useEffect(() => {
     let cancelled = false;
@@ -245,6 +287,12 @@ function Verify({ location, history }) {
           {email && !verified && (
             <Typography.Paragraph strong style={{ marginBottom: "1.5em" }}>
               {email}
+            </Typography.Paragraph>
+          )}
+
+          {linkError && !verified && (
+            <Typography.Paragraph type="danger" style={{ marginBottom: "1em" }}>
+              {t("verifyEmail.linkExpired")}
             </Typography.Paragraph>
           )}
 

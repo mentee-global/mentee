@@ -620,6 +620,7 @@
     "emailResent": "E-mail de verificação reenviado!",
     "error": "Não foi possível enviar o e-mail de verificação. Tente novamente.",
     "header": "Verifique seu e-mail",
+    "linkExpired": "Este link de verificação expirou ou já foi usado. Solicite um novo abaixo.",
     "noEmail": "Não recebeu o e-mail?",
     "notYet": "Ainda não verificado — clique no link enviado para seu e-mail.",
     "redirecting": "E-mail verificado! Redirecionando para seu painel…",

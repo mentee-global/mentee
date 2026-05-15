@@ -27,6 +27,11 @@ from api.utils.web_session import install_session_for_user
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
 
+def _verify_email_continue_url() -> str:
+    base = os.environ.get("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+    return f"{base}/verify"
+
+
 @auth.route("/verifyEmail", methods=["POST"])
 def verify_email():
     data = request.json
@@ -37,8 +42,16 @@ def verify_email():
     verification_link = None
 
     try:
-        # TODO: Add ActionCodeSetting for custom link/redirection back to main page
-        verification_link = firebase_admin_auth.generate_email_verification_link(email)
+        # handle_code_in_app=True makes the link a deep link to our /verify
+        # page (?mode=verifyEmail&oobCode=...) instead of Firebase's hosted
+        # handler. The frontend completes verification via applyActionCode.
+        action_code_settings = firebase_admin_auth.ActionCodeSettings(
+            url=_verify_email_continue_url(),
+            handle_code_in_app=True,
+        )
+        verification_link = firebase_admin_auth.generate_email_verification_link(
+            email, action_code_settings=action_code_settings
+        )
     except ValueError:
         msg = "Invalid email"
         logger.info(msg)

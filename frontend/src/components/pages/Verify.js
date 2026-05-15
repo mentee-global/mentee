@@ -80,25 +80,31 @@ function Verify({ location, history }) {
   const checkVerified = useCallback(async () => {
     const user = fireauth.auth().currentUser;
     if (!user) return false;
+    // Best-effort refresh from both sources. reload() updates the User
+    // object's emailVerified from the server; getIdTokenResult(true) forces
+    // a fresh ID token claim. Custom-token sign-ins (used by registration)
+    // have no refresh token, so getIdTokenResult(true) can throw — but
+    // reload() still works. Treat each step independently and accept
+    // verification from either signal.
     try {
-      // reload() refreshes the local User object (including emailVerified);
-      // getIdTokenResult(true) forces a fresh ID token so the email_verified
-      // claim is up to date. Both are needed because custom-token sign-in
-      // (used during registration) can leave emailVerified stale otherwise.
       await user.reload();
-      const idTokenResult = await user.getIdTokenResult(true);
-      const refreshed = fireauth.auth().currentUser;
-      const isVerified =
-        !!refreshed?.emailVerified ||
-        idTokenResult.claims.email_verified === true;
-      if (isVerified) {
-        setVerified(true);
-        redirectIfPossible();
-      }
-      return isVerified;
-    } catch (_) {
-      return false;
+    } catch (e) {
+      console.warn("[verify] user.reload() failed", e);
     }
+    let claimVerified = false;
+    try {
+      const idTokenResult = await user.getIdTokenResult(true);
+      claimVerified = idTokenResult.claims.email_verified === true;
+    } catch (e) {
+      console.warn("[verify] getIdTokenResult(true) failed", e);
+    }
+    const refreshed = fireauth.auth().currentUser;
+    const isVerified = !!refreshed?.emailVerified || claimVerified;
+    if (isVerified) {
+      setVerified(true);
+      redirectIfPossible();
+    }
+    return isVerified;
   }, [redirectIfPossible]);
 
   // When the user clicks the link in their email, Firebase generates a

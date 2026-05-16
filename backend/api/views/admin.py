@@ -588,3 +588,20 @@ def get_error_log(id):
             }
         }
     )
+
+
+@admin.route("/admin/error-logs/<string:id>", methods=["DELETE"])
+@admin_only
+def delete_error_log(id):
+    """Delete a single ErrorLog entry."""
+    try:
+        log = ErrorLog.objects.get(id=id)
+    except Exception:
+        return create_response(status=404, message="Error log not found")
+
+    try:
+        log.delete()
+        return create_response(message="Error log deleted")
+    except Exception as e:
+        logger.exception("Failed to delete error log")
+        return create_response(status=500, message=str(e))

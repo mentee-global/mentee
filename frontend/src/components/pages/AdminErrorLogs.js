@@ -5,6 +5,7 @@ import {
   Card,
   Drawer,
   Input,
+  Popconfirm,
   Select,
   Space,
   Spin,
@@ -16,6 +17,7 @@ import {
 import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
+  DeleteOutlined,
   ReloadOutlined,
   SaveOutlined,
   SearchOutlined,
@@ -25,6 +27,7 @@ import {
   fetchErrorLogById,
   fetchErrorAlertRecipients,
   setErrorAlertRecipients,
+  deleteErrorLog,
 } from "utils/api";
 import { useAuth } from "utils/hooks/useAuth";
 
@@ -52,6 +55,7 @@ function AdminErrorLogs() {
   const [search, setSearch] = useState("");
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [adminList, setAdminList] = useState([]);
   const [recipientIds, setRecipientIds] = useState([]);
   const [recipientsLoading, setRecipientsLoading] = useState(false);
@@ -143,6 +147,22 @@ function AdminErrorLogs() {
     setDetailLoading(false);
   };
 
+  const handleDelete = async (id) => {
+    if (!id) return;
+    setDeletingId(id);
+    const res = await deleteErrorLog(id);
+    if (res?.ok) {
+      message.success("Error log deleted");
+      setItems((prev) => prev.filter((it) => it.id !== id));
+      if (detail && detail.id === id) {
+        setDetail(null);
+      }
+    } else {
+      message.error(res?.error || "Failed to delete error log");
+    }
+    setDeletingId(null);
+  };
+
   const columns = [
     {
       title: "When",
@@ -203,6 +223,37 @@ function AdminErrorLogs() {
         ) : (
           <CloseCircleTwoTone twoToneColor="#d9d9d9" />
         ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      width: 90,
+      fixed: "right",
+      render: (_, record) => (
+        <Popconfirm
+          title="Delete this error log?"
+          description="This action cannot be undone."
+          okText="Delete"
+          okButtonProps={{ danger: true }}
+          cancelText="Cancel"
+          onConfirm={(e) => {
+            if (e && e.stopPropagation) e.stopPropagation();
+            handleDelete(record.id);
+          }}
+          onCancel={(e) => {
+            if (e && e.stopPropagation) e.stopPropagation();
+          }}
+        >
+          <Button
+            danger
+            size="small"
+            type="text"
+            icon={<DeleteOutlined />}
+            loading={deletingId === record.id}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Popconfirm>
+      ),
     },
   ];
 
@@ -298,7 +349,7 @@ function AdminErrorLogs() {
           columns={columns}
           dataSource={filtered.map((it) => ({ ...it, key: it.id }))}
           pagination={{ pageSize: 25 }}
-          scroll={{ x: 1300 }}
+          scroll={{ x: 1400 }}
           onRow={(record) => ({
             onClick: () => openDetail(record.id),
             style: { cursor: "pointer" },
@@ -312,6 +363,26 @@ function AdminErrorLogs() {
         open={!!detail || detailLoading}
         onClose={() => setDetail(null)}
         destroyOnHidden
+        extra={
+          detail ? (
+            <Popconfirm
+              title="Delete this error log?"
+              description="This action cannot be undone."
+              okText="Delete"
+              okButtonProps={{ danger: true }}
+              cancelText="Cancel"
+              onConfirm={() => handleDelete(detail.id)}
+            >
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                loading={deletingId === detail.id}
+              >
+                Delete
+              </Button>
+            </Popconfirm>
+          ) : null
+        }
       >
         <Spin spinning={detailLoading}>
           {detail && (

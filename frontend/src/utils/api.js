@@ -1742,6 +1742,20 @@ export const setErrorAlertRecipients = async (adminIds) => {
   );
 };
 
+export const deleteErrorLog = async (id) => {
+  const requestExtension = `/admin/error-logs/${id}`;
+  return authDelete(requestExtension).then(
+    (response) => ({ ok: true, response }),
+    (err) => {
+      console.error(err);
+      return {
+        ok: false,
+        error: err?.response?.data?.message || err?.message || "Network error",
+      };
+    }
+  );
+};
+
 // Admin - OAuth Clients
 export const fetchOAuthClients = async () => {
   const res = await authGet("/admin/oauth-clients");

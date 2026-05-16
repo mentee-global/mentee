@@ -335,7 +335,7 @@ function GroupMessageChatArea(props) {
       const altValue = link.getAttribute("alt"); // "Example Link"
       const file_name = link.textContent; // "Click here"
 
-      if (altValue.includes("download_file_")) {
+      if (altValue && altValue.includes("download_file_")) {
         let file_id = altValue.replace("download_file_", "");
         handleDownload(file_id, file_name);
       }

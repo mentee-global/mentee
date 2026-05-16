@@ -81,27 +81,22 @@ function NavigationHeader() {
     if (renderEdit) {
       items.push({
         key: "edit-profile",
-        label: (
-          <span
-            onClick={() => {
-              if (role !== ACCOUNT_TYPE.HUB) {
-                history.push("/profile");
+        label: t("navHeader.editProfile"),
+        onClick: () => {
+          if (role !== ACCOUNT_TYPE.HUB) {
+            history.push("/profile");
+          } else {
+            if (user) {
+              var hub_url = "";
+              if (user.hub_id) {
+                hub_url = "/" + user.hub_user.url;
               } else {
-                if (user) {
-                  var hub_url = "";
-                  if (user.hub_id) {
-                    hub_url = "/" + user.hub_user.url;
-                  } else {
-                    hub_url = "/" + user.url;
-                  }
-                  history.push(hub_url + "/profile");
-                }
+                hub_url = "/" + user.url;
               }
-            }}
-          >
-            {t("navHeader.editProfile")}
-          </span>
-        ),
+              history.push(hub_url + "/profile");
+            }
+          }
+        },
       });
       items.push({
         type: "divider",
@@ -139,16 +134,14 @@ function NavigationHeader() {
     if (!support_User_ID) {
       items.push({
         key: "sign-out",
-        label: <span onClick={() => logoutUser()}>{t("common.logout")}</span>,
+        label: t("common.logout"),
+        onClick: logoutUser,
       });
     } else {
       items.push({
         key: "",
-        label: (
-          <span onClick={() => goBackSupportDashbaord(support_User_ID)}>
-            {t("common.stopImpersonating")}
-          </span>
-        ),
+        label: t("common.stopImpersonating"),
+        onClick: () => goBackSupportDashbaord(support_User_ID),
       });
     }
 

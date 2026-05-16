@@ -21,11 +21,8 @@ function LanguageDropdown({
   const languageOptions = I18N_LANGUAGES.map(({ value }) => {
     return {
       key: value,
-      label: (
-        <span key={value} onClick={() => handleLanguageChange(value)}>
-          {t(`languages.${value.split("-")[0]}`)}
-        </span>
-      ),
+      label: t(`languages.${value.split("-")[0]}`),
+      onClick: () => handleLanguageChange(value),
     };
   });
 

@@ -332,6 +332,10 @@ function MentorProfileForm({
                 required: true,
                 message: t("common.requiredPassword"),
               },
+              {
+                min: 6,
+                message: t("common.passwordTooShort"),
+              },
             ]}
             className={styles.formGroupItem}
           >

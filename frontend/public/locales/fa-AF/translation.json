@@ -154,6 +154,7 @@
     "requiredDegree": "لطفا مدرک را وارد کنید",
     "requiredFullName": "لطفا نام کامل را وارد کنید",
     "requiredPassword": "لطفا رمز عبور را وارد کنید",
+    "passwordTooShort": "رمز عبور باید حداقل ۶ کاراکتر باشد",
     "requiredGender": "لطفا جنسیت را وارد کنید",
     "requiredAge": "لطفا سن را وارد کنید",
     "requiredOrganizationAffiliation": "لطفا وابستگی سازمان را وارد کنید",

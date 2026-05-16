@@ -154,6 +154,7 @@
     "requiredDegree": "Por favor ingrese Grado",
     "requiredFullName": "Por favor ingrese el nombre completo",
     "requiredPassword": "Por favor ingrese contraseña",
+    "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
     "requiredGender": "Por favor ingrese Género",
     "requiredAge": "Por favor ingrese la edad",
     "requiredOrganizationAffiliation": "Por favor ingrese la afiliación de la organización",

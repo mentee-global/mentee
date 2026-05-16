@@ -87,8 +87,11 @@ def create_firebase_user(email, password):
             email_verified=False,
             password=password,
         )
-    except ValueError:
-        msg = "Invalid input"
+    except ValueError as e:
+        # ValueError from the Firebase SDK carries a useful message
+        # (e.g. "Password must be a string at least 6 characters long.")
+        # — surface it so the UI doesn't show a generic "Invalid input".
+        msg = str(e) or "Invalid input"
         logger.info(msg)
         error_http_response = create_response(status=422, message=msg)
     except FirebaseError:

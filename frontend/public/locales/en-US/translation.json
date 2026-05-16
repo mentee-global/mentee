@@ -155,6 +155,7 @@
     "requiredDegree": "Please enter Degree",
     "requiredFullName": "Please enter Full Name",
     "requiredPassword": "Please enter Password",
+    "passwordTooShort": "Password must be at least 6 characters",
     "requiredGender": "Please enter Gender",
     "requiredAge": "Please enter Age",
     "requiredOrganizationAffiliation": "Please enter Organization Affliation",

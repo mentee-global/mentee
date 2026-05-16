@@ -155,6 +155,7 @@
     "requiredDegree": "مهرباني وکړئ درجې داخل کړئ",
     "requiredFullName": "مهرباني وکړئ بشپړ نوم ولیکئ",
     "requiredPassword": "مهرباني وکړئ پاسورډ دننه کړئ",
+    "passwordTooShort": "پاسورډ باید لږ تر لږه 6 توري ولري",
     "requiredGender": "مهرباني وکړئ جنسیت دننه کړئ",
     "requiredAge": "مهرباني وکړئ عمر دننه کړئ",
     "requiredOrganizationAffiliation": "مهرباني وکړئ د سازمان تړاو داخل کړئ",

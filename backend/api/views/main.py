@@ -159,9 +159,9 @@ def get_accounts(account_type):
             if partner_account.assign_mentees:
                 for mentee_item in partner_account.assign_mentees:
                     if "id" in mentee_item:
-                        partners_by_assign_mentee[
-                            str(mentee_item["id"])
-                        ] = partner_account
+                        partners_by_assign_mentee[str(mentee_item["id"])] = (
+                            partner_account
+                        )
         for account in mentees_data:
             if str(account.id) in partners_by_assign_mentee:
                 pair_partner = partners_by_assign_mentee[str(account.id)]
@@ -996,7 +996,15 @@ def create_mentor_profile():
         return create_response(status=400, message=msg)
     firebase_user, error_http_response = create_firebase_user(email, password)
     if error_http_response:
-        firebase_user = firebase_admin_auth.get_user_by_email(email)
+        # If create_firebase_user failed, the user likely doesn't exist in
+        # Firebase yet. Only fall back to a lookup if it really does — otherwise
+        # the lookup itself raises UserNotFoundError and Flask's global handler
+        # surfaces "No user record found for the provided email…" to the UI,
+        # masking the real cause (e.g. password too short).
+        try:
+            firebase_user = firebase_admin_auth.get_user_by_email(email)
+        except Exception:
+            return error_http_response
         if not firebase_user:
             return error_http_response
 

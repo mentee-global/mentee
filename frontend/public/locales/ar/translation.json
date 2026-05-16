@@ -154,6 +154,7 @@
     "requiredDegree": "الرجاء إدخال الدرجة",
     "requiredFullName": "الرجاء إدخال الاسم الكامل",
     "requiredPassword": "الرجاء إدخال كلمة المرور",
+    "passwordTooShort": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
     "requiredGender": "الرجاء إدخال الجنس",
     "requiredAge": "الرجاء إدخال العمر",
     "requiredOrganizationAffiliation": "الرجاء إدخال انتماء المنظمة",

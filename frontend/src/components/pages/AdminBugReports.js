@@ -126,7 +126,7 @@ function AdminBugReports() {
       await updateBugReport(selectedBug._id.$oid, editForm);
       message.success("Bug report updated successfully");
       setEditModalVisible(false);
-      setReload(!reload);
+      setReload((r) => !r);
     } catch (error) {
       message.error("Failed to update bug report");
     }
@@ -142,7 +142,7 @@ function AdminBugReports() {
         try {
           await deleteBugReportById(id);
           message.success("Bug report deleted successfully");
-          setReload(!reload);
+          setReload((r) => !r);
         } catch (error) {
           message.error("Failed to delete bug report");
         }
@@ -300,7 +300,7 @@ function AdminBugReports() {
           <ReloadOutlined
             style={{ fontSize: "16px", cursor: "pointer" }}
             spin={isLoading}
-            onClick={() => setReload(!reload)}
+            onClick={() => setReload((r) => !r)}
           />
 
           <div style={{ marginLeft: "auto" }}>

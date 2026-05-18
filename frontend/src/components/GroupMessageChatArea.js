@@ -199,7 +199,7 @@ function GroupMessageChatArea(props) {
   const editMessage = (block_id) => {
     if (!editMessageText.trim().length > 0 && !editTitle.trim().length > 0) {
       setEditInputFlags({});
-      setRefreshFlag(!refreshFlag);
+      setRefreshFlag((f) => !f);
       return;
     }
 
@@ -231,7 +231,7 @@ function GroupMessageChatArea(props) {
       let temp = replyInputFlags;
       temp[block_id] = false;
       setReplyInputFlags(temp);
-      setRefreshFlag(!refreshFlag);
+      setRefreshFlag((f) => !f);
       return;
     }
 

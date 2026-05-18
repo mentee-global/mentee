@@ -136,7 +136,7 @@ const AdminAnnouncement = () => {
     }
     setLoading(false);
     setAnnounceId(null);
-    setReload(!reload);
+    setReload((r) => !r);
     setCurrentAnnounce(null);
     setOpenUpdateAnnounce(false);
   };
@@ -176,7 +176,7 @@ const AdminAnnouncement = () => {
         message: "SUCCESS",
         description: "Announcement has been deleted successfully",
       });
-      setReload(!reload);
+      setReload((r) => !r);
     } else {
       notification.error({
         message: "ERROR",

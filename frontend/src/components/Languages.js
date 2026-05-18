@@ -75,7 +75,7 @@ export const Languages = () => {
     }
 
     dispatch(fetchOptions());
-    setReload(!reload);
+    setReload((r) => !r);
   };
 
   const handleCancel = () => {
@@ -180,7 +180,7 @@ export const Languages = () => {
     const success = await deleteLanguageByID(id);
     if (success) {
       message.success(`Successfully deleted `);
-      setReload(!reload);
+      setReload((r) => !r);
     } else {
       message.error(`Could not delete `);
     }

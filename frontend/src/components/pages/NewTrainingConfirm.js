@@ -125,7 +125,7 @@ function NewTrainingConfirm({ match }) {
         train_id={selectedTrainid}
         open={openSignModal}
         finish={() => {
-          setReload(!reload);
+          setReload((r) => !r);
           setOpenSignModal(false);
           setSelectedTrainid(null);
         }}

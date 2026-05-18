@@ -272,7 +272,7 @@ function Events() {
             role={role}
             open={eventModalvisible}
             setOpen={setEventModalvisible}
-            refresh={() => setReload(!reload)}
+            refresh={() => setReload((r) => !r)}
             reloading={() => setPageLoaded(false)}
             partnerData={hubPartners}
           />
@@ -328,7 +328,7 @@ function Events() {
               open={eventModalvisible}
               hubOptions={hubOptions}
               setOpen={setEventModalvisible}
-              refresh={() => setReload(!reload)}
+              refresh={() => setReload((r) => !r)}
               reloading={() => setPageLoaded(false)}
               partnerData={hubPartners}
             />
@@ -373,7 +373,7 @@ function Events() {
                   hub_url={hubUrl}
                   users={users}
                   hubOptions={hubOptions}
-                  refresh={() => setReload(!reload)}
+                  refresh={() => setReload((r) => !r)}
                   reloading={() => setPageLoaded(false)}
                   partnerData={hubPartners}
                 />

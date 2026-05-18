@@ -137,7 +137,7 @@ const CommunityLibrary = () => {
     }
     setLoading(false);
     setSelectedId(null);
-    setReload(!reload);
+    setReload((r) => !r);
     setCurrentData(null);
     setOpenUpdateData(false);
   };
@@ -188,7 +188,7 @@ const CommunityLibrary = () => {
         message: "SUCCESS",
         description: "Library has been deleted successfully",
       });
-      setReload(!reload);
+      setReload((r) => !r);
     } else {
       notification.error({
         message: "ERROR",

@@ -311,7 +311,7 @@ function AdminAccountData() {
       const success = await deleteAccountById(id, accountType);
       if (success) {
         message.success(`Successfully deleted ${name}`);
-        setReload(!reload);
+        setReload((r) => !r);
       } else {
         message.error(`Could not delete ${name}`);
       }
@@ -388,7 +388,7 @@ function AdminAccountData() {
   const handleAccountDisplay = (key) => {
     setDisplayOption(key);
     handleResetFilters();
-    setReload(!reload);
+    setReload((r) => !r);
   };
 
   const searchbyHub = (key) => {
@@ -775,7 +775,7 @@ function AdminAccountData() {
             <Button
               className="refresh-btn"
               icon={<ReloadOutlined spin={isReloading} />}
-              onClick={() => setReload(!reload)}
+              onClick={() => setReload((r) => !r)}
             />
           </Tooltip>
         </div>

@@ -103,7 +103,7 @@ export const Hubs = () => {
         await adminHubUserData(values, __image, selected_id).then((res) => {
           if (res.status === 200) {
             success();
-            setReload(!reload);
+            setReload((r) => !r);
           } else {
             if (res.response && res.response.status === 422) {
               alert("Failed create firebase account");
@@ -428,7 +428,7 @@ export const Hubs = () => {
     const success = await deleteAccountById(_id.$oid, ACCOUNT_TYPE.HUB);
     if (success) {
       message.success(`Successfully deleted `);
-      setReload(!reload);
+      setReload((r) => !r);
     } else {
       message.error(`Could not delete `);
     }

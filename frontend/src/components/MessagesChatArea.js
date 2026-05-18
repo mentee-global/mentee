@@ -168,7 +168,7 @@ function MessagesChatArea(props) {
       var temp = accountData;
       accountData.paused_flag = props.paused_flag;
       setAccountData(temp);
-      setRefresh(!refresh);
+      setRefresh((r) => !r);
     }
     fetchAccount();
     // eslint-disable-next-line react-hooks/exhaustive-deps

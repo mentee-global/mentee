@@ -193,7 +193,7 @@ const AdminTraining = () => {
     }
     setLoading(false);
     setTrainingId(null);
-    setReload(!reload);
+    setReload((r) => !r);
     setCurrentTraining(null);
     setOpenUpdateTraining(false);
   };
@@ -233,7 +233,7 @@ const AdminTraining = () => {
         message: "SUCCESS",
         description: "Training has been deleted successfully",
       });
-      setReload(!reload);
+      setReload((r) => !r);
     } else {
       notification.error({
         message: "ERROR",

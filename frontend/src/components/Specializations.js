@@ -75,7 +75,7 @@ export const Specializations = () => {
     }
 
     dispatch(fetchOptions());
-    setReload(!reload);
+    setReload((r) => !r);
   };
 
   const handleCancel = () => {
@@ -174,7 +174,7 @@ export const Specializations = () => {
     const success = await deleteSpecializationByID(id);
     if (success) {
       message.success(`Successfully deleted `);
-      setReload(!reload);
+      setReload((r) => !r);
     } else {
       message.error(`Could not delete `);
     }

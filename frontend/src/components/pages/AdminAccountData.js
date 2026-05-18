@@ -720,7 +720,7 @@ function AdminAccountData() {
           <AddGuestModal
             setGuestModalVisible={setGuestModalVisible}
             guestModalVisible={guestModalVisible}
-            refresh={() => setReload(!reload)}
+            refresh={() => setReload((r) => !r)}
           />
 
           {/* Add New Account */}
@@ -787,7 +787,7 @@ function AdminAccountData() {
           <AdminDataTable
             data={filterData}
             deleteAccount={handleDeleteAccount}
-            refresh={() => setReload(!reload)}
+            refresh={() => setReload((r) => !r)}
             isMentee={displayOption === keys.MENTEES}
             isPartner={displayOption === keys.PARTNER}
             isGuest={displayOption === keys.GUEST}

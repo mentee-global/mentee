@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Popconfirm,
@@ -13,6 +13,7 @@ import {
   Input,
   Tag,
   Tooltip,
+  Alert,
 } from "antd";
 import {
   LinkOutlined,
@@ -95,6 +96,11 @@ function AdminDataTable({
   const [form] = Form.useForm();
   const [valuesChanged, setValuesChanged] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  // Re-render the modal preview when form values change (without going
+  // through full form validation just to peek at the current state).
+  const watchedEmail = Form.useWatch("email", form);
+  const watchedPassword = Form.useWatch("password", form);
 
   useEffect(() => {
     async function getAllMentorMentee() {
@@ -416,9 +422,11 @@ function AdminDataTable({
   };
 
   const handleEditClose = () => {
+    if (submitting) return; // don't close mid-flight
     setIsEditEmailModalVisible(false);
     form.resetFields();
     setSelectedRecord(null);
+    setValuesChanged(false);
   };
   const handleValuesChange = () => {
     setValuesChanged(true);
@@ -433,128 +441,248 @@ function AdminDataTable({
     return Promise.resolve();
   };
 
-  const success = () => {
-    message.success("Successfully Edited");
-    handleEditClose();
-    refresh();
+  const onFinish = async () => {
+    if (!selectedRecord) return;
+    if (!valuesChanged) {
+      setIsEditEmailModalVisible(false);
+      form.resetFields();
+      setSelectedRecord(null);
+      return;
+    }
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (info) {
+      // AntD shows inline validation errors; nothing more to do here.
+      console.error("Validate Failed:", info);
+      return;
+    }
+    values.ex_email = selectedRecord.email;
+    setSubmitting(true);
+    try {
+      const res = await editEmailPassword(values);
+      if (res && res.status === 200) {
+        message.success("Account updated successfully");
+        setIsEditEmailModalVisible(false);
+        form.resetFields();
+        setSelectedRecord(null);
+        setValuesChanged(false);
+        refresh();
+      } else {
+        message.error("Failed to update email/password");
+      }
+    } catch (err) {
+      // Surface the backend's actual error message (e.g. our 404
+      // "No Firebase Auth account exists for {email}…" or the SDK's
+      // "Password must be a string at least 6 characters long.")
+      // instead of crashing with a TypeError on an undefined response.
+      const serverMsg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to update email/password";
+      message.error(serverMsg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const onFinish = useCallback((valuesChanged, _selected_record) => {
-    async function saveValues(values, _selected_record) {
-      values.ex_email = _selected_record.email;
-      try {
-        const res = await editEmailPassword(values);
-        if (res && res.status === 200) {
-          refresh();
-          success();
-        } else {
-          message.error("Failed to update email/password");
-        }
-      } catch (err) {
-        // Surface the backend's actual error message (e.g. our 404
-        // "No Firebase Auth account exists for {email}…") instead of
-        // crashing with a TypeError on an undefined response.
-        const serverMsg =
-          err?.response?.data?.message ||
-          err?.message ||
-          "Failed to update email/password";
-        message.error(serverMsg);
-      }
-    }
-    if (valuesChanged) {
-      form
-        .validateFields()
-        .then((values) => {
-          saveValues(values, _selected_record);
-        })
-        .catch((info) => {
-          console.error("Validate Failed:", info);
-        });
-    } else {
-      handleEditClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const EditEmailForm = () => (
-    <Form
-      form={form}
-      onValuesChange={handleValuesChange}
-      onFinish={() => onFinish(valuesChanged, selectedRecord)}
-    >
-      <Form.Item
-        name="email"
-        rules={[
-          {
-            required: true,
-            message: "Please input Email.",
-          },
-          {
-            type: "email",
-            message: "The input is not valid E-mail!",
-          },
-        ]}
-      >
-        <Input bordered={true} placeholder={"Email"} />
-      </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[
-          {
-            required: false,
-            message: "Please input Password.",
-          },
-        ]}
-      >
-        <Input.Password
-          iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-          }
-          bordered={true}
-          placeholder={"Password"}
-        />
-      </Form.Item>
-      <Form.Item
-        name="confirm"
-        rules={[
-          {
-            required: false,
-            message: "Please confirm password!",
-          },
-          { validator: validatePassword },
-        ]}
-      >
-        <Input.Password
-          iconRender={(visible) =>
-            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-          }
-          bordered={true}
-          placeholder={"Confirm Password"}
-        />
-      </Form.Item>
-
-      <Form.Item>
-        <Button
-          className="regular-button"
-          htmlType="submit"
-          style={{ marginTop: "20px" }}
-        >
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-
-  const showEditEmailModal = async (_data_record) => {
+  const showEditEmailModal = (_data_record) => {
+    if (!_data_record) return;
+    form.resetFields();
+    form.setFieldValue("email", _data_record.email);
+    setSelectedRecord(_data_record);
+    setValuesChanged(false);
     setIsEditEmailModalVisible(true);
-    if (_data_record) {
-      form.setFieldValue("email", _data_record.email);
-      setSelectedRecord(_data_record);
+  };
+
+  // Dynamic "what will happen" preview shown above the submit button.
+  // Mirrors the backend's behavior in editEmailPassword so the admin
+  // knows exactly which notifications fire before clicking Submit.
+  const renderImpactPreview = () => {
+    if (!selectedRecord) return null;
+    const trimmedEmail = (watchedEmail || "").trim();
+    const emailWillChange =
+      trimmedEmail && trimmedEmail !== selectedRecord.email;
+    const passwordWillChange = !!(
+      watchedPassword && watchedPassword.length > 0
+    );
+    if (!emailWillChange && !passwordWillChange) {
+      return (
+        <Alert
+          type="info"
+          showIcon
+          style={{ marginBottom: 16 }}
+          message="No changes yet"
+          description="Edit the email or set a new password to enable Submit."
+        />
+      );
     }
+    const items = [];
+    if (emailWillChange) {
+      items.push(
+        <li key="e-old">
+          Notification email sent to the <strong>old address</strong> (
+          {selectedRecord.email}) confirming the move.
+        </li>
+      );
+      items.push(
+        <li key="e-new">
+          Notification email sent to the <strong>new address</strong> (
+          {trimmedEmail}) confirming the link.
+        </li>
+      );
+      items.push(
+        <li key="e-mongo">
+          Email updated across all related records (profile, applications,
+          etc.).
+        </li>
+      );
+    }
+    if (passwordWillChange) {
+      items.push(
+        <li key="p-notif">
+          Notification email sent to the user confirming the password change.
+        </li>
+      );
+      items.push(
+        <li key="p-revoke">
+          All active login sessions for this user will be{" "}
+          <strong>signed out</strong>.
+        </li>
+      );
+    }
+    return (
+      <Alert
+        type="warning"
+        showIcon
+        style={{ marginBottom: 16 }}
+        message="When you click Submit:"
+        description={
+          <ul style={{ marginBottom: 0, paddingLeft: 20 }}>{items}</ul>
+        }
+      />
+    );
   };
 
   return (
     <>
+      <Modal
+        title={
+          selectedRecord
+            ? `Edit account: ${selectedRecord.email}`
+            : "Edit account"
+        }
+        open={isEditEmailModalVisible}
+        footer={null}
+        onCancel={handleEditClose}
+        closable={!submitting}
+        maskClosable={!submitting}
+        keyboard={!submitting}
+        destroyOnClose={true}
+        width={560}
+      >
+        <Spin
+          spinning={submitting}
+          tip="Updating account and sending notifications…"
+        >
+          <Alert
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
+            message="How this works"
+            description={
+              <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
+                <li>
+                  Change the email, set a new password, or both. Leave password
+                  blank to update only the email.
+                </li>
+                <li>
+                  The user will be automatically notified by email — at both the
+                  old and new addresses on email change, and at their current
+                  address on password change.
+                </li>
+                <li>
+                  Setting a password also signs the user out of all active
+                  sessions.
+                </li>
+              </ul>
+            }
+          />
+          <Form
+            form={form}
+            layout="vertical"
+            onValuesChange={handleValuesChange}
+            onFinish={onFinish}
+            disabled={submitting}
+          >
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Please input Email." },
+                { type: "email", message: "The input is not a valid email." },
+              ]}
+            >
+              <Input placeholder="Email" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="New password (optional)"
+              tooltip="Leave blank to keep the current password. Min 6 characters if set."
+              rules={[
+                {
+                  min: 6,
+                  message:
+                    "Password must be at least 6 characters (Firebase requirement).",
+                },
+              ]}
+            >
+              <Input.Password
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
+                placeholder="Leave blank to keep current password"
+                autoComplete="new-password"
+              />
+            </Form.Item>
+            <Form.Item
+              name="confirm"
+              label="Confirm new password"
+              dependencies={["password"]}
+              rules={[{ validator: validatePassword }]}
+            >
+              <Input.Password
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
+                placeholder="Re-type the new password"
+                autoComplete="new-password"
+              />
+            </Form.Item>
+
+            {renderImpactPreview()}
+
+            <Form.Item style={{ marginBottom: 0, marginTop: 12 }}>
+              <Button
+                onClick={handleEditClose}
+                disabled={submitting}
+                style={{ marginRight: 8 }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                className="regular-button"
+                htmlType="submit"
+                loading={submitting}
+                disabled={!valuesChanged}
+              >
+                {submitting ? "Saving…" : "Submit"}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
+      </Modal>
       <Table
         dataSource={data}
         expandable={{
@@ -577,24 +705,10 @@ function AdminDataTable({
           dataIndex={"email"}
           key="email"
           render={(text, data) => (
-            <>
-              <Modal
-                title="Edit"
-                open={isEditEmailModalVisible}
-                footer={<div></div>}
-                onCancel={handleEditClose}
-                closable={true}
-                width={"600px"}
-                mask={false}
-              >
-                {" "}
-                {EditEmailForm()}
-              </Modal>
-              <EditOutlined
-                className="delete-user-btn"
-                onClick={() => showEditEmailModal(data)}
-              />
-            </>
+            <EditOutlined
+              className="delete-user-btn"
+              onClick={() => showEditEmailModal(data)}
+            />
           )}
           align="center"
         />

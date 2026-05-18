@@ -423,7 +423,21 @@ def editEmailPassword():
     password = None
     if "password" in data:
         password = data["password"]
-    firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
+
+    try:
+        firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
+    except firebase_admin_auth.UserNotFoundError:
+        # Legacy accounts (pre-Firebase migration) and accounts whose Firebase
+        # record was deleted out-of-band live only in Mongo. Fail with a clear
+        # message rather than a raw 500 so the admin knows the two stores are
+        # out of sync for this user.
+        msg = (
+            f"No Firebase Auth account exists for {ex_email}. "
+            "The Mongo and Firebase records are out of sync — "
+            "delete the orphan record or recreate the Firebase user before editing."
+        )
+        logger.info(msg)
+        return create_response(status=404, message=msg)
 
     if password is not None:
         firebase_admin_auth.update_user(

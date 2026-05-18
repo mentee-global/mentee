@@ -8,8 +8,17 @@ from wtforms.validators import InputRequired
 from wtforms import validators
 import wtforms_json
 from typing import Tuple
+import base64
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import (
+    Mail,
+    Attachment,
+    FileContent,
+    FileName,
+    FileType,
+    Disposition,
+    ContentId,
+)
 from twilio.rest import Client as TwilioClient
 from .flask_imgur import Imgur
 from api.models import (
@@ -223,8 +232,15 @@ def send_email(
 
 
 def send_email_html(
-    recipient: str = "", subject: str = "", html_content: str = ""
+    recipient: str = "",
+    subject: str = "",
+    html_content: str = "",
+    inline_image_path: Optional[str] = None,
+    inline_image_cid: str = "",
+    inline_image_type: str = "image/png",
 ) -> Tuple[bool, str]:
+    """Send a single HTML email. Optionally embed one inline image via CID
+    so the HTML can reference it as <img src="cid:<inline_image_cid>">."""
     if not recipient:
         return False, "Missing recipient email"
 
@@ -234,6 +250,18 @@ def send_email_html(
         subject=subject,
         html_content=html_content,
     )
+
+    if inline_image_path and inline_image_cid:
+        with open(inline_image_path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode()
+        message.attachment = Attachment(
+            FileContent(encoded),
+            FileName(os.path.basename(inline_image_path)),
+            FileType(inline_image_type),
+            Disposition("inline"),
+            ContentId(inline_image_cid),
+        )
+
     try:
         sg = SendGridAPIClient(sendgrid_key)
         sg.send(message)

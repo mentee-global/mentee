@@ -26,7 +26,12 @@ from api.utils.constants import Account
 from api.utils.email_sync import update_email_across_models
 import csv
 import io
-from api.views.auth import create_firebase_user
+from api.views.auth import create_firebase_user, _bump_token_version_and_cascade
+from api.utils.admin_notification_emails import (
+    notify_email_changed_to_old,
+    notify_email_changed_to_new,
+    notify_password_changed,
+)
 from numpy import imag
 
 admin = Blueprint("admin", __name__)  # initialize blueprint
@@ -450,6 +455,36 @@ def editEmailPassword():
         )
     if email != ex_email:
         update_email_across_models(ex_email, email)
+
+    email_changed = email != ex_email
+    password_changed = password is not None
+
+    # Revoke active sessions on password change so existing devices/tokens
+    # stop working — without this the user's old session would survive.
+    if password_changed:
+        try:
+            firebase_admin_auth.revoke_refresh_tokens(firebase_user.uid)
+            _bump_token_version_and_cascade(email)
+        except Exception as exc:
+            logger.error(f"editEmailPassword: token revocation failed: {exc}")
+
+    # Security notifications. Each is wrapped individually so one SendGrid
+    # hiccup doesn't suppress the others, and none of them can fail the
+    # primary edit (which has already succeeded at this point).
+    if email_changed:
+        try:
+            notify_email_changed_to_old(ex_email, email)
+        except Exception as exc:
+            logger.error(f"editEmailPassword: notify old address failed: {exc}")
+        try:
+            notify_email_changed_to_new(ex_email, email)
+        except Exception as exc:
+            logger.error(f"editEmailPassword: notify new address failed: {exc}")
+    if password_changed:
+        try:
+            notify_password_changed(email)
+        except Exception as exc:
+            logger.error(f"editEmailPassword: notify password change failed: {exc}")
 
     return create_response(status=200, message="successful edited")
 

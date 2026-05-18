@@ -16,6 +16,7 @@ so we don't depend on any external hosting.
 
 import datetime as dt
 import os
+from html import escape
 from typing import Tuple
 
 from api.core import logger
@@ -25,6 +26,15 @@ LOGO_PATH = os.path.join(
     os.path.dirname(__file__), "..", "resources", "mentee_logo.png"
 )
 LOGO_CID = "mentee-logo"
+
+# Fail loud at import time if the logo isn't shipped — the per-send try/except
+# would otherwise swallow the FileNotFoundError and silently drop the entire
+# security notification.
+if not os.path.exists(LOGO_PATH):
+    logger.warning(
+        f"admin_notification_emails: logo missing at {LOGO_PATH} — "
+        "notification emails will fail to attach inline logo."
+    )
 
 # Brand palette pulled from frontend/src/components/css/_app.scss:
 #   $theme-orange #e4bb4f, $theme-orange-dark #a58123,
@@ -105,12 +115,17 @@ def _send(recipient: str, subject: str, html: str, context: str) -> Tuple[bool, 
 def notify_email_changed_to_old(old_email: str, new_email: str) -> Tuple[bool, str]:
     """Tell the OLD address the account was moved off of it."""
     subject = "Your Mentee Global account email was changed"
+    # Escape every user-controlled interpolation. Old emails come from Mongo
+    # where legacy/imported rows aren't guaranteed RFC-clean; a stray '<' in
+    # any address would otherwise break or distort the rendered email body.
+    old_safe = escape(old_email)
+    new_safe = escape(new_email)
     body = (
         _para("Hi,")
         + _para(
             "We're letting you know that the email address on your Mentee "
-            f"Global account was just changed from <strong>{old_email}</strong> "
-            f"to <strong>{new_email}</strong> by an administrator."
+            f"Global account was just changed from <strong>{old_safe}</strong> "
+            f"to <strong>{new_safe}</strong> by an administrator."
         )
         + _alert_box(
             "If you authorized this change, no action is needed and you can "
@@ -122,7 +137,7 @@ def notify_email_changed_to_old(old_email: str, new_email: str) -> Tuple[bool, s
         )
         + _para(
             "For your records, future emails from Mentee Global about this "
-            f"account will go to <strong>{new_email}</strong>.",
+            f"account will go to <strong>{new_safe}</strong>.",
             color="#374151",
         )
     )
@@ -137,12 +152,14 @@ def notify_email_changed_to_old(old_email: str, new_email: str) -> Tuple[bool, s
 def notify_email_changed_to_new(old_email: str, new_email: str) -> Tuple[bool, str]:
     """Tell the NEW address the account is now linked to it."""
     subject = "This email is now linked to a Mentee Global account"
+    old_safe = escape(old_email)
+    new_safe = escape(new_email)
     body = (
         _para("Hi,")
         + _para(
             "A Mentee Global account is now associated with this email address "
-            f"(<strong>{new_email}</strong>). Previously, the account used "
-            f"<strong>{old_email}</strong>. The change was made by an "
+            f"(<strong>{new_safe}</strong>). Previously, the account used "
+            f"<strong>{old_safe}</strong>. The change was made by an "
             "administrator."
         )
         + _para(
@@ -169,11 +186,12 @@ def notify_email_changed_to_new(old_email: str, new_email: str) -> Tuple[bool, s
 def notify_password_changed(email: str) -> Tuple[bool, str]:
     """Tell the user their password was just reset by an admin."""
     subject = "Your Mentee Global account password was changed"
+    email_safe = escape(email)
     body = (
         _para("Hi,")
         + _para(
             "We're letting you know that the password on your Mentee Global "
-            f"account (<strong>{email}</strong>) was just changed by an "
+            f"account (<strong>{email_safe}</strong>) was just changed by an "
             "administrator. Any active sessions have been signed out — you'll "
             "need to log in again with your new password."
         )

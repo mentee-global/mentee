@@ -428,8 +428,20 @@ function AdminDataTable({
     setSelectedRecord(null);
     setValuesChanged(false);
   };
-  const handleValuesChange = () => {
-    setValuesChanged(true);
+  const handleValuesChange = (_changed, allValues) => {
+    // Real dirty check — without this, Submit stays enabled even after
+    // the user types and then deletes back to the original value.
+    if (!selectedRecord) {
+      setValuesChanged(false);
+      return;
+    }
+    const emailDiffers =
+      (allValues.email || "").trim().toLowerCase() !==
+      (selectedRecord.email || "").toLowerCase();
+    const passwordTyped = !!(
+      allValues.password && allValues.password.length > 0
+    );
+    setValuesChanged(emailDiffers || passwordTyped);
   };
 
   const validatePassword = (_, value) => {
@@ -502,11 +514,15 @@ function AdminDataTable({
     if (!selectedRecord) return null;
     const trimmedEmail = (watchedEmail || "").trim();
     const emailWillChange =
-      trimmedEmail && trimmedEmail !== selectedRecord.email;
-    const passwordWillChange = !!(
-      watchedPassword && watchedPassword.length > 0
-    );
-    if (!emailWillChange && !passwordWillChange) {
+      !!trimmedEmail &&
+      trimmedEmail.toLowerCase() !== (selectedRecord.email || "").toLowerCase();
+    const passwordTouched = !!(watchedPassword && watchedPassword.length > 0);
+    // Only promise password side effects once the value clears Firebase's
+    // 6-character minimum — otherwise the preview would mislead the admin
+    // about the outcome of a submit the backend will reject anyway.
+    const passwordWillChange = passwordTouched && watchedPassword.length >= 6;
+
+    if (!emailWillChange && !passwordTouched) {
       return (
         <Alert
           type="info"
@@ -548,6 +564,13 @@ function AdminDataTable({
         <li key="p-revoke">
           All active login sessions for this user will be{" "}
           <strong>signed out</strong>.
+        </li>
+      );
+    } else if (passwordTouched) {
+      items.push(
+        <li key="p-short">
+          Password is shorter than 6 characters — Submit is blocked until you
+          reach the minimum length.
         </li>
       );
     }

@@ -355,7 +355,14 @@ def _revoke_all_user_oauth_tokens(user_id: str) -> None:
 
 
 def _bump_token_version_and_cascade(email: str) -> None:
-    user = Users.objects(email=email).first()
+    # Case-insensitive match: callers may pass whatever casing the admin
+    # typed, but Mongo stores emails normalized to lowercase. Without
+    # iexact + strip, an "Foo@Example.com" cascade silently no-ops and
+    # OAuth tokens stay live after a "password changed" notification has
+    # already promised they wouldn't.
+    if not email:
+        return
+    user = Users.objects(email__iexact=email.strip()).first()
     if not user:
         return
     user.token_version = (user.token_version or 0) + 1

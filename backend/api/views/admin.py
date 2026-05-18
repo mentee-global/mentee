@@ -33,7 +33,6 @@ from api.utils.admin_notification_emails import (
     notify_email_changed_to_new,
     notify_password_changed,
 )
-from numpy import imag
 
 admin = Blueprint("admin", __name__)  # initialize blueprint
 
@@ -423,12 +422,21 @@ def get_admin(id):
 @admin.route("edit_email_password", methods=["POST"])
 @admin_only
 def editEmailPassword():
-    data = request.get_json()
-    email = data["email"]
-    ex_email = data["ex_email"]
-    password = None
-    if "password" in data:
-        password = data["password"]
+    # Tolerate a missing/malformed JSON body — bare `request.get_json()`
+    # would raise; bare `data["email"]` would KeyError → 500. Validate
+    # required fields up front and return 400 with a clear message.
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+    ex_email = (data.get("ex_email") or "").strip().lower()
+    if not email or not ex_email:
+        msg = "Missing required fields: email and ex_email."
+        logger.info(f"editEmailPassword: {msg}")
+        return create_response(status=400, message=msg)
+
+    # Treat an empty-string password as "no password change". Without this,
+    # Firebase's update_user gets password="" and raises ValueError, which
+    # then masks any concurrent email change the admin actually wanted.
+    password = data.get("password") or None
 
     try:
         firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
@@ -466,9 +474,11 @@ def editEmailPassword():
         )
         logger.info(msg)
         return create_response(status=409, message=msg)
-    except FirebaseError as e:
-        msg = f"Firebase rejected the update: {e}"
-        logger.error(msg)
+    except FirebaseError:
+        # logger.exception preserves the full traceback in the error-log
+        # collection so the admin error-logs page has something actionable
+        # to surface on the next investigation.
+        logger.exception("editEmailPassword: Firebase rejected the update")
         return create_response(status=500, message="Could not update account")
 
     if email != ex_email:

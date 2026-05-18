@@ -2,6 +2,7 @@ from api.models.Moderator import Moderator
 from api.views.messages import invite
 from flask import Blueprint, request
 from firebase_admin import auth as firebase_admin_auth
+from firebase_admin.exceptions import FirebaseError
 from api.core import create_response, logger
 from api.models import (
     MenteeApplication,
@@ -444,15 +445,32 @@ def editEmailPassword():
         logger.info(msg)
         return create_response(status=404, message=msg)
 
+    update_kwargs = {"email": email}
     if password is not None:
-        firebase_admin_auth.update_user(
-            firebase_user.uid, email=email, password=password
+        update_kwargs["password"] = password
+
+    try:
+        firebase_admin_auth.update_user(firebase_user.uid, **update_kwargs)
+    except ValueError as e:
+        # SDK validation: too-short password, malformed email, etc.
+        # The SDK's message is descriptive ("Password must be a string at
+        # least 6 characters long.") — surface it so the admin sees the
+        # real problem instead of a raw 500.
+        msg = str(e) or "Invalid input"
+        logger.info(f"editEmailPassword: invalid input: {msg}")
+        return create_response(status=422, message=msg)
+    except firebase_admin_auth.EmailAlreadyExistsError:
+        msg = (
+            f"The email {email} is already in use by another account. "
+            "Pick a different address or merge the accounts manually."
         )
-    else:
-        firebase_admin_auth.update_user(
-            firebase_user.uid,
-            email=email,
-        )
+        logger.info(msg)
+        return create_response(status=409, message=msg)
+    except FirebaseError as e:
+        msg = f"Firebase rejected the update: {e}"
+        logger.error(msg)
+        return create_response(status=500, message="Could not update account")
+
     if email != ex_email:
         update_email_across_models(ex_email, email)
 

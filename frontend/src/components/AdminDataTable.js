@@ -442,18 +442,24 @@ function AdminDataTable({
   const onFinish = useCallback((valuesChanged, _selected_record) => {
     async function saveValues(values, _selected_record) {
       values.ex_email = _selected_record.email;
-      await editEmailPassword(values).then((res) => {
-        if (res.status === 200) {
+      try {
+        const res = await editEmailPassword(values);
+        if (res && res.status === 200) {
           refresh();
           success();
         } else {
-          if (res.response && res.response.status === 422) {
-            alert("Failed create firebase account");
-          } else {
-            alert("Already registered Email: " + values.email);
-          }
+          message.error("Failed to update email/password");
         }
-      });
+      } catch (err) {
+        // Surface the backend's actual error message (e.g. our 404
+        // "No Firebase Auth account exists for {email}…") instead of
+        // crashing with a TypeError on an undefined response.
+        const serverMsg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to update email/password";
+        message.error(serverMsg);
+      }
     }
     if (valuesChanged) {
       form

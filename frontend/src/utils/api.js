@@ -705,12 +705,10 @@ export const adminHubUserData = (values, __image, id) => {
 
 export const editEmailPassword = (data) => {
   const requestExtension = `/edit_email_password`;
-  return authPost(requestExtension, data).then(
-    (response) => response,
-    (err) => {
-      console.error(err);
-    }
-  );
+  // Let axios rejections propagate so the caller can read the server's
+  // error message (err.response.data.message) — swallowing them here
+  // hid the 404 "No Firebase Auth account for ex_email" details.
+  return authPost(requestExtension, data);
 };
 
 export const createEvent = (event) => {

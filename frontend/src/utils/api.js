@@ -239,7 +239,15 @@ export const createApplication = (application) => {
   );
 };
 
+const _hasValidEmailAndRole = (email, role) =>
+  typeof email === "string" &&
+  email.length > 0 &&
+  Number.isFinite(Number(role));
+
 export const getApplicationStatus = async (email, role) => {
+  if (!_hasValidEmailAndRole(email, role)) {
+    return { ok: false, state: null };
+  }
   const requestExtension = `/application/status/${email}/${role}`;
   try {
     const res = await instance.get(requestExtension);
@@ -254,6 +262,9 @@ export const getApplicationStatus = async (email, role) => {
 };
 
 export const checkProfileExists = async (email, role) => {
+  if (!_hasValidEmailAndRole(email, role)) {
+    return { profileExists: false, rightRole: undefined };
+  }
   const requestExtension = `/application/profile/exists/${email}/${role}`;
   const res = await instance.get(requestExtension);
   let profileExists = res.data?.result?.profileExists;
@@ -285,6 +296,9 @@ export const changeStateBuildProfile = async ({ email, role }) => {
 };
 
 export const checkStatusByEmail = async (email, role) => {
+  if (!_hasValidEmailAndRole(email, role)) {
+    return { inFirebase: false, profileExists: false, isVerified: false };
+  }
   const requestExtension = `/application/email/status/${email}/${role}`;
   const res = await instance.get(requestExtension);
   let inFirebase = res.data?.result?.inFirebase;

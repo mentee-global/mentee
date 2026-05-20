@@ -374,13 +374,18 @@ def get_application_mentee_by_id(id):
 
 @apply.route("/email/status/<email>/<role>", methods=["GET"])
 def get_email_status_by_role(email, role):
-    role = int(role)
-    email = email.lower()
     response_data = {
         "inFirebase": False,
         "isVerified": False,
         "profileExists": False,
     }
+    try:
+        role = int(role)
+    except (TypeError, ValueError):
+        return create_response(message="Invalid role", data=response_data)
+    if not email or email.lower() in ("null", "undefined"):
+        return create_response(message="Invalid email", data=response_data)
+    email = email.lower()
 
     try:
         VerifiedEmail.objects.get(email=email, role=str(role))
@@ -418,7 +423,12 @@ def get_email_status_by_role(email, role):
 
 @apply.route("/status/<email>/<role>", methods=["GET"])
 def get_application_status(email, role):
-    role = int(role)
+    try:
+        role = int(role)
+    except (TypeError, ValueError):
+        return create_response(message="Invalid role", data={"state": None})
+    if not email or email.lower() in ("null", "undefined"):
+        return create_response(message="Invalid email", data={"state": None})
     application = None
     try:
         if role == Account.MENTOR:
@@ -452,7 +462,12 @@ def get_application_status(email, role):
 
 @apply.route("/profile/exists/<email>/<role>", methods=["GET"])
 def check_profile_exists(email, role):
-    role = int(role)
+    try:
+        role = int(role)
+    except (TypeError, ValueError):
+        return create_response(message="Invalid role", data={"profileExists": False})
+    if not email or email.lower() in ("null", "undefined"):
+        return create_response(message="Invalid email", data={"profileExists": False})
     profile_exists = False
     try:
         # test if the email is in mongodb

@@ -82,8 +82,10 @@ function AddAppointmentModal({
         }
       }
       var res = [];
-      for (let mentee_item of temp) {
-        res.push({ value: mentee_item._id.$oid, label: mentee_item.name });
+      if (Array.isArray(temp)) {
+        for (let mentee_item of temp) {
+          res.push({ value: mentee_item._id.$oid, label: mentee_item.name });
+        }
       }
       setMenteeArr(res);
     }

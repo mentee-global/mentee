@@ -65,7 +65,8 @@ export const fetchAccountById = (id, type) => {
     },
   }).then(
     (response) => {
-      let res = response.data.result.account;
+      const res = response?.data?.result?.account;
+      if (!res) return undefined;
       res.role = type;
       return res;
     },
@@ -124,15 +125,16 @@ export const fetchAccounts = (
     },
   }).then(
     (response) => {
-      let account_data = response.data.result.accounts;
-      account_data.map((account_item) => {
+      const account_data = response?.data?.result?.accounts;
+      if (!Array.isArray(account_data)) return [];
+      account_data.forEach((account_item) => {
         account_item.role = type;
-        return true;
       });
       return account_data;
     },
     (err) => {
       console.error(err);
+      return [];
     }
   );
 };
@@ -349,7 +351,8 @@ export const getCommunityLibraries = async (user) => {
       hub_id: !user.hub_id ? user._id.$oid : user.hub_id,
     },
   }).catch(console.error);
-  const data = res.data.result.library;
+  const data = res?.data?.result?.library;
+  if (!Array.isArray(data)) return [];
   let newData = [];
   let seenOids = new Set();
   for (let item of data) {
@@ -378,9 +381,12 @@ export const getTrainings = async (
         user_id: user_id,
       },
     });
-    const trains = res.data.result.trainings;
+    const trains = res?.data?.result?.trainings;
     const newTrain = [];
     const seenOids = new Set();
+    if (!Array.isArray(trains)) {
+      return { ok: true, trainings: [] };
+    }
     for (let train of trains) {
       const oid = train._id["$oid"];
       if (!seenOids.has(oid)) {
@@ -551,7 +557,8 @@ export const getAnnouncements = async (
       hub_user_id: hub_user_id,
     },
   }).catch(console.error);
-  const data = res.data.result.res;
+  const data = res?.data?.result?.res;
+  if (!Array.isArray(data)) return [];
   let newData = [];
   for (let item of data) {
     item.id = item._id["$oid"];
@@ -919,6 +926,10 @@ export const fetchAllAppointments = () => {
 };
 
 export const downloadBlob = (response, filename) => {
+  if (!response || response.data == null) {
+    console.error("downloadBlob: missing response data, skipping download");
+    return;
+  }
   const url = window.URL.createObjectURL(new Blob([response.data]));
   const link = document.createElement("a");
   link.href = url;
@@ -1363,7 +1374,8 @@ export const fetchAdminLanguages = async () => {
   const requestExtension = `/masters/languages`;
   var records = await authGet(requestExtension).catch(console.error);
   var res = [];
-  var languages = records.data.result.result;
+  var languages = records?.data?.result?.result;
+  if (!Array.isArray(languages)) return res;
   var index = 0;
   for (let language of languages) {
     index++;
@@ -1396,7 +1408,8 @@ export const fetchAdminSpecializations = async () => {
   const requestExtension = `/masters/specializations`;
   var records = await authGet(requestExtension).catch(console.error);
   var res = [];
-  var specializations = records.data.result.result;
+  var specializations = records?.data?.result?.result;
+  if (!Array.isArray(specializations)) return res;
   var index = 0;
   for (let specialization of specializations) {
     index++;
@@ -1440,7 +1453,8 @@ export const getDisplayLanguages = async () => {
   const records = await authGet(requestExtension).catch(console.error);
   const currentLang = i18n.language;
   let res = [];
-  const languages = records.data?.result?.result ?? [];
+  const languages = records?.data?.result?.result;
+  if (!Array.isArray(languages)) return res;
   for (let language of languages) {
     const value = language.name;
     res.push({ value, label: language?.translations?.[currentLang] ?? value });
@@ -1453,7 +1467,8 @@ export const getDisplaySpecializations = async () => {
   const records = await authGet(requestExtension).catch(console.error);
   const currentLang = i18n.language;
   let res = [];
-  const specializations = records.data?.result?.result ?? [];
+  const specializations = records?.data?.result?.result;
+  if (!Array.isArray(specializations)) return res;
   for (let specialization of specializations) {
     const value = specialization.name;
     res.push({
@@ -1547,14 +1562,16 @@ export const searchAccounts = (type, params = {}) => {
   const requestExtension = `/accounts/${type}/search`;
   return authGet(requestExtension, { params }).then(
     (response) => {
-      const result = response.data.result;
-      result.accounts.forEach((a) => {
+      const result = response?.data?.result || {};
+      const accounts = Array.isArray(result.accounts) ? result.accounts : [];
+      accounts.forEach((a) => {
         a.role = type;
       });
-      return result;
+      return { ...result, accounts, total: result.total ?? accounts.length };
     },
     (err) => {
       console.error(err);
+      return { accounts: [], total: 0 };
     }
   );
 };

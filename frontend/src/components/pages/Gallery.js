@@ -175,14 +175,13 @@ function Gallery(props) {
         }
       }
       var temp = [];
-      if (all_data) {
-        all_data.map((item) => {
+      if (Array.isArray(all_data)) {
+        all_data.forEach((item) => {
           temp.push({
             value:
               item.organization + "_" + (item.id ? item.id : item._id["$oid"]),
             label: item.organization,
           });
-          return false;
         });
       }
       setAllPartners(temp);
@@ -208,10 +207,11 @@ function Gallery(props) {
 
   useEffect(() => {
     function initializeFavorites() {
-      let fav_set = new Set();
-      mentee.favorite_mentors_ids.forEach((id) => {
-        fav_set.add(id);
-      });
+      const fav_set = new Set();
+      const ids = mentee?.favorite_mentors_ids;
+      if (Array.isArray(ids)) {
+        ids.forEach((id) => fav_set.add(id));
+      }
       setFavoriteMentorIds(fav_set);
     }
     if (isMentee && mentee) {

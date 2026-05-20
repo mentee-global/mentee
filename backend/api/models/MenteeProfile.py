@@ -33,7 +33,7 @@ class MenteeProfile(Document, Mixin):
     workstate = ListField(StringField(), required=False)
     preferred_language = StringField(required=False, default="en-US")
     roomName = StringField(required=False)
-    timezone = StringField(required=True)
+    timezone = StringField(required=False)
     birthday = DateField(required=False)
     mentorMentee = StringField(required=False)
 

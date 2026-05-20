@@ -34,7 +34,7 @@ class PartnerProfile(Document, Mixin):
     hub_user = DictField(required=False)
     hub_user_name = StringField(required=False)
     roomName = StringField(required=False)
-    timezone = StringField(required=True)
+    timezone = StringField(required=False)
     mentorMentee = StringField(required=False)
 
     def __repr__(self):

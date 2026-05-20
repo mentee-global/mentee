@@ -8,7 +8,7 @@ const isPending = (appointment) =>
   (appointment.accepted !== undefined && !appointment.accepted);
 
 export const formatAppointments = (data, type) => {
-  if (!data || !data.requests) {
+  if (!data || !Array.isArray(data.requests)) {
     return;
   }
 

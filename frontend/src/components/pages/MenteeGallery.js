@@ -86,14 +86,15 @@ function Gallery(props) {
         }
       }
       var temp = [];
-      all_data.map((item) => {
-        temp.push({
-          value:
-            item.organization + "_" + (item.id ? item.id : item._id["$oid"]),
-          label: item.organization,
+      if (Array.isArray(all_data)) {
+        all_data.forEach((item) => {
+          temp.push({
+            value:
+              item.organization + "_" + (item.id ? item.id : item._id["$oid"]),
+            label: item.organization,
+          });
         });
-        return false;
-      });
+      }
       setAllPartners(temp);
     }
     getAllPartners();

@@ -14,6 +14,21 @@ from datetime import datetime
 from mongoengine.queryset.visitor import Q
 
 
+def _normalize_organization(value):
+    """Coerce an organization input into a string-or-None.
+
+    The frontend sometimes posts an int (e.g. 0) to mean "no organization",
+    but the mongoengine StringField rejects non-strings. Treat empty/falsy
+    and the literal 0 as "no organization", and stringify anything else so
+    downstream lookups still work.
+    """
+    if value is None or value == 0 or value == "":
+        return None
+    if isinstance(value, str):
+        return value
+    return str(value)
+
+
 def new_profile(data: dict = {}, profile_type: int = -1):
     """Parses data given by POST request
 
@@ -26,6 +41,9 @@ def new_profile(data: dict = {}, profile_type: int = -1):
     """
     if not data or profile_type == -1:
         return None
+
+    if "organization" in data:
+        data["organization"] = _normalize_organization(data["organization"])
 
     new_profile = None
     if profile_type == Account.PARTNER:
@@ -149,6 +167,10 @@ def edit_profile(data: dict = {}, profile: object = None):
     """
     if not data or not profile:
         return False
+
+    if "organization" in data:
+        data["organization"] = _normalize_organization(data["organization"])
+
     if isinstance(profile, Admin):
         profile.roomName = data.get("roomName", profile.roomName)
         return True

@@ -212,12 +212,22 @@ const TrainingList = (props) => {
               <Button
                 onClick={async () => {
                   let response = null;
-                  if (training.signed_data[training._id.$oid]) {
-                    response = await getSignedDocfile(
-                      training.signed_data[training._id.$oid].$oid
-                    );
+                  const signedEntry =
+                    training.signed_data &&
+                    training.signed_data[training._id.$oid];
+                  if (signedEntry) {
+                    response = await getSignedDocfile(signedEntry.$oid);
                   } else {
                     response = await getTrainVideo(training.id);
+                  }
+                  if (!response || response.data == null) {
+                    message.error(
+                      t("training.downloadFailed", {
+                        defaultValue:
+                          "Could not download this training. Please try again.",
+                      })
+                    );
+                    return;
                   }
                   downloadBlob(response, training.file_name);
                 }}

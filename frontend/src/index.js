@@ -23,14 +23,39 @@ import { reportClientError } from "utils/errorReport";
 
 // Suppress ResizeObserver loop error (harmless browser/React warning) and
 // report everything else to the backend so we know when users hit crashes.
+// Transient connectivity errors (offline, dropped Wi-Fi, dropped fetches
+// during navigation) are noise: the user retries and they go away. We
+// don't want them to page admins, so we filter them at the reporter.
+const isTransientNetworkError = (message) => {
+  if (typeof message !== "string") return false;
+  const m = message.toLowerCase();
+  return (
+    m === "network error" ||
+    m.includes("failed to fetch") ||
+    m.includes("load failed") ||
+    m.startsWith("loading chunk") ||
+    m.startsWith("loading css chunk") ||
+    m.includes("cancelled") ||
+    m.includes("aborted")
+  );
+};
+
 const prevOnError = window.onerror;
 window.onerror = (message, source, lineno, colno, error) => {
   if (typeof message === "string" && message.includes("ResizeObserver loop")) {
     return true; // Suppress this specific error
   }
+  const resolvedMessage = String(
+    (error && error.message) || message || "window.onerror"
+  );
+  if (isTransientNetworkError(resolvedMessage)) {
+    return prevOnError
+      ? prevOnError(message, source, lineno, colno, error)
+      : false;
+  }
   try {
     reportClientError({
-      message: String((error && error.message) || message || "window.onerror"),
+      message: resolvedMessage,
       stack: (error && error.stack) || `${source}:${lineno}:${colno}`,
       endpoint: window.location.pathname,
     });
@@ -43,10 +68,12 @@ window.onerror = (message, source, lineno, colno, error) => {
 window.addEventListener("unhandledrejection", (event) => {
   try {
     const reason = event && event.reason;
+    const message = String(
+      (reason && reason.message) || reason || "unhandledrejection"
+    );
+    if (isTransientNetworkError(message)) return;
     reportClientError({
-      message: String(
-        (reason && reason.message) || reason || "unhandledrejection"
-      ),
+      message,
       stack: (reason && reason.stack) || "",
       endpoint: window.location.pathname,
     });

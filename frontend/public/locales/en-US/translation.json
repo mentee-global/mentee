@@ -614,7 +614,9 @@
     "community_info": "Community Information",
     "inforamtion": "Information",
     "info_board": "Information Board",
-    "meeting": "Meeting Link"
+    "meeting": "Meeting Link",
+    "bot": "Mentee Bot",
+    "bot_new_badge": "NEW"
   },
   "verifyEmail": {
     "body": "We sent a verification link to your email. Click it to verify your account, then come back here and log in.",

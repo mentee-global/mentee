@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Opening Mentee Mentor…</title>
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #ffffff;
+        color: #2c2c2c;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+      .center {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        text-align: center;
+        padding: 24px;
+      }
+      .spinner {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 3px solid rgba(128, 0, 32, 0.15);
+        border-top-color: #800020;
+        animation: spin 0.9s linear infinite;
+      }
+      .title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+      }
+      .subtitle {
+        font-size: 14px;
+        color: #6f6f6f;
+        max-width: 360px;
+        margin: 0;
+      }
+      .fallback {
+        margin-top: 8px;
+        font-size: 13px;
+      }
+      .fallback a {
+        color: #800020;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .spinner {
+          animation: none;
+          border-top-color: rgba(128, 0, 32, 0.6);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="title">Opening Mentee Mentor…</p>
+      <p class="subtitle">Signing you in via Mentee. This should only take a moment.</p>
+      <noscript>
+        <p class="fallback">
+          JavaScript is required.
+          <a href="https://api.bot.menteeglobal.org/api/auth/login?redirect_to=/chat&amp;role_hint=mentee">Continue manually</a>.
+        </p>
+      </noscript>
+    </div>
+    <script>
+      (function () {
+        // Mentee app and bot both run locally for dev. Anywhere else =
+        // production. No staging bot exists yet — the Mentee dev (Heroku) tier
+        // points at the production bot too.
+        var isLocal =
+          location.hostname === "localhost" ||
+          location.hostname === "127.0.0.1";
+        var apiOrigin = isLocal
+          ? "http://localhost:8001"
+          : "https://api.bot.menteeglobal.org";
+        var target =
+          apiOrigin +
+          "/api/auth/login?redirect_to=/chat&role_hint=mentee";
+
+        // Give the spinner one frame to paint before we hand the tab off
+        // to the cross-origin OAuth chain. Without this, fast networks can
+        // commit the navigation before paint and the user sees the same
+        // blank tab we were trying to fix.
+        requestAnimationFrame(function () {
+          window.location.replace(target);
+        });
+      })();
+    </script>
+  </body>
+</html>

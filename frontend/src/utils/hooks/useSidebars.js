@@ -20,10 +20,97 @@ import {
   FileOutlined,
   AppstoreOutlined,
   SafetyCertificateOutlined,
+  ThunderboltFilled,
 } from "@ant-design/icons";
+import { css, keyframes } from "@emotion/css";
 import { ACCOUNT_TYPE } from "utils/consts";
 import { getLoginPath } from "utils/auth.service";
 import { fetchHasOauthAccess } from "features/oauthAccessSlice";
+
+// Same-origin "launching..." page that shows a spinner before kicking off
+// the cross-domain OAuth chain to the Mentee bot. See
+// public/launch-bot.html — that page picks the right bot backend host for
+// dev vs prod and then 302s into /api/auth/login?redirect_to=/chat. Going
+// through this shim instead of linking the bot directly avoids the long
+// blank-tab gap that the user sees while the browser ping-pongs through
+// the OAuth 302s.
+const BOT_CHAT_URL = "/launch-bot.html";
+
+// Sentinel key so NavigationSider can detect this entry and skip its default
+// `history.push`; the actual navigation happens via the anchor tag in `label`.
+const EXTERNAL_BOT_KEY = "__external_bot_chat";
+
+const sparklePulse = keyframes`
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.65; transform: scale(0.92); }
+`;
+
+const botLinkClass = css`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #800020;
+  font-weight: 600;
+  &:hover {
+    color: #800020;
+  }
+`;
+
+const sparkleIconClass = css`
+  color: #d4af37;
+  font-size: 12px;
+  animation: ${sparklePulse} 1.8s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+const newBadgeClass = css`
+  display: inline-block;
+  background: linear-gradient(135deg, #800020 0%, #c41e3a 100%);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(128, 0, 32, 0.25);
+`;
+
+// Style on the Menu <li> wrapper. Subtle gradient + accent border so the
+// entry stands out as a featured/new item without clashing with Ant's
+// hover/selected states.
+const botItemStyle = {
+  background:
+    "linear-gradient(90deg, rgba(212, 175, 55, 0.12) 0%, rgba(128, 0, 32, 0.06) 100%)",
+  borderLeft: "3px solid #800020",
+};
+
+function botSidebarItem(t) {
+  return {
+    label: (
+      <a
+        href={BOT_CHAT_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        // Stop the click from bubbling to Ant's Menu onClick so it doesn't
+        // also try to history.push("/__external_bot_chat"). The sentinel key
+        // is a defense-in-depth guard in NavigationSider.
+        onClick={(e) => e.stopPropagation()}
+        className={botLinkClass}
+      >
+        <span>{t("sidebars.bot")}</span>
+        <span className={newBadgeClass}>{t("sidebars.bot_new_badge")}</span>
+      </a>
+    ),
+    key: EXTERNAL_BOT_KEY,
+    icon: <ThunderboltFilled className={sparkleIconClass} />,
+    style: botItemStyle,
+  };
+}
+
+export { EXTERNAL_BOT_KEY };
 
 const CONNECTED_APPS_ROLES = new Set([
   ACCOUNT_TYPE.ADMIN,
@@ -139,6 +226,7 @@ export default function useSidebars(userType, user, t) {
       key: `messages/${ACCOUNT_TYPE.MENTEE}`,
       icon: <MessageOutlined />,
     },
+    botSidebarItem(t),
     {
       label: t("sidebars.meeting"),
       key: `createmeetinglink/${ACCOUNT_TYPE.MENTEE}`,

@@ -4,7 +4,7 @@ import { NavLink, withRouter, useHistory, useLocation } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
-import useSidebars from "utils/hooks/useSidebars";
+import useSidebars, { EXTERNAL_BOT_KEY } from "utils/hooks/useSidebars";
 import { collapse } from "features/userSlice";
 // import { ReactComponent as Logo } from "resources/mentee.svg";
 import BigLogoImage from "resources/Mentee_logo_letter.png";
@@ -42,6 +42,10 @@ function NavigationSider() {
     location.pathname.includes("/admin_group_messages");
 
   const onClick = ({ key }) => {
+    // External entries (e.g. bot chat link) handle navigation via an <a>
+    // inside their label; skip history.push so we don't navigate the current
+    // tab to a non-existent route if the anchor's stopPropagation misses.
+    if (key === EXTERNAL_BOT_KEY) return;
     isMobile && dispatch(collapse());
     history.push(`/${key}`);
   };

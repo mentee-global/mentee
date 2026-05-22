@@ -612,7 +612,9 @@
     "community_info": "Información de la comunidad",
     "inforamtion": "Información",
     "info_board": "Tarjeta de la información",
-    "meeting": "Enlace de reunión"
+    "meeting": "Enlace de reunión",
+    "bot": "Mentee Bot",
+    "bot_new_badge": "NUEVO"
   },
   "verifyEmail": {
     "body": "Te enviamos un enlace de verificación a tu correo. Haz clic en él para verificar tu cuenta y luego vuelve aquí para iniciar sesión.",

@@ -4,7 +4,6 @@ node_modules
 backend/firebase_service_key.json
 backend/keys/
 package-lock.json
-yarn.lock
 heroku-logs-prod.txt
 heroku-logs.txt
 poetry.lock

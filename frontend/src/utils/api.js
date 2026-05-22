@@ -1860,3 +1860,123 @@ export const fetchOAuthHasAny = async () => {
   const res = await authGet("/user/oauth-access/has-any");
   return Boolean(res?.data?.result?.has_any);
 };
+
+// Admin dashboard — see backend/api/views/admin_dashboard.py.
+const DASH = "/admin/dashboard";
+
+export const fetchDashboardSummary = async () => {
+  const res = await authGet(`${DASH}/summary`);
+  return res?.data?.result?.summary ?? null;
+};
+
+export const fetchDashboardApplicationsByMonth = async (role, months = 12) => {
+  const res = await authGet(`${DASH}/applications/by-month`, {
+    params: { role, months },
+  });
+  return res?.data?.result?.buckets ?? [];
+};
+
+export const fetchDashboardAppointmentsByMonth = async (months = 12) => {
+  const res = await authGet(`${DASH}/appointments/by-month`, {
+    params: { months },
+  });
+  return res?.data?.result?.buckets ?? [];
+};
+
+export const fetchDashboardTopMentors = async (limit = 10) => {
+  const res = await authGet(`${DASH}/appointments/top-mentors`, {
+    params: { limit },
+  });
+  return res?.data?.result?.mentors ?? [];
+};
+
+export const fetchDashboardAcceptanceRates = async (
+  minRequests = 3,
+  limit = 30
+) => {
+  const res = await authGet(`${DASH}/appointments/acceptance-rates`, {
+    params: { min_requests: minRequests, limit },
+  });
+  return res?.data?.result?.mentors ?? [];
+};
+
+export const fetchDashboardMessagesByDay = async (days = 90) => {
+  const res = await authGet(`${DASH}/messages/by-day`, { params: { days } });
+  return res?.data?.result?.buckets ?? [];
+};
+
+export const fetchDashboardCountries = async (limit = 15) => {
+  const res = await authGet(`${DASH}/demographics/countries`, {
+    params: { limit },
+  });
+  return res?.data?.result?.items ?? [];
+};
+
+export const fetchDashboardTopics = async (limit = 15) => {
+  const res = await authGet(`${DASH}/demographics/topics`, {
+    params: { limit },
+  });
+  return res?.data?.result?.items ?? [];
+};
+
+export const fetchDashboardCrisisStatus = async (limit = 10) => {
+  const res = await authGet(`${DASH}/demographics/crisis-status`, {
+    params: { limit },
+  });
+  return res?.data?.result?.items ?? [];
+};
+
+export const fetchDashboardIdentify = async (source = "mentee") => {
+  const res = await authGet(`${DASH}/demographics/identify`, {
+    params: { source },
+  });
+  return res?.data?.result?.items ?? [];
+};
+
+export const fetchDashboardMentorSpecializations = async (limit = 15) => {
+  const res = await authGet(`${DASH}/demographics/mentor-specializations`, {
+    params: { limit },
+  });
+  return res?.data?.result?.items ?? [];
+};
+
+export const fetchDashboardMentorFlags = async () => {
+  const res = await authGet(`${DASH}/demographics/mentor-flags`);
+  return res?.data?.result?.flags ?? null;
+};
+
+export const fetchDashboardTopPartners = async (
+  role = "mentee",
+  limit = 10
+) => {
+  const res = await authGet(`${DASH}/partners/top`, {
+    params: { role, limit },
+  });
+  return res?.data?.result?.partners ?? [];
+};
+
+export const fetchDashboardErrorsByDay = async (days = 30) => {
+  const res = await authGet(`${DASH}/errors/by-day`, { params: { days } });
+  return res?.data?.result?.buckets ?? [];
+};
+
+export const fetchDashboardTopExceptions = async (limit = 10) => {
+  const res = await authGet(`${DASH}/errors/top-exceptions`, {
+    params: { limit },
+  });
+  return res?.data?.result?.items ?? [];
+};
+
+export const fetchDashboardTopErrorEndpoints = async (limit = 10) => {
+  const res = await authGet(`${DASH}/errors/top-endpoints`, {
+    params: { limit },
+  });
+  return res?.data?.result?.items ?? [];
+};
+
+export const fetchDashboardOauthTokensByDay = async (days = 60) => {
+  const res = await authGet(`${DASH}/oauth/tokens-by-day`, {
+    params: { days },
+  });
+  return res?.data?.result?.buckets ?? [];
+};

@@ -6,6 +6,15 @@ from api.models import Availability
 
 
 class DirectMessage(Document, Mixin):
+    meta = {
+        "indexes": [
+            "-created_at",
+            "message_read",
+            {"fields": ["sender_id", "-created_at"]},
+            {"fields": ["recipient_id", "-created_at"]},
+        ],
+    }
+
     body = StringField(required=True)
     message_read = BooleanField(required=True)
     sender_id = ObjectIdField(required=True)

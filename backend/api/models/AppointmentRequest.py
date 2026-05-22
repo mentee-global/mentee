@@ -8,6 +8,15 @@ from api.models import Availability
 class AppointmentRequest(Document, Mixin):
     """Appointment Request Collection."""
 
+    meta = {
+        "indexes": [
+            "mentor_id",
+            "mentee_id",
+            "status",
+            "timeslot.start_time",
+        ],
+    }
+
     mentor_id = ObjectIdField(required=True)
     mentee_id = ObjectIdField()
     name = StringField(required=True)

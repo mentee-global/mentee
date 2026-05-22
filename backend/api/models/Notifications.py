@@ -7,6 +7,13 @@ from mongoengine import *
 class Notifications(Document, Mixin):
     """Model for mentor application."""
 
+    meta = {
+        "indexes": [
+            "readed",
+            "-date_submitted",
+        ],
+    }
+
     message = StringField(required=True)
     mentorId = StringField(required=True)
     date_submitted = DateTimeField(required=True)

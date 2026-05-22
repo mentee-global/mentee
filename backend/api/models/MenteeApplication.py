@@ -8,7 +8,12 @@ class MenteeApplication(Document, Mixin):
     """Model for Mentee application."""
 
     meta = {
-        "indexes": ["application_state"],
+        "indexes": [
+            "application_state",
+            "-date_submitted",
+            "partner",
+            {"fields": ["application_state", "-date_submitted"]},
+        ],
     }
 
     email = StringField(required=True)

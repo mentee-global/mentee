@@ -8,6 +8,13 @@ from datetime import datetime
 class BugReport(Document, Mixin):
     """Bug Report Collection."""
 
+    meta = {
+        "indexes": [
+            "status",
+            "-date_submitted",
+        ],
+    }
+
     description = StringField(required=True)
     user_name = StringField(required=True)
     user_email = StringField(required=True)

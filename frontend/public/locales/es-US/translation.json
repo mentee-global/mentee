@@ -801,5 +801,57 @@
   },
   "offline": {
     "banner": "Estás sin conexión. Es posible que los cambios no se guarden hasta que vuelva tu conexión."
+  },
+  "dashboard": {
+    "title": "Admin dashboard",
+    "kpi": {
+      "totalUsers": "Total users",
+      "mentees": "Mentee profiles",
+      "menteeApproval": "Mentee approval",
+      "mentorDropoff": "Mentor build-profile drop-off",
+      "mentorDropoffHint": "Approved but never finished onboarding",
+      "openBugs": "Open bug reports",
+      "oldestBugDays": "Oldest: {{days}} days",
+      "errors7d": "Errors (last 7d)",
+      "errorsTotal": "{{total}} total in retention window",
+      "botSessions": "Active bot sessions",
+      "botUsers": "{{count}} distinct users"
+    },
+    "charts": {
+      "roles": "Users by role",
+      "oauthSessions": "Active OAuth sessions by client",
+      "menteeFunnel": "Mentee applications by month",
+      "mentorFunnel": "Mentor applications by month",
+      "countries": "Top countries (mentee applicants)",
+      "topics": "Top topics requested",
+      "crisis": "Crisis & immigrant status (mentees)",
+      "mentorSpecs": "Mentor specializations",
+      "menteeIdentify": "Mentee gender identification",
+      "mentorFlags": "Mentor demographic flags (%)",
+      "apptStatus": "Appointments by status",
+      "topMentors": "Top mentors by sessions",
+      "acceptanceRates": "Mentor acceptance rates",
+      "apptsByMonth": "Appointments by month",
+      "messagesByDay": "Direct messages by day (last 90d)",
+      "errorsByDay": "Errors per day",
+      "topExceptions": "Top exception types",
+      "topErrorEndpoints": "Top failing endpoints",
+      "oauthTokens": "OAuth tokens issued per day",
+      "topPartnersMentee": "Top partners — mentee applications",
+      "topPartnersMentor": "Top partners — mentor applications"
+    },
+    "empty": {
+      "oauthSessions": "No active OAuth sessions"
+    },
+    "hygiene": {
+      "unreadNotifications": "{{pct}}% of notifications are unread",
+      "unreadNotificationsDesc": "Notifications feature appears unused — consider disabling or rewriting.",
+      "legacyAppts": "{{pct}}% of appointments use legacy schema",
+      "legacyApptsDesc": "Older rows have the legacy `accepted` bool but no `status` string.",
+      "danglingSigned": "Only {{pct}}% of signed_docs.training_id resolve",
+      "danglingSignedDesc": "Most training references no longer match a real training document.",
+      "dirtyRoles": "{{count}} users have a dirty role value",
+      "dirtyRolesDesc": "Role field has non-numeric values (e.g. 'mentor' instead of '1')."
+    }
   }
 }

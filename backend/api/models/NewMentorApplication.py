@@ -9,7 +9,12 @@ class NewMentorApplication(Document, Mixin):
     """Model for mentor application."""
 
     meta = {
-        "indexes": ["application_state"],
+        "indexes": [
+            "application_state",
+            "-date_submitted",
+            "partner",
+            {"fields": ["application_state", "-date_submitted"]},
+        ],
     }
 
     email = StringField(required=True)

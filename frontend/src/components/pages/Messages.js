@@ -1,16 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { withRouter } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import MessagesSidebar from "components/MessagesSidebar";
 import { Layout } from "antd";
 import MessagesChatArea from "components/MessagesChatArea";
-import { getLatestMessages, getMessageData, fetchPartners } from "utils/api";
+import {
+  getLatestMessages,
+  getMessageData,
+  getDirectMessagesPage,
+  fetchPartners,
+} from "utils/api";
 import socket from "utils/socket";
 
 import "../css/Messages.scss";
 import { setActiveMessageId } from "features/messagesSlice";
 import { updateNotificationsCount } from "features/notificationsSlice";
+
+// How many messages to load per page when scrolling up through a thread.
+const THREAD_PAGE_SIZE = 30;
 
 function Messages(props) {
   const { history } = props;
@@ -23,6 +31,13 @@ function Messages(props) {
   );
   const [userType, setUserType] = useState();
   const [messages, setMessages] = useState([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const [beforeCursor, setBeforeCursor] = useState(null);
+  // Always-current activeMessageId so async fetches can detect a conversation
+  // switch and avoid writing one thread's messages into another.
+  const activeMessageIdRef = useRef(activeMessageId);
+  activeMessageIdRef.current = activeMessageId;
   const [loading, setLoading] = useState(false);
   const [isBookingVisible, setBookingVisible] = useState(false);
   const [inviteeId, setinviteeId] = useState();
@@ -78,6 +93,11 @@ function Messages(props) {
       setAllMessages(data?.allMessages);
       setSidebarLoading(false);
       setRestrictedPartners(restricted_partners);
+      // Only auto-open the first contact when the URL doesn't already point at a
+      // specific conversation. Otherwise a refresh (or deep-link) on one thread
+      // would bounce the user to the first contact instead of staying put.
+      const currentReceiver = props.match?.params?.receiverId;
+      const hasValidReceiver = currentReceiver && currentReceiver.length > 3;
       if (data && data?.data?.length) {
         let unread_message_senders = [];
         data?.data.forEach((message_item) => {
@@ -95,7 +115,10 @@ function Messages(props) {
           }
         });
 
-        if (window.location.pathname.includes("/messages/")) {
+        if (
+          window.location.pathname.includes("/messages/") &&
+          !hasValidReceiver
+        ) {
           history.push(
             `/messages/${data?.data[0].otherId}?user_type=${data?.data[0].otherUser.user_type}`
           );
@@ -127,20 +150,51 @@ function Messages(props) {
       var user_type = new URLSearchParams(props.location.search).get(
         "user_type"
       );
+      const deepLinkMessageId = new URLSearchParams(props.location.search).get(
+        "message_id"
+      );
       dispatch(
         setActiveMessageId(props.match ? props.match.params.receiverId : null)
       );
       setUserType(user_type);
 
       if (activeMessageId && profileId && activeMessageId.length > 3) {
+        const convo = activeMessageId;
         setLoading(true);
-        setMessages(await getMessageData(profileId, activeMessageId));
+        if (deepLinkMessageId) {
+          // Deep-link from search: load the whole thread so the target message
+          // is present in the DOM and can be scrolled to.
+          const full = await getMessageData(profileId, activeMessageId);
+          if (activeMessageIdRef.current !== convo) return;
+          setMessages(full || []);
+          setHasMore(false);
+          setBeforeCursor(null);
+        } else {
+          const {
+            messages: page,
+            hasMore: more,
+            nextBefore,
+            nextBeforeId,
+          } = await getDirectMessagesPage(profileId, activeMessageId, {
+            limit: THREAD_PAGE_SIZE,
+          });
+          if (activeMessageIdRef.current !== convo) return;
+          setMessages(page);
+          setHasMore(more);
+          setBeforeCursor(
+            nextBefore && nextBeforeId
+              ? { before: nextBefore, beforeId: nextBeforeId }
+              : null
+          );
+        }
         setLoading(false);
       }
     }
     getData();
+    // profileId is included so the thread still loads on a full page refresh,
+    // where the Firebase-derived profileId resolves after activeMessageId is set.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeMessageId]);
+  }, [activeMessageId, profileId]);
 
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
@@ -152,6 +206,50 @@ function Messages(props) {
       }
       fetchLatest();
     }, 500);
+  };
+
+  // Fetch the next older page when the user scrolls to the top of a thread and
+  // prepend it. The keyset cursor is exclusive so pages don't overlap; the _id
+  // de-dupe is just defense-in-depth.
+  const loadOlderMessages = async () => {
+    if (!hasMore || loadingOlder || !beforeCursor) return;
+    const convo = activeMessageId;
+    setLoadingOlder(true);
+    try {
+      const result = await getDirectMessagesPage(profileId, activeMessageId, {
+        limit: THREAD_PAGE_SIZE,
+        before: beforeCursor.before,
+        beforeId: beforeCursor.beforeId,
+      });
+      // Drop the result if the user switched conversations mid-fetch.
+      if (activeMessageIdRef.current !== convo) return;
+      // On a transient failure, leave the cursor and hasMore intact so the user
+      // can retry by scrolling up again, rather than permanently stranding
+      // older history behind a false "end of history".
+      if (result.error) return;
+      const {
+        messages: older,
+        hasMore: more,
+        nextBefore,
+        nextBeforeId,
+      } = result;
+      setMessages((prev) => {
+        const existingIds = new Set(
+          prev.map((m) => m?._id?.$oid).filter(Boolean)
+        );
+        const deduped = older.filter((m) => !existingIds.has(m?._id?.$oid));
+        if (deduped.length === 0) return prev;
+        return [...deduped, ...prev];
+      });
+      setHasMore(more);
+      setBeforeCursor(
+        nextBefore && nextBeforeId
+          ? { before: nextBefore, beforeId: nextBeforeId }
+          : null
+      );
+    } finally {
+      setLoadingOlder(false);
+    }
   };
 
   // BUG: If we swap between breakpoints of mobile/desktop, the sidebar will not update
@@ -181,6 +279,9 @@ function Messages(props) {
           restrictedPartners={restrictedPartners}
           user={user}
           paused={paused}
+          hasMore={hasMore}
+          loadingOlder={loadingOlder}
+          loadOlderMessages={loadOlderMessages}
         />
       </Layout>
     </Layout>

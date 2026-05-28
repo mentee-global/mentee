@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from api.models import (
     MentorProfile,
     MenteeProfile,
@@ -24,9 +24,42 @@ import json
 from datetime import datetime, timedelta, timezone
 from api import socketio
 from mongoengine.queryset.visitor import Q
+from bson import ObjectId
+from bson.errors import InvalidId
 from urllib.parse import unquote
 
 messages = Blueprint("messages", __name__)
+
+# Roles with legitimate cross-user visibility into message history: the
+# admin-only /messages-details console (ADMIN) and SUPPORT, which the auth layer
+# already treats as a universal override. Everyone else may only read their own
+# conversations.
+_STAFF_ROLES = {Account.ADMIN.value, Account.SUPPORT.value}
+
+_PROFILE_MODEL_BY_ROLE = {
+    Account.MENTOR.value: MentorProfile,
+    Account.MENTEE.value: MenteeProfile,
+    Account.PARTNER.value: PartnerProfile,
+}
+
+
+def _caller_role_and_profile_id():
+    """Resolve the authenticated caller's (role, profile_id) from the verified
+    Firebase claims stashed on `g` by verify_user. The profile id is looked up
+    by firebase_uid, so a caller can never assert an identity they do not own
+    (we never trust the profile ids supplied in the request as proof of access).
+    Returns (role_int_or_None, profile_id_str_or_None)."""
+    claims = getattr(g, "auth_claims", None) or {}
+    try:
+        role = int(claims.get("role"))
+    except (TypeError, ValueError):
+        return None, None
+    uid = claims.get("uid")
+    model = _PROFILE_MODEL_BY_ROLE.get(role)
+    if not uid or model is None:
+        return role, None
+    profile = model.objects(firebase_uid=uid).only("id").first()
+    return role, (str(profile.id) if profile else None)
 
 
 @messages.route("/", methods=["GET"])
@@ -208,90 +241,93 @@ def contact_mentor(mentor_id):
 @messages.route("/contacts/<string:user_id>", methods=["GET"])
 @all_users
 def get_sidebar(user_id):
+    # Only the owner of the sidebar (or staff) may read it; otherwise any
+    # authenticated user could enumerate another user's contacts and history.
+    role, caller_id = _caller_role_and_profile_id()
+    if role not in _STAFF_ROLES and caller_id != user_id:
+        return create_response(status=403, message="Forbidden")
     try:
         sentMessages = DirectMessage.objects.filter(
             Q(recipient_id=user_id) | Q(sender_id=user_id)
         ).order_by("-created_at")
 
-        print("send messages", len(sentMessages))
-
-        contacts = []
-        sidebarContacts = set()
-        search_user_ids = set()
+        # Walk the history exactly once (it is newest-first). This single pass
+        # replaces the previous O(contacts * messages) work: the old code
+        # re-serialized the entire `allMessages` list and re-scanned every
+        # message to count `numberOfMessages` for each contact, which made the
+        # Messages page load slower the longer a user's history grew.
+        allMessages = []
+        message_count_by_other_id = {}
+        latest_message_by_other_id = {}
+        ordered_other_ids = []
         for message in sentMessages:
-            otherId = message["recipient_id"]
-            message_read = message["message_read"]
+            allMessages.append(json.loads(message.to_json()))
 
+            otherId = message["recipient_id"]
             if str(otherId) == user_id:
                 otherId = message["sender_id"]
 
-            if otherId not in sidebarContacts and otherId not in search_user_ids:
-                otherUser = None
-                user_type = Account.MENTOR.value
-                print("otherId", otherId)
-                search_user_ids.add(otherId)
+            message_count_by_other_id[otherId] = (
+                message_count_by_other_id.get(otherId, 0) + 1
+            )
+            # First time we see a contact is its latest message (newest-first).
+            if otherId not in latest_message_by_other_id:
+                latest_message_by_other_id[otherId] = message
+                ordered_other_ids.append(otherId)
+
+        contacts = []
+        for otherId in ordered_other_ids:
+            latest_message = latest_message_by_other_id[otherId]
+            otherUser = None
+            user_type = Account.MENTOR.value
+            try:
+                otherUser = MentorProfile.objects.get(id=otherId)
+            except:
                 try:
-                    otherUser = MentorProfile.objects.get(id=otherId)
+                    otherUser = PartnerProfile.objects.get(id=otherId)
+                    user_type = Account.PARTNER.value
                 except:
-                    try:
-                        otherUser = PartnerProfile.objects.get(id=otherId)
-                        user_type = Account.PARTNER.value
-                    except:
-                        pass
-                if not otherUser:
-                    user_type = Account.MENTEE.value
-                    try:
-                        otherUser = MenteeProfile.objects.get(id=otherId)
-                    except Exception as e:
-                        logger.info(e)
-                        msg = "Could not find mentor or mentee for given ids"
-                        logger.info(msg)
-                        pass
-                if otherUser:
-                    otherUser = json.loads(otherUser.to_json())
-                    if user_type == Account.PARTNER.value:
-                        if "organization" in otherUser:
-                            otherUserObj = {
-                                "name": otherUser["organization"],
-                                "user_type": user_type,
-                            }
-                        else:
-                            otherUserObj = {
-                                "name": otherUser["title"],
-                                "user_type": user_type,
-                            }
-                    else:
+                    pass
+            if not otherUser:
+                user_type = Account.MENTEE.value
+                try:
+                    otherUser = MenteeProfile.objects.get(id=otherId)
+                except Exception as e:
+                    logger.info(e)
+                    msg = "Could not find mentor or mentee for given ids"
+                    logger.info(msg)
+                    pass
+            if otherUser:
+                otherUser = json.loads(otherUser.to_json())
+                if user_type == Account.PARTNER.value:
+                    if "organization" in otherUser:
                         otherUserObj = {
-                            "name": otherUser["name"],
+                            "name": otherUser["organization"],
                             "user_type": user_type,
                         }
-
-                    if "image" in otherUser:
-                        otherUserObj["image"] = otherUser["image"]["url"]
-
-                    sidebarObject = {
-                        "otherId": str(otherId),
-                        "message_read": message_read,
-                        "numberOfMessages": len(
-                            [
-                                messagee
-                                for messagee in sentMessages
-                                if (
-                                    messagee["recipient_id"] == otherId
-                                    or messagee["sender_id"] == otherId
-                                )
-                            ]
-                        ),
-                        "otherUser": otherUserObj,
-                        "latestMessage": json.loads(message.to_json()),
+                    else:
+                        otherUserObj = {
+                            "name": otherUser["title"],
+                            "user_type": user_type,
+                        }
+                else:
+                    otherUserObj = {
+                        "name": otherUser["name"],
+                        "user_type": user_type,
                     }
 
-                    allMessages = [
-                        json.loads(message.to_json()) for message in sentMessages
-                    ]
+                if "image" in otherUser:
+                    otherUserObj["image"] = otherUser["image"]["url"]
 
-                    contacts.append(sidebarObject)
-                    sidebarContacts.add(otherId)
+                sidebarObject = {
+                    "otherId": str(otherId),
+                    "message_read": latest_message["message_read"],
+                    "numberOfMessages": message_count_by_other_id[otherId],
+                    "otherUser": otherUserObj,
+                    "latestMessage": json.loads(latest_message.to_json()),
+                }
+
+                contacts.append(sidebarObject)
 
         return create_response(
             data={
@@ -309,6 +345,13 @@ def get_sidebar(user_id):
 @messages.route("/contacts/mentors/<int:page_number>", methods=["GET"])
 @all_users
 def get_sidebar_mentors(page_number):
+    # Staff-only oversight view: it returns every mentor<->mentee conversation's
+    # latest message across the platform, so it must not be reachable by regular
+    # authenticated users (the /messages-details console is admin-gated).
+    role, _ = _caller_role_and_profile_id()
+    if role not in _STAFF_ROLES:
+        return create_response(status=403, message="Forbidden")
+
     partner_id = request.args.get("partner_id", "no-affiliation")
     view_mode = request.args.get("view_mode", "all")
     search_term = request.args.get("searchTerm", "")
@@ -642,6 +685,7 @@ def get_group_messages():
 def get_direct_messages():
     try:
         recipient_id = request.args.get("recipient_id")
+        sender_id = request.args.get("sender_id")
         if (
             recipient_id == str(Account.MENTEE.value)
             or recipient_id == str(Account.MENTOR.value)
@@ -650,21 +694,97 @@ def get_direct_messages():
             msg = "Invalid parameters provided"
             logger.info(msg)
             return create_response(status=422, message=msg)
-        else:
-            messages = DirectMessage.objects(
-                Q(sender_id=request.args.get("sender_id"))
-                & Q(recipient_id=request.args.get("recipient_id"))
-                | Q(sender_id=request.args.get("recipient_id"))
-                & Q(recipient_id=request.args.get("sender_id"))
+
+        # Only a participant in the conversation (or staff) may read it.
+        role, caller_id = _caller_role_and_profile_id()
+        if role not in _STAFF_ROLES and (
+            caller_id is None or caller_id not in (sender_id, recipient_id)
+        ):
+            return create_response(status=403, message="Forbidden")
+
+        # Both directions of the conversation between the two users.
+        conversation = (Q(sender_id=sender_id) & Q(recipient_id=recipient_id)) | (
+            Q(sender_id=recipient_id) & Q(recipient_id=sender_id)
+        )
+
+        # Always sort oldest->newest on (created_at, id). created_at is the
+        # primary key; _id breaks ties so the order is total and deterministic
+        # even when several messages share a created_at -- it is client-provided
+        # and not guaranteed unique. Without an explicit order_by, Mongo returns
+        # natural order, which used to coincide with insertion (chronological)
+        # order only because the collection had no indexes. Once compound indexes
+        # were added to DirectMessage, the planner began satisfying this $or via
+        # index scans, returning rows in index order and breaking chronological
+        # display.
+        limit = request.args.get("limit", type=int)
+        if not limit:
+            # Full-thread fetch (default). Used for search deep-links that must
+            # scroll to an arbitrary historical message, so the whole thread has
+            # to be present on the client.
+            messages = DirectMessage.objects(conversation).order_by("created_at", "id")
+            return create_response(
+                data={"Messages": messages, "has_more": False},
+                status=200,
+                message="Success",
             )
+
+        # Paginated fetch: the newest `limit` messages, optionally older than the
+        # (before, before_id) keyset cursor -- the (created_at, _id) of the oldest
+        # message already on the client. The compound cursor is a strict bound so
+        # a batch of messages sharing one created_at can never trap pagination on
+        # the same boundary set. (A created_at-only cursor loops forever once more
+        # than `limit` messages share the cursor timestamp: every page re-reads
+        # the same tied rows and never advances, leaving older history
+        # unreachable.) We probe one extra row to learn whether older rows exist.
+        filters = conversation
+        before = request.args.get("before")
+        before_id = request.args.get("before_id")
+        if before and before_id:
+            try:
+                before_dt = datetime.fromisoformat(before.replace("Z", "+00:00"))
+                before_oid = ObjectId(before_id)
+                older = Q(created_at__lt=before_dt) | (
+                    Q(created_at=before_dt) & Q(id__lt=before_oid)
+                )
+                filters = conversation & older
+            except (ValueError, TypeError, InvalidId):
+                pass
+
+        window = list(
+            DirectMessage.objects(filters)
+            .order_by("-created_at", "-id")
+            .limit(limit + 1)
+        )
+        has_more = len(window) > limit
+        page = window[:limit]
+        # Reverse the newest-first window back to oldest->newest for display.
+        page.reverse()
+
+        # Cursor for the next (older) page: the (created_at, _id) of the oldest
+        # message we are returning. created_at goes out as an ISO string the
+        # client echoes back verbatim so we never depend on how $date serializes.
+        next_before = None
+        next_before_id = None
+        if page:
+            oldest = page[0]
+            if oldest.created_at is not None:
+                next_before = oldest.created_at.isoformat()
+            next_before_id = str(oldest.id)
+
+        return create_response(
+            data={
+                "Messages": page,
+                "has_more": has_more,
+                "next_before": next_before,
+                "next_before_id": next_before_id,
+            },
+            status=200,
+            message="Success",
+        )
     except:
         msg = "Invalid parameters provided"
         logger.info(msg)
         return create_response(status=422, message=msg)
-    msg = "Success"
-    if not messages:
-        msg = request.args
-    return create_response(data={"Messages": messages}, status=200, message=msg)
 
 
 @socketio.on("editGroupMessage")

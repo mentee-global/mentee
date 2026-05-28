@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { Avatar, Input, Button, Spin, Modal, theme, Drawer } from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
@@ -56,13 +56,29 @@ function MessagesChatArea(props) {
     inviteeId,
     restrictedPartners,
     user,
+    hasMore,
+    loadingOlder,
+    loadOlderMessages,
   } = props;
   const messagesEndRef = useRef(null);
   const buttonRef = useRef(null);
+  // Scroll container for the message list + state used to keep the viewport
+  // anchored when older messages are prepended during infinite scroll.
+  const conversationRef = useRef(null);
+  const scrollAnchorRef = useRef(null);
+  const prevFirstIdRef = useRef(undefined);
+  const prevCountRef = useRef(0);
+  // Synchronous lock so rapid scroll events can't fire overlapping fetches
+  // before the loadingOlder state has propagated.
+  const loadingOlderLockRef = useRef(false);
   const scrollToBottom = () => {
     if (messagesEndRef.current != null) {
+      // Jump instantly rather than smooth-scrolling. A smooth scroll from the
+      // top animates through scrollTop<=60, which trips the load-older handler
+      // and eagerly fetches a second page on every thread open. Landing directly
+      // at the newest message is also the expected chat behaviour.
       messagesEndRef.current.scrollIntoView({
-        behavior: "smooth",
+        behavior: "auto",
         block: "nearest",
       });
     }
@@ -78,6 +94,24 @@ function MessagesChatArea(props) {
       });
     }
   }
+
+  const handleScroll = () => {
+    const container = conversationRef.current;
+    if (!container || !hasMore || loading || loadingOlderLockRef.current)
+      return;
+    if (container.scrollTop <= 60) {
+      loadingOlderLockRef.current = true;
+      // Snapshot distance-from-bottom (invariant to content prepended at the
+      // top, and to the transient "loading older" spinner) so the layout effect
+      // can keep the user pinned to the same message after the page prepends.
+      scrollAnchorRef.current = {
+        scrollBottom: container.scrollHeight - container.scrollTop,
+      };
+      Promise.resolve(loadOlderMessages && loadOlderMessages()).finally(() => {
+        loadingOlderLockRef.current = false;
+      });
+    }
+  };
 
   useEffect(() => {
     // fetchAccount needs userType (the counterparty's role) and otherId.
@@ -174,7 +208,30 @@ function MessagesChatArea(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateContent, otherId, messages]);
 
-  useEffect(() => {
+  // Decide how to position the scroll after a messages change:
+  // - prepend (older page loaded at top): restore the prior offset so the
+  //   message the user was reading stays in place instead of jumping.
+  // - otherwise (initial load / sent or received message): jump to the bottom,
+  //   or to a deep-linked message when ?message_id is present.
+  useLayoutEffect(() => {
+    const container = conversationRef.current;
+    const count = messages?.length || 0;
+    const firstId = messages?.[0]?._id?.$oid;
+    const grewAtFront =
+      count > prevCountRef.current &&
+      firstId !== prevFirstIdRef.current &&
+      scrollAnchorRef.current != null;
+    prevCountRef.current = count;
+    prevFirstIdRef.current = firstId;
+
+    if (grewAtFront && container) {
+      container.scrollTop =
+        container.scrollHeight - scrollAnchorRef.current.scrollBottom;
+      scrollAnchorRef.current = null;
+      return;
+    }
+    scrollAnchorRef.current = null;
+
     if (messageId) {
       if (!messages?.length) return;
       scrollToElement(messageId);
@@ -510,8 +567,17 @@ function MessagesChatArea(props) {
       ) : (
         <div></div>
       )}
-      <div className="conversation-content">
+      <div
+        className="conversation-content"
+        ref={conversationRef}
+        onScroll={handleScroll}
+      >
         <Spin spinning={loading}>
+          {loadingOlder && (
+            <div style={{ textAlign: "center", padding: "8px" }}>
+              <Spin size="small" />
+            </div>
+          )}
           {accountData &&
             messages.map((block, index) => {
               return (

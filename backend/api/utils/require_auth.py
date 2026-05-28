@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request
+from flask import request, g
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
 from api.utils.constants import Account
@@ -27,6 +27,11 @@ def verify_user(required_role):
         # flow instead of showing a red-alert 500.
         logger.info(f"Rejected auth: {e}")
         return UNAUTHORIZED, create_response(status=401, message="Invalid token")
+
+    # Expose the verified claims (uid, role, ...) to the request so views can
+    # derive the caller's identity for per-record authorization without
+    # re-verifying the token or trusting client-supplied ids.
+    g.auth_claims = claims
 
     if (
         required_role == ALL_USERS

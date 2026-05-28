@@ -1326,6 +1326,54 @@ export const getMessageData = (sender_id, recipient_id) => {
   );
 };
 
+// Paginated thread fetch: returns the newest `limit` messages (oldest->newest),
+// optionally older than the (before, beforeId) keyset cursor, plus whether older
+// messages remain and the cursor to request the next older page. The cursor is a
+// compound (created_at, _id) bound so messages sharing a created_at can't trap
+// pagination on a single timestamp.
+export const getDirectMessagesPage = (
+  sender_id,
+  recipient_id,
+  { limit = 30, before = null, beforeId = null } = {}
+) => {
+  if (typeof recipient_id !== "string") {
+    return Promise.resolve({
+      messages: [],
+      hasMore: false,
+      nextBefore: null,
+      nextBeforeId: null,
+      error: false,
+    });
+  }
+  let requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}&limit=${limit}`;
+  if (before && beforeId) {
+    requestExtension += `&before=${encodeURIComponent(
+      before
+    )}&before_id=${encodeURIComponent(beforeId)}`;
+  }
+  return authGet(requestExtension).then(
+    (response) => ({
+      messages: response.data.result.Messages || [],
+      hasMore: !!response.data.result.has_more,
+      nextBefore: response.data.result.next_before || null,
+      nextBeforeId: response.data.result.next_before_id || null,
+      error: false,
+    }),
+    (err) => {
+      console.error(err);
+      // Signal the failure instead of reporting an empty end-of-history, so the
+      // caller can preserve the cursor and let the user retry.
+      return {
+        messages: [],
+        hasMore: false,
+        nextBefore: null,
+        nextBeforeId: null,
+        error: true,
+      };
+    }
+  );
+};
+
 export const getMenteePrivateStatus = (profileId) => {
   const requestExtension = `/account/${profileId}/private`;
   return authGet(requestExtension).then(

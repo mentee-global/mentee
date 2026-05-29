@@ -177,9 +177,7 @@ def send_invite_email():
                 avail_htmls.append(
                     start_date_object.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
                     + " ~ "
-                    + end_date_object.astimezone(offset).strftime(
-                        "%m-%d-%Y %I:%M%p %Z"
-                    )
+                    + end_date_object.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
                 )
 
     if len(avail_htmls) > 0:

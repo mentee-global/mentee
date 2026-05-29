@@ -69,6 +69,11 @@ function MenteeProfileForm({
   const [flag, setFlag] = useState(false);
   const [, setFinishFlag] = useState(false);
   var n50_user = localStorage.getItem("n50_user");
+  const asArray = (value) => {
+    if (Array.isArray(value)) return value;
+    if (value) return [value];
+    return [];
+  };
 
   const immigrantOptions = [
     {
@@ -164,16 +169,15 @@ function MenteeProfileForm({
       form.setFieldValue("name", applicationData.name);
       form.setFieldValue("location", applicationData.Country);
       form.setFieldValue("gender", applicationData.identify);
-      form.setFieldValue("immigrant_status", applicationData.immigrant_status);
-      form.setFieldValue("workstate", applicationData.workstate);
+      form.setFieldValue(
+        "immigrant_status",
+        asArray(applicationData.immigrant_status)
+      );
+      form.setFieldValue("workstate", asArray(applicationData.workstate));
       if (applicationData.language) {
-        if (typeof applicationData.language === "string") {
-          form.setFieldValue("languages", [applicationData.language]);
-        } else {
-          form.setFieldValue("languages", applicationData.language);
-        }
+        form.setFieldValue("languages", asArray(applicationData.language));
       }
-      form.setFieldValue("specializations", applicationData.topics);
+      form.setFieldValue("specializations", asArray(applicationData.topics));
     }
   }, [profileData, form, resetFields, applicationData]);
 
@@ -181,12 +185,13 @@ function MenteeProfileForm({
     async function getPartners() {
       const partenr_data = await fetchPartners(undefined, null);
       if (!(partnerOptions.length > 0)) {
-        partenr_data.map((item) => {
+        (Array.isArray(partenr_data) ? partenr_data : []).forEach((item) => {
+          const partnerId = item?._id?.$oid || item?.id;
+          if (!partnerId || !item?.organization) return;
           partnerOptions.push({
-            value: item._id.$oid,
+            value: partnerId,
             label: item.organization,
           });
-          return true;
         });
         partnerOptions.push({
           value: 0,
@@ -200,7 +205,7 @@ function MenteeProfileForm({
     async function getAllCountries() {
       const all_countries = await getAllcountries();
       var temp_countires = [];
-      if (all_countries && all_countries.countries) {
+      if (all_countries && Array.isArray(all_countries.countries)) {
         // Extract country names
         const countryNames = all_countries.countries.map(
           (country) => country.country_name

@@ -88,10 +88,28 @@ def get_trainings(role):
     lang = request.args.get("lang", "en-US")
     user_email = request.args.get("user_email", None)
     user_id = request.args.get("user_id", None)
+    try:
+        role_int = int(role)
+    except (TypeError, ValueError):
+        return create_response(
+            status=400, message="Invalid training role", data={"trainings": []}
+        )
+
+    valid_roles = {
+        Account.MENTOR.value,
+        Account.MENTEE.value,
+        Account.PARTNER.value,
+        Account.HUB.value,
+    }
+    if role_int not in valid_roles:
+        return create_response(
+            status=400, message="Invalid training role", data={"trainings": []}
+        )
+
     trainings = Training.objects(role=str(role))
 
     append_data = []
-    if int(role) == Account.MENTOR:
+    if role_int == Account.MENTOR:
         if user_id is None:
             append_data = Training.objects(
                 Q(mentor_id__ne=None)
@@ -100,7 +118,7 @@ def get_trainings(role):
             )
         else:
             append_data = Training.objects(mentor_id__in=[user_id])
-    if int(role) == Account.MENTEE:
+    if role_int == Account.MENTEE:
         if user_id is None:
             append_data = Training.objects(
                 Q(mentee_id__ne=None)
@@ -129,7 +147,7 @@ def get_trainings(role):
 
     temp = []
     for training in trainings:
-        if training.hub_id is not None:
+        if training.hub_id is not None and str(training.hub_id) in Hub_users_object:
             training.hub_user = Hub_users_object[str(training.hub_id)]
         if str(training.id) in signed_trainings:
             training.signed_data = {
@@ -138,7 +156,7 @@ def get_trainings(role):
         temp.append(training)
 
     for training in append_data:
-        if training.hub_id is not None:
+        if training.hub_id is not None and str(training.hub_id) in Hub_users_object:
             training.hub_user = Hub_users_object[str(training.hub_id)]
         if str(training.id) in signed_trainings:
             training.signed_data = {
@@ -160,7 +178,7 @@ def get_trainings(role):
 
     temp = []
     for training in trainings:
-        if training.hub_id is not None:
+        if training.hub_id is not None and str(training.hub_id) in Hub_users_object:
             training.hub_user = Hub_users_object[str(training.hub_id)]
         temp.append(training)
     trainings = temp
@@ -181,16 +199,24 @@ def get_trainings(role):
 
 @training.route("/update_multiple", methods=["PATCH"])
 def update_multiple_trainings():
-    data = request.json.get("trainings", [])
+    data = (request.get_json(silent=True) or {}).get("trainings", [])
     if not data:
         return create_response(status=400, message="No trainings provided for update")
+    if not isinstance(data, list):
+        return create_response(status=400, message="Trainings must be a list")
 
     updated_trainings = []
     failed_updates = []
 
     for training in data:
+        if not isinstance(training, dict):
+            failed_updates.append({"error": "Training update must be an object"})
+            continue
         training_id = training.get("id")
         update_data = training.get("updated_data", {})
+        if not isinstance(update_data, dict):
+            failed_updates.append({"error": "updated_data must be an object"})
+            continue
 
         if not training_id:
             failed_updates.append({"error": "Training ID is required"})

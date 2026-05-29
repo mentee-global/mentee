@@ -40,11 +40,11 @@ function AddAppointmentModal({
       const mentee_data = await fetchMentees();
       if (mentee_data) {
         if (user && user.pair_partner && user.pair_partner.restricted) {
-          if (user.pair_partner.assign_mentees) {
+          if (Array.isArray(user.pair_partner.assign_mentees)) {
             var temp = [];
             mentee_data.map((mentee_item) => {
               var check_exist = user.pair_partner.assign_mentees.find(
-                (x) => x.id === mentee_item._id.$oid
+                (x) => x.id === (mentee_item?._id?.$oid || mentee_item?.id)
               );
               if (check_exist) {
                 temp.push(mentee_item);
@@ -61,7 +61,7 @@ function AddAppointmentModal({
           ) {
             var assigned_mentee_ids = [];
             restricted_partners.map((partner_item) => {
-              if (partner_item.assign_mentees) {
+              if (Array.isArray(partner_item.assign_mentees)) {
                 partner_item.assign_mentees.map((assign_item) => {
                   assigned_mentee_ids.push(assign_item.id);
                   return false;
@@ -71,7 +71,8 @@ function AddAppointmentModal({
             });
             temp = [];
             mentee_data.map((mentee_item) => {
-              if (!assigned_mentee_ids.includes(mentee_item._id.$oid)) {
+              const menteeId = mentee_item?._id?.$oid || mentee_item?.id;
+              if (menteeId && !assigned_mentee_ids.includes(menteeId)) {
                 temp.push(mentee_item);
               }
               return false;
@@ -84,7 +85,10 @@ function AddAppointmentModal({
       var res = [];
       if (Array.isArray(temp)) {
         for (let mentee_item of temp) {
-          res.push({ value: mentee_item._id.$oid, label: mentee_item.name });
+          const menteeId = mentee_item?._id?.$oid || mentee_item?.id;
+          if (menteeId) {
+            res.push({ value: menteeId, label: mentee_item.name });
+          }
         }
       }
       setMenteeArr(res);
@@ -127,13 +131,15 @@ function AddAppointmentModal({
         key: "errorBooking",
       });
     }
+    return !!res;
   }
 
   const onOk = () => {
     form
       .validateFields()
-      .then((values) => {
-        handleSave(values);
+      .then(async (values) => {
+        const saved = await handleSave(values);
+        if (!saved) return;
         setAppointmentClick(!appointmentClick);
         form.resetFields();
         setOpen(false);

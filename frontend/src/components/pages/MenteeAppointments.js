@@ -93,15 +93,26 @@ function MenteeAppointments() {
         ACCOUNT_TYPE.MENTEE
       );
 
-      if (formattedAppointments && favMentors) {
+      if (formattedAppointments) {
         setAppointments(formattedAppointments);
-        setVisibleAppts(formattedAppointments[currentTab.value]);
+        setVisibleAppts(formattedAppointments[currentTab.value] || []);
 
-        resFavMentors.map((elem) => (elem.id = elem._id.$oid));
-        setFavMentors(resFavMentors);
+        const safeFavMentors = Array.isArray(resFavMentors)
+          ? resFavMentors
+          : [];
+        safeFavMentors.forEach((elem) => {
+          elem.id = elem?._id?.$oid || elem.id;
+        });
+        setFavMentors(safeFavMentors);
         setisLoading(false);
       } else {
         console.error("Failed to fetch appointments or favorite mentors");
+        setAppointments(
+          formatAppointments({ requests: [] }, ACCOUNT_TYPE.MENTEE)
+        );
+        setVisibleAppts([]);
+        setFavMentors([]);
+        setisLoading(false);
       }
     }
     getData();
@@ -112,8 +123,9 @@ function MenteeAppointments() {
     const newTabObject = appointmentTabs.find(
       (elem) => elem.value === newSelect
     );
+    if (!newTabObject) return;
     setCurrentTab(newTabObject);
-    setVisibleAppts(appointments[newTabObject.value]);
+    setVisibleAppts(appointments[newTabObject.value] || []);
   };
 
   const handleUnfavorite = async (mentorId, name) => {
@@ -167,7 +179,9 @@ function MenteeAppointments() {
               title={t("menteeAppointments.noAppointments")}
             />
           ) : (
-            visibleAppts.map((elem) => <AppointmentCard info={elem} />)
+            visibleAppts.map((elem, index) => (
+              <AppointmentCard key={elem.id || index} info={elem} />
+            ))
           )}
         </div>
       </div>

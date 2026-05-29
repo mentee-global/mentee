@@ -88,9 +88,10 @@ function Gallery(props) {
       var temp = [];
       if (Array.isArray(all_data)) {
         all_data.forEach((item) => {
+          const partnerId = item?.id || item?._id?.$oid;
+          if (!partnerId || !item?.organization) return;
           temp.push({
-            value:
-              item.organization + "_" + (item.id ? item.id : item._id["$oid"]),
+            value: item.organization + "_" + partnerId,
             label: item.organization,
           });
         });
@@ -130,9 +131,9 @@ function Gallery(props) {
       if (gender) {
         params.gender = gender;
       }
-      if (selectedPartnerOrg && selectedPartnerOrg.length > 0) {
+      if (Array.isArray(selectedPartnerOrg) && selectedPartnerOrg.length > 0) {
         const partnerIds = selectedPartnerOrg.map((org) => {
-          const parts = org.split("_");
+          const parts = String(org).split("_");
           return parts[parts.length - 1];
         });
         params.partner_ids = partnerIds.join(",");
@@ -458,9 +459,11 @@ function Gallery(props) {
             ) : (
               <div className="gallery-mentor-container">
                 {mentees.map((mentee, key) => {
+                  const menteeId = mentee?._id?.$oid || mentee?.id;
+                  if (!menteeId) return null;
                   return (
                     <MenteeCard
-                      key={mentee._id["$oid"]}
+                      key={menteeId}
                       name={mentee.name}
                       languages={getTranslatedOptions(
                         mentee.languages,
@@ -472,7 +475,7 @@ function Gallery(props) {
                       image={mentee.image}
                       video={mentee.video}
                       age={mentee.age}
-                      id={mentee._id["$oid"]}
+                      id={menteeId}
                       pair_partner={mentee.pair_partner}
                       isSupport={props.isSupport}
                       isPrivate={mentee.is_private}

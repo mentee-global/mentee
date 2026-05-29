@@ -2,6 +2,14 @@ import React from "react";
 import moment from "moment";
 import "./css/MentorApplicationView.scss";
 
+const renderList = (items, prefix = "") =>
+  (Array.isArray(items) ? items : []).map((elem) => (
+    <div key={elem}>
+      {prefix}
+      {elem}
+    </div>
+  ));
+
 function NewMentorAppInfo({ info }) {
   return (
     <div className="info-container">
@@ -37,11 +45,7 @@ function NewMentorAppInfo({ info }) {
             "Let us know more about you. Check ALL of the boxes that apply. When filling out other, please be very specific."
           }
         </div>
-        <div className="answer">
-          {info?.immigrant_status.map((elem) => {
-            return <div key={elem}>• {elem}</div>;
-          })}
-        </div>
+        <div className="answer">{renderList(info?.immigrant_status, "• ")}</div>
       </div>
       <div className="single-info-section info2">
         <div className="question">{"Country"}</div>
@@ -68,11 +72,7 @@ function NewMentorAppInfo({ info }) {
             "What special topics would you be interested in? If one is not on the list please add it in other:"
           }
         </div>
-        <div className="answer">
-          {info?.topics.map((elem) => {
-            return <div key={elem}>{elem}</div>;
-          })}
-        </div>
+        <div className="answer">{renderList(info?.topics)}</div>
       </div>
 
       <div className="single-info-section info2">
@@ -81,12 +81,7 @@ function NewMentorAppInfo({ info }) {
             "What do you currently do? Please check ALL the options that apply to you. If you select ''other'', please be specific"
           }
         </div>
-        <div className="answer">
-          {" "}
-          {info?.workstate.map((elem) => {
-            return <div key={elem}>{elem}</div>;
-          })}
-        </div>
+        <div className="answer"> {renderList(info?.workstate)}</div>
       </div>
 
       <div className="single-info-section info2">

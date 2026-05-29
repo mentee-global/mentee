@@ -24,7 +24,9 @@ def get_availability(id):
 @availability.route("/<id>", methods=["PUT"])
 @all_users
 def edit_availability(id):
-    data = request.get_json().get("Availability")
+    data = (request.get_json(silent=True) or {}).get("Availability") or []
+    if not isinstance(data, list):
+        return create_response(status=400, message="Availability must be a list")
     try:
         mentor = MentorProfile.objects.get(id=id)
     except:
@@ -34,10 +36,13 @@ def edit_availability(id):
 
     mentor.availability = [
         Availability(
-            start_time=availability.get("start_time").get("$date"),
-            end_time=availability.get("end_time").get("$date"),
+            start_time=(availability.get("start_time") or {}).get("$date"),
+            end_time=(availability.get("end_time") or {}).get("$date"),
         )
         for availability in data
+        if isinstance(availability, dict)
+        and (availability.get("start_time") or {}).get("$date")
+        and (availability.get("end_time") or {}).get("$date")
     ]
     mentor.save()
     return create_response(status=200, message=f"Success")

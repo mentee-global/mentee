@@ -113,7 +113,10 @@ function MentorAppInfo({ info }) {
         <div className="question">{questions.topics}</div>
         <div className="answer">
           {info.specializations &&
-            info.specializations.map((elem) => {
+            (Array.isArray(info.specializations)
+              ? info.specializations
+              : [info.specializations]
+            ).map((elem) => {
               return <div>• {elem}</div>;
             })}
         </div>

@@ -29,7 +29,9 @@ function AvailabilityCalendar(props) {
   const [trigger, setTrigger] = useState(false); // Trigger for getSetdays UseEffect
   const format = "YYYY-MM-DDTHH:mm:ss.SSSZ";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone; // Gives timezone of browser
-  const appointmentdata = props.appointmentdata;
+  const appointmentdata = Array.isArray(props.appointmentdata)
+    ? props.appointmentdata
+    : [];
 
   /**
    * Gets appointments from backend and finds the days in format "YYYY-MM-DD"
@@ -41,7 +43,7 @@ function AvailabilityCalendar(props) {
       const availability_data = await fetchAvailability(mentorID);
       const set = [];
 
-      if (appointmentdata) {
+      if (appointmentdata.length) {
         appointmentdata.map((appointmentsObject, index) => {
           if (
             !saved.hasOwnProperty(
@@ -63,8 +65,11 @@ function AvailabilityCalendar(props) {
       setSaved(set);
 
       if (availability_data) {
-        const availability = availability_data.availability;
+        const availability = Array.isArray(availability_data.availability)
+          ? availability_data.availability
+          : [];
         availability.forEach((time) => {
+          if (!time?.start_time?.$date) return;
           // Checking if saved or set have date already
           if (
             !saved.hasOwnProperty(
@@ -90,12 +95,20 @@ function AvailabilityCalendar(props) {
   }, [trigger, profileId]);
 
   function getBookedAppointments() {
-    if (!appointmentdata) return;
+    if (!appointmentdata.length) return;
 
     const bookedTimes = [];
     appointmentdata.map((appointmentsObject) => {
-      const appointments = appointmentsObject.appointments;
+      const appointments = Array.isArray(appointmentsObject.appointments)
+        ? appointmentsObject.appointments
+        : [];
       appointments.forEach((element) => {
+        if (
+          !element?.timeslot?.start_time?.$date ||
+          !element?.timeslot?.end_time?.$date
+        ) {
+          return;
+        }
         bookedTimes.push([
           moment.parseZone(element.timeslot.start_time.$date).local(),
           moment.parseZone(element.timeslot.end_time.$date).local(),
@@ -116,8 +129,11 @@ function AvailabilityCalendar(props) {
 
     if (availability_data) {
       const times = [];
-      const availability = availability_data.availability;
+      const availability = Array.isArray(availability_data.availability)
+        ? availability_data.availability
+        : [];
       availability.forEach((element) => {
+        if (!element?.start_time?.$date || !element?.end_time?.$date) return;
         times.push([
           dayjs(element.start_time.$date),
           dayjs(element.end_time.$date),

@@ -190,16 +190,25 @@ function MenteeAppointmentModal(props) {
       openNotificationWithIcon(SUCCESS, timeInterval);
     } else {
       openNotificationWithIcon(ERROR, timeInterval);
+      return;
     }
 
     // Find matching appointment and PUT request for mentor availability
-    const changeTime = [...timeSlots];
-    let index = 0;
+    const changeTime = timeSlots.map((element) => ({
+      ...element,
+      end_time: {
+        ...element.end_time,
+        $date: dayjs(element?.end_time?.$date).format(),
+      },
+      start_time: {
+        ...element.start_time,
+        $date: dayjs(element?.start_time?.$date).format(),
+      },
+    }));
+    let index = -1;
 
     // Change date format and find index of object that matches selected
     changeTime.forEach((element) => {
-      element.end_time.$date = dayjs(element.end_time.$date).format();
-      element.start_time.$date = dayjs(element.start_time.$date).format();
       if (
         element.end_time.$date === time.end_time.$date &&
         time.start_time.$date === element.start_time.$date
@@ -209,8 +218,10 @@ function MenteeAppointmentModal(props) {
     });
 
     // Remove date object from timeslots and update availability
-    changeTime.splice(index, 1);
-    await editAvailability(changeTime, mentorID);
+    if (index >= 0) {
+      changeTime.splice(index, 1);
+      await editAvailability(changeTime, mentorID);
+    }
     props.handleUpdateMentor();
   }
 

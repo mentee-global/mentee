@@ -8,11 +8,15 @@ import { SearchOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import SearchMessageCard from "./SearchMessageCard";
 
+const asArray = (value) => (Array.isArray(value) ? value : []);
+
 function MessagesSidebar(props) {
   const { t } = useTranslation();
   const { Sider } = Layout;
   const [searchQuery, setSearchQuery] = useState("");
-  const { latestConvos, activeMessageId, restrictedPartners, user } = props;
+  const { activeMessageId, user } = props;
+  const latestConvos = asArray(props.latestConvos);
+  const restrictedPartners = asArray(props.restrictedPartners);
   var side_data = [];
   if (user && user.pair_partner && user.pair_partner.restricted) {
     if (latestConvos && latestConvos.length > 0) {
@@ -20,14 +24,14 @@ function MessagesSidebar(props) {
         user.pair_partner.assign_mentees &&
         user.pair_partner.assign_mentees.length > 0
       ) {
-        user.pair_partner.assign_mentees.map((item) => {
+        asArray(user.pair_partner.assign_mentees).map((item) => {
           var record = latestConvos.find((x) => x.otherId === item.id);
           if (record !== undefined && record !== null) {
             side_data.push(record);
           }
           return false;
         });
-        user.pair_partner.assign_mentors.map((item) => {
+        asArray(user.pair_partner.assign_mentors).map((item) => {
           var record = latestConvos.find((x) => x.otherId === item.id);
           if (record !== undefined && record !== null) {
             side_data.push(record);
@@ -44,15 +48,15 @@ function MessagesSidebar(props) {
   } else {
     if (restrictedPartners && restrictedPartners.length > 0) {
       var restricted_user_ids = [];
-      restrictedPartners?.map((partner_item) => {
+      restrictedPartners.map((partner_item) => {
         if (partner_item.assign_mentors) {
-          partner_item.assign_mentors.map((assign_item) => {
+          asArray(partner_item.assign_mentors).map((assign_item) => {
             restricted_user_ids.push(assign_item.id);
             return false;
           });
         }
         if (partner_item.assign_mentees) {
-          partner_item.assign_mentees.map((assign_item) => {
+          asArray(partner_item.assign_mentees).map((assign_item) => {
             restricted_user_ids.push(assign_item.id);
             return false;
           });
@@ -112,7 +116,7 @@ function MessagesSidebar(props) {
             side_data.length > 0 &&
             side_data.map((chat) => {
               if (
-                chat.otherUser.name
+                (chat.otherUser?.name || "")
                   .toLowerCase()
                   .includes(searchQuery.toLowerCase())
               ) {

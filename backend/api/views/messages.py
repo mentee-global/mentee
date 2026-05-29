@@ -107,7 +107,9 @@ def update_message(message_id):
         logger.info(msg)
         return create_response(status=422, message=msg)
     try:
-        body = request.get_json()
+        body = request.get_json(silent=True) or {}
+        if not isinstance(body, dict):
+            return create_response(status=422, message="Invalid message payload")
         for field in body:
             message[field] = body[field]
         message.save()
@@ -124,7 +126,9 @@ def update_message(message_id):
 @messages.route("/", methods=["POST"])
 @all_users
 def create_message():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
+    if not isinstance(data, dict):
+        return create_response(status=422, message="Invalid message payload")
     availabes_in_future = None
     if "availabes_in_future" in data:
         availabes_in_future = data.get("availabes_in_future")
@@ -177,7 +181,9 @@ def create_message():
 @messages.route("/mentor/<string:mentor_id>", methods=["POST"])
 @all_users
 def contact_mentor(mentor_id):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
+    if not isinstance(data, dict):
+        return create_response(status=422, message="Invalid message payload")
     if "mentee_id" not in data:
         return create_response(status=422, message="missing mentee_id")
 

@@ -204,7 +204,10 @@ function Appointments() {
               </div>
               <div className="appointments-row">
                 {/* TODO: Change the appointment component to fetch mentee info */}
-                {appointmentsObject.appointments.map((appointment, index) => (
+                {(Array.isArray(appointmentsObject.appointments)
+                  ? appointmentsObject.appointments
+                  : []
+                ).map((appointment, index) => (
                   <Appointment key={index} info={appointment} />
                 ))}
               </div>

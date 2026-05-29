@@ -68,12 +68,13 @@ function MentorProfileForm({
     async function getPartners() {
       const partenr_data = await fetchPartners(undefined, null);
       if (!(partnerOptions.length > 0)) {
-        partenr_data.map((item) => {
+        (Array.isArray(partenr_data) ? partenr_data : []).forEach((item) => {
+          const partnerId = item?._id?.$oid || item?.id;
+          if (!partnerId || !item?.organization) return;
           partnerOptions.push({
-            value: item._id.$oid,
+            value: partnerId,
             label: item.organization,
           });
-          return true;
         });
         partnerOptions.push({
           value: 0,
@@ -101,7 +102,12 @@ function MentorProfileForm({
     }
     if (applicationData) {
       if (applicationData.specializations) {
-        form.setFieldValue("specializations", applicationData.specializations);
+        form.setFieldValue(
+          "specializations",
+          Array.isArray(applicationData.specializations)
+            ? applicationData.specializations
+            : [applicationData.specializations]
+        );
       }
       form.setFieldValue(
         "organization",

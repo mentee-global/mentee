@@ -420,7 +420,8 @@ export const updateTrainings = async (data) => {
   const res = await authPatch(requestExtension, {
     trainings: data,
   }).catch(console.error);
-  const trains = res.data.result.trainings;
+  const trains = res?.data?.result?.trainings;
+  if (!Array.isArray(trains)) return [];
   return trains;
 };
 
@@ -701,6 +702,7 @@ export const createAppointment = (appointment) => {
     (response) => response,
     (err) => {
       console.error(err);
+      return false;
     }
   );
 };
@@ -788,9 +790,16 @@ export const deleteAppointment = (id) => {
 export const fetchAppointmentsById = (id, accountType) => {
   const requestExtension = `/appointment/${accountType}/${id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result,
+    (response) => {
+      const result = response?.data?.result || {};
+      return {
+        ...result,
+        requests: Array.isArray(result.requests) ? result.requests : [],
+      };
+    },
     (err) => {
       console.error(err);
+      return { name: "", requests: [] };
     }
   );
 };
@@ -809,9 +818,18 @@ export const getIsEmailVerified = (email, password) => {
 export const fetchAvailability = (id) => {
   const requestExtension = `/availability/${id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result,
+    (response) => {
+      const result = response?.data?.result || {};
+      return {
+        ...result,
+        availability: Array.isArray(result.availability)
+          ? result.availability
+          : [],
+      };
+    },
     (err) => {
       console.error(err);
+      return { availability: [] };
     }
   );
 };
@@ -1135,8 +1153,14 @@ export const editFavMentorById = (mentee_id, mentor_id, favorite) => {
 export const getFavMentorsById = (mentee_id) => {
   const requestExtension = `/mentee/favorites/${mentee_id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result.favorites,
-    (err) => console.error(err)
+    (response) =>
+      Array.isArray(response?.data?.result?.favorites)
+        ? response.data.result.favorites
+        : [],
+    (err) => {
+      console.error(err);
+      return [];
+    }
   );
 };
 
@@ -1260,11 +1284,20 @@ export const getDirectMessages = (user_id) => {
 };
 
 export const getLatestMessages = (user_id) => {
+  if (!user_id) return Promise.resolve({ data: [], allMessages: [] });
   const requestExtension = `/messages/contacts/${user_id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result,
+    (response) => ({
+      data: Array.isArray(response?.data?.result?.data)
+        ? response.data.result.data
+        : [],
+      allMessages: Array.isArray(response?.data?.result?.allMessages)
+        ? response.data.result.allMessages
+        : [],
+    }),
     (err) => {
       console.error(err);
+      return { data: [], allMessages: [] };
     }
   );
 };
@@ -1316,12 +1349,17 @@ export const getGroupMessageData = (hub_user_id) => {
 };
 
 export const getMessageData = (sender_id, recipient_id) => {
-  if (typeof recipient_id !== "string") return;
+  if (typeof recipient_id !== "string" || !sender_id)
+    return Promise.resolve([]);
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result.Messages,
+    (response) =>
+      Array.isArray(response?.data?.result?.Messages)
+        ? response.data.result.Messages
+        : [],
     (err) => {
       console.error(err);
+      return [];
     }
   );
 };
@@ -1336,7 +1374,7 @@ export const getDirectMessagesPage = (
   recipient_id,
   { limit = 30, before = null, beforeId = null } = {}
 ) => {
-  if (typeof recipient_id !== "string") {
+  if (typeof recipient_id !== "string" || !sender_id) {
     return Promise.resolve({
       messages: [],
       hasMore: false,
@@ -1353,10 +1391,12 @@ export const getDirectMessagesPage = (
   }
   return authGet(requestExtension).then(
     (response) => ({
-      messages: response.data.result.Messages || [],
-      hasMore: !!response.data.result.has_more,
-      nextBefore: response.data.result.next_before || null,
-      nextBeforeId: response.data.result.next_before_id || null,
+      messages: Array.isArray(response?.data?.result?.Messages)
+        ? response.data.result.Messages
+        : [],
+      hasMore: !!response?.data?.result?.has_more,
+      nextBefore: response?.data?.result?.next_before || null,
+      nextBeforeId: response?.data?.result?.next_before_id || null,
       error: false,
     }),
     (err) => {

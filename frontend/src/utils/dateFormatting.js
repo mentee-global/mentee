@@ -7,27 +7,39 @@ const isPending = (appointment) =>
   appointment.status === APPOINTMENT_STATUS.PENDING ||
   (appointment.accepted !== undefined && !appointment.accepted);
 
+const emptyAppointments = (name = "") => ({
+  name,
+  upcoming: [],
+  pending: [],
+  past: [],
+});
+
+const objectId = (value) => {
+  if (!value) return undefined;
+  if (typeof value === "string") return value;
+  return value.$oid;
+};
+
 export const formatAppointments = (data, type) => {
   if (!data || !Array.isArray(data.requests)) {
-    return;
+    return emptyAppointments(data?.name);
   }
 
-  const output = {
-    name: data.name,
-    upcoming: [],
-    pending: [],
-    past: [],
-  };
-  let appointments = data.requests;
+  const output = emptyAppointments(data.name);
+  let appointments = data.requests.filter(
+    (appointment) =>
+      appointment?.timeslot?.start_time?.$date &&
+      appointment?.timeslot?.end_time?.$date
+  );
   if (type === ACCOUNT_TYPE.MENTOR) {
-    appointments = data.requests.filter(
+    appointments = appointments.filter(
       (elem) => elem?.status !== APPOINTMENT_STATUS.DENIED
     );
   }
 
   const now = moment();
 
-  appointments.sort((a, b) =>
+  appointments = [...appointments].sort((a, b) =>
     moment(a.timeslot.start_time.$date).diff(
       moment(b.timeslot.start_time.$date)
     )
@@ -53,6 +65,9 @@ export const formatAppointments = (data, type) => {
     const timeslot = appointment.timeslot;
     const startTime = moment(timeslot.start_time.$date);
     const endTime = moment(timeslot.end_time.$date);
+    if (!startTime.isValid() || !endTime.isValid()) {
+      continue;
+    }
 
     let currentKey = "upcoming";
     if (
@@ -67,9 +82,9 @@ export const formatAppointments = (data, type) => {
     let keyInfo = appointmentType[currentKey];
     const formattedAppointment = {
       message: appointment.message,
-      id: appointment._id.$oid,
-      mentorID: appointment.mentor_id.$oid,
-      menteeID: appointment.mentee_id && appointment.mentee_id.$oid,
+      id: objectId(appointment._id),
+      mentorID: objectId(appointment.mentor_id),
+      menteeID: objectId(appointment.mentee_id),
       name: appointment.name,
       mentorName: appointment.mentor_name,
       date: startTime.format("LL"),

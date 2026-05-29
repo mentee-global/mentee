@@ -31,6 +31,20 @@ import re
 appointment = Blueprint("appointment", __name__)
 
 
+def _parse_iso_datetime(value):
+    if not isinstance(value, str) or not value:
+        raise ValueError("Missing datetime")
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S%z")
+
+
+def _preferred_language(user):
+    language = getattr(user, "preferred_language", "en-US")
+    return language if language in TRANSLATIONS else "en-US"
+
+
 def _verified_emails_for_role(user_role):
     """Lowercased emails of Users with role=<user_role> AND verified=True."""
     return {
@@ -124,10 +138,12 @@ def get_requests_by_id(account_type, id):
 @appointment.route("/send_invite_email", methods=["POST"])
 @all_users
 def send_invite_email():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     mentee_id = data.get("recipient_id")
     mentor_id = data.get("sener_id")
-    availabes_in_future = data.get("availabes_in_future")
+    availabes_in_future = data.get("availabes_in_future") or []
+    if not isinstance(availabes_in_future, list):
+        availabes_in_future = []
     try:
         mentee = MenteeProfile.objects.get(id=mentee_id)
         mentor = MentorProfile.objects.get(id=mentor_id)
@@ -137,12 +153,15 @@ def send_invite_email():
         return create_response(status=422, message=msg)
     avail_htmls = []
     for avail_item in availabes_in_future:
-        start_date_object = datetime.strptime(
-            avail_item["start_time"]["$date"], "%Y-%m-%dT%H:%M:%S%z"
-        )
-        end_date_object = datetime.strptime(
-            avail_item["end_time"]["$date"], "%Y-%m-%dT%H:%M:%S%z"
-        )
+        try:
+            start_date_object = _parse_iso_datetime(
+                (avail_item.get("start_time") or {}).get("$date")
+            )
+            end_date_object = _parse_iso_datetime(
+                (avail_item.get("end_time") or {}).get("$date")
+            )
+        except (AttributeError, TypeError, ValueError):
+            continue
         start_time = start_date_object.strftime("%m-%d-%Y %I:%M%p %Z")
         end_time = end_date_object.strftime("%I:%M%p %Z")
         avail_htmls.append(start_time + " ~ " + end_time)
@@ -158,23 +177,22 @@ def send_invite_email():
                 avail_htmls.append(
                     start_date_object.astimezone(offset).strftime("%m-%d-%Y %I:%M%p %Z")
                     + " ~ "
-                    + start_date_object.astimezone(offset).strftime(
+                    + end_date_object.astimezone(offset).strftime(
                         "%m-%d-%Y %I:%M%p %Z"
                     )
                 )
 
     if len(avail_htmls) > 0:
-        res, res_msg = (
-            send_email(
-                recipient=mentee.email,
-                template_id=SEND_INVITE_TEMPLATE,
-                data={
-                    "future_availability": avail_htmls,
-                    "name": mentor.name,
-                    mentee.preferred_language: True,
-                    "subject": TRANSLATIONS[mentee.preferred_language]["send_invite"],
-                },
-            ),
+        mentee_language = _preferred_language(mentee)
+        res, res_msg = send_email(
+            recipient=mentee.email,
+            template_id=SEND_INVITE_TEMPLATE,
+            data={
+                "future_availability": avail_htmls,
+                "name": mentor.name,
+                mentee_language: True,
+                "subject": TRANSLATIONS[mentee_language]["send_invite"],
+            },
         )
         if not res:
             msg = "Failed to send mentee email " + res_msg
@@ -187,7 +205,9 @@ def send_invite_email():
 @appointment.route("/", methods=["POST"])
 @all_users
 def create_appointment():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
+    if not isinstance(data, dict):
+        return create_response(status=400, message="Invalid appointment payload")
     validate_data = ApppointmentForm.from_json(data)
     msg, is_invalid = is_invalid_form(validate_data)
     if is_invalid:
@@ -221,11 +241,20 @@ def create_appointment():
     )
 
     time_data = data.get("timeslot")
+    if not isinstance(time_data, dict):
+        return create_response(status=422, message="Invalid timeslot")
+    start_time_value = time_data.get("start_time")
+    end_time_value = time_data.get("end_time")
+    try:
+        date_object = _parse_iso_datetime(start_time_value)
+        _parse_iso_datetime(end_time_value)
+    except (TypeError, ValueError):
+        return create_response(status=422, message="Invalid timeslot")
+
     new_appointment.timeslot = Availability(
-        start_time=time_data.get("start_time"), end_time=time_data.get("end_time")
+        start_time=start_time_value, end_time=end_time_value
     )
 
-    date_object = datetime.strptime(time_data.get("start_time"), "%Y-%m-%dT%H:%M:%S%z")
     start_time = date_object.strftime(APPT_TIME_FORMAT + " %Z")
     if mentee.timezone:
         match = re.match(r"UTC([+-]\d{2}):(\d{2})", mentee.timezone)
@@ -244,6 +273,7 @@ def create_appointment():
     else:
         start_time_local_timezone = start_time
 
+    mentee_language = _preferred_language(mentee)
     res, res_msg = send_email(
         recipient=mentee.email,
         template_id=MENTEE_APPT_TEMPLATE,
@@ -251,8 +281,8 @@ def create_appointment():
             "confirmation": True,
             "name": mentor.name,
             "date": start_time_local_timezone,
-            mentee.preferred_language: True,
-            "subject": TRANSLATIONS[mentee.preferred_language]["mentee_appt"],
+            mentee_language: True,
+            "subject": TRANSLATIONS[mentee_language]["mentee_appt"],
         },
     )
     if not res:
@@ -276,14 +306,15 @@ def create_appointment():
     else:
         start_time_local_timezone = start_time
 
+    mentor_language = _preferred_language(mentor)
     res, res_msg = send_email(
         recipient=mentor.email,
         template_id=MENTOR_APPT_TEMPLATE,
         data={
             "name": mentee.name,
             "date": start_time_local_timezone,
-            mentor.preferred_language: True,
-            "subject": TRANSLATIONS[mentee.preferred_language]["mentor_appt"],
+            mentor_language: True,
+            "subject": TRANSLATIONS[mentor_language]["mentor_appt"],
         },
     )
 

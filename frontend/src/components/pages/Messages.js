@@ -19,6 +19,8 @@ import { updateNotificationsCount } from "features/notificationsSlice";
 
 // How many messages to load per page when scrolling up through a thread.
 const THREAD_PAGE_SIZE = 30;
+const asArray = (value) => (Array.isArray(value) ? value : []);
+const objectId = (value) => value?.$oid || value;
 
 function Messages(props) {
   const { history } = props;
@@ -49,26 +51,24 @@ function Messages(props) {
   const messageListener = (data) => {
     async function fetchLatest() {
       setSidebarLoading(true);
-      const { data, allMessages } = await getLatestMessages(profileId);
-      setLatestConvos(data);
-      setAllMessages(allMessages);
+      const result = await getLatestMessages(profileId);
+      setLatestConvos(asArray(result?.data));
+      setAllMessages(asArray(result?.allMessages));
       setSidebarLoading(false);
     }
     fetchLatest();
-    if (data.allowBooking === "true") {
+    if (data?.allowBooking === "true") {
       setBookingVisible(true);
       setinviteeId(data.inviteeId);
     }
-    if (
-      data?.sender_id?.$oid === activeMessageId ||
-      data?.sender_id === activeMessageId
-    ) {
+    const senderId = objectId(data?.sender_id);
+    if (senderId === activeMessageId) {
       setPaused(data.paused_flag);
       setMessages((prevMessages) => [...prevMessages, data]);
       dispatch(
         updateNotificationsCount({
           recipient: profileId,
-          sender: data.sender_id.$oid,
+          sender: senderId,
         })
       );
     }
@@ -89,18 +89,18 @@ function Messages(props) {
       setSidebarLoading(true);
       const data = await getLatestMessages(profileId);
       const restricted_partners = await fetchPartners(true, null);
-      setLatestConvos(data?.data);
-      setAllMessages(data?.allMessages);
-      setSidebarLoading(false);
-      setRestrictedPartners(restricted_partners);
+      const latest = asArray(data?.data);
+      setLatestConvos(latest);
+      setAllMessages(asArray(data?.allMessages));
+      setRestrictedPartners(asArray(restricted_partners));
       // Only auto-open the first contact when the URL doesn't already point at a
       // specific conversation. Otherwise a refresh (or deep-link) on one thread
       // would bounce the user to the first contact instead of staying put.
       const currentReceiver = props.match?.params?.receiverId;
       const hasValidReceiver = currentReceiver && currentReceiver.length > 3;
-      if (data && data?.data?.length) {
+      if (latest.length) {
         let unread_message_senders = [];
-        data?.data.forEach((message_item) => {
+        latest.forEach((message_item) => {
           if (
             message_item.message_read === false &&
             !unread_message_senders.includes(message_item.otherId)
@@ -128,6 +128,7 @@ function Messages(props) {
           history.push("/messages/3");
         }
       }
+      setSidebarLoading(false);
     }
 
     if (profileId) {
@@ -161,33 +162,38 @@ function Messages(props) {
       if (activeMessageId && profileId && activeMessageId.length > 3) {
         const convo = activeMessageId;
         setLoading(true);
-        if (deepLinkMessageId) {
-          // Deep-link from search: load the whole thread so the target message
-          // is present in the DOM and can be scrolled to.
-          const full = await getMessageData(profileId, activeMessageId);
-          if (activeMessageIdRef.current !== convo) return;
-          setMessages(full || []);
-          setHasMore(false);
-          setBeforeCursor(null);
-        } else {
-          const {
-            messages: page,
-            hasMore: more,
-            nextBefore,
-            nextBeforeId,
-          } = await getDirectMessagesPage(profileId, activeMessageId, {
-            limit: THREAD_PAGE_SIZE,
-          });
-          if (activeMessageIdRef.current !== convo) return;
-          setMessages(page);
-          setHasMore(more);
-          setBeforeCursor(
-            nextBefore && nextBeforeId
-              ? { before: nextBefore, beforeId: nextBeforeId }
-              : null
-          );
+        try {
+          if (deepLinkMessageId) {
+            // Deep-link from search: load the whole thread so the target message
+            // is present in the DOM and can be scrolled to.
+            const full = await getMessageData(profileId, activeMessageId);
+            if (activeMessageIdRef.current !== convo) return;
+            setMessages(asArray(full));
+            setHasMore(false);
+            setBeforeCursor(null);
+          } else {
+            const {
+              messages: page,
+              hasMore: more,
+              nextBefore,
+              nextBeforeId,
+            } = await getDirectMessagesPage(profileId, activeMessageId, {
+              limit: THREAD_PAGE_SIZE,
+            });
+            if (activeMessageIdRef.current !== convo) return;
+            setMessages(asArray(page));
+            setHasMore(more);
+            setBeforeCursor(
+              nextBefore && nextBeforeId
+                ? { before: nextBefore, beforeId: nextBeforeId }
+                : null
+            );
+          }
+        } finally {
+          if (activeMessageIdRef.current === convo) {
+            setLoading(false);
+          }
         }
-        setLoading(false);
       }
     }
     getData();
@@ -201,8 +207,8 @@ function Messages(props) {
     setAllMessages((prevMessages) => [...prevMessages, msg]);
     setTimeout(() => {
       async function fetchLatest() {
-        const { data } = await getLatestMessages(profileId);
-        setLatestConvos(data);
+        const result = await getLatestMessages(profileId);
+        setLatestConvos(asArray(result?.data));
       }
       fetchLatest();
     }, 500);
@@ -237,7 +243,9 @@ function Messages(props) {
         const existingIds = new Set(
           prev.map((m) => m?._id?.$oid).filter(Boolean)
         );
-        const deduped = older.filter((m) => !existingIds.has(m?._id?.$oid));
+        const deduped = asArray(older).filter(
+          (m) => !existingIds.has(m?._id?.$oid)
+        );
         if (deduped.length === 0) return prev;
         return [...deduped, ...prev];
       });

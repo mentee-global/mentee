@@ -15,7 +15,9 @@ function Training({ location, history }) {
   const [loading, setLoading] = useState(false);
   const { t, i18n } = useTranslation();
   const query = useQuery();
-  const role = location.state?.role || parseInt(query.get("role"));
+  const rawRole = location.state?.role || query.get("role");
+  const role = Number.parseInt(rawRole, 10);
+  const hasValidRole = Number.isInteger(role) && !Number.isNaN(role);
   const email = location.state?.email || query.get("email");
   const [applicationData, setApplicationData] = useState(
     location.state?.applicationData
@@ -24,10 +26,15 @@ function Training({ location, history }) {
   if (location && location.pathname.includes("n50")) {
     n50_flag = true;
   }
-  const [flag, setFlag] = useState(false);
+  const [, setFlag] = useState(false);
 
   const [buttonFlag, setButtonFlag] = useState(false);
-  if (!role || !email) history.push("/");
+
+  useEffect(() => {
+    if (!hasValidRole || !email) {
+      history.replace("/");
+    }
+  }, [email, hasValidRole, history]);
 
   useEffect(() => {
     async function getApplicationData() {
@@ -50,20 +57,22 @@ function Training({ location, history }) {
       }
       setFlag((f) => !f);
     }
-    if (!applicationData) {
+    if (hasValidRole && email && !applicationData) {
       getApplicationData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onCompleteTraining = async () => {
-    if (!role || !email)
+    if (!hasValidRole || !email) {
       messageApi.error({
         content: "Could not submit this role's application form",
         duration: 0,
         key: "failed_submit",
         onClick: () => messageApi.destroy("failed_submit"),
       });
+      return;
+    }
 
     setLoading(true);
     const res = await changeStateBuildProfile({
@@ -92,14 +101,18 @@ function Training({ location, history }) {
 
   const allChecked = (value) => {
     if (
-      applicationData.application_state === "BuildProfile" ||
-      applicationData.application_state === "COMPLETED"
+      applicationData?.application_state === "BuildProfile" ||
+      applicationData?.application_state === "COMPLETED"
     ) {
       setButtonFlag(false);
     } else {
       setButtonFlag(value);
     }
   };
+
+  if (!hasValidRole || !email) {
+    return <>{contextHolder}</>;
+  }
 
   return (
     <div

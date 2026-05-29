@@ -128,7 +128,7 @@ const AdminTraining = () => {
     async function getHubData() {
       var temp = [];
       const hub_data = await fetchAccounts(ACCOUNT_TYPE.HUB);
-      hub_data.map((hub_item) => {
+      (Array.isArray(hub_data) ? hub_data : []).map((hub_item) => {
         temp.push({ label: hub_item.name, value: hub_item._id.$oid });
         return true;
       });
@@ -137,7 +137,7 @@ const AdminTraining = () => {
     async function getUsers() {
       var temp = [];
       let data = await fetchPartners();
-      data.map((item) => {
+      (Array.isArray(data) ? data : []).map((item) => {
         temp.push({
           label: item.organization,
           value: item._id.$oid,
@@ -148,9 +148,9 @@ const AdminTraining = () => {
       });
       setPartnerOptions(temp);
       data = await fetchAccounts(ACCOUNT_TYPE.MENTEE);
-      setMenteeOptions(data);
+      setMenteeOptions(Array.isArray(data) ? data : []);
       data = await fetchAccounts(ACCOUNT_TYPE.MENTOR);
-      setMentorOptions(data);
+      setMentorOptions(Array.isArray(data) ? data : []);
     }
     getHubData();
     getUsers();
@@ -158,7 +158,11 @@ const AdminTraining = () => {
 
   const handleResetFilters = () => {
     setResetFilters(!resetFilters);
-    setTrainingData(allData.sort((a, b) => a.sort_order - b.sort_order));
+    setTrainingData(
+      [...(Array.isArray(allData) ? allData : [])].sort(
+        (a, b) => a.sort_order - b.sort_order
+      )
+    );
   };
 
   const onFinishTrainingForm = async (values, isNewTraining) => {
@@ -300,10 +304,14 @@ const AdminTraining = () => {
   useMemo(() => {
     const getData = async () => {
       setLoading(true);
-      let newData = await getTrainings(role);
-      if (newData) {
-        setTrainingData(newData.sort((a, b) => a.sort_order - b.sort_order));
-        setAllData(newData.sort((a, b) => a.sort_order - b.sort_order));
+      let result = await getTrainings(role);
+      if (result?.ok) {
+        const newData = Array.isArray(result.trainings) ? result.trainings : [];
+        const sortedData = [...newData].sort(
+          (a, b) => a.sort_order - b.sort_order
+        );
+        setTrainingData(sortedData);
+        setAllData(sortedData);
       } else {
         setTrainingData([]);
         setAllData([]);
@@ -434,7 +442,7 @@ const AdminTraining = () => {
   const searchbyHub = (hub_id) => {
     if (role === ACCOUNT_TYPE.HUB) {
       setTrainingData(
-        allData
+        [...(Array.isArray(allData) ? allData : [])]
           .sort((a, b) => a.sort_order - b.sort_order)
           .filter((x) => x.hub_id === hub_id)
       );

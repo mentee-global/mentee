@@ -89,9 +89,9 @@ function Gallery(props) {
       if (specializations.length > 0) {
         params.specializations = specializations.join(",");
       }
-      if (selectedPartnerOrg && selectedPartnerOrg.length > 0) {
+      if (Array.isArray(selectedPartnerOrg) && selectedPartnerOrg.length > 0) {
         const partnerIds = selectedPartnerOrg.map((org) => {
-          const parts = org.split("_");
+          const parts = String(org).split("_");
           return parts[parts.length - 1];
         });
         params.partner_ids = partnerIds.join(",");
@@ -177,9 +177,10 @@ function Gallery(props) {
       var temp = [];
       if (Array.isArray(all_data)) {
         all_data.forEach((item) => {
+          const partnerId = item?.id || item?._id?.$oid;
+          if (!partnerId || !item?.organization) return;
           temp.push({
-            value:
-              item.organization + "_" + (item.id ? item.id : item._id["$oid"]),
+            value: item.organization + "_" + partnerId,
             label: item.organization,
           });
         });
@@ -485,32 +486,36 @@ function Gallery(props) {
               />
             ) : (
               <div className="gallery-mentor-container">
-                {mentors.map((mentor) => (
-                  <MentorCard
-                    key={mentor._id["$oid"]}
-                    name={mentor.name}
-                    languages={getTranslatedOptions(
-                      mentor.languages,
-                      options.languages
-                    )}
-                    professional_title={mentor.professional_title}
-                    location={mentor.location}
-                    specializations={mentor.specializations}
-                    video={mentor.video}
-                    id={mentor._id["$oid"]}
-                    lesson_types={getLessonTypes(
-                      mentor.offers_group_appointments,
-                      mentor.offers_in_person
-                    )}
-                    favorite={favoriteMentorIds.has(mentor._id["$oid"])}
-                    onEditFav={onEditFav}
-                    image={mentor.image}
-                    pair_partner={mentor.pair_partner}
-                    isSupport={props.isSupport}
-                    isPaused={mentor.paused_flag}
-                    showAdminBadges={isAdmin || props.isSupport}
-                  />
-                ))}
+                {mentors.map((mentor) => {
+                  const mentorId = mentor?._id?.$oid || mentor?.id;
+                  if (!mentorId) return null;
+                  return (
+                    <MentorCard
+                      key={mentorId}
+                      name={mentor.name}
+                      languages={getTranslatedOptions(
+                        mentor.languages,
+                        options.languages
+                      )}
+                      professional_title={mentor.professional_title}
+                      location={mentor.location}
+                      specializations={mentor.specializations}
+                      video={mentor.video}
+                      id={mentorId}
+                      lesson_types={getLessonTypes(
+                        mentor.offers_group_appointments,
+                        mentor.offers_in_person
+                      )}
+                      favorite={favoriteMentorIds.has(mentorId)}
+                      onEditFav={onEditFav}
+                      image={mentor.image}
+                      pair_partner={mentor.pair_partner}
+                      isSupport={props.isSupport}
+                      isPaused={mentor.paused_flag}
+                      showAdminBadges={isAdmin || props.isSupport}
+                    />
+                  );
+                })}
               </div>
             )}
             {total > PAGE_SIZE && (

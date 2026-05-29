@@ -23,6 +23,9 @@ import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "react-responsive";
 import { css } from "@emotion/css";
 
+const asArray = (value) => (Array.isArray(value) ? value : []);
+const objectId = (value) => value?.$oid || value;
+
 function MessagesChatArea(props) {
   const {
     token: { colorPrimaryBg },
@@ -43,11 +46,11 @@ function MessagesChatArea(props) {
   const [appointments, setAppointments] = useState([]);
   const [availabeInFuture, setAvailabeInFuture] = useState([]);
   const [bookedData, setBookedData] = useState({});
-  const [refresh, setRefresh] = useState(false);
+  const [, setRefresh] = useState(false);
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   var total_index = 0;
   const {
-    messages,
+    messages: rawMessages,
     activeMessageId,
     otherId,
     userType,
@@ -60,6 +63,8 @@ function MessagesChatArea(props) {
     loadingOlder,
     loadOlderMessages,
   } = props;
+  const messages = asArray(rawMessages);
+  const safeRestrictedPartners = asArray(restrictedPartners);
   const messagesEndRef = useRef(null);
   const buttonRef = useRef(null);
   // Scroll container for the message list + state used to keep the viewport
@@ -148,17 +153,17 @@ function MessagesChatArea(props) {
           account = await fetchAccountById(otherId, userType);
         }
       } else {
-        if (restrictedPartners && restrictedPartners.length > 0) {
+        if (safeRestrictedPartners.length > 0) {
           var restricted_user_ids = [];
-          restrictedPartners.map((partner_item) => {
+          safeRestrictedPartners.map((partner_item) => {
             if (partner_item.assign_mentors) {
-              partner_item.assign_mentors.map((assign_item) => {
+              asArray(partner_item.assign_mentors).map((assign_item) => {
                 restricted_user_ids.push(assign_item.id);
                 return false;
               });
             }
             if (partner_item.assign_mentees) {
-              partner_item.assign_mentees.map((assign_item) => {
+              asArray(partner_item.assign_mentees).map((assign_item) => {
                 restricted_user_ids.push(assign_item.id);
                 return false;
               });
@@ -182,7 +187,7 @@ function MessagesChatArea(props) {
         setAccountData(account);
         if (parseInt(userType, 10) === ACCOUNT_TYPE.MENTEE) {
           setIsAlreadyInvitedByMentor(
-            account.favorite_mentors_ids.indexOf(otherId) >= 0
+            asArray(account.favorite_mentors_ids).indexOf(otherId) >= 0
           );
         }
       }
@@ -193,7 +198,7 @@ function MessagesChatArea(props) {
         );
         if (profileAcount) {
           setIsAlreadyInvited(
-            profileAcount.favorite_mentors_ids.indexOf(otherId) >= 0
+            asArray(profileAcount.favorite_mentors_ids).indexOf(otherId) >= 0
           );
         }
       }
@@ -262,15 +267,15 @@ function MessagesChatArea(props) {
     var tmp_avails = [];
     if (formattedAppointments) {
       if (isMentor) {
-        tmp_avails = formattedAppointments["upcoming"];
+        tmp_avails = asArray(formattedAppointments["upcoming"]);
       }
       if (isMentee) {
-        formattedAppointments["pending"].map((item) => {
+        asArray(formattedAppointments["pending"]).map((item) => {
           tmp_avails.push(item);
           return true;
         });
 
-        formattedAppointments["upcoming"].map((item) => {
+        asArray(formattedAppointments["upcoming"]).map((item) => {
           tmp_avails.push(item);
           return true;
         });
@@ -278,7 +283,7 @@ function MessagesChatArea(props) {
       setAppointments(tmp_avails);
       if (tmp_avails) {
         tmp_avails.map((item) => {
-          item.appointments.map((appoint_item) => {
+          asArray(item.appointments).map((appoint_item) => {
             booked_data[
               moment
                 .parseZone(appoint_item.timeslot.start_time.$date)
@@ -301,7 +306,7 @@ function MessagesChatArea(props) {
 
     const future_availables = [];
     if (availability_data) {
-      const availability = availability_data.availability;
+      const availability = asArray(availability_data.availability);
       availability.forEach((time) => {
         // Checking if saved or set have date already
         var starttime = moment(time.start_time.$date);
@@ -364,7 +369,7 @@ function MessagesChatArea(props) {
     socketInvite.emit("invite", inviteMsg);
     let dateTime = moment().utc();
     var availabes_in_future = [];
-    availabeInFuture.map((avail_item, index) => {
+    asArray(availabeInFuture).map((avail_item, index) => {
       if (index < 5) {
         availabes_in_future.push(avail_item);
       }
@@ -455,7 +460,10 @@ function MessagesChatArea(props) {
   const linkify = (text) => {
     const urlPattern =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
-    return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+    return String(text || "").replace(
+      urlPattern,
+      '<a href="$1" target="_blank">$1</a>'
+    );
   };
 
   const HtmlContent = ({ content }) => {
@@ -580,24 +588,24 @@ function MessagesChatArea(props) {
           )}
           {accountData &&
             messages.map((block, index) => {
+              const senderId = objectId(block?.sender_id);
+              const availableSlots = asArray(block?.availabes_in_future);
               return (
                 <div
                   key={block?._id?.$oid || index}
                   className={`chatRight__items you-${
-                    block.sender_id.$oid === profileId ? "sent" : "received"
+                    senderId === profileId ? "sent" : "received"
                   }`}
                   id={block?._id?.$oid || index}
                 >
                   <div
                     className={`chatRight__inner  message-area ${
-                      block.sender_id.$oid !== profileId
-                        ? "flex-start"
-                        : "flex-end"
+                      senderId !== profileId ? "flex-start" : "flex-end"
                     }`}
                     data-chat="person1"
                   >
                     <div className="flex">
-                      {block.sender_id.$oid !== profileId && (
+                      {senderId !== profileId && (
                         <span>
                           <Avatar src={accountData.image?.url} />{" "}
                         </span>
@@ -610,20 +618,18 @@ function MessagesChatArea(props) {
                             margin-left: 8px;
                             width: fit-content;
                             white-space: pre-wrap;
-                            ${block.sender_id.$oid === profileId
+                            ${senderId === profileId
                               ? styles.bubbleSent
                               : styles.bubbleReceived}
                           `}
                         >
-                          <HtmlContent content={linkify(block.body)} />
-                          {block.availabes_in_future !== undefined &&
-                            block.availabes_in_future !== null &&
-                            block.availabes_in_future.length > 0 &&
-                            block.availabes_in_future.map((available_item) => {
+                          <HtmlContent content={linkify(block?.body)} />
+                          {availableSlots.length > 0 &&
+                            availableSlots.map((available_item) => {
                               total_index++;
                               return (
                                 <React.Fragment key={total_index}>
-                                  {block.sender_id.$oid === profileId ||
+                                  {senderId === profileId ||
                                   bookedData.hasOwnProperty(
                                     moment
                                       .parseZone(
@@ -650,7 +656,7 @@ function MessagesChatArea(props) {
                                   ) : (
                                     <MenteeAppointmentModal
                                       mentor_name={accountData.name}
-                                      availability={block.availabes_in_future}
+                                      availability={availableSlots}
                                       selected_availability={available_item}
                                       mentor_id={otherId}
                                       mentee_id={profileId}
@@ -684,10 +690,10 @@ function MessagesChatArea(props) {
                     </div>
 
                     <span style={{ opacity: "40%" }}>
-                      {block.time
+                      {block?.time
                         ? block.time
                         : moment
-                            .utc(block.created_at.$date)
+                            .utc(block?.created_at?.$date)
                             .local()
                             .format("LLL")}
                     </span>
@@ -708,7 +714,7 @@ function MessagesChatArea(props) {
               onChange={(e) => setMessageText(e.target.value)}
               autoSize={{ minRows: 1, maxRows: 3 }}
             />
-            {!accountData.paused_flag && !user.paused_flag && (
+            {!accountData.paused_flag && !user?.paused_flag && (
               <Button
                 id="sendMessagebtn"
                 onClick={sendMessage}

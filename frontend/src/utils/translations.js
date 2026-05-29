@@ -28,6 +28,7 @@ export const getTranslatedOptions = (selected, options) => {
       options.find((option) => option.value === selected)?.label ?? selected
     );
   }
+  if (!Array.isArray(selected) || !Array.isArray(options)) return [];
 
   const values = options.filter((option) => {
     return selected.includes(option.value);

@@ -267,10 +267,17 @@ const TrainingList = (props) => {
     async function loadTrainings() {
       setLoading(true);
       setLoadError(null);
+      // For hubs, send the hub id so the server scopes training to this hub
+      // (a hub member uses their hub_id; a hub owner uses their own id).
+      let hub_user_id = null;
+      if (props.role === ACCOUNT_TYPE.HUB && user) {
+        hub_user_id = user.hub_id ? user.hub_id : user._id.$oid;
+      }
       const res = await getTrainings(
         props.role,
         user ? user.email : props.user_email,
-        user ? user._id.$oid : null
+        user ? user._id.$oid : null,
+        hub_user_id
       );
       if (!res || !res.ok) {
         setLoadError(
@@ -284,12 +291,8 @@ const TrainingList = (props) => {
       }
       const trains = res.trainings || [];
       if (props.role === ACCOUNT_TYPE.HUB && user) {
-        var hub_user_id = null;
-        if (user.hub_id) {
-          hub_user_id = user.hub_id;
-        } else {
-          hub_user_id = user._id.$oid;
-        }
+        // Server already scopes to this hub; keep the client filter as a
+        // belt-and-suspenders guard.
         setTrainingData(
           trains
             .sort((a, b) => a.sort_order - b.sort_order)

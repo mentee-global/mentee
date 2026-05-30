@@ -22,7 +22,7 @@ function HubInviteLink() {
     if (user) {
       if (user.invite_key) {
         setInviteLink(
-          window.location.host + "/" + user.url + "/" + user.invite_key
+          window.location.host + "/" + user.url + "/invite/" + user.invite_key
         );
       }
     }
@@ -46,7 +46,7 @@ function HubInviteLink() {
       const randomIndex = Math.floor(Math.random() * charset.length);
       key += charset[randomIndex];
     }
-    setInviteLink(window.location.host + "/" + user.url + "/" + key);
+    setInviteLink(window.location.host + "/" + user.url + "/invite/" + key);
     var edit_data = {
       invite_key: key,
     };

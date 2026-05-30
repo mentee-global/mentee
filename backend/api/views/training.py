@@ -88,6 +88,7 @@ def get_trainings(role):
     lang = request.args.get("lang", "en-US")
     user_email = request.args.get("user_email", None)
     user_id = request.args.get("user_id", None)
+    hub_user_id = request.args.get("hub_user_id", None)
     try:
         role_int = int(role)
     except (TypeError, ValueError):
@@ -106,7 +107,16 @@ def get_trainings(role):
             status=400, message="Invalid training role", data={"trainings": []}
         )
 
-    trainings = Training.objects(role=str(role))
+    # Hub training is scoped to the hub server-side (mirrors events/announcement)
+    # so a hub user never receives another hub's training content; the client
+    # used to fetch every role-6 training and filter in the browser. When no
+    # hub_user_id is supplied (e.g. the admin training console, which lists all
+    # hubs' trainings and filters them in-app) we fall back to the role-only
+    # query so that view is unaffected.
+    if role_int == Account.HUB and hub_user_id:
+        trainings = Training.objects(role=str(role), hub_id=str(hub_user_id))
+    else:
+        trainings = Training.objects(role=str(role))
 
     append_data = []
     if role_int == Account.MENTOR:

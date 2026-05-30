@@ -45,6 +45,25 @@ def verify_user(required_role):
         return UNAUTHORIZED, create_response(status=401, message=msg)
 
 
+def get_optional_claims():
+    """Decode the Firebase token if one is present, without rejecting anonymous
+    callers. Returns the verified claims dict (uid, role, ...) when a valid token
+    is supplied, otherwise None. Use this on endpoints that must serve both
+    anonymous and authenticated callers but want to tailor the response (e.g.
+    return full vs sanitized data) based on the caller's role.
+    """
+    token = request.headers.get("Authorization")
+    if not token:
+        return None
+    try:
+        claims = firebase_admin_auth.verify_id_token(token)
+    except Exception as e:
+        logger.info(f"Ignoring invalid optional auth: {e}")
+        return None
+    g.auth_claims = claims
+    return claims
+
+
 def admin_only(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):

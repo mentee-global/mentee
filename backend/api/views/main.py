@@ -51,7 +51,12 @@ from api.utils.constants import NEW_APPLICATION_STATUS
 from api.utils.profile_parse import new_profile, edit_profile
 from api.utils.email_sync import update_email_across_models
 from api.utils.constants import Account
-from api.utils.require_auth import all_users, mentee_only, verify_user
+from api.utils.require_auth import (
+    all_users,
+    mentee_only,
+    verify_user,
+    get_optional_claims,
+)
 from firebase_admin import auth as firebase_admin_auth
 
 main = Blueprint("main", __name__)  # initialize blueprint
@@ -272,7 +277,29 @@ def get_accounts(account_type):
     elif account_type == Account.MODERATOR:
         accounts = Moderator.objects()
     elif account_type == Account.HUB:
-        accounts = Hub.objects()
+        # The hub list is fetched publicly (anonymous visitors) to build the
+        # per-hub login/invite routes, so it must NOT leak hub credentials.
+        # Only an authenticated admin (the admin Hub-management table) gets the
+        # full documents; everyone else gets a sanitized projection with just
+        # what the public app needs for routing.
+        claims = get_optional_claims()
+        try:
+            is_admin = claims is not None and int(claims.get("role")) == Account.ADMIN
+        except (TypeError, ValueError):
+            is_admin = False
+        if is_admin:
+            accounts = Hub.objects()
+        else:
+            accounts = [
+                {
+                    "_id": {"$oid": str(hub.id)},
+                    "url": hub.url,
+                    "name": hub.name,
+                    "image": {"url": hub.image.url} if hub.image else None,
+                    "preferred_language": hub.preferred_language,
+                }
+                for hub in Hub.objects()
+            ]
     elif account_type == Account.ADMIN:
         accounts = Admin.objects()
     else:
@@ -926,6 +953,24 @@ def create_mentor_profile():
             logger.info(msg)
             return create_response(status=422, message=msg)
 
+    # If this profile is being created through a hub invite, the client supplies
+    # hub_id. Never trust it blindly — require the matching invite_key for that
+    # hub, so only people who actually hold the invite link can join. Without
+    # this, anyone could attach themselves to any hub by passing its id.
+    hub_id = data.get("hub_id")
+    if hub_id:
+        try:
+            hub = Hub.objects.get(id=hub_id)
+        except Exception:
+            msg = "Invalid hub invite"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+        submitted_key = data.get("invite_key")
+        if not submitted_key or submitted_key != hub.invite_key:
+            msg = "Invalid or missing hub invite key"
+            logger.info(msg)
+            return create_response(status=403, message=msg)
+
     validate_data = None
     if account_type == Account.MENTOR:
         validate_data = MentorForm.from_json(data)
@@ -1161,6 +1206,24 @@ def create_profile_existing_account():
             msg = f"Email {email} is already registered as a partner"
             logger.info(msg)
             return create_response(status=422, message=msg)
+
+    # If this profile is being created through a hub invite, the client supplies
+    # hub_id. Never trust it blindly — require the matching invite_key for that
+    # hub, so only people who actually hold the invite link can join. Without
+    # this, anyone could attach themselves to any hub by passing its id.
+    hub_id = data.get("hub_id")
+    if hub_id:
+        try:
+            hub = Hub.objects.get(id=hub_id)
+        except Exception:
+            msg = "Invalid hub invite"
+            logger.info(msg)
+            return create_response(status=422, message=msg)
+        submitted_key = data.get("invite_key")
+        if not submitted_key or submitted_key != hub.invite_key:
+            msg = "Invalid or missing hub invite key"
+            logger.info(msg)
+            return create_response(status=403, message=msg)
 
     validate_data = None
     if account_type == Account.MENTOR:

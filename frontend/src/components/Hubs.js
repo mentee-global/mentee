@@ -56,7 +56,11 @@ export const Hubs = () => {
         }
         if (record.url && record.invite_key) {
           setInviteURL(
-            window.location.host + "/" + record.url + "/" + record.invite_key
+            window.location.host +
+              "/" +
+              record.url +
+              "/invite/" +
+              record.invite_key
           );
         }
       }
@@ -150,7 +154,7 @@ export const Hubs = () => {
     form.setFieldValue("invite_key", key);
     var hub_url = form.getFieldValue("url");
     if (hub_url) {
-      setInviteURL(window.location.host + "/" + hub_url + "/" + key);
+      setInviteURL(window.location.host + "/" + hub_url + "/invite/" + key);
     }
     setValuesChanged(true);
   };
@@ -352,7 +356,9 @@ export const Hubs = () => {
       key: "invite_url",
       render: (record) => {
         if (record.invite_key) {
-          return <span>{"/" + record.url + "/" + record.invite_key}</span>;
+          return (
+            <span>{"/" + record.url + "/invite/" + record.invite_key}</span>
+          );
         }
       },
     },

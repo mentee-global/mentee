@@ -56,6 +56,7 @@ from api.utils.require_auth import (
     mentee_only,
     verify_user,
     get_optional_claims,
+    hub_access_error,
 )
 from firebase_admin import auth as firebase_admin_auth
 
@@ -186,6 +187,15 @@ def get_accounts(account_type):
                 accounts = []
             accounts.append(account)
     elif account_type == Account.PARTNER:
+        # Listing partners filtered by a hub is hub-scoped data: only that hub
+        # (or staff) may enumerate its partners. General (non-hub) partner
+        # browsing is unaffected (no hub_user_id supplied).
+        requested_hub = request.args.get("hub_user_id", "")
+        if requested_hub:
+            get_optional_claims()
+            err = hub_access_error(requested_hub)
+            if err:
+                return err
         Hub_users = Hub.objects()
         Hub_users_object = {}
         for hub_user in Hub_users:
@@ -1033,7 +1043,9 @@ def create_mentor_profile():
             if is_invalid:
                 return create_response(status=422, message=msg)
 
-    logger.info(data)
+    logger.info(
+        {k: v for k, v in data.items() if k not in ("password", "confirmPassword")}
+    )
     new_account = new_profile(data=data, profile_type=account_type)
     if not new_account:
         msg = "Could not parse Account Data"
@@ -1287,7 +1299,9 @@ def create_profile_existing_account():
             if is_invalid:
                 return create_response(status=422, message=msg)
 
-    logger.info(data)
+    logger.info(
+        {k: v for k, v in data.items() if k not in ("password", "confirmPassword")}
+    )
     new_account = new_profile(data=data, profile_type=account_type)
 
     if not new_account:

@@ -8,6 +8,12 @@ AUTHORIZED = True
 UNAUTHORIZED = False
 ALL_USERS = True
 
+# Roles that may act across any hub (no per-hub ownership restriction).
+STAFF_ROLES = {Account.ADMIN.value, Account.SUPPORT.value}
+
+# Sentinel returned by caller_hub_id() for staff callers (= "all hubs").
+STAFF_ALL = object()
+
 
 def verify_user(required_role):
     headers = request.headers
@@ -62,6 +68,58 @@ def get_optional_claims():
         return None
     g.auth_claims = claims
     return claims
+
+
+def caller_hub_id():
+    """Resolve which hub the authenticated caller belongs to, from the verified
+    claims on `g` (set by verify_user / get_optional_claims). The caller's
+    profile is looked up by firebase_uid, so a caller can never assert a hub
+    they don't own by passing ids in the request.
+
+    Returns:
+      - STAFF_ALL for admin/support (allowed across all hubs),
+      - the hub id (str) for a hub account or a partner attached to a hub,
+      - None if unauthenticated or not associated with a hub.
+    """
+    claims = getattr(g, "auth_claims", None) or {}
+    try:
+        role = int(claims.get("role"))
+    except (TypeError, ValueError):
+        return None
+    if role in STAFF_ROLES:
+        return STAFF_ALL
+    uid = claims.get("uid")
+    if not uid:
+        return None
+    # Lazy import to avoid any import-order coupling with the models package.
+    from api.models import Hub, PartnerProfile
+
+    # A hub OWNER logs in with role HUB and has a Hub record. A hub MEMBER also
+    # logs in with role HUB (the login form sends role=6) but is actually a
+    # PartnerProfile attached to the hub — so fall back to that.
+    if role == Account.HUB.value:
+        hub = Hub.objects(firebase_uid=uid).only("id").first()
+        if hub:
+            return str(hub.id)
+        partner = PartnerProfile.objects(firebase_uid=uid).only("hub_id").first()
+        return partner.hub_id if partner and partner.hub_id else None
+    if role == Account.PARTNER.value:
+        partner = PartnerProfile.objects(firebase_uid=uid).only("hub_id").first()
+        return partner.hub_id if partner and partner.hub_id else None
+    return None
+
+
+def hub_access_error(hub_id):
+    """Return a 403 response unless the caller is staff or belongs to hub_id.
+    Returns None when access is allowed. Requires g.auth_claims to be set (use
+    on endpoints decorated with @all_users / after get_optional_claims())."""
+    caller = caller_hub_id()
+    if caller is STAFF_ALL:
+        return None
+    if caller is not None and hub_id is not None and str(caller) == str(hub_id):
+        return None
+    logger.info("Hub ownership check failed")
+    return create_response(status=403, message="Forbidden")
 
 
 def admin_only(fn):

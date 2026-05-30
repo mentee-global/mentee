@@ -34,3 +34,18 @@ export const phoneRegex = // eslint-disable-next-line no-useless-escape
 export const validatePhoneNumber = (str) => {
   return phoneRegex.test(str);
 };
+
+// Generate a hub invite key using a cryptographically secure RNG (not
+// Math.random). The key travels in a public invite URL and is validated
+// server-side, so it must be unguessable.
+export const generateInviteKey = (length = 20) => {
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const values = new Uint32Array(length);
+  window.crypto.getRandomValues(values);
+  let key = "";
+  for (let i = 0; i < length; i++) {
+    key += charset[values[i] % charset.length];
+  }
+  return key;
+};

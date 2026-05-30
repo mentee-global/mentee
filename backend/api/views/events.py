@@ -13,6 +13,7 @@ from api.models import (
 )
 from datetime import datetime, timezone, timedelta
 import re
+from api.utils.require_auth import all_users, hub_access_error, caller_hub_id, STAFF_ALL
 from api.utils.translate import (
     get_all_translations,
 )
@@ -28,14 +29,24 @@ event = Blueprint("event", __name__)  # initialize blueprint
 
 
 @event.route("events/<role>", methods=["GET"])
+@all_users
 def get_events(role):
     lang = request.args.get("lang", "en-US")
     hub_user_id = request.args.get("hub_user_id", None)
     partner_id = request.args.get("partner_id", None)
     user_id = request.args.get("user_id", None)
     if int(role) == Account.ADMIN:
+        # The "all events" branch is keyed off the URL role param, so require the
+        # CALLER to actually be staff — otherwise any user could pass role=0.
+        if caller_hub_id() is not STAFF_ALL:
+            return create_response(status=403, message="Forbidden")
         events = Event.objects().order_by("-start_datetime")
     elif int(role) == Account.HUB:
+        # Only return a hub's events to that hub (or staff) — never let one hub
+        # read another's by passing its id.
+        err = hub_access_error(hub_user_id)
+        if err:
+            return err
         events = Event.objects.filter(
             role__in=[role], hub_id=str(hub_user_id)
         ).order_by("-start_datetime")
@@ -79,23 +90,37 @@ def get_events(role):
 
 
 @event.route("event/<string:id>", methods=["GET"])
+@all_users
 def get_event_by_id(id):
     try:
         event = Event.objects.get(id=id)
     except:
         return create_response(status=422, message="event not found")
 
+    # Hub-scoped events are only readable by that hub (or staff). General
+    # (non-hub) events stay readable by any signed-in user.
+    if event.hub_id:
+        err = hub_access_error(event.hub_id)
+        if err:
+            return err
+
     return create_response(data={"event": event})
 
 
 @event.route("events/delete/<string:id>", methods=["DELETE"])
+@all_users
 def delete_train(id):
     try:
         event = Event.objects.get(id=id)
-        event.delete()
     except:
         return create_response(status=422, message="event not found")
 
+    # Only the owning hub (or staff) may delete; general events are staff-only.
+    err = hub_access_error(event.hub_id)
+    if err:
+        return err
+
+    event.delete()
     return create_response(status=200, message="Successful deletion")
 
 
@@ -145,6 +170,7 @@ def send_mail_for_event(
 
 
 @event.route("event_register", methods=["POST"])
+@all_users
 def new_event():
     try:
         data = request.get_json()
@@ -175,6 +201,11 @@ def new_event():
             url = data["url"]
         if "hub_id" in data:
             hub_id = data["hub_id"]
+            # A hub may only create events for itself (staff may target any hub).
+            if hub_id:
+                err = hub_access_error(hub_id)
+                if err:
+                    return err
 
         partner_ids = None
         if "partner_ids" in data:

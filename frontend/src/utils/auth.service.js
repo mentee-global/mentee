@@ -224,7 +224,23 @@ export const getUserEmail = () => {
   }
 };
 
+// Firebase restores a persisted session asynchronously after a hard page load.
+// Requests fired before that restore (e.g. a page's mount-time fetch) would
+// otherwise go out with no token, making an authenticated caller look
+// anonymous to the backend. Wait once for the first auth-state resolution so
+// the token is reliably attached when a session actually exists.
+let _authReadyPromise = null;
+const waitForAuthReady = () =>
+  _authReadyPromise ||
+  (_authReadyPromise = new Promise((resolve) => {
+    const unsubscribe = fireauth.auth().onAuthStateChanged(() => {
+      unsubscribe();
+      resolve();
+    });
+  }));
+
 export const getUserIdToken = async () => {
+  await waitForAuthReady();
   if (isLoggedIn()) {
     return await getIdToken().then((idToken) => {
       return idToken;

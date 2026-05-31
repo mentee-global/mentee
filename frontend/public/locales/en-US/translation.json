@@ -626,7 +626,8 @@
     "logIn": "Log in",
     "noEmail": "Didn't receive an email?",
     "refresh": "(Refresh this page if you verified your email)",
-    "resend": "Resend"
+    "resend": "Resend",
+    "loginNotice": "Your email isn't verified yet. Check your inbox for the verification link, or resend it below."
   },
   "meeting": {
     "title": "Create/Join Meeting",

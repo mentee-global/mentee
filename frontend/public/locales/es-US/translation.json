@@ -624,7 +624,8 @@
     "logIn": "Iniciar sesión",
     "noEmail": "¿No recibiste el correo?",
     "refresh": "Actualiza esta página si ya verificaste tu correo",
-    "resend": "Reenviar"
+    "resend": "Reenviar",
+    "loginNotice": "Tu correo aún no está verificado. Revisa tu bandeja de entrada para encontrar el enlace de verificación o reenvíalo abajo."
   },
   "meeting": {
     "title": "Crear/Unirse a la Reunión",

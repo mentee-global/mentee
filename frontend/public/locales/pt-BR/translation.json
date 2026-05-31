@@ -624,7 +624,8 @@
     "logIn": "Entrar",
     "noEmail": "Não recebeu o e-mail?",
     "refresh": "Recarregue esta página se você verificou o seu e-mail",
-    "resend": "Reenviar"
+    "resend": "Reenviar",
+    "loginNotice": "Seu e-mail ainda não foi verificado. Verifique sua caixa de entrada para encontrar o link de verificação ou reenvie-o abaixo."
   },
   "meeting": {
     "title": "Criar/Entrar na Reunião",

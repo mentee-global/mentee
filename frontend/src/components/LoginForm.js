@@ -30,6 +30,33 @@ import {
 import fireauth from "utils/fireauth";
 import { fetchUser } from "features/userSlice";
 
+// Resend button for the unverified-email notice. Self-contained so it can hold
+// its own loading state (it's rendered imperatively inside an antd notification,
+// outside the LoginForm render tree).
+function ResendVerificationButton({ email }) {
+  const { t } = useTranslation();
+  const [resending, setResending] = useState(false);
+  return (
+    <Button
+      type="primary"
+      size="small"
+      loading={resending}
+      onClick={async () => {
+        setResending(true);
+        const verifyRes = await sendVerificationEmail(email);
+        setResending(false);
+        if (verifyRes && (verifyRes.success || verifyRes.status === 200)) {
+          message.success(t("verifyEmail.emailResent"));
+        } else {
+          message.error(t("verifyEmail.error"));
+        }
+      }}
+    >
+      {t("verifyEmail.resend")}
+    </Button>
+  );
+}
+
 function LoginForm({ role, defaultEmail, n50_flag, location }) {
   if (!defaultEmail) {
     if (location && location.state && location.state.email) {
@@ -179,30 +206,13 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
         // Email not verified yet. Show a persistent, dismissible notice with a
         // manual "Resend" button instead of silently re-sending the
         // verification email on every login (which spammed unverified users).
+        // Wording doesn't claim we just sent one — they may already have it.
         notification.warning({
           key: "verify-email",
           message: t("verifyEmail.header"),
-          description: t("verifyEmail.body"),
+          description: t("verifyEmail.loginNotice"),
           duration: 0,
-          btn: (
-            <Button
-              type="primary"
-              size="small"
-              onClick={async () => {
-                const verifyRes = await sendVerificationEmail(email);
-                if (
-                  verifyRes &&
-                  (verifyRes.success || verifyRes.status === 200)
-                ) {
-                  message.success(t("verifyEmail.emailResent"));
-                } else {
-                  message.error(t("verifyEmail.error"));
-                }
-              }}
-            >
-              {t("verifyEmail.resend")}
-            </Button>
-          ),
+          btn: <ResendVerificationButton email={email} />,
         });
       }
       if (oauthNextCaptured) {

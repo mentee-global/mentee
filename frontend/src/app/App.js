@@ -251,13 +251,14 @@ function App() {
                       <PublicRoute exact path={hub_url}>
                         <SupportLogin role={ACCOUNT_TYPE.HUB} />
                       </PublicRoute>
-                      {allHubData[hub_url].invite_key && (
-                        <PublicRoute
-                          path={hub_url + "/" + allHubData[hub_url].invite_key}
-                        >
-                          <BuildProfile hub_user={allHubData[hub_url]} />
-                        </PublicRoute>
-                      )}
+                      {/* Invite link: the key now lives in the URL path and is
+                          validated server-side, so it no longer needs to be
+                          shipped to every visitor in allHubData. The "/invite/"
+                          segment keeps this from colliding with the hub's other
+                          sub-pages (events, profile, ...). */}
+                      <PublicRoute path={hub_url + "/invite/:inviteKey"}>
+                        <BuildProfile hub_user={allHubData[hub_url]} />
+                      </PublicRoute>
                     </React.Fragment>
                   );
                 })}

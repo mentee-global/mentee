@@ -27,6 +27,8 @@ from api.utils.constants import Account
 from api.utils.email_sync import update_email_across_models
 import csv
 import io
+import secrets
+import string
 from api.views.auth import create_firebase_user, _bump_token_version_and_cascade
 from api.utils.admin_notification_emails import (
     notify_email_changed_to_old,
@@ -123,12 +125,22 @@ def upload_account_emails():
     return create_response(status=200, message="success")
 
 
+def _generate_invite_key(length=20):
+    """Server-side invite key: a hub's join link is useless without one, so we
+    fall back to generating it if the admin didn't. Uses a CSPRNG (secrets)
+    rather than the client's Math.random."""
+    alphabet = string.ascii_letters + string.digits
+    return "".join(secrets.choice(alphabet) for _ in range(length))
+
+
 @admin.route("hub_register", methods=["PUT"])
 @admin_only
 def create_hub_account():
     id = request.form["id"]
     email = request.form["email"]
-    password = request.form["password"]
+    # Optional: omitted on edits where the admin doesn't change the password.
+    # A real value is required only when creating a hub.
+    password = request.form.get("password")
     name = request.form["name"]
     url = request.form["url"]
     invite_key = request.form["invite_key"]
@@ -137,6 +149,10 @@ def create_hub_account():
         image = request.files["image"]
 
     role = Account.HUB
+    # Store the numeric role ("6"), matching how every other account type is
+    # whitelisted. str(Account.HUB) would yield "Account.HUB" (the enum has no
+    # __str__), which the email-status check (querying role="6") never matches.
+    role_value = str(int(role))
 
     if id is not None and id != "":
         hub_account = Hub.objects.get(id=id)
@@ -147,7 +163,10 @@ def create_hub_account():
             if hub_account.email != email:
                 ex_email = hub_account.email
                 firebase_user = firebase_admin_auth.get_user_by_email(ex_email)
-                if password is not None:
+                # Only change the Firebase password when a genuine new value was
+                # supplied. Empty / "undefined" / "null" mean "leave it as is" —
+                # otherwise an email-only edit would brick the hub's login.
+                if password and password not in ("undefined", "null"):
                     firebase_admin_auth.update_user(
                         firebase_user.uid, email=email, password=password
                     )
@@ -180,7 +199,7 @@ def create_hub_account():
             hub_account.save()
         return create_response(status=200, message="Edit Hub user successfully")
     else:
-        duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
+        duplicates = VerifiedEmail.objects(email=email, role=role_value, password="")
         if not duplicates:
             firebase_user, error_http_response = create_firebase_user(email, password)
             if error_http_response:
@@ -193,6 +212,9 @@ def create_hub_account():
                         status=422, message="Can't create firebase user"
                     )
             firebase_uid = firebase_user.uid
+            # Never leave a new hub unjoinable: if no key was supplied, mint one.
+            if not invite_key:
+                invite_key = _generate_invite_key()
             hub = Hub(
                 name=name,
                 email=email,
@@ -211,7 +233,7 @@ def create_hub_account():
 
             hub.save()
 
-            verified_email = VerifiedEmail(email=email, role=str(role), password="")
+            verified_email = VerifiedEmail(email=email, role=role_value, password="")
             verified_email.save()
         else:
             return create_response(

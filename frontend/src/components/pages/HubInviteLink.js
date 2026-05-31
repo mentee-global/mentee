@@ -7,6 +7,7 @@ import "../css/Gallery.scss";
 import { useTranslation } from "react-i18next";
 import { css } from "@emotion/css";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { generateInviteKey } from "utils/misc";
 import { useDispatch, useSelector } from "react-redux";
 
 function HubInviteLink() {
@@ -22,7 +23,7 @@ function HubInviteLink() {
     if (user) {
       if (user.invite_key) {
         setInviteLink(
-          window.location.host + "/" + user.url + "/" + user.invite_key
+          window.location.host + "/" + user.url + "/invite/" + user.invite_key
         );
       }
     }
@@ -38,15 +39,8 @@ function HubInviteLink() {
   };
 
   const generateLink = async () => {
-    const charset =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let key = "";
-
-    for (let i = 0; i < 20; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      key += charset[randomIndex];
-    }
-    setInviteLink(window.location.host + "/" + user.url + "/" + key);
+    const key = generateInviteKey();
+    setInviteLink(window.location.host + "/" + user.url + "/invite/" + key);
     var edit_data = {
       invite_key: key,
     };

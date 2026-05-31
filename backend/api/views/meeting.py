@@ -19,9 +19,7 @@ ENCODED_PRIVATE_KEY = os.environ.get("EIGHT_X_EIGHT_ENCODED_PRIVATE_KEY")
 @meeting.route("/generateToken", methods=["GET"])
 def generateToken():
     try:
-        print(ENCODED_PRIVATE_KEY)
         PRIVATE_KEY = base64.b64decode(ENCODED_PRIVATE_KEY)
-        print(PRIVATE_KEY)
         jaasJwt = JaaSJwtBuilder()
         token = (
             jaasJwt.withDefaults()

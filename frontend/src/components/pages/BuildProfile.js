@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { css } from "@emotion/css";
 import { Result, Space, Typography, message } from "antd";
-import { Link, withRouter } from "react-router-dom";
+import { Link, withRouter, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import LanguageDropdown from "components/LanguageDropdown";
@@ -28,6 +28,9 @@ function BuildProfile({ location, history, hub_user }) {
   const [applicationData, setApplicationData] = useState(null);
 
   const query = useQuery();
+  // Present only on the hub invite route (/{hubUrl}/invite/:inviteKey); the
+  // backend validates it against the hub before accepting the membership.
+  const { inviteKey } = useParams();
   var role = location.state?.role || parseInt(query.get("role"));
   if (hub_user) {
     role = ACCOUNT_TYPE.PARTNER;
@@ -169,6 +172,7 @@ function BuildProfile({ location, history, hub_user }) {
             onSubmit={onSubmit}
             loading={loading}
             hub_user={hub_user}
+            invite_key={inviteKey}
           />
         );
       default:

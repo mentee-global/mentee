@@ -12,6 +12,7 @@ from api.models import (
     MenteeProfile,
     PartnerProfile,
 )
+from api.utils.require_auth import all_users, hub_access_error
 from datetime import datetime, timezone, timedelta
 import re
 from api.utils.translate import (
@@ -34,12 +35,17 @@ announcement = Blueprint("announcement", __name__)  # initialize blueprint
 
 
 @announcement.route("announcement/<role>", methods=["GET"])
+@all_users
 def get_announcements(role):
     lang = request.args.get("lang", "en-US")
     hub_user_id = request.args.get("hub_user_id", None)
     user_id = request.args.get("user_id", None)
 
     if int(role) == Account.HUB:
+        # Only the owning hub (or staff) may list a hub's announcements.
+        err = hub_access_error(hub_user_id)
+        if err:
+            return err
         data = Announcement.objects.filter(role__in=[role], hub_id=str(hub_user_id))
     else:
         data = Announcement.objects(role__in=[role])
@@ -91,6 +97,7 @@ def get_announcements(role):
 
 
 @announcement.route("announcement/register/<role>", methods=["POST"])
+@all_users
 def new_announce(role):
     try:
         name = request.form["name"]
@@ -101,6 +108,11 @@ def new_announce(role):
 
         if "hub_id" in request.form:
             hub_id = request.form["hub_id"]
+            # A hub may only post announcements for itself (staff: any hub).
+            if hub_id:
+                err = hub_access_error(hub_id)
+                if err:
+                    return err
 
         partner_id = None
         if (
@@ -238,11 +250,17 @@ def new_announce(role):
 
 
 @announcement.route("announcement/edit/<string:id>", methods=["PUT"])
+@all_users
 def edit(id):
     try:
         announcement = Announcement.objects.get(id=id)
     except Exception as e:
         return create_response(status=422, message=f"Failed to get training: {e}")
+
+    # Must own the announcement being edited (general ones are staff-only).
+    err = hub_access_error(announcement.hub_id)
+    if err:
+        return err
 
     new_name = request.form.get("name", announcement.name)
     new_description = request.form.get("description", announcement.description)
@@ -250,6 +268,11 @@ def edit(id):
     hub_id = None
     if "hub_id" in request.form:
         hub_id = request.form["hub_id"]
+        # Can't reassign an announcement to a hub you don't own.
+        if hub_id:
+            err = hub_access_error(hub_id)
+            if err:
+                return err
     announcement.hub_id = hub_id
 
     if announcement.name != new_name:
@@ -334,6 +357,8 @@ def get_doc_file(id):
 
 @announcement.route("announcement/get/<string:id>", methods=["GET"])
 def get_announce_by_id(id):
+    # Intentionally public: the /announcement/:id detail page is a PublicRoute
+    # and emailed announcement links are opened by signed-out recipients.
     try:
         announcement = Announcement.objects.get(id=id)
     except:
@@ -343,11 +368,17 @@ def get_announce_by_id(id):
 
 
 @announcement.route("announcement/delete/<string:id>", methods=["DELETE"])
+@all_users
 def delete(id):
     try:
         announcement = Announcement.objects.get(id=id)
-        announcement.delete()
     except:
-        return create_response(status=422, message="event not found")
+        return create_response(status=422, message="announcement not found")
 
+    # Only the owning hub (or staff) may delete; general announcements are staff-only.
+    err = hub_access_error(announcement.hub_id)
+    if err:
+        return err
+
+    announcement.delete()
     return create_response(status=200, message="Successful deletion")

@@ -17,7 +17,7 @@ from api.utils.constants import (
     TRANSLATIONS,
     UNREAD_MESSAGE_TEMPLATE,
 )
-from api.utils.require_auth import all_users
+from api.utils.require_auth import all_users, hub_access_error
 from api.utils.translate import get_translated_options
 from api.core import create_response, logger
 import json
@@ -671,6 +671,10 @@ def get_group_messages():
     try:
         hub_user_id = request.args.get("hub_user_id", None)
         if hub_user_id is not None and hub_user_id != "":
+            # Only the owning hub (or staff) may read a hub's group messages.
+            err = hub_access_error(hub_user_id)
+            if err:
+                return err
             messages = GroupMessage.objects(
                 Q(hub_user_id=request.args.get("hub_user_id")) & Q(is_deleted__ne=True)
             )

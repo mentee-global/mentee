@@ -19,14 +19,11 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
 
   useEffect(() => {
     setCheckFlagInviteLink(false);
+    // The invite key no longer ships in allHubData; invite pages are now any
+    // path under a known hub's "/invite/" segment.
     Object.keys(allHubData).map((hub_url) => {
-      if (allHubData[hub_url].invite_key) {
-        if (
-          location.pathname ===
-          hub_url + "/" + allHubData[hub_url].invite_key
-        ) {
-          setCheckFlagInviteLink(true);
-        }
+      if (location.pathname.startsWith(hub_url + "/invite/")) {
+        setCheckFlagInviteLink(true);
       }
       return true;
     });
@@ -272,8 +269,14 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                 >
                   <img
                     alt=""
-                    src={allHubData[location.pathname].image.url}
-                    style={{ maxWidth: "100%" }}
+                    src={
+                      allHubData[location.pathname].image?.url || BigLogoImage
+                    }
+                    style={
+                      allHubData[location.pathname].image?.url
+                        ? { maxWidth: "100%" }
+                        : { width: "100%", maxWidth: "200px", fillOpacity: 0.7 }
+                    }
                   />
                   <div
                     style={{

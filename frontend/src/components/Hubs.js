@@ -21,6 +21,7 @@ import {
 
 import "./css/Training.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
+import { generateInviteKey } from "utils/misc";
 import { css } from "@emotion/css";
 import ImgCrop from "antd-img-crop";
 
@@ -56,7 +57,11 @@ export const Hubs = () => {
         }
         if (record.url && record.invite_key) {
           setInviteURL(
-            window.location.host + "/" + record.url + "/" + record.invite_key
+            window.location.host +
+              "/" +
+              record.url +
+              "/invite/" +
+              record.invite_key
           );
         }
       }
@@ -104,6 +109,12 @@ export const Hubs = () => {
           if (res.status === 200) {
             success();
             setReload((r) => !r);
+            // A newly created hub's routes (/{url} login + /{url}/invite/:key)
+            // are built from data App.js fetches only on mount, so reload to
+            // register them immediately. (Edits don't add routes.)
+            if (!selected_id) {
+              setTimeout(() => window.location.reload(), 1200);
+            }
           } else {
             if (res.response && res.response.status === 422) {
               alert("Failed create firebase account");
@@ -139,18 +150,11 @@ export const Hubs = () => {
   };
 
   const generateLink = async () => {
-    const charset =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let key = "";
-
-    for (let i = 0; i < 20; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      key += charset[randomIndex];
-    }
+    const key = generateInviteKey();
     form.setFieldValue("invite_key", key);
     var hub_url = form.getFieldValue("url");
     if (hub_url) {
-      setInviteURL(window.location.host + "/" + hub_url + "/" + key);
+      setInviteURL(window.location.host + "/" + hub_url + "/invite/" + key);
     }
     setValuesChanged(true);
   };
@@ -352,7 +356,9 @@ export const Hubs = () => {
       key: "invite_url",
       render: (record) => {
         if (record.invite_key) {
-          return <span>{"/" + record.url + "/" + record.invite_key}</span>;
+          return (
+            <span>{"/" + record.url + "/invite/" + record.invite_key}</span>
+          );
         }
       },
     },

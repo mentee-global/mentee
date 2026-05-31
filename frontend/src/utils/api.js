@@ -384,6 +384,7 @@ export const getTrainings = async (
   role,
   user_email = null,
   user_id = null,
+  hub_user_id = null,
   lang = i18n.language
 ) => {
   const requestExtension = `/training/${role}`;
@@ -393,6 +394,7 @@ export const getTrainings = async (
         lang: lang,
         user_email: user_email,
         user_id: user_id,
+        hub_user_id: hub_user_id,
       },
     });
     const trains = res?.data?.result?.trainings;
@@ -714,7 +716,12 @@ export const adminHubUserData = (values, __image, id) => {
   formData.append("email", values.email);
   formData.append("name", values.name);
   formData.append("url", values.url);
-  formData.append("password", values.password);
+  // Only send a password when the admin actually entered one. On edit the field
+  // is left untouched (undefined); appending it would serialize the string
+  // "undefined" and the backend would overwrite the hub's Firebase password.
+  if (values.password) {
+    formData.append("password", values.password);
+  }
   formData.append("invite_key", values.invite_key ? values.invite_key : "");
   formData.append("image", __image);
 

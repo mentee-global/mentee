@@ -18,7 +18,14 @@ from api.models import (
 )
 from datetime import datetime
 from PyPDF2 import PdfReader
-from api.utils.require_auth import admin_only, all_users
+from api.utils.require_auth import (
+    admin_only,
+    all_users,
+    hub_access_error,
+    caller_hub_id,
+    get_optional_claims,
+    STAFF_ALL,
+)
 from api.utils.translate import (
     document_translate_all_languages,
     populate_translation_field,
@@ -77,17 +84,28 @@ def getSignedData(role):
 
 
 @training.route("/community_libraries", methods=["GET"])
+@all_users
 def getCommunityLibraries():
     hub_id = request.args.get("hub_id", None)
+    # Community library is hub-scoped: only that hub (or staff) may read it.
+    err = hub_access_error(hub_id)
+    if err:
+        return err
     data = CommunityLibrary.objects(hub_id=hub_id)
     return create_response(data={"library": data})
 
 
 @training.route("/<role>", methods=["GET"])
 def get_trainings(role):
+    # Public flows (the /application-training step for prospective mentors and
+    # mentees) read general training while signed out, so this stays open for
+    # non-hub roles. Decode the token if present so the HUB branch below can
+    # still enforce hub ownership.
+    get_optional_claims()
     lang = request.args.get("lang", "en-US")
     user_email = request.args.get("user_email", None)
     user_id = request.args.get("user_id", None)
+    hub_user_id = request.args.get("hub_user_id", None)
     try:
         role_int = int(role)
     except (TypeError, ValueError):
@@ -106,7 +124,23 @@ def get_trainings(role):
             status=400, message="Invalid training role", data={"trainings": []}
         )
 
-    trainings = Training.objects(role=str(role))
+    # Hub training is scoped server-side (mirrors events/announcement) so a hub
+    # user never receives another hub's training content.
+    if role_int == Account.HUB:
+        if hub_user_id:
+            # Must belong to the requested hub (or be staff).
+            err = hub_access_error(hub_user_id)
+            if err:
+                return err
+            trainings = Training.objects(role=str(role), hub_id=str(hub_user_id))
+        else:
+            # No hub specified → "all hubs' trainings" (admin training console).
+            # Restricted to staff so a hub user can't omit the id to read all.
+            if caller_hub_id() is not STAFF_ALL:
+                return create_response(status=403, message="Forbidden")
+            trainings = Training.objects(role=str(role))
+    else:
+        trainings = Training.objects(role=str(role))
 
     append_data = []
     if role_int == Account.MENTOR:
@@ -298,6 +332,7 @@ def delete_train(id):
 
 
 @training.route("/library/<string:id>", methods=["GET"])
+@all_users
 def get_library(id):
     try:
         library = CommunityLibrary.objects.get(id=id)
@@ -305,16 +340,26 @@ def get_library(id):
     except:
         return create_response(status=422, message="Data not found")
 
+    err = hub_access_error(library.hub_id)
+    if err:
+        return err
+
     return create_response(status=200, data={"library": library})
 
 
 ################################################################################
 @training.route("/train/<string:id>", methods=["GET"])
-# @admin_only
 def get_train(id):
+    # Public for general (non-hub) training (application flow); hub training is
+    # still restricted below. Decode any token for the hub ownership check.
+    get_optional_claims()
     try:
         user_email = request.args.get("user_email", None)
         train = Training.objects.get(id=id)
+        if train.hub_id:
+            err = hub_access_error(train.hub_id)
+            if err:
+                return err
         if user_email is not None:
             signed_data = (
                 SignedDocs.objects.filter(user_email=user_email)
@@ -331,12 +376,17 @@ def get_train(id):
 
 
 @training.route("/libraryFile/<string:id>", methods=["GET"])
+@all_users
 def get_library_file(id):
     lang = request.args.get("lang", "en-US")
     try:
         data = CommunityLibrary.objects.get(id=id)
     except:
         return create_response(status=422, message="library not found")
+
+    err = hub_access_error(data.hub_id)
+    if err:
+        return err
 
     if lang in TARGET_LANGS:
         document = get_translation_document(data.translations, lang)
@@ -354,13 +404,20 @@ def get_library_file(id):
 
 ##################################################################################
 @training.route("/trainVideo/<string:id>", methods=["GET"])
-# @all_users
 def get_train_file(id):
+    # Public for general (non-hub) training files (application flow); hub files
+    # are still restricted below.
+    get_optional_claims()
     lang = request.args.get("lang", "en-US")
     try:
         train = Training.objects.get(id=id)
     except:
         return create_response(status=422, message="training not found")
+
+    if train.hub_id:
+        err = hub_access_error(train.hub_id)
+        if err:
+            return err
 
     if lang in TARGET_LANGS:
         document = get_translation_document(train.translations, lang)

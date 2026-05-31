@@ -38,6 +38,7 @@ function PartnerProfileForm({
   profileData,
   resetFields,
   hub_user,
+  invite_key,
 }) {
   const { t, i18n } = useTranslation();
   const [image, setImage] = useState(null);
@@ -68,6 +69,9 @@ function PartnerProfileForm({
     newData.edited = edited;
     if (hub_user) {
       newData.hub_id = hub_user._id ? hub_user._id.$oid : hub_user.id;
+      // The server requires this to match the hub's stored key before it will
+      // attach the new partner to the hub.
+      newData.invite_key = invite_key;
     }
     onSubmit(newData);
     setChangedImage(false);

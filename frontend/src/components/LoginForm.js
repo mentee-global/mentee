@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, Button, message, Typography, Spin } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  message,
+  notification,
+  Typography,
+  Spin,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { css } from "@emotion/css";
 import { useTranslation } from "react-i18next";
@@ -168,8 +176,34 @@ function LoginForm({ role, defaultEmail, n50_flag, location }) {
       unsubscribe();
       if (!user) return;
       if (res.result.redirectToVerify) {
-        message.info(t("verifyEmail.body"));
-        await sendVerificationEmail(email);
+        // Email not verified yet. Show a persistent, dismissible notice with a
+        // manual "Resend" button instead of silently re-sending the
+        // verification email on every login (which spammed unverified users).
+        notification.warning({
+          key: "verify-email",
+          message: t("verifyEmail.header"),
+          description: t("verifyEmail.body"),
+          duration: 0,
+          btn: (
+            <Button
+              type="primary"
+              size="small"
+              onClick={async () => {
+                const verifyRes = await sendVerificationEmail(email);
+                if (
+                  verifyRes &&
+                  (verifyRes.success || verifyRes.status === 200)
+                ) {
+                  message.success(t("verifyEmail.emailResent"));
+                } else {
+                  message.error(t("verifyEmail.error"));
+                }
+              }}
+            >
+              {t("verifyEmail.resend")}
+            </Button>
+          ),
+        });
       }
       if (oauthNextCaptured) {
         // Show the redirecting overlay first; actual navigation fires in the

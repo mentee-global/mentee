@@ -79,11 +79,11 @@ function NavigationSider() {
           {role === ACCOUNT_TYPE.HUB ? (
             <img
               src={
-                user
+                (user
                   ? user.hub_user
                     ? user.hub_user.image?.url
                     : user.image?.url
-                  : ""
+                  : "") || BigLogoImage
               }
               alt="hub"
               className={css`
@@ -159,11 +159,11 @@ function NavigationSider() {
             {role === ACCOUNT_TYPE.HUB ? (
               <img
                 src={
-                  user
+                  (user
                     ? user.hub_user
                       ? user.hub_user.image?.url
                       : user.image?.url
-                    : ""
+                    : "") || BigLogoImage
                 }
                 alt="hub"
                 className={css`
@@ -197,11 +197,11 @@ function NavigationSider() {
             {role === ACCOUNT_TYPE.HUB ? (
               <img
                 src={
-                  user
+                  (user
                     ? user.hub_user
                       ? user.hub_user.image?.url
                       : user.image?.url
-                    : ""
+                    : "") || BigLogoImage
                 }
                 alt="hub"
                 className={css`

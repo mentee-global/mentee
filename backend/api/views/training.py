@@ -23,6 +23,7 @@ from api.utils.require_auth import (
     all_users,
     hub_access_error,
     caller_hub_id,
+    get_optional_claims,
     STAFF_ALL,
 )
 from api.utils.translate import (
@@ -95,8 +96,12 @@ def getCommunityLibraries():
 
 
 @training.route("/<role>", methods=["GET"])
-@all_users
 def get_trainings(role):
+    # Public flows (the /application-training step for prospective mentors and
+    # mentees) read general training while signed out, so this stays open for
+    # non-hub roles. Decode the token if present so the HUB branch below can
+    # still enforce hub ownership.
+    get_optional_claims()
     lang = request.args.get("lang", "en-US")
     user_email = request.args.get("user_email", None)
     user_id = request.args.get("user_id", None)
@@ -344,8 +349,10 @@ def get_library(id):
 
 ################################################################################
 @training.route("/train/<string:id>", methods=["GET"])
-@all_users
 def get_train(id):
+    # Public for general (non-hub) training (application flow); hub training is
+    # still restricted below. Decode any token for the hub ownership check.
+    get_optional_claims()
     try:
         user_email = request.args.get("user_email", None)
         train = Training.objects.get(id=id)
@@ -397,8 +404,10 @@ def get_library_file(id):
 
 ##################################################################################
 @training.route("/trainVideo/<string:id>", methods=["GET"])
-@all_users
 def get_train_file(id):
+    # Public for general (non-hub) training files (application flow); hub files
+    # are still restricted below.
+    get_optional_claims()
     lang = request.args.get("lang", "en-US")
     try:
         train = Training.objects.get(id=id)

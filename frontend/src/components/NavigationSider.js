@@ -82,14 +82,13 @@ function NavigationSider() {
       closable={false}
       title={
         <>
-          {role === ACCOUNT_TYPE.HUB ? (
+          {role === ACCOUNT_TYPE.HUB && hubLogoUrl ? (
             <img
-              src={hubLogoUrl || BigLogoImage}
+              src={hubLogoUrl}
               alt="hub"
               className={css`
                 height: auto;
                 width: 100%;
-                ${hubLogoUrl ? "" : "max-width: 110px;"}
               `}
             />
           ) : (
@@ -157,15 +156,14 @@ function NavigationSider() {
         {/* TODO: Add a smooth transition of logo change */}
         {!collapsed ? (
           <>
-            {role === ACCOUNT_TYPE.HUB ? (
+            {role === ACCOUNT_TYPE.HUB && hubLogoUrl ? (
               <img
-                src={hubLogoUrl || BigLogoImage}
+                src={hubLogoUrl}
                 alt="hub"
                 className={css`
                   height: auto;
                   width: 100%;
                   padding: 1em;
-                  ${hubLogoUrl ? "" : "max-width: 110px;"}
                 `}
               />
             ) : (
@@ -190,15 +188,14 @@ function NavigationSider() {
           </>
         ) : (
           <>
-            {role === ACCOUNT_TYPE.HUB ? (
+            {role === ACCOUNT_TYPE.HUB && hubLogoUrl ? (
               <img
-                src={hubLogoUrl || BigLogoImage}
+                src={hubLogoUrl}
                 alt="hub"
                 className={css`
                   height: auto;
                   width: 100%;
                   padding: 1em;
-                  ${hubLogoUrl ? "" : "max-width: 110px;"}
                 `}
               />
             ) : (

@@ -26,6 +26,12 @@ function NavigationSider() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const role = getRole();
+  // The hub's own logo (owner) or the logo of the hub a member belongs to.
+  // Empty when the hub hasn't uploaded one yet — we then fall back to a
+  // smaller Mentee placeholder (a real logo is banner-shaped and fills 100%).
+  const hubLogoUrl = user
+    ? (user.hub_user ? user.hub_user.image?.url : user.image?.url) || ""
+    : "";
   const sidebarItems = useSidebars(role, user, t);
   const isMobile = useMediaQuery({ query: `(max-width: 761px)` });
   let main_domain_url = history.location.pathname.split("/")[0];
@@ -78,17 +84,12 @@ function NavigationSider() {
         <>
           {role === ACCOUNT_TYPE.HUB ? (
             <img
-              src={
-                (user
-                  ? user.hub_user
-                    ? user.hub_user.image?.url
-                    : user.image?.url
-                  : "") || BigLogoImage
-              }
+              src={hubLogoUrl || BigLogoImage}
               alt="hub"
               className={css`
                 height: auto;
                 width: 100%;
+                ${hubLogoUrl ? "" : "max-width: 110px;"}
               `}
             />
           ) : (
@@ -158,18 +159,13 @@ function NavigationSider() {
           <>
             {role === ACCOUNT_TYPE.HUB ? (
               <img
-                src={
-                  (user
-                    ? user.hub_user
-                      ? user.hub_user.image?.url
-                      : user.image?.url
-                    : "") || BigLogoImage
-                }
+                src={hubLogoUrl || BigLogoImage}
                 alt="hub"
                 className={css`
                   height: auto;
                   width: 100%;
                   padding: 1em;
+                  ${hubLogoUrl ? "" : "max-width: 110px;"}
                 `}
               />
             ) : (
@@ -196,18 +192,13 @@ function NavigationSider() {
           <>
             {role === ACCOUNT_TYPE.HUB ? (
               <img
-                src={
-                  (user
-                    ? user.hub_user
-                      ? user.hub_user.image?.url
-                      : user.image?.url
-                    : "") || BigLogoImage
-                }
+                src={hubLogoUrl || BigLogoImage}
                 alt="hub"
                 className={css`
                   height: auto;
                   width: 100%;
                   padding: 1em;
+                  ${hubLogoUrl ? "" : "max-width: 110px;"}
                 `}
               />
             ) : (

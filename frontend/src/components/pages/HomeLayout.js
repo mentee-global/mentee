@@ -272,7 +272,11 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                     src={
                       allHubData[location.pathname].image?.url || BigLogoImage
                     }
-                    style={{ maxWidth: "100%" }}
+                    style={
+                      allHubData[location.pathname].image?.url
+                        ? { maxWidth: "100%" }
+                        : { width: "100%", maxWidth: "200px", fillOpacity: 0.7 }
+                    }
                   />
                   <div
                     style={{

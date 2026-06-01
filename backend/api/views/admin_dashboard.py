@@ -385,7 +385,15 @@ def summary():
         now = datetime.utcnow()
         section = _str_arg(
             "section",
-            {"all", "overview", "applications", "users", "appointments", "messages", "ops"},
+            {
+                "all",
+                "overview",
+                "applications",
+                "users",
+                "appointments",
+                "messages",
+                "ops",
+            },
             "all",
         )
         data = {"generated_at": now.isoformat(), "section": section}
@@ -825,7 +833,8 @@ def demographics_identify():
     population = _str_arg("population", {"applications", "profiles"}, "applications")
     if population == "profiles" and source != "mentee":
         return create_response(
-            status=400, message="Profile identity breakdown is only available for mentees"
+            status=400,
+            message="Profile identity breakdown is only available for mentees",
         )
 
     if population == "profiles":

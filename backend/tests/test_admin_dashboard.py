@@ -19,8 +19,12 @@ class FakeApplicationObjects:
                 email="has-profile@example.com", application_state="APPROVED"
             ),
             SimpleNamespace(email="missing@example.com", application_state="APPROVED"),
-            SimpleNamespace(email="build@example.com", application_state="BuildProfile"),
-            SimpleNamespace(email="completed@example.com", application_state="COMPLETED"),
+            SimpleNamespace(
+                email="build@example.com", application_state="BuildProfile"
+            ),
+            SimpleNamespace(
+                email="completed@example.com", application_state="COMPLETED"
+            ),
             SimpleNamespace(email="pending@example.com", application_state="PENDING"),
         ]
 
@@ -131,4 +135,6 @@ def test_demographics_identify_rejects_mentor_profiles():
 
     payload = response.get_json()
     assert status == 400
-    assert payload["message"] == "Profile identity breakdown is only available for mentees"
+    assert (
+        payload["message"] == "Profile identity breakdown is only available for mentees"
+    )

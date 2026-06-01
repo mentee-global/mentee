@@ -3,12 +3,11 @@ mac_setup:
 	./mac_setup
 
 setup:
-	pip3 install virtualenv
-	virtualenv venv
-	venv/bin/pip install -r requirements.txt -r requirements-dev.txt
+	uv venv
+	uv pip install -r requirements.txt -r requirements-dev.txt
 
 run_server:
-	venv/bin/python manage.py runserver
+	.venv/bin/python manage.py runserver
 
 start_dev_db:
 	echo "creating docker postgres DB"
@@ -18,7 +17,7 @@ recreate_db:
 	./scripts/docker_destroy.sh
 	start_dev_db
 	sleep 2
-	venv/bin/python manage.py recreate_db
+	.venv/bin/python manage.py recreate_db
 
 
 destroy:
@@ -40,7 +39,7 @@ heroku_setup:
 	
 format:
 	( \
-		. venv/bin/activate; \
+		. .venv/bin/activate; \
 		black api/; \
 		black tests/; \
 		black manage.py; \

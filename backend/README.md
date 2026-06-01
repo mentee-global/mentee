@@ -21,17 +21,27 @@ Replace the `[xxx]` with your own credentials.
 
 ### Server Setup
 
-Make sure you have [Python3](https://realpython.com/installing-python/) and [Poetry](https://python-poetry.org/) installed.
+Make sure you have [uv](https://docs.astral.sh/uv/) installed. The backend is pinned to Python 3.10.14 in `.python-version` and `runtime.txt`.
 
 Install packages:
 
 ```
-$ poetry install
+$ uv venv
+$ source .venv/bin/activate
+$ uv pip install -r requirements.txt
 ```
 
 To run the server:
 
 ```
+$ python manage.py runserver
+```
+
+If you prefer Poetry, use the same Python version:
+
+```
+$ poetry env use 3.10
+$ poetry install
 $ poetry run start
 ```
 

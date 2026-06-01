@@ -1177,9 +1177,18 @@ export const getFavMentorsById = (mentee_id) => {
 export const sendMessage = (data) => {
   const requestExtension = `/messages/`;
   return authPost(requestExtension, data).then(
-    (response) => response,
+    (response) => ({
+      ok: response.status >= 200 && response.status < 300,
+      held: response.status === 202,
+      message: response?.data?.message,
+      response,
+    }),
     (err) => {
       console.error(err);
+      return {
+        ok: false,
+        error: err?.response?.data?.message || err?.message || "Network error",
+      };
     }
   );
 };
@@ -1870,6 +1879,43 @@ export const deleteErrorLog = async (id) => {
   const requestExtension = `/admin/error-logs/${id}`;
   return authDelete(requestExtension).then(
     (response) => ({ ok: true, response }),
+    (err) => {
+      console.error(err);
+      return {
+        ok: false,
+        error: err?.response?.data?.message || err?.message || "Network error",
+      };
+    }
+  );
+};
+
+// Admin - Message Flags
+export const fetchMessageFlags = async (filters = {}) => {
+  const requestExtension = `/admin/message-flags/`;
+  return authGet(requestExtension, { params: filters }).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return { items: [], total: 0, page: 1, limit: 50 };
+    }
+  );
+};
+
+export const fetchMessageFlagById = async (id) => {
+  const requestExtension = `/admin/message-flags/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return null;
+    }
+  );
+};
+
+export const updateMessageFlagAction = async (id, action, note = "") => {
+  const requestExtension = `/admin/message-flags/${id}/action`;
+  return authPut(requestExtension, { action, note }).then(
+    (response) => ({ ok: true, result: response.data.result }),
     (err) => {
       console.error(err);
       return {

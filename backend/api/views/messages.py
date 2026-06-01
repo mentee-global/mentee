@@ -25,6 +25,15 @@ from api.utils.constants import (
 from api.utils.require_auth import all_users, hub_access_error
 from api.utils.translate import get_translated_options
 from api.core import create_response, logger
+from api.utils.message_flagging import (
+    SOURCE_DIRECT,
+    SOURCE_GROUP,
+    SOURCE_PARTNER_GROUP,
+    build_direct_payload,
+    build_group_payload,
+    build_partner_group_payload,
+    flag_pending_message_if_needed,
+)
 import json
 from datetime import datetime, timedelta, timezone
 from api import socketio
@@ -149,6 +158,21 @@ def create_message():
     data = request.get_json(silent=True) or {}
     if not isinstance(data, dict):
         return create_response(status=422, message="Invalid message payload")
+    payload = build_direct_payload(data, body_key="message")
+    held, flag, moderation_error = flag_pending_message_if_needed(
+        source_type=SOURCE_DIRECT, payload=payload
+    )
+    if moderation_error:
+        return create_response(
+            status=503,
+            message=f"Message could not be reviewed: {moderation_error}",
+        )
+    if held:
+        return create_response(
+            data={"flag_id": str(flag.id)},
+            status=202,
+            message="Message is pending admin review",
+        )
     availabes_in_future = None
     if "availabes_in_future" in data:
         availabes_in_future = data.get("availabes_in_future")
@@ -225,6 +249,28 @@ def contact_mentor(mentor_id):
     translated_interest_areas = get_translated_options(
         mentor.preferred_language, interest_areas, Specializations
     )
+
+    payload = {
+        "body": data.get("message", "Hello"),
+        "message_read": False,
+        "sender_id": mentee_id,
+        "recipient_id": mentor_id,
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    held, flag, moderation_error = flag_pending_message_if_needed(
+        source_type=SOURCE_DIRECT, payload=payload
+    )
+    if moderation_error:
+        return create_response(
+            status=503,
+            message=f"Message could not be reviewed: {moderation_error}",
+        )
+    if held:
+        return create_response(
+            data={"flag_id": str(flag.id)},
+            status=202,
+            message="Message is pending admin review",
+        )
 
     res, res_msg = send_email(
         mentor.email,
@@ -818,6 +864,22 @@ def editGroupMessage(id, hub_user_id, message_title, message_body, methods=["POS
 def chatGroup(msg, methods=["POST"]):
     try:
         if "hub_user_id" in msg and msg["hub_user_id"] is not None:
+            payload = build_group_payload(msg)
+            held, flag, moderation_error = flag_pending_message_if_needed(
+                source_type=SOURCE_GROUP, payload=payload
+            )
+            if moderation_error:
+                return {
+                    "success": False,
+                    "message": f"Message could not be reviewed: {moderation_error}",
+                }
+            if held:
+                return {
+                    "success": True,
+                    "held": True,
+                    "flag_id": str(flag.id),
+                    "message": "Message is pending admin review",
+                }
             message = GroupMessage(
                 title=msg.get("title"),
                 body=msg["body"],
@@ -830,6 +892,22 @@ def chatGroup(msg, methods=["POST"]):
             logger.info(msg["hub_user_id"])
 
         else:
+            payload = build_partner_group_payload(msg)
+            held, flag, moderation_error = flag_pending_message_if_needed(
+                source_type=SOURCE_PARTNER_GROUP, payload=payload
+            )
+            if moderation_error:
+                return {
+                    "success": False,
+                    "message": f"Message could not be reviewed: {moderation_error}",
+                }
+            if held:
+                return {
+                    "success": True,
+                    "held": True,
+                    "flag_id": str(flag.id),
+                    "message": "Message is pending admin review",
+                }
             message = PartnerGroupMessage(
                 body=msg["body"],
                 message_read=msg["message_read"],
@@ -841,7 +919,7 @@ def chatGroup(msg, methods=["POST"]):
 
     except Exception as e:
         logger.info(e)
-        return create_response(status=500, message="Failed to send message")
+        return {"success": False, "message": "Failed to send message"}
 
     try:
         message.save()
@@ -853,8 +931,8 @@ def chatGroup(msg, methods=["POST"]):
     except:
         msg = "Error in meessage"
         logger.info(msg)
-        return create_response(status=500, message="Failed to send message")
-    return create_response(status=200, message="successfully sent message")
+        return {"success": False, "message": "Failed to send message"}
+    return {"success": True, "message": "successfully sent message"}
 
 
 @socketio.on("connect")
@@ -887,6 +965,23 @@ def chat(msg, methods=["POST"]):
         if not allowed:
             logger.info(f"Rejected socket message: {validation_msg}")
             return {"success": False, "message": validation_msg}
+
+        payload = build_direct_payload(msg)
+        held, flag, moderation_error = flag_pending_message_if_needed(
+            source_type=SOURCE_DIRECT, payload=payload
+        )
+        if moderation_error:
+            return {
+                "success": False,
+                "message": f"Message could not be reviewed: {moderation_error}",
+            }
+        if held:
+            return {
+                "success": True,
+                "held": True,
+                "flag_id": str(flag.id),
+                "message": "Message is pending admin review",
+            }
 
         availabes_in_future = None
         if "availabes_in_future" in msg:

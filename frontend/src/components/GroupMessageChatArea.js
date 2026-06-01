@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Avatar, Input, Button, Spin, theme, Popconfirm, Grid } from "antd";
+import {
+  Avatar,
+  Input,
+  Button,
+  Spin,
+  theme,
+  Popconfirm,
+  Grid,
+  message as antdMessage,
+} from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import moment from "moment-timezone";
 import { SendOutlined } from "@ant-design/icons";
@@ -35,7 +44,7 @@ function GroupMessageChatArea(props) {
   const messagesEndRef = useRef(null);
   const [replyInputFlags, setReplyInputFlags] = useState({});
   const [editInputFlags, setEditInputFlags] = useState({});
-  const [refreshFlag, setRefreshFlag] = useState(false);
+  const [, setRefreshFlag] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiUp, setEmojiUp] = useState(false);
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
@@ -138,15 +147,28 @@ function GroupMessageChatArea(props) {
     });
   }
 
+  const handleSendAck = (response, onDelivered) => {
+    if (response?.success === false) {
+      antdMessage.error(response.message || "Message could not be sent");
+      return;
+    }
+    if (response?.held) {
+      antdMessage.info(response.message || "Message is pending admin review");
+      return;
+    }
+    onDelivered();
+  };
+
   const sendMessage = (e) => {
     let currentMessage = messageText;
+    let currentTitle = messageTitle.trim();
     if (!currentMessage.trim().length) {
       return;
     }
 
     let dateTime = moment().utc();
     const msg = {
-      title: messageTitle.trim(),
+      title: currentTitle,
       body: currentMessage,
       message_read: false,
       sender_id: profileId,
@@ -154,46 +176,42 @@ function GroupMessageChatArea(props) {
       parent_message_id: null,
       time: dateTime,
     };
-    // Clear inputs immediately
-    setMessageTitle("");
-    setMessageText("");
+    socket.emit("sendGroup", msg, (response) =>
+      handleSendAck(response, () => {
+        setMessageTitle("");
+        setMessageText("");
+        const displayMsg = {
+          ...msg,
+          _id: { $oid: Date.now().toString() },
+          sender_id: { $oid: msg.sender_id },
+          hub_user_id: { $oid: msg.hub_user_id },
+          time: moment().local().format("LLL"),
+        };
+        props.addMyMessage(displayMsg);
+        setShouldScroll(true);
 
-    // Basic message emission
-    socket.emit("sendGroup", msg);
-
-    // Simple message display
-    const displayMsg = {
-      ...msg,
-      _id: { $oid: Date.now().toString() },
-      sender_id: { $oid: msg.sender_id },
-      hub_user_id: { $oid: msg.hub_user_id },
-      time: moment().local().format("LLL"),
-    };
-
-    props.addMyMessage(displayMsg);
-    setShouldScroll(true);
-
-    // Simple notification
-    if (tagUsers.length === 0) {
-      if (particiants?.length > 0) {
-        setTimeout(() => {
-          particiants.forEach((user) => {
-            if (user._id.$oid !== profileId) {
-              sendNotifyGroupMessage(user._id.$oid, messageTitle.trim(), false);
+        if (tagUsers.length === 0) {
+          if (particiants?.length > 0) {
+            setTimeout(() => {
+              particiants.forEach((user) => {
+                if (user._id.$oid !== profileId) {
+                  sendNotifyGroupMessage(user._id.$oid, currentTitle, false);
+                }
+              });
+            }, 0);
+          }
+        } else {
+          tagUsers.map((tag_id) => {
+            if (tag_id !== profileId) {
+              sendNotifyGroupMessage(tag_id, currentTitle, true);
             }
+            return false;
           });
-        }, 0);
-      }
-    } else {
-      tagUsers.map((tag_id) => {
-        if (tag_id !== profileId) {
-          sendNotifyGroupMessage(tag_id, messageTitle.trim(), true);
         }
-        return false;
-      });
-    }
 
-    setTagUsers([]);
+        setTagUsers([]);
+      })
+    );
   };
 
   const editMessage = (block_id) => {
@@ -245,39 +263,33 @@ function GroupMessageChatArea(props) {
       time: dateTime,
     };
 
-    // Clear input and close reply box
-    setReplyMessageText("");
-    setReplyInputFlags({});
+    socket.emit("sendGroup", msg, (response) =>
+      handleSendAck(response, () => {
+        setReplyMessageText("");
+        setReplyInputFlags({});
+        const displayMsg = {
+          ...msg,
+          _id: { $oid: Date.now().toString() },
+          sender_id: { $oid: msg.sender_id },
+          hub_user_id: { $oid: msg.hub_user_id },
+          parent_message_id: block_id,
+          time: moment().local().format("LLL"),
+        };
+        props.addMyMessage(displayMsg);
 
-    // Emit to the same channel as regular messages
-    socket.emit("sendGroup", msg);
-
-    // Format for local display
-    const displayMsg = {
-      ...msg,
-      _id: { $oid: Date.now().toString() },
-      sender_id: { $oid: msg.sender_id },
-      hub_user_id: { $oid: msg.hub_user_id },
-      parent_message_id: block_id,
-      time: moment().local().format("LLL"),
-    };
-
-    // Add to local state
-    props.addMyMessage(displayMsg);
-    //setShouldScroll(true);
-
-    // Send notifications
-    if (tagUsers.length > 0) {
-      tagUsers.map((tag_id) => {
-        if (tag_id !== profileId) {
-          sendNotifyGroupMessage(tag_id, block_title, true, false);
+        if (tagUsers.length > 0) {
+          tagUsers.map((tag_id) => {
+            if (tag_id !== profileId) {
+              sendNotifyGroupMessage(tag_id, block_title, true, false);
+            }
+            return false;
+          });
+        } else {
+          sendNotifyGroupMessage(sender_id, block_title, false, false);
         }
-        return false;
-      });
-    } else {
-      sendNotifyGroupMessage(sender_id, block_title, false, false);
-    }
-    setTagUsers([]);
+        setTagUsers([]);
+      })
+    );
   };
 
   const styles = {

@@ -33,13 +33,26 @@ function PublicMessageModal({ mentorId, menteeId, menteeName }) {
       link: user?.website ?? user?.linkedin ?? "",
       time: moment().format("YYYY-MM-DD, HH:mm:ssZZ"),
     };
-    if (!(await sendMessage(data))) {
+    const result = await sendMessage(data);
+    if (!result?.ok) {
       messageApi.error({
-        content: t("failed to send message"),
+        content: result?.error || t("failed to send message"),
         duration: 0,
         key: "failed_to_send_message",
         onClick: () => messageApi.destroy("failed_to_send_message"),
       });
+      setLoading(false);
+      return;
+    }
+    if (result.held) {
+      messageApi.info({
+        content: result.message || "Message is pending admin review",
+        duration: 0,
+        key: "message_pending_review",
+        onClick: () => messageApi.destroy("message_pending_review"),
+      });
+      setLoading(false);
+      closeModals();
       return;
     }
     messageApi.success({

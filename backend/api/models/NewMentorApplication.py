@@ -11,6 +11,7 @@ class NewMentorApplication(Document, Mixin):
     meta = {
         "indexes": [
             "application_state",
+            "email",
             "-date_submitted",
             "partner",
             {"fields": ["application_state", "-date_submitted"]},

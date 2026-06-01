@@ -17,23 +17,13 @@ import { PALETTE, STATUS_COLORS, colorFor } from "utils/chartjs-setup"; // also 
 import { useAuth } from "utils/hooks/useAuth";
 
 import {
-  fetchDashboardAcceptanceRates,
-  fetchDashboardAppointmentsByMonth,
-  fetchDashboardApplicationsByMonth,
-  fetchDashboardCountries,
-  fetchDashboardCrisisStatus,
-  fetchDashboardErrorsByDay,
-  fetchDashboardIdentify,
-  fetchDashboardMentorFlags,
-  fetchDashboardMentorSpecializations,
-  fetchDashboardMessagesByDay,
-  fetchDashboardOauthTokensByDay,
+  fetchDashboardApplicationsOverview,
+  fetchDashboardAppointmentsOverview,
+  fetchDashboardMessagesOverview,
+  fetchDashboardOpsHygiene,
+  fetchDashboardOpsOverview,
   fetchDashboardSummary,
-  fetchDashboardTopErrorEndpoints,
-  fetchDashboardTopExceptions,
-  fetchDashboardTopMentors,
-  fetchDashboardTopPartners,
-  fetchDashboardTopics,
+  fetchDashboardUsersOverview,
 } from "utils/api";
 
 const { Content } = Layout;
@@ -86,6 +76,12 @@ const formatNumber = (value) =>
   new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(
     Number(value || 0)
   );
+
+const formatDelta = (value) => {
+  if (value === null || value === undefined) return "No previous-period data";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${formatNumber(value)}% vs previous 30d`;
+};
 
 const chartValue = (context) => {
   const parsed = context.parsed;
@@ -442,6 +438,82 @@ const oauthSessionsToBar = (rows) => {
   };
 };
 
+const supplyDemandGapsToBar = (rows) => {
+  if (!rows || !rows.length) return null;
+  return {
+    labels: rows.map((r) => r.topic),
+    datasets: [
+      {
+        label: "Demand gap",
+        data: rows.map((r) => r.gap),
+        gapRows: rows,
+        backgroundColor: rows.map((r) =>
+          r.gap > 0 ? STATUS_COLORS.pending : STATUS_COLORS.accepted
+        ),
+      },
+    ],
+  };
+};
+
+const attentionToBar = (attention) => {
+  if (!attention) return null;
+  const rows = [
+    [
+      "Approved mentees without profile",
+      attention.approved_mentees_without_profile,
+    ],
+    [
+      "Approved mentors without profile",
+      attention.approved_mentors_without_profile,
+    ],
+    ["Dirty user roles", attention.users_dirty_role_count],
+    [
+      "Mentee profiles missing timezone",
+      attention.mentee_profiles_missing_timezone,
+    ],
+    [
+      "Mentor profiles missing timezone",
+      attention.mentor_profiles_missing_timezone,
+    ],
+    [
+      "Mentors taking appointments without availability",
+      attention.mentors_taking_appointments_without_availability,
+    ],
+  ].filter(([, value]) => Number(value || 0) > 0);
+
+  if (!rows.length) return null;
+  return {
+    labels: rows.map(([label]) => label),
+    datasets: [
+      {
+        label: "Records",
+        data: rows.map(([, value]) => value),
+        backgroundColor: rows.map((_, i) => PALETTE[i % PALETTE.length]),
+      },
+    ],
+  };
+};
+
+const supplyDemandOptions = {
+  ...horizontalBarOptions,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          const row = context.dataset.gapRows?.[context.dataIndex];
+          if (!row) return `Demand gap: ${formatNumber(chartValue(context))}`;
+          return [
+            `Demand gap: ${formatNumber(row.gap)}`,
+            `Mentee demand: ${formatNumber(row.demand)}`,
+            `Available mentor supply: ${formatNumber(row.supply)}`,
+          ];
+        },
+      },
+    },
+  },
+};
+
 // ---------- section shell --------------------------------------------------
 
 const DASHBOARD_SECTIONS = [
@@ -475,10 +547,14 @@ const useSummary = (section, authReady) =>
 function OverviewSection({ authReady }) {
   const { t } = useTranslation();
   const summary = useSummary("overview", authReady);
+  const executiveSummary = useSummary("executive", authReady);
   const s = summary.data;
+  const executive = executiveSummary.data?.executive;
   const rolesData = rolesToDoughnut(s?.users?.by_role);
   const apptsStatusData = appointmentsToDoughnut(s?.appointments);
-  const kpis = useMemo(() => {
+  const supplyDemandData = supplyDemandGapsToBar(executive?.supply_demand_gaps);
+  const attentionData = attentionToBar(executive?.attention);
+  const coreKpis = useMemo(() => {
     if (!s) return [];
     return [
       { title: t("dashboard.kpi.totalUsers"), value: s.users.total },
@@ -516,33 +592,58 @@ function OverviewSection({ authReady }) {
             : undefined,
       },
       {
-        title: t("dashboard.kpi.pendingSoon"),
-        value: s.appointments.pending_next_7d,
-        hint: t("dashboard.kpi.pendingSoonHint"),
-        valueStyle:
-          s.appointments.pending_next_7d > 0 ? { color: "#d48806" } : undefined,
-      },
-      {
-        title: t("dashboard.kpi.openBugs"),
-        value: s.ops.bugs_open,
-        hint: s.ops.oldest_bug_age_days
-          ? t("dashboard.kpi.oldestBugDays", {
-              days: s.ops.oldest_bug_age_days,
-            })
-          : null,
-        valueStyle: s.ops.bugs_open > 0 ? { color: "#d48806" } : undefined,
-      },
-      {
         title: t("dashboard.kpi.errors7d"),
         value: s.ops.errors_7d,
         hint: t("dashboard.kpi.errorsTotal", { total: s.ops.errors_total }),
       },
     ];
   }, [s, t]);
+  const executiveKpis = useMemo(() => {
+    if (!executive) return [];
+    return [
+      {
+        title: t("dashboard.kpi.activeMentees30d"),
+        value: executive.active_mentees_30d,
+        hint: t("dashboard.kpi.activeProfilesHint"),
+      },
+      {
+        title: t("dashboard.kpi.activeMentors30d"),
+        value: executive.active_mentors_30d,
+        hint: t("dashboard.kpi.activeProfilesHint"),
+      },
+      {
+        title: t("dashboard.kpi.menteeApps30d"),
+        value: executive.mentee_applications_30d,
+        hint: formatDelta(executive.mentee_application_delta_30d),
+      },
+      {
+        title: t("dashboard.kpi.mentorApps30d"),
+        value: executive.mentor_applications_30d,
+        hint: formatDelta(executive.mentor_application_delta_30d),
+      },
+      {
+        title: t("dashboard.kpi.acceptedSessions30d"),
+        value: executive.accepted_sessions_30d,
+        hint: formatDelta(executive.accepted_sessions_delta_30d),
+      },
+      {
+        title: t("dashboard.kpi.availableMentors"),
+        value: executive.mentor_supply_available,
+        hint: t("dashboard.kpi.availableMentorsHint", {
+          total: executive.mentor_supply_total || 0,
+        }),
+      },
+    ];
+  }, [executive, t]);
 
   return (
     <>
-      <KpiGrid kpis={kpis} loading={summary.loading} skeletonCount={9} />
+      <KpiGrid kpis={coreKpis} loading={summary.loading} skeletonCount={6} />
+      <KpiGrid
+        kpis={executiveKpis}
+        loading={executiveSummary.loading}
+        skeletonCount={6}
+      />
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24} lg={12}>
           <ChartCard
@@ -569,38 +670,45 @@ function OverviewSection({ authReady }) {
           />
         </Col>
       </Row>
+      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+        <Col xs={24} lg={12}>
+          <ChartCard
+            title={t("dashboard.charts.supplyDemandGaps")}
+            subtitle="Source: Current profiles · Mentee specializations minus available mentor specializations · Top 8"
+            type="bar"
+            data={supplyDemandData}
+            options={supplyDemandOptions}
+            loading={executiveSummary.loading}
+            error={executiveSummary.error}
+            height={300}
+            empty={t("dashboard.empty.supplyDemandGaps")}
+          />
+        </Col>
+        <Col xs={24} lg={12}>
+          <ChartCard
+            title={t("dashboard.charts.attentionQueue")}
+            subtitle="Source: Current DB state · Data quality and operational follow-up"
+            type="bar"
+            data={attentionData}
+            options={horizontalBarOptions}
+            loading={executiveSummary.loading}
+            error={executiveSummary.error}
+            height={300}
+            empty={t("dashboard.empty.attentionQueue")}
+          />
+        </Col>
+      </Row>
     </>
   );
 }
 
 function ApplicationsSection({ authReady }) {
   const { t } = useTranslation();
-  const summary = useSummary("applications", authReady);
-  const menteeFunnel = useApi(
-    () => fetchDashboardApplicationsByMonth("mentee"),
+  const overview = useApi(
+    () => fetchDashboardApplicationsOverview(12),
     authReady
   );
-  const mentorFunnel = useApi(
-    () => fetchDashboardApplicationsByMonth("mentor"),
-    authReady
-  );
-  const countries = useApi(() => fetchDashboardCountries(15), authReady);
-  const topics = useApi(() => fetchDashboardTopics(15), authReady);
-  const crisis = useApi(() => fetchDashboardCrisisStatus(10), authReady);
-  const menteeApplicantIdentify = useApi(
-    () => fetchDashboardIdentify("mentee", "applications"),
-    authReady
-  );
-  const mentorFlags = useApi(fetchDashboardMentorFlags, authReady);
-  const partnersMentee = useApi(
-    () => fetchDashboardTopPartners("mentee", 10),
-    authReady
-  );
-  const partnersMentor = useApi(
-    () => fetchDashboardTopPartners("mentor", 10),
-    authReady
-  );
-  const s = summary.data;
+  const s = overview.data?.summary;
   const kpis = useMemo(() => {
     if (!s) return [];
     const menteeFunnelCounts = s.funnel?.mentee || {};
@@ -666,17 +774,17 @@ function ApplicationsSection({ authReady }) {
 
   return (
     <>
-      <KpiGrid kpis={kpis} loading={summary.loading} skeletonCount={6} />
+      <KpiGrid kpis={kpis} loading={overview.loading} skeletonCount={6} />
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24} lg={12}>
           <ChartCard
             title={t("dashboard.charts.menteeFunnel")}
             subtitle="Source: Mentee applications · Last 12 months"
             type="bar"
-            data={funnelToStacked(menteeFunnel.data)}
+            data={funnelToStacked(overview.data?.mentee_by_month)}
             options={stackedCountOptions}
-            loading={menteeFunnel.loading}
-            error={menteeFunnel.error}
+            loading={overview.loading}
+            error={overview.error}
             height={300}
           />
         </Col>
@@ -685,10 +793,10 @@ function ApplicationsSection({ authReady }) {
             title={t("dashboard.charts.mentorFunnel")}
             subtitle="Source: Mentor applications · Last 12 months"
             type="bar"
-            data={funnelToStacked(mentorFunnel.data)}
+            data={funnelToStacked(overview.data?.mentor_by_month)}
             options={stackedCountOptions}
-            loading={mentorFunnel.loading}
-            error={mentorFunnel.error}
+            loading={overview.loading}
+            error={overview.error}
             height={300}
           />
         </Col>
@@ -699,10 +807,10 @@ function ApplicationsSection({ authReady }) {
             title={t("dashboard.charts.countries")}
             subtitle="Source: Mentee applications · Top 15 shown"
             type="bar"
-            data={topToHorizontal(countries.data, "Applicants")}
+            data={topToHorizontal(overview.data?.countries, "Applicants")}
             options={horizontalCountOptions}
-            loading={countries.loading}
-            error={countries.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -711,10 +819,10 @@ function ApplicationsSection({ authReady }) {
             title={t("dashboard.charts.topics")}
             subtitle="Source: Mentee applications · Multi-select · Top 15 shown"
             type="bar"
-            data={topToHorizontal(topics.data, "Requests")}
+            data={topToHorizontal(overview.data?.topics, "Requests")}
             options={horizontalCountOptions}
-            loading={topics.loading}
-            error={topics.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -723,10 +831,10 @@ function ApplicationsSection({ authReady }) {
             title={t("dashboard.charts.crisis")}
             subtitle="Source: Mentee applications · Multi-select · Top 10 shown"
             type="bar"
-            data={topToHorizontal(crisis.data, "Mentees")}
+            data={topToHorizontal(overview.data?.crisis_status, "Mentees")}
             options={horizontalCountOptions}
-            loading={crisis.loading}
-            error={crisis.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -736,15 +844,15 @@ function ApplicationsSection({ authReady }) {
           <ChartCard
             title={t("dashboard.charts.menteeIdentify")}
             subtitle={metaSubtitle(
-              menteeApplicantIdentify.data?.meta,
+              overview.data?.mentee_identify?.meta,
               "Mentee applications",
               "All statuses"
             )}
             type="doughnut"
-            data={identityToDoughnut(menteeApplicantIdentify.data)}
+            data={identityToDoughnut(overview.data?.mentee_identify)}
             options={doughnutCountOptions}
-            loading={menteeApplicantIdentify.loading}
-            error={menteeApplicantIdentify.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -753,10 +861,10 @@ function ApplicationsSection({ authReady }) {
             title={t("dashboard.charts.mentorFlags")}
             subtitle="Source: Mentor applications · All statuses"
             type="bar"
-            data={flagsToBar(mentorFlags.data)}
+            data={flagsToBar(overview.data?.mentor_flags)}
             options={horizontalBarOptions}
-            loading={mentorFlags.loading}
-            error={mentorFlags.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -767,10 +875,10 @@ function ApplicationsSection({ authReady }) {
             title={t("dashboard.charts.topPartnersMentee")}
             subtitle="Source: Mentee applications · Top 10 shown"
             type="bar"
-            data={partnersToBar(partnersMentee.data)}
+            data={partnersToBar(overview.data?.top_partners_mentee)}
             options={horizontalCountOptions}
-            loading={partnersMentee.loading}
-            error={partnersMentee.error}
+            loading={overview.loading}
+            error={overview.error}
             height={300}
           />
         </Col>
@@ -779,10 +887,10 @@ function ApplicationsSection({ authReady }) {
             title={t("dashboard.charts.topPartnersMentor")}
             subtitle="Source: Mentor applications · Top 10 shown"
             type="bar"
-            data={partnersToBar(partnersMentor.data)}
+            data={partnersToBar(overview.data?.top_partners_mentor)}
             options={horizontalCountOptions}
-            loading={partnersMentor.loading}
-            error={partnersMentor.error}
+            loading={overview.loading}
+            error={overview.error}
             height={300}
           />
         </Col>
@@ -793,16 +901,8 @@ function ApplicationsSection({ authReady }) {
 
 function UsersSection({ authReady }) {
   const { t } = useTranslation();
-  const summary = useSummary("users", authReady);
-  const mentorSpecs = useApi(
-    () => fetchDashboardMentorSpecializations(15),
-    authReady
-  );
-  const menteeProfileIdentify = useApi(
-    () => fetchDashboardIdentify("mentee", "profiles"),
-    authReady
-  );
-  const s = summary.data;
+  const overview = useApi(fetchDashboardUsersOverview, authReady);
+  const s = overview.data?.summary;
   const kpis = useMemo(() => {
     if (!s) return [];
     return [
@@ -832,7 +932,7 @@ function UsersSection({ authReady }) {
 
   return (
     <>
-      <KpiGrid kpis={kpis} loading={summary.loading} skeletonCount={5} />
+      <KpiGrid kpis={kpis} loading={overview.loading} skeletonCount={5} />
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24} lg={12}>
           <ChartCard
@@ -841,8 +941,8 @@ function UsersSection({ authReady }) {
             type="doughnut"
             data={rolesToDoughnut(s?.users?.by_role)}
             options={doughnutCountOptions}
-            loading={summary.loading}
-            error={summary.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -850,15 +950,15 @@ function UsersSection({ authReady }) {
           <ChartCard
             title={t("dashboard.charts.menteeProfileGender")}
             subtitle={metaSubtitle(
-              menteeProfileIdentify.data?.meta,
+              overview.data?.mentee_profile_identify?.meta,
               "Mentee profiles",
               "Current profiles"
             )}
             type="doughnut"
-            data={identityToDoughnut(menteeProfileIdentify.data)}
+            data={identityToDoughnut(overview.data?.mentee_profile_identify)}
             options={doughnutCountOptions}
-            loading={menteeProfileIdentify.loading}
-            error={menteeProfileIdentify.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -869,10 +969,13 @@ function UsersSection({ authReady }) {
             title={t("dashboard.charts.mentorSpecs")}
             subtitle="Source: Mentor profiles · Multi-select · Top 15 shown"
             type="bar"
-            data={topToHorizontal(mentorSpecs.data, "Mentors")}
+            data={topToHorizontal(
+              overview.data?.mentor_specializations,
+              "Mentors"
+            )}
             options={horizontalCountOptions}
-            loading={mentorSpecs.loading}
-            error={mentorSpecs.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -883,17 +986,11 @@ function UsersSection({ authReady }) {
 
 function AppointmentsSection({ authReady }) {
   const { t } = useTranslation();
-  const summary = useSummary("appointments", authReady);
-  const apptsByMonth = useApi(
-    () => fetchDashboardAppointmentsByMonth(12),
+  const overview = useApi(
+    () => fetchDashboardAppointmentsOverview(12, 3, 20),
     authReady
   );
-  const topMentors = useApi(() => fetchDashboardTopMentors(10), authReady);
-  const acceptance = useApi(
-    () => fetchDashboardAcceptanceRates(3, 20),
-    authReady
-  );
-  const s = summary.data;
+  const s = overview.data?.summary;
   const kpis = useMemo(() => {
     if (!s) return [];
     return [
@@ -921,7 +1018,7 @@ function AppointmentsSection({ authReady }) {
 
   return (
     <>
-      <KpiGrid kpis={kpis} loading={summary.loading} skeletonCount={5} />
+      <KpiGrid kpis={kpis} loading={overview.loading} skeletonCount={5} />
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24} md={12} lg={8}>
           <ChartCard
@@ -930,8 +1027,8 @@ function AppointmentsSection({ authReady }) {
             type="doughnut"
             data={appointmentsToDoughnut(s?.appointments)}
             options={doughnutCountOptions}
-            loading={summary.loading}
-            error={summary.error}
+            loading={overview.loading}
+            error={overview.error}
             height={300}
           />
         </Col>
@@ -941,15 +1038,15 @@ function AppointmentsSection({ authReady }) {
             subtitle="Source: Appointment requests · All time · Top 10 shown"
             type="bar"
             data={topToHorizontal(
-              topMentors.data?.map((m) => ({
+              overview.data?.top_mentors?.map((m) => ({
                 value: m.mentor_name || `${(m.mentor_id || "").slice(0, 8)}…`,
                 count: m.appointments,
               })),
               "Sessions"
             )}
             options={horizontalCountOptions}
-            loading={topMentors.loading}
-            error={topMentors.error}
+            loading={overview.loading}
+            error={overview.error}
             height={300}
           />
         </Col>
@@ -958,13 +1055,13 @@ function AppointmentsSection({ authReady }) {
             title={t("dashboard.charts.acceptanceRates")}
             subtitle="Source: Appointment requests · Minimum 3 requests"
             type="bar"
-            data={acceptanceToBar(acceptance.data)}
+            data={acceptanceToBar(overview.data?.acceptance_rates)}
             options={{
               ...horizontalBarOptions,
               scales: { x: { beginAtZero: true, max: 100 } },
             }}
-            loading={acceptance.loading}
-            error={acceptance.error}
+            loading={overview.loading}
+            error={overview.error}
             height={300}
           />
         </Col>
@@ -976,7 +1073,7 @@ function AppointmentsSection({ authReady }) {
             subtitle="Source: Appointment requests · Last 12 months"
             type="bar"
             data={(() => {
-              const buckets = apptsByMonth.data;
+              const buckets = overview.data?.by_month;
               if (!buckets || !buckets.length) return null;
               return {
                 labels: buckets.map((b) => b.month),
@@ -1000,8 +1097,8 @@ function AppointmentsSection({ authReady }) {
               };
             })()}
             options={stackedCountOptions}
-            loading={apptsByMonth.loading}
-            error={apptsByMonth.error}
+            loading={overview.loading}
+            error={overview.error}
             height={260}
           />
         </Col>
@@ -1012,9 +1109,8 @@ function AppointmentsSection({ authReady }) {
 
 function MessagesSection({ authReady }) {
   const { t } = useTranslation();
-  const summary = useSummary("messages", authReady);
-  const messages = useApi(() => fetchDashboardMessagesByDay(90), authReady);
-  const s = summary.data;
+  const overview = useApi(() => fetchDashboardMessagesOverview(90), authReady);
+  const s = overview.data?.summary;
   const kpis = useMemo(() => {
     if (!s) return [];
     return [
@@ -1046,17 +1142,17 @@ function MessagesSection({ authReady }) {
 
   return (
     <>
-      <KpiGrid kpis={kpis} loading={summary.loading} skeletonCount={5} />
+      <KpiGrid kpis={kpis} loading={overview.loading} skeletonCount={5} />
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24}>
           <ChartCard
             title={t("dashboard.charts.messagesByDay")}
             subtitle="Source: Direct messages · Last 90 days"
             type="line"
-            data={messagesToLine(messages.data)}
+            data={messagesToLine(overview.data?.by_day)}
             options={lineOptions}
-            loading={messages.loading}
-            error={messages.error}
+            loading={overview.loading}
+            error={overview.error}
             height={320}
           />
         </Col>
@@ -1067,29 +1163,17 @@ function MessagesSection({ authReady }) {
 
 function OpsSection({ authReady }) {
   const { t } = useTranslation();
-  const summary = useSummary("ops", authReady);
-  const errorsByDay = useApi(() => fetchDashboardErrorsByDay(30), authReady);
-  const topExceptions = useApi(
-    () => fetchDashboardTopExceptions(10),
-    authReady
-  );
-  const topErrEndpoints = useApi(
-    () => fetchDashboardTopErrorEndpoints(10),
-    authReady
-  );
-  const oauthTokens = useApi(
-    () => fetchDashboardOauthTokensByDay(60),
-    authReady
-  );
-  const s = summary.data;
+  const overview = useApi(() => fetchDashboardOpsOverview(30, 60), authReady);
+  const hygiene = useApi(fetchDashboardOpsHygiene, authReady);
+  const s = overview.data?.summary;
   const hygieneAlerts = useMemo(() => {
-    const hygiene = s?.hygiene;
-    if (!hygiene) return [];
+    const data = hygiene.data;
+    if (!data) return [];
     const out = [];
-    if (hygiene.notifications.total) {
+    if (data.notifications.total) {
       const unreadPct = pct(
-        hygiene.notifications.unread,
-        hygiene.notifications.total
+        data.notifications.unread,
+        data.notifications.total
       );
       if (unreadPct >= 80) {
         out.push({
@@ -1100,20 +1184,20 @@ function OpsSection({ authReady }) {
         });
       }
     }
-    if (hygiene.appointments_legacy.legacy_only > 0) {
+    if (data.appointments_legacy.legacy_only > 0) {
       const legacyPct = pct(
-        hygiene.appointments_legacy.legacy_only,
-        hygiene.appointments_legacy.total
+        data.appointments_legacy.legacy_only,
+        data.appointments_legacy.total
       );
       out.push({
         title: t("dashboard.hygiene.legacyAppts", { pct: legacyPct }),
         description: t("dashboard.hygiene.legacyApptsDesc"),
       });
     }
-    if (hygiene.signed_docs_training_id.sampled > 0) {
+    if (data.signed_docs_training_id.sampled > 0) {
       const resolvedPct = pct(
-        hygiene.signed_docs_training_id.resolved,
-        hygiene.signed_docs_training_id.sampled
+        data.signed_docs_training_id.resolved,
+        data.signed_docs_training_id.sampled
       );
       if (resolvedPct < 50) {
         out.push({
@@ -1122,16 +1206,16 @@ function OpsSection({ authReady }) {
         });
       }
     }
-    if (hygiene.users_dirty_role_count > 0) {
+    if (data.users_dirty_role_count > 0) {
       out.push({
         title: t("dashboard.hygiene.dirtyRoles", {
-          count: hygiene.users_dirty_role_count,
+          count: data.users_dirty_role_count,
         }),
         description: t("dashboard.hygiene.dirtyRolesDesc"),
       });
     }
     return out;
-  }, [s, t]);
+  }, [hygiene.data, t]);
   const kpis = useMemo(() => {
     if (!s) return [];
     return [
@@ -1163,7 +1247,7 @@ function OpsSection({ authReady }) {
 
   return (
     <>
-      <KpiGrid kpis={kpis} loading={summary.loading} skeletonCount={3} />
+      <KpiGrid kpis={kpis} loading={overview.loading} skeletonCount={3} />
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24} lg={12}>
           <ChartCard
@@ -1172,8 +1256,8 @@ function OpsSection({ authReady }) {
             type="bar"
             data={oauthSessionsToBar(s?.oauth?.active_sessions_by_client)}
             options={horizontalCountOptions}
-            loading={summary.loading}
-            error={summary.error}
+            loading={overview.loading}
+            error={overview.error}
             height={260}
             empty={t("dashboard.empty.oauthSessions")}
           />
@@ -1183,10 +1267,10 @@ function OpsSection({ authReady }) {
             title={t("dashboard.charts.oauthTokens")}
             subtitle="Source: OAuth refresh tokens · Last 60 days"
             type="line"
-            data={tokensToLine(oauthTokens.data)}
+            data={tokensToLine(overview.data?.oauth_tokens_by_day)}
             options={lineOptions}
-            loading={oauthTokens.loading}
-            error={oauthTokens.error}
+            loading={overview.loading}
+            error={overview.error}
             height={260}
           />
         </Col>
@@ -1197,10 +1281,10 @@ function OpsSection({ authReady }) {
             title={t("dashboard.charts.errorsByDay")}
             subtitle="Source: Error logs · Last 30 days"
             type="bar"
-            data={errorsToStacked(errorsByDay.data)}
+            data={errorsToStacked(overview.data?.errors_by_day)}
             options={stackedCountOptions}
-            loading={errorsByDay.loading}
-            error={errorsByDay.error}
+            loading={overview.loading}
+            error={overview.error}
             height={280}
           />
         </Col>
@@ -1209,10 +1293,10 @@ function OpsSection({ authReady }) {
             title={t("dashboard.charts.topExceptions")}
             subtitle="Source: Error logs · Top 10 shown"
             type="bar"
-            data={topToHorizontal(topExceptions.data, "Errors")}
+            data={topToHorizontal(overview.data?.top_exceptions, "Errors")}
             options={horizontalCountOptions}
-            loading={topExceptions.loading}
-            error={topExceptions.error}
+            loading={overview.loading}
+            error={overview.error}
             height={280}
           />
         </Col>
@@ -1221,10 +1305,10 @@ function OpsSection({ authReady }) {
             title={t("dashboard.charts.topErrorEndpoints")}
             subtitle="Source: Error logs · Top 10 shown"
             type="bar"
-            data={topToHorizontal(topErrEndpoints.data, "Errors")}
+            data={topToHorizontal(overview.data?.top_error_endpoints, "Errors")}
             options={horizontalCountOptions}
-            loading={topErrEndpoints.loading}
-            error={topErrEndpoints.error}
+            loading={overview.loading}
+            error={overview.error}
             height={280}
           />
         </Col>

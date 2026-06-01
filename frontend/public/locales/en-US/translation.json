@@ -813,6 +813,14 @@
       "mentors": "Current mentor profiles",
       "partners": "Partner profiles",
       "hubs": "Hub profiles",
+      "activeMentees30d": "Active mentees (30d)",
+      "activeMentors30d": "Active mentors (30d)",
+      "activeProfilesHint": "Message or appointment activity",
+      "menteeApps30d": "Mentee apps (30d)",
+      "mentorApps30d": "Mentor apps (30d)",
+      "acceptedSessions30d": "Accepted sessions (30d)",
+      "availableMentors": "Available mentors",
+      "availableMentorsHint": "{{total}} total mentor profiles",
       "menteeApproval": "Mentee approval",
       "menteeConversion": "Mentee profile conversion",
       "mentorConversion": "Mentor profile conversion",
@@ -861,10 +869,14 @@
       "topErrorEndpoints": "Top failing endpoints",
       "oauthTokens": "OAuth tokens issued per day",
       "topPartnersMentee": "Top partners — mentee applications",
-      "topPartnersMentor": "Top partners — mentor applications"
+      "topPartnersMentor": "Top partners — mentor applications",
+      "supplyDemandGaps": "Largest topic supply gaps",
+      "attentionQueue": "Needs attention"
     },
     "empty": {
-      "oauthSessions": "No active OAuth sessions"
+      "oauthSessions": "No active OAuth sessions",
+      "supplyDemandGaps": "No positive supply gaps",
+      "attentionQueue": "No attention items"
     },
     "hygiene": {
       "unreadNotifications": "{{pct}}% of notifications are unread",

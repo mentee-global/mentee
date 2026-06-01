@@ -10,6 +10,7 @@ class DirectMessage(Document, Mixin):
         "indexes": [
             "-created_at",
             "message_read",
+            {"fields": ["message_read", "-created_at"]},
             {"fields": ["sender_id", "-created_at"]},
             {"fields": ["recipient_id", "-created_at"]},
         ],

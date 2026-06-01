@@ -1971,6 +1971,49 @@ export const fetchDashboardApplicationsByMonth = async (role, months = 12) => {
   return res?.data?.result?.buckets ?? [];
 };
 
+export const fetchDashboardApplicationsOverview = async (months = 12) => {
+  const res = await authGet(`${DASH}/applications/overview`, {
+    params: { months },
+  });
+  return res?.data?.result ?? null;
+};
+
+export const fetchDashboardUsersOverview = async () => {
+  const res = await authGet(`${DASH}/users/overview`);
+  return res?.data?.result ?? null;
+};
+
+export const fetchDashboardAppointmentsOverview = async (
+  months = 12,
+  minRequests = 3,
+  limit = 20
+) => {
+  const res = await authGet(`${DASH}/appointments/overview`, {
+    params: { months, min_requests: minRequests, limit },
+  });
+  return res?.data?.result ?? null;
+};
+
+export const fetchDashboardMessagesOverview = async (days = 90) => {
+  const res = await authGet(`${DASH}/messages/overview`, { params: { days } });
+  return res?.data?.result ?? null;
+};
+
+export const fetchDashboardOpsOverview = async (
+  errorDays = 30,
+  oauthDays = 60
+) => {
+  const res = await authGet(`${DASH}/ops/overview`, {
+    params: { error_days: errorDays, oauth_days: oauthDays },
+  });
+  return res?.data?.result ?? null;
+};
+
+export const fetchDashboardOpsHygiene = async () => {
+  const res = await authGet(`${DASH}/ops/hygiene`);
+  return res?.data?.result?.hygiene ?? null;
+};
+
 export const fetchDashboardAppointmentsByMonth = async (months = 12) => {
   const res = await authGet(`${DASH}/appointments/by-month`, {
     params: { months },

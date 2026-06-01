@@ -3,6 +3,7 @@ from .base import db
 from mongoengine import *
 from flask_mongoengine import Document
 from api.models import Availability
+from datetime import datetime
 
 
 class AppointmentRequest(Document, Mixin):
@@ -14,6 +15,9 @@ class AppointmentRequest(Document, Mixin):
             "mentee_id",
             "status",
             "timeslot.start_time",
+            "-created_at",
+            "-status_updated_at",
+            {"fields": ["status", "timeslot.start_time"]},
         ],
     }
 
@@ -25,6 +29,8 @@ class AppointmentRequest(Document, Mixin):
     topic = StringField()
     message = StringField()
     status = StringField()
+    created_at = DateTimeField(default=datetime.utcnow)
+    status_updated_at = DateTimeField(default=datetime.utcnow)
     allow_texts = BooleanField()
     allow_calls = BooleanField()
 

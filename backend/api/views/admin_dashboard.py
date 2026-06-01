@@ -182,6 +182,207 @@ def _summary_conversion(app_model, profile_model):
     }
 
 
+def _count_created_since(model, since):
+    return model.objects(
+        __raw__={
+            "$or": [
+                {"created_at": {"$gte": since}},
+                {
+                    "created_at": {"$exists": False},
+                    "_id": {"$gte": ObjectId.from_datetime(since)},
+                },
+            ]
+        }
+    ).count()
+
+
+def _distinct_profile_activity(profile_model, profile_field, since):
+    profile_ids = set(profile_model.objects.scalar("id"))
+    if not profile_ids:
+        return 0
+    message_ids = set(
+        DirectMessage.objects(created_at__gte=since).distinct("sender_id")
+    ) | set(DirectMessage.objects(created_at__gte=since).distinct("recipient_id"))
+    appointment_ids = set(
+        AppointmentRequest.objects(
+            __raw__={
+                "$or": [
+                    {"created_at": {"$gte": since}},
+                    {"status_updated_at": {"$gte": since}},
+                    {"timeslot.start_time": {"$gte": since}},
+                    {
+                        "created_at": {"$exists": False},
+                        "_id": {"$gte": ObjectId.from_datetime(since)},
+                    },
+                ]
+            }
+        ).distinct(profile_field)
+    )
+    return len(profile_ids & (message_ids | appointment_ids))
+
+
+def _status_count_since(status, since):
+    return AppointmentRequest.objects(
+        status=status, timeslot__start_time__gte=since
+    ).count()
+
+
+def _application_count_between(model, start, end):
+    return model.objects(date_submitted__gte=start, date_submitted__lt=end).count()
+
+
+def _period_delta(current, previous):
+    if previous == 0:
+        return None
+    return round(((current - previous) / previous) * 100, 1)
+
+
+def _top_supply_demand_gaps(limit=8):
+    demand_rows = _aggregate(
+        MenteeProfile,
+        [
+            {"$unwind": "$specializations"},
+            {"$group": {"_id": "$specializations", "demand": {"$sum": 1}}},
+        ],
+    )
+    supply_rows = _aggregate(
+        MentorProfile,
+        [
+            {
+                "$match": {
+                    "$and": [
+                        {
+                            "$or": [
+                                {"taking_appointments": True},
+                                {"taking_appointments": {"$exists": False}},
+                            ]
+                        },
+                        {
+                            "$or": [
+                                {"paused_flag": False},
+                                {"paused_flag": {"$exists": False}},
+                            ]
+                        },
+                    ]
+                }
+            },
+            {"$unwind": "$specializations"},
+            {"$group": {"_id": "$specializations", "supply": {"$sum": 1}}},
+        ],
+    )
+    supply = {row["_id"]: row["supply"] for row in supply_rows}
+    gaps = []
+    for row in demand_rows:
+        topic = row["_id"]
+        demand = row["demand"]
+        supply_count = supply.get(topic, 0)
+        gaps.append(
+            {
+                "topic": topic,
+                "demand": demand,
+                "supply": supply_count,
+                "gap": demand - supply_count,
+            }
+        )
+    return sorted(gaps, key=lambda row: row["gap"], reverse=True)[:limit]
+
+
+def _summary_executive(now):
+    since_30d = now - timedelta(days=30)
+    prev_30d = now - timedelta(days=60)
+    mentee_apps_30d = _application_count_between(MenteeApplication, since_30d, now)
+    mentor_apps_30d = _application_count_between(NewMentorApplication, since_30d, now)
+    mentee_apps_prev = _application_count_between(
+        MenteeApplication, prev_30d, since_30d
+    )
+    mentor_apps_prev = _application_count_between(
+        NewMentorApplication, prev_30d, since_30d
+    )
+    accepted_30d = _status_count_since("accepted", since_30d)
+    accepted_prev = AppointmentRequest.objects(
+        status="accepted",
+        timeslot__start_time__gte=prev_30d,
+        timeslot__start_time__lt=since_30d,
+    ).count()
+    mentee_conversion = _summary_conversion(MenteeApplication, MenteeProfile)
+    mentor_conversion = _summary_conversion(NewMentorApplication, MentorProfile)
+
+    return {
+        "active_mentees_30d": _distinct_profile_activity(
+            MenteeProfile, "mentee_id", since_30d
+        ),
+        "active_mentors_30d": _distinct_profile_activity(
+            MentorProfile, "mentor_id", since_30d
+        ),
+        "new_mentee_profiles_30d": _count_created_since(MenteeProfile, since_30d),
+        "new_mentor_profiles_30d": _count_created_since(MentorProfile, since_30d),
+        "mentee_applications_30d": mentee_apps_30d,
+        "mentor_applications_30d": mentor_apps_30d,
+        "mentee_application_delta_30d": _period_delta(
+            mentee_apps_30d, mentee_apps_prev
+        ),
+        "mentor_application_delta_30d": _period_delta(
+            mentor_apps_30d, mentor_apps_prev
+        ),
+        "accepted_sessions_30d": accepted_30d,
+        "accepted_sessions_delta_30d": _period_delta(accepted_30d, accepted_prev),
+        "mentor_supply_available": MentorProfile.objects(
+            __raw__={
+                "$and": [
+                    {"taking_appointments": True},
+                    {
+                        "$or": [
+                            {"paused_flag": False},
+                            {"paused_flag": {"$exists": False}},
+                        ]
+                    },
+                ]
+            }
+        ).count(),
+        "mentor_supply_total": MentorProfile.objects.count(),
+        "attention": {
+            "approved_mentees_without_profile": mentee_conversion[
+                "approved_without_profile"
+            ],
+            "approved_mentors_without_profile": mentor_conversion[
+                "approved_without_profile"
+            ],
+            "mentor_build_profile_without_profile": mentor_conversion[
+                "build_profile_without_profile"
+            ],
+            "users_dirty_role_count": Users.objects(
+                __raw__={"role": {"$nin": [str(i) for i in range(8)]}}
+            ).count(),
+            "mentee_profiles_missing_timezone": MenteeProfile.objects(
+                __raw__={
+                    "$or": [
+                        {"timezone": {"$exists": False}},
+                        {"timezone": {"$in": [None, ""]}},
+                    ]
+                }
+            ).count(),
+            "mentor_profiles_missing_timezone": MentorProfile.objects(
+                __raw__={
+                    "$or": [
+                        {"timezone": {"$exists": False}},
+                        {"timezone": {"$in": [None, ""]}},
+                    ]
+                }
+            ).count(),
+            "mentors_taking_appointments_without_availability": MentorProfile.objects(
+                __raw__={
+                    "taking_appointments": True,
+                    "$or": [
+                        {"availability": {"$exists": False}},
+                        {"availability": {"$size": 0}},
+                    ],
+                }
+            ).count(),
+        },
+        "supply_demand_gaps": _top_supply_demand_gaps(),
+    }
+
+
 def _summary_appointments(now):
     raw = _aggregate(
         AppointmentRequest,
@@ -343,7 +544,7 @@ def _summary_hygiene():
     ).count()
 
     dirty_roles = Users.objects(
-        __raw__={"role": {"$not": {"$in": [str(i) for i in range(8)]}}}
+        __raw__={"role": {"$nin": [str(i) for i in range(8)]}}
     ).count()
 
     # signed_docs: training_id rarely resolves. Sample-based estimate keeps it cheap.
@@ -388,18 +589,22 @@ def summary():
             {
                 "all",
                 "overview",
+                "executive",
                 "applications",
                 "users",
                 "appointments",
                 "messages",
                 "ops",
             },
-            "all",
+            "overview",
         )
         data = {"generated_at": now.isoformat(), "section": section}
 
         if section in {"all", "overview", "users"}:
             data["users"] = _summary_users()
+
+        if section in {"all", "executive"}:
+            data["executive"] = _summary_executive(now)
 
         if section in {"all", "applications"}:
             data["funnel"] = {
@@ -435,11 +640,7 @@ def summary():
 # ---------------------------------------------------------------------------
 
 
-@admin_dashboard.route("/applications/by-month", methods=["GET"])
-@admin_only
-def applications_by_month():
-    months = _int_arg("months", 12, lo=1, hi=36)
-    role = _str_arg("role", {"mentee", "mentor"}, "mentee")
+def _applications_by_month_data(role, months):
     since = datetime.utcnow() - timedelta(days=months * 31)
     model = MenteeApplication if role == "mentee" else NewMentorApplication
 
@@ -486,8 +687,149 @@ def applications_by_month():
             }
         },
     ]
+    return _aggregate(model, pipeline)
+
+
+def _top_partners_data(role, limit):
+    model = MenteeApplication if role == "mentee" else NewMentorApplication
+    pipeline = [
+        {"$match": {"partner": {"$exists": True, "$nin": [None, ""]}}},
+        {"$group": {"_id": "$partner", "applications": {"$sum": 1}}},
+        {"$sort": {"applications": -1}},
+        {"$limit": limit},
+        # Resolve the partner id (stored as a string) against partner_profile._id.
+        # We cast the string -> ObjectId before joining so the comparison hits.
+        {
+            "$addFields": {
+                "partner_oid": {
+                    "$convert": {
+                        "input": "$_id",
+                        "to": "objectId",
+                        "onError": None,
+                        "onNull": None,
+                    }
+                }
+            }
+        },
+        {
+            "$lookup": {
+                "from": "partner_profile",
+                "localField": "partner_oid",
+                "foreignField": "_id",
+                "as": "profile",
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "partner_id": "$_id",
+                "applications": 1,
+                "organization": {"$arrayElemAt": ["$profile.organization", 0]},
+                "person_name": {"$arrayElemAt": ["$profile.person_name", 0]},
+            }
+        },
+    ]
+    return _aggregate(model, pipeline)
+
+
+def _mentor_flags_data():
+    """Returns the percentage of mentor applicants who self-identify as
+    color/marginalized/native/economically-disadvantaged."""
+    pipeline = [
+        {
+            "$group": {
+                "_id": None,
+                "total": {"$sum": 1},
+                "color": {"$sum": {"$cond": [{"$eq": ["$isColorPerson", True]}, 1, 0]}},
+                "marginalized": {
+                    "$sum": {"$cond": [{"$eq": ["$isMarginalized", True]}, 1, 0]}
+                },
+                "native": {
+                    "$sum": {"$cond": [{"$eq": ["$isFamilyNative", True]}, 1, 0]}
+                },
+                "economically": {
+                    "$sum": {"$cond": [{"$eq": ["$isEconomically", True]}, 1, 0]}
+                },
+                "immigrant": {
+                    "$sum": {"$cond": [{"$eq": ["$immigrant_status", True]}, 1, 0]}
+                },
+            }
+        },
+        {"$project": {"_id": 0}},
+    ]
+    rows = _aggregate(NewMentorApplication, pipeline)
+    return rows[0] if rows else {"total": 0}
+
+
+@admin_dashboard.route("/applications/overview", methods=["GET"])
+@admin_only
+def applications_overview():
+    months = _int_arg("months", 12, lo=1, hi=36)
     try:
-        return create_response(data={"buckets": _aggregate(model, pipeline)})
+        mentee_identify_items, mentee_identify_total = _identity_breakdown(
+            MenteeApplication, "identify"
+        )
+        return create_response(
+            data={
+                "summary": {
+                    "funnel": {
+                        "mentee": _summary_funnel(MenteeApplication),
+                        "mentor": _summary_funnel(NewMentorApplication),
+                    },
+                    "conversion": {
+                        "mentee": _summary_conversion(MenteeApplication, MenteeProfile),
+                        "mentor": _summary_conversion(
+                            NewMentorApplication, MentorProfile
+                        ),
+                    },
+                },
+                "mentee_by_month": _applications_by_month_data("mentee", months),
+                "mentor_by_month": _applications_by_month_data("mentor", months),
+                "countries": _top_n(
+                    MenteeApplication,
+                    "Country",
+                    15,
+                    match={
+                        "Country": {
+                            "$exists": True,
+                            "$ne": None,
+                            "$nin": ["", " "],
+                        }
+                    },
+                ),
+                "topics": _top_n(MenteeApplication, "topics", 15, unwind=True),
+                "crisis_status": _top_n(
+                    MenteeApplication, "immigrant_status", 10, unwind=True
+                ),
+                "mentee_identify": {
+                    "items": mentee_identify_items,
+                    "meta": {
+                        "source": "mentee",
+                        "population": "applications",
+                        "field": "identify",
+                        "scope": "all statuses",
+                        "total": mentee_identify_total,
+                    },
+                },
+                "mentor_flags": _mentor_flags_data(),
+                "top_partners_mentee": _top_partners_data("mentee", 10),
+                "top_partners_mentor": _top_partners_data("mentor", 10),
+            }
+        )
+    except Exception as e:
+        logger.exception("applications/overview failed")
+        return create_response(status=500, message=str(e))
+
+
+@admin_dashboard.route("/applications/by-month", methods=["GET"])
+@admin_only
+def applications_by_month():
+    months = _int_arg("months", 12, lo=1, hi=36)
+    role = _str_arg("role", {"mentee", "mentor"}, "mentee")
+    try:
+        return create_response(
+            data={"buckets": _applications_by_month_data(role, months)}
+        )
     except Exception as e:
         logger.exception("applications/by-month failed")
         return create_response(status=500, message=str(e))
@@ -502,6 +844,14 @@ def applications_by_month():
 @admin_only
 def appointments_by_month():
     months = _int_arg("months", 12, lo=1, hi=36)
+    try:
+        return create_response(data={"buckets": _appointments_by_month_data(months)})
+    except Exception as e:
+        logger.exception("appointments/by-month failed")
+        return create_response(status=500, message=str(e))
+
+
+def _appointments_by_month_data(months):
     since = datetime.utcnow() - timedelta(days=months * 31)
     pipeline = [
         {"$match": {"timeslot.start_time": {"$type": "date", "$gte": since}}},
@@ -564,19 +914,21 @@ def appointments_by_month():
             }
         },
     ]
-    try:
-        return create_response(
-            data={"buckets": _aggregate(AppointmentRequest, pipeline)}
-        )
-    except Exception as e:
-        logger.exception("appointments/by-month failed")
-        return create_response(status=500, message=str(e))
+    return _aggregate(AppointmentRequest, pipeline)
 
 
 @admin_dashboard.route("/appointments/top-mentors", methods=["GET"])
 @admin_only
 def appointments_top_mentors():
     limit = _int_arg("limit", 10, lo=1, hi=50)
+    try:
+        return create_response(data={"mentors": _appointments_top_mentors_data(limit)})
+    except Exception as e:
+        logger.exception("appointments/top-mentors failed")
+        return create_response(status=500, message=str(e))
+
+
+def _appointments_top_mentors_data(limit):
     pipeline = [
         {"$group": {"_id": "$mentor_id", "appointments": {"$sum": 1}}},
         {"$sort": {"appointments": -1}},
@@ -599,13 +951,7 @@ def appointments_top_mentors():
             }
         },
     ]
-    try:
-        return create_response(
-            data={"mentors": _aggregate(AppointmentRequest, pipeline)}
-        )
-    except Exception as e:
-        logger.exception("appointments/top-mentors failed")
-        return create_response(status=500, message=str(e))
+    return _aggregate(AppointmentRequest, pipeline)
 
 
 @admin_dashboard.route("/appointments/acceptance-rates", methods=["GET"])
@@ -613,6 +959,16 @@ def appointments_top_mentors():
 def appointments_acceptance_rates():
     min_requests = _int_arg("min_requests", 3, lo=1, hi=100)
     limit = _int_arg("limit", 30, lo=1, hi=100)
+    try:
+        return create_response(
+            data={"mentors": _appointments_acceptance_rates_data(min_requests, limit)}
+        )
+    except Exception as e:
+        logger.exception("appointments/acceptance-rates failed")
+        return create_response(status=500, message=str(e))
+
+
+def _appointments_acceptance_rates_data(min_requests, limit):
     pipeline = [
         {
             "$group": {
@@ -655,12 +1011,28 @@ def appointments_acceptance_rates():
             }
         },
     ]
+    return _aggregate(AppointmentRequest, pipeline)
+
+
+@admin_dashboard.route("/appointments/overview", methods=["GET"])
+@admin_only
+def appointments_overview():
+    months = _int_arg("months", 12, lo=1, hi=36)
+    min_requests = _int_arg("min_requests", 3, lo=1, hi=100)
+    limit = _int_arg("limit", 20, lo=1, hi=100)
     try:
         return create_response(
-            data={"mentors": _aggregate(AppointmentRequest, pipeline)}
+            data={
+                "summary": {"appointments": _summary_appointments(datetime.utcnow())},
+                "by_month": _appointments_by_month_data(months),
+                "top_mentors": _appointments_top_mentors_data(10),
+                "acceptance_rates": _appointments_acceptance_rates_data(
+                    min_requests, limit
+                ),
+            }
         )
     except Exception as e:
-        logger.exception("appointments/acceptance-rates failed")
+        logger.exception("appointments/overview failed")
         return create_response(status=500, message=str(e))
 
 
@@ -673,6 +1045,14 @@ def appointments_acceptance_rates():
 @admin_only
 def messages_by_day():
     days = _int_arg("days", 90, lo=1, hi=365)
+    try:
+        return create_response(data={"buckets": _messages_by_day_data(days)})
+    except Exception as e:
+        logger.exception("messages/by-day failed")
+        return create_response(status=500, message=str(e))
+
+
+def _messages_by_day_data(days):
     since = datetime.utcnow() - timedelta(days=days)
     pipeline = [
         {"$match": {"created_at": {"$type": "date", "$gte": since}}},
@@ -697,10 +1077,23 @@ def messages_by_day():
             }
         },
     ]
+    return _aggregate(DirectMessage, pipeline)
+
+
+@admin_dashboard.route("/messages/overview", methods=["GET"])
+@admin_only
+def messages_overview():
+    days = _int_arg("days", 90, lo=1, hi=365)
     try:
-        return create_response(data={"buckets": _aggregate(DirectMessage, pipeline)})
+        now = datetime.utcnow()
+        return create_response(
+            data={
+                "summary": {"messaging": _summary_messaging(now)},
+                "by_day": _messages_by_day_data(days),
+            }
+        )
     except Exception as e:
-        logger.exception("messages/by-day failed")
+        logger.exception("messages/overview failed")
         return create_response(status=500, message=str(e))
 
 
@@ -873,37 +1266,41 @@ def demographics_mentor_specs():
         return create_response(status=500, message=str(e))
 
 
+@admin_dashboard.route("/users/overview", methods=["GET"])
+@admin_only
+def users_overview():
+    try:
+        profile_identify_items, profile_identify_total = _identity_breakdown(
+            MenteeProfile, "gender"
+        )
+        return create_response(
+            data={
+                "summary": {"users": _summary_users()},
+                "mentor_specializations": _top_n(
+                    MentorProfile, "specializations", 15, unwind=True
+                ),
+                "mentee_profile_identify": {
+                    "items": profile_identify_items,
+                    "meta": {
+                        "source": "mentee",
+                        "population": "profiles",
+                        "field": "gender",
+                        "scope": "current profiles",
+                        "total": profile_identify_total,
+                    },
+                },
+            }
+        )
+    except Exception as e:
+        logger.exception("users/overview failed")
+        return create_response(status=500, message=str(e))
+
+
 @admin_dashboard.route("/demographics/mentor-flags", methods=["GET"])
 @admin_only
 def demographics_mentor_flags():
-    """Returns the percentage of mentor applicants who self-identify as
-    color/marginalized/native/economically-disadvantaged."""
-    pipeline = [
-        {
-            "$group": {
-                "_id": None,
-                "total": {"$sum": 1},
-                "color": {"$sum": {"$cond": [{"$eq": ["$isColorPerson", True]}, 1, 0]}},
-                "marginalized": {
-                    "$sum": {"$cond": [{"$eq": ["$isMarginalized", True]}, 1, 0]}
-                },
-                "native": {
-                    "$sum": {"$cond": [{"$eq": ["$isFamilyNative", True]}, 1, 0]}
-                },
-                "economically": {
-                    "$sum": {"$cond": [{"$eq": ["$isEconomically", True]}, 1, 0]}
-                },
-                "immigrant": {
-                    "$sum": {"$cond": [{"$eq": ["$immigrant_status", True]}, 1, 0]}
-                },
-            }
-        },
-        {"$project": {"_id": 0}},
-    ]
     try:
-        rows = _aggregate(NewMentorApplication, pipeline)
-        row = rows[0] if rows else {"total": 0}
-        return create_response(data={"flags": row})
+        return create_response(data={"flags": _mentor_flags_data()})
     except Exception as e:
         logger.exception("demographics/mentor-flags failed")
         return create_response(status=500, message=str(e))
@@ -919,47 +1316,8 @@ def demographics_mentor_flags():
 def partners_top():
     limit = _int_arg("limit", 10, lo=1, hi=50)
     role = _str_arg("role", {"mentee", "mentor"}, "mentee")
-    model = MenteeApplication if role == "mentee" else NewMentorApplication
-
-    pipeline = [
-        {"$match": {"partner": {"$exists": True, "$ne": None, "$ne": ""}}},
-        {"$group": {"_id": "$partner", "applications": {"$sum": 1}}},
-        {"$sort": {"applications": -1}},
-        {"$limit": limit},
-        # Resolve the partner id (stored as a string) against partner_profile._id.
-        # We cast the string -> ObjectId before joining so the comparison hits.
-        {
-            "$addFields": {
-                "partner_oid": {
-                    "$convert": {
-                        "input": "$_id",
-                        "to": "objectId",
-                        "onError": None,
-                        "onNull": None,
-                    }
-                }
-            }
-        },
-        {
-            "$lookup": {
-                "from": "partner_profile",
-                "localField": "partner_oid",
-                "foreignField": "_id",
-                "as": "profile",
-            }
-        },
-        {
-            "$project": {
-                "_id": 0,
-                "partner_id": "$_id",
-                "applications": 1,
-                "organization": {"$arrayElemAt": ["$profile.organization", 0]},
-                "person_name": {"$arrayElemAt": ["$profile.person_name", 0]},
-            }
-        },
-    ]
     try:
-        return create_response(data={"partners": _aggregate(model, pipeline)})
+        return create_response(data={"partners": _top_partners_data(role, limit)})
     except Exception as e:
         logger.exception("partners/top failed")
         return create_response(status=500, message=str(e))
@@ -974,6 +1332,14 @@ def partners_top():
 @admin_only
 def errors_by_day():
     days = _int_arg("days", 30, lo=1, hi=90)
+    try:
+        return create_response(data={"buckets": _errors_by_day_data(days)})
+    except Exception as e:
+        logger.exception("errors/by-day failed")
+        return create_response(status=500, message=str(e))
+
+
+def _errors_by_day_data(days):
     since = datetime.utcnow() - timedelta(days=days)
     pipeline = [
         {"$match": {"timestamp": {"$type": "date", "$gte": since}}},
@@ -998,10 +1364,40 @@ def errors_by_day():
             }
         },
     ]
+    return _aggregate(ErrorLog, pipeline)
+
+
+@admin_dashboard.route("/ops/overview", methods=["GET"])
+@admin_only
+def ops_overview():
+    error_days = _int_arg("error_days", 30, lo=1, hi=90)
+    oauth_days = _int_arg("oauth_days", 60, lo=1, hi=365)
     try:
-        return create_response(data={"buckets": _aggregate(ErrorLog, pipeline)})
+        now = datetime.utcnow()
+        return create_response(
+            data={
+                "summary": {
+                    "ops": _summary_ops(now),
+                    "oauth": _summary_oauth(now),
+                },
+                "errors_by_day": _errors_by_day_data(error_days),
+                "top_exceptions": _top_n(ErrorLog, "exception_type", 10),
+                "top_error_endpoints": _top_n(ErrorLog, "endpoint", 10),
+                "oauth_tokens_by_day": _oauth_tokens_by_day_data(oauth_days),
+            }
+        )
     except Exception as e:
-        logger.exception("errors/by-day failed")
+        logger.exception("ops/overview failed")
+        return create_response(status=500, message=str(e))
+
+
+@admin_dashboard.route("/ops/hygiene", methods=["GET"])
+@admin_only
+def ops_hygiene():
+    try:
+        return create_response(data={"hygiene": _summary_hygiene()})
+    except Exception as e:
+        logger.exception("ops/hygiene failed")
         return create_response(status=500, message=str(e))
 
 
@@ -1038,6 +1434,14 @@ def errors_top_endpoints():
 @admin_only
 def oauth_tokens_by_day():
     days = _int_arg("days", 60, lo=1, hi=365)
+    try:
+        return create_response(data={"buckets": _oauth_tokens_by_day_data(days)})
+    except Exception as e:
+        logger.exception("oauth/tokens-by-day failed")
+        return create_response(status=500, message=str(e))
+
+
+def _oauth_tokens_by_day_data(days):
     since = datetime.utcnow() - timedelta(days=days)
     pipeline = [
         {"$match": {"created_at": {"$type": "date", "$gte": since}}},
@@ -1050,10 +1454,4 @@ def oauth_tokens_by_day():
         {"$sort": {"_id": 1}},
         {"$project": {"_id": 0, "day": "$_id", "issued": 1}},
     ]
-    try:
-        return create_response(
-            data={"buckets": _aggregate(OAuthRefreshToken, pipeline)}
-        )
-    except Exception as e:
-        logger.exception("oauth/tokens-by-day failed")
-        return create_response(status=500, message=str(e))
+    return _aggregate(OAuthRefreshToken, pipeline)

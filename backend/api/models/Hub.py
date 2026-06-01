@@ -2,12 +2,16 @@ from api.core import Mixin
 from flask_mongoengine import Document
 from mongoengine import *
 from api.models import Image
+from datetime import datetime
 
 
 class Hub(Document, Mixin):
     """Hub Collection."""
 
+    meta = {"indexes": ["email", "-created_at"]}
+
     firebase_uid = StringField(required=True)
+    created_at = DateTimeField(default=datetime.utcnow)
     email = StringField(required=True)
     name = StringField(required=True)
     image = EmbeddedDocumentField(Image)

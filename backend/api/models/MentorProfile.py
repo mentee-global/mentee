@@ -3,12 +3,16 @@ from .base import db
 from flask_mongoengine import Document
 from mongoengine import *
 from api.models import Education, Video, Availability, Image
+from datetime import datetime
 
 
 class MentorProfile(Document, Mixin):
     """Mentor Profile Collection."""
 
+    meta = {"indexes": ["email", "-created_at"]}
+
     firebase_uid = StringField()
+    created_at = DateTimeField(default=datetime.utcnow)
     user_id = ReferenceField("Users")
     name = StringField(required=True)
     location = StringField()

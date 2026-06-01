@@ -3,12 +3,16 @@ from api.core import Mixin
 from .base import db
 from mongoengine import *
 from api.models import Education, Video, Image
+from datetime import datetime
 
 
 class PartnerProfile(Document, Mixin):
     """Model for mentor application."""
 
+    meta = {"indexes": ["email", "hub_id", "-created_at"]}
+
     firebase_uid = StringField()
+    created_at = DateTimeField(default=datetime.utcnow)
     email = StringField(required=True)
     text_notifications = BooleanField(required=True)
     email_notifications = BooleanField(required=True)

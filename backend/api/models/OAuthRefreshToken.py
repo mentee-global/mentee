@@ -11,6 +11,7 @@ class OAuthRefreshToken(Document):
             {"fields": ["token_hash"], "unique": True},
             {"fields": ["user_id"]},
             {"fields": ["client_id", "revoked", "expires_at"]},
+            {"fields": ["-created_at"]},
         ],
     }
 

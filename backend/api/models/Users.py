@@ -7,6 +7,8 @@ from mongoengine import *
 class Users(Document, Mixin):
     """User Collection."""
 
+    meta = {"indexes": ["email", "role"]}
+
     firebase_uid = StringField()
     email = StringField(required=True)
     role = StringField(required=True)

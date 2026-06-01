@@ -28,6 +28,7 @@ class ErrorLog(Document, Mixin):
             # TTL: auto-expire after 90 days
             {"fields": ["-timestamp"], "expireAfterSeconds": 60 * 60 * 24 * 90},
             "exception_type",
+            "endpoint",
             "source",
         ],
     }

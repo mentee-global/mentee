@@ -226,12 +226,15 @@ def create_appointment():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
+    now = datetime.utcnow()
     new_appointment = AppointmentRequest(
         mentor_id=data.get("mentor_id"),
         mentee_id=data.get("mentee_id"),
         name=mentee.name,
         mentor_name=mentor.name,
         status=data.get("status"),
+        created_at=now,
+        status_updated_at=now,
         topic=data.get("topic"),
         message=data.get("message"),
         allow_texts=data.get("allow_texts"),
@@ -351,6 +354,7 @@ def put_appointment(id):
         return create_response(status=422, message=msg)
 
     appointment.status = APPT_STATUS["ACCEPTED"]
+    appointment.status_updated_at = datetime.utcnow()
 
     for timeslot in mentor.availability:
         if timeslot == appointment.timeslot:
@@ -446,6 +450,7 @@ def delete_request(appointment_id):
         logger.info("Failed to send email")
 
     request.status = APPT_STATUS["DENIED"]
+    request.status_updated_at = datetime.utcnow()
     request.save()
     return create_response(status=200, message=f"Success")
 

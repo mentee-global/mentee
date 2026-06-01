@@ -20,6 +20,7 @@ from api.models import (
     BugReport,
     DirectMessage,
     ErrorLog,
+    Hub,
     MenteeApplication,
     MenteeProfile,
     MentorProfile,
@@ -114,6 +115,7 @@ def _summary_users():
         "mentor_profile": MentorProfile.objects.count(),
         "mentee_profile": MenteeProfile.objects.count(),
         "partner_profile": PartnerProfile.objects.count(),
+        "hub": Hub.objects.count(),
     }
     return {
         "total": Users.objects.count(),
@@ -131,7 +133,56 @@ def _summary_funnel(model):
     return {r["_id"]: r["count"] for r in raw if r.get("_id")}
 
 
-def _summary_appointments():
+def _profile_email_set(model):
+    return {
+        email.strip().lower()
+        for email in model.objects.distinct("email")
+        if isinstance(email, str) and email.strip()
+    }
+
+
+def _summary_conversion(app_model, profile_model):
+    profile_emails = _profile_email_set(profile_model)
+    apps = list(app_model.objects.only("email", "application_state"))
+    total = len(apps)
+    approved_states = {"APPROVED", "BuildProfile", "COMPLETED"}
+    approved_or_later = 0
+    profile_created = 0
+    approved_without_profile = 0
+    build_profile_without_profile = 0
+    completed_without_profile = 0
+
+    for app in apps:
+        email = (getattr(app, "email", "") or "").strip().lower()
+        state = getattr(app, "application_state", None)
+        has_profile = bool(email and email in profile_emails)
+        if state in approved_states:
+            approved_or_later += 1
+            if has_profile:
+                profile_created += 1
+            else:
+                approved_without_profile += 1
+        if state == "BuildProfile" and not has_profile:
+            build_profile_without_profile += 1
+        if state == "COMPLETED" and not has_profile:
+            completed_without_profile += 1
+
+    return {
+        "total_applications": total,
+        "approved_or_later": approved_or_later,
+        "profile_created_from_approved": profile_created,
+        "profile_conversion_rate": (
+            round((profile_created / approved_or_later) * 100, 1)
+            if approved_or_later
+            else None
+        ),
+        "approved_without_profile": approved_without_profile,
+        "build_profile_without_profile": build_profile_without_profile,
+        "completed_without_profile": completed_without_profile,
+    }
+
+
+def _summary_appointments(now):
     raw = _aggregate(
         AppointmentRequest,
         [
@@ -170,16 +221,42 @@ def _summary_appointments():
         ],
     )
     counts = {r["_id"]: r["count"] for r in raw}
+    pending_past_timeslot = AppointmentRequest.objects(
+        status="pending", timeslot__start_time__lt=now
+    ).count()
+    pending_next_7d = AppointmentRequest.objects(
+        status="pending",
+        timeslot__start_time__gte=now,
+        timeslot__start_time__lte=now + timedelta(days=7),
+    ).count()
     return {
         "total": AppointmentRequest.objects.count(),
         "accepted": counts.get("accepted", 0),
         "denied": counts.get("denied", 0),
         "pending": counts.get("pending", 0),
         "unknown": counts.get("unknown", 0),
+        "pending_past_timeslot": pending_past_timeslot,
+        "pending_next_7d": pending_next_7d,
     }
 
 
 def _summary_messaging(now):
+    last_30d = DirectMessage.objects(created_at__gte=now - timedelta(days=30)).count()
+    unread_conversations = list(
+        DirectMessage.objects(message_read=False).aggregate(
+            [
+                {
+                    "$group": {
+                        "_id": {
+                            "sender_id": "$sender_id",
+                            "recipient_id": "$recipient_id",
+                        }
+                    }
+                },
+                {"$count": "count"},
+            ]
+        )
+    )
     return {
         "total": DirectMessage.objects.count(),
         "last_24h": DirectMessage.objects(
@@ -188,10 +265,18 @@ def _summary_messaging(now):
         "last_7d": DirectMessage.objects(
             created_at__gte=now - timedelta(days=7)
         ).count(),
-        "last_30d": DirectMessage.objects(
-            created_at__gte=now - timedelta(days=30)
-        ).count(),
+        "last_30d": last_30d,
+        "average_per_day_30d": round(last_30d / 30, 1),
         "unread": DirectMessage.objects(message_read=False).count(),
+        "unread_48h": DirectMessage.objects(
+            message_read=False, created_at__lt=now - timedelta(hours=48)
+        ).count(),
+        "unread_7d": DirectMessage.objects(
+            message_read=False, created_at__lt=now - timedelta(days=7)
+        ).count(),
+        "unread_conversations": (
+            unread_conversations[0]["count"] if unread_conversations else 0
+        ),
     }
 
 
@@ -298,19 +383,39 @@ def _summary_hygiene():
 def summary():
     try:
         now = datetime.utcnow()
-        data = {
-            "generated_at": now.isoformat(),
-            "users": _summary_users(),
-            "funnel": {
+        section = _str_arg(
+            "section",
+            {"all", "overview", "applications", "users", "appointments", "messages", "ops"},
+            "all",
+        )
+        data = {"generated_at": now.isoformat(), "section": section}
+
+        if section in {"all", "overview", "users"}:
+            data["users"] = _summary_users()
+
+        if section in {"all", "applications"}:
+            data["funnel"] = {
                 "mentee": _summary_funnel(MenteeApplication),
                 "mentor": _summary_funnel(NewMentorApplication),
-            },
-            "appointments": _summary_appointments(),
-            "messaging": _summary_messaging(now),
-            "ops": _summary_ops(now),
-            "oauth": _summary_oauth(now),
-            "hygiene": _summary_hygiene(),
-        }
+            }
+            data["conversion"] = {
+                "mentee": _summary_conversion(MenteeApplication, MenteeProfile),
+                "mentor": _summary_conversion(NewMentorApplication, MentorProfile),
+            }
+
+        if section in {"all", "overview", "appointments"}:
+            data["appointments"] = _summary_appointments(now)
+
+        if section in {"all", "overview", "messages"}:
+            data["messaging"] = _summary_messaging(now)
+
+        if section in {"all", "overview", "ops"}:
+            data["ops"] = _summary_ops(now)
+
+        if section in {"all", "ops"}:
+            data["oauth"] = _summary_oauth(now)
+            data["hygiene"] = _summary_hygiene()
+
         return create_response(data={"summary": data})
     except Exception as e:
         logger.exception("dashboard /summary failed")
@@ -568,10 +673,21 @@ def messages_by_day():
                 "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
                 "messages": {"$sum": 1},
                 "read": {"$sum": {"$cond": [{"$eq": ["$message_read", True]}, 1, 0]}},
+                "unread": {
+                    "$sum": {"$cond": [{"$eq": ["$message_read", False]}, 1, 0]}
+                },
             }
         },
         {"$sort": {"_id": 1}},
-        {"$project": {"_id": 0, "day": "$_id", "messages": 1, "read": 1}},
+        {
+            "$project": {
+                "_id": 0,
+                "day": "$_id",
+                "messages": 1,
+                "read": 1,
+                "unread": 1,
+            }
+        },
     ]
     try:
         return create_response(data={"buckets": _aggregate(DirectMessage, pipeline)})
@@ -598,6 +714,64 @@ def _top_n(model, field, limit, match=None, unwind=False):
         {"$project": {"_id": 0, "value": "$_id", "count": 1}},
     ]
     return _aggregate(model, pipeline)
+
+
+def _identity_normalization_project(field):
+    return {
+        "$project": {
+            "norm": {
+                "$let": {
+                    "vars": {"lc": {"$toLower": {"$trim": {"input": f"${field}"}}}},
+                    "in": {
+                        "$switch": {
+                            "branches": [
+                                {
+                                    "case": {
+                                        "$regexMatch": {
+                                            "input": "$$lc",
+                                            "regex": "wom(a|e)n|female",
+                                        }
+                                    },
+                                    "then": "woman",
+                                },
+                                {
+                                    "case": {
+                                        "$regexMatch": {
+                                            "input": "$$lc",
+                                            "regex": "man|male",
+                                        }
+                                    },
+                                    "then": "man",
+                                },
+                                {
+                                    "case": {
+                                        "$regexMatch": {
+                                            "input": "$$lc",
+                                            "regex": "lgbt|queer|non.?binary",
+                                        }
+                                    },
+                                    "then": "lgbtq+",
+                                },
+                            ],
+                            "default": "other",
+                        }
+                    },
+                }
+            }
+        }
+    }
+
+
+def _identity_breakdown(model, field):
+    pipeline = [
+        {"$match": {field: {"$exists": True, "$nin": [None, "", " "]}}},
+        _identity_normalization_project(field),
+        {"$group": {"_id": "$norm", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$project": {"_id": 0, "value": "$_id", "count": 1}},
+    ]
+    items = _aggregate(model, pipeline)
+    return items, sum(row["count"] for row in items)
 
 
 @admin_dashboard.route("/demographics/countries", methods=["GET"])
@@ -648,58 +822,31 @@ def demographics_identify():
     and 'As a female' into the dominant 'woman'/'man' buckets so the chart
     isn't fragmented by typos."""
     source = _str_arg("source", {"mentee", "mentor"}, "mentee")
-    model = MenteeApplication if source == "mentee" else NewMentorApplication
-    pipeline = [
-        {"$match": {"identify": {"$exists": True, "$ne": None, "$ne": ""}}},
-        {
-            "$project": {
-                "norm": {
-                    "$let": {
-                        "vars": {"lc": {"$toLower": {"$trim": {"input": "$identify"}}}},
-                        "in": {
-                            "$switch": {
-                                "branches": [
-                                    {
-                                        "case": {
-                                            "$regexMatch": {
-                                                "input": "$$lc",
-                                                "regex": "wom(a|e)n|female",
-                                            }
-                                        },
-                                        "then": "woman",
-                                    },
-                                    {
-                                        "case": {
-                                            "$regexMatch": {
-                                                "input": "$$lc",
-                                                "regex": "man|male",
-                                            }
-                                        },
-                                        "then": "man",
-                                    },
-                                    {
-                                        "case": {
-                                            "$regexMatch": {
-                                                "input": "$$lc",
-                                                "regex": "lgbt|queer|non.?binary",
-                                            }
-                                        },
-                                        "then": "lgbtq+",
-                                    },
-                                ],
-                                "default": "other",
-                            }
-                        },
-                    }
-                }
-            }
-        },
-        {"$group": {"_id": "$norm", "count": {"$sum": 1}}},
-        {"$sort": {"count": -1}},
-        {"$project": {"_id": 0, "value": "$_id", "count": 1}},
-    ]
+    population = _str_arg("population", {"applications", "profiles"}, "applications")
+    if population == "profiles" and source != "mentee":
+        return create_response(
+            status=400, message="Profile identity breakdown is only available for mentees"
+        )
+
+    if population == "profiles":
+        model = MenteeProfile
+        field = "gender"
+        scope = "current profiles"
+    else:
+        model = MenteeApplication if source == "mentee" else NewMentorApplication
+        field = "identify"
+        scope = "all statuses"
+
     try:
-        return create_response(data={"items": _aggregate(model, pipeline)})
+        items, total = _identity_breakdown(model, field)
+        meta = {
+            "source": source,
+            "population": population,
+            "field": field,
+            "scope": scope,
+            "total": total,
+        }
+        return create_response(data={"items": items, "meta": meta})
     except Exception as e:
         logger.exception("demographics/identify failed")
         return create_response(status=500, message=str(e))

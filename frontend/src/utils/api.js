@@ -1959,8 +1959,8 @@ export const fetchOAuthHasAny = async () => {
 // Admin dashboard — see backend/api/views/admin_dashboard.py.
 const DASH = "/admin/dashboard";
 
-export const fetchDashboardSummary = async () => {
-  const res = await authGet(`${DASH}/summary`);
+export const fetchDashboardSummary = async (section = "all") => {
+  const res = await authGet(`${DASH}/summary`, { params: { section } });
   return res?.data?.result?.summary ?? null;
 };
 
@@ -2021,11 +2021,18 @@ export const fetchDashboardCrisisStatus = async (limit = 10) => {
   return res?.data?.result?.items ?? [];
 };
 
-export const fetchDashboardIdentify = async (source = "mentee") => {
+export const fetchDashboardIdentify = async (
+  source = "mentee",
+  population = "applications"
+) => {
   const res = await authGet(`${DASH}/demographics/identify`, {
-    params: { source },
+    params: { source, population },
   });
-  return res?.data?.result?.items ?? [];
+  const result = res?.data?.result ?? {};
+  return {
+    items: result.items ?? [],
+    meta: result.meta ?? null,
+  };
 };
 
 export const fetchDashboardMentorSpecializations = async (limit = 15) => {

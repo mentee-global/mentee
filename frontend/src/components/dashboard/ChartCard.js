@@ -1,6 +1,8 @@
 import React from "react";
-import { Alert, Card, Skeleton } from "antd";
+import { Alert, Card, Skeleton, Typography } from "antd";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+
+const { Text } = Typography;
 
 const CHART_BY_TYPE = {
   bar: Bar,
@@ -10,6 +12,7 @@ const CHART_BY_TYPE = {
 
 function ChartCard({
   title,
+  subtitle,
   extra,
   type = "bar",
   data,
@@ -52,7 +55,23 @@ function ChartCard({
   }
 
   return (
-    <Card title={title} extra={extra} size="small" style={{ height: "100%" }}>
+    <Card
+      title={
+        subtitle ? (
+          <div>
+            <div>{title}</div>
+            <Text type="secondary" style={{ fontSize: 12, fontWeight: 400 }}>
+              {subtitle}
+            </Text>
+          </div>
+        ) : (
+          title
+        )
+      }
+      extra={extra}
+      size="small"
+      style={{ height: "100%" }}
+    >
       {body}
     </Card>
   );

@@ -17,6 +17,12 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
   const [checkFlagInviteLink, setCheckFlagInviteLink] = useState(false);
   const [isBugReportOpen, setIsBugReportOpen] = useState(false);
 
+  // allHubData is keyed without a trailing slash ("/YidanPrize"), but React
+  // Router matches "/YidanPrize/" too, so location.pathname can carry a trailing
+  // slash. Strip it before looking up the hub, otherwise the lookup misses and
+  // the hub logo silently falls back to the bare gradient panel.
+  const hubKey = location.pathname.replace(/\/+$/, "") || "/";
+
   useEffect(() => {
     setCheckFlagInviteLink(false);
     // The invite key no longer ships in allHubData; invite pages are now any
@@ -253,7 +259,7 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
               }
             `}
           >
-            {allHubData && allHubData[location.pathname] ? (
+            {allHubData && allHubData[hubKey] ? (
               <>
                 <div
                   style={{
@@ -269,11 +275,9 @@ function HomeLayout({ children, ignoreHomeLayout, allHubData, location }) {
                 >
                   <img
                     alt=""
-                    src={
-                      allHubData[location.pathname].image?.url || BigLogoImage
-                    }
+                    src={allHubData[hubKey].image?.url || BigLogoImage}
                     style={
-                      allHubData[location.pathname].image?.url
+                      allHubData[hubKey].image?.url
                         ? { maxWidth: "100%" }
                         : { width: "100%", maxWidth: "200px", fillOpacity: 0.7 }
                     }

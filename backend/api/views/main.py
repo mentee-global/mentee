@@ -943,6 +943,13 @@ def create_mentor_profile():
     if account_type == Account.MENTOR:
         data["taking_appointments"] = True
 
+    # A hub owner's email must not be reused to create a mentor/mentee/partner
+    # profile — it would make a confusing duplicate on the same Firebase user.
+    if Hub.objects(email=email).first():
+        msg = f"{email} is registered as a hub account"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
     # Check for duplicate email before proceeding
     if account_type == Account.MENTOR:
         existing_mentor = MentorProfile.objects(email=email).first()
@@ -1196,6 +1203,13 @@ def create_profile_existing_account():
         account_type = int(data["account_type"])
     except:
         msg = "Missing account_type param or account_type param is not an int"
+        logger.info(msg)
+        return create_response(status=422, message=msg)
+
+    # A hub owner's email must not be reused to create a mentor/mentee/partner
+    # profile — it would make a confusing duplicate on the same Firebase user.
+    if Hub.objects(email=email).first():
+        msg = f"{email} is registered as a hub account"
         logger.info(msg)
         return create_response(status=422, message=msg)
 

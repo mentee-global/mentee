@@ -16,6 +16,7 @@ from api.models import (
     MentorProfile,
     PartnerProfile,
     MentorApplication,
+    Hub,
 )
 from api.core import create_response, logger
 from api.utils.require_auth import admin_only
@@ -506,14 +507,28 @@ def check_profile_exists(email, role):
                         },
                     )
                 except:
-                    msg = "No application currently exist with this email " + email
-                    logger.info(msg)
-                    return create_response(
-                        message=msg,
-                        data={
-                            "profileExists": profile_exists,
-                        },
-                    )
+                    # The email may belong to a hub account (hubs live in their
+                    # own collection, not the mentor/mentee/partner profiles).
+                    # Report it so the login flow shows a role-mismatch instead
+                    # of sending a hub owner to build a duplicate partner profile.
+                    try:
+                        Hub.objects.get(email=email)
+                        return create_response(
+                            message=msg,
+                            data={
+                                "profileExists": profile_exists,
+                                "rightRole": Account.HUB.value,
+                            },
+                        )
+                    except:
+                        msg = "No application currently exist with this email " + email
+                        logger.info(msg)
+                        return create_response(
+                            message=msg,
+                            data={
+                                "profileExists": profile_exists,
+                            },
+                        )
 
     return create_response(data={"profileExists": profile_exists})
 

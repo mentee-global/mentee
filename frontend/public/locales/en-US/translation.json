@@ -539,6 +539,8 @@
     "reply": "Reply",
     "startConversation": "Start a conversation today!",
     "send": "Send",
+    "deletedAccount": "Deleted Account",
+    "deletedAccountNotice": "This account has been deleted. You can no longer reply to this conversation.",
     "search": "Search",
     "titlePlaceholder": "Enter message title (optional)"
   },

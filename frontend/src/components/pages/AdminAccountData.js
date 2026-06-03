@@ -308,12 +308,12 @@ function AdminAccountData() {
 
   const handleDeleteAccount = async (id, accountType, name) => {
     try {
-      const success = await deleteAccountById(id, accountType);
-      if (success) {
+      const result = await deleteAccountById(id, accountType);
+      if (result.ok) {
         message.success(`Successfully deleted ${name}`);
         setReload((r) => !r);
       } else {
-        message.error(`Could not delete ${name}`);
+        message.error(result.message || `Could not delete ${name}`);
       }
     } catch (error) {
       message.error(`Error deleting ${name}: ${error.message}`);

@@ -12,6 +12,7 @@ import {
   fetchPartners,
 } from "utils/api";
 import socket from "utils/socket";
+import { getProfileId } from "utils/auth.service";
 
 import "../css/Messages.scss";
 import { setActiveMessageId } from "features/messagesSlice";
@@ -26,7 +27,6 @@ function Messages(props) {
   const { history } = props;
   const dispatch = useDispatch();
   const [latestConvos, setLatestConvos] = useState([]);
-  const [allMessages, setAllMessages] = useState([]);
   const [paused, setPaused] = useState(false);
   const activeMessageId = useSelector(
     (state) => state.messages.activeMessageId
@@ -44,7 +44,11 @@ function Messages(props) {
   const [isBookingVisible, setBookingVisible] = useState(false);
   const [inviteeId, setinviteeId] = useState();
   const [restrictedPartners, setRestrictedPartners] = useState([]);
-  const profileId = useSelector((state) => state.user.user?._id?.$oid);
+  // Fall back to the stored profile id so the sidebar can load on a hard
+  // reload before redux finishes hydrating the user (otherwise getLatestMessages
+  // short-circuits on an undefined id and the conversation list shows empty).
+  const reduxProfileId = useSelector((state) => state.user.user?._id?.$oid);
+  const profileId = reduxProfileId || getProfileId();
   const user = useSelector((state) => state.user.user);
   const [sidebarLoading, setSidebarLoading] = useState(false);
 
@@ -53,7 +57,6 @@ function Messages(props) {
       setSidebarLoading(true);
       const result = await getLatestMessages(profileId);
       setLatestConvos(asArray(result?.data));
-      setAllMessages(asArray(result?.allMessages));
       setSidebarLoading(false);
     }
     fetchLatest();
@@ -91,7 +94,6 @@ function Messages(props) {
       const restricted_partners = await fetchPartners(true, null);
       const latest = asArray(data?.data);
       setLatestConvos(latest);
-      setAllMessages(asArray(data?.allMessages));
       setRestrictedPartners(asArray(restricted_partners));
       // Only auto-open the first contact when the URL doesn't already point at a
       // specific conversation. Otherwise a refresh (or deep-link) on one thread
@@ -204,7 +206,6 @@ function Messages(props) {
 
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
-    setAllMessages((prevMessages) => [...prevMessages, msg]);
     setTimeout(() => {
       async function fetchLatest() {
         const result = await getLatestMessages(profileId);
@@ -269,7 +270,6 @@ function Messages(props) {
         latestConvos={latestConvos}
         activeMessageId={activeMessageId}
         restrictedPartners={restrictedPartners}
-        allMessages={allMessages}
         user={user}
         loading={sidebarLoading}
       />

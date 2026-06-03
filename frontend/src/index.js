@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.scss";
 import App from "app/App";
@@ -85,18 +85,16 @@ dayjs.locale(i18n.language);
 
 const root = createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ProvideAuth>
-        <Suspense>
-          <ErrorBoundary>
-            <OfflineBanner />
-            <App />
-          </ErrorBoundary>
-        </Suspense>
-      </ProvideAuth>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <ProvideAuth>
+      <Suspense>
+        <ErrorBoundary>
+          <OfflineBanner />
+          <App />
+        </ErrorBoundary>
+      </Suspense>
+    </ProvideAuth>
+  </Provider>
 );
 
 // If you want your app to work offline and load faster, you can change

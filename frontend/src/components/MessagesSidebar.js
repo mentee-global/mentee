@@ -6,7 +6,6 @@ import MessageCard from "./MessageCard";
 import { useTranslation } from "react-i18next";
 import { SearchOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import SearchMessageCard from "./SearchMessageCard";
 
 const asArray = (value) => (Array.isArray(value) ? value : []);
 
@@ -85,12 +84,9 @@ function MessagesSidebar(props) {
         `}
         spinning={props.loading}
       >
-        <div className="messages-sidebar-header">
-          <h1>{t("messages.sidebarTitle")}</h1>
-        </div>
         <div
           className={css`
-            padding: 0 20px;
+            padding: 16px 20px 0;
             margin-bottom: 10px;
           `}
         >
@@ -103,40 +99,20 @@ function MessagesSidebar(props) {
         </div>
         <Divider className="header-divider" orientation="left"></Divider>
         <div className="messages-sidebar" style={{ paddingTop: "1em" }}>
-          {searchQuery && (
-            <SearchMessageCard
-              activeMessageId={activeMessageId}
-              messages={props?.allMessages}
-              searchQuery={searchQuery}
-              side_data={side_data}
-            />
-          )}
-          {!searchQuery &&
-            side_data &&
-            side_data.length > 0 &&
-            side_data.map((chat) => {
-              if (
-                (chat.otherUser?.name || "")
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase())
-              ) {
-                if (chat.otherId === activeMessageId) {
-                  return (
-                    <MessageCard key={chat.otherId} chat={chat} active={true} />
-                  );
-                } else {
-                  return (
-                    <MessageCard
-                      key={chat.otherId}
-                      chat={chat}
-                      active={false}
-                    />
-                  );
-                }
-              } else {
-                return <></>;
-              }
-            })}
+          {side_data
+            .filter((chat) =>
+              (chat.otherUser?.name || "")
+                .toLowerCase()
+                .includes(searchQuery.trim().toLowerCase())
+            )
+            .map((chat) => (
+              <MessageCard
+                key={chat.otherId}
+                chat={chat}
+                active={chat.otherId === activeMessageId}
+                searchQuery={searchQuery}
+              />
+            ))}
         </div>
       </Spin>
     </Sider>

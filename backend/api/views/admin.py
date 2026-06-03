@@ -22,6 +22,7 @@ from api.models import (
     ErrorLog,
 )
 from api.utils.require_auth import admin_only
+from api.utils.account_deletion import delete_account_cascade
 from api.utils.request_utils import get_profile_model, imgur_client
 from api.utils.constants import Account
 from api.utils.email_sync import update_email_across_models
@@ -59,43 +60,13 @@ def delete_account(role, id):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    firebase_uid = account.firebase_uid
-    email = account.email
-    login = None
-
-    if not firebase_uid:
-        # MenteeProfile does not contain user_id field
-        if role == Account.MENTEE:
-            account.delete()
-            return create_response(status=200, message="Successful deletion")
-
-        user_id = account.user_id
-        try:
-            login = Users.objects.get(id=user_id.id)
-        except:
-            msg = "No account currently exist with user_id " + user_id
-            logger.info(msg)
-            return create_response(status=422, message=msg)
-
-        verified = None
-        if login.verified:
-            try:
-                verified = VerifiedEmail.objects.get(email=email)
-            except:
-                msg = "No verified account currently exist with email " + email
-                logger.info(msg)
-
-        login.delete()
-        if verified:
-            verified.delete()
-    else:
-        login = firebase_admin_auth.get_user(firebase_uid)
-
-        if not login.email_verified:
-            msg = "No verified account currently exist with email " + email
-            logger.info(msg)
-
-    account.delete()
+    # Cascade identity/access/PII deletion while retaining relational artifacts
+    # (messages, appointments, applications). See api/utils/account_deletion.py.
+    ok, message, summary = delete_account_cascade(role, account)
+    if not ok:
+        logger.info(f"Refused to delete account {role}/{id}: {message}")
+        return create_response(status=409, message=message)
+    logger.info(f"Deleted account {role}/{id}: {summary}")
     return create_response(status=200, message="Successful deletion")
 
 

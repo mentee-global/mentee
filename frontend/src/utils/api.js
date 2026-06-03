@@ -1133,11 +1133,14 @@ export const downloadAllApplicationData = async () => {
 
 export const deleteAccountById = (id, accountType) => {
   const requestExtension = `/account/${accountType}/${id}`;
+  // Normalize to { ok, message } so callers can surface the backend's reason
+  // (e.g. a 409 "Hub still owns content (...)" refusal) instead of a generic
+  // failure toast.
   return authDelete(requestExtension).then(
-    (response) => response,
+    () => ({ ok: true }),
     (err) => {
       console.error(err);
-      return false;
+      return { ok: false, message: err?.response?.data?.message };
     }
   );
 };
@@ -1291,20 +1294,17 @@ export const getDirectMessages = (user_id) => {
 };
 
 export const getLatestMessages = (user_id) => {
-  if (!user_id) return Promise.resolve({ data: [], allMessages: [] });
+  if (!user_id) return Promise.resolve({ data: [] });
   const requestExtension = `/messages/contacts/${user_id}`;
   return authGet(requestExtension).then(
     (response) => ({
       data: Array.isArray(response?.data?.result?.data)
         ? response.data.result.data
         : [],
-      allMessages: Array.isArray(response?.data?.result?.allMessages)
-        ? response.data.result.allMessages
-        : [],
     }),
     (err) => {
       console.error(err);
-      return { data: [], allMessages: [] };
+      return { data: [] };
     }
   );
 };

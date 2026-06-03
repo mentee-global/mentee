@@ -4,6 +4,10 @@ from flask import Blueprint
 from api.models.MenteeProfile import MenteeProfile, MentorProfile
 from mongoengine.queryset.visitor import Q
 from api.models import DirectMessage, PartnerProfile, Hub
+from api.utils.direct_messages import (
+    direct_message_recipient,
+    visible_unread_direct_message_count,
+)
 from api.utils.request_utils import send_email, send_sms
 from api.utils.constants import (
     WEEKLY_NOTIF_REMINDER,
@@ -22,42 +26,7 @@ notifications = Blueprint("notifications", __name__)
 @all_users
 def get_unread_dm_count(id):
     try:
-        notifications = DirectMessage.objects(
-            Q(recipient_id=id) & Q(message_read=False)
-        )
-        unread_message_number = 0
-        checked_ids = set()
-        for message_item in notifications:
-            sender_id = message_item["sender_id"]
-            if sender_id not in checked_ids:
-                try:
-                    sender = MentorProfile.objects.get(id=sender_id)
-                    if sender:
-                        unread_message_number = unread_message_number + 1
-                        continue
-                except:
-                    try:
-                        sender = MenteeProfile.objects.get(id=sender_id)
-                        if sender:
-                            unread_message_number = unread_message_number + 1
-                            continue
-                    except:
-                        try:
-                            sender = PartnerProfile.objects.get(id=sender_id)
-                            if sender:
-                                unread_message_number = unread_message_number + 1
-                                continue
-                        except:
-                            try:
-                                sender = Hub.objects.get(id=sender_id)
-                                if sender:
-                                    unread_message_number = unread_message_number + 1
-                                    continue
-                            except:
-                                continue
-            else:
-                unread_message_number = unread_message_number + 1
-                continue
+        unread_message_number = visible_unread_direct_message_count(id)
 
     except Exception as e:
         msg = "No mentee with that id"
@@ -140,29 +109,15 @@ def send_unread_alert_group(id):
 # @all_users
 def send_unread_alert(id):
     try:
-        notifications_count = DirectMessage.objects(
-            Q(recipient_id=id) & Q(message_read=False)
-        ).count()
+        notifications_count = visible_unread_direct_message_count(id)
         email = None
         phone_number = None
         if notifications_count > 0:
-            user_record = MenteeProfile.objects(Q(id=id)).first()
+            user_record = direct_message_recipient(id)
             if user_record is not None:
                 email = user_record.email
                 if "phone_number" in user_record:
                     phone_number = user_record.phone_number
-            else:
-                user_record = MentorProfile.objects(Q(id=id)).first()
-                if user_record is not None:
-                    email = user_record.email
-                    if "phone_number" in user_record:
-                        phone_number = user_record.phone_number
-                else:
-                    user_record = PartnerProfile.objects(Q(id=id)).first()
-                    if user_record is not None:
-                        email = user_record.email
-                        if "phone_number" in user_record:
-                            phone_number = user_record.phone_number
             if user_record is not None:
                 if email is not None:
                     res, res_msg = send_email(
@@ -235,9 +190,7 @@ def send_weekly_emails():
         return create_response(status=422, message=msg)
     for user in mentee_users:
         try:
-            notifications_count = DirectMessage.objects(
-                Q(recipient_id=user.id) & Q(message_read=False)
-            ).count()
+            notifications_count = visible_unread_direct_message_count(user.id)
         except Exception as e:
             msg = "No mentee with that id"
             logger.info(e)
@@ -258,9 +211,7 @@ def send_weekly_emails():
 
     for user in mentor_users:
         try:
-            notifications_count = DirectMessage.objects(
-                Q(recipient_id=user.id) & Q(message_read=False)
-            ).count()
+            notifications_count = visible_unread_direct_message_count(user.id)
         except Exception as e:
             msg = "No mentor with that id"
             logger.info(e)

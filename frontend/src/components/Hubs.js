@@ -427,12 +427,12 @@ export const Hubs = () => {
     },
   ];
   const deleteData = async (_id) => {
-    const success = await deleteAccountById(_id.$oid, ACCOUNT_TYPE.HUB);
-    if (success) {
-      message.success(`Successfully deleted `);
+    const result = await deleteAccountById(_id.$oid, ACCOUNT_TYPE.HUB);
+    if (result.ok) {
+      message.success(`Successfully deleted`);
       setReload((r) => !r);
     } else {
-      message.error(`Could not delete `);
+      message.error(result.message || `Could not delete`);
     }
   };
   useEffect(() => {

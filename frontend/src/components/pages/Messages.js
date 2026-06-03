@@ -12,6 +12,7 @@ import {
   fetchPartners,
 } from "utils/api";
 import socket from "utils/socket";
+import { getProfileId } from "utils/auth.service";
 
 import "../css/Messages.scss";
 import { setActiveMessageId } from "features/messagesSlice";
@@ -44,7 +45,11 @@ function Messages(props) {
   const [isBookingVisible, setBookingVisible] = useState(false);
   const [inviteeId, setinviteeId] = useState();
   const [restrictedPartners, setRestrictedPartners] = useState([]);
-  const profileId = useSelector((state) => state.user.user?._id?.$oid);
+  // Fall back to the stored profile id so the sidebar can load on a hard
+  // reload before redux finishes hydrating the user (otherwise getLatestMessages
+  // short-circuits on an undefined id and the conversation list shows empty).
+  const reduxProfileId = useSelector((state) => state.user.user?._id?.$oid);
+  const profileId = reduxProfileId || getProfileId();
   const user = useSelector((state) => state.user.user);
   const [sidebarLoading, setSidebarLoading] = useState(false);
 

@@ -1133,11 +1133,14 @@ export const downloadAllApplicationData = async () => {
 
 export const deleteAccountById = (id, accountType) => {
   const requestExtension = `/account/${accountType}/${id}`;
+  // Normalize to { ok, message } so callers can surface the backend's reason
+  // (e.g. a 409 "Hub still owns content (...)" refusal) instead of a generic
+  // failure toast.
   return authDelete(requestExtension).then(
-    (response) => response,
+    () => ({ ok: true }),
     (err) => {
       console.error(err);
-      return false;
+      return { ok: false, message: err?.response?.data?.message };
     }
   );
 };

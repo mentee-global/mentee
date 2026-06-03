@@ -1308,26 +1308,6 @@ export const getLatestMessages = (user_id) => {
     }
   );
 };
-
-// Server-side search across the user's own direct messages. Runs only when the
-// user types in the Messages search box (replaces the old eager allMessages
-// payload). Returns an array of message objects (same shape as a DirectMessage
-// to_json: _id.$oid, body, sender_id.$oid, recipient_id.$oid, created_at.$date).
-export const searchDirectMessages = (user_id, query, limit = 50) => {
-  if (!user_id || !query || !query.trim()) return Promise.resolve([]);
-  const params = new URLSearchParams({ q: query.trim(), limit: String(limit) });
-  const requestExtension = `/messages/search/${user_id}?${params.toString()}`;
-  return authGet(requestExtension).then(
-    (response) =>
-      Array.isArray(response?.data?.result?.Messages)
-        ? response.data.result.Messages
-        : [],
-    (err) => {
-      console.error(err);
-      return [];
-    }
-  );
-};
 export const getDetailMessages = (
   pageNumber,
   pageSize,

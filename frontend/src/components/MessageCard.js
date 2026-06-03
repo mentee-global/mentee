@@ -10,8 +10,28 @@ import { ACCOUNT_TYPE } from "utils/consts";
 import { useMediaQuery } from "react-responsive";
 import { css } from "@emotion/css";
 
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Wrap the matched part of `text` in a yellow highlight while searching.
+const highlightMatch = (text, query) => {
+  const trimmed = (query || "").trim();
+  if (!trimmed || !text) return text;
+  const parts = String(text).split(
+    new RegExp(`(${escapeRegExp(trimmed)})`, "gi")
+  );
+  return parts.map((part, index) =>
+    part.toLowerCase() === trimmed.toLowerCase() ? (
+      <mark key={index} style={{ backgroundColor: "yellow", padding: 0 }}>
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+};
+
 function MessageCard(props) {
-  const { active } = props;
+  const { active, searchQuery } = props;
   const {
     token: {
       colorPrimaryBg,
@@ -134,7 +154,10 @@ function MessageCard(props) {
         >
           <Meta
             avatar={<Avatar src={otherUser.image} />}
-            title={otherUser.name ? otherUser.name : accountData.organization}
+            title={highlightMatch(
+              otherUser.name ? otherUser.name : accountData.organization,
+              searchQuery
+            )}
             description={
               <span className={descriptionClass}>{latestMessage.body}</span>
             }

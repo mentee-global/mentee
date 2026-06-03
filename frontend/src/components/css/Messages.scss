@@ -50,6 +50,8 @@
   color: #676971;
 }
 
+// Still used by the admin Partners list header (AdminPartnerData.js); the
+// Messages sidebar no longer renders this header.
 .messages-sidebar-header {
   background-color: white;
   overflow-y: hidden;

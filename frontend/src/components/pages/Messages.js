@@ -270,7 +270,6 @@ function Messages(props) {
         latestConvos={latestConvos}
         activeMessageId={activeMessageId}
         restrictedPartners={restrictedPartners}
-        profileId={profileId}
         user={user}
         loading={sidebarLoading}
       />

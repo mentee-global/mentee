@@ -27,7 +27,6 @@ function Messages(props) {
   const { history } = props;
   const dispatch = useDispatch();
   const [latestConvos, setLatestConvos] = useState([]);
-  const [allMessages, setAllMessages] = useState([]);
   const [paused, setPaused] = useState(false);
   const activeMessageId = useSelector(
     (state) => state.messages.activeMessageId
@@ -58,7 +57,6 @@ function Messages(props) {
       setSidebarLoading(true);
       const result = await getLatestMessages(profileId);
       setLatestConvos(asArray(result?.data));
-      setAllMessages(asArray(result?.allMessages));
       setSidebarLoading(false);
     }
     fetchLatest();
@@ -96,7 +94,6 @@ function Messages(props) {
       const restricted_partners = await fetchPartners(true, null);
       const latest = asArray(data?.data);
       setLatestConvos(latest);
-      setAllMessages(asArray(data?.allMessages));
       setRestrictedPartners(asArray(restricted_partners));
       // Only auto-open the first contact when the URL doesn't already point at a
       // specific conversation. Otherwise a refresh (or deep-link) on one thread
@@ -209,7 +206,6 @@ function Messages(props) {
 
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
-    setAllMessages((prevMessages) => [...prevMessages, msg]);
     setTimeout(() => {
       async function fetchLatest() {
         const result = await getLatestMessages(profileId);
@@ -274,7 +270,7 @@ function Messages(props) {
         latestConvos={latestConvos}
         activeMessageId={activeMessageId}
         restrictedPartners={restrictedPartners}
-        allMessages={allMessages}
+        profileId={profileId}
         user={user}
         loading={sidebarLoading}
       />

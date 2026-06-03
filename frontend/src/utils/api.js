@@ -1294,20 +1294,37 @@ export const getDirectMessages = (user_id) => {
 };
 
 export const getLatestMessages = (user_id) => {
-  if (!user_id) return Promise.resolve({ data: [], allMessages: [] });
+  if (!user_id) return Promise.resolve({ data: [] });
   const requestExtension = `/messages/contacts/${user_id}`;
   return authGet(requestExtension).then(
     (response) => ({
       data: Array.isArray(response?.data?.result?.data)
         ? response.data.result.data
         : [],
-      allMessages: Array.isArray(response?.data?.result?.allMessages)
-        ? response.data.result.allMessages
-        : [],
     }),
     (err) => {
       console.error(err);
-      return { data: [], allMessages: [] };
+      return { data: [] };
+    }
+  );
+};
+
+// Server-side search across the user's own direct messages. Runs only when the
+// user types in the Messages search box (replaces the old eager allMessages
+// payload). Returns an array of message objects (same shape as a DirectMessage
+// to_json: _id.$oid, body, sender_id.$oid, recipient_id.$oid, created_at.$date).
+export const searchDirectMessages = (user_id, query, limit = 50) => {
+  if (!user_id || !query || !query.trim()) return Promise.resolve([]);
+  const params = new URLSearchParams({ q: query.trim(), limit: String(limit) });
+  const requestExtension = `/messages/search/${user_id}?${params.toString()}`;
+  return authGet(requestExtension).then(
+    (response) =>
+      Array.isArray(response?.data?.result?.Messages)
+        ? response.data.result.Messages
+        : [],
+    (err) => {
+      console.error(err);
+      return [];
     }
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 
 import { Divider, Input, Layout, Spin } from "antd";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { SearchOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import SearchMessageCard from "./SearchMessageCard";
+import { searchDirectMessages } from "utils/api";
 
 const asArray = (value) => (Array.isArray(value) ? value : []);
 
@@ -14,8 +15,29 @@ function MessagesSidebar(props) {
   const { t } = useTranslation();
   const { Sider } = Layout;
   const [searchQuery, setSearchQuery] = useState("");
-  const { activeMessageId, user } = props;
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const { activeMessageId, user, profileId } = props;
   const latestConvos = asArray(props.latestConvos);
+
+  // Debounced server-side search: only hit the backend when the user types,
+  // ~300ms after they stop (rapid typing cancels in-flight debounces). Replaces
+  // the old eager full-history payload that get_sidebar used to return.
+  useEffect(() => {
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+    setSearchLoading(true);
+    const handle = setTimeout(async () => {
+      const results = await searchDirectMessages(profileId, trimmed);
+      setSearchResults(results);
+      setSearchLoading(false);
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [searchQuery, profileId]);
   const restrictedPartners = asArray(props.restrictedPartners);
   var side_data = [];
   if (user && user.pair_partner && user.pair_partner.restricted) {
@@ -104,12 +126,14 @@ function MessagesSidebar(props) {
         <Divider className="header-divider" orientation="left"></Divider>
         <div className="messages-sidebar" style={{ paddingTop: "1em" }}>
           {searchQuery && (
-            <SearchMessageCard
-              activeMessageId={activeMessageId}
-              messages={props?.allMessages}
-              searchQuery={searchQuery}
-              side_data={side_data}
-            />
+            <Spin spinning={searchLoading}>
+              <SearchMessageCard
+                activeMessageId={activeMessageId}
+                messages={searchResults}
+                searchQuery={searchQuery}
+                side_data={side_data}
+              />
+            </Spin>
           )}
           {!searchQuery &&
             side_data &&

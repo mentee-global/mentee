@@ -282,18 +282,15 @@ def get_sidebar(user_id):
             Q(recipient_id=user_id) | Q(sender_id=user_id)
         ).order_by("-created_at")
 
-        # Walk the history exactly once (it is newest-first). This single pass
-        # replaces the previous O(contacts * messages) work: the old code
-        # re-serialized the entire `allMessages` list and re-scanned every
-        # message to count `numberOfMessages` for each contact, which made the
-        # Messages page load slower the longer a user's history grew.
-        allMessages = []
+        # Walk the history exactly once (it is newest-first), collapsing it into
+        # one entry per conversation. We deliberately do NOT serialize and
+        # return the full message history here -- it grows unbounded with the
+        # user's history and was only ever used by the search box, which now
+        # runs server-side via /messages/search.
         message_count_by_other_id = {}
         latest_message_by_other_id = {}
         ordered_other_ids = []
         for message in sentMessages:
-            allMessages.append(json.loads(message.to_json()))
-
             otherId = message["recipient_id"]
             if str(otherId) == user_id:
                 otherId = message["sender_id"]
@@ -328,12 +325,45 @@ def get_sidebar(user_id):
             contacts.append(sidebarObject)
 
         return create_response(
-            data={
-                "data": contacts,
-                "allMessages": allMessages,
-            },
+            data={"data": contacts},
             status=200,
             message="res",
+        )
+    except Exception as e:
+        logger.info(e)
+        return create_response(status=422, message=str(e))
+
+
+@messages.route("/search/<string:user_id>", methods=["GET"])
+@all_users
+def search_direct_messages(user_id):
+    # Server-side replacement for the old eager `allMessages` payload: search the
+    # caller's own direct messages by body substring, only when they type.
+    role, caller_id = _caller_role_and_profile_id()
+    if role not in _STAFF_ROLES and caller_id != user_id:
+        return create_response(status=403, message="Forbidden")
+
+    q = (request.args.get("q") or "").strip()
+    limit = request.args.get("limit", default=50, type=int)
+    limit = max(1, min(limit or 50, 100))
+    if not q:
+        return create_response(data={"Messages": []}, status=200, message="res")
+
+    try:
+        # The sender_id / recipient_id indexes bound the scan to this user's own
+        # messages before the icontains regex runs, and limit caps the payload.
+        # A $text index on body is a future optimization if per-user history
+        # grows very large.
+        results = (
+            DirectMessage.objects.filter(
+                (Q(sender_id=user_id) | Q(recipient_id=user_id)) & Q(body__icontains=q)
+            )
+            .order_by("-created_at")
+            .limit(limit)
+        )
+        messages_out = [json.loads(m.to_json()) for m in results]
+        return create_response(
+            data={"Messages": messages_out}, status=200, message="res"
         )
     except Exception as e:
         logger.info(e)

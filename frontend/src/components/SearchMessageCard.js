@@ -31,6 +31,14 @@ const SearchMessageCard = ({
     return user;
   };
 
+  // The other party in the conversation. Results include both sent and received
+  // messages, so we can't assume recipient_id is the counterpart -- for received
+  // messages recipient_id is the logged-in user.
+  const getOtherId = (message) =>
+    message.sender_id?.$oid === thisUserId
+      ? message.recipient_id?.$oid
+      : message.sender_id?.$oid;
+
   const filteredMessages = searchQuery
     ? messages.filter((message) =>
         message.body.toLowerCase().includes(searchQuery.toLowerCase())
@@ -52,16 +60,17 @@ const SearchMessageCard = ({
   };
 
   const openMessage = (message) => {
+    const otherId = getOtherId(message);
     dispatch(
       updateNotificationsCount({
         recipient: thisUserId,
-        sender: message.recipient_id?.$oid,
+        sender: otherId,
       })
     );
     dispatch(setActiveMessageId({ activeMessageId: thisUserId }));
     history.push(
-      `/messages/${message.recipient_id?.$oid}?user_type=${
-        findUserInfo(message.recipient_id?.$oid)?.otherUser?.user_type
+      `/messages/${otherId}?user_type=${
+        findUserInfo(otherId)?.otherUser?.user_type
       }&message_id=${message._id?.$oid}`
     );
     if (isMobile) {
@@ -107,10 +116,10 @@ const SearchMessageCard = ({
       </TabPane>
       <TabPane tab="Message" key="message">
         {filteredMessages.map((message) => {
-          const userInfo = findUserInfo(message.recipient_id?.$oid)?.otherUser;
+          const userInfo = findUserInfo(getOtherId(message))?.otherUser;
           return (
             <Card
-              key={message.id}
+              key={message._id?.$oid}
               onClick={() => openMessage(message)}
               className={css`
                 width: 90%;

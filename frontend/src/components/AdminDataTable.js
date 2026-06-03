@@ -46,6 +46,7 @@ import {
   editEmailPassword,
 } from "utils/api";
 import ModalInput from "./ModalInput";
+import DeleteAccountModal from "./DeleteAccountModal";
 
 const { Column } = Table;
 
@@ -79,6 +80,8 @@ function AdminDataTable({
     data = newData;
   }
   const [accounts, setAccounts] = useState([]);
+  // Account pending deletion ({ id, type, name }); drives the confirm modal.
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditEmailModalVisible, setIsEditEmailModalVisible] = useState(false);
@@ -841,12 +844,12 @@ function AdminDataTable({
               dataIndex={["id", "name"]}
               key="id"
               render={(text, data) => (
-                <Popconfirm
-                  title={`Are you sure you want to delete ${data.name}?`}
-                  onConfirm={() => {
-                    deleteAccount(
-                      data.id ? data.id : data._id.$oid,
-                      isGuest
+                <DeleteOutlined
+                  className="delete-user-btn"
+                  onClick={() =>
+                    setDeleteTarget({
+                      id: data.id ? data.id : data._id.$oid,
+                      type: isGuest
                         ? ACCOUNT_TYPE.GUEST
                         : isSupport
                         ? ACCOUNT_TYPE.SUPPORT
@@ -855,17 +858,10 @@ function AdminDataTable({
                         : data.isMentee
                         ? ACCOUNT_TYPE.MENTEE
                         : ACCOUNT_TYPE.MENTOR,
-                      data.name
-                    );
-                  }}
-                  onCancel={() =>
-                    message.info(`No deletion has been for ${data.name}`)
+                      name: data.name,
+                    })
                   }
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <DeleteOutlined className="delete-user-btn" />
-                </Popconfirm>
+                />
               )}
               align="center"
             />
@@ -993,25 +989,16 @@ function AdminDataTable({
               dataIndex={["id", "organization"]}
               key="id"
               render={(text, data) => (
-                <Popconfirm
-                  title={`Are you sure you want to delete ${data.organization}?`}
-                  onConfirm={() => {
-                    deleteAccount(
-                      data.id ? data.id : data._id.$oid,
-                      ACCOUNT_TYPE.PARTNER,
-                      data.organization
-                    );
-                  }}
-                  onCancel={() =>
-                    message.info(
-                      `No deletion has been for ${data.organization}`
-                    )
+                <DeleteOutlined
+                  className="delete-user-btn"
+                  onClick={() =>
+                    setDeleteTarget({
+                      id: data.id ? data.id : data._id.$oid,
+                      type: ACCOUNT_TYPE.PARTNER,
+                      name: data.organization,
+                    })
                   }
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <DeleteOutlined className="delete-user-btn" />
-                </Popconfirm>
+                />
               )}
               align="center"
             />
@@ -1121,6 +1108,21 @@ function AdminDataTable({
           />
         )}
       </Table>
+      <DeleteAccountModal
+        open={!!deleteTarget}
+        account={deleteTarget}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            deleteAccount(
+              deleteTarget.id,
+              deleteTarget.type,
+              deleteTarget.name
+            );
+          }
+          setDeleteTarget(null);
+        }}
+      />
       <Modal
         title="Assign Users"
         open={isModalVisible}

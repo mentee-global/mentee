@@ -9,6 +9,7 @@ from api.models import (
     DirectMessage,
 )
 from api.utils.constants import Account
+from api.utils.direct_messages import resolve_direct_message_user
 from api import socketio
 from datetime import datetime
 from mongoengine.queryset.visitor import Q
@@ -257,6 +258,13 @@ def edit_profile(data: dict = {}, profile: object = None):
                                 else ex_message.sender_id
                             )
 
+                            # Skip partners whose profile no longer resolves
+                            # (deleted/orphan ids); writing to them only creates
+                            # new invisible DirectMessages.
+                            contacted_mentee_ids.add(str(new_recipient_id))
+                            if not resolve_direct_message_user(new_recipient_id)[0]:
+                                continue
+
                             message = DirectMessage(
                                 body="Please note that I needed to take a brief sabbatical from our community of support. In the meantime, please explore our other global mentors in the mentor gallery or reach out to global@menteeglobal.org with any questions you have.",
                                 message_read=False,
@@ -273,9 +281,8 @@ def edit_profile(data: dict = {}, profile: object = None):
                                 "created_at": datetime.utcnow().isoformat(),
                                 "paused_flag": profile.paused_flag,
                             }
-                            socketio.emit(str(new_recipient_id), send_data)
                             message.save()
-                            contacted_mentee_ids.add(str(new_recipient_id))
+                            socketio.emit(str(new_recipient_id), send_data)
                 except Exception as e:
                     print(e)
             else:
@@ -295,6 +302,14 @@ def edit_profile(data: dict = {}, profile: object = None):
                                 if (str(ex_message.sender_id) == str(profile.id))
                                 else ex_message.sender_id
                             )
+
+                            # Skip partners whose profile no longer resolves
+                            # (deleted/orphan ids); writing to them only creates
+                            # new invisible DirectMessages.
+                            contacted_mentee_ids.add(str(new_recipient_id))
+                            if not resolve_direct_message_user(new_recipient_id)[0]:
+                                continue
+
                             message = DirectMessage(
                                 body="I am back ! Please let me know if I can help with anything.",
                                 message_read=False,
@@ -311,9 +326,8 @@ def edit_profile(data: dict = {}, profile: object = None):
                                 "paused_flag": profile.paused_flag,
                             }
 
-                            socketio.emit(str(new_recipient_id), send_data)
                             message.save()
-                            contacted_mentee_ids.add(str(new_recipient_id))
+                            socketio.emit(str(new_recipient_id), send_data)
                 except Exception as e:
                     print(e)
 

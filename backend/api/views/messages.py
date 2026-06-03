@@ -1,4 +1,5 @@
 from flask import Blueprint, request, g
+from firebase_admin import auth as firebase_admin_auth
 from api.models import (
     MentorProfile,
     MenteeProfile,
@@ -11,6 +12,10 @@ from api.models import (
     Specializations,
 )
 from api.utils.request_utils import send_email
+from api.utils.direct_messages import (
+    direct_message_display_user_or_placeholder,
+    validate_direct_message_participants,
+)
 from api.utils.constants import (
     Account,
     MENTOR_CONTACT_ME,
@@ -29,6 +34,13 @@ from bson.errors import InvalidId
 from urllib.parse import unquote
 
 messages = Blueprint("messages", __name__)
+# Verified Firebase claims per Socket.IO session id, populated on connect.
+# This is per-process state and assumes a single Socket.IO worker (the Procfile
+# runs `gunicorn --workers 1 --worker-class eventlet`). If the app is ever
+# scaled to multiple workers, connect and send can land in different processes
+# and this must move to a shared store (e.g. Redis) alongside a SocketIO
+# message_queue, or every cross-worker send will be rejected.
+_SOCKET_AUTH_BY_SID = {}
 
 # Roles with legitimate cross-user visibility into message history: the
 # admin-only /messages-details console (ADMIN) and SUPPORT, which the auth layer
@@ -43,13 +55,11 @@ _PROFILE_MODEL_BY_ROLE = {
 }
 
 
-def _caller_role_and_profile_id():
-    """Resolve the authenticated caller's (role, profile_id) from the verified
-    Firebase claims stashed on `g` by verify_user. The profile id is looked up
-    by firebase_uid, so a caller can never assert an identity they do not own
-    (we never trust the profile ids supplied in the request as proof of access).
-    Returns (role_int_or_None, profile_id_str_or_None)."""
-    claims = getattr(g, "auth_claims", None) or {}
+def _profile_id_from_claims(claims):
+    """Resolve (role, profile_id) from verified Firebase claims. The profile id
+    is looked up by firebase_uid, so a caller can never assert an identity they
+    do not own (we never trust profile ids supplied in the request as proof of
+    access). Returns (role_int_or_None, profile_id_str_or_None)."""
     try:
         role = int(claims.get("role"))
     except (TypeError, ValueError):
@@ -60,6 +70,16 @@ def _caller_role_and_profile_id():
         return role, None
     profile = model.objects(firebase_uid=uid).only("id").first()
     return role, (str(profile.id) if profile else None)
+
+
+def _caller_role_and_profile_id():
+    """Resolve the authenticated caller's (role, profile_id) from the verified
+    Firebase claims stashed on `g` by verify_user."""
+    return _profile_id_from_claims(getattr(g, "auth_claims", None) or {})
+
+
+def _socket_role_and_profile_id():
+    return _profile_id_from_claims(_SOCKET_AUTH_BY_SID.get(request.sid, {}))
 
 
 @messages.route("/", methods=["GET"])
@@ -132,6 +152,12 @@ def create_message():
     availabes_in_future = None
     if "availabes_in_future" in data:
         availabes_in_future = data.get("availabes_in_future")
+    role, caller_id = _caller_role_and_profile_id()
+    allowed, msg = validate_direct_message_participants(
+        data.get("user_id"), data.get("recipient_id"), role, caller_id
+    )
+    if not allowed:
+        return create_response(status=403 if msg == "Forbidden" else 422, message=msg)
     try:
         message = DirectMessage(
             body=data["message"],
@@ -226,14 +252,13 @@ def contact_mentor(mentor_id):
             recipient_id=mentor_id,
             created_at=datetime.utcnow().isoformat(),
         )
-
-        socketio.emit(mentor_id, json.loads(message.to_json()))
     except Exception as e:
         msg = "Invalid parameter provided"
         logger.info(e)
         return create_response(status=422, message=msg)
     try:
         message.save()
+        socketio.emit(mentor_id, json.loads(message.to_json()))
     except:
         msg = "Failed to save message"
         logger.info(msg)
@@ -284,56 +309,23 @@ def get_sidebar(user_id):
         contacts = []
         for otherId in ordered_other_ids:
             latest_message = latest_message_by_other_id[otherId]
-            otherUser = None
-            user_type = Account.MENTOR.value
-            try:
-                otherUser = MentorProfile.objects.get(id=otherId)
-            except:
-                try:
-                    otherUser = PartnerProfile.objects.get(id=otherId)
-                    user_type = Account.PARTNER.value
-                except:
-                    pass
-            if not otherUser:
-                user_type = Account.MENTEE.value
-                try:
-                    otherUser = MenteeProfile.objects.get(id=otherId)
-                except Exception as e:
-                    logger.info(e)
-                    msg = "Could not find mentor or mentee for given ids"
-                    logger.info(msg)
-                    pass
-            if otherUser:
-                otherUser = json.loads(otherUser.to_json())
-                if user_type == Account.PARTNER.value:
-                    if "organization" in otherUser:
-                        otherUserObj = {
-                            "name": otherUser["organization"],
-                            "user_type": user_type,
-                        }
-                    else:
-                        otherUserObj = {
-                            "name": otherUser["title"],
-                            "user_type": user_type,
-                        }
-                else:
-                    otherUserObj = {
-                        "name": otherUser["name"],
-                        "user_type": user_type,
-                    }
+            # Always render the conversation. A counterpart whose profile no
+            # longer resolves (deleted account) shows as a "Deleted Account"
+            # placeholder so the owner keeps their history; the UI blocks
+            # replying. Unread counting stays strict elsewhere, and a deleted
+            # account's sent messages are marked read on deletion, so this does
+            # not resurrect phantom unread emails.
+            otherUserObj = direct_message_display_user_or_placeholder(otherId)
 
-                if "image" in otherUser:
-                    otherUserObj["image"] = otherUser["image"]["url"]
+            sidebarObject = {
+                "otherId": str(otherId),
+                "message_read": latest_message["message_read"],
+                "numberOfMessages": message_count_by_other_id[otherId],
+                "otherUser": otherUserObj,
+                "latestMessage": json.loads(latest_message.to_json()),
+            }
 
-                sidebarObject = {
-                    "otherId": str(otherId),
-                    "message_read": latest_message["message_read"],
-                    "numberOfMessages": message_count_by_other_id[otherId],
-                    "otherUser": otherUserObj,
-                    "latestMessage": json.loads(latest_message.to_json()),
-                }
-
-                contacts.append(sidebarObject)
+            contacts.append(sidebarObject)
 
         return create_response(
             data={
@@ -872,9 +864,37 @@ def chatGroup(msg, methods=["POST"]):
     return create_response(status=200, message="successfully sent message")
 
 
+@socketio.on("connect")
+def connect(auth=None):
+    token = (auth or {}).get("token")
+    if not token:
+        logger.info("Rejected socket connection without auth token")
+        return False
+    try:
+        claims = firebase_admin_auth.verify_id_token(token)
+    except Exception as e:
+        logger.info(f"Rejected socket connection: {e}")
+        return False
+    _SOCKET_AUTH_BY_SID[request.sid] = claims
+    return True
+
+
+@socketio.on("disconnect")
+def disconnect():
+    _SOCKET_AUTH_BY_SID.pop(request.sid, None)
+
+
 @socketio.on("send")
 def chat(msg, methods=["POST"]):
     try:
+        role, caller_id = _socket_role_and_profile_id()
+        allowed, validation_msg = validate_direct_message_participants(
+            msg.get("sender_id"), msg.get("recipient_id"), role, caller_id
+        )
+        if not allowed:
+            logger.info(f"Rejected socket message: {validation_msg}")
+            return {"success": False, "message": validation_msg}
+
         availabes_in_future = None
         if "availabes_in_future" in msg:
             availabes_in_future = [
@@ -894,19 +914,19 @@ def chat(msg, methods=["POST"]):
             availabes_in_future=availabes_in_future,
         )
         logger.info(msg["recipient_id"])
-        socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
 
     except Exception as e:
         logger.info(e)
-        return create_response(status=500, message="Failed to send message")
+        return {"success": False, "message": "Failed to send message"}
     try:
         message.save()
+        socketio.emit(msg["recipient_id"], json.loads(message.to_json()))
         msg = "successfully sent message"
     except:
         msg = "Error in meessage"
         logger.info(msg)
-        return create_response(status=500, message="Failed to send message")
-    return create_response(status=200, message="successfully sent message")
+        return {"success": False, "message": "Failed to send message"}
+    return {"success": True, "message": "successfully sent message"}
 
 
 @socketio.on("invite")

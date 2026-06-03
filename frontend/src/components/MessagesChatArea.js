@@ -3,7 +3,11 @@ import { Avatar, Input, Button, Spin, Modal, theme, Drawer } from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import moment from "moment-timezone";
-import { SendOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import {
+  SendOutlined,
+  ArrowLeftOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useAuth } from "utils/hooks/useAuth";
 import {
   fetchAccountById,
@@ -38,6 +42,9 @@ function MessagesChatArea(props) {
   const { profileId, isMentee, isMentor, isPartner } = useAuth();
   const [messageText, setMessageText] = useState("");
   const [accountData, setAccountData] = useState(null);
+  // True when the conversation counterpart's profile no longer resolves (the
+  // account was deleted). We keep the history visible but block replying.
+  const [deletedAccount, setDeletedAccount] = useState(false);
   const [isAlreadyInvited, setIsAlreadyInvited] = useState(false);
   const [isAlreadyInvitedByMentor, setIsAlreadyInvitedByMentor] =
     useState(false);
@@ -185,11 +192,17 @@ function MessagesChatArea(props) {
       }
       if (account) {
         setAccountData(account);
+        setDeletedAccount(false);
         if (parseInt(userType, 10) === ACCOUNT_TYPE.MENTEE) {
           setIsAlreadyInvitedByMentor(
             asArray(account.favorite_mentors_ids).indexOf(otherId) >= 0
           );
         }
+      } else if (otherId && otherId.length > 3) {
+        // Counterpart profile is gone (deleted account): keep history but mark
+        // it deleted so the input is replaced with a notice.
+        setAccountData(null);
+        setDeletedAccount(true);
       }
       if (parseInt(userType, 10) === ACCOUNT_TYPE.MENTOR) {
         var profileAcount = await fetchAccountById(
@@ -572,6 +585,23 @@ function MessagesChatArea(props) {
             </div>
           </div>
         </div>
+      ) : deletedAccount ? (
+        <div className="messages-chat-area-header">
+          {isMobile && (
+            <div
+              onClick={showSideBar}
+              style={{ cursor: "pointer", width: "20px", fontSize: "16px" }}
+            >
+              <ArrowLeftOutlined />
+            </div>
+          )}
+          <Avatar size={60} icon={<UserOutlined />} />
+          <div className="messages-chat-area-header-info">
+            <div className="messages-chat-area-header-name">
+              {t("messages.deletedAccount")}
+            </div>
+          </div>
+        </div>
       ) : (
         <div></div>
       )}
@@ -586,7 +616,7 @@ function MessagesChatArea(props) {
               <Spin size="small" />
             </div>
           )}
-          {accountData &&
+          {(accountData || deletedAccount) &&
             messages.map((block, index) => {
               const senderId = objectId(block?.sender_id);
               const availableSlots = asArray(block?.availabes_in_future);
@@ -607,7 +637,11 @@ function MessagesChatArea(props) {
                     <div className="flex">
                       {senderId !== profileId && (
                         <span>
-                          <Avatar src={accountData.image?.url} />{" "}
+                          {accountData ? (
+                            <Avatar src={accountData.image?.url} />
+                          ) : (
+                            <Avatar icon={<UserOutlined />} />
+                          )}{" "}
                         </span>
                       )}
                       <div className="convo">
@@ -655,7 +689,7 @@ function MessagesChatArea(props) {
                                     </div>
                                   ) : (
                                     <MenteeAppointmentModal
-                                      mentor_name={accountData.name}
+                                      mentor_name={accountData?.name}
                                       availability={availableSlots}
                                       selected_availability={available_item}
                                       mentor_id={otherId}
@@ -705,6 +739,11 @@ function MessagesChatArea(props) {
         <div ref={messagesEndRef} />
       </div>
       <div className="conversation-footer">
+        {!accountData && deletedAccount && (
+          <div style={{ width: "100%", textAlign: "center", opacity: "60%" }}>
+            {t("messages.deletedAccountNotice")}
+          </div>
+        )}
         {accountData && (
           <>
             <TextArea

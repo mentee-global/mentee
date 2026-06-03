@@ -7,7 +7,7 @@ import {
   adminHubUserData,
 } from "utils/api";
 import { Input, Form, Button } from "antd";
-import { Table, Popconfirm, message, Modal, Upload, Avatar } from "antd";
+import { Table, message, Modal, Upload, Avatar } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -21,12 +21,15 @@ import {
 
 import "./css/Training.scss";
 import { ACCOUNT_TYPE } from "utils/consts";
+import DeleteAccountModal from "./DeleteAccountModal";
 import { generateInviteKey } from "utils/misc";
 import { css } from "@emotion/css";
 import ImgCrop from "antd-img-crop";
 
 export const Hubs = () => {
   const [data, setData] = useState([]);
+  // Hub pending deletion ({ raw: _id, name }); drives the confirm modal.
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [err, setErr] = useState(false);
   const [reload, setReload] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -383,18 +386,11 @@ export const Hubs = () => {
       title: "Delete",
       dataIndex: "_id",
       key: "_id",
-      render: (_id) => (
-        <Popconfirm
-          title={`Are you sure you want to delete this user?`}
-          onConfirm={() => {
-            deleteData(_id);
-          }}
-          onCancel={() => message.info(`No deletion has been for `)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <DeleteOutlined className="delete-user-btn" />
-        </Popconfirm>
+      render: (_id, record) => (
+        <DeleteOutlined
+          className="delete-user-btn"
+          onClick={() => setDeleteTarget({ raw: _id, name: record?.name })}
+        />
       ),
       align: "center",
       width: "10%",
@@ -473,6 +469,21 @@ export const Hubs = () => {
       <div className="trainTable">
         <Table columns={columns} dataSource={data} />
       </div>
+      <DeleteAccountModal
+        open={!!deleteTarget}
+        account={
+          deleteTarget
+            ? { name: deleteTarget.name, type: ACCOUNT_TYPE.HUB }
+            : null
+        }
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) {
+            deleteData(deleteTarget.raw);
+          }
+          setDeleteTarget(null);
+        }}
+      />
       <Modal
         title="Hub"
         open={isModalVisible2}

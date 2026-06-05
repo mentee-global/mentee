@@ -50,7 +50,7 @@ To run both backend and frontend
 
 ```bash
 $ nvm use
-$ pnpm start
+$ pnpm dev
 ```
 
 Frontend runs at `http://localhost:3000`. Backend runs at `http://localhost:8000`.

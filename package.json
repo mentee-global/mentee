@@ -11,7 +11,6 @@
     "setup:backend": "cd backend && uv sync",
     "export:requirements": "cd backend && uv export --no-hashes --no-dev --no-emit-project -o requirements.txt && uv export --no-hashes --no-dev --no-emit-project -o ../requirements.txt",
     "dev": "pnpm -r --parallel run dev",
-    "start": "pnpm dev",
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "pnpm --filter backend dev",
     "build": "pnpm --filter frontend build",

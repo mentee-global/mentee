@@ -30,8 +30,10 @@ class WebSecurityMiddleware:
         response.headers["X-Frame-Options"] = "DENY"
         # Don't leak full URLs to cross-origin destinations.
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        # Force HTTPS for a year in production.
-        if os.environ.get("FLASK_ENV") == "production":
+        # Force HTTPS for a year in production. Gate on ENVIRONMENT, the same
+        # flag create_app() uses for production-only cookie security (the app
+        # does not set FLASK_ENV).
+        if os.environ.get("ENVIRONMENT") == "production":
             response.headers[
                 "Strict-Transport-Security"
             ] = "max-age=31536000; includeSubDomains"

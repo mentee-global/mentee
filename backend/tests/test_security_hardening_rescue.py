@@ -28,8 +28,8 @@ def test_web_security_middleware_hsts_only_in_production(monkeypatch):
 
     WebSecurityMiddleware(app)
 
-    monkeypatch.delenv("FLASK_ENV", raising=False)
+    monkeypatch.delenv("ENVIRONMENT", raising=False)
     assert "Strict-Transport-Security" not in app.test_client().get("/").headers
 
-    monkeypatch.setenv("FLASK_ENV", "production")
+    monkeypatch.setenv("ENVIRONMENT", "production")
     assert "Strict-Transport-Security" in app.test_client().get("/").headers

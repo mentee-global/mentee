@@ -27,6 +27,13 @@ from api.utils.web_session import install_session_for_user
 auth = Blueprint("auth", __name__)  # initialize blueprint
 
 
+def _coerce_firebase_expires_in(firebase_user):
+    try:
+        firebase_user["expiresIn"] = float(firebase_user["expiresIn"])
+    except (KeyError, TypeError, ValueError):
+        firebase_user["expiresIn"] = 3600
+
+
 def _verify_email_continue_url() -> str:
     base = os.environ.get("FRONTEND_URL", "http://localhost:3000").rstrip("/")
     return f"{base}/verify"
@@ -204,6 +211,7 @@ def login():
         firebase_user = firebase_client.auth().sign_in_with_email_and_password(
             email, password
         )
+        _coerce_firebase_expires_in(firebase_user)
         firebase_uid = firebase_user["localId"]
 
     except Exception as e:

@@ -21,7 +21,7 @@
   <a href="#license">License</a>
 </p>
 
-> **Note:** Currently maintained by Juan Velasquez, Director of IT at MENTEE ([LinkedIn](https://www.linkedin.com/in/juanvelasquezacevedo/)).
+> Currently maintained by Juan Velasquez, Director of IT at MENTEE ([LinkedIn](https://www.linkedin.com/in/juanvelasquezacevedo/)).
 
 ## Overview
 

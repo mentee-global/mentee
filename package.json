@@ -1,26 +1,26 @@
 {
+  "name": "mentee",
+  "private": true,
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": "22.21.0",
+    "pnpm": "11.3.0"
+  },
   "scripts": {
-    "format:backend": "cd backend && poetry run format",
-    "format": "concurrently \"cd frontend && yarn format:all\" \"yarn format:backend\"",
-    "export": "cd backend && poetry export -f requirements.txt --output requirements.txt --without-hashes && poetry export -f requirements.txt --output ../requirements.txt --without-hashes",
-    "start:backend": "yarn export && cd backend && poetry run start",
-    "start:frontend": "cd frontend && yarn start",
-    "start": "concurrently \"yarn start:frontend\" \"yarn start:backend\"",
-    "setup:backend": "cd backend && poetry install",
-    "setup:frontend": "cd frontend && yarn",
-    "setup": "concurrently \"yarn setup:backend\" \"yarn setup:frontend\"",
-    "local": "concurrently \"cd frontend && npm start\" \"cd backend && python manage.py runserver\"" 
-  },
-  "dependencies": {
-    "concurrently": "^8.2.0",
-    "dotenv": "^16.3.1",
-    "emoji-picker-react": "^4.3.0",
-    "pdf-lib": "^1.17.1",
-    "react-signature-canvas": "^1.0.6",
-    "sass": "^1.50.0"
-  },
-  "devDependencies": {
-    "cypress": "^13.6.0",
-    "cypress-plugin-api": "^2.11.1"
+    "setup": "pnpm install && pnpm setup:backend",
+    "setup:frontend": "pnpm install",
+    "setup:backend": "cd backend && uv venv && uv pip install -r requirements.txt -r requirements-dev.txt",
+    "dev": "pnpm -r --parallel run dev",
+    "start": "pnpm dev",
+    "local": "pnpm dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "start:frontend": "pnpm dev:frontend",
+    "dev:backend": "pnpm --filter backend dev",
+    "start:backend": "pnpm dev:backend",
+    "build": "pnpm build:frontend",
+    "build:frontend": "pnpm --filter frontend build",
+    "heroku-postbuild": "pnpm build:frontend",
+    "format": "pnpm -r --parallel run format:all",
+    "format:backend": "pnpm --filter backend format:all"
   }
 }

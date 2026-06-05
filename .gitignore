@@ -1,6 +1,7 @@
 .vscode
 venv
 node_modules
+.pnpm-store
 backend/firebase_service_key.json
 backend/keys/
 package-lock.json

@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": ".venv/bin/python manage.py runserver",
+    "start": ".venv/bin/python manage.py runserver",
+    "format:all": ".venv/bin/python -m black api/ tests/ manage.py",
+    "format:check": ".venv/bin/python -m black api/ tests/ manage.py --check"
+  }
+}

@@ -33,26 +33,48 @@ Connecting immigrant and refugee youth with a network of mentors.
 
 Install:
 
-- [Yarn](https://yarnpkg.com/)
-- [Poetry](https://python-poetry.org/)
-- [concurrently](https://www.npmjs.com/package/concurrently)
+- [nvm](https://github.com/nvm-sh/nvm)
+- [pnpm](https://pnpm.io/)
+- [uv](https://docs.astral.sh/uv/)
+
+This repository pins Node to `22.21.0` and pnpm to `11.3.0`.
 
 To install/update dependencies:
 
 ```bash
-$ yarn setup
+$ nvm use
+$ pnpm setup
 ```
 
 To run both backend and frontend
 
 ```bash
-$ yarn start
+$ nvm use
+$ pnpm start
 ```
+
+Frontend runs at `http://localhost:3000`. Backend runs at `http://localhost:8000`.
+
+To build the frontend production assets served by Flask:
+
+```bash
+$ nvm use
+$ pnpm build
+```
+
+For Heroku, this repo is pnpm-ready when the `heroku/nodejs` buildpack runs before `heroku/python`. The `mentee-dev` app currently uses:
+
+1. `heroku/nodejs`
+2. `heroku/python`
+3. `https://github.com/gerywahyunugraha/heroku-google-application-credentials-buildpack`
+
+The Node buildpack reads the root `pnpm-lock.yaml`, installs `pnpm@11.3.0`, and runs `heroku-postbuild`, which builds `frontend/artifacts` for the Python app to serve.
 
 To format both sides
 
 ```bash
-$ yarn format
+$ nvm use
+$ pnpm format
 ```
 
 ## Technologies

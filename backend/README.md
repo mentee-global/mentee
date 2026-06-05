@@ -70,9 +70,7 @@ You can also view the contents of your database by connecting to it in Mongo Com
 - `manage.py` - Command line interface that allows you to perform common functions with a command
 - `requirements.txt` - A list of python package dependencies the application requires
 - `runtime.txt` & `Procfile` - configuration for Heroku
-- `Dockerfile` - instructions for Docker to build the Flask app
-- `docker-compose.yml` - config to setup this Flask app and a Database
-- `migrations/` - Holds migration files – doesn't exist until you `python manage.py db init` if you decide to not use docker
+- `migrations/` - Holds migration files – doesn't exist until you `python manage.py db init`
 
 ### MISC
 
@@ -128,6 +126,5 @@ On the bottom of ```Resource ``` tab on Heroku dashboard, you can search ```pape
 - [Learn Python](https://www.learnpython.org/) - Learning Python3
 - [Relational Databases](https://www.ntu.edu.sg/home/ehchua/programming/sql/Relational_Database_Design.html) - Designing a database schema
 - [REST API](http://www.restapitutorial.com/lessons/restquicktips.html) - tips on making an API Restful
-- [Docker Docs](https://docs.docker.com/get-started/) - Docker docs
 - [SendGrid](https://sendgrid.com/docs/for-developers/) - Documentation For SendGrid
 - [Twilio](twilio.com/docs/libraries/python) - Documentation for Twilio

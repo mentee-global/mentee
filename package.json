@@ -8,21 +8,15 @@
   },
   "scripts": {
     "setup": "pnpm install && pnpm setup:backend",
-    "setup:frontend": "pnpm install",
     "setup:backend": "cd backend && uv sync",
     "export:requirements": "cd backend && uv export --no-hashes --no-dev --no-emit-project -o requirements.txt && uv export --no-hashes --no-dev --no-emit-project -o ../requirements.txt",
     "dev": "pnpm -r --parallel run dev",
     "start": "pnpm dev",
-    "local": "pnpm dev",
     "dev:frontend": "pnpm --filter frontend dev",
-    "start:frontend": "pnpm dev:frontend",
     "dev:backend": "pnpm --filter backend dev",
-    "start:backend": "pnpm dev:backend",
-    "build": "pnpm build:frontend",
-    "build:frontend": "pnpm --filter frontend build",
-    "heroku-postbuild": "pnpm build:frontend",
+    "build": "pnpm --filter frontend build",
+    "heroku-postbuild": "pnpm build",
     "format": "pnpm -r --parallel run format:all",
-    "format:check": "pnpm -r --parallel run format:check",
-    "format:backend": "pnpm --filter backend format:all"
+    "format:check": "pnpm -r --parallel run format:check"
   }
 }

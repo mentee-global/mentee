@@ -1,6 +1,4 @@
 from functools import wraps
-import time
-
 from flask import request, g
 from firebase_admin import auth as firebase_admin_auth
 from api.core import create_response, logger
@@ -17,51 +15,17 @@ STAFF_ROLES = {Account.ADMIN.value, Account.SUPPORT.value}
 STAFF_ALL = object()
 
 
-def _safe_float(value, default=None):
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return default
-
-
-def _extract_authorization_token(headers):
-    auth_header = headers.get("Authorization")
-    if not auth_header:
-        return None
-
-    auth_header = auth_header.strip()
-    if auth_header.lower().startswith("bearer "):
-        auth_header = auth_header[7:].strip()
-
-    return auth_header or None
-
-
-def verify_token_with_expiry(token):
-    claims = firebase_admin_auth.verify_id_token(token, check_revoked=True)
-
-    now = time.time()
-    token_iat = _safe_float(claims.get("iat"))
-    token_exp = _safe_float(claims.get("exp"))
-
-    if token_iat is not None and token_iat > now + 60.0:
-        raise ValueError("Token used before issued time")
-    if token_exp is None or now > token_exp + 60.0:
-        raise ValueError("Token has expired")
-
-    return claims
-
-
 def verify_user(required_role):
     headers = request.headers
     role = None
 
-    token = _extract_authorization_token(headers)
+    token = headers.get("Authorization")
     if not token:
         return UNAUTHORIZED, create_response(
             status=401, message="Missing Authorization header"
         )
     try:
-        claims = verify_token_with_expiry(token)
+        claims = firebase_admin_auth.verify_id_token(token)
         role = claims.get("role")
     except Exception as e:
         # A bad/expired/revoked token is a client auth failure, not a server
@@ -94,11 +58,11 @@ def get_optional_claims():
     anonymous and authenticated callers but want to tailor the response (e.g.
     return full vs sanitized data) based on the caller's role.
     """
-    token = _extract_authorization_token(request.headers)
+    token = request.headers.get("Authorization")
     if not token:
         return None
     try:
-        claims = verify_token_with_expiry(token)
+        claims = firebase_admin_auth.verify_id_token(token)
     except Exception as e:
         logger.info(f"Ignoring invalid optional auth: {e}")
         return None

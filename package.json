@@ -21,6 +21,7 @@
     "build:frontend": "pnpm --filter frontend build",
     "heroku-postbuild": "pnpm build:frontend",
     "format": "pnpm -r --parallel run format:all",
+    "format:check": "pnpm -r --parallel run format:check",
     "format:backend": "pnpm --filter backend format:all"
   }
 }

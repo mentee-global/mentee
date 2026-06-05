@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": ".venv/bin/python manage.py runserver",
-    "start": ".venv/bin/python manage.py runserver",
-    "format:all": ".venv/bin/python -m black api/ tests/ manage.py",
-    "format:check": ".venv/bin/python -m black api/ tests/ manage.py --check"
+    "dev": "uv run --no-project python manage.py runserver",
+    "start": "uv run --no-project python manage.py runserver",
+    "format:all": "uv run --no-project black .",
+    "format:check": "uv run --no-project black . --check"
   }
 }

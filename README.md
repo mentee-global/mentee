@@ -9,107 +9,115 @@
     <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
 </p>
 
-<h4 align="center">A project by <a href="https://uiuc.hack4impact.org/" target="_blank">Hack4Impact UIUC</a> in collaboration with <a href="https://www.menteeglobal.org/" target="_blank">MENTEE.</a></h4>
+<h4 align="center">A mentorship platform connecting immigrant and refugee youth with a global network of mentors.</h4>
 
 <p align="center">
-  <a href="#background">Background</a> •
-  <a href="#usage">Usage</a> •
-  <a href="#technologies">Technologies</a> •
-  <a href="#team">Team</a> •
+  <a href="#overview">Overview</a> •
+  <a href="#tech-stack">Tech Stack</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#common-commands">Commands</a> •
+  <a href="#project-structure">Structure</a> •
+  <a href="#deployment">Deployment</a> •
   <a href="#license">License</a>
 </p>
 
+## Overview
 
-## Background
+MENTEE is a web platform that connects immigrant and refugee youth with a global
+network of volunteer mentors. It supports the full mentorship lifecycle:
 
-Connecting immigrant and refugee youth with a network of mentors.
+- **Profiles & discovery** — mentors, mentees, and partner organizations create
+  profiles and find one another through the Explore directory.
+- **Applications & onboarding** — guided, multi-step applications for mentors and
+  mentees, with an admin review flow.
+- **Messaging & video** — real-time chat and in-app video sessions.
+- **Events** — mentors and partners can schedule and manage events.
+- **Notifications** — transactional emails for key account and application events.
+- **Admin dashboard** — account management, application review, and reporting.
+- **Internationalization** — the interface is available in multiple languages.
 
-<img width="1504" alt="Screen Shot 2023-08-12 at 1 31 53 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/116ee3ce-ea8e-4526-87b0-1cfecd1c0ef0">
-<img width="1506" alt="Screen Shot 2023-08-12 at 1 29 37 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/dd9325de-cad7-4dde-bbc6-1b9679c8a10e">
-<img width="1502" alt="Screen Shot 2023-08-12 at 1 31 20 PM" src="https://github.com/hack4impact-uiuc/mentee/assets/28935000/b3e4a922-eff6-4a22-82ab-3b40355afaa8">
+## Tech Stack
 
+| Layer    | Technologies                                                        |
+| -------- | ------------------------------------------------------------------- |
+| Frontend | React, Ant Design, Redux Toolkit, i18next, Socket.IO client         |
+| Backend  | Flask, MongoEngine (MongoDB), Flask-SocketIO + eventlet, Firebase   |
+| Tooling  | pnpm workspace (monorepo), uv (Python), Prettier, Black             |
+| Hosting  | Heroku                                                              |
 
-## Usage
+The repository is a **pnpm monorepo** containing the React `frontend` and the Flask
+`backend`. The backend is managed as a [uv](https://docs.astral.sh/uv/) project, and
+pnpm orchestrates both sides from the repository root.
 
-Install:
+## Getting Started
 
-- [nvm](https://github.com/nvm-sh/nvm)
-- [pnpm](https://pnpm.io/)
-- [uv](https://docs.astral.sh/uv/)
+### Prerequisites
 
-This repository pins Node to `22.21.0` and pnpm to `11.3.0`.
+- [nvm](https://github.com/nvm-sh/nvm) — Node version manager. The repo pins
+  **Node 22.21.0** and **pnpm 11.3.0** (via `.nvmrc` and `package.json`).
+- [pnpm](https://pnpm.io/) `11.3.0`
+- [uv](https://docs.astral.sh/uv/) — Python package & virtualenv manager. The backend
+  targets **Python 3.10**.
 
-To install/update dependencies:
+### Environment configuration
+
+The app integrates with external services (database, authentication, email, etc.) and
+reads its configuration from local environment files that are **not** committed to the
+repository. Before running, obtain the required values from the team and create:
+
+- `backend/.env`
+- `backend/firebase_service_key.json`
+- `frontend/.env`
+
+> ⚠️ Never commit `.env` files, service keys, or any credentials. Treat all secrets as sensitive.
+
+### Install & run
 
 ```bash
-$ nvm use
-$ pnpm setup
+nvm use      # switch to the pinned Node version
+pnpm setup   # install frontend (pnpm) and backend (uv) dependencies
+pnpm dev     # run the frontend and backend together
 ```
 
-To run both backend and frontend
+- Frontend → http://localhost:3000
+- Backend → http://localhost:8000
 
-```bash
-$ nvm use
-$ pnpm dev
+To run a single side, use `pnpm dev:frontend` or `pnpm dev:backend`.
+
+## Common Commands
+
+Run from the repository root:
+
+| Command                     | Description                                                          |
+| --------------------------- | -------------------------------------------------------------------- |
+| `pnpm dev`                  | Run the frontend and backend in development mode                     |
+| `pnpm build`                | Build the production frontend assets (served by Flask)               |
+| `pnpm format`               | Format all code (Prettier for the frontend, Black for the backend)   |
+| `pnpm format:check`         | Check formatting without writing (used by CI)                        |
+| `pnpm export:requirements`  | Regenerate `requirements.txt` from `uv.lock` after backend dep changes |
+
+## Project Structure
+
+```
+.
+├── frontend/             # React app (pnpm workspace)
+├── backend/              # Flask API (uv project)
+├── package.json          # workspace root — orchestration scripts
+├── pnpm-workspace.yaml   # pnpm workspace definition
+└── Procfile              # Heroku process definitions
 ```
 
-Frontend runs at `http://localhost:3000`. Backend runs at `http://localhost:8000`.
+## Deployment
 
-To build the frontend production assets served by Flask:
+The app is deployed on **Heroku** with two buildpacks, in order:
 
-```bash
-$ nvm use
-$ pnpm build
-```
+1. `heroku/nodejs` — installs pnpm, runs `heroku-postbuild`, and builds the frontend into `frontend/artifacts`.
+2. `heroku/python` — installs the backend from the root `requirements.txt`; Flask then serves the built frontend.
 
-For Heroku, this repo is pnpm-ready when the `heroku/nodejs` buildpack runs before `heroku/python`. The `mentee-dev` app currently uses:
-
-1. `heroku/nodejs`
-2. `heroku/python`
-3. `https://github.com/gerywahyunugraha/heroku-google-application-credentials-buildpack`
-
-The Node buildpack reads the root `pnpm-lock.yaml`, installs `pnpm@11.3.0`, and runs `heroku-postbuild`, which builds `frontend/artifacts` for the Python app to serve.
-
-To format both sides
-
-```bash
-$ nvm use
-$ pnpm format
-```
-
-## Technologies
-
-This application is built with React, Flask, MongoDB, and Ant Design
-
-## Team
-
-<table align="center">
-  <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/juanvelasquezacevedo/" target="_blank"><img src="https://menteeglobal.org/wp-content/uploads/2025/11/1740952337777-2.jpeg" width="75px;" alt="Juan Sebastian Velasquez"/><br /><b>Juan Sebastian Velasquez</b></a><br /><sub>IT Director</sub></td>
-    <td align="center"><a href="http://leonardogalindo.me/"><img src="https://avatars.githubusercontent.com/u/28935000?v=4" width="75px;" alt="Leonardo Galindo"/><br /><b>Leonardo Galindo</b></a><br /><sub>Technical Lead</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/al490/"><img src="https://uiuc.hack4impact.org/images/people/angela_luo.jpg" width="75px;" alt="Angela Luo"/><br /><b>Angela Luo</b></a><br /><sub>Product Manager</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/lamgtran/"><img src="https://uiuc.hack4impact.org/images/people/lam_tran.jpg" width="75px;" alt="Lam Tran"/><br /><b>Lam Tran</b></a><br /><sub>Product Manager</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/kelleychau/"><img src="https://ca.slack-edge.com/T6VL1BSEA-UFV1VN24B-ef42f0861a51-512" width="75px;" alt="Kelley Chau"/><br /><b>Kelley Chau</b></a><br /><sub>Technical Lead</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/kendall-hester/"><img src="https://uiuc.hack4impact.org/images/people/kendall_hester.jpg" width="75px;" alt="Kendall Hester"/><br /><b>Kendall Hester</b></a><br /><sub>Technical Lead</sub></td>
-    <td align="center"><a href="https://nikhilgargeya.me/"><img src="https://images.ctfassets.net/xig6hkxlux4q/3L78QCiDg9Qh19GtPDWXvn/472674707e73b830ba50b1cf38f6b710/nikhil_gargeya.jpg?h=160" width="75px;" alt="Nikhil Gargeya"/><br /><b>Nikhil Gargeya</b></a><br><sub>Product Designer</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/nayonika-roy-0162291b5/"><img src="https://uiuc.hack4impact.org/images/people/nayonika_roy.jpg" width="75px;" alt="Nayonika Roy"/><br /><b>Nayonika Roy</b></a><br /><sub>Software Developer</sub></td>
-    <td align="center"><a href=""><img src="https://uiuc.hack4impact.org/images/people/michael_chen.jpg" width="75px;" alt="Michael Chen"/><br /><b>Michael Chen</b></a><br /><sub>Software Developer</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/daniel-moon1/"><img src="https://uiuc.hack4impact.org/images/people/daniel_moon.jpg" width="75px;" alt="Daniel Moon"/><br /><b>Daniel Moon</b></a><br /><sub>Software Developer</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/feiyuwong/"><img src="https://images.ctfassets.net/xig6hkxlux4q/1V8t7Up2v8kpuRoJsggcBV/dc3247bc1be1c151823d04ac58dcf73d/andy_wong.jpeg?h=160" width="75px;" alt="Andy Wong"/><br /><b>Andy Wong</b></a><br /><sub>Software Developer</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/ishaan-r-sharma/"><img src="https://uiuc.hack4impact.org/images/people/ishaan_sharma.jpg" width="75px;" alt="Ishaan Sharma"/><br /><b>Ishaan Sharma</b></a><br /><sub>Software Developer</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/praneeth-g-277128133/"><img src="https://avatars.githubusercontent.com/u/23776635?v=4" width="75px;" alt="Praneeth Guduguntla"/><br /><b>Praneeth Guduguntla</b></a><br /><sub>Software Developer</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/zayyan-faizal/"><img src="https://uiuc.hack4impact.org/images/people/zayyan_faizal.jpg" width="75px;" alt="Zayyan Faizal"/><br /><b>Zayyan Faizal</b></a><br /><sub>Software Developer</sub></td>
-    <td align="center"><a href="https://www.linkedin.com/in/luciana-toledo-lopez/"><img src="https://avatars.githubusercontent.com/u/55062455?v=4" width="75px;" alt="Luciana Toledo-López"/><br /><b>Luciana Toledo-Lopez</b></a><br /><sub>Software Developer</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/faith-losbanes-527a97196/"><img src="https://uiuc.hack4impact.org/images/people/faith_losbanes.jpg" width="75px;" alt="Faith Losbanes"/><br /><b>Faith Losbanes</b></a><br /><sub>Product Designer</sub></td>
-  </tr>
-</table>
+The root `requirements.txt` is generated from `backend/uv.lock` via
+`pnpm export:requirements` — regenerate and commit it whenever backend dependencies
+change so the deployed package set stays in sync.
 
 ## License
 
-[MIT](https://github.com/hack4impact-uiuc/mentee/blob/main/LICENSE) licensed. Copyright © 2021 [Hack4Impact UIUC](https://github.com/hack4impact-uiuc).
+[MIT](https://github.com/mentee-global/mentee/blob/main/LICENSE) licensed. Copyright © 2021–2026 MENTEE.

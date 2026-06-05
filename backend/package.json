@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "uv run python manage.py runserver",
     "start": "uv run python manage.py runserver",
+    "serve": "uv run gunicorn --workers 1 --threads 256 --worker-class eventlet manage:app",
     "format:all": "uv run black .",
     "format:check": "uv run black . --check"
   }

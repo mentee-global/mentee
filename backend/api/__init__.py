@@ -82,6 +82,10 @@ def create_app():
         },
     )
 
+    from api.utils.web_security import WebSecurityMiddleware
+
+    WebSecurityMiddleware(app)
+
     # logging
     formatter = RequestFormatter(
         "%(asctime)s %(remote_addr)s: requested %(url)s: %(levelname)s in [%(module)s: %(lineno)d]: %(message)s"

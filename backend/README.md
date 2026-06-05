@@ -21,29 +21,25 @@ Replace the `[xxx]` with your own credentials.
 
 ### Server Setup
 
-Make sure you have [uv](https://docs.astral.sh/uv/) installed. The backend is pinned to Python 3.10.14 in `.python-version` and `runtime.txt`.
+Make sure you have [uv](https://docs.astral.sh/uv/) installed. The backend is a uv
+project (`pyproject.toml` + `uv.lock`) pinned to Python 3.10 in `.python-version`
+and `runtime.txt`.
 
-Install packages:
+Install dependencies (creates `.venv` and installs the prod + dev groups from the lock):
 
 ```
-$ uv venv
-$ source .venv/bin/activate
-$ uv pip install -r requirements.txt
+$ uv sync
 ```
 
 To run the server:
 
 ```
-$ python manage.py runserver
+$ uv run python manage.py runserver
 ```
 
-If you prefer Poetry, use the same Python version:
-
-```
-$ poetry env use 3.10
-$ poetry install
-$ poetry run start
-```
+> `requirements.txt` (this dir and repo root) is generated from `uv.lock` for the
+> Heroku Python buildpack. After changing dependencies, regenerate it with
+> `pnpm export:requirements` (from the repo root).
 
 ### Verifying
 

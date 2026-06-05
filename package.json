@@ -9,7 +9,8 @@
   "scripts": {
     "setup": "pnpm install && pnpm setup:backend",
     "setup:frontend": "pnpm install",
-    "setup:backend": "cd backend && uv venv && uv pip install -r requirements.txt -r requirements-dev.txt",
+    "setup:backend": "cd backend && uv sync",
+    "export:requirements": "cd backend && uv export --no-hashes --no-dev --no-emit-project -o requirements.txt && uv export --no-hashes --no-dev --no-emit-project -o ../requirements.txt",
     "dev": "pnpm -r --parallel run dev",
     "start": "pnpm dev",
     "local": "pnpm dev",

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "uv run --no-project python manage.py runserver",
-    "start": "uv run --no-project python manage.py runserver",
-    "format:all": "uv run --no-project black .",
-    "format:check": "uv run --no-project black . --check"
+    "dev": "uv run python manage.py runserver",
+    "start": "uv run python manage.py runserver",
+    "format:all": "uv run black .",
+    "format:check": "uv run black . --check"
   }
 }

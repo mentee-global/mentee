@@ -34,8 +34,8 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Install backend dev dependencies
-        run: cd backend && uv venv && uv pip install -r requirements-dev.txt
+      - name: Install backend dependencies
+        run: cd backend && uv sync --frozen
 
       # Single entry point: pnpm fans out to the frontend (prettier) and the
       # backend (black via uv) format:check scripts across the workspace.

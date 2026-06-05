@@ -21,29 +21,24 @@ Replace the `[xxx]` with your own credentials.
 
 ### Server Setup
 
-Make sure you have [uv](https://docs.astral.sh/uv/) installed. The backend is pinned to Python 3.10.14 in `.python-version` and `runtime.txt`.
+Make sure you have [uv](https://docs.astral.sh/uv/) installed. The backend is a uv
+project (`pyproject.toml` + `uv.lock`) targeting Python 3.10 (`.python-version`).
 
-Install packages:
+Install dependencies (creates `.venv` and installs the prod + dev groups from the lock):
 
 ```
-$ uv venv
-$ source .venv/bin/activate
-$ uv pip install -r requirements.txt
+$ uv sync
 ```
 
 To run the server:
 
 ```
-$ python manage.py runserver
+$ uv run python manage.py runserver
 ```
 
-If you prefer Poetry, use the same Python version:
-
-```
-$ poetry env use 3.10
-$ poetry install
-$ poetry run start
-```
+> `requirements.txt` (this dir and repo root) is generated from `uv.lock` for the
+> Heroku Python buildpack. After changing dependencies, regenerate it with
+> `pnpm export:requirements` (from the repo root).
 
 ### Verifying
 
@@ -69,10 +64,8 @@ You can also view the contents of your database by connecting to it in Mongo Com
 - `config.py` - Provides Configuration for the application. There are two configurations: one for development and one for production using Heroku.
 - `manage.py` - Command line interface that allows you to perform common functions with a command
 - `requirements.txt` - A list of python package dependencies the application requires
-- `runtime.txt` & `Procfile` - configuration for Heroku
-- `Dockerfile` - instructions for Docker to build the Flask app
-- `docker-compose.yml` - config to setup this Flask app and a Database
-- `migrations/` - Holds migration files – doesn't exist until you `python manage.py db init` if you decide to not use docker
+- `Procfile` - process definitions for Heroku (the Python version comes from the repo-root `.python-version`)
+- `migrations/` - Holds migration files – doesn't exist until you `python manage.py db init`
 
 ### MISC
 
@@ -128,6 +121,5 @@ On the bottom of ```Resource ``` tab on Heroku dashboard, you can search ```pape
 - [Learn Python](https://www.learnpython.org/) - Learning Python3
 - [Relational Databases](https://www.ntu.edu.sg/home/ehchua/programming/sql/Relational_Database_Design.html) - Designing a database schema
 - [REST API](http://www.restapitutorial.com/lessons/restquicktips.html) - tips on making an API Restful
-- [Docker Docs](https://docs.docker.com/get-started/) - Docker docs
 - [SendGrid](https://sendgrid.com/docs/for-developers/) - Documentation For SendGrid
 - [Twilio](twilio.com/docs/libraries/python) - Documentation for Twilio

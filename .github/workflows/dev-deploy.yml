@@ -14,21 +14,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3.3.0
 
-      # Run yarn build
-      - name: run yarn build
-        uses: actions/setup-node@v3.6.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          check-latest: true
+          node-version-file: .nvmrc
 
       - name: Install and Build
         env:
@@ -37,28 +31,18 @@ jobs:
           CI: false
           REACT_APP_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           REACT_APP_ENV: development
-        run: yarn install && yarn run build
-
-      - name: save build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: ${{ github.workspace }}/frontend/build
-          retention-days: 1
-          if-no-files-found: error
+        run: |
+          npm install -g pnpm@11.3.0
+          pnpm install --frozen-lockfile
+          pnpm build
 
   deploy:
     runs-on: ubuntu-latest
+    # `build` is a gate: Heroku rebuilds the frontend on the dyno via
+    # heroku-postbuild, so we only need to confirm the build compiles before deploying.
     needs: build
     steps:
       - uses: actions/checkout@v3.3.0
-
-      - name: Downloading build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          # Use the path artifacts because frontend/build is in gitignore
-          path: ${{ github.workspace }}/frontend/artifacts
 
       - name: Install Heroku CLI
         run: |

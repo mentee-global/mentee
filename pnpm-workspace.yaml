@@ -1,0 +1,15 @@
+packages:
+  - "frontend"
+  - "backend"
+
+engineStrict: true
+strictPeerDependencies: false
+autoInstallPeers: true
+nodeLinker: hoisted
+linkWorkspacePackages: true
+
+allowBuilds:
+  "@parcel/watcher": true
+  core-js: true
+  core-js-pure: true
+  protobufjs: true

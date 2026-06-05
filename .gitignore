@@ -1,6 +1,7 @@
 .vscode
 venv
 node_modules
+.pnpm-store
 backend/firebase_service_key.json
 backend/keys/
 package-lock.json
@@ -23,7 +24,6 @@ tests/cypress/screenshots/
 .claude
 .agents
 .agent
-CLAUDE.md
 
 # Local coding-agent docs (not shipped). Nested docs in backend/ and frontend/ are tracked.
 /docs/

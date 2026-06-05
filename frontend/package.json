@@ -55,7 +55,6 @@
     "dotenv": "16.3.1"
   },
   "scripts": {
-    "start": "react-scripts start",
     "dev": "react-scripts start",
     "build": "BUILD_PATH=artifacts react-scripts build && compress-cra --directory /frontend/artifacts",
     "test": "react-scripts test",

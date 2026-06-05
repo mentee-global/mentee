@@ -22,8 +22,7 @@ Replace the `[xxx]` with your own credentials.
 ### Server Setup
 
 Make sure you have [uv](https://docs.astral.sh/uv/) installed. The backend is a uv
-project (`pyproject.toml` + `uv.lock`) pinned to Python 3.10 in `.python-version`
-and `runtime.txt`.
+project (`pyproject.toml` + `uv.lock`) targeting Python 3.10 (`.python-version`).
 
 Install dependencies (creates `.venv` and installs the prod + dev groups from the lock):
 
@@ -65,7 +64,7 @@ You can also view the contents of your database by connecting to it in Mongo Com
 - `config.py` - Provides Configuration for the application. There are two configurations: one for development and one for production using Heroku.
 - `manage.py` - Command line interface that allows you to perform common functions with a command
 - `requirements.txt` - A list of python package dependencies the application requires
-- `runtime.txt` & `Procfile` - configuration for Heroku
+- `Procfile` - process definitions for Heroku (the Python version comes from the repo-root `.python-version`)
 - `migrations/` - Holds migration files – doesn't exist until you `python manage.py db init`
 
 ### MISC

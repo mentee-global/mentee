@@ -13,7 +13,6 @@
 
 <p align="center">
   <a href="#overview">Overview</a> •
-  <a href="#maintainer">Maintainer</a> •
   <a href="#tech-stack">Tech Stack</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#common-commands">Commands</a> •
@@ -21,6 +20,8 @@
   <a href="#deployment">Deployment</a> •
   <a href="#license">License</a>
 </p>
+
+> **Note:** Currently maintained by Juan Velasquez, Director of IT at MENTEE ([LinkedIn](https://www.linkedin.com/in/juanvelasquezacevedo/)).
 
 ## Overview
 
@@ -41,10 +42,6 @@ It supports the full mentorship lifecycle:
 - **Notifications:** transactional emails for key account and application events.
 - **Admin dashboard:** account management, application review, and reporting.
 - **Internationalization:** the interface is available in multiple languages.
-
-## Maintainer
-
-Currently maintained by Juan Velasquez, Director of IT at MENTEE ([LinkedIn](https://www.linkedin.com/in/juanvelasquezacevedo/)).
 
 ## Tech Stack
 

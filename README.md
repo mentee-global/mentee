@@ -13,12 +13,12 @@
 
 <p align="center">
   <a href="#overview">Overview</a> •
+  <a href="#maintainer">Maintainer</a> •
   <a href="#tech-stack">Tech Stack</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#common-commands">Commands</a> •
   <a href="#project-structure">Structure</a> •
   <a href="#deployment">Deployment</a> •
-  <a href="#maintainer">Maintainer</a> •
   <a href="#license">License</a>
 </p>
 
@@ -41,6 +41,10 @@ It supports the full mentorship lifecycle:
 - **Notifications:** transactional emails for key account and application events.
 - **Admin dashboard:** account management, application review, and reporting.
 - **Internationalization:** the interface is available in multiple languages.
+
+## Maintainer
+
+Currently maintained by Juan Velasquez, Director of IT at MENTEE ([LinkedIn](https://www.linkedin.com/in/juanvelasquezacevedo/)).
 
 ## Tech Stack
 
@@ -123,10 +127,6 @@ The app is deployed on **Heroku** with two buildpacks, in order:
 The root `requirements.txt` is generated from `backend/uv.lock` via
 `pnpm export:requirements`. Regenerate and commit it whenever backend dependencies
 change so the deployed package set stays in sync.
-
-## Maintainer
-
-Currently maintained by Juan Velasquez, Director of IT at MENTEE ([LinkedIn](https://www.linkedin.com/in/juanvelasquezacevedo/)).
 
 ## License
 

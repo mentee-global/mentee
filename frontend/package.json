@@ -32,7 +32,6 @@
     "moment-timezone": "0.5.48",
     "pdf-lib": "1.17.1",
     "prettier": "2.8.8",
-    "pretty-quick": "3.3.1",
     "react": "18.3.1",
     "react-chartjs-2": "5.3.1",
     "react-dom": "18.3.1",
@@ -59,7 +58,6 @@
     "build": "BUILD_PATH=artifacts react-scripts build && compress-cra --directory /frontend/artifacts",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "pretty-quick --staged \"src/**/*.{js,json,scss}\"",
     "format:all": "prettier --write \"src/**/*.{js,json,scss}\"",
     "format:check": "prettier --check \"src/**/*.js\""
   },

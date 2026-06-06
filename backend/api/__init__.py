@@ -140,6 +140,7 @@ def create_app():
         apply,
         admin,
         admin_dashboard as admin_dashboard_views,
+        admin_onboarding as admin_onboarding_views,
         download,
         mentee,
         messages,
@@ -168,6 +169,9 @@ def create_app():
     app.register_blueprint(admin.admin, url_prefix="/api")
     app.register_blueprint(
         admin_dashboard_views.admin_dashboard, url_prefix="/api/admin/dashboard"
+    )
+    app.register_blueprint(
+        admin_onboarding_views.admin_onboarding, url_prefix="/api/admin/onboarding"
     )
     app.register_blueprint(download.download, url_prefix="/api/download")
     app.register_blueprint(mentee.mentee, url_prefix="/api/mentee")

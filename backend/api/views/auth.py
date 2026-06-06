@@ -61,7 +61,7 @@ def verify_email():
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    if not send_email(
+    success, msg = send_email(
         recipient=email,
         data={
             "link": verification_link,
@@ -69,8 +69,8 @@ def verify_email():
             "subject": TRANSLATIONS[preferred_language]["verify_email"],
         },
         template_id=USER_VERIFICATION_TEMPLATE,
-    ):
-        msg = "Could not send email"
+    )
+    if not success:
         logger.info(msg)
         return create_response(status=422, message=msg)
 
@@ -240,6 +240,13 @@ def login():
             verified=firebase_admin_user.email_verified,
         )
         user_doc.save()
+    elif (
+        user_doc.firebase_uid != firebase_uid
+        or user_doc.verified != firebase_admin_user.email_verified
+    ):
+        user_doc.firebase_uid = firebase_uid
+        user_doc.verified = firebase_admin_user.email_verified
+        user_doc.save()
 
     if os.environ.get("OAUTH_ENABLED", "false").lower() == "true":
         install_session_for_user(user_doc)
@@ -334,7 +341,7 @@ def send_forgot_password_email(email, preferred_language="en-US"):
         logger.info(msg)
         return create_response(status=422, message=msg)
 
-    if not send_email(
+    success, msg = send_email(
         recipient=email,
         subject="Mentee Password Reset",
         data={
@@ -343,8 +350,8 @@ def send_forgot_password_email(email, preferred_language="en-US"):
             "subject": TRANSLATIONS[preferred_language]["forgot_password"],
         },
         template_id=USER_FORGOT_PASSWORD_TEMPLATE,
-    ):
-        msg = "Cannot send email"
+    )
+    if not success:
         logger.info(msg)
         return create_response(status=500, message=msg)
 

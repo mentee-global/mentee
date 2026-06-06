@@ -773,7 +773,7 @@ def edit_application(id, role):
             template_id=PROFILE_COMPLETED,
             data={
                 preferred_language: True,
-                "subject": TRANSLATIONS[preferred_language]["profile_completed"],
+                "subject": TRANSLATIONS[preferred_language]["profile_complete"],
             },
         )
         for admin in admin_data:

@@ -46,7 +46,7 @@ function BuildProfile({ location, history, hub_user }) {
 
   useEffect(() => {
     async function getUserData() {
-      const { in_firebase, is_verified, profileExists } =
+      const { inFirebase, isVerified, profileExists } =
         await checkStatusByEmail(email, role);
       if (profileExists) {
         history.push({
@@ -54,9 +54,9 @@ function BuildProfile({ location, history, hub_user }) {
           state: { email, role },
         });
       }
-      setInFirebase(in_firebase);
-      setIsVerified(is_verified);
-      if (!in_firebase) {
+      setInFirebase(inFirebase);
+      setIsVerified(isVerified);
+      if (!inFirebase) {
         const res = await getApplicationStatus(email, role);
         if (res?.ok) {
           setUserState(res.state);

@@ -6,6 +6,7 @@ import {
   Descriptions,
   Drawer,
   Input,
+  Modal,
   Popover,
   Select,
   Space,
@@ -18,6 +19,7 @@ import {
 } from "antd";
 import {
   CheckCircleOutlined,
+  ExclamationCircleOutlined,
   EyeOutlined,
   InfoCircleOutlined,
   MailOutlined,
@@ -223,30 +225,35 @@ const ACTIONS = {
   },
   resend_training: {
     route: "resend-training",
+    effect: "email",
     label: "Send training",
     help: "Sends the approved application training link. Use when the application is approved but no profile exists.",
     icon: <MailOutlined />,
   },
   resend_build_profile: {
     route: "resend-build-profile",
+    effect: "email",
     label: "Send profile link",
     help: "Sends the build profile link. Use when training is complete or the person has a login but no profile.",
     icon: <MailOutlined />,
   },
   resend_verification: {
     route: "resend-verification",
+    effect: "email",
     label: "Verify email",
     help: "Sends an email verification link. This does not create or edit the profile.",
     icon: <MailOutlined />,
   },
   resend_password_reset: {
     route: "resend-password-reset",
+    effect: "email",
     label: "Password reset",
     help: "Sends a password reset link. This helps login problems but does not move onboarding forward.",
     icon: <MailOutlined />,
   },
   sync_verification: {
     route: "sync-verification",
+    effect: "update",
     label: "Mark verified",
     help: "Marks this person as verified inside the app because their email account is already verified.",
     icon: <SyncOutlined />,
@@ -435,6 +442,7 @@ export default function AdminOnboarding() {
   const [actionKey, setActionKey] = useState("");
   const [selectedRow, setSelectedRow] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
+  const [modalApi, modalContextHolder] = Modal.useModal();
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearch(search), 350);
@@ -490,19 +498,7 @@ export default function AdminOnboarding() {
     setPage(1);
   }, [role, debouncedSearch, stage, partnerId, attentionOnly, attentionType]);
 
-  const runAction = async (row, action) => {
-    const meta = ACTIONS[action];
-    if (meta?.navigate === "application") {
-      const pathname =
-        row.role === ACCOUNT_TYPE.MENTOR ? "/organizer" : "/menteeOrganizer";
-      const params = new URLSearchParams({ search: row.email });
-      if (row.application_state) {
-        params.set("application_state", row.application_state);
-      }
-      history.push({ pathname, search: `?${params.toString()}` });
-      return;
-    }
-    if (!meta?.route) return;
+  const executeAction = async (row, action, meta) => {
     setActionKey(`${row.email}:${action}`);
     try {
       await runAdminOnboardingAction(row.role, row.email, meta.route);
@@ -515,6 +511,40 @@ export default function AdminOnboarding() {
     } finally {
       setActionKey("");
     }
+  };
+
+  const runAction = (row, action) => {
+    const meta = ACTIONS[action];
+    if (meta?.navigate === "application") {
+      const pathname =
+        row.role === ACCOUNT_TYPE.MENTOR ? "/organizer" : "/menteeOrganizer";
+      const params = new URLSearchParams({ search: row.email });
+      if (row.application_state) {
+        params.set("application_state", row.application_state);
+      }
+      history.push({ pathname, search: `?${params.toString()}` });
+      return;
+    }
+    if (!meta?.route) return;
+    const target = row.name ? `${row.name} (${row.email})` : row.email;
+    modalApi.confirm({
+      title: meta.label,
+      icon: <ExclamationCircleOutlined />,
+      width: 460,
+      okText: meta.label,
+      cancelText: "Cancel",
+      content: (
+        <Space direction="vertical" size={8}>
+          <Text>{meta.help}</Text>
+          <Text type="secondary">
+            {meta.effect === "email"
+              ? `This sends an email to ${target}.`
+              : `This updates ${target}'s status in the app. No email is sent.`}
+          </Text>
+        </Space>
+      ),
+      onOk: () => executeAction(row, action, meta),
+    });
   };
 
   const partnerOptions = useMemo(
@@ -729,6 +759,7 @@ export default function AdminOnboarding() {
   return (
     <div className={pageClass}>
       {contextHolder}
+      {modalContextHolder}
       <div className="admin-onboarding-header">
         <div>
           <Title level={3} style={{ marginBottom: 4 }}>

@@ -580,7 +580,7 @@ export default function AdminOnboarding() {
         />
       ),
       key: "person",
-      width: 240,
+      width: 210,
       render: (_, row) => (
         <Space direction="vertical" size={0}>
           <Button
@@ -605,7 +605,7 @@ export default function AdminOnboarding() {
         />
       ),
       key: "application",
-      width: 180,
+      width: 120,
       render: (_, row) => (
         <Space direction="vertical" size={2}>
           <Tag>{row.application_state || "No application"}</Tag>
@@ -624,7 +624,7 @@ export default function AdminOnboarding() {
         />
       ),
       dataIndex: "effective_stage_label",
-      width: 230,
+      width: 190,
       render: (label, row) => (
         <Tag color={STAGE_COLORS[row.effective_stage] || "default"}>
           {label}
@@ -639,7 +639,7 @@ export default function AdminOnboarding() {
         />
       ),
       key: "systems",
-      width: 260,
+      width: 220,
       render: (_, row) => (
         <Space wrap size={[0, 4]}>
           <BooleanTag
@@ -673,7 +673,7 @@ export default function AdminOnboarding() {
         />
       ),
       key: "attention",
-      width: 260,
+      width: 110,
       render: (_, row) => {
         if (!row.attention_reasons?.length) {
           return <Tag color="green">Clear</Tag>;
@@ -697,7 +697,7 @@ export default function AdminOnboarding() {
         />
       ),
       key: "last_action",
-      width: 180,
+      width: 150,
       render: (_, row) =>
         row.last_email_event ? (
           <Space direction="vertical" size={0}>
@@ -720,7 +720,7 @@ export default function AdminOnboarding() {
         />
       ),
       key: "actions",
-      width: 300,
+      width: 250,
       fixed: "right",
       render: (_, row) => (
         <Space wrap>
@@ -884,7 +884,7 @@ export default function AdminOnboarding() {
           loading={loading}
           columns={columns}
           dataSource={rows}
-          scroll={{ x: 1550 }}
+          scroll={{ x: 1250 }}
           onRow={(row) => ({
             onClick: () => setSelectedRow(row),
           })}

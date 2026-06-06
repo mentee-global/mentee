@@ -1,8 +1,10 @@
 import math
 import os
+import time
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+from threading import Lock
 
 from firebase_admin import auth as firebase_admin_auth
 from firebase_admin.exceptions import FirebaseError
@@ -74,6 +76,36 @@ ATTENTION_PROFILE_APP_INCOMPLETE = "profile_app_incomplete"
 ATTENTION_LOGIN_MISSING = "login_missing"
 ATTENTION_READY_TO_MARK_VERIFIED = "ready_to_mark_verified"
 ATTENTION_EMAIL_NOT_VERIFIED = "email_not_verified"
+
+# Building the row set for a role is expensive (loads every application/profile and
+# fans out Firebase lookups). The result only depends on role/search/partner/attention,
+# so cache it briefly; stage, attention-type, sorting and pagination are cheap and run
+# fresh each request. Any admin action invalidates the cache so changes show immediately.
+_ROWS_CACHE = {}
+_ROWS_CACHE_LOCK = Lock()
+_ROWS_CACHE_TTL_SECONDS = 90
+
+
+def _rows_cache_get(key):
+    with _ROWS_CACHE_LOCK:
+        entry = _ROWS_CACHE.get(key)
+        if not entry:
+            return None
+        expires_at, rows = entry
+        if expires_at < time.monotonic():
+            _ROWS_CACHE.pop(key, None)
+            return None
+        return rows
+
+
+def _rows_cache_set(key, rows):
+    with _ROWS_CACHE_LOCK:
+        _ROWS_CACHE[key] = (time.monotonic() + _ROWS_CACHE_TTL_SECONDS, rows)
+
+
+def _invalidate_rows_cache():
+    with _ROWS_CACHE_LOCK:
+        _ROWS_CACHE.clear()
 
 
 def _attention_reason(code, message):
@@ -558,31 +590,12 @@ def _record_event(
         metadata=metadata or {},
     )
     event.save()
+    # An action may change verification, profiles, or application state; drop cached
+    # rows so the next list reflects it instead of serving up to TTL-stale data.
+    _invalidate_rows_cache()
 
 
-@admin_onboarding.route("", methods=["GET"])
-@admin_only
-def list_onboarding():
-    try:
-        role = int(request.args.get("role", Account.MENTEE.value))
-    except (TypeError, ValueError):
-        return create_response(status=422, message="Invalid role")
-    if role not in (Account.MENTOR.value, Account.MENTEE.value):
-        return create_response(status=422, message="Unsupported role")
-
-    try:
-        page = max(1, int(request.args.get("page", 1)))
-        page_size = max(1, min(int(request.args.get("page_size", 20)), 100))
-    except (TypeError, ValueError):
-        page = 1
-        page_size = 20
-
-    search = request.args.get("search", "").strip()
-    partner_id = request.args.get("partner_id", "").strip()
-    stage_filter = request.args.get("effective_stage", "").strip()
-    attention = request.args.get("attention", "").strip()
-    attention_type = request.args.get("attention_type", "").strip()
-
+def _build_rows(role, search, partner_id, attention_on):
     query = Q()
     profile_query = Q()
     if search:
@@ -621,7 +634,7 @@ def list_onboarding():
     # Firebase lookups are the most expensive part of this endpoint (one API call
     # per ~100 emails). In the default attention-only view a profile-less row can
     # only qualify via application-only reasons, so we skip Firebase for the rest.
-    if attention == "true":
+    if attention_on:
         firebase_emails = {
             email
             for email in emails
@@ -634,7 +647,7 @@ def list_onboarding():
     events = _events_by_email(emails, role)
     partners = _partner_names()
 
-    rows = [
+    return [
         _serialize_row(
             email,
             role,
@@ -648,14 +661,53 @@ def list_onboarding():
         for email in sorted(emails)
     ]
 
+
+@admin_onboarding.route("", methods=["GET"])
+@admin_only
+def list_onboarding():
+    try:
+        role = int(request.args.get("role", Account.MENTEE.value))
+    except (TypeError, ValueError):
+        return create_response(status=422, message="Invalid role")
+    if role not in (Account.MENTOR.value, Account.MENTEE.value):
+        return create_response(status=422, message="Unsupported role")
+
+    try:
+        page = max(1, int(request.args.get("page", 1)))
+        page_size = max(1, min(int(request.args.get("page_size", 20)), 100))
+    except (TypeError, ValueError):
+        page = 1
+        page_size = 20
+
+    search = request.args.get("search", "").strip()
+    partner_id = request.args.get("partner_id", "").strip()
+    stage_filter = request.args.get("effective_stage", "").strip()
+    attention = request.args.get("attention", "").strip()
+    attention_type = request.args.get("attention_type", "").strip()
+    attention_on = attention == "true"
+
+    cache_key = (role, search.lower(), partner_id, attention_on)
+    base_rows = _rows_cache_get(cache_key)
+    if base_rows is None:
+        base_rows = _build_rows(role, search, partner_id, attention_on)
+        _rows_cache_set(cache_key, base_rows)
+
     # Stage/search/partner define the "view" population. The summary counts that
     # whole population so "People in view" and "Need attention" stay distinct; the
     # attention toggle and attention-type only filter the table below.
+    population = base_rows
     if stage_filter and stage_filter != "all":
-        rows = [row for row in rows if row["effective_stage"] == stage_filter]
+        population = [
+            row for row in base_rows if row["effective_stage"] == stage_filter
+        ]
 
-    summary = {"stages": {}, "actions": {}, "needs_attention": 0, "total": len(rows)}
-    for row in rows:
+    summary = {
+        "stages": {},
+        "actions": {},
+        "needs_attention": 0,
+        "total": len(population),
+    }
+    for row in population:
         summary["stages"][row["effective_stage"]] = (
             summary["stages"].get(row["effective_stage"], 0) + 1
         )
@@ -670,8 +722,8 @@ def list_onboarding():
                     summary["attention_types"].get(reason["code"], 0) + 1
                 )
 
-    table_rows = rows
-    if attention == "true":
+    table_rows = population
+    if attention_on:
         table_rows = [row for row in table_rows if row["attention_reasons"]]
     if attention_type and attention_type != "all":
         table_rows = [
@@ -682,13 +734,15 @@ def list_onboarding():
             )
         ]
 
-    table_rows.sort(
+    # sorted() (not list.sort) so we never reorder the cached base list in place.
+    table_rows = sorted(
+        table_rows,
         key=lambda row: (
             0 if row["attention_reasons"] else 1,
             -row["sort_submitted_at"],
             -row["sort_activity_at"],
             row["email"],
-        )
+        ),
     )
 
     total = len(table_rows)

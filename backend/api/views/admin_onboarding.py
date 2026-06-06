@@ -340,7 +340,7 @@ def _available_actions(app, profile, mongo_user, firebase_user):
         actions.append(ACTION_RESEND_VERIFICATION)
     if firebase_exists:
         actions.append(ACTION_RESEND_PASSWORD_RESET)
-    if firebase_exists and firebase_verified and not mongo_verified:
+    if profile and firebase_exists and firebase_verified and not mongo_verified:
         actions.append(ACTION_SYNC_VERIFICATION)
     return list(dict.fromkeys(actions))
 

@@ -1,6 +1,7 @@
 import math
 import os
 import urllib.parse
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
 from firebase_admin import auth as firebase_admin_auth
@@ -158,44 +159,48 @@ def _partner_names():
     }
 
 
-def _firebase_lookup(emails):
+def _firebase_user_record(user):
+    return {
+        "exists": True,
+        "uid": user.uid,
+        "email_verified": bool(user.email_verified),
+        "disabled": bool(user.disabled),
+        "created_at": _firebase_metadata(user, "creation_timestamp"),
+        "last_sign_in_at": _firebase_metadata(user, "last_sign_in_timestamp"),
+    }
+
+
+def _firebase_lookup_batch(batch):
     result = {}
+    try:
+        response = firebase_admin_auth.get_users(
+            [firebase_admin_auth.EmailIdentifier(email) for email in batch]
+        )
+        for user in response.users:
+            if user.email:
+                result[_normalize_email(user.email)] = _firebase_user_record(user)
+    except Exception as exc:
+        logger.warning(f"Firebase batch lookup failed: {exc}")
+        for email in batch:
+            try:
+                user = firebase_admin_auth.get_user_by_email(email)
+                result[email] = _firebase_user_record(user)
+            except Exception:
+                pass
+    return result
+
+
+def _firebase_lookup(emails):
     normalized = [e for e in {_normalize_email(email) for email in emails} if e]
-    for idx in range(0, len(normalized), 100):
-        batch = normalized[idx : idx + 100]
-        try:
-            response = firebase_admin_auth.get_users(
-                [firebase_admin_auth.EmailIdentifier(email) for email in batch]
-            )
-            for user in response.users:
-                if user.email:
-                    result[_normalize_email(user.email)] = {
-                        "exists": True,
-                        "uid": user.uid,
-                        "email_verified": bool(user.email_verified),
-                        "disabled": bool(user.disabled),
-                        "created_at": _firebase_metadata(user, "creation_timestamp"),
-                        "last_sign_in_at": _firebase_metadata(
-                            user, "last_sign_in_timestamp"
-                        ),
-                    }
-        except Exception as exc:
-            logger.warning(f"Firebase batch lookup failed: {exc}")
-            for email in batch:
-                try:
-                    user = firebase_admin_auth.get_user_by_email(email)
-                    result[email] = {
-                        "exists": True,
-                        "uid": user.uid,
-                        "email_verified": bool(user.email_verified),
-                        "disabled": bool(user.disabled),
-                        "created_at": _firebase_metadata(user, "creation_timestamp"),
-                        "last_sign_in_at": _firebase_metadata(
-                            user, "last_sign_in_timestamp"
-                        ),
-                    }
-                except Exception:
-                    pass
+    batches = [normalized[idx : idx + 100] for idx in range(0, len(normalized), 100)]
+    if not batches:
+        return {}
+    # Each batch is a separate Firebase round trip; running them sequentially is the
+    # dominant cost of this endpoint. Fan them out so the network waits overlap.
+    result = {}
+    with ThreadPoolExecutor(max_workers=min(8, len(batches))) as executor:
+        for batch_result in executor.map(_firebase_lookup_batch, batches):
+            result.update(batch_result)
     return result
 
 
@@ -303,9 +308,9 @@ def _recommendation(app, profile, mongo_user, firebase_user):
         return ACTION_SYNC_VERIFICATION
     if profile and firebase_exists and not firebase_verified:
         return ACTION_RESEND_VERIFICATION
-    if state == NEW_APPLICATION_STATUS["BUILDPROFILE"]:
+    if state == NEW_APPLICATION_STATUS["BUILDPROFILE"] and not profile:
         return ACTION_RESEND_BUILD_PROFILE
-    if state == NEW_APPLICATION_STATUS["APPROVED"]:
+    if state == NEW_APPLICATION_STATUS["APPROVED"] and not profile:
         return ACTION_RESEND_TRAINING
     if app and firebase_exists and not profile:
         return ACTION_RESEND_BUILD_PROFILE
@@ -354,9 +359,7 @@ def _attention_reasons(app, profile, mongo_user, firebase_user):
     days_since_submit = (
         _days_since(getattr(app, "date_submitted", None)) if app else None
     )
-    days_since_profile = (
-        _days_since(getattr(profile, "created_at", None)) if profile else None
-    )
+    days_since_profile = _days_since(_profile_created_at(profile))
 
     if (
         state == NEW_APPLICATION_STATUS["PENDING"]
@@ -426,6 +429,19 @@ def _attention_reasons(app, profile, mongo_user, firebase_user):
     return reasons
 
 
+def _profile_created_at(profile):
+    """Reliable profile creation time.
+
+    The profile models declare ``created_at = DateTimeField(default=datetime.utcnow)``,
+    but legacy documents never stored the field, so MongoEngine applies the default at
+    read time and ``created_at`` reads back as "now". The ObjectId generation time is
+    the true creation date, so we use it instead for dates and staleness checks.
+    """
+    if not profile:
+        return None
+    return profile.id.generation_time
+
+
 def _profileless_attention_candidate(app):
     """Whether a profile-less applicant could need attention without a Firebase lookup.
 
@@ -455,7 +471,7 @@ def _serialize_row(
     stage = _effective_stage(app, email, profile, mongo_user, firebase_user)
     partner = getattr(app, "partner", None) or getattr(profile, "organization", None)
     date_submitted = getattr(app, "date_submitted", None) if app else None
-    profile_created_at = getattr(profile, "created_at", None) if profile else None
+    profile_created_at = _profile_created_at(profile)
     firebase_created_at = firebase_user.get("created_at") if firebase_user else None
     firebase_last_sign_in_at = (
         firebase_user.get("last_sign_in_at") if firebase_user else None

@@ -452,6 +452,11 @@ export default function useSidebars(userType, user, t) {
       icon: <LinkOutlined />,
     },
     {
+      label: "Onboarding",
+      key: "onboarding",
+      icon: <SafetyCertificateOutlined />,
+    },
+    {
       label: t("common.group_message"),
       key: `admin_group_messages`,
       icon: <MessageOutlined />,

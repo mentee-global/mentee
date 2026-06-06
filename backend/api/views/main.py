@@ -63,6 +63,62 @@ from firebase_admin import auth as firebase_admin_auth
 main = Blueprint("main", __name__)  # initialize blueprint
 
 
+def _preferred_language_for_profile(profile):
+    preferred_language = getattr(profile, "preferred_language", "en-US")
+    return preferred_language if preferred_language in TRANSLATIONS else "en-US"
+
+
+def _complete_application_for_profile(email, account_type):
+    if account_type == Account.MENTOR:
+        models = (NewMentorApplication, MentorApplication)
+    elif account_type == Account.MENTEE:
+        models = (MenteeApplication,)
+    elif account_type == Account.PARTNER:
+        models = (PartnerApplication,)
+    else:
+        return
+
+    for model in models:
+        application = model.objects(email__iexact=email).first()
+        if application:
+            application.application_state = NEW_APPLICATION_STATUS["COMPLETED"]
+            application.save()
+            return
+
+
+def _sync_profile_user(email, account_type, firebase_user, profile):
+    user = Users.objects(email__iexact=email, role=str(account_type)).first()
+    if not user:
+        user = Users(
+            firebase_uid=firebase_user.uid,
+            email=email,
+            role=str(account_type),
+            verified=bool(firebase_user.email_verified),
+        )
+    else:
+        user.firebase_uid = firebase_user.uid
+        user.verified = bool(firebase_user.email_verified)
+    user.save()
+
+    if "user_id" in getattr(profile, "_fields", {}):
+        profile.user_id = user
+    if getattr(profile, "firebase_uid", None) != firebase_user.uid:
+        profile.firebase_uid = firebase_user.uid
+    return user
+
+
+def _send_profile_complete_email(email, profile):
+    preferred_language = _preferred_language_for_profile(profile)
+    return send_email(
+        recipient=email,
+        data={
+            preferred_language: True,
+            "subject": TRANSLATIONS[preferred_language]["profile_complete"],
+        },
+        template_id=PROFILE_COMPLETED,
+    )
+
+
 def _verified_emails_for_user_role(user_role):
     return {
         (u.email or "").lower()
@@ -931,7 +987,8 @@ def get_account(id):
 # @all_users
 def create_mentor_profile():
     data = request.json
-    email = data.get("email")
+    email = (data.get("email") or "").strip().lower()
+    data["email"] = email
     password = data.get("password")
     try:
         account_type = int(data["account_type"])
@@ -1104,41 +1161,11 @@ def create_mentor_profile():
                 partenr_account.assign_mentees = assign_mentees
                 partenr_account.save()
 
-    user = Users(
-        firebase_uid=firebase_uid,
-        email=email,
-        role="{}".format(account_type),
-        verified=False,
-    )
-    user.save()
-    if account_type == Account.MENTEE:
-        app_data = MenteeApplication.objects.get(email=email)
-        if app_data is not None:
-            app_data.application_state = "COMPLETED"
-            app_data.save()
-    # if account_type == Account.MENTOR:
-    #     app_data = MentorApplication.objects.get(email=email)
-    #     if app_data is not None:
-    #         app_data.application_state = "COMPLETED"
-    #         app_data.save()
+    _sync_profile_user(email, account_type, firebase_user, new_account)
+    new_account.save()
+    _complete_application_for_profile(email, account_type)
 
-    if account_type != Account.PARTNER:
-        try:
-            application = application_model(account_type)
-            exist_application = application.objects.get(email=email)
-            exist_application["application_state"] = NEW_APPLICATION_STATUS.COMPLETED
-            exist_application.save()
-        except:
-            pass
-    ########
-    success, msg = send_email(
-        recipient=email,
-        data={
-            new_account.preferred_language: True,
-            "subject": TRANSLATIONS[new_account.preferred_language]["profile_complete"],
-        },
-        template_id=PROFILE_COMPLETED,
-    )
+    success, msg = _send_profile_complete_email(email, new_account)
     admin_data = Admin.objects()
     for admin in admin_data:
         txt_role = "Mentor"
@@ -1196,7 +1223,8 @@ def create_mentor_profile():
 # @all_users
 def create_profile_existing_account():
     data = request.json
-    email = data.get("email")
+    email = (data.get("email") or "").strip().lower()
+    data["email"] = email
     user = firebase_admin_auth.get_user_by_email(email)
     data["firebase_uid"] = user.uid
     try:
@@ -1321,9 +1349,15 @@ def create_profile_existing_account():
     if not new_account:
         msg = "Could not parse Account Data"
         logger.info(msg)
-        create_response(status=400, message=msg)
+        return create_response(status=400, message=msg)
 
+    _sync_profile_user(email, account_type, user, new_account)
     new_account.save()
+    _complete_application_for_profile(email, account_type)
+
+    success, msg = _send_profile_complete_email(email, new_account)
+    if not success:
+        logger.info(msg)
 
     admin_data = Admin.objects()
     for admin in admin_data:

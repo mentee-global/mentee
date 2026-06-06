@@ -59,6 +59,7 @@ import OAuthError from "components/pages/OAuthError";
 import AdminOAuthClients from "components/pages/AdminOAuthClients";
 import AdminOAuthClientDetail from "components/pages/AdminOAuthClientDetail";
 import AdminDashboard from "components/pages/AdminDashboard";
+import AdminOnboarding from "components/pages/AdminOnboarding";
 import ConnectedApps from "components/pages/ConnectedApps";
 import AdminRoute from "components/AdminRoute";
 import { useSelector } from "react-redux";
@@ -300,6 +301,9 @@ function App() {
                 </PrivateRoute>
                 <AdminRoute path="/dashboard">
                   <AdminDashboard />
+                </AdminRoute>
+                <AdminRoute path="/onboarding">
+                  <AdminOnboarding />
                 </AdminRoute>
                 <PrivateRoute path="/support/all-mentees">
                   {role === ACCOUNT_TYPE.SUPPORT ? (

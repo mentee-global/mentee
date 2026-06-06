@@ -2125,3 +2125,45 @@ export const fetchDashboardOauthTokensByDay = async (days = 60) => {
   });
   return res?.data?.result?.buckets ?? [];
 };
+
+const ADMIN_ONBOARDING = "/admin/onboarding";
+
+export const fetchAdminOnboarding = async ({
+  role = ACCOUNT_TYPE.MENTEE,
+  page = 1,
+  pageSize = 20,
+  search = "",
+  partnerId = "",
+  effectiveStage = "",
+  attention = false,
+  attentionType = "",
+} = {}) => {
+  const res = await authGet(ADMIN_ONBOARDING, {
+    params: {
+      role,
+      page,
+      page_size: pageSize,
+      search: search || undefined,
+      partner_id: partnerId || undefined,
+      effective_stage:
+        effectiveStage && effectiveStage !== "all" ? effectiveStage : undefined,
+      attention: attention ? "true" : undefined,
+      attention_type:
+        attentionType && attentionType !== "all" ? attentionType : undefined,
+    },
+  });
+  return res?.data?.result ?? { rows: [], total: 0 };
+};
+
+export const runAdminOnboardingAction = async (role, email, action) => {
+  const res = await authPost(
+    `${ADMIN_ONBOARDING}/${role}/${encodeURIComponent(
+      email
+    )}/actions/${action}`,
+    {
+      front_url: FRONT_BASE_URL,
+      preferred_language: i18n.language,
+    }
+  );
+  return res?.data ?? null;
+};

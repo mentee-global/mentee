@@ -43,6 +43,7 @@ from .OAuthAuthorizationCode import OAuthAuthorizationCode
 from .OAuthAccessToken import OAuthAccessToken
 from .OAuthRefreshToken import OAuthRefreshToken
 from .OAuthConsent import OAuthConsent
+from .OnboardingEmailEvent import OnboardingEmailEvent
 
 __all__ = [
     "db",
@@ -87,6 +88,7 @@ __all__ = [
     "OAuthAccessToken",
     "OAuthRefreshToken",
     "OAuthConsent",
+    "OnboardingEmailEvent",
 ]
 
 # You must import all of the new Models you create to this page

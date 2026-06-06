@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
+import { useLocation } from "react-router-dom";
 import {
   Modal,
   Select,
@@ -51,12 +58,23 @@ function daysStuckColor(days) {
 }
 
 function ApplicationOrganizer({ isMentor, partnerId }) {
+  const location = useLocation();
   const { onAuthStateChanged } = useAuth();
+  const initialFilters = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return {
+      search: params.get("search") || "",
+      appState: params.get("application_state") || "all",
+      effectiveStage: params.get("effective_stage") || "all",
+    };
+  }, [location.search]);
   const [applications, setApplications] = useState([]);
-  const [appState, setAppstate] = useState("all");
-  const [effectiveStage, setEffectiveStage] = useState("all");
-  const [searchText, setSearchText] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  const [appState, setAppstate] = useState(initialFilters.appState);
+  const [effectiveStage, setEffectiveStage] = useState(
+    initialFilters.effectiveStage
+  );
+  const [searchText, setSearchText] = useState(initialFilters.search);
+  const [inputValue, setInputValue] = useState(initialFilters.search);
   const [visible, setVisible] = useState(false);
   const [selectedID, setSelectedID] = useState(null);
   const [appInfo, setAppInfo] = useState({});
@@ -114,7 +132,12 @@ function ApplicationOrganizer({ isMentor, partnerId }) {
 
   useEffect(() => {
     onAuthStateChanged(() => {
-      fetchPage(1, "", "all", "all");
+      fetchPage(
+        1,
+        searchTextRef.current,
+        appStateRef.current,
+        effectiveStageRef.current
+      );
     });
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);

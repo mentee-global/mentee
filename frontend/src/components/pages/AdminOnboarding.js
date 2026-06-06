@@ -8,6 +8,7 @@ import {
   Input,
   Modal,
   Popover,
+  Segmented,
   Select,
   Space,
   Table,
@@ -18,7 +19,6 @@ import {
   message,
 } from "antd";
 import {
-  CheckCircleOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
   InfoCircleOutlined,
@@ -831,16 +831,30 @@ export default function AdminOnboarding() {
             />
           </Popover>
         </div>
-        <Button
-          type={attentionOnly ? "primary" : "default"}
-          icon={<CheckCircleOutlined />}
-          onClick={() => {
-            setAttentionOnly((value) => !value);
-            if (attentionOnly) setAttentionType("all");
+        <Segmented
+          value={attentionOnly ? "attention" : "all"}
+          onChange={(value) => {
+            const onlyAttention = value === "attention";
+            setAttentionOnly(onlyAttention);
+            if (!onlyAttention) setAttentionType("all");
           }}
-        >
-          Needs attention
-        </Button>
+          options={[
+            {
+              label:
+                summary.needs_attention != null
+                  ? `Needs attention (${summary.needs_attention})`
+                  : "Needs attention",
+              value: "attention",
+            },
+            {
+              label:
+                (summary.total ?? data.total) != null
+                  ? `All (${summary.total ?? data.total})`
+                  : "All",
+              value: "all",
+            },
+          ]}
+        />
       </div>
 
       <div className="admin-onboarding-summary">
@@ -893,6 +907,8 @@ export default function AdminOnboarding() {
             pageSize: data.page_size || pageSize,
             total: data.total || 0,
             showSizeChanger: true,
+            showTotal: (total) =>
+              `${total.toLocaleString()} ${total === 1 ? "person" : "people"}`,
             onChange: (nextPage, nextPageSize) => {
               setPage(nextPage);
               setPageSize(nextPageSize);

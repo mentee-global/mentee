@@ -4,7 +4,7 @@ import {
   getRole,
   getLoginPath,
   hasPendingOAuthRedirect,
-  isSafeOAuthNext,
+  consumeNextParam,
 } from "utils/auth.service";
 import { ACCOUNT_TYPE, REDIRECTS } from "utils/consts";
 
@@ -29,15 +29,7 @@ function PublicRoute({ children, ...rest }) {
   // from a sibling app that bounced through here because their Flask session
   // expired. Without this, a stale localStorage.role would redirect them to
   // their dashboard before LoginForm mounts, dropping the next= param.
-  var oauth_next_flag = false;
-  if (typeof window !== "undefined") {
-    try {
-      var nextParam = new URLSearchParams(window.location.search).get("next");
-      oauth_next_flag = isSafeOAuthNext(nextParam);
-    } catch (_) {
-      oauth_next_flag = false;
-    }
-  }
+  var oauth_next_flag = Boolean(consumeNextParam());
 
   return (
     <Route

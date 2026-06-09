@@ -45,7 +45,7 @@ import PrivateRoute from "components/PrivateRoute";
 import HomeLayout from "components/pages/HomeLayout";
 import Home from "components/pages/Home";
 import Apply from "components/pages/Apply";
-import { getRole } from "utils/auth.service";
+import { getRole, consumeNextParam } from "utils/auth.service";
 import PublicRoute from "components/PublicRoute";
 import Training from "components/pages/Training";
 import BuildProfile from "components/pages/BuildProfile";
@@ -77,6 +77,7 @@ function App() {
   const [antdLocale, setAntdLocale] = useState(getAntdLocale(i18n.language));
   const { user } = useSelector((state) => state.user);
   const path = window.location.href;
+  const pathname = window.location.pathname;
   const [role, setRole] = useState(getRole());
   const [allHubData, setAllHubData] = useState({});
   const [n50Flag, setN50flag] = useState(false);
@@ -141,6 +142,10 @@ function App() {
   }, [i18n.language]);
 
   const cur_time = new Date().getTime();
+  const hasOAuthNext = Boolean(consumeNextParam());
+  const isOAuthPath = pathname.startsWith("/oauth/");
+  const showPublicContent = role == null || isOAuthPath || hasOAuthNext;
+  const showPrivateShell = role != null && !isOAuthPath && !hasOAuthNext;
 
   return (
     <>
@@ -158,17 +163,14 @@ function App() {
           <SocketComponent />
           <Initiator />
           <Layout hasSider style={{ position: "relative", height: "100%" }}>
-            {role != null && <NavigationSider />}
+            {showPrivateShell && <NavigationSider />}
             <Content
               style={{
-                display:
-                  role != null &&
-                  !window.location.pathname.startsWith("/oauth/") &&
-                  "none",
+                display: showPublicContent ? undefined : "none",
               }}
             >
               <HomeLayout
-                ignoreHomeLayout={role != null}
+                ignoreHomeLayout={showPrivateShell}
                 allHubData={allHubData}
               >
                 <PublicRoute exact path="/">
@@ -279,7 +281,7 @@ function App() {
               style={{
                 height: "100vh",
                 overflow: "hidden",
-                display: role == null ? "none" : undefined,
+                display: showPrivateShell ? undefined : "none",
               }}
             >
               {role != null && <NavigationHeader />}

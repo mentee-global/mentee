@@ -1177,9 +1177,18 @@ export const getFavMentorsById = (mentee_id) => {
 export const sendMessage = (data) => {
   const requestExtension = `/messages/`;
   return authPost(requestExtension, data).then(
-    (response) => response,
+    (response) => ({
+      ok: response.status >= 200 && response.status < 300,
+      held: response.status === 202,
+      message: response?.data?.message,
+      response,
+    }),
     (err) => {
       console.error(err);
+      return {
+        ok: false,
+        error: err?.response?.data?.message || err?.message || "Network error",
+      };
     }
   );
 };
@@ -1355,15 +1364,31 @@ export const getGroupMessageData = (hub_user_id) => {
   );
 };
 
+// Merge held (flagged, undelivered) messages into the delivered list in
+// chronological order. A held message is only the newest right after it's sent;
+// once later messages arrive it belongs earlier in the thread. Both delivered
+// and held items carry created_at.$date, and Array.sort is stable, so the
+// backend's (created_at, id) ordering of delivered messages is preserved.
+const mergeHeldMessages = (msgs, held) => {
+  if (!held.length) return msgs;
+  const ts = (m) =>
+    new Date(m?.created_at?.$date ?? m?.time ?? 0).getTime() || 0;
+  return [...msgs, ...held].sort((a, b) => ts(a) - ts(b));
+};
+
 export const getMessageData = (sender_id, recipient_id) => {
   if (typeof recipient_id !== "string" || !sender_id)
     return Promise.resolve([]);
   const requestExtension = `/messages/direct/?recipient_id=${recipient_id}&sender_id=${sender_id}`;
   return authGet(requestExtension).then(
-    (response) =>
-      Array.isArray(response?.data?.result?.Messages)
-        ? response.data.result.Messages
-        : [],
+    (response) => {
+      const result = response?.data?.result;
+      const msgs = Array.isArray(result?.Messages) ? result.Messages : [];
+      const held = Array.isArray(result?.HeldMessages)
+        ? result.HeldMessages
+        : [];
+      return mergeHeldMessages(msgs, held);
+    },
     (err) => {
       console.error(err);
       return [];
@@ -1397,15 +1422,21 @@ export const getDirectMessagesPage = (
     )}&before_id=${encodeURIComponent(beforeId)}`;
   }
   return authGet(requestExtension).then(
-    (response) => ({
-      messages: Array.isArray(response?.data?.result?.Messages)
-        ? response.data.result.Messages
-        : [],
-      hasMore: !!response?.data?.result?.has_more,
-      nextBefore: response?.data?.result?.next_before || null,
-      nextBeforeId: response?.data?.result?.next_before_id || null,
-      error: false,
-    }),
+    (response) => {
+      const result = response?.data?.result;
+      const msgs = Array.isArray(result?.Messages) ? result.Messages : [];
+      const held = Array.isArray(result?.HeldMessages)
+        ? result.HeldMessages
+        : [];
+      return {
+        // Held messages only arrive on the first page; merge them in by time.
+        messages: mergeHeldMessages(msgs, held),
+        hasMore: !!result?.has_more,
+        nextBefore: result?.next_before || null,
+        nextBeforeId: result?.next_before_id || null,
+        error: false,
+      };
+    },
     (err) => {
       console.error(err);
       // Signal the failure instead of reporting an empty end-of-history, so the
@@ -1869,6 +1900,68 @@ export const setErrorAlertRecipients = async (adminIds) => {
 export const deleteErrorLog = async (id) => {
   const requestExtension = `/admin/error-logs/${id}`;
   return authDelete(requestExtension).then(
+    (response) => ({ ok: true, response }),
+    (err) => {
+      console.error(err);
+      return {
+        ok: false,
+        error: err?.response?.data?.message || err?.message || "Network error",
+      };
+    }
+  );
+};
+
+// Admin - Message Flags
+export const fetchMessageFlags = async (filters = {}) => {
+  const requestExtension = `/admin/message-flags/`;
+  return authGet(requestExtension, { params: filters }).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return { items: [], total: 0, page: 1, limit: 50 };
+    }
+  );
+};
+
+export const fetchMessageFlagById = async (id) => {
+  const requestExtension = `/admin/message-flags/${id}`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result,
+    (err) => {
+      console.error(err);
+      return null;
+    }
+  );
+};
+
+export const updateMessageFlagAction = async (id, action, note = "") => {
+  const requestExtension = `/admin/message-flags/${id}/action`;
+  return authPut(requestExtension, { action, note }).then(
+    (response) => ({ ok: true, result: response.data.result }),
+    (err) => {
+      console.error(err);
+      return {
+        ok: false,
+        error: err?.response?.data?.message || err?.message || "Network error",
+      };
+    }
+  );
+};
+
+export const fetchMessageFlagRecipients = async () => {
+  const requestExtension = `/admin/message-flags/recipients`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.admins,
+    (err) => {
+      console.error(err);
+      return [];
+    }
+  );
+};
+
+export const setMessageFlagRecipients = async (adminIds) => {
+  const requestExtension = `/admin/message-flags/recipients`;
+  return authPut(requestExtension, { admin_ids: adminIds }).then(
     (response) => ({ ok: true, response }),
     (err) => {
       console.error(err);

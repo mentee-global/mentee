@@ -19,6 +19,7 @@ import AdminAccountData from "components/pages/AdminAccountData";
 import AdminAppointmentData from "components/pages/AdminAppointmentData";
 import AdminBugReports from "components/pages/AdminBugReports";
 import AdminErrorLogs from "components/pages/AdminErrorLogs";
+import AdminMessageFlags from "components/pages/AdminMessageFlags";
 import MenteeGallery from "components/pages/MenteeGallery";
 import Messages from "components/pages/Messages";
 import GroupMessages from "components/pages/GroupMessages";
@@ -811,6 +812,9 @@ function App() {
                 </AdminRoute>
                 <AdminRoute path="/admin/error-logs" exact>
                   <AdminErrorLogs />
+                </AdminRoute>
+                <AdminRoute path="/admin/message-flags" exact>
+                  <AdminMessageFlags />
                 </AdminRoute>
                 <PrivateRoute path="/settings/connected-apps" exact>
                   <ConnectedApps />

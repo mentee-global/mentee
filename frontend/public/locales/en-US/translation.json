@@ -535,6 +535,7 @@
     "sendInvite": "Send invite",
     "sendInviteBody": "Thank you for reaching out for a session! You can select any option that works for you in the below links and book an appointment.",
     "sendMessagePlaceholder": "Send a message",
+    "policyBlocked": "This message couldn't be sent because it doesn't comply with our platform's community guidelines. For more information, please contact support.",
     "sidebarTitle": "My Messages",
     "reply": "Reply",
     "startConversation": "Start a conversation today!",

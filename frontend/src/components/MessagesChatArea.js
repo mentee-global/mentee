@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
-import { Avatar, Input, Button, Spin, Modal, theme, Drawer } from "antd";
+import {
+  Avatar,
+  Input,
+  Button,
+  Spin,
+  Modal,
+  theme,
+  Drawer,
+  message as antdMessage,
+} from "antd";
 import { withRouter, NavLink } from "react-router-dom";
 import { ACCOUNT_TYPE } from "utils/consts";
 import moment from "moment-timezone";
@@ -351,6 +360,23 @@ function MessagesChatArea(props) {
   const handleUpdateAccount = () => {
     setUpdateContent(!updateContent);
   };
+
+  const handleSendAck = (response, onDelivered, onHeld) => {
+    if (response?.success === false) {
+      antdMessage.error(response.message || "Message could not be sent");
+      return;
+    }
+    if (response?.held) {
+      if (onHeld) {
+        onHeld();
+      } else {
+        antdMessage.error(t("messages.policyBlocked"));
+      }
+      return;
+    }
+    onDelivered();
+  };
+
   const handleSuccessBooking = (chatMsg) => {
     let dateTime = moment().utc();
     const msg = {
@@ -360,14 +386,17 @@ function MessagesChatArea(props) {
       recipient_id: activeMessageId,
       time: dateTime,
     };
-    socket.emit("send", msg);
-    msg["sender_id"] = { $oid: msg["sender_id"] };
-    msg["recipient_id"] = { $oid: msg["recipient_id"] };
-    msg.time = moment().local().format("LLL");
-    props.addMyMessage(msg);
-    setMessageText("");
-    getAppointments();
-    getAvailableInFuture();
+    socket.emit("send", msg, (response) =>
+      handleSendAck(response, () => {
+        msg["sender_id"] = { $oid: msg["sender_id"] };
+        msg["recipient_id"] = { $oid: msg["recipient_id"] };
+        msg.time = moment().local().format("LLL");
+        props.addMyMessage(msg);
+        setMessageText("");
+        getAppointments();
+        getAvailableInFuture();
+      })
+    );
     return;
   };
   /*
@@ -379,7 +408,6 @@ function MessagesChatArea(props) {
       sender_id: profileId,
       recipient_id: activeMessageId,
     };
-    socketInvite.emit("invite", inviteMsg);
     let dateTime = moment().utc();
     var availabes_in_future = [];
     asArray(availabeInFuture).map((avail_item, index) => {
@@ -396,15 +424,19 @@ function MessagesChatArea(props) {
       time: dateTime,
       availabes_in_future: availabes_in_future,
     };
-    socket.emit("send", msg);
-    setTimeout(() => {
-      sendInviteMail(activeMessageId, profileId, availabes_in_future);
-    }, 1000);
-    msg["sender_id"] = { $oid: msg["sender_id"] };
-    msg["recipient_id"] = { $oid: msg["recipient_id"] };
-    msg.time = moment().local().format("LLL");
-    props.addMyMessage(msg);
-    setMessageText("");
+    socket.emit("send", msg, (response) =>
+      handleSendAck(response, () => {
+        socketInvite.emit("invite", inviteMsg);
+        setTimeout(() => {
+          sendInviteMail(activeMessageId, profileId, availabes_in_future);
+        }, 1000);
+        msg["sender_id"] = { $oid: msg["sender_id"] };
+        msg["recipient_id"] = { $oid: msg["recipient_id"] };
+        msg.time = moment().local().format("LLL");
+        props.addMyMessage(msg);
+        setMessageText("");
+      })
+    );
     return;
   };
 
@@ -418,27 +450,47 @@ function MessagesChatArea(props) {
   };
 
   const sendMessage = (e) => {
-    let currentMessage = messageText;
+    const currentMessage = messageText;
     if (!currentMessage.trim().length) {
       return;
     }
-    let dateTime = moment().utc();
-    const msg = {
+    const tempId = `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const wireMsg = {
       body: currentMessage,
       message_read: false,
       sender_id: profileId,
       recipient_id: activeMessageId,
-      time: dateTime,
+      time: moment().utc(),
     };
-    socket.emit("send", msg);
-    setTimeout(() => {
-      sendNotifyUnreadMessage(activeMessageId);
-    }, 1000);
-    msg["sender_id"] = { $oid: msg["sender_id"] };
-    msg["recipient_id"] = { $oid: msg["recipient_id"] };
-    msg.time = moment().local().format("LLL");
-    props.addMyMessage(msg);
+    // Render the sender's message instantly (optimistic) and clear the input;
+    // moderation runs in the background and we reconcile on the ack below.
+    props.addMyMessage({
+      _tempId: tempId,
+      body: currentMessage,
+      message_read: false,
+      sender_id: { $oid: profileId },
+      recipient_id: { $oid: activeMessageId },
+      time: moment().local().format("LLL"),
+      pending: true,
+    });
     setMessageText("");
+    socket.emit("send", wireMsg, (response) => {
+      if (response?.success === false) {
+        antdMessage.error(response.message || "Message could not be sent");
+        props.removeMyMessage(tempId);
+        return;
+      }
+      if (response?.held) {
+        // Flagged: keep it in the sender's thread (dimmed, with an alert) but
+        // never deliver it to the recipient.
+        props.updateMyMessage(tempId, { pending: false, held: true });
+        return;
+      }
+      props.updateMyMessage(tempId, { pending: false });
+      setTimeout(() => {
+        sendNotifyUnreadMessage(activeMessageId);
+      }, 1000);
+    });
     return;
   };
   if (!activeMessageId || !messages || !messages.length) {
@@ -655,6 +707,11 @@ function MessagesChatArea(props) {
                             ${senderId === profileId
                               ? styles.bubbleSent
                               : styles.bubbleReceived}
+                            ${block?.held
+                              ? "opacity: 0.55;"
+                              : block?.pending
+                              ? "opacity: 0.7;"
+                              : ""}
                           `}
                         >
                           <HtmlContent content={linkify(block?.body)} />
@@ -731,6 +788,23 @@ function MessagesChatArea(props) {
                             .local()
                             .format("LLL")}
                     </span>
+                    {block?.held && (
+                      <div
+                        className={css`
+                          margin-top: 4px;
+                          max-width: 360px;
+                          padding: 6px 10px;
+                          border-radius: 6px;
+                          background: #fff7e6;
+                          border: 1px solid #ffe7ba;
+                          font-size: 12px;
+                          line-height: 1.35;
+                          color: #ad6800;
+                        `}
+                      >
+                        {t("messages.policyBlocked")}
+                      </div>
+                    )}
                   </div>
                 </div>
               );

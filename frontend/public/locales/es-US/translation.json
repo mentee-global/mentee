@@ -533,6 +533,7 @@
     "sendInvite": "Enviar invitación",
     "sendInviteBody": "¡Gracias por contactarnos para una sesión! ",
     "sendMessagePlaceholder": "Enviar un mensaje",
+    "policyBlocked": "Este mensaje no se pudo enviar porque no cumple con las normas de la comunidad de nuestra plataforma. Para más información, comunícate con soporte.",
     "sidebarTitle": "Mis mensajes",
     "reply": "Responder",
     "startConversation": "¡Comienza una conversación hoy!",

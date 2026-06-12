@@ -33,13 +33,26 @@ function PublicMessageModal({ mentorId, menteeId, menteeName }) {
       link: user?.website ?? user?.linkedin ?? "",
       time: moment().format("YYYY-MM-DD, HH:mm:ssZZ"),
     };
-    if (!(await sendMessage(data))) {
+    const result = await sendMessage(data);
+    if (!result?.ok) {
       messageApi.error({
-        content: t("failed to send message"),
+        content: result?.error || t("failed to send message"),
         duration: 0,
         key: "failed_to_send_message",
         onClick: () => messageApi.destroy("failed_to_send_message"),
       });
+      setLoading(false);
+      return;
+    }
+    if (result.held) {
+      messageApi.error({
+        content: t("messages.policyBlocked"),
+        duration: 0,
+        key: "message_not_sent",
+        onClick: () => messageApi.destroy("message_not_sent"),
+      });
+      setLoading(false);
+      closeModals();
       return;
     }
     messageApi.success({

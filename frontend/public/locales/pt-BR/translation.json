@@ -533,6 +533,7 @@
     "sendInvite": "Enviar convite",
     "sendInviteBody": "Obrigado por entrar em contato para uma sessão! Você pode selecionar qualquer opção que lhe seja conveniente nos links abaixo e agendar um compromisso.",
     "sendMessagePlaceholder": "Envie uma mensagem",
+    "policyBlocked": "Não foi possível enviar esta mensagem porque ela não está de acordo com as diretrizes da comunidade da nossa plataforma. Para mais informações, entre em contato com o suporte.",
     "sidebarTitle": "Minhas mensagens",
     "reply": "Responder",
     "startConversation": "Comece uma conversa hoje!",

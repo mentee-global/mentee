@@ -38,6 +38,7 @@ from .Announcement import Announcement
 from .CommunityLibrary import CommunityLibrary
 from .BugReport import BugReport
 from .ErrorLog import ErrorLog
+from .MessageFlag import MessageFlag
 from .OAuthClient import OAuthClient
 from .OAuthAuthorizationCode import OAuthAuthorizationCode
 from .OAuthAccessToken import OAuthAccessToken
@@ -83,6 +84,7 @@ __all__ = [
     "CommunityLibrary",
     "BugReport",
     "ErrorLog",
+    "MessageFlag",
     "OAuthClient",
     "OAuthAuthorizationCode",
     "OAuthAccessToken",

@@ -516,6 +516,10 @@ export default function useSidebars(userType, user, t) {
           key: "messages-details",
         },
         {
+          label: "Flagged Messages",
+          key: "admin/message-flags",
+        },
+        {
           label: "Bug Reports",
           key: "bug-reports",
         },

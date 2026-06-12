@@ -64,7 +64,8 @@ const sourceLabel = {
 
 function formatDate(value) {
   const raw = dateValue(value);
-  return raw ? moment(raw).format("MMM D, YYYY h:mm A") : "";
+  // Stored timestamps are UTC; interpret as UTC and show in the viewer's zone.
+  return raw ? moment.utc(raw).local().format("MMM D, YYYY h:mm A") : "";
 }
 
 function compactId(value) {

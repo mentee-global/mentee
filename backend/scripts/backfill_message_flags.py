@@ -15,7 +15,7 @@ import sys
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from bson import ObjectId
 from pymongo import MongoClient
@@ -28,7 +28,42 @@ except ImportError:
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = SCRIPT_DIR.parent
-DEFAULT_MODEL = "gpt-5-nano"
+DEFAULT_MODEL = "gpt-4o-mini"
+
+# Mirrors MODERATION_SYSTEM_PROMPT in api/utils/message_flagging.py (duplicated
+# because this one-off script runs standalone, with no app import).
+MODERATION_SYSTEM_PROMPT = (
+    "You review messages on Mentee Global, a mentorship platform that connects "
+    "immigrant and refugee youth (mentees) with volunteer mentors. Most messages "
+    "are normal conversation and must NOT be flagged. Flag a message, in any "
+    "language, only when it clearly and genuinely violates platform safety or "
+    "misuses the platform. Violations are: harassment, hate, threats, violence, "
+    "sexual content, self-harm encouragement, exploitation, or abusive language; "
+    "financial solicitation, meaning actually asking the other person to give, "
+    "send, lend, or pay money, or sending payment details to receive money; "
+    "scams and fraud, such as phishing, fake offers, or requests for sensitive "
+    "personal or financial information (passwords, bank or card details, "
+    "identity documents); advertising, selling, or recruiting (including "
+    "multi-level marketing and job or investment pitches); explicit romantic or "
+    "sexual advances; and sharing or requesting personal contact details (phone "
+    "number, WhatsApp, email, social handles) or pushing to move the "
+    "conversation off the platform. "
+    "Do NOT flag normal conversation or mentorship logistics. Greetings, small "
+    "talk, thanks, and arranging to meet -- proposing or asking to meet, "
+    "scheduling or asking about a call or session, and asking when or where to "
+    "meet -- are legitimate and must not be flagged. Suggesting a meeting is not "
+    "a contact-detail or off-platform violation. Discussing careers, education, "
+    "jobs, budgeting, finances, scholarships, or immigration as guidance is "
+    "normal; only flag an actual request for money or other clear misuse, not a "
+    "mere mention of these topics. When a message is short, ambiguous, or only "
+    "mentions a sensitive topic without a clear violation, do NOT flag it. "
+    "Prioritize English, Spanish, Portuguese, Arabic, Persian, and Dari, but "
+    "review messages written in any language. In the categories field, use short "
+    "snake_case labels such as harassment, hate, sexual_content, threats, "
+    "self_harm, exploitation, scam, financial_solicitation, spam_advertising, "
+    "off_topic, romantic_advance, or contact_info_request. Set severity by how "
+    "harmful the content is. Return concise JSON only."
+)
 
 COLLECTIONS = {
     "direct_message": {
@@ -152,22 +187,19 @@ def _openai_schema() -> Dict[str, Any]:
     }
 
 
+def _is_reasoning_model(model: str) -> bool:
+    return (model or "").lower().startswith(("gpt-5", "o1", "o3", "o4"))
+
+
 def _classify(client, model: str, text: str) -> Dict[str, Any]:
-    response = client.responses.create(
+    request = dict(
         model=model,
         input=[
             {
                 "role": "system",
-                "content": (
-                    "Review this historical platform message for admin moderation. "
-                    "Flag harassment, threats, sexual content, hate, exploitation, "
-                    "scams, self-harm encouragement, or abusive language. Prioritize "
-                    "English, Spanish, Portuguese, Arabic, and Persian, but review "
-                    "the message in any other language if it is written in a "
-                    "different language. Return JSON only."
-                ),
+                "content": MODERATION_SYSTEM_PROMPT,
             },
-            {"role": "user", "content": f"Message:\n{text}"},
+            {"role": "user", "content": f"Message: {text}"},
         ],
         text={
             "format": {
@@ -177,60 +209,24 @@ def _classify(client, model: str, text: str) -> Dict[str, Any]:
                 "strict": True,
             }
         },
-        max_output_tokens=300,
+        max_output_tokens=600,
     )
+    # Reasoning models (gpt-5*, o-series) need minimal reasoning so the JSON isn't
+    # crowded out; non-reasoning models (gpt-4o-mini) reject the parameter.
+    if _is_reasoning_model(model):
+        request["reasoning"] = {"effort": "minimal"}
+    response = client.responses.create(**request)
     return json.loads(getattr(response, "output_text", "") or "{}")
 
 
-def _term_matches(db, text: str) -> List[Dict[str, Any]]:
-    normalized = text.lower()
-    matches = []
-    for term in db["flagged_term"].find({"enabled": {"$ne": False}}):
-        needle = (term.get("term") or "").strip().lower()
-        if needle and needle in normalized:
-            matches.append(
-                {
-                    "term": term.get("term"),
-                    "language": term.get("language") or "all",
-                    "category": term.get("category") or "custom",
-                    "severity": term.get("severity") or "medium",
-                }
-            )
-    return matches
-
-
-def _best_severity(values: List[str]) -> str:
-    order = {"low": 1, "medium": 2, "high": 3}
-    return max(values or ["low"], key=lambda item: order.get(item, 1))
-
-
-def _combined_result(db, ai_result: Dict[str, Any], text: str) -> Dict[str, Any]:
-    terms = _term_matches(db, text)
-    categories = list(
-        dict.fromkeys(
-            list(ai_result.get("categories") or [])
-            + [match.get("category") or "custom" for match in terms]
-        )
-    )
-    reason = ai_result.get("reason") or ""
-    if terms:
-        reason = (
-            reason
-            + " Matched flagged term(s): "
-            + ", ".join(match["term"] for match in terms[:5])
-            + "."
-        ).strip()
+def _ai_flag_result(ai_result: Dict[str, Any]) -> Dict[str, Any]:
     return {
-        "flagged": bool(ai_result.get("flagged")) or bool(terms),
-        "severity": _best_severity(
-            [ai_result.get("severity") or "low"]
-            + [match.get("severity") or "medium" for match in terms]
-        ),
-        "categories": categories,
-        "reason": reason or "Potentially inappropriate message.",
+        "flagged": bool(ai_result.get("flagged")),
+        "severity": ai_result.get("severity") or "low",
+        "categories": list(ai_result.get("categories") or []),
+        "reason": ai_result.get("reason") or "Potentially inappropriate message.",
         "language": ai_result.get("language"),
         "confidence": ai_result.get("confidence"),
-        "term_matches": terms,
         "openai_response": ai_result,
     }
 
@@ -279,7 +275,6 @@ def _flag_doc(
         "reason": result["reason"],
         "language": result["language"],
         "confidence": result["confidence"],
-        "term_matches": result["term_matches"],
         "openai_model": model,
         "openai_response": result["openai_response"],
         "created_at": now,
@@ -342,7 +337,7 @@ def main() -> int:
                     continue
                 try:
                     ai_result = _classify(openai_client, args.model, text)
-                    result = _combined_result(db, ai_result, text)
+                    result = _ai_flag_result(ai_result)
                 except Exception as exc:
                     counts["errors"] += 1
                     print(

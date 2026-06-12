@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from bson.errors import InvalidId
@@ -149,8 +150,8 @@ def get_message_flag(flag_id):
     return create_response(
         data={
             "flag": _flag_payload(flag),
-            "original_message": original,
-            "context": context,
+            "original_message": json.loads(original.to_json()) if original else None,
+            "context": [json.loads(item.to_json()) for item in context],
         }
     )
 
@@ -199,3 +200,44 @@ def update_message_flag_action(flag_id):
         return create_response(status=500, message=str(exc))
 
     return create_response(data={"flag": _flag_payload(flag)}, message="Success")
+
+
+@message_flags.route("/recipients", methods=["GET"])
+@admin_only
+def list_flag_alert_recipients():
+    """List all admins with their flag-alert opt-in state."""
+    admins = Admin.objects().only("id", "email", "name", "receive_flag_alerts")
+    items = [
+        {
+            "id": str(a.id),
+            "name": a.name,
+            "email": a.email,
+            "receive_flag_alerts": bool(a.receive_flag_alerts),
+        }
+        for a in admins
+    ]
+    return create_response(data={"admins": items})
+
+
+@message_flags.route("/recipients", methods=["PUT"])
+@admin_only
+def set_flag_alert_recipients():
+    """Set the full opt-in list. Body: {admin_ids: [str, ...]}.
+
+    Selected admins get receive_flag_alerts=True; everyone else is cleared.
+    When none are selected, alerts fall back to all admins (see
+    notify_admins_of_flag).
+    """
+    data = request.get_json(silent=True) or {}
+    selected = data.get("admin_ids") or []
+    if not isinstance(selected, list):
+        return create_response(status=422, message="admin_ids must be a list")
+    selected_ids = [str(x) for x in selected if x]
+
+    if selected_ids:
+        Admin.objects(id__in=selected_ids).update(set__receive_flag_alerts=True)
+        Admin.objects(id__nin=selected_ids).update(set__receive_flag_alerts=False)
+    else:
+        Admin.objects().update(set__receive_flag_alerts=False)
+
+    return create_response(message="ok")

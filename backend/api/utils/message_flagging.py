@@ -3,6 +3,7 @@ import os
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import lru_cache
 from html import escape
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -16,7 +17,6 @@ from api.models import (
     Admin,
     Availability,
     DirectMessage,
-    FlaggedTerm,
     GroupMessage,
     Hub,
     MenteeProfile,
@@ -28,8 +28,7 @@ from api.models import (
 from api.utils.request_utils import send_email_html
 
 
-DEFAULT_MESSAGE_FLAGGING_MODEL = "gpt-5-nano"
-SEVERITY_ORDER = {"low": 1, "medium": 2, "high": 3}
+DEFAULT_MESSAGE_FLAGGING_MODEL = "gpt-4o-mini"
 
 SOURCE_DIRECT = "direct"
 SOURCE_GROUP = "group"
@@ -40,6 +39,39 @@ SOURCE_COLLECTIONS = {
     SOURCE_GROUP: "group_message",
     SOURCE_PARTNER_GROUP: "partner_group_message",
 }
+
+MODERATION_SYSTEM_PROMPT = (
+    "You review messages on Mentee Global, a mentorship platform that connects "
+    "immigrant and refugee youth (mentees) with volunteer mentors. Most messages "
+    "are normal conversation and must NOT be flagged. Flag a message, in any "
+    "language, only when it clearly and genuinely violates platform safety or "
+    "misuses the platform. Violations are: harassment, hate, threats, violence, "
+    "sexual content, self-harm encouragement, exploitation, or abusive language; "
+    "financial solicitation, meaning actually asking the other person to give, "
+    "send, lend, or pay money, or sending payment details to receive money; "
+    "scams and fraud, such as phishing, fake offers, or requests for sensitive "
+    "personal or financial information (passwords, bank or card details, "
+    "identity documents); advertising, selling, or recruiting (including "
+    "multi-level marketing and job or investment pitches); explicit romantic or "
+    "sexual advances; and sharing or requesting personal contact details (phone "
+    "number, WhatsApp, email, social handles) or pushing to move the "
+    "conversation off the platform. "
+    "Do NOT flag normal conversation or mentorship logistics. Greetings, small "
+    "talk, thanks, and arranging to meet -- proposing or asking to meet, "
+    "scheduling or asking about a call or session, and asking when or where to "
+    "meet -- are legitimate and must not be flagged. Suggesting a meeting is not "
+    "a contact-detail or off-platform violation. Discussing careers, education, "
+    "jobs, budgeting, finances, scholarships, or immigration as guidance is "
+    "normal; only flag an actual request for money or other clear misuse, not a "
+    "mere mention of these topics. When a message is short, ambiguous, or only "
+    "mentions a sensitive topic without a clear violation, do NOT flag it. "
+    "Prioritize English, Spanish, Portuguese, Arabic, Persian, and Dari, but "
+    "review messages written in any language. In the categories field, use short "
+    "snake_case labels such as harassment, hate, sexual_content, threats, "
+    "self_harm, exploitation, scam, financial_solicitation, spam_advertising, "
+    "off_topic, romantic_advance, or contact_info_request. Set severity by how "
+    "harmful the content is. Return concise JSON only."
+)
 
 
 class ModerationUnavailable(Exception):
@@ -54,7 +86,6 @@ class ModerationResult:
     reason: str = ""
     language: Optional[str] = None
     confidence: Optional[float] = None
-    term_matches: List[Dict[str, Any]] = field(default_factory=list)
     model: str = ""
     response: Dict[str, Any] = field(default_factory=dict)
 
@@ -67,6 +98,33 @@ def message_flagging_model() -> str:
     return os.environ.get(
         "OPENAI_MESSAGE_FLAGGING_MODEL", DEFAULT_MESSAGE_FLAGGING_MODEL
     )
+
+
+def _is_reasoning_model(model: str) -> bool:
+    m = (model or "").lower()
+    return m.startswith(("gpt-5", "o1", "o3", "o4"))
+
+
+@lru_cache(maxsize=1)
+def _get_openai_client(api_key: str):
+    # Reuse one client (and its keep-alive connection pool) across calls so each
+    # classification doesn't pay a fresh TLS handshake to OpenAI.
+    from openai import OpenAI
+
+    return OpenAI(api_key=api_key)
+
+
+def _create_openai_response(client, request: Dict[str, Any]):
+    # The server runs on eventlet's single cooperative hub, but the OpenAI HTTP
+    # call uses blocking sockets, so a multi-second classification would freeze
+    # every other request while it runs. Offload it to a native worker thread so
+    # the hub stays responsive and concurrent sends moderate in parallel. Fall
+    # back to a direct call when eventlet isn't available (scripts/tests).
+    try:
+        from eventlet import tpool
+    except ImportError:
+        return client.responses.create(**request)
+    return tpool.execute(client.responses.create, **request)
 
 
 def _parse_object_id(value: Any) -> Optional[ObjectId]:
@@ -99,33 +157,10 @@ def _parse_datetime(value: Any) -> Optional[datetime]:
     return None
 
 
-def _best_severity(values: List[str]) -> str:
-    return max(values or ["low"], key=lambda item: SEVERITY_ORDER.get(item, 1))
-
-
 def _safe_text(value: Any, max_length: int = 500) -> str:
     text = "" if value is None else str(value)
     text = " ".join(text.split())
     return text if len(text) <= max_length else text[: max_length - 3] + "..."
-
-
-def scan_flagged_terms(text: str) -> List[Dict[str, Any]]:
-    if not text:
-        return []
-    normalized = text.lower()
-    matches = []
-    for term in FlaggedTerm.objects(enabled=True):
-        needle = (term.term or "").strip().lower()
-        if needle and needle in normalized:
-            matches.append(
-                {
-                    "term": term.term,
-                    "language": term.language or "all",
-                    "category": term.category or "custom",
-                    "severity": term.severity or "medium",
-                }
-            )
-    return matches
 
 
 def _openai_schema() -> Dict[str, Any]:
@@ -163,29 +198,21 @@ def classify_message_with_openai(
         raise ModerationUnavailable("OPENAI_API_KEY is required for message flagging")
 
     try:
-        from openai import OpenAI
+        client = _get_openai_client(api_key)
     except ImportError as exc:
         raise ModerationUnavailable("openai package is not installed") from exc
 
     model = model or message_flagging_model()
-    client = OpenAI(api_key=api_key)
-    response = client.responses.create(
+    request = dict(
         model=model,
         input=[
             {
                 "role": "system",
-                "content": (
-                    "You review platform messages for safety. Flag only genuine "
-                    "policy concerns such as harassment, sexual content, threats, "
-                    "self-harm encouragement, hate, exploitation, scams, or abusive "
-                    "language. Prioritize English, Spanish, Portuguese, Arabic, and "
-                    "Persian, but review the message in any other language if it is "
-                    "written in a different language. Return concise JSON only."
-                ),
+                "content": MODERATION_SYSTEM_PROMPT,
             },
             {
                 "role": "user",
-                "content": f"Message to classify:\n{text}",
+                "content": f"Message to classify: {text}",
             },
         ],
         text={
@@ -196,8 +223,15 @@ def classify_message_with_openai(
                 "strict": True,
             }
         },
-        max_output_tokens=300,
+        max_output_tokens=600,
     )
+    # Reasoning models (gpt-5*, o-series) reason before answering; without a
+    # minimal-reasoning hint, reasoning consumes the whole token budget and the
+    # JSON comes back empty (every message would look unflagged). Non-reasoning
+    # models (e.g. gpt-4o-mini) reject the parameter, so only send it when needed.
+    if _is_reasoning_model(model):
+        request["reasoning"] = {"effort": "minimal"}
+    response = _create_openai_response(client, request)
     raw = getattr(response, "output_text", "") or "{}"
     return json.loads(raw)
 
@@ -206,33 +240,15 @@ def moderate_message_text(text: str, model: Optional[str] = None) -> ModerationR
     if not message_flagging_enabled():
         return ModerationResult(flagged=False)
 
-    term_matches = scan_flagged_terms(text)
     ai_result = classify_message_with_openai(text, model=model)
 
-    term_flagged = bool(term_matches)
-    ai_flagged = bool(ai_result.get("flagged"))
-    severity_values = [ai_result.get("severity") or "low"] + [
-        match.get("severity") or "medium" for match in term_matches
-    ]
-    categories = list(
-        dict.fromkeys(
-            list(ai_result.get("categories") or [])
-            + [match.get("category") or "custom" for match in term_matches]
-        )
-    )
-    reason = ai_result.get("reason") or ""
-    if term_flagged:
-        matched = ", ".join(match["term"] for match in term_matches[:5])
-        reason = f"{reason} Matched flagged term(s): {matched}.".strip()
-
     return ModerationResult(
-        flagged=term_flagged or ai_flagged,
-        severity=_best_severity(severity_values),
-        categories=categories,
-        reason=reason or "Potentially inappropriate message.",
+        flagged=bool(ai_result.get("flagged")),
+        severity=ai_result.get("severity") or "low",
+        categories=list(ai_result.get("categories") or []),
+        reason=ai_result.get("reason") or "Potentially inappropriate message.",
         language=ai_result.get("language"),
         confidence=ai_result.get("confidence"),
-        term_matches=term_matches,
         model=model or message_flagging_model(),
         response=ai_result,
     )
@@ -311,7 +327,6 @@ def create_message_flag(
         reason=moderation.reason,
         language=moderation.language,
         confidence=moderation.confidence,
-        term_matches=moderation.term_matches,
         openai_model=moderation.model,
         openai_response=moderation.response,
     )
@@ -321,38 +336,100 @@ def create_message_flag(
     except NotUniqueError:
         return MessageFlag.objects(source_key=source_key).first(), False
 
-    if notify_admins and flag.origin == "live" and _should_email_flag(flag):
-        notify_admins_of_flag(flag)
+    if notify_admins and flag.origin == "live":
+        # Send admin alerts off the request path so messaging stays fast.
+        socketio.start_background_task(notify_admins_of_flag, flag)
     return flag, created
-
-
-def _should_email_flag(flag: MessageFlag) -> bool:
-    threshold = os.environ.get("MESSAGE_FLAGGING_EMAIL_SEVERITY", "high").lower()
-    return SEVERITY_ORDER.get(flag.severity, 1) >= SEVERITY_ORDER.get(threshold, 3)
 
 
 def notify_admins_of_flag(flag: MessageFlag) -> None:
     label = sender_label(flag.sender_id)
-    subject = f"Mentee message held for review ({flag.severity})"
-    frontend_url = os.environ.get("FRONT_BASE_URL") or os.environ.get(
-        "FRONTEND_URL", "https://app.menteeglobal.org"
+    severity = (flag.severity or "low").lower()
+    subject = f"Flagged message for review ({severity})"
+    frontend_url = (
+        os.environ.get("FRONT_BASE_URL")
+        or os.environ.get("FRONTEND_URL", "https://app.menteeglobal.org")
+    ).rstrip("/")
+
+    severity_palette = {
+        "high": ("#fdecea", "#b71c1c"),
+        "medium": ("#fff4e5", "#b15c00"),
+        "low": ("#e8f0fe", "#1a56b0"),
+    }
+    sev_bg, sev_fg = severity_palette.get(severity, severity_palette["low"])
+
+    sender_name = escape(label.get("name") or "Unknown")
+    sender_email = escape(label.get("email") or "")
+    sender_line = (
+        f"{sender_name} &lt;{sender_email}&gt;" if sender_email else sender_name
     )
-    html = f"""
-    <p>A {escape(flag.severity)} severity message was held for admin review.</p>
-    <p><strong>Sender:</strong> {escape(label.get("name") or "")} {escape(label.get("email") or "")}</p>
-    <p><strong>Type:</strong> {escape(flag.source_type)}</p>
-    <p><strong>Reason:</strong> {escape(flag.reason)}</p>
-    <p><strong>Message:</strong> {escape(_safe_text(flag.body, 800))}</p>
-    <p><a href="{escape(frontend_url.rstrip('/'))}/admin/message-flags">Review flagged messages</a></p>
-    """
-    for admin in Admin.objects():
-        ok, err = send_email_html(
-            recipient=admin.email,
-            subject=subject,
-            html_content=html,
-        )
-        if not ok:
-            logger.error(f"message_flag alert to {admin.email} failed: {err}")
+    type_label = escape(
+        {
+            SOURCE_DIRECT: "Direct message",
+            SOURCE_GROUP: "Hub group",
+            SOURCE_PARTNER_GROUP: "Partner group",
+        }.get(flag.source_type, flag.source_type or "")
+    )
+    categories = ", ".join(escape(c) for c in (flag.categories or [])) or "—"
+    reason = escape(flag.reason or "")
+    body = escape(_safe_text(flag.body, 800))
+    review_url = f"{escape(frontend_url)}/admin/message-flags"
+
+    html = f"""\
+<div style="margin:0;padding:24px;background:#f4f5f9;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #ececf1;border-radius:12px;overflow:hidden;">
+    <tr>
+      <td style="background:#7a2c3b;padding:20px 28px;">
+        <div style="color:#ffffff;font-size:12px;letter-spacing:0.6px;text-transform:uppercase;opacity:0.8;">Mentee Global</div>
+        <div style="color:#ffffff;font-size:19px;font-weight:700;margin-top:3px;">A message was flagged for review</div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:24px 28px;">
+        <span style="display:inline-block;padding:4px 12px;border-radius:999px;background:{sev_bg};color:{sev_fg};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">{escape(severity)} severity</span>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;font-size:14px;color:#1f2330;">
+          <tr><td style="padding:6px 0;color:#8a8f9c;width:96px;vertical-align:top;">Sender</td><td style="padding:6px 0;">{sender_line}</td></tr>
+          <tr><td style="padding:6px 0;color:#8a8f9c;vertical-align:top;">Type</td><td style="padding:6px 0;">{type_label}</td></tr>
+          <tr><td style="padding:6px 0;color:#8a8f9c;vertical-align:top;">Categories</td><td style="padding:6px 0;">{categories}</td></tr>
+          <tr><td style="padding:6px 0;color:#8a8f9c;vertical-align:top;">Reason</td><td style="padding:6px 0;">{reason}</td></tr>
+        </table>
+        <div style="margin-top:16px;padding:14px 16px;background:#f4f5f9;border-left:3px solid #7a2c3b;border-radius:8px;font-size:14px;color:#1f2330;line-height:1.5;white-space:pre-wrap;">{body}</div>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:24px;">
+          <tr><td style="border-radius:8px;background:#7a2c3b;"><a href="{review_url}" style="display:inline-block;padding:11px 22px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;">Review flagged messages</a></td></tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:16px 28px;background:#fafafa;border-top:1px solid #ececf1;font-size:12px;color:#9aa0ad;line-height:1.5;">
+        You're receiving this because you're set to receive flagged-message alerts. Manage recipients on the Flagged Messages admin page.
+      </td>
+    </tr>
+  </table>
+</div>"""
+
+    # Email the admins who opted in on /admin/message-flags; if none are
+    # selected, fall back to every admin so alerts are never silently off.
+    recipients = Admin.objects(receive_flag_alerts=True) or Admin.objects()
+    admin_emails = [admin.email for admin in recipients if admin.email]
+    if not admin_emails:
+        return
+
+    # One SendGrid call: send to the platform address and BCC every admin so
+    # their addresses stay hidden from each other.
+    to_address = os.environ.get("SENDER_EMAIL")
+    if to_address:
+        bcc = admin_emails
+    else:
+        to_address, bcc = admin_emails[0], admin_emails[1:]
+
+    ok, err = send_email_html(
+        recipient=to_address,
+        subject=subject,
+        html_content=html,
+        bcc=bcc,
+    )
+    if not ok:
+        logger.error(f"message_flag admin alert failed: {err}")
 
 
 def send_warning_to_sender(flag: MessageFlag, note: str = "") -> Tuple[bool, str]:
@@ -377,6 +454,46 @@ def send_warning_to_sender(flag: MessageFlag, note: str = "") -> Tuple[bool, str
         flag.updated_at = datetime.utcnow()
         flag.save()
     return ok, err
+
+
+def held_messages_for_viewer(caller_id, sender_id, recipient_id):
+    """Pending held (flagged, undelivered) direct messages the caller sent in
+    this conversation, shaped like DirectMessage JSON with held=True.
+
+    Only the sender ever sees their own held messages; the recipient never does,
+    because held messages live in MessageFlag and are not DirectMessages.
+    """
+    caller = _parse_object_id(caller_id)
+    if not caller or str(caller_id) not in (str(sender_id), str(recipient_id)):
+        return []
+    other = _parse_object_id(
+        recipient_id if str(caller_id) == str(sender_id) else sender_id
+    )
+    if not other:
+        return []
+    flags = MessageFlag.objects(
+        source_type=SOURCE_DIRECT,
+        status="pending",
+        source_message_id=None,
+        sender_id=caller,
+        recipient_id=other,
+    ).order_by("created_at", "id")
+    return [
+        {
+            "_id": {"$oid": str(flag.id)},
+            "body": flag.body,
+            "sender_id": {"$oid": str(flag.sender_id)},
+            "recipient_id": {"$oid": str(flag.recipient_id)},
+            "created_at": (
+                {"$date": flag.created_at.isoformat() + "Z"}
+                if flag.created_at
+                else None
+            ),
+            "message_read": False,
+            "held": True,
+        }
+        for flag in flags
+    ]
 
 
 def build_direct_payload(
@@ -419,19 +536,22 @@ def flag_pending_message_if_needed(
     source_type: str,
     payload: Dict[str, Any],
     notify_admins: bool = True,
-) -> Tuple[bool, Optional[MessageFlag], Optional[str]]:
+) -> Tuple[bool, Optional[MessageFlag]]:
     if not message_flagging_enabled():
-        return False, None, None
+        return False, None
 
     body = payload.get("body", "")
     try:
         moderation = moderate_message_text(body)
-    except Exception as exc:
-        logger.exception("message moderation failed")
-        return False, None, str(exc)
+    except Exception:
+        # Moderation is best-effort: if it can't run (missing OPENAI_API_KEY,
+        # no OpenAI credits, API/network error) let the message through
+        # unflagged instead of blocking users from messaging each other.
+        logger.exception("message moderation unavailable; allowing message unflagged")
+        return False, None
 
     if not moderation.flagged:
-        return False, None, None
+        return False, None
 
     flag, _ = create_message_flag(
         source_type=source_type,
@@ -448,7 +568,7 @@ def flag_pending_message_if_needed(
         origin="live",
         notify_admins=notify_admins,
     )
-    return True, flag, None
+    return True, flag
 
 
 def create_direct_message_from_payload(payload: Dict[str, Any]) -> DirectMessage:

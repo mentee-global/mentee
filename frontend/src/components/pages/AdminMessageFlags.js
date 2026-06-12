@@ -2,15 +2,18 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Button,
+  Card,
   Col,
   DatePicker,
   Input,
   Modal,
+  Popover,
   Row,
   Select,
   Space,
   Table,
   Tag,
+  Tooltip,
   Typography,
   message,
 } from "antd";
@@ -18,14 +21,18 @@ import {
   CheckCircleOutlined,
   DeleteOutlined,
   EyeOutlined,
+  InfoCircleOutlined,
   MailOutlined,
+  SaveOutlined,
   StopOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 
 import {
   fetchMessageFlagById,
+  fetchMessageFlagRecipients,
   fetchMessageFlags,
+  setMessageFlagRecipients,
   updateMessageFlagAction,
 } from "utils/api";
 
@@ -65,6 +72,15 @@ function compactId(value) {
   return id ? `${id.slice(0, 6)}...${id.slice(-4)}` : "";
 }
 
+const FilterField = ({ tip, children }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+    {children}
+    <Tooltip title={tip}>
+      <InfoCircleOutlined style={{ color: "rgba(0,0,0,0.45)" }} />
+    </Tooltip>
+  </div>
+);
+
 function AdminMessageFlags() {
   const [filters, setFilters] = useState({
     status: "pending",
@@ -82,6 +98,10 @@ function AdminMessageFlags() {
   const [actionLoading, setActionLoading] = useState(false);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
+  const [adminList, setAdminList] = useState([]);
+  const [recipientIds, setRecipientIds] = useState([]);
+  const [recipientsLoading, setRecipientsLoading] = useState(false);
+  const [savingRecipients, setSavingRecipients] = useState(false);
 
   const loadFlags = async (nextFilters = filters) => {
     setLoading(true);
@@ -98,6 +118,39 @@ function AdminMessageFlags() {
     loadFlags();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    async function loadRecipients() {
+      setRecipientsLoading(true);
+      const admins = await fetchMessageFlagRecipients();
+      const sorted = [...admins].sort((a, b) =>
+        (a.name || a.email || "").localeCompare(b.name || b.email || "")
+      );
+      setAdminList(sorted);
+      setRecipientIds(
+        sorted.filter((a) => a.receive_flag_alerts).map((a) => a.id)
+      );
+      setRecipientsLoading(false);
+    }
+    loadRecipients();
+  }, []);
+
+  const saveRecipients = async () => {
+    setSavingRecipients(true);
+    const res = await setMessageFlagRecipients(recipientIds);
+    setSavingRecipients(false);
+    if (!res.ok) {
+      message.error(res.error);
+      return;
+    }
+    setAdminList((prev) =>
+      prev.map((a) => ({
+        ...a,
+        receive_flag_alerts: recipientIds.includes(a.id),
+      }))
+    );
+    message.success("Alert recipients updated");
+  };
 
   const setFilter = (key, value) => {
     const next = { ...filters, [key]: value, page: 1 };
@@ -213,59 +266,152 @@ function AdminMessageFlags() {
         <Alert type="error" message={error} style={{ marginBottom: 16 }} />
       )}
 
+      <Card
+        size="small"
+        title="Email alert recipients"
+        style={{ marginBottom: 16 }}
+        extra={
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            loading={savingRecipients}
+            onClick={saveRecipients}
+          >
+            Save
+          </Button>
+        }
+      >
+        <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
+          Selected admins are emailed when a message is flagged. If none are
+          selected, every admin is notified.
+        </Text>
+        <Select
+          mode="multiple"
+          showSearch
+          allowClear
+          placeholder="Search admins by name or email"
+          loading={recipientsLoading}
+          value={recipientIds}
+          onChange={setRecipientIds}
+          style={{ width: "100%" }}
+          optionFilterProp="label"
+          options={adminList.map((a) => ({
+            value: a.id,
+            label: `${a.name || "(no name)"} <${a.email}>`,
+          }))}
+        />
+      </Card>
+
       <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
         <Col xs={24} md={5}>
-          <Select
-            value={filters.status}
-            onChange={(value) => setFilter("status", value)}
-            style={{ width: "100%" }}
-            options={[
-              { value: "pending", label: "Pending" },
-              { value: "all", label: "All statuses" },
-              { value: "allowed", label: "Allowed" },
-              { value: "dismissed", label: "Dismissed" },
-              { value: "hidden", label: "Hidden" },
-              { value: "deleted", label: "Deleted" },
-            ]}
-          />
+          <FilterField
+            tip={
+              <span>
+                The review state of each flag.
+                <br />
+                <strong>Pending:</strong> not yet reviewed.
+                <br />
+                <strong>Allowed:</strong> approved and delivered to the
+                recipient.
+                <br />
+                <strong>Dismissed:</strong> left in place, no action taken.
+                <br />
+                <strong>Hidden / Deleted:</strong> the original message was
+                removed.
+              </span>
+            }
+          >
+            <Select
+              value={filters.status}
+              onChange={(value) => setFilter("status", value)}
+              style={{ width: "100%" }}
+              options={[
+                { value: "pending", label: "Pending" },
+                { value: "all", label: "All statuses" },
+                { value: "allowed", label: "Allowed" },
+                { value: "dismissed", label: "Dismissed" },
+                { value: "hidden", label: "Hidden" },
+                { value: "deleted", label: "Deleted" },
+              ]}
+            />
+          </FilterField>
         </Col>
         <Col xs={24} md={5}>
-          <Select
-            value={filters.severity}
-            onChange={(value) => setFilter("severity", value)}
-            style={{ width: "100%" }}
-            options={[
-              { value: "all", label: "All severities" },
-              { value: "high", label: "High" },
-              { value: "medium", label: "Medium" },
-              { value: "low", label: "Low" },
-            ]}
-          />
+          <FilterField
+            tip={
+              <span>
+                How serious the flagged content is, as rated by the AI review:
+                High, Medium, or Low.
+              </span>
+            }
+          >
+            <Select
+              value={filters.severity}
+              onChange={(value) => setFilter("severity", value)}
+              style={{ width: "100%" }}
+              options={[
+                { value: "all", label: "All severities" },
+                { value: "high", label: "High" },
+                { value: "medium", label: "Medium" },
+                { value: "low", label: "Low" },
+              ]}
+            />
+          </FilterField>
         </Col>
         <Col xs={24} md={5}>
-          <Select
-            value={filters.source_type}
-            onChange={(value) => setFilter("source_type", value)}
-            style={{ width: "100%" }}
-            options={[
-              { value: "all", label: "All message types" },
-              { value: "direct", label: "Direct" },
-              { value: "group", label: "Hub group" },
-              { value: "partner_group", label: "Partner group" },
-            ]}
-          />
+          <FilterField
+            tip={
+              <span>
+                Where the message was sent.
+                <br />
+                <strong>Direct:</strong> one-to-one chat.
+                <br />
+                <strong>Hub group:</strong> a hub group chat.
+                <br />
+                <strong>Partner group:</strong> a partner group chat.
+              </span>
+            }
+          >
+            <Select
+              value={filters.source_type}
+              onChange={(value) => setFilter("source_type", value)}
+              style={{ width: "100%" }}
+              options={[
+                { value: "all", label: "All message types" },
+                { value: "direct", label: "Direct" },
+                { value: "group", label: "Hub group" },
+                { value: "partner_group", label: "Partner group" },
+              ]}
+            />
+          </FilterField>
         </Col>
         <Col xs={24} md={5}>
-          <Select
-            value={filters.origin}
-            onChange={(value) => setFilter("origin", value)}
-            style={{ width: "100%" }}
-            options={[
-              { value: "all", label: "Live + backfill" },
-              { value: "live", label: "Live" },
-              { value: "backfill", label: "Backfill" },
-            ]}
-          />
+          <FilterField
+            tip={
+              <span>
+                How the flag was created.
+                <br />
+                <strong>Live:</strong> flagged in real time when a message was
+                sent.
+                <br />
+                <strong>Backfill:</strong> flagged retroactively by scanning
+                older messages.
+                <br />
+                Only Live flags email admins.
+              </span>
+            }
+          >
+            <Select
+              value={filters.origin}
+              onChange={(value) => setFilter("origin", value)}
+              style={{ width: "100%" }}
+              options={[
+                { value: "all", label: "Live + backfill" },
+                { value: "live", label: "Live" },
+                { value: "backfill", label: "Backfill" },
+              ]}
+            />
+          </FilterField>
         </Col>
         <Col xs={24} md={4}>
           <Input.Search
@@ -405,6 +551,38 @@ function AdminMessageFlags() {
               >
                 Send Warning
               </Button>
+              <Popover
+                trigger="click"
+                title="The sender will receive this email"
+                content={
+                  <div style={{ maxWidth: 380 }}>
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      Subject: A note about your Mentee Global message
+                    </Text>
+                    <p style={{ marginTop: 8, marginBottom: 8 }}>
+                      Hi {selectedFlag.sender?.name || "there"},
+                    </p>
+                    <p style={{ marginBottom: 8 }}>
+                      A recent message you wrote on Mentee Global was reviewed
+                      by an administrator because it may not follow our
+                      communication guidelines.
+                    </p>
+                    <p style={{ marginBottom: 8 }}>
+                      Please keep all communication respectful, safe, and
+                      appropriate for the platform.
+                    </p>
+                    {note.trim() && (
+                      <p style={{ marginBottom: 0 }}>
+                        <strong>Admin note:</strong> {note}
+                      </p>
+                    )}
+                  </div>
+                }
+              >
+                <Button type="link" icon={<InfoCircleOutlined />}>
+                  Preview warning
+                </Button>
+              </Popover>
             </Space>
             <Title level={5}>Conversation Context</Title>
             <Table

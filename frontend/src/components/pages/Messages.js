@@ -204,15 +204,34 @@ function Messages(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeMessageId, profileId]);
 
+  const refreshLatestConvos = (delay = 500) => {
+    setTimeout(async () => {
+      const result = await getLatestMessages(profileId);
+      setLatestConvos(asArray(result?.data));
+    }, delay);
+  };
+
   const addMyMessage = (msg) => {
     setMessages((prevMessages) => [...prevMessages, msg]);
-    setTimeout(() => {
-      async function fetchLatest() {
-        const result = await getLatestMessages(profileId);
-        setLatestConvos(asArray(result?.data));
-      }
-      fetchLatest();
-    }, 500);
+    refreshLatestConvos();
+  };
+
+  // Reconcile an optimistically-rendered message once the server acks: patch it
+  // in place (e.g. mark it delivered or held) matched by its client temp id.
+  const updateMyMessage = (tempId, patch) => {
+    setMessages((prev) =>
+      prev.map((m) => (m._tempId === tempId ? { ...m, ...patch } : m))
+    );
+    // Once a message is actually delivered, refresh the sidebar previews (the
+    // server now has it). Held messages never enter the delivered list.
+    if (patch && patch.pending === false && !patch.held) {
+      refreshLatestConvos(700);
+    }
+  };
+
+  // Drop an optimistic message that failed to send.
+  const removeMyMessage = (tempId) => {
+    setMessages((prev) => prev.filter((m) => m._tempId !== tempId));
   };
 
   // Fetch the next older page when the user scrolls to the top of a thread and
@@ -279,6 +298,8 @@ function Messages(props) {
           activeMessageId={activeMessageId}
           socket={socket}
           addMyMessage={addMyMessage}
+          updateMyMessage={updateMyMessage}
+          removeMyMessage={removeMyMessage}
           otherId={activeMessageId}
           userType={userType}
           loading={loading}

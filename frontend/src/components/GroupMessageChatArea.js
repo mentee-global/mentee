@@ -45,6 +45,7 @@ function GroupMessageChatArea(props) {
   const [replyInputFlags, setReplyInputFlags] = useState({});
   const [editInputFlags, setEditInputFlags] = useState({});
   const [, setRefreshFlag] = useState(false);
+  const [sending, setSending] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiUp, setEmojiUp] = useState(false);
   const [showReplyEmojiPicker, setShowReplyEmojiPicker] = useState(false);
@@ -148,12 +149,13 @@ function GroupMessageChatArea(props) {
   }
 
   const handleSendAck = (response, onDelivered) => {
+    setSending(false);
     if (response?.success === false) {
       antdMessage.error(response.message || "Message could not be sent");
       return;
     }
     if (response?.held) {
-      antdMessage.info(response.message || "Message is pending admin review");
+      antdMessage.error(t("messages.policyBlocked"));
       return;
     }
     onDelivered();
@@ -162,9 +164,10 @@ function GroupMessageChatArea(props) {
   const sendMessage = (e) => {
     let currentMessage = messageText;
     let currentTitle = messageTitle.trim();
-    if (!currentMessage.trim().length) {
+    if (sending || !currentMessage.trim().length) {
       return;
     }
+    setSending(true);
 
     let dateTime = moment().utc();
     const msg = {
@@ -893,6 +896,7 @@ function GroupMessageChatArea(props) {
 
                   <Button
                     onClick={sendMessage}
+                    loading={sending}
                     className="send-button"
                     shape="circle"
                     type="primary"

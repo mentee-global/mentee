@@ -45,11 +45,11 @@ function PublicMessageModal({ mentorId, menteeId, menteeName }) {
       return;
     }
     if (result.held) {
-      messageApi.info({
-        content: result.message || "Message is pending admin review",
+      messageApi.error({
+        content: t("messages.policyBlocked"),
         duration: 0,
-        key: "message_pending_review",
-        onClick: () => messageApi.destroy("message_pending_review"),
+        key: "message_not_sent",
+        onClick: () => messageApi.destroy("message_not_sent"),
       });
       setLoading(false);
       closeModals();

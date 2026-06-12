@@ -33,6 +33,7 @@ from api.utils.message_flagging import (
     build_group_payload,
     build_partner_group_payload,
     flag_pending_message_if_needed,
+    held_messages_for_viewer,
 )
 import json
 from datetime import datetime, timedelta, timezone
@@ -159,19 +160,14 @@ def create_message():
     if not isinstance(data, dict):
         return create_response(status=422, message="Invalid message payload")
     payload = build_direct_payload(data, body_key="message")
-    held, flag, moderation_error = flag_pending_message_if_needed(
+    held, flag = flag_pending_message_if_needed(
         source_type=SOURCE_DIRECT, payload=payload
     )
-    if moderation_error:
-        return create_response(
-            status=503,
-            message=f"Message could not be reviewed: {moderation_error}",
-        )
     if held:
         return create_response(
             data={"flag_id": str(flag.id)},
             status=202,
-            message="Message is pending admin review",
+            message="Message could not be sent",
         )
     availabes_in_future = None
     if "availabes_in_future" in data:
@@ -257,19 +253,14 @@ def contact_mentor(mentor_id):
         "recipient_id": mentor_id,
         "created_at": datetime.utcnow().isoformat(),
     }
-    held, flag, moderation_error = flag_pending_message_if_needed(
+    held, flag = flag_pending_message_if_needed(
         source_type=SOURCE_DIRECT, payload=payload
     )
-    if moderation_error:
-        return create_response(
-            status=503,
-            message=f"Message could not be reviewed: {moderation_error}",
-        )
     if held:
         return create_response(
             data={"flag_id": str(flag.id)},
             status=202,
-            message="Message is pending admin review",
+            message="Message could not be sent",
         )
 
     res, res_msg = send_email(
@@ -764,7 +755,13 @@ def get_direct_messages():
             # to be present on the client.
             messages = DirectMessage.objects(conversation).order_by("created_at", "id")
             return create_response(
-                data={"Messages": messages, "has_more": False},
+                data={
+                    "Messages": messages,
+                    "has_more": False,
+                    "HeldMessages": held_messages_for_viewer(
+                        caller_id, sender_id, recipient_id
+                    ),
+                },
                 status=200,
                 message="Success",
             )
@@ -812,12 +809,20 @@ def get_direct_messages():
                 next_before = oldest.created_at.isoformat()
             next_before_id = str(oldest.id)
 
+        # Held messages are the newest items, so only attach them to the first
+        # page (no older-than cursor); older pages never contain them.
+        held = (
+            []
+            if (before and before_id)
+            else held_messages_for_viewer(caller_id, sender_id, recipient_id)
+        )
         return create_response(
             data={
                 "Messages": page,
                 "has_more": has_more,
                 "next_before": next_before,
                 "next_before_id": next_before_id,
+                "HeldMessages": held,
             },
             status=200,
             message="Success",
@@ -865,20 +870,15 @@ def chatGroup(msg, methods=["POST"]):
     try:
         if "hub_user_id" in msg and msg["hub_user_id"] is not None:
             payload = build_group_payload(msg)
-            held, flag, moderation_error = flag_pending_message_if_needed(
+            held, flag = flag_pending_message_if_needed(
                 source_type=SOURCE_GROUP, payload=payload
             )
-            if moderation_error:
-                return {
-                    "success": False,
-                    "message": f"Message could not be reviewed: {moderation_error}",
-                }
             if held:
                 return {
                     "success": True,
                     "held": True,
                     "flag_id": str(flag.id),
-                    "message": "Message is pending admin review",
+                    "message": "Message could not be sent",
                 }
             message = GroupMessage(
                 title=msg.get("title"),
@@ -893,20 +893,15 @@ def chatGroup(msg, methods=["POST"]):
 
         else:
             payload = build_partner_group_payload(msg)
-            held, flag, moderation_error = flag_pending_message_if_needed(
+            held, flag = flag_pending_message_if_needed(
                 source_type=SOURCE_PARTNER_GROUP, payload=payload
             )
-            if moderation_error:
-                return {
-                    "success": False,
-                    "message": f"Message could not be reviewed: {moderation_error}",
-                }
             if held:
                 return {
                     "success": True,
                     "held": True,
                     "flag_id": str(flag.id),
-                    "message": "Message is pending admin review",
+                    "message": "Message could not be sent",
                 }
             message = PartnerGroupMessage(
                 body=msg["body"],
@@ -967,20 +962,15 @@ def chat(msg, methods=["POST"]):
             return {"success": False, "message": validation_msg}
 
         payload = build_direct_payload(msg)
-        held, flag, moderation_error = flag_pending_message_if_needed(
+        held, flag = flag_pending_message_if_needed(
             source_type=SOURCE_DIRECT, payload=payload
         )
-        if moderation_error:
-            return {
-                "success": False,
-                "message": f"Message could not be reviewed: {moderation_error}",
-            }
         if held:
             return {
                 "success": True,
                 "held": True,
                 "flag_id": str(flag.id),
-                "message": "Message is pending admin review",
+                "message": "Message could not be sent",
             }
 
         availabes_in_future = None

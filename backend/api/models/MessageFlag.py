@@ -13,6 +13,10 @@ MESSAGE_FLAG_ORIGINS = ("live", "backfill")
 
 class MessageFlag(Document, Mixin):
     meta = {
+        # Tolerate documents that still carry fields removed from this schema
+        # (e.g. the old term_matches). Without this, MongoEngine raises
+        # FieldDoesNotExist when hydrating those existing flags.
+        "strict": False,
         "indexes": [
             {"fields": ["source_key"], "unique": True},
             "status",
@@ -49,7 +53,6 @@ class MessageFlag(Document, Mixin):
     reason = StringField(required=True)
     language = StringField(required=False)
     confidence = FloatField(required=False)
-    term_matches = ListField(DictField(), default=list)
     openai_model = StringField(required=False)
     openai_response = DictField(required=False)
     moderation_error = StringField(required=False)

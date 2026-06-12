@@ -13,6 +13,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import (
     Mail,
     Attachment,
+    Bcc,
     FileContent,
     FileName,
     FileType,
@@ -238,9 +239,13 @@ def send_email_html(
     inline_image_path: Optional[str] = None,
     inline_image_cid: str = "",
     inline_image_type: str = "image/png",
+    bcc: Optional[List[str]] = None,
 ) -> Tuple[bool, str]:
     """Send a single HTML email. Optionally embed one inline image via CID
-    so the HTML can reference it as <img src="cid:<inline_image_cid>">."""
+    so the HTML can reference it as <img src="cid:<inline_image_cid>">.
+
+    Pass `bcc` to deliver the same email to several recipients in one SendGrid
+    call without exposing their addresses to each other."""
     if not recipient:
         return False, "Missing recipient email"
 
@@ -250,6 +255,9 @@ def send_email_html(
         subject=subject,
         html_content=html_content,
     )
+
+    for address in bcc or []:
+        message.add_bcc(Bcc(address))
 
     if inline_image_path and inline_image_cid:
         with open(inline_image_path, "rb") as f:

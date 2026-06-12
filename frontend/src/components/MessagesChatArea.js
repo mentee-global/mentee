@@ -361,13 +361,17 @@ function MessagesChatArea(props) {
     setUpdateContent(!updateContent);
   };
 
-  const handleSendAck = (response, onDelivered) => {
+  const handleSendAck = (response, onDelivered, onHeld) => {
     if (response?.success === false) {
       antdMessage.error(response.message || "Message could not be sent");
       return;
     }
     if (response?.held) {
-      antdMessage.info(response.message || "Message is pending admin review");
+      if (onHeld) {
+        onHeld();
+      } else {
+        antdMessage.error(t("messages.policyBlocked"));
+      }
       return;
     }
     onDelivered();
@@ -446,30 +450,47 @@ function MessagesChatArea(props) {
   };
 
   const sendMessage = (e) => {
-    let currentMessage = messageText;
+    const currentMessage = messageText;
     if (!currentMessage.trim().length) {
       return;
     }
-    let dateTime = moment().utc();
-    const msg = {
+    const tempId = `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const wireMsg = {
       body: currentMessage,
       message_read: false,
       sender_id: profileId,
       recipient_id: activeMessageId,
-      time: dateTime,
+      time: moment().utc(),
     };
-    socket.emit("send", msg, (response) =>
-      handleSendAck(response, () => {
-        setTimeout(() => {
-          sendNotifyUnreadMessage(activeMessageId);
-        }, 1000);
-        msg["sender_id"] = { $oid: msg["sender_id"] };
-        msg["recipient_id"] = { $oid: msg["recipient_id"] };
-        msg.time = moment().local().format("LLL");
-        props.addMyMessage(msg);
-        setMessageText("");
-      })
-    );
+    // Render the sender's message instantly (optimistic) and clear the input;
+    // moderation runs in the background and we reconcile on the ack below.
+    props.addMyMessage({
+      _tempId: tempId,
+      body: currentMessage,
+      message_read: false,
+      sender_id: { $oid: profileId },
+      recipient_id: { $oid: activeMessageId },
+      time: moment().local().format("LLL"),
+      pending: true,
+    });
+    setMessageText("");
+    socket.emit("send", wireMsg, (response) => {
+      if (response?.success === false) {
+        antdMessage.error(response.message || "Message could not be sent");
+        props.removeMyMessage(tempId);
+        return;
+      }
+      if (response?.held) {
+        // Flagged: keep it in the sender's thread (dimmed, with an alert) but
+        // never deliver it to the recipient.
+        props.updateMyMessage(tempId, { pending: false, held: true });
+        return;
+      }
+      props.updateMyMessage(tempId, { pending: false });
+      setTimeout(() => {
+        sendNotifyUnreadMessage(activeMessageId);
+      }, 1000);
+    });
     return;
   };
   if (!activeMessageId || !messages || !messages.length) {
@@ -686,6 +707,11 @@ function MessagesChatArea(props) {
                             ${senderId === profileId
                               ? styles.bubbleSent
                               : styles.bubbleReceived}
+                            ${block?.held
+                              ? "opacity: 0.55;"
+                              : block?.pending
+                              ? "opacity: 0.7;"
+                              : ""}
                           `}
                         >
                           <HtmlContent content={linkify(block?.body)} />
@@ -762,6 +788,23 @@ function MessagesChatArea(props) {
                             .local()
                             .format("LLL")}
                     </span>
+                    {block?.held && (
+                      <div
+                        className={css`
+                          margin-top: 4px;
+                          max-width: 360px;
+                          padding: 6px 10px;
+                          border-radius: 6px;
+                          background: #fff7e6;
+                          border: 1px solid #ffe7ba;
+                          font-size: 12px;
+                          line-height: 1.35;
+                          color: #ad6800;
+                        `}
+                      >
+                        {t("messages.policyBlocked")}
+                      </div>
+                    )}
                   </div>
                 </div>
               );

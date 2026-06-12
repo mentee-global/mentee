@@ -32,6 +32,7 @@ import {
   fetchMessageFlagById,
   fetchMessageFlagRecipients,
   fetchMessageFlags,
+  fetchMessageFlagSenders,
   setMessageFlagRecipients,
   updateMessageFlagAction,
 } from "utils/api";
@@ -64,7 +65,8 @@ const sourceLabel = {
 
 function formatDate(value) {
   const raw = dateValue(value);
-  return raw ? moment(raw).format("MMM D, YYYY h:mm A") : "";
+  // Stored timestamps are UTC; interpret as UTC and show in the viewer's zone.
+  return raw ? moment.utc(raw).local().format("MMM D, YYYY h:mm A") : "";
 }
 
 function compactId(value) {
@@ -87,10 +89,12 @@ function AdminMessageFlags() {
     severity: "all",
     source_type: "all",
     origin: "all",
+    sender_id: "all",
     search: "",
     page: 1,
     limit: 20,
   });
+  const [senderList, setSenderList] = useState([]);
   const [data, setData] = useState({ items: [], total: 0 });
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState(null);
@@ -116,6 +120,7 @@ function AdminMessageFlags() {
 
   useEffect(() => {
     loadFlags();
+    fetchMessageFlagSenders().then(setSenderList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -226,10 +231,10 @@ function AdminMessageFlags() {
         ellipsis: true,
       },
       {
-        title: "Created",
-        dataIndex: "created_at",
+        title: "Sent",
+        dataIndex: "original_created_at",
         width: 180,
-        render: formatDate,
+        render: (value, row) => formatDate(value || row.created_at),
       },
       {
         title: "",
@@ -303,7 +308,7 @@ function AdminMessageFlags() {
       </Card>
 
       <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
-        <Col xs={24} md={5}>
+        <Col xs={24} md={4}>
           <FilterField
             tip={
               <span>
@@ -336,7 +341,7 @@ function AdminMessageFlags() {
             />
           </FilterField>
         </Col>
-        <Col xs={24} md={5}>
+        <Col xs={24} md={4}>
           <FilterField
             tip={
               <span>
@@ -358,7 +363,7 @@ function AdminMessageFlags() {
             />
           </FilterField>
         </Col>
-        <Col xs={24} md={5}>
+        <Col xs={24} md={4}>
           <FilterField
             tip={
               <span>
@@ -385,7 +390,7 @@ function AdminMessageFlags() {
             />
           </FilterField>
         </Col>
-        <Col xs={24} md={5}>
+        <Col xs={24} md={4}>
           <FilterField
             tip={
               <span>
@@ -414,6 +419,33 @@ function AdminMessageFlags() {
           </FilterField>
         </Col>
         <Col xs={24} md={4}>
+          <FilterField
+            tip={
+              <span>
+                Show only the flagged messages of a single sender, to review
+                everything from that user at once.
+              </span>
+            }
+          >
+            <Select
+              showSearch
+              value={filters.sender_id}
+              onChange={(value) => setFilter("sender_id", value)}
+              style={{ width: "100%" }}
+              optionFilterProp="label"
+              options={[
+                { value: "all", label: "All senders" },
+                ...senderList.map((sender) => ({
+                  value: sender.id,
+                  label: sender.email
+                    ? `${sender.name} <${sender.email}>`
+                    : sender.name,
+                })),
+              ]}
+            />
+          </FilterField>
+        </Col>
+        <Col xs={24} md={4}>
           <Input.Search
             placeholder="Search"
             allowClear
@@ -421,18 +453,27 @@ function AdminMessageFlags() {
           />
         </Col>
         <Col xs={24}>
-          <RangePicker
-            onChange={(dates) => {
-              const next = {
-                ...filters,
-                page: 1,
-                since: dates?.[0]?.toISOString(),
-                before: dates?.[1]?.toISOString(),
-              };
-              setFilters(next);
-              loadFlags(next);
-            }}
-          />
+          <FilterField
+            tip={
+              <span>
+                Show only messages sent within this date range (when the user
+                sent the message, not when it was flagged).
+              </span>
+            }
+          >
+            <RangePicker
+              onChange={(dates) => {
+                const next = {
+                  ...filters,
+                  page: 1,
+                  since: dates?.[0]?.toISOString(),
+                  before: dates?.[1]?.toISOString(),
+                };
+                setFilters(next);
+                loadFlags(next);
+              }}
+            />
+          </FilterField>
         </Col>
       </Row>
 

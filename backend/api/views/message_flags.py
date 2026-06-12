@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+from bson import ObjectId
 from bson.errors import InvalidId
 from flask import Blueprint, g, request
 from mongoengine.queryset.visitor import Q
@@ -22,6 +23,7 @@ from api.utils.message_flagging import (
     original_message_for_flag,
     send_warning_to_sender,
     sender_label,
+    sender_labels,
 )
 from api.utils.require_auth import admin_only
 
@@ -38,7 +40,7 @@ def _date_arg(name):
         return None
 
 
-def _flag_payload(flag):
+def _flag_payload(flag, sender=None):
     data = flag.to_mongo().to_dict()
     data["_id"] = {"$oid": str(data.pop("_id"))}
     for field in (
@@ -59,7 +61,7 @@ def _flag_payload(flag):
     ):
         if data.get(field):
             data[field] = {"$date": data[field].isoformat()}
-    data["sender"] = sender_label(flag.sender_id)
+    data["sender"] = sender or sender_label(flag.sender_id)
     return data
 
 
@@ -115,26 +117,52 @@ def list_message_flags():
     if origin and origin != "all":
         query &= Q(origin=origin)
 
+    sender_id = request.args.get("sender_id")
+    if sender_id and sender_id != "all":
+        try:
+            query &= Q(sender_id=ObjectId(sender_id))
+        except (InvalidId, TypeError):
+            pass
+
+    # Dates filter and sort by when the message was sent, not when it was
+    # flagged: backfilled flags are all evaluated on the same day, so the
+    # evaluation date is meaningless for review.
     since = _date_arg("since")
     before = _date_arg("before")
     if since:
-        query &= Q(created_at__gte=since)
+        query &= Q(original_created_at__gte=since)
     if before:
-        query &= Q(created_at__lte=before)
+        query &= Q(original_created_at__lte=before)
     if search:
         query &= Q(body__icontains=search) | Q(reason__icontains=search)
 
-    queryset = MessageFlag.objects(query).order_by("-created_at")
+    queryset = MessageFlag.objects(query).order_by("-original_created_at")
     total = queryset.count()
-    flags = queryset.skip((page - 1) * limit).limit(limit)
+    flags = list(queryset.skip((page - 1) * limit).limit(limit))
+    labels = sender_labels(flag.sender_id for flag in flags)
     return create_response(
         data={
-            "items": [_flag_payload(flag) for flag in flags],
+            "items": [
+                _flag_payload(flag, sender=labels.get(str(flag.sender_id)))
+                for flag in flags
+            ],
             "total": total,
             "page": page,
             "limit": limit,
         }
     )
+
+
+@message_flags.route("/senders", methods=["GET"])
+@admin_only
+def list_message_flag_senders():
+    """Distinct senders with at least one flag, for the sender filter."""
+    labels = sender_labels(MessageFlag.objects().distinct("sender_id"))
+    senders = sorted(
+        ({"id": sender_id, **label} for sender_id, label in labels.items()),
+        key=lambda sender: (sender["name"] or "").lower(),
+    )
+    return create_response(data={"senders": senders})
 
 
 @message_flags.route("/<string:flag_id>", methods=["GET"])

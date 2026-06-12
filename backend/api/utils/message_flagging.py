@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from bson import ObjectId
 from bson.errors import InvalidId
 from mongoengine.errors import NotUniqueError
+from mongoengine.queryset.visitor import Q
 
 from api import socketio
 from api.core import logger
@@ -28,7 +29,9 @@ from api.models import (
 from api.utils.request_utils import send_email_html
 
 
-DEFAULT_MESSAGE_FLAGGING_MODEL = "gpt-4o-mini"
+DEFAULT_MESSAGE_FLAGGING_MODEL = "gpt-5-nano"
+OMNI_MODERATION_MODEL = "omni-moderation-latest"
+SEVERITY_RANK = {"low": 0, "medium": 1, "high": 2}
 
 SOURCE_DIRECT = "direct"
 SOURCE_GROUP = "group"
@@ -40,37 +43,111 @@ SOURCE_COLLECTIONS = {
     SOURCE_PARTNER_GROUP: "partner_group_message",
 }
 
+# The LLM only judges the platform-specific categories below. General safety
+# (harassment, hate, sexual, self-harm, violence) is handled separately by the
+# calibrated moderation API, so it is deliberately NOT in this prompt.
+LLM_CATEGORIES = [
+    "financial_solicitation",
+    "scam",
+    "spam_advertising",
+    "age_safety",
+    "grooming",
+]
+
 MODERATION_SYSTEM_PROMPT = (
     "You review messages on Mentee Global, a mentorship platform that connects "
-    "immigrant and refugee youth (mentees) with volunteer mentors. Most messages "
-    "are normal conversation and must NOT be flagged. Flag a message, in any "
-    "language, only when it clearly and genuinely violates platform safety or "
-    "misuses the platform. Violations are: harassment, hate, threats, violence, "
-    "sexual content, self-harm encouragement, exploitation, or abusive language; "
-    "financial solicitation, meaning actually asking the other person to give, "
-    "send, lend, or pay money, or sending payment details to receive money; "
-    "scams and fraud, such as phishing, fake offers, or requests for sensitive "
-    "personal or financial information (passwords, bank or card details, "
-    "identity documents); advertising, selling, or recruiting (including "
-    "multi-level marketing and job or investment pitches); explicit romantic or "
-    "sexual advances; and sharing or requesting personal contact details (phone "
-    "number, WhatsApp, email, social handles) or pushing to move the "
-    "conversation off the platform. "
-    "Do NOT flag normal conversation or mentorship logistics. Greetings, small "
-    "talk, thanks, and arranging to meet -- proposing or asking to meet, "
-    "scheduling or asking about a call or session, and asking when or where to "
-    "meet -- are legitimate and must not be flagged. Suggesting a meeting is not "
-    "a contact-detail or off-platform violation. Discussing careers, education, "
-    "jobs, budgeting, finances, scholarships, or immigration as guidance is "
-    "normal; only flag an actual request for money or other clear misuse, not a "
-    "mere mention of these topics. When a message is short, ambiguous, or only "
-    "mentions a sensitive topic without a clear violation, do NOT flag it. "
-    "Prioritize English, Spanish, Portuguese, Arabic, Persian, and Dari, but "
-    "review messages written in any language. In the categories field, use short "
-    "snake_case labels such as harassment, hate, sexual_content, threats, "
-    "self_harm, exploitation, scam, financial_solicitation, spam_advertising, "
-    "off_topic, romantic_advance, or contact_info_request. Set severity by how "
-    "harmful the content is. Return concise JSON only."
+    "immigrant and refugee youth (mentees) with volunteer mentors. Safety issues "
+    "such as harassment, hate, sexual content, self-harm, and violence are "
+    "handled by a separate system -- do NOT flag those here. Your job is ONLY "
+    "these platform-misuse categories:\n"
+    "- financial_solicitation: the sender asks the other person to give, send, "
+    "lend, or pay money, shares payment details to receive money, or shares a "
+    "link to their own fundraiser asking people to contribute or spread it. "
+    "Saying they need money or funding, asking for advice about scholarships or "
+    "funding options, asking for help preparing a fundraiser, or advising the "
+    "other person about raising money for their own needs is guidance, NOT "
+    "solicitation -- flag only a direct ask for money or a shared fundraising "
+    "link.\n"
+    "- scam: phishing or deception, such as fake offers or requests for "
+    "passwords, bank or card details, or identity documents. Simply sharing a "
+    "real phone number, WhatsApp, or email is NOT a scam, and sharing a link to "
+    "a real website, course, or signup page without any deceptive claim in the "
+    "message is NOT a scam. Scam means the SENDER is deceiving someone; "
+    "describing a login form, mentioning that a site asks for a password, or "
+    "asking for technical help with an account is NOT a scam.\n"
+    "- spam_advertising: the sender is seeking customers, clients, workers, or "
+    "investors -- selling or promoting a product or service, posting or "
+    "pitching a job (e.g. announcing that you or your company are hiring or "
+    "looking for a developer, designer, or other worker), or recruiting for a "
+    "business or investment scheme (including multi-level marketing). Offering "
+    "your services counts even when framed as charitable, discounted, or "
+    "social-impact, and a job post counts even when framed as networking (e.g. "
+    "asking whether anyone in the group knows someone for a role). But sharing "
+    "an opportunity the recipient could apply for or attend -- a scholarship, "
+    "internship, training program, course, community event, or useful link -- "
+    "is normal mentoring, NOT advertising, even when the sender's own "
+    "organization runs it. "
+    "Sharing your own phone number, WhatsApp, email, or social handle to "
+    "coordinate, or asking for the other person's, is NOT advertising.\n"
+    "- age_safety: a conversation participant or prospective mentee is under 18 "
+    "-- the sender giving their own age as under 18 (e.g. 15, 16, or 17), "
+    "someone being introduced as a prospective mentee who is under 18 or still "
+    "in high school, or the sender asking a young mentee's age (mentees must be "
+    "18+). A sender mentioning their own children's or relatives' ages in small "
+    "talk is NOT age_safety.\n"
+    "- grooming: an adult pressures a young mentee into a private or secret "
+    "channel, or any grooming pattern.\n"
+    "Everything else is normal and must NOT be flagged. In particular, sharing or "
+    "asking for a phone number, WhatsApp, email, or social handle, proposing or "
+    "scheduling a meeting or call, sending meeting links, introductions, "
+    "greetings, thanks, small talk, reaching out for mentorship, and discussing "
+    "careers, jobs, education, finances, scholarships, or immigration as guidance "
+    "are all normal and must NOT be flagged. "
+    "A violation is often a single sentence buried in an otherwise normal, "
+    "polite message: a warm multi-paragraph mentorship introduction that "
+    "mentions an age under 18 is still age_safety, and a friendly group post "
+    "that pitches a job or service is still spam_advertising. Check every "
+    "sentence against the categories before deciding.\n"
+    "Only flag if you can quote the exact words that constitute the violation; "
+    "put that quote in the evidence field. If you cannot quote specific violating "
+    "words, set flagged to false and evidence to an empty string.\n"
+    "Examples (message -> decision):\n"
+    "'Could you share your WhatsApp so we can plan our next session?' -> not "
+    "flagged.\n"
+    "'Hi, my number is +1 555 014 9920, text me anytime.' -> not flagged.\n"
+    "'Tuesday at 4pm works for me. I will email you the Zoom link.' -> not "
+    "flagged.\n"
+    "'Thank you so much for your advice, see you next week!' -> not flagged.\n"
+    "'Have you considered starting a GoFundMe for your tuition? I could help "
+    "you write your story.' -> not flagged.\n"
+    "'I want to share two scholarship programs you could apply for, here are "
+    "the links.' -> not flagged.\n"
+    "'The website is asking me to enter my name, email, and a password -- is "
+    "that normal?' -> not flagged.\n"
+    "'I have two daughters, 7 and 10, and on weekends we all go hiking.' -> not "
+    "flagged.\n"
+    "'Our organization runs a free summer coding bootcamp for students -- you "
+    "could apply, here is the link.' -> not flagged.\n"
+    "'Could you lend me $200? I promise to pay you back next month.' -> flagged "
+    "financial_solicitation.\n"
+    "'I sell phone cases and watches, check my page and order today!' -> flagged "
+    "spam_advertising.\n"
+    "'Our company is hiring remote workers, earn $500 a week -- reply to join.' "
+    "-> flagged spam_advertising.\n"
+    "'Hi all, our startup is looking for a graphic designer to join our team, "
+    "send me your CV if interested.' -> flagged spam_advertising.\n"
+    "'Your account will be closed today, verify your password at this link.' -> "
+    "flagged scam.\n"
+    "'Dear Ms. Rivera, I hope you are doing well. My name is Karim and I "
+    "recently moved to Canada with my family. I am 16 years old and in grade "
+    "11, I enjoy soccer and drawing, and I would be honored to have you as my "
+    "mentor.' -> flagged age_safety (the age is buried mid-message, flag it "
+    "anyway).\n"
+    "'I want to introduce my younger cousin, a 15-year-old high-school student "
+    "who needs guidance.' -> flagged age_safety.\n"
+    "You may be given the recent conversation as context; use it only to "
+    "understand the latest message, and classify ONLY the latest message. "
+    "Messages may be in any language. Return concise JSON only."
 )
 
 
@@ -105,6 +182,13 @@ def _is_reasoning_model(model: str) -> bool:
     return m.startswith(("gpt-5", "o1", "o3", "o4"))
 
 
+def message_flagging_reasoning_effort() -> str:
+    # "low" instead of "minimal": at minimal effort gpt-5-nano's decisions are
+    # so noisy that eval F1 swings between 0.42-0.46 on identical inputs; at low
+    # effort it is stable (F1 ~0.9-1.0 on the gold set) for ~0.8s extra latency.
+    return os.environ.get("MESSAGE_FLAGGING_REASONING_EFFORT", "low")
+
+
 @lru_cache(maxsize=1)
 def _get_openai_client(api_key: str):
     # Reuse one client (and its keep-alive connection pool) across calls so each
@@ -114,17 +198,18 @@ def _get_openai_client(api_key: str):
     return OpenAI(api_key=api_key)
 
 
-def _create_openai_response(client, request: Dict[str, Any]):
-    # The server runs on eventlet's single cooperative hub, but the OpenAI HTTP
-    # call uses blocking sockets, so a multi-second classification would freeze
-    # every other request while it runs. Offload it to a native worker thread so
-    # the hub stays responsive and concurrent sends moderate in parallel. Fall
-    # back to a direct call when eventlet isn't available (scripts/tests).
+def _run_off_hub(fn, *args, **kwargs):
+    # The server runs on eventlet's single cooperative hub, but OpenAI's HTTP
+    # calls use blocking sockets, so a multi-second moderation would freeze every
+    # other request. Offload the whole moderation to a native worker thread so the
+    # hub stays responsive and concurrent sends moderate in parallel. Falls back
+    # to a direct call when eventlet isn't available (scripts/tests), which run
+    # their own thread pool, so the moderation function itself stays plain.
     try:
         from eventlet import tpool
     except ImportError:
-        return client.responses.create(**request)
-    return tpool.execute(client.responses.create, **request)
+        return fn(*args, **kwargs)
+    return tpool.execute(lambda: fn(*args, **kwargs))
 
 
 def _parse_object_id(value: Any) -> Optional[ObjectId]:
@@ -172,9 +257,10 @@ def _openai_schema() -> Dict[str, Any]:
             "severity": {"type": "string", "enum": ["low", "medium", "high"]},
             "categories": {
                 "type": "array",
-                "items": {"type": "string"},
-                "maxItems": 8,
+                "items": {"type": "string", "enum": LLM_CATEGORIES},
+                "maxItems": len(LLM_CATEGORIES),
             },
+            "evidence": {"type": "string"},
             "reason": {"type": "string"},
             "language": {"type": ["string", "null"]},
             "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
@@ -183,6 +269,7 @@ def _openai_schema() -> Dict[str, Any]:
             "flagged",
             "severity",
             "categories",
+            "evidence",
             "reason",
             "language",
             "confidence",
@@ -190,8 +277,17 @@ def _openai_schema() -> Dict[str, Any]:
     }
 
 
+def _user_classification_content(text: str, context: Optional[str]) -> str:
+    if context:
+        return (
+            f"Recent conversation for context:\n{context}\n\n"
+            f"Classify ONLY this latest message: {text}"
+        )
+    return f"Message to classify: {text}"
+
+
 def classify_message_with_openai(
-    text: str, model: Optional[str] = None
+    text: str, model: Optional[str] = None, context: Optional[str] = None
 ) -> Dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
@@ -212,7 +308,7 @@ def classify_message_with_openai(
             },
             {
                 "role": "user",
-                "content": f"Message to classify: {text}",
+                "content": _user_classification_content(text, context),
             },
         ],
         text={
@@ -223,34 +319,134 @@ def classify_message_with_openai(
                 "strict": True,
             }
         },
-        max_output_tokens=600,
+        # Reasoning shares this budget with the JSON answer, so anything above
+        # minimal effort needs enough headroom or the JSON comes back empty.
+        max_output_tokens=(
+            600 if message_flagging_reasoning_effort() == "minimal" else 2500
+        ),
     )
     # Reasoning models (gpt-5*, o-series) reason before answering; without a
-    # minimal-reasoning hint, reasoning consumes the whole token budget and the
-    # JSON comes back empty (every message would look unflagged). Non-reasoning
+    # low-effort hint, reasoning consumes the whole token budget and the JSON
+    # comes back empty (every message would look unflagged). Non-reasoning
     # models (e.g. gpt-4o-mini) reject the parameter, so only send it when needed.
     if _is_reasoning_model(model):
-        request["reasoning"] = {"effort": "minimal"}
-    response = _create_openai_response(client, request)
+        request["reasoning"] = {"effort": message_flagging_reasoning_effort()}
+    response = client.responses.create(**request)
     raw = getattr(response, "output_text", "") or "{}"
     return json.loads(raw)
 
 
-def moderate_message_text(text: str, model: Optional[str] = None) -> ModerationResult:
+_OMNI_CATEGORY_MAP = {
+    "harassment": "harassment",
+    "harassment_threatening": "harassment",
+    "hate": "hate",
+    "hate_threatening": "hate",
+    "self_harm": "self_harm",
+    "self_harm_intent": "self_harm",
+    "self_harm_instructions": "self_harm",
+    "sexual": "sexual_content",
+    "sexual_minors": "sexual_content",
+    "violence": "violence",
+    "violence_graphic": "violence",
+}
+
+
+def _severity_from_score(score: float) -> str:
+    if score >= 0.7:
+        return "high"
+    if score >= 0.4:
+        return "medium"
+    return "low"
+
+
+def _omni_safety(client, text: str):
+    """Calibrated safety check via the moderation API (free, no contact bias).
+    Returns (flagged_categories, severity); severity 'low' means a weak signal."""
+    try:
+        result = client.moderations.create(
+            model=OMNI_MODERATION_MODEL, input=text[:4000]
+        ).results[0]
+        cats = result.categories.model_dump()
+        scores = result.category_scores.model_dump()
+    except Exception:
+        logger.exception("omni moderation failed; relying on the LLM check only")
+        return [], "low"
+    flagged, top = set(), 0.0
+    for key, ours in _OMNI_CATEGORY_MAP.items():
+        if cats.get(key):
+            flagged.add(ours)
+            top = max(top, float(scores.get(key) or 0.0))
+    return sorted(flagged), _severity_from_score(top)
+
+
+def _max_severity(severities) -> str:
+    return max(severities, key=lambda s: SEVERITY_RANK.get(s, 0))
+
+
+def moderate_message_text(
+    text: str, model: Optional[str] = None, context: Optional[str] = None
+) -> ModerationResult:
     if not message_flagging_enabled():
         return ModerationResult(flagged=False)
 
-    ai_result = classify_message_with_openai(text, model=model)
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise ModerationUnavailable("OPENAI_API_KEY is required for message flagging")
+    try:
+        client = _get_openai_client(api_key)
+    except ImportError as exc:
+        raise ModerationUnavailable("openai package is not installed") from exc
+
+    # 1. Safety via the calibrated moderation API.
+    omni_cats, omni_sev = _omni_safety(client, text)
+
+    # 2. Platform-specific misuse via the LLM (money, scams, spam, age, grooming).
+    ai = classify_message_with_openai(text, model=model, context=context)
+    llm_cats = list(ai.get("categories") or [])
+    llm_sev = ai.get("severity") or "low"
+    # Require a quoted-evidence span so the model can't flag on a hallucinated
+    # category; the enum schema already limits it to the real categories. A flag
+    # carrying nearly every category at once is a known degenerate output of the
+    # small model (no real message violates them all), so treat it as noise.
+    llm_flagged = (
+        bool(ai.get("flagged"))
+        and bool((ai.get("evidence") or "").strip())
+        and llm_cats
+        and len(llm_cats) < 4
+    )
+
+    # 3. Combine. Drop only weak OMNI signals (its score is calibrated, so a low
+    #    score genuinely means uncertain). LLM flags are already high-precision
+    #    (enum category + quoted evidence), and gpt-5-nano under-rates severity
+    #    (it calls a clear money request "low"), so we trust the flag and just
+    #    floor its display severity at medium rather than dropping it.
+    parts = []
+    if omni_cats and omni_sev != "low":
+        parts.append((omni_cats, omni_sev))
+    if llm_flagged:
+        parts.append((llm_cats, _max_severity([llm_sev, "medium"])))
+
+    categories = sorted({c for cats, _ in parts for c in cats})
+    response = {"omni": {"categories": omni_cats, "severity": omni_sev}, "llm": ai}
+    if not parts:
+        return ModerationResult(
+            flagged=False,
+            categories=sorted(set(omni_cats) | set(llm_cats)),
+            language=ai.get("language"),
+            confidence=ai.get("confidence"),
+            model=model or message_flagging_model(),
+            response=response,
+        )
 
     return ModerationResult(
-        flagged=bool(ai_result.get("flagged")),
-        severity=ai_result.get("severity") or "low",
-        categories=list(ai_result.get("categories") or []),
-        reason=ai_result.get("reason") or "Potentially inappropriate message.",
-        language=ai_result.get("language"),
-        confidence=ai_result.get("confidence"),
+        flagged=True,
+        severity=_max_severity(sev for _, sev in parts),
+        categories=categories,
+        reason=ai.get("reason") or "Flagged for review.",
+        language=ai.get("language"),
+        confidence=ai.get("confidence"),
         model=model or message_flagging_model(),
-        response=ai_result,
+        response=response,
     )
 
 
@@ -271,10 +467,7 @@ def _sender_profile(sender_id: Any):
     return None
 
 
-def sender_label(sender_id: Any) -> Dict[str, str]:
-    profile = _sender_profile(sender_id)
-    if not profile:
-        return {"name": str(sender_id or "Unknown"), "email": ""}
+def _profile_label(profile) -> Dict[str, str]:
     return {
         "name": getattr(profile, "name", None)
         or getattr(profile, "person_name", None)
@@ -282,6 +475,69 @@ def sender_label(sender_id: Any) -> Dict[str, str]:
         or str(profile.id),
         "email": getattr(profile, "email", "") or "",
     }
+
+
+def sender_label(sender_id: Any) -> Dict[str, str]:
+    profile = _sender_profile(sender_id)
+    if not profile:
+        return {"name": str(sender_id or "Unknown"), "email": ""}
+    return _profile_label(profile)
+
+
+def sender_labels(sender_ids) -> Dict[str, Dict[str, str]]:
+    """Labels for many senders at once: one id__in query per profile
+    collection instead of up to five queries per sender, which matters because
+    Mongo calls block the eventlet hub."""
+    ids = {oid for oid in (_parse_object_id(s) for s in sender_ids) if oid}
+    labels = {str(oid): {"name": str(oid), "email": ""} for oid in ids}
+    remaining = set(ids)
+    for model in (MentorProfile, MenteeProfile, PartnerProfile, Hub, Admin):
+        if not remaining:
+            break
+        for profile in model.objects(id__in=list(remaining)):
+            labels[str(profile.id)] = _profile_label(profile)
+            remaining.discard(profile.id)
+    return labels
+
+
+def _is_team_sender(sender_id: Any) -> bool:
+    """Only Letitia's accounts (letitia@menteeglobal.org and letitia+alias
+    addresses) are trusted and never moderated. Everyone else -- including
+    admins and other @menteeglobal.org team accounts -- is moderated normally."""
+    profile = _sender_profile(sender_id)
+    if profile is None:
+        return False
+    email = (getattr(profile, "email", "") or "").lower()
+    local, _, domain = email.partition("@")
+    return domain == "menteeglobal.org" and (
+        local == "letitia" or local.startswith("letitia+")
+    )
+
+
+def _recent_direct_context(
+    sender_id: Any, recipient_id: Any, limit: int = 3, before: Any = None
+) -> str:
+    """The last few delivered messages of this 1:1 conversation, labelled by who
+    sent each, to give the classifier context for the latest message. Pass
+    `before` (a datetime) to get the messages preceding a historical message."""
+    s = _parse_object_id(sender_id)
+    r = _parse_object_id(recipient_id)
+    if not s or not r:
+        return ""
+    conversation = (Q(sender_id=s) & Q(recipient_id=r)) | (
+        Q(sender_id=r) & Q(recipient_id=s)
+    )
+    if before is not None:
+        conversation = conversation & Q(created_at__lt=before)
+    messages = list(
+        DirectMessage.objects(conversation).order_by("-created_at").limit(limit)
+    )
+    messages.reverse()
+    lines = [
+        f"{'sender' if m.sender_id == s else 'other'}: {_safe_text(m.body, 300)}"
+        for m in messages
+    ]
+    return "\n".join(lines)
 
 
 def create_message_flag(
@@ -540,9 +796,18 @@ def flag_pending_message_if_needed(
     if not message_flagging_enabled():
         return False, None
 
+    sender_id = payload.get("sender_id")
+    if _is_team_sender(sender_id):
+        return False, None
+
     body = payload.get("body", "")
+    context = ""
+    if source_type == SOURCE_DIRECT:
+        context = _recent_direct_context(sender_id, payload.get("recipient_id"))
     try:
-        moderation = moderate_message_text(body)
+        # Run the (blocking) moderation off eventlet's hub so it can't stall
+        # other requests; scripts call moderate_message_text directly.
+        moderation = _run_off_hub(moderate_message_text, body, context=context)
     except Exception:
         # Moderation is best-effort: if it can't run (missing OPENAI_API_KEY,
         # no OpenAI credits, API/network error) let the message through

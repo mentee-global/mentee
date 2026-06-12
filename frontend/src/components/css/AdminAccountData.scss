@@ -12,21 +12,21 @@
 .account-data-body .ant-breadcrumb {
   margin-bottom: 8px;
   font-size: 14px;
-  
+
   a {
     color: #6b7280;
     transition: color 0.2s ease;
-    
+
     &:hover {
       color: #1890ff;
     }
   }
-  
+
   .ant-breadcrumb-separator {
     color: #d1d5db;
     margin: 0 8px;
   }
-  
+
   .ant-breadcrumb-link {
     color: #374151;
     font-weight: 500;
@@ -66,13 +66,14 @@
 
 .filter-search {
   width: 280px;
-  
+
   .ant-input {
     border-radius: 8px;
     border-color: #d1d5db;
     transition: all 0.2s ease;
-    
-    &:hover, &:focus {
+
+    &:hover,
+    &:focus {
       border-color: #1890ff;
       box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
     }
@@ -92,7 +93,7 @@
     align-items: center;
     justify-content: space-between;
     transition: all 0.2s ease;
-    
+
     &:hover {
       border-color: #1890ff;
       color: #1890ff;
@@ -109,7 +110,7 @@
   border-color: #d1d5db;
   background: #ffffff;
   transition: all 0.2s ease;
-  
+
   &:hover {
     color: #dc2626;
     border-color: #dc2626;
@@ -155,12 +156,12 @@
   align-items: center;
   gap: 6px;
   transition: all 0.2s ease;
-  
+
   &.ant-btn-default {
     border-color: #d1d5db;
     color: #374151;
     background: #ffffff;
-    
+
     &:hover {
       border-color: #1890ff;
       color: #1890ff;
@@ -190,7 +191,7 @@
     height: 36px;
     padding: 0 16px;
     border-right: 1px solid #1890ff;
-    
+
     &:hover {
       background: #e6f7ff;
     }
@@ -208,15 +209,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   &:hover {
     background: $theme-orange-dark !important;
   }
-  
+
   &:active {
     background: $theme-orange-dark !important;
   }
-  
+
   .anticon {
     font-size: 16px;
   }
@@ -233,7 +234,7 @@
   border-color: #d1d5db;
   color: #6b7280;
   transition: all 0.2s ease;
-  
+
   &:hover {
     border-color: #1890ff;
     color: #1890ff;
@@ -275,12 +276,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  
+
   &:hover {
     background: #f3f4f6;
     color: #374151;
   }
-  
+
   &.active {
     background: #1890ff;
     color: #ffffff;
@@ -309,13 +310,13 @@
     border-bottom: 1px solid #e5e7eb;
     padding: 16px;
   }
-  
+
   .ant-table-tbody > tr > td {
     padding: 16px;
     color: #4b5563;
     border-bottom: 1px solid #f3f4f6;
   }
-  
+
   .ant-table-tbody > tr:hover > td {
     background: #f0f9ff;
   }
@@ -371,25 +372,25 @@
   overflow-y: auto;
   min-height: 200px;
   max-height: 600px;
-  
+
   .assign-header-modal {
     display: flex;
-    
+
     .org-area {
       text-align: center;
     }
-    
+
     .restricted-area {
       font-size: 20px;
       padding-top: 20px;
       padding-left: 30%;
-      
+
       label {
         margin-right: 10px;
       }
     }
   }
-  
+
   .main-body {
     display: flex;
     width: 100%;
@@ -398,37 +399,37 @@
       width: 50%;
       padding: 20px;
     }
-    
+
     .sub-title {
       font-weight: bold;
       font-size: 18px;
     }
-    
+
     .add-btn {
       height: 38px;
       color: white;
       background-color: #e4bb4f;
     }
-    
+
     .mentors-area {
       border-right: 1px solid lightgray;
     }
-    
+
     .list {
       margin-top: 45px;
       background-color: white;
     }
-    
+
     .record {
       display: flex;
       justify-content: space-between;
       padding: 8px 10px;
     }
-    
+
     .record:hover {
       background-color: rgb(242, 242, 242);
     }
-    
+
     .odd {
       background-color: #fafafa;
     }
@@ -451,29 +452,29 @@
   .account-data-body {
     padding: 16px;
   }
-  
+
   .filters-row {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .filter-search {
     width: 100%;
   }
-  
+
   .table-header-section {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .table-actions {
     width: 100%;
     justify-content: flex-start;
   }
-  
+
   .download-section {
     width: 100%;
-    
+
     .download-dropdown .ant-btn,
     .download-btn {
       flex: 1;
@@ -485,7 +486,7 @@
   .table-button-group {
     flex-direction: column;
     width: 100%;
-    
+
     > .table-button {
       margin: 4px 0;
       width: 100%;

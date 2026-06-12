@@ -1923,6 +1923,17 @@ export const fetchMessageFlags = async (filters = {}) => {
   );
 };
 
+export const fetchMessageFlagSenders = async () => {
+  const requestExtension = `/admin/message-flags/senders`;
+  return authGet(requestExtension).then(
+    (response) => response.data.result.senders,
+    (err) => {
+      console.error(err);
+      return [];
+    }
+  );
+};
+
 export const fetchMessageFlagById = async (id) => {
   const requestExtension = `/admin/message-flags/${id}`;
   return authGet(requestExtension).then(

@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+from bson import ObjectId
 from bson.errors import InvalidId
 from flask import Blueprint, g, request
 from mongoengine.queryset.visitor import Q
@@ -115,16 +116,26 @@ def list_message_flags():
     if origin and origin != "all":
         query &= Q(origin=origin)
 
+    sender_id = request.args.get("sender_id")
+    if sender_id and sender_id != "all":
+        try:
+            query &= Q(sender_id=ObjectId(sender_id))
+        except (InvalidId, TypeError):
+            pass
+
+    # Dates filter and sort by when the message was sent, not when it was
+    # flagged: backfilled flags are all evaluated on the same day, so the
+    # evaluation date is meaningless for review.
     since = _date_arg("since")
     before = _date_arg("before")
     if since:
-        query &= Q(created_at__gte=since)
+        query &= Q(original_created_at__gte=since)
     if before:
-        query &= Q(created_at__lte=before)
+        query &= Q(original_created_at__lte=before)
     if search:
         query &= Q(body__icontains=search) | Q(reason__icontains=search)
 
-    queryset = MessageFlag.objects(query).order_by("-created_at")
+    queryset = MessageFlag.objects(query).order_by("-original_created_at")
     total = queryset.count()
     flags = queryset.skip((page - 1) * limit).limit(limit)
     return create_response(
@@ -135,6 +146,22 @@ def list_message_flags():
             "limit": limit,
         }
     )
+
+
+@message_flags.route("/senders", methods=["GET"])
+@admin_only
+def list_message_flag_senders():
+    """Distinct senders with at least one flag, for the sender filter."""
+    sender_ids = MessageFlag.objects().distinct("sender_id")
+    senders = sorted(
+        (
+            {"id": str(sender_id), **sender_label(sender_id)}
+            for sender_id in sender_ids
+            if sender_id
+        ),
+        key=lambda sender: (sender["name"] or "").lower(),
+    )
+    return create_response(data={"senders": senders})
 
 
 @message_flags.route("/<string:flag_id>", methods=["GET"])

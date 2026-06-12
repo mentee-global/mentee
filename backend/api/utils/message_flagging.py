@@ -467,10 +467,7 @@ def _sender_profile(sender_id: Any):
     return None
 
 
-def sender_label(sender_id: Any) -> Dict[str, str]:
-    profile = _sender_profile(sender_id)
-    if not profile:
-        return {"name": str(sender_id or "Unknown"), "email": ""}
+def _profile_label(profile) -> Dict[str, str]:
     return {
         "name": getattr(profile, "name", None)
         or getattr(profile, "person_name", None)
@@ -478,6 +475,29 @@ def sender_label(sender_id: Any) -> Dict[str, str]:
         or str(profile.id),
         "email": getattr(profile, "email", "") or "",
     }
+
+
+def sender_label(sender_id: Any) -> Dict[str, str]:
+    profile = _sender_profile(sender_id)
+    if not profile:
+        return {"name": str(sender_id or "Unknown"), "email": ""}
+    return _profile_label(profile)
+
+
+def sender_labels(sender_ids) -> Dict[str, Dict[str, str]]:
+    """Labels for many senders at once: one id__in query per profile
+    collection instead of up to five queries per sender, which matters because
+    Mongo calls block the eventlet hub."""
+    ids = {oid for oid in (_parse_object_id(s) for s in sender_ids) if oid}
+    labels = {str(oid): {"name": str(oid), "email": ""} for oid in ids}
+    remaining = set(ids)
+    for model in (MentorProfile, MenteeProfile, PartnerProfile, Hub, Admin):
+        if not remaining:
+            break
+        for profile in model.objects(id__in=list(remaining)):
+            labels[str(profile.id)] = _profile_label(profile)
+            remaining.discard(profile.id)
+    return labels
 
 
 def _is_team_sender(sender_id: Any) -> bool:

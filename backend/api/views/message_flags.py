@@ -23,6 +23,7 @@ from api.utils.message_flagging import (
     original_message_for_flag,
     send_warning_to_sender,
     sender_label,
+    sender_labels,
 )
 from api.utils.require_auth import admin_only
 
@@ -39,7 +40,7 @@ def _date_arg(name):
         return None
 
 
-def _flag_payload(flag):
+def _flag_payload(flag, sender=None):
     data = flag.to_mongo().to_dict()
     data["_id"] = {"$oid": str(data.pop("_id"))}
     for field in (
@@ -60,7 +61,7 @@ def _flag_payload(flag):
     ):
         if data.get(field):
             data[field] = {"$date": data[field].isoformat()}
-    data["sender"] = sender_label(flag.sender_id)
+    data["sender"] = sender or sender_label(flag.sender_id)
     return data
 
 
@@ -137,10 +138,14 @@ def list_message_flags():
 
     queryset = MessageFlag.objects(query).order_by("-original_created_at")
     total = queryset.count()
-    flags = queryset.skip((page - 1) * limit).limit(limit)
+    flags = list(queryset.skip((page - 1) * limit).limit(limit))
+    labels = sender_labels(flag.sender_id for flag in flags)
     return create_response(
         data={
-            "items": [_flag_payload(flag) for flag in flags],
+            "items": [
+                _flag_payload(flag, sender=labels.get(str(flag.sender_id)))
+                for flag in flags
+            ],
             "total": total,
             "page": page,
             "limit": limit,
@@ -152,13 +157,9 @@ def list_message_flags():
 @admin_only
 def list_message_flag_senders():
     """Distinct senders with at least one flag, for the sender filter."""
-    sender_ids = MessageFlag.objects().distinct("sender_id")
+    labels = sender_labels(MessageFlag.objects().distinct("sender_id"))
     senders = sorted(
-        (
-            {"id": str(sender_id), **sender_label(sender_id)}
-            for sender_id in sender_ids
-            if sender_id
-        ),
+        ({"id": sender_id, **label} for sender_id, label in labels.items()),
         key=lambda sender: (sender["name"] or "").lower(),
     )
     return create_response(data={"senders": senders})

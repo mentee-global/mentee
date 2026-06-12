@@ -481,15 +481,17 @@ def sender_label(sender_id: Any) -> Dict[str, str]:
 
 
 def _is_team_sender(sender_id: Any) -> bool:
-    """Mentee Global staff (admins or anyone on the @menteeglobal.org domain,
-    e.g. partner-program coordinators) are trusted and never moderated."""
+    """Only Letitia's accounts (letitia@menteeglobal.org and letitia+alias
+    addresses) are trusted and never moderated. Everyone else -- including
+    admins and other @menteeglobal.org team accounts -- is moderated normally."""
     profile = _sender_profile(sender_id)
     if profile is None:
         return False
-    if isinstance(profile, Admin):
-        return True
     email = (getattr(profile, "email", "") or "").lower()
-    return email.endswith("@menteeglobal.org")
+    local, _, domain = email.partition("@")
+    return domain == "menteeglobal.org" and (
+        local == "letitia" or local.startswith("letitia+")
+    )
 
 
 def _recent_direct_context(

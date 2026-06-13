@@ -300,6 +300,34 @@ def _build_link(app, role, page, front_url):
     )
 
 
+# Deterministic links embedded in the onboarding email buttons. Surfaced on the
+# panel so an admin can copy a person's link and share it directly when the email
+# itself never reaches them. Single-use Firebase links (verification, password
+# reset) are generated fresh per send and intentionally excluded.
+MANUAL_LINK_PAGES = {
+    ACTION_RESEND_TRAINING: ("application-training", "Training link"),
+    ACTION_RESEND_BUILD_PROFILE: ("build-profile", "Build profile link"),
+}
+
+
+def _manual_links(app, role, available_actions):
+    if not app:
+        return []
+    links = []
+    for action in available_actions:
+        page_label = MANUAL_LINK_PAGES.get(action)
+        if not page_label:
+            continue
+        page, label = page_label
+        # Empty front_url yields the relative path+query so the cached row never
+        # bakes in a base; the frontend prepends its own origin (FRONT_BASE_URL),
+        # which is the same base the email link is built with.
+        links.append(
+            {"action": action, "label": label, "path": _build_link(app, role, page, "")}
+        )
+    return links
+
+
 def _effective_stage(app, email, profile, mongo_user, firebase_user):
     if app is None:
         return STAGE_PROFILE_ONLY if profile else STAGE_APPLIED
@@ -510,6 +538,7 @@ def _serialize_row(
     )
     action_events = events.get(email, [])
     last_action_event = action_events[0] if action_events else None
+    available_actions = _available_actions(app, profile, mongo_user, firebase_user)
     latest_action_at = (
         datetime.fromisoformat(last_action_event["created_at"])
         if last_action_event and last_action_event.get("created_at")
@@ -562,9 +591,8 @@ def _serialize_row(
             and getattr(mongo_user, "verified", False)
         ),
         "recommended_action": _recommendation(app, profile, mongo_user, firebase_user),
-        "available_actions": _available_actions(
-            app, profile, mongo_user, firebase_user
-        ),
+        "available_actions": available_actions,
+        "manual_links": _manual_links(app, role, available_actions),
         "attention_reasons": _attention_reasons(
             app, profile, mongo_user, firebase_user
         ),

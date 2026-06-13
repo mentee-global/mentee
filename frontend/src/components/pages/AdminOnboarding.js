@@ -29,14 +29,14 @@ import {
   SyncOutlined,
 } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { ACCOUNT_TYPE } from "utils/consts";
+import { ACCOUNT_TYPE, FRONT_BASE_URL } from "utils/consts";
 import {
   fetchAccounts,
   fetchAdminOnboarding,
   runAdminOnboardingAction,
 } from "utils/api";
 
-const { Text, Title } = Typography;
+const { Text, Title, Paragraph } = Typography;
 
 const pageClass = css`
   padding: 24px;
@@ -1049,6 +1049,37 @@ export default function AdminOnboarding() {
                 )}
               </div>
             </div>
+
+            {selectedRow.manual_links?.length ? (
+              <div>
+                <Space align="center" size={6}>
+                  <Text strong>Backup links</Text>
+                  <Tooltip title="The destination of the onboarding email buttons. If the email never arrives, copy this and send it to the person directly. It won't match the link string in the email — that one is a SendGrid tracking redirect — but it opens the same page.">
+                    <InfoCircleOutlined className="help-icon" />
+                  </Tooltip>
+                </Space>
+                <Space
+                  direction="vertical"
+                  size={8}
+                  style={{ marginTop: 8, width: "100%" }}
+                >
+                  {selectedRow.manual_links.map((link) => {
+                    const url = `${FRONT_BASE_URL}${link.path}`;
+                    return (
+                      <div key={link.action}>
+                        <Text type="secondary">{link.label}</Text>
+                        <Paragraph
+                          copyable={{ text: url }}
+                          style={{ marginBottom: 0, wordBreak: "break-all" }}
+                        >
+                          {url}
+                        </Paragraph>
+                      </div>
+                    );
+                  })}
+                </Space>
+              </div>
+            ) : null}
 
             <Space wrap>
               <BooleanTag

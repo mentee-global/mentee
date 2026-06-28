@@ -85,12 +85,17 @@ def upload_account_emails():
     with io.TextIOWrapper(f, encoding="utf-8", newline="\n") as fstring:
         reader = csv.reader(fstring, delimiter="\n")
         for line in reader:
+            if not line:
+                continue
+            email_value = VerifiedEmail.normalize_email(line[0])
+            if not email_value:
+                continue
             duplicates = VerifiedEmail.objects(
-                email=line[0], is_mentor=isMentor, password=password
+                email=email_value, is_mentor=isMentor, password=password
             )
             if not duplicates:
                 email = VerifiedEmail(
-                    email=line[0], is_mentor=isMentor, password=password
+                    email=email_value, is_mentor=isMentor, password=password
                 )
                 email.save()
     return create_response(status=200, message="success")
@@ -229,8 +234,7 @@ def upload_account_emailText():
     password = request.form["password"]
     name = request.form["name"]
     if role == Account.GUEST or role == Account.SUPPORT or role == Account.MODERATOR:
-        email = messageText
-        email = email.replace(" ", "")
+        email = VerifiedEmail.normalize_email(messageText)
         duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
         if not duplicates:
             firebase_user, error_http_response = create_firebase_user(email, password)
@@ -264,7 +268,9 @@ def upload_account_emailText():
             )
     else:
         for email in messageText.split(";"):
-            email = email.replace(" ", "")
+            email = VerifiedEmail.normalize_email(email)
+            if not email:
+                continue
             duplicates = VerifiedEmail.objects(email=email, role=str(role), password="")
             if not duplicates:
                 email = VerifiedEmail(email=email, role=str(role), password="")

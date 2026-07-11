@@ -15,11 +15,30 @@ import "dayjs/locale/es";
 import "dayjs/locale/ar";
 import "dayjs/locale/fa";
 import "dayjs/locale/pt";
+import weekday from "dayjs/plugin/weekday";
+import localeData from "dayjs/plugin/localeData";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+import weekYear from "dayjs/plugin/weekYear";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import i18n from "utils/i18n";
 import { ProvideAuth } from "utils/hooks/useAuth";
 import ErrorBoundary from "components/ErrorBoundary";
 import OfflineBanner from "components/OfflineBanner";
 import { reportClientError } from "utils/errorReport";
+
+// Ant Design v5's date pickers (Calendar, DatePicker, TimePicker) call
+// weekday()/localeData()/etc. on the dayjs objects we hand them. antd extends
+// its own dayjs internally, but under pnpm's isolated node_modules our dayjs
+// instance is a separate copy that never receives those extensions, so the
+// pickers crash with "t.weekday is not a function". Register the plugins antd
+// relies on here, on our dayjs instance.
+dayjs.extend(customParseFormat);
+dayjs.extend(advancedFormat);
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+dayjs.extend(weekOfYear);
+dayjs.extend(weekYear);
 
 // Suppress ResizeObserver loop error (harmless browser/React warning) and
 // report everything else to the backend so we know when users hit crashes.

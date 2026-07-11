@@ -14,25 +14,23 @@ function MentorContactModal({
   mentorSpecializations,
 }) {
   const { t } = useTranslation();
+  const [form] = Form.useForm();
   const [openModal, setOpenModal] = useState(false);
-  const [message, setMessage] = useState("");
-  const [interestAreas, setInterestAreas] = useState([]);
   const [, setError] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(false);
 
+  // The mentor's specializations are only suggestions. The field is a
+  // free-text tags input, so a mentee can always type her own interest area
+  // even when there are no suggestions.
+  const suggestedInterestAreas = Array.isArray(mentorSpecializations)
+    ? mentorSpecializations.map((area) => ({ label: area, value: area }))
+    : [];
+
   const closeModal = () => {
     setOpenModal(false);
-    setMessage(null);
     setError(false);
-    setInterestAreas([]);
+    form.resetFields();
   };
-
-  const addInterestArea = (e) => {
-    setInterestAreas(e);
-  };
-  const filteredOptions = mentorSpecializations
-    ? mentorSpecializations.filter((o) => !interestAreas.includes(o))
-    : [];
 
   return (
     <span>
@@ -54,14 +52,15 @@ function MentorContactModal({
         footer={null}
       >
         <Form
+          form={form}
           layout="vertical"
           style={{ padding: "30px" }}
-          onFinish={async () => {
+          onFinish={async (values) => {
             const res = await sendMenteeMentorEmail(
               mentorId,
               menteeId,
-              interestAreas,
-              message
+              values.interestAreas,
+              values.message
             );
             if (!res) {
               setError(true);
@@ -82,7 +81,7 @@ function MentorContactModal({
             </h3>
           </Form.Item>
           <Form.Item
-            name="Choose Interest Areas"
+            name="interestAreas"
             label={t("mentorContactModal.areaInterest")}
             rules={[
               {
@@ -93,20 +92,14 @@ function MentorContactModal({
           >
             <Select
               mode="tags"
-              value={interestAreas}
-              onChange={addInterestArea}
+              placeholder={t("mentorContactModal.areaInterestPlaceholder")}
               style={{ minWidth: "100px" }}
-            >
-              {filteredOptions.map((item) => (
-                <Select.Option key={item} value={item}>
-                  {item}
-                </Select.Option>
-              ))}
-            </Select>
+              options={suggestedInterestAreas}
+            />
           </Form.Item>
           <Form.Item
             label={t("mentorContactModal.introPrompt")}
-            name="Custom Message"
+            name="message"
             style={{ paddingTop: "12px" }}
             rules={[
               {
@@ -115,17 +108,11 @@ function MentorContactModal({
               },
             ]}
           >
-            <div className="message-modal-container">
-              <Input.TextArea
-                placeholder={t("mentorContactModal.introExample")}
-                onChange={(e) => setMessage(e.target.value)}
-                value={message}
-                handleClick={() => {}}
-                style={styles.modalInput}
-                autoSize={{ minRows: 3 }}
-              />
-              <br />
-            </div>
+            <Input.TextArea
+              placeholder={t("mentorContactModal.introExample")}
+              style={styles.modalInput}
+              autoSize={{ minRows: 3 }}
+            />
           </Form.Item>
           <Form.Item>
             <Button

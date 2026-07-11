@@ -1604,7 +1604,9 @@ export const getDisplayLanguages = async () => {
 
 export const getDisplaySpecializations = async () => {
   const requestExtension = `/masters/specializations`;
-  const records = await authGet(requestExtension).catch(console.error);
+  // Let a failed request reject so the caller can mark the fetch as failed and
+  // retry, instead of silently caching an empty list for the whole session.
+  const records = await authGet(requestExtension);
   const currentLang = i18n.language;
   let res = [];
   const specializations = records?.data?.result?.result;

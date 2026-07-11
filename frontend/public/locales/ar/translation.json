@@ -494,6 +494,7 @@
   },
   "mentorContactModal": {
     "areaInterest": "اختر مجالات الاهتمام",
+    "areaInterestPlaceholder": "اختر أو اكتب مجال اهتمامك الخاص",
     "areaInterstValidate": "الرجاء تحديد منطقة اهتمام!",
     "basicInfoNotice": "سيتم إرسال اسمك والبريد الإلكتروني إلى هذا المرشد",
     "communicationMethod": "ما هي طريقة الاتصال المفضلة لديك؟",

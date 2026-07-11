@@ -494,6 +494,7 @@
   },
   "mentorContactModal": {
     "areaInterest": "مناطق مورد علاقه را انتخاب کنید",
+    "areaInterestPlaceholder": "زمینه مورد علاقه خود را انتخاب کنید یا تایپ کنید",
     "areaInterstValidate": "لطفاً یک منطقه مورد علاقه را انتخاب کنید!",
     "basicInfoNotice": "نام و ایمیل شما برای این استاد راهنما ارسال خواهد شد",
     "communicationMethod": "روش ارتباطی ترجیحی شما چیست؟",

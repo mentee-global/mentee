@@ -496,6 +496,7 @@
   },
   "mentorContactModal": {
     "areaInterest": "Choose Interest Areas",
+    "areaInterestPlaceholder": "Select or type your own interest area",
     "areaInterstValidate": "Please select an interest area!",
     "basicInfoNotice": "Your name and email will be sent to this mentor",
     "communicationMethod": "What is your preferred communication method?",

@@ -94,7 +94,8 @@ function Events() {
         setHubPartners([...partenr_data]);
       } else {
         const mentor_data = await fetchMentors();
-        const mentee_data = await fetchMentees();
+        // Includes private mentees so event authors always resolve to a name.
+        const mentee_data = await fetchMentees(undefined, true);
         const partenr_data = await fetchPartners(undefined, null);
         setUsers([
           ...mentee_data,

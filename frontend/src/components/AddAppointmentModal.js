@@ -12,6 +12,7 @@ import {
   Space,
 } from "antd";
 import moment from "moment";
+import dayjs from "dayjs";
 import { createAppointment, fetchMentees, fetchPartners } from "utils/api";
 import { APPOINTMENT_STATUS } from "utils/consts";
 
@@ -30,14 +31,21 @@ function AddAppointmentModal({
   const { t } = useTranslation();
   const { isAdmin, profileId } = useAuth();
   const [menteeArr, setMenteeArr] = useState([]);
+  const [menteesLoading, setMenteesLoading] = useState(false);
   const options = useSelector((state) => state.options);
   const user = useSelector((state) => state.user.user);
   const [form] = Form.useForm();
 
   // TODO: clean up this useEffect and its useState
   useEffect(() => {
+    // The full mentee directory is only needed once the mentor opens the modal.
+    if (!open || menteeArr.length) return;
+
     async function getMentees() {
-      const mentee_data = await fetchMentees();
+      setMenteesLoading(true);
+      // Private is a public-directory flag, not a booking restriction: mentors
+      // must be able to book the mentees they support.
+      const mentee_data = await fetchMentees(undefined, true);
       if (mentee_data) {
         if (user && user.pair_partner && user.pair_partner.restricted) {
           if (Array.isArray(user.pair_partner.assign_mentees)) {
@@ -87,16 +95,18 @@ function AddAppointmentModal({
         for (let mentee_item of temp) {
           const menteeId = mentee_item?._id?.$oid || mentee_item?.id;
           if (menteeId) {
-            res.push({ value: menteeId, label: mentee_item.name });
+            res.push({ value: menteeId, label: mentee_item.name.trim() });
           }
         }
       }
+      res.sort((a, b) => a.label.localeCompare(b.label));
       setMenteeArr(res);
+      setMenteesLoading(false);
     }
 
     getMentees();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [open]);
 
   async function handleSave(values) {
     // TODO: Optimize and swap these to dayjs
@@ -166,6 +176,9 @@ function AddAppointmentModal({
         ]}
       >
         <Select
+          showSearch
+          optionFilterProp="label"
+          loading={menteesLoading}
           options={menteeArr}
           placeholder={t("mentorAppointmentPage.selectMentee")}
         />
@@ -184,7 +197,10 @@ function AddAppointmentModal({
             marginBottom: isMobile ? "1em" : "0",
           }}
         >
-          <DatePicker placeholder={t("mentorAppointmentPage.selectDate")} />
+          <DatePicker
+            placeholder={t("mentorAppointmentPage.selectDate")}
+            disabledDate={(current) => current.isBefore(dayjs(), "day")}
+          />
         </Form.Item>
         <Form.Item
           name="timeRange"
@@ -198,7 +214,7 @@ function AddAppointmentModal({
             marginBottom: "0",
           }}
         >
-          <TimePicker.RangePicker use12Hours={false} format="h:mm A" />
+          <TimePicker.RangePicker use12Hours format="h:mm A" />
         </Form.Item>
       </Form.Item>
       <Form.Item

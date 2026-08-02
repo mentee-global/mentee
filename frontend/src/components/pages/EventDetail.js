@@ -36,7 +36,8 @@ function EventDetail({ match }) {
         all_users = [...partenr_data, hub_user, ...admin_data];
       } else {
         const mentor_data = await fetchMentors();
-        const mentee_data = await fetchMentees();
+        // Includes private mentees so event authors always resolve to a name.
+        const mentee_data = await fetchMentees(undefined, true);
         const partenr_data = await fetchPartners(undefined, null);
         all_users = [
           ...mentee_data,

@@ -5,6 +5,57 @@
   padding: 0 2em;
 }
 
+.admin-event-notifications {
+  width: min(360px, calc(100vw - 32px));
+}
+
+.admin-event-notifications > .ant-typography {
+  margin: 0 0 12px;
+}
+
+.admin-event-notifications__loading {
+  display: grid;
+  min-height: 96px;
+  place-items: center;
+}
+
+.admin-event-notifications__list {
+  display: flex;
+  max-height: min(420px, calc(100vh - 120px));
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.admin-event-notifications__item {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.admin-event-notifications__item:hover,
+.admin-event-notifications__item:focus-visible {
+  background: #f5f5f5;
+  outline: none;
+}
+
+.admin-event-notifications__item--unread {
+  background: #fff3f0;
+}
+
+.admin-event-notifications__item span {
+  color: rgba(0, 0, 0, 0.65);
+}
+
 .navigation-sidebar {
   box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
 }

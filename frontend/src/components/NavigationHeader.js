@@ -6,6 +6,7 @@ import { useMediaQuery } from "react-responsive";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import NotificationBell from "components/NotificationBell";
+import AdminEventNotificationBell from "components/AdminEventNotificationBell";
 import BugReportModal from "components/BugReportModal";
 import LanguageDropdown from "components/LanguageDropdown";
 import { getLoginPath, logout } from "utils/auth.service";
@@ -180,6 +181,7 @@ function NavigationHeader() {
         </div>
       )}
       <Space size="middle" style={{ lineHeight: "100%" }}>
+        {role === ACCOUNT_TYPE.ADMIN && <AdminEventNotificationBell />}
         {role !== ACCOUNT_TYPE.GUEST && role !== ACCOUNT_TYPE.SUPPORT && (
           <NotificationBell />
         )}

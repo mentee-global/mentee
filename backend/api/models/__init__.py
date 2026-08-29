@@ -22,6 +22,9 @@ from .PartnerGroupMessage import PartnerGroupMessage
 from .Admin import Admin
 from .Training import Training
 from .Event import Event
+from .EventNotificationJob import EventNotificationJob
+from .EventReviewNotificationJob import EventReviewNotificationJob
+from .AdminEventNotification import AdminEventNotification
 from .Hub import Hub
 from .PartnerProfile import PartnerProfile
 from .MentorApplication import MentorApplication
@@ -66,6 +69,9 @@ __all__ = [
     "PartnerApplication",
     "Training",
     "Event",
+    "EventNotificationJob",
+    "EventReviewNotificationJob",
+    "AdminEventNotification",
     "Hub",
     "PartnerProfile",
     "MentorApplication",

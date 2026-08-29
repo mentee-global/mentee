@@ -1,551 +1,424 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
+  Button,
   DatePicker,
-  Modal,
-  TimePicker,
-  notification,
+  Drawer,
   Form,
   Input,
-  Drawer,
-  Button,
-  Space,
-  Upload,
+  Modal,
   Select,
+  Space,
+  Spin,
+  TimePicker,
+  Upload,
+  notification,
 } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import moment from "moment";
-import { createEvent, uploadEventImage } from "utils/api";
-import { UploadOutlined } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "utils/hooks/useAuth";
 import { useMediaQuery } from "react-responsive";
-import { validateUrl } from "utils/misc";
-import { ACCOUNT_TYPE } from "utils/consts";
-import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
-const { Option } = Select;
+import {
+  createEvent,
+  fetchEventAudiencePreview,
+  updateEvent,
+  uploadEventImage,
+} from "utils/api";
+import { ACCOUNT_TYPE } from "utils/consts";
+import { useAuth } from "utils/hooks/useAuth";
+import { validateUrl } from "utils/misc";
+
+const AUDIENCE_OPTIONS = [
+  { value: ACCOUNT_TYPE.MENTEE, labelKey: "mentees" },
+  { value: ACCOUNT_TYPE.MENTOR, labelKey: "mentors" },
+  { value: ACCOUNT_TYPE.PARTNER, labelKey: "partners" },
+  { value: ACCOUNT_TYPE.HUB, labelKey: "hubs" },
+];
+
+function dateValue(value) {
+  return value ? moment(value.$date || value) : null;
+}
 
 function AddEventModal({
-  role,
   open,
-  hubOptions,
   setOpen,
   event_item,
   refresh,
-  reloading,
-  partnerData,
+  onSaved,
+  hubOptions = [],
 }) {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { t } = useTranslation();
-  const { isAdmin, isMentor, isPartner, isMentee, profileId, isHub } =
-    useAuth();
+  const { role, isAdmin, isMentor, isMentee, isPartner } = useAuth();
   const [form] = Form.useForm();
+  const [image, setImage] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [scopeType, setScopeType] = useState("global");
+  const [scopeId, setScopeId] = useState();
+  const [audienceRoles, setAudienceRoles] = useState([]);
+  const [audiencePreview, setAudiencePreview] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const previewRequest = useRef(0);
 
-  const [image, setImage] = useState(
-    event_item && event_item.image_file ? event_item.image_file : null
-  );
-  const [changedImage, setChangedImage] = useState(false);
-  const user = useSelector((state) => state.user.user);
-  const [userRole, setUserRole] = useState([]);
-
-  // TODO: clean up this useEffect and its useState
   useEffect(() => {
-    if (event_item) {
-      form.setFieldValue("title", event_item.title);
-      form.setFieldValue("url", event_item.url);
-      form.setFieldValue("description", event_item.description);
-      if (
-        typeof event_item.role == "string" ||
-        typeof event_item.role == "number"
-      ) {
-        form.setFieldValue("user_role", [parseInt(event_item.role)]);
-        setUserRole([parseInt(event_item.role)]);
-      } else {
-        form.setFieldValue("user_role", event_item.role);
-        setUserRole(event_item.role);
-      }
-      if (event_item.hub_id) {
-        form.setFieldValue("hub_id", event_item.hub_id);
-      }
-      if (event_item.partner_ids) {
-        form.setFieldValue("partner_ids", event_item.partner_ids);
-      }
+    if (!open) return;
+    const defaultAudience = isMentee
+      ? [ACCOUNT_TYPE.MENTEE]
+      : isMentor
+      ? [ACCOUNT_TYPE.MENTOR, ACCOUNT_TYPE.MENTEE]
+      : role === ACCOUNT_TYPE.HUB
+      ? [ACCOUNT_TYPE.MENTOR, ACCOUNT_TYPE.MENTEE, ACCOUNT_TYPE.PARTNER]
+      : [ACCOUNT_TYPE.MENTOR, ACCOUNT_TYPE.MENTEE];
+    const nextScope = event_item?.scope_type || "global";
+    const nextAudience =
+      event_item?.audience_roles || event_item?.role || defaultAudience;
+    setScopeType(nextScope);
+    setScopeId(event_item?.scope_id);
+    setAudienceRoles(nextAudience);
+    form.setFieldsValue({
+      title: event_item?.title,
+      audience_roles: nextAudience,
+      start_date: dateValue(event_item?.start_datetime),
+      start_time: dateValue(event_item?.start_datetime),
+      end_date: dateValue(event_item?.end_datetime),
+      end_time: dateValue(event_item?.end_datetime),
+      description: event_item?.description,
+      url: event_item?.url,
+      scope_type: nextScope,
+      scope_id: event_item?.scope_id,
+    });
+    setImage(event_item?.image_file || null);
+  }, [event_item, form, isMentee, isMentor, open, role]);
 
-      if (event_item.start_datetime) {
-        form.setFieldValue(
-          "start_date",
-          moment(event_item.start_datetime.$date)
-        );
-        form.setFieldValue(
-          "start_time",
-          moment(event_item.start_datetime.$date)
-        );
-      }
-      if (event_item.end_datetime) {
-        form.setFieldValue("end_date", moment(event_item.end_datetime.$date));
-        form.setFieldValue("end_time", moment(event_item.end_datetime.$date));
-      }
-      if (event_item.image_file) {
-        setImage(event_item.image_file);
-      }
-    } else {
-      if (role === ACCOUNT_TYPE.HUB) {
-        form.setFieldValue("user_role", [ACCOUNT_TYPE.HUB]);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  async function handleSave(values) {
-    // TODO: Optimize and swap these to dayjs
-    var start_datetime = null;
-    var start_datetime_str = null;
-    var end_datetime = null;
-    var end_datetime_str = null;
-    start_datetime = values.start_date.format("YYYY-MM-DD");
-    start_datetime_str = `${start_datetime} ${values.start_time.format(
-      "HH:mm"
-    )}`;
-    start_datetime = moment(
-      `${start_datetime} ${values.start_time.format("HH:mm:ss")}`
-    );
-
-    end_datetime = values.end_date.format("YYYY-MM-DD");
-    end_datetime_str = `${end_datetime} ${values.end_time.format("HH:mm")}`;
-    end_datetime = moment(
-      `${end_datetime} ${values.end_time.format("HH:mm:ss")}`
-    );
-
-    var hub_user_id = null;
-    if (role === ACCOUNT_TYPE.HUB && user) {
-      if (user.hub_id) {
-        hub_user_id = user.hub_id;
-      } else {
-        hub_user_id = user._id.$oid;
-      }
+  useEffect(() => {
+    if (!open || !audienceRoles.length) {
+      previewRequest.current += 1;
+      setAudiencePreview(null);
+      setPreviewLoading(false);
+      return;
     }
 
-    const newEvent = {
-      event_id: event_item ? event_item._id.$oid : 0,
-      user_id: profileId ? profileId : user && user._id.$oid,
-      title: values.title,
-      role: values.user_role,
-      start_datetime: start_datetime,
-      start_datetime_str: start_datetime_str,
-      end_datetime: end_datetime,
-      end_datetime_str: end_datetime_str,
-      description: values.description,
-      url: values.url,
-      hub_id: values.hub_id ? values.hub_id : hub_user_id,
-      partner_ids: values.partner_ids,
-    };
-
-    reloading();
-    var res = await createEvent(newEvent);
-    if (res && res.data && res.data.success) {
-      if (image) {
-        await uploadEventImage(image, res.data.result.event._id.$oid);
-      }
-    }
-    refresh();
-
-    if (res) {
-      notification["success"]({
-        message: t("events.succuessAdd"),
-      });
-    } else {
-      notification["error"]({
-        message: t("events.errorAdd"),
-        duration: 0,
-        key: "errorAdd",
-      });
-    }
-  }
-
-  const onOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (values.url && !validateUrl(values.url)) {
-          notification["error"]({
-            message: t("events.errorURL"),
-            duration: 0,
-            key: "errorURL",
-          });
-          return;
-        }
-        var start_datetime = values.start_date.format("YYYY-MM-DD");
-        start_datetime = moment(
-          `${start_datetime} ${values.start_time.format("HH:mm:ss")}`
-        );
-        var end_datetime = values.end_date.format("YYYY-MM-DD");
-        end_datetime = moment(
-          `${end_datetime} ${values.end_time.format("HH:mm:ss")}`
-        );
-        if (end_datetime.diff(start_datetime, "seconds") >= 0) {
-          handleSave(values);
-          form.resetFields();
-          setImage(null);
-          setOpen(false);
-        } else {
-          notification["error"]({
-            message: t("events.errorTimeSetting"),
-            duration: 0,
-            key: "errorTimeSetting",
-          });
-          return;
-        }
+    const requestId = previewRequest.current + 1;
+    previewRequest.current = requestId;
+    setPreviewLoading(true);
+    const timer = window.setTimeout(() => {
+      fetchEventAudiencePreview({
+        audience_roles: audienceRoles,
+        ...(isAdmin ? { scope_type: scopeType, scope_id: scopeId } : {}),
       })
-      .catch((info) => {
-        console.error("Validate Failed:", info);
-      });
-  };
+        .then((preview) => {
+          if (previewRequest.current === requestId) {
+            setAudiencePreview(preview);
+          }
+        })
+        .catch(() => {
+          if (previewRequest.current === requestId) {
+            setAudiencePreview({ unavailable: true });
+          }
+        })
+        .finally(() => {
+          if (previewRequest.current === requestId) {
+            setPreviewLoading(false);
+          }
+        });
+    }, 250);
 
-  const onCancel = () => {
-    // form.resetFields();
+    return () => window.clearTimeout(timer);
+  }, [audienceRoles, isAdmin, open, scopeId, scopeType]);
+
+  const close = () => {
+    previewRequest.current += 1;
+    form.resetFields();
+    setImage(null);
+    setAudiencePreview(null);
     setOpen(false);
   };
 
-  const EventForm = (event_item) => (
+  const previewDescription =
+    isMentor || isMentee
+      ? t("events.workflow.proposalRecipientEstimateDescription")
+      : t("events.workflow.publisherRecipientEstimateDescription");
+
+  const audienceBreakdown = audienceRoles
+    .map((audienceRole) => {
+      const option = AUDIENCE_OPTIONS.find(
+        ({ value }) => value === audienceRole
+      );
+      if (!option) return null;
+      return `${t(`events.workflow.${option.labelKey}`)}: ${
+        audiencePreview?.recipient_counts_by_role?.[audienceRole] || 0
+      }`;
+    })
+    .filter(Boolean)
+    .join(" · ");
+
+  const save = async () => {
+    try {
+      const values = await form.validateFields();
+      if (values.url && !validateUrl(values.url)) {
+        notification.error({ message: t("events.errorURL") });
+        return;
+      }
+      const start = moment(
+        `${values.start_date.format("YYYY-MM-DD")} ${values.start_time.format(
+          "HH:mm:ss"
+        )}`
+      );
+      const end = moment(
+        `${values.end_date.format("YYYY-MM-DD")} ${values.end_time.format(
+          "HH:mm:ss"
+        )}`
+      );
+      if (end.isBefore(start)) {
+        notification.error({ message: t("events.errorTimeSetting") });
+        return;
+      }
+
+      setSaving(true);
+      const payload = {
+        title: values.title,
+        audience_roles: values.audience_roles,
+        start_datetime: start.toISOString(),
+        end_datetime: end.toISOString(),
+        description: values.description,
+        url: values.url,
+        ...(isAdmin
+          ? { scope_type: values.scope_type, scope_id: values.scope_id }
+          : {}),
+      };
+      const id = event_item?._id?.$oid;
+      const response = id
+        ? await updateEvent(id, payload)
+        : await createEvent(payload);
+      const savedEvent = response.data.result.event;
+      const savedId = savedEvent._id.$oid;
+      if (image instanceof File) {
+        await uploadEventImage(image, savedId);
+      }
+      notification.success({
+        message: id
+          ? t("events.workflow.eventUpdated")
+          : t("events.workflow.draftSaved"),
+      });
+      close();
+      await refresh();
+      onSaved?.(savedEvent);
+    } catch (error) {
+      if (error?.errorFields) return;
+      notification.error({
+        message: error?.response?.data?.message || t("events.errorAdd"),
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const formContent = (
     <Form form={form} layout="vertical">
+      <Form.Item
+        name="audience_roles"
+        label={t("events.workflow.audience")}
+        rules={[
+          {
+            required: true,
+            message: t("events.workflow.selectAudience"),
+          },
+        ]}
+      >
+        <Select
+          mode="multiple"
+          onChange={setAudienceRoles}
+          options={AUDIENCE_OPTIONS.filter((option) => {
+            if (isMentee) return option.value === ACCOUNT_TYPE.MENTEE;
+            if (isMentor)
+              return [ACCOUNT_TYPE.MENTOR, ACCOUNT_TYPE.MENTEE].includes(
+                option.value
+              );
+            if (isPartner)
+              return [
+                ACCOUNT_TYPE.MENTOR,
+                ACCOUNT_TYPE.MENTEE,
+                ACCOUNT_TYPE.PARTNER,
+              ].includes(option.value);
+            return true;
+          }).map((option) => ({
+            value: option.value,
+            label: t(`events.workflow.${option.labelKey}`),
+          }))}
+        />
+      </Form.Item>
+      {previewLoading ? (
+        <div className="event-editor__preview-loading" aria-live="polite">
+          <Spin size="small" />
+          <span>{t("events.workflow.recipientEstimateLoading")}</span>
+        </div>
+      ) : audiencePreview?.unavailable ? (
+        <Alert
+          className="event-editor__recipient-preview"
+          showIcon
+          type="info"
+          message={t("events.workflow.recipientEstimateUnavailable")}
+          description={previewDescription}
+        />
+      ) : audiencePreview ? (
+        <Alert
+          className="event-editor__recipient-preview"
+          showIcon
+          type="info"
+          message={t("events.workflow.recipientEstimateTitle", {
+            count: audiencePreview.recipient_count,
+          })}
+          description={
+            <Space direction="vertical" size={2}>
+              <span>{audienceBreakdown}</span>
+              <span>{previewDescription}</span>
+            </Space>
+          }
+        />
+      ) : null}
       {isAdmin && (
         <>
           <Form.Item
-            name="user_role"
-            label={t("common.role")}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            name="scope_type"
+            label={t("events.workflow.communityScope")}
           >
             <Select
-              allowClear
-              mode="multiple"
               options={[
-                { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
-                { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
-                { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
-                { value: ACCOUNT_TYPE.HUB, label: "Hub" },
-              ]}
-              maxTagCount="responsive"
-              onChange={(val) => setUserRole(val)}
-            />
-          </Form.Item>
-          {userRole.includes(ACCOUNT_TYPE.HUB) && (
-            <Form.Item
-              name="hub_id"
-              label={"Hub User"}
-              rules={[
                 {
-                  required: true,
+                  value: "global",
+                  label: t("events.workflow.allCommunities"),
+                },
+                { value: "hub", label: t("events.workflow.oneHub") },
+                {
+                  value: "partner",
+                  label: t("events.workflow.onePartner"),
                 },
               ]}
+              onChange={(value) => {
+                setScopeType(value);
+                setScopeId(undefined);
+                form.setFieldValue("scope_id", undefined);
+              }}
+            />
+          </Form.Item>
+          {scopeType !== "global" && (
+            <Form.Item
+              name="scope_id"
+              label={
+                scopeType === "hub"
+                  ? t("events.workflow.hub")
+                  : t("events.workflow.partner")
+              }
+              rules={[{ required: true }]}
             >
-              <Select options={hubOptions} maxTagCount="responsive" />
+              <Select
+                showSearch
+                optionFilterProp="label"
+                options={hubOptions.filter(
+                  (option) => option.scopeType === scopeType
+                )}
+                onChange={setScopeId}
+              />
             </Form.Item>
           )}
         </>
       )}
-      {isPartner && (
-        <Form.Item
-          name="user_role"
-          label={t("common.role")}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            allowClear
-            mode="multiple"
-            options={[
-              { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
-              { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
-              { value: ACCOUNT_TYPE.PARTNER, label: "Partner" },
-            ]}
-            maxTagCount="responsive"
-          />
-        </Form.Item>
-      )}
-      {isMentor && (
-        <Form.Item
-          name="user_role"
-          label={t("common.role")}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            allowClear
-            mode="multiple"
-            options={[
-              { value: ACCOUNT_TYPE.MENTEE, label: "Mentee" },
-              { value: ACCOUNT_TYPE.MENTOR, label: "Mentor" },
-            ]}
-            maxTagCount="responsive"
-          />
-        </Form.Item>
-      )}
-      {isMentee && (
-        <Form.Item
-          name="user_role"
-          label={t("common.role")}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            allowClear
-            mode="multiple"
-            options={[{ value: ACCOUNT_TYPE.MENTEE, label: "Mentee" }]}
-            maxTagCount="responsive"
-          />
-        </Form.Item>
-      )}
-      {isHub && (
-        <>
-          <Form.Item
-            style={{ display: "none" }}
-            name="user_role"
-            label={t("common.role")}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Select
-              allowClear
-              mode="multiple"
-              options={[{ value: ACCOUNT_TYPE.HUB, label: "Hub" }]}
-              maxTagCount="responsive"
-            />
-          </Form.Item>
-        </>
-      )}
-      {isHub && (
-        <Form.Item
-          style={{ display: "none" }}
-          name="user_role"
-          label={t("common.role")}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            allowClear
-            mode="multiple"
-            options={[{ value: ACCOUNT_TYPE.HUB, label: "Hub" }]}
-            maxTagCount="responsive"
-          />
-        </Form.Item>
-      )}
       <Form.Item
         name="title"
         label={t("common.title")}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+        rules={[{ required: true }]}
       >
-        <Input type="text" placeholder={t("events.eventTitle")} />
+        <Input placeholder={t("events.eventTitle")} />
       </Form.Item>
-      <Form.Item label={t("events.start")}>
-        <Form.Item
-          name="start_date"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          style={{
-            display: "inline-block",
-            marginRight: "1em",
-            marginBottom: isMobile ? "1em" : "0",
-          }}
-        >
-          <DatePicker placeholder={t("events.startDate")} />
-        </Form.Item>
-        <Form.Item
-          name="start_time"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          style={{
-            display: "inline-block",
-            marginBottom: "0",
-          }}
-        >
-          <TimePicker
-            placeholder={t("events.startTime")}
-            use12Hours={false}
-            format="h:mm A"
-          />
-        </Form.Item>
+      <Form.Item label={t("events.start")} required>
+        <Space wrap>
+          <Form.Item name="start_date" noStyle rules={[{ required: true }]}>
+            <DatePicker placeholder={t("events.startDate")} />
+          </Form.Item>
+          <Form.Item name="start_time" noStyle rules={[{ required: true }]}>
+            <TimePicker format="h:mm A" placeholder={t("events.startTime")} />
+          </Form.Item>
+        </Space>
       </Form.Item>
-      <Form.Item label={t("events.end")}>
-        <Form.Item
-          name="end_date"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          style={{
-            display: "inline-block",
-            marginRight: "1em",
-            marginBottom: isMobile ? "1em" : "0",
-          }}
-        >
-          <DatePicker placeholder={t("events.endDate")} />
-        </Form.Item>
-        <Form.Item
-          name="end_time"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-          style={{
-            display: "inline-block",
-            marginBottom: "0",
-          }}
-        >
-          <TimePicker
-            placeholder={t("events.endTime")}
-            use12Hours={false}
-            format="h:mm A"
-          />
-        </Form.Item>
+      <Form.Item label={t("events.end")} required>
+        <Space wrap>
+          <Form.Item name="end_date" noStyle rules={[{ required: true }]}>
+            <DatePicker placeholder={t("events.endDate")} />
+          </Form.Item>
+          <Form.Item name="end_time" noStyle rules={[{ required: true }]}>
+            <TimePicker format="h:mm A" placeholder={t("events.endTime")} />
+          </Form.Item>
+        </Space>
       </Form.Item>
-      <Form.Item
-        name="description"
-        label={t("events.summary")}
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-        style={{ marginTop: "1em" }}
-      >
-        <Input.TextArea
-          rows={3}
-          value={event_item ? event_item.description : ""}
-        />
+      <Form.Item name="description" label={t("events.summary")}>
+        <Input.TextArea rows={3} />
       </Form.Item>
-      <Form.Item
-        name="url"
-        label={"URL"}
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <Input type="text" />
+      <Form.Item name="url" label="URL">
+        <Input />
       </Form.Item>
       <ImgCrop rotate aspect={5 / 3} minZoom={0.2}>
         <Upload
-          onChange={async (file) => {
-            setImage(file.file.originFileObj);
-            setChangedImage(true);
-          }}
+          beforeUpload={() => false}
+          onChange={(info) => setImage(info.file.originFileObj)}
           accept=".png,.jpg,.jpeg"
           showUploadList={false}
         >
-          <Button icon={<UploadOutlined />} className="">
-            {t("events.uploadImage")}
-          </Button>
+          <Button icon={<UploadOutlined />}>{t("events.uploadImage")}</Button>
         </Upload>
       </ImgCrop>
-
       {image && (
         <img
-          style={{ width: "100px", marginLeft: "15px" }}
-          alt=""
-          src={
-            changedImage
-              ? image && URL.createObjectURL(image)
-              : image && image.url
-          }
+          style={{ width: 100, marginLeft: 15 }}
+          alt={t("events.workflow.createTitle")}
+          src={image instanceof File ? URL.createObjectURL(image) : image.url}
         />
-      )}
-      {isHub && partnerData && partnerData.length > 0 && (
-        <>
-          <Form.Item
-            style={{ marginTop: "20px" }}
-            name="partner_ids"
-            label="Partner"
-            rules={[
-              {
-                required: false,
-              },
-            ]}
-          >
-            <Select mode="multiple">
-              {partnerData.map((item) => {
-                return (
-                  <Option
-                    value={
-                      item._id
-                        ? item._id.$oid
-                        : item.id.$oid
-                        ? item.id.$oid
-                        : item.id
-                    }
-                  >
-                    {item.person_name}
-                  </Option>
-                );
-              })}
-            </Select>
-          </Form.Item>
-          <p>
-            *if blank (no users selected) the event will be visible by all the
-            users in the hub
-          </p>
-        </>
       )}
     </Form>
   );
-  return isMobile ? (
-    <Drawer
-      width={"100%"}
-      title={t("events.addEvent")}
-      open={open}
-      onClose={onCancel}
-      forceRender
-    >
-      {EventForm(event_item)}
-      <br />
-      <Space>
-        <Button onClick={onCancel}>{t("common.cancel")}</Button>
-        <Button type="primary" onClick={onOk}>
-          {t("common.save")}
-        </Button>
-      </Space>
-    </Drawer>
-  ) : (
+
+  if (isMobile) {
+    return (
+      <Drawer
+        title={
+          event_item
+            ? t("events.workflow.editTitle")
+            : t("events.workflow.createTitle")
+        }
+        open={open}
+        onClose={close}
+        placement="bottom"
+        height="92%"
+        footer={
+          <div className="event-editor__mobile-actions">
+            <Button onClick={close}>{t("common.cancel")}</Button>
+            <Button type="primary" loading={saving} onClick={save}>
+              {t("events.workflow.saveDraft")}
+            </Button>
+          </div>
+        }
+      >
+        {formContent}
+      </Drawer>
+    );
+  }
+
+  return (
     <Modal
-      title={t("events.addEvent")}
+      title={
+        event_item
+          ? t("events.workflow.editTitle")
+          : t("events.workflow.createTitle")
+      }
       open={open}
-      onCancel={onCancel}
-      onOk={onOk}
-      okText={t("common.save")}
+      onCancel={close}
+      onOk={save}
+      okText={t("events.workflow.saveDraft")}
+      confirmLoading={saving}
       forceRender
     >
-      {EventForm(event_item)}
+      {formContent}
     </Modal>
   );
 }

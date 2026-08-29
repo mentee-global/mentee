@@ -14,6 +14,7 @@ class Admin(Document, Mixin):
     roomName = StringField(required=False)
     receive_error_alerts = BooleanField(default=False)
     receive_flag_alerts = BooleanField(default=False)
+    receive_event_review_alerts = BooleanField(default=False)
 
     def __repr__(self):
         return f"""<User id:{self.id} 

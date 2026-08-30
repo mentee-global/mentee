@@ -83,7 +83,7 @@ repository. Before running, obtain the required values from the team and create:
 ```bash
 nvm use      # switch to the pinned Node version
 pnpm setup   # install frontend (pnpm) and backend (uv) dependencies
-pnpm dev     # run the frontend and backend together
+pnpm dev     # run the frontend, backend API, and notification worker together
 ```
 
 - Frontend: http://localhost:3000
@@ -97,7 +97,7 @@ Run from the repository root:
 
 | Command                     | Description                                                          |
 | --------------------------- | -------------------------------------------------------------------- |
-| `pnpm dev`                  | Run the frontend and backend in development mode                     |
+| `pnpm dev`                  | Run the frontend, backend API, and notification worker               |
 | `pnpm build`                | Build the production frontend assets (served by Flask)               |
 | `pnpm format`               | Format all code (Prettier for the frontend, Black for the backend)   |
 | `pnpm format:check`         | Check formatting without writing (used by CI)                        |

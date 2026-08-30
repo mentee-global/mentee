@@ -159,6 +159,13 @@ def mark_admin_event_notification_read(admin_uid, notification_id):
     return _serialize_admin_notification(notification)
 
 
+def mark_all_admin_event_notifications_read(admin_uid):
+    return AdminEventNotification.objects(
+        recipient_uid=admin_uid,
+        read_at=None,
+    ).update(set__read_at=datetime.utcnow())
+
+
 def _creator_details(event):
     model = CREATOR_MODELS.get(event.creator_role)
     profile = model.objects(id=event.user_id).first() if model else None
@@ -262,10 +269,13 @@ def _deliver_event_review_notification(job):
         if recipient["email"] in sent_recipients:
             continue
         job.update(set__started_at=datetime.utcnow())
+        subject = f"Event proposal needs review: {event.title}"
         success, message = send_email(
             recipient=recipient["email"],
+            subject=subject,
             template_id=ALERT_TO_ADMINS,
             data={
+                "subject": subject,
                 "name": job.creator["name"],
                 "email": job.creator["email"],
                 "role": job.creator["role"],

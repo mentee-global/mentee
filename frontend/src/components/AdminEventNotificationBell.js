@@ -3,32 +3,66 @@ import { Badge, Button, Empty, Popover, Spin, Typography } from "antd";
 import { BellOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 
+import { fetchNotificationsCount } from "features/notificationsSlice";
 import {
   fetchAdminEventNotifications,
-  markAdminEventNotificationRead,
+  markAllAdminEventNotificationsRead,
 } from "utils/api";
+import { useAuth } from "utils/hooks/useAuth";
 import "./css/Navigation.scss";
 
 function AdminEventNotificationBell() {
   const { t } = useTranslation();
   const history = useHistory();
+  const dispatch = useDispatch();
+  const { role } = useAuth();
+  const messageCount = useSelector((state) => state.notifications.count) || 0;
+  const profileId = useSelector((state) => state.user.user?._id?.$oid);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const loadNotifications = useCallback(async () => {
+  const loadNotifications = useCallback(async (markAsRead = false) => {
+    let result;
     try {
-      const result = await fetchAdminEventNotifications();
-      setNotifications(result.notifications || []);
-      setUnreadCount(result.unread_count || 0);
+      result = await fetchAdminEventNotifications();
     } catch {
       setNotifications([]);
-    } finally {
       setLoading(false);
+      return;
     }
+
+    const nextNotifications = result.notifications || [];
+    const nextUnreadCount = result.unread_count || 0;
+    if (markAsRead && nextUnreadCount) {
+      const readAt = new Date().toISOString();
+      setNotifications(
+        nextNotifications.map((notification) => ({
+          ...notification,
+          read_at: notification.read_at || readAt,
+        }))
+      );
+      setUnreadCount(0);
+      try {
+        await markAllAdminEventNotificationsRead();
+      } catch {
+        setNotifications(nextNotifications);
+        setUnreadCount(nextUnreadCount);
+      }
+    } else {
+      setNotifications(nextNotifications);
+      setUnreadCount(nextUnreadCount);
+    }
+    setLoading(false);
   }, []);
+
+  const openNotification = (notification) => {
+    setOpen(false);
+    history.push(notification.link);
+  };
 
   useEffect(() => {
     loadNotifications();
@@ -36,29 +70,26 @@ function AdminEventNotificationBell() {
     return () => window.clearInterval(interval);
   }, [loadNotifications]);
 
-  const openNotification = async (notification) => {
-    try {
-      if (!notification.read_at) {
-        await markAdminEventNotificationRead(notification.id);
-        setUnreadCount((count) => Math.max(0, count - 1));
-        setNotifications((current) =>
-          current.map((item) =>
-            item.id === notification.id
-              ? { ...item, read_at: new Date().toISOString() }
-              : item
-          )
-        );
-      }
-    } catch {}
-    setOpen(false);
-    history.push(notification.link);
-  };
+  useEffect(() => {
+    if (profileId) dispatch(fetchNotificationsCount({ id: profileId }));
+  }, [dispatch, profileId]);
 
   const content = (
     <div className="admin-event-notifications">
       <Typography.Title level={5}>
-        {t("events.workflow.reviewNotificationsTitle")}
+        {t("events.workflow.adminNotificationsTitle")}
       </Typography.Title>
+      <Button
+        type="text"
+        className="admin-event-notifications__messages"
+        onClick={() => {
+          setOpen(false);
+          history.push(`/messages/${role}`);
+        }}
+      >
+        <span>{t("common.messages")}</span>
+        <Badge count={messageCount} size="small" />
+      </Button>
       {loading ? (
         <div className="admin-event-notifications__loading">
           <Spin size="small" />
@@ -98,10 +129,10 @@ function AdminEventNotificationBell() {
       open={open}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
-        if (nextOpen) loadNotifications();
+        if (nextOpen) loadNotifications(true);
       }}
     >
-      <Badge count={unreadCount} size="small">
+      <Badge count={unreadCount + messageCount} size="small">
         <Button
           type="text"
           shape="circle"

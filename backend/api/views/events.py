@@ -10,6 +10,7 @@ from api.utils.event_review_notifications import (
     EventReviewNotificationError,
     admin_event_notifications,
     event_review_recipient_options,
+    mark_all_admin_event_notifications_read,
     mark_admin_event_notification_read,
     set_event_review_recipient_ids,
 )
@@ -90,6 +91,13 @@ def update_event_review_recipients():
 @event_admin_only
 def get_event_review_notifications():
     return create_response(data=admin_event_notifications(g.auth_claims.get("uid")))
+
+
+@event.route("events/review-notifications/read", methods=["POST"])
+@event_admin_only
+def read_all_event_review_notifications():
+    updated_count = mark_all_admin_event_notifications_read(g.auth_claims.get("uid"))
+    return create_response(data={"updated_count": updated_count})
 
 
 @event.route(

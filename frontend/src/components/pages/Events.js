@@ -3,9 +3,11 @@ import {
   Alert,
   Button,
   Checkbox,
+  Descriptions,
   Empty,
   Input,
   Modal,
+  Select,
   Space,
   Spin,
   Table,
@@ -41,7 +43,10 @@ import { useAuth } from "utils/hooks/useAuth";
 import {
   eventId,
   eventManagementView,
+  eventMatchesDateFilter,
   eventSections,
+  sortEventsByCreationDate,
+  sortEventsForDateFilter,
 } from "utils/eventWorkflow";
 import "../css/Gallery.scss";
 
@@ -51,6 +56,11 @@ const ROLE_LABELS = {
   [ACCOUNT_TYPE.PARTNER]: "partners",
   [ACCOUNT_TYPE.HUB]: "hubs",
 };
+
+function formatEventDateTime(value) {
+  const serializedValue = value?.$date || value;
+  return serializedValue ? formatDateTime(new Date(serializedValue)) : "—";
+}
 
 function Events() {
   const { t } = useTranslation();
@@ -67,10 +77,12 @@ function Events() {
   const [reviewLoading, setReviewLoading] = useState(true);
   const [archiveLoading, setArchiveLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [dateFilter, setDateFilter] = useState("upcoming");
   const [editor, setEditor] = useState({ open: false, event: null });
   const [scopeOptions, setScopeOptions] = useState([]);
   const [publication, setPublication] = useState(null);
   const [notifyAudience, setNotifyAudience] = useState(true);
+  const [viewingEvent, setViewingEvent] = useState(null);
   const [rejecting, setRejecting] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
@@ -173,13 +185,35 @@ function Events() {
 
   const filteredPublished = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return published;
-    return published.filter((event) =>
-      [event.title, event.description, event.creator?.name]
-        .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(normalized))
+    const now = Date.now();
+    const filtered = published.filter(
+      (event) =>
+        eventMatchesDateFilter(event, dateFilter, now) &&
+        (!normalized ||
+          [event.title, event.description, event.creator?.name]
+            .filter(Boolean)
+            .some((value) => value.toLowerCase().includes(normalized)))
     );
-  }, [published, query]);
+    return sortEventsForDateFilter(filtered, dateFilter);
+  }, [dateFilter, published, query]);
+  const orderedManaged = useMemo(
+    () => sortEventsByCreationDate(managed),
+    [managed]
+  );
+  const orderedReviewQueue = useMemo(
+    () => sortEventsByCreationDate(reviewQueue),
+    [reviewQueue]
+  );
+  const orderedArchive = useMemo(
+    () => sortEventsByCreationDate(archive),
+    [archive]
+  );
+  const emptyPublishedKey =
+    dateFilter === "upcoming"
+      ? "emptyUpcoming"
+      : dateFilter === "past"
+      ? "emptyPast"
+      : "emptyAll";
 
   const runAction = async (action, successMessage) => {
     setActionLoading(true);
@@ -229,13 +263,23 @@ function Events() {
     if (completed) setPublication(null);
   };
 
+  const confirmCancellation = (event) =>
+    Modal.confirm({
+      title: t("events.workflow.cancelQuestion"),
+      content: t("events.workflow.cancelDescription"),
+      onOk: () =>
+        runAction(
+          () => cancelEvent(eventId(event)),
+          t("events.workflow.cancelled")
+        ),
+    });
+
   const confirmRejection = async () => {
-    if (!feedback.trim()) {
-      notification.error({ message: t("events.workflow.feedbackRequired") });
-      return;
-    }
+    const trimmedFeedback = feedback.trim();
+    if (!trimmedFeedback) return;
+
     const completed = await runAction(
-      () => reviewEvent(eventId(rejecting), "reject", feedback),
+      () => reviewEvent(eventId(rejecting), "reject", trimmedFeedback),
       t("events.workflow.returned")
     );
     if (completed) {
@@ -260,11 +304,13 @@ function Events() {
       ),
     },
     {
-      title: t("events.workflow.date"),
+      title: t("events.workflow.created"),
       render: (_, event) =>
-        event.start_datetime
-          ? formatDateTime(new Date(event.start_datetime.$date))
-          : "—",
+        formatEventDateTime(event.created_at || event.date_submitted),
+    },
+    {
+      title: t("events.workflow.date"),
+      render: (_, event) => formatEventDateTime(event.start_datetime),
     },
     {
       title: t("events.workflow.audience"),
@@ -352,26 +398,8 @@ function Events() {
               {t("events.workflow.submit")}
             </Button>
           )}
-          {event.permissions?.review && (
-            <Button danger onClick={() => setRejecting(event)}>
-              {t("events.workflow.reject")}
-            </Button>
-          )}
           {event.permissions?.cancel && (
-            <Button
-              danger
-              onClick={() =>
-                Modal.confirm({
-                  title: t("events.workflow.cancelQuestion"),
-                  content: t("events.workflow.cancelDescription"),
-                  onOk: () =>
-                    runAction(
-                      () => cancelEvent(eventId(event)),
-                      t("events.workflow.cancelled")
-                    ),
-                })
-              }
-            >
+            <Button danger onClick={() => confirmCancellation(event)}>
               {t("events.workflow.cancel")}
             </Button>
           )}
@@ -380,15 +408,88 @@ function Events() {
     },
   ];
 
+  const reviewColumns = [
+    ...columns.slice(0, -1),
+    {
+      title: t("events.workflow.actions"),
+      render: (_, event) => (
+        <Space wrap>
+          <Button
+            type="primary"
+            loading={actionLoading}
+            onClick={(clickEvent) => {
+              clickEvent.stopPropagation();
+              openPublication(event, event.status === "pending_review");
+            }}
+          >
+            {t("events.workflow.approve")}
+          </Button>
+          <Button
+            danger
+            disabled={actionLoading}
+            onClick={(clickEvent) => {
+              clickEvent.stopPropagation();
+              setRejecting(event);
+            }}
+          >
+            {t("events.workflow.reject")}
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const reviewRowProps = (event) => ({
+    className: "event-review-row",
+    tabIndex: 0,
+    "aria-label": t("events.workflow.viewEventDetails", {
+      title: event.title,
+    }),
+    onClick: () => setViewingEvent(event),
+    onKeyDown: (keyEvent) => {
+      if (
+        keyEvent.target === keyEvent.currentTarget &&
+        ["Enter", " "].includes(keyEvent.key)
+      ) {
+        keyEvent.preventDefault();
+        setViewingEvent(event);
+      }
+    },
+  });
+
   const publishedContent = (
     <>
-      <Input
-        style={{ maxWidth: 360, marginBottom: 16 }}
-        prefix={<SearchOutlined />}
-        placeholder={t("events.workflow.search")}
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
+      <div className="events-page__filters">
+        <label className="events-page__filter-field">
+          <Typography.Text strong>
+            {t("events.workflow.searchLabel")}
+          </Typography.Text>
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder={t("events.workflow.search")}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </label>
+        <label className="events-page__filter-field">
+          <Typography.Text strong>
+            {t("events.workflow.dateFilterLabel")}
+          </Typography.Text>
+          <Select
+            aria-label={t("events.workflow.dateFilterLabel")}
+            value={dateFilter}
+            onChange={setDateFilter}
+            options={[
+              {
+                value: "upcoming",
+                label: t("events.workflow.upcomingEvents"),
+              },
+              { value: "past", label: t("events.workflow.pastEvents") },
+              { value: "all", label: t("events.workflow.allEvents") },
+            ]}
+          />
+        </label>
+      </div>
       {publishedLoading ? (
         <div
           className="events-page__section-loading"
@@ -414,7 +515,13 @@ function Events() {
           ))}
         </div>
       ) : (
-        <Empty description={t("events.workflow.empty")} />
+        <Empty
+          description={
+            query
+              ? t("events.workflow.empty")
+              : t(`events.workflow.${emptyPublishedKey}`)
+          }
+        />
       )}
     </>
   );
@@ -422,14 +529,14 @@ function Events() {
   const tabs = [
     {
       key: "published",
-      label: t("events.workflow.published"),
+      label: t("events.workflow.published", { count: published.length }),
       children: publishedContent,
     },
   ];
   if (sections.includes("mine")) {
     tabs.push({
       key: "mine",
-      label: t("events.workflow.proposals"),
+      label: t("events.workflow.proposals", { count: managed.length }),
       children: (
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
           <Alert
@@ -441,9 +548,9 @@ function Events() {
           <Table
             rowKey={eventId}
             columns={columns}
-            dataSource={managed}
+            dataSource={orderedManaged}
             loading={managedLoading}
-            scroll={{ x: 900 }}
+            scroll={{ x: 1050 }}
           />
         </Space>
       ),
@@ -451,14 +558,14 @@ function Events() {
   } else if (sections.includes("community")) {
     tabs.push({
       key: "community",
-      label: t("events.workflow.communityEvents"),
+      label: t("events.workflow.communityEvents", { count: managed.length }),
       children: (
         <Table
           rowKey={eventId}
           columns={columns}
-          dataSource={managed}
+          dataSource={orderedManaged}
           loading={managedLoading}
-          scroll={{ x: 900 }}
+          scroll={{ x: 1050 }}
         />
       ),
     });
@@ -474,24 +581,25 @@ function Events() {
             <EventReviewNotificationSettings />
             <Table
               rowKey={eventId}
-              columns={columns}
-              dataSource={reviewQueue}
+              columns={reviewColumns}
+              dataSource={orderedReviewQueue}
               loading={reviewLoading}
-              scroll={{ x: 900 }}
+              onRow={reviewRowProps}
+              scroll={{ x: 1050 }}
             />
           </Space>
         ),
       },
       {
         key: "archive",
-        label: t("events.workflow.archive"),
+        label: t("events.workflow.archive", { count: archive.length }),
         children: (
           <Table
             rowKey={eventId}
             columns={columns}
-            dataSource={archive}
+            dataSource={orderedArchive}
             loading={archiveLoading}
-            scroll={{ x: 900 }}
+            scroll={{ x: 1050 }}
           />
         ),
       }
@@ -570,6 +678,101 @@ function Events() {
       />
 
       <Modal
+        title={t("events.workflow.eventDetails")}
+        open={Boolean(viewingEvent)}
+        onCancel={() => setViewingEvent(null)}
+        footer={
+          <Button onClick={() => setViewingEvent(null)}>
+            {t("events.workflow.close")}
+          </Button>
+        }
+        width={720}
+      >
+        {viewingEvent && (
+          <div className="event-review-details">
+            {viewingEvent.image_file?.url && (
+              <img
+                className="event-review-details__image"
+                src={viewingEvent.image_file.url}
+                alt={viewingEvent.title}
+              />
+            )}
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label={t("events.workflow.event")}>
+                {viewingEvent.title}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.workflow.submittedByLabel")}>
+                {viewingEvent.creator?.name || "MENTEE"}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.workflow.status")}>
+                <Tag color="gold">
+                  {viewingEvent.status?.replaceAll("_", " ")}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.workflow.audience")}>
+                {(viewingEvent.audience_roles || viewingEvent.role || []).map(
+                  (audienceRole) => (
+                    <Tag key={audienceRole}>
+                      {t(`events.workflow.${ROLE_LABELS[audienceRole]}`)}
+                    </Tag>
+                  )
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.workflow.scope")}>
+                {viewingEvent.scope_type === "global"
+                  ? t("events.workflow.global")
+                  : viewingEvent.scope_type}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.workflow.submittedAt")}>
+                {viewingEvent.submitted_at || viewingEvent.date_submitted
+                  ? formatDateTime(
+                      new Date(
+                        viewingEvent.submitted_at?.$date ||
+                          viewingEvent.submitted_at ||
+                          viewingEvent.date_submitted?.$date ||
+                          viewingEvent.date_submitted
+                      )
+                    )
+                  : "—"}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.workflow.startDateTime")}>
+                {viewingEvent.start_datetime
+                  ? formatDateTime(
+                      new Date(
+                        viewingEvent.start_datetime.$date ||
+                          viewingEvent.start_datetime
+                      )
+                    )
+                  : "—"}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.workflow.endDateTime")}>
+                {viewingEvent.end_datetime
+                  ? formatDateTime(
+                      new Date(
+                        viewingEvent.end_datetime.$date ||
+                          viewingEvent.end_datetime
+                      )
+                    )
+                  : "—"}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("events.summary")}>
+                {viewingEvent.description || "—"}
+              </Descriptions.Item>
+              <Descriptions.Item label="URL">
+                {viewingEvent.url ? (
+                  <a href={viewingEvent.url} target="_blank" rel="noreferrer">
+                    {viewingEvent.url}
+                  </a>
+                ) : (
+                  "—"
+                )}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
         title={
           publication?.approve
             ? t("events.workflow.approveTitle")
@@ -579,7 +782,11 @@ function Events() {
         onCancel={() => setPublication(null)}
         onOk={confirmPublication}
         confirmLoading={actionLoading}
-        okText={t("events.workflow.publish")}
+        okText={
+          publication?.approve
+            ? t("events.workflow.approve")
+            : t("events.workflow.publish")
+        }
       >
         <Typography.Paragraph>
           {t("events.workflow.publishDescription", {
@@ -602,18 +809,41 @@ function Events() {
       <Modal
         title={t("events.workflow.rejectTitle")}
         open={Boolean(rejecting)}
-        onCancel={() => setRejecting(null)}
+        onCancel={() => {
+          setRejecting(null);
+          setFeedback("");
+        }}
         onOk={confirmRejection}
         confirmLoading={actionLoading}
         okText={t("events.workflow.rejectWithFeedback")}
-        okButtonProps={{ danger: true }}
+        okButtonProps={{ danger: true, disabled: !feedback.trim() }}
       >
-        <Input.TextArea
-          rows={4}
-          value={feedback}
-          onChange={(event) => setFeedback(event.target.value)}
-          placeholder={t("events.workflow.feedbackPlaceholder")}
-        />
+        <Typography.Paragraph>
+          {t("events.workflow.rejectionFeedbackDescription")}
+        </Typography.Paragraph>
+        <div className="event-rejection-feedback">
+          <label htmlFor="event-rejection-feedback">
+            {t("events.workflow.feedbackLabel")}
+          </label>
+          <Input.TextArea
+            id="event-rejection-feedback"
+            name="event-rejection-feedback"
+            rows={4}
+            value={feedback}
+            onChange={(event) => setFeedback(event.target.value)}
+            placeholder={t("events.workflow.feedbackPlaceholder")}
+            maxLength={500}
+            autoComplete="off"
+          />
+          <Typography.Text
+            className="event-rejection-feedback__counter"
+            type="secondary"
+          >
+            {t("events.workflow.feedbackCharactersRemaining", {
+              count: 500 - feedback.length,
+            })}
+          </Typography.Text>
+        </div>
       </Modal>
     </div>
   );

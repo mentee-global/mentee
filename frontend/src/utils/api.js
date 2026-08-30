@@ -115,6 +115,11 @@ export const markAdminEventNotificationRead = async (notificationId) => {
   return response.data.result.notification;
 };
 
+export const markAllAdminEventNotificationsRead = async () => {
+  const response = await authPost("/events/review-notifications/read", {});
+  return response.data.result;
+};
+
 export const fetchAccounts = (
   type,
   restricted = undefined,

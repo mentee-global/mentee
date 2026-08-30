@@ -181,9 +181,11 @@ function NavigationHeader() {
         </div>
       )}
       <Space size="middle" style={{ lineHeight: "100%" }}>
-        {role === ACCOUNT_TYPE.ADMIN && <AdminEventNotificationBell />}
-        {role !== ACCOUNT_TYPE.GUEST && role !== ACCOUNT_TYPE.SUPPORT && (
-          <NotificationBell />
+        {role === ACCOUNT_TYPE.ADMIN ? (
+          <AdminEventNotificationBell />
+        ) : (
+          role !== ACCOUNT_TYPE.GUEST &&
+          role !== ACCOUNT_TYPE.SUPPORT && <NotificationBell />
         )}
         <Dropdown
           menu={{

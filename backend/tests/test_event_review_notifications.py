@@ -214,6 +214,8 @@ def test_review_notification_worker_emails_each_selected_admin(monkeypatch):
     assert [email["recipient"] for email in sent] == [
         "second@example.org",
     ]
+    assert sent[0]["subject"] == "Event proposal needs review: Career workshop"
+    assert sent[0]["data"]["subject"] == "Event proposal needs review: Career workshop"
     assert all(
         email["data"]["link"] == "https://app.menteeglobal.org/events?tab=review"
         for email in sent
@@ -283,6 +285,35 @@ def test_event_review_recipients_require_at_least_one_admin():
         event_review_notifications.set_event_review_recipient_ids([])
 
     assert error.value.message == "Select at least one administrator"
+
+
+def test_opening_admin_notifications_marks_all_unread_items(monkeypatch):
+    updates = []
+
+    class FakeNotificationQuery:
+        def update(self, **values):
+            updates.append(values)
+            return 2
+
+    class FakeNotifications:
+        @staticmethod
+        def objects(**query):
+            assert query == {"recipient_uid": "admin-uid", "read_at": None}
+            return FakeNotificationQuery()
+
+    monkeypatch.setattr(
+        event_review_notifications,
+        "AdminEventNotification",
+        FakeNotifications,
+    )
+
+    updated_count = event_review_notifications.mark_all_admin_event_notifications_read(
+        "admin-uid"
+    )
+
+    assert updated_count == 2
+    assert len(updates) == 1
+    assert "set__read_at" in updates[0]
 
 
 def test_event_review_recipient_settings_select_only_requested_admins(monkeypatch):

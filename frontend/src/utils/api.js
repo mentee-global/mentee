@@ -80,32 +80,44 @@ export const fetchEventById = (id) => {
   if (!id) return;
   const requestExtension = `/event/${id}`;
   return authGet(requestExtension).then(
-    (response) => response.data.result.event,
-    (err) => {
-      console.error(err);
-    }
+    (response) => response.data.result.event
   );
 };
 
-export const fetchEvents = async (
-  type,
-  hub_user_id = null,
-  partner_id = null,
-  user_id = null
-) => {
-  const requestExtension = `/events/${type}`;
-  return authGet(requestExtension, {
-    params: {
-      hub_user_id: hub_user_id,
-      partner_id: partner_id,
-      user_id: user_id,
-    },
-  }).then(
-    (response) => response.data.result.events,
-    (err) => {
-      console.error(err);
-    }
+export const fetchEvents = async (view = "published", status) => {
+  return authGet("/events", { params: { view, status } }).then(
+    (response) => response.data.result.events
   );
+};
+
+export const fetchEventReviewRecipients = async () => {
+  const response = await authGet("/events/review-recipients");
+  return response.data.result;
+};
+
+export const updateEventReviewRecipients = async (adminIds) => {
+  const response = await authPut("/events/review-recipients", {
+    admin_ids: adminIds,
+  });
+  return response.data.result;
+};
+
+export const fetchAdminEventNotifications = async () => {
+  const response = await authGet("/events/review-notifications");
+  return response.data.result;
+};
+
+export const markAdminEventNotificationRead = async (notificationId) => {
+  const response = await authPost(
+    `/events/review-notifications/${notificationId}/read`,
+    {}
+  );
+  return response.data.result.notification;
+};
+
+export const markAllAdminEventNotificationsRead = async () => {
+  const response = await authPost("/events/review-notifications/read", {});
+  return response.data.result;
 };
 
 export const fetchAccounts = (
@@ -742,18 +754,43 @@ export const editEmailPassword = (data) => {
 };
 
 export const createEvent = (event) => {
-  const requestExtension = `/event_register`;
-  event.front_url = FRONT_BASE_URL;
-  return authPost(requestExtension, event).then(
-    (response) => response,
-    (err) => {
-      console.error(err);
-    }
+  return authPost("/events", event);
+};
+
+export const updateEvent = (id, event) => {
+  return authPost(`/events/${id}`, event);
+};
+
+export const submitEvent = (id) => {
+  return authPost(`/events/${id}/submit`, {});
+};
+
+export const reviewEvent = (id, decision, feedback, notify = false) => {
+  return authPost(`/events/${id}/review`, { decision, feedback, notify });
+};
+
+export const fetchEventPublicationPreview = (id) => {
+  return authGet(`/events/${id}/publication-preview`).then(
+    (response) => response.data.result.preview
   );
 };
 
+export const fetchEventAudiencePreview = (event) => {
+  return authPost("/events/audience-preview", event).then(
+    (response) => response.data.result.preview
+  );
+};
+
+export const publishEvent = (id, notify) => {
+  return authPost(`/events/${id}/publish`, { notify });
+};
+
+export const cancelEvent = (id) => {
+  return authPost(`/events/${id}/cancel`, {});
+};
+
 export const uploadEventImage = (image, id) => {
-  const requestExtension = `/event_register/${id}/image`;
+  const requestExtension = `/events/${id}/image`;
   let formData = new FormData();
   formData.append("image", image);
   return authPut(requestExtension, formData).then(
@@ -765,13 +802,7 @@ export const uploadEventImage = (image, id) => {
 };
 
 export const deleteEvent = (event_item) => {
-  const requestExtension = `/events/delete/${event_item._id.$oid}`;
-  return authDelete(requestExtension).then(
-    (response) => response,
-    (err) => {
-      console.error(err);
-    }
-  );
+  return cancelEvent(event_item._id.$oid);
 };
 
 export const acceptAppointment = (id) => {

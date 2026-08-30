@@ -1,352 +1,325 @@
-from flask import Blueprint, request
-import json
-from numpy import imag
-from werkzeug.utils import secure_filename
-from api.core import create_response, logger
-from api.models import (
-    Event,
-    Hub,
-    Image,
-    MentorProfile,
-    MenteeProfile,
-    PartnerProfile,
-)
-from datetime import datetime, timezone, timedelta
-import re
-from api.utils.require_auth import all_users, hub_access_error, caller_hub_id, STAFF_ALL
-from api.utils.translate import (
-    get_all_translations,
-)
-from api.utils.constants import (
-    Account,
-    EVENT_TEMPLATE,
-    TRANSLATIONS,
-    TARGET_LANGS,
-)
-from api.utils.request_utils import send_email, imgur_client
+from functools import wraps
 
-event = Blueprint("event", __name__)  # initialize blueprint
+from bson.errors import InvalidId
+from flask import Blueprint, g, request
+from mongoengine import ValidationError
+
+from api.core import create_response, logger
+from api.models import Event, Image
+from api.utils.event_review_notifications import (
+    EventReviewNotificationError,
+    admin_event_notifications,
+    event_review_recipient_options,
+    mark_all_admin_event_notifications_read,
+    mark_admin_event_notification_read,
+    set_event_review_recipient_ids,
+)
+from api.utils.event_workflow import (
+    EventWorkflowError,
+    audience_preview,
+    cancel_event,
+    can_edit_event,
+    can_view_event,
+    create_event,
+    list_events,
+    publication_preview,
+    publish_event,
+    resolve_event_actor,
+    review_event,
+    serialize_event,
+    serialize_events,
+    submit_event,
+    update_event,
+)
+from api.utils.constants import Account
+from api.utils.require_auth import all_users
+from api.utils.request_utils import imgur_client
+
+
+event = Blueprint("event", __name__)
+
+
+def _actor():
+    return resolve_event_actor(getattr(g, "auth_claims", None) or {})
+
+
+def _find_event(event_id):
+    try:
+        return Event.objects.get(id=event_id)
+    except (Event.DoesNotExist, InvalidId, ValidationError):
+        raise EventWorkflowError("Event not found", 404)
+
+
+def _error_response(error):
+    logger.info(error.message)
+    return create_response(status=error.status, message=error.message)
+
+
+def event_admin_only(fn):
+    @all_users
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        try:
+            role = int(g.auth_claims.get("role"))
+        except (TypeError, ValueError):
+            role = None
+        if role != Account.ADMIN.value:
+            return create_response(status=403, message="Forbidden")
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
+@event.route("events/review-recipients", methods=["GET"])
+@event_admin_only
+def get_event_review_recipients():
+    return create_response(data=event_review_recipient_options())
+
+
+@event.route("events/review-recipients", methods=["PUT"])
+@event_admin_only
+def update_event_review_recipients():
+    try:
+        data = request.get_json() or {}
+        options = set_event_review_recipient_ids(data.get("admin_ids"))
+        return create_response(data=options)
+    except EventReviewNotificationError as error:
+        return _error_response(error)
+
+
+@event.route("events/review-notifications", methods=["GET"])
+@event_admin_only
+def get_event_review_notifications():
+    return create_response(data=admin_event_notifications(g.auth_claims.get("uid")))
+
+
+@event.route("events/review-notifications/read", methods=["POST"])
+@event_admin_only
+def read_all_event_review_notifications():
+    updated_count = mark_all_admin_event_notifications_read(g.auth_claims.get("uid"))
+    return create_response(data={"updated_count": updated_count})
+
+
+@event.route(
+    "events/review-notifications/<string:notification_id>/read",
+    methods=["POST"],
+)
+@event_admin_only
+def read_event_review_notification(notification_id):
+    try:
+        notification = mark_admin_event_notification_read(
+            g.auth_claims.get("uid"), notification_id
+        )
+        return create_response(data={"notification": notification})
+    except EventReviewNotificationError as error:
+        return _error_response(error)
+
+
+@event.route("events", methods=["GET"])
+@all_users
+def get_events():
+    try:
+        actor = _actor()
+        events = list_events(
+            actor,
+            view=request.args.get("view", "published"),
+            status=request.args.get("status"),
+        )
+        lang = request.args.get("lang", "en-US")
+        return create_response(data={"events": serialize_events(events, lang, actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
+
+
+@event.route("events/audience-preview", methods=["POST"])
+@all_users
+def preview_event_audience():
+    try:
+        return create_response(
+            data={"preview": audience_preview(_actor(), request.get_json() or {})}
+        )
+    except EventWorkflowError as error:
+        return _error_response(error)
 
 
 @event.route("events/<role>", methods=["GET"])
 @all_users
-def get_events(role):
-    lang = request.args.get("lang", "en-US")
-    hub_user_id = request.args.get("hub_user_id", None)
-    partner_id = request.args.get("partner_id", None)
-    user_id = request.args.get("user_id", None)
-    if int(role) == Account.ADMIN:
-        # The "all events" branch is keyed off the URL role param, so require the
-        # CALLER to actually be staff — otherwise any user could pass role=0.
-        if caller_hub_id() is not STAFF_ALL:
-            return create_response(status=403, message="Forbidden")
-        events = Event.objects().order_by("-start_datetime")
-    elif int(role) == Account.HUB:
-        # Only return a hub's events to that hub (or staff) — never let one hub
-        # read another's by passing its id.
-        err = hub_access_error(hub_user_id)
-        if err:
-            return err
-        events = Event.objects.filter(
-            role__in=[role], hub_id=str(hub_user_id)
-        ).order_by("-start_datetime")
-
-        if partner_id:
-            temp = []
-            for event in events:
-                include_event = True
-
-                if partner_id:
-                    if (
-                        event.partner_ids is not None
-                        and len(event.partner_ids) > 0
-                        and partner_id not in event.partner_ids
-                    ):
-                        include_event = False
-
-                if user_id:
-                    if str(event.user_id) != user_id:
-                        include_event = False
-
-                if include_event:
-                    temp.append(event)
-            events = temp
-    else:
-        events = Event.objects(role__in=[role]).order_by("-start_datetime")
-    result = []
-
-    if lang in TARGET_LANGS:
-        for event in events:
-            event_dic = json.loads(event.to_json())
-            event_dic["name"] = event.titleTranslated.get(lang, event.title)
-            event_dic["description"] = event.descriptionTranslated.get(
-                lang, event.description
-            )
-            result.append(event_dic)
-    else:
-        result = events
-
-    return create_response(data={"events": result})
-
-
-@event.route("event/<string:id>", methods=["GET"])
-@all_users
-def get_event_by_id(id):
+def get_legacy_events(role):
     try:
-        event = Event.objects.get(id=id)
-    except:
-        return create_response(status=422, message="event not found")
-
-    # Hub-scoped events are only readable by that hub (or staff). General
-    # (non-hub) events stay readable by any signed-in user.
-    if event.hub_id:
-        err = hub_access_error(event.hub_id)
-        if err:
-            return err
-
-    return create_response(data={"event": event})
+        actor = _actor()
+        events = list_events(actor, view="published")
+        lang = request.args.get("lang", "en-US")
+        return create_response(data={"events": serialize_events(events, lang, actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
 
 
-@event.route("events/delete/<string:id>", methods=["DELETE"])
+@event.route("events/<string:event_id>", methods=["PATCH", "POST"])
 @all_users
-def delete_train(id):
+def update_existing_event(event_id):
     try:
-        event = Event.objects.get(id=id)
-    except:
-        return create_response(status=422, message="event not found")
-
-    # Only the owning hub (or staff) may delete; general events are staff-only.
-    err = hub_access_error(event.hub_id)
-    if err:
-        return err
-
-    event.delete()
-    return create_response(status=200, message="Successful deletion")
+        actor = _actor()
+        item = update_event(actor, _find_event(event_id), request.get_json() or {})
+        return create_response(data={"event": serialize_event(item, actor=actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
 
 
-######################################################################
-def send_mail_for_event(
-    recipients, role_name, title, eventdate, target_url, start_datetime, end_datetime
-):
-    for recipient in recipients:
-        if "timezone" in recipient and recipient.timezone:
-            match = re.match(r"UTC([+-]\d{2}):(\d{2})", recipient.timezone)
-            if match:
-                hours_offset = int(match.group(1))
-                minutes_offset = int(match.group(2))
-                # Create a timezone with the parsed offset
-                offset = timezone(timedelta(hours=hours_offset, minutes=minutes_offset))
-                # Convert the datetime to the target timezone
-
-                eventdate = (
-                    datetime.strptime(
-                        start_datetime.replace("Z", "+00:00"), "%Y-%m-%dT%H:%M:%S.%f%z"
-                    )
-                    .astimezone(offset)
-                    .strftime("%m-%d-%Y %I:%M%p %Z")
-                    + " ~ "
-                    + datetime.strptime(
-                        end_datetime.replace("Z", "+00:00"), "%Y-%m-%dT%H:%M:%S.%f%z"
-                    )
-                    .astimezone(offset)
-                    .strftime("%m-%d-%Y %I:%M%p %Z")
-                )
-
-        res, res_msg = send_email(
-            recipient=recipient.email,
-            data={
-                "link": target_url,
-                "eventtitle": title,
-                "eventdate": eventdate,
-                "role": role_name,
-                recipient.preferred_language: True,
-                "subject": TRANSLATIONS[recipient.preferred_language]["new_event"],
-            },
-            template_id=EVENT_TEMPLATE,
+@event.route("events", methods=["POST"])
+@all_users
+def create_new_event():
+    try:
+        actor = _actor()
+        item = create_event(actor, request.get_json() or {})
+        return create_response(
+            status=201, data={"event": serialize_event(item, actor=actor)}
         )
-        if not res:
-            msg = "Failed to send new event data alert email " + res_msg
-            logger.error(msg)
+    except EventWorkflowError as error:
+        return _error_response(error)
 
 
+@event.route("events/<string:event_id>/submit", methods=["POST"])
+@all_users
+def submit_existing_event(event_id):
+    try:
+        actor = _actor()
+        item = submit_event(actor, _find_event(event_id))
+        return create_response(data={"event": serialize_event(item, actor=actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
+
+
+@event.route("events/<string:event_id>/review", methods=["POST"])
+@all_users
+def review_existing_event(event_id):
+    try:
+        actor = _actor()
+        data = request.get_json() or {}
+        item = review_event(
+            actor,
+            _find_event(event_id),
+            decision=data.get("decision"),
+            feedback=data.get("feedback"),
+        )
+        if data.get("decision") == "approve":
+            item = publish_event(actor, item, bool(data.get("notify")))
+        return create_response(data={"event": serialize_event(item, actor=actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
+
+
+@event.route("events/<string:event_id>/publication-preview", methods=["GET"])
+@all_users
+def preview_event_publication(event_id):
+    try:
+        return create_response(
+            data={"preview": publication_preview(_actor(), _find_event(event_id))}
+        )
+    except EventWorkflowError as error:
+        return _error_response(error)
+
+
+@event.route("events/<string:event_id>/publish", methods=["POST"])
+@all_users
+def publish_existing_event(event_id):
+    try:
+        actor = _actor()
+        item = publish_event(
+            actor,
+            _find_event(event_id),
+            bool((request.get_json() or {}).get("notify")),
+        )
+        return create_response(data={"event": serialize_event(item, actor=actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
+
+
+@event.route("events/<string:event_id>/cancel", methods=["POST"])
+@all_users
+def cancel_existing_event(event_id):
+    try:
+        actor = _actor()
+        item = cancel_event(actor, _find_event(event_id))
+        return create_response(data={"event": serialize_event(item, actor=actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
+
+
+@event.route("event/<string:event_id>", methods=["GET"])
+@all_users
+def get_event_by_id(event_id):
+    try:
+        actor = _actor()
+        item = _find_event(event_id)
+        if not can_view_event(actor, item):
+            raise EventWorkflowError("Forbidden", 403)
+        return create_response(data={"event": serialize_event(item, actor=actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
+
+
+@event.route("events/<string:event_id>/image", methods=["PUT"])
+@all_users
+def upload_event_image(event_id):
+    try:
+        actor = _actor()
+        item = _find_event(event_id)
+        if not can_edit_event(actor, item):
+            raise EventWorkflowError("Forbidden", 403)
+        if item.status == "pending_review":
+            raise EventWorkflowError("Pending events cannot be edited", 409)
+
+        image = request.files["image"]
+        image_response = imgur_client.send_image(image)
+        old_hash = item.image_file.image_hash if item.image_file else None
+        item.image_file = Image(
+            url=image_response["data"]["link"],
+            image_hash=image_response["data"]["deletehash"],
+        )
+        item.save()
+        if old_hash:
+            imgur_client.delete_image(old_hash)
+        return create_response(message="Image upload successful")
+    except EventWorkflowError as error:
+        return _error_response(error)
+    except (KeyError, TypeError) as error:
+        logger.info(f"Event image upload failed: {error}")
+        return create_response(status=400, message="Image upload failed")
+
+
+# Temporary compatibility adapters for older clients. They use the same
+# authorization and never publish or notify as a side effect of saving.
 @event.route("event_register", methods=["POST"])
 @all_users
-def new_event():
+def legacy_save_event():
     try:
-        data = request.get_json()
-        event_id = data["event_id"]
-        user_id = data["user_id"]
-        title = data["title"]
-        roles = data["role"]
-        front_url = data["front_url"]
-        titleTranslated = get_all_translations(data["title"])
-        description = None
-        descriptionTranslated = None
-        if "description" in data:
-            description = data["description"]
-            descriptionTranslated = get_all_translations(data["description"])
-        start_datetime = None
-        end_datetime = None
-        start_datetime_str = ""
-        end_datetime_str = ""
-        url = None
-        hub_id = None
-        if "start_datetime" in data:
-            start_datetime = data["start_datetime"]
-            start_datetime_str = data["start_datetime_str"]
-        if "end_datetime" in data:
-            end_datetime = data["end_datetime"]
-            end_datetime_str = data["end_datetime_str"]
-        if "url" in data:
-            url = data["url"]
-        if "hub_id" in data:
-            hub_id = data["hub_id"]
-            # A hub may only create events for itself (staff may target any hub).
-            if hub_id:
-                err = hub_access_error(hub_id)
-                if err:
-                    return err
-
-        partner_ids = None
-        if "partner_ids" in data:
-            partner_ids = list(data["partner_ids"])
-
-        if event_id == 0:
-            event = Event(
-                user_id=user_id,
-                title=title,
-                titleTranslated=titleTranslated,
-                description=description,
-                descriptionTranslated=descriptionTranslated,
-                role=list(roles),
-                partner_ids=partner_ids,
-                start_datetime=start_datetime,
-                end_datetime=end_datetime,
-                url=url,
-                hub_id=hub_id,
-                date_submitted=datetime.now(),
-            )
-            event.save()
-
-            new_event_id = event.id
-            target_url = front_url + "event/" + str(new_event_id)
-            role_name = ""
-            eventdate = ""
-            if start_datetime_str != "":
-                eventdate = start_datetime_str + " ~ " + end_datetime_str
-            if Account.MENTOR in roles:
-                recipients = MentorProfile.objects.only(
-                    "email", "preferred_language", "timezone"
-                )
-                role_name = "MENTOR"
-
-                send_mail_for_event(
-                    recipients,
-                    role_name,
-                    title,
-                    eventdate,
-                    target_url,
-                    start_datetime,
-                    end_datetime,
-                )
-            if Account.MENTEE in roles:
-                recipients = MenteeProfile.objects.only(
-                    "email", "preferred_language", "timezone"
-                )
-                role_name = "MENTEE"
-                send_mail_for_event(
-                    recipients,
-                    role_name,
-                    title,
-                    eventdate,
-                    target_url,
-                    start_datetime,
-                    end_datetime,
-                )
-            if Account.PARTNER in roles:
-                recipients = PartnerProfile.objects.only(
-                    "email", "preferred_language", "timezone"
-                )
-                role_name = "Partner"
-                send_mail_for_event(
-                    recipients,
-                    role_name,
-                    title,
-                    eventdate,
-                    target_url,
-                    start_datetime,
-                    end_datetime,
-                )
-            if hub_id is not None:
-                role_name = "Hub"
-                if partner_ids:
-                    partners = PartnerProfile.objects.filter(id__in=partner_ids).only(
-                        "email", "preferred_language"
-                    )
-                else:
-                    partners = PartnerProfile.objects.filter(hub_id=hub_id).only(
-                        "email", "preferred_language"
-                    )
-                hub_users = Hub.objects(id=hub_id).only(
-                    "email", "preferred_language", "url"
-                )
-                recipients = []
-                for hub_user in hub_users:
-                    role_name = hub_user.name
-                    recipients.append(hub_user)
-                    target_url = (
-                        front_url + hub_user.url + "/event/" + str(new_event_id)
-                    )
-                for partner_user in partners:
-                    recipients.append(partner_user)
-                send_mail_for_event(
-                    recipients,
-                    role_name,
-                    title,
-                    eventdate,
-                    target_url,
-                    start_datetime,
-                    end_datetime,
-                )
+        actor = _actor()
+        data = request.get_json() or {}
+        if data.get("hub_id") and not data.get("scope_type"):
+            data["scope_type"] = "hub"
+            data["scope_id"] = data["hub_id"]
+        event_id = data.get("event_id")
+        if event_id and event_id != 0 and str(event_id) != "0":
+            item = update_event(actor, _find_event(str(event_id)), data)
         else:
-            event = Event.objects.get(id=event_id)
-            event.user_id = user_id
-            event.title = title
-            event.role = list(roles)
-            event.titleTranslated = titleTranslated
-            event.description = description
-            event.descriptionTranslated = descriptionTranslated
-            event.start_datetime = start_datetime
-            event.end_datetime = end_datetime
-            event.url = url
-            event.hub_id = hub_id
-            event.date_submitted = datetime.now()
-            event.save()
-
-    except Exception as e:
-        return create_response(status=400, message=f"missing parameters {e}")
-
-    return create_response(status=200, data={"event": event})
+            item = create_event(actor, data)
+        return create_response(data={"event": serialize_event(item, actor=actor)})
+    except EventWorkflowError as error:
+        return _error_response(error)
 
 
-@event.route("event_register/<string:id>/image", methods=["PUT"])
-def uploadImage(id):
-    event = Event.objects.get(id=id)
-    if event:
-        try:
-            if event.image_file is True and event.image_file.image_hash is True:
-                image_response = imgur_client.delete_image(event.image_file.image_hash)
+@event.route("event_register/<string:event_id>/image", methods=["PUT"])
+@all_users
+def legacy_upload_event_image(event_id):
+    return upload_event_image(event_id)
 
-            image = request.files["image"]
-            image_response = imgur_client.send_image(image)
-            new_image = Image(
-                url=image_response["data"]["link"],
-                image_hash=image_response["data"]["deletehash"],
-            )
-            event.image_file = new_image
-            event.save()
-            return create_response(status=200, message=f"Image upload success")
-        except:
-            return create_response(status=400, message=f"Image upload failed")
-    else:
-        return create_response(status=400, message=f"Image upload failed")
+
+@event.route("events/delete/<string:event_id>", methods=["DELETE"])
+@all_users
+def legacy_delete_event(event_id):
+    try:
+        actor = _actor()
+        cancel_event(actor, _find_event(event_id))
+        return create_response(message="Event cancelled")
+    except EventWorkflowError as error:
+        return _error_response(error)

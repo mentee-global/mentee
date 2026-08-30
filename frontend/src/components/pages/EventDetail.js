@@ -1,238 +1,112 @@
 import React, { useEffect, useState } from "react";
+import { Avatar, Result, Spin, Tag, Typography } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Typography, Result } from "antd";
 import { withRouter } from "react-router-dom";
-import { useAuth } from "../../utils/hooks/useAuth";
-import {
-  fetchEventById,
-  fetchMentors,
-  fetchMentees,
-  fetchPartners,
-  fetchAccountById,
-  fetchAccounts,
-} from "utils/api";
 import { useTranslation } from "react-i18next";
-import { ACCOUNT_TYPE, formatDateTime } from "utils/consts";
-import { useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
 
-const { Title, Paragraph } = Typography;
+import { fetchEventById } from "utils/api";
+import { formatDateTime } from "utils/consts";
 
 function EventDetail({ match }) {
-  const id = match.params.id;
-  const [event, setEvent] = useState({});
-  const [createUser, setCreateUser] = useState({});
-  const { isHub, role } = useAuth();
   const { t } = useTranslation();
-  const { user } = useSelector((state) => state.user);
+  const [event, setEvent] = useState(null);
+  const [status, setStatus] = useState("loading");
 
   useEffect(() => {
-    async function getEvent(hub_user_id = null) {
-      var all_users = [];
-      const admin_data = await fetchAccounts(ACCOUNT_TYPE.ADMIN);
-      if (isHub) {
-        const partenr_data = await fetchPartners(undefined, hub_user_id);
-        const hub_user = await fetchAccountById(hub_user_id, ACCOUNT_TYPE.HUB);
-        all_users = [...partenr_data, hub_user, ...admin_data];
-      } else {
-        const mentor_data = await fetchMentors();
-        // Includes private mentees so event authors always resolve to a name.
-        const mentee_data = await fetchMentees(undefined, true);
-        const partenr_data = await fetchPartners(undefined, null);
-        all_users = [
-          ...mentee_data,
-          ...mentor_data,
-          ...partenr_data,
-          ...admin_data,
-        ];
-      }
+    setStatus("loading");
+    fetchEventById(match.params.id)
+      .then((result) => {
+        if (!result) {
+          setStatus("forbidden");
+          return;
+        }
+        setEvent(result);
+        setStatus("ready");
+      })
+      .catch((error) => {
+        setStatus(error?.response?.status === 404 ? "missing" : "forbidden");
+      });
+  }, [match.params.id]);
 
-      const EventData = await fetchEventById(id);
-      if (EventData) {
-        setEvent(EventData);
-      }
+  if (status === "loading") return <Spin size="large" />;
+  if (status !== "ready") {
+    return (
+      <Result
+        status={status === "missing" ? "404" : "403"}
+        title={status === "missing" ? "404" : "403"}
+        subTitle={
+          status === "missing"
+            ? t("events.workflow.notFound")
+            : t("gallery.unauthorizedAccess")
+        }
+      />
+    );
+  }
 
-      setTimeout(() => {
-        const create_user = all_users.find(
-          (x) => x._id.$oid === EventData.user_id.$oid
-        );
-        setCreateUser(create_user);
-      }, 500);
-    }
-    var hub_user_id = null;
-    if (isHub && user) {
-      if (user.hub_id) {
-        hub_user_id = user.hub_id;
-      } else {
-        hub_user_id = user._id.$oid;
-      }
-    }
-    getEvent(hub_user_id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
+  const creator = event.creator || {};
   return (
-    <>
-      {role !== ACCOUNT_TYPE.ADMIN &&
-      event &&
-      event.role &&
-      !event.role.includes(role) ? (
-        <Result
-          status="403"
-          title="403"
-          subTitle={t("gallery.unauthorizedAccess")}
-        />
-      ) : (
-        <div className="mentor-profile-flexbox">
-          <div className={"mentor-profile-content-public"}>
-            <div style={{ minWidth: "65%" }}>
-              <div style={{ display: "flex" }}>
-                {createUser && createUser.role > 0 ? (
-                  <NavLink
-                    to={`/gallery/${createUser.role}/${event.user_id.$oid}`}
-                  >
-                    <Avatar
-                      size={120}
-                      src={
-                        createUser && createUser.image && createUser.image.url
-                      }
-                      icon={<UserOutlined />}
-                    />
-                  </NavLink>
-                ) : (
-                  <Avatar
-                    size={120}
-                    src={createUser && createUser.image && createUser.image.url}
-                    icon={<UserOutlined />}
-                  />
-                )}
-                <div style={{ marginLeft: "20px" }}>
-                  <Title className="gallery-title-text">
-                    {event && event.title}
-                  </Title>
-                  <div className="gallery-header-description">
-                    {t("events.eventsubmitby")} :{" "}
-                    <span>
-                      {createUser
-                        ? createUser.name
-                          ? createUser.name
-                          : createUser.person_name
-                        : "Admin User"}
-                    </span>
-                  </div>
-                </div>
+    <div className="mentor-profile-flexbox">
+      <div className="mentor-profile-content-public">
+        <div style={{ minWidth: "65%" }}>
+          <div style={{ display: "flex", gap: 20 }}>
+            <Avatar
+              size={120}
+              src={creator.image_url}
+              icon={<UserOutlined />}
+            />
+            <div>
+              <Typography.Title className="gallery-title-text">
+                {event.title}
+              </Typography.Title>
+              <div className="gallery-header-description">
+                {t("events.eventsubmitby")}: {creator.name || "MENTEE"}
               </div>
-
-              <div className="datetime-area" style={{ marginTop: "20px" }}>
-                {event.start_datetime && (
-                  <>
-                    <label
-                      style={{
-                        fontSize: "20px",
-                        fontWeight: 600,
-                        marginRight: "10px",
-                      }}
-                    >
-                      {t("events.period")} :{" "}
-                    </label>
-                    <span style={{ fontSize: "20px", color: "#800020" }}>
-                      {formatDateTime(new Date(event.start_datetime.$date))} ~{" "}
-                    </span>
-                    {event.end_datetime && (
-                      <span style={{ fontSize: "20px", color: "#800020" }}>
-                        {formatDateTime(new Date(event.end_datetime.$date))}
-                      </span>
-                    )}
-                  </>
-                )}
-
-                {event.image_file && (
-                  <Typography>
-                    <Paragraph
-                      style={{
-                        fontSize: "20px",
-                        fontWeight: 600,
-                        marginTop: "5px",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      {t("events.attatchment")}:
-                    </Paragraph>
-                    <img
-                      style={{
-                        marginLeft: "5%",
-                        marginTop: "15px",
-                        width: "60%",
-                      }}
-                      className="event-img"
-                      src={event.image_file.url}
-                      alt=""
-                    />
-                  </Typography>
-                )}
-                {event.description && (
-                  <Typography>
-                    <Paragraph
-                      style={{
-                        fontSize: "20px",
-                        fontWeight: 600,
-                        marginTop: "5px",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      {t("events.summary")}:
-                    </Paragraph>
-                    <Paragraph
-                      style={{
-                        fontSize: "16px",
-                        paddingLeft: "10px",
-                        marginTop: "5px",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      {event.description}
-                    </Paragraph>
-                  </Typography>
-                )}
-                <div style={{ marginTop: "15px" }}>
-                  {event.url && (
-                    <>
-                      <Typography>
-                        <Paragraph
-                          style={{
-                            fontSize: "20px",
-                            fontWeight: 600,
-                            marginTop: "5px",
-                            marginBottom: "5px",
-                          }}
-                        >
-                          {"URL"}:
-                        </Paragraph>
-                        <Paragraph
-                          style={{
-                            fontSize: "16px",
-                            paddingLeft: "10px",
-                            marginTop: "5px",
-                            marginBottom: "5px",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: "65%",
-                          }}
-                        >
-                          <a style={{ whiteSpace: "nowrap" }} href={event.url}>
-                            {event.url}
-                          </a>
-                        </Paragraph>
-                      </Typography>
-                    </>
-                  )}
-                </div>
-              </div>
+              {event.status !== "published" && (
+                <Tag color={event.status === "rejected" ? "red" : "gold"}>
+                  {event.status.replaceAll("_", " ")}
+                </Tag>
+              )}
             </div>
           </div>
+          {event.review_feedback && (
+            <Typography.Paragraph type="danger" style={{ marginTop: 20 }}>
+              {t("events.workflow.reviewFeedback", {
+                feedback: event.review_feedback,
+              })}
+            </Typography.Paragraph>
+          )}
+          <div className="datetime-area" style={{ marginTop: 20 }}>
+            {event.start_datetime && (
+              <Typography.Paragraph style={{ fontSize: 20 }}>
+                <strong>{t("events.period")}:</strong>{" "}
+                {formatDateTime(new Date(event.start_datetime.$date))}
+                {event.end_datetime &&
+                  ` ~ ${formatDateTime(new Date(event.end_datetime.$date))}`}
+              </Typography.Paragraph>
+            )}
+            {event.image_file && (
+              <img
+                style={{ marginTop: 15, maxWidth: "60%" }}
+                src={event.image_file.url}
+                alt=""
+              />
+            )}
+            {event.description && (
+              <Typography.Paragraph style={{ fontSize: 16, marginTop: 20 }}>
+                <strong>{t("events.summary")}:</strong>
+                <br />
+                {event.description}
+              </Typography.Paragraph>
+            )}
+            {event.url && (
+              <Typography.Paragraph style={{ fontSize: 16 }} ellipsis>
+                <strong>URL:</strong> <a href={event.url}>{event.url}</a>
+              </Typography.Paragraph>
+            )}
+          </div>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
 

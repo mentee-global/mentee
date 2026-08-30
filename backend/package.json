@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "uv run python manage.py runserver",
+    "dev": "pnpm --parallel run \"/^dev:.*/\"",
+    "dev:server": "uv run python manage.py runserver",
+    "dev:worker": "uv run python manage.py runworker",
     "format:all": "uv run black .",
     "format:check": "uv run black . --check"
   }

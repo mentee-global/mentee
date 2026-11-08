@@ -7,8 +7,9 @@ Keep SendGrid as the email provider throughout the infrastructure migration.
 ## Preview resources
 
 The `MENTEE` project in the Mentee workspace has separate `development` and
-`production` environments. `development` contains the web service and a private
-MongoDB service. `production` is empty until the production migration is ready.
+`production` environments. `development` contains the web service, notification
+worker, private MongoDB service, and `mentee-dev-files` storage bucket.
+`production` is empty until the production migration is ready.
 On 2026-11-08, the `mentee` database
 from the development Atlas M0 cluster was copied to `mentee_preview` in Railway.
 The source and destination matched at 38 collections, 5,335 documents and 56
@@ -19,9 +20,8 @@ been changed or deleted. No production data was exported.
 
 Railway project: https://railway.com/project/90a8e55e-1ff1-4d68-a8e6-7205dcaa6b90
 Development URL: https://web-preview-0c1a.up.railway.app
-The web service follows `codex/railway-migration` while PR #1392 is open. Change
-its source branch to `dev` after merging that PR to make merges to `dev` deploy
-automatically to `development`. Configure the production service separately from
+The web and worker services follow `dev`, so merges to `dev` deploy automatically
+to `development`. Configure the production service separately from
 the production branch when that migration is ready; do not duplicate the
 development environment's database or secrets into production.
 The deployed `/health` endpoint and web root returned HTTP 200 after the copy.
@@ -37,18 +37,19 @@ even if their profiles appear in the development database.
 The preview domain was added to that project's authorized domains without
 removing the existing domains.
 
-The preview currently uses the development Firebase service account. File uploads
-remain unavailable: the Google Cloud project's billing account is closed, so
-Google Cloud rejected creation of a separate preview GCS bucket and even a test
-write to the existing bucket. The configured `GCS_BUCKET` name is intentionally
-not an existing bucket; this prevents preview uploads from writing to the
-production bucket. Resolve storage access before testing file flows.
+The preview uses the development Firebase service account. Google Cloud's billing
+account is closed, so a separate GCS bucket could not be created. Profile photos
+and bug report attachments instead use the private Railway bucket through the
+web service. Existing GridFS files remain in the copied MongoDB database. The
+`GCS_BUCKET` variable points to a nonexistent name as a fallback guard; preview
+uploads must never write to the production GCS bucket. Railway bucket storage is
+billed by usage, currently $0.015 per GB-month, with free S3 operations and bucket
+egress. Web service egress still applies when serving files through the API.
 
 Use the repository root as the build context and `Dockerfile.railway` as the
 Dockerfile. The web service's Dockerfile path and `/health` check are set in
 Railway service settings. Railway no longer accepts the repository's
-`deploy/railway/web.json` as a Config as Code file. Do not create the
-notification worker until the web preview has been verified.
+`deploy/railway/web.json` as a Config as Code file.
 
 The existing `backend/Dockerfile` and Heroku `Procfile` are not changed.
 
@@ -63,7 +64,8 @@ Railway variables, not in source files or build arguments.
 | `MONGO_URI` | Private Railway MongoDB URI for the `mentee_preview` scoped user; stored only in Railway variables |
 | `MONGO_DB` | `mentee_preview` |
 | `GOOGLE_CREDENTIALS_JSON` | Existing development Firebase service-account JSON for `mentee-d0304` |
-| `GCS_BUCKET` | Reserved preview bucket name; file flows are blocked until storage billing is resolved |
+| `GCS_BUCKET` | Nonexistent preview bucket name, retained as a fallback guard |
+| `AWS_S3_BUCKET_NAME`, `AWS_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION` | References to the `mentee-dev-files` Railway bucket |
 | `FLASK_SECRET_KEY` | A new secret used only by the preview |
 | `CORS_ORIGINS` | The preview web origin |
 | `ENVIRONMENT` | `production`, to enable secure cookies on the HTTPS preview |
@@ -120,12 +122,13 @@ Do not pass private Google service-account JSON as a build argument.
 
 1. Confirm `/health` reports database readiness on the temporary Railway domain.
 2. Test preview authentication, profiles and chat with dedicated synthetic
-   accounts in the shared Firebase project. File flows require working storage.
+   accounts in the shared Firebase project. Exercise image upload and retrieval
+   through the Railway bucket without modifying copied user profiles.
 3. Verify that email and SMS attempts are blocked and that no weekly cron exists.
 4. Measure response times, memory, CPU and cost under representative load.
-5. Introduce the preview worker only after reviewing pending development jobs.
-   The Railway database is independent from the `mentee-dev` queue, so existing
-   jobs were copied but subsequent queue activity is separate.
+5. Exercise the preview worker with a dedicated job. The Railway database is
+   independent from the `mentee-dev` queue, so subsequent queue activity is
+   separate.
 6. Restore a Railway volume backup into an isolated test service, then rehearse
    the final write-freeze migration separately. This setup does not migrate
    production data.

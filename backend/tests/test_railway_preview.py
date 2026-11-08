@@ -9,7 +9,7 @@ from flask import Flask
 from pymongo.errors import ConnectionFailure
 
 from api.utils import request_utils
-from api.views import app_blueprint
+from api.views import app_blueprint, main
 
 
 entrypoint_path = (
@@ -159,8 +159,26 @@ def test_shared_firebase_still_rejects_production_bucket(
     monkeypatch.setenv("REACT_APP_FIREBASE_CONFIG", json.dumps(firebase_config))
     monkeypatch.setenv("GCS_BUCKET", "app-mentee-global-images")
 
-    with pytest.raises(RuntimeError, match="separate GCS bucket"):
+    with pytest.raises(RuntimeError, match="separate object storage"):
         entrypoint.prepare_environment()
+
+
+def test_preview_accepts_railway_storage_with_production_gcs_bucket(
+    preview_environment, monkeypatch
+):
+    monkeypatch.setenv("GCS_BUCKET", "app-mentee-global-images")
+    monkeypatch.setenv("AWS_S3_BUCKET_NAME", "mentee-dev-files")
+    monkeypatch.setenv("AWS_ENDPOINT_URL", "https://storage.example.test")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "test-access")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test-secret")
+    monkeypatch.setenv("RAILWAY_PUBLIC_DOMAIN", "preview.example.test")
+
+    entrypoint.prepare_environment()
+    credentials_path = Path(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
+    credentials_path.unlink()
+
+    assert os.environ["EMAIL_DELIVERY_ENABLED"] == "false"
+    assert os.environ["SMS_DELIVERY_ENABLED"] == "false"
 
 
 def test_disabled_email_never_constructs_sendgrid_client(monkeypatch):
@@ -217,3 +235,26 @@ def test_health_reports_database_readiness(monkeypatch, database_available):
 
     assert response.status_code == (200 if database_available else 503)
     assert response.json == {"status": "ok" if database_available else "unavailable"}
+
+
+def test_preview_storage_serves_images_and_downloads_bug_attachments(monkeypatch):
+    monkeypatch.setattr(
+        main,
+        "read_railway_file",
+        lambda filename: (b"file content", "text/html"),
+    )
+    app = Flask(__name__)
+    app.register_blueprint(main.main, url_prefix="/api")
+    client = app.test_client()
+
+    image = client.get("/api/storage/images/test.jpg")
+    attachment = client.get("/api/storage/bug-reports/test.html")
+    rejected = client.get("/api/storage/other/test.html")
+
+    assert image.status_code == 200
+    assert image.headers["X-Content-Type-Options"] == "nosniff"
+    assert image.headers.get("Content-Disposition", "").startswith("inline")
+    assert attachment.status_code == 200
+    assert attachment.headers["Content-Disposition"].startswith("attachment")
+    assert attachment.headers["X-Content-Type-Options"] == "nosniff"
+    assert rejected.status_code == 404

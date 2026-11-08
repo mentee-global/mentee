@@ -2,7 +2,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/analytics";
 
-const fireauth = firebase.initializeApp({
+const defaultConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "mentee-d0304.firebaseapp.com",
   projectId: "mentee-d0304",
@@ -10,7 +10,13 @@ const fireauth = firebase.initializeApp({
   messagingSenderId: "64054250486",
   appId: "1:64054250486:web:5dda0b621ca92dc03ad5d7",
   measurementId: "G-HSJ2934X33",
-});
+};
+
+const firebaseConfig = process.env.REACT_APP_FIREBASE_CONFIG
+  ? JSON.parse(process.env.REACT_APP_FIREBASE_CONFIG)
+  : defaultConfig;
+
+const fireauth = firebase.initializeApp(firebaseConfig);
 
 firebase.analytics();
 

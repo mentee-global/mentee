@@ -20,6 +20,12 @@ bidict==0.22.1
     # via
     #   backend
     #   python-socketio
+boto3==1.43.126
+    # via backend
+botocore==1.43.126
+    # via
+    #   boto3
+    #   s3transfer
 cachecontrol==0.12.11
     # via
     #   backend
@@ -258,6 +264,10 @@ jinja2==3.1.2
     #   flask
 jiter==0.15.0
     # via openai
+jmespath==1.1.0
+    # via
+    #   boto3
+    #   botocore
 jwcrypto==1.4.2
     # via
     #   backend
@@ -368,6 +378,7 @@ pyrebase4==4.6.0
 python-dateutil==2.8.2
     # via
     #   backend
+    #   botocore
     #   pandas
 python-dotenv==1.0.0
     # via backend
@@ -412,6 +423,8 @@ rsa==4.9
     #   backend
     #   google-auth
     #   oauth2client
+s3transfer==0.19.3
+    # via boto3
 sendgrid==6.9.7
     # via backend
 setuptools==75.3.0
@@ -468,6 +481,7 @@ uritemplate==4.1.1
 urllib3==1.26.14
     # via
     #   backend
+    #   botocore
     #   requests
 werkzeug==2.2.3
     # via

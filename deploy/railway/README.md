@@ -1,4 +1,4 @@
-# Parallel Railway preview
+# Railway environments for MENTEE
 
 This setup prepares a Railway preview of MENTEE with an isolated copy of the
 development database. It does not change Heroku, Atlas, or production DNS.
@@ -6,8 +6,10 @@ Keep SendGrid as the email provider throughout the infrastructure migration.
 
 ## Preview resources
 
-The `MENTEE Dev Preview` project in the Mentee workspace has a `preview`
-environment and a private MongoDB service. On 2026-11-08, the `mentee` database
+The `MENTEE` project in the Mentee workspace has separate `development` and
+`production` environments. `development` contains the web service and a private
+MongoDB service. `production` is empty until the production migration is ready.
+On 2026-11-08, the `mentee` database
 from the development Atlas M0 cluster was copied to `mentee_preview` in Railway.
 The source and destination matched at 38 collections, 5,335 documents and 56
 indexes. The Railway web service uses a database user limited to read and write
@@ -16,10 +18,12 @@ made to either database after the copy are independent. The Atlas source has not
 been changed or deleted. No production data was exported.
 
 Railway project: https://railway.com/project/90a8e55e-1ff1-4d68-a8e6-7205dcaa6b90
-Preview URL: https://web-preview-0c1a.up.railway.app
+Development URL: https://web-preview-0c1a.up.railway.app
 The web service follows `codex/railway-migration` while PR #1392 is open. Change
 its source branch to `dev` after merging that PR to make merges to `dev` deploy
-automatically to this preview.
+automatically to `development`. Configure the production service separately from
+the production branch when that migration is ready; do not duplicate the
+development environment's database or secrets into production.
 The deployed `/health` endpoint and web root returned HTTP 200 after the copy.
 The MongoDB volume has a daily backup schedule with six-day retention, and an
 initial manual backup named `Post-Atlas development copy` was created. A restore

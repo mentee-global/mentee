@@ -113,7 +113,11 @@ def create_app():
     password = os.environ.get("MONGO_PASSWORD")
     db = os.environ.get("MONGO_DB")
     host = os.environ.get("MONGO_HOST")
-    app.config["MONGODB_SETTINGS"] = {"db": db, "host": host % (user, password, db)}
+    mongo_uri = os.environ.get("MONGO_URI")
+    app.config["MONGODB_SETTINGS"] = {
+        "db": db,
+        "host": mongo_uri or host % (user, password, db),
+    }
     # app.config["MONGODB_SETTINGS"] = {
     #     "db": "mentee",
     #     "host": "localhost",

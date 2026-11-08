@@ -36,6 +36,7 @@ from api.models import (
     Hub,
 )
 from api.utils.constants import Account, TARGET_LANGS
+from api.utils.delivery import email_delivery_enabled, sms_delivery_enabled
 
 wtforms_json.init()
 
@@ -48,7 +49,9 @@ sender_email = os.environ.get("SENDER_EMAIL")
 twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID")
 twilio_token = os.environ.get("TWILIO_AUTH_TOKEN")
 twilio_phone = os.environ.get("TWILIO_PHONE")
-twilio_client = TwilioClient(twilio_sid, twilio_token)
+twilio_client = (
+    TwilioClient(twilio_sid, twilio_token) if sms_delivery_enabled() else None
+)
 
 
 class EducationForm(Form):
@@ -206,6 +209,9 @@ def send_email(
     if not recipient:
         return False, "Missing recipient email"
 
+    if not email_delivery_enabled():
+        return False, "Email delivery disabled"
+
     message = Mail(
         from_email=sender_email,
         to_emails=recipient,
@@ -249,6 +255,9 @@ def send_email_html(
     if not recipient:
         return False, "Missing recipient email"
 
+    if not email_delivery_enabled():
+        return False, "Email delivery disabled"
+
     message = Mail(
         from_email=sender_email,
         to_emails=recipient,
@@ -290,6 +299,8 @@ def send_sms(text: str = "", recipient: str = "") -> Tuple[bool, str]:
     """
     if not recipient or not text:
         return False, "Empty recipient number or text"
+    if not sms_delivery_enabled():
+        return False, "SMS delivery disabled"
     try:
         res = twilio_client.messages.create(body=text, from_=twilio_phone, to=recipient)
     except Exception as e:

@@ -115,9 +115,10 @@ def main():
             "eventlet",
             "manage:app",
         ],
+        "worker": [sys.executable, "manage.py", "runworker"],
     }
     if service not in commands:
-        raise SystemExit("Choose web")
+        raise SystemExit("Choose web or worker")
     prepare_environment()
     command = commands[service]
     os.execvp(command[0], command)

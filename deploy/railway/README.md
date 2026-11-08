@@ -128,10 +128,9 @@ Do not pass private Google service-account JSON as a build argument.
    through the Railway bucket without modifying copied user profiles.
 3. Verify that email and SMS attempts are blocked and that no weekly cron exists.
 4. Measure response times, memory, CPU and cost under representative load.
-5. Confirm whether a separate worker is needed. The current `Procfile` invokes
-   `python manage.py runworker`, but `manage.py` has no `runworker` command and
-   the application defines no shared job queue. Socket.IO background tasks run
-   in the web process. Do not run a Railway worker until it has a defined job.
+5. Verify the worker against the event notification queues. The deployed
+   Heroku production commit defines `runworker` for event publication and review
+   notification jobs. Keep outbound email disabled during rehearsal.
 6. Restore a Railway volume backup into an isolated test service, then rehearse
    the final write-freeze migration separately. This setup does not migrate
    production data.
@@ -159,10 +158,9 @@ official template copy was verified. Its volume is queued for deletion by
 Railway. Atlas remains the live production source until cutover.
 At runtime Railway exposes that bucket as `mentee-prod-files-wciuvo4`; the
 entrypoint checks the exact name and Firebase project `mentee-d0304`.
-The `worker-prod` service is reserved but has no source or running deployment:
-its inherited `runworker` command failed because that command no longer exists.
-The Heroku worker is still running an older deployed slug; its purpose must be
-verified before giving Railway a replacement process.
+The `worker-prod` service uses the same production MongoDB and code as the web
+service. It polls event notification jobs; email delivery remains disabled
+during rehearsal. The Heroku worker continues to serve the live Atlas database.
 Email and SMS delivery stay disabled during rehearsal. The Heroku `clock`
 process calls the public weekly email endpoint and must remain the only active
 clock until cutover; enable its Railway replacement only after disabling it on

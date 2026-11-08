@@ -22,8 +22,12 @@ database is a rehearsal copy and must not be treated as current user data.
   leave the traffic CNAME pointing to Heroku until the cutover.
 - Set `WEEKLY_EMAILS_URL` for `clock-prod` to the Railway web URL, not the public
   domain. Prepare `clock-prod` using `deploy/railway/clock.json`, but keep it
-  stopped. Keep `EMAIL_DELIVERY_ENABLED=false` and
+  stopped. Set its `TZ` to match the current Heroku clock (`EST`). Keep
+  `EMAIL_DELIVERY_ENABLED=false` and
   `SMS_DELIVERY_ENABLED=false` in Railway until the final checks.
+- Keep OAuth disabled on Railway during rehearsal. Its issuer, key ID and
+  signing key are prepared from Heroku, but production clients need a separate
+  test before enabling `OAUTH_ENABLED=true` at cutover.
 - Prepare the DNS change at the provider for `app.menteeglobal.org`: change the
   `app` CNAME from Heroku to the value returned by `railway domain status`.
   Do not apply it yet. Confirm access to the DNS account and a short TTL.
@@ -48,7 +52,7 @@ database is a rehearsal copy and must not be treated as current user data.
    Do not let both clocks run simultaneously.
 6. Change the `app` CNAME to Railway's current target. Wait for Railway's
    certificate to become active, then test login, messages, uploads, events,
-   appointments, OAuth if enabled, email links and the public `/health` route.
+   appointments, OAuth clients, email links and the public `/health` route.
 7. Monitor Railway errors, response times and MongoDB. Keep Heroku and Atlas
    intact through the observation period. Only then remove the Heroku domain
    and scale down its dynos; remove Atlas after a verified backup and a separate

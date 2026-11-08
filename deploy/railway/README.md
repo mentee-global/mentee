@@ -152,8 +152,10 @@ closed. Google Cloud permits listing the 1,332 existing objects but returns 403
 when their contents are downloaded. Keep existing image URLs intact until the
 account is active, then copy and verify the objects before rewriting URLs.
 
-The production web uses `RAILWAY_PREVIEW=false`, the private
-`mongodb-prod.railway.internal` host, and the `mentee-prod-files` bucket.
+The production web uses `RAILWAY_PREVIEW=false`, the official Railway MongoDB
+template at `mongodb-x6fv.railway.internal`, and the `mentee-prod-files` bucket.
+The earlier manually created `mongodb-prod` service is retained temporarily as
+a rollback copy; it does not have Railway's MongoDB Data view.
 At runtime Railway exposes that bucket as `mentee-prod-files-wciuvo4`; the
 entrypoint checks the exact name and Firebase project `mentee-d0304`.
 The `worker-prod` service is reserved but has no source or running deployment:

@@ -31,7 +31,7 @@ def validate_production_database():
     mongo_url = urlsplit(os.environ.get("MONGO_URI", ""))
     if mongo_url.scheme != "mongodb":
         raise RuntimeError("Railway production requires a MongoDB connection URI")
-    if mongo_url.hostname != "mongodb-prod.railway.internal":
+    if mongo_url.hostname != "mongodb-x6fv.railway.internal":
         raise RuntimeError("Railway production requires its private MongoDB service")
     if os.environ.get("MONGO_DB") != "mentee" or mongo_url.path != "/mentee":
         raise RuntimeError("Railway production requires the mentee database")

@@ -123,8 +123,9 @@ def test_preview_cannot_fall_back_to_legacy_production_connection(monkeypatch):
     [
         ("mongodb+srv://cluster0.vr5uq.mongodb.net/mentee", "mentee"),
         ("mongodb://mongodb.railway.internal:27017/mentee", "mentee"),
-        ("mongodb://mongodb-prod.railway.internal:27017/mentee_preview", "mentee"),
-        ("mongodb://mongodb-prod.railway.internal:27017/mentee", "mentee_preview"),
+        ("mongodb://mongodb-x6fv.railway.internal:27017/mentee_preview", "mentee"),
+        ("mongodb://mongodb-x6fv.railway.internal:27017/mentee", "mentee_preview"),
+        ("mongodb://mongodb-prod.railway.internal:27017/mentee", "mentee"),
     ],
 )
 def test_railway_production_rejects_other_databases(monkeypatch, uri, database):
@@ -137,7 +138,7 @@ def test_railway_production_rejects_other_databases(monkeypatch, uri, database):
 
 def test_railway_production_accepts_private_database(monkeypatch):
     monkeypatch.setenv(
-        "MONGO_URI", "mongodb://mongodb-prod.railway.internal:27017/mentee"
+        "MONGO_URI", "mongodb://mongodb-x6fv.railway.internal:27017/mentee"
     )
     monkeypatch.setenv("MONGO_DB", "mentee")
 
@@ -158,7 +159,7 @@ def test_railway_production_rejects_wrong_storage_or_firebase(
     monkeypatch.setenv("RAILWAY_ENVIRONMENT_NAME", "production")
     monkeypatch.setenv("RAILWAY_PREVIEW", "false")
     monkeypatch.setenv(
-        "MONGO_URI", "mongodb://mongodb-prod.railway.internal:27017/mentee"
+        "MONGO_URI", "mongodb://mongodb-x6fv.railway.internal:27017/mentee"
     )
     monkeypatch.setenv("MONGO_DB", "mentee")
     monkeypatch.setenv("AWS_S3_BUCKET_NAME", bucket)

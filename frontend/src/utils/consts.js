@@ -1,11 +1,19 @@
 export const IS_PRODUCTION = process.env.NODE_ENV === "production";
 export const IS_DEVELOPMENT = process.env.REACT_APP_ENV === "development";
 
-export const BASE_URL = IS_PRODUCTION
+const configuredBaseUrl = process.env.REACT_APP_BASE_URL;
+const baseUrlOverride =
+  configuredBaseUrl === "auto" ? window.location.origin : configuredBaseUrl;
+
+const defaultBaseUrl = IS_PRODUCTION
   ? IS_DEVELOPMENT
     ? "https://mentee-dev.herokuapp.com/"
     : "https://app.menteeglobal.org/"
   : "http://localhost:8000/";
+
+export const BASE_URL = baseUrlOverride
+  ? `${baseUrlOverride.replace(/\/+$/, "")}/`
+  : defaultBaseUrl;
 
 export const FRONT_BASE_URL = IS_PRODUCTION
   ? BASE_URL

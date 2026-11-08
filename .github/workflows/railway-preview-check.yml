@@ -1,0 +1,26 @@
+name: Railway Preview Image
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - .dockerignore
+      - Dockerfile.railway
+      - deploy/railway/**
+      - backend/**
+      - frontend/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Railway preview image
+        run: |
+          docker build -f Dockerfile.railway \
+            --build-arg REACT_APP_FIREBASE_CONFIG='{"apiKey":"ci","authDomain":"ci.firebaseapp.com","projectId":"ci","storageBucket":"ci.appspot.com","appId":"ci"}' \
+            -t mentee-railway-preview:ci .

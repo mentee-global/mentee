@@ -1,6 +1,9 @@
 name: Code Format Check
 
 on:
+  pull_request:
+    branches:
+      - dev
   push:
     branches:
       - main

@@ -36,6 +36,7 @@ from api.models import (
 )
 from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS, ALERT_TO_ADMINS
 from api.utils.request_utils import send_email
+from api.utils.delivery import email_delivery_enabled
 from api.core import create_response, logger
 from api.utils.request_utils import (
     MentorForm,
@@ -1742,8 +1743,8 @@ def submit_bug_report():
     """
 
     # Check if SendGrid is properly configured
-    if not sendgrid_key:
-        logger.warning("SENDGRID_API_KEY not found - using development mode")
+    if not sendgrid_key or not email_delivery_enabled():
+        logger.warning("Email delivery disabled or not configured")
         logger.info(
             f"Bug report #{bug_report.id} received from {user_name} ({user_email})"
         )

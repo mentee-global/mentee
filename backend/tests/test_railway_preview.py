@@ -144,6 +144,36 @@ def test_railway_production_accepts_private_database(monkeypatch):
     entrypoint.validate_production_database()
 
 
+@pytest.mark.parametrize(
+    "bucket,credential_project,firebase_project",
+    [
+        ("mentee-dev-files", "mentee-d0304", "mentee-d0304"),
+        ("mentee-prod-files-wciuvo4", "other-project", "mentee-d0304"),
+        ("mentee-prod-files-wciuvo4", "mentee-d0304", "other-project"),
+    ],
+)
+def test_railway_production_rejects_wrong_storage_or_firebase(
+    monkeypatch, bucket, credential_project, firebase_project
+):
+    monkeypatch.setenv("RAILWAY_ENVIRONMENT_NAME", "production")
+    monkeypatch.setenv("RAILWAY_PREVIEW", "false")
+    monkeypatch.setenv(
+        "MONGO_URI", "mongodb://mongodb-prod.railway.internal:27017/mentee"
+    )
+    monkeypatch.setenv("MONGO_DB", "mentee")
+    monkeypatch.setenv("AWS_S3_BUCKET_NAME", bucket)
+    monkeypatch.setenv("RAILWAY_PUBLIC_DOMAIN", "web-prod.example.test")
+    monkeypatch.setenv(
+        "GOOGLE_CREDENTIALS_JSON", json.dumps({"project_id": credential_project})
+    )
+    monkeypatch.setenv(
+        "REACT_APP_FIREBASE_CONFIG", json.dumps({"projectId": firebase_project})
+    )
+
+    with pytest.raises(RuntimeError):
+        entrypoint.prepare_environment()
+
+
 @pytest.mark.parametrize("project_id", ["mentee-preview", "mentee-d0304"])
 def test_preview_disables_delivery_and_materializes_private_credentials(
     preview_environment, monkeypatch, project_id

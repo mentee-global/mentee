@@ -78,10 +78,19 @@ def prepare_environment():
         if os.environ.get("RAILWAY_PREVIEW", "false").lower() == "true":
             raise RuntimeError("Railway production cannot use preview mode")
         validate_production_database()
-        if not os.environ.get("AWS_S3_BUCKET_NAME"):
+        if os.environ.get("AWS_S3_BUCKET_NAME") != "mentee-prod-files-wciuvo4":
             raise RuntimeError("Railway production requires its object storage bucket")
         if not os.environ.get("RAILWAY_PUBLIC_DOMAIN"):
             raise RuntimeError("Railway production requires a public domain")
+        credentials = json.loads(credentials_json or "{}")
+        firebase_config = json.loads(os.environ.get("REACT_APP_FIREBASE_CONFIG", "{}"))
+        if (
+            credentials.get("project_id") != "mentee-d0304"
+            or firebase_config.get("projectId") != "mentee-d0304"
+        ):
+            raise RuntimeError(
+                "Railway production requires the MENTEE Firebase project"
+            )
 
     if credentials_json:
         with tempfile.NamedTemporaryFile(

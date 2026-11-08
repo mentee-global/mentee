@@ -154,8 +154,8 @@ account is active, then copy and verify the objects before rewriting URLs.
 
 The production web uses `RAILWAY_PREVIEW=false`, the official Railway MongoDB
 template at `mongodb-x6fv.railway.internal`, and the `mentee-prod-files` bucket.
-The earlier manually created `mongodb-prod` service is retained temporarily as
-a rollback copy; it does not have Railway's MongoDB Data view.
+The earlier manually created `mongodb-prod` service is stopped and retained
+temporarily as a rollback copy; it does not have Railway's MongoDB Data view.
 At runtime Railway exposes that bucket as `mentee-prod-files-wciuvo4`; the
 entrypoint checks the exact name and Firebase project `mentee-d0304`.
 The `worker-prod` service is reserved but has no source or running deployment:

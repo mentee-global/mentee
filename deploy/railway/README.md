@@ -9,17 +9,16 @@ Keep SendGrid as the email provider throughout the infrastructure migration.
 The `MENTEE` project in the Mentee workspace has separate `development` and
 `production` environments. `development` contains the web service, notification
 worker, private MongoDB service, and `mentee-dev-files` storage bucket.
-`production` has a separate MongoDB service, a copy of the Atlas production
-database, and the `mentee-prod-files` bucket. The web and worker services are
-being prepared on a separate branch. Heroku still serves the public domain and
-Atlas remains the live database.
+`production` has a separate MongoDB service, a rehearsal copy of the Atlas
+production database, the `mentee-prod-files` bucket, and a deployed web service.
+Heroku still serves the public domain and Atlas remains the live database.
 On 2026-11-08, the `mentee` database
 from the development Atlas M0 cluster was copied to `mentee_preview` in Railway.
 The source and destination matched at 38 collections, 5,335 documents and 56
 indexes. The Railway web service uses a database user limited to read and write
 access on `mentee_preview`. Heroku development continues to use Atlas, so writes
 made to either database after the copy are independent. The Atlas source has not
-been changed or deleted. No production data was exported.
+been changed or deleted. The production rehearsal copy is described below.
 
 Railway project: https://railway.com/project/90a8e55e-1ff1-4d68-a8e6-7205dcaa6b90
 Development URL: https://web-preview-0c1a.up.railway.app
@@ -129,9 +128,10 @@ Do not pass private Google service-account JSON as a build argument.
    through the Railway bucket without modifying copied user profiles.
 3. Verify that email and SMS attempts are blocked and that no weekly cron exists.
 4. Measure response times, memory, CPU and cost under representative load.
-5. Exercise the preview worker with a dedicated job. The Railway database is
-   independent from the `mentee-dev` queue, so subsequent queue activity is
-   separate.
+5. Confirm whether a separate worker is needed. The current `Procfile` invokes
+   `python manage.py runworker`, but `manage.py` has no `runworker` command and
+   the application defines no shared job queue. Socket.IO background tasks run
+   in the web process. Do not run a Railway worker until it has a defined job.
 6. Restore a Railway volume backup into an isolated test service, then rehearse
    the final write-freeze migration separately. This setup does not migrate
    production data.
@@ -152,8 +152,12 @@ closed. Google Cloud permits listing the 1,332 existing objects but returns 403
 when their contents are downloaded. Keep existing image URLs intact until the
 account is active, then copy and verify the objects before rewriting URLs.
 
-The production web and worker must use `RAILWAY_PREVIEW=false`, the private
+The production web uses `RAILWAY_PREVIEW=false`, the private
 `mongodb-prod.railway.internal` host, and the `mentee-prod-files` bucket.
+The `worker-prod` service is reserved but has no source or running deployment:
+its inherited `runworker` command failed because that command no longer exists.
+The Heroku worker is still running an older deployed slug; its purpose must be
+verified before giving Railway a replacement process.
 Email and SMS delivery stay disabled during rehearsal. The Heroku `clock`
 process calls the public weekly email endpoint and must remain the only active
 clock until cutover; enable its Railway replacement only after disabling it on

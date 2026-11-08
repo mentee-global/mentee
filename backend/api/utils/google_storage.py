@@ -5,9 +5,10 @@ from io import BytesIO
 import base64
 import datetime
 from uuid import uuid4
+import os
 
 client = storage.Client()
-BUCKET = "app-mentee-global-images"
+BUCKET = os.environ.get("GCS_BUCKET", "app-mentee-global-images")
 
 
 def upload_image_to_storage(image, filename):

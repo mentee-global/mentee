@@ -48,9 +48,19 @@ def prepare_environment():
             if not firebase_config.get(field):
                 raise RuntimeError(f"Preview Firebase configuration requires {field}")
             os.environ[variable] = firebase_config[field]
-        bucket = os.environ.get("GCS_BUCKET")
-        if not bucket or bucket == "app-mentee-global-images":
-            raise RuntimeError("Preview requires a separate GCS bucket")
+        if os.environ.get("AWS_S3_BUCKET_NAME"):
+            for variable in (
+                "AWS_ENDPOINT_URL",
+                "AWS_ACCESS_KEY_ID",
+                "AWS_SECRET_ACCESS_KEY",
+                "RAILWAY_PUBLIC_DOMAIN",
+            ):
+                if not os.environ.get(variable):
+                    raise RuntimeError(f"Preview storage requires {variable}")
+        else:
+            bucket = os.environ.get("GCS_BUCKET")
+            if not bucket or bucket == "app-mentee-global-images":
+                raise RuntimeError("Preview requires separate object storage")
         os.environ["EMAIL_DELIVERY_ENABLED"] = "false"
         os.environ["SMS_DELIVERY_ENABLED"] = "false"
 

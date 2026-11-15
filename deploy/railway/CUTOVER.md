@@ -9,16 +9,19 @@ database is a rehearsal copy and must not be treated as current user data.
 - Merge PR #1394 into `main` after its checks and required review. Confirm that
   Railway `web-prod` and `worker-prod` deploy the merged commit.
 - Keep Google Cloud Storage and Firebase in the existing `mentee-d0304` project.
-  Billing was reopened on 2026-11-15 and an object read succeeded. Production
+  Billing was reopened on 2026-11-15. The Railway production service account
+  passed upload, authenticated download and public HTTP download checks. Production
   must use `GCS_BUCKET=app-mentee-global-images`, with S3 variables removed.
   The 1,332 objects copied to Railway are a temporary secondary copy, not the
   production file store. Existing GCS URLs remain valid.
 - Test GCS uploads and downloads using the production service account and a
   disposable object. Test login for Admin, Mentor and Mentee, direct messages,
   events and appointments.
-- Restore a MongoDB volume backup into an isolated service, then verify a
-  representative collection. Do not use the live Railway database for this
-  restore test.
+- Atlas logical backup restore rehearsal passed on 2026-11-15: an isolated
+  MongoDB 8 container restored 41 collections, 16,361 documents and 127 indexes.
+  The encrypted-at-rest workstation holds the private archive outside the repo.
+  This tests logical recovery, not Railway volume-snapshot recovery. Keep the
+  Railway daily volume backups and verify snapshot recovery separately.
 - Confirm Railway has a custom domain entry for `app.menteeglobal.org` on
   `web-prod`. Add its ownership-verification TXT record if Railway requests it;
   leave the traffic CNAME pointing to Heroku until the cutover.

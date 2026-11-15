@@ -44,4 +44,12 @@ jobs:
         run: uv sync --frozen
       - name: Test deployment configuration and health checks
         working-directory: backend
-        run: uv run pytest -q tests/test_railway_preview.py
+        run: |
+          uv run python - <<'PY'
+          from unittest.mock import patch
+          from google.auth.credentials import AnonymousCredentials
+          import pytest
+
+          with patch("google.auth.default", return_value=(AnonymousCredentials(), "mentee-ci")):
+              raise SystemExit(pytest.main(["-q", "tests/test_railway_preview.py"]))
+          PY

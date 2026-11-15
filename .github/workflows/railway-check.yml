@@ -1,0 +1,55 @@
+name: Railway Validation
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-image:
+    name: Build Railway image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build application image
+        env:
+          APP_ENV: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'production' || 'development' }}
+        run: |
+          docker build -f Dockerfile.railway \
+            --build-arg REACT_APP_FIREBASE_CONFIG='{"apiKey":"ci","authDomain":"ci.firebaseapp.com","projectId":"ci","storageBucket":"ci.appspot.com","appId":"ci"}' \
+            --build-arg REACT_APP_BASE_URL=auto \
+            --build-arg REACT_APP_ENV="$APP_ENV" \
+            -t mentee-railway:ci .
+
+  deployment-tests:
+    name: Railway deployment tests
+    runs-on: ubuntu-latest
+    env:
+      IMGUR_KEY: ci
+      EMAIL_DELIVERY_ENABLED: 'false'
+      SMS_DELIVERY_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - uses: astral-sh/setup-uv@v5
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync --frozen
+      - name: Test deployment configuration and health checks
+        working-directory: backend
+        run: |
+          uv run python - <<'PY'
+          from unittest.mock import patch
+          from google.auth.credentials import AnonymousCredentials
+          import pytest
+
+          with patch("google.auth.default", return_value=(AnonymousCredentials(), "mentee-ci")):
+              raise SystemExit(pytest.main(["-q", "tests/test_railway_preview.py"]))
+          PY

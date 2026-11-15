@@ -19,7 +19,7 @@ database is a rehearsal copy and must not be treated as current user data.
   events and appointments.
 - Atlas logical backup restore rehearsal passed on 2026-11-15: an isolated
   MongoDB 8 container restored 41 collections, 16,361 documents and 127 indexes.
-  The encrypted-at-rest workstation holds the private archive outside the repo.
+  The local archive has owner-only permissions and is stored outside the repo.
   This tests logical recovery, not Railway volume-snapshot recovery. Keep the
   Railway daily volume backups and verify snapshot recovery separately.
 - Confirm Railway has a custom domain entry for `app.menteeglobal.org` on

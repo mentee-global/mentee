@@ -29,6 +29,7 @@ COPY --from=dependencies /app/backend/.venv /app/backend/.venv
 COPY backend/api /app/backend/api
 COPY backend/manage.py backend/pyproject.toml backend/uv.lock /app/backend/
 COPY backend/scripts/railway_entrypoint.py /app/backend/scripts/railway_entrypoint.py
+COPY backend/scripts/emails.py /app/backend/scripts/emails.py
 COPY --from=frontend /app/frontend/artifacts /app/frontend/artifacts
 WORKDIR /app/backend
 ENV PYTHONUNBUFFERED=1 UV_PYTHON_DOWNLOADS=never UV_NO_SYNC=1 \

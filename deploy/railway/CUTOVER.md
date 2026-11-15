@@ -1,8 +1,23 @@
 # Production cutover: Heroku and Atlas to Railway
 
-The public application is `app.menteeglobal.org`. Until this checklist is
-completed, Heroku and Atlas remain the source of truth. The Railway production
-database is a rehearsal copy and must not be treated as current user data.
+The public application is `app.menteeglobal.org`.
+
+## Cutover progress on 2026-11-15
+
+- Heroku production is in maintenance; web, worker and clock are scaled to zero.
+- A final Atlas archive was created after stopping Heroku writes and restored
+  into Railway. Counts matched exactly: 41 collections, 16,361 documents,
+  127 indexes. Atlas is retained for recovery and must not resume app writes.
+- The `app` CNAME now points to `zmd2alad.up.railway.app`, with TTL 300. The
+  ownership TXT record is published and Railway confirms ownership. Certificate
+  issuance and DNS propagation are still being checked.
+- Google Storage remains the production file store. Admin, Mentee and Mentor
+  logins passed against the Railway URL after the final restore.
+- Web and worker follow `main`; outbound delivery is enabled. The weekly clock
+  image needs `scripts/emails.py`, included by the follow-up Dockerfile fix.
+- Do not delete Atlas or backups before public HTTPS and functional verification
+  complete and the observation period ends.
+
 
 ## Before the maintenance window
 

@@ -78,8 +78,10 @@ def prepare_environment():
         if os.environ.get("RAILWAY_PREVIEW", "false").lower() == "true":
             raise RuntimeError("Railway production cannot use preview mode")
         validate_production_database()
-        if os.environ.get("AWS_S3_BUCKET_NAME") != "mentee-prod-files-wciuvo4":
-            raise RuntimeError("Railway production requires its object storage bucket")
+        if os.environ.get("AWS_S3_BUCKET_NAME"):
+            raise RuntimeError("Railway production requires Google Cloud Storage")
+        if os.environ.get("GCS_BUCKET") != "app-mentee-global-images":
+            raise RuntimeError("Railway production requires the MENTEE GCS bucket")
         if not os.environ.get("RAILWAY_PUBLIC_DOMAIN"):
             raise RuntimeError("Railway production requires a public domain")
         credentials = json.loads(credentials_json or "{}")

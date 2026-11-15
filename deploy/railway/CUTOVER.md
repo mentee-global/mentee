@@ -8,12 +8,14 @@ database is a rehearsal copy and must not be treated as current user data.
 
 - Merge PR #1394 into `main` after its checks and required review. Confirm that
   Railway `web-prod` and `worker-prod` deploy the merged commit.
-- Restore Google Cloud billing. Read a sample object from
-  `gs://app-mentee-global-images` and copy the 1,332 existing objects into
-  `mentee-prod-files`. Compare object count, size and sample hashes. Keep
-  existing image URLs until each stored reference is migrated and verified.
-- Test Railway bucket uploads and downloads with a disposable file. Test login
-  for Admin, Mentor and Mentee, direct messages, events and appointments.
+- Keep Google Cloud Storage and Firebase in the existing `mentee-d0304` project.
+  Billing was reopened on 2026-11-15 and an object read succeeded. Production
+  must use `GCS_BUCKET=app-mentee-global-images`, with S3 variables removed.
+  The 1,332 objects copied to Railway are a temporary secondary copy, not the
+  production file store. Existing GCS URLs remain valid.
+- Test GCS uploads and downloads using the production service account and a
+  disposable object. Test login for Admin, Mentor and Mentee, direct messages,
+  events and appointments.
 - Restore a MongoDB volume backup into an isolated service, then verify a
   representative collection. Do not use the live Railway database for this
   restore test.

@@ -148,9 +148,9 @@ def test_railway_production_accepts_private_database(monkeypatch):
 @pytest.mark.parametrize(
     "bucket,credential_project,firebase_project",
     [
-        ("mentee-dev-files", "mentee-d0304", "mentee-d0304"),
-        ("mentee-prod-files-wciuvo4", "other-project", "mentee-d0304"),
-        ("mentee-prod-files-wciuvo4", "mentee-d0304", "other-project"),
+        ("wrong-gcs-bucket", "mentee-d0304", "mentee-d0304"),
+        ("app-mentee-global-images", "other-project", "mentee-d0304"),
+        ("app-mentee-global-images", "mentee-d0304", "other-project"),
     ],
 )
 def test_railway_production_rejects_wrong_storage_or_firebase(
@@ -162,7 +162,8 @@ def test_railway_production_rejects_wrong_storage_or_firebase(
         "MONGO_URI", "mongodb://mongodb-x6fv.railway.internal:27017/mentee"
     )
     monkeypatch.setenv("MONGO_DB", "mentee")
-    monkeypatch.setenv("AWS_S3_BUCKET_NAME", bucket)
+    monkeypatch.delenv("AWS_S3_BUCKET_NAME", raising=False)
+    monkeypatch.setenv("GCS_BUCKET", bucket)
     monkeypatch.setenv("RAILWAY_PUBLIC_DOMAIN", "web-prod.example.test")
     monkeypatch.setenv(
         "GOOGLE_CREDENTIALS_JSON", json.dumps({"project_id": credential_project})
@@ -173,6 +174,32 @@ def test_railway_production_rejects_wrong_storage_or_firebase(
 
     with pytest.raises(RuntimeError):
         entrypoint.prepare_environment()
+
+
+@pytest.mark.parametrize("s3_bucket", [None, "mentee-prod-files-wciuvo4"])
+def test_production_uses_existing_gcs_bucket(monkeypatch, s3_bucket):
+    monkeypatch.setenv("RAILWAY_ENVIRONMENT_NAME", "production")
+    monkeypatch.setenv("RAILWAY_PREVIEW", "false")
+    monkeypatch.setenv(
+        "MONGO_URI", "mongodb://mongodb-x6fv.railway.internal:27017/mentee"
+    )
+    monkeypatch.setenv("MONGO_DB", "mentee")
+    monkeypatch.setenv("GCS_BUCKET", "app-mentee-global-images")
+    monkeypatch.setenv("RAILWAY_PUBLIC_DOMAIN", "web-prod.example.test")
+    monkeypatch.setenv(
+        "GOOGLE_CREDENTIALS_JSON", json.dumps({"project_id": "mentee-d0304"})
+    )
+    monkeypatch.setenv(
+        "REACT_APP_FIREBASE_CONFIG", json.dumps({"projectId": "mentee-d0304"})
+    )
+    if s3_bucket:
+        monkeypatch.setenv("AWS_S3_BUCKET_NAME", s3_bucket)
+        with pytest.raises(RuntimeError, match="requires Google Cloud Storage"):
+            entrypoint.prepare_environment()
+    else:
+        monkeypatch.delenv("AWS_S3_BUCKET_NAME", raising=False)
+        entrypoint.prepare_environment()
+        os.unlink(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
 
 
 @pytest.mark.parametrize("project_id", ["mentee-preview", "mentee-d0304"])

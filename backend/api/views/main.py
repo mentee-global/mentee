@@ -1,5 +1,5 @@
 from ast import Not
-from flask import Blueprint, request
+from flask import Blueprint, abort, request, send_file
 from sqlalchemy import true
 from datetime import datetime
 import math
@@ -8,9 +8,11 @@ from io import BytesIO
 from uuid import uuid4
 from api.utils.google_storage import (
     delete_image_from_storage,
+    read_railway_file,
     upload_image_to_storage,
     compress_image,
 )
+from botocore.exceptions import ClientError
 from api.views.auth import create_firebase_user
 from api.utils.request_utils import PartnerForm
 from mongoengine.queryset.visitor import Q
@@ -36,6 +38,7 @@ from api.models import (
 )
 from api.utils.constants import PROFILE_COMPLETED, TRANSLATIONS, ALERT_TO_ADMINS
 from api.utils.request_utils import send_email
+from api.utils.delivery import email_delivery_enabled
 from api.core import create_response, logger
 from api.utils.request_utils import (
     MentorForm,
@@ -61,6 +64,24 @@ from api.utils.require_auth import (
 from firebase_admin import auth as firebase_admin_auth
 
 main = Blueprint("main", __name__)  # initialize blueprint
+
+
+@main.route("/storage/<path:filename>", methods=["GET"])
+def serve_railway_file(filename):
+    if not filename.startswith(("images/", "bug-reports/")):
+        abort(404)
+    try:
+        content, content_type = read_railway_file(filename)
+    except (ClientError, KeyError):
+        abort(404)
+    response = send_file(
+        BytesIO(content),
+        mimetype=content_type,
+        as_attachment=filename.startswith("bug-reports/"),
+        download_name=filename.rsplit("/", 1)[-1],
+    )
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
 
 
 def _preferred_language_for_profile(profile):
@@ -1642,7 +1663,7 @@ def submit_bug_report():
     except Exception as e:
         logger.warning(f"Could not find user by email {user_email}: {e}")
 
-    # Upload attachments to Google Cloud Storage
+    # Upload attachments to the configured object store
     uploaded_attachments = []
     for file_data in file_attachments:
         try:
@@ -1651,7 +1672,6 @@ def submit_bug_report():
             file_type = file_data.get("type", "application/octet-stream")
 
             if file_content_base64:
-                # Upload to GCS
                 public_url, gcs_filename = upload_bug_report_attachment(
                     file_content_base64, file_name, file_type
                 )
@@ -1664,7 +1684,7 @@ def submit_bug_report():
                         "content_type": file_type,
                     }
                 )
-                logger.info(f"Uploaded attachment to GCS: {file_name}")
+                logger.info(f"Uploaded attachment to storage: {file_name}")
         except Exception as e:
             logger.error(
                 f"Failed to upload attachment {file_data.get('name', 'unknown')}: {e}"
@@ -1742,8 +1762,8 @@ def submit_bug_report():
     """
 
     # Check if SendGrid is properly configured
-    if not sendgrid_key:
-        logger.warning("SENDGRID_API_KEY not found - using development mode")
+    if not sendgrid_key or not email_delivery_enabled():
+        logger.warning("Email delivery disabled or not configured")
         logger.info(
             f"Bug report #{bug_report.id} received from {user_name} ({user_email})"
         )

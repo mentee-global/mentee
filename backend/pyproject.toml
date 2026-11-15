@@ -9,6 +9,7 @@ dependencies = [
   "authlib==1.6.11",
   "bcrypt==4.3.0",
   "bidict==0.22.1",
+  "boto3>=1.35,<2",
   "cachecontrol==0.12.11",
   "cachetools==4.2.4",
   "certifi==2022.12.7",

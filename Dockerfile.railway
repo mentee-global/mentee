@@ -1,0 +1,36 @@
+FROM node:22.21.0-bookworm-slim AS frontend
+WORKDIR /app
+RUN npm install --global pnpm@11.3.0
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY frontend/package.json ./frontend/
+COPY backend/package.json ./backend/
+RUN pnpm install --frozen-lockfile --filter frontend...
+COPY frontend/ ./frontend/
+ARG REACT_APP_FIREBASE_CONFIG
+ARG REACT_APP_BASE_URL=auto
+ARG REACT_APP_ENV=development
+ENV REACT_APP_FIREBASE_CONFIG=$REACT_APP_FIREBASE_CONFIG \
+    REACT_APP_BASE_URL=$REACT_APP_BASE_URL \
+    REACT_APP_ENV=$REACT_APP_ENV
+RUN test -n "$REACT_APP_FIREBASE_CONFIG" && pnpm build
+
+FROM python:3.10-slim-bookworm AS dependencies
+COPY --from=ghcr.io/astral-sh/uv:0.12.3 /uv /usr/local/bin/uv
+WORKDIR /app/backend
+RUN apt-get update && apt-get install --yes --no-install-recommends build-essential libffi-dev libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+COPY backend/pyproject.toml backend/uv.lock ./
+ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=never
+RUN uv sync --frozen --no-dev
+
+FROM python:3.10-slim-bookworm
+COPY --from=dependencies /usr/local/bin/uv /usr/local/bin/uv
+COPY --from=dependencies /app/backend/.venv /app/backend/.venv
+COPY backend/api /app/backend/api
+COPY backend/manage.py backend/pyproject.toml backend/uv.lock /app/backend/
+COPY backend/scripts/railway_entrypoint.py /app/backend/scripts/railway_entrypoint.py
+COPY --from=frontend /app/frontend/artifacts /app/frontend/artifacts
+WORKDIR /app/backend
+ENV PYTHONUNBUFFERED=1 UV_PYTHON_DOWNLOADS=never UV_NO_SYNC=1 \
+    RAILWAY_PREVIEW=true EMAIL_DELIVERY_ENABLED=false SMS_DELIVERY_ENABLED=false
+CMD ["uv", "run", "--no-dev", "python", "scripts/railway_entrypoint.py", "web"]

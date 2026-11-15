@@ -1,4 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
+import os
 import requests
 
 sched = BlockingScheduler()
@@ -6,10 +7,13 @@ sched = BlockingScheduler()
 
 @sched.scheduled_job("cron", day_of_week="mon", hour=12)
 def scheduled_job():
-    # python requests
-    # r = requests.get("localhost:5000/api/notifications/weeklyemails")
-    r = requests.get("https://app.menteeglobal.org/api/notifications/weeklyemails")
+    url = os.environ.get(
+        "WEEKLY_EMAILS_URL",
+        "https://app.menteeglobal.org/api/notifications/weeklyemails",
+    )
+    r = requests.get(url)
     print(r.status_code)
 
 
-sched.start()
+if __name__ == "__main__":
+    sched.start()
